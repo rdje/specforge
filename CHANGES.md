@@ -1,0 +1,62 @@
+# CHANGES
+## 2026-03-31
+- initialized the `specforge` Git repository
+- established the initial live documentation surface:
+  - `README.md`
+  - `SESSION_BOOTSTRAP.md`
+  - `ROADMAP.md`
+  - `LIVE_ACHIEVEMENT_STATUS.md`
+  - `RUST_CODEBASE_ANALYSIS.md`
+  - `USER_GUIDE.md`
+  - `DEVELOPMENT_NOTES.md`
+  - `CHANGES.md`
+  - `MEMORY.md`
+- defined `README.md` as the single project entry point
+- recorded the working project/binary naming:
+  - project: `specforge`
+  - CLI: `spec2fsm`
+- recorded the staged-tool architecture direction and the initial Rust architecture baseline
+- updated `COMMIT.md` to reinforce live-document continuity requirements during long-running tasks
+- added `.gitignore` rules so local workflow files and build artifacts remain untracked
+- created the initial Rust workspace:
+  - `Cargo.toml`
+  - `Cargo.lock`
+  - `crates/spec2fsm/Cargo.toml`
+  - `crates/spec2fsm/src/main.rs`
+  - `crates/spec2fsm/src/lib.rs`
+  - `crates/spec2fsm/src/cli.rs`
+  - `crates/spec2fsm/src/error.rs`
+  - `crates/spec2fsm/src/source.rs`
+  - `crates/spec2fsm/src/commands/inspect.rs`
+  - `crates/spec2fsm/src/commands/ingest.rs`
+- implemented the first `spec2fsm` command surface:
+  - `inspect <path>`
+  - `ingest <source> --dry-run`
+- validated the new Rust workspace with:
+  - `cargo test`
+  - `cargo run -p spec2fsm -- --help`
+  - `cargo run -p spec2fsm -- inspect README.md`
+  - `cargo run -p spec2fsm -- ingest README.md --dry-run`
+- tightened the continuity policy so:
+  - `MEMORY.md` must contain the latest committed Git hash and corresponding brief message, or explicitly say `none yet`
+  - `MEMORY.md` remains a compact operational history rather than a transcript
+  - `COMMIT.md` explains how `MEMORY.md` should catch up to the newest committed baseline after commit creation
+- reloaded and analyzed the prior AXI extraction workspace in `/Users/richarddje/Documents/livework/protocols/arm/axi`
+- recorded in the live docs how that AXI method maps into `specforge`:
+  - keep the staged extraction method
+  - keep typed Rust data as the system of record
+  - treat markdown worksheets/catalogs/decomposition artifacts as generated views
+  - shape the next ingest slice around dossier/provenance/section-map support
+- clarified the project objective in the live docs:
+  - `specforge` is about staged specification intent capture, not just artifact conversion
+  - automation should be pushed as far as safely possible toward full PDF/component-spec to `.fsm` automation
+  - any non-automated remainder must be emitted as structured residual decision packets
+- aligned the roadmap and architecture notes around:
+  - typed intent representation
+  - residual-decision scaffolding
+  - automation-first, manual-last workflow design
+- re-ran the baseline Rust/CLI validation during the first commit workflow:
+  - `cargo test`
+  - `cargo run -p spec2fsm -- --help`
+  - `cargo run -p spec2fsm -- inspect README.md`
+  - `cargo run -p spec2fsm -- ingest README.md --dry-run`
