@@ -2,58 +2,65 @@
 ## Purpose
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
-- remain useful even when the Rust codebase is still small or only partially built
+- remain useful even while only the early IR stages are implemented
 
 ## Executive summary
-- the repository now contains the first Rust workspace and a minimal but real `spec2fsm` CLI
-- the current codebase is intentionally small and architecture-light, but it already establishes:
-  - a build/test loop
-  - a user-visible command surface
-  - typed error handling
-  - a first deterministic source-classification helper
-- the main architectural risk has shifted from “starting with the wrong first abstraction” to “letting the initial single-crate bootstrap harden into a monolith once ingest and IR logic become real”
-- the next slice should add real ingest manifest and normalization support while preserving provenance and staged boundaries
+- the repository now contains a renamed `specforge` crate and CLI rather than the older `spec2fsm` identity
+- the canonical product boundary is now `IntentIR`, not `.fsm`
+- the codebase has been reshaped around an explicit staged IR pipeline:
+  - `SourceIR`
+  - `EvidenceIR`
+  - `SemanticIR`
+  - `IntentIR`
+  - adapters
+- the implemented stage today is `SourceIR`
+- `SourceIR` now reserves parser-backend, page-artifact, and visual-asset schema surface for multimodal source capture
+- `EvidenceIR` now reserves typed multimodal evidence records instead of assuming text-only evidence
+- the later stages currently exist as typed scaffolding, which is valuable for architectural clarity but still needs real builders
+- the next slice should turn the architecture from declared stages into executed stages by closing the remaining `SourceIR` structured-PDF-normalization gap and constructing the first real visual-aware `EvidenceIR`
 
 ## Observed current state
 ### Repository contents directly observed
 - `.git/`
-- live project documentation surface
+- live documentation surface
+- `INTENTIR_SPEC.md`
 - `Cargo.toml`
 - `Cargo.lock`
-- `crates/spec2fsm/Cargo.toml`
-- `crates/spec2fsm/src/main.rs`
-- `crates/spec2fsm/src/lib.rs`
-- `crates/spec2fsm/src/cli.rs`
-- `crates/spec2fsm/src/error.rs`
-- `crates/spec2fsm/src/source.rs`
-- `crates/spec2fsm/src/commands/inspect.rs`
-- `crates/spec2fsm/src/commands/ingest.rs`
+- `crates/specforge/Cargo.toml`
+- `crates/specforge/src/main.rs`
+- `crates/specforge/src/lib.rs`
+- `crates/specforge/src/cli.rs`
+- `crates/specforge/src/error.rs`
+- `crates/specforge/src/commands/inspect.rs`
+- `crates/specforge/src/commands/ingest.rs`
+- `crates/specforge/src/ir/mod.rs`
+- `crates/specforge/src/ir/source.rs`
+- `crates/specforge/src/ir/evidence.rs`
+- `crates/specforge/src/ir/semantic.rs`
+- `crates/specforge/src/ir/intent.rs`
+- `crates/specforge/src/ir/adapters.rs`
 
 ### Rust-specific contents still absent
-- no dedicated `specforge-core` crate
-- no dedicated `specforge-ingest` crate
-- no dedicated `specforge-ir` crate
-- no dedicated `specforge-validate` crate
-- no `fixtures/`
-- no `examples/`
-- no integration-test harness beyond the crate-local unit tests
+- no dedicated `specforge-source` crate
+- no dedicated `specforge-evidence` crate
+- no dedicated `specforge-semantic` crate
+- no dedicated `specforge-intent` crate
+- no dedicated `specforge-adapters` crate
+- no dedicated validation crate
+- no integration-test harness beyond crate-local unit tests
+- no real builders beyond the current `SourceIR` slice
 
 ### Immediate implication
-- there is now a real Rust codebase to preserve and evolve
-- the current code is still bootstrap-scale, so a single crate is acceptable
-- future growth pressure should be handled by splitting real boundaries out of the crate only when the code actually justifies that move
+- the codebase now has a clean top-level architectural story
+- the current risk is no longer naming confusion; it is execution lag between the declared staged architecture and the still-limited implemented builders
 
 ## What the tool needs to do
-- orchestrate source ingest from PDF or already-normalized Markdown
-- maintain source provenance and evidence ranges
-- support actor-oriented extraction rather than monolithic protocol flattening
-- preserve the distinction between:
-  - source facts
-  - derived rules
-  - local design decisions
-  - explicit abstractions
-- emit structured markdown artifacts and later `.fsm` outputs
-- validate emitted `.fsm` files and back-annotate the result
+- build `SourceIR` from raw specifications and normalized artifacts
+- build `EvidenceIR` from normalized markdown, page assets, figures, captions, and evidence extraction
+- build `SemanticIR` from actors, interfaces, phases, invariants, contracts, gates, assertions, abstractions, and decomposition candidates
+- build canonical `IntentIR` as a backend-independent intent model
+- lower `IntentIR` through adapters such as `.fsm`, SystemVerilog, Verilog, and VHDL
+- validate stage outputs and adapter outputs and back-annotate findings
 
 ## Current implemented architecture
 ### Root workspace
@@ -63,250 +70,161 @@
   - dependency lockfile
 
 ### Active crate
-- `crates/spec2fsm`
-  - single user-facing CLI crate and binary for the first slice
+- `crates/specforge`
+  - single user-facing CLI crate and binary for the current slice
 
 ### Implemented module boundaries
 - `src/main.rs`
   - binary entrypoint
 - `src/lib.rs`
-  - command dispatch
+  - command dispatch and public module exports
 - `src/cli.rs`
-  - clap-based command model
+  - clap-based command model using the `specforge` binary name
 - `src/error.rs`
   - typed error/result boundary
-- `src/source.rs`
-  - source-kind classification helper
 - `src/commands/inspect.rs`
-  - deterministic inspection command
+  - deterministic source/path inspection command
 - `src/commands/ingest.rs`
-  - ingest planning command, currently dry-run only
+  - `SourceIR` preview/materialization command
+- `src/ir/mod.rs`
+  - stage identifiers for `source_ir`, `evidence_ir`, `semantic_ir`, and `intent_ir`
+- `src/ir/source.rs`
+  - concrete `SourceIR` implementation
+- `src/ir/evidence.rs`
+  - `EvidenceIR` scaffolding
+- `src/ir/semantic.rs`
+  - `SemanticIR` scaffolding
+- `src/ir/intent.rs`
+  - `IntentIR` scaffolding
+- `src/ir/adapters.rs`
+  - adapter targets and adapter-plan scaffolding
 
-### Assessment of current structure
-- good:
-  - not a single-file prototype
-  - clear enough command/module split for the first slice
-  - low friction for rapid progress
-- not yet sufficient for the long-term architecture:
-  - ingest logic is not yet rich enough to justify a dedicated ingest crate
-  - there is no typed extraction IR yet
-  - there is no validation crate boundary yet
+## Assessment of current structure
+### What is good
+- the crate/binary identity now matches the repo direction
+- the code no longer hardcodes `.fsm` as the conceptual endpoint
+- a real typed `SourceIR` artifact exists instead of a handwritten ingest plan
+- the later stages have typed names and module homes, which reduces the risk of accidental backend-first growth
+- adapter planning is separated from the canonical IR stages
+- the IR surface now makes room for structured PDF assets and multimodal visual evidence before the real builder exists
+
+### What is still insufficient
+- only `SourceIR` has a real builder today
+- structured PDF normalization is still missing inside `SourceIR`
+- page-artifact and visual-asset manifests are still planned rather than materialized
+- `EvidenceIR`, `SemanticIR`, and `IntentIR` remain type scaffolding rather than executable stage builders
+- visual enrichment and figure-grounding are not implemented yet
+- there is no real adapter implementation yet
+- validation/back-annotation is still absent
 
 ## Architectural recommendation
 ### Core architectural stance
-- use typed Rust data structures as the system of record
-- make the typed model represent implementation-relevant intent, not merely document structure
-- do not let markdown text or prompt text become the primary internal representation
-- treat markdown emission, prompts, and `.fsm` emission as views over typed IR rather than as the IR itself
-- represent irreducible ambiguity explicitly as residual decision packets rather than freeform notes
+- keep `IntentIR` as the canonical endpoint
+- keep adapters downstream of `IntentIR`
+- keep the internal system of record typed and stage-specific
+- keep residual decisions explicit at every stage
+- do not let convenience around one backend contaminate the stage-neutral model
+- use structured parsing first and selective multimodal enrichment second, rather than collapsing the problem into markdown-only OCR or ungrounded VLM generation
 
 ### Recommended growth path from the current codebase
 #### Keep in the current crate for one more slice
-- path/source inspection
-- ingest planning
-- early manifest types
-- basic source normalization
+- `SourceIR` structured PDF normalization orchestration
+- first visual-aware `EvidenceIR` extractor
+- initial statement classification into source facts / derived rules / local design decisions / explicit abstractions
 
-#### Split into a dedicated crate when pressure becomes real
-- ingest manifest and artifact promotion logic
-- reusable typed IR
-- validation integration
-
-### Recommended future subsystem split
-- `specforge-cli`
-  - CLI parsing
-  - command dispatch
-  - top-level workflow orchestration
-- `specforge-core`
-  - common error types
-  - identifiers
-  - filesystem/path helpers
-  - manifest metadata
-- `specforge-ingest`
-  - PDF/Markdown source registration
-  - converter orchestration
-  - artifact promotion and normalization
-- `specforge-ir`
-  - typed models for:
-    - section maps
-    - evidence items
-    - signals
-    - actor catalogs
-    - actor sheets
-    - invariants
-    - contracts
-    - gates
-    - assertion seeds
-    - abstractions
-    - decomposition plans
+#### Split into dedicated crates when pressure becomes real
+- `specforge-source`
+  - source registration, normalization, converter orchestration
+- `specforge-evidence`
+  - section anchors, evidence spans, statement extraction and provenance
+- `specforge-semantic`
+  - actor and semantic lifting
+- `specforge-intent`
+  - canonical intent model and versioned serialization
+- `specforge-adapters`
+  - target-specific lowerings
 - `specforge-validate`
-  - FSM validation boundary
-  - validation report capture
-  - generated-output metadata
+  - validation, diagnostics, back-annotation
 
-## Mapping from staged method to Rust subsystems
-### Phase 0: PDF to Markdown conversion
-- future primary ownership:
-  - `specforge-ingest`
-- immediate precursor in current code:
-  - `ingest --dry-run`
+## Mapping from staged architecture to the current modules
+### SourceIR
+- current primary ownership:
+  - `src/commands/ingest.rs`
+  - `src/ir/source.rs`
 
-### Phase 1: Section mapping
-- future ownership:
-  - `specforge-ingest`
-  - later `specforge-ir`
+### EvidenceIR
+- current declared ownership:
+  - `src/ir/evidence.rs`
+- next real implementation target:
+  - build a real extractor from normalized markdown, figures, captions, and page/asset manifests
 
-### Phase 2 through Phase 11: Extraction and normalization
-- future ownership:
-  - `specforge-ir`
+### SemanticIR
+- current declared ownership:
+  - `src/ir/semantic.rs`
+- dependency:
+  - requires real `EvidenceIR`
 
-### Phase 12 and Phase 13: Decomposition and `.fsm` emission
-- future ownership:
-  - `specforge-ir`
-  - later an emitter layer
+### IntentIR
+- current declared ownership:
+  - `src/ir/intent.rs`
+- dependency:
+  - requires real `SemanticIR`
 
-### Phase 14: Validation and back-annotation
-- future ownership:
-  - `specforge-validate`
-
-## Recovered precedent from the AXI extraction workspace
-- the workspace at `/Users/richarddje/Documents/livework/protocols/arm/axi` already exercised the intended extraction method at the document/artifact level
-- reusable artifact families observed there:
-  - protocol dossier
-  - section map / key section anchors
-  - channel catalog
-  - actor catalog
-  - actor sheets
-  - invariant, contract, gate, and assertion ledgers
-  - abstraction log
-  - `.fsm` decomposition sheet
-  - validation log
-- architectural conclusion:
-  - these should become typed models, not ad hoc markdown-only artifacts
-- likely Rust type families implied by that precedent:
-  - `IngestManifest`
-  - `NormalizedSourceDocument`
-  - `DocumentIdentity`
-  - `SourceReference`
-  - `SectionRef`
-  - `EvidenceItem`
-  - `StatementClass`
-  - `AutomationConfidence`
-  - `ResidualDecisionPacket`
-  - `CandidateInterpretation`
-  - `ProtocolDossier`
-  - `ActorCatalog`
-  - `ActorSheet`
-  - `InvariantRecord`
-  - `ContractRecord`
-  - `GateRecord`
-  - `AssertionSeed`
-  - `AbstractionRecord`
-  - `FsmDecompositionPlan`
-  - `ValidationLog`
-- immediate impact on the next slice:
-  - `crates/spec2fsm/src/commands/ingest.rs` already sketches the right staged flow, but still only prints the plan
-  - R2 should materialize a real manifest plus normalized-source metadata/provenance, not stop at path classification
-  - R2 should leave clear hooks for later section-map and evidence extraction even if those are not fully implemented yet
-  - R2 should introduce the first residual-decision scaffolding so incomplete automation has a typed representation from the start
-  - markdown dossier/worksheet emission should come after the typed forms exist
-
-## Data-model requirements
-### Provenance is mandatory
-- every extracted fact should be able to reference:
-  - source file
-  - section/range
-  - optional figure/table reference
-  - extraction confidence
-
-### IR stability matters more than prompt stability
-- prompts will evolve
-- markdown templates will evolve
-- the typed IR should be comparatively stable and explicit
-
-### Abstractions must be first-class
-- deferred capability cannot be hidden in prose
-- the IR must carry explicit abstraction records so downstream `.fsm` emission and validation know what was intentionally omitted
-
-## First coding slice assessment
-### Intended goals
-- create the smallest executable Rust workspace that still reflects the staged architecture
-
-### What was actually delivered
-- root workspace manifest
-- one user-facing CLI crate and binary
-- clap-based command parsing
-- typed error handling
-- first deterministic command pair:
-  - `inspect`
-  - `ingest --dry-run`
-- unit tests for source-kind detection and ingest stem logic
-
-### Why this slice is good enough
-- it establishes the repo as a real Rust project
-- it keeps the first code slice deterministic and inspectable
-- it avoids pretending ingest already exists when only the command surface is ready
-
-### What is still missing
-- real ingest manifest type
-- normalized source model
-- converter orchestration
-- typed extraction IR
-- worksheet/artifact emission
-- validation integration
+### Adapters
+- current declared ownership:
+  - `src/ir/adapters.rs`
+- dependency:
+  - requires stable `IntentIR`
 
 ## Major risks
-### Risk: premature monolith
-- if ingest, extraction, emission, and validation all accumulate in `crates/spec2fsm` without boundary management, the staged-tool design will erode quickly
-- current status:
-  - acceptable today
-  - must be watched closely in the next one or two slices
+### Risk: backend leakage into IntentIR
+- if `.fsm` or RTL-specific assumptions creep back into the canonical model, the pivot fails even if the names remain correct
 
-### Risk: prompt-driven architecture
-- if LLM prompts become the de facto internal format, deterministic replay and continuity will suffer
-- current status:
-  - not active yet because no LLM boundary exists in code
+### Risk: stage scaffolding without stage execution
+- if `EvidenceIR`, `SemanticIR`, and `IntentIR` remain only structs for too long, the architecture becomes performative rather than operational
 
-### Risk: insufficient provenance
-- if extracted artifacts lose source ranges early, later validation and auditing will become fragile
-- current status:
-  - not yet a live implementation defect
-  - must be addressed in the next real ingest/IR slice
+### Risk: incomplete provenance in EvidenceIR
+- if evidence ranges are not carried forward precisely, later semantic lifting and validation will be fragile
 
-### Risk: emitter-first implementation
-- if `.fsm` emission is implemented before the IR is stabilized, the project will accumulate string-based technical debt
-- current status:
-  - low for now
-  - avoid rushing into `.fsm` output from the current CLI scaffold
+### Risk: markdown-only drift for PDFs
+- if the real builder treats markdown as the only normalized representation, the system will silently lose figure, chart, and layout semantics before `EvidenceIR`
+
+### Risk: ungrounded visual descriptions
+- if multimodal descriptions are generated without stable links back to page regions, captions, and source references, later stages will be vulnerable to hallucinated evidence
+
+### Risk: SourceIR overpromises on PDFs
+- today `SourceIR` records planned promoted markdown, page-artifact, and visual-asset paths for PDFs, but real converter orchestration is still absent
+- this is acceptable temporarily, but should be closed soon so the first stage is truly operational for PDFs
 
 ## Testing implications
 - current tests cover:
   - source-kind detection
-  - deterministic ingest stem naming
+  - deterministic source key naming
+  - `SourceIR` JSON materialization
+  - directory residual decision emission
+  - PDF normalization planning
 - next tests should cover:
-  - ingest manifest/path normalization
-  - command behavior around missing/unsupported inputs
-  - deterministic artifact naming
-- protocol-semantic tests should come later once the IR exists
+  - structured PDF normalization and failure handling
+  - first `EvidenceIR` extraction on normalized markdown plus visual-asset fixtures
+  - figure extraction and caption-linking fidelity
+  - visual evidence grounding and confidence propagation
+  - provenance retention across stage boundaries
+  - adapter planning and eventual adapter lowering snapshots
 
 ## Validation completed in this session
+- `cargo fmt --all --manifest-path Cargo.toml`
+  - passed after the multimodal `SourceIR` and `EvidenceIR` schema update
 - `cargo test`
-  - passed
-- `cargo run -p spec2fsm -- --help`
-  - passed
-- `cargo run -p spec2fsm -- inspect README.md`
-  - passed
-- `cargo run -p spec2fsm -- ingest README.md --dry-run`
-  - passed
-
-## Recommended update triggers for this document
-- creation of a real ingest manifest
-- addition of new crates or major module boundaries
-- introduction of public integration seams
-- introduction of an LLM boundary
-- changes in the recommended architecture or risk picture
+  - passed for the renamed `specforge` crate and current staged IR modules
+- `cargo run -p specforge -- --help`
+  - passed and reports the staged `SourceIR`, `EvidenceIR`, `SemanticIR`, `IntentIR`, and adapter direction
+- `cargo run -p specforge -- ingest README.md --dry-run`
+  - passed and emits `SourceIR` JSON with parser backend, page-artifact manifests, visual-asset manifests, placeholder bindings, and downstream stage planning fields
+- repo-wide stale-name sweep
+  - remaining `spec2fsm` references are historical notes only, not active CLI or architecture surfaces
 
 ## Current recommendation
 - keep the current single-crate workspace for one more slice
-- next, implement a real ingest manifest and normalized source model behind `spec2fsm ingest`
-- after that, reassess whether `specforge-ingest` should become its own crate
+- next, close the remaining `SourceIR` gap by orchestrating structured PDF normalization
+- immediately after that, build the first real visual-aware `EvidenceIR` extractor
+- keep `IntentIR` canonical and resist any temptation to make `.fsm` the hidden endpoint again

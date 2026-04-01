@@ -1,137 +1,132 @@
 # DEVELOPMENT_NOTES
 ## Current project direction
 - project name: `specforge`
-- working CLI/binary name: `spec2fsm`
+- CLI/binary name: `specforge`
 - implementation language: Rust
-- product shape: staged toolchain, not one-shot conversion
-- project mission: staged specification intent capture pushed toward fully automated `.fsm` synthesis
+- canonical deliverable: `IntentIR`
+- product shape: staged IR toolchain, not one-shot backend generation
+- stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
 ## Foundational engineering choices
+### IntentIR instead of AST
+- the final canonical output must capture semantics and implementation-relevant intent, not only syntax structure
+- `IntentIR` is therefore a better name and design target than a plain `AST`
+- the canonical model must carry assumptions, constraints, abstractions, and residual decisions explicitly
+
+### Backend independence first
+- `.fsm` is not the product boundary
+- `.fsm`, SystemVerilog, Verilog, and VHDL are adapter targets downstream of `IntentIR`
+- the canonical model must not inherit backend-specific assumptions too early
+
 ### Typed IR first
-- the internal system of record should be typed Rust data, not ad hoc markdown text or string templates
-- markdown artifacts, prompts, and emitted `.fsm` files should be generated from typed internal structures
+- the internal system of record should be typed Rust data, not markdown prose or string templates
+- JSON serialization is the first interchange surface for stage artifacts
+- markdown docs explain and steer the system, but they must not become the hidden runtime IR
 
-### Automation-first intent capture
-- the tool should optimize for automated extraction of implementation-relevant intent rather than merely producing intermediate paperwork
-- full automation is the target state whenever the evidence and validation support it
-- the correct question for each stage is not only “what artifact do we emit?” but “what ambiguity have we eliminated?”
+### SOTA document understanding, not markdown-only extraction
+- PDFs must be treated as multimodal documents, not as plain text containers
+- the preferred architecture is hybrid and provenance-first:
+  - structured parser first
+  - page and visual asset capture second
+  - selective multimodal enrichment for figures, charts, diagrams, and image-heavy regions third
+- markdown is a convenient normalized view for humans and some downstream text steps, but it is not the only system of record for PDF sources
+- the normalization layer should remain backend-pluggable so `specforge` can keep pace with the state of the art without destabilizing later IR stages
 
-### Actor-first extraction
-- the tool should preserve actor boundaries and protocol decomposition rather than flattening everything into one monolithic model
+### Staged IR pipeline
+- `SourceIR` captures normalized source identity, parser backend choice, page artifacts, visual assets, and ingest intent
+- `EvidenceIR` captures text anchors, visual evidence, cross-links between text and figures, extracted statements, and statement classification
+- `SemanticIR` captures actors, interfaces, phases, invariants, contracts, gates, assertions, abstractions, and decomposition candidates
+- `IntentIR` is the canonical backend-independent intent model
+- adapters lower `IntentIR` into concrete targets
 
 ### Residual decision packets instead of ad hoc manual gaps
 - when automation cannot safely choose a single interpretation, the system should emit a structured residual decision packet
-- each packet should capture the unresolved question, supporting/conflicting evidence, candidate interpretations, downstream impact, and the minimum user decision required to continue
-- unresolved ambiguity should stay machine-tracked and resumable rather than leaking into freeform notes or tribal knowledge
+- residual decisions must be explicit in the typed model, not buried in prose
+- this keeps the manual surface reviewable and progressively reducible
 
 ### Deterministic versus assisted stages
-- deterministic stages should own ingest, manifests, normalization, and validation
-- interpretation-heavy stages such as actor discovery and semantic extraction can later use assisted reasoning, but must still produce typed artifacts with provenance
+- deterministic stages should own ingest, normalization, artifact materialization, and validation boundaries
+- interpretation-heavy stages such as actor discovery and semantic lifting can use assisted reasoning later, but must still emit typed artifacts with provenance
 
 ### Continuity as infrastructure
 - live documentation is not optional process overhead
-- `MEMORY.md`, `RUST_CODEBASE_ANALYSIS.md`, `CHANGES.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, and `README.md` are part of the engineering system
+- `README.md`, `INTENTIR_SPEC.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `USER_GUIDE.md`, `DEVELOPMENT_NOTES.md`, `CHANGES.md`, and `MEMORY.md` are part of the engineering system
 - they must be updated when work completes and at meaningful intermediate checkpoints during long-running tasks
-- `MEMORY.md` is an operational continuity view, not a transcript
-- `MEMORY.md` must carry the latest committed baseline hash/message known at the time it is refreshed, and explicitly say `none yet` before the first commit exists
 
 ## Current repository observations
-- the repository started essentially empty apart from `COMMIT.md` and `.git/`
-- the documentation surface was established before Rust code was added
-- the repository now contains the first Rust workspace and CLI bootstrap
+- the repository now contains a renamed `specforge` crate and CLI
+- the active Rust codebase no longer treats `spec2fsm` as the primary identity
+- the canonical product boundary is now described consistently as `IntentIR`
+- the first real implemented stage is `SourceIR`
+- `SourceIR` now reserves parser-backend, page-artifact, and visual-asset fields so a future structured PDF builder has a stable landing zone
+- `EvidenceIR` now reserves multimodal evidence records instead of assuming text-only extraction
 
-## Initial architecture recommendation
-- start with a small Rust workspace and grow only when real pressure appears
-- preserve these conceptual subsystem boundaries from the start:
-  - CLI/orchestration
-  - ingest/normalization
-  - typed extraction IR
-  - validation integration
-
-## Documentation surface established in this session
+## Documentation surface currently steering the implementation
 - `README.md`
-- `SESSION_BOOTSTRAP.md`
+  - single entry point and quick orientation
+- `INTENTIR_SPEC.md`
+  - canonical architecture and stage specification
 - `ROADMAP.md`
-- `LIVE_ACHIEVEMENT_STATUS.md`
+  - live implementation sequence
 - `RUST_CODEBASE_ANALYSIS.md`
+  - architecture/risk assessment
 - `USER_GUIDE.md`
-- `CHANGES.md`
+  - current and planned CLI/user workflow
 - `MEMORY.md`
-- `.gitignore`
+  - continuity record for restart/handoff
 
-## Rust implementation established in this session
+## Current Rust code boundaries
 ### Workspace shape
 - root workspace manifest: `Cargo.toml`
-- initial CLI crate: `crates/spec2fsm`
+- active CLI crate: `crates/specforge`
 
-### Current code boundaries
+### Module boundaries
 - `src/main.rs`
   - binary entrypoint
 - `src/lib.rs`
-  - command dispatch
+  - command dispatch and module exports
 - `src/cli.rs`
-  - clap CLI model
+  - clap CLI model for `specforge`
 - `src/error.rs`
   - typed error/result boundary
-- `src/source.rs`
-  - source-kind classification helpers
 - `src/commands/inspect.rs`
-  - deterministic inspection command
+  - source/path inspection command
 - `src/commands/ingest.rs`
-  - ingest planning command, currently dry-run only
+  - `SourceIR` preview/materialization command
+- `src/ir/mod.rs`
+  - stage identifiers and IR namespace
+- `src/ir/source.rs`
+  - `SourceIR` types, normalization planning, parser backend selection, page/visual artifact planning, and source-side residual decisions
+- `src/ir/evidence.rs`
+  - multimodal `EvidenceIR` scaffolding for text, figures, captions, and visual evidence
+- `src/ir/semantic.rs`
+  - `SemanticIR` scaffolding
+- `src/ir/intent.rs`
+  - `IntentIR` scaffolding
+- `src/ir/adapters.rs`
+  - adapter targets and planning scaffolding
 
-### Engineering choices in the first code slice
-- keep the first executable implementation in one crate to avoid premature crate sprawl
-- still preserve conceptual boundaries through modules so later extraction into dedicated crates stays straightforward
-- implement two deterministic commands first:
-  - one for path/source inspection
-  - one for ingest planning
-- keep real ingest side effects out of the first slice; dry-run first is safer and clarifies the intended staged boundary
+## Newly completed architectural pivot
+- the CLI/crate identity is now `specforge`
+- the repo objective has been rewritten around `IntentIR`
+- `.fsm` is now documented as an adapter target instead of the core endpoint
+- `specforge ingest` now materializes `SourceIR` at `generated/source_ir/<document_key>/source_ir.json`
+- explicit scaffolding exists for the full staged pipeline:
+  - `SourceIR`
+  - `EvidenceIR`
+  - `SemanticIR`
+  - `IntentIR`
+  - adapters
+- `INTENTIR_SPEC.md` now records the canonical long-form architecture and examples for future implementation work
 
-### Validation run
-- `cargo test`
-- `cargo run -p spec2fsm -- --help`
-- `cargo run -p spec2fsm -- inspect README.md`
-- `cargo run -p spec2fsm -- ingest README.md --dry-run`
-- all passed
-
-## Continuity workflow refinement
-- `COMMIT.md` now explicitly requires `MEMORY.md` to track the latest committed baseline hash/message
-- the documented workflow also now explains the timing nuance:
-  - a just-created commit hash can only be known after commit creation
-  - therefore `MEMORY.md` records the latest already-known committed baseline at update time
-  - then gets refreshed at the next documentation checkpoint so continuity catches up to the newly-created commit
-
-## Recovered methodological precedent from the AXI workspace
-- external reference workspace:
-  - `/Users/richarddje/Documents/livework/protocols/arm/axi`
-- re-read reference artifacts:
-  - `PROTOCOL_EXTRACTION_METHOD.md`
-  - `PROTOCOL_EXTRACTION_PROMPT.md`
-  - `PROTOCOL_EXTRACTION_WORKSHEET.md`
-  - `AXI_CORE_EXTRACTION_WORKSHEET.md`
-  - `AXI_PROTOCOL_DOSSIER.md`
-  - `AXI_ACTOR_CATALOG.md`
-  - `AXI_FSM_DECOMPOSITION.md`
-- durable method to carry forward:
-  - convert and promote the source into searchable Markdown
-  - build a section map before deeper synthesis
-  - classify extracted content as source facts, derived machine rules, local design decisions, and explicit abstractions
-  - discover actors before inventing FSM states
-  - define interfaces and phases before state decomposition
-  - capture invariants, contracts, gates, assertions, and abstractions explicitly
-  - separate `.fsm` decomposition from `.fsm` emission
-  - validate and back-annotate findings into the analysis artifacts
-- refinements for `specforge`:
-  - markdown worksheet/catalog/decomposition artifacts are outputs, not the primary internal representation
-  - typed Rust data with provenance should be the primary internal representation
-  - the method must generalize beyond AXI and bus protocols to arbitrary protocol and RTL-module specifications
-  - deterministic ingest/normalization should remain separate from later assisted semantic extraction
-  - the extracted model should represent implementation-relevant intent, not just document structure
-- implication for the next code slice:
-  - implement ingest structures that can eventually feed dossier, section-map, and evidence artifacts
-  - define provenance/source-reference types early so later actor, invariant, contract, gate, and assertion IR can attach to them cleanly
-  - introduce a residual-decision type so incomplete automation has a structured representation from the beginning
+## Immediate implementation consequences
+- do not jump to `.fsm` generation from `SourceIR`
+- keep the current `SourceIR` types stable enough that later `EvidenceIR` builders can depend on them
+- close the remaining `SourceIR` structured-PDF-normalization gap before or alongside the first `EvidenceIR` extractor
+- make the first `EvidenceIR` pass visual-aware so the staged pipeline becomes real beyond the initial source layer
+- do not let figures, charts, or diagrams collapse into throwaway markdown placeholders if they may carry normative meaning
 
 ## Immediate next engineering target
-- implement a real ingest manifest, normalized source model, and residual-decision scaffolding behind `spec2fsm ingest`
+- orchestrate structured PDF normalization within `SourceIR`
+- materialize the promoted markdown, page-artifact, metadata, and visual-asset layout recorded in `SourceIR`
+- build the first real `EvidenceIR` extractor from normalized markdown, figures, captions, and page assets

@@ -1,4 +1,55 @@
 # CHANGES
+## 2026-04-01
+- pivoted the repository objective so `IntentIR` is now the canonical product boundary
+- rewrote the core docs around the explicit staged pipeline:
+  - `SourceIR`
+  - `EvidenceIR`
+  - `SemanticIR`
+  - `IntentIR`
+  - adapters
+- added `INTENTIR_SPEC.md` as the canonical architecture/specification document for the new direction
+- renamed the active Rust crate and CLI direction from `spec2fsm` to `specforge` with no compatibility aliasing
+- renamed the workspace member path to `crates/specforge`
+- refactored the Rust code layout around explicit staged IR modules:
+  - `crates/specforge/src/ir/source.rs`
+  - `crates/specforge/src/ir/evidence.rs`
+  - `crates/specforge/src/ir/semantic.rs`
+  - `crates/specforge/src/ir/intent.rs`
+  - `crates/specforge/src/ir/adapters.rs`
+- replaced the previous ingest-manifest framing with a real `SourceIR` artifact
+- updated `specforge ingest` so:
+  - dry-run prints computed `SourceIR` JSON
+  - execute mode materializes `generated/source_ir/<document_key>/source_ir.json`
+- formalized a stricter SOTA ingestion stance:
+  - structured parser first
+  - provenance-preserving page and visual asset capture second
+  - selective multimodal enrichment for figures, charts, diagrams, and image-heavy regions third
+- extended `SourceIR` scaffolding so it now reserves:
+  - parser backend identity
+  - page-artifact manifests
+  - visual-asset manifests
+  - placeholder bindings for normalized sources
+- extended `EvidenceIR` scaffolding so it now reserves:
+  - multimodal evidence spans
+  - visual evidence items
+  - text-to-figure links
+  - picture-description / OCR-over-image / chart-extraction observations
+- recorded adapter targets as downstream of `IntentIR`:
+  - `.fsm`
+  - SystemVerilog
+  - Verilog
+  - VHDL
+- kept residual decision packets as a first-class mechanism for unresolved automation
+- updated the live status tracker so the next highest-priority gap is:
+  - close the remaining `SourceIR` structured-PDF-normalization gap and build the first real multimodal `EvidenceIR` extractor
+- validated the renamed crate and staged IR refactor with:
+  - `cargo fmt --all --manifest-path Cargo.toml`
+  - `cargo test`
+  - `cargo run -p specforge -- --help`
+  - `cargo run -p specforge -- ingest README.md --dry-run`
+- confirmed that `specforge ingest README.md --dry-run` now exposes parser backend, page-artifact manifest, visual-asset manifest, and placeholder-binding fields in `SourceIR`
+- confirmed the remaining `spec2fsm` mentions are historical continuity references rather than active product naming
+
 ## 2026-03-31
 - initialized the `specforge` Git repository
 - established the initial live documentation surface:
@@ -18,45 +69,6 @@
 - recorded the staged-tool architecture direction and the initial Rust architecture baseline
 - updated `COMMIT.md` to reinforce live-document continuity requirements during long-running tasks
 - added `.gitignore` rules so local workflow files and build artifacts remain untracked
-- created the initial Rust workspace:
-  - `Cargo.toml`
-  - `Cargo.lock`
-  - `crates/spec2fsm/Cargo.toml`
-  - `crates/spec2fsm/src/main.rs`
-  - `crates/spec2fsm/src/lib.rs`
-  - `crates/spec2fsm/src/cli.rs`
-  - `crates/spec2fsm/src/error.rs`
-  - `crates/spec2fsm/src/source.rs`
-  - `crates/spec2fsm/src/commands/inspect.rs`
-  - `crates/spec2fsm/src/commands/ingest.rs`
-- implemented the first `spec2fsm` command surface:
-  - `inspect <path>`
-  - `ingest <source> --dry-run`
-- validated the new Rust workspace with:
-  - `cargo test`
-  - `cargo run -p spec2fsm -- --help`
-  - `cargo run -p spec2fsm -- inspect README.md`
-  - `cargo run -p spec2fsm -- ingest README.md --dry-run`
-- tightened the continuity policy so:
-  - `MEMORY.md` must contain the latest committed Git hash and corresponding brief message, or explicitly say `none yet`
-  - `MEMORY.md` remains a compact operational history rather than a transcript
-  - `COMMIT.md` explains how `MEMORY.md` should catch up to the newest committed baseline after commit creation
-- reloaded and analyzed the prior AXI extraction workspace in `/Users/richarddje/Documents/livework/protocols/arm/axi`
-- recorded in the live docs how that AXI method maps into `specforge`:
-  - keep the staged extraction method
-  - keep typed Rust data as the system of record
-  - treat markdown worksheets/catalogs/decomposition artifacts as generated views
-  - shape the next ingest slice around dossier/provenance/section-map support
-- clarified the project objective in the live docs:
-  - `specforge` is about staged specification intent capture, not just artifact conversion
-  - automation should be pushed as far as safely possible toward full PDF/component-spec to `.fsm` automation
-  - any non-automated remainder must be emitted as structured residual decision packets
-- aligned the roadmap and architecture notes around:
-  - typed intent representation
-  - residual-decision scaffolding
-  - automation-first, manual-last workflow design
-- re-ran the baseline Rust/CLI validation during the first commit workflow:
-  - `cargo test`
-  - `cargo run -p spec2fsm -- --help`
-  - `cargo run -p spec2fsm -- inspect README.md`
-  - `cargo run -p spec2fsm -- ingest README.md --dry-run`
+- created the initial Rust workspace and bootstrap CLI
+- established the initial continuity workflow and live-doc surface
+- created the first repository baseline commit

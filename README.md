@@ -3,40 +3,63 @@ This file is the single entry point for the project.
 Use it first for the project objective, document navigation, and the current implementation map.
 
 ## Project objective
-- build a staged Rust toolchain for extracting implementation-relevant intent from protocol, component, and system specifications and converging that intent toward actor-oriented `.fsm` implementations
-- push automation as far as safely possible; if any step cannot yet be fully automated, emit a structured residual decision packet instead of leaving an ad hoc manual gap
-- keep deterministic extraction, typed intent representation, LLM-assisted reasoning, `.fsm` emission, and validation as distinct stages instead of collapsing everything into one opaque step
+- build `specforge` as a staged Rust toolchain for extracting implementation-relevant intent from protocol, component, and system specifications
+- make the canonical deliverable a backend-independent `IntentIR`, serialized as JSON or a future equivalent interchange format
+- treat `.fsm`, SystemVerilog, Verilog, and VHDL as adapter targets downstream of `IntentIR`, not as the core product boundary
+- push automation as far as safely possible, while representing unresolved ambiguity as structured residual decision packets instead of ad hoc manual gaps
 - preserve crash-safe continuity through live documentation so a new AI or LLM session can resume work quickly and correctly
 
 ## Current repository state
-- the initial live-document surface has been established
-- the initial Rust workspace has been scaffolded
-- the first `spec2fsm` CLI surface exists and currently supports:
+- the live-document surface has been pivoted around `IntentIR` as the canonical endpoint
+- the Rust workspace and active CLI/crate identity are now `specforge`
+- the current `specforge` CLI surface supports:
   - `inspect <path>`
   - `ingest <source> --dry-run`
-- the next implementation milestone is real ingest manifest, normalized source-model, and residual-decision scaffolding support
+  - `ingest <source>`
+- `specforge ingest` now computes and materializes `SourceIR` at `generated/source_ir/<document_key>/source_ir.json`
+- the `SourceIR` schema now reserves:
+  - parser-backend identity
+  - page-artifact manifests
+  - visual-asset manifests
+  - placeholder bindings for normalized sources
+- PDF normalization is now explicitly treated as structured source capture with page images, figure/table assets, captions, and markdown as a convenience view rather than the sole system of record
+- explicit staged IR modules now exist for:
+  - `SourceIR`
+  - `EvidenceIR`
+  - `SemanticIR`
+  - `IntentIR`
+  - adapter planning
+- the next implementation milestone is to close the remaining `SourceIR` gap for structured PDF normalization and then build the first real multimodal `EvidenceIR` extraction pass
 
 ## Working naming
-- repository / project name: `specforge`
-- working CLI / binary name: `spec2fsm`
+- repository / project / CLI / crate name: `specforge`
+- canonical output: `IntentIR`
+- adapter targets:
+  - `.fsm`
+  - SystemVerilog
+  - Verilog
+  - VHDL
 
 ## Fast ramp-up order
 1. `README.md`
 2. `SESSION_BOOTSTRAP.md`
-3. `ROADMAP.md`
-4. `LIVE_ACHIEVEMENT_STATUS.md`
-5. `RUST_CODEBASE_ANALYSIS.md`
-6. `USER_GUIDE.md`
-7. `DEVELOPMENT_NOTES.md`
-8. `CHANGES.md`
-9. `MEMORY.md`
-10. `COMMIT.md`
+3. `INTENTIR_SPEC.md`
+4. `ROADMAP.md`
+5. `LIVE_ACHIEVEMENT_STATUS.md`
+6. `RUST_CODEBASE_ANALYSIS.md`
+7. `USER_GUIDE.md`
+8. `DEVELOPMENT_NOTES.md`
+9. `CHANGES.md`
+10. `MEMORY.md`
+11. `COMMIT.md`
 
 ## Documentation index
 - `README.md`
   - single project entry point and navigation hub
 - `SESSION_BOOTSTRAP.md`
   - exact fresh-session instruction for a new AI or LLM instance
+- `INTENTIR_SPEC.md`
+  - canonical product and stage specification for `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 - `ROADMAP.md`
   - live roadmap for project objectives, sequencing, and remaining work
 - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -58,6 +81,7 @@ Use it first for the project objective, document navigation, and the current imp
 ### Current workflow and documentation paths
 - `README.md`
 - `SESSION_BOOTSTRAP.md`
+- `INTENTIR_SPEC.md`
 - `ROADMAP.md`
 - `LIVE_ACHIEVEMENT_STATUS.md`
 - `RUST_CODEBASE_ANALYSIS.md`
@@ -86,56 +110,71 @@ Use it first for the project objective, document navigation, and the current imp
 - `Cargo.toml`
   - root Rust workspace manifest
 - `Cargo.lock`
-  - dependency lockfile created by the first build
-- `crates/spec2fsm/Cargo.toml`
-  - initial CLI crate manifest
-- `crates/spec2fsm/src/main.rs`
+  - dependency lockfile
+- `crates/specforge/Cargo.toml`
+  - active CLI crate manifest
+- `crates/specforge/src/main.rs`
   - binary entrypoint
-- `crates/spec2fsm/src/lib.rs`
+- `crates/specforge/src/lib.rs`
   - top-level command dispatch
-- `crates/spec2fsm/src/cli.rs`
+- `crates/specforge/src/cli.rs`
   - clap-based CLI model
-- `crates/spec2fsm/src/error.rs`
-  - current typed error boundary
-- `crates/spec2fsm/src/source.rs`
-  - source-kind classification helpers
-- `crates/spec2fsm/src/commands/inspect.rs`
-  - first path/source inspection command
-- `crates/spec2fsm/src/commands/ingest.rs`
-  - ingest planning command, currently dry-run only
+- `crates/specforge/src/error.rs`
+  - typed error boundary
+- `crates/specforge/src/commands/inspect.rs`
+  - source/path inspection command
+- `crates/specforge/src/commands/ingest.rs`
+  - `SourceIR` preview/materialization command
+- `crates/specforge/src/ir/mod.rs`
+  - staged IR namespace and stage identifiers
+- `crates/specforge/src/ir/source.rs`
+  - `SourceIR` types, parser-backend selection, page/visual artifact planning, and ingest-side residual decisions
+- `crates/specforge/src/ir/evidence.rs`
+  - multimodal `EvidenceIR` scaffolding for text, figures, captions, and visual evidence
+- `crates/specforge/src/ir/semantic.rs`
+  - `SemanticIR` scaffolding
+- `crates/specforge/src/ir/intent.rs`
+  - `IntentIR` scaffolding
+- `crates/specforge/src/ir/adapters.rs`
+  - adapter targets and planning scaffolding
 
 ### Planned future implementation paths
 - `fixtures/`
-  - planned sample protocols, specs, and test inputs
+  - sample specifications, PDFs, markdown conversions, and expected IR snapshots
 - `examples/`
-  - planned example invocations and sample projects
+  - example invocations and example stage outputs
 - `generated/`
-  - planned generated artifacts only when intentionally versioned
+  - generated IR artifacts only when intentionally versioned
 
 ## Quick start
 ```bash
 cargo test
-cargo run -p spec2fsm -- --help
-cargo run -p spec2fsm -- inspect README.md
-cargo run -p spec2fsm -- ingest README.md --dry-run
+cargo run -p specforge -- --help
+cargo run -p specforge -- inspect README.md
+cargo run -p specforge -- ingest README.md --dry-run
 ```
+- `specforge ingest <source> --dry-run` prints computed `SourceIR` JSON without writing artifacts
+- `specforge ingest <source>` materializes `generated/source_ir/<document_key>/source_ir.json`
 
 ## Planned product shape
-- stage 0: ingest and normalize source documents
-- stage 1: build section maps and evidence records
-- stage 2: build typed intent records for source facts, derived rules, local design decisions, abstractions, and actor-oriented behavior
-- stage 3: produce dossiers, worksheets, actor/decomposition artifacts, and residual decision packets
-- stage 4: synthesize `.fsm` scaffolds and later fuller `.fsm` implementations from typed intent
-- stage 5: validate with FSMGen and back-annotate the findings
+- stage 0: build `SourceIR` from raw sources, normalized text views, structured page artifacts, and extracted visual assets
+- stage 1: build `EvidenceIR` from normalized text, section anchors, evidence spans, figure/caption links, visual evidence, and statement extraction
+- stage 2: build `SemanticIR` from actors, interfaces, phases, invariants, contracts, gates, assertions, abstractions, and decomposition candidates
+- stage 3: build `IntentIR` as the canonical backend-independent intent model
+- stage 4: lower `IntentIR` through adapters such as `.fsm`, SystemVerilog, Verilog, and VHDL
+- stage 5: validate adapters and back-annotate findings into the IR/documentation surface
 
 ## Key operating principles
-- staged tool, not one-shot conversion
-- intent capture rather than literal text conversion
+- `IntentIR` is the canonical endpoint
+- `.fsm` is an adapter target, not the core endpoint
+- the pipeline is explicit: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 - automation-first, manual-last
 - actor-first extraction
 - typed IR over string-based generation
 - deterministic steps where possible
+- structured document parsing first, selective multimodal enrichment second
 - LLM assistance where interpretation is required
+- markdown is a lossy convenience view for PDFs, not the only normalized representation
 - residual decision packets for irreducible ambiguity
 - live documentation as critical continuity infrastructure
 

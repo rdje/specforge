@@ -1,7 +1,7 @@
 pub mod cli;
 mod commands;
 pub mod error;
-pub mod source;
+pub mod ir;
 
 use cli::{Cli, Commands};
 use error::Result;

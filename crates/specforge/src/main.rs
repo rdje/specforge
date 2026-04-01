@@ -1,9 +1,9 @@
 use clap::Parser;
 
 fn main() {
-    let cli = spec2fsm::cli::Cli::parse();
+    let cli = specforge::cli::Cli::parse();
 
-    if let Err(error) = spec2fsm::run(cli) {
+    if let Err(error) = specforge::run(cli) {
         eprintln!("error: {error}");
         std::process::exit(1);
     }

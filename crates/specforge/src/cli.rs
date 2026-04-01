@@ -4,9 +4,9 @@ use clap::{Args, Parser, Subcommand};
 
 #[derive(Debug, Parser)]
 #[command(
-    name = "spec2fsm",
+    name = "specforge",
     version,
-    about = "Staged protocol-spec extraction CLI bootstrap for SpecForge"
+    about = "Stage specifications into SourceIR, EvidenceIR, SemanticIR, IntentIR, and downstream adapters"
 )]
 pub struct Cli {
     #[command(subcommand)]
@@ -17,7 +17,7 @@ pub struct Cli {
 pub enum Commands {
     /// Inspect a source path and report the detected source kind
     Inspect(InspectArgs),
-    /// Plan a source ingest run; currently dry-run only
+    /// Build or materialize a SourceIR artifact for a source
     Ingest(IngestArgs),
 }
 
@@ -31,7 +31,7 @@ pub struct InspectArgs {
 pub struct IngestArgs {
     /// Source file or directory to ingest
     pub source: PathBuf,
-    /// Do not modify anything; print the planned ingest actions instead
+    /// Do not write SourceIR artifacts; print the computed SourceIR JSON instead
     #[arg(long)]
     pub dry_run: bool,
 }

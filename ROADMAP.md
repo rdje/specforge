@@ -1,9 +1,13 @@
 # ROADMAP
 ## Objective
-- build `specforge` as a staged Rust toolchain for extracting implementation-relevant intent from protocol, component, and system specifications and converting that intent into actor-oriented `.fsm` outputs
-- push automation as far as safely possible; any remaining manual work must be reduced to structured decision packets with explicit evidence and downstream impact
-- preserve deterministic provenance and typed intermediate data across all stages
+- build `specforge` as a staged Rust toolchain for extracting implementation-relevant intent from specifications into canonical `IntentIR`
+- keep `.fsm`, SystemVerilog, Verilog, and VHDL as adapter targets downstream of `IntentIR`
+- preserve deterministic provenance, typed intermediate data, and explicit residual decisions across all stages
+- treat text, layout, figures, captions, tables, and charts as first-class evidence rather than markdown decoration
 - make the workflow resumable and understandable through live project documentation
+
+## Canonical pipeline
+- `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
 ## Major workstreams
 ### R0 Repository, workflow, and continuity bootstrap
@@ -19,87 +23,99 @@
   - SESSION_BOOTSTRAP is in place
   - roadmap and live-status files are established
 
-### R1 Rust workspace and CLI bootstrap
+### R1 IntentIR pivot and CLI identity
 - status: Done
 - goals:
-  - create the Rust workspace manifest
-  - create the initial `spec2fsm` CLI entrypoint
-  - establish shared error handling, config loading, and command dispatch
+  - make `IntentIR` the canonical endpoint
+  - rename the CLI/crate direction to `specforge`
+  - remove `.fsm` as the apparent primary product boundary
 - completion criteria:
-  - `cargo` workspace builds
-  - `spec2fsm --help` works
-  - at least one no-op or inspection command exists
+  - docs describe `IntentIR` as the canonical output
+  - active crate/binary name is `specforge`
+  - adapter targets are described as downstream of `IntentIR`
 
-### R2 Source ingest and normalization
-- status: Not Started
+### R2 SourceIR
+- status: Mostly Done
 - goals:
-  - orchestrate PDF to Markdown conversion
-  - normalize file layout, metadata, and artifact manifests
-  - preserve figures, tables, and promotion paths
-  - record source identity, conversion quality, and promotion provenance
+  - detect source kinds
+  - record source identity and canonical paths
+  - plan normalization into promoted artifacts
+  - record parser backend identity for structured document conversion
+  - reserve page-artifact and visual-asset manifests
+  - emit a typed `SourceIR` JSON artifact
+  - emit source-side residual decisions when automation is not yet safe
 - completion criteria:
-  - deterministic ingest manifest exists
-  - source identity, conversion quality, and stable promoted markdown paths can be recorded
+  - `specforge ingest` materializes `SourceIR`
+  - markdown inputs are represented cleanly
+  - PDF inputs have planned promoted markdown, page-artifact, metadata, and visual-asset locations
+  - directory and unknown inputs produce residual decisions instead of implicit failure
+- remaining gap:
+  - actual structured PDF normalization, backend orchestration, and promoted artifact materialization are still needed for full `SourceIR` closure
 
-### R3 Evidence extraction and typed IR
-- status: Not Started
+### R3 EvidenceIR
+- status: In Progress
 - goals:
-  - extract section maps
-  - capture signals, channel candidates, and evidence spans
-  - classify source facts, derived machine rules, local design decisions, and explicit abstractions
-  - define typed intent IR for actors, invariants, contracts, gates, assertions, abstractions, decomposition, and automation confidence
+  - extract section anchors and evidence spans from normalized sources
+  - link text references to figures, captions, charts, and page crops
+  - represent visual evidence as typed, provenance-carrying records
+  - classify extracted statements into source facts, derived rules, local design decisions, and explicit abstractions
+  - preserve precise provenance into a typed `EvidenceIR`
 - completion criteria:
-  - typed intent IR exists
+  - the tool can build a real `EvidenceIR` from normalized markdown plus structured page/visual artifacts
   - evidence items retain provenance to source ranges
-  - residual decision artifacts can be represented in typed form
+  - figure/caption linkage is explicit and inspectable
+  - statement classification is explicit and inspectable
 
-### R4 Actor planning and worksheet generation
+### R4 SemanticIR
+- status: In Progress
+- goals:
+  - lift `EvidenceIR` into actors, interfaces, phases, invariants, contracts, gates, assertions, abstractions, and decomposition candidates
+  - keep the representation backend-neutral
+- completion criteria:
+  - the tool can build a real `SemanticIR`
+  - semantic residual decisions are explicit
+  - actor-first extraction is visible in the typed model
+
+### R5 IntentIR
+- status: In Progress
+- goals:
+  - canonicalize the semantic model into backend-independent `IntentIR`
+  - make `IntentIR` precise enough that adapters are lowering passes rather than semantic invention
+- completion criteria:
+  - a real `IntentIR` artifact can be emitted
+  - `IntentIR` is versioned and serializable
+  - assumptions, abstractions, and residual decisions remain explicit
+
+### R6 Adapter layer
+- status: In Progress
+- goals:
+  - define target-specific lowering boundaries for:
+    - `.fsm`
+    - SystemVerilog
+    - Verilog
+    - VHDL
+  - keep adapter concerns from leaking backward into `IntentIR`
+- completion criteria:
+  - adapter planning is typed
+  - at least one real adapter exists after `IntentIR` is stable
+
+### R7 Validation and back-annotation
 - status: Not Started
 - goals:
-  - generate actor catalogs
-  - generate structured extraction worksheets
-  - record deferred features and abstractions explicitly
-  - emit structured residual decision packets for unresolved ambiguities
+  - validate stage outputs and adapter outputs
+  - collect diagnostics and back-annotate findings into IR artifacts and live docs
 - completion criteria:
-  - worksheet, actor planning, and residual decision artifacts can be emitted from IR
-
-### R5 `.fsm` scaffold emission
-- status: Not Started
-- goals:
-  - emit initial `.fsm` scaffolds from typed IR
-  - preserve actor boundaries and decomposition choices
-  - avoid opaque string-only generation
-- completion criteria:
-  - at least one emitted `.fsm` validates structurally
-
-### R6 Validation and back-annotation
-- status: Not Started
-- goals:
-  - integrate FSMGen validation
-  - collect diagnostics and generated-output summaries
-  - back-annotate validation findings into live artifacts
-- completion criteria:
-  - validation reports are reproducible and tied to emitted artifacts
-
-### R7 Assisted reasoning layer
-- status: Not Started
-- goals:
-  - define the LLM-assisted boundary for actor discovery and semantic extraction
-  - keep deterministic stages separate from interpretation-heavy stages
-  - preserve prompts, evidence, and outputs in replayable form
-  - automate by default and escalate only when confidence or validation says a user decision is necessary
-- completion criteria:
-  - assisted extraction can be audited and resumed with provenance
+  - validation reports are reproducible and tied to IR/artifact versions
+  - adapter validation does not replace semantic validation
 
 ## Recommended implementation order
-1. finish repository/bootstrap documentation
-2. scaffold the Rust workspace and `spec2fsm` CLI
-3. implement ingest manifest, normalized source model, and provenance capture
-4. implement section-map and evidence extraction
-5. define the actor-oriented typed intent IR and residual decision types
-6. emit structured markdown artifacts and residual decision packets from the IR
-7. emit `.fsm` scaffolds
-8. integrate validation and back-annotation
+1. keep the `IntentIR` product boundary explicit in all docs and code
+2. close the remaining `SourceIR` structured-PDF-normalization gap
+3. build the first real multimodal `EvidenceIR` extraction pass
+4. lift `EvidenceIR` into `SemanticIR`
+5. canonicalize into `IntentIR`
+6. build adapters after `IntentIR` is stable
+7. integrate validation and back-annotation
 
 ## Immediate next milestone
-- implement the first real ingest manifest, normalized source model, and residual-decision scaffolding behind `spec2fsm ingest`
+- close the remaining `SourceIR` structured-PDF-normalization gap and build the first real `EvidenceIR` extractor from normalized markdown, figures, captions, and page assets

@@ -1,0 +1,27 @@
+pub mod adapters;
+pub mod evidence;
+pub mod intent;
+pub mod semantic;
+pub mod source;
+
+use serde::Serialize;
+
+#[derive(Debug, Clone, Copy, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum IrStage {
+    SourceIr,
+    EvidenceIr,
+    SemanticIr,
+    IntentIr,
+}
+
+impl IrStage {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::SourceIr => "source_ir",
+            Self::EvidenceIr => "evidence_ir",
+            Self::SemanticIr => "semantic_ir",
+            Self::IntentIr => "intent_ir",
+        }
+    }
+}
