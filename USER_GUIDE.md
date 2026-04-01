@@ -25,9 +25,9 @@
 - the currently implemented executable IR stages are `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR`
 - `SourceIR` now handles existing Markdown directly and performs Docling-backed structured PDF normalization for PDF inputs
 - `EvidenceIR` now consumes ready `SourceIR` artifacts and extracts section anchors, evidence spans, visual evidence, figure/caption links, and heuristic statement classes
-- `SemanticIR` now consumes ready `EvidenceIR` artifacts and lifts heuristic actors, interfaces, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions
-- `IntentIR` now consumes ready `SemanticIR` artifacts and canonicalizes actor responsibilities, behaviors, constraints, assumptions, and residual decisions
-- the first `.fsm` adapter slice now consumes ready `IntentIR` artifacts and materializes a typed DT-centric adapter artifact; unsafe `.fsm` text emission remains blocked with explicit residual decisions
+- `SemanticIR` now consumes ready `EvidenceIR` artifacts and lifts heuristic actors, interfaces, backend-neutral system/init records, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions
+- `IntentIR` now consumes ready `SemanticIR` artifacts and canonicalizes actor responsibilities, interface/control/system/init surface, behaviors, constraints, assumptions, and residual decisions
+- the first `.fsm` adapter slice now consumes ready `IntentIR` artifacts and materializes a typed DT-centric adapter artifact; explicit standalone combinational and sequential DT cases are renderable, and broader unsafe `.fsm` text emission remains blocked with explicit residual decisions
 
 ## Available commands today
 ### Inspect a path
@@ -112,6 +112,7 @@ cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json
 - builds:
   - actors from role-like evidence terms or inferred channel groupings
   - interfaces from recurring grouped signal names plus explicit typed signal declarations when present
+  - backend-neutral system contract and init-assignment records from explicit `Clock ...`, `Reset ...`, and `Init ...` statements when the evidence is explicit enough
   - backend-neutral guarded/action control fragments from explicit `Block ...` statements when the evidence is explicit enough
   - phases from section structure and sequencing language
   - invariants, contracts, and gates from heuristic semantic lifting
@@ -139,6 +140,7 @@ cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json
   - a canonical intent identity from the document and semantic theme
   - actor responsibilities from semantic actors, contracts, and phase overlap
   - canonical interface inventory carried forward from typed semantic interfaces
+  - canonical backend-neutral system contract and init assignments carried forward from explicit semantic records
   - canonical backend-neutral guarded/action fragments carried forward from typed semantic control blocks
   - behaviors from phases, contracts, and gate-like sequencing rules
   - constraints from invariants, assertions, and interface-coupled rules
@@ -165,13 +167,19 @@ cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --targ
 - writes `generated/adapters/fsm/<document_key>/adapter.json`
 - currently:
   - selects a conservative DT-oriented root unless canonical sequencing is explicit enough for a true `?fsm:name` root
-  - consumes canonical interface inventory and backend-neutral guarded/action fragments from `IntentIR`
-  - writes a real standalone `.fsm` file when every referenced signal has explicit width/direction and every control block is fully typed
-  - keeps blocked cases explicit when signal roles, widths, sequential/system facts, or broader roots would otherwise require invention
-- current explicit renderable cue for the first slice:
+  - consumes canonical interface inventory, backend-neutral system/init records, and backend-neutral guarded/action fragments from `IntentIR`
+  - writes a real standalone `.fsm` file when every referenced signal has explicit width/direction, every control block is fully typed, and any standalone sequential DT case also has explicit system/init facts
+  - keeps blocked cases explicit when signal roles, widths, system/init facts, true FSM state structure, or broader roots would otherwise require invention
+- current explicit renderable cues:
   - `Signal DATA_IN is input width 8.`
   - `Signal DATA_OUT is output width 8.`
   - `Block route_data: DATA_OUT = DATA_IN.`
+  - `Signal clk is input width 1.`
+  - `Signal rst_n is input width 1.`
+  - `Clock clk.`
+  - `Reset rst_n is asynchronous active low.`
+  - `Init ACC = 8'0.`
+  - `Block accumulate: ACC <- DATA_IN.`
 
 ## Planned user workflow
 1. provide a source specification
@@ -205,7 +213,7 @@ cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --targ
 - the current `EvidenceIR` extraction logic is still heuristic and does not yet perform deeper OCR, chart extraction, or semantic lifting from visual regions
 - the current `SemanticIR` extraction logic is still heuristic and conservative, so later `IntentIR` work will need refinement rather than semantic invention
 - the current `IntentIR` canonicalization logic is still heuristic and conservative, so adapter work should refine backend lowering rather than treat the current pass as a complete semantic endpoint
-- the first `.fsm` adapter slice is implemented and can now emit standalone renderable `?dt:name` text for explicit canonical interface/control cases, but broader sequential/system-contract/composition cases remain deferred
+- the first `.fsm` adapter slice is implemented and can now emit standalone renderable `?dt:name` text for explicit canonical combinational and sequential DT cases, but true `?fsm:name` state modeling and broader composition cases remain deferred
 - validation/back-annotation is not implemented yet
 
 ## Where to look next

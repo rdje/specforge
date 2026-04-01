@@ -27,6 +27,10 @@ pub struct SemanticIr {
     pub assertions: Vec<AssertionRecord>,
     pub abstractions: Vec<AbstractionRecord>,
     pub decomposition_candidates: Vec<DecompositionCandidate>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub system_contract: Option<SystemContractRecord>,
+    #[serde(default)]
+    pub init_assignments: Vec<InitAssignmentRecord>,
     #[serde(default)]
     pub decision_tree_fragments: Vec<DecisionTreeFragmentRecord>,
     pub residual_decisions: Vec<ResidualDecisionPacket>,
@@ -74,6 +78,8 @@ impl SemanticIr {
         let assertions = build_assertions(&context);
         let abstractions = build_abstractions(&context);
         let decomposition_candidates = build_decomposition_candidates(&context);
+        let system_contract = build_system_contract(&context);
+        let init_assignments = build_init_assignments(&context);
         let decision_tree_fragments = build_decision_tree_fragments(&context);
         let residual_decisions =
             build_residual_decisions(&context, &interfaces, actor_build.explicit_actor_count);
@@ -93,6 +99,8 @@ impl SemanticIr {
             assertions,
             abstractions,
             decomposition_candidates,
+            system_contract,
+            init_assignments,
             decision_tree_fragments,
             residual_decisions,
         })
@@ -222,6 +230,30 @@ pub struct DecompositionCandidate {
     pub summary: String,
     pub supporting_statement_ids: Vec<String>,
     pub supporting_section_ids: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct SystemContractRecord {
+    pub clock_signal: String,
+    pub reset_signal: String,
+    pub reset_kind: SystemResetKind,
+    pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum SystemResetKind {
+    Synchronous,
+    Asynchronous,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct InitAssignmentRecord {
+    pub target_signal: String,
+    pub value: DecisionTreeValueRecord,
+    pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -397,10 +429,29 @@ struct InterfaceSignalAccumulator {
 }
 
 #[derive(Debug, Clone)]
+struct InitAssignmentAccumulator {
+    value: DecisionTreeValueRecord,
+    supporting_statement_ids: BTreeSet<String>,
+    conflicting_value: bool,
+}
+
+#[derive(Debug, Clone)]
 struct ParsedInterfaceSignalDeclaration {
     signal_name: String,
     direction_hint: InterfaceSignalDirection,
     width_hint: Option<u32>,
+}
+
+#[derive(Debug, Clone)]
+struct ParsedSystemResetDeclaration {
+    signal_name: String,
+    reset_kind: SystemResetKind,
+}
+
+#[derive(Debug, Clone)]
+struct ParsedInitAssignment {
+    target_signal: String,
+    value: DecisionTreeValueRecord,
 }
 
 #[derive(Debug, Clone)]
@@ -445,7 +496,11 @@ fn build_interfaces(context: &SemanticContext) -> Vec<InterfaceRecord> {
             continue;
         }
 
-        if parse_explicit_decision_tree_fragment(&statement.text).is_some() {
+        if parse_explicit_decision_tree_fragment(&statement.text).is_some()
+            || parse_explicit_system_clock(&statement.text).is_some()
+            || parse_explicit_system_reset(&statement.text).is_some()
+            || parse_explicit_init_assignment(&statement.text).is_some()
+        {
             continue;
         }
         if !should_emit_interface_candidate(statement.signals.as_slice()) {
@@ -495,6 +550,81 @@ fn build_interfaces(context: &SemanticContext) -> Vec<InterfaceRecord> {
                     .collect(),
                 supporting_statement_ids: entry.supporting_statement_ids.into_iter().collect(),
             }
+        })
+        .collect()
+}
+
+fn build_system_contract(context: &SemanticContext) -> Option<SystemContractRecord> {
+    let mut clock_signal = None::<String>;
+    let mut reset_signal = None::<String>;
+    let mut reset_kind = None::<SystemResetKind>;
+    let mut supporting_statement_ids = BTreeSet::new();
+    let mut conflicting = false;
+
+    for statement in &context.statements {
+        if let Some(parsed_clock) = parse_explicit_system_clock(&statement.text) {
+            if !merge_named_hint(&mut clock_signal, &parsed_clock) {
+                conflicting = true;
+            }
+            supporting_statement_ids.insert(statement.statement_id.clone());
+        }
+
+        if let Some(parsed_reset) = parse_explicit_system_reset(&statement.text) {
+            if !merge_named_hint(&mut reset_signal, &parsed_reset.signal_name) {
+                conflicting = true;
+            }
+            if !merge_copy_hint(&mut reset_kind, parsed_reset.reset_kind) {
+                conflicting = true;
+            }
+            supporting_statement_ids.insert(statement.statement_id.clone());
+        }
+    }
+
+    if conflicting {
+        return None;
+    }
+
+    Some(SystemContractRecord {
+        clock_signal: clock_signal?,
+        reset_signal: reset_signal?,
+        reset_kind: reset_kind?,
+        supporting_statement_ids: supporting_statement_ids.into_iter().collect(),
+        automation_confidence: AutomationConfidence::High,
+    })
+}
+
+fn build_init_assignments(context: &SemanticContext) -> Vec<InitAssignmentRecord> {
+    let mut accumulators = BTreeMap::<String, InitAssignmentAccumulator>::new();
+
+    for statement in &context.statements {
+        let Some(parsed_init) = parse_explicit_init_assignment(&statement.text) else {
+            continue;
+        };
+
+        let entry = accumulators
+            .entry(parsed_init.target_signal.clone())
+            .or_insert_with(|| InitAssignmentAccumulator {
+                value: parsed_init.value.clone(),
+                supporting_statement_ids: BTreeSet::new(),
+                conflicting_value: false,
+            });
+        if entry.value != parsed_init.value {
+            entry.conflicting_value = true;
+        }
+        entry
+            .supporting_statement_ids
+            .insert(statement.statement_id.clone());
+    }
+
+    accumulators
+        .into_iter()
+        .filter_map(|(target_signal, entry)| {
+            (!entry.conflicting_value).then_some(InitAssignmentRecord {
+                target_signal,
+                value: entry.value,
+                supporting_statement_ids: entry.supporting_statement_ids.into_iter().collect(),
+                automation_confidence: AutomationConfidence::High,
+            })
         })
         .collect()
 }
@@ -1032,6 +1162,92 @@ fn parse_explicit_signal_declaration(text: &str) -> Option<ParsedInterfaceSignal
     })
 }
 
+fn parse_explicit_system_clock(text: &str) -> Option<String> {
+    let normalized = normalize_sentence(text);
+    let normalized = normalized
+        .trim()
+        .trim_end_matches('.')
+        .trim_end_matches(':');
+    let tokens: Vec<&str> = normalized.split_whitespace().collect();
+    if tokens.is_empty() || !tokens[0].eq_ignore_ascii_case("clock") {
+        return None;
+    }
+
+    match tokens.as_slice() {
+        [_, signal_name] => parse_identifier(signal_name),
+        [_, middle, signal_name]
+            if middle.eq_ignore_ascii_case("signal") || middle.eq_ignore_ascii_case("is") =>
+        {
+            parse_identifier(signal_name)
+        }
+        _ => None,
+    }
+}
+
+fn parse_explicit_system_reset(text: &str) -> Option<ParsedSystemResetDeclaration> {
+    let normalized = normalize_sentence(text);
+    let normalized = normalized
+        .trim()
+        .trim_end_matches('.')
+        .trim_end_matches(':');
+    let tokens: Vec<&str> = normalized.split_whitespace().collect();
+    if tokens.len() < 4 || !tokens[0].eq_ignore_ascii_case("reset") {
+        return None;
+    }
+
+    let (signal_name, is_token_index) =
+        if tokens[1].eq_ignore_ascii_case("signal") && tokens.len() >= 5 {
+            (parse_identifier(tokens[2])?, 3usize)
+        } else {
+            (parse_identifier(tokens[1])?, 2usize)
+        };
+
+    if !tokens
+        .get(is_token_index)
+        .is_some_and(|token| token.eq_ignore_ascii_case("is"))
+    {
+        return None;
+    }
+
+    Some(ParsedSystemResetDeclaration {
+        signal_name,
+        reset_kind: parse_system_reset_kind(&tokens[is_token_index + 1..])?,
+    })
+}
+
+fn parse_system_reset_kind(tokens: &[&str]) -> Option<SystemResetKind> {
+    if tokens.is_empty() {
+        return None;
+    }
+
+    let filtered_tokens = tokens
+        .iter()
+        .map(|token| token.trim_end_matches('.').to_ascii_lowercase())
+        .filter(|token| token != "active" && token != "low")
+        .collect::<Vec<_>>();
+
+    match filtered_tokens.as_slice() {
+        [kind] if kind == "sync" || kind == "synchronous" => Some(SystemResetKind::Synchronous),
+        [kind] if kind == "async" || kind == "asynchronous" => Some(SystemResetKind::Asynchronous),
+        _ => None,
+    }
+}
+
+fn parse_explicit_init_assignment(text: &str) -> Option<ParsedInitAssignment> {
+    let normalized = normalize_sentence(text);
+    let normalized = normalized.trim().trim_end_matches('.');
+    if !normalized.to_ascii_lowercase().starts_with("init ") {
+        return None;
+    }
+
+    let body = normalized[5..].trim();
+    let (target_signal, value_text) = body.split_once('=')?;
+    Some(ParsedInitAssignment {
+        target_signal: parse_identifier(target_signal.trim())?,
+        value: parse_decision_tree_value(value_text.trim())?,
+    })
+}
+
 fn parse_explicit_decision_tree_fragment(text: &str) -> Option<ParsedDecisionTreeFragment> {
     let normalized = normalize_sentence(text);
     let normalized = normalized.trim().trim_end_matches('.');
@@ -1241,6 +1457,26 @@ fn merge_signal_hint<T: Copy + Eq>(target: &mut Option<T>, incoming: Option<T>) 
         (None, Some(value)) => *target = Some(value),
         (Some(existing), Some(value)) if existing != value => *target = None,
         _ => {}
+    }
+}
+
+fn merge_named_hint(target: &mut Option<String>, incoming: &str) -> bool {
+    match target {
+        None => {
+            *target = Some(incoming.to_string());
+            true
+        }
+        Some(existing) => existing == incoming,
+    }
+}
+
+fn merge_copy_hint<T: Copy + Eq>(target: &mut Option<T>, incoming: T) -> bool {
+    match *target {
+        None => {
+            *target = Some(incoming);
+            true
+        }
+        Some(existing) => existing == incoming,
     }
 }
 
@@ -1689,6 +1925,7 @@ mod tests {
     use super::{
         DecisionTreeActionRecord, DecisionTreeAssignmentKind, DecisionTreeComparisonOperator,
         DecisionTreeGuardRecord, DecisionTreeValueRecord, InterfaceSignalDirection, SemanticIr,
+        SystemResetKind,
     };
 
     #[test]
@@ -1870,6 +2107,64 @@ mod tests {
                         operator: DecisionTreeComparisonOperator::Eq,
                         right: DecisionTreeValueRecord::Literal { literal },
                     }) if left_signal == "DATA_IN" && literal == "8'0"
+                )
+        }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn extracts_system_contract_and_init_assignments_from_explicit_markdown() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("seq_dt.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            "# Explicit Sequential Control\nSignal clk is input width 1.\n\nSignal rst_n is input width 1.\n\nSignal DATA_IN is input width 8.\n\nSignal ACC is output width 8.\n\nClock clk.\n\nReset rst_n is asynchronous active low.\n\nInit ACC = 8'0.\n\nBlock accumulate: ACC <- DATA_IN.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        assert_eq!(
+            semantic_ir.system_contract.as_ref().map(|contract| (
+                contract.clock_signal.as_str(),
+                contract.reset_signal.as_str(),
+                contract.reset_kind,
+            )),
+            Some(("clk", "rst_n", SystemResetKind::Asynchronous))
+        );
+        assert_eq!(semantic_ir.init_assignments.len(), 1);
+        assert!(matches!(
+            semantic_ir.init_assignments.first(),
+            Some(super::InitAssignmentRecord {
+                target_signal,
+                value: DecisionTreeValueRecord::Literal { literal },
+                ..
+            }) if target_signal == "ACC" && literal == "8'0"
+        ));
+        assert!(semantic_ir.decision_tree_fragments.iter().any(|fragment| {
+            fragment.block_name == "accumulate"
+                && matches!(
+                    fragment.actions.first(),
+                    Some(DecisionTreeActionRecord::Assign {
+                        target_signal,
+                        assignment_kind: DecisionTreeAssignmentKind::Sequential,
+                        value: DecisionTreeValueRecord::SignalRef { signal_name },
+                    }) if target_signal == "ACC" && signal_name == "DATA_IN"
                 )
         }));
 

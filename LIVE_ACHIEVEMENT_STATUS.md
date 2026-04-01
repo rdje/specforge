@@ -28,14 +28,17 @@
 - EvidenceIR extraction implemented: Done
 - SemanticIR construction implemented: Done
 - SemanticIR typed signal/control enrichment implemented: Done
+- SemanticIR system/init enrichment implemented: Done
 - IntentIR construction implemented: Done
 - IntentIR canonical interface/control carry-through implemented: Done
+- IntentIR canonical system/init carry-through implemented: Done
 - `specforge adapt` command created: Done
 - First DT-centric `.fsm` adapter artifact implemented: Done
 - Standalone renderable `.fsm` text emission implemented for explicit canonical cases: Done
+- Standalone sequential/system-contract `.fsm` emission implemented for explicit canonical DT cases: Done
 - SystemVerilog/Verilog/VHDL adapters implemented: Not Started
 - Validation and back-annotation pipeline implemented: Not Started
 - End-to-end source-to-IntentIR pipeline implemented: Done
 
 ## Highest-priority remaining gap
-- Broaden the canonical control surface beyond the first standalone renderable `.fsm` slice, starting with sequential/system-contract support while keeping composition roots deferred: In Progress
+- Promote explicit regular-state and transition records so the adapter can choose true `?fsm:name` roots honestly while keeping composition roots deferred: In Progress

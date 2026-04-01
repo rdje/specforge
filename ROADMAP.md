@@ -74,6 +74,7 @@
   - the tool can build a real `SemanticIR`
   - `specforge semantic` previews and materializes `SemanticIR` at `generated/semantic_ir/<document_key>/semantic_ir.json`
   - explicit signal declarations and guarded/action block fragments are preserved as typed semantic records when the evidence is explicit enough
+  - explicit clock/reset/init statements are preserved as typed backend-neutral system/init records when the evidence is explicit enough
   - semantic residual decisions are explicit
   - actor-first extraction is visible in the typed model
 
@@ -87,6 +88,7 @@
   - `specforge intent` previews and materializes `IntentIR` at `generated/intent_ir/<document_key>/intent_ir.json`
   - `IntentIR` is versioned and serializable
   - canonical interface inventory and backend-neutral guarded/action fragments are carried forward when the semantic model makes them explicit
+  - canonical backend-neutral system contract and init assignments are carried forward when the semantic model makes them explicit
   - assumptions, abstractions, and residual decisions remain explicit
 
 ### R6 Adapter layer
@@ -103,8 +105,9 @@
   - adapter planning is typed
   - at least one real adapter artifact exists after `IntentIR` is stable
   - non-renderable adapter cases stop with explicit residual decisions instead of fabricated target text
-  - real standalone `?dt:name` target text is emitted only when the canonical structure is renderable without semantic invention
-  - broader sequential/system-contract/composition roots remain explicitly deferred until the canonical model carries those facts
+  - real standalone `?dt:name` target text is emitted only when the canonical signal, control, system-contract, and init structure is renderable without semantic invention
+  - explicit standalone sequential DT cases can lower with `(+system ...)` and `(:= ...)` without promoting a true FSM root
+  - broader `?fsm:name` and composition roots remain explicitly deferred until the canonical model carries state/composition facts
 
 ### R7 Validation and back-annotation
 - status: Not Started
@@ -121,4 +124,4 @@
 3. integrate validation and back-annotation
 
 ## Immediate next milestone
-- broaden the new standalone renderable `.fsm` slice without leaking backend syntax backward, starting with the next canonical facts needed for sequential/system-contract support while keeping composition roots deferred
+- promote explicit regular-state and transition facts needed for honest `?fsm:name` lowering while keeping composition roots deferred and the canonical model backend-neutral

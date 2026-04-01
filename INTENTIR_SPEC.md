@@ -236,7 +236,7 @@ It is responsible for:
 Current implementation note:
 - `specforge semantic <evidence-ir>` now materializes `generated/semantic_ir/<document_key>/semantic_ir.json`
 - the first executable pass consumes persisted `EvidenceIR` JSON
-- it currently discovers actors, interfaces, typed signal records, backend-neutral guarded/action control fragments, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions from deterministic heuristics over evidence statements and visual grounding
+- it currently discovers actors, interfaces, typed signal records, backend-neutral system/init records, backend-neutral guarded/action control fragments, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions from deterministic heuristics over evidence statements and visual grounding
 - the current output is intentionally conservative and inspectable; canonical semantic normalization still continues in the later `IntentIR` stage
 
 Minimal conceptual example:
@@ -269,6 +269,7 @@ It should include at least:
 - intent identity
 - actors and responsibilities
 - canonical interface inventory
+- canonical backend-neutral system contract and init assignments
 - backend-neutral guarded/action control fragments
 - behaviors
 - constraints
@@ -279,7 +280,7 @@ It should include at least:
 Current implementation note:
 - `specforge intent <semantic-ir>` now materializes `generated/intent_ir/<document_key>/intent_ir.json`
 - the first executable pass consumes persisted `SemanticIR` JSON
-- it currently canonicalizes intent identity, actor responsibilities, interface inventory, backend-neutral control fragments, behaviors, constraints, assumptions, and residual decisions from deterministic heuristics over semantic records
+- it currently canonicalizes intent identity, actor responsibilities, interface inventory, backend-neutral system/init records, backend-neutral control fragments, behaviors, constraints, assumptions, and residual decisions from deterministic heuristics over semantic records
 - the current output is intentionally conservative and inspectable; adapter work should lower from this canonical surface rather than reconstruct semantics from scratch
 
 Minimal conceptual example:
@@ -307,27 +308,51 @@ Minimal conceptual example:
       "interface_id": "interface_write_path",
       "signal_records": [
         {
+          "signal_name": "clk",
+          "direction_hint": "input",
+          "width_hint": 1
+        },
+        {
+          "signal_name": "rst_n",
+          "direction_hint": "input",
+          "width_hint": 1
+        },
+        {
           "signal_name": "DATA_IN",
           "direction_hint": "input",
           "width_hint": 8
         },
         {
-          "signal_name": "DATA_OUT",
+          "signal_name": "ACC",
           "direction_hint": "output",
           "width_hint": 8
         }
       ]
     }
   ],
+  "system_contract": {
+    "clock_signal": "clk",
+    "reset_signal": "rst_n",
+    "reset_kind": "asynchronous"
+  },
+  "init_assignments": [
+    {
+      "target_signal": "ACC",
+      "value": {
+        "kind": "literal",
+        "literal": "8'0"
+      }
+    }
+  ],
   "decision_tree_fragments": [
     {
-      "fragment_id": "dt_fragment_route_data",
-      "block_name": "route_data",
+      "fragment_id": "dt_fragment_accumulate",
+      "block_name": "accumulate",
       "actions": [
         {
           "kind": "assign",
-          "target_signal": "DATA_OUT",
-          "assignment_kind": "combinational",
+          "target_signal": "ACC",
+          "assignment_kind": "sequential",
           "value": {
             "kind": "signal_ref",
             "signal_name": "DATA_IN"
@@ -356,7 +381,7 @@ Initial planned targets:
 Current implementation note:
 - `specforge adapt <intent-ir> --target fsm` now materializes `generated/adapters/fsm/<document_key>/adapter.json`
 - the first executable adapter slice consumes persisted `IntentIR` JSON
-- it currently selects a conservative DT-oriented root, consumes canonical interface/control records when available, emits real standalone `?dt:name` text for fully specified explicit cases, and keeps broader cases blocked with residual decisions plus renderability blockers rather than fabricating `.fsm` text
+- it currently selects a conservative DT-oriented root, consumes canonical interface/control/system/init records when available, emits real standalone `?dt:name` text for fully specified explicit combinational and sequential cases, and keeps broader cases blocked with residual decisions plus renderability blockers rather than fabricating `.fsm` text
 
 Minimal conceptual adapter artifact:
 ```json

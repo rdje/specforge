@@ -10,7 +10,7 @@ use crate::ir::intent::{IntentDocumentIdentity, IntentIr};
 use crate::ir::semantic::{
     DecisionTreeActionRecord, DecisionTreeAssignmentKind, DecisionTreeComparisonOperator,
     DecisionTreeFragmentRecord, DecisionTreeGuardRecord, DecisionTreeValueRecord,
-    InterfaceSignalDirection,
+    InitAssignmentRecord, InterfaceSignalDirection, SystemContractRecord, SystemResetKind,
 };
 use crate::ir::source::{
     AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket, document_key,
@@ -33,6 +33,151 @@ impl AdapterTarget {
             Self::Verilog => "verilog",
             Self::Vhdl => "vhdl",
         }
+    }
+}
+
+fn validate_system_contract_renderability(
+    system_contract: &SystemContractRecord,
+    signals_by_name: &BTreeMap<String, &FsmSignalCandidate>,
+    blocking_reasons: &mut Vec<String>,
+    required_canonical_enrichments: &mut BTreeSet<String>,
+) {
+    validate_system_signal_renderability(
+        &system_contract.clock_signal,
+        "clock",
+        signals_by_name,
+        blocking_reasons,
+        required_canonical_enrichments,
+    );
+    validate_system_signal_renderability(
+        &system_contract.reset_signal,
+        "reset",
+        signals_by_name,
+        blocking_reasons,
+        required_canonical_enrichments,
+    );
+}
+
+fn validate_system_signal_renderability(
+    signal_name: &str,
+    role_name: &str,
+    signals_by_name: &BTreeMap<String, &FsmSignalCandidate>,
+    blocking_reasons: &mut Vec<String>,
+    required_canonical_enrichments: &mut BTreeSet<String>,
+) {
+    let Some(signal) = signals_by_name.get(signal_name).copied() else {
+        push_unique_message(
+            blocking_reasons,
+            &format!(
+                "Canonical system contract references undeclared {} signal `{}`.",
+                role_name, signal_name
+            ),
+        );
+        required_canonical_enrichments.insert(
+            "promote a canonical interface inventory with stable signal names, directions, and widths"
+                .to_string(),
+        );
+        return;
+    };
+
+    match signal.direction_hint {
+        Some(InterfaceSignalDirection::Input) => {}
+        Some(_) => {
+            push_unique_message(
+                blocking_reasons,
+                &format!(
+                    "Canonical {} signal `{}` must be declared as an input for standalone `.fsm` lowering.",
+                    role_name, signal_name
+                ),
+            );
+            required_canonical_enrichments.insert(
+                "keep first-slice system-contract signals aligned with explicit input roles"
+                    .to_string(),
+            );
+        }
+        None => {
+            push_unique_message(
+                blocking_reasons,
+                &format!(
+                    "Canonical {} signal `{}` is missing a direction hint required for standalone `.fsm` lowering.",
+                    role_name, signal_name
+                ),
+            );
+            required_canonical_enrichments.insert(
+                "promote a canonical interface inventory with stable signal names, directions, and widths"
+                    .to_string(),
+            );
+        }
+    }
+
+    match signal.width_hint {
+        Some(1) => {}
+        Some(width) => {
+            push_unique_message(
+                blocking_reasons,
+                &format!(
+                    "Canonical {} signal `{}` must be 1-bit for the first standalone `.fsm` system-contract slice, but width {} was provided.",
+                    role_name, signal_name, width
+                ),
+            );
+            required_canonical_enrichments
+                .insert("keep first-slice system-contract signals explicitly 1-bit".to_string());
+        }
+        None => {
+            push_unique_message(
+                blocking_reasons,
+                &format!(
+                    "Canonical {} signal `{}` is missing a width hint required for standalone `.fsm` lowering.",
+                    role_name, signal_name
+                ),
+            );
+            required_canonical_enrichments.insert(
+                "promote a canonical interface inventory with stable signal names, directions, and widths"
+                    .to_string(),
+            );
+        }
+    }
+}
+
+fn validate_init_assignment_renderability(
+    init_assignment: &InitAssignmentRecord,
+    signals_by_name: &BTreeMap<String, &FsmSignalCandidate>,
+    size_entries: &mut BTreeMap<String, FsmRenderableSizeEntry>,
+    blocking_reasons: &mut Vec<String>,
+    required_canonical_enrichments: &mut BTreeSet<String>,
+) {
+    let target_direction = register_renderable_signal(
+        &init_assignment.target_signal,
+        signals_by_name,
+        size_entries,
+        blocking_reasons,
+        required_canonical_enrichments,
+    );
+    if !matches!(target_direction, Some(InterfaceSignalDirection::Output)) {
+        push_unique_message(
+            blocking_reasons,
+            &format!(
+                "Init assignment target `{}` is not declared as a canonical output signal.",
+                init_assignment.target_signal
+            ),
+        );
+        required_canonical_enrichments
+            .insert("keep first-slice init targets aligned with explicit output roles".to_string());
+    }
+
+    if !matches!(
+        init_assignment.value,
+        DecisionTreeValueRecord::Literal { .. }
+    ) {
+        push_unique_message(
+            blocking_reasons,
+            &format!(
+                "Init assignment for `{}` must use an explicit literal in the first standalone `.fsm` slice.",
+                init_assignment.target_signal
+            ),
+        );
+        required_canonical_enrichments
+            .insert("keep first-slice init assignments explicit and literal-valued".to_string());
     }
 }
 
@@ -204,6 +349,10 @@ pub struct FsmAdapterArtifact {
     pub root_name: String,
     pub root_kind_decision: FsmRootKindDecision,
     pub signal_inventory: Vec<FsmSignalCandidate>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub system_contract: Option<SystemContractRecord>,
+    #[serde(default)]
+    pub init_assignments: Vec<InitAssignmentRecord>,
     pub decision_tree_candidates: Vec<FsmDecisionTreeCandidate>,
     pub state_candidates: Vec<FsmStateCandidate>,
     pub renderability: FsmRenderability,
@@ -281,7 +430,11 @@ pub struct FsmRenderability {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct FsmRenderableModule {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub system_contract: Option<SystemContractRecord>,
     pub size_entries: Vec<FsmRenderableSizeEntry>,
+    #[serde(default)]
+    pub init_assignments: Vec<InitAssignmentRecord>,
     pub blocks: Vec<DecisionTreeFragmentRecord>,
 }
 
@@ -303,11 +456,15 @@ fn build_fsm_adapter_artifact(
     let adapter_artifact_path = artifact_root.join("adapter.json");
     let root_name = fsm_root_name(&intent_ir.document_identity.document_key);
     let signal_inventory = build_signal_inventory(intent_ir);
+    let system_contract = intent_ir.system_contract.clone();
+    let init_assignments = intent_ir.init_assignments.clone();
     let state_candidates = build_state_candidates(intent_ir);
     let root_kind_decision = build_root_kind_decision(&state_candidates);
     let decision_tree_candidates = build_decision_tree_candidates(intent_ir, &signal_inventory);
     let (renderability, renderable_module) = analyze_renderability(
         &signal_inventory,
+        system_contract.as_ref(),
+        &init_assignments,
         &decision_tree_candidates,
         &root_kind_decision,
     );
@@ -341,6 +498,8 @@ fn build_fsm_adapter_artifact(
         root_name,
         root_kind_decision,
         signal_inventory,
+        system_contract,
+        init_assignments,
         decision_tree_candidates,
         state_candidates,
         renderability,
@@ -582,6 +741,8 @@ fn build_decision_tree_candidates(
 
 fn analyze_renderability(
     signal_inventory: &[FsmSignalCandidate],
+    system_contract: Option<&SystemContractRecord>,
+    init_assignments: &[InitAssignmentRecord],
     decision_tree_candidates: &[FsmDecisionTreeCandidate],
     root_kind_decision: &FsmRootKindDecision,
 ) -> (FsmRenderability, Option<FsmRenderableModule>) {
@@ -619,6 +780,7 @@ fn analyze_renderability(
         .collect();
     let mut size_entries = BTreeMap::<String, FsmRenderableSizeEntry>::new();
     let mut driven_outputs = BTreeSet::new();
+    let mut sequential_targets = BTreeSet::new();
     let mut seen_block_names = BTreeSet::new();
 
     for block in &blocks {
@@ -666,8 +828,73 @@ fn analyze_renderability(
                 &signals_by_name,
                 &mut size_entries,
                 &mut driven_outputs,
+                &mut sequential_targets,
                 &mut blocking_reasons,
                 &mut required_canonical_enrichments,
+            );
+        }
+    }
+
+    let requires_sequential_support =
+        !sequential_targets.is_empty() || !init_assignments.is_empty();
+    if let Some(system_contract) = system_contract {
+        validate_system_contract_renderability(
+            system_contract,
+            &signals_by_name,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+    } else if requires_sequential_support {
+        push_unique_message(
+            &mut blocking_reasons,
+            "Sequential standalone `.fsm` lowering requires an explicit canonical system contract with clock and reset facts.",
+        );
+        required_canonical_enrichments.insert(
+            "promote backend-neutral clock/reset system-contract facts before lowering sequential DT control"
+                .to_string(),
+        );
+    }
+
+    let init_targets = init_assignments
+        .iter()
+        .map(|assignment| assignment.target_signal.clone())
+        .collect::<BTreeSet<_>>();
+    for target_signal in &sequential_targets {
+        if !init_targets.contains(target_signal) {
+            push_unique_message(
+                &mut blocking_reasons,
+                &format!(
+                    "Sequential target `{}` is missing an explicit canonical init assignment required for standalone `.fsm` lowering.",
+                    target_signal
+                ),
+            );
+            required_canonical_enrichments.insert(
+                "promote backend-neutral init assignments for every sequentially driven standalone DT target"
+                    .to_string(),
+            );
+        }
+    }
+
+    for init_assignment in init_assignments {
+        validate_init_assignment_renderability(
+            init_assignment,
+            &signals_by_name,
+            &mut size_entries,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+
+        if !sequential_targets.contains(&init_assignment.target_signal) {
+            push_unique_message(
+                &mut blocking_reasons,
+                &format!(
+                    "Init assignment target `{}` is not driven by any sequential DT action in the current standalone slice.",
+                    init_assignment.target_signal
+                ),
+            );
+            required_canonical_enrichments.insert(
+                "keep first-slice init assignments aligned with explicit sequential DT targets"
+                    .to_string(),
             );
         }
     }
@@ -696,7 +923,9 @@ fn analyze_renderability(
     };
 
     let renderable_module = renderability.is_renderable.then_some(FsmRenderableModule {
+        system_contract: system_contract.cloned(),
         size_entries: size_entries.into_values().collect(),
+        init_assignments: init_assignments.to_vec(),
         blocks,
     });
 
@@ -749,6 +978,35 @@ fn build_adapter_residual_decisions(
         });
     }
 
+    let system_contract_blocked = renderability.blocking_reasons.iter().any(|reason| {
+        reason.contains("system contract")
+            || reason.contains("clock")
+            || reason.contains("reset")
+            || reason.contains("init assignment")
+            || reason.contains("Sequential target")
+            || reason.contains("Init assignment target")
+    });
+    if system_contract_blocked {
+        residual_decisions.push(ResidualDecisionPacket {
+            packet_id: "fsm_adapter_system_contract".to_string(),
+            question: "Which backend-neutral system-contract and init facts are complete enough to lower sequential standalone DT control honestly?".to_string(),
+            why_unresolved: "The current standalone sequential `.fsm` slice still lacks some combination of explicit clock/reset facts, supported reset kind, or reset/init assignments needed for honest lowering.".to_string(),
+            automation_confidence: AutomationConfidence::Low,
+            candidate_interpretations: vec![
+                CandidateInterpretation {
+                    interpretation_id: "enrich_intent_ir_system_surface".to_string(),
+                    description: "Carry explicit clock/reset/init facts forward in canonical form so the adapter can lower `(+system ...)` and `(:= ...)` directly.".to_string(),
+                    downstream_impact: "Sequential standalone DT cases become renderable without inventing implicit reset semantics inside the adapter.".to_string(),
+                },
+                CandidateInterpretation {
+                    interpretation_id: "keep_sequential_dt_blocked".to_string(),
+                    description: "Continue treating sequential standalone DT lowering as blocked until the canonical system/init surface is explicit.".to_string(),
+                    downstream_impact: "The adapter stays honest, but sequential `.fsm` text remains unavailable for under-specified inputs.".to_string(),
+                },
+            ],
+        });
+    }
+
     let dt_surface_blocked = decision_tree_candidates
         .iter()
         .all(|candidate| candidate.blocks.is_empty())
@@ -756,7 +1014,6 @@ fn build_adapter_residual_decisions(
             reason.contains("control block")
                 || reason.contains("guard")
                 || reason.contains("assignment")
-                || reason.contains("sequential")
         });
     if dt_surface_blocked {
         residual_decisions.push(ResidualDecisionPacket {
@@ -947,6 +1204,7 @@ fn validate_action_renderability(
     signals_by_name: &BTreeMap<String, &FsmSignalCandidate>,
     size_entries: &mut BTreeMap<String, FsmRenderableSizeEntry>,
     driven_outputs: &mut BTreeSet<String>,
+    sequential_targets: &mut BTreeSet<String>,
     blocking_reasons: &mut Vec<String>,
     required_canonical_enrichments: &mut BTreeSet<String>,
 ) {
@@ -980,14 +1238,7 @@ fn validate_action_renderability(
             }
 
             if matches!(assignment_kind, DecisionTreeAssignmentKind::Sequential) {
-                push_unique_message(
-                    blocking_reasons,
-                    "The first renderable `.fsm` slice stays combinational; sequential assignments still need canonical init/system-contract support.",
-                );
-                required_canonical_enrichments.insert(
-                    "promote backend-neutral init/reset/system-contract facts before lowering sequential actions"
-                        .to_string(),
-                );
+                sequential_targets.insert(target_signal.clone());
             }
 
             if let DecisionTreeValueRecord::SignalRef { signal_name } = value {
@@ -1083,6 +1334,16 @@ fn register_renderable_signal(
 
 fn render_fsm_module(root_name: &str, module: &FsmRenderableModule) -> String {
     let mut lines = vec![format!("(?dt:{root_name}")];
+    if let Some(system_contract) = module.system_contract.as_ref() {
+        lines.push("  (+system".to_string());
+        lines.push(format!("    (clock {})", system_contract.clock_signal));
+        lines.push(format!(
+            "    ({} {})",
+            render_system_reset_kind(system_contract.reset_kind),
+            system_contract.reset_signal
+        ));
+        lines.push("  )".to_string());
+    }
 
     if !module.size_entries.is_empty() {
         lines.push("  (+size".to_string());
@@ -1090,6 +1351,10 @@ fn render_fsm_module(root_name: &str, module: &FsmRenderableModule) -> String {
             lines.push(format!("    ({} {})", entry.signal_name, entry.width));
         }
         lines.push("  )".to_string());
+    }
+
+    for init_assignment in &module.init_assignments {
+        lines.push(format!("  ({})", render_init_assignment(init_assignment)));
     }
 
     for block in &module.blocks {
@@ -1150,6 +1415,13 @@ fn render_assignment_operator(kind: DecisionTreeAssignmentKind) -> &'static str 
     }
 }
 
+fn render_system_reset_kind(kind: SystemResetKind) -> &'static str {
+    match kind {
+        SystemResetKind::Synchronous => "sreset",
+        SystemResetKind::Asynchronous => "asreset",
+    }
+}
+
 fn render_comparison_operator(operator: DecisionTreeComparisonOperator) -> &'static str {
     match operator {
         DecisionTreeComparisonOperator::Eq => "==",
@@ -1162,6 +1434,14 @@ fn render_value(value: &DecisionTreeValueRecord) -> String {
         DecisionTreeValueRecord::SignalRef { signal_name } => signal_name.clone(),
         DecisionTreeValueRecord::Literal { literal } => literal.clone(),
     }
+}
+
+fn render_init_assignment(init_assignment: &InitAssignmentRecord) -> String {
+    format!(
+        ":= {}={}",
+        init_assignment.target_signal,
+        render_value(&init_assignment.value)
+    )
 }
 
 fn extract_signal_tokens(statement: &str) -> BTreeSet<String> {
@@ -1341,6 +1621,72 @@ mod tests {
         Ok(intent_ir)
     }
 
+    fn build_explicit_sequential_control_intent_ir(base: &Path) -> Result<IntentIr> {
+        let source = base.join("seq_dt.md");
+        let source_artifact_base = base.join("generated").join("source_ir");
+        let evidence_artifact_base = base.join("generated").join("evidence_ir");
+        let semantic_artifact_base = base.join("generated").join("semantic_ir");
+        let intent_artifact_base = base.join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            "# Explicit Sequential Control\nSignal clk is input width 1.\n\nSignal rst_n is input width 1.\n\nSignal DATA_IN is input width 8.\n\nSignal ACC is output width 8.\n\nClock clk.\n\nReset rst_n is asynchronous active low.\n\nInit ACC = 8'0.\n\nBlock accumulate: ACC <- DATA_IN.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+        intent_ir.write_to_disk()?;
+        Ok(intent_ir)
+    }
+
+    fn build_incomplete_sequential_control_intent_ir(base: &Path) -> Result<IntentIr> {
+        let source = base.join("seq_dt_incomplete.md");
+        let source_artifact_base = base.join("generated").join("source_ir");
+        let evidence_artifact_base = base.join("generated").join("evidence_ir");
+        let semantic_artifact_base = base.join("generated").join("semantic_ir");
+        let intent_artifact_base = base.join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            "# Incomplete Sequential Control\nSignal DATA_IN is input width 8.\n\nSignal ACC is output width 8.\n\nBlock accumulate: ACC <- DATA_IN.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+        intent_ir.write_to_disk()?;
+        Ok(intent_ir)
+    }
+
     fn build_explicit_control_intent_ir(base: &Path) -> Result<IntentIr> {
         let source = base.join("comb_dt.md");
         let source_artifact_base = base.join("generated").join("source_ir");
@@ -1493,6 +1839,79 @@ mod tests {
                 .iter()
                 .all(|packet| packet.packet_id != "fsm_adapter_dt_action_graph")
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn builds_renderable_standalone_sequential_dt_fsm_adapter_artifact() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_explicit_sequential_control_intent_ir(tempdir.path())?;
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+        adapter.write_to_disk()?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "renderable");
+        let emitted_target_path = adapter
+            .artifact_layout
+            .emitted_target_path
+            .as_ref()
+            .expect("renderable adapter should emit target text");
+        let emitted_text = fs::read_to_string(emitted_target_path)?;
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+
+        assert!(fsm.renderability.is_renderable);
+        assert!(fsm.system_contract.is_some());
+        assert_eq!(fsm.init_assignments.len(), 1);
+        assert!(emitted_text.contains("(?dt:seq_dt"));
+        assert!(emitted_text.contains("(+system"));
+        assert!(emitted_text.contains("(clock clk)"));
+        assert!(emitted_text.contains("(asreset rst_n)"));
+        assert!(emitted_text.contains("(+size"));
+        assert!(emitted_text.contains("(ACC 8)"));
+        assert!(emitted_text.contains("(DATA_IN 8)"));
+        assert!(emitted_text.contains("(:= ACC=8'0)"));
+        assert!(emitted_text.contains("(ACC <- DATA_IN)"));
+        assert!(
+            adapter
+                .residual_decisions
+                .iter()
+                .all(|packet| packet.packet_id != "fsm_adapter_system_contract")
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn keeps_standalone_sequential_dt_blocked_without_system_contract() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_incomplete_sequential_control_intent_ir(tempdir.path())?;
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        assert!(
+            adapter
+                .residual_decisions
+                .iter()
+                .any(|packet| { packet.packet_id == "fsm_adapter_system_contract" })
+        );
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        assert!(!fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.iter().any(|reason| {
+            reason.contains("system contract") || reason.contains("init assignment")
+        }));
 
         Ok(())
     }

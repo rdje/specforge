@@ -1,5 +1,28 @@
 # CHANGES
 ## 2026-04-01
+- enriched `SemanticIR` so it now preserves backend-neutral system contract and init-assignment records from explicit `Clock ...`, `Reset ...`, and `Init ...` statements
+- enriched `IntentIR` so it now carries canonical system contract and init-assignment surface forward for downstream adapters
+- widened the `.fsm` adapter so it now renders explicit standalone sequential `?dt:name` text with `(+system ...)` and `(:= ...)` when the canonical system/init facts are complete
+- added a dedicated adapter-side residual for unresolved system/init surface so sequential standalone DT cases stay blocked explicitly instead of inventing reset semantics
+- added regression coverage for:
+  - explicit system/init extraction in `SemanticIR`
+  - canonical system/init carry-through in `IntentIR`
+  - renderable and blocked standalone sequential `.fsm` adapter paths
+- validated the new standalone sequential slice with:
+  - `cargo fmt --all --manifest-path Cargo.toml`
+  - `cargo test --manifest-path Cargo.toml`
+  - `cargo run --manifest-path Cargo.toml -- ingest <temp>/seq_dt.md`
+  - `cargo run --manifest-path Cargo.toml -- evidence generated/source_ir/seq_dt/source_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/seq_dt/evidence_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/seq_dt/semantic_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/seq_dt/intent_ir.json --target fsm`
+- confirmed the representative explicit sequential end-to-end adapter output is now safely renderable:
+  - `lowering_status: renderable`
+  - `selected_root_kind: dt`
+  - `signal_candidate_count: 4`
+  - `decision_tree_candidate_count: 1`
+  - `residual_decision_count: 4`
+  - `emitted_target_path: generated/adapters/fsm/seq_dt/seq_dt.fsm`
 - enriched `SemanticIR` so it now preserves typed signal records and backend-neutral guarded/action control fragments when the evidence is explicit enough
 - enriched `IntentIR` so it now carries the canonical interface inventory and backend-neutral control fragments forward for downstream adapters
 - widened the `.fsm` adapter so it now consumes the canonical interface/control surface instead of relying only on mined prose hints

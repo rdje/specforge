@@ -38,16 +38,16 @@ Use it first for the project objective, document navigation, and the current imp
 - PDF normalization is now explicitly treated as structured source capture with page images, figure/table assets, captions, and markdown as a convenience view rather than the sole system of record
 - `specforge ingest <pdf>` now performs real Docling-backed structured normalization and materializes promoted markdown, page images, page metadata sidecars, visual assets, metadata JSON, backend raw JSON, and manifest files under `generated/source_ir/<document_key>/normalized`
 - the first real `EvidenceIR` extraction pass now builds section anchors, evidence spans, visual evidence items, figure/caption links, and heuristic extracted statements from ready `SourceIR` artifacts
-- the first real `SemanticIR` lifting pass now builds actors, interfaces, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions from persisted `EvidenceIR` artifacts
-- the first real `IntentIR` canonicalization pass now builds intent identity, actor responsibilities, behaviors, constraints, assumptions, and residual decisions from persisted `SemanticIR` artifacts
+- the first real `SemanticIR` lifting pass now builds actors, interfaces, backend-neutral system/init records, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions from persisted `EvidenceIR` artifacts
+- the first real `IntentIR` canonicalization pass now builds intent identity, actor responsibilities, carried interface/control/system/init surface, behaviors, constraints, assumptions, and residual decisions from persisted `SemanticIR` artifacts
 - explicit staged IR modules now exist for:
   - `SourceIR`
   - `EvidenceIR`
   - `SemanticIR`
   - `IntentIR`
   - typed adapter lowering
-- the first real `.fsm` adapter slice now materializes a DT-centric adapter artifact, selects a conservative `?dt:name` root, and blocks unsafe `.fsm` text emission with explicit residual decisions instead of fabricating target syntax
-- the next implementation milestone is to widen the `.fsm` adapter from a typed blocked lowering plan to safe renderable `.fsm` text, or add the minimal canonical enrichment needed to do that honestly
+- the first real `.fsm` adapter slice now materializes a DT-centric adapter artifact, selects a conservative `?dt:name` root, emits explicit standalone combinational and sequential DT text when the canonical facts are fully explicit, and blocks unsafe `.fsm` text emission with explicit residual decisions instead of fabricating target syntax
+- the next implementation milestone is to promote explicit state/transition facts for honest `?fsm:name` lowering while keeping composition deferred
 
 ## Working naming
 - repository / project / CLI / crate name: `specforge`
@@ -202,14 +202,14 @@ cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --targ
 - `specforge intent <semantic-ir> --dry-run` prints computed `IntentIR` JSON without writing artifacts
 - `specforge intent <semantic-ir>` materializes `generated/intent_ir/<document_key>/intent_ir.json`
 - `specforge adapt <intent-ir> --target fsm --dry-run` prints computed adapter JSON without writing artifacts
-- `specforge adapt <intent-ir> --target fsm` materializes `generated/adapters/fsm/<document_key>/adapter.json` and writes an emitted standalone `.fsm` file when the canonical interface/control surface is explicit enough to lower honestly
+- `specforge adapt <intent-ir> --target fsm` materializes `generated/adapters/fsm/<document_key>/adapter.json` and writes an emitted standalone `.fsm` file when the canonical interface/control/system/init surface is explicit enough to lower honestly
 - PDF execute-mode ingest expects `docling` to be importable from `python3` or `python`; when it lives elsewhere, set `SPECFORGE_DOCLING_PYTHON=/path/to/python`
 
 ## Planned product shape
 - stage 0: build `SourceIR` from raw sources, normalized text views, structured page artifacts, and extracted visual assets
 - stage 1: build `EvidenceIR` from normalized text, section anchors, evidence spans, figure/caption links, visual evidence, and statement extraction
-- stage 2: build `SemanticIR` from actors, interfaces, phases, invariants, contracts, gates, assertions, abstractions, and decomposition candidates
-- stage 3: build `IntentIR` as the canonical backend-independent intent model, including explicit interface inventory and backend-neutral guarded/action fragments when supported by the evidence
+- stage 2: build `SemanticIR` from actors, interfaces, backend-neutral system/init records, phases, invariants, contracts, gates, assertions, abstractions, and decomposition candidates
+- stage 3: build `IntentIR` as the canonical backend-independent intent model, including explicit interface inventory, backend-neutral guarded/action fragments, and backend-neutral system/init records when supported by the evidence
 - stage 4: lower `IntentIR` through adapters such as `.fsm`, SystemVerilog, Verilog, and VHDL
 - stage 5: validate adapters and back-annotate findings into the IR/documentation surface
 

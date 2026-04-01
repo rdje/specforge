@@ -103,6 +103,7 @@
   - derives artifact layout under `generated/semantic_ir/<document_key>/semantic_ir.json`
   - discovers actors from explicit role terms and falls back to interface-derived channel actors when the evidence names signals but not endpoints
   - discovers interfaces from recurring grouped signal names and preserves typed signal records when explicit declarations are present
+  - preserves backend-neutral system contract and init-assignment records from explicit `Clock ...`, `Reset ...`, and `Init ...` statements when the evidence is explicit enough
   - preserves backend-neutral guarded/action control fragments from explicit `Block ...` statements when the evidence is explicit enough
   - derives phases from section structure and sequencing language
   - extracts invariants, contracts, gates, and abstractions from inspectable heuristics over evidence statements
@@ -118,6 +119,7 @@
   - derives artifact layout under `generated/intent_ir/<document_key>/intent_ir.json`
   - canonicalizes actor responsibilities from semantic actors, contracts, and phase overlap
   - carries forward canonical interface inventory from typed semantic interfaces
+  - carries forward canonical backend-neutral system contract and init assignments from typed semantic records
   - carries forward backend-neutral guarded/action control fragments from typed semantic control blocks
   - canonicalizes behaviors from phases, contracts, and gate-like sequencing rules
   - canonicalizes constraints from invariants, assertions, and interface-coupled rules
@@ -132,11 +134,11 @@
   - loads persisted `IntentIR` JSON from disk
   - derives typed adapter artifacts under `generated/adapters/fsm/<document_key>/adapter.json`
   - selects a conservative DT-oriented `.fsm` root decision unless the canonical model carries stronger sequencing evidence
-  - consumes canonical interface inventory and backend-neutral guarded/action fragments from `IntentIR`
-  - emits real standalone `?dt:name` text when every referenced signal has explicit width/direction and every control block is fully typed
-  - preserves upstream residual decisions and emits adapter-side residual decisions only for unresolved signal inventory, deferred control structure, and broader root-kind expansion
-  - keeps sequential/system-contract/composition cases blocked until the canonical model carries those facts explicitly
-- the current first renderable slice is intentionally narrow rather than speculative; it proves the backend-neutral control boundary and honest emission rule before widening to broader target cases
+  - consumes canonical interface inventory, backend-neutral system/init records, and backend-neutral guarded/action fragments from `IntentIR`
+  - emits real standalone `?dt:name` text when every referenced signal has explicit width/direction, every control block is fully typed, and any sequential standalone DT case also has explicit system/init facts
+  - preserves upstream residual decisions and emits adapter-side residual decisions only for unresolved signal inventory, system/init surface, deferred control structure, and broader root-kind expansion
+  - keeps true `?fsm:name` state modeling and composition cases blocked until the canonical model carries those facts explicitly
+- the current renderable slice is still intentionally narrow rather than speculative; it now covers explicit standalone combinational and sequential DT cases while keeping broader root kinds deferred
 
 ## Documentation surface currently steering the implementation
 - `README.md`
@@ -217,5 +219,5 @@
 - do not let figures, charts, or diagrams collapse into throwaway markdown placeholders if they may carry normative meaning
 
 ## Immediate next engineering target
-- broaden the new standalone renderable `.fsm` slice toward sequential/system-contract support without leaking backend syntax into the canonical model
+- promote explicit regular-state and transition facts for honest `?fsm:name` lowering without leaking backend syntax into the canonical model
 - keep composition roots and broader module/top structure deferred until the canonical model carries them explicitly

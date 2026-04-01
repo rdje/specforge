@@ -6,7 +6,10 @@ use serde::{Deserialize, Serialize};
 
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
-use crate::ir::semantic::{DecisionTreeFragmentRecord, InterfaceRecord, SemanticIr};
+use crate::ir::semantic::{
+    DecisionTreeFragmentRecord, InitAssignmentRecord, InterfaceRecord, SemanticIr,
+    SystemContractRecord,
+};
 use crate::ir::source::{
     AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket, document_key,
 };
@@ -22,9 +25,13 @@ pub struct IntentIr {
     pub actors: Vec<IntentActor>,
     #[serde(default)]
     pub interfaces: Vec<InterfaceRecord>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub system_contract: Option<SystemContractRecord>,
     pub behaviors: Vec<BehaviorIntent>,
     pub constraints: Vec<IntentConstraint>,
     pub assumptions: Vec<IntentAssumption>,
+    #[serde(default)]
+    pub init_assignments: Vec<InitAssignmentRecord>,
     #[serde(default)]
     pub decision_tree_fragments: Vec<DecisionTreeFragmentRecord>,
     pub residual_decisions: Vec<ResidualDecisionPacket>,
@@ -63,11 +70,13 @@ impl IntentIr {
 
         let context = IntentContext::from_semantic_ir(&semantic_ir);
         let interfaces = semantic_ir.interfaces.clone();
+        let system_contract = semantic_ir.system_contract.clone();
         let actors = build_intent_actors(&context);
         let actor_ids = actors.iter().map(|actor| actor.actor_id.clone()).collect();
         let behaviors = build_behaviors(&context, actor_ids);
         let constraints = build_constraints(&context);
         let assumptions = build_assumptions(&context, &actors);
+        let init_assignments = semantic_ir.init_assignments.clone();
         let decision_tree_fragments = semantic_ir.decision_tree_fragments.clone();
         let residual_decisions =
             build_residual_decisions(&context, &actors, &behaviors, &constraints);
@@ -75,8 +84,10 @@ impl IntentIr {
             &document_identity,
             &actors,
             &interfaces,
+            system_contract.as_ref(),
             &behaviors,
             &constraints,
+            &init_assignments,
             &decision_tree_fragments,
         );
 
@@ -89,9 +100,11 @@ impl IntentIr {
             intent_identity,
             actors,
             interfaces,
+            system_contract,
             behaviors,
             constraints,
             assumptions,
+            init_assignments,
             decision_tree_fragments,
             residual_decisions,
         })
@@ -295,20 +308,24 @@ fn build_intent_identity(
     document_identity: &IntentDocumentIdentity,
     actors: &[IntentActor],
     interfaces: &[InterfaceRecord],
+    system_contract: Option<&SystemContractRecord>,
     behaviors: &[BehaviorIntent],
     constraints: &[IntentConstraint],
+    init_assignments: &[InitAssignmentRecord],
     decision_tree_fragments: &[DecisionTreeFragmentRecord],
 ) -> IntentIdentity {
     IntentIdentity {
         intent_id: format!("intent_{}", document_identity.document_key),
         summary: format!(
-            "backend-neutral intent for {} covering {} actors, {} interfaces, {} behaviors, {} constraints, and {} control fragments",
+            "backend-neutral intent for {} covering {} actors, {} interfaces, {} behaviors, {} constraints, {} init assignments, {} control fragments, and {} explicit system contract",
             document_identity.display_name,
             actors.len(),
             interfaces.len(),
             behaviors.len(),
             constraints.len(),
-            decision_tree_fragments.len()
+            init_assignments.len(),
+            decision_tree_fragments.len(),
+            if system_contract.is_some() { 1 } else { 0 }
         ),
     }
 }
@@ -629,7 +646,7 @@ mod tests {
 
     use crate::error::Result;
     use crate::ir::evidence::EvidenceIr;
-    use crate::ir::semantic::SemanticIr;
+    use crate::ir::semantic::{SemanticIr, SystemResetKind};
     use crate::ir::source::{SourceIr, VisualAsset, VisualAssetKind};
 
     use super::IntentIr;
@@ -810,6 +827,57 @@ mod tests {
                 .intent_identity
                 .summary
                 .contains("control fragments")
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn carries_system_contract_and_init_assignments_into_intent_ir() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("seq_dt.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            "# Explicit Sequential Control\nSignal clk is input width 1.\n\nSignal rst_n is input width 1.\n\nSignal DATA_IN is input width 8.\n\nSignal ACC is output width 8.\n\nClock clk.\n\nReset rst_n is asynchronous active low.\n\nInit ACC = 8'0.\n\nBlock accumulate: ACC <- DATA_IN.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        assert_eq!(
+            intent_ir.system_contract.as_ref().map(|contract| (
+                contract.clock_signal.as_str(),
+                contract.reset_signal.as_str(),
+                contract.reset_kind,
+            )),
+            Some(("clk", "rst_n", SystemResetKind::Asynchronous))
+        );
+        assert_eq!(intent_ir.init_assignments.len(), 1);
+        assert!(
+            intent_ir
+                .intent_identity
+                .summary
+                .contains("explicit system contract")
         );
 
         Ok(())
