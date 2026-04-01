@@ -47,8 +47,8 @@
   - adapters
 
 ## Latest committed baseline
-- latest_commit_hash: `f8e42eaa91239c4188ff734eff3f404770aaed0d`
-- latest_commit_brief_message: `Implement first real SemanticIR lifting stage`
+- latest_commit_hash: `b128fd5808b846cfd8e0d59549babdd3b3e81d22`
+- latest_commit_brief_message: `Implement first real IntentIR canonicalization stage`
 - continuity_rule:
   - refresh this section whenever a new latest committed baseline exists at the time `MEMORY.md` is updated
 
@@ -73,13 +73,17 @@
 - the current slice has now implemented the first real `EvidenceIR` extractor and CLI on top of ready `SourceIR` artifacts
 - the current slice has now implemented the first real `SemanticIR` extractor and CLI on top of ready `EvidenceIR` artifacts
 - the current slice has now implemented the first real `IntentIR` constructor and CLI on top of ready `SemanticIR` artifacts
+- the current slice has now added `subs/fsmgen` as a pinned local git submodule for `.fsm` adapter reference work
 
 ## In-flight work in this session
-- refresh the live docs and continuity files for the new `IntentIR` stage
+- refresh the live docs and continuity files for the new `fsmgen` submodule addition
 - run the commit workflow immediately after this task is closed
 
 ## Current execution checkpoint
 - `IntentIR` now has a real build/materialization path
+- the repository now includes:
+  - `.gitmodules`
+  - `subs/fsmgen` pinned at `57f00e581b4fc9a2aa02318846d1eb8a726c8960`
 - execute-mode `specforge intent` now writes:
   - `generated/intent_ir/<document_key>/intent_ir.json`
   - intent identity, actor responsibilities, behaviors, constraints, assumptions, and residual decisions
@@ -111,6 +115,6 @@
 - keep `IntentIR` as the canonical endpoint and keep adapters downstream of it
 
 ## Commit status
-- the latest committed baseline is `f8e42eaa91239c4188ff734eff3f404770aaed0d`
-- the current working tree contains the uncommitted IntentIR builder, CLI wiring, live-doc refreshes, and validation-record updates for the new stage
+- the latest committed baseline is `b128fd5808b846cfd8e0d59549babdd3b3e81d22`
+- the current working tree contains the uncommitted `.gitmodules` manifest, the `subs/fsmgen` submodule entry, and live-doc refreshes for the new pinned reference dependency
 - before the next commit, follow `COMMIT.md`

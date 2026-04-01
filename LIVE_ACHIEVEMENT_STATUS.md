@@ -20,6 +20,7 @@
 - SemanticIR scaffolding implemented: Done
 - IntentIR scaffolding implemented: Done
 - Adapter planning scaffolding implemented: Done
+- Pinned `fsmgen` reference submodule added: Done
 - Renamed CLI and staged IR architecture validation completed: Done
 - SOTA multimodal ingestion architecture defined: Done
 - Multimodal SourceIR/EvidenceIR schema validation completed: Done

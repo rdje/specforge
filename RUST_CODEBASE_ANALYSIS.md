@@ -24,6 +24,7 @@
 ## Observed current state
 ### Repository contents directly observed
 - `.git/`
+- `.gitmodules`
 - live documentation surface
 - `INTENTIR_SPEC.md`
 - `Cargo.toml`
@@ -45,6 +46,7 @@
 - `crates/specforge/src/ir/semantic.rs`
 - `crates/specforge/src/ir/intent.rs`
 - `crates/specforge/src/ir/adapters.rs`
+- `subs/fsmgen/`
 
 ### Rust-specific contents still absent
 - no dedicated `specforge-source` crate
@@ -125,6 +127,7 @@
 - the later stages have typed names and module homes, which reduces the risk of accidental backend-first growth
 - adapter planning is separated from the canonical IR stages
 - the IR surface now carries page and visual manifests plus backend source references that later stages can ground against
+- the repository now also contains a pinned local `fsmgen` checkout, which gives the next `.fsm` adapter slice a nearby reference implementation without changing the canonical `IntentIR` boundary
 
 ### What is still insufficient
 - only `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR` have real builders today
@@ -196,6 +199,8 @@
   - `src/ir/adapters.rs`
 - dependency:
   - requires stable `IntentIR`
+- nearby reference implementation:
+  - `subs/fsmgen/`
 - next real implementation target:
   - lower canonical `IntentIR` into the first concrete backend target without leaking adapter assumptions backward
 

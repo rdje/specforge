@@ -1,0 +1,3 @@
+[submodule "subs/fsmgen"]
+	path = subs/fsmgen
+	url = git@github.com:rdje/fsmgen.git

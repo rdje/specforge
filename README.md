@@ -26,6 +26,7 @@ Use it first for the project objective, document navigation, and the current imp
 - `specforge evidence` now computes and materializes `EvidenceIR` at `generated/evidence_ir/<document_key>/evidence_ir.json`
 - `specforge semantic` now computes and materializes `SemanticIR` at `generated/semantic_ir/<document_key>/semantic_ir.json`
 - `specforge intent` now computes and materializes `IntentIR` at `generated/intent_ir/<document_key>/intent_ir.json`
+- a pinned `subs/fsmgen` git submodule now exists as a local `.fsm` reference implementation for upcoming adapter work
 - the `SourceIR` schema now reserves:
   - parser-backend identity
   - page-artifact manifests
@@ -89,6 +90,8 @@ Use it first for the project objective, document navigation, and the current imp
   - compact but actionable continuity record for crash/session-loss recovery
 - `COMMIT.md`
   - exact commit workflow and commit-time reporting requirements
+- `.gitmodules`
+  - git submodule manifest for pinned local reference dependencies
 
 ## Project file and directory map
 ### Current workflow and documentation paths
@@ -104,6 +107,7 @@ Use it first for the project objective, document navigation, and the current imp
 - `MEMORY.md`
 - `COMMIT.md`
 - `.gitignore`
+- `.gitmodules`
 
 ### Local-only workflow paths
 - `git_message_brief.txt`
@@ -118,6 +122,10 @@ Use it first for the project objective, document navigation, and the current imp
 - `target/`
   - Rust build output
   - must remain untracked
+
+### Reference adapter/tooling paths
+- `subs/fsmgen/`
+  - pinned local checkout of `fsmgen`, used as a reference implementation while building the first `.fsm` adapter
 
 ### Current Rust implementation paths
 - `Cargo.toml`
