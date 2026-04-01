@@ -149,6 +149,12 @@ It is responsible for:
 
 It should avoid jumping too early into actor decomposition or backend logic.
 
+Current implementation note:
+- `specforge evidence <source-ir>` now materializes `generated/evidence_ir/<document_key>/evidence_ir.json`
+- the first executable pass consumes ready `SourceIR` artifacts plus promoted markdown
+- it currently builds section anchors, block-level evidence spans, visual evidence items from `SourceIR.visual_assets`, caption/figure-reference links, and heuristic statement classes
+- deeper OCR-over-image, chart extraction, and formula/table transcription remain future enrichment work
+
 Minimal conceptual example:
 ```json
 {

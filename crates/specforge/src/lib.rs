@@ -10,5 +10,6 @@ pub fn run(cli: Cli) -> Result<()> {
     match cli.command {
         Commands::Inspect(args) => commands::inspect::run(args),
         Commands::Ingest(args) => commands::ingest::run(args),
+        Commands::Evidence(args) => commands::evidence::run(args),
     }
 }

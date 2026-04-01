@@ -13,11 +13,11 @@
   - `SemanticIR`
   - `IntentIR`
   - adapters
-- the implemented stage today is `SourceIR`
+- the implemented executable stages today are `SourceIR` and `EvidenceIR`
 - `SourceIR` now has a real Docling-backed PDF materialization path that emits promoted markdown, page artifacts, visual assets, metadata JSON, and backend raw JSON
-- `EvidenceIR` now reserves typed multimodal evidence records instead of assuming text-only evidence
+- `EvidenceIR` now has a real builder that emits typed multimodal evidence records instead of remaining text-only scaffolding
 - the later stages currently exist as typed scaffolding, which is valuable for architectural clarity but still needs real builders
-- the next slice should turn the architecture from declared stages into executed stages by constructing the first real visual-aware `EvidenceIR`
+- the next slice should lift the now-grounded `EvidenceIR` outputs into the first real backend-neutral `SemanticIR`
 
 ## Observed current state
 ### Repository contents directly observed
@@ -33,6 +33,7 @@
 - `crates/specforge/src/error.rs`
 - `crates/specforge/src/commands/inspect.rs`
 - `crates/specforge/src/commands/ingest.rs`
+- `crates/specforge/src/commands/evidence.rs`
 - `crates/specforge/src/ir/mod.rs`
 - `crates/specforge/src/ir/source.rs`
 - `crates/specforge/src/ir/source/docling_backend.rs`
@@ -49,7 +50,7 @@
 - no dedicated `specforge-adapters` crate
 - no dedicated validation crate
 - no integration-test harness beyond crate-local unit tests
-- no real builders beyond the current `SourceIR` slice
+- no real builders beyond the current `SourceIR`/`EvidenceIR` slices
 
 ### Immediate implication
 - the codebase now has a clean top-level architectural story
@@ -87,6 +88,8 @@
   - deterministic source/path inspection command
 - `src/commands/ingest.rs`
   - `SourceIR` preview/materialization command
+- `src/commands/evidence.rs`
+  - `EvidenceIR` preview/materialization command
 - `src/ir/mod.rs`
   - stage identifiers for `source_ir`, `evidence_ir`, `semantic_ir`, and `intent_ir`
 - `src/ir/source.rs`
@@ -94,7 +97,7 @@
 - `src/ir/source/docling_backend.rs`
   - external backend discovery, Docling command orchestration, and the embedded Python helper for structured PDF normalization
 - `src/ir/evidence.rs`
-  - `EvidenceIR` scaffolding
+  - concrete `EvidenceIR` builder, markdown parsing, caption/reference linking, and extraction heuristics
 - `src/ir/semantic.rs`
   - `SemanticIR` scaffolding
 - `src/ir/intent.rs`
@@ -108,14 +111,15 @@
 - the code no longer hardcodes `.fsm` as the conceptual endpoint
 - a real typed `SourceIR` artifact exists instead of a handwritten ingest plan
 - a real structured PDF normalization path now exists inside `SourceIR`, so the first stage is operational for both Markdown and PDF inputs
+- a real typed `EvidenceIR` artifact now exists, so the staged pipeline is operational beyond raw source normalization
 - the later stages have typed names and module homes, which reduces the risk of accidental backend-first growth
 - adapter planning is separated from the canonical IR stages
 - the IR surface now carries page and visual manifests plus backend source references that later stages can ground against
 
 ### What is still insufficient
-- only `SourceIR` has a real builder today
-- `EvidenceIR`, `SemanticIR`, and `IntentIR` remain type scaffolding rather than executable stage builders
-- visual enrichment and figure-grounding are not implemented yet
+- only `SourceIR` and `EvidenceIR` have real builders today
+- `SemanticIR` and `IntentIR` remain type scaffolding rather than executable stage builders
+- deeper visual enrichment beyond caption/reference grounding is not implemented yet
 - there is no real adapter implementation yet
 - validation/back-annotation is still absent
 
@@ -130,8 +134,8 @@
 
 ### Recommended growth path from the current codebase
 #### Keep in the current crate for one more slice
-- first visual-aware `EvidenceIR` extractor
-- initial statement classification into source facts / derived rules / local design decisions / explicit abstractions
+- first real `SemanticIR` lift from grounded `EvidenceIR`
+- initial actor/interface/phase/invariant extraction with explicit residual decisions
 
 #### Split into dedicated crates when pressure becomes real
 - `specforge-source`
@@ -155,15 +159,18 @@
 
 ### EvidenceIR
 - current declared ownership:
+  - `src/commands/evidence.rs`
   - `src/ir/evidence.rs`
-- next real implementation target:
-  - build a real extractor from normalized markdown, figures, captions, and page/asset manifests
+- current executable behavior:
+  - builds `EvidenceIR` from ready `SourceIR`, promoted markdown, and visual-asset manifests
 
 ### SemanticIR
 - current declared ownership:
   - `src/ir/semantic.rs`
 - dependency:
   - requires real `EvidenceIR`
+- next real implementation target:
+  - lift grounded evidence into actors, interfaces, phases, invariants, and residual decisions
 
 ### IntentIR
 - current declared ownership:
@@ -205,12 +212,15 @@
   - directory residual decision emission
   - PDF normalization planning
   - PDF materialization through a stubbed backend override that exercises the manifest-writing path
+  - markdown-backed `EvidenceIR` construction
+  - caption and figure-reference grounding into visual evidence
 - next tests should cover:
   - structured PDF normalization failure handling against missing runtimes and malformed backend output
-  - first `EvidenceIR` extraction on normalized markdown plus visual-asset fixtures
-  - figure extraction and caption-linking fidelity
-  - visual evidence grounding and confidence propagation
+  - additional `EvidenceIR` extraction on richer visual-asset fixtures
+  - figure extraction and caption-linking fidelity across ambiguous numbering cases
+  - visual evidence grounding and confidence propagation beyond the current heuristic pass
   - provenance retention across stage boundaries
+  - first `SemanticIR` snapshots and residual-decision coverage
   - adapter planning and eventual adapter lowering snapshots
 
 ## Validation completed in this session
@@ -226,10 +236,16 @@
   - passed after the PDF materialization changes, confirming the markdown execute path still behaves correctly
 - `SPECFORGE_DOCLING_PYTHON=/tmp/specforge-docling-venv/bin/python cargo run -p specforge -- ingest /tmp/specforge-docling-sample.pdf`
   - passed and materialized a real PDF `SourceIR` with 9 page artifacts, 11 visual assets, promoted markdown, metadata JSON, backend raw JSON, and manifest files
+- `cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json --dry-run`
+  - passed and previewed a markdown-backed `EvidenceIR`
+- `cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json`
+  - passed and materialized a markdown-backed `EvidenceIR` with 14 section anchors, 151 evidence spans, and 151 extracted statements
+- `cargo run -p specforge -- evidence generated/source_ir/specforge_docling_sample/source_ir.json`
+  - passed and materialized a PDF-backed `EvidenceIR` with 18 section anchors, 225 evidence spans, 11 visual evidence items, 19 evidence links, and 225 extracted statements
 - repo-wide stale-name sweep
   - remaining `spec2fsm` references are historical notes only, not active CLI or architecture surfaces
 
 ## Current recommendation
 - keep the current single-crate workspace for one more slice
-- next, build the first real visual-aware `EvidenceIR` extractor on top of the newly materialized SourceIR artifacts
+- next, build the first real backend-neutral `SemanticIR` extractor on top of the newly materialized `EvidenceIR` artifacts
 - keep `IntentIR` canonical and resist any temptation to make `.fsm` the hidden endpoint again

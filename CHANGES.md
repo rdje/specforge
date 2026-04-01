@@ -70,6 +70,31 @@
   - `cargo run -p specforge -- ingest README.md`
   - `SPECFORGE_DOCLING_PYTHON=/tmp/specforge-docling-venv/bin/python cargo run -p specforge -- ingest /tmp/specforge-docling-sample.pdf`
 - updated the live status tracker so the remaining top-priority gap is now the first real `EvidenceIR` extractor rather than the SourceIR PDF-normalization backend
+- implemented the first real `EvidenceIR` extractor on top of persisted `SourceIR` artifacts
+- added `specforge evidence <source-ir> [--dry-run]` to preview or materialize `generated/evidence_ir/<document_key>/evidence_ir.json`
+- `EvidenceIR::build` now:
+  - loads persisted `SourceIR` JSON from disk
+  - requires `normalization_status: ready`
+  - parses promoted markdown into section anchors and block-level evidence spans
+  - projects `SourceIR` visual assets into typed visual evidence items
+  - links caption spans with `describes` and figure/table references with `cites`
+  - emits heuristic statement classes for source facts, derived rules, local design decisions, and explicit abstractions
+- added stage-artifact loading support and deserialize coverage needed to rebuild `EvidenceIR` from saved `SourceIR` JSON
+- added unit tests for:
+  - markdown-only `EvidenceIR` construction
+  - caption plus figure-reference grounding into visual evidence
+- validated the new `EvidenceIR` stage with:
+  - `cargo fmt --all --manifest-path Cargo.toml`
+  - `cargo test --manifest-path Cargo.toml`
+  - `cargo run -p specforge -- ingest README.md`
+  - `cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json --dry-run`
+  - `cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json`
+  - `SPECFORGE_DOCLING_PYTHON=/tmp/specforge-docling-venv/bin/python cargo run -p specforge -- ingest /tmp/specforge-docling-sample.pdf`
+  - `cargo run -p specforge -- evidence generated/source_ir/specforge_docling_sample/source_ir.json`
+- confirmed live execute-mode outputs for validation:
+  - markdown-backed `EvidenceIR`: 14 section anchors, 151 evidence spans, 151 extracted statements
+  - PDF-backed `EvidenceIR`: 18 section anchors, 225 evidence spans, 11 visual evidence items, 19 evidence links, 225 extracted statements
+- updated the live status tracker so the remaining top-priority gap is now the first real `SemanticIR` constructor rather than the `EvidenceIR` extraction stage
 
 ## 2026-03-31
 - initialized the `specforge` Git repository

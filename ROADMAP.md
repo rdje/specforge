@@ -51,7 +51,7 @@
   - directory and unknown inputs produce residual decisions instead of implicit failure
 
 ### R3 EvidenceIR
-- status: In Progress
+- status: Done
 - goals:
   - extract section anchors and evidence spans from normalized sources
   - link text references to figures, captions, charts, and page crops
@@ -60,6 +60,7 @@
   - preserve precise provenance into a typed `EvidenceIR`
 - completion criteria:
   - the tool can build a real `EvidenceIR` from normalized markdown plus structured page/visual artifacts
+  - `specforge evidence` previews and materializes `EvidenceIR` at `generated/evidence_ir/<document_key>/evidence_ir.json`
   - evidence items retain provenance to source ranges
   - figure/caption linkage is explicit and inspectable
   - statement classification is explicit and inspectable
@@ -108,11 +109,10 @@
 
 ## Recommended implementation order
 1. keep the `IntentIR` product boundary explicit in all docs and code
-2. build the first real multimodal `EvidenceIR` extraction pass
-3. lift `EvidenceIR` into `SemanticIR`
-4. canonicalize into `IntentIR`
-5. build adapters after `IntentIR` is stable
-6. integrate validation and back-annotation
+2. lift `EvidenceIR` into `SemanticIR`
+3. canonicalize into `IntentIR`
+4. build adapters after `IntentIR` is stable
+5. integrate validation and back-annotation
 
 ## Immediate next milestone
-- build the first real `EvidenceIR` extractor from normalized markdown, figures, captions, and page assets
+- build the first real `SemanticIR` lifter from `EvidenceIR` actors, interfaces, phases, invariants, and residual decisions

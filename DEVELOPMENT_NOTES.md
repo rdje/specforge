@@ -57,9 +57,9 @@
 - the repository now contains a renamed `specforge` crate and CLI
 - the active Rust codebase no longer treats `spec2fsm` as the primary identity
 - the canonical product boundary is now described consistently as `IntentIR`
-- the first real implemented stage is `SourceIR`
+- the first real implemented stages are `SourceIR` and `EvidenceIR`
 - `SourceIR` now includes a real Docling-backed structured PDF materialization path with promoted markdown, page artifacts, visual assets, metadata JSON, and backend raw JSON
-- `EvidenceIR` now reserves multimodal evidence records instead of assuming text-only extraction
+- `EvidenceIR` now builds multimodal evidence records instead of remaining text-only scaffolding
 
 ## Structured PDF normalization implementation
 - execute-mode PDF ingest is now orchestrated from `crates/specforge/src/ir/source.rs`
@@ -73,6 +73,22 @@
 - runtime discovery prefers `python3` or `python` with `docling` importable, and can be overridden with `SPECFORGE_DOCLING_PYTHON`
 - tests can override the backend command with `SPECFORGE_DOCLING_HELPER` so `cargo test` exercises the full SourceIR materialization path without depending on a live Docling install
 - visual assets now carry a `source_ref` pointing back into backend-native structured output so later stages can ground evidence against the raw parser representation
+
+## First executable EvidenceIR stage
+- execute-mode `EvidenceIR` construction is now orchestrated from `crates/specforge/src/commands/evidence.rs`
+- the core builder lives in `crates/specforge/src/ir/evidence.rs`
+- `EvidenceIR::build` now:
+  - loads persisted `SourceIR` JSON from disk
+  - requires `normalization_status: ready`
+  - reads the promoted markdown path from `SourceIR`
+  - builds section anchors from markdown headings
+  - builds block-level evidence spans with line provenance
+  - projects `SourceIR` visual assets into typed visual evidence items
+  - links caption spans to visual assets with `describes`
+  - links textual `Figure N` / `Fig. N` / `Table N` references with `cites`
+  - emits heuristic extracted-statement classes for source facts, derived rules, local design decisions, and explicit abstractions
+- the current first-pass implementation is intentionally deterministic and inspectable rather than LLM-driven
+- deeper OCR, chart extraction, and richer visual interpretation remain future enrichment work for later EvidenceIR/SemanticIR slices
 
 ## Documentation surface currently steering the implementation
 - `README.md`
@@ -106,6 +122,8 @@
   - source/path inspection command
 - `src/commands/ingest.rs`
   - `SourceIR` preview/materialization command
+- `src/commands/evidence.rs`
+  - `EvidenceIR` preview/materialization command
 - `src/ir/mod.rs`
   - stage identifiers and IR namespace
 - `src/ir/source.rs`
@@ -113,7 +131,7 @@
 - `src/ir/source/docling_backend.rs`
   - runtime backend discovery, external Docling orchestration, and the embedded Python helper for structured PDF materialization
 - `src/ir/evidence.rs`
-  - multimodal `EvidenceIR` scaffolding for text, figures, captions, and visual evidence
+  - first real multimodal `EvidenceIR` builder for text spans, figure/caption linking, visual evidence, and extracted statements
 - `src/ir/semantic.rs`
   - `SemanticIR` scaffolding
 - `src/ir/intent.rs`
@@ -136,10 +154,10 @@
 
 ## Immediate implementation consequences
 - do not jump to `.fsm` generation from `SourceIR`
-- keep the current `SourceIR` types stable enough that later `EvidenceIR` builders can depend on them
-- use the newly materialized `SourceIR` page, visual-asset, and backend-raw artifacts as the substrate for the first real `EvidenceIR` extractor
-- make the first `EvidenceIR` pass visual-aware so the staged pipeline becomes real beyond the initial source layer
+- keep the current `SourceIR` and `EvidenceIR` types stable enough that later `SemanticIR` builders can depend on them
+- use the newly materialized `EvidenceIR` section anchors, evidence links, and extracted statements as the substrate for the first real `SemanticIR` extractor
+- keep the current `EvidenceIR` pass visual-aware and provenance-first so later semantic lifting can stay grounded
 - do not let figures, charts, or diagrams collapse into throwaway markdown placeholders if they may carry normative meaning
 
 ## Immediate next engineering target
-- build the first real `EvidenceIR` extractor from normalized markdown, figures, captions, and page assets
+- build the first real `SemanticIR` extractor from grounded `EvidenceIR` artifacts

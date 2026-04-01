@@ -19,6 +19,7 @@ pub enum AppError {
         stderr: String,
     },
     InvalidBackendOutput(String),
+    InvalidStageArtifact(String),
 }
 
 impl fmt::Display for AppError {
@@ -53,6 +54,7 @@ impl fmt::Display for AppError {
                 )
             }
             Self::InvalidBackendOutput(message) => write!(f, "invalid backend output: {message}"),
+            Self::InvalidStageArtifact(message) => write!(f, "invalid stage artifact: {message}"),
         }
     }
 }

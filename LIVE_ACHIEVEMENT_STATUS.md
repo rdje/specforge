@@ -10,6 +10,7 @@
 - Explicit `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters` architecture defined: Done
 - `specforge inspect` command created: Done
 - `specforge ingest` SourceIR command created: Done
+- `specforge evidence` EvidenceIR command created: Done
 - SourceIR type system implemented: Done
 - EvidenceIR scaffolding implemented: Done
 - SourceIR page/visual artifact scaffolding implemented: Done
@@ -21,7 +22,7 @@
 - SOTA multimodal ingestion architecture defined: Done
 - Multimodal SourceIR/EvidenceIR schema validation completed: Done
 - Structured PDF normalization orchestration implemented: Done
-- EvidenceIR extraction implemented: Not Started
+- EvidenceIR extraction implemented: Done
 - SemanticIR construction implemented: Not Started
 - IntentIR construction implemented: Not Started
 - `.fsm` adapter implemented: Not Started
@@ -30,4 +31,4 @@
 - End-to-end source-to-IntentIR pipeline implemented: In Progress
 
 ## Highest-priority remaining gap
-- Build the first real multimodal EvidenceIR extractor from normalized markdown, figures, captions, and page assets: Not Started
+- Build the first real backend-neutral SemanticIR constructor from EvidenceIR artifacts: Not Started

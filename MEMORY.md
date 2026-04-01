@@ -32,7 +32,9 @@
   - `inspect <path>`
   - `ingest <source> --dry-run`
   - `ingest <source>`
-- the currently implemented real stage artifact is `SourceIR`
+  - `evidence <source-ir> --dry-run`
+  - `evidence <source-ir>`
+- the currently implemented real stage artifacts are `SourceIR` and `EvidenceIR`
 - explicit staged IR modules now exist for:
   - `SourceIR`
   - `EvidenceIR`
@@ -41,8 +43,8 @@
   - adapters
 
 ## Latest committed baseline
-- latest_commit_hash: `7be5253702d99945bbfd693cde148121b6b8a7ed`
-- latest_commit_brief_message: `Pivot specforge to IntentIR and multimodal IR scaffolding`
+- latest_commit_hash: `02f64c3eaa4aa00943f246ea72294e08f94b2aa0`
+- latest_commit_brief_message: `Implement Docling-backed SourceIR PDF normalization`
 - continuity_rule:
   - refresh this section whenever a new latest committed baseline exists at the time `MEMORY.md` is updated
 
@@ -64,31 +66,30 @@
 - `SourceIR` was further extended to reserve parser-backend, page-artifact, and visual-asset schema surface
 - `EvidenceIR` was further extended to reserve multimodal visual-evidence records and text-to-figure linkage
 - the next slice has now implemented a real Docling-backed PDF normalization path inside `SourceIR`
+- the current slice has now implemented the first real `EvidenceIR` extractor and CLI on top of ready `SourceIR` artifacts
 
 ## In-flight work in this session
-- implement real structured PDF normalization inside `SourceIR`
-- refresh the live docs and continuity files for the new backend
+- refresh the live docs and continuity files for the new `EvidenceIR` stage
 - run the commit workflow immediately after this task is closed
 
 ## Current execution checkpoint
-- `SourceIR` now has a real Docling-backed PDF materialization path
-- execute-mode PDF ingest now writes:
-  - promoted markdown
-  - page images and page metadata sidecars
-  - visual asset crops for pictures and tables
-  - metadata JSON and backend raw JSON
-  - `page_artifacts.json` and `visual_assets.json`
-- visual assets now carry backend `source_ref` values for later grounding
-- runtime discovery supports:
-  - `python3` / `python` with `docling` importable
-  - optional override via `SPECFORGE_DOCLING_PYTHON`
-  - test/advanced override via `SPECFORGE_DOCLING_HELPER`
-- the backend implementation is validated with:
+- `EvidenceIR` now has a real build/materialization path
+- execute-mode `specforge evidence` now writes:
+  - `generated/evidence_ir/<document_key>/evidence_ir.json`
+  - section anchors
+  - block-level evidence spans with line provenance
+  - visual evidence items derived from `SourceIR` visual assets
+  - explicit caption/reference links
+  - heuristic extracted statements
+- the current validation set is:
   - `cargo fmt --all --manifest-path Cargo.toml`
-  - `cargo test`
+  - `cargo test --manifest-path Cargo.toml`
   - `cargo run -p specforge -- ingest README.md`
+  - `cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json --dry-run`
+  - `cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json`
   - `SPECFORGE_DOCLING_PYTHON=/tmp/specforge-docling-venv/bin/python cargo run -p specforge -- ingest /tmp/specforge-docling-sample.pdf`
-- the next implementation action is the first real multimodal `EvidenceIR` extractor
+  - `cargo run -p specforge -- evidence generated/source_ir/specforge_docling_sample/source_ir.json`
+- the next implementation action is the first real `SemanticIR` constructor
 
 ## If resuming from an interruption
 1. read `README.md`
@@ -100,10 +101,10 @@
 7. continue with the next implementation slice unless the user redirects
 
 ## Recommended next implementation slice
-- build the first real `EvidenceIR` extractor from normalized markdown, figures, captions, and page assets
+- build the first real `SemanticIR` extractor from grounded `EvidenceIR` artifacts
 - keep `IntentIR` as the canonical endpoint and keep adapters downstream of it
 
 ## Commit status
-- the latest committed baseline is `7be5253702d99945bbfd693cde148121b6b8a7ed`
-- the current working tree contains the uncommitted SourceIR PDF backend, live-doc refreshes, and validation-record updates for the new backend
+- the latest committed baseline is `02f64c3eaa4aa00943f246ea72294e08f94b2aa0`
+- the current working tree contains the uncommitted EvidenceIR builder, CLI wiring, live-doc refreshes, and validation-record updates for the new stage
 - before the next commit, follow `COMMIT.md`

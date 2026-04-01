@@ -14,9 +14,12 @@
   - `specforge inspect <path>`
   - `specforge ingest <source> --dry-run`
   - `specforge ingest <source>`
-- the currently implemented stage is `SourceIR`
+  - `specforge evidence <source-ir> --dry-run`
+  - `specforge evidence <source-ir>`
+- the currently implemented executable stages are `SourceIR` and `EvidenceIR`
 - `SourceIR` now handles existing Markdown directly and performs Docling-backed structured PDF normalization for PDF inputs
-- `EvidenceIR`, `SemanticIR`, `IntentIR`, and adapter planning now have typed scaffolding but not real builders yet
+- `EvidenceIR` now consumes ready `SourceIR` artifacts and extracts section anchors, evidence spans, visual evidence, figure/caption links, and heuristic statement classes
+- `SemanticIR`, `IntentIR`, and adapter lowering remain planned
 
 ## Available commands today
 ### Inspect a path
@@ -47,7 +50,7 @@ cargo run -p specforge -- ingest README.md --dry-run
 cargo run -p specforge -- ingest README.md
 ```
 - writes `generated/source_ir/<document_key>/source_ir.json`
-- this is the first real IR artifact emitted by the tool
+- this is the first stage artifact emitted by the tool
 - for Markdown inputs, the normalization plan points at the existing Markdown source
 - for PDF inputs, execute mode now materializes:
   - promoted markdown
@@ -56,6 +59,30 @@ cargo run -p specforge -- ingest README.md
   - metadata JSON and backend raw JSON
   - `page_artifacts.json` and `visual_assets.json`
 - PDF execute mode expects `docling` to be importable from `python3` or `python`; when needed, point `SPECFORGE_DOCLING_PYTHON` at the correct interpreter
+
+### Preview an EvidenceIR artifact
+```bash
+cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json --dry-run
+```
+- prints computed `EvidenceIR` JSON without writing artifacts
+- requires a `SourceIR` whose normalization status is `ready`
+- useful for checking:
+  - section anchors and line provenance
+  - evidence spans and extracted statements
+  - figure/caption linkage
+  - visual evidence counts before materialization
+
+### Materialize an EvidenceIR artifact
+```bash
+cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json
+```
+- writes `generated/evidence_ir/<document_key>/evidence_ir.json`
+- builds:
+  - section anchors from promoted markdown headings
+  - block-level evidence spans with line provenance
+  - visual evidence items from `SourceIR` visual assets
+  - explicit `describes` and `cites` links for caption and figure/table references
+  - extracted statements classified into source facts, derived rules, local design decisions, or explicit abstractions
 
 ## Planned user workflow
 1. provide a source specification
@@ -85,8 +112,9 @@ cargo run -p specforge -- ingest README.md
 - `.fsm` is only one adapter target among several
 
 ## Current limitation
-- `SourceIR` is implemented
-- the first real PDF normalization backend is implemented, but `EvidenceIR`, `SemanticIR`, and `IntentIR` builders are still not implemented
+- `SourceIR` and the first real `EvidenceIR` pass are implemented
+- the current `EvidenceIR` extraction logic is still heuristic and does not yet perform deeper OCR, chart extraction, or semantic lifting from visual regions
+- `SemanticIR` and `IntentIR` builders are still not implemented
 - adapters are planned but not implemented
 - validation/back-annotation is not implemented yet
 

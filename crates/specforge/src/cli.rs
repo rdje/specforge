@@ -19,6 +19,8 @@ pub enum Commands {
     Inspect(InspectArgs),
     /// Build or materialize a SourceIR artifact for a source
     Ingest(IngestArgs),
+    /// Build or materialize an EvidenceIR artifact from a SourceIR JSON file
+    Evidence(EvidenceArgs),
 }
 
 #[derive(Debug, Args)]
@@ -32,6 +34,15 @@ pub struct IngestArgs {
     /// Source file or directory to ingest
     pub source: PathBuf,
     /// Do not write SourceIR artifacts; print the computed SourceIR JSON instead
+    #[arg(long)]
+    pub dry_run: bool,
+}
+
+#[derive(Debug, Args)]
+pub struct EvidenceArgs {
+    /// Path to a SourceIR JSON artifact
+    pub source_ir: PathBuf,
+    /// Do not write EvidenceIR artifacts; print the computed EvidenceIR JSON instead
     #[arg(long)]
     pub dry_run: bool,
 }

@@ -7,7 +7,7 @@ use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::adapters::AdapterTarget;
 
-#[derive(Debug, Clone, Copy, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum SourceKind {
     Pdf,
@@ -39,7 +39,7 @@ impl SourceKind {
     }
 }
 
-#[derive(Debug, Clone, Copy, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum SourcePathKind {
     File,
@@ -67,7 +67,7 @@ impl SourcePathKind {
     }
 }
 
-#[derive(Debug, Clone, Copy, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum NormalizationStrategy {
     ExistingMarkdown,
@@ -76,7 +76,7 @@ pub enum NormalizationStrategy {
     ResolveUnknownSource,
 }
 
-#[derive(Debug, Clone, Copy, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum NormalizationBackend {
     DirectMarkdown,
@@ -86,7 +86,7 @@ pub enum NormalizationBackend {
     Undecided,
 }
 
-#[derive(Debug, Clone, Copy, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum NormalizationStatus {
     Ready,
@@ -104,7 +104,7 @@ impl NormalizationStatus {
     }
 }
 
-#[derive(Debug, Clone, Copy, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum AutomationConfidence {
     High,
@@ -122,7 +122,7 @@ impl AutomationConfidence {
     }
 }
 
-#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct SourceIr {
     pub schema_version: u32,
     pub stage: IrStage,
@@ -141,6 +141,13 @@ pub struct SourceIr {
 }
 
 impl SourceIr {
+    pub fn load_from_path(path: &Path) -> Result<Self> {
+        if !path.exists() {
+            return Err(AppError::MissingPath(path.to_path_buf()));
+        }
+
+        Ok(serde_json::from_str(&fs::read_to_string(path)?)?)
+    }
     pub fn build(source: &Path, artifact_base_root: &Path) -> Result<Self> {
         if !source.exists() {
             return Err(AppError::MissingPath(source.to_path_buf()));
@@ -360,7 +367,7 @@ impl SourceIr {
     }
 }
 
-#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct SourceRegistration {
     pub requested_path: PathBuf,
     pub canonical_path: PathBuf,
@@ -370,7 +377,7 @@ pub struct SourceRegistration {
     pub size_bytes: Option<u64>,
 }
 
-#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct SourceArtifactLayout {
     pub artifact_root: PathBuf,
     pub source_ir_path: PathBuf,
@@ -382,14 +389,14 @@ pub struct SourceArtifactLayout {
     pub backend_raw_output_path: PathBuf,
 }
 
-#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct DocumentIdentity {
     pub document_key: String,
     pub display_name: String,
     pub origin_kind: SourceKind,
 }
 
-#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct NormalizationPlan {
     pub strategy: NormalizationStrategy,
     pub backend: NormalizationBackend,
@@ -441,7 +448,7 @@ pub struct PlaceholderBinding {
     pub normalized_source_path: PathBuf,
 }
 
-#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct ResidualDecisionPacket {
     pub packet_id: String,
     pub question: String,
@@ -450,7 +457,7 @@ pub struct ResidualDecisionPacket {
     pub candidate_interpretations: Vec<CandidateInterpretation>,
 }
 
-#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct CandidateInterpretation {
     pub interpretation_id: String,
     pub description: String,
