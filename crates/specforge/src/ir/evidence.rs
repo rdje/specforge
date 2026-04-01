@@ -77,6 +77,13 @@ pub struct EvidenceIr {
 }
 
 impl EvidenceIr {
+    pub fn load_from_path(path: &Path) -> Result<Self> {
+        if !path.exists() {
+            return Err(AppError::MissingPath(path.to_path_buf()));
+        }
+
+        Ok(serde_json::from_str(&fs::read_to_string(path)?)?)
+    }
     pub fn build(source_ir_path: &Path, artifact_base_root: &Path) -> Result<Self> {
         let source_ir_path = canonicalize_existing_path(source_ir_path)?;
         let source_ir = SourceIr::load_from_path(&source_ir_path)?;

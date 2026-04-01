@@ -95,6 +95,31 @@
   - markdown-backed `EvidenceIR`: 14 section anchors, 151 evidence spans, 151 extracted statements
   - PDF-backed `EvidenceIR`: 18 section anchors, 225 evidence spans, 11 visual evidence items, 19 evidence links, 225 extracted statements
 - updated the live status tracker so the remaining top-priority gap is now the first real `SemanticIR` constructor rather than the `EvidenceIR` extraction stage
+- implemented the first real `SemanticIR` extractor on top of persisted `EvidenceIR` artifacts
+- added `specforge semantic <evidence-ir> [--dry-run]` to preview or materialize `generated/semantic_ir/<document_key>/semantic_ir.json`
+- `SemanticIR::build` now:
+  - loads persisted `EvidenceIR` JSON from disk
+  - derives typed semantic artifacts under `generated/semantic_ir/<document_key>/semantic_ir.json`
+  - discovers actors, interfaces, phases, invariants, contracts, gates, abstractions, and decomposition candidates from deterministic heuristics
+  - emits residual decisions for unresolved actor boundaries, overlapping interface groups, and ambiguous visual semantics
+- added stage-artifact loading support needed to rebuild `SemanticIR` from saved `EvidenceIR` JSON
+- added unit tests for:
+  - handshake-driven actor/interface/invariant extraction
+  - ambiguous visual grounding residual decisions
+- validated the new `SemanticIR` stage with:
+  - `cargo fmt --all --manifest-path Cargo.toml`
+  - `cargo test --manifest-path Cargo.toml`
+  - `cargo run -p specforge -- ingest README.md`
+  - `cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json`
+  - `cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json --dry-run`
+  - `cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json`
+  - `SPECFORGE_DOCLING_PYTHON=/tmp/specforge-docling-venv/bin/python cargo run -p specforge -- ingest /tmp/specforge-docling-sample.pdf`
+  - `cargo run -p specforge -- evidence generated/source_ir/specforge_docling_sample/source_ir.json`
+  - `cargo run -p specforge -- semantic generated/evidence_ir/specforge_docling_sample/evidence_ir.json`
+- confirmed live execute-mode outputs for validation:
+  - markdown-backed `SemanticIR`: 2 actors, 0 interfaces, 4 phases, 3 invariants, 3 gates, 1 abstraction, 12 decomposition candidates, 0 residual decisions
+  - PDF-backed `SemanticIR`: 2 actors, 22 interfaces, 7 phases, 17 invariants, 2 contracts, 20 gates, 12 decomposition candidates, 2 residual decisions
+- updated the live status tracker so the remaining top-priority gap is now the first real canonical `IntentIR` constructor rather than the `SemanticIR` stage
 
 ## 2026-03-31
 - initialized the `specforge` Git repository

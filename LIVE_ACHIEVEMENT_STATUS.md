@@ -11,6 +11,7 @@
 - `specforge inspect` command created: Done
 - `specforge ingest` SourceIR command created: Done
 - `specforge evidence` EvidenceIR command created: Done
+- `specforge semantic` SemanticIR command created: Done
 - SourceIR type system implemented: Done
 - EvidenceIR scaffolding implemented: Done
 - SourceIR page/visual artifact scaffolding implemented: Done
@@ -23,7 +24,7 @@
 - Multimodal SourceIR/EvidenceIR schema validation completed: Done
 - Structured PDF normalization orchestration implemented: Done
 - EvidenceIR extraction implemented: Done
-- SemanticIR construction implemented: Not Started
+- SemanticIR construction implemented: Done
 - IntentIR construction implemented: Not Started
 - `.fsm` adapter implemented: Not Started
 - SystemVerilog/Verilog/VHDL adapters implemented: Not Started
@@ -31,4 +32,4 @@
 - End-to-end source-to-IntentIR pipeline implemented: In Progress
 
 ## Highest-priority remaining gap
-- Build the first real backend-neutral SemanticIR constructor from EvidenceIR artifacts: Not Started
+- Build the first real canonical IntentIR constructor from SemanticIR artifacts: Not Started

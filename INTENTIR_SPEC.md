@@ -233,12 +233,18 @@ It is responsible for:
 - decomposition candidates
 - semantic residual decisions
 
+Current implementation note:
+- `specforge semantic <evidence-ir>` now materializes `generated/semantic_ir/<document_key>/semantic_ir.json`
+- the first executable pass consumes persisted `EvidenceIR` JSON
+- it currently discovers actors, interfaces, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions from deterministic heuristics over evidence statements and visual grounding
+- the current output is intentionally conservative and inspectable; canonical semantic normalization still continues in the later `IntentIR` stage
+
 Minimal conceptual example:
 ```json
 {
   "schema_version": 1,
   "stage": "semantic_ir",
-  "evidence_ir_ref": "generated/evidence_ir/axi_core/evidence_ir.json",
+  "evidence_ir_path": "generated/evidence_ir/axi_core/evidence_ir.json",
   "actors": [
     {
       "actor_id": "valid_ready_channel",

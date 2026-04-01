@@ -11,5 +11,6 @@ pub fn run(cli: Cli) -> Result<()> {
         Commands::Inspect(args) => commands::inspect::run(args),
         Commands::Ingest(args) => commands::ingest::run(args),
         Commands::Evidence(args) => commands::evidence::run(args),
+        Commands::Semantic(args) => commands::semantic::run(args),
     }
 }

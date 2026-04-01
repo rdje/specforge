@@ -57,9 +57,10 @@
 - the repository now contains a renamed `specforge` crate and CLI
 - the active Rust codebase no longer treats `spec2fsm` as the primary identity
 - the canonical product boundary is now described consistently as `IntentIR`
-- the first real implemented stages are `SourceIR` and `EvidenceIR`
+- the first real implemented stages are `SourceIR`, `EvidenceIR`, and `SemanticIR`
 - `SourceIR` now includes a real Docling-backed structured PDF materialization path with promoted markdown, page artifacts, visual assets, metadata JSON, and backend raw JSON
 - `EvidenceIR` now builds multimodal evidence records instead of remaining text-only scaffolding
+- `SemanticIR` now builds a first backend-neutral semantic layer instead of remaining scaffolding only
 
 ## Structured PDF normalization implementation
 - execute-mode PDF ingest is now orchestrated from `crates/specforge/src/ir/source.rs`
@@ -89,6 +90,20 @@
   - emits heuristic extracted-statement classes for source facts, derived rules, local design decisions, and explicit abstractions
 - the current first-pass implementation is intentionally deterministic and inspectable rather than LLM-driven
 - deeper OCR, chart extraction, and richer visual interpretation remain future enrichment work for later EvidenceIR/SemanticIR slices
+
+## First executable SemanticIR stage
+- execute-mode `SemanticIR` construction is now orchestrated from `crates/specforge/src/commands/semantic.rs`
+- the core builder lives in `crates/specforge/src/ir/semantic.rs`
+- `SemanticIR::build` now:
+  - loads persisted `EvidenceIR` JSON from disk
+  - derives artifact layout under `generated/semantic_ir/<document_key>/semantic_ir.json`
+  - discovers actors from explicit role terms and falls back to interface-derived channel actors when the evidence names signals but not endpoints
+  - discovers interfaces from recurring grouped signal names
+  - derives phases from section structure and sequencing language
+  - extracts invariants, contracts, gates, and abstractions from inspectable heuristics over evidence statements
+  - emits decomposition candidates from section/topic clustering
+  - emits explicit residual decisions when actor boundaries, overlapping interfaces, or ambiguous visual evidence remain unresolved
+- the current first-pass implementation remains deterministic and conservative; it is meant to expose candidate semantics and unresolved ambiguity, not to invent a final canonical intent model
 
 ## Documentation surface currently steering the implementation
 - `README.md`
@@ -124,6 +139,8 @@
   - `SourceIR` preview/materialization command
 - `src/commands/evidence.rs`
   - `EvidenceIR` preview/materialization command
+- `src/commands/semantic.rs`
+  - `SemanticIR` preview/materialization command
 - `src/ir/mod.rs`
   - stage identifiers and IR namespace
 - `src/ir/source.rs`
@@ -133,7 +150,7 @@
 - `src/ir/evidence.rs`
   - first real multimodal `EvidenceIR` builder for text spans, figure/caption linking, visual evidence, and extracted statements
 - `src/ir/semantic.rs`
-  - `SemanticIR` scaffolding
+  - first real `SemanticIR` builder for deterministic semantic lifting and residual-decision generation
 - `src/ir/intent.rs`
   - `IntentIR` scaffolding
 - `src/ir/adapters.rs`
@@ -154,10 +171,10 @@
 
 ## Immediate implementation consequences
 - do not jump to `.fsm` generation from `SourceIR`
-- keep the current `SourceIR` and `EvidenceIR` types stable enough that later `SemanticIR` builders can depend on them
-- use the newly materialized `EvidenceIR` section anchors, evidence links, and extracted statements as the substrate for the first real `SemanticIR` extractor
-- keep the current `EvidenceIR` pass visual-aware and provenance-first so later semantic lifting can stay grounded
+- keep the current `SourceIR`, `EvidenceIR`, and `SemanticIR` types stable enough that later `IntentIR` builders can depend on them
+- use the newly materialized `SemanticIR` actors, interfaces, invariants, contracts, abstractions, and residual decisions as the substrate for the first real `IntentIR` constructor
+- keep the current `EvidenceIR` and `SemanticIR` passes provenance-first so later canonicalization stays grounded
 - do not let figures, charts, or diagrams collapse into throwaway markdown placeholders if they may carry normative meaning
 
 ## Immediate next engineering target
-- build the first real `SemanticIR` extractor from grounded `EvidenceIR` artifacts
+- build the first real canonical `IntentIR` constructor from grounded `SemanticIR` artifacts

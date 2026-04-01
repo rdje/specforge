@@ -66,12 +66,13 @@
   - statement classification is explicit and inspectable
 
 ### R4 SemanticIR
-- status: In Progress
+- status: Done
 - goals:
   - lift `EvidenceIR` into actors, interfaces, phases, invariants, contracts, gates, assertions, abstractions, and decomposition candidates
   - keep the representation backend-neutral
 - completion criteria:
   - the tool can build a real `SemanticIR`
+  - `specforge semantic` previews and materializes `SemanticIR` at `generated/semantic_ir/<document_key>/semantic_ir.json`
   - semantic residual decisions are explicit
   - actor-first extraction is visible in the typed model
 
@@ -109,10 +110,9 @@
 
 ## Recommended implementation order
 1. keep the `IntentIR` product boundary explicit in all docs and code
-2. lift `EvidenceIR` into `SemanticIR`
-3. canonicalize into `IntentIR`
-4. build adapters after `IntentIR` is stable
-5. integrate validation and back-annotation
+2. canonicalize into `IntentIR`
+3. build adapters after `IntentIR` is stable
+4. integrate validation and back-annotation
 
 ## Immediate next milestone
-- build the first real `SemanticIR` lifter from `EvidenceIR` actors, interfaces, phases, invariants, and residual decisions
+- build the first real canonical `IntentIR` constructor from `SemanticIR` actors, interfaces, invariants, contracts, abstractions, and residual decisions

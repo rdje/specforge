@@ -16,10 +16,13 @@
   - `specforge ingest <source>`
   - `specforge evidence <source-ir> --dry-run`
   - `specforge evidence <source-ir>`
-- the currently implemented executable stages are `SourceIR` and `EvidenceIR`
+  - `specforge semantic <evidence-ir> --dry-run`
+  - `specforge semantic <evidence-ir>`
+- the currently implemented executable stages are `SourceIR`, `EvidenceIR`, and `SemanticIR`
 - `SourceIR` now handles existing Markdown directly and performs Docling-backed structured PDF normalization for PDF inputs
 - `EvidenceIR` now consumes ready `SourceIR` artifacts and extracts section anchors, evidence spans, visual evidence, figure/caption links, and heuristic statement classes
-- `SemanticIR`, `IntentIR`, and adapter lowering remain planned
+- `SemanticIR` now consumes ready `EvidenceIR` artifacts and lifts heuristic actors, interfaces, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions
+- `IntentIR` and adapter lowering remain planned
 
 ## Available commands today
 ### Inspect a path
@@ -84,6 +87,31 @@ cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json
   - explicit `describes` and `cites` links for caption and figure/table references
   - extracted statements classified into source facts, derived rules, local design decisions, or explicit abstractions
 
+### Preview a SemanticIR artifact
+```bash
+cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json --dry-run
+```
+- prints computed `SemanticIR` JSON without writing artifacts
+- requires an `EvidenceIR` JSON artifact
+- useful for checking:
+  - actor and interface discovery
+  - phase, invariant, and gate extraction
+  - abstraction and decomposition candidate creation
+  - semantic residual decisions before materialization
+
+### Materialize a SemanticIR artifact
+```bash
+cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json
+```
+- writes `generated/semantic_ir/<document_key>/semantic_ir.json`
+- builds:
+  - actors from role-like evidence terms or inferred channel groupings
+  - interfaces from recurring grouped signal names
+  - phases from section structure and sequencing language
+  - invariants, contracts, and gates from heuristic semantic lifting
+  - abstractions and decomposition candidates with supporting statement ids
+  - residual decisions when actor boundaries, interface grouping, or visual semantics remain ambiguous
+
 ## Planned user workflow
 1. provide a source specification
 2. build `SourceIR`
@@ -112,9 +140,10 @@ cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json
 - `.fsm` is only one adapter target among several
 
 ## Current limitation
-- `SourceIR` and the first real `EvidenceIR` pass are implemented
+- `SourceIR`, the first real `EvidenceIR` pass, and the first real `SemanticIR` pass are implemented
 - the current `EvidenceIR` extraction logic is still heuristic and does not yet perform deeper OCR, chart extraction, or semantic lifting from visual regions
-- `SemanticIR` and `IntentIR` builders are still not implemented
+- the current `SemanticIR` extraction logic is still heuristic and conservative, so later `IntentIR` work will need refinement rather than semantic invention
+- `IntentIR` builder is still not implemented
 - adapters are planned but not implemented
 - validation/back-annotation is not implemented yet
 
