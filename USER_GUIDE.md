@@ -15,7 +15,7 @@
   - `specforge ingest <source> --dry-run`
   - `specforge ingest <source>`
 - the currently implemented stage is `SourceIR`
-- `SourceIR` now reserves parser backend, page-artifact, and visual-asset fields so PDF ingestion can remain multimodal rather than markdown-only
+- `SourceIR` now handles existing Markdown directly and performs Docling-backed structured PDF normalization for PDF inputs
 - `EvidenceIR`, `SemanticIR`, `IntentIR`, and adapter planning now have typed scaffolding but not real builders yet
 
 ## Available commands today
@@ -49,7 +49,13 @@ cargo run -p specforge -- ingest README.md
 - writes `generated/source_ir/<document_key>/source_ir.json`
 - this is the first real IR artifact emitted by the tool
 - for Markdown inputs, the normalization plan points at the existing Markdown source
-- for PDF inputs, the artifact records the planned parser backend plus promoted markdown, page-artifact, metadata, and visual-asset layout even though converter execution is still a later step
+- for PDF inputs, execute mode now materializes:
+  - promoted markdown
+  - page images and page metadata sidecars
+  - visual asset crops for pictures and tables
+  - metadata JSON and backend raw JSON
+  - `page_artifacts.json` and `visual_assets.json`
+- PDF execute mode expects `docling` to be importable from `python3` or `python`; when needed, point `SPECFORGE_DOCLING_PYTHON` at the correct interpreter
 
 ## Planned user workflow
 1. provide a source specification
@@ -80,8 +86,7 @@ cargo run -p specforge -- ingest README.md
 
 ## Current limitation
 - `SourceIR` is implemented
-- structured PDF normalization and multimodal asset extraction are not implemented yet
-- `EvidenceIR`, `SemanticIR`, and `IntentIR` builders are not implemented yet
+- the first real PDF normalization backend is implemented, but `EvidenceIR`, `SemanticIR`, and `IntentIR` builders are still not implemented
 - adapters are planned but not implemented
 - validation/back-annotation is not implemented yet
 

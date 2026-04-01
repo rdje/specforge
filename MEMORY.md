@@ -41,8 +41,8 @@
   - adapters
 
 ## Latest committed baseline
-- latest_commit_hash: `006b6a5e573beb4d5f07365903cb5f25c79c7817`
-- latest_commit_brief_message: `Bootstrap specforge workspace and intent-capture baseline`
+- latest_commit_hash: `7be5253702d99945bbfd693cde148121b6b8a7ed`
+- latest_commit_brief_message: `Pivot specforge to IntentIR and multimodal IR scaffolding`
 - continuity_rule:
   - refresh this section whenever a new latest committed baseline exists at the time `MEMORY.md` is updated
 
@@ -63,25 +63,32 @@
 - typed scaffolding was added for `EvidenceIR`, `SemanticIR`, `IntentIR`, and adapter planning
 - `SourceIR` was further extended to reserve parser-backend, page-artifact, and visual-asset schema surface
 - `EvidenceIR` was further extended to reserve multimodal visual-evidence records and text-to-figure linkage
+- the next slice has now implemented a real Docling-backed PDF normalization path inside `SourceIR`
 
 ## In-flight work in this session
-- complete the IntentIR pivot in docs and code
-- rename the active CLI/crate direction to `specforge`
-- refactor the current ingest-side types into `SourceIR`
-- record the staged IR architecture clearly enough for future implementation work to follow it consistently
+- implement real structured PDF normalization inside `SourceIR`
+- refresh the live docs and continuity files for the new backend
+- run the commit workflow immediately after this task is closed
 
 ## Current execution checkpoint
-- the IntentIR pivot is implemented in the working tree and validated with:
+- `SourceIR` now has a real Docling-backed PDF materialization path
+- execute-mode PDF ingest now writes:
+  - promoted markdown
+  - page images and page metadata sidecars
+  - visual asset crops for pictures and tables
+  - metadata JSON and backend raw JSON
+  - `page_artifacts.json` and `visual_assets.json`
+- visual assets now carry backend `source_ref` values for later grounding
+- runtime discovery supports:
+  - `python3` / `python` with `docling` importable
+  - optional override via `SPECFORGE_DOCLING_PYTHON`
+  - test/advanced override via `SPECFORGE_DOCLING_HELPER`
+- the backend implementation is validated with:
   - `cargo fmt --all --manifest-path Cargo.toml`
   - `cargo test`
-  - `cargo run -p specforge -- --help`
-  - `cargo run -p specforge -- ingest README.md --dry-run`
-- the remaining `spec2fsm` references in tracked docs are historical notes only
-- `specforge ingest` now emits `SourceIR` rather than a backend-oriented ingest artifact
-- `SourceIR` now reserves parser-backend, page-artifact, and visual-asset fields for structured PDF normalization
-- `EvidenceIR` now reserves multimodal evidence, visual observations, and text-to-figure links
-- `specforge ingest README.md --dry-run` now shows the new parser backend, page-artifact manifest, visual-asset manifest, and placeholder-binding fields in the emitted `SourceIR`
-- the next implementation action is to close the remaining `SourceIR` structured-PDF-normalization gap and then build the first real multimodal `EvidenceIR` extractor
+  - `cargo run -p specforge -- ingest README.md`
+  - `SPECFORGE_DOCLING_PYTHON=/tmp/specforge-docling-venv/bin/python cargo run -p specforge -- ingest /tmp/specforge-docling-sample.pdf`
+- the next implementation action is the first real multimodal `EvidenceIR` extractor
 
 ## If resuming from an interruption
 1. read `README.md`
@@ -93,12 +100,10 @@
 7. continue with the next implementation slice unless the user redirects
 
 ## Recommended next implementation slice
-- orchestrate structured PDF normalization inside `SourceIR`
-- materialize the promoted markdown, page-artifact, metadata, and visual-asset layout recorded by `SourceIR`
 - build the first real `EvidenceIR` extractor from normalized markdown, figures, captions, and page assets
 - keep `IntentIR` as the canonical endpoint and keep adapters downstream of it
 
 ## Commit status
-- the latest committed baseline is still `006b6a5e573beb4d5f07365903cb5f25c79c7817`
-- the current working tree contains the uncommitted IntentIR pivot, CLI rename, staged IR refactor, multimodal-ingestion schema/doc updates, and validation-record updates
+- the latest committed baseline is `7be5253702d99945bbfd693cde148121b6b8a7ed`
+- the current working tree contains the uncommitted SourceIR PDF backend, live-doc refreshes, and validation-record updates for the new backend
 - before the next commit, follow `COMMIT.md`

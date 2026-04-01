@@ -74,9 +74,10 @@ It is responsible for:
 - normalization planning
 - promoted artifact layout
 - parser backend identity
-- page-artifact planning
-- visual-asset planning
-- caption and placeholder linkage planning
+- page-artifact materialization
+- visual-asset materialization
+- backend raw output capture
+- caption and visual-source linkage
 - initial automation confidence
 - source-side residual decisions
 - explicit handoff toward `EvidenceIR`
@@ -362,7 +363,7 @@ Example:
 - do not claim full automation if residual decisions still exist
 
 ## Immediate implementation implications
-- `specforge ingest` produces `SourceIR`
+- `specforge ingest` produces `SourceIR`, and for execute-mode PDF inputs it now materializes Docling-backed normalized artifacts under `generated/source_ir/<document_key>/normalized`
 - the next real builder should construct `EvidenceIR` from normalized markdown, page/asset manifests, and visual evidence anchors
 - after that, the system should build `SemanticIR`
 - only then should it construct canonical `IntentIR`

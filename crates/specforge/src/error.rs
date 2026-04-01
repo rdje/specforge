@@ -9,6 +9,16 @@ pub enum AppError {
     Json(serde_json::Error),
     MissingPath(PathBuf),
     FeatureNotYetImplemented(&'static str),
+    MissingRuntimeDependency {
+        dependency: &'static str,
+        resolution: String,
+    },
+    ExternalCommandFailed {
+        program: String,
+        exit_code: Option<i32>,
+        stderr: String,
+    },
+    InvalidBackendOutput(String),
 }
 
 impl fmt::Display for AppError {
@@ -20,6 +30,29 @@ impl fmt::Display for AppError {
             Self::FeatureNotYetImplemented(feature) => {
                 write!(f, "feature not implemented yet: {feature}")
             }
+            Self::MissingRuntimeDependency {
+                dependency,
+                resolution,
+            } => {
+                write!(
+                    f,
+                    "missing runtime dependency: {dependency}; resolution: {resolution}"
+                )
+            }
+            Self::ExternalCommandFailed {
+                program,
+                exit_code,
+                stderr,
+            } => {
+                write!(
+                    f,
+                    "external command failed: {program} (exit code: {}): {stderr}",
+                    exit_code
+                        .map(|code| code.to_string())
+                        .unwrap_or_else(|| "terminated by signal".to_string())
+                )
+            }
+            Self::InvalidBackendOutput(message) => write!(f, "invalid backend output: {message}"),
         }
     }
 }

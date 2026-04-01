@@ -1,7 +1,7 @@
+mod docling_backend;
+use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::{Path, PathBuf};
-
-use serde::Serialize;
 
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
@@ -284,9 +284,77 @@ impl SourceIr {
     pub fn to_pretty_json(&self) -> Result<String> {
         Ok(serde_json::to_string_pretty(self)?)
     }
+    pub fn materialize(&mut self) -> Result<()> {
+        if !matches!(self.source.source_kind, SourceKind::Pdf) {
+            return Ok(());
+        }
+
+        if matches!(self.normalization_plan.status, NormalizationStatus::Ready) {
+            return Ok(());
+        }
+
+        let promoted_markdown_path = self
+            .normalization_plan
+            .promoted_markdown_path
+            .clone()
+            .ok_or_else(|| {
+                AppError::InvalidBackendOutput(
+                    "pdf normalization plan is missing a promoted markdown path".to_string(),
+                )
+            })?;
+        let metadata_output_path = self
+            .normalization_plan
+            .metadata_output_path
+            .clone()
+            .ok_or_else(|| {
+                AppError::InvalidBackendOutput(
+                    "pdf normalization plan is missing a metadata output path".to_string(),
+                )
+            })?;
+
+        let backend_summary = docling_backend::materialize_pdf(
+            &self.source.canonical_path,
+            &promoted_markdown_path,
+            &metadata_output_path,
+            &self.artifact_layout,
+            &self.document_identity.document_key,
+        )?;
+
+        self.page_artifacts = backend_summary.page_artifacts;
+        self.visual_assets = backend_summary.visual_assets;
+        self.placeholder_bindings = backend_summary.placeholder_bindings;
+        self.normalization_plan.status = NormalizationStatus::Ready;
+        self.planned_actions = materialized_source_actions(&self.residual_decisions);
+        self.normalization_plan.notes.push(format!(
+            "docling materialized promoted markdown, backend raw JSON, {} page artifacts, {} picture assets, and {} table assets",
+            backend_summary.metadata.page_count,
+            backend_summary.metadata.picture_count,
+            backend_summary.metadata.table_count
+        ));
+        if let Some(version) = backend_summary.backend_version {
+            self.normalization_plan
+                .notes
+                .push(format!("docling backend version: {version}"));
+        }
+
+        Ok(())
+    }
 
     pub fn write_to_disk(&self) -> Result<()> {
         fs::create_dir_all(&self.artifact_layout.artifact_root)?;
+        if matches!(self.source.source_kind, SourceKind::Pdf)
+            && matches!(self.normalization_plan.status, NormalizationStatus::Ready)
+        {
+            fs::create_dir_all(&self.artifact_layout.normalized_root)?;
+            fs::write(
+                &self.artifact_layout.page_artifact_manifest_path,
+                serde_json::to_string_pretty(&self.page_artifacts)?,
+            )?;
+            fs::write(
+                &self.artifact_layout.visual_asset_manifest_path,
+                serde_json::to_string_pretty(&self.visual_assets)?,
+            )?;
+        }
         fs::write(&self.artifact_layout.source_ir_path, self.to_pretty_json()?)?;
         Ok(())
     }
@@ -332,7 +400,7 @@ pub struct NormalizationPlan {
     pub notes: Vec<String>,
 }
 
-#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct PageArtifact {
     pub page_id: String,
     pub page_number: u32,
@@ -342,7 +410,7 @@ pub struct PageArtifact {
     pub height_px: Option<u32>,
 }
 
-#[derive(Debug, Clone, Copy, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum VisualAssetKind {
     Figure,
@@ -354,7 +422,7 @@ pub enum VisualAssetKind {
     Unknown,
 }
 
-#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct VisualAsset {
     pub asset_id: String,
     pub asset_kind: VisualAssetKind,
@@ -362,11 +430,11 @@ pub struct VisualAsset {
     pub image_path: Option<PathBuf>,
     pub caption_text: Option<String>,
     pub caption_source_path: Option<PathBuf>,
+    pub source_ref: Option<String>,
     pub placeholder_text: Option<String>,
     pub note: Option<String>,
 }
-
-#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct PlaceholderBinding {
     pub placeholder_text: String,
     pub asset_id: String,
@@ -427,6 +495,19 @@ fn planned_actions(
     actions.push("plan_adapter_lowering".to_string());
 
     actions
+}
+
+fn materialized_source_actions(residual_decisions: &[ResidualDecisionPacket]) -> Vec<String> {
+    if !residual_decisions.is_empty() {
+        return vec!["resolve_source_ir_residual_decisions".to_string()];
+    }
+
+    vec![
+        "build_evidence_ir".to_string(),
+        "build_semantic_ir".to_string(),
+        "build_intent_ir".to_string(),
+        "plan_adapter_lowering".to_string(),
+    ]
 }
 
 fn directory_source_packet() -> ResidualDecisionPacket {
@@ -527,8 +608,10 @@ fn normalized_extension(path: &Path) -> Option<String> {
 
 #[cfg(test)]
 mod tests {
+    use std::env;
     use std::fs;
     use std::path::Path;
+    use std::sync::Mutex;
 
     use tempfile::tempdir;
 
@@ -536,6 +619,37 @@ mod tests {
     use crate::ir::IrStage;
 
     use super::{NormalizationBackend, SourceIr, SourceKind, document_key, stable_stem};
+
+    static ENV_LOCK: Mutex<()> = Mutex::new(());
+
+    struct EnvVarGuard {
+        key: &'static str,
+        original: Option<std::ffi::OsString>,
+    }
+
+    impl EnvVarGuard {
+        fn set_path(key: &'static str, value: &Path) -> Self {
+            let original = env::var_os(key);
+            // SAFETY: tests serialize environment mutation with ENV_LOCK.
+            unsafe { env::set_var(key, value) };
+            Self { key, original }
+        }
+    }
+
+    impl Drop for EnvVarGuard {
+        fn drop(&mut self) {
+            match &self.original {
+                Some(value) => {
+                    // SAFETY: tests serialize environment mutation with ENV_LOCK.
+                    unsafe { env::set_var(self.key, value) };
+                }
+                None => {
+                    // SAFETY: tests serialize environment mutation with ENV_LOCK.
+                    unsafe { env::remove_var(self.key) };
+                }
+            }
+        }
+    }
 
     #[test]
     fn detects_pdf_extension_case_insensitively() {
@@ -685,6 +799,135 @@ mod tests {
         assert!(source_ir_json.contains("\"source_kind\": \"markdown\""));
         assert!(source_ir_json.contains("\"stage\": \"source_ir\""));
         assert!(source_ir_json.contains("\"backend\": \"direct_markdown\""));
+
+        Ok(())
+    }
+
+    #[test]
+    fn pdf_source_ir_materialization_uses_backend_helper_and_writes_manifests() -> Result<()> {
+        let _env_lock = ENV_LOCK.lock().expect("environment mutex poisoned");
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("bus_spec.pdf");
+        let artifact_base = tempdir.path().join("generated").join("source_ir");
+        let helper = tempdir.path().join("docling_stub.sh");
+
+        fs::write(&source, b"%PDF-1.0")?;
+        fs::write(
+            &helper,
+            r##"#!/bin/sh
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --markdown) markdown="$2"; shift 2 ;;
+    --page-image-root) page_image_root="$2"; shift 2 ;;
+    --visual-asset-root) visual_asset_root="$2"; shift 2 ;;
+    --backend-raw-output) backend_raw_output="$2"; shift 2 ;;
+    --metadata-output) metadata_output="$2"; shift 2 ;;
+    --summary-output) summary_output="$2"; shift 2 ;;
+    *) shift ;;
+  esac
+done
+
+mkdir -p "$(dirname "$markdown")" "$page_image_root" "$visual_asset_root"
+printf '# normalized\n\n![Image](assets/picture-0001.png)\n' > "$markdown"
+printf '{}' > "$backend_raw_output"
+printf '{"backend":"docling_stub"}\n' > "$metadata_output"
+printf 'stub-page' > "$page_image_root/page-0001.png"
+printf '{"page_number":1}\n' > "$page_image_root/page-0001.json"
+printf 'stub-asset' > "$visual_asset_root/picture-0001.png"
+cat > "$summary_output" <<EOF
+{
+  "backend_version": "stub-1.0",
+  "page_artifacts": [
+    {
+      "page_id": "page_0001",
+      "page_number": 1,
+      "page_image_path": "$page_image_root/page-0001.png",
+      "layout_metadata_path": "$page_image_root/page-0001.json",
+      "width_px": 800,
+      "height_px": 600
+    }
+  ],
+  "visual_assets": [
+    {
+      "asset_id": "picture_0001",
+      "asset_kind": "figure",
+      "page_id": "page_0001",
+      "image_path": "$visual_asset_root/picture-0001.png",
+      "caption_text": "Stub figure",
+      "caption_source_path": "$backend_raw_output",
+      "source_ref": "#/pictures/0",
+      "placeholder_text": null,
+      "note": null
+    }
+  ],
+  "placeholder_bindings": [],
+  "metadata": {
+    "page_count": 1,
+    "picture_count": 1,
+    "table_count": 0
+  }
+}
+EOF
+"##,
+        )?;
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+
+            fs::set_permissions(&helper, fs::Permissions::from_mode(0o755))?;
+        }
+
+        let _env_guard = EnvVarGuard::set_path("SPECFORGE_DOCLING_HELPER", &helper);
+        let mut source_ir = SourceIr::build(&source, &artifact_base)?;
+
+        source_ir.materialize()?;
+        source_ir.write_to_disk()?;
+
+        assert_eq!(
+            source_ir.normalization_plan.status,
+            super::NormalizationStatus::Ready
+        );
+        assert_eq!(source_ir.page_artifacts.len(), 1);
+        assert_eq!(source_ir.visual_assets.len(), 1);
+        assert_eq!(
+            source_ir.visual_assets[0].source_ref.as_deref(),
+            Some("#/pictures/0")
+        );
+        assert_eq!(
+            source_ir.planned_actions,
+            vec![
+                "build_evidence_ir".to_string(),
+                "build_semantic_ir".to_string(),
+                "build_intent_ir".to_string(),
+                "plan_adapter_lowering".to_string()
+            ]
+        );
+
+        let source_ir_json =
+            fs::read_to_string(artifact_base.join("bus_spec").join("source_ir.json"))?;
+        let page_manifest = fs::read_to_string(
+            artifact_base
+                .join("bus_spec")
+                .join("normalized")
+                .join("page_artifacts.json"),
+        )?;
+        let visual_manifest = fs::read_to_string(
+            artifact_base
+                .join("bus_spec")
+                .join("normalized")
+                .join("visual_assets.json"),
+        )?;
+        let promoted_markdown = fs::read_to_string(
+            artifact_base
+                .join("bus_spec")
+                .join("normalized")
+                .join("bus_spec.md"),
+        )?;
+
+        assert!(source_ir_json.contains("\"status\": \"ready\""));
+        assert!(page_manifest.contains("\"page_id\": \"page_0001\""));
+        assert!(visual_manifest.contains("\"source_ref\": \"#/pictures/0\""));
+        assert!(promoted_markdown.contains("![Image](assets/picture-0001.png)"));
 
         Ok(())
     }

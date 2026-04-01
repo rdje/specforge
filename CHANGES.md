@@ -49,6 +49,27 @@
   - `cargo run -p specforge -- ingest README.md --dry-run`
 - confirmed that `specforge ingest README.md --dry-run` now exposes parser backend, page-artifact manifest, visual-asset manifest, and placeholder-binding fields in `SourceIR`
 - confirmed the remaining `spec2fsm` mentions are historical continuity references rather than active product naming
+- implemented the first real structured PDF normalization backend for `SourceIR`
+- added `crates/specforge/src/ir/source/docling_backend.rs` to orchestrate a Docling-backed PDF conversion flow from Rust
+- `specforge ingest <pdf>` now materializes:
+  - promoted markdown
+  - page images and per-page metadata sidecars
+  - cropped picture and table assets
+  - backend raw JSON and metadata JSON
+  - `page_artifacts.json` and `visual_assets.json`
+- `SourceIR` PDF execute mode now upgrades its normalization status from `planned_conversion` to `ready` after successful backend materialization
+- added a `source_ref` field to visual-asset records so later stages can trace assets back into backend-native structured output
+- added runtime dependency guidance:
+  - discover `docling` from `python3` or `python`
+  - optionally override with `SPECFORGE_DOCLING_PYTHON`
+- added a backend-override seam for tests and advanced local integration with `SPECFORGE_DOCLING_HELPER`
+- added a stubbed PDF materialization unit test so the real SourceIR backend path is exercised without requiring Docling inside `cargo test`
+- validated the new PDF backend with:
+  - `cargo fmt --all --manifest-path Cargo.toml`
+  - `cargo test`
+  - `cargo run -p specforge -- ingest README.md`
+  - `SPECFORGE_DOCLING_PYTHON=/tmp/specforge-docling-venv/bin/python cargo run -p specforge -- ingest /tmp/specforge-docling-sample.pdf`
+- updated the live status tracker so the remaining top-priority gap is now the first real `EvidenceIR` extractor rather than the SourceIR PDF-normalization backend
 
 ## 2026-03-31
 - initialized the `specforge` Git repository

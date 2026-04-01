@@ -9,7 +9,7 @@ fn default_artifact_base_root() -> PathBuf {
 }
 
 pub fn run(args: IngestArgs) -> Result<()> {
-    let source_ir = SourceIr::build(&args.source, &default_artifact_base_root())?;
+    let mut source_ir = SourceIr::build(&args.source, &default_artifact_base_root())?;
 
     if args.dry_run {
         println!("command: ingest");
@@ -21,6 +21,7 @@ pub fn run(args: IngestArgs) -> Result<()> {
         println!("source_ir_json:");
         println!("{}", source_ir.to_pretty_json()?);
     } else {
+        source_ir.materialize()?;
         source_ir.write_to_disk()?;
         println!("command: ingest");
         println!("mode: execute");
@@ -37,6 +38,14 @@ pub fn run(args: IngestArgs) -> Result<()> {
             "normalization_status: {}",
             source_ir.normalization_plan.status.as_str()
         );
+        if let Some(promoted_markdown_path) = &source_ir.normalization_plan.promoted_markdown_path {
+            println!(
+                "promoted_markdown_path: {}",
+                promoted_markdown_path.display()
+            );
+        }
+        println!("page_artifact_count: {}", source_ir.page_artifacts.len());
+        println!("visual_asset_count: {}", source_ir.visual_assets.len());
         println!(
             "automation_confidence: {}",
             source_ir.automation_confidence.as_str()

@@ -58,8 +58,21 @@
 - the active Rust codebase no longer treats `spec2fsm` as the primary identity
 - the canonical product boundary is now described consistently as `IntentIR`
 - the first real implemented stage is `SourceIR`
-- `SourceIR` now reserves parser-backend, page-artifact, and visual-asset fields so a future structured PDF builder has a stable landing zone
+- `SourceIR` now includes a real Docling-backed structured PDF materialization path with promoted markdown, page artifacts, visual assets, metadata JSON, and backend raw JSON
 - `EvidenceIR` now reserves multimodal evidence records instead of assuming text-only extraction
+
+## Structured PDF normalization implementation
+- execute-mode PDF ingest is now orchestrated from `crates/specforge/src/ir/source.rs`
+- the backend runner lives in `crates/specforge/src/ir/source/docling_backend.rs`
+- Rust remains the owner of canonical `SourceIR`, manifest paths, and final `source_ir.json` persistence
+- an embedded Python helper drives Docling to materialize:
+  - promoted markdown with referenced picture assets
+  - page images and per-page metadata sidecars
+  - cropped picture and table assets
+  - metadata JSON and backend raw JSON
+- runtime discovery prefers `python3` or `python` with `docling` importable, and can be overridden with `SPECFORGE_DOCLING_PYTHON`
+- tests can override the backend command with `SPECFORGE_DOCLING_HELPER` so `cargo test` exercises the full SourceIR materialization path without depending on a live Docling install
+- visual assets now carry a `source_ref` pointing back into backend-native structured output so later stages can ground evidence against the raw parser representation
 
 ## Documentation surface currently steering the implementation
 - `README.md`
@@ -96,7 +109,9 @@
 - `src/ir/mod.rs`
   - stage identifiers and IR namespace
 - `src/ir/source.rs`
-  - `SourceIR` types, normalization planning, parser backend selection, page/visual artifact planning, and source-side residual decisions
+  - `SourceIR` types, normalization planning, parser backend selection, page/visual artifact manifests, and source-side residual decisions
+- `src/ir/source/docling_backend.rs`
+  - runtime backend discovery, external Docling orchestration, and the embedded Python helper for structured PDF materialization
 - `src/ir/evidence.rs`
   - multimodal `EvidenceIR` scaffolding for text, figures, captions, and visual evidence
 - `src/ir/semantic.rs`
@@ -122,11 +137,9 @@
 ## Immediate implementation consequences
 - do not jump to `.fsm` generation from `SourceIR`
 - keep the current `SourceIR` types stable enough that later `EvidenceIR` builders can depend on them
-- close the remaining `SourceIR` structured-PDF-normalization gap before or alongside the first `EvidenceIR` extractor
+- use the newly materialized `SourceIR` page, visual-asset, and backend-raw artifacts as the substrate for the first real `EvidenceIR` extractor
 - make the first `EvidenceIR` pass visual-aware so the staged pipeline becomes real beyond the initial source layer
 - do not let figures, charts, or diagrams collapse into throwaway markdown placeholders if they may carry normative meaning
 
 ## Immediate next engineering target
-- orchestrate structured PDF normalization within `SourceIR`
-- materialize the promoted markdown, page-artifact, metadata, and visual-asset layout recorded in `SourceIR`
 - build the first real `EvidenceIR` extractor from normalized markdown, figures, captions, and page assets

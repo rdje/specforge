@@ -23,13 +23,14 @@ Use it first for the project objective, document navigation, and the current imp
   - visual-asset manifests
   - placeholder bindings for normalized sources
 - PDF normalization is now explicitly treated as structured source capture with page images, figure/table assets, captions, and markdown as a convenience view rather than the sole system of record
+- `specforge ingest <pdf>` now performs real Docling-backed structured normalization and materializes promoted markdown, page images, page metadata sidecars, visual assets, metadata JSON, backend raw JSON, and manifest files under `generated/source_ir/<document_key>/normalized`
 - explicit staged IR modules now exist for:
   - `SourceIR`
   - `EvidenceIR`
   - `SemanticIR`
   - `IntentIR`
   - adapter planning
-- the next implementation milestone is to close the remaining `SourceIR` gap for structured PDF normalization and then build the first real multimodal `EvidenceIR` extraction pass
+- the next implementation milestone is to build the first real multimodal `EvidenceIR` extraction pass on top of the now-materialized `SourceIR` page and visual artifacts
 
 ## Working naming
 - repository / project / CLI / crate name: `specforge`
@@ -128,7 +129,9 @@ Use it first for the project objective, document navigation, and the current imp
 - `crates/specforge/src/ir/mod.rs`
   - staged IR namespace and stage identifiers
 - `crates/specforge/src/ir/source.rs`
-  - `SourceIR` types, parser-backend selection, page/visual artifact planning, and ingest-side residual decisions
+  - `SourceIR` types, parser-backend selection, page/visual artifact manifests, and ingest-side residual decisions
+- `crates/specforge/src/ir/source/docling_backend.rs`
+  - Docling backend orchestration and the embedded Python helper that materializes structured PDF artifacts for `SourceIR`
 - `crates/specforge/src/ir/evidence.rs`
   - multimodal `EvidenceIR` scaffolding for text, figures, captions, and visual evidence
 - `crates/specforge/src/ir/semantic.rs`
@@ -155,6 +158,7 @@ cargo run -p specforge -- ingest README.md --dry-run
 ```
 - `specforge ingest <source> --dry-run` prints computed `SourceIR` JSON without writing artifacts
 - `specforge ingest <source>` materializes `generated/source_ir/<document_key>/source_ir.json`
+- PDF execute-mode ingest expects `docling` to be importable from `python3` or `python`; when it lives elsewhere, set `SPECFORGE_DOCLING_PYTHON=/path/to/python`
 
 ## Planned product shape
 - stage 0: build `SourceIR` from raw sources, normalized text views, structured page artifacts, and extracted visual assets

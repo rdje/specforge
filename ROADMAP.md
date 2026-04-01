@@ -35,7 +35,7 @@
   - adapter targets are described as downstream of `IntentIR`
 
 ### R2 SourceIR
-- status: Mostly Done
+- status: Done
 - goals:
   - detect source kinds
   - record source identity and canonical paths
@@ -47,10 +47,8 @@
 - completion criteria:
   - `specforge ingest` materializes `SourceIR`
   - markdown inputs are represented cleanly
-  - PDF inputs have planned promoted markdown, page-artifact, metadata, and visual-asset locations
+  - PDF inputs materialize promoted markdown, page-artifact manifests, page metadata sidecars, metadata JSON, backend raw JSON, and visual-asset manifests
   - directory and unknown inputs produce residual decisions instead of implicit failure
-- remaining gap:
-  - actual structured PDF normalization, backend orchestration, and promoted artifact materialization are still needed for full `SourceIR` closure
 
 ### R3 EvidenceIR
 - status: In Progress
@@ -110,12 +108,11 @@
 
 ## Recommended implementation order
 1. keep the `IntentIR` product boundary explicit in all docs and code
-2. close the remaining `SourceIR` structured-PDF-normalization gap
-3. build the first real multimodal `EvidenceIR` extraction pass
-4. lift `EvidenceIR` into `SemanticIR`
-5. canonicalize into `IntentIR`
-6. build adapters after `IntentIR` is stable
-7. integrate validation and back-annotation
+2. build the first real multimodal `EvidenceIR` extraction pass
+3. lift `EvidenceIR` into `SemanticIR`
+4. canonicalize into `IntentIR`
+5. build adapters after `IntentIR` is stable
+6. integrate validation and back-annotation
 
 ## Immediate next milestone
-- close the remaining `SourceIR` structured-PDF-normalization gap and build the first real `EvidenceIR` extractor from normalized markdown, figures, captions, and page assets
+- build the first real `EvidenceIR` extractor from normalized markdown, figures, captions, and page assets

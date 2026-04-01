@@ -20,7 +20,7 @@
 - Renamed CLI and staged IR architecture validation completed: Done
 - SOTA multimodal ingestion architecture defined: Done
 - Multimodal SourceIR/EvidenceIR schema validation completed: Done
-- Structured PDF normalization orchestration implemented: Not Started
+- Structured PDF normalization orchestration implemented: Done
 - EvidenceIR extraction implemented: Not Started
 - SemanticIR construction implemented: Not Started
 - IntentIR construction implemented: Not Started
@@ -30,4 +30,4 @@
 - End-to-end source-to-IntentIR pipeline implemented: In Progress
 
 ## Highest-priority remaining gap
-- Build the first real multimodal EvidenceIR extractor from normalized markdown, figures, captions, and page assets while closing the remaining structured-PDF-normalization gap in SourceIR: Not Started
+- Build the first real multimodal EvidenceIR extractor from normalized markdown, figures, captions, and page assets: Not Started
