@@ -317,16 +317,27 @@ Initial planned targets:
 - SystemVerilog
 - Verilog
 - VHDL
+Current implementation note:
+- `specforge adapt <intent-ir> --target fsm` now materializes `generated/adapters/fsm/<document_key>/adapter.json`
+- the first executable adapter slice consumes persisted `IntentIR` JSON
+- it currently selects a conservative DT-oriented root, inventories low-confidence signals, records DT/state candidates, and emits adapter-side residual decisions plus renderability blockers rather than fabricating `.fsm` text
 
-Minimal conceptual adapter plan:
+Minimal conceptual adapter artifact:
 ```json
 {
   "target": "fsm",
   "required_input_stage": "intent_ir",
-  "status": "planned",
-  "notes": [
-    "adapter target only; IntentIR remains the canonical endpoint"
-  ]
+  "intent_ir_path": "generated/intent_ir/axi_core/intent_ir.json",
+  "lowering_status": "blocked",
+  "fsm": {
+    "root_name": "axi_core",
+    "root_kind_decision": {
+      "selected_root_kind": "dt"
+    },
+    "renderability": {
+      "is_renderable": false
+    }
+  }
 }
 ```
 
@@ -385,6 +396,7 @@ Example:
 - `specforge evidence` constructs `EvidenceIR` from normalized markdown, page/asset manifests, and visual evidence anchors
 - `specforge semantic` constructs `SemanticIR` from grounded evidence
 - `specforge intent` now constructs canonical `IntentIR`
+- `specforge adapt --target fsm` now constructs a typed `.fsm` adapter artifact and blocks unsafe target text emission with explicit residual decisions
 - adapter work should follow `IntentIR`, not precede it
 
 ## Long-term documentation requirement

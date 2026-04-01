@@ -95,10 +95,13 @@
     - SystemVerilog
     - Verilog
     - VHDL
+  - land the first DT-centric `.fsm` adapter slice without leaking target assumptions backward into `IntentIR`
   - keep adapter concerns from leaking backward into `IntentIR`
 - completion criteria:
   - adapter planning is typed
-  - at least one real adapter exists after `IntentIR` is stable
+  - at least one real adapter artifact exists after `IntentIR` is stable
+  - non-renderable adapter cases stop with explicit residual decisions instead of fabricated target text
+  - real target text is emitted only when the canonical structure is renderable without semantic invention
 
 ### R7 Validation and back-annotation
 - status: Not Started
@@ -115,4 +118,4 @@
 3. integrate validation and back-annotation
 
 ## Immediate next milestone
-- build the first real adapter lowering pass from `IntentIR`, starting with a concrete backend target while keeping adapter concerns downstream of the canonical model
+- widen the first DT-centric `.fsm` adapter from a typed blocked lowering artifact to safe renderable `.fsm` text, or add the minimal canonical enrichment needed to support that honestly

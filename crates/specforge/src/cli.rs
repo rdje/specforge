@@ -1,6 +1,8 @@
 use std::path::PathBuf;
 
-use clap::{Args, Parser, Subcommand};
+use clap::{Args, Parser, Subcommand, ValueEnum};
+
+use crate::ir::adapters::AdapterTarget;
 
 #[derive(Debug, Parser)]
 #[command(
@@ -25,6 +27,8 @@ pub enum Commands {
     Semantic(SemanticArgs),
     /// Build or materialize an IntentIR artifact from a SemanticIR JSON file
     Intent(IntentArgs),
+    /// Build or materialize a target adapter artifact from an IntentIR JSON file
+    Adapt(AdaptArgs),
 }
 
 #[derive(Debug, Args)]
@@ -65,6 +69,41 @@ pub struct IntentArgs {
     /// Path to a SemanticIR JSON artifact
     pub semantic_ir: PathBuf,
     /// Do not write IntentIR artifacts; print the computed IntentIR JSON instead
+    #[arg(long)]
+    pub dry_run: bool,
+}
+
+#[derive(Debug, Clone, Copy, ValueEnum)]
+pub enum AdapterTargetArg {
+    #[value(name = "fsm")]
+    Fsm,
+    #[value(name = "systemverilog")]
+    SystemVerilog,
+    #[value(name = "verilog")]
+    Verilog,
+    #[value(name = "vhdl")]
+    Vhdl,
+}
+
+impl From<AdapterTargetArg> for AdapterTarget {
+    fn from(value: AdapterTargetArg) -> Self {
+        match value {
+            AdapterTargetArg::Fsm => AdapterTarget::Fsm,
+            AdapterTargetArg::SystemVerilog => AdapterTarget::SystemVerilog,
+            AdapterTargetArg::Verilog => AdapterTarget::Verilog,
+            AdapterTargetArg::Vhdl => AdapterTarget::Vhdl,
+        }
+    }
+}
+
+#[derive(Debug, Args)]
+pub struct AdaptArgs {
+    /// Path to an IntentIR JSON artifact
+    pub intent_ir: PathBuf,
+    /// Adapter target to lower toward
+    #[arg(long, value_enum)]
+    pub target: AdapterTargetArg,
+    /// Do not write adapter artifacts; print the computed adapter JSON instead
     #[arg(long)]
     pub dry_run: bool,
 }

@@ -22,10 +22,13 @@ Use it first for the project objective, document navigation, and the current imp
   - `semantic <evidence-ir>`
   - `intent <semantic-ir> --dry-run`
   - `intent <semantic-ir>`
+  - `adapt <intent-ir> --target fsm --dry-run`
+  - `adapt <intent-ir> --target fsm`
 - `specforge ingest` now computes and materializes `SourceIR` at `generated/source_ir/<document_key>/source_ir.json`
 - `specforge evidence` now computes and materializes `EvidenceIR` at `generated/evidence_ir/<document_key>/evidence_ir.json`
 - `specforge semantic` now computes and materializes `SemanticIR` at `generated/semantic_ir/<document_key>/semantic_ir.json`
 - `specforge intent` now computes and materializes `IntentIR` at `generated/intent_ir/<document_key>/intent_ir.json`
+- `specforge adapt --target fsm` now computes and materializes typed adapter artifacts at `generated/adapters/fsm/<document_key>/adapter.json`
 - a pinned `subs/fsmgen` git submodule now exists as a local `.fsm` reference implementation for upcoming adapter work
 - the `SourceIR` schema now reserves:
   - parser-backend identity
@@ -42,8 +45,9 @@ Use it first for the project objective, document navigation, and the current imp
   - `EvidenceIR`
   - `SemanticIR`
   - `IntentIR`
-  - adapter planning
-- the next implementation milestone is to build the first real adapter lowering pass on top of the now-materialized `IntentIR` artifacts
+  - typed adapter lowering
+- the first real `.fsm` adapter slice now materializes a DT-centric adapter artifact, selects a conservative `?dt:name` root, and blocks unsafe `.fsm` text emission with explicit residual decisions instead of fabricating target syntax
+- the next implementation milestone is to widen the `.fsm` adapter from a typed blocked lowering plan to safe renderable `.fsm` text, or add the minimal canonical enrichment needed to do that honestly
 
 ## Working naming
 - repository / project / CLI / crate name: `specforge`
@@ -153,6 +157,8 @@ Use it first for the project objective, document navigation, and the current imp
   - `SemanticIR` preview/materialization command
 - `crates/specforge/src/commands/intent.rs`
   - `IntentIR` preview/materialization command
+- `crates/specforge/src/commands/adapt.rs`
+  - `.fsm` adapter preview/materialization command for the first target-specific lowering slice
 - `crates/specforge/src/ir/mod.rs`
   - staged IR namespace and stage identifiers
 - `crates/specforge/src/ir/source.rs`
@@ -166,7 +172,7 @@ Use it first for the project objective, document navigation, and the current imp
 - `crates/specforge/src/ir/intent.rs`
   - first real `IntentIR` builder for canonical intent identity, actor responsibilities, behaviors, constraints, assumptions, and residual decisions
 - `crates/specforge/src/ir/adapters.rs`
-  - adapter targets and planning scaffolding
+  - typed adapter artifacts, DT-centric `.fsm` lowering logic, renderability status, and adapter-side residual decisions
 
 ### Planned future implementation paths
 - `fixtures/`
@@ -185,6 +191,7 @@ cargo run -p specforge -- ingest README.md --dry-run
 cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json --dry-run
 cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json --dry-run
 cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json --dry-run
+cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --target fsm --dry-run
 ```
 - `specforge ingest <source> --dry-run` prints computed `SourceIR` JSON without writing artifacts
 - `specforge ingest <source>` materializes `generated/source_ir/<document_key>/source_ir.json`
@@ -194,6 +201,8 @@ cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json -
 - `specforge semantic <evidence-ir>` materializes `generated/semantic_ir/<document_key>/semantic_ir.json`
 - `specforge intent <semantic-ir> --dry-run` prints computed `IntentIR` JSON without writing artifacts
 - `specforge intent <semantic-ir>` materializes `generated/intent_ir/<document_key>/intent_ir.json`
+- `specforge adapt <intent-ir> --target fsm --dry-run` prints computed adapter JSON without writing artifacts
+- `specforge adapt <intent-ir> --target fsm` materializes `generated/adapters/fsm/<document_key>/adapter.json` and only writes an emitted `.fsm` file when the adapter is safely renderable
 - PDF execute-mode ingest expects `docling` to be importable from `python3` or `python`; when it lives elsewhere, set `SPECFORGE_DOCLING_PYTHON=/path/to/python`
 
 ## Planned product shape

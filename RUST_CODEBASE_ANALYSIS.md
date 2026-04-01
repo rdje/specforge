@@ -18,8 +18,8 @@
 - `EvidenceIR` now has a real builder that emits typed multimodal evidence records instead of remaining text-only scaffolding
 - `SemanticIR` now has a real builder that lifts grounded evidence into inspectable semantic records and residual decisions
 - `IntentIR` now has a real builder that canonicalizes semantic records into inspectable backend-neutral intent artifacts
-- the later stages currently exist as typed scaffolding, which is valuable for architectural clarity but still needs real builders
-- the next slice should lower the now-materialized `IntentIR` outputs through the first real adapter
+- the first `.fsm` adapter slice now materializes a typed DT-centric adapter artifact and keeps unsafe target text blocked with explicit residual decisions
+- the next slice should widen that adapter toward safe renderable `.fsm` text or the minimal canonical enrichment needed for it
 
 ## Observed current state
 ### Repository contents directly observed
@@ -39,6 +39,7 @@
 - `crates/specforge/src/commands/evidence.rs`
 - `crates/specforge/src/commands/semantic.rs`
 - `crates/specforge/src/commands/intent.rs`
+- `crates/specforge/src/commands/adapt.rs`
 - `crates/specforge/src/ir/mod.rs`
 - `crates/specforge/src/ir/source.rs`
 - `crates/specforge/src/ir/source/docling_backend.rs`
@@ -56,7 +57,7 @@
 - no dedicated `specforge-adapters` crate
 - no dedicated validation crate
 - no integration-test harness beyond crate-local unit tests
-- no real builders beyond the current `SourceIR`/`EvidenceIR`/`SemanticIR`/`IntentIR` slices
+- no additional real builders beyond the current `SourceIR`/`EvidenceIR`/`SemanticIR`/`IntentIR` slices and the first `.fsm` adapter slice
 
 ### Immediate implication
 - the codebase now has a clean top-level architectural story
@@ -100,6 +101,8 @@
   - `SemanticIR` preview/materialization command
 - `src/commands/intent.rs`
   - `IntentIR` preview/materialization command
+- `src/commands/adapt.rs`
+  - `.fsm` adapter preview/materialization command
 - `src/ir/mod.rs`
   - stage identifiers for `source_ir`, `evidence_ir`, `semantic_ir`, and `intent_ir`
 - `src/ir/source.rs`
@@ -113,7 +116,7 @@
 - `src/ir/intent.rs`
   - concrete `IntentIR` builder, canonicalization heuristics, and residual-decision preservation
 - `src/ir/adapters.rs`
-  - adapter targets and adapter-plan scaffolding
+  - typed adapter artifacts, DT-centric `.fsm` lowering logic, renderability gating, and adapter-side residual-decision generation
 
 ## Assessment of current structure
 ### What is good
@@ -125,15 +128,16 @@
 - a real typed `SemanticIR` artifact now exists, so the staged pipeline now reaches a backend-neutral semantic layer before the final canonicalization stage
 - a real typed `IntentIR` artifact now exists, so the end-to-end source-to-intent pipeline is operational before adapter lowering
 - the later stages have typed names and module homes, which reduces the risk of accidental backend-first growth
-- adapter planning is separated from the canonical IR stages
+- adapter lowering is separated from the canonical IR stages
 - the IR surface now carries page and visual manifests plus backend source references that later stages can ground against
 - the repository now also contains a pinned local `fsmgen` checkout, which gives the next `.fsm` adapter slice a nearby reference implementation without changing the canonical `IntentIR` boundary
 - that `fsmgen` checkout is now explicitly contextual and read-only from the `specforge` side; any observed upstream misbehavior should be captured as a local `FSMGEN-BUG-####` report instead of a submodule edit
+- the first `.fsm` adapter slice already enforces honest renderability boundaries instead of fabricating target text from under-specified intent
 
 ### What is still insufficient
 - only `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR` have real builders today
 - deeper visual enrichment beyond caption/reference grounding is not implemented yet
-- there is no real adapter implementation yet
+- the first `.fsm` adapter slice is intentionally blocked for current `IntentIR` outputs because stable signal inventory and backend-neutral DT fragments are still missing
 - validation/back-annotation is still absent
 
 ## Architectural recommendation
@@ -147,8 +151,8 @@
 
 ### Recommended growth path from the current codebase
 #### Keep in the current crate for one more slice
-- first real adapter lowering from grounded `IntentIR`
-- initial target-specific structure emission while preserving the canonical model boundary
+- widen the first `.fsm` adapter from a typed blocked artifact toward safe renderable `.fsm` text
+- keep any new control/data enrichment backend-neutral so the canonical model boundary stays intact
 
 #### Split into dedicated crates when pressure becomes real
 - `specforge-source`
@@ -197,6 +201,7 @@
 
 ### Adapters
 - current declared ownership:
+  - `src/commands/adapt.rs`
   - `src/ir/adapters.rs`
 - dependency:
   - requires stable `IntentIR`
@@ -205,8 +210,12 @@
 - local workflow rule:
   - treat `subs/fsmgen` as read-only contextual input
   - if upstream behavior looks wrong, file a local tracked bug report under `FSMGEN-BUG-####` rather than patching the submodule here
+- current executable behavior:
+  - builds a typed `.fsm` adapter artifact from persisted `IntentIR`
+  - defaults to a DT-oriented root decision
+  - records signal candidates, DT/state candidates, renderability blockers, and adapter residual decisions
 - next real implementation target:
-  - lower canonical `IntentIR` into the first concrete backend target without leaking adapter assumptions backward
+  - widen `.fsm` emission only when the canonical model is explicit enough to avoid semantic invention
 
 ## Major risks
 ### Risk: backend leakage into IntentIR
@@ -250,8 +259,8 @@
   - provenance retention across stage boundaries
   - richer `SemanticIR` snapshots and residual-decision coverage on protocol-heavy fixtures
   - richer `IntentIR` snapshots and canonicalization coverage on protocol-heavy fixtures
-  - first adapter snapshots and lowering coverage
-  - adapter planning and eventual adapter lowering snapshots
+  - wider `.fsm` renderability coverage and snapshot stability
+  - future adapter targets beyond the first `.fsm` slice
 
 ## Validation completed in this session
 - `cargo fmt --all --manifest-path Cargo.toml`
@@ -284,10 +293,12 @@
   - passed and materialized a markdown-backed `IntentIR` with 2 actors, 7 behaviors, 3 constraints, 1 assumption, and 0 residual decisions
 - `cargo run -p specforge -- intent generated/semantic_ir/specforge_docling_sample/semantic_ir.json`
   - passed and materialized a PDF-backed `IntentIR` with 2 actors, 28 behaviors, 24 constraints, 1 assumption, and 2 residual decisions
+- `cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/handshake/intent_ir.json --target fsm`
+  - passed and materialized a typed `.fsm` adapter artifact with `lowering_status: blocked`, `selected_root_kind: dt`, 2 signal candidates, 1 DT candidate, and 3 adapter residual decisions
 - repo-wide stale-name sweep
   - remaining `spec2fsm` references are historical notes only, not active CLI or architecture surfaces
 
 ## Current recommendation
 - keep the current single-crate workspace for one more slice
-- next, build the first real adapter lowering pass on top of the newly materialized `IntentIR` artifacts
+- next, widen the first `.fsm` adapter from typed blocked artifacts to safe renderable `.fsm` text or the minimal canonical enrichment needed for that
 - keep `IntentIR` canonical and resist any temptation to make `.fsm` the hidden endpoint again

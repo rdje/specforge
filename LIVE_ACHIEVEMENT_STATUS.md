@@ -19,7 +19,7 @@
 - EvidenceIR multimodal visual-evidence scaffolding implemented: Done
 - SemanticIR scaffolding implemented: Done
 - IntentIR scaffolding implemented: Done
-- Adapter planning scaffolding implemented: Done
+- Adapter layer scaffolding implemented: Done
 - Pinned `fsmgen` reference submodule added: Done
 - Renamed CLI and staged IR architecture validation completed: Done
 - SOTA multimodal ingestion architecture defined: Done
@@ -28,10 +28,12 @@
 - EvidenceIR extraction implemented: Done
 - SemanticIR construction implemented: Done
 - IntentIR construction implemented: Done
-- `.fsm` adapter implemented: Not Started
+- `specforge adapt` command created: Done
+- First DT-centric `.fsm` adapter artifact implemented: Done
+- `.fsm` target text emission implemented for safe renderable cases: In Progress
 - SystemVerilog/Verilog/VHDL adapters implemented: Not Started
 - Validation and back-annotation pipeline implemented: Not Started
 - End-to-end source-to-IntentIR pipeline implemented: Done
 
 ## Highest-priority remaining gap
-- Build the first real adapter lowering pass from IntentIR artifacts: Not Started
+- Widen the `.fsm` adapter from typed blocked DT plans to safe renderable `.fsm` text or the minimal canonical enrichments needed for it: In Progress

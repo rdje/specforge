@@ -20,12 +20,14 @@
   - `specforge semantic <evidence-ir>`
   - `specforge intent <semantic-ir> --dry-run`
   - `specforge intent <semantic-ir>`
-- the currently implemented executable stages are `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR`
+  - `specforge adapt <intent-ir> --target fsm --dry-run`
+  - `specforge adapt <intent-ir> --target fsm`
+- the currently implemented executable IR stages are `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR`
 - `SourceIR` now handles existing Markdown directly and performs Docling-backed structured PDF normalization for PDF inputs
 - `EvidenceIR` now consumes ready `SourceIR` artifacts and extracts section anchors, evidence spans, visual evidence, figure/caption links, and heuristic statement classes
 - `SemanticIR` now consumes ready `EvidenceIR` artifacts and lifts heuristic actors, interfaces, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions
 - `IntentIR` now consumes ready `SemanticIR` artifacts and canonicalizes actor responsibilities, behaviors, constraints, assumptions, and residual decisions
-- adapter lowering remains planned
+- the first `.fsm` adapter slice now consumes ready `IntentIR` artifacts and materializes a typed DT-centric adapter artifact; unsafe `.fsm` text emission remains blocked with explicit residual decisions
 
 ## Available commands today
 ### Inspect a path
@@ -140,6 +142,30 @@ cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json
   - assumptions from abstractions and conservative canonicalization heuristics
   - residual decisions preserved from `SemanticIR` plus any canonicalization-specific ambiguity
 
+### Preview an `.fsm` adapter artifact
+```bash
+cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --target fsm --dry-run
+```
+- prints computed adapter JSON without writing artifacts
+- requires an `IntentIR` JSON artifact
+- useful for checking:
+  - root-kind selection (`?dt:name` vs future broader roots)
+  - low-confidence signal inventory
+  - DT candidates and any state hints
+  - renderability blockers and required canonical enrichments
+  - adapter-side residual decisions before materialization
+
+### Materialize an `.fsm` adapter artifact
+```bash
+cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --target fsm
+```
+- writes `generated/adapters/fsm/<document_key>/adapter.json`
+- currently:
+  - selects a conservative DT-oriented root unless canonical sequencing is explicit enough for a true `?fsm:name` root
+  - inventories low-confidence signal candidates from canonical intent statements
+  - records DT candidates, renderability blockers, and adapter residual decisions in typed JSON
+  - writes an emitted `.fsm` file only when the adapter is safely renderable, which the current first slice usually reports as `emitted_target_path: none`
+
 ## Planned user workflow
 1. provide a source specification
 2. build `SourceIR`
@@ -155,7 +181,7 @@ cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json
 - `specforge evidence <source-ir>`
 - `specforge semantic <evidence-ir>`
 - `specforge intent <semantic-ir>`
-- `specforge adapt <intent-ir> --target <fsm|systemverilog|verilog|vhdl>`
+- `specforge adapt <intent-ir> --target <fsm|systemverilog|verilog|vhdl>` (today, only `fsm` is implemented)
 - `specforge validate <artifact>`
 
 ## Expected user-visible principles
@@ -172,7 +198,7 @@ cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json
 - the current `EvidenceIR` extraction logic is still heuristic and does not yet perform deeper OCR, chart extraction, or semantic lifting from visual regions
 - the current `SemanticIR` extraction logic is still heuristic and conservative, so later `IntentIR` work will need refinement rather than semantic invention
 - the current `IntentIR` canonicalization logic is still heuristic and conservative, so adapter work should refine backend lowering rather than treat the current pass as a complete semantic endpoint
-- adapters are planned but not implemented
+- the first `.fsm` adapter slice is implemented, but it is intentionally conservative and usually blocked until `IntentIR` grows stable signal inventory and backend-neutral DT fragments
 - validation/back-annotation is not implemented yet
 
 ## Where to look next

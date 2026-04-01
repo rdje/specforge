@@ -41,7 +41,9 @@
   - `semantic <evidence-ir>`
   - `intent <semantic-ir> --dry-run`
   - `intent <semantic-ir>`
-- the currently implemented real stage artifacts are `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR`
+  - `adapt <intent-ir> --target fsm --dry-run`
+  - `adapt <intent-ir> --target fsm`
+- the currently implemented real stage artifacts are `SourceIR`, `EvidenceIR`, `SemanticIR`, `IntentIR`, and the first `.fsm` adapter artifact
 - explicit staged IR modules now exist for:
   - `SourceIR`
   - `EvidenceIR`
@@ -50,8 +52,8 @@
   - adapters
 
 ## Latest committed baseline
-- latest_commit_hash: `d8b39a5cd6c66ce5a3a4c0d09df9a8f9ac801400`
-- latest_commit_brief_message: `Add pinned fsmgen reference submodule`
+- latest_commit_hash: `a1195962b78ac492b0d075d4b34dd5f019f96d20`
+- latest_commit_brief_message: `Record read-only fsmgen reference contract`
 - continuity_rule:
   - refresh this section whenever a new latest committed baseline exists at the time `MEMORY.md` is updated
 
@@ -78,10 +80,11 @@
 - the current slice has now implemented the first real `IntentIR` constructor and CLI on top of ready `SemanticIR` artifacts
 - the current slice has now added `subs/fsmgen` as a pinned local git submodule for `.fsm` adapter reference work
 - the user has now clarified that `subs/fsmgen` is contextual-only, read-only, and any observed upstream misbehavior must be tracked locally under `FSMGEN-BUG-####`
+- the current slice has now implemented the first DT-centric `.fsm` adapter artifact and `specforge adapt` command on top of persisted `IntentIR`
 
 ## In-flight work in this session
-- refresh the live docs and continuity files for the read-only `fsmgen` usage contract
-- run the commit workflow immediately after this task is closed
+- refresh the live docs and continuity files for the first real adapter slice
+- run the commit workflow for the completed adapter slice
 
 ## Current execution checkpoint
 - `IntentIR` now has a real build/materialization path
@@ -92,6 +95,9 @@
 - execute-mode `specforge intent` now writes:
   - `generated/intent_ir/<document_key>/intent_ir.json`
   - intent identity, actor responsibilities, behaviors, constraints, assumptions, and residual decisions
+- execute-mode `specforge adapt --target fsm` now writes:
+  - `generated/adapters/fsm/<document_key>/adapter.json`
+  - DT-centric root-kind choice, low-confidence signal inventory, DT/state candidates, renderability blockers, and adapter residual decisions
 - the current validation set is:
   - `cargo fmt --all --manifest-path Cargo.toml`
   - `cargo test --manifest-path Cargo.toml`
@@ -104,7 +110,12 @@
   - `cargo run -p specforge -- evidence generated/source_ir/specforge_docling_sample/source_ir.json`
   - `cargo run -p specforge -- semantic generated/evidence_ir/specforge_docling_sample/evidence_ir.json`
   - `cargo run -p specforge -- intent generated/semantic_ir/specforge_docling_sample/semantic_ir.json`
-- the next implementation action is the first real adapter lowering pass
+  - `cargo run --manifest-path Cargo.toml -- ingest <temp>/handshake.md`
+  - `cargo run --manifest-path Cargo.toml -- evidence generated/source_ir/handshake/source_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/handshake/evidence_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/handshake/semantic_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/handshake/intent_ir.json --target fsm`
+- the next implementation action is to widen the `.fsm` adapter from typed blocked artifacts to safe renderable `.fsm` text, or minimally enrich `IntentIR` to support that honestly
 
 ## If resuming from an interruption
 1. read `README.md`
@@ -116,10 +127,10 @@
 7. continue with the next implementation slice unless the user redirects
 
 ## Recommended next implementation slice
-- build the first real adapter lowering pass from grounded `IntentIR` artifacts
+- widen the first DT-centric `.fsm` adapter from typed blocked artifacts to safe renderable `.fsm` text
 - keep `IntentIR` as the canonical endpoint and keep adapters downstream of it
 
 ## Commit status
-- the latest committed baseline is `d8b39a5cd6c66ce5a3a4c0d09df9a8f9ac801400`
-- the current working tree contains the uncommitted live-doc refreshes for the read-only `fsmgen` usage contract and local upstream bug-report rule
+- the latest committed baseline is `a1195962b78ac492b0d075d4b34dd5f019f96d20`
+- the current working tree contains the uncommitted first adapter slice plus the matching live-doc refreshes
 - before the next commit, follow `COMMIT.md`

@@ -1,5 +1,31 @@
 # CHANGES
 ## 2026-04-01
+- implemented the first real adapter slice on top of persisted `IntentIR` artifacts
+- added `specforge adapt <intent-ir> --target fsm [--dry-run]` to preview or materialize `generated/adapters/fsm/<document_key>/adapter.json`
+- replaced the old adapter planning-only scaffolding with a typed adapter artifact model in `crates/specforge/src/ir/adapters.rs`
+- the first `.fsm` adapter slice now:
+  - loads persisted `IntentIR` JSON from disk
+  - selects a conservative DT-oriented root instead of inventing FSM or composition semantics
+  - inventories low-confidence signal candidates and DT/state candidate structure from canonical intent records
+  - preserves upstream residual decisions and emits adapter-side residuals for missing signal inventory, DT fragments, and broader root-kind expansion
+  - blocks emitted `.fsm` text when target syntax would require semantic invention
+- added adapter-stage unit tests for:
+  - handshake-driven `.fsm` adapter artifact construction
+  - wrong-stage input rejection before deserializing as `IntentIR`
+- validated the new adapter slice with:
+  - `cargo fmt --all --manifest-path Cargo.toml`
+  - `cargo test --manifest-path Cargo.toml`
+  - `cargo run --manifest-path Cargo.toml -- ingest <temp>/handshake.md`
+  - `cargo run --manifest-path Cargo.toml -- evidence generated/source_ir/handshake/source_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/handshake/evidence_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/handshake/semantic_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/handshake/intent_ir.json --target fsm`
+- confirmed the representative end-to-end adapter output is currently honest and blocked rather than fabricated:
+  - `lowering_status: blocked`
+  - `selected_root_kind: dt`
+  - `signal_candidate_count: 2`
+  - `decision_tree_candidate_count: 1`
+  - `residual_decision_count: 3`
 - pivoted the repository objective so `IntentIR` is now the canonical product boundary
 - rewrote the core docs around the explicit staged pipeline:
   - `SourceIR`

@@ -64,6 +64,7 @@
 - `EvidenceIR` now builds multimodal evidence records instead of remaining text-only scaffolding
 - `SemanticIR` now builds a first backend-neutral semantic layer instead of remaining scaffolding only
 - `IntentIR` now builds a first canonical backend-neutral intent layer instead of remaining scaffolding only
+- the first `.fsm` adapter slice now builds a typed DT-centric adapter artifact instead of leaving adapters as planning-only scaffolding
 
 ## Structured PDF normalization implementation
 - execute-mode PDF ingest is now orchestrated from `crates/specforge/src/ir/source.rs`
@@ -121,6 +122,18 @@
   - preserves semantic residual decisions and adds canonicalization-specific residuals only when the intent model would otherwise become speculative
 - the current first-pass implementation remains deterministic and conservative; it is meant to produce a stable canonical intent surface before adapter work, not to overfit one backend target
 
+## First executable adapter stage
+- execute-mode adapter construction is now orchestrated from `crates/specforge/src/commands/adapt.rs`
+- the core builder lives in `crates/specforge/src/ir/adapters.rs`
+- `AdapterArtifact::build` now:
+  - loads persisted `IntentIR` JSON from disk
+  - derives typed adapter artifacts under `generated/adapters/fsm/<document_key>/adapter.json`
+  - selects a conservative DT-oriented `.fsm` root decision unless the canonical model carries stronger sequencing evidence
+  - inventories low-confidence signal candidates and DT/state candidate structure from canonical intent records
+  - preserves upstream residual decisions and emits adapter-side residual decisions for missing signal inventory, DT fragments, and broader root-kind expansion
+  - blocks emitted `.fsm` text when signal declarations or DT predicates/actions would require semantic invention
+- the current first-pass implementation is intentionally honest rather than over-productive; it proves the adapter boundary, target-specific typing, and renderability gating before widening emission
+
 ## Documentation surface currently steering the implementation
 - `README.md`
   - single entry point and quick orientation
@@ -159,6 +172,8 @@
   - `SemanticIR` preview/materialization command
 - `src/commands/intent.rs`
   - `IntentIR` preview/materialization command
+- `src/commands/adapt.rs`
+  - `.fsm` adapter preview/materialization command
 - `src/ir/mod.rs`
   - stage identifiers and IR namespace
 - `src/ir/source.rs`
@@ -172,7 +187,7 @@
 - `src/ir/intent.rs`
   - first real `IntentIR` builder for deterministic canonicalization and residual-decision preservation
 - `src/ir/adapters.rs`
-  - adapter targets and planning scaffolding
+  - typed adapter artifacts, DT-centric `.fsm` lowering logic, and adapter-side residual-decision/renderability reporting
 
 ## Newly completed architectural pivot
 - the CLI/crate identity is now `specforge`
@@ -198,4 +213,5 @@
 - do not let figures, charts, or diagrams collapse into throwaway markdown placeholders if they may carry normative meaning
 
 ## Immediate next engineering target
-- build the first real adapter lowering pass from grounded `IntentIR` artifacts
+- widen the first `.fsm` adapter from a typed blocked DT-centric artifact to safe renderable `.fsm` text
+- if that widening still requires semantic invention, add the smallest backend-neutral `IntentIR` enrichment needed for signal inventory and DT fragments instead of pushing target-specific inference into the adapter
