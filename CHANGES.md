@@ -149,6 +149,9 @@
 - added `subs/fsmgen` as a pinned git submodule using the SSH remote `git@github.com:rdje/fsmgen.git`
 - pinned the local `fsmgen` reference checkout at submodule revision `57f00e581b4fc9a2aa02318846d1eb8a726c8960`
 - updated the live documentation surface so the repo map and continuity notes now treat `subs/fsmgen` as the local `.fsm` reference implementation for upcoming adapter work
+- recorded the workflow rule that `subs/fsmgen` is contextual and read-only inside `specforge`
+- established the local upstream bug-report ID format `FSMGEN-BUG-####` for any future `fsmgen` misbehavior found during adapter work
+- no new `fsmgen` misbehavior was identified in this slice, so no local `FSMGEN-BUG-####` report was filed yet
 
 ## 2026-03-31
 - initialized the `specforge` Git repository

@@ -125,7 +125,8 @@ Use it first for the project objective, document navigation, and the current imp
 
 ### Reference adapter/tooling paths
 - `subs/fsmgen/`
-  - pinned local checkout of `fsmgen`, used as a reference implementation while building the first `.fsm` adapter
+  - pinned local checkout of `fsmgen`, used as read-only contextual reference while building the first `.fsm` adapter
+  - do not modify it from this repository; if upstream misbehavior is discovered, track it locally as a bug report instead
 
 ### Current Rust implementation paths
 - `Cargo.toml`

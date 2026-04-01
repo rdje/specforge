@@ -23,6 +23,9 @@
 - `ROADMAP.md` must track the goals, remaining work, and advancement
 - `README.md` must be the single entry point and its last line must be:
   - `Read SESSION_BOOTSTRAP.md and start from there.`
+- `subs/fsmgen` is contextual only and must be treated as read-only from `specforge`
+- if `fsmgen` misbehavior is identified, file a thorough local tracked bug report instead of patching the submodule in place
+- use the local bug-report ID format `FSMGEN-BUG-####` for such upstream reports
 
 ## Repository state at this checkpoint
 - Git repository exists
@@ -47,8 +50,8 @@
   - adapters
 
 ## Latest committed baseline
-- latest_commit_hash: `b128fd5808b846cfd8e0d59549babdd3b3e81d22`
-- latest_commit_brief_message: `Implement first real IntentIR canonicalization stage`
+- latest_commit_hash: `d8b39a5cd6c66ce5a3a4c0d09df9a8f9ac801400`
+- latest_commit_brief_message: `Add pinned fsmgen reference submodule`
 - continuity_rule:
   - refresh this section whenever a new latest committed baseline exists at the time `MEMORY.md` is updated
 
@@ -74,9 +77,10 @@
 - the current slice has now implemented the first real `SemanticIR` extractor and CLI on top of ready `EvidenceIR` artifacts
 - the current slice has now implemented the first real `IntentIR` constructor and CLI on top of ready `SemanticIR` artifacts
 - the current slice has now added `subs/fsmgen` as a pinned local git submodule for `.fsm` adapter reference work
+- the user has now clarified that `subs/fsmgen` is contextual-only, read-only, and any observed upstream misbehavior must be tracked locally under `FSMGEN-BUG-####`
 
 ## In-flight work in this session
-- refresh the live docs and continuity files for the new `fsmgen` submodule addition
+- refresh the live docs and continuity files for the read-only `fsmgen` usage contract
 - run the commit workflow immediately after this task is closed
 
 ## Current execution checkpoint
@@ -84,6 +88,7 @@
 - the repository now includes:
   - `.gitmodules`
   - `subs/fsmgen` pinned at `57f00e581b4fc9a2aa02318846d1eb8a726c8960`
+- `subs/fsmgen` is now explicitly treated as read-only contextual input, with future upstream bug reports to be tracked locally as `FSMGEN-BUG-####`
 - execute-mode `specforge intent` now writes:
   - `generated/intent_ir/<document_key>/intent_ir.json`
   - intent identity, actor responsibilities, behaviors, constraints, assumptions, and residual decisions
@@ -115,6 +120,6 @@
 - keep `IntentIR` as the canonical endpoint and keep adapters downstream of it
 
 ## Commit status
-- the latest committed baseline is `b128fd5808b846cfd8e0d59549babdd3b3e81d22`
-- the current working tree contains the uncommitted `.gitmodules` manifest, the `subs/fsmgen` submodule entry, and live-doc refreshes for the new pinned reference dependency
+- the latest committed baseline is `d8b39a5cd6c66ce5a3a4c0d09df9a8f9ac801400`
+- the current working tree contains the uncommitted live-doc refreshes for the read-only `fsmgen` usage contract and local upstream bug-report rule
 - before the next commit, follow `COMMIT.md`

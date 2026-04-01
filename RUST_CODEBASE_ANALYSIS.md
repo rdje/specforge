@@ -128,6 +128,7 @@
 - adapter planning is separated from the canonical IR stages
 - the IR surface now carries page and visual manifests plus backend source references that later stages can ground against
 - the repository now also contains a pinned local `fsmgen` checkout, which gives the next `.fsm` adapter slice a nearby reference implementation without changing the canonical `IntentIR` boundary
+- that `fsmgen` checkout is now explicitly contextual and read-only from the `specforge` side; any observed upstream misbehavior should be captured as a local `FSMGEN-BUG-####` report instead of a submodule edit
 
 ### What is still insufficient
 - only `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR` have real builders today
@@ -201,6 +202,9 @@
   - requires stable `IntentIR`
 - nearby reference implementation:
   - `subs/fsmgen/`
+- local workflow rule:
+  - treat `subs/fsmgen` as read-only contextual input
+  - if upstream behavior looks wrong, file a local tracked bug report under `FSMGEN-BUG-####` rather than patching the submodule here
 - next real implementation target:
   - lower canonical `IntentIR` into the first concrete backend target without leaking adapter assumptions backward
 

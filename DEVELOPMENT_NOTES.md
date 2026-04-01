@@ -59,6 +59,7 @@
 - the canonical product boundary is now described consistently as `IntentIR`
 - the first real implemented stages are `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR`
 - the repository now also includes `subs/fsmgen` as a pinned git submodule for local `.fsm` reference work during adapter implementation
+- `subs/fsmgen` is now explicitly treated as contextual and read-only from `specforge`
 - `SourceIR` now includes a real Docling-backed structured PDF materialization path with promoted markdown, page artifacts, visual assets, metadata JSON, and backend raw JSON
 - `EvidenceIR` now builds multimodal evidence records instead of remaining text-only scaffolding
 - `SemanticIR` now builds a first backend-neutral semantic layer instead of remaining scaffolding only
@@ -191,6 +192,8 @@
 - keep the current `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR` types stable enough that later adapter builders can depend on them
 - use the newly materialized `IntentIR` actors, behaviors, constraints, assumptions, and residual decisions as the substrate for the first real adapter lowerings
 - use `subs/fsmgen` as a local reference implementation for `.fsm` expectations and comparisons, but do not let that reference redefine the canonical `IntentIR` boundary
+- do not edit `subs/fsmgen` from this repository; if upstream behavior appears wrong, file a thorough local tracked bug report instead
+- use the local upstream bug-report ID format `FSMGEN-BUG-####` when such issues are found
 - keep the current `EvidenceIR`, `SemanticIR`, and `IntentIR` passes provenance-first so later adapter lowering stays grounded
 - do not let figures, charts, or diagrams collapse into throwaway markdown placeholders if they may carry normative meaning
 
