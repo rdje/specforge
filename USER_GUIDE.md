@@ -27,7 +27,7 @@
 - `EvidenceIR` now consumes ready `SourceIR` artifacts and extracts section anchors, evidence spans, visual evidence, figure/caption links, and heuristic statement classes
 - `SemanticIR` now consumes ready `EvidenceIR` artifacts and lifts heuristic actors, interfaces, backend-neutral system/init records, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions
 - `IntentIR` now consumes ready `SemanticIR` artifacts and canonicalizes actor responsibilities, interface/control/system/init surface, behaviors, constraints, assumptions, and residual decisions
-- the first `.fsm` adapter slice now consumes ready `IntentIR` artifacts and materializes a typed DT-centric adapter artifact; explicit standalone combinational and sequential DT cases are renderable, and broader unsafe `.fsm` text emission remains blocked with explicit residual decisions
+- the first `.fsm` adapter slices now consume ready `IntentIR` artifacts and materialize typed adapter artifacts; explicit standalone combinational and sequential DT cases are renderable, explicit state-graph cases can now lower to structured `?fsm:name`, and broader composition-level `.fsm` text emission remains blocked with explicit residual decisions
 
 ## Available commands today
 ### Inspect a path
@@ -154,9 +154,9 @@ cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --targ
 - prints computed adapter JSON without writing artifacts
 - requires an `IntentIR` JSON artifact
 - useful for checking:
-  - root-kind selection (`?dt:name` vs future broader roots)
+  - root-kind selection (`?dt:name`, `?fsm:name`, or future broader roots)
   - canonical signal inventory, including direction/width hints when known
-  - canonical control-block candidates and any state hints
+  - canonical control-block candidates plus any explicit regular-state and transition candidates
   - renderability blockers and required canonical enrichments
   - adapter-side residual decisions before materialization
 
@@ -166,10 +166,10 @@ cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --targ
 ```
 - writes `generated/adapters/fsm/<document_key>/adapter.json`
 - currently:
-  - selects a conservative DT-oriented root unless canonical sequencing is explicit enough for a true `?fsm:name` root
-  - consumes canonical interface inventory, backend-neutral system/init records, and backend-neutral guarded/action fragments from `IntentIR`
-  - writes a real standalone `.fsm` file when every referenced signal has explicit width/direction, every control block is fully typed, and any standalone sequential DT case also has explicit system/init facts
-  - keeps blocked cases explicit when signal roles, widths, system/init facts, true FSM state structure, or broader roots would otherwise require invention
+  - selects `?dt:name` for honest standalone DT cases and `?fsm:name` when explicit regular states and transition targets are present
+  - consumes canonical interface inventory, backend-neutral system/init records, backend-neutral guarded/action fragments, and explicit regular-state/transition records from `IntentIR`
+  - writes a real standalone or structured `.fsm` file when every referenced signal has explicit width/direction, every rendered control fragment is fully typed, and any sequential/stateful case also has explicit system/init facts
+  - keeps blocked cases explicit when signal roles, widths, system/init facts, the regular-state graph, or broader composition roots would otherwise require invention
 - current explicit renderable cues:
   - `Signal DATA_IN is input width 8.`
   - `Signal DATA_OUT is output width 8.`
@@ -180,6 +180,10 @@ cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --targ
   - `Reset rst_n is asynchronous active low.`
   - `Init ACC = 8'0.`
   - `Block accumulate: ACC <- DATA_IN.`
+  - `State idle is initial.`
+  - `State busy.`
+  - `Transition idle -> busy when GO.`
+  - `Transition busy -> idle when DONE.`
 
 ## Planned user workflow
 1. provide a source specification
@@ -213,7 +217,7 @@ cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --targ
 - the current `EvidenceIR` extraction logic is still heuristic and does not yet perform deeper OCR, chart extraction, or semantic lifting from visual regions
 - the current `SemanticIR` extraction logic is still heuristic and conservative, so later `IntentIR` work will need refinement rather than semantic invention
 - the current `IntentIR` canonicalization logic is still heuristic and conservative, so adapter work should refine backend lowering rather than treat the current pass as a complete semantic endpoint
-- the first `.fsm` adapter slice is implemented and can now emit standalone renderable `?dt:name` text for explicit canonical combinational and sequential DT cases, but true `?fsm:name` state modeling and broader composition cases remain deferred
+- the first `.fsm` adapter slices are implemented and can now emit standalone renderable `?dt:name` text for explicit canonical combinational and sequential DT cases plus structured renderable `?fsm:name` text for explicit canonical state-graph cases, but broader composition cases remain deferred
 - validation/back-annotation is not implemented yet
 
 ## Where to look next

@@ -36,9 +36,10 @@
 - First DT-centric `.fsm` adapter artifact implemented: Done
 - Standalone renderable `.fsm` text emission implemented for explicit canonical cases: Done
 - Standalone sequential/system-contract `.fsm` emission implemented for explicit canonical DT cases: Done
+- Structured `?fsm:name` `.fsm` emission implemented for explicit canonical FSM cases: Done
 - SystemVerilog/Verilog/VHDL adapters implemented: Not Started
 - Validation and back-annotation pipeline implemented: Not Started
 - End-to-end source-to-IntentIR pipeline implemented: Done
 
 ## Highest-priority remaining gap
-- Promote explicit regular-state and transition records so the adapter can choose true `?fsm:name` roots honestly while keeping composition roots deferred: In Progress
+- Promote explicit composition/module/top facts so the adapter can choose honest `?top:name`, `?mod:name`, and `?module:name` roots while keeping the canonical model backend-neutral: In Progress

@@ -99,7 +99,7 @@
     - SystemVerilog
     - Verilog
     - VHDL
-  - land the first DT-centric `.fsm` adapter slice without leaking target assumptions backward into `IntentIR`
+  - land the first honest `.fsm` adapter slices for standalone DT and explicit FSM-root cases without leaking target assumptions backward into `IntentIR`
   - keep adapter concerns from leaking backward into `IntentIR`
 - completion criteria:
   - adapter planning is typed
@@ -107,7 +107,8 @@
   - non-renderable adapter cases stop with explicit residual decisions instead of fabricated target text
   - real standalone `?dt:name` target text is emitted only when the canonical signal, control, system-contract, and init structure is renderable without semantic invention
   - explicit standalone sequential DT cases can lower with `(+system ...)` and `(:= ...)` without promoting a true FSM root
-  - broader `?fsm:name` and composition roots remain explicitly deferred until the canonical model carries state/composition facts
+  - real structured `?fsm:name` target text is emitted only when the canonical state graph, state-body control, transition targets, and system/init surface are explicit enough to avoid semantic invention
+  - broader composition roots remain explicitly deferred until the canonical model carries composition facts
 
 ### R7 Validation and back-annotation
 - status: Not Started
@@ -124,4 +125,4 @@
 3. integrate validation and back-annotation
 
 ## Immediate next milestone
-- promote explicit regular-state and transition facts needed for honest `?fsm:name` lowering while keeping composition roots deferred and the canonical model backend-neutral
+- promote explicit composition/module/top facts needed for honest `?top:name`, `?mod:name`, and `?module:name` lowering while keeping the canonical model backend-neutral

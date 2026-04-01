@@ -1,5 +1,31 @@
 # CHANGES
 ## 2026-04-01
+- enriched `SemanticIR` so it now preserves backend-neutral regular-state and transition records from explicit `State ...` and `Transition ...` statements
+- enriched `IntentIR` so it now carries canonical regular-state and transition surface forward for downstream adapters
+- widened the `.fsm` adapter so it now selects honest `?fsm:name` roots from the explicit canonical state graph, groups state-matching control fragments into state bodies, preserves unmatched control fragments as standalone `-block` children, and renders sequential state-body assignments with `<=`
+- tightened adapter-side residual logic so the unresolved state-graph packet only remains when structured FSM lowering is actually blocked
+- extended `specforge adapt` execute-mode summaries with `transition_candidate_count` for explicit FSM-root pipecleans
+- added regression coverage for:
+  - explicit regular-state and transition extraction in `SemanticIR`
+  - canonical regular-state and transition carry-through in `IntentIR`
+  - renderable and blocked structured `?fsm:name` adapter paths
+- validated the new structured FSM slice with:
+  - `cargo fmt --all --manifest-path Cargo.toml`
+  - `cargo test --manifest-path Cargo.toml`
+  - `cargo run --manifest-path Cargo.toml -- ingest <temp>/explicit_fsm.md`
+  - `cargo run --manifest-path Cargo.toml -- evidence generated/source_ir/explicit_fsm/source_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/explicit_fsm/evidence_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/explicit_fsm/semantic_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/explicit_fsm/intent_ir.json --target fsm`
+- confirmed the representative explicit FSM end-to-end adapter output is now safely renderable:
+  - `lowering_status: renderable`
+  - `selected_root_kind: fsm`
+  - `signal_candidate_count: 7`
+  - `decision_tree_candidate_count: 1`
+  - `state_candidate_count: 2`
+  - `transition_candidate_count: 2`
+  - `residual_decision_count: 2`
+  - `emitted_target_path: generated/adapters/fsm/explicit_fsm/explicit_fsm.fsm`
 - enriched `SemanticIR` so it now preserves backend-neutral system contract and init-assignment records from explicit `Clock ...`, `Reset ...`, and `Init ...` statements
 - enriched `IntentIR` so it now carries canonical system contract and init-assignment surface forward for downstream adapters
 - widened the `.fsm` adapter so it now renders explicit standalone sequential `?dt:name` text with `(+system ...)` and `(:= ...)` when the canonical system/init facts are complete

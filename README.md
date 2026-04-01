@@ -46,8 +46,8 @@ Use it first for the project objective, document navigation, and the current imp
   - `SemanticIR`
   - `IntentIR`
   - typed adapter lowering
-- the first real `.fsm` adapter slice now materializes a DT-centric adapter artifact, selects a conservative `?dt:name` root, emits explicit standalone combinational and sequential DT text when the canonical facts are fully explicit, and blocks unsafe `.fsm` text emission with explicit residual decisions instead of fabricating target syntax
-- the next implementation milestone is to promote explicit state/transition facts for honest `?fsm:name` lowering while keeping composition deferred
+- the first real `.fsm` adapter slices now materialize typed adapter artifacts, emit explicit standalone `?dt:name` text for honest canonical DT cases, emit structured `?fsm:name` text when the canonical state graph is explicit, and block unsafe composition-level `.fsm` text with explicit residual decisions instead of fabricating target syntax
+- the next implementation milestone is to promote explicit composition/module/top facts for honest `?top:name`, `?mod:name`, and `?module:name` lowering while keeping the canonical model backend-neutral
 
 ## Working naming
 - repository / project / CLI / crate name: `specforge`
@@ -158,7 +158,7 @@ Use it first for the project objective, document navigation, and the current imp
 - `crates/specforge/src/commands/intent.rs`
   - `IntentIR` preview/materialization command
 - `crates/specforge/src/commands/adapt.rs`
-  - `.fsm` adapter preview/materialization command for the first target-specific lowering slice
+  - `.fsm` adapter preview/materialization command for the current honest DT/FSM lowering slices
 - `crates/specforge/src/ir/mod.rs`
   - staged IR namespace and stage identifiers
 - `crates/specforge/src/ir/source.rs`
@@ -172,7 +172,7 @@ Use it first for the project objective, document navigation, and the current imp
 - `crates/specforge/src/ir/intent.rs`
   - first real `IntentIR` builder for canonical intent identity, actor responsibilities, carried interface inventory, carried backend-neutral control fragments, behaviors, constraints, assumptions, and residual decisions
 - `crates/specforge/src/ir/adapters.rs`
-  - typed adapter artifacts, DT-centric `.fsm` lowering logic, safe standalone renderability analysis, and adapter-side residual decisions
+  - typed adapter artifacts, honest standalone/structured `.fsm` lowering logic, renderability analysis, and adapter-side residual decisions
 
 ### Planned future implementation paths
 - `fixtures/`
@@ -202,7 +202,7 @@ cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --targ
 - `specforge intent <semantic-ir> --dry-run` prints computed `IntentIR` JSON without writing artifacts
 - `specforge intent <semantic-ir>` materializes `generated/intent_ir/<document_key>/intent_ir.json`
 - `specforge adapt <intent-ir> --target fsm --dry-run` prints computed adapter JSON without writing artifacts
-- `specforge adapt <intent-ir> --target fsm` materializes `generated/adapters/fsm/<document_key>/adapter.json` and writes an emitted standalone `.fsm` file when the canonical interface/control/system/init surface is explicit enough to lower honestly
+- `specforge adapt <intent-ir> --target fsm` materializes `generated/adapters/fsm/<document_key>/adapter.json` and writes an emitted `.fsm` file when the canonical interface/control/system/init/state surface is explicit enough for honest standalone DT or structured FSM lowering
 - PDF execute-mode ingest expects `docling` to be importable from `python3` or `python`; when it lives elsewhere, set `SPECFORGE_DOCLING_PYTHON=/path/to/python`
 
 ## Planned product shape

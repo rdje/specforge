@@ -10,7 +10,8 @@ use crate::ir::intent::{IntentDocumentIdentity, IntentIr};
 use crate::ir::semantic::{
     DecisionTreeActionRecord, DecisionTreeAssignmentKind, DecisionTreeComparisonOperator,
     DecisionTreeFragmentRecord, DecisionTreeGuardRecord, DecisionTreeValueRecord,
-    InitAssignmentRecord, InterfaceSignalDirection, SystemContractRecord, SystemResetKind,
+    InitAssignmentRecord, InterfaceSignalDirection, StateTransitionRecord, SystemContractRecord,
+    SystemResetKind,
 };
 use crate::ir::source::{
     AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket, document_key,
@@ -323,9 +324,13 @@ impl AdapterArtifact {
 
     fn rendered_target_text(&self) -> Option<String> {
         match (&self.target, &self.fsm) {
-            (AdapterTarget::Fsm, Some(fsm)) if fsm.renderability.is_renderable => Some(
-                render_fsm_module(&fsm.root_name, fsm.renderable_module.as_ref()?),
-            ),
+            (AdapterTarget::Fsm, Some(fsm)) if fsm.renderability.is_renderable => {
+                Some(render_fsm_module(
+                    &fsm.root_name,
+                    fsm.root_kind_decision.selected_root_kind,
+                    fsm.renderable_module.as_ref()?,
+                ))
+            }
             _ => None,
         }
     }
@@ -355,6 +360,8 @@ pub struct FsmAdapterArtifact {
     pub init_assignments: Vec<InitAssignmentRecord>,
     pub decision_tree_candidates: Vec<FsmDecisionTreeCandidate>,
     pub state_candidates: Vec<FsmStateCandidate>,
+    #[serde(default)]
+    pub transition_candidates: Vec<FsmTransitionCandidate>,
     pub renderability: FsmRenderability,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub renderable_module: Option<FsmRenderableModule>,
@@ -416,8 +423,22 @@ pub struct FsmDecisionTreeCandidate {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct FsmStateCandidate {
     pub state_id: String,
-    pub summary: String,
-    pub supporting_behavior_ids: Vec<String>,
+    pub state_name: String,
+    pub is_initial: bool,
+    pub declaration_order: u32,
+    pub supporting_canonical_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct FsmTransitionCandidate {
+    pub transition_id: String,
+    pub source_state: String,
+    pub target_state: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub guard: Option<DecisionTreeGuardRecord>,
+    pub declaration_order: u32,
+    pub supporting_canonical_ids: Vec<String>,
     pub automation_confidence: AutomationConfidence,
 }
 
@@ -435,6 +456,9 @@ pub struct FsmRenderableModule {
     pub size_entries: Vec<FsmRenderableSizeEntry>,
     #[serde(default)]
     pub init_assignments: Vec<InitAssignmentRecord>,
+    #[serde(default)]
+    pub states: Vec<FsmRenderableState>,
+    #[serde(default)]
     pub blocks: Vec<DecisionTreeFragmentRecord>,
 }
 
@@ -443,6 +467,16 @@ pub struct FsmRenderableSizeEntry {
     pub signal_name: String,
     pub direction_hint: InterfaceSignalDirection,
     pub width: u32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct FsmRenderableState {
+    pub state_name: String,
+    pub is_initial: bool,
+    #[serde(default)]
+    pub blocks: Vec<DecisionTreeFragmentRecord>,
+    #[serde(default)]
+    pub transitions: Vec<StateTransitionRecord>,
 }
 
 fn build_fsm_adapter_artifact(
@@ -459,12 +493,15 @@ fn build_fsm_adapter_artifact(
     let system_contract = intent_ir.system_contract.clone();
     let init_assignments = intent_ir.init_assignments.clone();
     let state_candidates = build_state_candidates(intent_ir);
+    let transition_candidates = build_transition_candidates(intent_ir);
     let root_kind_decision = build_root_kind_decision(&state_candidates);
     let decision_tree_candidates = build_decision_tree_candidates(intent_ir, &signal_inventory);
     let (renderability, renderable_module) = analyze_renderability(
         &signal_inventory,
         system_contract.as_ref(),
         &init_assignments,
+        &state_candidates,
+        &transition_candidates,
         &decision_tree_candidates,
         &root_kind_decision,
     );
@@ -474,6 +511,8 @@ fn build_fsm_adapter_artifact(
     let residual_decisions = build_adapter_residual_decisions(
         intent_ir,
         &signal_inventory,
+        &state_candidates,
+        &transition_candidates,
         &decision_tree_candidates,
         &root_kind_decision,
         &renderability,
@@ -490,7 +529,7 @@ fn build_fsm_adapter_artifact(
             intent_ir.document_identity.document_key
         ),
         summary: format!(
-            "typed DT-centric `.fsm` lowering artifact for {}",
+            "typed `.fsm` lowering artifact for {}",
             intent_ir.document_identity.display_name
         ),
     };
@@ -502,6 +541,7 @@ fn build_fsm_adapter_artifact(
         init_assignments,
         decision_tree_candidates,
         state_candidates,
+        transition_candidates,
         renderability,
         renderable_module,
     };
@@ -613,51 +653,47 @@ fn build_signal_inventory(intent_ir: &IntentIr) -> Vec<FsmSignalCandidate> {
 }
 
 fn build_state_candidates(intent_ir: &IntentIr) -> Vec<FsmStateCandidate> {
-    let mut state_candidates = Vec::new();
-    let mut seen = BTreeSet::new();
+    intent_ir
+        .regular_states
+        .iter()
+        .map(|state| FsmStateCandidate {
+            state_id: state.state_id.clone(),
+            state_name: state.state_name.clone(),
+            is_initial: state.is_initial,
+            declaration_order: state.declaration_order,
+            supporting_canonical_ids: state.supporting_statement_ids.clone(),
+            automation_confidence: state.automation_confidence,
+        })
+        .collect()
+}
 
-    for behavior in &intent_ir.behaviors {
-        let lower = behavior.statement.to_ascii_lowercase();
-        if !lower.contains("state")
-            && !lower.contains("transition")
-            && !lower.contains("next_state")
-        {
-            continue;
-        }
-
-        let state_id = format!("state_hint_{}", document_key(&behavior.behavior_id));
-        if !seen.insert(state_id.clone()) {
-            continue;
-        }
-
-        state_candidates.push(FsmStateCandidate {
-            state_id,
-            summary: format!(
-                "low-confidence state-sequencing hint derived from behavior intent: {}",
-                normalize_sentence(&behavior.statement)
-            ),
-            supporting_behavior_ids: vec![behavior.behavior_id.clone()],
-            automation_confidence: AutomationConfidence::Low,
-        });
-    }
-
-    state_candidates
+fn build_transition_candidates(intent_ir: &IntentIr) -> Vec<FsmTransitionCandidate> {
+    intent_ir
+        .state_transitions
+        .iter()
+        .map(|transition| FsmTransitionCandidate {
+            transition_id: transition.transition_id.clone(),
+            source_state: transition.source_state.clone(),
+            target_state: transition.target_state.clone(),
+            guard: transition.guard.clone(),
+            declaration_order: transition.declaration_order,
+            supporting_canonical_ids: transition.supporting_statement_ids.clone(),
+            automation_confidence: transition.automation_confidence,
+        })
+        .collect()
 }
 
 fn build_root_kind_decision(state_candidates: &[FsmStateCandidate]) -> FsmRootKindDecision {
-    let has_confident_state_model = state_candidates.iter().any(|candidate| {
-        matches!(
-            candidate.automation_confidence,
-            AutomationConfidence::High | AutomationConfidence::Medium
-        )
-    });
-
-    if has_confident_state_model {
+    if !state_candidates.is_empty() {
         return FsmRootKindDecision {
             selected_root_kind: FsmRootKind::Fsm,
             deferred_root_kinds: vec![FsmRootKind::Top, FsmRootKind::Mod, FsmRootKind::Module],
-            automation_confidence: AutomationConfidence::Medium,
-            rationale: "canonical sequencing evidence is strong enough to justify a true `?fsm:name` lowering root".to_string(),
+            automation_confidence: fold_automation_confidence(
+                state_candidates
+                    .iter()
+                    .map(|candidate| candidate.automation_confidence),
+            ),
+            rationale: "the current IntentIR carries explicit regular-state facts, so the adapter can target a true `?fsm:name` root without inventing state identity".to_string(),
         };
     }
 
@@ -670,7 +706,7 @@ fn build_root_kind_decision(state_candidates: &[FsmStateCandidate]) -> FsmRootKi
             FsmRootKind::Module,
         ],
         automation_confidence: AutomationConfidence::Medium,
-        rationale: "the current IntentIR does not yet carry explicit regular-state progression, so the first `.fsm` adapter slice defaults to a standalone `?dt:name` plan rather than inventing FSM or composition semantics".to_string(),
+        rationale: "the current IntentIR does not yet carry explicit regular-state facts, so the adapter stays on a standalone `?dt:name` plan rather than inventing FSM or composition semantics".to_string(),
     }
 }
 
@@ -743,21 +779,49 @@ fn analyze_renderability(
     signal_inventory: &[FsmSignalCandidate],
     system_contract: Option<&SystemContractRecord>,
     init_assignments: &[InitAssignmentRecord],
+    state_candidates: &[FsmStateCandidate],
+    transition_candidates: &[FsmTransitionCandidate],
     decision_tree_candidates: &[FsmDecisionTreeCandidate],
     root_kind_decision: &FsmRootKindDecision,
 ) -> (FsmRenderability, Option<FsmRenderableModule>) {
+    match root_kind_decision.selected_root_kind {
+        FsmRootKind::Dt => analyze_dt_root_renderability(
+            signal_inventory,
+            system_contract,
+            init_assignments,
+            decision_tree_candidates,
+        ),
+        FsmRootKind::Fsm => analyze_fsm_root_renderability(
+            signal_inventory,
+            system_contract,
+            init_assignments,
+            state_candidates,
+            transition_candidates,
+            decision_tree_candidates,
+        ),
+        _ => (
+            FsmRenderability {
+                is_renderable: false,
+                blocking_reasons: vec![
+                    "This adapter slice only supports explicit standalone `?dt:name` and `?fsm:name` roots.".to_string(),
+                ],
+                required_canonical_enrichments: vec![
+                    "keep composition roots deferred until the canonical model carries explicit module/top structure".to_string(),
+                ],
+            },
+            None,
+        ),
+    }
+}
+
+fn analyze_dt_root_renderability(
+    signal_inventory: &[FsmSignalCandidate],
+    system_contract: Option<&SystemContractRecord>,
+    init_assignments: &[InitAssignmentRecord],
+    decision_tree_candidates: &[FsmDecisionTreeCandidate],
+) -> (FsmRenderability, Option<FsmRenderableModule>) {
     let mut blocking_reasons = Vec::new();
     let mut required_canonical_enrichments = BTreeSet::new();
-
-    if !matches!(root_kind_decision.selected_root_kind, FsmRootKind::Dt) {
-        push_unique_message(
-            &mut blocking_reasons,
-            "This adapter slice only emits standalone `?dt:name` roots; canonical sequencing or composition still points beyond the current lowering boundary.",
-        );
-        required_canonical_enrichments.insert(
-            "add explicit regular-state and composition records before widening beyond standalone `?dt:name`".to_string(),
-        );
-    }
 
     let blocks = decision_tree_candidates
         .iter()
@@ -781,59 +845,16 @@ fn analyze_renderability(
     let mut size_entries = BTreeMap::<String, FsmRenderableSizeEntry>::new();
     let mut driven_outputs = BTreeSet::new();
     let mut sequential_targets = BTreeSet::new();
-    let mut seen_block_names = BTreeSet::new();
-
-    for block in &blocks {
-        if !seen_block_names.insert(block.block_name.clone()) {
-            push_unique_message(
-                &mut blocking_reasons,
-                &format!(
-                    "Canonical control block `{}` is duplicated; the first renderable `.fsm` slice expects one unique top-level block per name.",
-                    block.block_name
-                ),
-            );
-            required_canonical_enrichments.insert(
-                "normalize canonical control blocks to one stable top-level block per name"
-                    .to_string(),
-            );
-        }
-
-        if block.actions.is_empty() {
-            push_unique_message(
-                &mut blocking_reasons,
-                &format!(
-                    "Canonical control block `{}` has no typed actions to lower into `.fsm`.",
-                    block.block_name
-                ),
-            );
-            required_canonical_enrichments.insert(
-                "keep each canonical control block anchored to at least one typed assignment action"
-                    .to_string(),
-            );
-        }
-
-        if let Some(guard) = block.guard.as_ref() {
-            validate_guard_renderability(
-                guard,
-                &signals_by_name,
-                &mut size_entries,
-                &mut blocking_reasons,
-                &mut required_canonical_enrichments,
-            );
-        }
-
-        for action in &block.actions {
-            validate_action_renderability(
-                action,
-                &signals_by_name,
-                &mut size_entries,
-                &mut driven_outputs,
-                &mut sequential_targets,
-                &mut blocking_reasons,
-                &mut required_canonical_enrichments,
-            );
-        }
-    }
+    validate_block_set_renderability(
+        &blocks,
+        &BTreeSet::new(),
+        &signals_by_name,
+        &mut size_entries,
+        &mut driven_outputs,
+        &mut sequential_targets,
+        &mut blocking_reasons,
+        &mut required_canonical_enrichments,
+    );
 
     let requires_sequential_support =
         !sequential_targets.is_empty() || !init_assignments.is_empty();
@@ -926,15 +947,365 @@ fn analyze_renderability(
         system_contract: system_contract.cloned(),
         size_entries: size_entries.into_values().collect(),
         init_assignments: init_assignments.to_vec(),
+        states: Vec::new(),
         blocks,
     });
 
     (renderability, renderable_module)
 }
 
+fn analyze_fsm_root_renderability(
+    signal_inventory: &[FsmSignalCandidate],
+    system_contract: Option<&SystemContractRecord>,
+    init_assignments: &[InitAssignmentRecord],
+    state_candidates: &[FsmStateCandidate],
+    transition_candidates: &[FsmTransitionCandidate],
+    decision_tree_candidates: &[FsmDecisionTreeCandidate],
+) -> (FsmRenderability, Option<FsmRenderableModule>) {
+    let mut blocking_reasons = Vec::new();
+    let mut required_canonical_enrichments = BTreeSet::new();
+    let blocks = decision_tree_candidates
+        .iter()
+        .flat_map(|candidate| candidate.blocks.iter().cloned())
+        .collect::<Vec<_>>();
+    let state_names = state_candidates
+        .iter()
+        .map(|state| state.state_name.clone())
+        .collect::<BTreeSet<_>>();
+
+    if state_candidates.is_empty() {
+        push_unique_message(
+            &mut blocking_reasons,
+            "FSM-root lowering requires explicit canonical regular-state records.",
+        );
+        required_canonical_enrichments.insert(
+            "promote explicit regular-state records before lowering a true `?fsm:name` root"
+                .to_string(),
+        );
+    }
+
+    if blocks.is_empty() && transition_candidates.is_empty() {
+        push_unique_message(
+            &mut blocking_reasons,
+            "IntentIR does not yet carry typed state-body control or transition records, so a true `.fsm` root cannot be emitted safely.",
+        );
+        required_canonical_enrichments.insert(
+            "promote backend-neutral state-body control fragments and transition records before lowering a true `?fsm:name` root".to_string(),
+        );
+    }
+
+    let signals_by_name: BTreeMap<String, &FsmSignalCandidate> = signal_inventory
+        .iter()
+        .map(|signal| (signal.signal_name.clone(), signal))
+        .collect();
+    let mut size_entries = BTreeMap::<String, FsmRenderableSizeEntry>::new();
+    let mut driven_outputs = BTreeSet::new();
+    let mut sequential_targets = BTreeSet::new();
+
+    validate_block_set_renderability(
+        &blocks,
+        &state_names,
+        &signals_by_name,
+        &mut size_entries,
+        &mut driven_outputs,
+        &mut sequential_targets,
+        &mut blocking_reasons,
+        &mut required_canonical_enrichments,
+    );
+
+    if let Some(system_contract) = system_contract {
+        validate_system_contract_renderability(
+            system_contract,
+            &signals_by_name,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+    } else {
+        push_unique_message(
+            &mut blocking_reasons,
+            "FSM-root lowering requires an explicit canonical system contract with clock and reset facts.",
+        );
+        required_canonical_enrichments.insert(
+            "promote backend-neutral clock/reset system-contract facts before lowering a true `?fsm:name` root".to_string(),
+        );
+    }
+
+    let initial_state_count = state_candidates
+        .iter()
+        .filter(|state| state.is_initial)
+        .count();
+    if initial_state_count != 1 {
+        push_unique_message(
+            &mut blocking_reasons,
+            "FSM-root lowering requires exactly one explicit initial regular state in the canonical state graph.",
+        );
+        required_canonical_enrichments.insert(
+            "mark exactly one canonical regular state as initial before lowering a true `?fsm:name` root".to_string(),
+        );
+    }
+
+    let mut transitions_by_source = BTreeMap::<String, Vec<StateTransitionRecord>>::new();
+    for transition in transition_candidates {
+        validate_transition_renderability(
+            transition,
+            &state_names,
+            &signals_by_name,
+            &mut size_entries,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        if state_names.contains(&transition.source_state)
+            && state_names.contains(&transition.target_state)
+        {
+            transitions_by_source
+                .entry(transition.source_state.clone())
+                .or_default()
+                .push(StateTransitionRecord {
+                    transition_id: transition.transition_id.clone(),
+                    source_state: transition.source_state.clone(),
+                    target_state: transition.target_state.clone(),
+                    guard: transition.guard.clone(),
+                    declaration_order: transition.declaration_order,
+                    supporting_statement_ids: transition.supporting_canonical_ids.clone(),
+                    automation_confidence: transition.automation_confidence,
+                });
+        }
+    }
+
+    let init_targets = init_assignments
+        .iter()
+        .map(|assignment| assignment.target_signal.clone())
+        .collect::<BTreeSet<_>>();
+    for target_signal in &sequential_targets {
+        if !init_targets.contains(target_signal) {
+            push_unique_message(
+                &mut blocking_reasons,
+                &format!(
+                    "Sequential target `{}` is missing an explicit canonical init assignment required for `.fsm` lowering.",
+                    target_signal
+                ),
+            );
+            required_canonical_enrichments.insert(
+                "promote backend-neutral init assignments for every sequentially driven FSM output"
+                    .to_string(),
+            );
+        }
+    }
+
+    for init_assignment in init_assignments {
+        validate_init_assignment_renderability(
+            init_assignment,
+            &signals_by_name,
+            &mut size_entries,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+
+        if !sequential_targets.contains(&init_assignment.target_signal) {
+            push_unique_message(
+                &mut blocking_reasons,
+                &format!(
+                    "Init assignment target `{}` is not driven by any sequential FSM-state action in the current slice.",
+                    init_assignment.target_signal
+                ),
+            );
+            required_canonical_enrichments.insert(
+                "keep first-slice init assignments aligned with explicit sequential FSM outputs"
+                    .to_string(),
+            );
+        }
+    }
+
+    for size_entry in size_entries.values() {
+        if matches!(size_entry.direction_hint, InterfaceSignalDirection::Output)
+            && !driven_outputs.contains(&size_entry.signal_name)
+        {
+            push_unique_message(
+                &mut blocking_reasons,
+                &format!(
+                    "Declared output signal `{}` is not driven by any typed FSM-state action.",
+                    size_entry.signal_name
+                ),
+            );
+            required_canonical_enrichments.insert(
+                "keep canonical output roles aligned with explicit FSM-state actions".to_string(),
+            );
+        }
+    }
+
+    let mut blocks_by_name = BTreeMap::<String, Vec<DecisionTreeFragmentRecord>>::new();
+    for block in blocks {
+        blocks_by_name
+            .entry(block.block_name.clone())
+            .or_default()
+            .push(block);
+    }
+
+    let mut ordered_states = state_candidates.iter().collect::<Vec<_>>();
+    ordered_states.sort_by_key(|state| (!state.is_initial, state.declaration_order));
+    let mut renderable_states = Vec::new();
+    for state in ordered_states {
+        let state_blocks = blocks_by_name.remove(&state.state_name).unwrap_or_default();
+        let mut state_transitions = transitions_by_source
+            .remove(&state.state_name)
+            .unwrap_or_default();
+        state_transitions.sort_by_key(|transition| transition.declaration_order);
+        if state_blocks.is_empty() && state_transitions.is_empty() {
+            push_unique_message(
+                &mut blocking_reasons,
+                &format!(
+                    "Regular state `{}` has no typed actions or transitions to lower into `.fsm`.",
+                    state.state_name
+                ),
+            );
+            required_canonical_enrichments.insert(
+                "keep each canonical regular state anchored to typed actions or explicit transitions"
+                    .to_string(),
+            );
+        }
+        renderable_states.push(FsmRenderableState {
+            state_name: state.state_name.clone(),
+            is_initial: state.is_initial,
+            blocks: state_blocks,
+            transitions: state_transitions,
+        });
+    }
+
+    let standalone_blocks = blocks_by_name.into_values().flatten().collect::<Vec<_>>();
+    let renderability = FsmRenderability {
+        is_renderable: blocking_reasons.is_empty(),
+        blocking_reasons,
+        required_canonical_enrichments: required_canonical_enrichments.into_iter().collect(),
+    };
+
+    let renderable_module = renderability.is_renderable.then_some(FsmRenderableModule {
+        system_contract: system_contract.cloned(),
+        size_entries: size_entries.into_values().collect(),
+        init_assignments: init_assignments.to_vec(),
+        states: renderable_states,
+        blocks: standalone_blocks,
+    });
+
+    (renderability, renderable_module)
+}
+
+fn validate_block_set_renderability(
+    blocks: &[DecisionTreeFragmentRecord],
+    duplicate_names_allowed: &BTreeSet<String>,
+    signals_by_name: &BTreeMap<String, &FsmSignalCandidate>,
+    size_entries: &mut BTreeMap<String, FsmRenderableSizeEntry>,
+    driven_outputs: &mut BTreeSet<String>,
+    sequential_targets: &mut BTreeSet<String>,
+    blocking_reasons: &mut Vec<String>,
+    required_canonical_enrichments: &mut BTreeSet<String>,
+) {
+    let mut seen_block_names = BTreeSet::new();
+
+    for block in blocks {
+        if !duplicate_names_allowed.contains(&block.block_name)
+            && !seen_block_names.insert(block.block_name.clone())
+        {
+            push_unique_message(
+                blocking_reasons,
+                &format!(
+                    "Canonical control block `{}` is duplicated; the current `.fsm` slice expects one unique standalone block per non-state name.",
+                    block.block_name
+                ),
+            );
+            required_canonical_enrichments.insert(
+                "normalize canonical standalone block names before lowering `.fsm` text"
+                    .to_string(),
+            );
+        }
+
+        if block.actions.is_empty() {
+            push_unique_message(
+                blocking_reasons,
+                &format!(
+                    "Canonical control block `{}` has no typed actions to lower into `.fsm`.",
+                    block.block_name
+                ),
+            );
+            required_canonical_enrichments.insert(
+                "keep each canonical control block anchored to at least one typed assignment action"
+                    .to_string(),
+            );
+        }
+
+        if let Some(guard) = block.guard.as_ref() {
+            validate_guard_renderability(
+                guard,
+                signals_by_name,
+                size_entries,
+                blocking_reasons,
+                required_canonical_enrichments,
+            );
+        }
+
+        for action in &block.actions {
+            validate_action_renderability(
+                action,
+                signals_by_name,
+                size_entries,
+                driven_outputs,
+                sequential_targets,
+                blocking_reasons,
+                required_canonical_enrichments,
+            );
+        }
+    }
+}
+
+fn validate_transition_renderability(
+    transition: &FsmTransitionCandidate,
+    state_names: &BTreeSet<String>,
+    signals_by_name: &BTreeMap<String, &FsmSignalCandidate>,
+    size_entries: &mut BTreeMap<String, FsmRenderableSizeEntry>,
+    blocking_reasons: &mut Vec<String>,
+    required_canonical_enrichments: &mut BTreeSet<String>,
+) {
+    if !state_names.contains(&transition.source_state) {
+        push_unique_message(
+            blocking_reasons,
+            &format!(
+                "Transition source `{}` is not declared as a canonical regular state.",
+                transition.source_state
+            ),
+        );
+        required_canonical_enrichments.insert(
+            "declare every transition source as an explicit canonical regular state".to_string(),
+        );
+    }
+
+    if !state_names.contains(&transition.target_state) {
+        push_unique_message(
+            blocking_reasons,
+            &format!(
+                "Transition target `{}` is not declared as a canonical regular state.",
+                transition.target_state
+            ),
+        );
+        required_canonical_enrichments.insert(
+            "declare every transition target as an explicit canonical regular state".to_string(),
+        );
+    }
+
+    if let Some(guard) = transition.guard.as_ref() {
+        validate_guard_renderability(
+            guard,
+            signals_by_name,
+            size_entries,
+            blocking_reasons,
+            required_canonical_enrichments,
+        );
+    }
+}
+
 fn build_adapter_residual_decisions(
     intent_ir: &IntentIr,
     signal_inventory: &[FsmSignalCandidate],
+    state_candidates: &[FsmStateCandidate],
+    transition_candidates: &[FsmTransitionCandidate],
     decision_tree_candidates: &[FsmDecisionTreeCandidate],
     root_kind_decision: &FsmRootKindDecision,
     renderability: &FsmRenderability,
@@ -978,6 +1349,40 @@ fn build_adapter_residual_decisions(
         });
     }
 
+    let state_graph_blocked = !renderability.is_renderable
+        && (!state_candidates.is_empty()
+            || !transition_candidates.is_empty()
+            || renderability.blocking_reasons.iter().any(|reason| {
+                reason.contains("regular state")
+                    || reason.contains("Transition")
+                    || reason.contains("initial regular state")
+                    || reason.contains("FSM-root")
+            }));
+    if state_graph_blocked {
+        residual_decisions.push(ResidualDecisionPacket {
+            packet_id: "fsm_adapter_state_graph".to_string(),
+            question: "Which canonical regular states, initial-state designation, and transition targets are complete enough to lower a true `?fsm:name` root honestly?".to_string(),
+            why_unresolved: format!(
+                "The current adapter sees {} regular-state candidate(s) and {} transition candidate(s), but the canonical state graph is not yet complete enough to guarantee safe FSM-root lowering in every case.",
+                state_candidates.len(),
+                transition_candidates.len()
+            ),
+            automation_confidence: AutomationConfidence::Low,
+            candidate_interpretations: vec![
+                CandidateInterpretation {
+                    interpretation_id: "enrich_intent_ir_state_graph".to_string(),
+                    description: "Carry explicit regular states, exactly one initial-state designation, and fully declared transition targets forward in canonical form.".to_string(),
+                    downstream_impact: "The adapter can emit a true `?fsm:name` root without inventing state identity or target membership.".to_string(),
+                },
+                CandidateInterpretation {
+                    interpretation_id: "keep_fsm_root_blocked".to_string(),
+                    description: "Continue blocking true FSM-root emission until the canonical state graph is explicit and internally consistent.".to_string(),
+                    downstream_impact: "The adapter stays honest, but stateful `.fsm` text remains unavailable for under-specified inputs.".to_string(),
+                },
+            ],
+        });
+    }
+
     let system_contract_blocked = renderability.blocking_reasons.iter().any(|reason| {
         reason.contains("system contract")
             || reason.contains("clock")
@@ -989,18 +1394,18 @@ fn build_adapter_residual_decisions(
     if system_contract_blocked {
         residual_decisions.push(ResidualDecisionPacket {
             packet_id: "fsm_adapter_system_contract".to_string(),
-            question: "Which backend-neutral system-contract and init facts are complete enough to lower sequential standalone DT control honestly?".to_string(),
-            why_unresolved: "The current standalone sequential `.fsm` slice still lacks some combination of explicit clock/reset facts, supported reset kind, or reset/init assignments needed for honest lowering.".to_string(),
+            question: "Which backend-neutral system-contract and init facts are complete enough to lower sequential `.fsm` control honestly?".to_string(),
+            why_unresolved: "The current `.fsm` slice still lacks some combination of explicit clock/reset facts, supported reset kind, or reset/init assignments needed for honest sequential lowering.".to_string(),
             automation_confidence: AutomationConfidence::Low,
             candidate_interpretations: vec![
                 CandidateInterpretation {
                     interpretation_id: "enrich_intent_ir_system_surface".to_string(),
                     description: "Carry explicit clock/reset/init facts forward in canonical form so the adapter can lower `(+system ...)` and `(:= ...)` directly.".to_string(),
-                    downstream_impact: "Sequential standalone DT cases become renderable without inventing implicit reset semantics inside the adapter.".to_string(),
+                    downstream_impact: "Sequential DT and FSM cases become renderable without inventing implicit reset semantics inside the adapter.".to_string(),
                 },
                 CandidateInterpretation {
-                    interpretation_id: "keep_sequential_dt_blocked".to_string(),
-                    description: "Continue treating sequential standalone DT lowering as blocked until the canonical system/init surface is explicit.".to_string(),
+                    interpretation_id: "keep_sequential_lowering_blocked".to_string(),
+                    description: "Continue treating sequential `.fsm` lowering as blocked until the canonical system/init surface is explicit.".to_string(),
                     downstream_impact: "The adapter stays honest, but sequential `.fsm` text remains unavailable for under-specified inputs.".to_string(),
                 },
             ],
@@ -1043,7 +1448,7 @@ fn build_adapter_residual_decisions(
         packet_id: "fsm_adapter_root_kind_expansion".to_string(),
         question: "When should the `.fsm` adapter escalate from a `?dt:name` root to `?fsm:name`, `?top:name`, `?mod:name`, or `?module:name`?".to_string(),
         why_unresolved: format!(
-            "The adapter currently selects `?{}:name` because IntentIR does not yet contain explicit regular-state or composition records strong enough for the broader root kinds.",
+            "The adapter currently selects `?{}:name`; composition-level roots remain deferred until IntentIR carries explicit module/top structure even when FSM-root lowering is available.",
             root_kind_decision.selected_root_kind.as_str()
         ),
         automation_confidence: AutomationConfidence::Medium,
@@ -1332,8 +1737,12 @@ fn register_renderable_signal(
     Some(direction_hint)
 }
 
-fn render_fsm_module(root_name: &str, module: &FsmRenderableModule) -> String {
-    let mut lines = vec![format!("(?dt:{root_name}")];
+fn render_fsm_module(
+    root_name: &str,
+    root_kind: FsmRootKind,
+    module: &FsmRenderableModule,
+) -> String {
+    let mut lines = vec![format!("(?{}:{root_name}", root_kind.as_str())];
     if let Some(system_contract) = module.system_contract.as_ref() {
         lines.push("  (+system".to_string());
         lines.push(format!("    (clock {})", system_contract.clock_signal));
@@ -1357,24 +1766,85 @@ fn render_fsm_module(root_name: &str, module: &FsmRenderableModule) -> String {
         lines.push(format!("  ({})", render_init_assignment(init_assignment)));
     }
 
-    for block in &module.blocks {
-        lines.push(format!("  (-{}", block.block_name));
-        if let Some(guard) = block.guard.as_ref() {
-            lines.push(format!("    ({}", render_guard(guard)));
-            for action in &block.actions {
-                lines.push(format!("      ({})", render_action(action)));
-            }
-            lines.push("    )".to_string());
-        } else {
-            for action in &block.actions {
-                lines.push(format!("    ({})", render_action(action)));
-            }
+    if matches!(root_kind, FsmRootKind::Fsm) {
+        for state in &module.states {
+            lines.extend(render_regular_state(state, root_kind));
         }
-        lines.push("  )".to_string());
+    }
+
+    for block in &module.blocks {
+        lines.extend(render_standalone_block(block, root_kind));
     }
 
     lines.push(")".to_string());
     format!("{}\n", lines.join("\n"))
+}
+
+fn render_regular_state(state: &FsmRenderableState, root_kind: FsmRootKind) -> Vec<String> {
+    let mut lines = vec![format!("  ({}", state.state_name)];
+
+    for block in &state.blocks {
+        lines.extend(render_state_body_fragment(block, root_kind));
+    }
+    for transition in &state.transitions {
+        lines.extend(render_state_transition(transition));
+    }
+
+    lines.push("  )".to_string());
+    lines
+}
+
+fn render_state_body_fragment(
+    block: &DecisionTreeFragmentRecord,
+    root_kind: FsmRootKind,
+) -> Vec<String> {
+    let mut lines = Vec::new();
+
+    if let Some(guard) = block.guard.as_ref() {
+        lines.push(format!("    ({}", render_guard(guard)));
+        for action in &block.actions {
+            lines.push(format!("      ({})", render_action(action, root_kind)));
+        }
+        lines.push("    )".to_string());
+    } else {
+        for action in &block.actions {
+            lines.push(format!("    ({})", render_action(action, root_kind)));
+        }
+    }
+
+    lines
+}
+
+fn render_state_transition(transition: &StateTransitionRecord) -> Vec<String> {
+    if let Some(guard) = transition.guard.as_ref() {
+        return vec![
+            format!("    ({}", render_guard(guard)),
+            format!("      (-> {})", transition.target_state),
+            "    )".to_string(),
+        ];
+    }
+
+    vec![format!("    (-> {})", transition.target_state)]
+}
+
+fn render_standalone_block(
+    block: &DecisionTreeFragmentRecord,
+    root_kind: FsmRootKind,
+) -> Vec<String> {
+    let mut lines = vec![format!("  (-{}", block.block_name)];
+    if let Some(guard) = block.guard.as_ref() {
+        lines.push(format!("    ({}", render_guard(guard)));
+        for action in &block.actions {
+            lines.push(format!("      ({})", render_action(action, root_kind)));
+        }
+        lines.push("    )".to_string());
+    } else {
+        for action in &block.actions {
+            lines.push(format!("    ({})", render_action(action, root_kind)));
+        }
+    }
+    lines.push("  )".to_string());
+    lines
 }
 
 fn render_guard(guard: &DecisionTreeGuardRecord) -> String {
@@ -1393,7 +1863,7 @@ fn render_guard(guard: &DecisionTreeGuardRecord) -> String {
     }
 }
 
-fn render_action(action: &DecisionTreeActionRecord) -> String {
+fn render_action(action: &DecisionTreeActionRecord, root_kind: FsmRootKind) -> String {
     match action {
         DecisionTreeActionRecord::Assign {
             target_signal,
@@ -1402,16 +1872,22 @@ fn render_action(action: &DecisionTreeActionRecord) -> String {
         } => format!(
             "{} {} {}",
             target_signal,
-            render_assignment_operator(*assignment_kind),
+            render_assignment_operator(*assignment_kind, root_kind),
             render_value(value)
         ),
     }
 }
 
-fn render_assignment_operator(kind: DecisionTreeAssignmentKind) -> &'static str {
+fn render_assignment_operator(
+    kind: DecisionTreeAssignmentKind,
+    root_kind: FsmRootKind,
+) -> &'static str {
     match kind {
         DecisionTreeAssignmentKind::Combinational => "=",
-        DecisionTreeAssignmentKind::Sequential => "<-",
+        DecisionTreeAssignmentKind::Sequential => match root_kind {
+            FsmRootKind::Fsm => "<=",
+            _ => "<-",
+        },
     }
 }
 
@@ -1534,10 +2010,6 @@ fn fsm_root_name(document_key_input: &str) -> String {
     }
 
     root_name
-}
-
-fn normalize_sentence(text: &str) -> String {
-    text.split_whitespace().collect::<Vec<_>>().join(" ")
 }
 
 fn canonicalize_existing_path(path: &Path) -> Result<PathBuf> {
@@ -1718,6 +2190,64 @@ mod tests {
         )?;
         intent_ir.write_to_disk()?;
         Ok(intent_ir)
+    }
+
+    fn build_intent_ir_from_markdown(
+        base: &Path,
+        source_name: &str,
+        markdown: &str,
+    ) -> Result<IntentIr> {
+        let source = base.join(source_name);
+        let source_artifact_base = base.join("generated").join("source_ir");
+        let evidence_artifact_base = base.join("generated").join("evidence_ir");
+        let semantic_artifact_base = base.join("generated").join("semantic_ir");
+        let intent_artifact_base = base.join("generated").join("intent_ir");
+
+        fs::write(&source, markdown)?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+        intent_ir.write_to_disk()?;
+        Ok(intent_ir)
+    }
+
+    fn build_explicit_fsm_intent_ir(base: &Path) -> Result<IntentIr> {
+        build_intent_ir_from_markdown(
+            base,
+            "explicit_fsm.md",
+            "# Explicit FSM Control\nSignal clk is input width 1.\n\nSignal rst_n is input width 1.\n\nSignal GO is input width 1.\n\nSignal DONE is input width 1.\n\nSignal DATA_IN is input width 8.\n\nSignal ACC is output width 8.\n\nSignal TRACE is output width 1.\n\nClock clk.\n\nReset rst_n is asynchronous active low.\n\nInit ACC = 8'0.\n\nState idle is initial.\n\nState busy.\n\nBlock idle: ACC <- DATA_IN.\n\nTransition idle -> busy when GO.\n\nBlock busy: ACC <- DATA_IN.\n\nTransition busy -> idle when DONE.\n\nBlock trace when DONE: TRACE = 1.\n",
+        )
+    }
+
+    fn build_missing_initial_fsm_intent_ir(base: &Path) -> Result<IntentIr> {
+        build_intent_ir_from_markdown(
+            base,
+            "missing_initial_fsm.md",
+            "# Missing Initial FSM Control\nSignal clk is input width 1.\n\nSignal rst_n is input width 1.\n\nSignal GO is input width 1.\n\nSignal DONE is input width 1.\n\nSignal DATA_IN is input width 8.\n\nSignal ACC is output width 8.\n\nClock clk.\n\nReset rst_n is asynchronous active low.\n\nInit ACC = 8'0.\n\nState idle.\n\nState busy.\n\nBlock idle: ACC <- DATA_IN.\n\nTransition idle -> busy when GO.\n\nBlock busy: ACC <- DATA_IN.\n\nTransition busy -> idle when DONE.\n",
+        )
+    }
+
+    fn build_unknown_target_fsm_intent_ir(base: &Path) -> Result<IntentIr> {
+        build_intent_ir_from_markdown(
+            base,
+            "unknown_target_fsm.md",
+            "# Unknown Transition Target FSM Control\nSignal clk is input width 1.\n\nSignal rst_n is input width 1.\n\nSignal GO is input width 1.\n\nSignal DATA_IN is input width 8.\n\nSignal ACC is output width 8.\n\nClock clk.\n\nReset rst_n is asynchronous active low.\n\nInit ACC = 8'0.\n\nState idle is initial.\n\nState busy.\n\nBlock idle: ACC <- DATA_IN.\n\nTransition idle -> missing_state when GO.\n\nBlock busy: ACC <- DATA_IN.\n",
+        )
     }
 
     #[test]
@@ -1912,6 +2442,151 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.iter().any(|reason| {
             reason.contains("system contract") || reason.contains("init assignment")
         }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn builds_renderable_structured_fsm_adapter_artifact() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_explicit_fsm_intent_ir(tempdir.path())?;
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+        adapter.write_to_disk()?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "renderable");
+        let emitted_target_path = adapter
+            .artifact_layout
+            .emitted_target_path
+            .as_ref()
+            .expect("renderable adapter should emit target text");
+        let emitted_text = fs::read_to_string(emitted_target_path)?;
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+
+        assert!(fsm.renderability.is_renderable);
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Fsm);
+        assert_eq!(fsm.state_candidates.len(), 2);
+        assert_eq!(fsm.transition_candidates.len(), 2);
+        assert!(fsm.renderable_module.is_some());
+        assert!(emitted_text.contains("(?fsm:explicit_fsm"));
+        assert!(emitted_text.contains("(+system"));
+        assert!(emitted_text.contains("(clock clk)"));
+        assert!(emitted_text.contains("(asreset rst_n)"));
+        assert!(emitted_text.contains("(:= ACC=8'0)"));
+        assert!(emitted_text.contains("\n  (idle\n"));
+        assert!(emitted_text.contains("\n  (busy\n"));
+        assert!(emitted_text.contains("(ACC <= DATA_IN)"));
+        assert!(emitted_text.contains("(<GO"));
+        assert!(emitted_text.contains("(-> busy)"));
+        assert!(emitted_text.contains("(<DONE"));
+        assert!(emitted_text.contains("(-> idle)"));
+        assert!(emitted_text.contains("(-trace"));
+        assert!(emitted_text.contains("(TRACE = 1)"));
+        assert!(!emitted_text.contains("<-"));
+
+        let idle_position = emitted_text
+            .find("\n  (idle\n")
+            .expect("idle state should be rendered");
+        let busy_position = emitted_text
+            .find("\n  (busy\n")
+            .expect("busy state should be rendered");
+        assert!(
+            idle_position < busy_position,
+            "initial state should render before later states"
+        );
+        assert!(
+            adapter
+                .residual_decisions
+                .iter()
+                .all(|packet| packet.packet_id != "fsm_adapter_signal_inventory")
+        );
+        assert!(
+            adapter
+                .residual_decisions
+                .iter()
+                .all(|packet| packet.packet_id != "fsm_adapter_state_graph")
+        );
+        assert!(
+            adapter
+                .residual_decisions
+                .iter()
+                .all(|packet| packet.packet_id != "fsm_adapter_system_contract")
+        );
+        assert!(
+            adapter
+                .residual_decisions
+                .iter()
+                .all(|packet| packet.packet_id != "fsm_adapter_dt_action_graph")
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn keeps_structured_fsm_blocked_without_exactly_one_initial_state() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_missing_initial_fsm_intent_ir(tempdir.path())?;
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Fsm);
+        assert!(!fsm.renderability.is_renderable);
+        assert!(
+            fsm.renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| { reason.contains("exactly one explicit initial regular state") })
+        );
+        assert!(
+            adapter
+                .residual_decisions
+                .iter()
+                .any(|packet| packet.packet_id == "fsm_adapter_state_graph")
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn keeps_structured_fsm_blocked_when_transition_target_is_undeclared() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_unknown_target_fsm_intent_ir(tempdir.path())?;
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Fsm);
+        assert_eq!(fsm.transition_candidates.len(), 1);
+        assert!(!fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.iter().any(|reason| {
+            reason.contains("Transition target `missing_state` is not declared")
+        }));
+        assert!(
+            adapter
+                .residual_decisions
+                .iter()
+                .any(|packet| packet.packet_id == "fsm_adapter_state_graph")
+        );
 
         Ok(())
     }

@@ -44,6 +44,10 @@ pub fn run(args: AdaptArgs) -> Result<()> {
                 fsm.decision_tree_candidates.len()
             );
             println!("state_candidate_count: {}", fsm.state_candidates.len());
+            println!(
+                "transition_candidate_count: {}",
+                fsm.transition_candidates.len()
+            );
             println!("renderable: {}", fsm.renderability.is_renderable);
         }
         println!(

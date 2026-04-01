@@ -18,8 +18,8 @@
 - `EvidenceIR` now has a real builder that emits typed multimodal evidence records instead of remaining text-only scaffolding
 - `SemanticIR` now has a real builder that lifts grounded evidence into inspectable semantic records and residual decisions
 - `IntentIR` now has a real builder that canonicalizes semantic records into inspectable backend-neutral intent artifacts
-- the first `.fsm` adapter slice now materializes a typed DT-centric adapter artifact and can emit explicit standalone combinational and sequential DT text when the canonical facts are complete
-- the next slice should promote explicit regular-state and transition records for honest `?fsm:name` lowering while keeping composition deferred
+- the first `.fsm` adapter slices now materialize typed adapter artifacts and can emit honest standalone `?dt:name` plus structured `?fsm:name` text when the canonical facts are complete
+- the next slice should promote explicit composition/module/top facts for honest broader-root lowering while keeping the canonical model backend-neutral
 
 ## Observed current state
 ### Repository contents directly observed
@@ -135,12 +135,13 @@
 - the first `.fsm` adapter slice already enforces honest renderability boundaries instead of fabricating target text from under-specified intent
 - the canonical model now preserves typed signal inventory and backend-neutral guarded/action control fragments before the adapter boundary
 - the canonical model now also preserves backend-neutral system contract and init-assignment records for explicit standalone sequential control
-- the `.fsm` adapter can now emit a real standalone `?dt:name` file for explicit combinational and sequential DT cases when those canonical facts are explicit enough
+- the canonical model now also preserves explicit regular-state and transition records for stateful lowering
+- the `.fsm` adapter can now emit a real standalone `?dt:name` file for explicit combinational and sequential DT cases plus a real structured `?fsm:name` file for explicit state-graph cases when those canonical facts are explicit enough
 
 ### What is still insufficient
 - only `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR` have real builders today
 - deeper visual enrichment beyond caption/reference grounding is not implemented yet
-- the current renderable `.fsm` slice is intentionally narrow: it handles explicit standalone combinational and sequential DT control, but true `?fsm:name` state modeling and composition cases are still deferred
+- the current renderable `.fsm` slices are intentionally narrow: they handle explicit standalone combinational/sequential DT control plus explicit structured FSM-root cases, but composition/module/top cases are still deferred
 - validation/back-annotation is still absent
 
 ## Architectural recommendation
@@ -154,8 +155,8 @@
 
 ### Recommended growth path from the current codebase
 #### Keep in the current crate for one more slice
-- promote explicit regular-state and transition records for honest `?fsm:name` lowering
-- keep any new state/control enrichment backend-neutral so the canonical model boundary stays intact
+- promote explicit composition/module/top facts for honest broader-root lowering
+- keep any new composition/control enrichment backend-neutral so the canonical model boundary stays intact
 
 #### Split into dedicated crates when pressure becomes real
 - `specforge-source`
@@ -215,11 +216,12 @@
   - if upstream behavior looks wrong, file a local tracked bug report under `FSMGEN-BUG-####` rather than patching the submodule here
 - current executable behavior:
   - builds a typed `.fsm` adapter artifact from persisted `IntentIR`
-  - defaults to a DT-oriented root decision
-  - consumes canonical signal inventory, backend-neutral system/init records, and backend-neutral control fragments when present
+  - chooses `?dt:name` for explicit standalone DT cases and `?fsm:name` when explicit regular-state and transition records are present
+  - consumes canonical signal inventory, backend-neutral system/init records, backend-neutral control fragments, and explicit regular-state/transition records when present
   - emits a real standalone `?dt:name` file only when widths, directions, guarded/action blocks, and any required standalone sequential system/init facts are explicit enough to avoid semantic invention
+  - emits a real structured `?fsm:name` file only when the state graph, transition targets, and state-body control are explicit enough to avoid semantic invention
 - next real implementation target:
-  - promote explicit regular-state and transition facts for honest `?fsm:name` lowering while keeping composition deferred
+  - promote explicit composition/module/top facts for honest broader-root lowering while keeping composition backend-neutral
 
 ## Major risks
 ### Risk: backend leakage into IntentIR
@@ -263,7 +265,7 @@
   - provenance retention across stage boundaries
   - richer `SemanticIR` snapshots and residual-decision coverage on protocol-heavy fixtures
   - richer `IntentIR` snapshots and canonicalization coverage on protocol-heavy fixtures
-  - wider `.fsm` renderability coverage and snapshot stability, especially sequential/system-contract cases
+  - wider `.fsm` renderability coverage and snapshot stability, especially structured FSM and future composition-root cases
   - future adapter targets beyond the first `.fsm` slice
 
 ## Validation completed in this session
@@ -319,10 +321,20 @@
   - passed and carried the canonical interface/system/init/control surface into `IntentIR`
 - `cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/seq_dt/intent_ir.json --target fsm`
   - passed and materialized a renderable `.fsm` adapter artifact with `lowering_status: renderable`, `selected_root_kind: dt`, 4 signal candidates, 1 DT candidate, 4 residual decisions, and an emitted `generated/adapters/fsm/seq_dt/seq_dt.fsm`
+- `cargo run --manifest-path Cargo.toml -- ingest <temp>/explicit_fsm.md`
+  - passed and started a temporary explicit FSM-root CLI pipeclean for the structured `?fsm:name` slice
+- `cargo run --manifest-path Cargo.toml -- evidence generated/source_ir/explicit_fsm/source_ir.json`
+  - passed and preserved the explicit FSM fixture into `EvidenceIR`
+- `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/explicit_fsm/evidence_ir.json`
+  - passed and materialized `SemanticIR` with one typed interface, explicit regular states, explicit transitions, and one standalone guarded DT fragment
+- `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/explicit_fsm/semantic_ir.json`
+  - passed and carried the canonical interface/system/init/control/state/transition surface into `IntentIR`
+- `cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/explicit_fsm/intent_ir.json --target fsm`
+  - passed and materialized a renderable `.fsm` adapter artifact with `lowering_status: renderable`, `selected_root_kind: fsm`, 7 signal candidates, 1 DT candidate, 2 state candidates, 2 transition candidates, 2 residual decisions, and an emitted `generated/adapters/fsm/explicit_fsm/explicit_fsm.fsm`
 - repo-wide stale-name sweep
   - remaining `spec2fsm` references are historical notes only, not active CLI or architecture surfaces
 
 ## Current recommendation
 - keep the current single-crate workspace for one more slice
-- next, promote explicit regular-state and transition facts for honest `?fsm:name` lowering while keeping the canonical model backend-neutral
+- next, promote explicit composition/module/top facts for honest broader-root lowering while keeping the canonical model backend-neutral
 - keep `IntentIR` canonical and resist any temptation to make `.fsm` the hidden endpoint again

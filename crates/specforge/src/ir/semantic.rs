@@ -32,6 +32,10 @@ pub struct SemanticIr {
     #[serde(default)]
     pub init_assignments: Vec<InitAssignmentRecord>,
     #[serde(default)]
+    pub regular_states: Vec<RegularStateRecord>,
+    #[serde(default)]
+    pub state_transitions: Vec<StateTransitionRecord>,
+    #[serde(default)]
     pub decision_tree_fragments: Vec<DecisionTreeFragmentRecord>,
     pub residual_decisions: Vec<ResidualDecisionPacket>,
 }
@@ -80,6 +84,8 @@ impl SemanticIr {
         let decomposition_candidates = build_decomposition_candidates(&context);
         let system_contract = build_system_contract(&context);
         let init_assignments = build_init_assignments(&context);
+        let regular_states = build_regular_states(&context);
+        let state_transitions = build_state_transitions(&context);
         let decision_tree_fragments = build_decision_tree_fragments(&context);
         let residual_decisions =
             build_residual_decisions(&context, &interfaces, actor_build.explicit_actor_count);
@@ -101,6 +107,8 @@ impl SemanticIr {
             decomposition_candidates,
             system_contract,
             init_assignments,
+            regular_states,
+            state_transitions,
             decision_tree_fragments,
             residual_decisions,
         })
@@ -252,6 +260,28 @@ pub enum SystemResetKind {
 pub struct InitAssignmentRecord {
     pub target_signal: String,
     pub value: DecisionTreeValueRecord,
+    pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RegularStateRecord {
+    pub state_id: String,
+    pub state_name: String,
+    pub is_initial: bool,
+    pub declaration_order: u32,
+    pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct StateTransitionRecord {
+    pub transition_id: String,
+    pub source_state: String,
+    pub target_state: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub guard: Option<DecisionTreeGuardRecord>,
+    pub declaration_order: u32,
     pub supporting_statement_ids: Vec<String>,
     pub automation_confidence: AutomationConfidence,
 }
@@ -455,6 +485,19 @@ struct ParsedInitAssignment {
 }
 
 #[derive(Debug, Clone)]
+struct ParsedRegularStateDeclaration {
+    state_name: String,
+    is_initial: bool,
+}
+
+#[derive(Debug, Clone)]
+struct ParsedStateTransition {
+    source_state: String,
+    target_state: String,
+    guard: Option<DecisionTreeGuardRecord>,
+}
+
+#[derive(Debug, Clone)]
 struct ParsedDecisionTreeFragment {
     block_name: String,
     guard: Option<DecisionTreeGuardRecord>,
@@ -500,6 +543,8 @@ fn build_interfaces(context: &SemanticContext) -> Vec<InterfaceRecord> {
             || parse_explicit_system_clock(&statement.text).is_some()
             || parse_explicit_system_reset(&statement.text).is_some()
             || parse_explicit_init_assignment(&statement.text).is_some()
+            || parse_explicit_regular_state_declaration(&statement.text).is_some()
+            || parse_explicit_state_transition(&statement.text).is_some()
         {
             continue;
         }
@@ -627,6 +672,86 @@ fn build_init_assignments(context: &SemanticContext) -> Vec<InitAssignmentRecord
             })
         })
         .collect()
+}
+
+fn build_regular_states(context: &SemanticContext) -> Vec<RegularStateRecord> {
+    let mut regular_states = Vec::<RegularStateRecord>::new();
+    let mut state_index_by_name = HashMap::<String, usize>::new();
+
+    for statement in &context.statements {
+        let Some(parsed_state) = parse_explicit_regular_state_declaration(&statement.text) else {
+            continue;
+        };
+
+        if let Some(existing_index) = state_index_by_name.get(&parsed_state.state_name).copied() {
+            let existing = &mut regular_states[existing_index];
+            existing.is_initial |= parsed_state.is_initial;
+            if !existing
+                .supporting_statement_ids
+                .iter()
+                .any(|statement_id| statement_id == &statement.statement_id)
+            {
+                existing
+                    .supporting_statement_ids
+                    .push(statement.statement_id.clone());
+            }
+            continue;
+        }
+
+        let declaration_order =
+            u32::try_from(regular_states.len()).expect("regular-state count should fit in u32");
+        let state_id = format!(
+            "regular_state_{}",
+            document_key(&format!(
+                "{}_{}",
+                declaration_order, parsed_state.state_name
+            ))
+        );
+        regular_states.push(RegularStateRecord {
+            state_id,
+            state_name: parsed_state.state_name.clone(),
+            is_initial: parsed_state.is_initial,
+            declaration_order,
+            supporting_statement_ids: vec![statement.statement_id.clone()],
+            automation_confidence: AutomationConfidence::High,
+        });
+        state_index_by_name.insert(parsed_state.state_name, regular_states.len() - 1);
+    }
+
+    regular_states
+}
+
+fn build_state_transitions(context: &SemanticContext) -> Vec<StateTransitionRecord> {
+    let mut state_transitions = Vec::new();
+
+    for statement in &context.statements {
+        let Some(parsed_transition) = parse_explicit_state_transition(&statement.text) else {
+            continue;
+        };
+
+        let declaration_order =
+            u32::try_from(state_transitions.len()).expect("transition count should fit in u32");
+        state_transitions.push(StateTransitionRecord {
+            transition_id: format!(
+                "transition_{}",
+                document_key(&format!(
+                    "{}_{}_{}_{}",
+                    declaration_order,
+                    parsed_transition.source_state,
+                    parsed_transition.target_state,
+                    guard_key(parsed_transition.guard.as_ref())
+                ))
+            ),
+            source_state: parsed_transition.source_state,
+            target_state: parsed_transition.target_state,
+            guard: parsed_transition.guard,
+            declaration_order,
+            supporting_statement_ids: vec![statement.statement_id.clone()],
+            automation_confidence: AutomationConfidence::High,
+        });
+    }
+
+    state_transitions
 }
 
 fn build_decision_tree_fragments(context: &SemanticContext) -> Vec<DecisionTreeFragmentRecord> {
@@ -1245,6 +1370,63 @@ fn parse_explicit_init_assignment(text: &str) -> Option<ParsedInitAssignment> {
     Some(ParsedInitAssignment {
         target_signal: parse_identifier(target_signal.trim())?,
         value: parse_decision_tree_value(value_text.trim())?,
+    })
+}
+
+fn parse_explicit_regular_state_declaration(text: &str) -> Option<ParsedRegularStateDeclaration> {
+    let normalized = normalize_sentence(text);
+    let normalized = normalized.trim().trim_end_matches('.');
+    if !normalized.to_ascii_lowercase().starts_with("state ") {
+        return None;
+    }
+
+    let body = normalized[6..].trim();
+    let (state_name_text, suffix) = if let Some((state_name_text, suffix)) = body.split_once(" is ")
+    {
+        (state_name_text.trim(), Some(suffix.trim()))
+    } else {
+        (body, None)
+    };
+    let state_name = parse_identifier(state_name_text)?;
+    let is_initial = match suffix {
+        None => false,
+        Some(suffix) if suffix.eq_ignore_ascii_case("initial") => true,
+        _ => return None,
+    };
+
+    Some(ParsedRegularStateDeclaration {
+        state_name,
+        is_initial,
+    })
+}
+
+fn parse_explicit_state_transition(text: &str) -> Option<ParsedStateTransition> {
+    let normalized = normalize_sentence(text);
+    let normalized = normalized.trim().trim_end_matches('.');
+    if !normalized.to_ascii_lowercase().starts_with("transition ") {
+        return None;
+    }
+
+    let body = normalized[11..].trim();
+    let (source_state_text, remainder) = body.split_once("->")?;
+    let source_state = parse_identifier(source_state_text.trim())?;
+    let remainder = remainder.trim();
+    let remainder_lower = remainder.to_ascii_lowercase();
+    let (target_state_text, guard) = if let Some(index) = remainder_lower.find(" when ") {
+        (
+            remainder[..index].trim(),
+            Some(parse_explicit_decision_tree_guard(
+                remainder[index + 6..].trim(),
+            )?),
+        )
+    } else {
+        (remainder, None)
+    };
+
+    Some(ParsedStateTransition {
+        source_state,
+        target_state: parse_identifier(target_state_text)?,
+        guard,
     })
 }
 
@@ -2167,6 +2349,74 @@ mod tests {
                     }) if target_signal == "ACC" && signal_name == "DATA_IN"
                 )
         }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn extracts_regular_states_and_state_transitions_from_explicit_markdown() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("explicit_fsm.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            "# Explicit FSM Control\nSignal clk is input width 1.\n\nSignal rst_n is input width 1.\n\nSignal GO is input width 1.\n\nSignal DONE is input width 1.\n\nSignal DATA_IN is input width 8.\n\nSignal ACC is output width 8.\n\nClock clk.\n\nReset rst_n is asynchronous active low.\n\nInit ACC = 8'0.\n\nState idle is initial.\n\nState busy.\n\nBlock idle: ACC <- DATA_IN.\n\nTransition idle -> busy when GO.\n\nBlock busy: ACC <- ACC.\n\nTransition busy -> idle when DONE.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        assert_eq!(semantic_ir.regular_states.len(), 2);
+        assert!(semantic_ir.regular_states.iter().any(|state| {
+            state.state_name == "idle" && state.is_initial && state.declaration_order == 0
+        }));
+        assert!(semantic_ir.regular_states.iter().any(|state| {
+            state.state_name == "busy" && !state.is_initial && state.declaration_order == 1
+        }));
+        assert_eq!(semantic_ir.state_transitions.len(), 2);
+        assert!(semantic_ir.state_transitions.iter().any(|transition| {
+            transition.source_state == "idle"
+                && transition.target_state == "busy"
+                && matches!(
+                    transition.guard.as_ref(),
+                    Some(DecisionTreeGuardRecord::SignalIsHigh { signal_name })
+                        if signal_name == "GO"
+                )
+        }));
+        assert!(semantic_ir.state_transitions.iter().any(|transition| {
+            transition.source_state == "busy"
+                && transition.target_state == "idle"
+                && matches!(
+                    transition.guard.as_ref(),
+                    Some(DecisionTreeGuardRecord::SignalIsHigh { signal_name })
+                        if signal_name == "DONE"
+                )
+        }));
+        assert!(
+            semantic_ir
+                .decision_tree_fragments
+                .iter()
+                .any(|fragment| fragment.block_name == "idle")
+        );
+        assert!(
+            semantic_ir
+                .decision_tree_fragments
+                .iter()
+                .any(|fragment| fragment.block_name == "busy")
+        );
 
         Ok(())
     }

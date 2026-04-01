@@ -7,8 +7,8 @@ use serde::{Deserialize, Serialize};
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::semantic::{
-    DecisionTreeFragmentRecord, InitAssignmentRecord, InterfaceRecord, SemanticIr,
-    SystemContractRecord,
+    DecisionTreeFragmentRecord, InitAssignmentRecord, InterfaceRecord, RegularStateRecord,
+    SemanticIr, StateTransitionRecord, SystemContractRecord,
 };
 use crate::ir::source::{
     AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket, document_key,
@@ -32,6 +32,10 @@ pub struct IntentIr {
     pub assumptions: Vec<IntentAssumption>,
     #[serde(default)]
     pub init_assignments: Vec<InitAssignmentRecord>,
+    #[serde(default)]
+    pub regular_states: Vec<RegularStateRecord>,
+    #[serde(default)]
+    pub state_transitions: Vec<StateTransitionRecord>,
     #[serde(default)]
     pub decision_tree_fragments: Vec<DecisionTreeFragmentRecord>,
     pub residual_decisions: Vec<ResidualDecisionPacket>,
@@ -77,6 +81,8 @@ impl IntentIr {
         let constraints = build_constraints(&context);
         let assumptions = build_assumptions(&context, &actors);
         let init_assignments = semantic_ir.init_assignments.clone();
+        let regular_states = semantic_ir.regular_states.clone();
+        let state_transitions = semantic_ir.state_transitions.clone();
         let decision_tree_fragments = semantic_ir.decision_tree_fragments.clone();
         let residual_decisions =
             build_residual_decisions(&context, &actors, &behaviors, &constraints);
@@ -88,6 +94,8 @@ impl IntentIr {
             &behaviors,
             &constraints,
             &init_assignments,
+            &regular_states,
+            &state_transitions,
             &decision_tree_fragments,
         );
 
@@ -105,6 +113,8 @@ impl IntentIr {
             constraints,
             assumptions,
             init_assignments,
+            regular_states,
+            state_transitions,
             decision_tree_fragments,
             residual_decisions,
         })
@@ -312,18 +322,22 @@ fn build_intent_identity(
     behaviors: &[BehaviorIntent],
     constraints: &[IntentConstraint],
     init_assignments: &[InitAssignmentRecord],
+    regular_states: &[RegularStateRecord],
+    state_transitions: &[StateTransitionRecord],
     decision_tree_fragments: &[DecisionTreeFragmentRecord],
 ) -> IntentIdentity {
     IntentIdentity {
         intent_id: format!("intent_{}", document_identity.document_key),
         summary: format!(
-            "backend-neutral intent for {} covering {} actors, {} interfaces, {} behaviors, {} constraints, {} init assignments, {} control fragments, and {} explicit system contract",
+            "backend-neutral intent for {} covering {} actors, {} interfaces, {} behaviors, {} constraints, {} init assignments, {} regular states, {} state transitions, {} control fragments, and {} explicit system contract",
             document_identity.display_name,
             actors.len(),
             interfaces.len(),
             behaviors.len(),
             constraints.len(),
             init_assignments.len(),
+            regular_states.len(),
+            state_transitions.len(),
             decision_tree_fragments.len(),
             if system_contract.is_some() { 1 } else { 0 }
         ),
@@ -878,6 +892,59 @@ mod tests {
                 .intent_identity
                 .summary
                 .contains("explicit system contract")
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn carries_regular_states_and_state_transitions_into_intent_ir() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("explicit_fsm.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            "# Explicit FSM Control\nSignal clk is input width 1.\n\nSignal rst_n is input width 1.\n\nSignal GO is input width 1.\n\nSignal DONE is input width 1.\n\nSignal DATA_IN is input width 8.\n\nSignal ACC is output width 8.\n\nClock clk.\n\nReset rst_n is asynchronous active low.\n\nInit ACC = 8'0.\n\nState idle is initial.\n\nState busy.\n\nBlock idle: ACC <- DATA_IN.\n\nTransition idle -> busy when GO.\n\nBlock busy: ACC <- ACC.\n\nTransition busy -> idle when DONE.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        assert_eq!(intent_ir.regular_states.len(), 2);
+        assert!(
+            intent_ir
+                .regular_states
+                .iter()
+                .any(|state| state.state_name == "idle" && state.is_initial)
+        );
+        assert_eq!(intent_ir.state_transitions.len(), 2);
+        assert!(intent_ir.state_transitions.iter().any(|transition| {
+            transition.source_state == "idle" && transition.target_state == "busy"
+        }));
+        assert!(
+            intent_ir
+                .intent_identity
+                .summary
+                .contains("state transitions")
         );
 
         Ok(())

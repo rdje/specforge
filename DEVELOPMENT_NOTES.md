@@ -64,7 +64,7 @@
 - `EvidenceIR` now builds multimodal evidence records instead of remaining text-only scaffolding
 - `SemanticIR` now builds a first backend-neutral semantic layer instead of remaining scaffolding only
 - `IntentIR` now builds a first canonical backend-neutral intent layer instead of remaining scaffolding only
-- the first `.fsm` adapter slice now builds a typed DT-centric adapter artifact instead of leaving adapters as planning-only scaffolding
+- the first `.fsm` adapter slices now build typed adapter artifacts that can lower honest standalone and structured FSM cases instead of leaving adapters as planning-only scaffolding
 
 ## Structured PDF normalization implementation
 - execute-mode PDF ingest is now orchestrated from `crates/specforge/src/ir/source.rs`
@@ -133,12 +133,13 @@
 - `AdapterArtifact::build` now:
   - loads persisted `IntentIR` JSON from disk
   - derives typed adapter artifacts under `generated/adapters/fsm/<document_key>/adapter.json`
-  - selects a conservative DT-oriented `.fsm` root decision unless the canonical model carries stronger sequencing evidence
-  - consumes canonical interface inventory, backend-neutral system/init records, and backend-neutral guarded/action fragments from `IntentIR`
+  - chooses `?dt:name` for explicit standalone DT cases and `?fsm:name` when explicit regular-state and transition records are present
+  - consumes canonical interface inventory, backend-neutral system/init records, backend-neutral guarded/action fragments, and explicit regular-state/transition records from `IntentIR`
   - emits real standalone `?dt:name` text when every referenced signal has explicit width/direction, every control block is fully typed, and any sequential standalone DT case also has explicit system/init facts
-  - preserves upstream residual decisions and emits adapter-side residual decisions only for unresolved signal inventory, system/init surface, deferred control structure, and broader root-kind expansion
-  - keeps true `?fsm:name` state modeling and composition cases blocked until the canonical model carries those facts explicitly
-- the current renderable slice is still intentionally narrow rather than speculative; it now covers explicit standalone combinational and sequential DT cases while keeping broader root kinds deferred
+  - emits real structured `?fsm:name` text when the canonical state graph, transition targets, and state-body control are explicit enough to avoid semantic invention
+  - preserves upstream residual decisions and emits adapter-side residual decisions only for unresolved signal inventory, system/init surface, state graph, and broader root-kind expansion
+  - keeps composition cases blocked until the canonical model carries explicit module/top facts
+- the current renderable slices are still intentionally narrow rather than speculative; they now cover explicit standalone combinational and sequential DT cases plus explicit structured FSM-root cases while keeping composition roots deferred
 
 ## Documentation surface currently steering the implementation
 - `README.md`
@@ -193,7 +194,7 @@
 - `src/ir/intent.rs`
   - first real `IntentIR` builder for deterministic canonicalization and residual-decision preservation
 - `src/ir/adapters.rs`
-  - typed adapter artifacts, DT-centric `.fsm` lowering logic, and adapter-side residual-decision/renderability reporting
+  - typed adapter artifacts, honest standalone/structured `.fsm` lowering logic, and adapter-side residual-decision/renderability reporting
 
 ## Newly completed architectural pivot
 - the CLI/crate identity is now `specforge`
@@ -219,5 +220,5 @@
 - do not let figures, charts, or diagrams collapse into throwaway markdown placeholders if they may carry normative meaning
 
 ## Immediate next engineering target
-- promote explicit regular-state and transition facts for honest `?fsm:name` lowering without leaking backend syntax into the canonical model
-- keep composition roots and broader module/top structure deferred until the canonical model carries them explicitly
+- promote explicit composition/module/top facts for honest `?top:name`, `?mod:name`, and `?module:name` lowering without leaking backend syntax into the canonical model
+- keep broader target structure deferred until the canonical model carries it explicitly

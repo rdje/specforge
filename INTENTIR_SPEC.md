@@ -344,6 +344,32 @@ Minimal conceptual example:
       }
     }
   ],
+  "regular_states": [
+    {
+      "state_id": "regular_state_idle",
+      "state_name": "idle",
+      "is_initial": true,
+      "declaration_order": 0
+    },
+    {
+      "state_id": "regular_state_busy",
+      "state_name": "busy",
+      "is_initial": false,
+      "declaration_order": 1
+    }
+  ],
+  "state_transitions": [
+    {
+      "transition_id": "transition_idle_busy_go",
+      "source_state": "idle",
+      "target_state": "busy",
+      "guard": {
+        "kind": "signal_is_high",
+        "signal_name": "GO"
+      },
+      "declaration_order": 0
+    }
+  ],
   "decision_tree_fragments": [
     {
       "fragment_id": "dt_fragment_accumulate",
@@ -381,7 +407,7 @@ Initial planned targets:
 Current implementation note:
 - `specforge adapt <intent-ir> --target fsm` now materializes `generated/adapters/fsm/<document_key>/adapter.json`
 - the first executable adapter slice consumes persisted `IntentIR` JSON
-- it currently selects a conservative DT-oriented root, consumes canonical interface/control/system/init records when available, emits real standalone `?dt:name` text for fully specified explicit combinational and sequential cases, and keeps broader cases blocked with residual decisions plus renderability blockers rather than fabricating `.fsm` text
+- it currently chooses `?dt:name` for fully specified explicit standalone cases, chooses `?fsm:name` when explicit regular-state and transition records are present, consumes canonical interface/control/system/init/state records when available, emits real standalone or structured `.fsm` text only when renderability is explicit enough, and keeps broader composition cases blocked with residual decisions plus renderability blockers rather than fabricating `.fsm` text
 
 Minimal conceptual adapter artifact:
 ```json
@@ -457,7 +483,7 @@ Example:
 - `specforge evidence` constructs `EvidenceIR` from normalized markdown, page/asset manifests, and visual evidence anchors
 - `specforge semantic` constructs `SemanticIR` from grounded evidence
 - `specforge intent` now constructs canonical `IntentIR`
-- `specforge adapt --target fsm` now constructs a typed `.fsm` adapter artifact, emits real standalone `.fsm` text for explicit canonical standalone cases, and blocks unsafe target text emission with explicit residual decisions otherwise
+- `specforge adapt --target fsm` now constructs a typed `.fsm` adapter artifact, emits real standalone or structured `.fsm` text for explicit canonical standalone/stateful cases, and blocks unsafe target text emission with explicit residual decisions otherwise
 - adapter work should follow `IntentIR`, not precede it
 
 ## Long-term documentation requirement
