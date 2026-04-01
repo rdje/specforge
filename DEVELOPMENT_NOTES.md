@@ -102,7 +102,8 @@
   - loads persisted `EvidenceIR` JSON from disk
   - derives artifact layout under `generated/semantic_ir/<document_key>/semantic_ir.json`
   - discovers actors from explicit role terms and falls back to interface-derived channel actors when the evidence names signals but not endpoints
-  - discovers interfaces from recurring grouped signal names
+  - discovers interfaces from recurring grouped signal names and preserves typed signal records when explicit declarations are present
+  - preserves backend-neutral guarded/action control fragments from explicit `Block ...` statements when the evidence is explicit enough
   - derives phases from section structure and sequencing language
   - extracts invariants, contracts, gates, and abstractions from inspectable heuristics over evidence statements
   - emits decomposition candidates from section/topic clustering
@@ -116,6 +117,8 @@
   - loads persisted `SemanticIR` JSON from disk
   - derives artifact layout under `generated/intent_ir/<document_key>/intent_ir.json`
   - canonicalizes actor responsibilities from semantic actors, contracts, and phase overlap
+  - carries forward canonical interface inventory from typed semantic interfaces
+  - carries forward backend-neutral guarded/action control fragments from typed semantic control blocks
   - canonicalizes behaviors from phases, contracts, and gate-like sequencing rules
   - canonicalizes constraints from invariants, assertions, and interface-coupled rules
   - derives assumptions from abstractions and conservative backend-neutral heuristics
@@ -129,10 +132,11 @@
   - loads persisted `IntentIR` JSON from disk
   - derives typed adapter artifacts under `generated/adapters/fsm/<document_key>/adapter.json`
   - selects a conservative DT-oriented `.fsm` root decision unless the canonical model carries stronger sequencing evidence
-  - inventories low-confidence signal candidates and DT/state candidate structure from canonical intent records
-  - preserves upstream residual decisions and emits adapter-side residual decisions for missing signal inventory, DT fragments, and broader root-kind expansion
-  - blocks emitted `.fsm` text when signal declarations or DT predicates/actions would require semantic invention
-- the current first-pass implementation is intentionally honest rather than over-productive; it proves the adapter boundary, target-specific typing, and renderability gating before widening emission
+  - consumes canonical interface inventory and backend-neutral guarded/action fragments from `IntentIR`
+  - emits real standalone `?dt:name` text when every referenced signal has explicit width/direction and every control block is fully typed
+  - preserves upstream residual decisions and emits adapter-side residual decisions only for unresolved signal inventory, deferred control structure, and broader root-kind expansion
+  - keeps sequential/system-contract/composition cases blocked until the canonical model carries those facts explicitly
+- the current first renderable slice is intentionally narrow rather than speculative; it proves the backend-neutral control boundary and honest emission rule before widening to broader target cases
 
 ## Documentation surface currently steering the implementation
 - `README.md`
@@ -205,7 +209,7 @@
 ## Immediate implementation consequences
 - do not jump to `.fsm` generation from `SourceIR`
 - keep the current `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR` types stable enough that later adapter builders can depend on them
-- use the newly materialized `IntentIR` actors, behaviors, constraints, assumptions, and residual decisions as the substrate for the first real adapter lowerings
+- use the newly materialized `IntentIR` actors, interface inventory, control fragments, behaviors, constraints, assumptions, and residual decisions as the substrate for adapter lowerings
 - use `subs/fsmgen` as a local reference implementation for `.fsm` expectations and comparisons, but do not let that reference redefine the canonical `IntentIR` boundary
 - do not edit `subs/fsmgen` from this repository; if upstream behavior appears wrong, file a thorough local tracked bug report instead
 - use the local upstream bug-report ID format `FSMGEN-BUG-####` when such issues are found
@@ -213,5 +217,5 @@
 - do not let figures, charts, or diagrams collapse into throwaway markdown placeholders if they may carry normative meaning
 
 ## Immediate next engineering target
-- widen the first `.fsm` adapter from a typed blocked DT-centric artifact to safe renderable `.fsm` text
-- if that widening still requires semantic invention, add the smallest backend-neutral `IntentIR` enrichment needed for signal inventory and DT fragments instead of pushing target-specific inference into the adapter
+- broaden the new standalone renderable `.fsm` slice toward sequential/system-contract support without leaking backend syntax into the canonical model
+- keep composition roots and broader module/top structure deferred until the canonical model carries them explicitly

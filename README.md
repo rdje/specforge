@@ -168,11 +168,11 @@ Use it first for the project objective, document navigation, and the current imp
 - `crates/specforge/src/ir/evidence.rs`
   - first real multimodal `EvidenceIR` builder for text spans, captions, figure/table references, visual evidence, and extracted statements
 - `crates/specforge/src/ir/semantic.rs`
-  - first real `SemanticIR` builder for actors, interfaces, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions
+  - first real `SemanticIR` builder for actors, interfaces, typed signal records, backend-neutral control fragments, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions
 - `crates/specforge/src/ir/intent.rs`
-  - first real `IntentIR` builder for canonical intent identity, actor responsibilities, behaviors, constraints, assumptions, and residual decisions
+  - first real `IntentIR` builder for canonical intent identity, actor responsibilities, carried interface inventory, carried backend-neutral control fragments, behaviors, constraints, assumptions, and residual decisions
 - `crates/specforge/src/ir/adapters.rs`
-  - typed adapter artifacts, DT-centric `.fsm` lowering logic, renderability status, and adapter-side residual decisions
+  - typed adapter artifacts, DT-centric `.fsm` lowering logic, safe standalone renderability analysis, and adapter-side residual decisions
 
 ### Planned future implementation paths
 - `fixtures/`
@@ -202,14 +202,14 @@ cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --targ
 - `specforge intent <semantic-ir> --dry-run` prints computed `IntentIR` JSON without writing artifacts
 - `specforge intent <semantic-ir>` materializes `generated/intent_ir/<document_key>/intent_ir.json`
 - `specforge adapt <intent-ir> --target fsm --dry-run` prints computed adapter JSON without writing artifacts
-- `specforge adapt <intent-ir> --target fsm` materializes `generated/adapters/fsm/<document_key>/adapter.json` and only writes an emitted `.fsm` file when the adapter is safely renderable
+- `specforge adapt <intent-ir> --target fsm` materializes `generated/adapters/fsm/<document_key>/adapter.json` and writes an emitted standalone `.fsm` file when the canonical interface/control surface is explicit enough to lower honestly
 - PDF execute-mode ingest expects `docling` to be importable from `python3` or `python`; when it lives elsewhere, set `SPECFORGE_DOCLING_PYTHON=/path/to/python`
 
 ## Planned product shape
 - stage 0: build `SourceIR` from raw sources, normalized text views, structured page artifacts, and extracted visual assets
 - stage 1: build `EvidenceIR` from normalized text, section anchors, evidence spans, figure/caption links, visual evidence, and statement extraction
 - stage 2: build `SemanticIR` from actors, interfaces, phases, invariants, contracts, gates, assertions, abstractions, and decomposition candidates
-- stage 3: build `IntentIR` as the canonical backend-independent intent model
+- stage 3: build `IntentIR` as the canonical backend-independent intent model, including explicit interface inventory and backend-neutral guarded/action fragments when supported by the evidence
 - stage 4: lower `IntentIR` through adapters such as `.fsm`, SystemVerilog, Verilog, and VHDL
 - stage 5: validate adapters and back-annotate findings into the IR/documentation surface
 

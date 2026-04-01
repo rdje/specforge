@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
-use crate::ir::semantic::SemanticIr;
+use crate::ir::semantic::{DecisionTreeFragmentRecord, InterfaceRecord, SemanticIr};
 use crate::ir::source::{
     AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket, document_key,
 };
@@ -20,9 +20,13 @@ pub struct IntentIr {
     pub document_identity: IntentDocumentIdentity,
     pub intent_identity: IntentIdentity,
     pub actors: Vec<IntentActor>,
+    #[serde(default)]
+    pub interfaces: Vec<InterfaceRecord>,
     pub behaviors: Vec<BehaviorIntent>,
     pub constraints: Vec<IntentConstraint>,
     pub assumptions: Vec<IntentAssumption>,
+    #[serde(default)]
+    pub decision_tree_fragments: Vec<DecisionTreeFragmentRecord>,
     pub residual_decisions: Vec<ResidualDecisionPacket>,
 }
 
@@ -58,15 +62,23 @@ impl IntentIr {
         };
 
         let context = IntentContext::from_semantic_ir(&semantic_ir);
+        let interfaces = semantic_ir.interfaces.clone();
         let actors = build_intent_actors(&context);
         let actor_ids = actors.iter().map(|actor| actor.actor_id.clone()).collect();
         let behaviors = build_behaviors(&context, actor_ids);
         let constraints = build_constraints(&context);
         let assumptions = build_assumptions(&context, &actors);
+        let decision_tree_fragments = semantic_ir.decision_tree_fragments.clone();
         let residual_decisions =
             build_residual_decisions(&context, &actors, &behaviors, &constraints);
-        let intent_identity =
-            build_intent_identity(&document_identity, &actors, &behaviors, &constraints);
+        let intent_identity = build_intent_identity(
+            &document_identity,
+            &actors,
+            &interfaces,
+            &behaviors,
+            &constraints,
+            &decision_tree_fragments,
+        );
 
         Ok(Self {
             schema_version: 1,
@@ -76,9 +88,11 @@ impl IntentIr {
             document_identity,
             intent_identity,
             actors,
+            interfaces,
             behaviors,
             constraints,
             assumptions,
+            decision_tree_fragments,
             residual_decisions,
         })
     }
@@ -280,17 +294,21 @@ struct AbstractionContext {
 fn build_intent_identity(
     document_identity: &IntentDocumentIdentity,
     actors: &[IntentActor],
+    interfaces: &[InterfaceRecord],
     behaviors: &[BehaviorIntent],
     constraints: &[IntentConstraint],
+    decision_tree_fragments: &[DecisionTreeFragmentRecord],
 ) -> IntentIdentity {
     IntentIdentity {
         intent_id: format!("intent_{}", document_identity.document_key),
         summary: format!(
-            "backend-neutral intent for {} covering {} actors, {} behaviors, and {} constraints",
+            "backend-neutral intent for {} covering {} actors, {} interfaces, {} behaviors, {} constraints, and {} control fragments",
             document_identity.display_name,
             actors.len(),
+            interfaces.len(),
             behaviors.len(),
-            constraints.len()
+            constraints.len(),
+            decision_tree_fragments.len()
         ),
     }
 }
@@ -737,6 +755,61 @@ mod tests {
                 .artifact_layout
                 .intent_ir_path
                 .ends_with("generated/intent_ir/control/intent_ir.json")
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn carries_typed_interface_and_control_fragments_into_intent_ir() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("comb_dt.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            "# Explicit Control\nSignal DATA_IN is input width 8.\n\nSignal DATA_OUT is output width 8.\n\nSignal ZERO_FLAG is output width 1.\n\nBlock route_data: DATA_OUT = DATA_IN.\n\nBlock flag_zero when DATA_IN == 8'0: ZERO_FLAG = 1.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        assert!(intent_ir.interfaces.iter().any(|interface| {
+            interface
+                .signal_records
+                .iter()
+                .any(|signal| signal.signal_name == "DATA_IN" && signal.width_hint == Some(8))
+        }));
+        assert_eq!(intent_ir.decision_tree_fragments.len(), 2);
+        assert!(
+            intent_ir
+                .decision_tree_fragments
+                .iter()
+                .any(|fragment| fragment.block_name == "route_data")
+        );
+        assert!(
+            intent_ir
+                .intent_identity
+                .summary
+                .contains("control fragments")
         );
 
         Ok(())

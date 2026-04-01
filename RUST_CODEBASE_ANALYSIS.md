@@ -133,11 +133,13 @@
 - the repository now also contains a pinned local `fsmgen` checkout, which gives the next `.fsm` adapter slice a nearby reference implementation without changing the canonical `IntentIR` boundary
 - that `fsmgen` checkout is now explicitly contextual and read-only from the `specforge` side; any observed upstream misbehavior should be captured as a local `FSMGEN-BUG-####` report instead of a submodule edit
 - the first `.fsm` adapter slice already enforces honest renderability boundaries instead of fabricating target text from under-specified intent
+- the canonical model now preserves typed signal inventory and backend-neutral guarded/action control fragments before the adapter boundary
+- the `.fsm` adapter can now emit a real standalone `?dt:name` file when those canonical facts are explicit enough
 
 ### What is still insufficient
 - only `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR` have real builders today
 - deeper visual enrichment beyond caption/reference grounding is not implemented yet
-- the first `.fsm` adapter slice is intentionally blocked for current `IntentIR` outputs because stable signal inventory and backend-neutral DT fragments are still missing
+- the current renderable `.fsm` slice is intentionally narrow: it handles explicit standalone combinational control blocks, but sequential/system-contract/composition cases are still deferred
 - validation/back-annotation is still absent
 
 ## Architectural recommendation
@@ -188,7 +190,7 @@
 - dependency:
   - requires real `EvidenceIR`
 - current executable behavior:
-  - builds `SemanticIR` from persisted `EvidenceIR`, deriving actors, interfaces, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions
+  - builds `SemanticIR` from persisted `EvidenceIR`, deriving actors, interfaces, typed signal records, backend-neutral control fragments, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions
 
 ### IntentIR
 - current declared ownership:
@@ -197,7 +199,7 @@
 - dependency:
   - requires real `SemanticIR`
 - current executable behavior:
-  - builds `IntentIR` from persisted `SemanticIR`, deriving intent identity, actor responsibilities, behaviors, constraints, assumptions, and residual decisions
+  - builds `IntentIR` from persisted `SemanticIR`, deriving intent identity, actor responsibilities, interface inventory, backend-neutral control fragments, behaviors, constraints, assumptions, and residual decisions
 
 ### Adapters
 - current declared ownership:
@@ -213,9 +215,10 @@
 - current executable behavior:
   - builds a typed `.fsm` adapter artifact from persisted `IntentIR`
   - defaults to a DT-oriented root decision
-  - records signal candidates, DT/state candidates, renderability blockers, and adapter residual decisions
+  - consumes canonical signal inventory and backend-neutral control fragments when present
+  - emits a real standalone `?dt:name` file only when widths, directions, and guarded/action blocks are explicit enough to avoid semantic invention
 - next real implementation target:
-  - widen `.fsm` emission only when the canonical model is explicit enough to avoid semantic invention
+  - broaden the canonical surface beyond the first standalone renderable slice, starting with sequential/system-contract support while keeping composition deferred
 
 ## Major risks
 ### Risk: backend leakage into IntentIR
@@ -259,7 +262,7 @@
   - provenance retention across stage boundaries
   - richer `SemanticIR` snapshots and residual-decision coverage on protocol-heavy fixtures
   - richer `IntentIR` snapshots and canonicalization coverage on protocol-heavy fixtures
-  - wider `.fsm` renderability coverage and snapshot stability
+  - wider `.fsm` renderability coverage and snapshot stability, especially sequential/system-contract cases
   - future adapter targets beyond the first `.fsm` slice
 
 ## Validation completed in this session
@@ -295,10 +298,20 @@
   - passed and materialized a PDF-backed `IntentIR` with 2 actors, 28 behaviors, 24 constraints, 1 assumption, and 2 residual decisions
 - `cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/handshake/intent_ir.json --target fsm`
   - passed and materialized a typed `.fsm` adapter artifact with `lowering_status: blocked`, `selected_root_kind: dt`, 2 signal candidates, 1 DT candidate, and 3 adapter residual decisions
+- `cargo run --manifest-path Cargo.toml -- ingest <temp>/comb_dt.md`
+  - passed and started a temporary explicit-control CLI pipeclean for the first renderable standalone `.fsm` slice
+- `cargo run --manifest-path Cargo.toml -- evidence generated/source_ir/comb_dt/source_ir.json`
+  - passed and preserved the explicit-control fixture into `EvidenceIR`
+- `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/comb_dt/evidence_ir.json`
+  - passed and materialized `SemanticIR` with one typed interface and two canonical control fragments
+- `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/comb_dt/semantic_ir.json`
+  - passed and carried the canonical interface/control surface into `IntentIR`
+- `cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/comb_dt/intent_ir.json --target fsm`
+  - passed and materialized a renderable `.fsm` adapter artifact with `lowering_status: renderable`, `selected_root_kind: dt`, 3 signal candidates, 1 DT candidate, 2 residual decisions, and an emitted `generated/adapters/fsm/comb_dt/comb_dt.fsm`
 - repo-wide stale-name sweep
   - remaining `spec2fsm` references are historical notes only, not active CLI or architecture surfaces
 
 ## Current recommendation
 - keep the current single-crate workspace for one more slice
-- next, widen the first `.fsm` adapter from typed blocked artifacts to safe renderable `.fsm` text or the minimal canonical enrichment needed for that
+- next, broaden the standalone renderable `.fsm` slice toward sequential/system-contract support while keeping the canonical model backend-neutral
 - keep `IntentIR` canonical and resist any temptation to make `.fsm` the hidden endpoint again

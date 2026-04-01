@@ -111,7 +111,8 @@ cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json
 - writes `generated/semantic_ir/<document_key>/semantic_ir.json`
 - builds:
   - actors from role-like evidence terms or inferred channel groupings
-  - interfaces from recurring grouped signal names
+  - interfaces from recurring grouped signal names plus explicit typed signal declarations when present
+  - backend-neutral guarded/action control fragments from explicit `Block ...` statements when the evidence is explicit enough
   - phases from section structure and sequencing language
   - invariants, contracts, and gates from heuristic semantic lifting
   - abstractions and decomposition candidates with supporting statement ids
@@ -137,6 +138,8 @@ cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json
 - builds:
   - a canonical intent identity from the document and semantic theme
   - actor responsibilities from semantic actors, contracts, and phase overlap
+  - canonical interface inventory carried forward from typed semantic interfaces
+  - canonical backend-neutral guarded/action fragments carried forward from typed semantic control blocks
   - behaviors from phases, contracts, and gate-like sequencing rules
   - constraints from invariants, assertions, and interface-coupled rules
   - assumptions from abstractions and conservative canonicalization heuristics
@@ -150,8 +153,8 @@ cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --targ
 - requires an `IntentIR` JSON artifact
 - useful for checking:
   - root-kind selection (`?dt:name` vs future broader roots)
-  - low-confidence signal inventory
-  - DT candidates and any state hints
+  - canonical signal inventory, including direction/width hints when known
+  - canonical control-block candidates and any state hints
   - renderability blockers and required canonical enrichments
   - adapter-side residual decisions before materialization
 
@@ -162,9 +165,13 @@ cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --targ
 - writes `generated/adapters/fsm/<document_key>/adapter.json`
 - currently:
   - selects a conservative DT-oriented root unless canonical sequencing is explicit enough for a true `?fsm:name` root
-  - inventories low-confidence signal candidates from canonical intent statements
-  - records DT candidates, renderability blockers, and adapter residual decisions in typed JSON
-  - writes an emitted `.fsm` file only when the adapter is safely renderable, which the current first slice usually reports as `emitted_target_path: none`
+  - consumes canonical interface inventory and backend-neutral guarded/action fragments from `IntentIR`
+  - writes a real standalone `.fsm` file when every referenced signal has explicit width/direction and every control block is fully typed
+  - keeps blocked cases explicit when signal roles, widths, sequential/system facts, or broader roots would otherwise require invention
+- current explicit renderable cue for the first slice:
+  - `Signal DATA_IN is input width 8.`
+  - `Signal DATA_OUT is output width 8.`
+  - `Block route_data: DATA_OUT = DATA_IN.`
 
 ## Planned user workflow
 1. provide a source specification
@@ -198,7 +205,7 @@ cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --targ
 - the current `EvidenceIR` extraction logic is still heuristic and does not yet perform deeper OCR, chart extraction, or semantic lifting from visual regions
 - the current `SemanticIR` extraction logic is still heuristic and conservative, so later `IntentIR` work will need refinement rather than semantic invention
 - the current `IntentIR` canonicalization logic is still heuristic and conservative, so adapter work should refine backend lowering rather than treat the current pass as a complete semantic endpoint
-- the first `.fsm` adapter slice is implemented, but it is intentionally conservative and usually blocked until `IntentIR` grows stable signal inventory and backend-neutral DT fragments
+- the first `.fsm` adapter slice is implemented and can now emit standalone renderable `?dt:name` text for explicit canonical interface/control cases, but broader sequential/system-contract/composition cases remain deferred
 - validation/back-annotation is not implemented yet
 
 ## Where to look next

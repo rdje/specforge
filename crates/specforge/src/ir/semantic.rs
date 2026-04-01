@@ -27,6 +27,8 @@ pub struct SemanticIr {
     pub assertions: Vec<AssertionRecord>,
     pub abstractions: Vec<AbstractionRecord>,
     pub decomposition_candidates: Vec<DecompositionCandidate>,
+    #[serde(default)]
+    pub decision_tree_fragments: Vec<DecisionTreeFragmentRecord>,
     pub residual_decisions: Vec<ResidualDecisionPacket>,
 }
 
@@ -72,6 +74,7 @@ impl SemanticIr {
         let assertions = build_assertions(&context);
         let abstractions = build_abstractions(&context);
         let decomposition_candidates = build_decomposition_candidates(&context);
+        let decision_tree_fragments = build_decision_tree_fragments(&context);
         let residual_decisions =
             build_residual_decisions(&context, &interfaces, actor_build.explicit_actor_count);
 
@@ -90,6 +93,7 @@ impl SemanticIr {
             assertions,
             abstractions,
             decomposition_candidates,
+            decision_tree_fragments,
             residual_decisions,
         })
     }
@@ -132,7 +136,38 @@ pub struct ActorRecord {
 pub struct InterfaceRecord {
     pub interface_id: String,
     pub signals: Vec<String>,
+    #[serde(default)]
+    pub signal_records: Vec<InterfaceSignalRecord>,
     pub supporting_statement_ids: Vec<String>,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum InterfaceSignalDirection {
+    Input,
+    Output,
+    Internal,
+}
+
+impl InterfaceSignalDirection {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Input => "input",
+            Self::Output => "output",
+            Self::Internal => "internal",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct InterfaceSignalRecord {
+    pub signal_name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub direction_hint: Option<InterfaceSignalDirection>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub width_hint: Option<u32>,
+    pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -187,6 +222,62 @@ pub struct DecompositionCandidate {
     pub summary: String,
     pub supporting_statement_ids: Vec<String>,
     pub supporting_section_ids: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct DecisionTreeFragmentRecord {
+    pub fragment_id: String,
+    pub block_name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub guard: Option<DecisionTreeGuardRecord>,
+    pub actions: Vec<DecisionTreeActionRecord>,
+    pub referenced_signal_names: Vec<String>,
+    pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(tag = "kind", rename_all = "snake_case")]
+pub enum DecisionTreeGuardRecord {
+    SignalIsHigh {
+        signal_name: String,
+    },
+    Comparison {
+        left_signal: String,
+        operator: DecisionTreeComparisonOperator,
+        right: DecisionTreeValueRecord,
+    },
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum DecisionTreeComparisonOperator {
+    Eq,
+    NotEq,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(tag = "kind", rename_all = "snake_case")]
+pub enum DecisionTreeActionRecord {
+    Assign {
+        target_signal: String,
+        assignment_kind: DecisionTreeAssignmentKind,
+        value: DecisionTreeValueRecord,
+    },
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum DecisionTreeAssignmentKind {
+    Combinational,
+    Sequential,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(tag = "kind", rename_all = "snake_case")]
+pub enum DecisionTreeValueRecord {
+    SignalRef { signal_name: String },
+    Literal { literal: String },
 }
 
 #[derive(Debug, Clone)]
@@ -293,13 +384,70 @@ struct ActorAccumulator {
 #[derive(Debug, Clone)]
 struct InterfaceAccumulator {
     signals: BTreeSet<String>,
+    signal_records: BTreeMap<String, InterfaceSignalAccumulator>,
     supporting_statement_ids: BTreeSet<String>,
+}
+
+#[derive(Debug, Clone)]
+struct InterfaceSignalAccumulator {
+    direction_hint: Option<InterfaceSignalDirection>,
+    width_hint: Option<u32>,
+    supporting_statement_ids: BTreeSet<String>,
+    automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone)]
+struct ParsedInterfaceSignalDeclaration {
+    signal_name: String,
+    direction_hint: InterfaceSignalDirection,
+    width_hint: Option<u32>,
+}
+
+#[derive(Debug, Clone)]
+struct ParsedDecisionTreeFragment {
+    block_name: String,
+    guard: Option<DecisionTreeGuardRecord>,
+    action: DecisionTreeActionRecord,
+    referenced_signal_names: BTreeSet<String>,
+}
+
+#[derive(Debug, Clone)]
+struct DecisionTreeFragmentAccumulator {
+    block_name: String,
+    guard: Option<DecisionTreeGuardRecord>,
+    actions: Vec<DecisionTreeActionRecord>,
+    referenced_signal_names: BTreeSet<String>,
+    supporting_statement_ids: BTreeSet<String>,
+    automation_confidence: AutomationConfidence,
 }
 
 fn build_interfaces(context: &SemanticContext) -> Vec<InterfaceRecord> {
     let mut accumulators: BTreeMap<String, InterfaceAccumulator> = BTreeMap::new();
 
     for statement in &context.statements {
+        if let Some(signal_declaration) = parse_explicit_signal_declaration(&statement.text) {
+            let key = explicit_interface_key(statement.section_ids.as_slice());
+            let entry = accumulators
+                .entry(key)
+                .or_insert_with(|| InterfaceAccumulator {
+                    signals: BTreeSet::new(),
+                    signal_records: BTreeMap::new(),
+                    supporting_statement_ids: BTreeSet::new(),
+                });
+            register_interface_signal_record(
+                entry,
+                &signal_declaration.signal_name,
+                Some(signal_declaration.direction_hint),
+                signal_declaration.width_hint,
+                &statement.statement_id,
+                AutomationConfidence::High,
+            );
+            continue;
+        }
+
+        if parse_explicit_decision_tree_fragment(&statement.text).is_some() {
+            continue;
+        }
         if !should_emit_interface_candidate(statement.signals.as_slice()) {
             continue;
         }
@@ -309,8 +457,72 @@ fn build_interfaces(context: &SemanticContext) -> Vec<InterfaceRecord> {
             .entry(key)
             .or_insert_with(|| InterfaceAccumulator {
                 signals: statement.signals.iter().cloned().collect(),
+                signal_records: BTreeMap::new(),
                 supporting_statement_ids: BTreeSet::new(),
             });
+        for signal_name in &statement.signals {
+            register_interface_signal_record(
+                entry,
+                signal_name,
+                None,
+                None,
+                &statement.statement_id,
+                AutomationConfidence::Low,
+            );
+        }
+    }
+
+    accumulators
+        .into_iter()
+        .map(|(key, entry)| {
+            let signals: Vec<String> = entry.signals.into_iter().collect();
+            InterfaceRecord {
+                interface_id: format!("interface_{}", document_key(&key)),
+                signals,
+                signal_records: entry
+                    .signal_records
+                    .into_iter()
+                    .map(|(signal_name, signal)| InterfaceSignalRecord {
+                        signal_name,
+                        direction_hint: signal.direction_hint,
+                        width_hint: signal.width_hint,
+                        supporting_statement_ids: signal
+                            .supporting_statement_ids
+                            .into_iter()
+                            .collect(),
+                        automation_confidence: signal.automation_confidence,
+                    })
+                    .collect(),
+                supporting_statement_ids: entry.supporting_statement_ids.into_iter().collect(),
+            }
+        })
+        .collect()
+}
+
+fn build_decision_tree_fragments(context: &SemanticContext) -> Vec<DecisionTreeFragmentRecord> {
+    let mut accumulators: BTreeMap<String, DecisionTreeFragmentAccumulator> = BTreeMap::new();
+
+    for statement in &context.statements {
+        let Some(parsed_fragment) = parse_explicit_decision_tree_fragment(&statement.text) else {
+            continue;
+        };
+
+        let key =
+            decision_tree_fragment_key(&parsed_fragment.block_name, parsed_fragment.guard.as_ref());
+        let entry = accumulators
+            .entry(key)
+            .or_insert_with(|| DecisionTreeFragmentAccumulator {
+                block_name: parsed_fragment.block_name.clone(),
+                guard: parsed_fragment.guard.clone(),
+                actions: Vec::new(),
+                referenced_signal_names: BTreeSet::new(),
+                supporting_statement_ids: BTreeSet::new(),
+                automation_confidence: AutomationConfidence::High,
+            });
+        entry.actions.push(parsed_fragment.action);
+        entry
+            .referenced_signal_names
+            .extend(parsed_fragment.referenced_signal_names);
         entry
             .supporting_statement_ids
             .insert(statement.statement_id.clone());
@@ -318,13 +530,21 @@ fn build_interfaces(context: &SemanticContext) -> Vec<InterfaceRecord> {
 
     accumulators
         .into_values()
-        .map(|entry| {
-            let signals: Vec<String> = entry.signals.into_iter().collect();
-            InterfaceRecord {
-                interface_id: format!("interface_{}", document_key(&signals.join("_"))),
-                signals,
-                supporting_statement_ids: entry.supporting_statement_ids.into_iter().collect(),
-            }
+        .map(|entry| DecisionTreeFragmentRecord {
+            fragment_id: format!(
+                "dt_fragment_{}",
+                document_key(&format!(
+                    "{}_{}",
+                    entry.block_name,
+                    guard_key(entry.guard.as_ref())
+                ))
+            ),
+            block_name: entry.block_name,
+            guard: entry.guard,
+            actions: entry.actions,
+            referenced_signal_names: entry.referenced_signal_names.into_iter().collect(),
+            supporting_statement_ids: entry.supporting_statement_ids.into_iter().collect(),
+            automation_confidence: entry.automation_confidence,
         })
         .collect()
 }
@@ -777,6 +997,344 @@ fn section_ids_for_statement(
     section_ids.into_iter().collect()
 }
 
+fn parse_explicit_signal_declaration(text: &str) -> Option<ParsedInterfaceSignalDeclaration> {
+    let normalized = normalize_sentence(text);
+    let normalized = normalized
+        .trim()
+        .trim_end_matches('.')
+        .trim_end_matches(':');
+    let tokens: Vec<&str> = normalized.split_whitespace().collect();
+    if tokens.len() < 3 || !tokens[0].eq_ignore_ascii_case("signal") {
+        return None;
+    }
+
+    let signal_name = parse_identifier(tokens[1])?;
+    let mut index = 2usize;
+    if tokens
+        .get(index)
+        .is_some_and(|token| token.eq_ignore_ascii_case("is"))
+    {
+        index += 1;
+    }
+
+    let direction_hint = parse_interface_signal_direction(*tokens.get(index)?)?;
+    index += 1;
+
+    let width_hint = parse_optional_width_hint(tokens.as_slice(), &mut index);
+    if index != tokens.len() {
+        return None;
+    }
+
+    Some(ParsedInterfaceSignalDeclaration {
+        signal_name,
+        direction_hint,
+        width_hint,
+    })
+}
+
+fn parse_explicit_decision_tree_fragment(text: &str) -> Option<ParsedDecisionTreeFragment> {
+    let normalized = normalize_sentence(text);
+    let normalized = normalized.trim().trim_end_matches('.');
+    let lower = normalized.to_ascii_lowercase();
+    if !lower.starts_with("block ") {
+        return None;
+    }
+
+    let body = normalized[6..].trim();
+    let (header, action_clause) = body.split_once(':')?;
+    let header = header.trim();
+    let action_clause = action_clause.trim();
+    if header.is_empty() || action_clause.is_empty() {
+        return None;
+    }
+
+    let header_lower = header.to_ascii_lowercase();
+    let (raw_block_name, raw_guard) = if let Some(index) = header_lower.find(" when ") {
+        (&header[..index], Some(&header[index + 6..]))
+    } else {
+        (header, None)
+    };
+
+    let block_name = normalize_decision_tree_block_name(raw_block_name)?;
+    let guard = match raw_guard {
+        Some(guard_text) => Some(parse_explicit_decision_tree_guard(guard_text.trim())?),
+        None => None,
+    };
+    let action = parse_explicit_decision_tree_action(action_clause)?;
+
+    let mut referenced_signal_names = BTreeSet::new();
+    if let Some(guard) = guard.as_ref() {
+        referenced_signal_names.extend(referenced_signal_names_for_guard(guard));
+    }
+    referenced_signal_names.extend(referenced_signal_names_for_action(&action));
+
+    Some(ParsedDecisionTreeFragment {
+        block_name,
+        guard,
+        action,
+        referenced_signal_names,
+    })
+}
+
+fn parse_explicit_decision_tree_guard(text: &str) -> Option<DecisionTreeGuardRecord> {
+    if let Some((left_signal, right_text)) = text.split_once("==") {
+        return Some(DecisionTreeGuardRecord::Comparison {
+            left_signal: parse_identifier(left_signal.trim())?,
+            operator: DecisionTreeComparisonOperator::Eq,
+            right: parse_decision_tree_value(right_text.trim())?,
+        });
+    }
+    if let Some((left_signal, right_text)) = text.split_once("!=") {
+        return Some(DecisionTreeGuardRecord::Comparison {
+            left_signal: parse_identifier(left_signal.trim())?,
+            operator: DecisionTreeComparisonOperator::NotEq,
+            right: parse_decision_tree_value(right_text.trim())?,
+        });
+    }
+
+    Some(DecisionTreeGuardRecord::SignalIsHigh {
+        signal_name: parse_identifier(text.trim())?,
+    })
+}
+
+fn parse_explicit_decision_tree_action(text: &str) -> Option<DecisionTreeActionRecord> {
+    if let Some((target_signal, value_text)) = text.split_once("<-") {
+        return Some(DecisionTreeActionRecord::Assign {
+            target_signal: parse_identifier(target_signal.trim())?,
+            assignment_kind: DecisionTreeAssignmentKind::Sequential,
+            value: parse_decision_tree_value(value_text.trim())?,
+        });
+    }
+    if let Some((target_signal, value_text)) = text.split_once('=') {
+        return Some(DecisionTreeActionRecord::Assign {
+            target_signal: parse_identifier(target_signal.trim())?,
+            assignment_kind: DecisionTreeAssignmentKind::Combinational,
+            value: parse_decision_tree_value(value_text.trim())?,
+        });
+    }
+
+    None
+}
+
+fn parse_decision_tree_value(text: &str) -> Option<DecisionTreeValueRecord> {
+    let trimmed = text.trim().trim_end_matches('.');
+    if trimmed.is_empty() {
+        return None;
+    }
+
+    if let Some(signal_name) = parse_identifier(trimmed) {
+        return Some(DecisionTreeValueRecord::SignalRef { signal_name });
+    }
+
+    Some(DecisionTreeValueRecord::Literal {
+        literal: trimmed.to_string(),
+    })
+}
+
+fn parse_identifier(token: &str) -> Option<String> {
+    let trimmed = token
+        .trim()
+        .trim_end_matches('.')
+        .trim_end_matches(':')
+        .trim_end_matches(',');
+    let mut chars = trimmed.chars();
+    let first = chars.next()?;
+    if !(first.is_ascii_alphabetic() || first == '_') {
+        return None;
+    }
+    if !chars.all(|ch| ch.is_ascii_alphanumeric() || ch == '_') {
+        return None;
+    }
+
+    Some(trimmed.to_string())
+}
+
+fn parse_interface_signal_direction(token: &str) -> Option<InterfaceSignalDirection> {
+    if token.eq_ignore_ascii_case("input") {
+        return Some(InterfaceSignalDirection::Input);
+    }
+    if token.eq_ignore_ascii_case("output") {
+        return Some(InterfaceSignalDirection::Output);
+    }
+    if token.eq_ignore_ascii_case("internal") || token.eq_ignore_ascii_case("local") {
+        return Some(InterfaceSignalDirection::Internal);
+    }
+
+    None
+}
+
+fn parse_optional_width_hint(tokens: &[&str], index: &mut usize) -> Option<u32> {
+    let Some(token) = tokens.get(*index).copied() else {
+        return None;
+    };
+
+    if token.eq_ignore_ascii_case("width") {
+        let width = parse_width_token(*tokens.get(*index + 1)?)?;
+        *index += 2;
+        return Some(width);
+    }
+
+    let width = parse_width_token(token)?;
+    *index += 1;
+    Some(width)
+}
+
+fn parse_width_token(token: &str) -> Option<u32> {
+    let trimmed = token
+        .trim()
+        .trim_end_matches('.')
+        .trim_end_matches(',')
+        .trim_end_matches(':');
+    let trimmed = trimmed
+        .strip_suffix("-bit")
+        .or_else(|| trimmed.strip_suffix("-bits"))
+        .unwrap_or(trimmed);
+    let width = trimmed.parse::<u32>().ok()?;
+    (width > 0).then_some(width)
+}
+
+fn normalize_decision_tree_block_name(raw_name: &str) -> Option<String> {
+    let normalized = document_key(raw_name.trim());
+    (!normalized.is_empty()).then_some(normalized)
+}
+
+fn explicit_interface_key(section_ids: &[String]) -> String {
+    if section_ids.is_empty() {
+        return "explicit_document_interface".to_string();
+    }
+
+    format!("explicit_interface__{}", section_ids.join("__"))
+}
+
+fn register_interface_signal_record(
+    accumulator: &mut InterfaceAccumulator,
+    signal_name: &str,
+    direction_hint: Option<InterfaceSignalDirection>,
+    width_hint: Option<u32>,
+    supporting_statement_id: &str,
+    automation_confidence: AutomationConfidence,
+) {
+    accumulator.signals.insert(signal_name.to_string());
+    accumulator
+        .supporting_statement_ids
+        .insert(supporting_statement_id.to_string());
+    let entry = accumulator
+        .signal_records
+        .entry(signal_name.to_string())
+        .or_insert_with(|| InterfaceSignalAccumulator {
+            direction_hint: None,
+            width_hint: None,
+            supporting_statement_ids: BTreeSet::new(),
+            automation_confidence,
+        });
+    merge_signal_hint(&mut entry.direction_hint, direction_hint);
+    merge_signal_hint(&mut entry.width_hint, width_hint);
+    entry
+        .supporting_statement_ids
+        .insert(supporting_statement_id.to_string());
+    entry.automation_confidence =
+        max_automation_confidence(entry.automation_confidence, automation_confidence);
+}
+
+fn merge_signal_hint<T: Copy + Eq>(target: &mut Option<T>, incoming: Option<T>) {
+    match (*target, incoming) {
+        (None, Some(value)) => *target = Some(value),
+        (Some(existing), Some(value)) if existing != value => *target = None,
+        _ => {}
+    }
+}
+
+fn max_automation_confidence(
+    left: AutomationConfidence,
+    right: AutomationConfidence,
+) -> AutomationConfidence {
+    if automation_confidence_rank(left) >= automation_confidence_rank(right) {
+        left
+    } else {
+        right
+    }
+}
+
+fn automation_confidence_rank(confidence: AutomationConfidence) -> u8 {
+    match confidence {
+        AutomationConfidence::High => 3,
+        AutomationConfidence::Medium => 2,
+        AutomationConfidence::Low => 1,
+    }
+}
+
+fn decision_tree_fragment_key(block_name: &str, guard: Option<&DecisionTreeGuardRecord>) -> String {
+    format!("{block_name}::{}", guard_key(guard))
+}
+
+fn guard_key(guard: Option<&DecisionTreeGuardRecord>) -> String {
+    match guard {
+        None => "unguarded".to_string(),
+        Some(DecisionTreeGuardRecord::SignalIsHigh { signal_name }) => {
+            format!("signal_high:{signal_name}")
+        }
+        Some(DecisionTreeGuardRecord::Comparison {
+            left_signal,
+            operator,
+            right,
+        }) => format!(
+            "comparison:{}:{}:{}",
+            left_signal,
+            decision_tree_comparison_operator_key(*operator),
+            decision_tree_value_key(right)
+        ),
+    }
+}
+
+fn decision_tree_comparison_operator_key(operator: DecisionTreeComparisonOperator) -> &'static str {
+    match operator {
+        DecisionTreeComparisonOperator::Eq => "eq",
+        DecisionTreeComparisonOperator::NotEq => "not_eq",
+    }
+}
+
+fn decision_tree_value_key(value: &DecisionTreeValueRecord) -> String {
+    match value {
+        DecisionTreeValueRecord::SignalRef { signal_name } => format!("signal:{signal_name}"),
+        DecisionTreeValueRecord::Literal { literal } => format!("literal:{literal}"),
+    }
+}
+
+fn referenced_signal_names_for_guard(guard: &DecisionTreeGuardRecord) -> BTreeSet<String> {
+    let mut signal_names = BTreeSet::new();
+    match guard {
+        DecisionTreeGuardRecord::SignalIsHigh { signal_name } => {
+            signal_names.insert(signal_name.clone());
+        }
+        DecisionTreeGuardRecord::Comparison {
+            left_signal, right, ..
+        } => {
+            signal_names.insert(left_signal.clone());
+            if let DecisionTreeValueRecord::SignalRef { signal_name } = right {
+                signal_names.insert(signal_name.clone());
+            }
+        }
+    }
+    signal_names
+}
+
+fn referenced_signal_names_for_action(action: &DecisionTreeActionRecord) -> BTreeSet<String> {
+    let mut signal_names = BTreeSet::new();
+    match action {
+        DecisionTreeActionRecord::Assign {
+            target_signal,
+            value,
+            ..
+        } => {
+            signal_names.insert(target_signal.clone());
+            if let DecisionTreeValueRecord::SignalRef { signal_name } = value {
+                signal_names.insert(signal_name.clone());
+            }
+        }
+    }
+    signal_names
+}
+
 fn extract_signal_tokens(text: &str) -> Vec<String> {
     let mut signals = BTreeSet::new();
     let mut current = String::new();
@@ -1075,10 +1633,11 @@ fn statement_by_id<'a>(
 }
 
 fn normalize_text_key(text: &str) -> String {
-    text.split_whitespace()
-        .collect::<Vec<_>>()
-        .join(" ")
-        .to_ascii_lowercase()
+    normalize_sentence(text).to_ascii_lowercase()
+}
+
+fn normalize_sentence(text: &str) -> String {
+    text.split_whitespace().collect::<Vec<_>>().join(" ")
 }
 
 fn contains_any_phrase(text: &str, phrases: &[&str]) -> bool {
@@ -1127,7 +1686,10 @@ mod tests {
     use crate::ir::evidence::EvidenceIr;
     use crate::ir::source::{SourceIr, VisualAsset, VisualAssetKind};
 
-    use super::SemanticIr;
+    use super::{
+        DecisionTreeActionRecord, DecisionTreeAssignmentKind, DecisionTreeComparisonOperator,
+        DecisionTreeGuardRecord, DecisionTreeValueRecord, InterfaceSignalDirection, SemanticIr,
+    };
 
     #[test]
     fn builds_semantic_ir_from_handshake_evidence() -> Result<()> {
@@ -1242,6 +1804,74 @@ mod tests {
                 .semantic_ir_path
                 .ends_with("generated/semantic_ir/control/semantic_ir.json")
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn extracts_typed_interface_signals_and_dt_fragments_from_explicit_markdown() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("comb_dt.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            "# Explicit Control\nSignal DATA_IN is input width 8.\n\nSignal DATA_OUT is output width 8.\n\nSignal ZERO_FLAG is output width 1.\n\nBlock route_data: DATA_OUT = DATA_IN.\n\nBlock flag_zero when DATA_IN == 8'0: ZERO_FLAG = 1.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let explicit_interface = semantic_ir
+            .interfaces
+            .iter()
+            .find(|interface| interface.signals.contains(&"DATA_IN".to_string()))
+            .expect("explicit interface should be present");
+        assert!(explicit_interface.signal_records.iter().any(|signal| {
+            signal.signal_name == "DATA_IN"
+                && signal.direction_hint == Some(InterfaceSignalDirection::Input)
+                && signal.width_hint == Some(8)
+        }));
+        assert!(explicit_interface.signal_records.iter().any(|signal| {
+            signal.signal_name == "ZERO_FLAG"
+                && signal.direction_hint == Some(InterfaceSignalDirection::Output)
+                && signal.width_hint == Some(1)
+        }));
+        assert_eq!(semantic_ir.decision_tree_fragments.len(), 2);
+        assert!(semantic_ir.decision_tree_fragments.iter().any(|fragment| {
+            fragment.block_name == "route_data"
+                && matches!(
+                    fragment.actions.first(),
+                    Some(DecisionTreeActionRecord::Assign {
+                        target_signal,
+                        assignment_kind: DecisionTreeAssignmentKind::Combinational,
+                        value: DecisionTreeValueRecord::SignalRef { signal_name },
+                    }) if target_signal == "DATA_OUT" && signal_name == "DATA_IN"
+                )
+        }));
+        assert!(semantic_ir.decision_tree_fragments.iter().any(|fragment| {
+            fragment.block_name == "flag_zero"
+                && matches!(
+                    fragment.guard.as_ref(),
+                    Some(DecisionTreeGuardRecord::Comparison {
+                        left_signal,
+                        operator: DecisionTreeComparisonOperator::Eq,
+                        right: DecisionTreeValueRecord::Literal { literal },
+                    }) if left_signal == "DATA_IN" && literal == "8'0"
+                )
+        }));
 
         Ok(())
     }

@@ -27,13 +27,15 @@
 - Structured PDF normalization orchestration implemented: Done
 - EvidenceIR extraction implemented: Done
 - SemanticIR construction implemented: Done
+- SemanticIR typed signal/control enrichment implemented: Done
 - IntentIR construction implemented: Done
+- IntentIR canonical interface/control carry-through implemented: Done
 - `specforge adapt` command created: Done
 - First DT-centric `.fsm` adapter artifact implemented: Done
-- `.fsm` target text emission implemented for safe renderable cases: In Progress
+- Standalone renderable `.fsm` text emission implemented for explicit canonical cases: Done
 - SystemVerilog/Verilog/VHDL adapters implemented: Not Started
 - Validation and back-annotation pipeline implemented: Not Started
 - End-to-end source-to-IntentIR pipeline implemented: Done
 
 ## Highest-priority remaining gap
-- Widen the `.fsm` adapter from typed blocked DT plans to safe renderable `.fsm` text or the minimal canonical enrichments needed for it: In Progress
+- Broaden the canonical control surface beyond the first standalone renderable `.fsm` slice, starting with sequential/system-contract support while keeping composition roots deferred: In Progress

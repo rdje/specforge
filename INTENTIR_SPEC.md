@@ -236,7 +236,7 @@ It is responsible for:
 Current implementation note:
 - `specforge semantic <evidence-ir>` now materializes `generated/semantic_ir/<document_key>/semantic_ir.json`
 - the first executable pass consumes persisted `EvidenceIR` JSON
-- it currently discovers actors, interfaces, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions from deterministic heuristics over evidence statements and visual grounding
+- it currently discovers actors, interfaces, typed signal records, backend-neutral guarded/action control fragments, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions from deterministic heuristics over evidence statements and visual grounding
 - the current output is intentionally conservative and inspectable; canonical semantic normalization still continues in the later `IntentIR` stage
 
 Minimal conceptual example:
@@ -268,6 +268,8 @@ It is responsible for capturing the backend-independent behavioral intent precis
 It should include at least:
 - intent identity
 - actors and responsibilities
+- canonical interface inventory
+- backend-neutral guarded/action control fragments
 - behaviors
 - constraints
 - assumptions
@@ -277,7 +279,7 @@ It should include at least:
 Current implementation note:
 - `specforge intent <semantic-ir>` now materializes `generated/intent_ir/<document_key>/intent_ir.json`
 - the first executable pass consumes persisted `SemanticIR` JSON
-- it currently canonicalizes intent identity, actor responsibilities, behaviors, constraints, assumptions, and residual decisions from deterministic heuristics over semantic records
+- it currently canonicalizes intent identity, actor responsibilities, interface inventory, backend-neutral control fragments, behaviors, constraints, assumptions, and residual decisions from deterministic heuristics over semantic records
 - the current output is intentionally conservative and inspectable; adapter work should lower from this canonical surface rather than reconstruct semantics from scratch
 
 Minimal conceptual example:
@@ -297,6 +299,40 @@ Minimal conceptual example:
         "launch write request",
         "emit write beats",
         "observe completion response"
+      ]
+    }
+  ],
+  "interfaces": [
+    {
+      "interface_id": "interface_write_path",
+      "signal_records": [
+        {
+          "signal_name": "DATA_IN",
+          "direction_hint": "input",
+          "width_hint": 8
+        },
+        {
+          "signal_name": "DATA_OUT",
+          "direction_hint": "output",
+          "width_hint": 8
+        }
+      ]
+    }
+  ],
+  "decision_tree_fragments": [
+    {
+      "fragment_id": "dt_fragment_route_data",
+      "block_name": "route_data",
+      "actions": [
+        {
+          "kind": "assign",
+          "target_signal": "DATA_OUT",
+          "assignment_kind": "combinational",
+          "value": {
+            "kind": "signal_ref",
+            "signal_name": "DATA_IN"
+          }
+        }
       ]
     }
   ],
@@ -320,7 +356,7 @@ Initial planned targets:
 Current implementation note:
 - `specforge adapt <intent-ir> --target fsm` now materializes `generated/adapters/fsm/<document_key>/adapter.json`
 - the first executable adapter slice consumes persisted `IntentIR` JSON
-- it currently selects a conservative DT-oriented root, inventories low-confidence signals, records DT/state candidates, and emits adapter-side residual decisions plus renderability blockers rather than fabricating `.fsm` text
+- it currently selects a conservative DT-oriented root, consumes canonical interface/control records when available, emits real standalone `?dt:name` text for fully specified explicit cases, and keeps broader cases blocked with residual decisions plus renderability blockers rather than fabricating `.fsm` text
 
 Minimal conceptual adapter artifact:
 ```json
@@ -396,7 +432,7 @@ Example:
 - `specforge evidence` constructs `EvidenceIR` from normalized markdown, page/asset manifests, and visual evidence anchors
 - `specforge semantic` constructs `SemanticIR` from grounded evidence
 - `specforge intent` now constructs canonical `IntentIR`
-- `specforge adapt --target fsm` now constructs a typed `.fsm` adapter artifact and blocks unsafe target text emission with explicit residual decisions
+- `specforge adapt --target fsm` now constructs a typed `.fsm` adapter artifact, emits real standalone `.fsm` text for explicit canonical standalone cases, and blocks unsafe target text emission with explicit residual decisions otherwise
 - adapter work should follow `IntentIR`, not precede it
 
 ## Long-term documentation requirement

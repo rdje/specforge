@@ -7,6 +7,11 @@ use serde::{Deserialize, Serialize};
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::intent::{IntentDocumentIdentity, IntentIr};
+use crate::ir::semantic::{
+    DecisionTreeActionRecord, DecisionTreeAssignmentKind, DecisionTreeComparisonOperator,
+    DecisionTreeFragmentRecord, DecisionTreeGuardRecord, DecisionTreeValueRecord,
+    InterfaceSignalDirection,
+};
 use crate::ir::source::{
     AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket, document_key,
 };
@@ -173,7 +178,9 @@ impl AdapterArtifact {
 
     fn rendered_target_text(&self) -> Option<String> {
         match (&self.target, &self.fsm) {
-            (AdapterTarget::Fsm, Some(fsm)) if fsm.renderability.is_renderable => None,
+            (AdapterTarget::Fsm, Some(fsm)) if fsm.renderability.is_renderable => Some(
+                render_fsm_module(&fsm.root_name, fsm.renderable_module.as_ref()?),
+            ),
             _ => None,
         }
     }
@@ -200,6 +207,8 @@ pub struct FsmAdapterArtifact {
     pub decision_tree_candidates: Vec<FsmDecisionTreeCandidate>,
     pub state_candidates: Vec<FsmStateCandidate>,
     pub renderability: FsmRenderability,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub renderable_module: Option<FsmRenderableModule>,
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
@@ -235,7 +244,11 @@ pub struct FsmRootKindDecision {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct FsmSignalCandidate {
     pub signal_name: String,
-    pub supporting_intent_ids: Vec<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub direction_hint: Option<InterfaceSignalDirection>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub width_hint: Option<u32>,
+    pub supporting_canonical_ids: Vec<String>,
     pub mention_categories: Vec<String>,
     pub automation_confidence: AutomationConfidence,
 }
@@ -244,9 +257,9 @@ pub struct FsmSignalCandidate {
 pub struct FsmDecisionTreeCandidate {
     pub candidate_id: String,
     pub summary: String,
-    pub supporting_behavior_ids: Vec<String>,
-    pub supporting_constraint_ids: Vec<String>,
-    pub supporting_assumption_ids: Vec<String>,
+    pub supporting_fragment_ids: Vec<String>,
+    #[serde(default)]
+    pub blocks: Vec<DecisionTreeFragmentRecord>,
     pub referenced_signal_names: Vec<String>,
     pub automation_confidence: AutomationConfidence,
 }
@@ -266,6 +279,19 @@ pub struct FsmRenderability {
     pub required_canonical_enrichments: Vec<String>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct FsmRenderableModule {
+    pub size_entries: Vec<FsmRenderableSizeEntry>,
+    pub blocks: Vec<DecisionTreeFragmentRecord>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct FsmRenderableSizeEntry {
+    pub signal_name: String,
+    pub direction_hint: InterfaceSignalDirection,
+    pub width: u32,
+}
+
 fn build_fsm_adapter_artifact(
     intent_ir: &IntentIr,
     intent_ir_path: &Path,
@@ -280,7 +306,11 @@ fn build_fsm_adapter_artifact(
     let state_candidates = build_state_candidates(intent_ir);
     let root_kind_decision = build_root_kind_decision(&state_candidates);
     let decision_tree_candidates = build_decision_tree_candidates(intent_ir, &signal_inventory);
-    let renderability = build_renderability();
+    let (renderability, renderable_module) = analyze_renderability(
+        &signal_inventory,
+        &decision_tree_candidates,
+        &root_kind_decision,
+    );
     let emitted_target_path = renderability
         .is_renderable
         .then(|| artifact_root.join(format!("{root_name}.fsm")));
@@ -289,6 +319,7 @@ fn build_fsm_adapter_artifact(
         &signal_inventory,
         &decision_tree_candidates,
         &root_kind_decision,
+        &renderability,
     );
     let lowering_status = if renderability.is_renderable {
         AdapterLoweringStatus::Renderable
@@ -313,6 +344,7 @@ fn build_fsm_adapter_artifact(
         decision_tree_candidates,
         state_candidates,
         renderability,
+        renderable_module,
     };
 
     Ok(AdapterArtifact {
@@ -334,50 +366,89 @@ fn build_fsm_adapter_artifact(
 }
 
 fn build_signal_inventory(intent_ir: &IntentIr) -> Vec<FsmSignalCandidate> {
-    let mut inventory = BTreeMap::<String, SignalEvidence>::new();
+    let mut inventory = BTreeMap::<String, SignalInventoryEvidence>::new();
 
-    for behavior in &intent_ir.behaviors {
-        register_signal_mentions(
-            &mut inventory,
-            &behavior.statement,
-            &behavior.behavior_id,
-            "behavior",
-        );
+    for interface in &intent_ir.interfaces {
+        if interface.signal_records.is_empty() {
+            for signal_name in &interface.signals {
+                register_canonical_signal(
+                    &mut inventory,
+                    signal_name,
+                    None,
+                    None,
+                    &interface.interface_id,
+                    "interface",
+                    AutomationConfidence::Low,
+                );
+            }
+            continue;
+        }
+
+        for signal in &interface.signal_records {
+            register_canonical_signal(
+                &mut inventory,
+                &signal.signal_name,
+                signal.direction_hint,
+                signal.width_hint,
+                &interface.interface_id,
+                "interface",
+                signal.automation_confidence,
+            );
+        }
     }
 
-    for constraint in &intent_ir.constraints {
-        register_signal_mentions(
-            &mut inventory,
-            &constraint.statement,
-            &constraint.constraint_id,
-            "constraint",
-        );
+    for fragment in &intent_ir.decision_tree_fragments {
+        for signal_name in &fragment.referenced_signal_names {
+            register_canonical_signal(
+                &mut inventory,
+                signal_name,
+                None,
+                None,
+                &fragment.fragment_id,
+                "control_fragment",
+                fragment.automation_confidence,
+            );
+        }
     }
 
-    for assumption in &intent_ir.assumptions {
-        register_signal_mentions(
-            &mut inventory,
-            &assumption.statement,
-            &assumption.assumption_id,
-            "assumption",
-        );
+    if inventory.is_empty() {
+        for behavior in &intent_ir.behaviors {
+            register_signal_mentions(
+                &mut inventory,
+                &behavior.statement,
+                &behavior.behavior_id,
+                "behavior",
+            );
+        }
+
+        for constraint in &intent_ir.constraints {
+            register_signal_mentions(
+                &mut inventory,
+                &constraint.statement,
+                &constraint.constraint_id,
+                "constraint",
+            );
+        }
+
+        for assumption in &intent_ir.assumptions {
+            register_signal_mentions(
+                &mut inventory,
+                &assumption.statement,
+                &assumption.assumption_id,
+                "assumption",
+            );
+        }
     }
 
     inventory
         .into_iter()
-        .map(|(signal_name, evidence)| {
-            let support_count = evidence.supporting_intent_ids.len();
-
-            FsmSignalCandidate {
-                signal_name,
-                supporting_intent_ids: evidence.supporting_intent_ids.into_iter().collect(),
-                mention_categories: evidence.mention_categories.into_iter().collect(),
-                automation_confidence: if support_count >= 2 {
-                    AutomationConfidence::Medium
-                } else {
-                    AutomationConfidence::Low
-                },
-            }
+        .map(|(signal_name, evidence)| FsmSignalCandidate {
+            signal_name,
+            direction_hint: evidence.direction_hint,
+            width_hint: evidence.width_hint,
+            supporting_canonical_ids: evidence.supporting_canonical_ids.into_iter().collect(),
+            mention_categories: evidence.mention_categories.into_iter().collect(),
+            automation_confidence: evidence.automation_confidence,
         })
         .collect()
 }
@@ -448,6 +519,37 @@ fn build_decision_tree_candidates(
     intent_ir: &IntentIr,
     signal_inventory: &[FsmSignalCandidate],
 ) -> Vec<FsmDecisionTreeCandidate> {
+    if !intent_ir.decision_tree_fragments.is_empty() {
+        let referenced_signal_names = intent_ir
+            .decision_tree_fragments
+            .iter()
+            .flat_map(|fragment| fragment.referenced_signal_names.iter().cloned())
+            .collect::<BTreeSet<_>>()
+            .into_iter()
+            .collect();
+
+        return vec![FsmDecisionTreeCandidate {
+            candidate_id: "dt_primary_intent_cone".to_string(),
+            summary: format!(
+                "primary canonical control candidate aggregates {} typed block(s) for {}",
+                intent_ir.decision_tree_fragments.len(),
+                intent_ir.document_identity.display_name
+            ),
+            supporting_fragment_ids: intent_ir
+                .decision_tree_fragments
+                .iter()
+                .map(|fragment| fragment.fragment_id.clone())
+                .collect(),
+            blocks: intent_ir.decision_tree_fragments.clone(),
+            referenced_signal_names,
+            automation_confidence: fold_automation_confidence(
+                intent_ir
+                    .decision_tree_fragments
+                    .iter()
+                    .map(|fragment| fragment.automation_confidence),
+            ),
+        }];
+    }
     if intent_ir.behaviors.is_empty()
         && intent_ir.constraints.is_empty()
         && intent_ir.assumptions.is_empty()
@@ -464,21 +566,8 @@ fn build_decision_tree_candidates(
             intent_ir.assumptions.len(),
             intent_ir.document_identity.display_name
         ),
-        supporting_behavior_ids: intent_ir
-            .behaviors
-            .iter()
-            .map(|behavior| behavior.behavior_id.clone())
-            .collect(),
-        supporting_constraint_ids: intent_ir
-            .constraints
-            .iter()
-            .map(|constraint| constraint.constraint_id.clone())
-            .collect(),
-        supporting_assumption_ids: intent_ir
-            .assumptions
-            .iter()
-            .map(|assumption| assumption.assumption_id.clone())
-            .collect(),
+        supporting_fragment_ids: Vec::new(),
+        blocks: Vec::new(),
         referenced_signal_names: signal_inventory
             .iter()
             .map(|signal| signal.signal_name.clone())
@@ -491,19 +580,127 @@ fn build_decision_tree_candidates(
     }]
 }
 
-fn build_renderability() -> FsmRenderability {
-    FsmRenderability {
-        is_renderable: false,
-        blocking_reasons: vec![
-            "IntentIR does not yet carry stable signal directions or widths, so `.fsm` port declarations would be invented.".to_string(),
-            "IntentIR does not yet carry a backend-neutral DT predicate/action graph, so `.fsm` guards and assignments cannot be emitted safely.".to_string(),
-        ],
-        required_canonical_enrichments: vec![
-            "promote a canonical interface inventory with stable signal names, directions, and widths".to_string(),
-            "promote backend-neutral DT predicates and actions that can lower directly into `.fsm` decision trees".to_string(),
-            "add explicit regular-state and transition records only when the canonical model truly warrants a `?fsm:name` root".to_string(),
-        ],
+fn analyze_renderability(
+    signal_inventory: &[FsmSignalCandidate],
+    decision_tree_candidates: &[FsmDecisionTreeCandidate],
+    root_kind_decision: &FsmRootKindDecision,
+) -> (FsmRenderability, Option<FsmRenderableModule>) {
+    let mut blocking_reasons = Vec::new();
+    let mut required_canonical_enrichments = BTreeSet::new();
+
+    if !matches!(root_kind_decision.selected_root_kind, FsmRootKind::Dt) {
+        push_unique_message(
+            &mut blocking_reasons,
+            "This adapter slice only emits standalone `?dt:name` roots; canonical sequencing or composition still points beyond the current lowering boundary.",
+        );
+        required_canonical_enrichments.insert(
+            "add explicit regular-state and composition records before widening beyond standalone `?dt:name`".to_string(),
+        );
     }
+
+    let blocks = decision_tree_candidates
+        .iter()
+        .flat_map(|candidate| candidate.blocks.iter().cloned())
+        .collect::<Vec<_>>();
+    if blocks.is_empty() {
+        push_unique_message(
+            &mut blocking_reasons,
+            "IntentIR does not yet carry typed guarded/action blocks, so `.fsm` control cannot be emitted safely.",
+        );
+        required_canonical_enrichments.insert(
+            "promote backend-neutral control fragments with explicit guards and assignments"
+                .to_string(),
+        );
+    }
+
+    let signals_by_name: BTreeMap<String, &FsmSignalCandidate> = signal_inventory
+        .iter()
+        .map(|signal| (signal.signal_name.clone(), signal))
+        .collect();
+    let mut size_entries = BTreeMap::<String, FsmRenderableSizeEntry>::new();
+    let mut driven_outputs = BTreeSet::new();
+    let mut seen_block_names = BTreeSet::new();
+
+    for block in &blocks {
+        if !seen_block_names.insert(block.block_name.clone()) {
+            push_unique_message(
+                &mut blocking_reasons,
+                &format!(
+                    "Canonical control block `{}` is duplicated; the first renderable `.fsm` slice expects one unique top-level block per name.",
+                    block.block_name
+                ),
+            );
+            required_canonical_enrichments.insert(
+                "normalize canonical control blocks to one stable top-level block per name"
+                    .to_string(),
+            );
+        }
+
+        if block.actions.is_empty() {
+            push_unique_message(
+                &mut blocking_reasons,
+                &format!(
+                    "Canonical control block `{}` has no typed actions to lower into `.fsm`.",
+                    block.block_name
+                ),
+            );
+            required_canonical_enrichments.insert(
+                "keep each canonical control block anchored to at least one typed assignment action"
+                    .to_string(),
+            );
+        }
+
+        if let Some(guard) = block.guard.as_ref() {
+            validate_guard_renderability(
+                guard,
+                &signals_by_name,
+                &mut size_entries,
+                &mut blocking_reasons,
+                &mut required_canonical_enrichments,
+            );
+        }
+
+        for action in &block.actions {
+            validate_action_renderability(
+                action,
+                &signals_by_name,
+                &mut size_entries,
+                &mut driven_outputs,
+                &mut blocking_reasons,
+                &mut required_canonical_enrichments,
+            );
+        }
+    }
+
+    for size_entry in size_entries.values() {
+        if matches!(size_entry.direction_hint, InterfaceSignalDirection::Output)
+            && !driven_outputs.contains(&size_entry.signal_name)
+        {
+            push_unique_message(
+                &mut blocking_reasons,
+                &format!(
+                    "Declared output signal `{}` is not driven by any typed control action.",
+                    size_entry.signal_name
+                ),
+            );
+            required_canonical_enrichments.insert(
+                "keep canonical output roles aligned with explicit driving actions".to_string(),
+            );
+        }
+    }
+
+    let renderability = FsmRenderability {
+        is_renderable: blocking_reasons.is_empty(),
+        blocking_reasons,
+        required_canonical_enrichments: required_canonical_enrichments.into_iter().collect(),
+    };
+
+    let renderable_module = renderability.is_renderable.then_some(FsmRenderableModule {
+        size_entries: size_entries.into_values().collect(),
+        blocks,
+    });
+
+    (renderability, renderable_module)
 }
 
 fn build_adapter_residual_decisions(
@@ -511,52 +708,79 @@ fn build_adapter_residual_decisions(
     signal_inventory: &[FsmSignalCandidate],
     decision_tree_candidates: &[FsmDecisionTreeCandidate],
     root_kind_decision: &FsmRootKindDecision,
+    renderability: &FsmRenderability,
 ) -> Vec<ResidualDecisionPacket> {
     let mut residual_decisions = intent_ir.residual_decisions.clone();
+    let advisory_signal_inventory_only = decision_tree_candidates
+        .iter()
+        .all(|candidate| candidate.blocks.is_empty())
+        && signal_inventory
+            .iter()
+            .any(|signal| signal.direction_hint.is_none() || signal.width_hint.is_none());
+    let signal_inventory_blocked = advisory_signal_inventory_only
+        || renderability.blocking_reasons.iter().any(|reason| {
+            reason.contains("signal")
+                || reason.contains("direction")
+                || reason.contains("width")
+                || reason.contains("output")
+                || reason.contains("Declared")
+        });
+    if signal_inventory_blocked {
+        residual_decisions.push(ResidualDecisionPacket {
+            packet_id: "fsm_adapter_signal_inventory".to_string(),
+            question: "Which canonical signal inventory should the `.fsm` adapter lower into ports, predicates, and assignments?".to_string(),
+            why_unresolved: format!(
+                "The current IntentIR artifact still leaves some render-critical signal roles unresolved across {} inventoried signal(s).",
+                signal_inventory.len()
+            ),
+            automation_confidence: AutomationConfidence::Low,
+            candidate_interpretations: vec![
+                CandidateInterpretation {
+                    interpretation_id: "enrich_intent_ir_interface_inventory".to_string(),
+                    description: "Add or complete backend-neutral interface and signal facts before widening `.fsm` emission.".to_string(),
+                    downstream_impact: "The adapter can render real `.fsm` roots without inventing ports or widths.".to_string(),
+                },
+                CandidateInterpretation {
+                    interpretation_id: "keep_signal_inventory_plan_only".to_string(),
+                    description: "Treat the current signal inventory as advisory only and keep the adapter artifact blocked.".to_string(),
+                    downstream_impact: "The adapter remains honest, but generated `.fsm` text stays unavailable until upstream canonical structure improves.".to_string(),
+                },
+            ],
+        });
+    }
 
-    residual_decisions.push(ResidualDecisionPacket {
-        packet_id: "fsm_adapter_signal_inventory".to_string(),
-        question: "Which canonical signal inventory should the `.fsm` adapter lower into ports, predicates, and assignments?".to_string(),
-        why_unresolved: format!(
-            "The current IntentIR artifact only provides low-confidence signal mentions ({}) and does not include stable directions or widths.",
-            signal_inventory.len()
-        ),
-        automation_confidence: AutomationConfidence::Low,
-        candidate_interpretations: vec![
-            CandidateInterpretation {
-                interpretation_id: "enrich_intent_ir_interface_inventory".to_string(),
-                description: "Add a backend-neutral interface and signal inventory to IntentIR before widening `.fsm` emission.".to_string(),
-                downstream_impact: "The adapter can render real `.fsm` roots without inventing ports or widths.".to_string(),
-            },
-            CandidateInterpretation {
-                interpretation_id: "keep_signal_inventory_plan_only".to_string(),
-                description: "Treat the current signal inventory as advisory only and keep the adapter artifact blocked.".to_string(),
-                downstream_impact: "The adapter remains honest, but generated `.fsm` text stays unavailable until upstream canonical structure improves.".to_string(),
-            },
-        ],
-    });
-
-    residual_decisions.push(ResidualDecisionPacket {
-        packet_id: "fsm_adapter_dt_action_graph".to_string(),
-        question: "What backend-neutral DT predicate and action graph should be lowered into `.fsm` branches and assignments?".to_string(),
-        why_unresolved: format!(
-            "The current `.fsm` adapter slice can identify {} DT candidate(s), but their executable control/data structure is still implicit in natural-language IntentIR records.",
-            decision_tree_candidates.len()
-        ),
-        automation_confidence: AutomationConfidence::Low,
-        candidate_interpretations: vec![
-            CandidateInterpretation {
-                interpretation_id: "enrich_intent_ir_with_dt_fragments".to_string(),
-                description: "Introduce canonical DT fragments in IntentIR so adapters lower typed predicates and actions instead of text summaries.".to_string(),
-                downstream_impact: "DT-centric targets like `.fsm` can become directly renderable and later HDL adapters can share the same canonical control structure.".to_string(),
-            },
-            CandidateInterpretation {
-                interpretation_id: "defer_target_text_emission".to_string(),
-                description: "Preserve the current typed lowering plan without emitting `.fsm` text until canonical DT structure exists.".to_string(),
-                downstream_impact: "The adapter remains useful for roadmap validation and gap analysis, but target text stays blocked.".to_string(),
-            },
-        ],
-    });
+    let dt_surface_blocked = decision_tree_candidates
+        .iter()
+        .all(|candidate| candidate.blocks.is_empty())
+        || renderability.blocking_reasons.iter().any(|reason| {
+            reason.contains("control block")
+                || reason.contains("guard")
+                || reason.contains("assignment")
+                || reason.contains("sequential")
+        });
+    if dt_surface_blocked {
+        residual_decisions.push(ResidualDecisionPacket {
+            packet_id: "fsm_adapter_dt_action_graph".to_string(),
+            question: "What backend-neutral control fragments should be lowered into `.fsm` guards and assignments?".to_string(),
+            why_unresolved: format!(
+                "The current `.fsm` adapter slice can identify {} DT candidate(s), but their executable guarded/action surface is still incomplete for honest lowering.",
+                decision_tree_candidates.len()
+            ),
+            automation_confidence: AutomationConfidence::Low,
+            candidate_interpretations: vec![
+                CandidateInterpretation {
+                    interpretation_id: "enrich_intent_ir_with_dt_fragments".to_string(),
+                    description: "Introduce or complete canonical guarded/action fragments so adapters lower typed predicates and assignments instead of prose summaries.".to_string(),
+                    downstream_impact: "DT-centric targets like `.fsm` can become directly renderable and later HDL adapters can share the same canonical control structure.".to_string(),
+                },
+                CandidateInterpretation {
+                    interpretation_id: "defer_target_text_emission".to_string(),
+                    description: "Preserve the current typed lowering plan without emitting `.fsm` text until canonical control structure exists.".to_string(),
+                    downstream_impact: "The adapter remains useful for roadmap validation and gap analysis, but target text stays blocked.".to_string(),
+                },
+            ],
+        });
+    }
 
     residual_decisions.push(ResidualDecisionPacket {
         packet_id: "fsm_adapter_root_kind_expansion".to_string(),
@@ -583,20 +807,360 @@ fn build_adapter_residual_decisions(
     residual_decisions
 }
 
+fn push_unique_message(messages: &mut Vec<String>, message: &str) {
+    if !messages.iter().any(|existing| existing == message) {
+        messages.push(message.to_string());
+    }
+}
+
+fn register_canonical_signal(
+    inventory: &mut BTreeMap<String, SignalInventoryEvidence>,
+    signal_name: &str,
+    direction_hint: Option<InterfaceSignalDirection>,
+    width_hint: Option<u32>,
+    supporting_canonical_id: &str,
+    mention_category: &str,
+    automation_confidence: AutomationConfidence,
+) {
+    let entry = inventory.entry(signal_name.to_string()).or_default();
+    merge_signal_hint(&mut entry.direction_hint, direction_hint);
+    merge_signal_hint(&mut entry.width_hint, width_hint);
+    entry
+        .supporting_canonical_ids
+        .insert(supporting_canonical_id.to_string());
+    entry
+        .mention_categories
+        .insert(mention_category.to_string());
+    entry.automation_confidence =
+        max_automation_confidence(entry.automation_confidence, automation_confidence);
+}
+
 fn register_signal_mentions(
-    inventory: &mut BTreeMap<String, SignalEvidence>,
+    inventory: &mut BTreeMap<String, SignalInventoryEvidence>,
     statement: &str,
-    supporting_intent_id: &str,
+    supporting_canonical_id: &str,
     mention_category: &str,
 ) {
     for token in extract_signal_tokens(statement) {
-        let evidence = inventory.entry(token).or_default();
-        evidence
-            .supporting_intent_ids
-            .insert(supporting_intent_id.to_string());
-        evidence
-            .mention_categories
-            .insert(mention_category.to_string());
+        register_canonical_signal(
+            inventory,
+            &token,
+            None,
+            None,
+            supporting_canonical_id,
+            mention_category,
+            AutomationConfidence::Low,
+        );
+    }
+}
+
+fn merge_signal_hint<T: Copy + Eq>(target: &mut Option<T>, incoming: Option<T>) {
+    match (*target, incoming) {
+        (None, Some(value)) => *target = Some(value),
+        (Some(existing), Some(value)) if existing != value => *target = None,
+        _ => {}
+    }
+}
+
+fn max_automation_confidence(
+    left: AutomationConfidence,
+    right: AutomationConfidence,
+) -> AutomationConfidence {
+    if automation_confidence_rank(left) >= automation_confidence_rank(right) {
+        left
+    } else {
+        right
+    }
+}
+
+fn automation_confidence_rank(confidence: AutomationConfidence) -> u8 {
+    match confidence {
+        AutomationConfidence::High => 3,
+        AutomationConfidence::Medium => 2,
+        AutomationConfidence::Low => 1,
+    }
+}
+
+fn fold_automation_confidence<I>(confidences: I) -> AutomationConfidence
+where
+    I: IntoIterator<Item = AutomationConfidence>,
+{
+    confidences
+        .into_iter()
+        .fold(AutomationConfidence::Low, max_automation_confidence)
+}
+
+fn validate_guard_renderability(
+    guard: &DecisionTreeGuardRecord,
+    signals_by_name: &BTreeMap<String, &FsmSignalCandidate>,
+    size_entries: &mut BTreeMap<String, FsmRenderableSizeEntry>,
+    blocking_reasons: &mut Vec<String>,
+    required_canonical_enrichments: &mut BTreeSet<String>,
+) {
+    match guard {
+        DecisionTreeGuardRecord::SignalIsHigh { signal_name } => {
+            register_renderable_signal(
+                signal_name,
+                signals_by_name,
+                size_entries,
+                blocking_reasons,
+                required_canonical_enrichments,
+            );
+        }
+        DecisionTreeGuardRecord::Comparison {
+            left_signal,
+            operator,
+            right,
+        } => {
+            register_renderable_signal(
+                left_signal,
+                signals_by_name,
+                size_entries,
+                blocking_reasons,
+                required_canonical_enrichments,
+            );
+            if matches!(operator, DecisionTreeComparisonOperator::NotEq) {
+                push_unique_message(
+                    blocking_reasons,
+                    "The first renderable `.fsm` slice only lowers equality or truthy guards; `!=` guards remain deferred.",
+                );
+                required_canonical_enrichments.insert(
+                    "keep first-slice canonical guards to truthy checks or equality comparisons"
+                        .to_string(),
+                );
+            }
+            if let DecisionTreeValueRecord::SignalRef { signal_name } = right {
+                register_renderable_signal(
+                    signal_name,
+                    signals_by_name,
+                    size_entries,
+                    blocking_reasons,
+                    required_canonical_enrichments,
+                );
+            }
+        }
+    }
+}
+
+fn validate_action_renderability(
+    action: &DecisionTreeActionRecord,
+    signals_by_name: &BTreeMap<String, &FsmSignalCandidate>,
+    size_entries: &mut BTreeMap<String, FsmRenderableSizeEntry>,
+    driven_outputs: &mut BTreeSet<String>,
+    blocking_reasons: &mut Vec<String>,
+    required_canonical_enrichments: &mut BTreeSet<String>,
+) {
+    match action {
+        DecisionTreeActionRecord::Assign {
+            target_signal,
+            assignment_kind,
+            value,
+        } => {
+            let target_direction = register_renderable_signal(
+                target_signal,
+                signals_by_name,
+                size_entries,
+                blocking_reasons,
+                required_canonical_enrichments,
+            );
+            if !matches!(target_direction, Some(InterfaceSignalDirection::Output)) {
+                push_unique_message(
+                    blocking_reasons,
+                    &format!(
+                        "Assignment target `{}` is not declared as a canonical output signal.",
+                        target_signal
+                    ),
+                );
+                required_canonical_enrichments.insert(
+                    "keep first-slice assignment targets aligned with explicit output roles"
+                        .to_string(),
+                );
+            } else {
+                driven_outputs.insert(target_signal.clone());
+            }
+
+            if matches!(assignment_kind, DecisionTreeAssignmentKind::Sequential) {
+                push_unique_message(
+                    blocking_reasons,
+                    "The first renderable `.fsm` slice stays combinational; sequential assignments still need canonical init/system-contract support.",
+                );
+                required_canonical_enrichments.insert(
+                    "promote backend-neutral init/reset/system-contract facts before lowering sequential actions"
+                        .to_string(),
+                );
+            }
+
+            if let DecisionTreeValueRecord::SignalRef { signal_name } = value {
+                register_renderable_signal(
+                    signal_name,
+                    signals_by_name,
+                    size_entries,
+                    blocking_reasons,
+                    required_canonical_enrichments,
+                );
+            }
+        }
+    }
+}
+
+fn register_renderable_signal(
+    signal_name: &str,
+    signals_by_name: &BTreeMap<String, &FsmSignalCandidate>,
+    size_entries: &mut BTreeMap<String, FsmRenderableSizeEntry>,
+    blocking_reasons: &mut Vec<String>,
+    required_canonical_enrichments: &mut BTreeSet<String>,
+) -> Option<InterfaceSignalDirection> {
+    let Some(signal) = signals_by_name.get(signal_name).copied() else {
+        push_unique_message(
+            blocking_reasons,
+            &format!(
+                "Canonical control references undeclared signal `{}`.",
+                signal_name
+            ),
+        );
+        required_canonical_enrichments.insert(
+            "promote a canonical interface inventory with stable signal names, directions, and widths"
+                .to_string(),
+        );
+        return None;
+    };
+
+    let Some(direction_hint) = signal.direction_hint else {
+        push_unique_message(
+            blocking_reasons,
+            &format!(
+                "Signal `{}` is missing a canonical direction hint required for `.fsm` emission.",
+                signal_name
+            ),
+        );
+        required_canonical_enrichments.insert(
+            "promote a canonical interface inventory with stable signal names, directions, and widths"
+                .to_string(),
+        );
+        return None;
+    };
+
+    if matches!(direction_hint, InterfaceSignalDirection::Internal) {
+        push_unique_message(
+            blocking_reasons,
+            &format!(
+                "Signal `{}` is marked internal; the first `.fsm` slice does not yet lower canonical local temporaries.",
+                signal_name
+            ),
+        );
+        required_canonical_enrichments.insert(
+            "add a canonical local-signal surface before lowering internal temporaries into `.fsm`"
+                .to_string(),
+        );
+        return None;
+    }
+
+    let Some(width_hint) = signal.width_hint else {
+        push_unique_message(
+            blocking_reasons,
+            &format!(
+                "Signal `{}` is missing a canonical width hint required for `.fsm` emission.",
+                signal_name
+            ),
+        );
+        required_canonical_enrichments.insert(
+            "promote a canonical interface inventory with stable signal names, directions, and widths"
+                .to_string(),
+        );
+        return None;
+    };
+
+    size_entries
+        .entry(signal_name.to_string())
+        .or_insert_with(|| FsmRenderableSizeEntry {
+            signal_name: signal_name.to_string(),
+            direction_hint,
+            width: width_hint,
+        });
+
+    Some(direction_hint)
+}
+
+fn render_fsm_module(root_name: &str, module: &FsmRenderableModule) -> String {
+    let mut lines = vec![format!("(?dt:{root_name}")];
+
+    if !module.size_entries.is_empty() {
+        lines.push("  (+size".to_string());
+        for entry in &module.size_entries {
+            lines.push(format!("    ({} {})", entry.signal_name, entry.width));
+        }
+        lines.push("  )".to_string());
+    }
+
+    for block in &module.blocks {
+        lines.push(format!("  (-{}", block.block_name));
+        if let Some(guard) = block.guard.as_ref() {
+            lines.push(format!("    ({}", render_guard(guard)));
+            for action in &block.actions {
+                lines.push(format!("      ({})", render_action(action)));
+            }
+            lines.push("    )".to_string());
+        } else {
+            for action in &block.actions {
+                lines.push(format!("    ({})", render_action(action)));
+            }
+        }
+        lines.push("  )".to_string());
+    }
+
+    lines.push(")".to_string());
+    format!("{}\n", lines.join("\n"))
+}
+
+fn render_guard(guard: &DecisionTreeGuardRecord) -> String {
+    match guard {
+        DecisionTreeGuardRecord::SignalIsHigh { signal_name } => format!("<{signal_name}"),
+        DecisionTreeGuardRecord::Comparison {
+            left_signal,
+            operator,
+            right,
+        } => format!(
+            "<{}{}{}",
+            left_signal,
+            render_comparison_operator(*operator),
+            render_value(right)
+        ),
+    }
+}
+
+fn render_action(action: &DecisionTreeActionRecord) -> String {
+    match action {
+        DecisionTreeActionRecord::Assign {
+            target_signal,
+            assignment_kind,
+            value,
+        } => format!(
+            "{} {} {}",
+            target_signal,
+            render_assignment_operator(*assignment_kind),
+            render_value(value)
+        ),
+    }
+}
+
+fn render_assignment_operator(kind: DecisionTreeAssignmentKind) -> &'static str {
+    match kind {
+        DecisionTreeAssignmentKind::Combinational => "=",
+        DecisionTreeAssignmentKind::Sequential => "<-",
+    }
+}
+
+fn render_comparison_operator(operator: DecisionTreeComparisonOperator) -> &'static str {
+    match operator {
+        DecisionTreeComparisonOperator::Eq => "==",
+        DecisionTreeComparisonOperator::NotEq => "!=",
+    }
+}
+
+fn render_value(value: &DecisionTreeValueRecord) -> String {
+    match value {
+        DecisionTreeValueRecord::SignalRef { signal_name } => signal_name.clone(),
+        DecisionTreeValueRecord::Literal { literal } => literal.clone(),
     }
 }
 
@@ -704,10 +1268,25 @@ fn canonicalize_existing_path(path: &Path) -> Result<PathBuf> {
     Ok(fs::canonicalize(path)?)
 }
 
-#[derive(Debug, Default)]
-struct SignalEvidence {
-    supporting_intent_ids: BTreeSet<String>,
+#[derive(Debug)]
+struct SignalInventoryEvidence {
+    direction_hint: Option<InterfaceSignalDirection>,
+    width_hint: Option<u32>,
+    supporting_canonical_ids: BTreeSet<String>,
     mention_categories: BTreeSet<String>,
+    automation_confidence: AutomationConfidence,
+}
+
+impl Default for SignalInventoryEvidence {
+    fn default() -> Self {
+        Self {
+            direction_hint: None,
+            width_hint: None,
+            supporting_canonical_ids: BTreeSet::new(),
+            mention_categories: BTreeSet::new(),
+            automation_confidence: AutomationConfidence::Low,
+        }
+    }
 }
 
 #[derive(Debug, Deserialize)]
@@ -739,6 +1318,39 @@ mod tests {
         fs::write(
             &source,
             "# Channel Operation\nThe transmitter must assert VALID when data is available.\n\nThe receiver may assert READY when it can accept data.\n\nVALID must remain asserted until READY is observed.\n\nThe channel is modeled as a backend-neutral transport abstraction.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+        intent_ir.write_to_disk()?;
+        Ok(intent_ir)
+    }
+
+    fn build_explicit_control_intent_ir(base: &Path) -> Result<IntentIr> {
+        let source = base.join("comb_dt.md");
+        let source_artifact_base = base.join("generated").join("source_ir");
+        let evidence_artifact_base = base.join("generated").join("evidence_ir");
+        let semantic_artifact_base = base.join("generated").join("semantic_ir");
+        let intent_artifact_base = base.join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            "# Explicit Control\nSignal DATA_IN is input width 8.\n\nSignal DATA_OUT is output width 8.\n\nSignal ZERO_FLAG is output width 1.\n\nBlock route_data: DATA_OUT = DATA_IN.\n\nBlock flag_zero when DATA_IN == 8'0: ZERO_FLAG = 1.\n",
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
@@ -823,6 +1435,63 @@ mod tests {
                     .join("handshake.fsm")
             )
             .is_err()
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn builds_renderable_standalone_dt_fsm_adapter_artifact() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_explicit_control_intent_ir(tempdir.path())?;
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+        adapter.write_to_disk()?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "renderable");
+        let emitted_target_path = adapter
+            .artifact_layout
+            .emitted_target_path
+            .as_ref()
+            .expect("renderable adapter should emit target text");
+        let emitted_text = fs::read_to_string(emitted_target_path)?;
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+
+        assert!(fsm.renderability.is_renderable);
+        assert!(fsm.renderable_module.is_some());
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Dt);
+        assert_eq!(fsm.decision_tree_candidates.len(), 1);
+        assert!(fsm.signal_inventory.iter().any(|signal| {
+            signal.signal_name == "DATA_IN"
+                && signal.width_hint == Some(8)
+                && signal.direction_hint.is_some()
+        }));
+        assert!(emitted_text.contains("(?dt:comb_dt"));
+        assert!(emitted_text.contains("(+size"));
+        assert!(emitted_text.contains("(DATA_IN 8)"));
+        assert!(emitted_text.contains("(DATA_OUT 8)"));
+        assert!(emitted_text.contains("(ZERO_FLAG 1)"));
+        assert!(emitted_text.contains("(-route_data"));
+        assert!(emitted_text.contains("(DATA_OUT = DATA_IN)"));
+        assert!(emitted_text.contains("(-flag_zero"));
+        assert!(emitted_text.contains("(<DATA_IN==8'0"));
+        assert!(emitted_text.contains("(ZERO_FLAG = 1)"));
+        assert!(
+            adapter
+                .residual_decisions
+                .iter()
+                .all(|packet| packet.packet_id != "fsm_adapter_signal_inventory")
+        );
+        assert!(
+            adapter
+                .residual_decisions
+                .iter()
+                .all(|packet| packet.packet_id != "fsm_adapter_dt_action_graph")
         );
 
         Ok(())

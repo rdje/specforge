@@ -1,5 +1,28 @@
 # CHANGES
 ## 2026-04-01
+- enriched `SemanticIR` so it now preserves typed signal records and backend-neutral guarded/action control fragments when the evidence is explicit enough
+- enriched `IntentIR` so it now carries the canonical interface inventory and backend-neutral control fragments forward for downstream adapters
+- widened the `.fsm` adapter so it now consumes the canonical interface/control surface instead of relying only on mined prose hints
+- the `.fsm` adapter now emits a real standalone `?dt:name` file for explicit canonical cases and keeps broader sequential/system-contract/composition cases blocked instead of inventing semantics
+- added regression coverage for:
+  - explicit typed-signal/control extraction in `SemanticIR`
+  - canonical interface/control carry-through in `IntentIR`
+  - blocked and renderable `.fsm` adapter paths
+- validated the new canonical/renderable slice with:
+  - `cargo fmt --all --manifest-path Cargo.toml`
+  - `cargo test --manifest-path Cargo.toml`
+  - `cargo run --manifest-path Cargo.toml -- ingest <temp>/comb_dt.md`
+  - `cargo run --manifest-path Cargo.toml -- evidence generated/source_ir/comb_dt/source_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/comb_dt/evidence_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/comb_dt/semantic_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/comb_dt/intent_ir.json --target fsm`
+- confirmed the representative explicit end-to-end adapter output is now safely renderable:
+  - `lowering_status: renderable`
+  - `selected_root_kind: dt`
+  - `signal_candidate_count: 3`
+  - `decision_tree_candidate_count: 1`
+  - `residual_decision_count: 2`
+  - `emitted_target_path: generated/adapters/fsm/comb_dt/comb_dt.fsm`
 - implemented the first real adapter slice on top of persisted `IntentIR` artifacts
 - added `specforge adapt <intent-ir> --target fsm [--dry-run]` to preview or materialize `generated/adapters/fsm/<document_key>/adapter.json`
 - replaced the old adapter planning-only scaffolding with a typed adapter artifact model in `crates/specforge/src/ir/adapters.rs`

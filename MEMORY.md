@@ -43,7 +43,7 @@
   - `intent <semantic-ir>`
   - `adapt <intent-ir> --target fsm --dry-run`
   - `adapt <intent-ir> --target fsm`
-- the currently implemented real stage artifacts are `SourceIR`, `EvidenceIR`, `SemanticIR`, `IntentIR`, and the first `.fsm` adapter artifact
+- the currently implemented real stage artifacts are `SourceIR`, `EvidenceIR`, `SemanticIR`, `IntentIR`, and the first renderable standalone `.fsm` adapter slice
 - explicit staged IR modules now exist for:
   - `SourceIR`
   - `EvidenceIR`
@@ -52,8 +52,8 @@
   - adapters
 
 ## Latest committed baseline
-- latest_commit_hash: `a1195962b78ac492b0d075d4b34dd5f019f96d20`
-- latest_commit_brief_message: `Record read-only fsmgen reference contract`
+- latest_commit_hash: `6aba2ef904678bd524a4f1fd55b78b592ad02b96`
+- latest_commit_brief_message: `Implement first DT-centric fsm adapter slice`
 - continuity_rule:
   - refresh this section whenever a new latest committed baseline exists at the time `MEMORY.md` is updated
 
@@ -81,10 +81,12 @@
 - the current slice has now added `subs/fsmgen` as a pinned local git submodule for `.fsm` adapter reference work
 - the user has now clarified that `subs/fsmgen` is contextual-only, read-only, and any observed upstream misbehavior must be tracked locally under `FSMGEN-BUG-####`
 - the current slice has now implemented the first DT-centric `.fsm` adapter artifact and `specforge adapt` command on top of persisted `IntentIR`
+- the current slice has now enriched `SemanticIR` and `IntentIR` with backend-neutral interface/control records just far enough to support honest standalone renderable `.fsm` emission
+- the current slice has now widened the `.fsm` adapter so it can emit a real standalone `?dt:name` file when the canonical facts are explicit and keep broader cases blocked otherwise
 
 ## In-flight work in this session
-- refresh the live docs and continuity files for the first real adapter slice
-- run the commit workflow for the completed adapter slice
+- refresh the live docs and continuity files for the canonical interface/control enrichment and renderable standalone `.fsm` slice
+- run the commit workflow for the completed canonical/renderable slice
 
 ## Current execution checkpoint
 - `IntentIR` now has a real build/materialization path
@@ -97,25 +99,28 @@
   - intent identity, actor responsibilities, behaviors, constraints, assumptions, and residual decisions
 - execute-mode `specforge adapt --target fsm` now writes:
   - `generated/adapters/fsm/<document_key>/adapter.json`
-  - DT-centric root-kind choice, low-confidence signal inventory, DT/state candidates, renderability blockers, and adapter residual decisions
+  - DT-centric root-kind choice, canonical signal inventory, canonical control-block candidates, renderability status, and adapter residual decisions
+  - a real emitted standalone `.fsm` file when every referenced signal has explicit width/direction and every control block is fully typed
+- `SemanticIR` now preserves:
+  - typed signal records when explicit declarations are present
+  - backend-neutral guarded/action control fragments from explicit `Block ...` statements
+- `IntentIR` now carries:
+  - canonical interface inventory
+  - backend-neutral guarded/action control fragments
 - the current validation set is:
   - `cargo fmt --all --manifest-path Cargo.toml`
   - `cargo test --manifest-path Cargo.toml`
-  - `cargo run -p specforge -- ingest README.md`
-  - `cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json`
-  - `cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json`
-  - `cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json --dry-run`
-  - `cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json`
-  - `SPECFORGE_DOCLING_PYTHON=/tmp/specforge-docling-venv/bin/python cargo run -p specforge -- ingest /tmp/specforge-docling-sample.pdf`
-  - `cargo run -p specforge -- evidence generated/source_ir/specforge_docling_sample/source_ir.json`
-  - `cargo run -p specforge -- semantic generated/evidence_ir/specforge_docling_sample/evidence_ir.json`
-  - `cargo run -p specforge -- intent generated/semantic_ir/specforge_docling_sample/semantic_ir.json`
   - `cargo run --manifest-path Cargo.toml -- ingest <temp>/handshake.md`
   - `cargo run --manifest-path Cargo.toml -- evidence generated/source_ir/handshake/source_ir.json`
   - `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/handshake/evidence_ir.json`
   - `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/handshake/semantic_ir.json`
   - `cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/handshake/intent_ir.json --target fsm`
-- the next implementation action is to widen the `.fsm` adapter from typed blocked artifacts to safe renderable `.fsm` text, or minimally enrich `IntentIR` to support that honestly
+  - `cargo run --manifest-path Cargo.toml -- ingest <temp>/comb_dt.md`
+  - `cargo run --manifest-path Cargo.toml -- evidence generated/source_ir/comb_dt/source_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/comb_dt/evidence_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/comb_dt/semantic_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/comb_dt/intent_ir.json --target fsm`
+- the next implementation action is to broaden the canonical control surface beyond the first standalone renderable `.fsm` slice, starting with sequential/system-contract facts while keeping composition roots deferred
 
 ## If resuming from an interruption
 1. read `README.md`
@@ -127,10 +132,10 @@
 7. continue with the next implementation slice unless the user redirects
 
 ## Recommended next implementation slice
-- widen the first DT-centric `.fsm` adapter from typed blocked artifacts to safe renderable `.fsm` text
+- broaden the standalone renderable `.fsm` slice toward sequential/system-contract support
 - keep `IntentIR` as the canonical endpoint and keep adapters downstream of it
 
 ## Commit status
-- the latest committed baseline is `a1195962b78ac492b0d075d4b34dd5f019f96d20`
-- the current working tree contains the uncommitted first adapter slice plus the matching live-doc refreshes
+- the latest committed baseline is `6aba2ef904678bd524a4f1fd55b78b592ad02b96`
+- the current working tree contains the uncommitted canonical interface/control enrichment, renderable standalone `.fsm` slice, and the matching live-doc refreshes
 - before the next commit, follow `COMMIT.md`
