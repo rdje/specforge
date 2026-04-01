@@ -77,12 +77,13 @@
   - actor-first extraction is visible in the typed model
 
 ### R5 IntentIR
-- status: In Progress
+- status: Done
 - goals:
   - canonicalize the semantic model into backend-independent `IntentIR`
   - make `IntentIR` precise enough that adapters are lowering passes rather than semantic invention
 - completion criteria:
   - a real `IntentIR` artifact can be emitted
+  - `specforge intent` previews and materializes `IntentIR` at `generated/intent_ir/<document_key>/intent_ir.json`
   - `IntentIR` is versioned and serializable
   - assumptions, abstractions, and residual decisions remain explicit
 
@@ -110,9 +111,8 @@
 
 ## Recommended implementation order
 1. keep the `IntentIR` product boundary explicit in all docs and code
-2. canonicalize into `IntentIR`
-3. build adapters after `IntentIR` is stable
-4. integrate validation and back-annotation
+2. build adapters after `IntentIR` is stable
+3. integrate validation and back-annotation
 
 ## Immediate next milestone
-- build the first real canonical `IntentIR` constructor from `SemanticIR` actors, interfaces, invariants, contracts, abstractions, and residual decisions
+- build the first real adapter lowering pass from `IntentIR`, starting with a concrete backend target while keeping adapter concerns downstream of the canonical model

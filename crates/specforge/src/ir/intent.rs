@@ -1,13 +1,23 @@
-use serde::Serialize;
+use std::collections::BTreeSet;
+use std::fs;
+use std::path::{Path, PathBuf};
 
+use serde::{Deserialize, Serialize};
+
+use crate::error::{AppError, Result};
 use crate::ir::IrStage;
-use crate::ir::source::ResidualDecisionPacket;
+use crate::ir::semantic::SemanticIr;
+use crate::ir::source::{
+    AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket, document_key,
+};
 
-#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct IntentIr {
     pub schema_version: u32,
     pub stage: IrStage,
-    pub semantic_ir_ref: String,
+    pub semantic_ir_path: PathBuf,
+    pub artifact_layout: IntentArtifactLayout,
+    pub document_identity: IntentDocumentIdentity,
     pub intent_identity: IntentIdentity,
     pub actors: Vec<IntentActor>,
     pub behaviors: Vec<BehaviorIntent>,
@@ -16,32 +26,719 @@ pub struct IntentIr {
     pub residual_decisions: Vec<ResidualDecisionPacket>,
 }
 
-#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+impl IntentIr {
+    pub fn load_from_path(path: &Path) -> Result<Self> {
+        if !path.exists() {
+            return Err(AppError::MissingPath(path.to_path_buf()));
+        }
+
+        Ok(serde_json::from_str(&fs::read_to_string(path)?)?)
+    }
+
+    pub fn build(semantic_ir_path: &Path, artifact_base_root: &Path) -> Result<Self> {
+        let semantic_ir_path = canonicalize_existing_path(semantic_ir_path)?;
+        let semantic_ir = SemanticIr::load_from_path(&semantic_ir_path)?;
+
+        if !matches!(semantic_ir.stage, IrStage::SemanticIr) {
+            return Err(AppError::InvalidStageArtifact(format!(
+                "artifact at {} must be a SemanticIR document before building IntentIR",
+                semantic_ir_path.display()
+            )));
+        }
+
+        let artifact_root = artifact_base_root.join(&semantic_ir.document_identity.document_key);
+        let intent_ir_path = artifact_root.join("intent_ir.json");
+        let artifact_layout = IntentArtifactLayout {
+            artifact_root,
+            intent_ir_path,
+        };
+        let document_identity = IntentDocumentIdentity {
+            document_key: semantic_ir.document_identity.document_key.clone(),
+            display_name: semantic_ir.document_identity.display_name.clone(),
+        };
+
+        let context = IntentContext::from_semantic_ir(&semantic_ir);
+        let actors = build_intent_actors(&context);
+        let actor_ids = actors.iter().map(|actor| actor.actor_id.clone()).collect();
+        let behaviors = build_behaviors(&context, actor_ids);
+        let constraints = build_constraints(&context);
+        let assumptions = build_assumptions(&context, &actors);
+        let residual_decisions =
+            build_residual_decisions(&context, &actors, &behaviors, &constraints);
+        let intent_identity =
+            build_intent_identity(&document_identity, &actors, &behaviors, &constraints);
+
+        Ok(Self {
+            schema_version: 1,
+            stage: IrStage::IntentIr,
+            semantic_ir_path,
+            artifact_layout,
+            document_identity,
+            intent_identity,
+            actors,
+            behaviors,
+            constraints,
+            assumptions,
+            residual_decisions,
+        })
+    }
+
+    pub fn to_pretty_json(&self) -> Result<String> {
+        Ok(serde_json::to_string_pretty(self)?)
+    }
+
+    pub fn write_to_disk(&self) -> Result<()> {
+        fs::create_dir_all(&self.artifact_layout.artifact_root)?;
+        fs::write(&self.artifact_layout.intent_ir_path, self.to_pretty_json()?)?;
+        Ok(())
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct IntentArtifactLayout {
+    pub artifact_root: PathBuf,
+    pub intent_ir_path: PathBuf,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct IntentDocumentIdentity {
+    pub document_key: String,
+    pub display_name: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct IntentIdentity {
     pub intent_id: String,
     pub summary: String,
 }
 
-#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct IntentActor {
     pub actor_id: String,
     pub responsibilities: Vec<String>,
+    pub supporting_actor_ids: Vec<String>,
 }
 
-#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct BehaviorIntent {
     pub behavior_id: String,
     pub statement: String,
+    pub actor_ids: Vec<String>,
+    pub supporting_semantic_ids: Vec<String>,
 }
 
-#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct IntentConstraint {
     pub constraint_id: String,
     pub statement: String,
+    pub related_interface_ids: Vec<String>,
+    pub supporting_semantic_ids: Vec<String>,
 }
 
-#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct IntentAssumption {
     pub assumption_id: String,
     pub statement: String,
+    pub supporting_semantic_ids: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+struct IntentContext {
+    semantic_actors: Vec<SemanticActorContext>,
+    phases: Vec<PhaseContext>,
+    invariants: Vec<ConstraintSourceContext>,
+    assertions: Vec<ConstraintSourceContext>,
+    contracts: Vec<ContractContext>,
+    gates: Vec<GateContext>,
+    abstractions: Vec<AbstractionContext>,
+    residual_decisions: Vec<ResidualDecisionPacket>,
+}
+
+impl IntentContext {
+    fn from_semantic_ir(semantic_ir: &SemanticIr) -> Self {
+        let semantic_actors = semantic_ir
+            .actors
+            .iter()
+            .map(|actor| SemanticActorContext {
+                actor_id: actor.actor_id.clone(),
+                role_summary: actor.role_summary.clone(),
+                supporting_statement_ids: actor.supporting_statement_ids.clone(),
+                supporting_section_ids: actor.supporting_section_ids.clone(),
+            })
+            .collect();
+        let phases = semantic_ir
+            .phases
+            .iter()
+            .map(|phase| PhaseContext {
+                phase_id: phase.phase_id.clone(),
+                summary: phase.summary.clone(),
+                supporting_statement_ids: phase.supporting_statement_ids.clone(),
+                supporting_section_ids: phase.supporting_section_ids.clone(),
+            })
+            .collect();
+        let invariants = semantic_ir
+            .invariants
+            .iter()
+            .map(|invariant| ConstraintSourceContext {
+                source_id: invariant.invariant_id.clone(),
+                statement: invariant.statement.clone(),
+                related_interface_ids: invariant.related_interface_ids.clone(),
+            })
+            .collect();
+        let assertions = semantic_ir
+            .assertions
+            .iter()
+            .map(|assertion| ConstraintSourceContext {
+                source_id: assertion.assertion_id.clone(),
+                statement: assertion.statement.clone(),
+                related_interface_ids: Vec::new(),
+            })
+            .collect();
+        let contracts = semantic_ir
+            .contracts
+            .iter()
+            .map(|contract| ContractContext {
+                contract_id: contract.contract_id.clone(),
+                statement: contract.statement.clone(),
+                actor_ids: contract.actor_ids.clone(),
+            })
+            .collect();
+        let gates = semantic_ir
+            .gates
+            .iter()
+            .map(|gate| GateContext {
+                gate_id: gate.gate_id.clone(),
+                condition: gate.condition.clone(),
+                related_interface_ids: gate.related_interface_ids.clone(),
+            })
+            .collect();
+        let abstractions = semantic_ir
+            .abstractions
+            .iter()
+            .map(|abstraction| AbstractionContext {
+                abstraction_id: abstraction.abstraction_id.clone(),
+                description: abstraction.description.clone(),
+            })
+            .collect();
+
+        Self {
+            semantic_actors,
+            phases,
+            invariants,
+            assertions,
+            contracts,
+            gates,
+            abstractions,
+            residual_decisions: semantic_ir.residual_decisions.clone(),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+struct SemanticActorContext {
+    actor_id: String,
+    role_summary: String,
+    supporting_statement_ids: Vec<String>,
+    supporting_section_ids: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+struct PhaseContext {
+    phase_id: String,
+    summary: String,
+    supporting_statement_ids: Vec<String>,
+    supporting_section_ids: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+struct ConstraintSourceContext {
+    source_id: String,
+    statement: String,
+    related_interface_ids: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+struct ContractContext {
+    contract_id: String,
+    statement: String,
+    actor_ids: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+struct GateContext {
+    gate_id: String,
+    condition: String,
+    related_interface_ids: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+struct AbstractionContext {
+    abstraction_id: String,
+    description: String,
+}
+
+fn build_intent_identity(
+    document_identity: &IntentDocumentIdentity,
+    actors: &[IntentActor],
+    behaviors: &[BehaviorIntent],
+    constraints: &[IntentConstraint],
+) -> IntentIdentity {
+    IntentIdentity {
+        intent_id: format!("intent_{}", document_identity.document_key),
+        summary: format!(
+            "backend-neutral intent for {} covering {} actors, {} behaviors, and {} constraints",
+            document_identity.display_name,
+            actors.len(),
+            behaviors.len(),
+            constraints.len()
+        ),
+    }
+}
+
+fn build_intent_actors(context: &IntentContext) -> Vec<IntentActor> {
+    let mut actors = Vec::new();
+
+    for actor in &context.semantic_actors {
+        let mut responsibilities = BTreeSet::new();
+        responsibilities.insert(actor.role_summary.clone());
+
+        for contract in &context.contracts {
+            if contract.actor_ids.contains(&actor.actor_id) {
+                responsibilities.insert(normalize_sentence(&contract.statement));
+            }
+        }
+
+        for phase in &context.phases {
+            if overlaps(
+                actor.supporting_statement_ids.as_slice(),
+                phase.supporting_statement_ids.as_slice(),
+            ) || overlaps(
+                actor.supporting_section_ids.as_slice(),
+                phase.supporting_section_ids.as_slice(),
+            ) {
+                responsibilities.insert(format!("participate in {}", phase.summary));
+            }
+        }
+
+        if actor.actor_id.ends_with("_channel") {
+            responsibilities.insert(
+                "treat grouped interface semantics as a backend-neutral channel abstraction"
+                    .to_string(),
+            );
+        }
+
+        actors.push(IntentActor {
+            actor_id: actor.actor_id.clone(),
+            responsibilities: responsibilities.into_iter().collect(),
+            supporting_actor_ids: vec![actor.actor_id.clone()],
+        });
+    }
+
+    actors
+}
+
+fn build_behaviors(context: &IntentContext, actor_ids: BTreeSet<String>) -> Vec<BehaviorIntent> {
+    let mut behaviors = Vec::new();
+    let mut seen = BTreeSet::new();
+
+    for phase in &context.phases {
+        let statement = normalize_sentence(&phase.summary);
+        let dedupe_key = normalize_text_key(&statement);
+        if !seen.insert(dedupe_key.clone()) {
+            continue;
+        }
+
+        behaviors.push(BehaviorIntent {
+            behavior_id: format!("behavior_{}", document_key(&phase.phase_id)),
+            statement,
+            actor_ids: actor_ids.iter().cloned().collect(),
+            supporting_semantic_ids: vec![phase.phase_id.clone()],
+        });
+    }
+
+    for contract in &context.contracts {
+        let statement = normalize_sentence(&contract.statement);
+        let dedupe_key = normalize_text_key(&statement);
+        if !seen.insert(dedupe_key.clone()) {
+            continue;
+        }
+
+        behaviors.push(BehaviorIntent {
+            behavior_id: format!("behavior_{}", document_key(&contract.contract_id)),
+            statement,
+            actor_ids: contract.actor_ids.clone(),
+            supporting_semantic_ids: vec![contract.contract_id.clone()],
+        });
+    }
+
+    for gate in &context.gates {
+        let statement = normalize_sentence(&gate.condition);
+        let dedupe_key = normalize_text_key(&statement);
+        if !seen.insert(dedupe_key.clone()) {
+            continue;
+        }
+
+        behaviors.push(BehaviorIntent {
+            behavior_id: format!("behavior_{}", document_key(&gate.gate_id)),
+            statement,
+            actor_ids: actor_ids.iter().cloned().collect(),
+            supporting_semantic_ids: vec![gate.gate_id.clone()],
+        });
+    }
+
+    behaviors
+}
+
+fn build_constraints(context: &IntentContext) -> Vec<IntentConstraint> {
+    let mut constraints = Vec::new();
+    let mut seen = BTreeSet::new();
+
+    for invariant in &context.invariants {
+        let statement = normalize_sentence(&invariant.statement);
+        let dedupe_key = normalize_text_key(&statement);
+        if !seen.insert(dedupe_key.clone()) {
+            continue;
+        }
+
+        constraints.push(IntentConstraint {
+            constraint_id: format!("constraint_{}", document_key(&invariant.source_id)),
+            statement,
+            related_interface_ids: invariant.related_interface_ids.clone(),
+            supporting_semantic_ids: vec![invariant.source_id.clone()],
+        });
+    }
+
+    for assertion in &context.assertions {
+        let statement = normalize_sentence(&assertion.statement);
+        let dedupe_key = normalize_text_key(&statement);
+        if !seen.insert(dedupe_key.clone()) {
+            continue;
+        }
+
+        constraints.push(IntentConstraint {
+            constraint_id: format!("constraint_{}", document_key(&assertion.source_id)),
+            statement,
+            related_interface_ids: assertion.related_interface_ids.clone(),
+            supporting_semantic_ids: vec![assertion.source_id.clone()],
+        });
+    }
+
+    for gate in &context.gates {
+        if gate.related_interface_ids.is_empty() {
+            continue;
+        }
+
+        let statement = format!(
+            "{} [interface-coupled rule]",
+            normalize_sentence(&gate.condition)
+        );
+        let dedupe_key = normalize_text_key(&statement);
+        if !seen.insert(dedupe_key.clone()) {
+            continue;
+        }
+
+        constraints.push(IntentConstraint {
+            constraint_id: format!("constraint_{}_gate", document_key(&gate.gate_id)),
+            statement,
+            related_interface_ids: gate.related_interface_ids.clone(),
+            supporting_semantic_ids: vec![gate.gate_id.clone()],
+        });
+    }
+
+    constraints
+}
+
+fn build_assumptions(context: &IntentContext, actors: &[IntentActor]) -> Vec<IntentAssumption> {
+    let mut assumptions = Vec::new();
+    let mut seen = BTreeSet::new();
+
+    for abstraction in &context.abstractions {
+        let statement = normalize_sentence(&abstraction.description);
+        let dedupe_key = normalize_text_key(&statement);
+        if !seen.insert(dedupe_key.clone()) {
+            continue;
+        }
+
+        assumptions.push(IntentAssumption {
+            assumption_id: format!("assumption_{}", document_key(&abstraction.abstraction_id)),
+            statement,
+            supporting_semantic_ids: vec![abstraction.abstraction_id.clone()],
+        });
+    }
+
+    for actor in actors {
+        if !actor.actor_id.ends_with("_channel") {
+            continue;
+        }
+
+        let statement = format!(
+            "{} is treated as a backend-neutral channel abstraction in this IntentIR pass.",
+            actor.actor_id
+        );
+        let dedupe_key = normalize_text_key(&statement);
+        if !seen.insert(dedupe_key.clone()) {
+            continue;
+        }
+
+        assumptions.push(IntentAssumption {
+            assumption_id: format!("assumption_{}", document_key(&actor.actor_id)),
+            statement,
+            supporting_semantic_ids: actor.supporting_actor_ids.clone(),
+        });
+    }
+
+    if context
+        .residual_decisions
+        .iter()
+        .any(|packet| packet.packet_id == "semantic_ambiguous_visual_grounding")
+    {
+        let statement =
+            "Ambiguous visual evidence is preserved as unresolved context rather than promoted into stronger canonical constraints in this IntentIR pass.".to_string();
+        assumptions.push(IntentAssumption {
+            assumption_id: "assumption_ambiguous_visual_grounding".to_string(),
+            statement,
+            supporting_semantic_ids: vec!["semantic_ambiguous_visual_grounding".to_string()],
+        });
+    }
+
+    assumptions
+}
+
+fn build_residual_decisions(
+    context: &IntentContext,
+    actors: &[IntentActor],
+    behaviors: &[BehaviorIntent],
+    constraints: &[IntentConstraint],
+) -> Vec<ResidualDecisionPacket> {
+    let mut residual_decisions = context.residual_decisions.clone();
+
+    if actors.is_empty() {
+        residual_decisions.push(ResidualDecisionPacket {
+            packet_id: "intent_actor_canonicalization".to_string(),
+            question: "Which canonical actors should own the backend-neutral intent model?".to_string(),
+            why_unresolved: "SemanticIR did not provide stable actor records that can be lowered into IntentIR actor responsibilities safely.".to_string(),
+            automation_confidence: AutomationConfidence::Low,
+            candidate_interpretations: vec![
+                CandidateInterpretation {
+                    interpretation_id: "interface_owned_actors".to_string(),
+                    description: "Infer IntentIR actors from interface ownership and coupling patterns.".to_string(),
+                    downstream_impact: "IntentIR becomes executable sooner, but actor invention risk increases without stronger semantic support.".to_string(),
+                },
+                CandidateInterpretation {
+                    interpretation_id: "defer_actor_identity".to_string(),
+                    description: "Keep actor identity unresolved until richer semantic or user-guided input exists.".to_string(),
+                    downstream_impact: "IntentIR remains conservative, but adapters may be blocked on missing ownership structure.".to_string(),
+                },
+            ],
+        });
+    }
+
+    if behaviors.is_empty() {
+        residual_decisions.push(ResidualDecisionPacket {
+            packet_id: "intent_behavior_canonicalization".to_string(),
+            question: "Which canonical behaviors should be emitted into IntentIR?".to_string(),
+            why_unresolved: "The current SemanticIR artifact did not provide enough phase, contract, or gate structure to canonicalize stable behavior intents.".to_string(),
+            automation_confidence: AutomationConfidence::Low,
+            candidate_interpretations: vec![
+                CandidateInterpretation {
+                    interpretation_id: "constraint_only_intent".to_string(),
+                    description: "Emit IntentIR with constraints and assumptions only, deferring explicit behaviors.".to_string(),
+                    downstream_impact: "The canonical model stays conservative, but adapter work may need later behavior reconstruction.".to_string(),
+                },
+                CandidateInterpretation {
+                    interpretation_id: "synthesize_from_sections".to_string(),
+                    description: "Synthesize behaviors from coarser semantic clustering even without explicit phase or gate evidence.".to_string(),
+                    downstream_impact: "IntentIR becomes fuller, but semantic invention risk increases.".to_string(),
+                },
+            ],
+        });
+    }
+
+    if constraints.is_empty() {
+        residual_decisions.push(ResidualDecisionPacket {
+            packet_id: "intent_constraint_canonicalization".to_string(),
+            question: "Should IntentIR emit canonical constraints when SemanticIR has no explicit invariant or assertion records?".to_string(),
+            why_unresolved: "The current semantic slice did not produce stable constraint candidates, so canonical lowering would require speculative inference.".to_string(),
+            automation_confidence: AutomationConfidence::Low,
+            candidate_interpretations: vec![
+                CandidateInterpretation {
+                    interpretation_id: "emit_minimal_intent".to_string(),
+                    description: "Keep IntentIR minimal and wait for richer upstream semantic extraction.".to_string(),
+                    downstream_impact: "Canonical intent remains safe but incomplete for later adapters.".to_string(),
+                },
+                CandidateInterpretation {
+                    interpretation_id: "promote_behavior_rules".to_string(),
+                    description: "Promote some behaviors into constraints heuristically.".to_string(),
+                    downstream_impact: "IntentIR becomes denser, but semantic categories may blur too early.".to_string(),
+                },
+            ],
+        });
+    }
+
+    residual_decisions
+}
+
+fn overlaps(left: &[String], right: &[String]) -> bool {
+    if left.is_empty() || right.is_empty() {
+        return false;
+    }
+
+    let right_ids: BTreeSet<&String> = right.iter().collect();
+    left.iter().any(|id| right_ids.contains(id))
+}
+
+fn normalize_sentence(text: &str) -> String {
+    text.split_whitespace().collect::<Vec<_>>().join(" ")
+}
+
+fn normalize_text_key(text: &str) -> String {
+    normalize_sentence(text).to_ascii_lowercase()
+}
+
+fn canonicalize_existing_path(path: &Path) -> Result<PathBuf> {
+    if !path.exists() {
+        return Err(AppError::MissingPath(path.to_path_buf()));
+    }
+
+    Ok(fs::canonicalize(path)?)
+}
+
+#[cfg(test)]
+mod tests {
+    use std::fs;
+
+    use tempfile::tempdir;
+
+    use crate::error::Result;
+    use crate::ir::evidence::EvidenceIr;
+    use crate::ir::semantic::SemanticIr;
+    use crate::ir::source::{SourceIr, VisualAsset, VisualAssetKind};
+
+    use super::IntentIr;
+
+    #[test]
+    fn builds_intent_ir_from_handshake_semantics() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("handshake.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            "# Channel Operation\nThe transmitter must assert VALID when data is available.\n\nThe receiver may assert READY when it can accept data.\n\nVALID must remain asserted until READY is observed.\n\nThe channel is modeled as a backend-neutral transport abstraction.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        assert_eq!(intent_ir.stage.as_str(), "intent_ir");
+        assert!(intent_ir.intent_identity.intent_id.starts_with("intent_"));
+        assert!(
+            intent_ir
+                .actors
+                .iter()
+                .any(|actor| actor.actor_id == "actor_transmitter")
+        );
+        assert!(intent_ir.behaviors.iter().any(|behavior| {
+            behavior
+                .statement
+                .contains("The transmitter must assert VALID")
+        }));
+        assert!(intent_ir.constraints.iter().any(|constraint| {
+            constraint
+                .statement
+                .contains("VALID must remain asserted until READY is observed.")
+        }));
+        assert!(intent_ir.assumptions.iter().any(|assumption| {
+            assumption
+                .statement
+                .contains("backend-neutral transport abstraction")
+        }));
+        assert!(intent_ir.residual_decisions.is_empty());
+
+        Ok(())
+    }
+
+    #[test]
+    fn preserves_semantic_residual_decisions_in_intent_ir() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("control.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        let asset_path = tempdir.path().join("assets").join("figure-0001.png");
+
+        fs::create_dir_all(asset_path.parent().expect("asset parent should exist"))?;
+        fs::write(&asset_path, b"png")?;
+        fs::write(
+            &source,
+            "# Control Path\nFigure 1: Controller block diagram.\n\n![Image](assets/figure-0001.png)\n\nThe controller behavior is shown in Figure 1.\n",
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.visual_assets.push(VisualAsset {
+            asset_id: "figure_0001".to_string(),
+            asset_kind: VisualAssetKind::Diagram,
+            page_id: Some("page_0001".to_string()),
+            image_path: Some(asset_path),
+            caption_text: Some("Figure 1: Controller block diagram.".to_string()),
+            caption_source_path: None,
+            source_ref: Some("#/pictures/0".to_string()),
+            placeholder_text: None,
+            note: None,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+        intent_ir.write_to_disk()?;
+
+        assert!(
+            intent_ir
+                .residual_decisions
+                .iter()
+                .any(|packet| { packet.packet_id == "semantic_ambiguous_visual_grounding" })
+        );
+        assert!(intent_ir.assumptions.iter().any(|assumption| {
+            assumption.assumption_id == "assumption_ambiguous_visual_grounding"
+        }));
+        assert!(
+            intent_ir
+                .artifact_layout
+                .intent_ir_path
+                .ends_with("generated/intent_ir/control/intent_ir.json")
+        );
+
+        Ok(())
+    }
 }

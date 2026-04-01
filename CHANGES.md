@@ -92,7 +92,7 @@
   - `SPECFORGE_DOCLING_PYTHON=/tmp/specforge-docling-venv/bin/python cargo run -p specforge -- ingest /tmp/specforge-docling-sample.pdf`
   - `cargo run -p specforge -- evidence generated/source_ir/specforge_docling_sample/source_ir.json`
 - confirmed live execute-mode outputs for validation:
-  - markdown-backed `EvidenceIR`: 14 section anchors, 151 evidence spans, 151 extracted statements
+  - markdown-backed `EvidenceIR`: 14 section anchors, 167 evidence spans, 167 extracted statements
   - PDF-backed `EvidenceIR`: 18 section anchors, 225 evidence spans, 11 visual evidence items, 19 evidence links, 225 extracted statements
 - updated the live status tracker so the remaining top-priority gap is now the first real `SemanticIR` constructor rather than the `EvidenceIR` extraction stage
 - implemented the first real `SemanticIR` extractor on top of persisted `EvidenceIR` artifacts
@@ -120,6 +120,32 @@
   - markdown-backed `SemanticIR`: 2 actors, 0 interfaces, 4 phases, 3 invariants, 3 gates, 1 abstraction, 12 decomposition candidates, 0 residual decisions
   - PDF-backed `SemanticIR`: 2 actors, 22 interfaces, 7 phases, 17 invariants, 2 contracts, 20 gates, 12 decomposition candidates, 2 residual decisions
 - updated the live status tracker so the remaining top-priority gap is now the first real canonical `IntentIR` constructor rather than the `SemanticIR` stage
+- implemented the first real `IntentIR` constructor on top of persisted `SemanticIR` artifacts
+- added `specforge intent <semantic-ir> [--dry-run]` to preview or materialize `generated/intent_ir/<document_key>/intent_ir.json`
+- `IntentIR::build` now:
+  - loads persisted `SemanticIR` JSON from disk
+  - derives canonical intent artifacts under `generated/intent_ir/<document_key>/intent_ir.json`
+  - canonicalizes actor responsibilities, behaviors, constraints, and assumptions from deterministic heuristics over semantic records
+  - preserves semantic residual decisions and emits additional canonicalization residuals only when the intent model would otherwise become speculative
+- added unit tests for:
+  - handshake-driven intent identity, behavior, constraint, and assumption construction
+  - residual-decision preservation from `SemanticIR` into `IntentIR`
+- validated the new `IntentIR` stage with:
+  - `cargo fmt --all --manifest-path Cargo.toml`
+  - `cargo test --manifest-path Cargo.toml`
+  - `cargo run -p specforge -- ingest README.md`
+  - `cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json`
+  - `cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json`
+  - `cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json --dry-run`
+  - `cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json`
+  - `SPECFORGE_DOCLING_PYTHON=/tmp/specforge-docling-venv/bin/python cargo run -p specforge -- ingest /tmp/specforge-docling-sample.pdf`
+  - `cargo run -p specforge -- evidence generated/source_ir/specforge_docling_sample/source_ir.json`
+  - `cargo run -p specforge -- semantic generated/evidence_ir/specforge_docling_sample/evidence_ir.json`
+  - `cargo run -p specforge -- intent generated/semantic_ir/specforge_docling_sample/semantic_ir.json`
+- confirmed live execute-mode outputs for validation:
+  - markdown-backed `IntentIR`: 2 actors, 7 behaviors, 3 constraints, 1 assumption, 0 residual decisions
+  - PDF-backed `IntentIR`: 2 actors, 28 behaviors, 24 constraints, 1 assumption, 2 residual decisions
+- updated the live status tracker so the remaining top-priority gap is now the first real adapter lowering pass rather than the `IntentIR` stage
 
 ## 2026-03-31
 - initialized the `specforge` Git repository

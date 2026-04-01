@@ -18,11 +18,14 @@
   - `specforge evidence <source-ir>`
   - `specforge semantic <evidence-ir> --dry-run`
   - `specforge semantic <evidence-ir>`
-- the currently implemented executable stages are `SourceIR`, `EvidenceIR`, and `SemanticIR`
+  - `specforge intent <semantic-ir> --dry-run`
+  - `specforge intent <semantic-ir>`
+- the currently implemented executable stages are `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR`
 - `SourceIR` now handles existing Markdown directly and performs Docling-backed structured PDF normalization for PDF inputs
 - `EvidenceIR` now consumes ready `SourceIR` artifacts and extracts section anchors, evidence spans, visual evidence, figure/caption links, and heuristic statement classes
 - `SemanticIR` now consumes ready `EvidenceIR` artifacts and lifts heuristic actors, interfaces, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions
-- `IntentIR` and adapter lowering remain planned
+- `IntentIR` now consumes ready `SemanticIR` artifacts and canonicalizes actor responsibilities, behaviors, constraints, assumptions, and residual decisions
+- adapter lowering remains planned
 
 ## Available commands today
 ### Inspect a path
@@ -112,6 +115,31 @@ cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json
   - abstractions and decomposition candidates with supporting statement ids
   - residual decisions when actor boundaries, interface grouping, or visual semantics remain ambiguous
 
+### Preview an IntentIR artifact
+```bash
+cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json --dry-run
+```
+- prints computed `IntentIR` JSON without writing artifacts
+- requires a `SemanticIR` JSON artifact
+- useful for checking:
+  - canonical intent identity
+  - actor responsibilities
+  - behavior and constraint canonicalization
+  - assumptions and preserved residual decisions
+
+### Materialize an IntentIR artifact
+```bash
+cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json
+```
+- writes `generated/intent_ir/<document_key>/intent_ir.json`
+- builds:
+  - a canonical intent identity from the document and semantic theme
+  - actor responsibilities from semantic actors, contracts, and phase overlap
+  - behaviors from phases, contracts, and gate-like sequencing rules
+  - constraints from invariants, assertions, and interface-coupled rules
+  - assumptions from abstractions and conservative canonicalization heuristics
+  - residual decisions preserved from `SemanticIR` plus any canonicalization-specific ambiguity
+
 ## Planned user workflow
 1. provide a source specification
 2. build `SourceIR`
@@ -140,10 +168,10 @@ cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json
 - `.fsm` is only one adapter target among several
 
 ## Current limitation
-- `SourceIR`, the first real `EvidenceIR` pass, and the first real `SemanticIR` pass are implemented
+- `SourceIR`, the first real `EvidenceIR` pass, the first real `SemanticIR` pass, and the first real `IntentIR` pass are implemented
 - the current `EvidenceIR` extraction logic is still heuristic and does not yet perform deeper OCR, chart extraction, or semantic lifting from visual regions
 - the current `SemanticIR` extraction logic is still heuristic and conservative, so later `IntentIR` work will need refinement rather than semantic invention
-- `IntentIR` builder is still not implemented
+- the current `IntentIR` canonicalization logic is still heuristic and conservative, so adapter work should refine backend lowering rather than treat the current pass as a complete semantic endpoint
 - adapters are planned but not implemented
 - validation/back-annotation is not implemented yet
 

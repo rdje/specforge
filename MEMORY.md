@@ -36,7 +36,9 @@
   - `evidence <source-ir>`
   - `semantic <evidence-ir> --dry-run`
   - `semantic <evidence-ir>`
-- the currently implemented real stage artifacts are `SourceIR`, `EvidenceIR`, and `SemanticIR`
+  - `intent <semantic-ir> --dry-run`
+  - `intent <semantic-ir>`
+- the currently implemented real stage artifacts are `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR`
 - explicit staged IR modules now exist for:
   - `SourceIR`
   - `EvidenceIR`
@@ -45,8 +47,8 @@
   - adapters
 
 ## Latest committed baseline
-- latest_commit_hash: `1612482bbffd9802443f7c0f6ea61c8695c6900c`
-- latest_commit_brief_message: `Implement first real EvidenceIR extraction stage`
+- latest_commit_hash: `f8e42eaa91239c4188ff734eff3f404770aaed0d`
+- latest_commit_brief_message: `Implement first real SemanticIR lifting stage`
 - continuity_rule:
   - refresh this section whenever a new latest committed baseline exists at the time `MEMORY.md` is updated
 
@@ -70,28 +72,30 @@
 - the next slice has now implemented a real Docling-backed PDF normalization path inside `SourceIR`
 - the current slice has now implemented the first real `EvidenceIR` extractor and CLI on top of ready `SourceIR` artifacts
 - the current slice has now implemented the first real `SemanticIR` extractor and CLI on top of ready `EvidenceIR` artifacts
+- the current slice has now implemented the first real `IntentIR` constructor and CLI on top of ready `SemanticIR` artifacts
 
 ## In-flight work in this session
-- refresh the live docs and continuity files for the new `SemanticIR` stage
+- refresh the live docs and continuity files for the new `IntentIR` stage
 - run the commit workflow immediately after this task is closed
 
 ## Current execution checkpoint
-- `SemanticIR` now has a real build/materialization path
-- execute-mode `specforge semantic` now writes:
-  - `generated/semantic_ir/<document_key>/semantic_ir.json`
-  - actors, interfaces, phases, invariants, contracts, gates, abstractions, and decomposition candidates
-  - residual decisions for unresolved actor/interface/visual ambiguities
+- `IntentIR` now has a real build/materialization path
+- execute-mode `specforge intent` now writes:
+  - `generated/intent_ir/<document_key>/intent_ir.json`
+  - intent identity, actor responsibilities, behaviors, constraints, assumptions, and residual decisions
 - the current validation set is:
   - `cargo fmt --all --manifest-path Cargo.toml`
   - `cargo test --manifest-path Cargo.toml`
   - `cargo run -p specforge -- ingest README.md`
   - `cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json`
-  - `cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json --dry-run`
   - `cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json`
+  - `cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json --dry-run`
+  - `cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json`
   - `SPECFORGE_DOCLING_PYTHON=/tmp/specforge-docling-venv/bin/python cargo run -p specforge -- ingest /tmp/specforge-docling-sample.pdf`
   - `cargo run -p specforge -- evidence generated/source_ir/specforge_docling_sample/source_ir.json`
   - `cargo run -p specforge -- semantic generated/evidence_ir/specforge_docling_sample/evidence_ir.json`
-- the next implementation action is the first real `IntentIR` constructor
+  - `cargo run -p specforge -- intent generated/semantic_ir/specforge_docling_sample/semantic_ir.json`
+- the next implementation action is the first real adapter lowering pass
 
 ## If resuming from an interruption
 1. read `README.md`
@@ -103,10 +107,10 @@
 7. continue with the next implementation slice unless the user redirects
 
 ## Recommended next implementation slice
-- build the first real `IntentIR` constructor from grounded `SemanticIR` artifacts
+- build the first real adapter lowering pass from grounded `IntentIR` artifacts
 - keep `IntentIR` as the canonical endpoint and keep adapters downstream of it
 
 ## Commit status
-- the latest committed baseline is `1612482bbffd9802443f7c0f6ea61c8695c6900c`
-- the current working tree contains the uncommitted SemanticIR builder, CLI wiring, live-doc refreshes, and validation-record updates for the new stage
+- the latest committed baseline is `f8e42eaa91239c4188ff734eff3f404770aaed0d`
+- the current working tree contains the uncommitted IntentIR builder, CLI wiring, live-doc refreshes, and validation-record updates for the new stage
 - before the next commit, follow `COMMIT.md`

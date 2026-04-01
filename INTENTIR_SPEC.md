@@ -274,12 +274,18 @@ It should include at least:
 - abstractions
 - residual decisions
 
+Current implementation note:
+- `specforge intent <semantic-ir>` now materializes `generated/intent_ir/<document_key>/intent_ir.json`
+- the first executable pass consumes persisted `SemanticIR` JSON
+- it currently canonicalizes intent identity, actor responsibilities, behaviors, constraints, assumptions, and residual decisions from deterministic heuristics over semantic records
+- the current output is intentionally conservative and inspectable; adapter work should lower from this canonical surface rather than reconstruct semantics from scratch
+
 Minimal conceptual example:
 ```json
 {
   "schema_version": 1,
   "stage": "intent_ir",
-  "semantic_ir_ref": "generated/semantic_ir/axi_core/semantic_ir.json",
+  "semantic_ir_path": "generated/semantic_ir/axi_core/semantic_ir.json",
   "intent_identity": {
     "intent_id": "axi_core_transport",
     "summary": "backend-neutral intent for the AXI core transport and transaction rules"
@@ -376,9 +382,9 @@ Example:
 
 ## Immediate implementation implications
 - `specforge ingest` produces `SourceIR`, and for execute-mode PDF inputs it now materializes Docling-backed normalized artifacts under `generated/source_ir/<document_key>/normalized`
-- the next real builder should construct `EvidenceIR` from normalized markdown, page/asset manifests, and visual evidence anchors
-- after that, the system should build `SemanticIR`
-- only then should it construct canonical `IntentIR`
+- `specforge evidence` constructs `EvidenceIR` from normalized markdown, page/asset manifests, and visual evidence anchors
+- `specforge semantic` constructs `SemanticIR` from grounded evidence
+- `specforge intent` now constructs canonical `IntentIR`
 - adapter work should follow `IntentIR`, not precede it
 
 ## Long-term documentation requirement

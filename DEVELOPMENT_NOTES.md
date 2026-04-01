@@ -57,10 +57,11 @@
 - the repository now contains a renamed `specforge` crate and CLI
 - the active Rust codebase no longer treats `spec2fsm` as the primary identity
 - the canonical product boundary is now described consistently as `IntentIR`
-- the first real implemented stages are `SourceIR`, `EvidenceIR`, and `SemanticIR`
+- the first real implemented stages are `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR`
 - `SourceIR` now includes a real Docling-backed structured PDF materialization path with promoted markdown, page artifacts, visual assets, metadata JSON, and backend raw JSON
 - `EvidenceIR` now builds multimodal evidence records instead of remaining text-only scaffolding
 - `SemanticIR` now builds a first backend-neutral semantic layer instead of remaining scaffolding only
+- `IntentIR` now builds a first canonical backend-neutral intent layer instead of remaining scaffolding only
 
 ## Structured PDF normalization implementation
 - execute-mode PDF ingest is now orchestrated from `crates/specforge/src/ir/source.rs`
@@ -105,6 +106,19 @@
   - emits explicit residual decisions when actor boundaries, overlapping interfaces, or ambiguous visual evidence remain unresolved
 - the current first-pass implementation remains deterministic and conservative; it is meant to expose candidate semantics and unresolved ambiguity, not to invent a final canonical intent model
 
+## First executable IntentIR stage
+- execute-mode `IntentIR` construction is now orchestrated from `crates/specforge/src/commands/intent.rs`
+- the core builder lives in `crates/specforge/src/ir/intent.rs`
+- `IntentIR::build` now:
+  - loads persisted `SemanticIR` JSON from disk
+  - derives artifact layout under `generated/intent_ir/<document_key>/intent_ir.json`
+  - canonicalizes actor responsibilities from semantic actors, contracts, and phase overlap
+  - canonicalizes behaviors from phases, contracts, and gate-like sequencing rules
+  - canonicalizes constraints from invariants, assertions, and interface-coupled rules
+  - derives assumptions from abstractions and conservative backend-neutral heuristics
+  - preserves semantic residual decisions and adds canonicalization-specific residuals only when the intent model would otherwise become speculative
+- the current first-pass implementation remains deterministic and conservative; it is meant to produce a stable canonical intent surface before adapter work, not to overfit one backend target
+
 ## Documentation surface currently steering the implementation
 - `README.md`
   - single entry point and quick orientation
@@ -141,6 +155,8 @@
   - `EvidenceIR` preview/materialization command
 - `src/commands/semantic.rs`
   - `SemanticIR` preview/materialization command
+- `src/commands/intent.rs`
+  - `IntentIR` preview/materialization command
 - `src/ir/mod.rs`
   - stage identifiers and IR namespace
 - `src/ir/source.rs`
@@ -152,7 +168,7 @@
 - `src/ir/semantic.rs`
   - first real `SemanticIR` builder for deterministic semantic lifting and residual-decision generation
 - `src/ir/intent.rs`
-  - `IntentIR` scaffolding
+  - first real `IntentIR` builder for deterministic canonicalization and residual-decision preservation
 - `src/ir/adapters.rs`
   - adapter targets and planning scaffolding
 
@@ -171,10 +187,10 @@
 
 ## Immediate implementation consequences
 - do not jump to `.fsm` generation from `SourceIR`
-- keep the current `SourceIR`, `EvidenceIR`, and `SemanticIR` types stable enough that later `IntentIR` builders can depend on them
-- use the newly materialized `SemanticIR` actors, interfaces, invariants, contracts, abstractions, and residual decisions as the substrate for the first real `IntentIR` constructor
-- keep the current `EvidenceIR` and `SemanticIR` passes provenance-first so later canonicalization stays grounded
+- keep the current `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR` types stable enough that later adapter builders can depend on them
+- use the newly materialized `IntentIR` actors, behaviors, constraints, assumptions, and residual decisions as the substrate for the first real adapter lowerings
+- keep the current `EvidenceIR`, `SemanticIR`, and `IntentIR` passes provenance-first so later adapter lowering stays grounded
 - do not let figures, charts, or diagrams collapse into throwaway markdown placeholders if they may carry normative meaning
 
 ## Immediate next engineering target
-- build the first real canonical `IntentIR` constructor from grounded `SemanticIR` artifacts
+- build the first real adapter lowering pass from grounded `IntentIR` artifacts

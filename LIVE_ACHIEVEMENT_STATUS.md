@@ -12,6 +12,7 @@
 - `specforge ingest` SourceIR command created: Done
 - `specforge evidence` EvidenceIR command created: Done
 - `specforge semantic` SemanticIR command created: Done
+- `specforge intent` IntentIR command created: Done
 - SourceIR type system implemented: Done
 - EvidenceIR scaffolding implemented: Done
 - SourceIR page/visual artifact scaffolding implemented: Done
@@ -25,11 +26,11 @@
 - Structured PDF normalization orchestration implemented: Done
 - EvidenceIR extraction implemented: Done
 - SemanticIR construction implemented: Done
-- IntentIR construction implemented: Not Started
+- IntentIR construction implemented: Done
 - `.fsm` adapter implemented: Not Started
 - SystemVerilog/Verilog/VHDL adapters implemented: Not Started
 - Validation and back-annotation pipeline implemented: Not Started
-- End-to-end source-to-IntentIR pipeline implemented: In Progress
+- End-to-end source-to-IntentIR pipeline implemented: Done
 
 ## Highest-priority remaining gap
-- Build the first real canonical IntentIR constructor from SemanticIR artifacts: Not Started
+- Build the first real adapter lowering pass from IntentIR artifacts: Not Started

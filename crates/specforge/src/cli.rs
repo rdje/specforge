@@ -23,6 +23,8 @@ pub enum Commands {
     Evidence(EvidenceArgs),
     /// Build or materialize a SemanticIR artifact from an EvidenceIR JSON file
     Semantic(SemanticArgs),
+    /// Build or materialize an IntentIR artifact from a SemanticIR JSON file
+    Intent(IntentArgs),
 }
 
 #[derive(Debug, Args)]
@@ -54,6 +56,15 @@ pub struct SemanticArgs {
     /// Path to an EvidenceIR JSON artifact
     pub evidence_ir: PathBuf,
     /// Do not write SemanticIR artifacts; print the computed SemanticIR JSON instead
+    #[arg(long)]
+    pub dry_run: bool,
+}
+
+#[derive(Debug, Args)]
+pub struct IntentArgs {
+    /// Path to a SemanticIR JSON artifact
+    pub semantic_ir: PathBuf,
+    /// Do not write IntentIR artifacts; print the computed IntentIR JSON instead
     #[arg(long)]
     pub dry_run: bool,
 }

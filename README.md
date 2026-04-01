@@ -20,9 +20,12 @@ Use it first for the project objective, document navigation, and the current imp
   - `evidence <source-ir>`
   - `semantic <evidence-ir> --dry-run`
   - `semantic <evidence-ir>`
+  - `intent <semantic-ir> --dry-run`
+  - `intent <semantic-ir>`
 - `specforge ingest` now computes and materializes `SourceIR` at `generated/source_ir/<document_key>/source_ir.json`
 - `specforge evidence` now computes and materializes `EvidenceIR` at `generated/evidence_ir/<document_key>/evidence_ir.json`
 - `specforge semantic` now computes and materializes `SemanticIR` at `generated/semantic_ir/<document_key>/semantic_ir.json`
+- `specforge intent` now computes and materializes `IntentIR` at `generated/intent_ir/<document_key>/intent_ir.json`
 - the `SourceIR` schema now reserves:
   - parser-backend identity
   - page-artifact manifests
@@ -32,13 +35,14 @@ Use it first for the project objective, document navigation, and the current imp
 - `specforge ingest <pdf>` now performs real Docling-backed structured normalization and materializes promoted markdown, page images, page metadata sidecars, visual assets, metadata JSON, backend raw JSON, and manifest files under `generated/source_ir/<document_key>/normalized`
 - the first real `EvidenceIR` extraction pass now builds section anchors, evidence spans, visual evidence items, figure/caption links, and heuristic extracted statements from ready `SourceIR` artifacts
 - the first real `SemanticIR` lifting pass now builds actors, interfaces, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions from persisted `EvidenceIR` artifacts
+- the first real `IntentIR` canonicalization pass now builds intent identity, actor responsibilities, behaviors, constraints, assumptions, and residual decisions from persisted `SemanticIR` artifacts
 - explicit staged IR modules now exist for:
   - `SourceIR`
   - `EvidenceIR`
   - `SemanticIR`
   - `IntentIR`
   - adapter planning
-- the next implementation milestone is to build the first real canonical `IntentIR` constructor on top of the now-materialized `SemanticIR` artifacts
+- the next implementation milestone is to build the first real adapter lowering pass on top of the now-materialized `IntentIR` artifacts
 
 ## Working naming
 - repository / project / CLI / crate name: `specforge`
@@ -138,6 +142,8 @@ Use it first for the project objective, document navigation, and the current imp
   - `EvidenceIR` preview/materialization command
 - `crates/specforge/src/commands/semantic.rs`
   - `SemanticIR` preview/materialization command
+- `crates/specforge/src/commands/intent.rs`
+  - `IntentIR` preview/materialization command
 - `crates/specforge/src/ir/mod.rs`
   - staged IR namespace and stage identifiers
 - `crates/specforge/src/ir/source.rs`
@@ -149,7 +155,7 @@ Use it first for the project objective, document navigation, and the current imp
 - `crates/specforge/src/ir/semantic.rs`
   - first real `SemanticIR` builder for actors, interfaces, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions
 - `crates/specforge/src/ir/intent.rs`
-  - `IntentIR` scaffolding
+  - first real `IntentIR` builder for canonical intent identity, actor responsibilities, behaviors, constraints, assumptions, and residual decisions
 - `crates/specforge/src/ir/adapters.rs`
   - adapter targets and planning scaffolding
 
@@ -169,6 +175,7 @@ cargo run -p specforge -- inspect README.md
 cargo run -p specforge -- ingest README.md --dry-run
 cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json --dry-run
 cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json --dry-run
+cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json --dry-run
 ```
 - `specforge ingest <source> --dry-run` prints computed `SourceIR` JSON without writing artifacts
 - `specforge ingest <source>` materializes `generated/source_ir/<document_key>/source_ir.json`
@@ -176,6 +183,8 @@ cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json
 - `specforge evidence <source-ir>` materializes `generated/evidence_ir/<document_key>/evidence_ir.json`
 - `specforge semantic <evidence-ir> --dry-run` prints computed `SemanticIR` JSON without writing artifacts
 - `specforge semantic <evidence-ir>` materializes `generated/semantic_ir/<document_key>/semantic_ir.json`
+- `specforge intent <semantic-ir> --dry-run` prints computed `IntentIR` JSON without writing artifacts
+- `specforge intent <semantic-ir>` materializes `generated/intent_ir/<document_key>/intent_ir.json`
 - PDF execute-mode ingest expects `docling` to be importable from `python3` or `python`; when it lives elsewhere, set `SPECFORGE_DOCLING_PYTHON=/path/to/python`
 
 ## Planned product shape
