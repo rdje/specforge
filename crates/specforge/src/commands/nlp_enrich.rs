@@ -117,9 +117,24 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
             let mut total_conditional_rules = 0usize;
             let mut total_calls = 0usize;
             let mut total_errors = 0usize;
+            let mut total_alias_reclassified = 0usize; // Form 2 tally
 
             for pass in 1..=max_passes {
                 println!("--- pass {pass}/{max_passes} ---");
+
+                // Form 2: apply the accumulated alias map BEFORE deriving candidates.
+                // Aliases learned in previous passes reclassify NormativeStatements without
+                // an LLM call, shrinking the candidate pool for this pass.
+                if !args.dry_run {
+                    let mut alias_counter = evidence_ir.signal_constraints.len() + 1;
+                    let (alias_n, alias_records) =
+                        evidence_ir.apply_alias_reclassification(&mut alias_counter);
+                    if alias_n > 0 {
+                        println!("  alias_reclassified: {alias_n} NormativeStatements via Form 2");
+                        total_alias_reclassified += alias_n;
+                        evidence_ir.signal_constraints.extend(alias_records);
+                    }
+                }
 
                 // Re-derive candidates each pass so already-extracted sentences are skipped.
                 let existing_signal_texts: std::collections::HashSet<String> = evidence_ir
@@ -196,6 +211,20 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
                                 record.constraint_kind,
                                 truncate_for_display(&statement.text, 60)
                             );
+                            // Form 2: learn alias if signal name is not in the source text.
+                            if let Some(phrase) =
+                                extract_alias_phrase(&statement.text, &record.subject_signal)
+                            {
+                                if !evidence_ir.signal_alias_map.contains_key(&phrase) {
+                                    println!(
+                                        "  alias_learned: \"{}\" → {}",
+                                        phrase, record.subject_signal
+                                    );
+                                    evidence_ir
+                                        .signal_alias_map
+                                        .insert(phrase, record.subject_signal.clone());
+                                }
+                            }
                             new_signal_constraints.push(record);
                         }
                         Ok(NlpExtractionResult::ConditionalRule(mut record)) => {
@@ -234,6 +263,8 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
                 let pass_extracted = new_signal_constraints.len() + new_conditional_rules.len();
                 total_signal_constraints += new_signal_constraints.len();
                 total_conditional_rules += new_conditional_rules.len();
+
+                let alias_map_size_before_llm = evidence_ir.signal_alias_map.len();
 
                 if !args.dry_run && pass_extracted > 0 {
                     // Form 1: backannotation — reclassify the original ExtractedStatement entries
@@ -279,6 +310,12 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
                     evidence_ir.conditional_rules.extend(new_conditional_rules);
                     // Write after every pass so progress is durable.
                     evidence_ir.write_to_disk()?;
+                } else if !args.dry_run
+                    && evidence_ir.signal_alias_map.len() > alias_map_size_before_llm
+                {
+                    // New aliases were learned this pass but the LLM extracted nothing new.
+                    // Persist so the alias map accumulates correctly.
+                    evidence_ir.write_to_disk()?;
                 }
 
                 // Layer C convergence: stop if nothing was extracted this pass.
@@ -293,6 +330,11 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
                 println!("total_llm_calls: {total_calls}");
                 println!("total_new_signal_constraints: {total_signal_constraints}");
                 println!("total_new_conditional_rules: {total_conditional_rules}");
+                println!("total_alias_reclassified (Form 2): {total_alias_reclassified}");
+                println!(
+                    "signal_alias_map_size: {}",
+                    evidence_ir.signal_alias_map.len()
+                );
                 println!("total_errors: {total_errors}");
                 println!(
                     "enriched_evidence_ir_path: {}",
@@ -352,6 +394,100 @@ fn auto_extract_declared_signals(evidence_ir: &EvidenceIr) -> Vec<String> {
     signals.sort();
     signals.dedup();
     signals
+}
+
+/// Form 2: Extract a prose alias phrase for a signal from a sentence where Level 3
+/// identified the signal but the name does not appear literally in the text.
+///
+/// Algorithm:
+///  1. If the signal token already appears literally in the sentence — no alias needed.
+///  2. Find the subject part (text before the first modal verb or copula).
+///  3. Strip leading articles ("the", "a", "an", "its", ...).
+///  4. Normalize to lowercase and limit to 4 words.
+///  5. Reject single-word pronouns and phrases shorter than 4 characters.
+///
+/// Example:
+///   sentence = "The address bus shall remain stable when HREADY is LOW"
+///   subject_signal = "HADDR"
+///   → Some("address bus")
+fn extract_alias_phrase(sentence: &str, subject_signal: &str) -> Option<String> {
+    // If the signal name appears literally, Level 1/2 would have caught it — skip.
+    if sentence
+        .split(|c: char| !c.is_ascii_alphanumeric() && c != '_')
+        .any(|tok| tok.eq_ignore_ascii_case(subject_signal))
+    {
+        return None;
+    }
+
+    let lowered = sentence.to_ascii_lowercase();
+
+    // Find the earliest modal verb / copula to locate the subject boundary.
+    const MODAL_MARKERS: &[&str] = &[
+        " shall ",
+        " must ",
+        " cannot ",
+        " can not ",
+        " will ",
+        " may ",
+        " is ",
+        " are ",
+        " was ",
+        " were ",
+    ];
+    let subject_end = MODAL_MARKERS
+        .iter()
+        .filter_map(|marker| lowered.find(marker))
+        .min()?;
+
+    let subject_raw = sentence[..subject_end].trim();
+    if subject_raw.is_empty() {
+        return None;
+    }
+
+    // Strip leading articles / determiners then normalize.
+    let stripped = strip_leading_articles(subject_raw);
+    let normalized = stripped.to_ascii_lowercase();
+    let normalized = normalized.trim();
+
+    let words: Vec<&str> = normalized.split_whitespace().collect();
+
+    // Reject single-word pronouns or trivially generic subjects.
+    if words.is_empty()
+        || (words.len() == 1
+            && matches!(
+                words[0],
+                "it" | "this" | "that" | "they" | "them" | "its" | "each" | "all"
+            ))
+    {
+        return None;
+    }
+
+    // Need at least 2 words to form a useful alias phrase.
+    if words.len() < 2 {
+        return None;
+    }
+
+    // Limit to 4 words so the phrase stays general enough to match future sentences.
+    let phrase = words.iter().take(4).copied().collect::<Vec<_>>().join(" ");
+
+    if phrase.len() >= 4 {
+        Some(phrase)
+    } else {
+        None
+    }
+}
+
+/// Strip common leading determiners / articles from a noun phrase.
+fn strip_leading_articles(text: &str) -> &str {
+    let lowered = text.to_ascii_lowercase();
+    for prefix in &[
+        "the ", "a ", "an ", "this ", "its ", "each ", "all ", "every ", "any ",
+    ] {
+        if lowered.starts_with(prefix) {
+            return &text[prefix.len()..];
+        }
+    }
+    text
 }
 
 /// Parse the signal name from a synthesized `Signal X is input/output [width N].` statement.
@@ -895,6 +1031,123 @@ mod tests {
         assert!(
             matches!(result, NlpExtractionResult::ConditionalRule(r) if r.antecedent_text == "HREADY is LOW")
         );
+    }
+
+    // ── Form 2: extract_alias_phrase ─────────────────────────────────
+
+    #[test]
+    fn extract_alias_phrase_returns_none_when_signal_appears_literally() {
+        // "HADDR" IS in the text — Level 1/2 would have caught it, no alias needed.
+        let result = extract_alias_phrase("HADDR shall remain stable", "HADDR");
+        assert!(result.is_none(), "signal present literally → no alias");
+    }
+
+    #[test]
+    fn extract_alias_phrase_extracts_noun_phrase_when_signal_absent() {
+        // Classic implicit reference: "The address bus" → "HADDR"
+        let result = extract_alias_phrase(
+            "The address bus shall remain stable when HREADY is LOW",
+            "HADDR",
+        );
+        assert_eq!(
+            result.as_deref(),
+            Some("address bus"),
+            "should strip \"The\" and return the 2-word noun phrase"
+        );
+    }
+
+    #[test]
+    fn extract_alias_phrase_rejects_pronoun_only_subjects() {
+        // "It shall be held HIGH" — "it" alone is too ambiguous.
+        let result = extract_alias_phrase("It shall be held HIGH throughout the burst", "HTRANS");
+        assert!(
+            result.is_none(),
+            "pronoun-only subject 'it' must be rejected as an alias phrase"
+        );
+    }
+
+    #[test]
+    fn extract_alias_phrase_limits_to_four_words() {
+        // Very long subject — alias should be at most 4 words.
+        let result = extract_alias_phrase(
+            "The write enable control signal shall be deasserted when the burst ends",
+            "HWRITE",
+        );
+        if let Some(phrase) = result {
+            let word_count = phrase.split_whitespace().count();
+            assert!(
+                word_count <= 4,
+                "alias phrase must not exceed 4 words, got: \"{phrase}\""
+            );
+        }
+    }
+
+    #[test]
+    fn nlp_enrich_learns_alias_and_stores_in_evidence_ir() -> Result<()> {
+        // End-to-end test: when Level 3 extracts a constraint from a sentence where
+        // the signal name is NOT in the text, the alias is stored in signal_alias_map.
+        let _lock = vlm_helper_lock();
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(&source, "# Protocol\nSome content.\n")?;
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        // Inject a NormativeStatement where the signal name is absent from the text.
+        // "The address bus" is the prose subject; the mock LLM resolves it to HADDR.
+        let alias_sentence = "The address bus shall remain stable when HREADY is LOW";
+        evidence_ir
+            .extracted_statements
+            .push(crate::ir::evidence::ExtractedStatement {
+                statement_id: "stmt_alias_learn".to_string(),
+                text: alias_sentence.to_string(),
+                class: crate::ir::evidence::StatementClass::NormativeStatement,
+                modality: crate::ir::evidence::EvidenceModality::Text,
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            });
+        evidence_ir.write_to_disk()?;
+
+        // Mock LLM returns HADDR as the subject signal.
+        let helper = write_mock_helper(
+            tempdir.path(),
+            &[(
+                "address bus",
+                r#"{"type":"signal_constraint","subject_signal":"HADDR","constraint_kind":"must_be_stable","negated":false}"#,
+            )],
+        );
+
+        unsafe { std::env::set_var(VLM_HELPER_ENV, &helper) };
+        run(NlpEnrichArgs {
+            evidence_ir: evidence_ir.artifact_layout.evidence_ir_path.clone(),
+            vlm_provider: VlmProviderArg::Ollama,
+            vlm_model: Some("qwen2.5vl:7b".to_string()),
+            dry_run: false,
+            max_sentences: 0,
+            grounding_signals: None,
+            max_passes: 1,
+        })?;
+        unsafe { std::env::remove_var(VLM_HELPER_ENV) };
+
+        let enriched = EvidenceIr::load_from_path(&evidence_ir.artifact_layout.evidence_ir_path)?;
+
+        // The alias map must contain "address bus" → "HADDR".
+        assert_eq!(
+            enriched
+                .signal_alias_map
+                .get("address bus")
+                .map(String::as_str),
+            Some("HADDR"),
+            "Form 2: alias \"address bus\" → HADDR must be persisted in signal_alias_map"
+        );
+
+        Ok(())
     }
 
     // ── Form 1: backannotation ───────────────────────────────────────

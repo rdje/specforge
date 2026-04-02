@@ -1,4 +1,14 @@
 # CHANGES
+## 2026-04-02 (Form 2: signal alias learning feedback loop)
+- **EvidenceIr.signal_alias_map** (evidence.rs): new BTreeMap<String,String> field (serde default = empty). Persisted to JSON so aliases accumulate across nlp-enrich runs.
+- **apply_alias_reclassification()** (EvidenceIr pub method): applies accumulated alias map to re-classify remaining NormativeStatements WITHOUT LLM calls. For each sentence containing a known alias phrase, substitutes the signal name (uppercase) and re-checks is_signal_value_constraint(). If true: reclassifies statement to SignalValueConstraint, synthesises a SignalConstraintRecord (AutomationConfidence::Low, alias-derived).
+- **detect_constraint_kind_from_substituted()** (evidence.rs): helper detects must_not_change / must_be_stable / must_be_high / must_be_low / must_be_asserted / must_be_deasserted from substituted mixed-case text.
+- **extract_alias_phrase()** (nlp_enrich.rs): after each successful LLM extraction, if the signal name does not appear literally in the source text, extracts a 2-4 word noun phrase (strips leading articles, rejects pronouns, limits to 4 words) and inserts it into evidence_ir.signal_alias_map.
+- **Pass loop integration**: (1) START of each pass: apply_alias_reclassification() shrinks candidate pool for free; (2) AFTER each LLM extraction: learn alias if signal not in text; (3) write EvidenceIR even when only aliases were learned (no LLM extractions). Summary reports total_alias_reclassified and signal_alias_map_size.
+- **Converging loop**: with --max-passes N, iteration 1 builds alias dict; iteration 2+ applies it, progressively reducing NormativeStatement residuals without LLM calls; converges when neither LLM extraction nor alias reclassification produces anything new.
+- **7 new tests** (83 -> 90 total, all passing):
+  - evidence.rs: apply_alias_reclassification_reclassifies_normative_statement_with_alias, apply_alias_reclassification_skips_already_covered_sentences
+  - nlp_enrich.rs: extract_alias_phrase_returns_none_when_signal_appears_literally, extract_alias_phrase_extracts_noun_phrase_when_signal_absent, extract_alias_phrase_rejects_pronoun_only_subjects, extract_alias_phrase_limits_to_four_words, nlp_enrich_learns_alias_and_stores_in_evidence_ir
 ## 2026-04-02 (Form 1: backannotation feedback loop)
 - **Form 1: backannotation** (nlp_enrich.rs): after each nlp-enrich pass, ExtractedStatement.class updated in-place: NormativeStatement -> SignalValueConstraint or ConditionalRule. Closes feedback loop from Level 3 back to EvidenceIR.
 - **Fixed test parallelism bug**: added vlm_helper_lock() mutex (OnceLock<Mutex<()>>) to serialize 4 tests sharing SPECFORGE_VLM_HELPER env var.

@@ -111,6 +111,13 @@ pub struct EvidenceIr {
     /// Level 2 NLP: structured records extracted from `ConditionalRule` sentences.
     #[serde(default)]
     pub conditional_rules: Vec<ConditionalRuleRecord>,
+    /// Form 2 signal alias map — populated by `specforge nlp-enrich` when Level 3
+    /// extracts a constraint from a sentence where the signal name doesn't appear
+    /// literally (e.g. "address bus" → "HADDR").  Persisted across runs so the
+    /// alias vocabulary accumulates.  Applied at the start of each enrichment pass
+    /// to reclassify remaining NormativeStatements without LLM calls.
+    #[serde(default)]
+    pub signal_alias_map: BTreeMap<String, String>,
 }
 
 impl EvidenceIr {
@@ -435,7 +442,94 @@ impl EvidenceIr {
             timing_constraints,
             signal_constraints,
             conditional_rules,
+            signal_alias_map: BTreeMap::new(), // populated by nlp-enrich (Form 2)
         })
+    }
+
+    /// Form 2: Signal alias learning feedback loop.
+    ///
+    /// Applies the accumulated `signal_alias_map` to re-classify remaining
+    /// `NormativeStatement` sentences WITHOUT an LLM call.  For each sentence
+    /// containing a known prose alias (e.g. "address bus"), the alias is substituted
+    /// by the canonical signal name (e.g. "HADDR") and `is_signal_value_constraint()`
+    /// is re-run on the substituted text.  If it now qualifies, the statement is
+    /// reclassified to `SignalValueConstraint` and a `SignalConstraintRecord` is
+    /// synthesised at `AutomationConfidence::Low` (alias-derived).
+    ///
+    /// Returns `(reclassified_count, new_records)`.  The caller is responsible for
+    /// extending `self.signal_constraints` with `new_records` and writing to disk.
+    pub fn apply_alias_reclassification(
+        &mut self,
+        constraint_counter: &mut usize,
+    ) -> (usize, Vec<SignalConstraintRecord>) {
+        if self.signal_alias_map.is_empty() {
+            return (0, Vec::new());
+        }
+
+        // Build a quick-lookup set of texts already covered by existing records.
+        let existing_texts: HashSet<&str> = self
+            .signal_constraints
+            .iter()
+            .map(|r| r.source_text.as_str())
+            .collect();
+
+        let alias_map = self.signal_alias_map.clone();
+        let mut reclassified = 0usize;
+        let mut new_records = Vec::new();
+
+        for stmt in &mut self.extracted_statements {
+            if !matches!(stmt.class, StatementClass::NormativeStatement) {
+                continue;
+            }
+            if existing_texts.contains(stmt.text.as_str()) {
+                continue;
+            }
+
+            let lowered = stmt.text.to_ascii_lowercase();
+
+            for (alias_phrase, signal_name) in &alias_map {
+                if !lowered.contains(alias_phrase.as_str()) {
+                    continue;
+                }
+
+                // Substitute the alias phrase with the uppercase signal name.
+                // Result is mixed-case, e.g. "the HADDR shall remain stable when hready is low".
+                // `is_signal_value_constraint()` handles this correctly:
+                //   • lowercases for phrase-binding check  ("shall remain stable" found)
+                //   • scans original-case for uppercase tokens  ("HADDR" found)
+                let substituted = lowered.replace(alias_phrase.as_str(), signal_name.as_str());
+
+                if !is_signal_value_constraint(&substituted) {
+                    continue;
+                }
+
+                // Reclassify the statement (Form 2 backannotation).
+                stmt.class = StatementClass::SignalValueConstraint;
+                reclassified += 1;
+
+                // Synthesise a constraint record for the reclassified statement.
+                let constraint_kind = detect_constraint_kind_from_substituted(&substituted);
+                let condition_text = extract_condition_clause(&stmt.text);
+                let negated = lowered.contains(" not ") || lowered.contains("cannot");
+
+                *constraint_counter += 1;
+                new_records.push(SignalConstraintRecord {
+                    constraint_id: format!("alias2_sigcon_{constraint_counter:04}"),
+                    subject_signal: signal_name.clone(),
+                    constraint_kind,
+                    target_value: None,
+                    condition_text,
+                    negated,
+                    source_text: stmt.text.clone(),
+                    supporting_statement_ids: vec![stmt.statement_id.clone()],
+                    automation_confidence: AutomationConfidence::Low,
+                });
+
+                break; // Apply at most one alias per statement.
+            }
+        }
+
+        (reclassified, new_records)
     }
 
     pub fn to_pretty_json(&self) -> Result<String> {
@@ -1689,6 +1783,81 @@ fn extract_action_phrase(full_lowered: &str, consequent_lowered: &str) -> String
     "(see source_text)".to_string()
 }
 
+/// Detect `SignalConstraintKind` from an alias-substituted sentence.
+/// The input is a mixed-case string where the alias phrase has been replaced by the
+/// signal name in uppercase (e.g. `"the HADDR shall remain stable when hready is low"`).
+fn detect_constraint_kind_from_substituted(text: &str) -> SignalConstraintKind {
+    let lowered = text.to_ascii_lowercase();
+    if contains_any(
+        &lowered,
+        &[
+            "shall not change",
+            "must not change",
+            "cannot change",
+            "will not change",
+        ],
+    ) {
+        SignalConstraintKind::MustNotChange
+    } else if contains_any(
+        &lowered,
+        &[
+            "shall remain stable",
+            "must remain stable",
+            "shall be stable",
+            "must be stable",
+        ],
+    ) {
+        SignalConstraintKind::MustBeStable
+    } else if contains_any(
+        &lowered,
+        &[
+            "shall be high",
+            "must be high",
+            "shall remain high",
+            "must remain high",
+            "is tied high",
+            "is held high",
+            "is kept high",
+        ],
+    ) {
+        SignalConstraintKind::MustBeHigh
+    } else if contains_any(
+        &lowered,
+        &[
+            "shall be low",
+            "must be low",
+            "shall remain low",
+            "must remain low",
+            "is tied low",
+            "is held low",
+        ],
+    ) {
+        SignalConstraintKind::MustBeLow
+    } else if contains_any(
+        &lowered,
+        &[
+            "shall be asserted",
+            "must be asserted",
+            "shall remain asserted",
+            "must remain asserted",
+        ],
+    ) {
+        SignalConstraintKind::MustBeAsserted
+    } else if contains_any(
+        &lowered,
+        &[
+            "shall be deasserted",
+            "must be deasserted",
+            "shall remain deasserted",
+        ],
+    ) {
+        SignalConstraintKind::MustBeDeasserted
+    } else {
+        // Fall back to stable — the sentence is a constraint but kind is ambiguous.
+        SignalConstraintKind::MustBeStable
+    }
+}
+
 /// Returns `true` if the sentence explicitly constrains a hardware signal to a specific
 /// logic value or protocol state.
 ///
@@ -2622,6 +2791,121 @@ mod tests {
                 "HIGH is a logic level, not a signal"
             );
         }
+    }
+
+    // ── Form 2: signal alias learning ───────────────────────────────────
+
+    #[test]
+    fn apply_alias_reclassification_reclassifies_normative_statement_with_alias() -> Result<()> {
+        use super::EvidenceModality;
+        // Seed the alias map with "address bus" → "HADDR", then call
+        // apply_alias_reclassification() and verify the NormativeStatement is
+        // reclassified to SignalValueConstraint and a constraint record is created.
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(&source, "# Protocol\nSome content.\n")?;
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        // Inject a NormativeStatement whose subject is a prose alias.
+        let alias_sentence = "The address bus shall remain stable when HREADY is LOW";
+        evidence_ir
+            .extracted_statements
+            .push(crate::ir::evidence::ExtractedStatement {
+                statement_id: "stmt_alias_test".to_string(),
+                text: alias_sentence.to_string(),
+                class: StatementClass::NormativeStatement,
+                modality: EvidenceModality::Text,
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            });
+
+        // Seed the alias map as if it had been learned by a previous nlp-enrich run.
+        evidence_ir
+            .signal_alias_map
+            .insert("address bus".to_string(), "HADDR".to_string());
+
+        let mut counter = 1usize;
+        let (reclassified, new_records) = evidence_ir.apply_alias_reclassification(&mut counter);
+
+        assert_eq!(reclassified, 1, "one statement should be reclassified");
+        assert_eq!(
+            new_records.len(),
+            1,
+            "one constraint record should be created"
+        );
+        assert_eq!(new_records[0].subject_signal, "HADDR");
+        // The statement class must be updated in place.
+        let updated_stmt = evidence_ir
+            .extracted_statements
+            .iter()
+            .find(|s| s.text == alias_sentence)
+            .unwrap();
+        assert_eq!(
+            updated_stmt.class,
+            StatementClass::SignalValueConstraint,
+            "statement must be reclassified from NormativeStatement to SignalValueConstraint"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn apply_alias_reclassification_skips_already_covered_sentences() {
+        // A sentence whose source_text already appears in signal_constraints must not
+        // generate a duplicate record even if its class is still NormativeStatement.
+        use super::EvidenceModality;
+        use crate::ir::source::{
+            AutomationConfidence, SignalConstraintKind, SignalConstraintRecord,
+        };
+        let tempdir = tempfile::tempdir().unwrap();
+        let source = tempdir.path().join("s.md");
+        std::fs::write(&source, "# P\nContent.\n").unwrap();
+        let sib = tempdir.path().join("src_ir");
+        let eib = tempdir.path().join("ev_ir");
+        let source_ir = SourceIr::build(&source, &sib).unwrap();
+        source_ir.write_to_disk().unwrap();
+        let mut ev = EvidenceIr::build(&source_ir.artifact_layout.source_ir_path, &eib).unwrap();
+
+        let covered_text = "The address bus shall remain stable";
+        ev.extracted_statements
+            .push(crate::ir::evidence::ExtractedStatement {
+                statement_id: "stmt_covered".to_string(),
+                text: covered_text.to_string(),
+                class: StatementClass::NormativeStatement,
+                modality: EvidenceModality::Text,
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            });
+        // Pre-populate with a constraint whose source_text matches.
+        ev.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_existing".to_string(),
+            subject_signal: "HADDR".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeStable,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: covered_text.to_string(),
+            supporting_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        ev.signal_alias_map
+            .insert("address bus".to_string(), "HADDR".to_string());
+
+        let mut counter = 1usize;
+        let (reclassified, new_records) = ev.apply_alias_reclassification(&mut counter);
+        assert_eq!(
+            reclassified, 0,
+            "already-covered sentence must not be reclassified"
+        );
+        assert!(new_records.is_empty());
     }
 
     // ── Layer A: section-aware boilerplate suppression ────────────────────
