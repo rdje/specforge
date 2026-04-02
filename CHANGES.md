@@ -1,4 +1,26 @@
 # CHANGES
+## 2026-04-02 (AHB + APB end-to-end pipeline validation run)
+
+### AHB (IHI0033_C) results — full feedback loop on existing SourceIR
+- Layer A suppressed 13 boilerplate NormativeStatements (85 → 72 residuals before nlp-enrich)
+- nlp-enrich Pass 1: 72 candidates → 26 extracted (13 signal + 13 conditional), Form 1 backannotated 26, 1 alias learned (low-quality: "- the address" from markdown table row)
+- nlp-enrich Pass 2: 46 candidates → 0 extracted → convergence at residual=46 (pass 3 stable check)
+- Layer D gating: 17 declared signals (100% direction, 58% width), 248 heuristic noise excluded
+- Final score: **86/100 — GOOD** (signal_dir=25/25, width=5.8/10, constraints=30/30, enums=15/15, registers=5/5, timing=5/5)
+- Residual NormativeStatements: 46 (architectural/infrastructure sentences with no named signal)
+
+### APB (IHI0024_E) results — full ingest from PDF + feedback loop
+- Ingested: 48 pages, 35 visual assets
+- EvidenceIR: 517 statements, 18 NormativeStatements, 37 signal_constraints (Level 2)
+- nlp-enrich Pass 1: 18 candidates → 8 extracted, Form 1 backannotated 8, 0 aliases learned
+- nlp-enrich Pass 2: 10 candidates → 0 extracted → convergence at residual=10
+- Layer D gating: **0 declared signals** — APB signal description tables not detected as SignalDescription kind, so no High-confidence records; direction/width coverage = 0%
+- Final score: **35/100 — NEEDS IMPROVEMENT** (constraints=30/30, registers=5/5, all signal coverage zero)
+- Root cause: APB table classification is returning Unknown instead of SignalDescription for the signal description tables → no synthesized "Signal X is input/output" statements → Layer D has no declared set → direction/width = 0 → score tank
+
+### Issues identified
+1. **APB signal table classification**: APB tables not being classified as SignalDescription; need to inspect APB structured_tables
+2. **Alias extraction quality**: "- the address" alias from markdown table row prefix is garbage — need to filter phrases starting with "-" or pure markdown tokens
 ## 2026-04-02 (remove --max-passes: residual-stable convergence criterion)
 - **Removed --max-passes CLI option** from NlpEnrichArgs: was a safety net that is no longer needed.
 - **New convergence criterion**: loop stops when residual(N) == residual(N-1).  Termination is guaranteed because the residual pool is finite and can only decrease or stay flat (monotone).  The criterion covers Form 2 alias reclassifications AND LLM extractions together, unlike the previous "pass_extracted == 0" check which only counted LLM extractions and could stop prematurely.
