@@ -236,6 +236,43 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
                 total_conditional_rules += new_conditional_rules.len();
 
                 if !args.dry_run && pass_extracted > 0 {
+                    // Form 1: backannotation — reclassify the original ExtractedStatement entries
+                    // whose text was successfully extracted this pass.  This closes the feedback
+                    // loop from Level 3 back to Level 1/2: the sentence is no longer an opaque
+                    // NormativeStatement; it now carries the precise class the LLM discovered.
+                    //
+                    // SignalConstraint extraction → StatementClass::SignalValueConstraint
+                    // ConditionalRule extraction  → StatementClass::ConditionalRule
+                    //
+                    // Subsequent passes see the updated classes and skip these sentences
+                    // automatically (the candidate filter already excludes non-NormativeStatement).
+                    let signal_texts: std::collections::HashSet<&str> = new_signal_constraints
+                        .iter()
+                        .map(|r| r.source_text.as_str())
+                        .collect();
+                    let rule_texts: std::collections::HashSet<&str> = new_conditional_rules
+                        .iter()
+                        .map(|r| r.source_text.as_str())
+                        .collect();
+
+                    let mut backannotated = 0usize;
+                    for stmt in &mut evidence_ir.extracted_statements {
+                        if matches!(stmt.class, StatementClass::NormativeStatement) {
+                            if signal_texts.contains(stmt.text.as_str()) {
+                                stmt.class = StatementClass::SignalValueConstraint;
+                                backannotated += 1;
+                            } else if rule_texts.contains(stmt.text.as_str()) {
+                                stmt.class = StatementClass::ConditionalRule;
+                                backannotated += 1;
+                            }
+                        }
+                    }
+                    if backannotated > 0 {
+                        println!(
+                            "  backannotated: {backannotated} NormativeStatements reclassified"
+                        );
+                    }
+
                     evidence_ir
                         .signal_constraints
                         .extend(new_signal_constraints);
@@ -249,7 +286,7 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
                     println!("convergence: pass extracted 0 new records — stopping.");
                     break;
                 }
-            }
+            } // end for pass
 
             if !args.dry_run {
                 println!("--- summary ---");
@@ -660,6 +697,7 @@ fn truncate_for_display(text: &str, max: usize) -> String {
 #[cfg(test)]
 mod tests {
     use std::fs;
+    use std::sync::{Mutex, OnceLock};
 
     use tempfile::tempdir;
 
@@ -668,6 +706,13 @@ mod tests {
     use crate::error::Result;
     use crate::ir::evidence::{EvidenceIr, StatementClass};
     use crate::ir::source::SourceIr;
+
+    /// Serializes all tests that read/write `SPECFORGE_VLM_HELPER` so they cannot
+    /// race when `cargo test` runs them in parallel within the same process.
+    fn vlm_helper_lock() -> std::sync::MutexGuard<'static, ()> {
+        static LOCK: OnceLock<Mutex<()>> = OnceLock::new();
+        LOCK.get_or_init(|| Mutex::new(())).lock().unwrap()
+    }
 
     /// Create a minimal mock VLM helper script that returns a predefined JSON based
     /// on the --sentence argument content. Used via SPECFORGE_VLM_HELPER.
@@ -697,6 +742,7 @@ mod tests {
         //   EvidenceIR with NormativeStatement sentences
         //     → nlp-enrich calls LLM (mocked via SPECFORGE_VLM_HELPER)
         //     → new SignalConstraintRecord added to evidence_ir.signal_constraints
+        let _lock = vlm_helper_lock();
         let tempdir = tempdir()?;
         let source = tempdir.path().join("spec.md");
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
@@ -778,6 +824,7 @@ mod tests {
 
     #[test]
     fn nlp_enrich_dry_run_does_not_modify_evidence_ir() -> Result<()> {
+        let _lock = vlm_helper_lock();
         let tempdir = tempdir()?;
         let source = tempdir.path().join("spec.md");
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
@@ -850,6 +897,77 @@ mod tests {
         );
     }
 
+    // ── Form 1: backannotation ───────────────────────────────────────
+
+    #[test]
+    fn nlp_enrich_backannotates_extracted_statement_class() -> Result<()> {
+        // After nlp-enrich extracts a SignalConstraintRecord from a NormativeStatement,
+        // the original ExtractedStatement.class must be updated from NormativeStatement
+        // to SignalValueConstraint (Form 1 backannotation feedback loop).
+        let _lock = vlm_helper_lock();
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(&source, "# Protocol\nSome content.\n")?;
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        // Inject a NormativeStatement that the mock LLM will classify as SignalConstraint.
+        let target_text = "HWRITE shall remain HIGH during the burst";
+        evidence_ir
+            .extracted_statements
+            .push(crate::ir::evidence::ExtractedStatement {
+                statement_id: "stmt_backannotate_test".to_string(),
+                text: target_text.to_string(),
+                class: StatementClass::NormativeStatement,
+                modality: crate::ir::evidence::EvidenceModality::Text,
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            });
+        evidence_ir.write_to_disk()?;
+
+        let helper = write_mock_helper(
+            tempdir.path(),
+            &[(
+                "HWRITE",
+                r#"{"type":"signal_constraint","subject_signal":"HWRITE","constraint_kind":"must_be_high","negated":false}"#,
+            )],
+        );
+
+        unsafe { std::env::set_var(VLM_HELPER_ENV, &helper) };
+        run(NlpEnrichArgs {
+            evidence_ir: evidence_ir.artifact_layout.evidence_ir_path.clone(),
+            vlm_provider: VlmProviderArg::Ollama,
+            vlm_model: Some("qwen2.5vl:7b".to_string()),
+            dry_run: false,
+            max_sentences: 0,
+            grounding_signals: None,
+            max_passes: 1,
+        })?;
+        unsafe { std::env::remove_var(VLM_HELPER_ENV) };
+
+        // Reload EvidenceIR and verify the statement was backannotated.
+        let enriched = EvidenceIr::load_from_path(&evidence_ir.artifact_layout.evidence_ir_path)?;
+        let reclassified = enriched
+            .extracted_statements
+            .iter()
+            .find(|s| s.text == target_text)
+            .expect("injected statement should be present");
+        assert_eq!(
+            reclassified.class,
+            StatementClass::SignalValueConstraint,
+            "Form 1 backannotation: statement class must be updated from NormativeStatement \
+             to SignalValueConstraint after successful LLM extraction"
+        );
+
+        Ok(())
+    }
+
     // ── Layer B: grounding signals in prompt ────────────────────────────
 
     #[test]
@@ -901,6 +1019,7 @@ mod tests {
     fn nlp_enrich_multi_pass_stops_on_convergence() -> Result<()> {
         // With max_passes=3, if the first pass extracts everything, the second pass should
         // find 0 candidates and stop (convergence). This verifies the loop terminates.
+        let _lock = vlm_helper_lock();
         let tempdir = tempdir()?;
         let source = tempdir.path().join("spec.md");
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");

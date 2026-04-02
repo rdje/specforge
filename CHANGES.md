@@ -1,4 +1,8 @@
 # CHANGES
+## 2026-04-02 (Form 1: backannotation feedback loop)
+- **Form 1: backannotation** (nlp_enrich.rs): after each nlp-enrich pass, ExtractedStatement.class updated in-place: NormativeStatement -> SignalValueConstraint or ConditionalRule. Closes feedback loop from Level 3 back to EvidenceIR.
+- **Fixed test parallelism bug**: added vlm_helper_lock() mutex (OnceLock<Mutex<()>>) to serialize 4 tests sharing SPECFORGE_VLM_HELPER env var.
+- **Test suite: 82 -> 83 (+1, all passing)**
 ## 2026-04-02 (NLP pipeline Layers A/B/C/D/E: boilerplate suppression, grounded multi-pass NLP, declared-signal gating, spec-type-aware scoring)
 - **Layer A — Section-aware boilerplate suppression** (`evidence.rs`)
   - New `is_boilerplate_section_title()` helper: matches Introduction, Revision History, Legal Notice, Normative/Informative References, Glossary, Acronyms, Bibliography, Scope, Terms and Definitions, About this Document, and related headings
