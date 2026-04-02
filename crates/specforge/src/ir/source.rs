@@ -122,6 +122,141 @@ impl AutomationConfidence {
     }
 }
 
+/// Structured cell-level representation of one table extracted from a PDF.
+/// The cells are Docling's native extraction; header rows are those where
+/// Docling marks cells as `column_header` or `row_header`.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct StructuredTableRecord {
+    pub table_id: String,
+    /// Cross-references `VisualAsset.asset_id` for the corresponding table image.
+    pub asset_id: String,
+    pub page_id: Option<String>,
+    pub caption_text: Option<String>,
+    pub source_ref: Option<String>,
+    /// Purpose of this table as inferred from its header cells at ingest time.
+    #[serde(default)]
+    pub table_kind: TableKind,
+    /// Rows where at least one cell is marked as a header by Docling.
+    pub header_rows: Vec<Vec<StructuredTableCellRecord>>,
+    /// Non-header data rows.
+    pub body_rows: Vec<Vec<StructuredTableCellRecord>>,
+    pub row_count: u32,
+    pub col_count: u32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct StructuredTableCellRecord {
+    pub text: String,
+    pub row_span: u32,
+    pub col_span: u32,
+    pub is_header: bool,
+}
+
+/// Type label for a text content element as classified by Docling.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum ContentElementKind {
+    Title,
+    Abstract,
+    SectionHeader,
+    BodyText,
+    ListItem,
+    Code,
+    Caption,
+    Footnote,
+    Formula,
+    Unknown,
+}
+
+/// One typed text element from the document, in reading order.
+/// Page headers, footers, and empty elements are excluded.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ContentElementRecord {
+    pub element_id: String,
+    pub kind: ContentElementKind,
+    pub text: String,
+    /// Heading level 1–6 for `SectionHeader` elements; `None` for all other kinds.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub heading_level: Option<u8>,
+    pub page_id: Option<String>,
+    pub source_ref: Option<String>,
+    /// Position of this element in Docling's reading-order traversal.
+    pub reading_order: u32,
+}
+
+/// Classification of a structured table's purpose, inferred from its header cells at ingest time.
+/// Downstream stages (EvidenceIR, SemanticIR) use this to apply table-type-specific extraction.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum TableKind {
+    /// Signal name + direction/width columns (AHB manager/subordinate signal tables).
+    SignalDescription,
+    /// Value/encoding columns + name/description column (HTRANS, HBURST, HRESP encodings).
+    Encoding,
+    /// Offset/address + name + access type + reset value columns.
+    RegisterMap,
+    /// Parameter + min/typ/max + unit columns.
+    TimingParameter,
+    /// Feature/property + mandatory/optional/prohibited columns.
+    FeatureMatrix,
+    Unknown,
+}
+
+impl Default for TableKind {
+    fn default() -> Self {
+        Self::Unknown
+    }
+}
+
+/// Section kind as heuristically classified from the heading title at ingest time.
+/// Downstream stages can use this to avoid re-discovering section roles.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum SectionKind {
+    /// Legal text, revision history, proprietary notice, etc.
+    Boilerplate,
+    /// Normative protocol / specification content.
+    Normative,
+    /// Section describing signals, ports, or I/O.
+    SignalDescription,
+    /// Section describing registers, memory maps, or CSRs.
+    RegisterDescription,
+    /// Section containing timing diagrams or constraints.
+    Timing,
+    /// Glossary, abbreviations, definitions.
+    Glossary,
+    /// Table of contents.
+    TableOfContents,
+    /// Appendix or annex.
+    Appendix,
+    Unknown,
+}
+
+/// One section heading from the document, in reading order.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ContentSectionRecord {
+    pub section_id: String,
+    pub title: String,
+    /// Heading depth 1–6 (h1 = 1, h2 = 2, …).
+    pub heading_level: u8,
+    pub page_id: Option<String>,
+    pub source_ref: Option<String>,
+    pub reading_order: u32,
+    /// Heuristic section kind inferred from the heading title.
+    pub section_kind: SectionKind,
+}
+
+/// High-level statistics and document title extracted at ingest time.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct DocumentProfile {
+    pub title: Option<String>,
+    pub page_count: u32,
+    pub table_count: u32,
+    pub figure_count: u32,
+    pub content_element_count: u32,
+    pub section_count: u32,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct SourceIr {
     pub schema_version: u32,
@@ -132,6 +267,22 @@ pub struct SourceIr {
     pub normalization_plan: NormalizationPlan,
     pub page_artifacts: Vec<PageArtifact>,
     pub visual_assets: Vec<VisualAsset>,
+    /// Cell-level structured data for every table Docling extracted from the PDF.
+    /// Empty for Markdown inputs.
+    #[serde(default)]
+    pub structured_tables: Vec<StructuredTableRecord>,
+    /// Every non-page-header/footer text element in reading order, with type label.
+    /// Empty for Markdown inputs.
+    #[serde(default)]
+    pub content_elements: Vec<ContentElementRecord>,
+    /// All section headings in reading order with heading level and section kind.
+    /// Empty for Markdown inputs.
+    #[serde(default)]
+    pub document_sections: Vec<ContentSectionRecord>,
+    /// High-level document profile: title, counts.
+    /// `None` for Markdown inputs.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub document_profile: Option<DocumentProfile>,
     pub placeholder_bindings: Vec<PlaceholderBinding>,
     pub residual_decisions: Vec<ResidualDecisionPacket>,
     pub downstream_stages: Vec<IrStage>,
@@ -274,6 +425,10 @@ impl SourceIr {
             normalization_plan,
             page_artifacts: Vec::new(),
             visual_assets: Vec::new(),
+            structured_tables: Vec::new(),
+            content_elements: Vec::new(),
+            document_sections: Vec::new(),
+            document_profile: None,
             placeholder_bindings: Vec::new(),
             residual_decisions,
             downstream_stages: vec![IrStage::EvidenceIr, IrStage::SemanticIr, IrStage::IntentIr],
@@ -329,14 +484,19 @@ impl SourceIr {
 
         self.page_artifacts = backend_summary.page_artifacts;
         self.visual_assets = backend_summary.visual_assets;
+        self.structured_tables = backend_summary.structured_tables;
+        self.content_elements = backend_summary.content_elements;
+        self.document_sections = backend_summary.document_sections;
+        self.document_profile = backend_summary.document_profile;
         self.placeholder_bindings = backend_summary.placeholder_bindings;
         self.normalization_plan.status = NormalizationStatus::Ready;
         self.planned_actions = materialized_source_actions(&self.residual_decisions);
         self.normalization_plan.notes.push(format!(
-            "docling materialized promoted markdown, backend raw JSON, {} page artifacts, {} picture assets, and {} table assets",
+            "docling materialized promoted markdown, backend raw JSON, {} page artifacts, {} picture assets, and {} table assets ({} structured)",
             backend_summary.metadata.page_count,
             backend_summary.metadata.picture_count,
-            backend_summary.metadata.table_count
+            backend_summary.metadata.table_count,
+            self.structured_tables.len()
         ));
         if let Some(version) = backend_summary.backend_version {
             self.normalization_plan

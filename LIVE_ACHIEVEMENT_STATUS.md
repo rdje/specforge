@@ -48,6 +48,10 @@
 - Direct-module alias-root decision recorded and speculative `.fsm` adapter root-kind placeholders removed: Done
 - SemanticIR extraction quality improved for real chip spec PDFs (boilerplate filtering, expanded stop words, interface noise filtering): Done
 - SemanticIR signal-table row parsing implemented (direction and width from PDF signal description tables): Done
+- EXTRACTION_ARCHITECTURE.md created as comprehensive reference for SOTA extraction vision: Done
+- SourceIR SOTA capture: structured table cell grids, typed content elements, section hierarchy with SectionKind, document profile, table kind classification: Done
+- EvidenceIR SOTA typed evidence: signal declarations and encoding enum declarations synthesized from structured table cells, NormativeStatement classification added: Done
+- SemanticIR parse_signal_table_row band-aid removed (declarations now flow from EvidenceIR): Done
 - Docling installed and first real-world PDF (AMBA AHB) exercised end-to-end through the full pipeline: Done
 - SystemVerilog/Verilog/VHDL adapters implemented: Not Started
 - Validation and back-annotation pipeline implemented: Not Started

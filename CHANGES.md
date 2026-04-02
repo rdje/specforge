@@ -1,4 +1,31 @@
 # CHANGES
+## 2026-04-02 (SOTA SourceIR and EvidenceIR)
+- created `EXTRACTION_ARCHITECTURE.md` — comprehensive reference document capturing the full SOTA extraction vision for chip spec PDFs: six information modalities, quality gap analysis per IR stage, target architecture, and priority-ordered implementation plan (Tier 1–4)
+- updated `ROADMAP.md` with new workstreams R8 (SourceIR SOTA capture), R9 (EvidenceIR SOTA typed evidence), and R10 (EvidenceIR VLM visual content)
+- extended Docling Python helper to extract in a single pass:
+  - **structured table cell grids** (`StructuredTableRecord` with header/body row cells, row/col spans, `is_header` flags)
+  - **table kind classification** (`classify_table_kind`): `signal_description`, `encoding`, `register_map`, `timing_parameter`, `feature_matrix`, `unknown`
+  - **typed content elements** (`ContentElementRecord`): all text elements with Docling type labels (title, section_header, body_text, list_item, code, caption, footnote, formula), reading order, page provenance
+  - **section hierarchy with semantic classification** (`ContentSectionRecord` with `SectionKind`): `Boilerplate`, `SignalDescription`, `Normative`, `Timing`, `RegisterDescription`, `Glossary`, `Appendix`, `TableOfContents`
+  - **document profile** (`DocumentProfile`): title, page/table/figure/section counts
+- added new Rust types to `source.rs`: `StructuredTableRecord`, `StructuredTableCellRecord`, `TableKind`, `ContentElementRecord`, `ContentElementKind`, `ContentSectionRecord`, `SectionKind`, `DocumentProfile`
+- updated `SourceIr` struct with new `#[serde(default)]` fields: `structured_tables`, `content_elements`, `document_sections`, `document_profile`
+- updated `DoclingBackendSummary` to deserialize all new fields; updated `SourceIr::materialize()` to populate them
+- added `StatementClass::NormativeStatement` to `EvidenceIR` statement classification — sentences with `shall`/`must`/`shall not` in non-boilerplate sections are now correctly classified as behavioral requirements rather than generic `SourceFact`
+- added `synthesize_declarations_from_tables()` in `EvidenceIR` that reads `source_ir.structured_tables` and synthesizes formal typed declarations:
+  - `SignalDescription` tables → `Signal X is output/input [width N].` declarations (High confidence)
+  - `Encoding` tables → `Enum <name> <member> = <value>.` declarations (High confidence)
+  - Direction inferred from `ContentSectionRecord.section_kind` + section title keywords; width from numeric cell values; non-signal tokens filtered via `is_signal_synthesis_non_signal()`
+- **removed `parse_signal_table_row` band-aid from `SemanticIR`** — signal declarations now flow cleanly from `EvidenceIR` structured table synthesis through `SemanticIR`'s existing `parse_explicit_signal_declaration` and `parse_explicit_symbol_definition` parsers
+- validated on AMBA AHB Protocol Specification PDF (SOTA pipeline, re-ingested):
+  - `source_ir.structured_tables`: 40 tables (11 signal_description, 2 encoding, 3 register_map, 2 timing_parameter, 22 unknown)
+  - `source_ir.content_elements`: 1004 typed text elements
+  - `source_ir.document_sections`: 172 sections (115 normative, 37 signal_description, 8 boilerplate, 5 timing, 4 appendix, 2 glossary, 1 table_of_contents)
+  - `source_ir.document_profile`: page_count=104, table_count=40, figure_count=30, section_count=172
+  - 17 AHB signals with explicit direction+width in adapter signal inventory (HSELX newly added from Decoder table)
+  - `NormativeStatement` classification active for behavioral requirements
+  - No SemanticIR band-aid; signal declarations flow architecturally
+- all `cargo fmt` and `cargo test` checks pass: 48 tests, 0 failures
 ## 2026-04-02 (continued)
 - improved `SemanticIR` extraction quality for real chip specification PDFs with three targeted fixes:
   - **expanded `signal_stop_words()`** with ~200 entries covering legal/contractual vocabulary, common English all-caps words (HIGH, LOW, etc.), AMBA/ARM protocol family names, company names, document structure words, and technology abbreviations that are never hardware signal names; this eliminates legal front-matter contamination from signal extraction

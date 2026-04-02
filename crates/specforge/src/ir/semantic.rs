@@ -1012,17 +1012,12 @@ fn build_interfaces(context: &SemanticContext) -> Vec<InterfaceRecord> {
     let empty_known_signal_names = BTreeSet::<String>::new();
     let empty_known_symbol_names = BTreeSet::<String>::new();
 
-    // Build section title lookup for signal table row parsing. This enables extracting
-    // direction and width from markdown tables in real chip specs (e.g. AMBA AHB/APB/AXI)
-    // where signals are described in tabular form rather than the formal declaration syntax.
-    let section_title_by_id: HashMap<&str, &str> = context
-        .section_anchors
-        .iter()
-        .map(|anchor| (anchor.section_id.as_str(), anchor.title.as_str()))
-        .collect();
-
     for statement in &context.statements {
         if let Some(signal_declaration) = parse_explicit_signal_declaration(&statement.text) {
+            // Signal declarations arrive from EvidenceIR via two paths:
+            //   1. Formal `Signal X is input/output width N.` in source text
+            //   2. Synthesized by EvidenceIR from structured table cell grids in SourceIR
+            // Both flow through `parse_explicit_signal_declaration` here.
             let key = explicit_interface_key(statement.section_ids.as_slice());
             let entry = accumulators
                 .entry(key)
@@ -1038,39 +1033,6 @@ fn build_interfaces(context: &SemanticContext) -> Vec<InterfaceRecord> {
                 signal_declaration.width_hint,
                 &statement.statement_id,
                 AutomationConfidence::High,
-            );
-            continue;
-        }
-
-        // Try to extract a signal declaration from a markdown signal-description table row.
-        // This handles real-world chip protocol specs (AMBA AHB, APB, AXI, etc.) where signal
-        // names, directions, and widths are described in structured tables rather than in the
-        // formal "Signal X is input width N." declaration syntax. The extracted records carry
-        // Medium confidence because the parsing relies on section title heuristics rather than
-        // explicit formal declarations.
-        let statement_section_titles: Vec<&str> = statement
-            .section_ids
-            .iter()
-            .filter_map(|id| section_title_by_id.get(id.as_str()).copied())
-            .collect();
-        if let Some(signal_declaration) =
-            parse_signal_table_row(&statement.text, &statement_section_titles)
-        {
-            let key = explicit_interface_key(statement.section_ids.as_slice());
-            let entry = accumulators
-                .entry(key)
-                .or_insert_with(|| InterfaceAccumulator {
-                    signals: BTreeSet::new(),
-                    signal_records: BTreeMap::new(),
-                    supporting_statement_ids: BTreeSet::new(),
-                });
-            register_interface_signal_record(
-                entry,
-                &signal_declaration.signal_name,
-                Some(signal_declaration.direction_hint),
-                signal_declaration.width_hint,
-                &statement.statement_id,
-                AutomationConfidence::Medium,
             );
             continue;
         }
@@ -4651,110 +4613,6 @@ fn contains_phrase(text: &str, phrase: &str) -> bool {
     false
 }
 
-fn parse_signal_table_row(
-    text: &str,
-    section_titles: &[&str],
-) -> Option<ParsedInterfaceSignalDeclaration> {
-    let text = text.trim();
-    // Must be a markdown table row (starts with `|`).
-    if !text.starts_with('|') {
-        return None;
-    }
-
-    // Split by `|` and collect non-empty cells.
-    let cells: Vec<&str> = text
-        .split('|')
-        .map(str::trim)
-        .filter(|c| !c.is_empty())
-        .collect();
-
-    if cells.len() < 3 {
-        return None;
-    }
-
-    let first_cell = cells[0];
-
-    // Skip separator rows (e.g. `|------|------|`) and header rows.
-    if first_cell
-        .chars()
-        .all(|c| matches!(c, '-' | '=' | ':' | ' '))
-    {
-        return None;
-    }
-    if first_cell.eq_ignore_ascii_case("name")
-        || first_cell.eq_ignore_ascii_case("signal")
-        || first_cell.eq_ignore_ascii_case("port")
-        || first_cell.eq_ignore_ascii_case("pin")
-    {
-        return None;
-    }
-
-    // First token in the first cell must look like a hardware signal name.
-    // Strip footnote markers (e.g. "HSELx a" → use "HSELx").
-    let raw_name = first_cell.split_whitespace().next()?;
-    if !looks_like_signal_token(raw_name) {
-        return None;
-    }
-    let signal_name = raw_name.to_ascii_uppercase();
-    if signal_stop_words().contains(signal_name.as_str()) {
-        return None;
-    }
-
-    // Width from the 3rd cell (index 2): accept simple positive integers only.
-    // Parameter-based widths (ADDR_WIDTH, DATA_WIDTH/8) are left as None.
-    let width_hint = cells.get(2).and_then(|cell| {
-        let trimmed = cell.trim();
-        trimmed.parse::<u32>().ok().filter(|&w| w > 0 && w <= 1024)
-    });
-
-    // Infer direction from the section context.
-    //   "Manager signals" → Output (Manager drives these toward Subordinates)
-    //   "Subordinate signals" → Input (Subordinate drives these; from Manager perspective = input)
-    //   "Global signals" / "System signals" → Input (clock, reset are inputs to all)
-    //   "Decoder signals" / "Select signals" → Input (select signals come from the Decoder)
-    //   Multiplexor / Response sections → Input (responses come back to the Manager)
-    let direction_hint = section_titles.iter().find_map(|title| {
-        let lowered = title.to_ascii_lowercase();
-        if lowered.contains("manager signal")
-            || lowered.contains("manager port")
-            || lowered.contains("initiator signal")
-            || lowered.contains("master signal")
-        {
-            Some(InterfaceSignalDirection::Output)
-        } else if lowered.contains("subordinate signal")
-            || lowered.contains("slave signal")
-            || lowered.contains("responder signal")
-            || lowered.contains("multiplexor signal")
-            || lowered.contains("response signal")
-        {
-            Some(InterfaceSignalDirection::Input)
-        } else if lowered.contains("global signal")
-            || lowered.contains("system signal")
-            || lowered.contains("clock signal")
-            || lowered.contains("decoder signal")
-            || lowered.contains("select signal")
-        {
-            Some(InterfaceSignalDirection::Input)
-        } else {
-            None
-        }
-    });
-
-    // Only emit a table-parsed signal record when direction was explicitly inferred from the
-    // section context. Using a fallback direction of `Internal` would create spurious
-    // direction conflicts when the same signal appears in both a protocol table (where
-    // direction is known) and a check/parity table (where direction cannot be determined
-    // from the section title). Requiring an explicit direction match prevents those conflicts
-    // while still allowing the table to enrich width-only records for clearly named sections.
-    let direction_hint = direction_hint?;
-
-    Some(ParsedInterfaceSignalDeclaration {
-        signal_name,
-        direction_hint,
-        width_hint,
-    })
-}
-
 fn is_boilerplate_section_title(title: &str) -> bool {
     let lowered = title.to_ascii_lowercase();
     // Legal sections common to ARM/chip specifications
@@ -5497,34 +5355,118 @@ mod tests {
     }
 
     #[test]
-    fn extracts_signal_direction_and_width_from_markdown_signal_description_table() -> Result<()> {
+    fn extracts_signal_direction_and_width_from_structured_table_in_source_ir() -> Result<()> {
+        // Tests the new SOTA architecture:
+        //   SourceIR.structured_tables (Docling cell grids)
+        //     → EvidenceIR synthesizes Signal declarations
+        //     → SemanticIR parses them via parse_explicit_signal_declaration
+        //
+        // We populate structured_tables directly to simulate what Docling would
+        // produce for a PDF with Manager and Subordinate signal tables.
+        use crate::ir::source::{
+            ContentSectionRecord, SectionKind, StructuredTableCellRecord, StructuredTableRecord,
+            TableKind,
+        };
+
         let tempdir = tempdir()?;
-        let source = tempdir.path().join("signal_table_spec.md");
+        let source = tempdir.path().join("stub.md");
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
         let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
         let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
 
-        // Simulate the table format used in real AMBA chip specs: signals described
-        // in named tables under section headings that identify the direction context.
-        fs::write(
-            &source,
-            concat!(
-                "# Manager signals\n",
-                "| Name   | Destination | Width | Description            |\n",
-                "|--------|-------------|-------|------------------------|\n",
-                "| HADDR  | Subordinate | 32    | Address bus            |\n",
-                "| HWRITE | Subordinate | 1     | Write enable           |\n",
-                "| HTRANS | Subordinate | 2     | Transfer type          |\n",
-                "\n",
-                "# Subordinate signals\n",
-                "| Name      | Destination | Width | Description            |\n",
-                "|-----------|-------------|-------|------------------------|\n",
-                "| HREADYOUT | Manager     | 1     | Transfer done          |\n",
-                "| HRESP     | Manager     | 1     | Transfer response      |\n",
-            ),
-        )?;
+        fs::write(&source, "# Stub\n")?;
 
-        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+
+        // Simulate Docling extracting a "Manager signals" section on page 1.
+        source_ir.document_sections.push(ContentSectionRecord {
+            section_id: "sec_0001_manager_signals".to_string(),
+            title: "Manager signals".to_string(),
+            heading_level: 2,
+            page_id: Some("page_0001".to_string()),
+            source_ref: None,
+            reading_order: 1,
+            section_kind: SectionKind::SignalDescription,
+        });
+        source_ir.document_sections.push(ContentSectionRecord {
+            section_id: "sec_0002_subordinate_signals".to_string(),
+            title: "Subordinate signals".to_string(),
+            heading_level: 2,
+            page_id: Some("page_0002".to_string()),
+            source_ref: None,
+            reading_order: 10,
+            section_kind: SectionKind::SignalDescription,
+        });
+
+        // Manager signal table (page 1).
+        let make_cell = |text: &str, is_header: bool| StructuredTableCellRecord {
+            text: text.to_string(),
+            row_span: 1,
+            col_span: 1,
+            is_header,
+        };
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_0001".to_string(),
+            asset_id: "table_0001".to_string(),
+            page_id: Some("page_0001".to_string()),
+            caption_text: None,
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_cell("Name", true),
+                make_cell("Destination", true),
+                make_cell("Width", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_cell("HADDR", false),
+                    make_cell("Subordinate", false),
+                    make_cell("32", false),
+                ],
+                vec![
+                    make_cell("HWRITE", false),
+                    make_cell("Subordinate", false),
+                    make_cell("1", false),
+                ],
+                vec![
+                    make_cell("HTRANS", false),
+                    make_cell("Subordinate", false),
+                    make_cell("2", false),
+                ],
+            ],
+            row_count: 3,
+            col_count: 3,
+        });
+
+        // Subordinate signal table (page 2).
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_0002".to_string(),
+            asset_id: "table_0002".to_string(),
+            page_id: Some("page_0002".to_string()),
+            caption_text: None,
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_cell("Name", true),
+                make_cell("Destination", true),
+                make_cell("Width", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_cell("HREADYOUT", false),
+                    make_cell("Manager", false),
+                    make_cell("1", false),
+                ],
+                vec![
+                    make_cell("HRESP", false),
+                    make_cell("Manager", false),
+                    make_cell("1", false),
+                ],
+            ],
+            row_count: 2,
+            col_count: 3,
+        });
+
         source_ir.write_to_disk()?;
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
@@ -5553,11 +5495,17 @@ mod tests {
         assert_eq!(haddr.width_hint, Some(32));
 
         let hwrite = find_signal("HWRITE").expect("HWRITE should be extracted from table");
-        assert_eq!(hwrite.direction_hint, Some(InterfaceSignalDirection::Output));
+        assert_eq!(
+            hwrite.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
         assert_eq!(hwrite.width_hint, Some(1));
 
         let htrans = find_signal("HTRANS").expect("HTRANS should be extracted from table");
-        assert_eq!(htrans.direction_hint, Some(InterfaceSignalDirection::Output));
+        assert_eq!(
+            htrans.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
         assert_eq!(htrans.width_hint, Some(2));
 
         // Subordinate signals should be extracted as Input with explicit widths.

@@ -9,7 +9,10 @@ use tempfile::tempdir;
 
 use crate::error::{AppError, Result};
 
-use super::{PageArtifact, PlaceholderBinding, SourceArtifactLayout, VisualAsset};
+use super::{
+    ContentElementRecord, ContentSectionRecord, DocumentProfile, PageArtifact, PlaceholderBinding,
+    SourceArtifactLayout, StructuredTableRecord, VisualAsset,
+};
 
 const DOCLING_HELPER_ENV: &str = "SPECFORGE_DOCLING_HELPER";
 const DOCLING_PYTHON_ENV: &str = "SPECFORGE_DOCLING_PYTHON";
@@ -18,6 +21,7 @@ const DOCLING_HELPER_SCRIPT: &str = r###"
 import argparse
 import json
 import os
+import re
 import sys
 from importlib import metadata
 from pathlib import Path
@@ -67,6 +71,158 @@ def save_json(path, payload):
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
+def docling_label_to_kind(label):
+    """Map a Docling DocItemLabel to our ContentElementKind string."""
+    try:
+        # DocItemLabel is a StrEnum; its .value is the canonical lowercase name.
+        label_val = label.value if hasattr(label, "value") else str(label)
+    except Exception:
+        label_val = str(label)
+    label_val = label_val.lower().replace("-", "_")
+    if "title" in label_val and "sub" not in label_val:
+        return "title"
+    if "section_header" in label_val or "heading" in label_val:
+        return "section_header"
+    if "list_item" in label_val or "list-item" in label_val:
+        return "list_item"
+    if "code" in label_val:
+        return "code"
+    if "caption" in label_val:
+        return "caption"
+    if "footnote" in label_val:
+        return "footnote"
+    if "formula" in label_val:
+        return "formula"
+    if "page_header" in label_val:
+        return "page_header"
+    if "page_footer" in label_val:
+        return "page_footer"
+    if "abstract" in label_val:
+        return "abstract"
+    return "body_text"
+
+
+def classify_section(title):
+    """Heuristic section kind classification based on the heading title."""
+    lowered = title.lower()
+    # Boilerplate / legal / admin
+    if any(kw in lowered for kw in [
+        "licence", "license", "copyright", "proprietary", "trademark",
+        "disclaimer", "change history", "revision history", "release note",
+        "release information", "acknowledgement", "preface", "foreword",
+        "feedback", "about this",
+    ]):
+        return "boilerplate"
+    # Table of contents
+    if any(kw in lowered for kw in ["table of contents", "contents"]):
+        return "table_of_contents"
+    # Glossary / definitions
+    if any(kw in lowered for kw in ["glossary", "abbreviation", "acronym", "definition"]):
+        return "glossary"
+    # Appendix
+    if lowered.startswith("appendix") or lowered.startswith("annex"):
+        return "appendix"
+    # Signal / port description tables
+    if any(kw in lowered for kw in [
+        "signal", "port", "pin", "interface", "i/o",
+    ]):
+        return "signal_description"
+    # Register / memory maps
+    if any(kw in lowered for kw in [
+        "register", "memory map", "address map", "configuration", "csr",
+    ]):
+        return "register_description"
+    # Timing sections
+    if any(kw in lowered for kw in [
+        "timing", "waveform", "clock", "latency", "throughput",
+    ]):
+        return "timing"
+    return "normative"
+
+
+def classify_table_kind(header_rows):
+    """Classify a table's purpose from its header cell text.
+
+    Returns one of: signal_description, encoding, register_map,
+    timing_parameter, feature_matrix, unknown.
+    """
+    if not header_rows:
+        return "unknown"
+    # Flatten all header cell texts to lowercase for pattern matching.
+    all_headers = [cell["text"].lower() for row in header_rows for cell in row]
+    header_set = set(all_headers)
+
+    # Signal description: first column is a signal/port name column.
+    first_header = all_headers[0] if all_headers else ""
+    has_name_col = any(kw in first_header for kw in ["name", "signal", "port", "pin"])
+    has_width_col = any(any(kw in h for kw in ["width", "bits", "size"]) for h in all_headers)
+    has_dir_col = any(any(kw in h for kw in ["direction", "source", "destination"]) for h in all_headers)
+    if has_name_col and (has_width_col or has_dir_col):
+        return "signal_description"
+
+    # Encoding: value/encoding columns alongside a name/description column.
+    has_value_col = any(any(kw in h for kw in ["value", "encoding", "code", "binary", "hex"]) for h in all_headers)
+    has_meaning_col = any(any(kw in h for kw in ["name", "meaning", "description", "transfer type", "type"]) for h in all_headers)
+    if has_value_col and has_meaning_col:
+        return "encoding"
+
+    # Register map: offset/address + field name + access type.
+    has_addr_col = any(any(kw in h for kw in ["offset", "address", "addr", "base"]) for h in all_headers)
+    has_access_col = any(any(kw in h for kw in ["access", "r/w", "rw", "read", "write"]) for h in all_headers)
+    if has_addr_col or (has_access_col and has_name_col):
+        return "register_map"
+
+    # Timing parameter: min/max/typical + unit columns.
+    has_minmax = any(any(kw in h for kw in ["min", "max", "typ", "typical", "maximum", "minimum"]) for h in all_headers)
+    has_unit = any(any(kw in h for kw in ["unit", "ns", "ps", "cycles", "period"]) for h in all_headers)
+    if has_minmax and (has_unit or "parameter" in header_set or "symbol" in header_set):
+        return "timing_parameter"
+
+    # Feature matrix: mandatory/optional/prohibited support levels.
+    has_feature_col = any(any(kw in h for kw in ["feature", "property", "capability", "option"]) for h in all_headers)
+    has_support_col = any(any(kw in h for kw in ["mandatory", "optional", "prohibited", "required", "supported"]) for h in all_headers)
+    if has_feature_col or has_support_col:
+        return "feature_matrix"
+
+    return "unknown"
+
+
+def extract_table_grid(element):
+    """Extract header_rows and body_rows from a Docling TableItem."""
+    header_rows = []
+    body_rows = []
+    try:
+        if element.data is None:
+            return header_rows, body_rows
+        grid = element.data.grid
+        if not grid:
+            return header_rows, body_rows
+        for row in grid:
+            row_cells = []
+            row_is_header = False
+            for cell in row:
+                cell_text = normalize_text(getattr(cell, "text", "")) or ""
+                is_header = bool(
+                    getattr(cell, "column_header", False)
+                    or getattr(cell, "row_header", False)
+                )
+                if is_header:
+                    row_is_header = True
+                row_cells.append({
+                    "text": cell_text,
+                    "row_span": max(1, getattr(cell, "row_span", 1) or 1),
+                    "col_span": max(1, getattr(cell, "col_span", 1) or 1),
+                    "is_header": is_header,
+                })
+            if row_is_header:
+                header_rows.append(row_cells)
+            else:
+                body_rows.append(row_cells)
+    except Exception:
+        pass
+    return header_rows, body_rows
+
+
 def main():
     args = parse_args()
 
@@ -107,6 +263,7 @@ def main():
     result = converter.convert(str(input_path))
     doc = result.document
 
+    # ── Page artifacts ─────────────────────────────────────────────────────────
     page_metadata_records = {}
     page_artifacts = []
     for page in doc.pages.values():
@@ -148,14 +305,27 @@ def main():
             }
         )
 
+    # ── Single-pass element extraction ─────────────────────────────────────────
+    # We iterate once and collect all four categories: visual assets, structured
+    # table cell grids, typed content elements, and section headings.
     visual_assets = []
+    structured_tables = []
+    content_elements = []
+    document_sections = []
     picture_counter = 0
     table_counter = 0
-    for element, _level in doc.iterate_items():
+    element_reading_order = 0
+    document_title = None
+
+    for element, level in doc.iterate_items():
+        element_reading_order += 1
+        page_number = int(element.prov[0].page_no) if getattr(element, "prov", None) else None
+        page_id = f"page_{page_number:04d}" if page_number is not None else None
+        source_ref = getattr(element, "self_ref", None)
+
         if isinstance(element, PictureItem):
+            # ── Figure / diagram / chart ───────────────────────────────────────
             picture_counter += 1
-            page_number = int(element.prov[0].page_no) if element.prov else None
-            page_id = f"page_{page_number:04d}" if page_number is not None else None
             asset_id = f"picture_{picture_counter:04d}"
             asset_path = visual_asset_root / f"picture-{picture_counter:04d}.png"
             element.get_image(doc).save(asset_path, "PNG")
@@ -163,47 +333,118 @@ def main():
                 element.image.uri = relative_uri(markdown_path.parent, asset_path)
             caption_text = normalize_text(element.caption_text(doc))
             if page_number in page_metadata_records:
-                page_metadata_records[page_number]["record"]["picture_refs"].append(
-                    element.self_ref
-                )
-            visual_assets.append(
-                {
-                    "asset_id": asset_id,
-                    "asset_kind": picture_asset_kind(caption_text),
-                    "page_id": page_id,
-                    "image_path": as_posix(asset_path),
-                    "caption_text": caption_text,
-                    "caption_source_path": as_posix(backend_raw_output_path),
-                    "source_ref": element.self_ref,
-                    "placeholder_text": None,
-                    "note": None,
-                }
-            )
+                page_metadata_records[page_number]["record"]["picture_refs"].append(source_ref)
+            visual_assets.append({
+                "asset_id": asset_id,
+                "asset_kind": picture_asset_kind(caption_text),
+                "page_id": page_id,
+                "image_path": as_posix(asset_path),
+                "caption_text": caption_text,
+                "caption_source_path": as_posix(backend_raw_output_path),
+                "source_ref": source_ref,
+                "placeholder_text": None,
+                "note": None,
+            })
+
         elif isinstance(element, TableItem):
+            # ── Table image + structured cell grid ────────────────────────────
             table_counter += 1
-            page_number = int(element.prov[0].page_no) if element.prov else None
-            page_id = f"page_{page_number:04d}" if page_number is not None else None
             asset_id = f"table_{table_counter:04d}"
             asset_path = visual_asset_root / f"table-{table_counter:04d}.png"
             element.get_image(doc).save(asset_path, "PNG")
             caption_text = normalize_text(element.caption_text(doc))
             if page_number in page_metadata_records:
-                page_metadata_records[page_number]["record"]["table_refs"].append(
-                    element.self_ref
-                )
-            visual_assets.append(
-                {
-                    "asset_id": asset_id,
-                    "asset_kind": "table_region",
+                page_metadata_records[page_number]["record"]["table_refs"].append(source_ref)
+            visual_assets.append({
+                "asset_id": asset_id,
+                "asset_kind": "table_region",
+                "page_id": page_id,
+                "image_path": as_posix(asset_path),
+                "caption_text": caption_text,
+                "caption_source_path": as_posix(backend_raw_output_path),
+                "source_ref": source_ref,
+                "placeholder_text": None,
+                "note": None,
+            })
+            # Extract the cell grid from the structured table representation.
+            header_rows, body_rows = extract_table_grid(element)
+            col_count = 0
+            try:
+                col_count = element.data.num_cols if element.data else 0
+            except Exception:
+                pass
+            table_kind = classify_table_kind(header_rows)
+            structured_tables.append({
+                "table_id": asset_id,
+                "asset_id": asset_id,
+                "page_id": page_id,
+                "caption_text": caption_text,
+                "source_ref": source_ref,
+                "table_kind": table_kind,
+                "header_rows": header_rows,
+                "body_rows": body_rows,
+                "row_count": len(header_rows) + len(body_rows),
+                "col_count": col_count,
+            })
+
+        else:
+            # ── Typed text elements ───────────────────────────────────────────
+            label = getattr(element, "label", None)
+            if label is None:
+                continue
+            kind = docling_label_to_kind(label)
+            # Skip page headers/footers and unknown non-text elements.
+            if kind in ("page_header", "page_footer"):
+                continue
+            text = normalize_text(getattr(element, "text", None))
+            if not text:
+                continue
+            # Derive heading level: try element.level attribute first, then the
+            # iteration level, capping at 6.
+            heading_level = None
+            if kind == "section_header":
+                elem_level = getattr(element, "level", None)
+                if elem_level is not None:
+                    try:
+                        heading_level = max(1, min(6, int(elem_level)))
+                    except (TypeError, ValueError):
+                        pass
+                if heading_level is None and level is not None:
+                    try:
+                        heading_level = max(1, min(6, int(level)))
+                    except (TypeError, ValueError):
+                        pass
+                if heading_level is None:
+                    heading_level = 1
+
+            content_elements.append({
+                "element_id": f"elem_{element_reading_order:05d}",
+                "kind": kind,
+                "text": text,
+                "heading_level": heading_level,
+                "page_id": page_id,
+                "source_ref": source_ref,
+                "reading_order": element_reading_order,
+            })
+
+            # Capture the first document title.
+            if kind == "title" and document_title is None:
+                document_title = text
+
+            # Collect section headings as a flat ordered list with classification.
+            if kind == "section_header":
+                section_idx = len(document_sections) + 1
+                # Build a safe section ID from the title text.
+                safe_title = re.sub(r"[^a-z0-9]+", "_", text.lower()).strip("_")[:60]
+                document_sections.append({
+                    "section_id": f"sec_{section_idx:04d}_{safe_title}",
+                    "title": text,
+                    "heading_level": heading_level or 1,
                     "page_id": page_id,
-                    "image_path": as_posix(asset_path),
-                    "caption_text": caption_text,
-                    "caption_source_path": as_posix(backend_raw_output_path),
-                    "source_ref": element.self_ref,
-                    "placeholder_text": None,
-                    "note": None,
-                }
-            )
+                    "source_ref": source_ref,
+                    "reading_order": element_reading_order,
+                    "section_kind": classify_section(text),
+                })
 
     for page_number in sorted(page_metadata_records):
         entry = page_metadata_records[page_number]
@@ -241,6 +482,17 @@ def main():
             "backend_version": docling_version,
             "page_artifacts": page_artifacts,
             "visual_assets": visual_assets,
+            "structured_tables": structured_tables,
+            "content_elements": content_elements,
+            "document_sections": document_sections,
+            "document_profile": {
+                "title": document_title,
+                "page_count": len(page_artifacts),
+                "table_count": table_counter,
+                "figure_count": picture_counter,
+                "content_element_count": len(content_elements),
+                "section_count": len(document_sections),
+            },
             "placeholder_bindings": [],
             "metadata": {
                 "page_count": len(page_artifacts),
@@ -261,6 +513,21 @@ pub struct DoclingBackendSummary {
     pub backend_version: Option<String>,
     pub page_artifacts: Vec<PageArtifact>,
     pub visual_assets: Vec<VisualAsset>,
+    /// Structured cell-level representation of every table in the document.
+    /// Each record links back to its VisualAsset via `asset_id` and carries
+    /// the full header/body row grid that Docling extracts natively.
+    #[serde(default)]
+    pub structured_tables: Vec<StructuredTableRecord>,
+    /// Every non-page-header/footer text element with its Docling type label,
+    /// reading order position, and page provenance.
+    #[serde(default)]
+    pub content_elements: Vec<ContentElementRecord>,
+    /// Flat ordered list of section headings with heading level and section kind
+    /// classification (signal_description, boilerplate, normative, etc.).
+    #[serde(default)]
+    pub document_sections: Vec<ContentSectionRecord>,
+    /// High-level document statistics and document title.
+    pub document_profile: Option<DocumentProfile>,
     #[serde(default)]
     pub placeholder_bindings: Vec<PlaceholderBinding>,
     pub metadata: DoclingDocumentMetadata,

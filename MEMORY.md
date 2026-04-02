@@ -52,8 +52,8 @@
   - adapters
 
 ## Latest committed baseline
-- latest_commit_hash: `27511f840d5b8f4e8a45f772b97602471aea5828`
-- latest_commit_brief_message: `Widen honest .fsm lowering and tighten root kinds`
+- latest_commit_hash: `9252aa9cf31bedaf958cf07e8bb8835d30f137fc`
+- latest_commit_brief_message: `Refresh live docs for SemanticIR extraction improvements`
 - continuity_rule:
   - refresh this section whenever a new latest committed baseline exists at the time `MEMORY.md` is updated
 
@@ -96,8 +96,9 @@
 
 ## In-flight work in this session
 - real-world PDF testing against AMBA AHB spec is active (user instruction: "test using AHB pdf until further notice")
-- three SemanticIR extraction quality improvements for real chip spec PDFs have been implemented and validated
-- Docling 2.84.0 installed globally into Python 3.11 for PDF processing
+- SOTA SourceIR/EvidenceIR extraction architecture fully implemented and validated on AHB PDF
+- EXTRACTION_ARCHITECTURE.md created as the permanent reference document for the SOTA extraction vision
+- SemanticIR parse_signal_table_row band-aid removed; signal declarations now flow architecturally from EvidenceIR
 
 ## Current execution checkpoint
 - `IntentIR` now has a real build/materialization path

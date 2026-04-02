@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -7,13 +7,17 @@ use serde::{Deserialize, Serialize};
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::source::{
-    AutomationConfidence, NormalizationStatus, SourceIr, VisualAsset, VisualAssetKind, document_key,
+    AutomationConfidence, NormalizationStatus, SectionKind, SourceIr, TableKind, VisualAsset,
+    VisualAssetKind, document_key,
 };
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum StatementClass {
     SourceFact,
+    /// Sentence containing `shall`, `must`, `shall not`, `required to`, or `prohibited` in a
+    /// non-boilerplate section. These are behavioral requirements, not descriptive prose.
+    NormativeStatement,
     DerivedRule,
     LocalDesignDecision,
     ExplicitAbstraction,
@@ -340,6 +344,12 @@ impl EvidenceIr {
                 section_anchors[index].page_end = Some(max_page);
             }
         }
+
+        // Synthesize typed declarations from structured table data in SourceIR.
+        // This is the correct layer for this extraction: SourceIR captured the cell grids;
+        // EvidenceIR produces the typed evidence; SemanticIR lifts without re-parsing.
+        let synthesized = synthesize_declarations_from_tables(&source_ir, &mut statement_counter);
+        extracted_statements.extend(synthesized);
 
         Ok(Self {
             schema_version: 1,
@@ -873,6 +883,23 @@ fn classify_statement(text: &str) -> StatementClass {
     ) {
         return StatementClass::LocalDesignDecision;
     }
+    // Normative behavioral requirements — most important class for protocol specs.
+    // Must appear AFTER the abstraction/derived/local checks so they take precedence.
+    if contains_any(
+        &lowered_text,
+        &[
+            "shall not",
+            "must not",
+            "shall ",
+            "must ",
+            "required to",
+            "is required",
+            "prohibited",
+        ],
+    ) {
+        return StatementClass::NormativeStatement;
+    }
+
     if text.trim().is_empty() {
         return StatementClass::Unknown;
     }
@@ -911,6 +938,333 @@ fn contains_reference_token(text: &str, token: &str) -> bool {
     }
 
     false
+}
+
+/// Synthesizes formal typed declarations from the structured table data captured in `SourceIR`.
+///
+/// This is the correct architectural layer for table-to-declaration conversion:
+/// `SourceIR` holds the raw cell grids; `EvidenceIR` produces typed statements;
+/// `SemanticIR` lifts from those statements using its existing parsers.
+///
+/// Currently handles two table kinds:
+/// - `SignalDescription` → `Signal X is output/input [width N].` declarations
+/// - `Encoding` → `Enum <name> <member> = <value>.` declarations
+fn synthesize_declarations_from_tables(
+    source_ir: &SourceIr,
+    statement_counter: &mut usize,
+) -> Vec<ExtractedStatement> {
+    let mut statements = Vec::new();
+    if source_ir.structured_tables.is_empty() {
+        return statements;
+    }
+
+    // Build a page-number → (section_kind, section_title) lookup so we can infer
+    // the semantic context of a table from the last section heading before it.
+    let mut page_to_section: BTreeMap<u32, (SectionKind, String)> = BTreeMap::new();
+    for section in &source_ir.document_sections {
+        if let Some(page_num) = section
+            .page_id
+            .as_deref()
+            .and_then(page_number_from_page_id)
+        {
+            page_to_section.insert(page_num, (section.section_kind, section.title.clone()));
+        }
+    }
+
+    for table in &source_ir.structured_tables {
+        let table_page = table
+            .page_id
+            .as_deref()
+            .and_then(page_number_from_page_id)
+            .unwrap_or(0);
+
+        // Find the most recent section heading at or before this table's page.
+        let (section_kind, section_title) = page_to_section
+            .range(..=table_page)
+            .next_back()
+            .map(|(_, v)| v.clone())
+            .unwrap_or((SectionKind::Unknown, String::new()));
+
+        match table.table_kind {
+            TableKind::SignalDescription => {
+                statements.extend(synthesize_signal_declarations(
+                    table,
+                    section_kind,
+                    &section_title,
+                    statement_counter,
+                ));
+            }
+            TableKind::Encoding => {
+                statements.extend(synthesize_encoding_declarations(
+                    table,
+                    &section_title,
+                    statement_counter,
+                ));
+            }
+            _ => {}
+        }
+    }
+
+    statements
+}
+
+/// Infer signal direction from a section kind + title for signal description tables.
+fn infer_signal_direction_from_section(kind: SectionKind, title: &str) -> Option<&'static str> {
+    // Explicit section kind takes priority.
+    match kind {
+        SectionKind::SignalDescription => {}
+        SectionKind::Boilerplate | SectionKind::Glossary | SectionKind::TableOfContents => {
+            return None;
+        }
+        _ => {}
+    }
+    let lowered = title.to_ascii_lowercase();
+    if lowered.contains("manager") || lowered.contains("initiator") || lowered.contains("master") {
+        return Some("output");
+    }
+    if lowered.contains("subordinate")
+        || lowered.contains("slave")
+        || lowered.contains("responder")
+        || lowered.contains("multiplexor")
+    {
+        return Some("input");
+    }
+    if lowered.contains("global")
+        || lowered.contains("system")
+        || lowered.contains("clock")
+        || lowered.contains("decoder")
+    {
+        return Some("input");
+    }
+    None
+}
+
+/// Returns true if the token looks like a hardware signal name:
+/// all-uppercase with optional digits and underscores, at least 2 chars.
+fn is_hardware_signal_token(token: &str) -> bool {
+    token.len() >= 2
+        && token
+            .chars()
+            .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_')
+        && token.chars().any(|c| c.is_ascii_uppercase())
+}
+
+/// Tokens that pass `is_hardware_signal_token` but are component names, role names,
+/// or descriptive words rather than hardware signal names. These appear as first
+/// cells in some table formats (e.g. AMBA Table 2-1 / Table 2-5 where signal
+/// names are in the last column rather than the first).
+fn is_signal_synthesis_non_signal(token: &str) -> bool {
+    matches!(
+        token,
+        "MANAGER"
+            | "SUBORDINATE"
+            | "INITIATOR"
+            | "TARGET"
+            | "SOURCE"
+            | "DECODER"
+            | "MASTER"
+            | "SLAVE"
+            | "RESPONDER"
+            | "CLOCK"
+            | "RESET"
+            | "NAME"
+            | "SIGNAL"
+            | "PORT"
+            | "PIN"
+    )
+}
+
+fn synthesize_signal_declarations(
+    table: &crate::ir::source::StructuredTableRecord,
+    section_kind: SectionKind,
+    section_title: &str,
+    statement_counter: &mut usize,
+) -> Vec<ExtractedStatement> {
+    let mut statements = Vec::new();
+    if table.body_rows.is_empty() || table.col_count < 2 {
+        return statements;
+    }
+
+    // Find width column index from header rows.
+    let header_texts: Vec<String> = table
+        .header_rows
+        .first()
+        .map(|row| row.iter().map(|c| c.text.to_ascii_lowercase()).collect())
+        .unwrap_or_default();
+    let width_col = header_texts
+        .iter()
+        .position(|h| h.contains("width") || h.contains("bits") || h.contains("size"));
+    let dir_col = header_texts
+        .iter()
+        .position(|h| h.contains("direction") || h.contains("source") || h.contains("destination"));
+
+    let default_dir = infer_signal_direction_from_section(section_kind, section_title);
+
+    for row in &table.body_rows {
+        let Some(name_cell) = row.first() else {
+            continue;
+        };
+        // Strip footnote markers (e.g. "HSELx a" → use "HSELX").
+        let raw_name = name_cell.text.trim();
+        let token = raw_name
+            .split_whitespace()
+            .next()
+            .unwrap_or("")
+            .to_ascii_uppercase();
+        if !is_hardware_signal_token(&token) || is_signal_synthesis_non_signal(&token) {
+            continue;
+        }
+
+        // Determine direction from an explicit column or fall back to section context.
+        let direction = dir_col
+            .and_then(|col| row.get(col))
+            .and_then(|cell| {
+                let t = cell.text.to_ascii_lowercase();
+                if t.contains("output") {
+                    Some("output")
+                } else if t.contains("input") {
+                    Some("input")
+                } else {
+                    None
+                }
+            })
+            .or(default_dir);
+
+        // Parse numeric width; skip parametric widths like ADDR_WIDTH.
+        let width: Option<u32> = width_col.and_then(|col| {
+            row.get(col)
+                .and_then(|cell| cell.text.trim().parse::<u32>().ok())
+                .filter(|&w| w > 0 && w <= 1024)
+        });
+
+        let text = match (direction, width) {
+            (Some(dir), Some(w)) => format!("Signal {token} is {dir} width {w}."),
+            (Some(dir), None) => format!("Signal {token} is {dir}."),
+            _ => continue,
+        };
+
+        *statement_counter += 1;
+        statements.push(ExtractedStatement {
+            statement_id: format!("statement_{statement_counter:04}"),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text,
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        });
+    }
+
+    statements
+}
+
+fn synthesize_encoding_declarations(
+    table: &crate::ir::source::StructuredTableRecord,
+    section_title: &str,
+    statement_counter: &mut usize,
+) -> Vec<ExtractedStatement> {
+    let mut statements = Vec::new();
+    if table.body_rows.is_empty() {
+        return statements;
+    }
+
+    // Derive enum name from caption or section title.
+    // e.g. "HTRANS encoding" → "HTRANS", "Table 5-3 HBURST values" → "HBURST"
+    let enum_name_source = table.caption_text.as_deref().unwrap_or(section_title);
+    // Extract the first all-uppercase token that looks like a signal name.
+    let enum_name: Option<String> = enum_name_source
+        .split_whitespace()
+        .find(|tok| is_hardware_signal_token(&tok.to_ascii_uppercase()))
+        .map(|tok| tok.to_ascii_uppercase());
+    let Some(enum_name) = enum_name else {
+        return statements;
+    };
+
+    // Find header column indices.
+    let header_texts: Vec<String> = table
+        .header_rows
+        .first()
+        .map(|row| row.iter().map(|c| c.text.to_ascii_lowercase()).collect())
+        .unwrap_or_default();
+    // Name/meaning column: the column that names each encoding value.
+    let name_col = header_texts
+        .iter()
+        .position(|h| {
+            h.contains("name")
+                || h.contains("meaning")
+                || h.contains("transfer")
+                || h.contains("type")
+                || h.contains("description")
+        })
+        .unwrap_or(0);
+    // Value column: binary/hex encoding value.
+    let value_col = header_texts
+        .iter()
+        .position(|h| {
+            h.contains("value")
+                || h.contains("encoding")
+                || h.contains("code")
+                || h.contains("binary")
+                || h.contains("hex")
+        })
+        .unwrap_or(1);
+
+    for (row_idx, row) in table.body_rows.iter().enumerate() {
+        let Some(name_cell) = row.get(name_col) else {
+            continue;
+        };
+        let raw_name = name_cell.text.trim();
+        if raw_name.is_empty() {
+            continue;
+        }
+        // Sanitize enum member name: keep alphanumeric + underscore, uppercase.
+        let member_name: String = raw_name
+            .chars()
+            .map(|c| {
+                if c.is_ascii_alphanumeric() || c == '_' {
+                    c.to_ascii_uppercase()
+                } else {
+                    '_'
+                }
+            })
+            .collect::<String>()
+            .trim_matches('_')
+            .to_string();
+        if member_name.is_empty() {
+            continue;
+        }
+        // Numeric value: use value_col if available and parseable, otherwise use row index.
+        let value: u32 = row
+            .get(value_col)
+            .and_then(|cell| {
+                let t = cell.text.trim();
+                // Try direct integer, then strip binary prefix like 2'b00 or 0b00.
+                t.parse::<u32>().ok().or_else(|| {
+                    let stripped = t
+                        .trim_start_matches(|c: char| c.is_ascii_digit())
+                        .trim_start_matches("'b")
+                        .trim_start_matches("'h");
+                    u32::from_str_radix(stripped, 2)
+                        .ok()
+                        .or_else(|| u32::from_str_radix(stripped, 16).ok())
+                })
+            })
+            .unwrap_or(row_idx as u32);
+
+        // Synthesize: "Enum HTRANS IDLE = 0."
+        let text = format!("Enum {enum_name} {member_name} = {value}.");
+
+        *statement_counter += 1;
+        statements.push(ExtractedStatement {
+            statement_id: format!("statement_{statement_counter:04}"),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text,
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        });
+    }
+
+    statements
 }
 
 fn canonicalize_existing_path(path: &Path) -> Result<PathBuf> {
@@ -1021,9 +1375,11 @@ mod tests {
         assert_eq!(evidence_ir.extracted_statements.len(), 2);
         assert!(evidence_ir.visual_evidence.is_empty());
         assert!(evidence_ir.evidence_links.is_empty());
+        // "VALID must stay asserted" contains "must " → now correctly classified as
+        // NormativeStatement (a behavioral requirement), not generic SourceFact.
         assert_eq!(
             evidence_ir.extracted_statements[0].class,
-            StatementClass::SourceFact
+            StatementClass::NormativeStatement
         );
 
         Ok(())

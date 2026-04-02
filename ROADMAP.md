@@ -122,10 +122,57 @@
   - validation reports are reproducible and tied to IR/artifact versions
   - adapter validation does not replace semantic validation
 
+### R8 SourceIR SOTA capture (Tier 1 of EXTRACTION_ARCHITECTURE.md)
+- status: In Progress
+- reference: `EXTRACTION_ARCHITECTURE.md` §Tier 1
+- goals:
+  - extract structured table cell grids from Docling (not just image + caption)
+  - type every text element (section_header, body_text, list_item, code, caption, footnote, formula)
+  - build section hierarchy with semantic classification (SignalDescription, Boilerplate, Normative, Timing, RegisterDescription, etc.)
+  - capture document profile (title, version, page/table/figure counts)
+  - classify each table type (signal_description, encoding, register_map, timing_parameter, feature_matrix)
+- completion criteria:
+  - `SourceIr.structured_tables` carries cell grids for all PDF tables
+  - `SourceIr.content_elements` carries all typed text elements in reading order
+  - `SourceIr.document_sections` carries section hierarchy with `SectionKind`
+  - `SourceIr.document_profile` carries title and counts
+  - `StructuredTableRecord.table_kind` classifies every table
+  - `SourceIR` drops no structured information that Docling provides
+
+### R9 EvidenceIR SOTA typed evidence (Tier 2 of EXTRACTION_ARCHITECTURE.md)
+- status: In Progress
+- reference: `EXTRACTION_ARCHITECTURE.md` §Tier 2
+- goals:
+  - synthesize formal signal declarations from signal description tables (no band-aid in SemanticIR)
+  - synthesize enum definitions from encoding tables
+  - synthesize register records from register map tables
+  - synthesize timing constraint records from timing parameter tables
+  - add `NormativeStatement` class to statement classification
+- completion criteria:
+  - signal tables produce `Signal X is output width N.` statements in EvidenceIR
+  - encoding tables produce `Enum <name> <member> = <value>.` statements in EvidenceIR
+  - `NormativeStatement` class used for shall/must sentences in normative sections
+  - SemanticIR `parse_signal_table_row` band-aid removed
+  - `IntentIR` for AMBA AHB carries all 32+ signals with direction and width, all encoding enums
+
+### R10 EvidenceIR visual content (Tier 3 of EXTRACTION_ARCHITECTURE.md)
+- status: Not Started
+- reference: `EXTRACTION_ARCHITECTURE.md` §Tier 3
+- goals:
+  - classify visual assets beyond caption heuristics (timing_diagram, state_machine, block_diagram, etc.)
+  - VLM extraction of timing diagram content → typed timing observations
+  - VLM extraction of state machine content → typed state/transition observations
+- completion criteria:
+  - `VisualObservation` types `Description`, `ChartExtraction` populated for classified diagrams
+  - timing diagrams produce `TimingConstraintRecord` in `SemanticIR`/`IntentIR`
+  - state machine diagrams produce `RegularStateRecord`/`StateTransitionRecord` in `SemanticIR`/`IntentIR`
+
 ## Recommended implementation order
 1. keep the `IntentIR` product boundary explicit in all docs and code
 2. build adapters after `IntentIR` is stable
-3. integrate validation and back-annotation
+3. push data richness into `SourceIR` and `EvidenceIR` (R8, R9) before patching downstream stages
+4. integrate VLM visual understanding (R10) after structured extraction is solid
+5. integrate validation and back-annotation (R7)
 
 ## Immediate next milestone
-- start the validation/back-annotation pipeline so the current stage outputs and `.fsm` adapter artifacts have reproducible artifact-linked reports
+- complete R8/R9 Tier 1 and Tier 2 so `SourceIR` captures all structured table data and `EvidenceIR` produces typed signal/encoding declarations from tables
