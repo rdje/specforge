@@ -105,8 +105,12 @@
 - `SemanticIR::build` now:
   - loads persisted `EvidenceIR` JSON from disk
   - derives artifact layout under `generated/semantic_ir/<document_key>/semantic_ir.json`
+  - filters statements from boilerplate sections (legal/licence/admin headings) before semantic extraction so legal front-matter in chip specs does not contaminate actor, interface, or invariant discovery
   - discovers actors from explicit role terms and falls back to interface-derived channel actors when the evidence names signals but not endpoints
-  - discovers interfaces from recurring grouped signal names and preserves typed signal records when explicit declarations are present
+  - discovers interfaces through three complementary paths:
+    - explicit `Signal X is input/output width N.` declarations (High confidence)
+    - markdown signal-description table rows when the section heading identifies a known direction context such as "Manager signals" or "Subordinate signals" (Medium confidence)
+    - heuristic co-mention grouping for remaining UPPERCASE tokens, with expanded stop-word filtering to exclude legal terms, protocol family names, and common English all-caps words, and with large-set noise filtering requiring ≥2 supporting statements for groups >8 signals
   - preserves backend-neutral system contract and init-assignment records from explicit `Clock ...`, `Reset ...`, and `Init ...` statements when the evidence is explicit enough, including reset kind, polarity, assertion/release timing, and target semantics
   - preserves backend-neutral guarded/action control fragments from explicit `Block ...` statements when the evidence is explicit enough
   - preserves explicit module and top-composition facts from explicit `Module ...` and `Top ...` statements when the evidence is explicit enough
@@ -115,6 +119,7 @@
   - emits decomposition candidates from section/topic clustering
   - emits explicit residual decisions when actor boundaries, overlapping interfaces, or ambiguous visual evidence remain unresolved
 - the current first-pass implementation remains deterministic and conservative; it is meant to expose candidate semantics and unresolved ambiguity, not to invent a final canonical intent model
+- validated against the AMBA AHB Protocol Specification PDF: signal candidate count reduced 250 → 57, interface count 172 → 94, 16 signals carry explicit direction+width from signal-table parsing
 
 ## First executable IntentIR stage
 - execute-mode `IntentIR` construction is now orchestrated from `crates/specforge/src/commands/intent.rs`

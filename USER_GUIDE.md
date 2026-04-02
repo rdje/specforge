@@ -25,7 +25,7 @@
 - the currently implemented executable IR stages are `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR`
 - `SourceIR` now handles existing Markdown directly and performs Docling-backed structured PDF normalization for PDF inputs
 - `EvidenceIR` now consumes ready `SourceIR` artifacts and extracts section anchors, evidence spans, visual evidence, figure/caption links, and heuristic statement classes
-- `SemanticIR` now consumes ready `EvidenceIR` artifacts and lifts heuristic actors, interfaces, backend-neutral system/init records, first-class reset polarity/assertion/release/target semantics, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions
+- `SemanticIR` now consumes ready `EvidenceIR` artifacts and lifts heuristic actors, interfaces, backend-neutral system/init records, first-class reset polarity/assertion/release/target semantics, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions; boilerplate sections (legal/admin) are filtered out before extraction, and signal-description tables in real chip specs are parsed for explicit direction and width
 - `IntentIR` now consumes ready `SemanticIR` artifacts and canonicalizes actor responsibilities, interface/control/system/init surface, behaviors, constraints, assumptions, and residual decisions
 - the first `.fsm` adapter slices now consume ready `IntentIR` artifacts and materialize typed adapter artifacts; explicit standalone combinational and sequential DT cases are renderable, explicit state-graph cases can now lower to structured `?fsm:name`, explicit module/top composition cases can now lower to `?top:name`, and direct-module alias roots remain deferred with explicit residual decisions
 
@@ -111,7 +111,7 @@ cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json
 - writes `generated/semantic_ir/<document_key>/semantic_ir.json`
 - builds:
   - actors from role-like evidence terms or inferred channel groupings
-  - interfaces from recurring grouped signal names plus explicit typed signal declarations when present
+  - interfaces from explicit typed signal declarations (`Signal X is input/output width N.`), markdown signal-description table rows when the section title identifies direction context (e.g. "Manager signals" → output, "Subordinate signals" → input), and heuristic co-mention grouping for remaining UPPERCASE tokens with expanded stop-word filtering and large-set noise reduction
   - backend-neutral system contract and init-assignment records from explicit `Clock ...`, `Reset ...`, and `Init ...` statements when the evidence is explicit enough, including reset kind, polarity, assertion/release timing, and target semantics
   - backend-neutral guarded/action control fragments from explicit `Block ...` statements when the evidence is explicit enough
   - phases from section structure and sequencing language
