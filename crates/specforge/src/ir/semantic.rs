@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
-use crate::ir::evidence::{EvidenceIr, StatementClass, VisualEvidenceRole};
+use crate::ir::evidence::{EvidenceIr, StatementClass, VisualEvidenceRole, VisualObservationKind};
 use crate::ir::source::{
     AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket, document_key,
 };
@@ -118,11 +118,37 @@ impl SemanticIr {
         let residual_decisions =
             build_residual_decisions(&context, &interfaces, actor_build.explicit_actor_count);
         // Carry structured table records forward from EvidenceIR.
-        // These were synthesized directly from SourceIR structured table cell grids.
         let register_records = evidence_ir.register_records.clone();
-        let timing_constraints = evidence_ir.timing_constraints.clone();
         let signal_constraints = evidence_ir.signal_constraints.clone();
         let conditional_rules = evidence_ir.conditional_rules.clone();
+
+        // Merge timing constraints: table-synthesized + VLM diagram observations.
+        let mut timing_constraints = evidence_ir.timing_constraints.clone();
+        let (vlm_timing, vlm_states, vlm_transitions) =
+            extract_records_from_vlm_observations(&evidence_ir);
+        timing_constraints.extend(vlm_timing);
+
+        // Merge state/transition records: formal syntax + VLM diagram observations.
+        // VLM-sourced records are appended so they don’t replace existing formal records.
+        let mut regular_states_with_vlm = regular_states.clone();
+        let mut state_transitions_with_vlm = state_transitions.clone();
+        for vlm_state in vlm_states {
+            // Only add if not already present by name.
+            if !regular_states_with_vlm
+                .iter()
+                .any(|s| s.state_name == vlm_state.state_name)
+            {
+                regular_states_with_vlm.push(vlm_state);
+            }
+        }
+        for vlm_transition in vlm_transitions {
+            if !state_transitions_with_vlm.iter().any(|t| {
+                t.source_state == vlm_transition.source_state
+                    && t.target_state == vlm_transition.target_state
+            }) {
+                state_transitions_with_vlm.push(vlm_transition);
+            }
+        }
 
         Ok(Self {
             schema_version: 1,
@@ -141,8 +167,8 @@ impl SemanticIr {
             decomposition_candidates,
             system_contract,
             init_assignments,
-            regular_states,
-            state_transitions,
+            regular_states: regular_states_with_vlm,
+            state_transitions: state_transitions_with_vlm,
             decision_tree_fragments,
             symbol_definitions,
             control_blocks,
@@ -4659,6 +4685,178 @@ fn build_timing_constraints(context: &SemanticContext) -> Vec<TimingConstraintRe
     Vec::new()
 }
 
+/// Parse VLM-derived `VisualObservation` entries from `EvidenceIR` into typed
+/// `SemanticIR` records.
+///
+/// Returns `(timing_constraints, regular_states, state_transitions)` extracted from:
+/// - `VisualObservationKind::TimingDiagramExtraction` → timing annotation → `TimingConstraintRecord`
+/// - `VisualObservationKind::StateMachineExtraction` → states/transitions → typed records
+fn extract_records_from_vlm_observations(
+    evidence_ir: &EvidenceIr,
+) -> (
+    Vec<TimingConstraintRecord>,
+    Vec<RegularStateRecord>,
+    Vec<StateTransitionRecord>,
+) {
+    let mut timing_records = Vec::new();
+    let mut state_records = Vec::new();
+    let mut transition_records = Vec::new();
+
+    for visual_item in &evidence_ir.visual_evidence {
+        for obs in &visual_item.observations {
+            match obs.kind {
+                VisualObservationKind::TimingDiagramExtraction => {
+                    parse_timing_diagram_observation(
+                        &obs.text,
+                        &visual_item.evidence_id,
+                        &mut timing_records,
+                    );
+                }
+                VisualObservationKind::StateMachineExtraction => {
+                    parse_state_machine_observation(
+                        &obs.text,
+                        &visual_item.evidence_id,
+                        &mut state_records,
+                        &mut transition_records,
+                    );
+                }
+                _ => {}
+            }
+        }
+    }
+
+    (timing_records, state_records, transition_records)
+}
+
+/// Parse a `TimingDiagramExtraction` JSON observation into `TimingConstraintRecord` entries.
+/// Expected format:
+/// `{"signals":[{"name":str,"values":[{"cycle":str,"state":str}]}],"annotations":[str]}`
+fn parse_timing_diagram_observation(
+    json_text: &str,
+    evidence_id: &str,
+    records: &mut Vec<TimingConstraintRecord>,
+) {
+    // Use serde_json for robust parsing.
+    let Ok(value) = serde_json::from_str::<serde_json::Value>(json_text) else {
+        return;
+    };
+
+    // Each annotation string becomes a TimingConstraintRecord.
+    if let Some(annotations) = value.get("annotations").and_then(|a| a.as_array()) {
+        for (idx, annotation) in annotations.iter().enumerate() {
+            let text = annotation.as_str().unwrap_or_default().trim();
+            if text.is_empty() {
+                continue;
+            }
+            records.push(TimingConstraintRecord {
+                constraint_id: format!("vlm_timing_{}_{idx:03}", document_key(evidence_id)),
+                parameter_name: format!("vlm_annotation_{idx:03}"),
+                min_value: None,
+                typ_value: None,
+                max_value: None,
+                unit: None,
+                description: Some(text.to_string()),
+                supporting_statement_ids: vec![evidence_id.to_string()],
+                automation_confidence: AutomationConfidence::Medium,
+            });
+        }
+    }
+
+    // Each signal cycle pair adds context but no single-value record for now.
+    // Future: extract "HCLK stays HIGH for 3 cycles" patterns into TimingConstraintRecord.
+}
+
+/// Parse a `StateMachineExtraction` JSON observation into state and transition records.
+/// Expected format:
+/// `{"states":[{"name":str,"is_initial":bool}],"transitions":[{"from":str,"to":str,"guard":str}]}`
+fn parse_state_machine_observation(
+    json_text: &str,
+    evidence_id: &str,
+    state_records: &mut Vec<RegularStateRecord>,
+    transition_records: &mut Vec<StateTransitionRecord>,
+) {
+    let Ok(value) = serde_json::from_str::<serde_json::Value>(json_text) else {
+        return;
+    };
+
+    // Parse states.
+    if let Some(states) = value.get("states").and_then(|s| s.as_array()) {
+        for (idx, state_val) in states.iter().enumerate() {
+            let name = state_val
+                .get("name")
+                .and_then(|n| n.as_str())
+                .unwrap_or_default()
+                .trim();
+            if name.is_empty() {
+                continue;
+            }
+            let is_initial = state_val
+                .get("is_initial")
+                .and_then(|b| b.as_bool())
+                .unwrap_or(false);
+            state_records.push(RegularStateRecord {
+                state_id: format!(
+                    "vlm_state_{}_{}",
+                    document_key(evidence_id),
+                    document_key(name)
+                ),
+                state_name: name.to_string(),
+                is_initial,
+                declaration_order: u32::try_from(idx).unwrap_or(0),
+                supporting_statement_ids: vec![evidence_id.to_string()],
+                automation_confidence: AutomationConfidence::Medium,
+            });
+        }
+    }
+
+    // Parse transitions.
+    if let Some(transitions) = value.get("transitions").and_then(|t| t.as_array()) {
+        for (idx, trans_val) in transitions.iter().enumerate() {
+            let from = trans_val
+                .get("from")
+                .and_then(|f| f.as_str())
+                .unwrap_or_default()
+                .trim()
+                .to_string();
+            let to = trans_val
+                .get("to")
+                .and_then(|t| t.as_str())
+                .unwrap_or_default()
+                .trim()
+                .to_string();
+            if from.is_empty() || to.is_empty() {
+                continue;
+            }
+            let guard_text = trans_val
+                .get("guard")
+                .and_then(|g| g.as_str())
+                .unwrap_or_default()
+                .trim();
+            // Convert guard string to DecisionTreeGuardRecord heuristically.
+            let guard = if guard_text.is_empty() {
+                None
+            } else {
+                Some(DecisionTreeGuardRecord::SignalIsHigh {
+                    signal_name: guard_text.to_string(),
+                })
+            };
+            transition_records.push(StateTransitionRecord {
+                transition_id: format!(
+                    "vlm_trans_{}_{}_{idx:03}",
+                    document_key(evidence_id),
+                    document_key(&from)
+                ),
+                source_state: from,
+                target_state: to,
+                guard,
+                declaration_order: u32::try_from(idx).unwrap_or(0),
+                supporting_statement_ids: vec![evidence_id.to_string()],
+                automation_confidence: AutomationConfidence::Medium,
+            });
+        }
+    }
+}
+
 fn is_boilerplate_section_title(title: &str) -> bool {
     let lowered = title.to_ascii_lowercase();
     // Legal sections common to ARM/chip specifications
@@ -5396,6 +5594,142 @@ mod tests {
                 .decision_tree_fragments
                 .iter()
                 .any(|fragment| fragment.block_name == "busy")
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn vlm_timing_diagram_observation_produces_timing_constraint_records() -> Result<()> {
+        // Tests the VLM wiring chain in SemanticIR:
+        //   SourceIR.visual_assets[i].note = "vlm_timing_diagram_extraction: {json}"
+        //     → EvidenceIR injects TimingDiagramExtraction observation
+        //     → SemanticIR parses annotations → TimingConstraintRecord entries
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("timing_spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(&source, "# Timing\n")?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.visual_assets.push(VisualAsset {
+            asset_id: "picture_0001".to_string(),
+            asset_kind: VisualAssetKind::Diagram,
+            page_id: Some("page_0001".to_string()),
+            image_path: None,
+            caption_text: Some("Figure 3-1 Read transfer timing".to_string()),
+            caption_source_path: None,
+            source_ref: None,
+            placeholder_text: None,
+            note: Some(
+                "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"HCLK\",\"values\":[{\"cycle\":\"T1\",\"state\":\"HIGH\"}]}],\"annotations\":[\"tSU = 2 ns\",\"tHD = 1 ns\"]}"
+                    .to_string(),
+            ),
+            diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        // VLM annotations should produce TimingConstraintRecord entries.
+        assert!(
+            semantic_ir.timing_constraints.iter().any(|tc| {
+                tc.description
+                    .as_deref()
+                    .map(|d| d.contains("tSU"))
+                    .unwrap_or(false)
+            }),
+            "expected timing constraint from VLM annotation 'tSU = 2 ns'"
+        );
+        assert!(
+            semantic_ir.timing_constraints.iter().any(|tc| {
+                tc.description
+                    .as_deref()
+                    .map(|d| d.contains("tHD"))
+                    .unwrap_or(false)
+            }),
+            "expected timing constraint from VLM annotation 'tHD = 1 ns'"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn vlm_state_machine_observation_produces_state_and_transition_records() -> Result<()> {
+        // Tests the VLM wiring chain for state machine diagrams:
+        //   SourceIR.visual_assets[i].note = "vlm_state_machine_extraction: {json}"
+        //     → EvidenceIR injects StateMachineExtraction observation
+        //     → SemanticIR appends RegularStateRecord + StateTransitionRecord entries
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("sm_spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(&source, "# State Machine\n")?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.visual_assets.push(VisualAsset {
+            asset_id: "picture_0002".to_string(),
+            asset_kind: VisualAssetKind::Diagram,
+            page_id: Some("page_0001".to_string()),
+            image_path: None,
+            caption_text: Some("Figure 5-1 Transfer state machine".to_string()),
+            caption_source_path: None,
+            source_ref: None,
+            placeholder_text: None,
+            note: Some(
+                "vlm_state_machine_extraction: {\"states\":[{\"name\":\"IDLE\",\"is_initial\":true},{\"name\":\"BUSY\",\"is_initial\":false}],\"transitions\":[{\"from\":\"IDLE\",\"to\":\"BUSY\",\"guard\":\"HTRANS_NONSEQ\"}]}"
+                    .to_string(),
+            ),
+            diagram_kind: crate::ir::source::DiagramKind::StateMachineDiagram,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        // VLM states should appear in regular_states.
+        assert!(
+            semantic_ir
+                .regular_states
+                .iter()
+                .any(|s| s.state_name == "IDLE" && s.is_initial),
+            "expected IDLE initial state from VLM extraction"
+        );
+        assert!(
+            semantic_ir
+                .regular_states
+                .iter()
+                .any(|s| s.state_name == "BUSY"),
+            "expected BUSY state from VLM extraction"
+        );
+        // VLM transitions should appear in state_transitions.
+        assert!(
+            semantic_ir
+                .state_transitions
+                .iter()
+                .any(|t| t.source_state == "IDLE" && t.target_state == "BUSY"),
+            "expected IDLE→BUSY transition from VLM extraction"
         );
 
         Ok(())

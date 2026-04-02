@@ -114,13 +114,19 @@
   - compatibility-level `?mod:name` and `?module:name` spellings stay outside the adapter root-kind model until the canonical layer carries an honest direct-module distinction
 
 ### R7 Validation and back-annotation
-- status: Not Started
+- status: In Progress
 - goals:
   - validate stage outputs and adapter outputs
   - collect diagnostics and back-annotate findings into IR artifacts and live docs
 - completion criteria:
   - validation reports are reproducible and tied to IR/artifact versions
   - adapter validation does not replace semantic validation
+- done:
+  - `specforge validate <artifact>` command: auto-detects IR stage, reports signal coverage %, NLP coverage, VLM readiness, structured extraction counts, quality score 0–100 with grade
+  - validate tests for all four IR stages
+- remaining:
+  - back-annotation of findings into IR artifacts and live docs
+  - adapter validation (SystemVerilog/Verilog/VHDL targets)
 
 ### R8 SourceIR SOTA capture (Tier 1 of EXTRACTION_ARCHITECTURE.md)
 - status: In Progress
@@ -156,7 +162,7 @@
   - `IntentIR` for AMBA AHB carries all 32+ signals with direction and width, all encoding enums
 
 ### R10 EvidenceIR visual content (Tier 3 of EXTRACTION_ARCHITECTURE.md)
-- status: Not Started
+- status: Done
 - reference: `EXTRACTION_ARCHITECTURE.md` §Tier 3
 - goals:
   - classify visual assets beyond caption heuristics (timing_diagram, state_machine, block_diagram, etc.)
@@ -166,6 +172,24 @@
   - `VisualObservation` types `Description`, `ChartExtraction` populated for classified diagrams
   - timing diagrams produce `TimingConstraintRecord` in `SemanticIR`/`IntentIR`
   - state machine diagrams produce `RegularStateRecord`/`StateTransitionRecord` in `SemanticIR`/`IntentIR`
+- done:
+  - `DiagramKind` classification from caption text (Steps 3.1): TimingDiagram, StateMachineDiagram, BlockDiagram
+  - `specforge enrich` with Ollama/OpenAI/LM Studio providers (Steps 3.2/3.3)
+  - VLM JSON stored in `VisualAsset.note`; EvidenceIR injects `TimingDiagramExtraction`/`StateMachineExtraction` observations
+  - SemanticIR merges VLM-sourced timing constraints and state/transition records
+  - Full test coverage for the VLM wiring chain
+
+### R11 NLP Level 3 enrichment
+- status: Not Started
+- reference: `EXTRACTION_ARCHITECTURE.md` §Step 3.4
+- goals:
+  - reclassify ambiguous `NormativeStatement` sentences that Level 2 pattern-matching cannot handle
+  - use same VLM provider infrastructure already in place from R10
+- completion criteria:
+  - `specforge nlp-enrich <evidence-ir> --vlm-provider <provider>` command implemented
+  - `NormativeStatement` residual count reduced by ≥50% for AMBA AHB spec
+  - upgraded sentences produce `SignalConstraintRecord` entries with `confidence: Medium`
+  - full test coverage for the NLP Level 3 pipeline
 
 ## Recommended implementation order
 1. keep the `IntentIR` product boundary explicit in all docs and code

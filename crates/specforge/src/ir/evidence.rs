@@ -68,6 +68,12 @@ pub enum VisualObservationKind {
     OcrTranscription,
     TableTranscription,
     FormulaTranscription,
+    /// Structured extraction from a timing diagram via VLM.
+    /// `text` field contains JSON: `{"signals":[{"name":str,"values":[{"cycle":str,"state":str}]}],"annotations":[str]}`
+    TimingDiagramExtraction,
+    /// Structured extraction from a state machine diagram via VLM.
+    /// `text` field contains JSON: `{"states":[{"name":str,"is_initial":bool}],"transitions":[{"from":str,"to":str,"guard":str}]}`
+    StateMachineExtraction,
     Unknown,
 }
 
@@ -169,6 +175,15 @@ impl EvidenceIr {
             .enumerate()
             .map(|(idx, item)| (item.asset_id.clone(), idx))
             .collect();
+
+        // Inject VLM-derived observations from SourceIR visual asset notes.
+        // These are written by `specforge enrich --vlm-provider <provider>` and carry
+        // typed diagram extractions that downstream SemanticIR parses into records.
+        inject_vlm_observations(
+            &source_ir.visual_assets,
+            &mut visual_evidence,
+            &asset_id_to_visual_index,
+        );
         let asset_id_to_visual_evidence_id: HashMap<String, String> = visual_evidence
             .iter()
             .map(|item| (item.asset_id.clone(), item.evidence_id.clone()))
@@ -1993,6 +2008,60 @@ fn synthesize_timing_constraints(source_ir: &SourceIr) -> Vec<TimingConstraintRe
     records
 }
 
+/// Inject VLM-derived observations from `SourceIR.visual_assets[*].note` into the
+/// corresponding `VisualEvidenceItem.observations` entries.
+///
+/// `specforge enrich` writes structured VLM extraction into the note field:
+/// - `"vlm_timing_diagram_extraction: {json}"` → `TimingDiagramExtraction` observation
+/// - `"vlm_state_machine_extraction: {json}"` → `StateMachineExtraction` observation
+///
+/// These observations are then available to `SemanticIR` for parsing into typed records.
+fn inject_vlm_observations(
+    assets: &[crate::ir::source::VisualAsset],
+    visual_evidence: &mut Vec<VisualEvidenceItem>,
+    asset_id_to_visual_index: &HashMap<String, usize>,
+) {
+    for asset in assets {
+        let Some(note) = &asset.note else {
+            continue;
+        };
+        let Some(visual_idx) = asset_id_to_visual_index.get(&asset.asset_id).copied() else {
+            continue;
+        };
+
+        let (kind, json_str) = if let Some(s) = note.strip_prefix("vlm_timing_diagram_extraction: ")
+        {
+            (VisualObservationKind::TimingDiagramExtraction, s)
+        } else if let Some(s) = note.strip_prefix("vlm_state_machine_extraction: ") {
+            (VisualObservationKind::StateMachineExtraction, s)
+        } else {
+            continue;
+        };
+
+        let observation_id = format!("obs_vlm_{kind:?}_{}", &asset.asset_id);
+        visual_evidence[visual_idx]
+            .observations
+            .push(VisualObservation {
+                observation_id,
+                kind,
+                created_by: "specforge_vlm_enrich".to_string(),
+                text: json_str.to_string(),
+                supporting_span_ids: vec![],
+                automation_confidence: AutomationConfidence::High,
+            });
+
+        // Upgrade VLM-enriched figures to Normative role —
+        // timing and state machine diagrams are the most normative content in chip specs.
+        if matches!(
+            kind,
+            VisualObservationKind::TimingDiagramExtraction
+                | VisualObservationKind::StateMachineExtraction
+        ) {
+            visual_evidence[visual_idx].role = crate::ir::evidence::VisualEvidenceRole::Normative;
+        }
+    }
+}
+
 fn canonicalize_existing_path(path: &Path) -> Result<PathBuf> {
     if !path.exists() {
         return Err(AppError::MissingPath(path.to_path_buf()));
@@ -2106,6 +2175,62 @@ mod tests {
         assert_eq!(
             evidence_ir.extracted_statements[0].class,
             StatementClass::NormativeStatement
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn vlm_enrichment_note_becomes_timing_diagram_observation() -> Result<()> {
+        // Tests the VLM wiring chain:
+        //   VisualAsset.note = "vlm_timing_diagram_extraction: {json}"
+        //     → EvidenceIr.visual_evidence[i].observations contains TimingDiagramExtraction
+        //     → (SemanticIR test separately verifies it parses into TimingConstraintRecord)
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("diagram_spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(&source, "# Timing\n")?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.visual_assets.push(VisualAsset {
+            asset_id: "picture_0001".to_string(),
+            asset_kind: VisualAssetKind::Diagram,
+            page_id: Some("page_0001".to_string()),
+            image_path: None,
+            caption_text: Some("Figure 3-1 Read transfer timing".to_string()),
+            caption_source_path: None,
+            source_ref: None,
+            placeholder_text: None,
+            // Simulate what `specforge enrich --vlm-provider ollama` would write.
+            note: Some(
+                "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"HCLK\",\"values\":[{\"cycle\":\"T1\",\"state\":\"HIGH\"}]}],\"annotations\":[\"Address phase: T1-T2\",\"tSU = 2 ns\"]}"
+                    .to_string(),
+            ),
+            diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        // The VLM note must produce a TimingDiagramExtraction observation.
+        assert_eq!(evidence_ir.visual_evidence.len(), 1);
+        assert!(
+            evidence_ir.visual_evidence[0].observations.iter().any(|o| {
+                matches!(o.kind, VisualObservationKind::TimingDiagramExtraction)
+                    && o.text.contains("Address phase")
+                    && o.created_by == "specforge_vlm_enrich"
+            }),
+            "expected TimingDiagramExtraction observation from VLM note"
+        );
+        // The figure's role should be upgraded to Normative.
+        assert_eq!(
+            evidence_ir.visual_evidence[0].role,
+            super::VisualEvidenceRole::Normative
         );
 
         Ok(())

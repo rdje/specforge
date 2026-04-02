@@ -60,9 +60,15 @@
 - specforge enrich command: VLM enrichment pipeline with Ollama/OpenAI/LM Studio providers: Done
 - 17 AHB timing diagrams correctly classified, ready for VLM enrichment: Done
 - Docling installed and first real-world PDF (AMBA AHB) exercised end-to-end through the full pipeline: Done
+- VLM observations (TimingDiagramExtraction, StateMachineExtraction) injected into EvidenceIR from enriched VisualAsset.note: Done
+- SemanticIR VLM wiring: timing constraints merged from VLM diagram annotations; state/transition records merged from VLM state machine extraction: Done
+- specforge validate command implemented for all four IR stages with quality score and coverage metrics: Done
+- Test suite expanded to 55 tests (+6: VLM wiring x2, validate command x4); all passing: Done
+- EXTRACTION_ARCHITECTURE.md corrected with all Tier 1–3 implementation statuses; NLP Level 3 plan added as next step: Done
 - SystemVerilog/Verilog/VHDL adapters implemented: Not Started
-- Validation and back-annotation pipeline implemented: Not Started
+- NLP Level 3 (LLM reclassification of ambiguous NormativeStatement sentences via specforge nlp-enrich command): Not Started
+- Validation back-annotation and artifact-linked reports: Not Started
 - End-to-end source-to-IntentIR pipeline implemented: Done
 
 ## Highest-priority remaining gap
-- Implement the validation and back-annotation pipeline so stage and adapter outputs produce reproducible artifact-linked reports: Not Started
+- Implement NLP Level 3: `specforge nlp-enrich <evidence-ir> --vlm-provider <provider>` to send ambiguous `NormativeStatement` sentences to a small LLM for structured `SignalConstraintRecord` extraction; target ≥50% reduction of NormativeStatement residual on AMBA AHB spec

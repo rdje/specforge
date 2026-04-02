@@ -1,4 +1,36 @@
 # CHANGES
+## 2026-04-02 (VLM wiring, validate command, 55-test suite, doc corrections)
+- **VLM observations wired into EvidenceIR** (Steps 3.2/3.3 complete end-to-end)
+  - Added `TimingDiagramExtraction` and `StateMachineExtraction` to `VisualObservationKind` in `evidence.rs`
+  - New `inject_vlm_observations()`: reads `VisualAsset.note` prefix `"vlm_timing_diagram_extraction: {json}"` / `"vlm_state_machine_extraction: {json}"` and injects typed `VisualObservation` entries into the matching `VisualEvidenceItem`
+  - Enriched figures automatically upgraded to `VisualEvidenceRole::Normative` (highest-priority evidence)
+- **SemanticIR VLM observation parsing** (timing + state machine → typed records)
+  - New `extract_records_from_vlm_observations()` in `semantic.rs` iterates EvidenceIR visual observations
+  - `parse_timing_diagram_observation()`: each VLM annotation string → `TimingConstraintRecord { description: annotation, confidence: Medium }`; merged with table-synthesized timing constraints
+  - `parse_state_machine_observation()`: each VLM state → `RegularStateRecord`; each VLM transition → `StateTransitionRecord`; merged with formal syntax records (non-duplicate append)
+  - Result: timing constraints from both tables and VLM diagrams, state records from both formal syntax and VLM extraction
+- **specforge validate command** (Step 4.1 complete)
+  - New `crates/specforge/src/commands/validate.rs` — auto-detects IR stage from `stage` field in artifact JSON
+  - `validate_source_ir`: document profile, table classification, diagram classification, VLM readiness, section classification, residual count
+  - `validate_evidence_ir`: statement classification breakdown, NLP coverage %, structured extraction counts, VLM observation counts
+  - `validate_semantic_ir`: signal coverage (with_direction %, with_width %, fully_typed %), semantic record counts, system contract, residual decisions
+  - `validate_intent_ir`: signal coverage, intent record counts, quality score (0–100) with grade EXCELLENT/GOOD/ADEQUATE/NEEDS IMPROVEMENT/INCOMPLETE
+  - Wired in `cli.rs` as `Commands::Validate(ValidateArgs)` and dispatched in `lib.rs`
+- **Test suite expanded: 49 → 55 (+6)**
+  - `ir::semantic::tests::vlm_timing_diagram_observation_produces_timing_constraint_records` — full chain: SourceIR note → EvidenceIR observation → SemanticIR timing constraints
+  - `ir::semantic::tests::vlm_state_machine_observation_produces_state_and_transition_records` — full chain: SourceIR note → EvidenceIR observation → SemanticIR states/transitions
+  - `commands::validate::tests::validate_source_ir_artifact_reports_without_error`
+  - `commands::validate::tests::validate_evidence_ir_artifact_reports_without_error`
+  - `commands::validate::tests::validate_semantic_ir_artifact_reports_without_error`
+  - `commands::validate::tests::validate_intent_ir_artifact_reports_without_error`
+  - All 55 tests pass, 0 failures
+- **EXTRACTION_ARCHITECTURE.md** corrected with accurate status for all completed steps:
+  - SourceIR: DiagramKind ✅, VLM enrichment ✅
+  - EvidenceIR: SignalConstraintRecord ✅, ConditionalRuleRecord ✅, TimingDiagramExtraction/StateMachineExtraction ✅
+  - SemanticIR: signal_constraints ✅, conditional_rules ✅, VLM state/transition merge ✅, VLM timing merge ✅
+  - IntentIR: signal_constraints ✅, conditional_rules ✅, VLM state/transition records ✅
+  - Tier 3 Steps 3.1/3.2/3.3: ✅ done; added Step 3.4 (NLP Level 3: LLM-based reclassification) as planned next step
+  - Step 4.1 Validation: ✅ done
 ## 2026-04-02 (NLP Level 2 structured extraction + VLM enrichment pipeline)
 - **EXTRACTION_ARCHITECTURE.md** updated as authoritative reference: NLP 4-level pyramid, classification-vs-extraction gap analysis, VLM provider architecture (Ollama/OpenAI/LM Studio), all implementation steps with precise ✅/❌ status
 - **Level 2 NLP: SignalConstraintRecord extraction**

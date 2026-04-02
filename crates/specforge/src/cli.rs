@@ -31,6 +31,8 @@ pub enum Commands {
     Adapt(AdaptArgs),
     /// Enrich a SourceIR artifact with VLM-derived visual observations (timing diagrams, state machines)
     Enrich(EnrichArgs),
+    /// Validate an IR artifact and report extraction coverage metrics
+    Validate(ValidateArgs),
 }
 
 #[derive(Debug, Args)]
@@ -96,6 +98,12 @@ impl From<AdapterTargetArg> for AdapterTarget {
             AdapterTargetArg::Vhdl => AdapterTarget::Vhdl,
         }
     }
+}
+
+#[derive(Debug, Args)]
+pub struct ValidateArgs {
+    /// Path to any IR artifact (source_ir.json, evidence_ir.json, semantic_ir.json, intent_ir.json)
+    pub artifact: std::path::PathBuf,
 }
 
 /// VLM provider selection for the `enrich` command.
