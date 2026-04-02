@@ -21,7 +21,8 @@
 - the first `.fsm` adapter slices now materialize typed adapter artifacts and can emit honest standalone `?dt:name`, structured `?fsm:name`, and explicit `?top:name` text when the canonical facts are complete, including canonical symbol-definition sections, structured reset-role blocks, selector/test-node branches, and compound-update shorthand from the widened semantic model
 - the canonical reset model now preserves reset kind, polarity, assertion timing, release timing, and reset-target semantics explicitly, and the `.fsm` adapter keeps the reduced target surface honest by requiring reset polarity to remain recoverable from the reset signal name
 - the current adapter root-kind model is now intentionally limited to `?dt:name`, `?fsm:name`, and `?top:name`; compatibility-level `?mod:name` / `?module:name` spellings remain outside that model until a real backend-neutral direct-module distinction exists
-- the next slice should build the validation/back-annotation pipeline on top of the now-stable staged IR and `.fsm` adapter surfaces
+- the Tier 1–3 SOTA extraction pipeline is now complete: structured tables, typed NLP records (Level 1–2), VLM visual enrichment, and `specforge validate` for all four IR stages
+- the next slice should implement NLP Level 3 (`specforge nlp-enrich`) for LLM-based reclassification of ambiguous `NormativeStatement` sentences
 
 ## Observed current state
 ### Repository contents directly observed
@@ -42,6 +43,8 @@
 - `crates/specforge/src/commands/semantic.rs`
 - `crates/specforge/src/commands/intent.rs`
 - `crates/specforge/src/commands/adapt.rs`
+- `crates/specforge/src/commands/enrich.rs`
+- `crates/specforge/src/commands/validate.rs`
 - `crates/specforge/src/ir/mod.rs`
 - `crates/specforge/src/ir/source.rs`
 - `crates/specforge/src/ir/source/docling_backend.rs`
@@ -143,9 +146,10 @@
 
 ### What is still insufficient
 - only `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR` have real builders today
-- deeper visual enrichment beyond caption/reference grounding is not implemented yet
+- VLM enrichment (`specforge enrich`) and `specforge validate` are now implemented; NLP Level 3 (`specforge nlp-enrich`) is the next gap
 - the current renderable `.fsm` slices are intentionally narrow: they handle explicit standalone combinational/sequential DT control, canonical symbol-definition sections, structured reset-role blocks, selector/test-node branches, compound-update shorthand, explicit structured FSM-root cases, and the first explicit top-root composition slice, while unsupported selector/predicate shapes stay deferred and compatibility-level direct-module spellings remain outside the current canonical root-kind model
-- validation/back-annotation is still absent
+- back-annotation of validation findings into IR artifacts is still absent
+- NLP Level 3 (LLM reclassification of ambiguous `NormativeStatement` sentences) is not yet implemented
 
 ## Architectural recommendation
 ### Core architectural stance
@@ -209,8 +213,10 @@
 
 ### Adapters
 - current declared ownership:
-  - `src/commands/adapt.rs`
-  - `src/ir/adapters.rs`
+  - `src/commands/adapt.rs` — `.fsm` adapter preview/materialization command
+  - `src/commands/enrich.rs` — VLM diagram enrichment command (Ollama/OpenAI/LM Studio)
+  - `src/commands/validate.rs` — artifact health validation command with quality score
+  - `src/ir/mod.rs`
 - dependency:
   - requires stable `IntentIR`
 - nearby reference implementation:
@@ -249,19 +255,26 @@
 - this is acceptable temporarily, but should be closed soon so the first stage is truly operational for PDFs
 
 ## Testing implications
+- current test count: 55 (all passing)
 - current tests cover:
   - source-kind detection
   - deterministic source key naming
   - `SourceIR` JSON materialization
   - directory residual decision emission
   - PDF normalization planning
-  - PDF materialization through a stubbed backend override that exercises the manifest-writing path
+  - PDF materialization through a stubbed backend override
   - markdown-backed `EvidenceIR` construction
   - caption and figure-reference grounding into visual evidence
+  - VLM observation injection (TimingDiagramExtraction, StateMachineExtraction from VisualAsset.note)
   - handshake-driven `SemanticIR` actor/interface/invariant extraction
+  - structured-table signal direction+width extraction through EvidenceIR → SemanticIR
+  - VLM timing diagram annotation → TimingConstraintRecord in SemanticIR
+  - VLM state machine extraction → RegularStateRecord + StateTransitionRecord in SemanticIR
   - ambiguous visual-grounding residual decisions in `SemanticIR`
   - handshake-driven `IntentIR` identity/behavior/constraint/assumption construction
   - residual-decision preservation from `SemanticIR` into `IntentIR`
+  - `.fsm` adapter renderability (12 adapter cases)
+  - `specforge validate` for all four IR stages
 - next tests should cover:
   - structured PDF normalization failure handling against missing runtimes and malformed backend output
   - additional `EvidenceIR` extraction on richer visual-asset fixtures

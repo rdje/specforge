@@ -52,8 +52,8 @@
   - adapters
 
 ## Latest committed baseline
-- latest_commit_hash: `15d349b8ade1fea5fa40b8707a0ff8e3f08e98d0`
-- latest_commit_brief_message: `Add SignalValueConstraint: syntactic NLP for signal-value binding sentences`
+- latest_commit_hash: `615b549` (short) — see `git log --oneline -1` for full hash
+- latest_commit_brief_message: `VLM wiring, validate command, 55-test suite, doc corrections`
 - continuity_rule:
   - refresh this section whenever a new latest committed baseline exists at the time `MEMORY.md` is updated
 
@@ -102,6 +102,11 @@
 - Level 2 NLP structured extraction (SignalConstraintRecord, ConditionalRuleRecord) implemented and validated on AHB
 - DiagramKind classification: 17 AHB timing diagrams classified, 3 block diagrams; VLM enrichment pipeline ready
 - specforge enrich command: Ollama/OpenAI/LM Studio providers, SPECFORGE_VLM_HELPER test override
+- VLM observations wired into EvidenceIR and SemanticIR: timing annotations → TimingConstraintRecord; state/transition JSON → RegularStateRecord/StateTransitionRecord
+- specforge validate command implemented for all four IR stages with quality score
+- test suite expanded to 55 tests; all passing
+- EXTRACTION_ARCHITECTURE.md statuses fully corrected (all Tier 1–3 steps updated)
+- NLP Level 3 plan defined as Step 3.4 in EXTRACTION_ARCHITECTURE.md and new R11 workstream in ROADMAP.md
 
 ## Current execution checkpoint
 - `IntentIR` now has a real build/materialization path
@@ -183,7 +188,10 @@
   - `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/compound_update_dt/evidence_ir.json`
   - `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/compound_update_dt/intent_ir.json`
   - `cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/compound_update_dt/intent_ir.json --target fsm`
-- the next implementation action is to build the validation/back-annotation pipeline so staged IR and adapter outputs have reproducible artifact-linked reports
+- the next implementation action is NLP Level 3: `specforge nlp-enrich <evidence-ir> --vlm-provider <provider>` that sends ambiguous `NormativeStatement` sentences to a small LLM for structured `SignalConstraintRecord` extraction
+- the runnable CLI command surface now also includes:
+  - `enrich <source-ir> --vlm-provider <ollama|openai|lmstudio|skip>`
+  - `validate <artifact>` (autodetects IR stage)
 
 ## If resuming from an interruption
 1. read `README.md`
@@ -195,7 +203,8 @@
 7. continue with the next implementation slice unless the user redirects
 
 ## Recommended next implementation slice
-- build the validation/back-annotation pipeline so staged IR and adapter outputs have reproducible artifact-linked reports
+- implement NLP Level 3 (R11): `specforge nlp-enrich` command that sends `NormativeStatement` sentences to a small LLM for structured extraction (Step 3.4 in EXTRACTION_ARCHITECTURE.md)
+- target: reduce NormativeStatement residual by ≥50% for AMBA AHB spec
 - keep `IntentIR` as the canonical endpoint and keep adapters downstream of it
 
 ## Commit status
