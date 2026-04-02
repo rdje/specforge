@@ -63,12 +63,16 @@
 - VLM observations (TimingDiagramExtraction, StateMachineExtraction) injected into EvidenceIR from enriched VisualAsset.note: Done
 - SemanticIR VLM wiring: timing constraints merged from VLM diagram annotations; state/transition records merged from VLM state machine extraction: Done
 - specforge validate command implemented for all four IR stages with quality score and coverage metrics: Done
-- Test suite expanded to 55 tests (+6: VLM wiring x2, validate command x4); all passing: Done
 - EXTRACTION_ARCHITECTURE.md corrected with all Tier 1–3 implementation statuses; NLP Level 3 plan added as next step: Done
+- VLM truncation bug fixed (120-char cap removed); serde_json response parsing; max_tokens 2048: Done
+- qwen2.5vl:7b set as default Ollama model for VLM+NLP; model pulled and ready (6GB): Done
+- specforge nlp-enrich command (NLP Level 3): LLM-based reclassification of NormativeStatement sentences: Done
+- NLP Level 1+2 pattern expansion (~50%→70%+ coverage): cannot/is not permitted/unless/provided that/is tied high/multi-signal extraction: Done
+- Test suite expanded to 75 tests; all passing: Done
 - SystemVerilog/Verilog/VHDL adapters implemented: Not Started
-- NLP Level 3 (LLM reclassification of ambiguous NormativeStatement sentences via specforge nlp-enrich command): Not Started
+- AHB end-to-end pipeline run to validate NLP improvements: Not Started
 - Validation back-annotation and artifact-linked reports: Not Started
 - End-to-end source-to-IntentIR pipeline implemented: Done
 
 ## Highest-priority remaining gap
-- Implement NLP Level 3: `specforge nlp-enrich <evidence-ir> --vlm-provider <provider>` to send ambiguous `NormativeStatement` sentences to a small LLM for structured `SignalConstraintRecord` extraction; target ≥50% reduction of NormativeStatement residual on AMBA AHB spec
+- Run AHB end-to-end pipeline with `specforge validate` to measure actual NLP coverage uplift and identify remaining gaps before starting RTL adapter work

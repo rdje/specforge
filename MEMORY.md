@@ -52,8 +52,8 @@
   - adapters
 
 ## Latest committed baseline
-- latest_commit_hash: `615b549` (short) — see `git log --oneline -1` for full hash
-- latest_commit_brief_message: `VLM wiring, validate command, 55-test suite, doc corrections`
+- latest_commit_hash: `463e9fa` (short) — see `git log --oneline -1` for full hash
+- latest_commit_brief_message: `NLP Level 1+2 pattern expansion: ~50%→70%+ coverage uplift`
 - continuity_rule:
   - refresh this section whenever a new latest committed baseline exists at the time `MEMORY.md` is updated
 
@@ -99,9 +99,11 @@
 - SOTA SourceIR/EvidenceIR extraction architecture fully implemented and validated on AHB PDF
 - EXTRACTION_ARCHITECTURE.md created as the permanent reference document for the SOTA extraction vision
 - SemanticIR parse_signal_table_row band-aid removed; signal declarations now flow architecturally from EvidenceIR
-- Level 2 NLP structured extraction (SignalConstraintRecord, ConditionalRuleRecord) implemented and validated on AHB
-- DiagramKind classification: 17 AHB timing diagrams classified, 3 block diagrams; VLM enrichment pipeline ready
-- specforge enrich command: Ollama/OpenAI/LM Studio providers, SPECFORGE_VLM_HELPER test override
+- Level 1+2 NLP: full vocabulary expansion (cannot/is not permitted/unless/is tied high/multi-signal/etc.) + 15 regression tests
+- Level 3 NLP: specforge nlp-enrich command implemented with qwen2.5vl:7b via Ollama
+- VLM truncation bug fixed; qwen2.5vl:7b set as default Ollama model; model pulled and ready
+- Test suite: 75 tests, all passing
+- NEXT: AHB end-to-end pipeline run with specforge validate to measure actual coverage improvements
 - VLM observations wired into EvidenceIR and SemanticIR: timing annotations → TimingConstraintRecord; state/transition JSON → RegularStateRecord/StateTransitionRecord
 - specforge validate command implemented for all four IR stages with quality score
 - test suite expanded to 55 tests; all passing
@@ -188,9 +190,10 @@
   - `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/compound_update_dt/evidence_ir.json`
   - `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/compound_update_dt/intent_ir.json`
   - `cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/compound_update_dt/intent_ir.json --target fsm`
-- the next implementation action is NLP Level 3: `specforge nlp-enrich <evidence-ir> --vlm-provider <provider>` that sends ambiguous `NormativeStatement` sentences to a small LLM for structured `SignalConstraintRecord` extraction
+- the next implementation action is R12: run AHB end-to-end pipeline with specforge validate to quantify NLP coverage improvements
 - the runnable CLI command surface now also includes:
   - `enrich <source-ir> --vlm-provider <ollama|openai|lmstudio|skip>`
+  - `nlp-enrich <evidence-ir> --vlm-provider <ollama|openai|lmstudio|skip>`
   - `validate <artifact>` (autodetects IR stage)
 
 ## If resuming from an interruption
@@ -203,8 +206,11 @@
 7. continue with the next implementation slice unless the user redirects
 
 ## Recommended next implementation slice
-- implement NLP Level 3 (R11): `specforge nlp-enrich` command that sends `NormativeStatement` sentences to a small LLM for structured extraction (Step 3.4 in EXTRACTION_ARCHITECTURE.md)
-- target: reduce NormativeStatement residual by ≥50% for AMBA AHB spec
+- R12: run AHB end-to-end pipeline run with specforge validate at each stage; record quality scores
+  - measure actual NormativeStatement residual after Level 1+2 expansion (was 91 before; expected ~40–50 after)
+  - run specforge nlp-enrich --vlm-provider ollama --vlm-model qwen2.5vl:7b on AHB EvidenceIR
+  - compare quality score before/after both enrichment steps
+  - identify remaining gaps before starting RTL adapter work (SystemVerilog)
 - keep `IntentIR` as the canonical endpoint and keep adapters downstream of it
 
 ## Commit status

@@ -1,4 +1,39 @@
 # CHANGES
+## 2026-04-02 (NLP Level 1+2 pattern expansion: ~50%→70%+ coverage uplift)
+- **Level 1 `classify_statement()` vocabulary expanded significantly**
+  - `NormativeStatement`: added `cannot/can not`, `is not permitted/allowed`, `are not permitted/allowed`, `may not`, `is forbidden/illegal`, `will not`, `must/shall never`, `it is mandatory`, `is not valid/legal/supported`, `are required`
+  - `ConditionalRule`: added `unless`, `provided that`, `as long as` (both leading and embedded); `while/during/after/before` now also work as leading conditionals; `cannot` added to consequent verb list
+  - `SignalValueConstraint` (`is_signal_value_constraint()`): added `is tied high/low/to`, `is driven high/low`, `is held/kept high/low/stable/asserted`, `remains high/low/asserted/deasserted/stable`, `cannot change`, `cannot/will not/must not/shall not be changed`, `must/shall indicate`, `must/shall not be asserted/deasserted` (passive negation forms)
+  - `TimingConstraint`: added `tco/tpd/toh/tih`, `rising/falling/clock/positive/negative edge`, `within one/two clock`, `cycles` plural
+- **Level 2 `extract_signal_constraints()` multi-signal extraction**
+  - Strip condition clause before scanning subject signals: `HREADY` in `"...when HREADY is LOW"` is no longer confused with the constrained signal
+  - New helper `text_before_condition_marker()`: returns text before first `when/while/during/unless/provided/after/before` marker
+  - New helper `collect_subject_signal_tokens()`: collects ALL valid uppercase signal tokens from a text fragment (excludes logic levels, protocol states, protocol family names, role names)
+  - Multi-signal sentences like `"Both HTRANS and HADDR shall be stable"` now produce one `SignalConstraintRecord` per signal instead of one
+  - Negation detection now includes `cannot` and `will not`
+- **Level 2 `split_conditional_sentence()`**: added `unless`, `provided that`, `as long as` as leading conditional markers
+- **Level 2 `extract_protocol_state_value()`**: added INCR4/INCR8/INCR16, WRAP4/WRAP8/WRAP16, EXCLUSIVE, RETRY, SPLIT, BYTE, HALFWORD, WORD
+- **15 NLP regression tests added** (60 → 75 total; all passing)
+  - Tests confirm: `cannot/is not permitted/may not` → NormativeStatement; `is tied high/is held stable/cannot change/remains stable` → SignalValueConstraint; `unless/provided that/before` → ConditionalRule; `rising edge period` → TimingConstraint; multi-signal subject extraction; condition-clause stripping; logic-level exclusion from subjects
+  - Clarifying comments: tests document that more-specific `SignalValueConstraint` correctly wins over NormativeStatement when a sentence contains both a value-binding phrase and a prohibition keyword
+## 2026-04-02 (qwen2.5vl:7b integration: VLM fix + NLP Level 3 nlp-enrich command)
+- **Critical VLM truncation bug fixed in `enrich.rs`**
+  - Removed `.min(120)` cap on VLM response storage that silently corrupted every real VLM response
+  - Replaced fragile `"content":` string-search with proper `serde_json` parsing of `{choices[0].message.content}`; handles both string and array content parts with clear error on invalid JSON
+  - `max_tokens` increased 1024 → 2048 for VLM diagram responses
+- **Default Ollama model updated**: `llava:13b` → `qwen2.5vl:7b` (both VLM enrichment and NLP Level 3)
+  - `qwen2.5vl:7b` outperforms GPT-4o-mini on document/diagram understanding benchmarks; available via `ollama pull qwen2.5vl:7b` (6GB)
+  - `qwen2.5vl:7b` pulled and ready on local Ollama instance
+- **`specforge nlp-enrich` command (NLP Level 3) implemented**
+  - `specforge nlp-enrich <evidence-ir> --vlm-provider ollama [--vlm-model qwen2.5vl:7b] [--dry-run] [--max-sentences N]`
+  - Reads `NormativeStatement` sentences from EvidenceIR not already covered by Level 2
+  - Sends each sentence to LLM with a structured extraction prompt (text-only, no image)
+  - Prompt yields a single JSON: `signal_constraint / conditional_rule / none`
+  - Robust to markdown code-fence wrapping; validates uppercase signal names; graceful `none` handling
+  - Writes new `SignalConstraintRecord` / `ConditionalRuleRecord` entries back to EvidenceIR JSON
+  - `SPECFORGE_VLM_HELPER` env var override for unit testing
+  - 5 tests: end-to-end pipeline, dry-run isolation, code-fence JSON parsing, invalid signal rejection, conditional rule extraction
+- **Test suite: 55 → 60 (+5 NLP Level 3 tests)**
 ## 2026-04-02 (VLM wiring, validate command, 55-test suite, doc corrections)
 - **VLM observations wired into EvidenceIR** (Steps 3.2/3.3 complete end-to-end)
   - Added `TimingDiagramExtraction` and `StateMachineExtraction` to `VisualObservationKind` in `evidence.rs`

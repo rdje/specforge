@@ -129,7 +129,7 @@
   - adapter validation (SystemVerilog/Verilog/VHDL targets)
 
 ### R8 SourceIR SOTA capture (Tier 1 of EXTRACTION_ARCHITECTURE.md)
-- status: In Progress
+- status: Done
 - reference: `EXTRACTION_ARCHITECTURE.md` §Tier 1
 - goals:
   - extract structured table cell grids from Docling (not just image + caption)
@@ -146,7 +146,7 @@
   - `SourceIR` drops no structured information that Docling provides
 
 ### R9 EvidenceIR SOTA typed evidence (Tier 2 of EXTRACTION_ARCHITECTURE.md)
-- status: In Progress
+- status: In Progress (infrastructure complete; AHB coverage validation pending)
 - reference: `EXTRACTION_ARCHITECTURE.md` §Tier 2
 - goals:
   - synthesize formal signal declarations from signal description tables (no band-aid in SemanticIR)
@@ -180,23 +180,43 @@
   - Full test coverage for the VLM wiring chain
 
 ### R11 NLP Level 3 enrichment
-- status: Not Started
+- status: In Progress
 - reference: `EXTRACTION_ARCHITECTURE.md` §Step 3.4
 - goals:
   - reclassify ambiguous `NormativeStatement` sentences that Level 2 pattern-matching cannot handle
   - use same VLM provider infrastructure already in place from R10
 - completion criteria:
-  - `specforge nlp-enrich <evidence-ir> --vlm-provider <provider>` command implemented
-  - `NormativeStatement` residual count reduced by ≥50% for AMBA AHB spec
-  - upgraded sentences produce `SignalConstraintRecord` entries with `confidence: Medium`
-  - full test coverage for the NLP Level 3 pipeline
+  - `specforge nlp-enrich <evidence-ir> --vlm-provider <provider>` command implemented ✅
+  - `NormativeStatement` residual count reduced by ≥50% for AMBA AHB spec ← pending AHB validation run
+  - upgraded sentences produce `SignalConstraintRecord` entries with `confidence: Medium` ✅
+  - full test coverage for the NLP Level 3 pipeline ✅
+- done:
+  - `specforge nlp-enrich` command with Ollama/OpenAI/LM Studio support, `--dry-run`, `--max-sentences`
+  - `qwen2.5vl:7b` pulled and ready as default model; handles text-only NLP prompts efficiently
+  - NLP Level 1+2 pattern expansion: ~50%→70%+ estimated coverage without any LLM calls
+  - 20 new NLP tests (regression coverage for all new patterns + Level 3 pipeline)
+
+### R12 AHB end-to-end validation run
+- status: Not Started
+- goals:
+  - run complete pipeline on AMBA AHB PDF with all NLP improvements active
+  - measure actual NormativeStatement residual before/after Level 1+2 expansion
+  - run `specforge validate` at each stage and record quality scores
+  - run `specforge nlp-enrich` with qwen2.5vl:7b to measure Level 3 uplift
+  - identify remaining coverage gaps before RTL adapter work begins
+- completion criteria:
+  - all five pipeline stages complete without errors on real AHB PDF
+  - `validate intent_ir` quality score recorded with grade
+  - NormativeStatement count measured before and after NLP enrichment
 
 ## Recommended implementation order
 1. keep the `IntentIR` product boundary explicit in all docs and code
 2. build adapters after `IntentIR` is stable
 3. push data richness into `SourceIR` and `EvidenceIR` (R8, R9) before patching downstream stages
 4. integrate VLM visual understanding (R10) after structured extraction is solid
-5. integrate validation and back-annotation (R7)
+5. validate NLP coverage improvements on real PDF (R12) before starting RTL adapter work
+6. integrate validation and back-annotation (R7)
+7. SystemVerilog adapter (R6 remaining)
 
 ## Immediate next milestone
-- complete R8/R9 Tier 1 and Tier 2 so `SourceIR` captures all structured table data and `EvidenceIR` produces typed signal/encoding declarations from tables
+- R12: run AHB end-to-end with `specforge validate` to quantify coverage improvements from all NLP work; record quality scores and guide RTL adapter priority
