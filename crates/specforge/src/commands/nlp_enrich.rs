@@ -14,16 +14,19 @@ const VLM_HELPER_ENV: &str = "SPECFORGE_VLM_HELPER";
 
 /// Enrich an EvidenceIR artifact with LLM-extracted NLP constraints.
 ///
-/// Architecture (NLP Level 3 — Layers B+C):
+/// Architecture (NLP Level 3 — Layers A–E + Forms 1+2):
 ///   Input:  EvidenceIR with `NormativeStatement` sentences that Level 1/2 pattern-matching
 ///           could not classify into `SignalValueConstraint` or `ConditionalRule`.
 ///   Action: Send each sentence to a small LLM (qwen2.5vl:7b via Ollama, or OpenAI, LM Studio)
 ///           with a structured extraction prompt grounded by known declared signal names.
-///   Passes: Runs up to `max_passes` iterations; each pass re-checks sentences not yet
-///           extracted and stops when a full pass yields zero new records (convergence).
+///   Loop:   Iterates until the residual NormativeStatement count is STABLE between two
+///           consecutive passes (residual(N) == residual(N-1)).  At the start of each pass,
+///           Form 2 alias reclassification is applied first (free, no LLM calls), then the
+///           remaining candidates are sent to the LLM.  Termination is guaranteed because the
+///           residual pool is finite and can only decrease or stay flat.
 ///   Output: New `SignalConstraintRecord` or `ConditionalRuleRecord` entries appended to the
 ///           EvidenceIR's `signal_constraints` / `conditional_rules` fields.
-///           The EvidenceIR JSON is written back to disk.
+///           The EvidenceIR JSON is written back to disk after each productive pass.
 ///
 /// Downstream: re-run `specforge semantic` after this step to pick up the new records.
 pub fn run(args: NlpEnrichArgs) -> Result<()> {
@@ -111,20 +114,26 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
                 );
             }
 
-            // Layer C: multi-pass loop with convergence check.
-            let max_passes = args.max_passes.max(1);
+            // Residual-stable convergence loop (Forms 1+2 integrated).
+            // Each pass applies Form 2 alias reclassification first (free), counts the
+            // remaining residual, then sends candidates to the LLM.
+            // Termination criterion: residual(N) == residual(N-1) — nothing moved.
+            // Guaranteed to terminate because the residual pool is finite and monotone.
+            let mut prev_residual = usize::MAX; // sentinel: force the first pass to run
+            let mut pass_number = 0usize;
             let mut total_signal_constraints = 0usize;
             let mut total_conditional_rules = 0usize;
             let mut total_calls = 0usize;
             let mut total_errors = 0usize;
-            let mut total_alias_reclassified = 0usize; // Form 2 tally
+            let mut total_alias_reclassified = 0usize;
 
-            for pass in 1..=max_passes {
-                println!("--- pass {pass}/{max_passes} ---");
+            loop {
+                pass_number += 1;
+                println!("--- pass {pass_number} ---");
 
-                // Form 2: apply the accumulated alias map BEFORE deriving candidates.
-                // Aliases learned in previous passes reclassify NormativeStatements without
-                // an LLM call, shrinking the candidate pool for this pass.
+                // Form 2: apply the accumulated alias map BEFORE counting residuals.
+                // Aliases learned in previous passes reclassify NormativeStatements for free,
+                // shrinking the candidate pool before the LLM is involved.
                 if !args.dry_run {
                     let mut alias_counter = evidence_ir.signal_constraints.len() + 1;
                     let (alias_n, alias_records) =
@@ -136,7 +145,22 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
                     }
                 }
 
-                // Re-derive candidates each pass so already-extracted sentences are skipped.
+                // Count remaining residual AFTER alias reclassification.
+                let current_residual = count_candidate_statements(&evidence_ir);
+                println!("normative_statement_candidates: {current_residual}");
+
+                // Convergence check: stop when residual is zero or hasn’t decreased.
+                if current_residual == 0 {
+                    println!("convergence: residual = 0 — all extractable sentences processed.");
+                    break;
+                }
+                if current_residual >= prev_residual {
+                    println!("convergence: residual stable at {current_residual} — stopping.");
+                    break;
+                }
+                prev_residual = current_residual;
+
+                // Re-derive the candidate list from the (now alias-reclassified) pool.
                 let existing_signal_texts: std::collections::HashSet<String> = evidence_ir
                     .signal_constraints
                     .iter()
@@ -160,20 +184,12 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
                     .cloned()
                     .collect();
 
-                let total_candidates = candidate_statements.len();
                 let limit = if args.max_sentences == 0 {
-                    total_candidates
+                    candidate_statements.len()
                 } else {
-                    args.max_sentences.min(total_candidates)
+                    args.max_sentences.min(candidate_statements.len())
                 };
-
-                println!("normative_statement_candidates: {total_candidates}");
                 println!("sentences_this_pass: {limit}");
-
-                if limit == 0 {
-                    println!("convergence: no remaining candidates — stopping.");
-                    break;
-                }
 
                 let mut signal_counter = evidence_ir.signal_constraints.len() + 1;
                 let mut rule_counter = evidence_ir.conditional_rules.len() + 1;
@@ -264,9 +280,14 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
                 total_signal_constraints += new_signal_constraints.len();
                 total_conditional_rules += new_conditional_rules.len();
 
+                // dry-run: show one pass of what would be done, then stop.
+                if args.dry_run {
+                    break;
+                }
+
                 let alias_map_size_before_llm = evidence_ir.signal_alias_map.len();
 
-                if !args.dry_run && pass_extracted > 0 {
+                if pass_extracted > 0 {
                     // Form 1: backannotation — reclassify the original ExtractedStatement entries
                     // whose text was successfully extracted this pass.  This closes the feedback
                     // loop from Level 3 back to Level 1/2: the sentence is no longer an opaque
@@ -310,20 +331,14 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
                     evidence_ir.conditional_rules.extend(new_conditional_rules);
                     // Write after every pass so progress is durable.
                     evidence_ir.write_to_disk()?;
-                } else if !args.dry_run
-                    && evidence_ir.signal_alias_map.len() > alias_map_size_before_llm
-                {
+                } else if evidence_ir.signal_alias_map.len() > alias_map_size_before_llm {
                     // New aliases were learned this pass but the LLM extracted nothing new.
                     // Persist so the alias map accumulates correctly.
                     evidence_ir.write_to_disk()?;
                 }
-
-                // Layer C convergence: stop if nothing was extracted this pass.
-                if pass_extracted == 0 && !args.dry_run {
-                    println!("convergence: pass extracted 0 new records — stopping.");
-                    break;
-                }
-            } // end for pass
+                // (No explicit convergence break here: the residual-stable check at the
+                //  top of the next iteration handles it cleanly.)
+            } // end convergence loop
 
             if !args.dry_run {
                 println!("--- summary ---");
@@ -938,7 +953,6 @@ mod tests {
             dry_run: false,
             max_sentences: 0,
             grounding_signals: None,
-            max_passes: 1,
         });
         unsafe { std::env::remove_var(VLM_HELPER_ENV) };
         result?;
@@ -992,7 +1006,6 @@ mod tests {
             dry_run: true,
             max_sentences: 0,
             grounding_signals: None,
-            max_passes: 1,
         })?;
         unsafe { std::env::remove_var(VLM_HELPER_ENV) };
 
@@ -1131,7 +1144,6 @@ mod tests {
             dry_run: false,
             max_sentences: 0,
             grounding_signals: None,
-            max_passes: 1,
         })?;
         unsafe { std::env::remove_var(VLM_HELPER_ENV) };
 
@@ -1200,7 +1212,6 @@ mod tests {
             dry_run: false,
             max_sentences: 0,
             grounding_signals: None,
-            max_passes: 1,
         })?;
         unsafe { std::env::remove_var(VLM_HELPER_ENV) };
 
@@ -1270,8 +1281,8 @@ mod tests {
 
     #[test]
     fn nlp_enrich_multi_pass_stops_on_convergence() -> Result<()> {
-        // With max_passes=3, if the first pass extracts everything, the second pass should
-        // find 0 candidates and stop (convergence). This verifies the loop terminates.
+        // After the first pass extracts the only candidate, the residual drops to 0
+        // and the loop stops on convergence (residual-stable criterion).
         let _lock = vlm_helper_lock();
         let tempdir = tempdir()?;
         let source = tempdir.path().join("spec.md");
@@ -1318,7 +1329,6 @@ mod tests {
             dry_run: false,
             max_sentences: 0,
             grounding_signals: None,
-            max_passes: 3, // 3 passes requested, but should stop after 1 (convergence)
         });
         unsafe { std::env::remove_var(VLM_HELPER_ENV) };
         result?;

@@ -123,10 +123,6 @@ pub struct NlpEnrichArgs {
     /// in the EvidenceIR. Pass an empty string to disable grounding entirely.
     #[arg(long)]
     pub grounding_signals: Option<String>,
-    /// Run up to N enrichment passes, stopping early if a pass extracts nothing new.
-    /// Multi-pass is useful because each extracted record can ground subsequent passes.
-    #[arg(long, default_value = "1")]
-    pub max_passes: usize,
 }
 
 #[derive(Debug, Args)]

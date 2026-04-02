@@ -1,4 +1,9 @@
 # CHANGES
+## 2026-04-02 (remove --max-passes: residual-stable convergence criterion)
+- **Removed --max-passes CLI option** from NlpEnrichArgs: was a safety net that is no longer needed.
+- **New convergence criterion**: loop stops when residual(N) == residual(N-1).  Termination is guaranteed because the residual pool is finite and can only decrease or stay flat (monotone).  The criterion covers Form 2 alias reclassifications AND LLM extractions together, unlike the previous "pass_extracted == 0" check which only counted LLM extractions and could stop prematurely.
+- **Loop structure**:  replaced by  with pass counter for display only.  dry-run breaks after one pass.
+- **All 90 tests updated**: removed max_passes field from all NlpEnrichArgs struct literals; convergence test comment updated to describe residual-stable criterion.
 ## 2026-04-02 (Form 2: signal alias learning feedback loop)
 - **EvidenceIr.signal_alias_map** (evidence.rs): new BTreeMap<String,String> field (serde default = empty). Persisted to JSON so aliases accumulate across nlp-enrich runs.
 - **apply_alias_reclassification()** (EvidenceIr pub method): applies accumulated alias map to re-classify remaining NormativeStatements WITHOUT LLM calls. For each sentence containing a known alias phrase, substitutes the signal name (uppercase) and re-checks is_signal_value_constraint(). If true: reclassifies statement to SignalValueConstraint, synthesises a SignalConstraintRecord (AutomationConfidence::Low, alias-derived).
