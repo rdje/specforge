@@ -954,50 +954,98 @@ fn classify_statement(text: &str) -> StatementClass {
         &lowered_text,
         &[
             " cycle",
+            "cycles",
+            // Standard timing parameter abbreviations
             "tsu",
             "thd",
             "tckh",
             "tckl",
+            "tco",
+            "tpd",
+            "toh",
+            "tih",
             "setup time",
             "hold time",
             "clock period",
             "within n",
+            "within one clock",
+            "within two clock",
             "at least",
             "maximum latency",
             "propagation delay",
+            // Edge-referenced timing
+            "rising edge",
+            "falling edge",
+            "clock edge",
+            "positive edge",
+            "negative edge",
         ],
     ) && contains_any(
         &lowered_text,
-        &["shall", "must", "cycle", "ns", "ps", "time"],
+        &["shall", "must", "cycle", "ns", "ps", "time", "edge"],
     ) {
         return StatementClass::TimingConstraint;
     }
 
     // Conditional behavioral rules.
+    // Triggers on leading conditionals (When X, Y) and embedded conditionals (X when Y).
+    // Also handles inverted conditionals (unless), duration (while/during/as long as),
+    // and temporal ordering (after/before) when combined with a normative consequent.
     if (lowered_text.starts_with("when ")
         || lowered_text.starts_with("if ")
+        || lowered_text.starts_with("unless ")
+        || lowered_text.starts_with("while ")
+        || lowered_text.starts_with("during ")
+        || lowered_text.starts_with("after ")
+        || lowered_text.starts_with("before ")
+        || lowered_text.starts_with("provided that ")
+        || lowered_text.starts_with("as long as ")
         || lowered_text.contains(" when ")
+        || lowered_text.contains(" unless ")
         || lowered_text.contains("whenever ")
-        || lowered_text.contains("in the event"))
+        || lowered_text.contains("in the event")
+        || lowered_text.contains(" provided that ")
+        || lowered_text.contains(" as long as "))
         && contains_any(
             &lowered_text,
-            &["shall", "must", "will", "assert", "deassert"],
+            &["shall", "must", "cannot", "will", "assert", "deassert"],
         )
     {
         return StatementClass::ConditionalRule;
     }
 
     // Normative behavioral requirements — most important class for protocol specs.
+    // Covers RFC 2119 modal verbs (shall/must) and common prohibition vocabulary
+    // found in hardware specification documents.
     if contains_any(
         &lowered_text,
         &[
+            // RFC 2119 obligation / prohibition
             "shall not",
             "must not",
             "shall ",
             "must ",
             "required to",
             "is required",
+            "are required",
             "prohibited",
+            // Common prohibition vocabulary in chip specs (not covered by shall/must)
+            "cannot ",
+            "can not ",
+            "is not permitted",
+            "are not permitted",
+            "is not allowed",
+            "are not allowed",
+            "is not legal",
+            "is not valid",
+            "is forbidden",
+            "is illegal",
+            "may not ",
+            "must never",
+            "shall never",
+            "will not ",
+            "it is mandatory",
+            "is not supported",
         ],
     ) {
         return StatementClass::NormativeStatement;
@@ -1154,6 +1202,12 @@ fn is_hardware_signal_token(token: &str) -> bool {
 
 /// Level 2 NLP — Extract `SignalConstraintRecord` entries from `SignalValueConstraint` sentences.
 /// Operates only on already-classified sentences to keep precision high.
+///
+/// Multi-signal support: if a sentence constrains multiple signals simultaneously
+/// (e.g. "Both HTRANS and HADDR shall be stable"), a separate record is created
+/// for each. The condition clause is stripped first so that signal names appearing
+/// in the condition (e.g. HREADY in "...when HREADY is LOW") are not confused
+/// with subjects.
 fn extract_signal_constraints(
     statements: &[ExtractedStatement],
     counter: &mut usize,
@@ -1167,45 +1221,31 @@ fn extract_signal_constraints(
         let text = &statement.text;
         let lowered = text.to_ascii_lowercase();
 
-        // Extract the subject signal: find the first uppercase hardware-signal token.
-        // We look for 3+ char uppercase tokens, preferring H-prefixed AHB signals.
-        let subject_signal = text
-            .split(|c: char| !(c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_'))
-            .filter(|tok| {
-                tok.len() >= 3
-                    && tok
-                        .chars()
-                        .next()
-                        .map(|c| c.is_ascii_uppercase())
-                        .unwrap_or(false)
-                    && tok
-                        .chars()
-                        .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_')
-            })
-            .find(|tok| {
-                // Exclude value tokens and common non-signal uppercase words.
-                !matches!(
-                    *tok,
-                    "HIGH" | "LOW" | "IDLE" | "BUSY" | "NONSEQ" | "SEQ" | "OKAY" | "ERROR"
-                        | "VALID" | "INVALID" | "NONE" | "ALL" | "ANY"
-                        // Protocol family and company names are never signal subjects
-                        | "AMBA" | "AHB" | "AHB5" | "APB" | "AXI" | "CHI" | "ARM" | "AMD"
-                        // Document / specification terms
-                        | "NOTE" | "TABLE" | "FIGURE" | "CHAPTER" | "SECTION"
-                        // Common spec phrases
-                        | "MANAGER" | "SUBORDINATE" | "DECODER" | "INITIATOR"
-                )
-            })
-            .map(|s| s.to_string());
+        // Strip the condition clause so signal names in "when X" / "during X" / "unless X"
+        // are not mistaken for subjects of the constraint.
+        let subject_part = text_before_condition_marker(text);
 
-        let Some(subject_signal) = subject_signal else {
+        // Collect ALL valid signal tokens from the subject part, creating one record each.
+        // Fall back to scanning the full text if no signals found in the subject part.
+        let mut subject_signals = collect_subject_signal_tokens(subject_part);
+        if subject_signals.is_empty() {
+            subject_signals = collect_subject_signal_tokens(text);
+        }
+
+        if subject_signals.is_empty() {
             continue;
-        };
-
+        }
         // Determine constraint kind and negation from the value-binding phrase.
         let negated = contains_any(
             &lowered,
-            &["must not", "shall not", "must never", "shall never"],
+            &[
+                "must not",
+                "shall not",
+                "must never",
+                "shall never",
+                "cannot",
+                "will not",
+            ],
         );
 
         let constraint_kind = if contains_any(
@@ -1289,21 +1329,87 @@ fn extract_signal_constraints(
         // Extract condition clause: text after "when", "while", "during", "unless".
         let condition_text = extract_condition_clause(text);
 
-        *counter += 1;
-        records.push(SignalConstraintRecord {
-            constraint_id: format!("sigcon_{counter:04}"),
-            subject_signal,
-            constraint_kind,
-            target_value: None,
-            condition_text,
-            negated,
-            source_text: text.clone(),
-            supporting_statement_ids: vec![statement.statement_id.clone()],
-            automation_confidence: AutomationConfidence::Medium,
-        });
+        // Create one record per subject signal (multi-signal sentences).
+        for subject_signal in subject_signals {
+            *counter += 1;
+            records.push(SignalConstraintRecord {
+                constraint_id: format!("sigcon_{counter:04}"),
+                subject_signal,
+                constraint_kind: constraint_kind.clone(),
+                target_value: None,
+                condition_text: condition_text.clone(),
+                negated,
+                source_text: text.clone(),
+                supporting_statement_ids: vec![statement.statement_id.clone()],
+                automation_confidence: AutomationConfidence::Medium,
+            });
+        }
     }
 
     records
+}
+
+/// Return the portion of `text` before the first condition-clause marker
+/// (" when ", " while ", " during ", " unless ", " provided ", " after ", " before ").
+/// Returns the full text if no marker is found.
+fn text_before_condition_marker(text: &str) -> &str {
+    let lowered_bytes = text.to_ascii_lowercase();
+    for marker in &[
+        " when ",
+        " while ",
+        " during ",
+        " unless ",
+        " provided ",
+        " after ",
+        " before ",
+    ] {
+        if let Some(pos) = lowered_bytes.find(marker) {
+            return &text[..pos];
+        }
+    }
+    text
+}
+
+/// Collect all uppercase hardware signal tokens from a text fragment.
+/// Excludes logic-level values (HIGH/LOW), protocol state names (NONSEQ/SEQ/...),
+/// protocol family names (AHB/AXI/...), and document structure words.
+fn collect_subject_signal_tokens(text: &str) -> Vec<String> {
+    text.split(|c: char| !(c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_'))
+        .filter(|tok| {
+            tok.len() >= 3
+                && tok
+                    .chars()
+                    .next()
+                    .map(|c| c.is_ascii_uppercase())
+                    .unwrap_or(false)
+                && tok
+                    .chars()
+                    .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_')
+                && !matches!(
+                    *tok,
+                    // Logic levels and protocol state values are never signal subjects.
+                    "HIGH" | "LOW" | "IDLE" | "BUSY" | "NONSEQ" | "SEQ" | "OKAY" | "ERROR"
+                        | "VALID" | "INVALID" | "NONE" | "ALL" | "ANY" | "BOTH"
+                        | "SINGLE" | "INCR" | "WRAP" | "OKAY" | "RETRY" | "SPLIT"
+                        | "BYTE" | "HALF" | "WORD"
+                        // Protocol family and company names
+                        | "AMBA" | "AHB" | "AHB5" | "APB" | "AXI" | "CHI" | "ARM" | "AMD"
+                        | "RISC" | "IP" | "SoC"
+                        // Document structure terms
+                        | "NOTE" | "TABLE" | "FIGURE" | "CHAPTER" | "SECTION" | "REF"
+                        // Role/component terms that appear uppercase in signal tables
+                        | "MANAGER" | "SUBORDINATE" | "DECODER" | "INITIATOR"
+                        | "MASTER" | "SLAVE" | "TARGET" | "SOURCE"
+                )
+        })
+        .map(|s| s.to_string())
+        // Deduplicate while preserving order (same signal can appear twice in a sentence).
+        .fold(Vec::new(), |mut acc, s| {
+            if !acc.contains(&s) {
+                acc.push(s);
+            }
+            acc
+        })
 }
 
 /// Level 2 NLP — Extract `ConditionalRuleRecord` entries from `ConditionalRule` sentences.
@@ -1382,19 +1488,35 @@ fn extract_condition_clause(text: &str) -> Option<String> {
 /// Extract a protocol state value from lowered text (IDLE, NONSEQ, SEQ, OKAY, etc.).
 fn extract_protocol_state_value(lowered: &str) -> Option<String> {
     for state in &[
+        // HTRANS encoding values
         "idle",
         "busy",
         "nonseq",
         "nonsequential",
         "seq",
         "sequential",
+        // HRESP values
         "okay",
         "error",
-        "valid",
-        "invalid",
+        "retry",
+        "split",
+        // HBURST values
         "single",
         "incr",
-        "wrap",
+        "incr4",
+        "incr8",
+        "incr16",
+        "wrap4",
+        "wrap8",
+        "wrap16",
+        // HSIZE values
+        "byte",
+        "halfword",
+        "word",
+        // Generic
+        "valid",
+        "invalid",
+        "exclusive",
     ] {
         if contains_any(
             lowered,
@@ -1414,15 +1536,18 @@ fn extract_protocol_state_value(lowered: &str) -> Option<String> {
 /// Split a conditional sentence into (antecedent, consequent) based on leading conditional words.
 fn split_conditional_sentence(text: &str) -> (String, String) {
     let lowered = text.to_ascii_lowercase();
-    // Leading conditional: "When X, Y" / "While X, Y" / "If X, Y" / "During X, Y"
+    // Leading conditional: "When X, Y" / "While X, Y" / "If X, Y" / "Unless X, Y"
     for marker in &[
         "when ",
         "while ",
         "if ",
+        "unless ",
         "during ",
         "after ",
         "before ",
         "whenever ",
+        "provided that ",
+        "as long as ",
     ] {
         if lowered.starts_with(marker) {
             // Find the comma or second clause boundary.
@@ -1520,7 +1645,7 @@ fn is_signal_value_constraint(text: &str) -> bool {
     let has_value_binding = contains_any(
         &lowered,
         &[
-            // Logic levels
+            // Logic levels — explicit must/shall
             "must be high",
             "shall be high",
             "must be low",
@@ -1535,6 +1660,32 @@ fn is_signal_value_constraint(text: &str) -> bool {
             "shall stay low",
             "is high when",
             "is low when",
+            // Tied / driven / held — hardware-specific passive forms that imply
+            // a permanent or phase-locked logic level without using shall/must.
+            // Very common in chip specs: "HWRITE is tied HIGH for the entire burst".
+            "is tied high",
+            "is tied low",
+            "is tied to",
+            "is driven high",
+            "is driven low",
+            "is held high",
+            "is held low",
+            "is held stable",
+            "is kept high",
+            "is kept low",
+            "is kept stable",
+            "is kept asserted",
+            "remains high",
+            "remains low",
+            "remains asserted",
+            "remains deasserted",
+            "remains stable",
+            // Prohibition forms
+            "cannot change",
+            "cannot be changed",
+            "will not change",
+            "must not be changed",
+            "shall not be changed",
             // Assertion / de-assertion
             "must be asserted",
             "shall be asserted",
@@ -1548,6 +1699,10 @@ fn is_signal_value_constraint(text: &str) -> bool {
             "shall be driven high",
             "must be driven low",
             "shall be driven low",
+            "must not be deasserted",
+            "shall not be deasserted",
+            "must not be asserted",
+            "shall not be asserted",
             // Stability
             "must be stable",
             "shall be stable",
@@ -1555,7 +1710,7 @@ fn is_signal_value_constraint(text: &str) -> bool {
             "shall not change",
             "must remain stable",
             "shall remain stable",
-            // Protocol states (HTRANS, HBURST, HRESP encoding values)
+            // Protocol states (HTRANS, HBURST, HRESP, HSIZE encoding values)
             "must be idle",
             "shall be idle",
             "must be nonseq",
@@ -1572,6 +1727,8 @@ fn is_signal_value_constraint(text: &str) -> bool {
             "shall be valid",
             "must be invalid",
             "shall be invalid",
+            "must indicate",
+            "shall indicate",
             // Valid/ready handshake patterns
             "must be held",
             "shall be held",
@@ -2234,6 +2391,170 @@ mod tests {
         );
 
         Ok(())
+    }
+
+    /// Unit tests for Level 1 and Level 2 NLP classification and extraction.
+    /// These lock in the expanded vocabulary so regressions are caught immediately.
+    mod nlp_classification {
+        use super::super::{
+            StatementClass, classify_statement, collect_subject_signal_tokens,
+            is_signal_value_constraint, text_before_condition_marker,
+        };
+        use crate::ir::source::SignalConstraintKind;
+
+        // ── Level 1: NormativeStatement new vocabulary ──────────────────────
+
+        #[test]
+        fn cannot_classifies_as_normative_statement() {
+            // Note: "HTRANS cannot change" hits SignalValueConstraint (more specific — correct).
+            // This test uses a sentence with no value-binding phrase to isolate the
+            // NormativeStatement path triggered by "cannot ".
+            assert_eq!(
+                classify_statement("Transfers cannot overlap with outstanding error responses"),
+                StatementClass::NormativeStatement
+            );
+        }
+
+        #[test]
+        fn is_not_permitted_classifies_as_normative_statement() {
+            assert_eq!(
+                classify_statement("Early termination is not permitted on locked transfers"),
+                StatementClass::NormativeStatement
+            );
+        }
+
+        #[test]
+        fn may_not_classifies_as_normative_statement() {
+            assert_eq!(
+                classify_statement("HMASTER may not change while HMASTLOCK is asserted"),
+                StatementClass::NormativeStatement
+            );
+        }
+
+        #[test]
+        fn will_not_without_condition_classifies_as_normative_statement() {
+            // "HADDR will not change" → SignalValueConstraint (correct, more specific).
+            // Use a sentence with no value-binding phrase to isolate the "will not " trigger.
+            assert_eq!(
+                classify_statement("The response will not indicate an OKAY during error states"),
+                StatementClass::NormativeStatement
+            );
+        }
+
+        // ── Level 1: SignalValueConstraint new vocabulary ────────────────────
+
+        #[test]
+        fn is_tied_high_is_signal_value_constraint() {
+            // Very common in AHB specs: "HWRITE is tied HIGH for the entire burst".
+            assert!(is_signal_value_constraint(
+                "HWRITE is tied HIGH for the entire burst"
+            ));
+        }
+
+        #[test]
+        fn is_held_stable_is_signal_value_constraint() {
+            assert!(is_signal_value_constraint(
+                "HWDATA is held stable throughout the data phase"
+            ));
+        }
+
+        #[test]
+        fn cannot_change_is_signal_value_constraint() {
+            assert!(is_signal_value_constraint(
+                "HTRANS cannot change during a waited transfer"
+            ));
+        }
+
+        #[test]
+        fn remains_stable_is_signal_value_constraint() {
+            assert!(is_signal_value_constraint(
+                "HADDR remains stable throughout the burst"
+            ));
+        }
+
+        // ── Level 1: ConditionalRule new vocabulary ──────────────────────────
+
+        #[test]
+        fn unless_conditional_classifies_as_conditional_rule() {
+            assert_eq!(
+                classify_statement("HTRANS must remain NONSEQ unless HREADY is asserted"),
+                StatementClass::ConditionalRule
+            );
+        }
+
+        #[test]
+        fn provided_that_classifies_as_conditional_rule() {
+            // "HADDR shall be valid" → SignalValueConstraint (correct, more specific).
+            // Use a sentence whose consequent has no value-binding phrase.
+            assert_eq!(
+                classify_statement(
+                    "The transfer shall proceed provided that the address phase completes"
+                ),
+                StatementClass::ConditionalRule
+            );
+        }
+
+        #[test]
+        fn before_with_must_classifies_as_conditional_rule() {
+            // "HREADY must be asserted" → SignalValueConstraint (correct, more specific).
+            // Use a sentence whose consequent has no value-binding phrase.
+            assert_eq!(
+                classify_statement(
+                    "Before the transfer phase, the decoder must enable the peripheral select"
+                ),
+                StatementClass::ConditionalRule
+            );
+        }
+
+        // ── Level 1: TimingConstraint new vocabulary ─────────────────────────
+
+        #[test]
+        fn rising_edge_classifies_as_timing_constraint() {
+            // "HADDR must be stable" → SignalValueConstraint (correct, more specific).
+            // Use a sentence where the rising edge IS the timing parameter, not the condition.
+            assert_eq!(
+                classify_statement(
+                    "HCLK must have a rising edge period of at least one nanosecond"
+                ),
+                StatementClass::TimingConstraint
+            );
+        }
+
+        // ── Level 2: multi-signal extraction ────────────────────────────────
+
+        #[test]
+        fn collect_subject_signal_tokens_finds_all_signals_before_condition() {
+            // "Both HTRANS and HADDR shall be stable" → [HTRANS, HADDR]
+            // The condition clause stripping is not applied here (no condition marker).
+            let signals = collect_subject_signal_tokens("Both HTRANS and HADDR shall be stable");
+            assert!(signals.contains(&"HTRANS".to_string()), "expected HTRANS");
+            assert!(signals.contains(&"HADDR".to_string()), "expected HADDR");
+        }
+
+        #[test]
+        fn text_before_condition_marker_strips_when_clause() {
+            let pre = text_before_condition_marker("HTRANS must remain NONSEQ when HREADY is LOW");
+            assert!(pre.contains("HTRANS"), "subject part should include HTRANS");
+            assert!(
+                !pre.contains("HREADY"),
+                "condition-clause signal HREADY should be stripped"
+            );
+        }
+
+        #[test]
+        fn collect_subject_signal_tokens_excludes_logic_level_values() {
+            // HIGH, LOW, IDLE etc. must never be treated as subject signals.
+            let signals = collect_subject_signal_tokens("HTRANS must be IDLE");
+            assert!(signals.contains(&"HTRANS".to_string()));
+            assert!(
+                !signals.contains(&"IDLE".to_string()),
+                "IDLE is a value, not a signal"
+            );
+            assert!(
+                !signals.contains(&"HIGH".to_string()),
+                "HIGH is a logic level, not a signal"
+            );
+        }
     }
 
     #[test]
