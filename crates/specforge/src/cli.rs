@@ -33,6 +33,8 @@ pub enum Commands {
     Enrich(EnrichArgs),
     /// Validate an IR artifact and report extraction coverage metrics
     Validate(ValidateArgs),
+    /// Enrich an EvidenceIR artifact with LLM-extracted NLP Level 3 constraints
+    NlpEnrich(NlpEnrichArgs),
 }
 
 #[derive(Debug, Args)]
@@ -98,6 +100,24 @@ impl From<AdapterTargetArg> for AdapterTarget {
             AdapterTargetArg::Vhdl => AdapterTarget::Vhdl,
         }
     }
+}
+
+#[derive(Debug, Args)]
+pub struct NlpEnrichArgs {
+    /// Path to an EvidenceIR JSON artifact to enrich with LLM-extracted NLP constraints
+    pub evidence_ir: std::path::PathBuf,
+    /// LLM provider (same providers as specforge enrich)
+    #[arg(long, value_enum, default_value = "skip")]
+    pub vlm_provider: VlmProviderArg,
+    /// Model name override (default: qwen2.5vl:7b for ollama/lmstudio, gpt-4o for openai)
+    #[arg(long)]
+    pub vlm_model: Option<String>,
+    /// Show what would be enriched without making LLM calls
+    #[arg(long)]
+    pub dry_run: bool,
+    /// Maximum number of NormativeStatement sentences to send to LLM (0 = all)
+    #[arg(long, default_value = "0")]
+    pub max_sentences: usize,
 }
 
 #[derive(Debug, Args)]

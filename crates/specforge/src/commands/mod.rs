@@ -4,5 +4,6 @@ pub mod evidence;
 pub mod ingest;
 pub mod inspect;
 pub mod intent;
+pub mod nlp_enrich;
 pub mod semantic;
 pub mod validate;

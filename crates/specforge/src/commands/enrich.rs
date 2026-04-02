@@ -79,9 +79,11 @@ pub fn run(args: EnrichArgs) -> Result<()> {
             println!("vlm_provider: {provider_name}");
 
             let model = args.vlm_model.unwrap_or_else(|| match provider {
-                VlmProviderArg::Ollama => "llava:13b".to_string(),
+                // qwen2.5vl:7b is the recommended open-source VLM for diagram extraction.
+                // It outperforms GPT-4o-mini on document/diagram understanding tasks.
+                VlmProviderArg::Ollama => "qwen2.5vl:7b".to_string(),
                 VlmProviderArg::OpenAi => "gpt-4o".to_string(),
-                VlmProviderArg::LmStudio => "loaded_model".to_string(),
+                VlmProviderArg::LmStudio => "qwen2.5vl:7b".to_string(),
                 VlmProviderArg::Skip => unreachable!(),
             });
             println!("vlm_model: {model}");
@@ -160,10 +162,8 @@ fn enrich_visual_assets(
                 calls_made += 1;
                 match call_vlm_for_asset(asset, "timing_diagram", model, api_url, provider) {
                     Ok(observation_text) => {
-                        asset.note = Some(format!(
-                            "vlm_timing_diagram_extraction: {}",
-                            &observation_text[..observation_text.len().min(120)]
-                        ));
+                        asset.note =
+                            Some(format!("vlm_timing_diagram_extraction: {observation_text}"));
                         timing_enriched += 1;
                     }
                     Err(e) => {
@@ -187,10 +187,8 @@ fn enrich_visual_assets(
                 calls_made += 1;
                 match call_vlm_for_asset(asset, "state_machine", model, api_url, provider) {
                     Ok(observation_text) => {
-                        asset.note = Some(format!(
-                            "vlm_state_machine_extraction: {}",
-                            &observation_text[..observation_text.len().min(120)]
-                        ));
+                        asset.note =
+                            Some(format!("vlm_state_machine_extraction: {observation_text}"));
                         state_machine_enriched += 1;
                     }
                     Err(e) => {
@@ -333,23 +331,62 @@ fn build_chat_request(model: &str, prompt: &str, image_b64: &str) -> String {
         .replace('\n', "\\n");
 
     format!(
-        r#"{{"model": "{model}", "messages": [{{"role": "user", "content": [{{"type": "text", "text": "{prompt_escaped}"}}, {{"type": "image_url", "image_url": {{"url": "data:image/png;base64,{image_b64}"}}}}]}}], "max_tokens": 1024}}"#
+        r#"{{"model": "{model}", "messages": [{{"role": "user", "content": [{{"type": "text", "text": "{prompt_escaped}"}}, {{"type": "image_url", "image_url": {{"url": "data:image/png;base64,{image_b64}"}}}}]}}], "max_tokens": 2048}}"#
     )
 }
 
 /// Extract the assistant message content from an OpenAI-compatible chat response.
+///
+/// Parses the standard structure:
+/// `{"choices": [{"message": {"content": "..."}}]}`
+///
+/// `content` may be a plain string or an array of content parts (some VLM providers).
 fn extract_vlm_content(response_json: &str) -> Result<String> {
-    // Parse just enough to find choices[0].message.content.
-    if let Some(content_start) = response_json.find("\"content\":") {
-        let after = &response_json[content_start + 10..].trim_start();
-        if after.starts_with('"') {
-            // Simple string content.
-            let end = after[1..].find('"').unwrap_or(after.len() - 1);
-            return Ok(after[1..end + 1].to_string());
-        }
+    #[derive(serde::Deserialize)]
+    struct ChatResponse {
+        choices: Vec<ChatChoice>,
     }
-    // Fall back to returning the raw response.
-    Ok(response_json.chars().take(512).collect())
+    #[derive(serde::Deserialize)]
+    struct ChatChoice {
+        message: ChatMessage,
+    }
+    #[derive(serde::Deserialize)]
+    struct ChatMessage {
+        content: serde_json::Value,
+    }
+
+    let response: ChatResponse = serde_json::from_str(response_json).map_err(|e| {
+        AppError::InvalidStageArtifact(format!(
+            "invalid VLM response (not OpenAI-compatible JSON): {e}\nraw: {}",
+            &response_json[..response_json.len().min(256)]
+        ))
+    })?;
+
+    let content = response
+        .choices
+        .into_iter()
+        .next()
+        .ok_or_else(|| {
+            AppError::InvalidStageArtifact("VLM response has no choices (empty array)".to_string())
+        })?
+        .message
+        .content;
+
+    // Content can be a plain string or an array of {type, text} parts.
+    match content {
+        serde_json::Value::String(s) => Ok(s),
+        serde_json::Value::Array(parts) => {
+            for part in parts {
+                if let Some(text) = part.get("text").and_then(|t| t.as_str()) {
+                    return Ok(text.to_string());
+                }
+            }
+            Err(AppError::InvalidStageArtifact(
+                "VLM response content array has no text part".to_string(),
+            ))
+        }
+        other => Ok(other.to_string()),
+    }
 }
 
 /// Simple base64 encoder without external dependencies.
