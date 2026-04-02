@@ -43,7 +43,7 @@
   - `intent <semantic-ir>`
   - `adapt <intent-ir> --target fsm --dry-run`
   - `adapt <intent-ir> --target fsm`
-- the currently implemented real stage artifacts are `SourceIR`, `EvidenceIR`, `SemanticIR`, `IntentIR`, and the first renderable `.fsm` adapter slices for explicit standalone DT and explicit structured FSM cases
+- the currently implemented real stage artifacts are `SourceIR`, `EvidenceIR`, `SemanticIR`, `IntentIR`, and the first renderable `.fsm` adapter slices for explicit standalone DT, widened canonical symbol/control lowering, selector/test-node branches, compound-update shorthand, explicit structured FSM cases, and explicit top-root composition cases, with the adapter root-kind surface now intentionally limited to `dt` / `fsm` / `top`
 - explicit staged IR modules now exist for:
   - `SourceIR`
   - `EvidenceIR`
@@ -52,8 +52,8 @@
   - adapters
 
 ## Latest committed baseline
-- latest_commit_hash: `215a89d9ee268893379ddeb4604cf1c97d2a04a4`
-- latest_commit_brief_message: `Implement renderable standalone fsm canonical slice`
+- latest_commit_hash: `464a1a1d73d352f08396cb24e544c3675e4d74d5`
+- latest_commit_brief_message: `Implement honest structured fsm root lowering`
 - continuity_rule:
   - refresh this section whenever a new latest committed baseline exists at the time `MEMORY.md` is updated
 
@@ -87,9 +87,15 @@
 - the current slice has now widened the `.fsm` adapter so explicit standalone sequential DT cases can emit `(+system ...)` and `(:= ...)` while broader `?fsm:name` and composition roots remain blocked
 - the current slice has now enriched `SemanticIR` and `IntentIR` with backend-neutral regular-state and transition records from explicit `State ...` and `Transition ...` statements
 - the current slice has now widened the `.fsm` adapter so explicit state-graph cases can emit honest structured `?fsm:name` text while composition roots remain blocked
+- the current slice has now enriched `SemanticIR` and `IntentIR` with explicit backend-neutral module/top composition facts from `Module ...` and `Top ...` statements
+- the current slice has now widened the `.fsm` adapter so explicit composition cases can emit honest `?top:name` source documents with embedded DT/FSM child roots while direct `?mod:name` / `?module:name` alias roots remain deferred
+- the current slice has now widened `SemanticIR` and `IntentIR` further so canonical `.fsm`-relevant symbol definitions and structured control blocks, including dedicated synchronous-reset and asynchronous-reset roles, are preserved explicitly
+- the current slice has now widened the `.fsm` adapter so renderable DT/FSM lowering consumes canonical symbol-definition/control-block surface first and now lowers honest selector/test-node branches plus compound-update shorthand while still blocking unsupported selector/predicate shapes instead of inventing target syntax
+- the current slice has now reviewed the `fsmgen` direct-root contract and confirmed that `?mod:` / `?module:` remain compatibility-level accepted spellings rather than a settled backend-neutral direct-module distinction for SpecForge, so the adapter root-kind surface now stays limited to `dt` / `fsm` / `top`
+- the user has now clarified the real-hardware reset model in more detail, and the canonical reset contract now preserves reset kind, polarity, assertion timing, release timing, and reset-target semantics explicitly rather than leaving them implicit
 
 ## In-flight work in this session
-- run the commit workflow for the completed structured `?fsm:name` slice
+- the direct-module defer decision slice, validation, and continuity/doc refresh are complete; wait for the user's next direction or commit request
 
 ## Current execution checkpoint
 - `IntentIR` now has a real build/materialization path
@@ -102,21 +108,34 @@
   - intent identity, actor responsibilities, behaviors, constraints, assumptions, and residual decisions
 - execute-mode `specforge adapt --target fsm` now writes:
   - `generated/adapters/fsm/<document_key>/adapter.json`
-  - root-kind choice (`?dt:name` or `?fsm:name`), canonical signal inventory, canonical system/init surface, canonical control/state/transition candidates, renderability status, and adapter residual decisions
-  - a real emitted standalone or structured `.fsm` file when every referenced signal has explicit width/direction, every rendered control fragment is fully typed, and any sequential/stateful case has explicit system/init facts
+  - root-kind choice (`?dt:name`, `?fsm:name`, or `?top:name`), canonical signal inventory, canonical system/init surface, canonical control/state/transition candidates, explicit module/top candidate counts, renderability status, and adapter residual decisions
+  - a real emitted standalone, structured, or explicit top-root `.fsm` file when every referenced signal has explicit width/direction, every rendered control fragment is fully typed, any sequential/stateful case has explicit system/init facts, any explicit top composition has renderable child modules plus width-compatible links, and any selector/test-node or compound-update control maps directly into the current honest `.fsm` surface
 - `SemanticIR` now preserves:
   - typed signal records when explicit declarations are present
-  - backend-neutral system contract and init-assignment records from explicit `Clock ...`, `Reset ...`, and `Init ...` statements
+  - backend-neutral system contract and init-assignment records from explicit `Clock ...`, `Reset ...`, and `Init ...` statements, including first-class reset polarity/assertion/release/target semantics
   - backend-neutral regular-state and transition records from explicit `State ...` and `Transition ...` statements
+  - explicit backend-neutral module records from `Module ...` statements
+  - explicit backend-neutral top-composition records from `Top ...` statements
+  - canonical symbol-definition sections for explicit `Constant`, `Define`, `Param`, and `Enum` statements
+  - structured control blocks with branch-local actions and dedicated synchronous-reset/asynchronous-reset roles
   - backend-neutral guarded/action control fragments from explicit `Block ...` statements
 - `IntentIR` now carries:
   - canonical interface inventory
-  - canonical backend-neutral system contract and init assignments
+  - canonical backend-neutral system contract and init assignments, including first-class reset polarity/assertion/release/target semantics
   - canonical regular states and state transitions
+  - explicit canonical module and top-composition records
+  - canonical symbol-definition sections
+  - canonical structured control blocks, including dedicated reset-role blocks
   - backend-neutral guarded/action control fragments
 - the current validation set is:
+  - `cargo fmt --all --manifest-path Cargo.toml --check`
   - `cargo fmt --all --manifest-path Cargo.toml`
   - `cargo test --manifest-path Cargo.toml`
+  - `cargo run --manifest-path Cargo.toml -- ingest <temp>/inferred_reset_cli.md`
+  - `cargo run --manifest-path Cargo.toml -- evidence generated/source_ir/inferred_reset_cli/source_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/inferred_reset_cli/evidence_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/inferred_reset_cli/semantic_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/inferred_reset_cli/intent_ir.json --target fsm`
   - `cargo run --manifest-path Cargo.toml -- ingest <temp>/handshake.md`
   - `cargo run --manifest-path Cargo.toml -- evidence generated/source_ir/handshake/source_ir.json`
   - `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/handshake/evidence_ir.json`
@@ -137,7 +156,28 @@
   - `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/explicit_fsm/evidence_ir.json`
   - `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/explicit_fsm/semantic_ir.json`
   - `cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/explicit_fsm/intent_ir.json --target fsm`
-- the next implementation action is to promote explicit composition/module/top facts for honest broader-root lowering while keeping composition roots deferred
+  - `cargo run --manifest-path Cargo.toml -- ingest <temp>/explicit_top.md`
+  - `cargo run --manifest-path Cargo.toml -- evidence generated/source_ir/explicit_top/source_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/explicit_top/evidence_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/explicit_top/semantic_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/explicit_top/intent_ir.json --target fsm`
+  - `cargo run --manifest-path Cargo.toml -- ingest <temp>/sync_control.md`
+  - `cargo run --manifest-path Cargo.toml -- evidence generated/source_ir/sync_control/source_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/sync_control/evidence_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/sync_control/intent_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/sync_control/intent_ir.json --target fsm`
+  - `cargo test --manifest-path Cargo.toml adapters`
+  - `cargo run --manifest-path Cargo.toml -- ingest <temp>/selector_dt.md`
+  - `cargo run --manifest-path Cargo.toml -- evidence generated/source_ir/selector_dt/source_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/selector_dt/evidence_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/selector_dt/intent_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/selector_dt/intent_ir.json --target fsm`
+  - `cargo run --manifest-path Cargo.toml -- ingest <temp>/compound_update_dt.md`
+  - `cargo run --manifest-path Cargo.toml -- evidence generated/source_ir/compound_update_dt/source_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/compound_update_dt/evidence_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/compound_update_dt/intent_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/compound_update_dt/intent_ir.json --target fsm`
+- the next implementation action is to build the validation/back-annotation pipeline so staged IR and adapter outputs have reproducible artifact-linked reports
 
 ## If resuming from an interruption
 1. read `README.md`
@@ -149,10 +189,10 @@
 7. continue with the next implementation slice unless the user redirects
 
 ## Recommended next implementation slice
-- promote explicit composition/module/top facts needed for honest `?top:name`, `?mod:name`, and `?module:name` lowering
+- build the validation/back-annotation pipeline so staged IR and adapter outputs have reproducible artifact-linked reports
 - keep `IntentIR` as the canonical endpoint and keep adapters downstream of it
 
 ## Commit status
-- the latest committed baseline is `215a89d9ee268893379ddeb4604cf1c97d2a04a4`
-- the current working tree contains the uncommitted explicit regular-state/transition enrichment, structured `?fsm:name` adapter slice, and the matching live-doc refreshes
+- the latest committed baseline is `464a1a1d73d352f08396cb24e544c3675e4d74d5`
+- the current working tree contains the uncommitted direct-module defer decision slice, the earlier selector/test-node and compound-update `.fsm` lowering slice, the earlier first-class reset-contract widening, and the matching live-doc refreshes
 - before the next commit, follow `COMMIT.md`

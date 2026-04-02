@@ -37,6 +37,14 @@ pub struct SemanticIr {
     pub state_transitions: Vec<StateTransitionRecord>,
     #[serde(default)]
     pub decision_tree_fragments: Vec<DecisionTreeFragmentRecord>,
+    #[serde(default)]
+    pub symbol_definitions: Vec<SymbolDefinitionRecord>,
+    #[serde(default)]
+    pub control_blocks: Vec<ControlBlockRecord>,
+    #[serde(default)]
+    pub explicit_modules: Vec<ExplicitModuleRecord>,
+    #[serde(default)]
+    pub explicit_tops: Vec<ExplicitTopRecord>,
     pub residual_decisions: Vec<ResidualDecisionPacket>,
 }
 
@@ -87,6 +95,14 @@ impl SemanticIr {
         let regular_states = build_regular_states(&context);
         let state_transitions = build_state_transitions(&context);
         let decision_tree_fragments = build_decision_tree_fragments(&context);
+        let symbol_definitions = build_symbol_definitions(&context);
+        let control_blocks = build_control_blocks(
+            &context,
+            regular_states.as_slice(),
+            symbol_definitions.as_slice(),
+        );
+        let explicit_modules = build_explicit_modules(&context);
+        let explicit_tops = build_explicit_tops(&context);
         let residual_decisions =
             build_residual_decisions(&context, &interfaces, actor_build.explicit_actor_count);
 
@@ -110,6 +126,10 @@ impl SemanticIr {
             regular_states,
             state_transitions,
             decision_tree_fragments,
+            symbol_definitions,
+            control_blocks,
+            explicit_modules,
+            explicit_tops,
             residual_decisions,
         })
     }
@@ -125,6 +145,17 @@ impl SemanticIr {
             self.to_pretty_json()?,
         )?;
         Ok(())
+    }
+}
+
+fn min_automation_confidence(
+    left: AutomationConfidence,
+    right: AutomationConfidence,
+) -> AutomationConfidence {
+    if automation_confidence_rank(left) <= automation_confidence_rank(right) {
+        left
+    } else {
+        right
     }
 }
 
@@ -245,6 +276,10 @@ pub struct SystemContractRecord {
     pub clock_signal: String,
     pub reset_signal: String,
     pub reset_kind: SystemResetKind,
+    pub reset_polarity: SystemResetPolarity,
+    pub assertion_timing: SystemResetTimingRelation,
+    pub release_timing: SystemResetTimingRelation,
+    pub target_kind: SystemResetTargetKind,
     pub supporting_statement_ids: Vec<String>,
     pub automation_confidence: AutomationConfidence,
 }
@@ -254,6 +289,47 @@ pub struct SystemContractRecord {
 pub enum SystemResetKind {
     Synchronous,
     Asynchronous,
+}
+
+impl SystemResetKind {
+    pub fn assertion_timing(self) -> SystemResetTimingRelation {
+        match self {
+            Self::Synchronous => SystemResetTimingRelation::SynchronousToClock,
+            Self::Asynchronous => SystemResetTimingRelation::AsynchronousToClock,
+        }
+    }
+
+    pub fn release_timing(self) -> SystemResetTimingRelation {
+        SystemResetTimingRelation::SynchronousToClock
+    }
+
+    pub fn target_kind(self) -> SystemResetTargetKind {
+        match self {
+            Self::Synchronous => SystemResetTargetKind::DataInputPath,
+            Self::Asynchronous => SystemResetTargetKind::DedicatedResetPin,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum SystemResetPolarity {
+    ActiveHigh,
+    ActiveLow,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum SystemResetTimingRelation {
+    SynchronousToClock,
+    AsynchronousToClock,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum SystemResetTargetKind {
+    DataInputPath,
+    DedicatedResetPin,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -341,6 +417,267 @@ pub enum DecisionTreeValueRecord {
     SignalRef { signal_name: String },
     Literal { literal: String },
 }
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum SymbolDefinitionKind {
+    Constant,
+    Define,
+    Param,
+    Enum,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct SymbolEnumMemberRecord {
+    pub member_name: String,
+    pub value: ControlExpressionRecord,
+    pub declaration_order: u32,
+    pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct SymbolDefinitionRecord {
+    pub symbol_id: String,
+    pub symbol_name: String,
+    pub kind: SymbolDefinitionKind,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub value: Option<ControlExpressionRecord>,
+    #[serde(default)]
+    pub members: Vec<SymbolEnumMemberRecord>,
+    pub declaration_order: u32,
+    pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum ControlReferenceKind {
+    Unknown,
+    Signal,
+    Symbol,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(tag = "kind", rename_all = "snake_case")]
+pub enum ControlReferenceSuffix {
+    Member { member_name: String },
+    BitIndex { index: u32 },
+    Slice { msb: u32, lsb: u32 },
+    WidthCast { width: u32 },
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ControlReferenceRecord {
+    pub base_name: String,
+    pub kind_hint: ControlReferenceKind,
+    #[serde(default)]
+    pub suffixes: Vec<ControlReferenceSuffix>,
+    pub exposed_public_output: bool,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum ControlUnaryOperator {
+    Not,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum ControlBinaryOperator {
+    Add,
+    Sub,
+    Mul,
+    Div,
+    Mod,
+    BitAnd,
+    BitOr,
+    BitXor,
+    Eq,
+    NotEq,
+    Lt,
+    Le,
+    Gt,
+    Ge,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(tag = "kind", rename_all = "snake_case")]
+pub enum ControlExpressionRecord {
+    Reference {
+        reference: ControlReferenceRecord,
+    },
+    Literal {
+        literal: String,
+    },
+    Unary {
+        operator: ControlUnaryOperator,
+        operand: Box<ControlExpressionRecord>,
+    },
+    Binary {
+        operator: ControlBinaryOperator,
+        left: Box<ControlExpressionRecord>,
+        right: Box<ControlExpressionRecord>,
+    },
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum ControlBlockRole {
+    StateBody,
+    ResetSynchronous,
+    ResetAsynchronous,
+    StandaloneDecisionTree,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ControlAssignmentTargetRecord {
+    pub signal_name: String,
+    pub exposed_public_output: bool,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum ControlDualOutputKind {
+    NextSignal,
+    RegisteredSignal,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum ControlCompoundUpdateOperation {
+    Increment,
+    Decrement,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(tag = "kind", rename_all = "snake_case")]
+pub enum ControlActionRecord {
+    Assign {
+        target: ControlAssignmentTargetRecord,
+        assignment_kind: DecisionTreeAssignmentKind,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        dual_output: Option<ControlDualOutputKind>,
+        value: ControlExpressionRecord,
+    },
+    Transition {
+        target_state: String,
+    },
+    DelayedPulse {
+        target: ControlAssignmentTargetRecord,
+        delay: u32,
+        value: ControlExpressionRecord,
+    },
+    CompoundUpdate {
+        target: ControlAssignmentTargetRecord,
+        operation: ControlCompoundUpdateOperation,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        amount: Option<ControlExpressionRecord>,
+    },
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ControlBranchRecord {
+    pub branch_id: String,
+    pub declaration_order: u32,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub predicate: Option<ControlExpressionRecord>,
+    #[serde(default)]
+    pub actions: Vec<ControlActionRecord>,
+    pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ControlBlockRecord {
+    pub block_id: String,
+    pub block_name: String,
+    pub role: ControlBlockRole,
+    pub declaration_order: u32,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub selector: Option<ControlExpressionRecord>,
+    #[serde(default)]
+    pub branches: Vec<ControlBranchRecord>,
+    pub referenced_signal_names: Vec<String>,
+    pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ExplicitModuleRecord {
+    pub module_id: String,
+    pub module_name: String,
+    pub declaration_order: u32,
+    #[serde(default)]
+    pub interfaces: Vec<InterfaceRecord>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub system_contract: Option<SystemContractRecord>,
+    #[serde(default)]
+    pub init_assignments: Vec<InitAssignmentRecord>,
+    #[serde(default)]
+    pub regular_states: Vec<RegularStateRecord>,
+    #[serde(default)]
+    pub state_transitions: Vec<StateTransitionRecord>,
+    #[serde(default)]
+    pub decision_tree_fragments: Vec<DecisionTreeFragmentRecord>,
+    #[serde(default)]
+    pub symbol_definitions: Vec<SymbolDefinitionRecord>,
+    #[serde(default)]
+    pub control_blocks: Vec<ControlBlockRecord>,
+    pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ExplicitTopRecord {
+    pub top_id: String,
+    pub top_name: String,
+    pub declaration_order: u32,
+    #[serde(default)]
+    pub ports: Vec<ExplicitTopPortRecord>,
+    #[serde(default)]
+    pub children: Vec<ExplicitTopChildRecord>,
+    #[serde(default)]
+    pub links: Vec<ExplicitTopLinkRecord>,
+    pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ExplicitTopPortRecord {
+    pub port_name: String,
+    pub direction_hint: InterfaceSignalDirection,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub width_hint: Option<u32>,
+    pub declaration_order: u32,
+    pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ExplicitTopChildRecord {
+    pub instance_name: String,
+    pub source_module_name: String,
+    pub declaration_order: u32,
+    pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ExplicitTopLinkRecord {
+    pub link_id: String,
+    pub source: ExplicitTopLinkEndpoint,
+    pub target: ExplicitTopLinkEndpoint,
+    pub declaration_order: u32,
+    pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ExplicitTopLinkEndpoint {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub instance_name: Option<String>,
+    pub signal_name: String,
+}
 
 #[derive(Debug, Clone)]
 struct SemanticContext {
@@ -422,6 +759,19 @@ struct StatementContext {
     signals: Vec<String>,
 }
 
+impl StatementContext {
+    fn with_rewritten_text(&self, text: String) -> Self {
+        Self {
+            statement_id: self.statement_id.clone(),
+            class: self.class,
+            text: text.clone(),
+            related_visual_evidence_ids: self.related_visual_evidence_ids.clone(),
+            section_ids: self.section_ids.clone(),
+            signals: extract_signal_tokens(&text),
+        }
+    }
+}
+
 #[derive(Debug, Clone)]
 struct SemanticSectionContext {
     section_id: String,
@@ -459,6 +809,53 @@ struct InterfaceSignalAccumulator {
 }
 
 #[derive(Debug, Clone)]
+struct ScalarSymbolAccumulator {
+    kind: SymbolDefinitionKind,
+    symbol_name: String,
+    value: ControlExpressionRecord,
+    declaration_order: u32,
+    supporting_statement_ids: BTreeSet<String>,
+    conflicting_value: bool,
+}
+
+#[derive(Debug, Clone)]
+struct EnumMemberAccumulator {
+    member_name: String,
+    value: ControlExpressionRecord,
+    declaration_order: u32,
+    supporting_statement_ids: BTreeSet<String>,
+    conflicting_value: bool,
+}
+
+#[derive(Debug, Clone)]
+struct EnumSymbolAccumulator {
+    enum_name: String,
+    declaration_order: u32,
+    members: BTreeMap<String, EnumMemberAccumulator>,
+    supporting_statement_ids: BTreeSet<String>,
+}
+
+#[derive(Debug, Clone)]
+struct ControlBranchAccumulator {
+    predicate: Option<ControlExpressionRecord>,
+    declaration_order: u32,
+    actions: Vec<ControlActionRecord>,
+    referenced_signal_names: BTreeSet<String>,
+    supporting_statement_ids: BTreeSet<String>,
+}
+
+#[derive(Debug, Clone)]
+struct ControlBlockAccumulator {
+    block_name: String,
+    role: ControlBlockRole,
+    declaration_order: u32,
+    selector: Option<ControlExpressionRecord>,
+    branches: Vec<ControlBranchAccumulator>,
+    referenced_signal_names: BTreeSet<String>,
+    supporting_statement_ids: BTreeSet<String>,
+}
+
+#[derive(Debug, Clone)]
 struct InitAssignmentAccumulator {
     value: DecisionTreeValueRecord,
     supporting_statement_ids: BTreeSet<String>,
@@ -476,12 +873,55 @@ struct ParsedInterfaceSignalDeclaration {
 struct ParsedSystemResetDeclaration {
     signal_name: String,
     reset_kind: SystemResetKind,
+    reset_polarity: SystemResetPolarity,
+    assertion_timing: SystemResetTimingRelation,
+    release_timing: SystemResetTimingRelation,
+    target_kind: SystemResetTargetKind,
+    automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone)]
+struct ParsedModuleScopedStatement {
+    module_name: String,
+    scoped_text: Option<String>,
+}
+
+#[derive(Debug, Clone)]
+struct ParsedTopScopedStatement {
+    top_name: String,
+    scoped_text: Option<String>,
 }
 
 #[derive(Debug, Clone)]
 struct ParsedInitAssignment {
     target_signal: String,
     value: DecisionTreeValueRecord,
+}
+
+#[derive(Debug, Clone)]
+enum ParsedSymbolDefinition {
+    Scalar {
+        kind: SymbolDefinitionKind,
+        symbol_name: String,
+        value: ControlExpressionRecord,
+    },
+    EnumMember {
+        enum_name: String,
+        member_name: String,
+        value: ControlExpressionRecord,
+    },
+}
+
+#[derive(Debug, Clone)]
+struct ParsedExplicitTopChild {
+    instance_name: String,
+    source_module_name: String,
+}
+
+#[derive(Debug, Clone)]
+struct ParsedExplicitTopLink {
+    source: ExplicitTopLinkEndpoint,
+    target: ExplicitTopLinkEndpoint,
 }
 
 #[derive(Debug, Clone)]
@@ -506,6 +946,16 @@ struct ParsedDecisionTreeFragment {
 }
 
 #[derive(Debug, Clone)]
+struct ParsedControlClause {
+    block_name: String,
+    role: ControlBlockRole,
+    selector: Option<ControlExpressionRecord>,
+    predicate: Option<ControlExpressionRecord>,
+    actions: Vec<ControlActionRecord>,
+    referenced_signal_names: BTreeSet<String>,
+}
+
+#[derive(Debug, Clone)]
 struct DecisionTreeFragmentAccumulator {
     block_name: String,
     guard: Option<DecisionTreeGuardRecord>,
@@ -515,8 +965,29 @@ struct DecisionTreeFragmentAccumulator {
     automation_confidence: AutomationConfidence,
 }
 
+#[derive(Debug, Clone)]
+struct ExplicitModuleAccumulator {
+    module_name: String,
+    declaration_order: u32,
+    statements: Vec<StatementContext>,
+    supporting_statement_ids: BTreeSet<String>,
+}
+
+#[derive(Debug, Clone)]
+struct ExplicitTopAccumulator {
+    top_name: String,
+    declaration_order: u32,
+    ports: Vec<ExplicitTopPortRecord>,
+    children: Vec<ExplicitTopChildRecord>,
+    links: Vec<ExplicitTopLinkRecord>,
+    supporting_statement_ids: BTreeSet<String>,
+}
+
 fn build_interfaces(context: &SemanticContext) -> Vec<InterfaceRecord> {
     let mut accumulators: BTreeMap<String, InterfaceAccumulator> = BTreeMap::new();
+    let empty_regular_state_names = BTreeSet::<String>::new();
+    let empty_known_signal_names = BTreeSet::<String>::new();
+    let empty_known_symbol_names = BTreeSet::<String>::new();
 
     for statement in &context.statements {
         if let Some(signal_declaration) = parse_explicit_signal_declaration(&statement.text) {
@@ -540,11 +1011,26 @@ fn build_interfaces(context: &SemanticContext) -> Vec<InterfaceRecord> {
         }
 
         if parse_explicit_decision_tree_fragment(&statement.text).is_some()
+            || parse_explicit_symbol_definition(
+                &statement.text,
+                &empty_known_signal_names,
+                &empty_known_symbol_names,
+            )
+            .is_some()
+            || parse_explicit_control_clause(
+                &statement.text,
+                &empty_regular_state_names,
+                &empty_known_signal_names,
+                &empty_known_symbol_names,
+            )
+            .is_some()
             || parse_explicit_system_clock(&statement.text).is_some()
             || parse_explicit_system_reset(&statement.text).is_some()
             || parse_explicit_init_assignment(&statement.text).is_some()
             || parse_explicit_regular_state_declaration(&statement.text).is_some()
             || parse_explicit_state_transition(&statement.text).is_some()
+            || parse_module_scoped_statement(&statement.text).is_some()
+            || parse_top_scoped_statement(&statement.text).is_some()
         {
             continue;
         }
@@ -603,7 +1089,12 @@ fn build_system_contract(context: &SemanticContext) -> Option<SystemContractReco
     let mut clock_signal = None::<String>;
     let mut reset_signal = None::<String>;
     let mut reset_kind = None::<SystemResetKind>;
+    let mut reset_polarity = None::<SystemResetPolarity>;
+    let mut assertion_timing = None::<SystemResetTimingRelation>;
+    let mut release_timing = None::<SystemResetTimingRelation>;
+    let mut target_kind = None::<SystemResetTargetKind>;
     let mut supporting_statement_ids = BTreeSet::new();
+    let mut automation_confidence = AutomationConfidence::High;
     let mut conflicting = false;
 
     for statement in &context.statements {
@@ -621,6 +1112,22 @@ fn build_system_contract(context: &SemanticContext) -> Option<SystemContractReco
             if !merge_copy_hint(&mut reset_kind, parsed_reset.reset_kind) {
                 conflicting = true;
             }
+            if !merge_copy_hint(&mut reset_polarity, parsed_reset.reset_polarity) {
+                conflicting = true;
+            }
+            if !merge_copy_hint(&mut assertion_timing, parsed_reset.assertion_timing) {
+                conflicting = true;
+            }
+            if !merge_copy_hint(&mut release_timing, parsed_reset.release_timing) {
+                conflicting = true;
+            }
+            if !merge_copy_hint(&mut target_kind, parsed_reset.target_kind) {
+                conflicting = true;
+            }
+            automation_confidence = min_automation_confidence(
+                automation_confidence,
+                parsed_reset.automation_confidence,
+            );
             supporting_statement_ids.insert(statement.statement_id.clone());
         }
     }
@@ -633,8 +1140,12 @@ fn build_system_contract(context: &SemanticContext) -> Option<SystemContractReco
         clock_signal: clock_signal?,
         reset_signal: reset_signal?,
         reset_kind: reset_kind?,
+        reset_polarity: reset_polarity?,
+        assertion_timing: assertion_timing?,
+        release_timing: release_timing?,
+        target_kind: target_kind?,
         supporting_statement_ids: supporting_statement_ids.into_iter().collect(),
-        automation_confidence: AutomationConfidence::High,
+        automation_confidence,
     })
 }
 
@@ -800,6 +1311,465 @@ fn build_decision_tree_fragments(context: &SemanticContext) -> Vec<DecisionTreeF
             referenced_signal_names: entry.referenced_signal_names.into_iter().collect(),
             supporting_statement_ids: entry.supporting_statement_ids.into_iter().collect(),
             automation_confidence: entry.automation_confidence,
+        })
+        .collect()
+}
+
+fn build_symbol_definitions(context: &SemanticContext) -> Vec<SymbolDefinitionRecord> {
+    let known_signal_names = known_explicit_signal_names(context);
+    let mut scalar_accumulators = BTreeMap::<String, ScalarSymbolAccumulator>::new();
+    let mut enum_accumulators = BTreeMap::<String, EnumSymbolAccumulator>::new();
+
+    for statement in &context.statements {
+        let known_symbol_names = scalar_accumulators
+            .keys()
+            .cloned()
+            .chain(enum_accumulators.keys().cloned())
+            .collect::<BTreeSet<_>>();
+        let Some(parsed_definition) = parse_explicit_symbol_definition(
+            &statement.text,
+            &known_signal_names,
+            &known_symbol_names,
+        ) else {
+            continue;
+        };
+
+        match parsed_definition {
+            ParsedSymbolDefinition::Scalar {
+                kind,
+                symbol_name,
+                value,
+            } => {
+                if enum_accumulators.contains_key(&symbol_name) {
+                    continue;
+                }
+                let declaration_order =
+                    u32::try_from(scalar_accumulators.len() + enum_accumulators.len())
+                        .expect("symbol definition count should fit in u32");
+                let entry = scalar_accumulators
+                    .entry(symbol_name.clone())
+                    .or_insert_with(|| ScalarSymbolAccumulator {
+                        kind,
+                        symbol_name: symbol_name.clone(),
+                        value: value.clone(),
+                        declaration_order,
+                        supporting_statement_ids: BTreeSet::new(),
+                        conflicting_value: false,
+                    });
+                if entry.kind != kind || entry.value != value {
+                    entry.conflicting_value = true;
+                }
+                entry
+                    .supporting_statement_ids
+                    .insert(statement.statement_id.clone());
+            }
+            ParsedSymbolDefinition::EnumMember {
+                enum_name,
+                member_name,
+                value,
+            } => {
+                if scalar_accumulators.contains_key(&enum_name) {
+                    continue;
+                }
+                let declaration_order =
+                    u32::try_from(scalar_accumulators.len() + enum_accumulators.len())
+                        .expect("symbol definition count should fit in u32");
+                let entry = enum_accumulators
+                    .entry(enum_name.clone())
+                    .or_insert_with(|| EnumSymbolAccumulator {
+                        enum_name: enum_name.clone(),
+                        declaration_order,
+                        members: BTreeMap::new(),
+                        supporting_statement_ids: BTreeSet::new(),
+                    });
+                entry
+                    .supporting_statement_ids
+                    .insert(statement.statement_id.clone());
+                let member_declaration_order = u32::try_from(entry.members.len())
+                    .expect("enum member count should fit in u32");
+                let member_entry = entry.members.entry(member_name.clone()).or_insert_with(|| {
+                    EnumMemberAccumulator {
+                        member_name: member_name.clone(),
+                        value: value.clone(),
+                        declaration_order: member_declaration_order,
+                        supporting_statement_ids: BTreeSet::new(),
+                        conflicting_value: false,
+                    }
+                });
+                if member_entry.value != value {
+                    member_entry.conflicting_value = true;
+                }
+                member_entry
+                    .supporting_statement_ids
+                    .insert(statement.statement_id.clone());
+            }
+        }
+    }
+
+    let known_symbol_names = scalar_accumulators
+        .keys()
+        .cloned()
+        .chain(enum_accumulators.keys().cloned())
+        .collect::<BTreeSet<_>>();
+    let mut records = scalar_accumulators
+        .into_values()
+        .filter_map(|entry| {
+            (!entry.conflicting_value).then_some(SymbolDefinitionRecord {
+                symbol_id: format!(
+                    "symbol_{}",
+                    document_key(&format!(
+                        "{}_{}",
+                        entry.declaration_order, entry.symbol_name
+                    ))
+                ),
+                symbol_name: entry.symbol_name,
+                kind: entry.kind,
+                value: Some(reclassify_control_expression(
+                    &entry.value,
+                    &known_signal_names,
+                    &known_symbol_names,
+                )),
+                members: Vec::new(),
+                declaration_order: entry.declaration_order,
+                supporting_statement_ids: entry.supporting_statement_ids.into_iter().collect(),
+                automation_confidence: AutomationConfidence::High,
+            })
+        })
+        .collect::<Vec<_>>();
+
+    records.extend(enum_accumulators.into_values().map(|entry| {
+        let mut members = entry
+            .members
+            .into_values()
+            .filter_map(|member| {
+                (!member.conflicting_value).then_some(SymbolEnumMemberRecord {
+                    member_name: member.member_name,
+                    value: reclassify_control_expression(
+                        &member.value,
+                        &known_signal_names,
+                        &known_symbol_names,
+                    ),
+                    declaration_order: member.declaration_order,
+                    supporting_statement_ids: member.supporting_statement_ids.into_iter().collect(),
+                    automation_confidence: AutomationConfidence::High,
+                })
+            })
+            .collect::<Vec<_>>();
+        members.sort_by_key(|member| member.declaration_order);
+
+        SymbolDefinitionRecord {
+            symbol_id: format!(
+                "symbol_{}",
+                document_key(&format!("{}_{}", entry.declaration_order, entry.enum_name))
+            ),
+            symbol_name: entry.enum_name,
+            kind: SymbolDefinitionKind::Enum,
+            value: None,
+            members,
+            declaration_order: entry.declaration_order,
+            supporting_statement_ids: entry.supporting_statement_ids.into_iter().collect(),
+            automation_confidence: AutomationConfidence::High,
+        }
+    }));
+    records.sort_by_key(|record| record.declaration_order);
+    records
+}
+
+fn build_control_blocks(
+    context: &SemanticContext,
+    regular_states: &[RegularStateRecord],
+    symbol_definitions: &[SymbolDefinitionRecord],
+) -> Vec<ControlBlockRecord> {
+    let normalized_regular_state_names = regular_states
+        .iter()
+        .map(|state| document_key(&state.state_name))
+        .collect::<BTreeSet<_>>();
+    let known_signal_names = known_explicit_signal_names(context);
+    let known_symbol_names = symbol_definitions
+        .iter()
+        .map(|definition| definition.symbol_name.clone())
+        .collect::<BTreeSet<_>>();
+    let mut accumulators = BTreeMap::<String, ControlBlockAccumulator>::new();
+
+    for statement in &context.statements {
+        let Some(parsed_clause) = parse_explicit_control_clause(
+            &statement.text,
+            &normalized_regular_state_names,
+            &known_signal_names,
+            &known_symbol_names,
+        ) else {
+            continue;
+        };
+
+        let block_key = control_block_key(
+            &parsed_clause.block_name,
+            parsed_clause.role,
+            parsed_clause.selector.as_ref(),
+        );
+        let declaration_order =
+            u32::try_from(accumulators.len()).expect("control block count should fit in u32");
+        let entry = accumulators
+            .entry(block_key)
+            .or_insert_with(|| ControlBlockAccumulator {
+                block_name: parsed_clause.block_name.clone(),
+                role: parsed_clause.role,
+                declaration_order,
+                selector: parsed_clause.selector.clone(),
+                branches: Vec::new(),
+                referenced_signal_names: BTreeSet::new(),
+                supporting_statement_ids: BTreeSet::new(),
+            });
+        entry
+            .supporting_statement_ids
+            .insert(statement.statement_id.clone());
+        entry
+            .referenced_signal_names
+            .extend(parsed_clause.referenced_signal_names.iter().cloned());
+
+        if let Some(existing_branch) = entry
+            .branches
+            .iter_mut()
+            .find(|branch| branch.predicate == parsed_clause.predicate)
+        {
+            existing_branch
+                .actions
+                .extend(parsed_clause.actions.clone());
+            existing_branch
+                .referenced_signal_names
+                .extend(parsed_clause.referenced_signal_names);
+            existing_branch
+                .supporting_statement_ids
+                .insert(statement.statement_id.clone());
+            continue;
+        }
+
+        let branch_declaration_order =
+            u32::try_from(entry.branches.len()).expect("control branch count should fit in u32");
+        entry.branches.push(ControlBranchAccumulator {
+            predicate: parsed_clause.predicate,
+            declaration_order: branch_declaration_order,
+            actions: parsed_clause.actions,
+            referenced_signal_names: parsed_clause.referenced_signal_names,
+            supporting_statement_ids: BTreeSet::from([statement.statement_id.clone()]),
+        });
+    }
+
+    let mut blocks = accumulators.into_values().collect::<Vec<_>>();
+    blocks.sort_by_key(|block| block.declaration_order);
+    blocks
+        .into_iter()
+        .map(|entry| ControlBlockRecord {
+            block_id: format!(
+                "control_block_{}",
+                document_key(&format!(
+                    "{}_{}_{}_{}",
+                    entry.declaration_order,
+                    entry.block_name,
+                    control_block_role_key(entry.role),
+                    control_expression_key(entry.selector.as_ref())
+                ))
+            ),
+            block_name: entry.block_name,
+            role: entry.role,
+            declaration_order: entry.declaration_order,
+            selector: entry.selector,
+            branches: entry
+                .branches
+                .into_iter()
+                .map(|branch| ControlBranchRecord {
+                    branch_id: format!(
+                        "control_branch_{}",
+                        document_key(&format!(
+                            "{}_{}_{}",
+                            entry.declaration_order,
+                            branch.declaration_order,
+                            control_expression_key(branch.predicate.as_ref())
+                        ))
+                    ),
+                    declaration_order: branch.declaration_order,
+                    predicate: branch.predicate,
+                    actions: branch.actions,
+                    supporting_statement_ids: branch.supporting_statement_ids.into_iter().collect(),
+                    automation_confidence: AutomationConfidence::High,
+                })
+                .collect(),
+            referenced_signal_names: entry.referenced_signal_names.into_iter().collect(),
+            supporting_statement_ids: entry.supporting_statement_ids.into_iter().collect(),
+            automation_confidence: AutomationConfidence::High,
+        })
+        .collect()
+}
+fn build_explicit_modules(context: &SemanticContext) -> Vec<ExplicitModuleRecord> {
+    let mut accumulators = BTreeMap::<String, ExplicitModuleAccumulator>::new();
+
+    for statement in &context.statements {
+        let Some(parsed) = parse_module_scoped_statement(&statement.text) else {
+            continue;
+        };
+
+        let declaration_order =
+            u32::try_from(accumulators.len()).expect("explicit module count should fit in u32");
+        let entry = accumulators
+            .entry(parsed.module_name.clone())
+            .or_insert_with(|| ExplicitModuleAccumulator {
+                module_name: parsed.module_name.clone(),
+                declaration_order,
+                statements: Vec::new(),
+                supporting_statement_ids: BTreeSet::new(),
+            });
+        entry
+            .supporting_statement_ids
+            .insert(statement.statement_id.clone());
+        if let Some(scoped_text) = parsed.scoped_text {
+            entry
+                .statements
+                .push(statement.with_rewritten_text(scoped_text));
+        }
+    }
+
+    let mut modules = accumulators.into_values().collect::<Vec<_>>();
+    modules.sort_by_key(|module| module.declaration_order);
+    modules
+        .into_iter()
+        .map(build_explicit_module_record)
+        .collect()
+}
+
+fn build_explicit_module_record(accumulator: ExplicitModuleAccumulator) -> ExplicitModuleRecord {
+    let scoped_context = SemanticContext {
+        statements: accumulator.statements,
+        section_anchors: Vec::new(),
+        visual_roles_by_id: HashMap::new(),
+    };
+    let interfaces = build_interfaces(&scoped_context);
+    let system_contract = build_system_contract(&scoped_context);
+    let init_assignments = build_init_assignments(&scoped_context);
+    let regular_states = build_regular_states(&scoped_context);
+    let state_transitions = build_state_transitions(&scoped_context);
+    let decision_tree_fragments = build_decision_tree_fragments(&scoped_context);
+    let symbol_definitions = build_symbol_definitions(&scoped_context);
+    let control_blocks = build_control_blocks(
+        &scoped_context,
+        regular_states.as_slice(),
+        symbol_definitions.as_slice(),
+    );
+
+    ExplicitModuleRecord {
+        module_id: format!(
+            "explicit_module_{}",
+            document_key(&format!(
+                "{}_{}",
+                accumulator.declaration_order, accumulator.module_name
+            ))
+        ),
+        module_name: accumulator.module_name,
+        declaration_order: accumulator.declaration_order,
+        interfaces,
+        system_contract,
+        init_assignments,
+        regular_states,
+        state_transitions,
+        decision_tree_fragments,
+        symbol_definitions,
+        control_blocks,
+        supporting_statement_ids: accumulator.supporting_statement_ids.into_iter().collect(),
+        automation_confidence: AutomationConfidence::High,
+    }
+}
+
+fn build_explicit_tops(context: &SemanticContext) -> Vec<ExplicitTopRecord> {
+    let mut accumulators = BTreeMap::<String, ExplicitTopAccumulator>::new();
+
+    for statement in &context.statements {
+        let Some(parsed) = parse_top_scoped_statement(&statement.text) else {
+            continue;
+        };
+
+        let declaration_order =
+            u32::try_from(accumulators.len()).expect("explicit top count should fit in u32");
+        let entry = accumulators
+            .entry(parsed.top_name.clone())
+            .or_insert_with(|| ExplicitTopAccumulator {
+                top_name: parsed.top_name.clone(),
+                declaration_order,
+                ports: Vec::new(),
+                children: Vec::new(),
+                links: Vec::new(),
+                supporting_statement_ids: BTreeSet::new(),
+            });
+        entry
+            .supporting_statement_ids
+            .insert(statement.statement_id.clone());
+
+        let Some(scoped_text) = parsed.scoped_text.as_deref() else {
+            continue;
+        };
+
+        if let Some(parsed_port) = parse_explicit_top_port(scoped_text) {
+            let declaration_order =
+                u32::try_from(entry.ports.len()).expect("top port count should fit in u32");
+            entry.ports.push(ExplicitTopPortRecord {
+                port_name: parsed_port.signal_name,
+                direction_hint: parsed_port.direction_hint,
+                width_hint: parsed_port.width_hint,
+                declaration_order,
+                supporting_statement_ids: vec![statement.statement_id.clone()],
+                automation_confidence: AutomationConfidence::High,
+            });
+            continue;
+        }
+
+        if let Some(parsed_child) = parse_explicit_top_child(scoped_text) {
+            let declaration_order =
+                u32::try_from(entry.children.len()).expect("top child count should fit in u32");
+            entry.children.push(ExplicitTopChildRecord {
+                instance_name: parsed_child.instance_name,
+                source_module_name: parsed_child.source_module_name,
+                declaration_order,
+                supporting_statement_ids: vec![statement.statement_id.clone()],
+                automation_confidence: AutomationConfidence::High,
+            });
+            continue;
+        }
+
+        if let Some(parsed_link) = parse_explicit_top_link(scoped_text) {
+            let declaration_order =
+                u32::try_from(entry.links.len()).expect("top link count should fit in u32");
+            entry.links.push(ExplicitTopLinkRecord {
+                link_id: format!(
+                    "top_link_{}",
+                    document_key(&format!(
+                        "{}_{}_{}_{}",
+                        entry.top_name,
+                        declaration_order,
+                        explicit_top_link_endpoint_key(&parsed_link.source),
+                        explicit_top_link_endpoint_key(&parsed_link.target)
+                    ))
+                ),
+                source: parsed_link.source,
+                target: parsed_link.target,
+                declaration_order,
+                supporting_statement_ids: vec![statement.statement_id.clone()],
+                automation_confidence: AutomationConfidence::High,
+            });
+        }
+    }
+
+    let mut tops = accumulators.into_values().collect::<Vec<_>>();
+    tops.sort_by_key(|top| top.declaration_order);
+    tops.into_iter()
+        .map(|top| ExplicitTopRecord {
+            top_id: format!(
+                "explicit_top_{}",
+                document_key(&format!("{}_{}", top.declaration_order, top.top_name))
+            ),
+            top_name: top.top_name,
+            declaration_order: top.declaration_order,
+            ports: top.ports,
+            children: top.children,
+            links: top.links,
+            supporting_statement_ids: top.supporting_statement_ids.into_iter().collect(),
+            automation_confidence: AutomationConfidence::High,
         })
         .collect()
 }
@@ -1334,28 +2304,91 @@ fn parse_explicit_system_reset(text: &str) -> Option<ParsedSystemResetDeclaratio
         return None;
     }
 
+    let (reset_kind, reset_polarity, automation_confidence) =
+        parse_system_reset_descriptor(&signal_name, &tokens[is_token_index + 1..])?;
+
     Some(ParsedSystemResetDeclaration {
         signal_name,
-        reset_kind: parse_system_reset_kind(&tokens[is_token_index + 1..])?,
+        reset_kind,
+        reset_polarity,
+        assertion_timing: reset_kind.assertion_timing(),
+        release_timing: reset_kind.release_timing(),
+        target_kind: reset_kind.target_kind(),
+        automation_confidence,
     })
 }
 
-fn parse_system_reset_kind(tokens: &[&str]) -> Option<SystemResetKind> {
+fn parse_system_reset_descriptor(
+    signal_name: &str,
+    tokens: &[&str],
+) -> Option<(SystemResetKind, SystemResetPolarity, AutomationConfidence)> {
     if tokens.is_empty() {
         return None;
     }
 
-    let filtered_tokens = tokens
+    let normalized_tokens = tokens
         .iter()
         .map(|token| token.trim_end_matches('.').to_ascii_lowercase())
-        .filter(|token| token != "active" && token != "low")
         .collect::<Vec<_>>();
+    let mut reset_kind = None;
+    let mut reset_polarity = None;
+    let mut index = 0usize;
 
-    match filtered_tokens.as_slice() {
-        [kind] if kind == "sync" || kind == "synchronous" => Some(SystemResetKind::Synchronous),
-        [kind] if kind == "async" || kind == "asynchronous" => Some(SystemResetKind::Asynchronous),
-        _ => None,
+    while index < normalized_tokens.len() {
+        match normalized_tokens[index].as_str() {
+            "sync" | "synchronous" => {
+                if reset_kind.replace(SystemResetKind::Synchronous).is_some() {
+                    return None;
+                }
+                index += 1;
+            }
+            "async" | "asynchronous" => {
+                if reset_kind.replace(SystemResetKind::Asynchronous).is_some() {
+                    return None;
+                }
+                index += 1;
+            }
+            "active" => {
+                let level = normalized_tokens.get(index + 1)?;
+                let parsed_polarity = match level.as_str() {
+                    "high" => SystemResetPolarity::ActiveHigh,
+                    "low" => SystemResetPolarity::ActiveLow,
+                    _ => return None,
+                };
+                if reset_polarity.replace(parsed_polarity).is_some() {
+                    return None;
+                }
+                index += 2;
+            }
+            _ => return None,
+        }
     }
+
+    let reset_kind = reset_kind?;
+    let (reset_polarity, automation_confidence) = match reset_polarity {
+        Some(reset_polarity) => (reset_polarity, AutomationConfidence::High),
+        None => (
+            infer_system_reset_polarity(signal_name),
+            AutomationConfidence::Medium,
+        ),
+    };
+
+    Some((reset_kind, reset_polarity, automation_confidence))
+}
+
+fn infer_system_reset_polarity(signal_name: &str) -> SystemResetPolarity {
+    if reset_signal_name_looks_active_low(signal_name) {
+        SystemResetPolarity::ActiveLow
+    } else {
+        SystemResetPolarity::ActiveHigh
+    }
+}
+
+fn reset_signal_name_looks_active_low(signal_name: &str) -> bool {
+    let lowered = signal_name.to_ascii_lowercase();
+    lowered.ends_with("_n")
+        || lowered.ends_with("_b")
+        || matches!(lowered.as_str(), "rstn" | "rstb" | "resetn" | "resetb")
 }
 
 fn parse_explicit_init_assignment(text: &str) -> Option<ParsedInitAssignment> {
@@ -1370,6 +2403,198 @@ fn parse_explicit_init_assignment(text: &str) -> Option<ParsedInitAssignment> {
     Some(ParsedInitAssignment {
         target_signal: parse_identifier(target_signal.trim())?,
         value: parse_decision_tree_value(value_text.trim())?,
+    })
+}
+
+fn parse_explicit_symbol_definition(
+    text: &str,
+    known_signal_names: &BTreeSet<String>,
+    known_symbol_names: &BTreeSet<String>,
+) -> Option<ParsedSymbolDefinition> {
+    let normalized = normalize_sentence(text);
+    let normalized = normalized.trim().trim_end_matches('.');
+    let lowered = normalized.to_ascii_lowercase();
+
+    if lowered.starts_with("constant ") {
+        return parse_scalar_symbol_definition(
+            SymbolDefinitionKind::Constant,
+            &normalized[9..],
+            known_signal_names,
+            known_symbol_names,
+        );
+    }
+    if lowered.starts_with("define ") {
+        return parse_scalar_symbol_definition(
+            SymbolDefinitionKind::Define,
+            &normalized[7..],
+            known_signal_names,
+            known_symbol_names,
+        );
+    }
+    if lowered.starts_with("param ") {
+        return parse_scalar_symbol_definition(
+            SymbolDefinitionKind::Param,
+            &normalized[6..],
+            known_signal_names,
+            known_symbol_names,
+        );
+    }
+    if lowered.starts_with("parameter ") {
+        return parse_scalar_symbol_definition(
+            SymbolDefinitionKind::Param,
+            &normalized[10..],
+            known_signal_names,
+            known_symbol_names,
+        );
+    }
+    if lowered.starts_with("enum ") {
+        return parse_enum_symbol_definition(
+            &normalized[5..],
+            known_signal_names,
+            known_symbol_names,
+        );
+    }
+
+    None
+}
+
+fn parse_scalar_symbol_definition(
+    kind: SymbolDefinitionKind,
+    body: &str,
+    known_signal_names: &BTreeSet<String>,
+    known_symbol_names: &BTreeSet<String>,
+) -> Option<ParsedSymbolDefinition> {
+    let (symbol_name, value_text) = body.split_once('=')?;
+    Some(ParsedSymbolDefinition::Scalar {
+        kind,
+        symbol_name: parse_identifier(symbol_name.trim())?,
+        value: parse_control_expression(value_text.trim(), known_signal_names, known_symbol_names)?,
+    })
+}
+
+fn parse_enum_symbol_definition(
+    body: &str,
+    known_signal_names: &BTreeSet<String>,
+    known_symbol_names: &BTreeSet<String>,
+) -> Option<ParsedSymbolDefinition> {
+    let (lhs, value_text) = body.split_once('=')?;
+    let lhs_tokens = lhs.split_whitespace().collect::<Vec<_>>();
+    if lhs_tokens.len() != 2 {
+        return None;
+    }
+
+    Some(ParsedSymbolDefinition::EnumMember {
+        enum_name: parse_identifier(lhs_tokens[0])?,
+        member_name: parse_identifier(lhs_tokens[1])?,
+        value: parse_control_expression(value_text.trim(), known_signal_names, known_symbol_names)?,
+    })
+}
+
+fn parse_module_scoped_statement(text: &str) -> Option<ParsedModuleScopedStatement> {
+    let normalized = normalize_sentence(text);
+    let normalized = normalized.trim().trim_end_matches('.');
+    if !normalized.to_ascii_lowercase().starts_with("module ") {
+        return None;
+    }
+
+    let body = normalized[7..].trim();
+    let (module_name, scoped_text) = split_scoped_statement_body(body)?;
+    Some(ParsedModuleScopedStatement {
+        module_name,
+        scoped_text,
+    })
+}
+
+fn parse_top_scoped_statement(text: &str) -> Option<ParsedTopScopedStatement> {
+    let normalized = normalize_sentence(text);
+    let normalized = normalized.trim().trim_end_matches('.');
+    if !normalized.to_ascii_lowercase().starts_with("top ") {
+        return None;
+    }
+
+    let body = normalized[4..].trim();
+    let (top_name, scoped_text) = split_scoped_statement_body(body)?;
+    Some(ParsedTopScopedStatement {
+        top_name,
+        scoped_text,
+    })
+}
+
+fn split_scoped_statement_body(body: &str) -> Option<(String, Option<String>)> {
+    let body = body.trim();
+    if body.is_empty() {
+        return None;
+    }
+
+    let split_index = body
+        .char_indices()
+        .find_map(|(index, character)| character.is_whitespace().then_some(index));
+    let (name_text, scoped_text) = match split_index {
+        Some(index) => (&body[..index], Some(body[index..].trim().to_string())),
+        None => (body, None),
+    };
+    let name = parse_identifier(name_text)?;
+    let scoped_text = scoped_text.filter(|text| !text.is_empty());
+    Some((name, scoped_text))
+}
+
+fn parse_explicit_top_port(text: &str) -> Option<ParsedInterfaceSignalDeclaration> {
+    let normalized = normalize_sentence(text);
+    let normalized = normalized.trim().trim_end_matches('.');
+    if !normalized.to_ascii_lowercase().starts_with("port ") {
+        return None;
+    }
+
+    parse_explicit_signal_declaration(&format!("Signal {}", normalized[5..].trim()))
+}
+
+fn parse_explicit_top_child(text: &str) -> Option<ParsedExplicitTopChild> {
+    let normalized = normalize_sentence(text);
+    let normalized = normalized.trim().trim_end_matches('.');
+    if !normalized.to_ascii_lowercase().starts_with("child ") {
+        return None;
+    }
+
+    let tokens = normalized[6..].split_whitespace().collect::<Vec<_>>();
+    if tokens.len() != 4
+        || !tokens[1].eq_ignore_ascii_case("uses")
+        || !tokens[2].eq_ignore_ascii_case("module")
+    {
+        return None;
+    }
+
+    Some(ParsedExplicitTopChild {
+        instance_name: parse_identifier(tokens[0])?,
+        source_module_name: parse_identifier(tokens[3])?,
+    })
+}
+
+fn parse_explicit_top_link(text: &str) -> Option<ParsedExplicitTopLink> {
+    let normalized = normalize_sentence(text);
+    let normalized = normalized.trim().trim_end_matches('.');
+    if !normalized.to_ascii_lowercase().starts_with("link ") {
+        return None;
+    }
+
+    let body = normalized[5..].trim();
+    let (source_text, target_text) = body.split_once("->")?;
+    Some(ParsedExplicitTopLink {
+        source: parse_explicit_top_link_endpoint(source_text.trim())?,
+        target: parse_explicit_top_link_endpoint(target_text.trim())?,
+    })
+}
+
+fn parse_explicit_top_link_endpoint(text: &str) -> Option<ExplicitTopLinkEndpoint> {
+    if let Some((instance_name, signal_name)) = text.split_once('.') {
+        return Some(ExplicitTopLinkEndpoint {
+            instance_name: Some(parse_identifier(instance_name.trim())?),
+            signal_name: parse_identifier(signal_name.trim())?,
+        });
+    }
+
+    Some(ExplicitTopLinkEndpoint {
+        instance_name: None,
+        signal_name: parse_identifier(text.trim())?,
     })
 }
 
@@ -1474,6 +2699,278 @@ fn parse_explicit_decision_tree_fragment(text: &str) -> Option<ParsedDecisionTre
     })
 }
 
+fn parse_explicit_control_clause(
+    text: &str,
+    normalized_regular_state_names: &BTreeSet<String>,
+    known_signal_names: &BTreeSet<String>,
+    known_symbol_names: &BTreeSet<String>,
+) -> Option<ParsedControlClause> {
+    let normalized = normalize_sentence(text);
+    let normalized = normalized.trim().trim_end_matches('.');
+    let (explicit_role, body) = parse_control_role_prefix(normalized)?;
+    let (header, action_clause) = body.split_once(':')?;
+    let header = header.trim();
+    let action_clause = action_clause.trim();
+    if header.is_empty() || action_clause.is_empty() {
+        return None;
+    }
+
+    let (header_without_predicate, predicate_text) = split_control_header_keyword(header, " when ");
+    let (raw_block_name, selector_text) =
+        split_control_header_keyword(header_without_predicate.trim(), " select ");
+    let block_name = normalize_decision_tree_block_name(raw_block_name)?;
+    let role = explicit_role.unwrap_or_else(|| {
+        if normalized_regular_state_names.contains(&block_name) {
+            ControlBlockRole::StateBody
+        } else {
+            ControlBlockRole::StandaloneDecisionTree
+        }
+    });
+    let selector = match selector_text {
+        Some(selector_text) => Some(parse_control_expression(
+            selector_text.trim(),
+            known_signal_names,
+            known_symbol_names,
+        )?),
+        None => None,
+    };
+    let predicate = match predicate_text {
+        Some(predicate_text) => Some(parse_control_expression(
+            predicate_text.trim(),
+            known_signal_names,
+            known_symbol_names,
+        )?),
+        None => None,
+    };
+    let actions = split_control_actions(action_clause)
+        .into_iter()
+        .map(|action_text| {
+            parse_explicit_control_action(action_text, known_signal_names, known_symbol_names)
+        })
+        .collect::<Option<Vec<_>>>()?;
+    if actions.is_empty() {
+        return None;
+    }
+
+    let mut referenced_signal_names = BTreeSet::new();
+    if let Some(selector) = selector.as_ref() {
+        referenced_signal_names.extend(referenced_signal_names_for_control_expression(selector));
+    }
+    if let Some(predicate) = predicate.as_ref() {
+        referenced_signal_names.extend(referenced_signal_names_for_control_expression(predicate));
+    }
+    for action in &actions {
+        referenced_signal_names.extend(referenced_signal_names_for_control_action(action));
+    }
+
+    Some(ParsedControlClause {
+        block_name,
+        role,
+        selector,
+        predicate,
+        actions,
+        referenced_signal_names,
+    })
+}
+
+fn parse_control_role_prefix(normalized: &str) -> Option<(Option<ControlBlockRole>, &str)> {
+    let lowered = normalized.to_ascii_lowercase();
+    for (prefix, role) in [
+        ("block ", None),
+        ("syncreset ", Some(ControlBlockRole::ResetSynchronous)),
+        ("sync reset ", Some(ControlBlockRole::ResetSynchronous)),
+        (
+            "synchronous reset ",
+            Some(ControlBlockRole::ResetSynchronous),
+        ),
+        ("asyncreset ", Some(ControlBlockRole::ResetAsynchronous)),
+        ("async reset ", Some(ControlBlockRole::ResetAsynchronous)),
+        (
+            "asynchronous reset ",
+            Some(ControlBlockRole::ResetAsynchronous),
+        ),
+    ] {
+        if lowered.starts_with(prefix) {
+            return Some((role, normalized[prefix.len()..].trim()));
+        }
+    }
+
+    None
+}
+
+fn split_control_header_keyword<'a>(text: &'a str, keyword: &str) -> (&'a str, Option<&'a str>) {
+    let lowered = text.to_ascii_lowercase();
+    if let Some(index) = lowered.find(keyword) {
+        return (&text[..index], Some(&text[index + keyword.len()..]));
+    }
+
+    (text, None)
+}
+
+fn split_control_actions(action_clause: &str) -> Vec<&str> {
+    action_clause
+        .split(';')
+        .map(str::trim)
+        .filter(|action| !action.is_empty())
+        .collect()
+}
+
+fn parse_explicit_control_action(
+    text: &str,
+    known_signal_names: &BTreeSet<String>,
+    known_symbol_names: &BTreeSet<String>,
+) -> Option<ControlActionRecord> {
+    let normalized = normalize_sentence(text);
+    let normalized = normalized.trim().trim_end_matches('.');
+    let lowered = normalized.to_ascii_lowercase();
+
+    if lowered.starts_with("transition ") {
+        return Some(ControlActionRecord::Transition {
+            target_state: parse_identifier(normalized[11..].trim())?,
+        });
+    }
+    if normalized.starts_with("->") {
+        return Some(ControlActionRecord::Transition {
+            target_state: parse_identifier(normalized[2..].trim())?,
+        });
+    }
+    if lowered.starts_with("pulse ") {
+        let body = normalized[6..].trim();
+        let body_lower = body.to_ascii_lowercase();
+        let after_index = body_lower.find(" after ")?;
+        let target_text = body[..after_index].trim();
+        let remainder = body[after_index + 7..].trim();
+        let delay_end = remainder
+            .char_indices()
+            .find_map(|(index, character)| character.is_whitespace().then_some(index))?;
+        let delay = parse_u32_token(remainder[..delay_end].trim())?;
+        let assignment_text = remainder[delay_end..].trim();
+        let (_, _, value_text) = split_explicit_assignment(assignment_text)?;
+        let (target, dual_output) = parse_control_assignment_target(target_text)?;
+        if dual_output.is_some() {
+            return None;
+        }
+
+        return Some(ControlActionRecord::DelayedPulse {
+            target,
+            delay,
+            value: parse_control_expression(value_text, known_signal_names, known_symbol_names)?,
+        });
+    }
+    if let Some((target_text, amount_text)) = normalized.split_once("+=") {
+        let (target, dual_output) = parse_control_assignment_target(target_text.trim())?;
+        if dual_output.is_some() {
+            return None;
+        }
+
+        return Some(ControlActionRecord::CompoundUpdate {
+            target,
+            operation: ControlCompoundUpdateOperation::Increment,
+            amount: Some(parse_control_expression(
+                amount_text.trim(),
+                known_signal_names,
+                known_symbol_names,
+            )?),
+        });
+    }
+    if let Some((target_text, amount_text)) = normalized.split_once("-=") {
+        let (target, dual_output) = parse_control_assignment_target(target_text.trim())?;
+        if dual_output.is_some() {
+            return None;
+        }
+
+        return Some(ControlActionRecord::CompoundUpdate {
+            target,
+            operation: ControlCompoundUpdateOperation::Decrement,
+            amount: Some(parse_control_expression(
+                amount_text.trim(),
+                known_signal_names,
+                known_symbol_names,
+            )?),
+        });
+    }
+
+    let (target_text, assignment_kind, value_text) = split_explicit_assignment(normalized)?;
+    let (target, dual_output) = parse_control_assignment_target(target_text)?;
+    Some(ControlActionRecord::Assign {
+        target,
+        assignment_kind,
+        dual_output,
+        value: parse_control_expression(value_text, known_signal_names, known_symbol_names)?,
+    })
+}
+
+fn split_explicit_assignment(text: &str) -> Option<(&str, DecisionTreeAssignmentKind, &str)> {
+    if let Some((left, right)) = text.split_once("<-") {
+        return Some((
+            left.trim(),
+            DecisionTreeAssignmentKind::Sequential,
+            right.trim(),
+        ));
+    }
+
+    for (index, character) in text.char_indices() {
+        if character != '=' {
+            continue;
+        }
+
+        let prefix = text[..index].chars().next_back();
+        let suffix = text[index + character.len_utf8()..].chars().next();
+        if matches!(prefix, Some('!' | '<' | '>' | '=')) || matches!(suffix, Some('=')) {
+            continue;
+        }
+
+        return Some((
+            text[..index].trim(),
+            DecisionTreeAssignmentKind::Combinational,
+            text[index + character.len_utf8()..].trim(),
+        ));
+    }
+
+    None
+}
+
+fn parse_control_assignment_target(
+    text: &str,
+) -> Option<(ControlAssignmentTargetRecord, Option<ControlDualOutputKind>)> {
+    let mut exposed_public_output = false;
+    let mut dual_output = None::<ControlDualOutputKind>;
+    let mut signal_name = None::<String>;
+
+    for token in text.split_whitespace() {
+        if token.eq_ignore_ascii_case("public") {
+            exposed_public_output = true;
+            continue;
+        }
+        if token.eq_ignore_ascii_case("next") {
+            if dual_output.is_some() {
+                return None;
+            }
+            dual_output = Some(ControlDualOutputKind::NextSignal);
+            continue;
+        }
+        if token.eq_ignore_ascii_case("registered") || token.eq_ignore_ascii_case("reg") {
+            if dual_output.is_some() {
+                return None;
+            }
+            dual_output = Some(ControlDualOutputKind::RegisteredSignal);
+            continue;
+        }
+        if signal_name.is_some() {
+            return None;
+        }
+        signal_name = Some(parse_identifier(token)?);
+    }
+
+    Some((
+        ControlAssignmentTargetRecord {
+            signal_name: signal_name?,
+            exposed_public_output,
+        },
+        dual_output,
+    ))
+}
+
 fn parse_explicit_decision_tree_guard(text: &str) -> Option<DecisionTreeGuardRecord> {
     if let Some((left_signal, right_text)) = text.split_once("==") {
         return Some(DecisionTreeGuardRecord::Comparison {
@@ -1527,6 +3024,367 @@ fn parse_decision_tree_value(text: &str) -> Option<DecisionTreeValueRecord> {
     Some(DecisionTreeValueRecord::Literal {
         literal: trimmed.to_string(),
     })
+}
+
+fn parse_control_expression(
+    text: &str,
+    known_signal_names: &BTreeSet<String>,
+    known_symbol_names: &BTreeSet<String>,
+) -> Option<ControlExpressionRecord> {
+    let tokens = tokenize_control_expression(text)?;
+    let mut parser = ControlExpressionParser::new(tokens, known_signal_names, known_symbol_names);
+    parser.parse()
+}
+
+fn tokenize_control_expression(text: &str) -> Option<Vec<String>> {
+    let trimmed = text.trim().trim_end_matches('.');
+    if trimmed.is_empty() {
+        return None;
+    }
+
+    let characters = trimmed.chars().collect::<Vec<_>>();
+    let mut tokens = Vec::new();
+    let mut index = 0usize;
+    while index < characters.len() {
+        let character = characters[index];
+        if character.is_whitespace() {
+            index += 1;
+            continue;
+        }
+
+        if index + 1 < characters.len() {
+            let pair = [character, characters[index + 1]];
+            if matches!(pair, ['=', '='] | ['!', '='] | ['<', '='] | ['>', '=']) {
+                tokens.push(pair.iter().collect());
+                index += 2;
+                continue;
+            }
+        }
+
+        if matches!(
+            character,
+            '(' | ')'
+                | '['
+                | ']'
+                | ':'
+                | '.'
+                | '@'
+                | '+'
+                | '-'
+                | '*'
+                | '/'
+                | '%'
+                | '&'
+                | '|'
+                | '^'
+                | '!'
+                | '<'
+                | '>'
+        ) {
+            tokens.push(character.to_string());
+            index += 1;
+            continue;
+        }
+
+        if character.is_ascii_alphanumeric() || character == '_' || character == '\'' {
+            let start = index;
+            index += 1;
+            while index < characters.len()
+                && (characters[index].is_ascii_alphanumeric()
+                    || characters[index] == '_'
+                    || characters[index] == '\'')
+            {
+                index += 1;
+            }
+            tokens.push(trimmed[start..index].to_string());
+            continue;
+        }
+
+        return None;
+    }
+
+    Some(tokens)
+}
+
+struct ControlExpressionParser<'a> {
+    tokens: Vec<String>,
+    index: usize,
+    known_signal_names: &'a BTreeSet<String>,
+    known_symbol_names: &'a BTreeSet<String>,
+}
+
+impl<'a> ControlExpressionParser<'a> {
+    fn new(
+        tokens: Vec<String>,
+        known_signal_names: &'a BTreeSet<String>,
+        known_symbol_names: &'a BTreeSet<String>,
+    ) -> Self {
+        Self {
+            tokens,
+            index: 0,
+            known_signal_names,
+            known_symbol_names,
+        }
+    }
+
+    fn parse(&mut self) -> Option<ControlExpressionRecord> {
+        let expression = self.parse_comparison()?;
+        (self.index == self.tokens.len()).then_some(expression)
+    }
+
+    fn parse_comparison(&mut self) -> Option<ControlExpressionRecord> {
+        let mut expression = self.parse_bit_or()?;
+        loop {
+            let operator = match self.peek() {
+                Some("==") => ControlBinaryOperator::Eq,
+                Some("!=") => ControlBinaryOperator::NotEq,
+                Some("<") => ControlBinaryOperator::Lt,
+                Some("<=") => ControlBinaryOperator::Le,
+                Some(">") => ControlBinaryOperator::Gt,
+                Some(">=") => ControlBinaryOperator::Ge,
+                _ => break,
+            };
+            self.index += 1;
+            let right = self.parse_bit_or()?;
+            expression = ControlExpressionRecord::Binary {
+                operator,
+                left: Box::new(expression),
+                right: Box::new(right),
+            };
+        }
+        Some(expression)
+    }
+
+    fn parse_bit_or(&mut self) -> Option<ControlExpressionRecord> {
+        self.parse_left_associative(Self::parse_bit_xor, &[("|", ControlBinaryOperator::BitOr)])
+    }
+
+    fn parse_bit_xor(&mut self) -> Option<ControlExpressionRecord> {
+        self.parse_left_associative(Self::parse_bit_and, &[("^", ControlBinaryOperator::BitXor)])
+    }
+
+    fn parse_bit_and(&mut self) -> Option<ControlExpressionRecord> {
+        self.parse_left_associative(Self::parse_add_sub, &[("&", ControlBinaryOperator::BitAnd)])
+    }
+
+    fn parse_add_sub(&mut self) -> Option<ControlExpressionRecord> {
+        self.parse_left_associative(
+            Self::parse_mul_div_mod,
+            &[
+                ("+", ControlBinaryOperator::Add),
+                ("-", ControlBinaryOperator::Sub),
+            ],
+        )
+    }
+
+    fn parse_mul_div_mod(&mut self) -> Option<ControlExpressionRecord> {
+        self.parse_left_associative(
+            Self::parse_unary,
+            &[
+                ("*", ControlBinaryOperator::Mul),
+                ("/", ControlBinaryOperator::Div),
+                ("%", ControlBinaryOperator::Mod),
+            ],
+        )
+    }
+
+    fn parse_left_associative(
+        &mut self,
+        next_parser: fn(&mut Self) -> Option<ControlExpressionRecord>,
+        operators: &[(&str, ControlBinaryOperator)],
+    ) -> Option<ControlExpressionRecord> {
+        let mut expression = next_parser(self)?;
+        loop {
+            let Some((_, operator)) = operators
+                .iter()
+                .find(|(token, _)| self.peek().is_some_and(|next| next == *token))
+            else {
+                break;
+            };
+            self.index += 1;
+            let right = next_parser(self)?;
+            expression = ControlExpressionRecord::Binary {
+                operator: *operator,
+                left: Box::new(expression),
+                right: Box::new(right),
+            };
+        }
+        Some(expression)
+    }
+
+    fn parse_unary(&mut self) -> Option<ControlExpressionRecord> {
+        if self.consume("!") {
+            return Some(ControlExpressionRecord::Unary {
+                operator: ControlUnaryOperator::Not,
+                operand: Box::new(self.parse_unary()?),
+            });
+        }
+
+        self.parse_primary()
+    }
+
+    fn parse_primary(&mut self) -> Option<ControlExpressionRecord> {
+        if self.consume("(") {
+            let expression = self.parse_comparison()?;
+            self.expect(")")?;
+            return Some(expression);
+        }
+
+        let token = self.next_owned()?;
+        if token.eq_ignore_ascii_case("true")
+            || token.eq_ignore_ascii_case("false")
+            || token
+                .chars()
+                .next()
+                .is_some_and(|character| character.is_ascii_digit())
+        {
+            return Some(ControlExpressionRecord::Literal { literal: token });
+        }
+
+        let base_name = parse_identifier(&token)?;
+        let mut suffixes = Vec::new();
+        loop {
+            if self.consume(".") {
+                suffixes.push(ControlReferenceSuffix::Member {
+                    member_name: parse_identifier(&self.next_owned()?)?,
+                });
+                continue;
+            }
+            if self.consume("[") {
+                let first = self.next_owned()?;
+                if self.consume(":") {
+                    let second = self.next_owned()?;
+                    self.expect("]")?;
+                    suffixes.push(ControlReferenceSuffix::Slice {
+                        msb: parse_u32_token(&first)?,
+                        lsb: parse_u32_token(&second)?,
+                    });
+                } else {
+                    self.expect("]")?;
+                    suffixes.push(ControlReferenceSuffix::BitIndex {
+                        index: parse_u32_token(&first)?,
+                    });
+                }
+                continue;
+            }
+            if self.consume("@") {
+                suffixes.push(ControlReferenceSuffix::WidthCast {
+                    width: parse_width_token(&self.next_owned()?)?,
+                });
+                continue;
+            }
+            break;
+        }
+
+        Some(ControlExpressionRecord::Reference {
+            reference: ControlReferenceRecord {
+                base_name: base_name.clone(),
+                kind_hint: classify_control_reference_kind(
+                    &base_name,
+                    self.known_signal_names,
+                    self.known_symbol_names,
+                ),
+                suffixes,
+                exposed_public_output: false,
+            },
+        })
+    }
+
+    fn peek(&self) -> Option<&str> {
+        self.tokens.get(self.index).map(String::as_str)
+    }
+
+    fn consume(&mut self, token: &str) -> bool {
+        if self.peek().is_some_and(|next| next == token) {
+            self.index += 1;
+            true
+        } else {
+            false
+        }
+    }
+
+    fn expect(&mut self, token: &str) -> Option<()> {
+        self.consume(token).then_some(())
+    }
+
+    fn next_owned(&mut self) -> Option<String> {
+        let token = self.tokens.get(self.index)?.clone();
+        self.index += 1;
+        Some(token)
+    }
+}
+
+fn classify_control_reference_kind(
+    base_name: &str,
+    known_signal_names: &BTreeSet<String>,
+    known_symbol_names: &BTreeSet<String>,
+) -> ControlReferenceKind {
+    if known_symbol_names.contains(base_name) {
+        return ControlReferenceKind::Symbol;
+    }
+    if known_signal_names.contains(base_name) {
+        return ControlReferenceKind::Signal;
+    }
+
+    ControlReferenceKind::Unknown
+}
+
+fn reclassify_control_expression(
+    expression: &ControlExpressionRecord,
+    known_signal_names: &BTreeSet<String>,
+    known_symbol_names: &BTreeSet<String>,
+) -> ControlExpressionRecord {
+    match expression {
+        ControlExpressionRecord::Reference { reference } => ControlExpressionRecord::Reference {
+            reference: ControlReferenceRecord {
+                base_name: reference.base_name.clone(),
+                kind_hint: classify_control_reference_kind(
+                    &reference.base_name,
+                    known_signal_names,
+                    known_symbol_names,
+                ),
+                suffixes: reference.suffixes.clone(),
+                exposed_public_output: reference.exposed_public_output,
+            },
+        },
+        ControlExpressionRecord::Literal { literal } => ControlExpressionRecord::Literal {
+            literal: literal.clone(),
+        },
+        ControlExpressionRecord::Unary { operator, operand } => ControlExpressionRecord::Unary {
+            operator: *operator,
+            operand: Box::new(reclassify_control_expression(
+                operand,
+                known_signal_names,
+                known_symbol_names,
+            )),
+        },
+        ControlExpressionRecord::Binary {
+            operator,
+            left,
+            right,
+        } => ControlExpressionRecord::Binary {
+            operator: *operator,
+            left: Box::new(reclassify_control_expression(
+                left,
+                known_signal_names,
+                known_symbol_names,
+            )),
+            right: Box::new(reclassify_control_expression(
+                right,
+                known_signal_names,
+                known_symbol_names,
+            )),
+        },
+    }
+}
+
+fn parse_u32_token(token: &str) -> Option<u32> {
+    token
+        .trim()
+        .trim_end_matches('.')
+        .trim_end_matches(',')
+        .parse::<u32>()
+        .ok()
 }
 
 fn parse_identifier(token: &str) -> Option<String> {
@@ -1589,6 +3447,38 @@ fn parse_width_token(token: &str) -> Option<u32> {
         .unwrap_or(trimmed);
     let width = trimmed.parse::<u32>().ok()?;
     (width > 0).then_some(width)
+}
+
+fn known_explicit_signal_names(context: &SemanticContext) -> BTreeSet<String> {
+    let mut signal_names = BTreeSet::new();
+
+    for statement in &context.statements {
+        if let Some(signal_declaration) = parse_explicit_signal_declaration(&statement.text) {
+            signal_names.insert(signal_declaration.signal_name);
+        }
+        if let Some(clock_signal) = parse_explicit_system_clock(&statement.text) {
+            signal_names.insert(clock_signal);
+        }
+        if let Some(reset_declaration) = parse_explicit_system_reset(&statement.text) {
+            signal_names.insert(reset_declaration.signal_name);
+        }
+        if let Some(init_assignment) = parse_explicit_init_assignment(&statement.text) {
+            signal_names.insert(init_assignment.target_signal);
+            if let DecisionTreeValueRecord::SignalRef { signal_name } = init_assignment.value {
+                signal_names.insert(signal_name);
+            }
+        }
+        if let Some(transition) = parse_explicit_state_transition(&statement.text) {
+            if let Some(guard) = transition.guard.as_ref() {
+                signal_names.extend(referenced_signal_names_for_guard(guard));
+            }
+        }
+        if let Some(fragment) = parse_explicit_decision_tree_fragment(&statement.text) {
+            signal_names.extend(fragment.referenced_signal_names);
+        }
+    }
+
+    signal_names
 }
 
 fn normalize_decision_tree_block_name(raw_name: &str) -> Option<String> {
@@ -1685,6 +3575,115 @@ fn decision_tree_fragment_key(block_name: &str, guard: Option<&DecisionTreeGuard
     format!("{block_name}::{}", guard_key(guard))
 }
 
+fn control_block_key(
+    block_name: &str,
+    role: ControlBlockRole,
+    selector: Option<&ControlExpressionRecord>,
+) -> String {
+    format!(
+        "{block_name}::{}::{}",
+        control_block_role_key(role),
+        control_expression_key(selector)
+    )
+}
+
+fn control_block_role_key(role: ControlBlockRole) -> &'static str {
+    match role {
+        ControlBlockRole::StateBody => "state_body",
+        ControlBlockRole::ResetSynchronous => "reset_synchronous",
+        ControlBlockRole::ResetAsynchronous => "reset_asynchronous",
+        ControlBlockRole::StandaloneDecisionTree => "standalone_decision_tree",
+    }
+}
+
+fn control_expression_key(expression: Option<&ControlExpressionRecord>) -> String {
+    match expression {
+        None => "none".to_string(),
+        Some(expression) => control_expression_record_key(expression),
+    }
+}
+
+fn control_expression_record_key(expression: &ControlExpressionRecord) -> String {
+    match expression {
+        ControlExpressionRecord::Reference { reference } => format!(
+            "ref:{}:{}:{}",
+            control_reference_kind_key(reference.kind_hint),
+            reference.base_name,
+            reference
+                .suffixes
+                .iter()
+                .map(control_reference_suffix_key)
+                .collect::<Vec<_>>()
+                .join("|")
+        ),
+        ControlExpressionRecord::Literal { literal } => format!("lit:{literal}"),
+        ControlExpressionRecord::Unary { operator, operand } => format!(
+            "unary:{}:{}",
+            control_unary_operator_key(*operator),
+            control_expression_record_key(operand)
+        ),
+        ControlExpressionRecord::Binary {
+            operator,
+            left,
+            right,
+        } => format!(
+            "bin:{}:{}:{}",
+            control_binary_operator_key(*operator),
+            control_expression_record_key(left),
+            control_expression_record_key(right)
+        ),
+    }
+}
+
+fn control_reference_kind_key(kind: ControlReferenceKind) -> &'static str {
+    match kind {
+        ControlReferenceKind::Unknown => "unknown",
+        ControlReferenceKind::Signal => "signal",
+        ControlReferenceKind::Symbol => "symbol",
+    }
+}
+
+fn control_reference_suffix_key(suffix: &ControlReferenceSuffix) -> String {
+    match suffix {
+        ControlReferenceSuffix::Member { member_name } => format!("member:{member_name}"),
+        ControlReferenceSuffix::BitIndex { index } => format!("bit:{index}"),
+        ControlReferenceSuffix::Slice { msb, lsb } => format!("slice:{msb}:{lsb}"),
+        ControlReferenceSuffix::WidthCast { width } => format!("width:{width}"),
+    }
+}
+
+fn control_unary_operator_key(operator: ControlUnaryOperator) -> &'static str {
+    match operator {
+        ControlUnaryOperator::Not => "not",
+    }
+}
+
+fn control_binary_operator_key(operator: ControlBinaryOperator) -> &'static str {
+    match operator {
+        ControlBinaryOperator::Add => "add",
+        ControlBinaryOperator::Sub => "sub",
+        ControlBinaryOperator::Mul => "mul",
+        ControlBinaryOperator::Div => "div",
+        ControlBinaryOperator::Mod => "mod",
+        ControlBinaryOperator::BitAnd => "bit_and",
+        ControlBinaryOperator::BitOr => "bit_or",
+        ControlBinaryOperator::BitXor => "bit_xor",
+        ControlBinaryOperator::Eq => "eq",
+        ControlBinaryOperator::NotEq => "not_eq",
+        ControlBinaryOperator::Lt => "lt",
+        ControlBinaryOperator::Le => "le",
+        ControlBinaryOperator::Gt => "gt",
+        ControlBinaryOperator::Ge => "ge",
+    }
+}
+
+fn explicit_top_link_endpoint_key(endpoint: &ExplicitTopLinkEndpoint) -> String {
+    match endpoint.instance_name.as_deref() {
+        Some(instance_name) => format!("{instance_name}.{}", endpoint.signal_name),
+        None => endpoint.signal_name.clone(),
+    }
+}
+
 fn guard_key(guard: Option<&DecisionTreeGuardRecord>) -> String {
     match guard {
         None => "unguarded".to_string(),
@@ -1747,6 +3746,51 @@ fn referenced_signal_names_for_action(action: &DecisionTreeActionRecord) -> BTre
             signal_names.insert(target_signal.clone());
             if let DecisionTreeValueRecord::SignalRef { signal_name } = value {
                 signal_names.insert(signal_name.clone());
+            }
+        }
+    }
+    signal_names
+}
+
+fn referenced_signal_names_for_control_expression(
+    expression: &ControlExpressionRecord,
+) -> BTreeSet<String> {
+    match expression {
+        ControlExpressionRecord::Reference { reference } => {
+            if matches!(reference.kind_hint, ControlReferenceKind::Symbol) {
+                return BTreeSet::new();
+            }
+
+            BTreeSet::from([reference.base_name.clone()])
+        }
+        ControlExpressionRecord::Literal { .. } => BTreeSet::new(),
+        ControlExpressionRecord::Unary { operand, .. } => {
+            referenced_signal_names_for_control_expression(operand)
+        }
+        ControlExpressionRecord::Binary { left, right, .. } => {
+            let mut signal_names = referenced_signal_names_for_control_expression(left);
+            signal_names.extend(referenced_signal_names_for_control_expression(right));
+            signal_names
+        }
+    }
+}
+
+fn referenced_signal_names_for_control_action(action: &ControlActionRecord) -> BTreeSet<String> {
+    let mut signal_names = BTreeSet::new();
+    match action {
+        ControlActionRecord::Assign { target, value, .. } => {
+            signal_names.insert(target.signal_name.clone());
+            signal_names.extend(referenced_signal_names_for_control_expression(value));
+        }
+        ControlActionRecord::Transition { .. } => {}
+        ControlActionRecord::DelayedPulse { target, value, .. } => {
+            signal_names.insert(target.signal_name.clone());
+            signal_names.extend(referenced_signal_names_for_control_expression(value));
+        }
+        ControlActionRecord::CompoundUpdate { target, amount, .. } => {
+            signal_names.insert(target.signal_name.clone());
+            if let Some(amount) = amount.as_ref() {
+                signal_names.extend(referenced_signal_names_for_control_expression(amount));
             }
         }
     }
@@ -2102,12 +4146,15 @@ mod tests {
 
     use crate::error::Result;
     use crate::ir::evidence::EvidenceIr;
-    use crate::ir::source::{SourceIr, VisualAsset, VisualAssetKind};
+    use crate::ir::source::{AutomationConfidence, SourceIr, VisualAsset, VisualAssetKind};
 
     use super::{
-        DecisionTreeActionRecord, DecisionTreeAssignmentKind, DecisionTreeComparisonOperator,
-        DecisionTreeGuardRecord, DecisionTreeValueRecord, InterfaceSignalDirection, SemanticIr,
-        SystemResetKind,
+        ControlActionRecord, ControlBinaryOperator, ControlBlockRole,
+        ControlCompoundUpdateOperation, ControlDualOutputKind, ControlExpressionRecord,
+        ControlReferenceKind, ControlReferenceSuffix, DecisionTreeActionRecord,
+        DecisionTreeAssignmentKind, DecisionTreeComparisonOperator, DecisionTreeGuardRecord,
+        DecisionTreeValueRecord, InterfaceSignalDirection, SemanticIr, SymbolDefinitionKind,
+        SystemResetKind, SystemResetPolarity, SystemResetTargetKind, SystemResetTimingRelation,
     };
 
     #[test]
@@ -2321,13 +4368,32 @@ mod tests {
             &semantic_artifact_base,
         )?;
 
+        let system_contract = semantic_ir
+            .system_contract
+            .as_ref()
+            .expect("explicit system contract should be present");
+        assert_eq!(system_contract.clock_signal, "clk");
+        assert_eq!(system_contract.reset_signal, "rst_n");
+        assert_eq!(system_contract.reset_kind, SystemResetKind::Asynchronous);
         assert_eq!(
-            semantic_ir.system_contract.as_ref().map(|contract| (
-                contract.clock_signal.as_str(),
-                contract.reset_signal.as_str(),
-                contract.reset_kind,
-            )),
-            Some(("clk", "rst_n", SystemResetKind::Asynchronous))
+            system_contract.reset_polarity,
+            SystemResetPolarity::ActiveLow
+        );
+        assert_eq!(
+            system_contract.assertion_timing,
+            SystemResetTimingRelation::AsynchronousToClock
+        );
+        assert_eq!(
+            system_contract.release_timing,
+            SystemResetTimingRelation::SynchronousToClock
+        );
+        assert_eq!(
+            system_contract.target_kind,
+            SystemResetTargetKind::DedicatedResetPin
+        );
+        assert_eq!(
+            system_contract.automation_confidence,
+            AutomationConfidence::High
         );
         assert_eq!(semantic_ir.init_assignments.len(), 1);
         assert!(matches!(
@@ -2348,6 +4414,351 @@ mod tests {
                         value: DecisionTreeValueRecord::SignalRef { signal_name },
                     }) if target_signal == "ACC" && signal_name == "DATA_IN"
                 )
+        }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn extracts_synchronous_active_high_reset_from_explicit_markdown() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("sync_dt.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            "# Explicit Synchronous Control\nSignal clk is input width 1.\n\nSignal rst is input width 1.\n\nSignal DATA_IN is input width 8.\n\nSignal ACC is output width 8.\n\nClock clk.\n\nReset rst is synchronous active high.\n\nInit ACC = 8'0.\n\nBlock accumulate: ACC <- DATA_IN.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let system_contract = semantic_ir
+            .system_contract
+            .as_ref()
+            .expect("explicit system contract should be present");
+        assert_eq!(system_contract.clock_signal, "clk");
+        assert_eq!(system_contract.reset_signal, "rst");
+        assert_eq!(system_contract.reset_kind, SystemResetKind::Synchronous);
+        assert_eq!(
+            system_contract.reset_polarity,
+            SystemResetPolarity::ActiveHigh
+        );
+        assert_eq!(
+            system_contract.assertion_timing,
+            SystemResetTimingRelation::SynchronousToClock
+        );
+        assert_eq!(
+            system_contract.release_timing,
+            SystemResetTimingRelation::SynchronousToClock
+        );
+        assert_eq!(
+            system_contract.target_kind,
+            SystemResetTargetKind::DataInputPath
+        );
+        assert_eq!(
+            system_contract.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert_eq!(semantic_ir.init_assignments.len(), 1);
+
+        Ok(())
+    }
+
+    #[test]
+    fn infers_reset_polarity_when_explicit_level_is_omitted() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("inferred_reset.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            "# Explicit Sequential Control\nSignal clk is input width 1.\n\nSignal rst_n is input width 1.\n\nSignal DATA_IN is input width 8.\n\nSignal ACC is output width 8.\n\nClock clk.\n\nReset rst_n is asynchronous.\n\nInit ACC = 8'0.\n\nBlock accumulate: ACC <- DATA_IN.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let system_contract = semantic_ir
+            .system_contract
+            .as_ref()
+            .expect("explicit system contract should be present");
+        assert_eq!(system_contract.reset_kind, SystemResetKind::Asynchronous);
+        assert_eq!(
+            system_contract.reset_polarity,
+            SystemResetPolarity::ActiveLow
+        );
+        assert_eq!(
+            system_contract.assertion_timing,
+            SystemResetTimingRelation::AsynchronousToClock
+        );
+        assert_eq!(
+            system_contract.release_timing,
+            SystemResetTimingRelation::SynchronousToClock
+        );
+        assert_eq!(
+            system_contract.target_kind,
+            SystemResetTargetKind::DedicatedResetPin
+        );
+        assert_eq!(
+            system_contract.automation_confidence,
+            AutomationConfidence::Medium
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn extracts_symbol_definitions_and_rich_control_blocks_from_explicit_markdown() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("rich_control.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            "# Rich Explicit Control\nSignal MODE is input width 2.\n\nSignal GO is input width 1.\n\nSignal ACC is output width 8.\n\nSignal PULSE_OUT is output width 1.\n\nConstant STEP = 8'1.\n\nParam RESET_VALUE = 8'0.\n\nEnum mode_t idle = 0.\n\nEnum mode_t busy = 1.\n\nState idle is initial.\n\nState busy.\n\nBlock decode select MODE when MODE == mode_t.idle: public ACC = 8'0; transition idle.\n\nSyncReset clear_acc: ACC <- RESET_VALUE.\n\nAsyncReset clear_pulse: public PULSE_OUT = 0.\n\nBlock busy when GO: next ACC <- ACC + STEP; pulse public PULSE_OUT after 2 = 1; ACC += STEP; -> idle.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        assert_eq!(semantic_ir.symbol_definitions.len(), 3);
+        assert!(semantic_ir.symbol_definitions.iter().any(|definition| {
+            definition.symbol_name == "STEP"
+                && definition.kind == SymbolDefinitionKind::Constant
+                && matches!(
+                    definition.value.as_ref(),
+                    Some(ControlExpressionRecord::Literal { literal }) if literal == "8'1"
+                )
+        }));
+        assert!(semantic_ir.symbol_definitions.iter().any(|definition| {
+            definition.symbol_name == "mode_t"
+                && definition.kind == SymbolDefinitionKind::Enum
+                && definition.members.len() == 2
+                && definition
+                    .members
+                    .iter()
+                    .any(|member| member.member_name == "idle")
+        }));
+
+        let decode_block = semantic_ir
+            .control_blocks
+            .iter()
+            .find(|block| block.block_name == "decode")
+            .expect("decode control block should be present");
+        assert_eq!(decode_block.role, ControlBlockRole::StandaloneDecisionTree);
+        assert!(matches!(
+            decode_block.selector.as_ref(),
+            Some(ControlExpressionRecord::Reference { reference })
+                if reference.base_name == "MODE"
+                    && reference.kind_hint == ControlReferenceKind::Signal
+        ));
+        assert!(matches!(
+            decode_block
+                .branches
+                .first()
+                .and_then(|branch| branch.predicate.as_ref()),
+            Some(ControlExpressionRecord::Binary {
+                operator: ControlBinaryOperator::Eq,
+                left,
+                right,
+            }) if matches!(
+                left.as_ref(),
+                ControlExpressionRecord::Reference { reference }
+                    if reference.base_name == "MODE"
+                        && reference.kind_hint == ControlReferenceKind::Signal
+            ) && matches!(
+                right.as_ref(),
+                ControlExpressionRecord::Reference { reference }
+                    if reference.base_name == "mode_t"
+                        && reference.kind_hint == ControlReferenceKind::Symbol
+                        && matches!(
+                            reference.suffixes.first(),
+                            Some(ControlReferenceSuffix::Member { member_name })
+                                if member_name == "idle"
+                        )
+            )
+        ));
+
+        let busy_block = semantic_ir
+            .control_blocks
+            .iter()
+            .find(|block| block.block_name == "busy")
+            .expect("state body control block should be present");
+        assert_eq!(busy_block.role, ControlBlockRole::StateBody);
+        assert!(busy_block.branches.iter().any(|branch| {
+            branch.actions.iter().any(|action| {
+                matches!(
+                    action,
+                    ControlActionRecord::Assign {
+                        target,
+                        dual_output: Some(ControlDualOutputKind::NextSignal),
+                        value:
+                            ControlExpressionRecord::Binary {
+                                operator: ControlBinaryOperator::Add,
+                                ..
+                            },
+                        ..
+                    } if target.signal_name == "ACC"
+                )
+            })
+        }));
+        assert!(busy_block.branches.iter().any(|branch| {
+            branch.actions.iter().any(|action| {
+                matches!(
+                    action,
+                    ControlActionRecord::DelayedPulse {
+                        target,
+                        delay,
+                        value: ControlExpressionRecord::Literal { literal },
+                    } if target.signal_name == "PULSE_OUT"
+                        && target.exposed_public_output
+                        && *delay == 2
+                        && literal == "1"
+                )
+            })
+        }));
+        assert!(busy_block.branches.iter().any(|branch| {
+            branch.actions.iter().any(|action| {
+                matches!(
+                    action,
+                    ControlActionRecord::CompoundUpdate {
+                        target,
+                        operation: ControlCompoundUpdateOperation::Increment,
+                        amount:
+                            Some(ControlExpressionRecord::Reference { reference }),
+                    } if target.signal_name == "ACC"
+                        && reference.base_name == "STEP"
+                        && reference.kind_hint == ControlReferenceKind::Symbol
+                )
+            })
+        }));
+        assert!(busy_block.branches.iter().any(|branch| {
+            branch.actions.iter().any(|action| {
+                matches!(
+                    action,
+                    ControlActionRecord::Transition { target_state }
+                        if target_state == "idle"
+                )
+            })
+        }));
+        assert!(semantic_ir.control_blocks.iter().any(|block| {
+            block.block_name == "clear_acc" && block.role == ControlBlockRole::ResetSynchronous
+        }));
+        assert!(semantic_ir.control_blocks.iter().any(|block| {
+            block.block_name == "clear_pulse" && block.role == ControlBlockRole::ResetAsynchronous
+        }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn extracts_explicit_modules_and_tops_from_markdown() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("composition.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            "# Explicit Composition\nTop datapath.\n\nTop datapath port result_data is output width 8.\n\nTop datapath child producer uses module producer_core.\n\nTop datapath child consumer uses module consumer_core.\n\nTop datapath link producer.output_data -> consumer.input_data.\n\nTop datapath link consumer.result_data -> result_data.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n\nModule consumer_core signal input_data is input width 8.\n\nModule consumer_core signal result_data is output width 8.\n\nModule consumer_core block route: result_data = input_data.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        assert_eq!(semantic_ir.explicit_modules.len(), 2);
+        assert_eq!(semantic_ir.explicit_tops.len(), 1);
+        assert!(semantic_ir.explicit_modules.iter().any(|module| {
+            module.module_name == "producer_core"
+                && module
+                    .decision_tree_fragments
+                    .iter()
+                    .any(|fragment| fragment.block_name == "produce")
+                && module
+                    .control_blocks
+                    .iter()
+                    .any(|block| block.block_name == "produce")
+        }));
+        assert!(semantic_ir.explicit_modules.iter().any(|module| {
+            module.module_name == "consumer_core"
+                && module.interfaces.iter().any(|interface| {
+                    interface.signal_records.iter().any(|signal| {
+                        signal.signal_name == "input_data"
+                            && signal.direction_hint == Some(InterfaceSignalDirection::Input)
+                            && signal.width_hint == Some(8)
+                    })
+                })
+        }));
+
+        let explicit_top = semantic_ir
+            .explicit_tops
+            .iter()
+            .find(|top| top.top_name == "datapath")
+            .expect("explicit top should be present");
+        assert_eq!(explicit_top.ports.len(), 1);
+        assert_eq!(explicit_top.children.len(), 2);
+        assert_eq!(explicit_top.links.len(), 2);
+        assert!(explicit_top.ports.iter().any(|port| {
+            port.port_name == "result_data"
+                && port.direction_hint == InterfaceSignalDirection::Output
+                && port.width_hint == Some(8)
+        }));
+        assert!(explicit_top.children.iter().any(|child| {
+            child.instance_name == "producer" && child.source_module_name == "producer_core"
+        }));
+        assert!(explicit_top.links.iter().any(|link| {
+            link.source.instance_name.as_deref() == Some("consumer")
+                && link.source.signal_name == "result_data"
+                && link.target.instance_name.is_none()
+                && link.target.signal_name == "result_data"
         }));
 
         Ok(())

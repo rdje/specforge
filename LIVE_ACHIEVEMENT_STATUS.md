@@ -37,9 +37,18 @@
 - Standalone renderable `.fsm` text emission implemented for explicit canonical cases: Done
 - Standalone sequential/system-contract `.fsm` emission implemented for explicit canonical DT cases: Done
 - Structured `?fsm:name` `.fsm` emission implemented for explicit canonical FSM cases: Done
+- Canonical symbol-definition and structured-control widening for `.fsm` semantics implemented: Done
+- Honest `.fsm` lowering for canonical symbol-definition sections and reset-role blocks implemented: Done
+- Explicit active-high synchronous reset phrasing accepted in reset parsing: Done
+- First-class canonical reset polarity/assertion/release/target semantics implemented: Done
+- Reset-contract carry-through and honest `.fsm` polarity validation implemented: Done
+- Explicit module/top composition carry-through implemented: Done
+- Structured `?top:name` `.fsm` emission implemented for explicit canonical composition cases: Done
+- Selector/test-node and compound-update lowering into emitted `.fsm` text implemented: Done
+- Direct-module alias-root decision recorded and speculative `.fsm` adapter root-kind placeholders removed: Done
 - SystemVerilog/Verilog/VHDL adapters implemented: Not Started
 - Validation and back-annotation pipeline implemented: Not Started
 - End-to-end source-to-IntentIR pipeline implemented: Done
 
 ## Highest-priority remaining gap
-- Promote explicit composition/module/top facts so the adapter can choose honest `?top:name`, `?mod:name`, and `?module:name` roots while keeping the canonical model backend-neutral: In Progress
+- Implement the validation and back-annotation pipeline so stage and adapter outputs produce reproducible artifact-linked reports: Not Started

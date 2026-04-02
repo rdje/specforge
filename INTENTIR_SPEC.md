@@ -7,6 +7,8 @@
 ## Canonical product boundary
 `specforge` exists to extract implementation-relevant intent from specifications.
 
+This includes software-interface documents associated with hardware components when they carry normative behavior, interface contracts, or implementation constraints.
+
 The canonical output of the system is:
 - `IntentIR`
 
@@ -236,7 +238,7 @@ It is responsible for:
 Current implementation note:
 - `specforge semantic <evidence-ir>` now materializes `generated/semantic_ir/<document_key>/semantic_ir.json`
 - the first executable pass consumes persisted `EvidenceIR` JSON
-- it currently discovers actors, interfaces, typed signal records, backend-neutral system/init records, backend-neutral guarded/action control fragments, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions from deterministic heuristics over evidence statements and visual grounding
+- it currently discovers actors, interfaces, typed signal records, backend-neutral system/init records, first-class reset polarity/assertion/release/target semantics, backend-neutral guarded/action control fragments, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions from deterministic heuristics over evidence statements and visual grounding
 - the current output is intentionally conservative and inspectable; canonical semantic normalization still continues in the later `IntentIR` stage
 
 Minimal conceptual example:
@@ -280,7 +282,7 @@ It should include at least:
 Current implementation note:
 - `specforge intent <semantic-ir>` now materializes `generated/intent_ir/<document_key>/intent_ir.json`
 - the first executable pass consumes persisted `SemanticIR` JSON
-- it currently canonicalizes intent identity, actor responsibilities, interface inventory, backend-neutral system/init records, backend-neutral control fragments, behaviors, constraints, assumptions, and residual decisions from deterministic heuristics over semantic records
+- it currently canonicalizes intent identity, actor responsibilities, interface inventory, backend-neutral system/init records, first-class reset polarity/assertion/release/target semantics, backend-neutral control fragments, behaviors, constraints, assumptions, and residual decisions from deterministic heuristics over semantic records
 - the current output is intentionally conservative and inspectable; adapter work should lower from this canonical surface rather than reconstruct semantics from scratch
 
 Minimal conceptual example:
@@ -333,7 +335,11 @@ Minimal conceptual example:
   "system_contract": {
     "clock_signal": "clk",
     "reset_signal": "rst_n",
-    "reset_kind": "asynchronous"
+    "reset_kind": "asynchronous",
+    "reset_polarity": "active_low",
+    "assertion_timing": "asynchronous_to_clock",
+    "release_timing": "synchronous_to_clock",
+    "target_kind": "dedicated_reset_pin"
   },
   "init_assignments": [
     {
@@ -407,7 +413,7 @@ Initial planned targets:
 Current implementation note:
 - `specforge adapt <intent-ir> --target fsm` now materializes `generated/adapters/fsm/<document_key>/adapter.json`
 - the first executable adapter slice consumes persisted `IntentIR` JSON
-- it currently chooses `?dt:name` for fully specified explicit standalone cases, chooses `?fsm:name` when explicit regular-state and transition records are present, consumes canonical interface/control/system/init/state records when available, emits real standalone or structured `.fsm` text only when renderability is explicit enough, and keeps broader composition cases blocked with residual decisions plus renderability blockers rather than fabricating `.fsm` text
+- it currently chooses `?dt:name` for fully specified explicit standalone cases, chooses `?fsm:name` when explicit regular-state and transition records are present, chooses `?top:name` when explicit module/top composition facts are present, consumes canonical interface/control/system/init/state/module/top records when available, emits real standalone, structured, or explicit top-root `.fsm` text only when renderability is explicit enough, and keeps compatibility-level direct-module spellings outside the current canonical root-kind model rather than fabricating `.fsm` text from an invented direct-module distinction
 
 Minimal conceptual adapter artifact:
 ```json
@@ -484,6 +490,7 @@ Example:
 - `specforge semantic` constructs `SemanticIR` from grounded evidence
 - `specforge intent` now constructs canonical `IntentIR`
 - `specforge adapt --target fsm` now constructs a typed `.fsm` adapter artifact, emits real standalone or structured `.fsm` text for explicit canonical standalone/stateful cases, and blocks unsafe target text emission with explicit residual decisions otherwise
+- `specforge adapt --target fsm` now also emits real explicit `?top:name` source documents when explicit module/top composition facts are complete enough to avoid semantic invention
 - adapter work should follow `IntentIR`, not precede it
 
 ## Long-term documentation requirement

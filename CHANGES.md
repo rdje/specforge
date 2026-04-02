@@ -1,5 +1,122 @@
 # CHANGES
+## 2026-04-02
+- widened `SemanticIR` so it now preserves canonical `.fsm`-relevant symbol-definition and structured-control surface rather than relying only on legacy decision-tree fragments:
+  - canonical symbol definitions for `Constant`, `Define`, `Param`, and `Enum`
+  - canonical control expressions, branch-local actions, and dedicated synchronous-reset/asynchronous-reset control-block roles
+  - richer module-scoped carry-through for the same widened semantic surface
+- widened the canonical reset contract so `SystemContractRecord` now preserves reset kind, reset polarity, assertion timing, release timing, and reset-target semantics explicitly instead of leaving real hardware reset behavior implicit
+- tightened reset normalization so explicit reset declarations now:
+  - preserve synchronous reset as synchronous assertion + synchronous release through the data-input path
+  - preserve asynchronous reset as asynchronous assertion + synchronous release through the dedicated reset pin
+  - infer active-low polarity from `_n` / `_b` reset naming and otherwise fall back to active-high with lower automation confidence when explicit polarity wording is omitted
+- widened `IntentIR` so it now carries canonical symbol-definition sections and structured control blocks unchanged for downstream adapters
+- refactored the `.fsm` adapter to lower from canonical `symbol_definitions` and `control_blocks` first, with legacy decision-tree fragments kept only as a fallback when the widened canonical surface is absent
+- tightened `.fsm` system-contract renderability so reset polarity must stay recoverable honestly from `sreset` / `asreset` plus the reset signal name in the current target slice
+- widened emitted `.fsm` text so the renderable slices now cover:
+  - `+constants`, `+define`, `+params`, and `+enums` sections
+  - structured standalone/DT and FSM-root lowering from canonical control blocks
+  - canonical synchronous-reset and asynchronous-reset control-role blocks
+  - explicit public-output targets and dual-output assignment forms carried through the widened control model when renderable
+- widened the `.fsm` adapter so selector/test-node control and canonical compound-update actions now lower honestly into emitted `.fsm` text when their canonical selector/predicate/update shapes map directly to explicit `.fsm` test-selector tokens and update shorthand, while unsupported selector predicates remain blocked explicitly
+- repaired accidental corruption in the `adapters.rs` regression module and tightened adapter residual logic so renderable compound-update artifacts no longer keep a stale `fsm_adapter_dt_action_graph` packet
+- reviewed the current `fsmgen` direct-root contract and confirmed that `?mod:name` / `?module:name` are still compatibility-level accepted spellings on a shared single-module path rather than a settled backend-neutral semantic distinction for SpecForge
+- tightened the SpecForge `.fsm` adapter root-kind model so it now only represents the current honest canonical roots (`dt`, `fsm`, `top`) and no longer carries speculative `mod` / `module` placeholder variants in adapter JSON or deferred-root decisions
+- tightened explicit reset parsing so both of these phrasing styles now normalize into the widened backend-neutral reset contract:
+  - `Reset rst_n is asynchronous active low.`
+  - `Reset rst is synchronous active high.`
+- added regression coverage for:
+  - semantic extraction of synchronous active-high reset phrasing
+  - intent carry-through of synchronous active-high reset phrasing
+  - semantic and intent carry-through of inferred active-low reset polarity from `rst_n`
+  - honest adapter blocking when reset polarity cannot be preserved through the reset signal name
+  - renderable standalone DT lowering with canonical symbol-definition sections
+  - renderable structured FSM lowering with canonical reset-role blocks
+  - renderable selector-based standalone DT lowering
+  - renderable computed-selector standalone DT lowering
+  - honest blocking when a selector branch predicate does not map relative to the chosen selector
+  - renderable compound-update standalone DT lowering
+  - tightened deferred-root decisions so renderable/blocked adapter artifacts keep only the current honest root-kind set (`dt`, `fsm`, `top`)
+- validated the widened `.fsm` semantic slice with:
+  - `cargo fmt --all --manifest-path Cargo.toml`
+  - `cargo fmt --all --manifest-path Cargo.toml --check`
+  - `cargo test --manifest-path Cargo.toml adapters`
+  - `cargo test --manifest-path Cargo.toml`
+  - an execute-mode end-to-end CLI pipeclean on a temporary inferred-polarity reset sample through `ingest -> evidence -> semantic -> intent -> adapt`
+  - an execute-mode end-to-end CLI pipeclean on a temporary synchronous-active-high reset sample through `ingest -> evidence -> semantic -> intent -> adapt`
+  - an execute-mode end-to-end CLI pipeclean on a temporary selector/test-node sample through `ingest -> evidence -> semantic -> intent -> adapt`
+  - an execute-mode end-to-end CLI pipeclean on a temporary compound-update sample through `ingest -> evidence -> semantic -> intent -> adapt`
+- confirmed the representative inferred-polarity end-to-end adapter output is now safely renderable while preserving the widened reset contract in JSON:
+  - `document_key: inferred_reset_cli`
+  - `semantic/system_contract.reset_polarity: active_low`
+  - `semantic/system_contract.assertion_timing: asynchronous_to_clock`
+  - `semantic/system_contract.release_timing: synchronous_to_clock`
+  - `semantic/system_contract.target_kind: dedicated_reset_pin`
+  - `semantic/system_contract.automation_confidence: medium`
+  - `intent/system_contract` matches the widened semantic reset contract exactly
+  - `emitted_target_path: generated/adapters/fsm/inferred_reset_cli/inferred_reset_cli.fsm`
+- confirmed the representative synchronous-active-high end-to-end adapter output is now safely renderable:
+  - `document_key: sync_control`
+  - `lowering_status: renderable`
+  - `selected_root_kind: fsm`
+  - `emitted_target_path: generated/adapters/fsm/sync_control/sync_control.fsm`
+- confirmed the representative selector/test-node end-to-end adapter output is now safely renderable:
+  - `document_key: selector_dt`
+  - `lowering_status: renderable`
+  - `selected_root_kind: dt`
+  - `residual_decision_count: 2`
+  - `emitted_target_path: generated/adapters/fsm/selector_dt/selector_dt.fsm`
+  - emitted test-node block includes `(?MODE ...)` and the selector branch token `=mode_t.idle`
+- confirmed the representative compound-update end-to-end adapter output is now safely renderable:
+  - `document_key: compound_update_dt`
+  - `lowering_status: renderable`
+  - `selected_root_kind: dt`
+  - `residual_decision_count: 4`
+  - `emitted_target_path: generated/adapters/fsm/compound_update_dt/compound_update_dt.fsm`
+  - emitted update block includes `(-bump` and `(+= ACC STEP)`
+- refreshed the live documentation surface so the README, user guide, live status tracker, codebase analysis, development notes, roadmap, and continuity records now describe the widened canonical reset contract, the landed selector/test-node and compound-update slice, the current reset-naming convention, and the remaining direct-module alias gap plus explicit unsupported selector/predicate boundaries
+- refreshed the same live documentation surface again so it now records the direct-module defer decision explicitly, removes speculative adapter root-kind language, and advances the next milestone to validation/back-annotation
 ## 2026-04-01
+- enriched `SemanticIR` so it now preserves explicit backend-neutral module and top-composition records from `Module ...` and `Top ...` statements, including typed top ports, child-module references, and explicit wiring links
+- tightened semantic extraction so module-scoped and top-scoped statements are handled through scoped parsing helpers and no longer leak into document-global direct-root inference
+- enriched `IntentIR` so it now carries canonical explicit module and top-composition surface forward unchanged for downstream adapters
+- widened the `.fsm` adapter beyond a single direct-root model so it now:
+  - inventories explicit module candidates and explicit top candidates from canonical intent records
+  - selects an honest `?top:name` root when exactly one explicit top composition is renderable
+  - renders stable top-level support blocks such as `?ports:public_io` and `?toplink:wiring`
+  - embeds referenced renderable child module roots after the selected `?top:name` root
+  - keeps standalone direct `?mod:name` / `?module:name` alias roots deferred until there is a real backend-neutral direct-module distinction
+- tightened adapter renderability checks for explicit top composition so emitted `.fsm` text now requires:
+  - fully typed explicit top ports
+  - existing referenced child modules
+  - renderable child module roots
+  - width-compatible and direction-compatible explicit link endpoints
+  - explicit links for the current multi-child composition slice
+- tightened adapter residual logic so standalone DT residuals are suppressed when an explicit `?top:name` source document is selected and composition-specific residuals remain honest when child modules or links are missing
+- extended `specforge adapt` execute-mode summaries with `module_candidate_count` and `top_candidate_count`
+- added regression coverage for:
+  - explicit module/top extraction in `SemanticIR`
+  - explicit module/top carry-through in `IntentIR`
+  - renderable and blocked explicit top-composition adapter paths
+- validated the new explicit composition slice with:
+  - `cargo fmt --all --manifest-path Cargo.toml`
+  - `cargo test --manifest-path Cargo.toml`
+  - `cargo run --manifest-path Cargo.toml -- ingest <temp>/explicit_top.md`
+  - `cargo run --manifest-path Cargo.toml -- evidence generated/source_ir/explicit_top/source_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/explicit_top/evidence_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/explicit_top/semantic_ir.json`
+  - `cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/explicit_top/intent_ir.json --target fsm`
+- confirmed the representative explicit top-composition end-to-end adapter output is now safely renderable:
+  - `lowering_status: renderable`
+  - `selected_root_kind: top`
+  - `signal_candidate_count: 1`
+  - `decision_tree_candidate_count: 0`
+  - `state_candidate_count: 0`
+  - `transition_candidate_count: 0`
+  - `module_candidate_count: 2`
+  - `top_candidate_count: 1`
+  - `residual_decision_count: 3`
+  - `emitted_target_path: generated/adapters/fsm/explicit_top/datapath.fsm`
+- refreshed the live documentation surface so the roadmap, status trackers, user guide, architecture docs, and continuity files now describe the landed explicit `?top:name` slice and the still-deferred direct module-alias roots
 - enriched `SemanticIR` so it now preserves backend-neutral regular-state and transition records from explicit `State ...` and `Transition ...` statements
 - enriched `IntentIR` so it now carries canonical regular-state and transition surface forward for downstream adapters
 - widened the `.fsm` adapter so it now selects honest `?fsm:name` roots from the explicit canonical state graph, groups state-matching control fragments into state bodies, preserves unmatched control fragments as standalone `-block` children, and renders sequential state-body assignments with `<=`

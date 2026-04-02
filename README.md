@@ -3,7 +3,7 @@ This file is the single entry point for the project.
 Use it first for the project objective, document navigation, and the current implementation map.
 
 ## Project objective
-- build `specforge` as a staged Rust toolchain for extracting implementation-relevant intent from protocol, component, and system specifications
+- build `specforge` as a staged Rust toolchain for extracting implementation-relevant intent from protocol, component, system, and software-interface specifications
 - make the canonical deliverable a backend-independent `IntentIR`, serialized as JSON or a future equivalent interchange format
 - treat `.fsm`, SystemVerilog, Verilog, and VHDL as adapter targets downstream of `IntentIR`, not as the core product boundary
 - push automation as far as safely possible, while representing unresolved ambiguity as structured residual decision packets instead of ad hoc manual gaps
@@ -38,7 +38,7 @@ Use it first for the project objective, document navigation, and the current imp
 - PDF normalization is now explicitly treated as structured source capture with page images, figure/table assets, captions, and markdown as a convenience view rather than the sole system of record
 - `specforge ingest <pdf>` now performs real Docling-backed structured normalization and materializes promoted markdown, page images, page metadata sidecars, visual assets, metadata JSON, backend raw JSON, and manifest files under `generated/source_ir/<document_key>/normalized`
 - the first real `EvidenceIR` extraction pass now builds section anchors, evidence spans, visual evidence items, figure/caption links, and heuristic extracted statements from ready `SourceIR` artifacts
-- the first real `SemanticIR` lifting pass now builds actors, interfaces, backend-neutral system/init records, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions from persisted `EvidenceIR` artifacts
+- the first real `SemanticIR` lifting pass now builds actors, interfaces, backend-neutral system/init records, first-class reset polarity/assertion/release/target semantics, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions from persisted `EvidenceIR` artifacts
 - the first real `IntentIR` canonicalization pass now builds intent identity, actor responsibilities, carried interface/control/system/init surface, behaviors, constraints, assumptions, and residual decisions from persisted `SemanticIR` artifacts
 - explicit staged IR modules now exist for:
   - `SourceIR`
@@ -46,8 +46,8 @@ Use it first for the project objective, document navigation, and the current imp
   - `SemanticIR`
   - `IntentIR`
   - typed adapter lowering
-- the first real `.fsm` adapter slices now materialize typed adapter artifacts, emit explicit standalone `?dt:name` text for honest canonical DT cases, emit structured `?fsm:name` text when the canonical state graph is explicit, and block unsafe composition-level `.fsm` text with explicit residual decisions instead of fabricating target syntax
-- the next implementation milestone is to promote explicit composition/module/top facts for honest `?top:name`, `?mod:name`, and `?module:name` lowering while keeping the canonical model backend-neutral
+- the first real `.fsm` adapter slices now materialize typed adapter artifacts, emit explicit standalone `?dt:name` text for honest canonical DT cases, emit structured `?fsm:name` text when the canonical state graph is explicit, emit explicit `?top:name` source documents when module/top composition facts are explicit, lower canonical symbol-definition sections, structured reset-role blocks, selector/test-node branches, and compound-update shorthand from the widened semantic model when those canonical shapes map directly into `.fsm`, keep reset polarity honest through the reset signal name because emitted `.fsm` text still carries only `sreset` / `asreset` plus the signal, keep unsupported selector predicates and other unsafe broader-root cases blocked with explicit residual decisions instead of fabricating target syntax, and intentionally keep compatibility-level `?mod:name` / `?module:name` spellings outside the current canonical root-kind model until a real backend-neutral direct-module distinction exists
+- the next implementation milestone is to build the validation/back-annotation pipeline so stage and adapter outputs have reproducible artifact-linked reports
 
 ## Working naming
 - repository / project / CLI / crate name: `specforge`
@@ -158,7 +158,7 @@ Use it first for the project objective, document navigation, and the current imp
 - `crates/specforge/src/commands/intent.rs`
   - `IntentIR` preview/materialization command
 - `crates/specforge/src/commands/adapt.rs`
-  - `.fsm` adapter preview/materialization command for the current honest DT/FSM lowering slices
+  - `.fsm` adapter preview/materialization command for the current honest DT/FSM/top lowering slices
 - `crates/specforge/src/ir/mod.rs`
   - staged IR namespace and stage identifiers
 - `crates/specforge/src/ir/source.rs`
@@ -168,11 +168,11 @@ Use it first for the project objective, document navigation, and the current imp
 - `crates/specforge/src/ir/evidence.rs`
   - first real multimodal `EvidenceIR` builder for text spans, captions, figure/table references, visual evidence, and extracted statements
 - `crates/specforge/src/ir/semantic.rs`
-  - first real `SemanticIR` builder for actors, interfaces, typed signal records, backend-neutral control fragments, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions
+  - first real `SemanticIR` builder for actors, interfaces, typed signal records, backend-neutral control fragments, explicit module/top composition facts, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions
 - `crates/specforge/src/ir/intent.rs`
-  - first real `IntentIR` builder for canonical intent identity, actor responsibilities, carried interface inventory, carried backend-neutral control fragments, behaviors, constraints, assumptions, and residual decisions
+  - first real `IntentIR` builder for canonical intent identity, actor responsibilities, carried interface inventory, carried backend-neutral control fragments, carried explicit module/top composition facts, behaviors, constraints, assumptions, and residual decisions
 - `crates/specforge/src/ir/adapters.rs`
-  - typed adapter artifacts, honest standalone/structured `.fsm` lowering logic, renderability analysis, and adapter-side residual decisions
+  - typed adapter artifacts, honest standalone/structured/top-root `.fsm` lowering logic, renderability analysis, and adapter-side residual decisions
 
 ### Planned future implementation paths
 - `fixtures/`
@@ -202,7 +202,7 @@ cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --targ
 - `specforge intent <semantic-ir> --dry-run` prints computed `IntentIR` JSON without writing artifacts
 - `specforge intent <semantic-ir>` materializes `generated/intent_ir/<document_key>/intent_ir.json`
 - `specforge adapt <intent-ir> --target fsm --dry-run` prints computed adapter JSON without writing artifacts
-- `specforge adapt <intent-ir> --target fsm` materializes `generated/adapters/fsm/<document_key>/adapter.json` and writes an emitted `.fsm` file when the canonical interface/control/system/init/state surface is explicit enough for honest standalone DT or structured FSM lowering
+- `specforge adapt <intent-ir> --target fsm` materializes `generated/adapters/fsm/<document_key>/adapter.json` and writes an emitted `.fsm` file when the canonical interface/control/system/init/state surface or explicit module/top composition surface is explicit enough for honest standalone DT, structured FSM, or first-slice `?top:name` lowering
 - PDF execute-mode ingest expects `docling` to be importable from `python3` or `python`; when it lives elsewhere, set `SPECFORGE_DOCLING_PYTHON=/path/to/python`
 
 ## Planned product shape

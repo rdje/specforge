@@ -18,6 +18,10 @@
 - `.fsm`, SystemVerilog, Verilog, and VHDL are adapter targets downstream of `IntentIR`
 - the canonical model must not inherit backend-specific assumptions too early
 
+### Software-interface documents are valid intent sources
+- firmware-facing and software-interface documents associated with chips or components can carry implementation intent
+- the canonical model should therefore capture interface and behavior facts without assuming the evidence is only RTL-facing hardware prose
+
 ### Typed IR first
 - the internal system of record should be typed Rust data, not markdown prose or string templates
 - JSON serialization is the first interchange surface for stage artifacts
@@ -64,7 +68,7 @@
 - `EvidenceIR` now builds multimodal evidence records instead of remaining text-only scaffolding
 - `SemanticIR` now builds a first backend-neutral semantic layer instead of remaining scaffolding only
 - `IntentIR` now builds a first canonical backend-neutral intent layer instead of remaining scaffolding only
-- the first `.fsm` adapter slices now build typed adapter artifacts that can lower honest standalone and structured FSM cases instead of leaving adapters as planning-only scaffolding
+- the first `.fsm` adapter slices now build typed adapter artifacts that can lower honest standalone DT, structured FSM, and explicit top-root composition cases instead of leaving adapters as planning-only scaffolding
 
 ## Structured PDF normalization implementation
 - execute-mode PDF ingest is now orchestrated from `crates/specforge/src/ir/source.rs`
@@ -103,8 +107,9 @@
   - derives artifact layout under `generated/semantic_ir/<document_key>/semantic_ir.json`
   - discovers actors from explicit role terms and falls back to interface-derived channel actors when the evidence names signals but not endpoints
   - discovers interfaces from recurring grouped signal names and preserves typed signal records when explicit declarations are present
-  - preserves backend-neutral system contract and init-assignment records from explicit `Clock ...`, `Reset ...`, and `Init ...` statements when the evidence is explicit enough
+  - preserves backend-neutral system contract and init-assignment records from explicit `Clock ...`, `Reset ...`, and `Init ...` statements when the evidence is explicit enough, including reset kind, polarity, assertion/release timing, and target semantics
   - preserves backend-neutral guarded/action control fragments from explicit `Block ...` statements when the evidence is explicit enough
+  - preserves explicit module and top-composition facts from explicit `Module ...` and `Top ...` statements when the evidence is explicit enough
   - derives phases from section structure and sequencing language
   - extracts invariants, contracts, gates, and abstractions from inspectable heuristics over evidence statements
   - emits decomposition candidates from section/topic clustering
@@ -119,8 +124,9 @@
   - derives artifact layout under `generated/intent_ir/<document_key>/intent_ir.json`
   - canonicalizes actor responsibilities from semantic actors, contracts, and phase overlap
   - carries forward canonical interface inventory from typed semantic interfaces
-  - carries forward canonical backend-neutral system contract and init assignments from typed semantic records
+  - carries forward canonical backend-neutral system contract and init assignments from typed semantic records, including first-class reset polarity/assertion/release/target semantics
   - carries forward backend-neutral guarded/action control fragments from typed semantic control blocks
+  - carries forward explicit module and top-composition facts without reinterpreting scope inside the adapter
   - canonicalizes behaviors from phases, contracts, and gate-like sequencing rules
   - canonicalizes constraints from invariants, assertions, and interface-coupled rules
   - derives assumptions from abstractions and conservative backend-neutral heuristics
@@ -133,13 +139,31 @@
 - `AdapterArtifact::build` now:
   - loads persisted `IntentIR` JSON from disk
   - derives typed adapter artifacts under `generated/adapters/fsm/<document_key>/adapter.json`
-  - chooses `?dt:name` for explicit standalone DT cases and `?fsm:name` when explicit regular-state and transition records are present
-  - consumes canonical interface inventory, backend-neutral system/init records, backend-neutral guarded/action fragments, and explicit regular-state/transition records from `IntentIR`
+  - chooses `?dt:name` for explicit standalone DT cases, `?fsm:name` when explicit regular-state and transition records are present, and `?top:name` when explicit top/module composition facts are present
+  - consumes canonical interface inventory, backend-neutral system/init records, backend-neutral guarded/action fragments, explicit regular-state/transition records, and explicit module/top composition facts from `IntentIR`
   - emits real standalone `?dt:name` text when every referenced signal has explicit width/direction, every control block is fully typed, and any sequential standalone DT case also has explicit system/init facts
   - emits real structured `?fsm:name` text when the canonical state graph, transition targets, and state-body control are explicit enough to avoid semantic invention
-  - preserves upstream residual decisions and emits adapter-side residual decisions only for unresolved signal inventory, system/init surface, state graph, and broader root-kind expansion
-  - keeps composition cases blocked until the canonical model carries explicit module/top facts
-- the current renderable slices are still intentionally narrow rather than speculative; they now cover explicit standalone combinational and sequential DT cases plus explicit structured FSM-root cases while keeping composition roots deferred
+  - emits real explicit `?top:name` source documents when explicit top ports, child modules, and width-compatible links are complete enough to avoid semantic invention
+  - keeps reset polarity honest in emitted `.fsm` text by requiring it to remain recoverable from `sreset` / `asreset` plus the reset signal name because the current target syntax does not carry a separate polarity token
+  - preserves upstream residual decisions and emits adapter-side residual decisions only for unresolved signal inventory, system/init surface, state graph, composition topology, and broader root-kind expansion
+  - keeps compatibility-level `?mod:name` / `?module:name` spellings outside the current canonical root-kind model because the current canonical surface does not yet carry an honest direct-module distinction
+- the current renderable slices are still intentionally narrow rather than speculative; they now cover explicit standalone combinational and sequential DT cases, canonical symbol-definition/reset-role lowering, selector/test-node branches, compound-update shorthand, explicit structured FSM-root cases, and the first explicit top-root composition slice while keeping compatibility-level direct-module spellings outside the canonical root-kind model and still deferring unsupported selector predicate shapes
+
+## Widened `.fsm` semantic slice
+- `SemanticIR` and `IntentIR` now preserve canonical symbol-definition sections and structured control blocks instead of relying only on legacy decision-tree fragments
+- the widened canonical surface now carries:
+  - `+constants`, `+define`, `+params`, and `+enums` style symbol definitions
+  - structured control expressions and action records
+  - dedicated synchronous-reset and asynchronous-reset control-block roles
+  - state-body control that can keep branch-local actions together instead of forcing every action through older fragment-only shapes
+- the `.fsm` adapter now lowers from canonical `symbol_definitions` and `control_blocks` first and only falls back to legacy fragment candidates when the widened canonical surface is absent
+- the `.fsm` adapter now lowers honest selector/test-node branches and compound-update shorthand when the canonical selector/predicate/update shapes map directly to explicit `.fsm` syntax, still blocks unsupported selector predicates or target/update shapes explicitly instead of inventing approximations, and now keeps the adapter root-kind surface limited to `dt` / `fsm` / `top` until a real backend-neutral direct-module distinction exists
+- the canonical system contract now preserves reset kind, reset polarity, assertion timing, release timing, and reset-target semantics explicitly rather than leaving hardware reset behavior implicit
+- the current reset normalization maps:
+  - synchronous reset to synchronous assertion, synchronous release, and data-input-path semantics
+  - asynchronous reset to asynchronous assertion, synchronous release, and dedicated-reset-pin semantics
+- explicit reset phrasing accepts both `Reset rst_n is asynchronous active low.` and `Reset rst is synchronous active high.`
+- when explicit polarity wording is omitted, the current parser infers active-low from `_n` / `_b` reset naming and otherwise falls back to active-high with lower automation confidence
 
 ## Documentation surface currently steering the implementation
 - `README.md`
@@ -220,5 +244,5 @@
 - do not let figures, charts, or diagrams collapse into throwaway markdown placeholders if they may carry normative meaning
 
 ## Immediate next engineering target
-- promote explicit composition/module/top facts for honest `?top:name`, `?mod:name`, and `?module:name` lowering without leaking backend syntax into the canonical model
+- build the validation/back-annotation pipeline so staged IR and adapter outputs have reproducible artifact-linked reports
 - keep broader target structure deferred until the canonical model carries it explicitly

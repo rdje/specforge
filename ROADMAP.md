@@ -99,16 +99,19 @@
     - SystemVerilog
     - Verilog
     - VHDL
-  - land the first honest `.fsm` adapter slices for standalone DT and explicit FSM-root cases without leaking target assumptions backward into `IntentIR`
+  - land the first honest `.fsm` adapter slices for standalone DT, explicit FSM-root, and explicit top-root composition cases without leaking target assumptions backward into `IntentIR`
   - keep adapter concerns from leaking backward into `IntentIR`
 - completion criteria:
   - adapter planning is typed
   - at least one real adapter artifact exists after `IntentIR` is stable
   - non-renderable adapter cases stop with explicit residual decisions instead of fabricated target text
   - real standalone `?dt:name` target text is emitted only when the canonical signal, control, system-contract, and init structure is renderable without semantic invention
+  - standalone DT lowering can also carry canonical symbol-definition sections, reset-role blocks, selector/test-node branches, and compound-update shorthand when the widened canonical control/value surface maps directly to explicit `.fsm` syntax
   - explicit standalone sequential DT cases can lower with `(+system ...)` and `(:= ...)` without promoting a true FSM root
   - real structured `?fsm:name` target text is emitted only when the canonical state graph, state-body control, transition targets, and system/init surface are explicit enough to avoid semantic invention
-  - broader composition roots remain explicitly deferred until the canonical model carries composition facts
+  - real explicit `?top:name` target text is emitted only when the canonical model carries explicit top ports, child modules, renderable child roots, and width-compatible links
+  - the canonical system contract preserves reset kind, polarity, assertion/release timing, and reset-target semantics explicitly enough that adapter lowering does not have to infer hardware reset behavior ad hoc
+  - compatibility-level `?mod:name` and `?module:name` spellings stay outside the adapter root-kind model until the canonical layer carries an honest direct-module distinction
 
 ### R7 Validation and back-annotation
 - status: Not Started
@@ -125,4 +128,4 @@
 3. integrate validation and back-annotation
 
 ## Immediate next milestone
-- promote explicit composition/module/top facts needed for honest `?top:name`, `?mod:name`, and `?module:name` lowering while keeping the canonical model backend-neutral
+- start the validation/back-annotation pipeline so the current stage outputs and `.fsm` adapter artifacts have reproducible artifact-linked reports

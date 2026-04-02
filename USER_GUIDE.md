@@ -4,7 +4,7 @@
 - document the expected staged workflow as the tool evolves toward canonical `IntentIR`
 
 ## What SpecForge is intended to become
-- a staged Rust tool that turns protocol, component, and system specifications into backend-independent `IntentIR`
+- a staged Rust tool that turns protocol, component, system, and software-interface specifications into backend-independent `IntentIR`
 - a system where backend formats are adapters, not endpoints
 - an automation-first workflow that keeps ambiguity explicit through residual decision packets
 
@@ -25,9 +25,9 @@
 - the currently implemented executable IR stages are `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR`
 - `SourceIR` now handles existing Markdown directly and performs Docling-backed structured PDF normalization for PDF inputs
 - `EvidenceIR` now consumes ready `SourceIR` artifacts and extracts section anchors, evidence spans, visual evidence, figure/caption links, and heuristic statement classes
-- `SemanticIR` now consumes ready `EvidenceIR` artifacts and lifts heuristic actors, interfaces, backend-neutral system/init records, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions
+- `SemanticIR` now consumes ready `EvidenceIR` artifacts and lifts heuristic actors, interfaces, backend-neutral system/init records, first-class reset polarity/assertion/release/target semantics, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions
 - `IntentIR` now consumes ready `SemanticIR` artifacts and canonicalizes actor responsibilities, interface/control/system/init surface, behaviors, constraints, assumptions, and residual decisions
-- the first `.fsm` adapter slices now consume ready `IntentIR` artifacts and materialize typed adapter artifacts; explicit standalone combinational and sequential DT cases are renderable, explicit state-graph cases can now lower to structured `?fsm:name`, and broader composition-level `.fsm` text emission remains blocked with explicit residual decisions
+- the first `.fsm` adapter slices now consume ready `IntentIR` artifacts and materialize typed adapter artifacts; explicit standalone combinational and sequential DT cases are renderable, explicit state-graph cases can now lower to structured `?fsm:name`, explicit module/top composition cases can now lower to `?top:name`, and direct-module alias roots remain deferred with explicit residual decisions
 
 ## Available commands today
 ### Inspect a path
@@ -112,7 +112,7 @@ cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json
 - builds:
   - actors from role-like evidence terms or inferred channel groupings
   - interfaces from recurring grouped signal names plus explicit typed signal declarations when present
-  - backend-neutral system contract and init-assignment records from explicit `Clock ...`, `Reset ...`, and `Init ...` statements when the evidence is explicit enough
+  - backend-neutral system contract and init-assignment records from explicit `Clock ...`, `Reset ...`, and `Init ...` statements when the evidence is explicit enough, including reset kind, polarity, assertion/release timing, and target semantics
   - backend-neutral guarded/action control fragments from explicit `Block ...` statements when the evidence is explicit enough
   - phases from section structure and sequencing language
   - invariants, contracts, and gates from heuristic semantic lifting
@@ -140,7 +140,7 @@ cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json
   - a canonical intent identity from the document and semantic theme
   - actor responsibilities from semantic actors, contracts, and phase overlap
   - canonical interface inventory carried forward from typed semantic interfaces
-  - canonical backend-neutral system contract and init assignments carried forward from explicit semantic records
+  - canonical backend-neutral system contract and init assignments carried forward from explicit semantic records, including first-class reset polarity/assertion/release/target semantics
   - canonical backend-neutral guarded/action fragments carried forward from typed semantic control blocks
   - behaviors from phases, contracts, and gate-like sequencing rules
   - constraints from invariants, assertions, and interface-coupled rules
@@ -154,9 +154,10 @@ cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --targ
 - prints computed adapter JSON without writing artifacts
 - requires an `IntentIR` JSON artifact
 - useful for checking:
-  - root-kind selection (`?dt:name`, `?fsm:name`, or future broader roots)
+  - root-kind selection (`?dt:name`, `?fsm:name`, `?top:name`, or future broader roots)
   - canonical signal inventory, including direction/width hints when known
   - canonical control-block candidates plus any explicit regular-state and transition candidates
+  - explicit module/top candidate counts when broader-root composition facts are present
   - renderability blockers and required canonical enrichments
   - adapter-side residual decisions before materialization
 
@@ -166,24 +167,43 @@ cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --targ
 ```
 - writes `generated/adapters/fsm/<document_key>/adapter.json`
 - currently:
-  - selects `?dt:name` for honest standalone DT cases and `?fsm:name` when explicit regular states and transition targets are present
-  - consumes canonical interface inventory, backend-neutral system/init records, backend-neutral guarded/action fragments, and explicit regular-state/transition records from `IntentIR`
-  - writes a real standalone or structured `.fsm` file when every referenced signal has explicit width/direction, every rendered control fragment is fully typed, and any sequential/stateful case also has explicit system/init facts
-  - keeps blocked cases explicit when signal roles, widths, system/init facts, the regular-state graph, or broader composition roots would otherwise require invention
+  - selects `?dt:name` for honest standalone DT cases, `?fsm:name` when explicit regular states and transition targets are present, and `?top:name` when explicit module/top composition facts are present
+  - consumes canonical interface inventory, backend-neutral system/init records, canonical symbol-definition sections, structured control blocks, explicit regular-state/transition records, and explicit module/top composition facts from `IntentIR`
+  - writes a real standalone, structured, or explicit top-root `.fsm` file when every referenced signal has explicit width/direction, every rendered control fragment is fully typed, any sequential/stateful case has explicit system/init facts, and every explicit top child/link detail is renderable without invention
+  - keeps blocked cases explicit when signal roles, widths, system/init facts, reset polarity cannot be preserved honestly through the reset signal name, selector/test-node predicates or compound-update targets fall outside the honest shorthand slice, the regular-state graph or top composition topology are incomplete, or compatibility-level `?mod:name` / `?module:name` spellings would require the adapter to invent a direct-module canonical distinction
 - current explicit renderable cues:
   - `Signal DATA_IN is input width 8.`
   - `Signal DATA_OUT is output width 8.`
   - `Block route_data: DATA_OUT = DATA_IN.`
   - `Signal clk is input width 1.`
+  - `Signal rst is input width 1.`
   - `Signal rst_n is input width 1.`
   - `Clock clk.`
+  - `Reset rst is synchronous active high.`
   - `Reset rst_n is asynchronous active low.`
   - `Init ACC = 8'0.`
   - `Block accumulate: ACC <- DATA_IN.`
+  - `Block decode select MODE when MODE == mode_t.idle: OUT = 1.`
+  - `Block choose select A | B when A | B == 0: X = 1.`
+  - `Block choose select A | B when A | B == 1: Y = 1.`
+  - `Block bump: ACC += STEP.`
+  - `Constant STEP = 8'1.`
+  - `Define D0 = 8'4.`
+  - `Param RESET_VALUE = 8'0.`
+  - `Enum mode_t busy = 1.`
+  - `SyncReset clear_acc: ACC <- RESET_VALUE.`
+  - `AsyncReset clear_pulse: public PULSE_OUT = 0.`
   - `State idle is initial.`
   - `State busy.`
   - `Transition idle -> busy when GO.`
   - `Transition busy -> idle when DONE.`
+  - `Top datapath.`
+  - `Top datapath port result_data is output width 8.`
+  - `Top datapath child producer uses module producer_core.`
+  - `Top datapath link producer.output_data -> consumer.input_data.`
+  - `Module producer_core signal output_data is output width 8.`
+  - `Module producer_core block produce: output_data = 8'3.`
+- when explicit `active high` / `active low` wording is omitted, the current canonical reset slice infers active-low from `_n` / `_b` reset naming and otherwise falls back to active-high with lower automation confidence
 
 ## Planned user workflow
 1. provide a source specification
@@ -217,7 +237,7 @@ cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --targ
 - the current `EvidenceIR` extraction logic is still heuristic and does not yet perform deeper OCR, chart extraction, or semantic lifting from visual regions
 - the current `SemanticIR` extraction logic is still heuristic and conservative, so later `IntentIR` work will need refinement rather than semantic invention
 - the current `IntentIR` canonicalization logic is still heuristic and conservative, so adapter work should refine backend lowering rather than treat the current pass as a complete semantic endpoint
-- the first `.fsm` adapter slices are implemented and can now emit standalone renderable `?dt:name` text for explicit canonical combinational and sequential DT cases plus structured renderable `?fsm:name` text for explicit canonical state-graph cases, but broader composition cases remain deferred
+- the first `.fsm` adapter slices are implemented and can now emit standalone renderable `?dt:name` text for explicit canonical combinational and sequential DT cases, structured renderable `?fsm:name` text for explicit canonical state-graph cases, canonical symbol-definition/reset-role lowering, selector/test-node branches, compound-update shorthand for honest canonical cases, and first-slice renderable `?top:name` text for explicit canonical composition cases, but unsupported selector/predicate shapes still remain deferred, compatibility-level `?mod:name` / `?module:name` spellings stay outside the current canonical root-kind model, and validation/back-annotation is not implemented yet
 - validation/back-annotation is not implemented yet
 
 ## Where to look next

@@ -48,6 +48,8 @@ pub fn run(args: AdaptArgs) -> Result<()> {
                 "transition_candidate_count: {}",
                 fsm.transition_candidates.len()
             );
+            println!("module_candidate_count: {}", fsm.module_candidates.len());
+            println!("top_candidate_count: {}", fsm.top_candidates.len());
             println!("renderable: {}", fsm.renderability.is_renderable);
         }
         println!(

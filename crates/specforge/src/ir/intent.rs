@@ -7,8 +7,9 @@ use serde::{Deserialize, Serialize};
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::semantic::{
-    DecisionTreeFragmentRecord, InitAssignmentRecord, InterfaceRecord, RegularStateRecord,
-    SemanticIr, StateTransitionRecord, SystemContractRecord,
+    ControlBlockRecord, DecisionTreeFragmentRecord, ExplicitModuleRecord, ExplicitTopRecord,
+    InitAssignmentRecord, InterfaceRecord, RegularStateRecord, SemanticIr, StateTransitionRecord,
+    SymbolDefinitionRecord, SystemContractRecord,
 };
 use crate::ir::source::{
     AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket, document_key,
@@ -38,6 +39,14 @@ pub struct IntentIr {
     pub state_transitions: Vec<StateTransitionRecord>,
     #[serde(default)]
     pub decision_tree_fragments: Vec<DecisionTreeFragmentRecord>,
+    #[serde(default)]
+    pub symbol_definitions: Vec<SymbolDefinitionRecord>,
+    #[serde(default)]
+    pub control_blocks: Vec<ControlBlockRecord>,
+    #[serde(default)]
+    pub explicit_modules: Vec<ExplicitModuleRecord>,
+    #[serde(default)]
+    pub explicit_tops: Vec<ExplicitTopRecord>,
     pub residual_decisions: Vec<ResidualDecisionPacket>,
 }
 
@@ -84,6 +93,10 @@ impl IntentIr {
         let regular_states = semantic_ir.regular_states.clone();
         let state_transitions = semantic_ir.state_transitions.clone();
         let decision_tree_fragments = semantic_ir.decision_tree_fragments.clone();
+        let symbol_definitions = semantic_ir.symbol_definitions.clone();
+        let control_blocks = semantic_ir.control_blocks.clone();
+        let explicit_modules = semantic_ir.explicit_modules.clone();
+        let explicit_tops = semantic_ir.explicit_tops.clone();
         let residual_decisions =
             build_residual_decisions(&context, &actors, &behaviors, &constraints);
         let intent_identity = build_intent_identity(
@@ -97,6 +110,10 @@ impl IntentIr {
             &regular_states,
             &state_transitions,
             &decision_tree_fragments,
+            &symbol_definitions,
+            &control_blocks,
+            &explicit_modules,
+            &explicit_tops,
         );
 
         Ok(Self {
@@ -116,6 +133,10 @@ impl IntentIr {
             regular_states,
             state_transitions,
             decision_tree_fragments,
+            symbol_definitions,
+            control_blocks,
+            explicit_modules,
+            explicit_tops,
             residual_decisions,
         })
     }
@@ -325,11 +346,15 @@ fn build_intent_identity(
     regular_states: &[RegularStateRecord],
     state_transitions: &[StateTransitionRecord],
     decision_tree_fragments: &[DecisionTreeFragmentRecord],
+    symbol_definitions: &[SymbolDefinitionRecord],
+    control_blocks: &[ControlBlockRecord],
+    explicit_modules: &[ExplicitModuleRecord],
+    explicit_tops: &[ExplicitTopRecord],
 ) -> IntentIdentity {
     IntentIdentity {
         intent_id: format!("intent_{}", document_identity.document_key),
         summary: format!(
-            "backend-neutral intent for {} covering {} actors, {} interfaces, {} behaviors, {} constraints, {} init assignments, {} regular states, {} state transitions, {} control fragments, and {} explicit system contract",
+            "backend-neutral intent for {} covering {} actors, {} interfaces, {} behaviors, {} constraints, {} init assignments, {} regular states, {} state transitions, {} control fragments, {} symbol definitions, {} structured control blocks, {} explicit modules, {} explicit tops, and {} explicit system contract",
             document_identity.display_name,
             actors.len(),
             interfaces.len(),
@@ -339,6 +364,10 @@ fn build_intent_identity(
             regular_states.len(),
             state_transitions.len(),
             decision_tree_fragments.len(),
+            symbol_definitions.len(),
+            control_blocks.len(),
+            explicit_modules.len(),
+            explicit_tops.len(),
             if system_contract.is_some() { 1 } else { 0 }
         ),
     }
@@ -660,8 +689,11 @@ mod tests {
 
     use crate::error::Result;
     use crate::ir::evidence::EvidenceIr;
-    use crate::ir::semantic::{SemanticIr, SystemResetKind};
-    use crate::ir::source::{SourceIr, VisualAsset, VisualAssetKind};
+    use crate::ir::semantic::{
+        ControlBlockRole, SemanticIr, SymbolDefinitionKind, SystemResetKind, SystemResetPolarity,
+        SystemResetTargetKind, SystemResetTimingRelation,
+    };
+    use crate::ir::source::{AutomationConfidence, SourceIr, VisualAsset, VisualAssetKind};
 
     use super::IntentIr;
 
@@ -847,6 +879,65 @@ mod tests {
     }
 
     #[test]
+    fn carries_symbol_definitions_and_control_blocks_into_intent_ir() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("rich_control.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            "# Rich Explicit Control\nSignal MODE is input width 2.\n\nSignal GO is input width 1.\n\nSignal ACC is output width 8.\n\nSignal PULSE_OUT is output width 1.\n\nConstant STEP = 8'1.\n\nParam RESET_VALUE = 8'0.\n\nEnum mode_t idle = 0.\n\nEnum mode_t busy = 1.\n\nState idle is initial.\n\nState busy.\n\nBlock decode select MODE when MODE == mode_t.idle: public ACC = 8'0; transition idle.\n\nSyncReset clear_acc: ACC <- RESET_VALUE.\n\nAsyncReset clear_pulse: public PULSE_OUT = 0.\n\nBlock busy when GO: next ACC <- ACC + STEP; pulse public PULSE_OUT after 2 = 1; ACC += STEP; -> idle.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        assert_eq!(intent_ir.symbol_definitions.len(), 3);
+        assert!(intent_ir.symbol_definitions.iter().any(|definition| {
+            definition.symbol_name == "STEP" && definition.kind == SymbolDefinitionKind::Constant
+        }));
+        assert_eq!(intent_ir.control_blocks.len(), 4);
+        assert!(intent_ir.control_blocks.iter().any(|block| {
+            block.block_name == "busy" && block.role == ControlBlockRole::StateBody
+        }));
+        assert!(intent_ir.control_blocks.iter().any(|block| {
+            block.block_name == "clear_acc" && block.role == ControlBlockRole::ResetSynchronous
+        }));
+        assert!(
+            intent_ir
+                .intent_identity
+                .summary
+                .contains("symbol definitions")
+        );
+        assert!(
+            intent_ir
+                .intent_identity
+                .summary
+                .contains("structured control blocks")
+        );
+
+        Ok(())
+    }
+
+    #[test]
     fn carries_system_contract_and_init_assignments_into_intent_ir() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("seq_dt.md");
@@ -878,13 +969,32 @@ mod tests {
             &intent_artifact_base,
         )?;
 
+        let system_contract = intent_ir
+            .system_contract
+            .as_ref()
+            .expect("explicit system contract should be present");
+        assert_eq!(system_contract.clock_signal, "clk");
+        assert_eq!(system_contract.reset_signal, "rst_n");
+        assert_eq!(system_contract.reset_kind, SystemResetKind::Asynchronous);
         assert_eq!(
-            intent_ir.system_contract.as_ref().map(|contract| (
-                contract.clock_signal.as_str(),
-                contract.reset_signal.as_str(),
-                contract.reset_kind,
-            )),
-            Some(("clk", "rst_n", SystemResetKind::Asynchronous))
+            system_contract.reset_polarity,
+            SystemResetPolarity::ActiveLow
+        );
+        assert_eq!(
+            system_contract.assertion_timing,
+            SystemResetTimingRelation::AsynchronousToClock
+        );
+        assert_eq!(
+            system_contract.release_timing,
+            SystemResetTimingRelation::SynchronousToClock
+        );
+        assert_eq!(
+            system_contract.target_kind,
+            SystemResetTargetKind::DedicatedResetPin
+        );
+        assert_eq!(
+            system_contract.automation_confidence,
+            AutomationConfidence::High
         );
         assert_eq!(intent_ir.init_assignments.len(), 1);
         assert!(
@@ -893,6 +1003,186 @@ mod tests {
                 .summary
                 .contains("explicit system contract")
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn carries_synchronous_active_high_reset_into_intent_ir() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("sync_dt.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            "# Explicit Synchronous Control\nSignal clk is input width 1.\n\nSignal rst is input width 1.\n\nSignal DATA_IN is input width 8.\n\nSignal ACC is output width 8.\n\nClock clk.\n\nReset rst is synchronous active high.\n\nInit ACC = 8'0.\n\nBlock accumulate: ACC <- DATA_IN.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let system_contract = intent_ir
+            .system_contract
+            .as_ref()
+            .expect("explicit system contract should be present");
+        assert_eq!(system_contract.clock_signal, "clk");
+        assert_eq!(system_contract.reset_signal, "rst");
+        assert_eq!(system_contract.reset_kind, SystemResetKind::Synchronous);
+        assert_eq!(
+            system_contract.reset_polarity,
+            SystemResetPolarity::ActiveHigh
+        );
+        assert_eq!(
+            system_contract.assertion_timing,
+            SystemResetTimingRelation::SynchronousToClock
+        );
+        assert_eq!(
+            system_contract.release_timing,
+            SystemResetTimingRelation::SynchronousToClock
+        );
+        assert_eq!(
+            system_contract.target_kind,
+            SystemResetTargetKind::DataInputPath
+        );
+        assert_eq!(
+            system_contract.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert_eq!(intent_ir.init_assignments.len(), 1);
+
+        Ok(())
+    }
+
+    #[test]
+    fn carries_inferred_reset_polarity_into_intent_ir() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("inferred_reset.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            "# Explicit Sequential Control\nSignal clk is input width 1.\n\nSignal rst_n is input width 1.\n\nSignal DATA_IN is input width 8.\n\nSignal ACC is output width 8.\n\nClock clk.\n\nReset rst_n is asynchronous.\n\nInit ACC = 8'0.\n\nBlock accumulate: ACC <- DATA_IN.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let system_contract = intent_ir
+            .system_contract
+            .as_ref()
+            .expect("explicit system contract should be present");
+        assert_eq!(system_contract.reset_kind, SystemResetKind::Asynchronous);
+        assert_eq!(
+            system_contract.reset_polarity,
+            SystemResetPolarity::ActiveLow
+        );
+        assert_eq!(
+            system_contract.assertion_timing,
+            SystemResetTimingRelation::AsynchronousToClock
+        );
+        assert_eq!(
+            system_contract.release_timing,
+            SystemResetTimingRelation::SynchronousToClock
+        );
+        assert_eq!(
+            system_contract.target_kind,
+            SystemResetTargetKind::DedicatedResetPin
+        );
+        assert_eq!(
+            system_contract.automation_confidence,
+            AutomationConfidence::Medium
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn carries_explicit_modules_and_tops_into_intent_ir() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("composition.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            "# Explicit Composition\nTop datapath.\n\nTop datapath port result_data is output width 8.\n\nTop datapath child producer uses module producer_core.\n\nTop datapath child consumer uses module consumer_core.\n\nTop datapath link producer.output_data -> consumer.input_data.\n\nTop datapath link consumer.result_data -> result_data.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n\nModule consumer_core signal input_data is input width 8.\n\nModule consumer_core signal result_data is output width 8.\n\nModule consumer_core block route: result_data = input_data.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        assert_eq!(intent_ir.explicit_modules.len(), 2);
+        assert_eq!(intent_ir.explicit_tops.len(), 1);
+        assert!(intent_ir.explicit_modules.iter().any(|module| {
+            module.module_name == "producer_core"
+                && module
+                    .decision_tree_fragments
+                    .iter()
+                    .any(|fragment| fragment.block_name == "produce")
+        }));
+        assert!(intent_ir.explicit_tops.iter().any(|top| {
+            top.top_name == "datapath" && top.children.len() == 2 && top.links.len() == 2
+        }));
+        assert!(
+            intent_ir
+                .intent_identity
+                .summary
+                .contains("explicit modules")
+        );
+        assert!(intent_ir.intent_identity.summary.contains("explicit tops"));
 
         Ok(())
     }
