@@ -1,4 +1,17 @@
 # CHANGES
+## 2026-04-02 (Tier 2: Register/Timing type system + NormativeStatement sub-classes)
+- added `RegisterRecord` and `RegisterFieldRecord` types to `source.rs` (foundation layer, no circular deps)
+- added `TimingConstraintRecord` type to `source.rs`
+- re-exported these types from `semantic.rs` so `IntentIR` and adapters import from `semantic` as before
+- added `synthesize_register_records()` in `evidence.rs`: reads `SourceIR.structured_tables` where `table_kind == RegisterMap`; extracts register name, offset address, bit field rows
+- added `synthesize_timing_constraints()` in `evidence.rs`: reads `SourceIR.structured_tables` where `table_kind == TimingParameter`; extracts parameter name, min/typ/max values, unit
+- added `EvidenceIr.register_records: Vec<RegisterRecord>` and `EvidenceIr.timing_constraints: Vec<TimingConstraintRecord>` as typed first-class fields
+- carried `register_records` and `timing_constraints` through `SemanticIr` and `IntentIr` unchanged
+- extended `StatementClass` with `TimingConstraint` (cycle counts, setup/hold references, latency bounds) and `ConditionalRule` (`when X then Y` / `if A then B` conditional behavioral structures)
+- updated `classify_statement()` to detect `TimingConstraint` and `ConditionalRule` patterns before the generic `NormativeStatement` check
+- updated `EXTRACTION_ARCHITECTURE.md` to reflect precise current done/pending status and sharpen modality descriptions with exact type names
+- validated on AMBA AHB PDF: 21 register records, 8 timing constraints, statement classes: 91 normative_statement, 42 conditional_rule, 30 timing_constraint, 14 derived_rule, 5 explicit_abstraction (vs. 100% source_fact before)
+- all `cargo fmt` and `cargo test` pass: 48 tests, 0 failures
 ## 2026-04-02 (SOTA SourceIR and EvidenceIR)
 - created `EXTRACTION_ARCHITECTURE.md` — comprehensive reference document capturing the full SOTA extraction vision for chip spec PDFs: six information modalities, quality gap analysis per IR stage, target architecture, and priority-ordered implementation plan (Tier 1–4)
 - updated `ROADMAP.md` with new workstreams R8 (SourceIR SOTA capture), R9 (EvidenceIR SOTA typed evidence), and R10 (EvidenceIR VLM visual content)

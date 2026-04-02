@@ -45,6 +45,12 @@ pub struct SemanticIr {
     pub explicit_modules: Vec<ExplicitModuleRecord>,
     #[serde(default)]
     pub explicit_tops: Vec<ExplicitTopRecord>,
+    /// Register map records synthesized from `register_map` tables in `SourceIR`.
+    #[serde(default)]
+    pub register_records: Vec<RegisterRecord>,
+    /// Timing constraint records synthesized from `timing_parameter` tables in `SourceIR`.
+    #[serde(default)]
+    pub timing_constraints: Vec<TimingConstraintRecord>,
     pub residual_decisions: Vec<ResidualDecisionPacket>,
 }
 
@@ -105,6 +111,10 @@ impl SemanticIr {
         let explicit_tops = build_explicit_tops(&context);
         let residual_decisions =
             build_residual_decisions(&context, &interfaces, actor_build.explicit_actor_count);
+        // Carry structured table records forward from EvidenceIR.
+        // These were synthesized directly from SourceIR structured table cell grids.
+        let register_records = evidence_ir.register_records.clone();
+        let timing_constraints = evidence_ir.timing_constraints.clone();
 
         Ok(Self {
             schema_version: 1,
@@ -130,6 +140,8 @@ impl SemanticIr {
             control_blocks,
             explicit_modules,
             explicit_tops,
+            register_records,
+            timing_constraints,
             residual_decisions,
         })
     }
@@ -678,6 +690,11 @@ pub struct ExplicitTopLinkEndpoint {
     pub instance_name: Option<String>,
     pub signal_name: String,
 }
+
+// Register and timing types are defined in `source.rs` to avoid circular imports
+// (evidence.rs → source, semantic.rs → source, but evidence.rs cannot → semantic.rs).
+// Re-exported here so IntentIR and adapters can import them from `semantic`.
+pub use crate::ir::source::{RegisterFieldRecord, RegisterRecord, TimingConstraintRecord};
 
 #[derive(Debug, Clone)]
 struct SemanticContext {
@@ -4611,6 +4628,23 @@ fn contains_phrase(text: &str, phrase: &str) -> bool {
     }
 
     false
+}
+
+fn build_register_records(context: &SemanticContext) -> Vec<RegisterRecord> {
+    // Currently carry-through from EvidenceIR. Direct semantic enrichment
+    // (cross-referencing registers against signal declarations, etc.) is future work.
+    // The context does not yet expose EvidenceIR register_records directly, so we
+    // return an empty Vec here; the IntentIR builder reads them from SemanticIR
+    // which receives them via EvidenceIR.load_from_path already.//
+    // NOTE: SemanticIR.register_records is populated directly in SemanticIr::build()
+    // from evidence_ir.register_records; this stub exists to satisfy the call site.
+    let _ = context;
+    Vec::new()
+}
+
+fn build_timing_constraints(context: &SemanticContext) -> Vec<TimingConstraintRecord> {
+    let _ = context;
+    Vec::new()
 }
 
 fn is_boilerplate_section_title(title: &str) -> bool {

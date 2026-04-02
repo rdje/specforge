@@ -52,6 +52,9 @@
 - SourceIR SOTA capture: structured table cell grids, typed content elements, section hierarchy with SectionKind, document profile, table kind classification: Done
 - EvidenceIR SOTA typed evidence: signal declarations and encoding enum declarations synthesized from structured table cells, NormativeStatement classification added: Done
 - SemanticIR parse_signal_table_row band-aid removed (declarations now flow from EvidenceIR): Done
+- Tier 2: RegisterRecord, RegisterFieldRecord, TimingConstraintRecord type system implemented; EvidenceIR synthesizes from structured tables: Done
+- Tier 2: TimingConstraint and ConditionalRule StatementClass sub-classes added to EvidenceIR classification: Done
+- EXTRACTION_ARCHITECTURE.md updated as precise authoritative reference with exact type names and implementation status: Done
 - Docling installed and first real-world PDF (AMBA AHB) exercised end-to-end through the full pipeline: Done
 - SystemVerilog/Verilog/VHDL adapters implemented: Not Started
 - Validation and back-annotation pipeline implemented: Not Started

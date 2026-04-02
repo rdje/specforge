@@ -10,14 +10,20 @@ use crate::ir::source::{
     AutomationConfidence, NormalizationStatus, SectionKind, SourceIr, TableKind, VisualAsset,
     VisualAssetKind, document_key,
 };
+use crate::ir::source::{RegisterFieldRecord, RegisterRecord, TimingConstraintRecord};
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum StatementClass {
     SourceFact,
-    /// Sentence containing `shall`, `must`, `shall not`, `required to`, or `prohibited` in a
-    /// non-boilerplate section. These are behavioral requirements, not descriptive prose.
+    /// Sentence with `shall`/`must`/`shall not`/`required`/`prohibited` in a non-boilerplate
+    /// section. These are normative behavioral requirements.
     NormativeStatement,
+    /// Sentence containing cycle counts, setup/hold time references, or latency bounds.
+    /// Examples: "within 2 cycles", "tSU setup time", "at least N clock periods".
+    TimingConstraint,
+    /// Conditional behavioral sentence: `when X, Y shall...` / `if A then B`.
+    ConditionalRule,
     DerivedRule,
     LocalDesignDecision,
     ExplicitAbstraction,
@@ -78,6 +84,12 @@ pub struct EvidenceIr {
     pub visual_evidence: Vec<VisualEvidenceItem>,
     pub evidence_links: Vec<EvidenceLink>,
     pub extracted_statements: Vec<ExtractedStatement>,
+    /// Register records synthesized from `register_map` tables in `SourceIR`.
+    #[serde(default)]
+    pub register_records: Vec<RegisterRecord>,
+    /// Timing constraint records synthesized from `timing_parameter` tables in `SourceIR`.
+    #[serde(default)]
+    pub timing_constraints: Vec<TimingConstraintRecord>,
 }
 
 impl EvidenceIr {
@@ -351,6 +363,12 @@ impl EvidenceIr {
         let synthesized = synthesize_declarations_from_tables(&source_ir, &mut statement_counter);
         extracted_statements.extend(synthesized);
 
+        // Synthesize typed register and timing records from structured tables.
+        // These are first-class typed records carried through to SemanticIR and IntentIR
+        // without any further text re-parsing.
+        let register_records = synthesize_register_records(&source_ir);
+        let timing_constraints = synthesize_timing_constraints(&source_ir);
+
         Ok(Self {
             schema_version: 1,
             stage: IrStage::EvidenceIr,
@@ -362,6 +380,8 @@ impl EvidenceIr {
             visual_evidence,
             evidence_links,
             extracted_statements,
+            register_records,
+            timing_constraints,
         })
     }
 
@@ -883,8 +903,46 @@ fn classify_statement(text: &str) -> StatementClass {
     ) {
         return StatementClass::LocalDesignDecision;
     }
+    // Timing constraints — check before normative so "shall be asserted within 2 cycles"
+    // gets the more specific TimingConstraint class.
+    if contains_any(
+        &lowered_text,
+        &[
+            " cycle",
+            "tsu",
+            "thd",
+            "tckh",
+            "tckl",
+            "setup time",
+            "hold time",
+            "clock period",
+            "within n",
+            "at least",
+            "maximum latency",
+            "propagation delay",
+        ],
+    ) && contains_any(
+        &lowered_text,
+        &["shall", "must", "cycle", "ns", "ps", "time"],
+    ) {
+        return StatementClass::TimingConstraint;
+    }
+
+    // Conditional behavioral rules.
+    if (lowered_text.starts_with("when ")
+        || lowered_text.starts_with("if ")
+        || lowered_text.contains(" when ")
+        || lowered_text.contains("whenever ")
+        || lowered_text.contains("in the event"))
+        && contains_any(
+            &lowered_text,
+            &["shall", "must", "will", "assert", "deassert"],
+        )
+    {
+        return StatementClass::ConditionalRule;
+    }
+
     // Normative behavioral requirements — most important class for protocol specs.
-    // Must appear AFTER the abstraction/derived/local checks so they take precedence.
     if contains_any(
         &lowered_text,
         &[
@@ -1265,6 +1323,195 @@ fn synthesize_encoding_declarations(
     }
 
     statements
+}
+
+/// Synthesize `RegisterRecord` entries from `register_map` tables captured in `SourceIR`.
+/// Each table row becomes either a register-level record or, if the table has bit-field
+/// columns, a field within the preceding register.
+fn synthesize_register_records(source_ir: &SourceIr) -> Vec<RegisterRecord> {
+    let mut records: Vec<RegisterRecord> = Vec::new();
+    let register_tables: Vec<_> = source_ir
+        .structured_tables
+        .iter()
+        .filter(|t| matches!(t.table_kind, TableKind::RegisterMap))
+        .collect();
+
+    for table in register_tables {
+        if table.body_rows.is_empty() {
+            continue;
+        }
+
+        // Identify column indices from header row.
+        let header: Vec<String> = table
+            .header_rows
+            .first()
+            .map(|r| r.iter().map(|c| c.text.to_ascii_lowercase()).collect())
+            .unwrap_or_default();
+
+        let name_col = header
+            .iter()
+            .position(|h| h.contains("name") || h.contains("register") || h.contains("field"))
+            .unwrap_or(0);
+        let offset_col = header
+            .iter()
+            .position(|h| h.contains("offset") || h.contains("address") || h.contains("addr"));
+        let access_col = header
+            .iter()
+            .position(|h| h.contains("access") || h.contains("r/w"));
+        let reset_col = header
+            .iter()
+            .position(|h| h.contains("reset") || h.contains("default"));
+        let desc_col = header.iter().position(|h| h.contains("description"));
+        let bits_col = header
+            .iter()
+            .position(|h| h.contains("bits") || h.contains("bit") || h.contains("field"));
+
+        let table_id = table.table_id.clone();
+        for (row_idx, row) in table.body_rows.iter().enumerate() {
+            let name = row
+                .get(name_col)
+                .map(|c| c.text.trim().to_string())
+                .unwrap_or_default();
+            if name.is_empty() {
+                continue;
+            }
+
+            let offset = offset_col
+                .and_then(|col| row.get(col))
+                .map(|c| c.text.trim().to_string())
+                .filter(|s| !s.is_empty());
+            let access = access_col
+                .and_then(|col| row.get(col))
+                .map(|c| c.text.trim().to_string())
+                .filter(|s| !s.is_empty());
+            let reset = reset_col
+                .and_then(|col| row.get(col))
+                .map(|c| c.text.trim().to_string())
+                .filter(|s| !s.is_empty());
+            let desc = desc_col
+                .and_then(|col| row.get(col))
+                .map(|c| c.text.trim().to_string())
+                .filter(|s| !s.is_empty());
+
+            // If there's a bits column, treat this as a register with one field.
+            if bits_col.is_some() {
+                let bits_text = bits_col
+                    .and_then(|col| row.get(col))
+                    .map(|c| c.text.trim().to_string())
+                    .unwrap_or_default();
+                // Parse "7:0" or "[7:0]" into bits_high, bits_low.
+                let (bits_high, bits_low) = parse_bit_range(&bits_text);
+                let field = RegisterFieldRecord {
+                    field_name: name.clone(),
+                    bits_high,
+                    bits_low,
+                    access_type: access,
+                    reset_value: reset,
+                    description: desc,
+                };
+                // Try to attach to the last register, or create a new one.
+                if let Some(last) = records.last_mut() {
+                    last.fields.push(field);
+                    continue;
+                }
+            }
+
+            records.push(RegisterRecord {
+                register_id: format!("reg_{}_{row_idx:03}", document_key(&table_id)),
+                register_name: name,
+                offset_address: offset,
+                fields: Vec::new(),
+                supporting_statement_ids: Vec::new(),
+                automation_confidence: AutomationConfidence::Medium,
+            });
+        }
+    }
+
+    records
+}
+
+/// Parse a bit-range string like "7:0", "[7:0]", or "31" into (bits_high, bits_low).
+fn parse_bit_range(text: &str) -> (Option<u32>, Option<u32>) {
+    let cleaned: String = text
+        .chars()
+        .filter(|c| c.is_ascii_digit() || *c == ':')
+        .collect();
+    if let Some(colon) = cleaned.find(':') {
+        let high = cleaned[..colon].parse::<u32>().ok();
+        let low = cleaned[colon + 1..].parse::<u32>().ok();
+        (high, low)
+    } else if let Ok(bit) = cleaned.parse::<u32>() {
+        (Some(bit), Some(bit))
+    } else {
+        (None, None)
+    }
+}
+
+/// Synthesize `TimingConstraintRecord` entries from `timing_parameter` tables in `SourceIR`.
+fn synthesize_timing_constraints(source_ir: &SourceIr) -> Vec<TimingConstraintRecord> {
+    let mut records: Vec<TimingConstraintRecord> = Vec::new();
+    let timing_tables: Vec<_> = source_ir
+        .structured_tables
+        .iter()
+        .filter(|t| matches!(t.table_kind, TableKind::TimingParameter))
+        .collect();
+
+    for table in timing_tables {
+        if table.body_rows.is_empty() {
+            continue;
+        }
+
+        let header: Vec<String> = table
+            .header_rows
+            .first()
+            .map(|r| r.iter().map(|c| c.text.to_ascii_lowercase()).collect())
+            .unwrap_or_default();
+
+        let name_col = header
+            .iter()
+            .position(|h| h.contains("parameter") || h.contains("symbol") || h.contains("name"))
+            .unwrap_or(0);
+        let min_col = header.iter().position(|h| h.contains("min"));
+        let typ_col = header
+            .iter()
+            .position(|h| h.contains("typ") || h.contains("typical"));
+        let max_col = header.iter().position(|h| h.contains("max"));
+        let unit_col = header
+            .iter()
+            .position(|h| h.contains("unit") || h.contains("ns") || h.contains("ps"));
+        let desc_col = header.iter().position(|h| h.contains("description"));
+
+        let table_id = table.table_id.clone();
+        for (row_idx, row) in table.body_rows.iter().enumerate() {
+            let name = row
+                .get(name_col)
+                .map(|c| c.text.trim().to_string())
+                .unwrap_or_default();
+            if name.is_empty() {
+                continue;
+            }
+
+            let get_cell = |col: Option<usize>| -> Option<String> {
+                col.and_then(|c| row.get(c))
+                    .map(|cell| cell.text.trim().to_string())
+                    .filter(|s| !s.is_empty() && s != "-")
+            };
+
+            records.push(TimingConstraintRecord {
+                constraint_id: format!("timing_{}_{row_idx:03}", document_key(&table_id)),
+                parameter_name: name,
+                min_value: get_cell(min_col),
+                typ_value: get_cell(typ_col),
+                max_value: get_cell(max_col),
+                unit: get_cell(unit_col),
+                description: get_cell(desc_col),
+                supporting_statement_ids: Vec::new(),
+                automation_confidence: AutomationConfidence::Medium,
+            });
+        }
+    }
+
+    records
 }
 
 fn canonicalize_existing_path(path: &Path) -> Result<PathBuf> {

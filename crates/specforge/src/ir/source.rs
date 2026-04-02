@@ -246,6 +246,56 @@ pub struct ContentSectionRecord {
     pub section_kind: SectionKind,
 }
 
+/// One register extracted from a register map table in the chip spec.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RegisterRecord {
+    pub register_id: String,
+    pub register_name: String,
+    /// Byte offset from the block base address (hexadecimal string, e.g. "0x04").
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub offset_address: Option<String>,
+    pub fields: Vec<RegisterFieldRecord>,
+    pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+/// One bit-field within a `RegisterRecord`.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RegisterFieldRecord {
+    pub field_name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub bits_high: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub bits_low: Option<u32>,
+    /// Access type: RO, WO, RW, RC, RS, W1C, etc.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub access_type: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reset_value: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+}
+
+/// One timing constraint extracted from a timing parameter table.
+/// Parameter names typically follow the tXX convention (tSU, tHD, tCKH, etc.).
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct TimingConstraintRecord {
+    pub constraint_id: String,
+    pub parameter_name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub min_value: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub typ_value: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub max_value: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub unit: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
 /// High-level statistics and document title extracted at ingest time.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct DocumentProfile {
