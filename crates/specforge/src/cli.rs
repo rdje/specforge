@@ -29,6 +29,8 @@ pub enum Commands {
     Intent(IntentArgs),
     /// Build or materialize a target adapter artifact from an IntentIR JSON file
     Adapt(AdaptArgs),
+    /// Enrich a SourceIR artifact with VLM-derived visual observations (timing diagrams, state machines)
+    Enrich(EnrichArgs),
 }
 
 #[derive(Debug, Args)]
@@ -94,6 +96,38 @@ impl From<AdapterTargetArg> for AdapterTarget {
             AdapterTargetArg::Vhdl => AdapterTarget::Vhdl,
         }
     }
+}
+
+/// VLM provider selection for the `enrich` command.
+#[derive(Debug, Clone, Copy, ValueEnum)]
+pub enum VlmProviderArg {
+    /// Local Ollama server at http://localhost:11434. Use `llava:13b` or `ibm/granite-docling:258m`.
+    Ollama,
+    /// OpenAI cloud API. Requires `OPENAI_API_KEY` environment variable. Uses `gpt-4o`.
+    OpenAi,
+    /// LM Studio local server at http://localhost:1234. Load a vision model in LM Studio.
+    LmStudio,
+    /// Skip VLM enrichment (dry-run / no-op). Useful for testing the classification step.
+    Skip,
+}
+
+#[derive(Debug, Args)]
+pub struct EnrichArgs {
+    /// Path to a SourceIR JSON artifact to enrich
+    pub source_ir: PathBuf,
+    /// VLM provider to use for visual content enrichment
+    #[arg(long, value_enum, default_value = "skip")]
+    pub vlm_provider: VlmProviderArg,
+    /// Model name to use (overrides the provider default).
+    /// Defaults: ollama=llava:13b, openai=gpt-4o, lmstudio=(loaded model)
+    #[arg(long)]
+    pub vlm_model: Option<String>,
+    /// Only classify diagram kinds without calling the VLM (zero-cost step)
+    #[arg(long)]
+    pub classify_only: bool,
+    /// Do not write enriched SourceIR; print the enrichment summary instead
+    #[arg(long)]
+    pub dry_run: bool,
 }
 
 #[derive(Debug, Args)]

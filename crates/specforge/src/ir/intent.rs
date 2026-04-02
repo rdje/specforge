@@ -7,9 +7,10 @@ use serde::{Deserialize, Serialize};
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::semantic::{
-    ControlBlockRecord, DecisionTreeFragmentRecord, ExplicitModuleRecord, ExplicitTopRecord,
-    InitAssignmentRecord, InterfaceRecord, RegisterRecord, RegularStateRecord, SemanticIr,
-    StateTransitionRecord, SymbolDefinitionRecord, SystemContractRecord, TimingConstraintRecord,
+    ConditionalRuleRecord, ControlBlockRecord, DecisionTreeFragmentRecord, ExplicitModuleRecord,
+    ExplicitTopRecord, InitAssignmentRecord, InterfaceRecord, RegisterRecord, RegularStateRecord,
+    SemanticIr, SignalConstraintRecord, StateTransitionRecord, SymbolDefinitionRecord,
+    SystemContractRecord, TimingConstraintRecord,
 };
 use crate::ir::source::{
     AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket, document_key,
@@ -53,6 +54,12 @@ pub struct IntentIr {
     /// Timing constraint records carried forward from `SemanticIR`.
     #[serde(default)]
     pub timing_constraints: Vec<TimingConstraintRecord>,
+    /// Level 2 NLP: signal constraint records carried forward from `SemanticIR`.
+    #[serde(default)]
+    pub signal_constraints: Vec<SignalConstraintRecord>,
+    /// Level 2 NLP: conditional rule records carried forward from `SemanticIR`.
+    #[serde(default)]
+    pub conditional_rules: Vec<ConditionalRuleRecord>,
     pub residual_decisions: Vec<ResidualDecisionPacket>,
 }
 
@@ -105,6 +112,8 @@ impl IntentIr {
         let explicit_tops = semantic_ir.explicit_tops.clone();
         let register_records = semantic_ir.register_records.clone();
         let timing_constraints = semantic_ir.timing_constraints.clone();
+        let signal_constraints = semantic_ir.signal_constraints.clone();
+        let conditional_rules = semantic_ir.conditional_rules.clone();
         let residual_decisions =
             build_residual_decisions(&context, &actors, &behaviors, &constraints);
         let intent_identity = build_intent_identity(
@@ -147,6 +156,8 @@ impl IntentIr {
             explicit_tops,
             register_records,
             timing_constraints,
+            signal_constraints,
+            conditional_rules,
             residual_decisions,
         })
     }
@@ -795,6 +806,7 @@ mod tests {
             source_ref: Some("#/pictures/0".to_string()),
             placeholder_text: None,
             note: None,
+            diagram_kind: crate::ir::source::DiagramKind::BlockDiagram,
         });
         source_ir.write_to_disk()?;
 

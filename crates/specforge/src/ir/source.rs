@@ -246,6 +246,75 @@ pub struct ContentSectionRecord {
     pub section_kind: SectionKind,
 }
 
+/// The kind of constraint that a `SignalConstraintRecord` captures.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case", tag = "kind")]
+pub enum SignalConstraintKind {
+    /// `SIGNAL must be HIGH` / `shall be asserted`.
+    MustBeHigh,
+    /// `SIGNAL must be LOW` / `shall be deasserted`.
+    MustBeLow,
+    /// `SIGNAL must be asserted` (polarity-neutral).
+    MustBeAsserted,
+    /// `SIGNAL must be deasserted` (polarity-neutral).
+    MustBeDeasserted,
+    /// `SIGNAL must not change` / `shall remain stable`.
+    MustNotChange,
+    /// `SIGNAL must be stable` throughout a phase.
+    MustBeStable,
+    /// `SIGNAL must hold data` / be held.
+    MustHoldData,
+    /// `SIGNAL must be VALUE` where VALUE is a specific protocol state (IDLE, NONSEQ, OKAY, etc.).
+    MustBeValue { value: String },
+}
+
+/// A structured signal constraint extracted from a `SignalValueConstraint` sentence.
+/// This is the Level 2 NLP output — not just a classified sentence but a typed record.
+///
+/// Example: `"HAUSER must not change between cycles when HREADY is LOW"` →
+/// `{ subject: "HAUSER", kind: MustNotChange, condition: "when HREADY is LOW", negated: false }`
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct SignalConstraintRecord {
+    pub constraint_id: String,
+    /// The hardware signal that is being constrained.
+    pub subject_signal: String,
+    /// What the signal must do or be.
+    pub constraint_kind: SignalConstraintKind,
+    /// The specific target value/state, if applicable (e.g. "IDLE", "NONSEQ").
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub target_value: Option<String>,
+    /// The condition clause, if present (e.g. "when HREADY is LOW").
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub condition_text: Option<String>,
+    /// Whether the constraint was negated (`must not`, `shall not`).
+    pub negated: bool,
+    /// The original sentence this record was extracted from.
+    pub source_text: String,
+    pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+/// A structured conditional rule extracted from a `ConditionalRule` sentence.
+/// Captures `when ANTECEDENT, SIGNAL shall/must ACTION`.
+///
+/// Example: `"When HREADY is LOW, the Manager must not change HTRANS"` →
+/// `{ antecedent: "HREADY is LOW", consequent_signal: "HTRANS", consequent_action: "must not change" }`
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ConditionalRuleRecord {
+    pub rule_id: String,
+    /// The condition that triggers the rule ("when HREADY is LOW").
+    pub antecedent_text: String,
+    /// The signal that is the subject of the consequent, if identifiable.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub consequent_signal: Option<String>,
+    /// The action the consequent describes ("must not change", "shall be IDLE", etc.).
+    pub consequent_action: String,
+    /// The original sentence this record was extracted from.
+    pub source_text: String,
+    pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
 /// One register extracted from a register map table in the chip spec.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct RegisterRecord {
@@ -639,6 +708,34 @@ pub enum VisualAssetKind {
     Unknown,
 }
 
+/// Semantic classification of a visual asset's diagram type.
+/// Set from caption text heuristics at ingest time (zero VLM deps).
+/// Used to route VLM enrichment calls at the `specforge enrich` step.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum DiagramKind {
+    /// Waveform on horizontal time axis — the most normative content in chip specs.
+    TimingDiagram,
+    /// Boxes and arrows with guard labels (state/transition diagrams).
+    StateMachineDiagram,
+    /// Component rectangles with connections (system/block diagrams).
+    BlockDiagram,
+    /// Horizontal bit-field layout (register diagrams).
+    RegisterBitfield,
+    /// Tabular with binary inputs/outputs.
+    TruthTable,
+    /// Flow chart with diamond decision nodes.
+    FlowChart,
+    /// Cannot be determined from caption text alone; requires VLM.
+    Unknown,
+}
+
+impl Default for DiagramKind {
+    fn default() -> Self {
+        Self::Unknown
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct VisualAsset {
     pub asset_id: String,
@@ -650,6 +747,10 @@ pub struct VisualAsset {
     pub source_ref: Option<String>,
     pub placeholder_text: Option<String>,
     pub note: Option<String>,
+    /// Semantic diagram kind inferred from caption text at ingest time.
+    /// Set to `Unknown` when classification cannot be determined from caption alone.
+    #[serde(default)]
+    pub diagram_kind: DiagramKind,
 }
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct PlaceholderBinding {

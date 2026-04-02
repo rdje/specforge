@@ -52,8 +52,8 @@
   - adapters
 
 ## Latest committed baseline
-- latest_commit_hash: `9252aa9cf31bedaf958cf07e8bb8835d30f137fc`
-- latest_commit_brief_message: `Refresh live docs for SemanticIR extraction improvements`
+- latest_commit_hash: `15d349b8ade1fea5fa40b8707a0ff8e3f08e98d0`
+- latest_commit_brief_message: `Add SignalValueConstraint: syntactic NLP for signal-value binding sentences`
 - continuity_rule:
   - refresh this section whenever a new latest committed baseline exists at the time `MEMORY.md` is updated
 
@@ -99,6 +99,9 @@
 - SOTA SourceIR/EvidenceIR extraction architecture fully implemented and validated on AHB PDF
 - EXTRACTION_ARCHITECTURE.md created as the permanent reference document for the SOTA extraction vision
 - SemanticIR parse_signal_table_row band-aid removed; signal declarations now flow architecturally from EvidenceIR
+- Level 2 NLP structured extraction (SignalConstraintRecord, ConditionalRuleRecord) implemented and validated on AHB
+- DiagramKind classification: 17 AHB timing diagrams classified, 3 block diagrams; VLM enrichment pipeline ready
+- specforge enrich command: Ollama/OpenAI/LM Studio providers, SPECFORGE_VLM_HELPER test override
 
 ## Current execution checkpoint
 - `IntentIR` now has a real build/materialization path

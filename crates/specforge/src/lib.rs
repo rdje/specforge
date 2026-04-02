@@ -14,5 +14,6 @@ pub fn run(cli: Cli) -> Result<()> {
         Commands::Semantic(args) => commands::semantic::run(args),
         Commands::Intent(args) => commands::intent::run(args),
         Commands::Adapt(args) => commands::adapt::run(args),
+        Commands::Enrich(args) => commands::enrich::run(args),
     }
 }

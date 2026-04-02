@@ -55,6 +55,10 @@
 - Tier 2: RegisterRecord, RegisterFieldRecord, TimingConstraintRecord type system implemented; EvidenceIR synthesizes from structured tables: Done
 - Tier 2: TimingConstraint and ConditionalRule StatementClass sub-classes added to EvidenceIR classification: Done
 - EXTRACTION_ARCHITECTURE.md updated as precise authoritative reference with exact type names and implementation status: Done
+- Level 2 NLP: SignalConstraintRecord and ConditionalRuleRecord structured extraction from classified sentences: Done
+- DiagramKind classification: timing_diagram/state_machine/block_diagram from caption text (zero VLM deps): Done
+- specforge enrich command: VLM enrichment pipeline with Ollama/OpenAI/LM Studio providers: Done
+- 17 AHB timing diagrams correctly classified, ready for VLM enrichment: Done
 - Docling installed and first real-world PDF (AMBA AHB) exercised end-to-end through the full pipeline: Done
 - SystemVerilog/Verilog/VHDL adapters implemented: Not Started
 - Validation and back-annotation pipeline implemented: Not Started

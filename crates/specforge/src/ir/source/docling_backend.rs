@@ -102,6 +102,68 @@ def docling_label_to_kind(label):
     return "body_text"
 
 
+def classify_diagram_kind(caption_text, asset_kind):
+    """Classify a visual asset's diagram type from its caption and asset kind.
+
+    Returns one of: timing_diagram, state_machine_diagram, block_diagram,
+    register_bitfield, truth_table, flow_chart, unknown.
+    """
+    lowered = (caption_text or "").lower()
+    # Always unknown for table regions (they are handled structurally).
+    if asset_kind == "table_region":
+        return "unknown"
+    # Timing diagram: waveform, timing, clock, waveform, signal transitions.
+    # In chip spec figures, "transfer", "burst", "wait state" diagrams are timing diagrams.
+    if any(kw in lowered for kw in [
+        "timing diagram", "timing waveform", "waveform diagram", "waveform",
+        "timing", "handshake timing", "clock timing", "signal timing",
+        "transfer timing", "cycle timing", "setup and hold",
+        "high and low",
+        # AMBA-style transfer/burst diagrams (the figure shows a clocked waveform).
+        "read transfer", "write transfer",
+        "wait state", "waited transfer",
+        "wrapping burst", "incrementing burst",
+        "undefined length burst",
+        "locked transfer",
+        "error response",
+        "transfer type example",
+        "four-beat", "eight-beat", "sixteen-beat",
+    ]):
+        return "timing_diagram"
+    # State machine / state transition diagram.
+    if any(kw in lowered for kw in [
+        "state machine", "state diagram", "state transition", "transfer state",
+        "fsm", "finite state", "states and transitions",
+    ]):
+        return "state_machine_diagram"
+    # Block / architecture / system diagram.
+    if any(kw in lowered for kw in [
+        "block diagram", "architecture diagram", "system diagram",
+        "interconnect", "system block", "component diagram",
+        "bus matrix", "top-level", "high-level",
+        # AMBA interface/interconnect figures.
+        "manager interface", "subordinate interface",
+        "multiplexor interconnection", "select signal",
+    ]):
+        return "block_diagram"
+    # Register bit-field layout.
+    if any(kw in lowered for kw in [
+        "register", "bit field", "bitfield", "register map", "register layout",
+    ]):
+        return "register_bitfield"
+    # Truth table.
+    if any(kw in lowered for kw in [
+        "truth table", "encoding table", "lookup table",
+    ]):
+        return "truth_table"
+    # Flow chart.
+    if any(kw in lowered for kw in [
+        "flow chart", "flowchart", "flow diagram", "decision flow",
+    ]):
+        return "flow_chart"
+    return "unknown"
+
+
 def classify_section(title):
     """Heuristic section kind classification based on the heading title."""
     lowered = title.lower()
@@ -334,9 +396,10 @@ def main():
             caption_text = normalize_text(element.caption_text(doc))
             if page_number in page_metadata_records:
                 page_metadata_records[page_number]["record"]["picture_refs"].append(source_ref)
+            asset_kind_str = picture_asset_kind(caption_text)
             visual_assets.append({
                 "asset_id": asset_id,
-                "asset_kind": picture_asset_kind(caption_text),
+                "asset_kind": asset_kind_str,
                 "page_id": page_id,
                 "image_path": as_posix(asset_path),
                 "caption_text": caption_text,
@@ -344,6 +407,7 @@ def main():
                 "source_ref": source_ref,
                 "placeholder_text": None,
                 "note": None,
+                "diagram_kind": classify_diagram_kind(caption_text, asset_kind_str),
             })
 
         elif isinstance(element, TableItem):
@@ -365,6 +429,7 @@ def main():
                 "source_ref": source_ref,
                 "placeholder_text": None,
                 "note": None,
+                "diagram_kind": "unknown",
             })
             # Extract the cell grid from the structured table representation.
             header_rows, body_rows = extract_table_grid(element)

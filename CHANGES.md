@@ -1,4 +1,29 @@
 # CHANGES
+## 2026-04-02 (NLP Level 2 structured extraction + VLM enrichment pipeline)
+- **EXTRACTION_ARCHITECTURE.md** updated as authoritative reference: NLP 4-level pyramid, classification-vs-extraction gap analysis, VLM provider architecture (Ollama/OpenAI/LM Studio), all implementation steps with precise ✅/❌ status
+- **Level 2 NLP: SignalConstraintRecord extraction**
+  - New types in `source.rs`: `SignalConstraintKind`, `SignalConstraintRecord`, `ConditionalRuleRecord`
+  - `extract_signal_constraints()` in `evidence.rs`: for each `SignalValueConstraint` sentence, extracts `{subject_signal, constraint_kind, target_value, condition_text, negated}` via syntactic pattern matching; stop-worded for AMBA/ARM/company names
+  - `extract_conditional_rules()` in `evidence.rs`: for each `ConditionalRule` sentence, extracts `{antecedent_text, consequent_signal, consequent_action}` by sentence splitting on when/if/while/during
+  - `EvidenceIr.signal_constraints` + `EvidenceIr.conditional_rules` as first-class typed fields
+  - Carried through `SemanticIr.signal_constraints` and `IntentIr.signal_constraints`
+  - AHB result: 12 `SignalConstraintRecord` (HAUSER must_not_change, HEXOKAY must_be_deasserted, etc.), 36 `ConditionalRuleRecord`
+- **DiagramKind classification in SourceIR (Step 3.1)**
+  - New `DiagramKind` enum in `source.rs`: `TimingDiagram`, `StateMachineDiagram`, `BlockDiagram`, `RegisterBitfield`, `TruthTable`, `FlowChart`, `Unknown`
+  - `VisualAsset.diagram_kind` field set from caption text in Docling Python helper
+  - `classify_diagram_kind()` in Python helper: pattern-matches AMBA-specific caption vocabulary ("read transfer", "write transfer", "burst", "wait state" → `timing_diagram`; "Manager interface", "multiplexor interconnection" → `block_diagram`; etc.)
+  - AHB result: **17 timing diagrams** correctly classified, 3 block diagrams
+- **specforge enrich command (Step 3.2/3.3)**
+  - New `specforge enrich <source-ir> --vlm-provider <provider>` command
+  - Providers: `ollama` (localhost:11434, model `llava:13b`), `openai` (OPENAI_API_KEY, model `gpt-4o`), `lmstudio` (localhost:1234), `skip` (default)
+  - `--classify-only` flag: shows timing/state-machine diagram counts without calling VLM
+  - `--vlm-model` override for custom models
+  - `--dry-run` shows which figures would be sent to VLM without making calls
+  - `SPECFORGE_VLM_HELPER` env var override for unit testing (same pattern as `SPECFORGE_DOCLING_HELPER`)
+  - Structured prompts: timing diagram → `{signals, cycles, annotations}` JSON; state machine → `{states, transitions}` JSON
+  - All providers use OpenAI-compatible chat completions API (supports Docling's granite-docling model via Ollama or LM Studio)
+  - VLM enrichment writes updated `VisualAsset.note` with typed extraction; downstream `specforge evidence` picks it up
+- 48 tests, 0 failures
 ## 2026-04-02 (Tier 2: Register/Timing type system + NormativeStatement sub-classes)
 - added `RegisterRecord` and `RegisterFieldRecord` types to `source.rs` (foundation layer, no circular deps)
 - added `TimingConstraintRecord` type to `source.rs`

@@ -10,7 +10,10 @@ use crate::ir::source::{
     AutomationConfidence, NormalizationStatus, SectionKind, SourceIr, TableKind, VisualAsset,
     VisualAssetKind, document_key,
 };
-use crate::ir::source::{RegisterFieldRecord, RegisterRecord, TimingConstraintRecord};
+use crate::ir::source::{
+    ConditionalRuleRecord, RegisterFieldRecord, RegisterRecord, SignalConstraintKind,
+    SignalConstraintRecord, TimingConstraintRecord,
+};
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -96,6 +99,12 @@ pub struct EvidenceIr {
     /// Timing constraint records synthesized from `timing_parameter` tables in `SourceIR`.
     #[serde(default)]
     pub timing_constraints: Vec<TimingConstraintRecord>,
+    /// Level 2 NLP: structured records extracted from `SignalValueConstraint` sentences.
+    #[serde(default)]
+    pub signal_constraints: Vec<SignalConstraintRecord>,
+    /// Level 2 NLP: structured records extracted from `ConditionalRule` sentences.
+    #[serde(default)]
+    pub conditional_rules: Vec<ConditionalRuleRecord>,
 }
 
 impl EvidenceIr {
@@ -370,10 +379,16 @@ impl EvidenceIr {
         extracted_statements.extend(synthesized);
 
         // Synthesize typed register and timing records from structured tables.
-        // These are first-class typed records carried through to SemanticIR and IntentIR
-        // without any further text re-parsing.
         let register_records = synthesize_register_records(&source_ir);
         let timing_constraints = synthesize_timing_constraints(&source_ir);
+
+        // Level 2 NLP: extract structured records from already-classified normative sentences.
+        // These operate on classified statement text, not raw text, so precision is high.
+        let mut constraint_counter = 1usize;
+        let signal_constraints =
+            extract_signal_constraints(&extracted_statements, &mut constraint_counter);
+        let conditional_rules =
+            extract_conditional_rules(&extracted_statements, &mut constraint_counter);
 
         Ok(Self {
             schema_version: 1,
@@ -388,6 +403,8 @@ impl EvidenceIr {
             extracted_statements,
             register_records,
             timing_constraints,
+            signal_constraints,
+            conditional_rules,
         })
     }
 
@@ -1120,6 +1137,351 @@ fn is_hardware_signal_token(token: &str) -> bool {
         && token.chars().any(|c| c.is_ascii_uppercase())
 }
 
+/// Level 2 NLP — Extract `SignalConstraintRecord` entries from `SignalValueConstraint` sentences.
+/// Operates only on already-classified sentences to keep precision high.
+fn extract_signal_constraints(
+    statements: &[ExtractedStatement],
+    counter: &mut usize,
+) -> Vec<SignalConstraintRecord> {
+    let mut records = Vec::new();
+
+    for statement in statements {
+        if !matches!(statement.class, StatementClass::SignalValueConstraint) {
+            continue;
+        }
+        let text = &statement.text;
+        let lowered = text.to_ascii_lowercase();
+
+        // Extract the subject signal: find the first uppercase hardware-signal token.
+        // We look for 3+ char uppercase tokens, preferring H-prefixed AHB signals.
+        let subject_signal = text
+            .split(|c: char| !(c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_'))
+            .filter(|tok| {
+                tok.len() >= 3
+                    && tok
+                        .chars()
+                        .next()
+                        .map(|c| c.is_ascii_uppercase())
+                        .unwrap_or(false)
+                    && tok
+                        .chars()
+                        .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_')
+            })
+            .find(|tok| {
+                // Exclude value tokens and common non-signal uppercase words.
+                !matches!(
+                    *tok,
+                    "HIGH" | "LOW" | "IDLE" | "BUSY" | "NONSEQ" | "SEQ" | "OKAY" | "ERROR"
+                        | "VALID" | "INVALID" | "NONE" | "ALL" | "ANY"
+                        // Protocol family and company names are never signal subjects
+                        | "AMBA" | "AHB" | "AHB5" | "APB" | "AXI" | "CHI" | "ARM" | "AMD"
+                        // Document / specification terms
+                        | "NOTE" | "TABLE" | "FIGURE" | "CHAPTER" | "SECTION"
+                        // Common spec phrases
+                        | "MANAGER" | "SUBORDINATE" | "DECODER" | "INITIATOR"
+                )
+            })
+            .map(|s| s.to_string());
+
+        let Some(subject_signal) = subject_signal else {
+            continue;
+        };
+
+        // Determine constraint kind and negation from the value-binding phrase.
+        let negated = contains_any(
+            &lowered,
+            &["must not", "shall not", "must never", "shall never"],
+        );
+
+        let constraint_kind = if contains_any(
+            &lowered,
+            &[
+                "must not change",
+                "shall not change",
+                "must remain stable",
+                "shall remain stable",
+            ],
+        ) {
+            SignalConstraintKind::MustNotChange
+        } else if contains_any(
+            &lowered,
+            &[
+                "must be stable",
+                "shall be stable",
+                "must hold",
+                "shall hold",
+            ],
+        ) {
+            SignalConstraintKind::MustBeStable
+        } else if contains_any(
+            &lowered,
+            &[
+                "must be high",
+                "shall be high",
+                "must remain high",
+                "shall remain high",
+                "must be driven high",
+            ],
+        ) {
+            SignalConstraintKind::MustBeHigh
+        } else if contains_any(
+            &lowered,
+            &[
+                "must be low",
+                "shall be low",
+                "must remain low",
+                "shall remain low",
+                "must be driven low",
+            ],
+        ) {
+            SignalConstraintKind::MustBeLow
+        } else if contains_any(
+            &lowered,
+            &[
+                "must be asserted",
+                "shall be asserted",
+                "must remain asserted",
+                "shall remain asserted",
+            ],
+        ) {
+            SignalConstraintKind::MustBeAsserted
+        } else if contains_any(
+            &lowered,
+            &[
+                "must be deasserted",
+                "shall be deasserted",
+                "must remain deasserted",
+                "shall remain deasserted",
+            ],
+        ) {
+            SignalConstraintKind::MustBeDeasserted
+        } else if contains_any(&lowered, &["must be valid", "shall be valid"]) {
+            // Look for a specific protocol state value after "must be" / "shall be"
+            if let Some(value) = extract_protocol_state_value(&lowered) {
+                SignalConstraintKind::MustBeValue { value }
+            } else {
+                SignalConstraintKind::MustBeStable
+            }
+        } else {
+            // Generic: try to find a protocol state value
+            if let Some(value) = extract_protocol_state_value(&lowered) {
+                SignalConstraintKind::MustBeValue { value }
+            } else {
+                SignalConstraintKind::MustBeStable
+            }
+        };
+
+        // Extract condition clause: text after "when", "while", "during", "unless".
+        let condition_text = extract_condition_clause(text);
+
+        *counter += 1;
+        records.push(SignalConstraintRecord {
+            constraint_id: format!("sigcon_{counter:04}"),
+            subject_signal,
+            constraint_kind,
+            target_value: None,
+            condition_text,
+            negated,
+            source_text: text.clone(),
+            supporting_statement_ids: vec![statement.statement_id.clone()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+    }
+
+    records
+}
+
+/// Level 2 NLP — Extract `ConditionalRuleRecord` entries from `ConditionalRule` sentences.
+fn extract_conditional_rules(
+    statements: &[ExtractedStatement],
+    counter: &mut usize,
+) -> Vec<ConditionalRuleRecord> {
+    let mut records = Vec::new();
+
+    for statement in statements {
+        if !matches!(statement.class, StatementClass::ConditionalRule) {
+            continue;
+        }
+        let text = &statement.text;
+        let lowered = text.to_ascii_lowercase();
+
+        // Split on "when", "if", "while", "during", "after", "before".
+        let (antecedent, consequent) = split_conditional_sentence(text);
+        if antecedent.is_empty() || consequent.is_empty() {
+            continue;
+        }
+
+        // Try to find the consequent signal (uppercase token in the consequent clause).
+        let consequent_signal = consequent
+            .split(|c: char| !(c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_'))
+            .filter(|tok| {
+                tok.len() >= 3
+                    && tok
+                        .chars()
+                        .next()
+                        .map(|c| c.is_ascii_uppercase())
+                        .unwrap_or(false)
+                    && tok
+                        .chars()
+                        .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_')
+                    && !matches!(
+                        *tok,
+                        "HIGH" | "LOW" | "IDLE" | "BUSY" | "NONSEQ" | "SEQ" | "OKAY" | "ERROR"
+                    )
+            })
+            .next()
+            .map(|s| s.to_string());
+
+        // Extract the action verb phrase from the consequent.
+        let consequent_action = extract_action_phrase(&lowered, &consequent.to_ascii_lowercase());
+
+        *counter += 1;
+        records.push(ConditionalRuleRecord {
+            rule_id: format!("condrule_{counter:04}"),
+            antecedent_text: antecedent.trim().to_string(),
+            consequent_signal,
+            consequent_action,
+            source_text: text.clone(),
+            supporting_statement_ids: vec![statement.statement_id.clone()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+    }
+
+    records
+}
+
+/// Extract the condition clause from a sentence ("when X", "while X", "during X", "unless X").
+fn extract_condition_clause(text: &str) -> Option<String> {
+    let lowered = text.to_ascii_lowercase();
+    for marker in &[" when ", " while ", " during ", " unless ", " provided "] {
+        if let Some(pos) = lowered.find(marker) {
+            let clause = &text[pos + marker.len()..].trim_end_matches('.');
+            if !clause.is_empty() {
+                return Some(clause.to_string());
+            }
+        }
+    }
+    None
+}
+
+/// Extract a protocol state value from lowered text (IDLE, NONSEQ, SEQ, OKAY, etc.).
+fn extract_protocol_state_value(lowered: &str) -> Option<String> {
+    for state in &[
+        "idle",
+        "busy",
+        "nonseq",
+        "nonsequential",
+        "seq",
+        "sequential",
+        "okay",
+        "error",
+        "valid",
+        "invalid",
+        "single",
+        "incr",
+        "wrap",
+    ] {
+        if contains_any(
+            lowered,
+            &[
+                &format!("must be {state}"),
+                &format!("shall be {state}"),
+                &format!("must remain {state}"),
+                &format!("shall remain {state}"),
+            ],
+        ) {
+            return Some(state.to_ascii_uppercase());
+        }
+    }
+    None
+}
+
+/// Split a conditional sentence into (antecedent, consequent) based on leading conditional words.
+fn split_conditional_sentence(text: &str) -> (String, String) {
+    let lowered = text.to_ascii_lowercase();
+    // Leading conditional: "When X, Y" / "While X, Y" / "If X, Y" / "During X, Y"
+    for marker in &[
+        "when ",
+        "while ",
+        "if ",
+        "during ",
+        "after ",
+        "before ",
+        "whenever ",
+    ] {
+        if lowered.starts_with(marker) {
+            // Find the comma or second clause boundary.
+            let rest = &text[marker.len()..];
+            // Look for ", the", ", a ", ", SIGNAL", or just " , "
+            if let Some(comma_pos) = rest.find(',') {
+                let antecedent = rest[..comma_pos].trim().to_string();
+                let consequent = rest[comma_pos + 1..].trim().to_string();
+                if !antecedent.is_empty() && !consequent.is_empty() {
+                    return (antecedent, consequent);
+                }
+            }
+            // No comma: try splitting at " then "
+            if let Some(then_pos) = rest.to_ascii_lowercase().find(" then ") {
+                return (
+                    rest[..then_pos].trim().to_string(),
+                    rest[then_pos + 6..].trim().to_string(),
+                );
+            }
+        }
+    }
+    // Embedded conditional: "X [must/shall] Y when Z"
+    let lowered = text.to_ascii_lowercase();
+    for marker in &[" when ", " while ", " during ", " unless "] {
+        if let Some(pos) = lowered.find(marker) {
+            let consequent = text[..pos].trim().to_string();
+            let antecedent = text[pos + marker.len()..].trim_end_matches('.').to_string();
+            if !antecedent.is_empty() && !consequent.is_empty() {
+                return (antecedent, consequent);
+            }
+        }
+    }
+    (String::new(), String::new())
+}
+
+/// Extract a normalized action phrase from the consequent clause of a conditional sentence.
+fn extract_action_phrase(full_lowered: &str, consequent_lowered: &str) -> String {
+    for phrase in &[
+        "must not change",
+        "shall not change",
+        "must remain",
+        "shall remain",
+        "must be idle",
+        "shall be idle",
+        "must be nonseq",
+        "shall be nonseq",
+        "must be seq",
+        "shall be seq",
+        "must be asserted",
+        "shall be asserted",
+        "must be deasserted",
+        "shall be deasserted",
+        "must be stable",
+        "shall be stable",
+        "must be valid",
+        "shall be valid",
+        "must be high",
+        "shall be high",
+        "must be low",
+        "shall be low",
+        "must not",
+        "shall not",
+        "must be",
+        "shall be",
+        "must",
+        "shall",
+    ] {
+        if consequent_lowered.contains(phrase) || full_lowered.contains(phrase) {
+            return phrase.to_string();
+        }
+    }
+    "(see source_text)".to_string()
+}
+
 /// Returns `true` if the sentence explicitly constrains a hardware signal to a specific
 /// logic value or protocol state.
 ///
@@ -1775,6 +2137,7 @@ mod tests {
             source_ref: Some("#/pictures/0".to_string()),
             placeholder_text: None,
             note: None,
+            diagram_kind: crate::ir::source::DiagramKind::Unknown,
         });
         source_ir.write_to_disk()?;
 

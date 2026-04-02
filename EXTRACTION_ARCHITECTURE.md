@@ -48,11 +48,41 @@ This directly feeds `RegularStateRecord` and `StateTransitionRecord` in `Semanti
 ### Modality 4 — Normative prose
 Sentences like "HTRANS shall remain NONSEQ during address phase" or "HREADY must be asserted within two cycles". These are behavioral requirements. Currently extracted as `SourceFact` like everything else, producing low-quality invariant extraction.
 
-**What is needed:** Proper NLP classification distinguishing:
-- `NormativeStatement` — sentences with `shall`, `must`, `shall not`, `required`, `prohibited` in non-boilerplate sections (**now implemented**)
-- `TimingConstraint` — sentences with cycle counts, setup/hold references, latency bounds
-- `ConditionalRule` — `when X, Y shall...` / `if A then B` conditional behavioral structures
-- `SignalValueConstraint` — `X must be HIGH when Y is asserted`, value constraints on signals
+**Classification (now partially implemented) — five statement sub-classes:**
+- `SignalValueConstraint` — **most specific** — binds a named signal to a specific value/state. `"HAUSER must not change when HREADY is LOW"`. (**now implemented**)
+- `TimingConstraint` — sentence references cycle counts, setup/hold, latency bounds. (**now implemented**)
+- `ConditionalRule` — `when X, Y shall...` / `if A then B` temporal/causal structure. (**now implemented**)
+- `NormativeStatement` — general `shall`/`must` not covered by a more specific class. (**now implemented**)
+- `SourceFact` — everything else.
+
+**Critical gap: classification ≠ extraction.**
+Knowing a sentence is `SignalValueConstraint` is not the same as knowing what it constrains. The extraction layer is missing. The target is structured records, not classified strings:
+```
+"HAUSER must not change between cycles when HREADY is LOW"
+     ↓ structured extraction
+{ subject: HAUSER, constraint: must_not_change,
+  condition: { signal: HREADY, state: LOW } }
+```
+
+**NLP architecture — four levels:**
+- **Level 1 (done):** Keyword classification → routes sentences to sub-classes
+- **Level 2 (next):** Syntactic pattern extraction → extracts `SignalConstraintRecord{signal, constraint_kind, target_value, condition}` and `ConditionalRuleRecord{antecedent, consequent}` from classified sentences
+- **Level 3 (future):** LLM reclassification → send ambiguous `NormativeStatement` sentences to a small LLM with a structured extraction prompt
+- **Level 4 (SOTA):** Fine-tuned NER/RE model → generalises to paraphrases, passive voice, negation, co-reference
+
+**Current false negatives (sentences we miss):**
+- `"HWRITE is tied HIGH for the entire burst"` — no must/shall → `SourceFact` (wrong)
+- `"HTRANS cannot change during a waited transfer"` — `cannot` not in list → `SourceFact`
+- `"Transfer type shall indicate NONSEQ"` — no `be` before value → `NormativeStatement` (not `SignalValueConstraint`)
+- `"It must be asserted"` — co-reference; `It` refers to HREADYOUT earlier — no extraction
+- `"shall not be asserted when X"` vs `"shall be asserted when not X"` — same class, opposite semantics
+
+**Types needed for Level 2 extraction:**
+```rust
+SignalConstraintRecord { subject_signal, constraint_kind, target_value, condition_text, negated, confidence }
+ConditionalRuleRecord  { antecedent_text, consequent_signal, consequent_action, confidence }
+```
+These flow as first-class records through `EvidenceIR.signal_constraints` → `SemanticIR.signal_constraints` → `IntentIR.signal_constraints`.
 
 ### Modality 5 — Section structure and classification
 The document hierarchy carries semantic meaning. "Chapter 2 Signal Descriptions" tells you that the content below is normative signal data. "Appendix A" is not normative. "AMBA Specification Licence" is boilerplate.
@@ -74,32 +104,37 @@ Document number, revision, organization, date. Critical for traceability and ver
 - ✅ Typed content elements (`ContentElementRecord` with Docling labels)
 - ✅ Section hierarchy with `SectionKind` classification
 - ✅ Document profile (title, counts)
-- ❌ Visual asset classification beyond caption heuristics (diagram type: timing/state/block)
+- ❌ `VisualAsset.diagram_kind: DiagramKind` — every figure still classified as generic `figure` or `diagram`
+- ❌ VLM visual enrichment — all timing diagrams and state machine diagrams completely opaque
 - ❌ For Markdown inputs: structure still not parsed
 
 ### EvidenceIR — current state
-- ✅ Signal declarations synthesized from `signal_description` tables
+- ✅ Signal declarations synthesized from `signal_description` tables (High confidence)
 - ✅ Encoding enum declarations synthesized from `encoding` tables
-- ✅ `NormativeStatement` classification for `shall`/`must`/`shall not` sentences
-- ❌ Register field declarations from `register_map` tables
-- ❌ Timing constraint records from `timing_parameter` tables
-- ❌ `TimingConstraint` and `ConditionalRule` statement sub-classes
-- ❌ `VisualObservation` types `Description`, `ChartExtraction`, `TimingDiagramExtraction`, `StateMachineExtraction` never populated
+- ✅ `RegisterRecord` / `RegisterFieldRecord` extracted from `register_map` tables
+- ✅ `TimingConstraintRecord` extracted from `timing_parameter` tables
+- ✅ `NormativeStatement`, `TimingConstraint`, `ConditionalRule`, `SignalValueConstraint` statement classes
+- ❌ `SignalConstraintRecord` — structured extraction from `SignalValueConstraint` sentences (Level 2 NLP)
+- ❌ `ConditionalRuleRecord` — structured extraction from `ConditionalRule` sentences (Level 2 NLP)
+- ❌ `VisualObservation.TimingDiagramExtraction` / `StateMachineExtraction` — requires VLM
 
 ### SemanticIR — current state
-- ✅ `parse_signal_table_row` band-aid removed; signal declarations flow from EvidenceIR
-- ✅ Boilerplate section filter backed by `SectionKind` (correct layer)
-- ✅ Encoding enums flow from EvidenceIR through existing `parse_explicit_symbol_definition`
-- ❌ `RegisterRecord`, `RegisterFieldRecord` types not yet defined
-- ❌ `TimingConstraintRecord` type not yet defined
+- ✅ Signal declarations from EvidenceIR through `parse_explicit_signal_declaration`
+- ✅ Boilerplate section filter backed by `SectionKind`
+- ✅ Encoding enums through `parse_explicit_symbol_definition`
+- ✅ `register_records: Vec<RegisterRecord>` carried forward
+- ✅ `timing_constraints: Vec<TimingConstraintRecord>` carried forward
+- ❌ `signal_constraints: Vec<SignalConstraintRecord>` — not yet defined
 - ❌ State machine extraction from VLM diagram records not yet wired
 
 ### IntentIR — current state
 - ✅ 17+ AHB signals with direction+width from structured tables
-- ✅ Encoding enums beginning to populate for HTRANS, HBURST etc.
-- ❌ No `register_records` field
-- ❌ No `timing_constraints` field
-- ❌ Behavioral requirements identified but not distinguished from prose
+- ✅ Encoding enums (HTRANS, HBURST etc.) via EvidenceIR synthesis
+- ✅ `register_records` carried forward
+- ✅ `timing_constraints` from timing parameter tables
+- ❌ `signal_constraints` — structured constraint records missing
+- ❌ State/transition records from VLM diagram extraction missing
+- ❌ Behavioral requirements still stored as prose strings, not structured predicates
 
 ---
 
@@ -108,33 +143,35 @@ Document number, revision, organization, date. Critical for traceability and ver
 ### SourceIR (SOTA capture layer)
 ```
 SourceIr {
-    page_artifacts          ✅ page images + geometry
-    visual_assets           ✅ figure/table crops + captions
-    structured_tables       ✅ Docling cell grids with header/body rows + table_kind
-    content_elements        ✅ typed text elements in reading order
-    document_sections       ✅ section hierarchy with SectionKind
-    document_profile        ✅ title, counts
-    [next] visual_asset_kind  TODO: classify each figure as timing_diagram / state_machine / block_diagram
+    page_artifacts            ✅ page images + geometry
+    visual_assets             ✅ figure/table crops + captions + diagram_kind [next]
+    structured_tables         ✅ Docling cell grids + table_kind classification
+    content_elements          ✅ typed text elements in reading order
+    document_sections         ✅ section hierarchy with SectionKind
+    document_profile          ✅ title, counts
+    [next] DiagramKind field  TODO: timing_diagram / state_machine / block_diagram / register_bitfield
 }
 ```
-Key principle: `SourceIR` drops nothing. Every fact Docling provides is captured in a typed form. The promoted markdown is a convenience view only — it is never the sole source of truth.
+Key principle: `SourceIR` drops nothing. Every fact Docling provides is captured in a typed form.
 
 ### EvidenceIR (typed evidence per modality)
 ```
 EvidenceIr {
     text evidence spans          ✅ existing
     visual evidence items        ✅ existing
-    evidence links               ✅ existing (caption/figure-ref)
-    signal declarations          ✅ synthesized from signal_description tables
-    encoding enum declarations   ✅ synthesized from encoding tables
-    NormativeStatement class     ✅ shall/must/shall-not sentences classified
-    [next] register declarations TODO: RegisterRecord from register_map tables
-    [next] timing declarations   TODO: TimingConstraintRecord from timing_parameter tables
-    [next] TimingConstraint class  TODO: sub-classify timing sentences
-    [future] VLM visual content  TODO: TimingDiagramRecord, StateMachineExtraction from VLM
+    evidence links               ✅ caption/figure-ref
+    signal declarations          ✅ from signal_description tables
+    encoding enum declarations   ✅ from encoding tables
+    register_records             ✅ from register_map tables
+    timing_constraints           ✅ from timing_parameter tables
+    5 statement sub-classes      ✅ SignalValueConstraint, TimingConstraint, ConditionalRule,
+                                    NormativeStatement, SourceFact
+    [next] signal_constraints    TODO: SignalConstraintRecord (Level 2 NLP extraction)
+    [next] conditional_rules     TODO: ConditionalRuleRecord (Level 2 NLP extraction)
+    [future] VLM observations    TODO: TimingDiagramRecord, StateMachineExtraction
 }
 ```
-Key principle: `EvidenceIR` is typed. Every piece of evidence has a class. Downstream stages receive clean typed records, not raw text to re-parse.
+Key principle: `EvidenceIR` is typed. Classification is Stage 1; structured extraction (Level 2) is Stage 2.
 
 ### SemanticIR (semantic lifting, no heuristic re-parsing)
 ```
@@ -143,14 +180,15 @@ SemanticIr {
     interfaces              ✅ enriched by signal declarations from EvidenceIR
     symbol definitions      ✅ formal + encoding enums from EvidenceIR
     system contract         ✅ formal syntax
-    state machines          ✅ formal syntax; [future] from VLM
+    state machines          ✅ formal syntax + [future] from VLM
     control blocks          ✅ formal syntax
-    invariants              ✅ sharpened by NormativeStatement; [next] TimingConstraint
-    [next] register_records TODO: carry forward from EvidenceIR
-    [next] timing_constraints TODO: carry forward from EvidenceIR
+    invariants              ✅ NormativeStatement-backed
+    register_records        ✅ carried from EvidenceIR
+    timing_constraints      ✅ carried from EvidenceIR
+    [next] signal_constraints  TODO: structured constraint records
 }
 ```
-Key principle: `SemanticIR` lifts from typed evidence. It does not re-parse raw text to recover what `SourceIR`/`EvidenceIR` should have captured.
+Key principle: `SemanticIR` lifts from typed evidence. It does not re-parse raw text.
 
 ### IntentIR (canonical backend-independent intent)
 Carries everything `SemanticIR` produces, canonicalized. The quality of `IntentIR` is determined entirely by the quality of `SourceIR` and `EvidenceIR`.
@@ -208,52 +246,83 @@ These use zero additional dependencies. Docling already extracts this data; we j
 Still zero additional dependencies. Structured cell data is already in `SourceIR`.
 
 **Step 2.1** — `EvidenceIR` + `SemanticIR` + `IntentIR`: register map extraction
-- Types to add: `RegisterRecord`, `RegisterFieldRecord` in `semantic.rs`
-- `synthesize_register_declarations()` in `evidence.rs`: reads tables where `table_kind == RegisterMap`
+- Types: `RegisterRecord`, `RegisterFieldRecord` in `source.rs`; synthesized by `synthesize_register_records()` in `evidence.rs`
 - Extracts: register name, offset address, bit fields (name, bits [n:m], access type, reset value)
-- `SemanticIr.register_records: Vec<RegisterRecord>` and `IntentIr.register_records` carry them forward
-- Status: **❌ not started**
+- `EvidenceIr.register_records` → `SemanticIr.register_records` → `IntentIr.register_records`
+- Status: **✅ done**
 
 **Step 2.2** — `EvidenceIR` + `SemanticIR` + `IntentIR`: timing parameter extraction
-- Types to add: `TimingConstraintRecord` in `semantic.rs`
-- `synthesize_timing_declarations()` in `evidence.rs`: reads tables where `table_kind == TimingParameter`
-- Extracts: parameter name (e.g. tSU, tHD), min/typ/max numeric values, unit
-- `SemanticIr.timing_constraints: Vec<TimingConstraintRecord>` and `IntentIr.timing_constraints`
+- Types: `TimingConstraintRecord` in `source.rs`; synthesized by `synthesize_timing_constraints()` in `evidence.rs`
+- Extracts: parameter name, min/typ/max values, unit from `timing_parameter` tables
+- `EvidenceIr.timing_constraints` → `SemanticIr.timing_constraints` → `IntentIr.timing_constraints`
+- Status: **✅ done**
+
+**Step 2.3** — `EvidenceIR`: all five normative statement sub-classes
+- `SignalValueConstraint` — `"SIGNAL must be HIGH/LOW/asserted/stable/IDLE/..."` + signal token required
+- `TimingConstraint` — cycle counts, setup/hold, latency bound references
+- `ConditionalRule` — `when X, Y shall...` / `if A then B` structures
+- `NormativeStatement` — general shall/must not matching more specific class
+- `SourceFact` — all other descriptive content
+- Status: **✅ done**
+
+**Step 2.4** — `EvidenceIR` + `SemanticIR` + `IntentIR`: Level 2 NLP — `SignalConstraintRecord` extraction
+- For each `SignalValueConstraint` sentence, extract structured record via syntactic patterns:
+  `{subject_signal, constraint_kind, target_value, condition_text, negated, confidence}`
+- `SignalConstraintKind`: `MustBeHigh`, `MustBeLow`, `MustBeAsserted`, `MustBeDeasserted`, `MustNotChange`, `MustBeStable`, `MustBeValue{value}`
+- Add `synthesize_signal_constraints()` in `evidence.rs`
+- `EvidenceIr.signal_constraints` → `SemanticIr.signal_constraints` → `IntentIr.signal_constraints`
+- Status: **❌ not started — next**
+
+**Step 2.5** — `EvidenceIR` + `SemanticIR` + `IntentIR`: Level 2 NLP — `ConditionalRuleRecord` extraction
+- For each `ConditionalRule` sentence, extract `{antecedent_text, consequent_signal, consequent_action, confidence}`
+- These represent the most common protocol behavioral rules: `"when HREADY is LOW, HTRANS shall remain NONSEQ"`
 - Status: **❌ not started**
 
-**Step 2.3** — `EvidenceIR`: `TimingConstraint` and `ConditionalRule` statement sub-classes
-- Extend `StatementClass` with `TimingConstraint` (cycle counts, latency bounds, setup/hold in prose)
-- Extend `StatementClass` with `ConditionalRule` (`when X, Y shall...` / `if A then B` structures)
-- Sharpen `SemanticIR` invariant extraction to distinguish timing requirements from behavioral rules
+### Tier 3 — Visual content understanding (VLM required)
+The type system in `VisualObservation` reserves the needed observation kinds: `Description`, `Classification`, `ChartExtraction`, `TimingDiagramExtraction`, `StateMachineExtraction`, `OcrTranscription`, `TableTranscription`, `FormulaTranscription`. The infrastructure for VLM is already in place. What remains is implementing the enrichment call.
+
+**VLM provider architecture — two-tier approach:**
+
+Tier A — Caption-based classification (zero VLM deps, Docling metadata only):
+- `VisualAsset.diagram_kind` is set from caption text patterns in the Python helper
+- Reliable for chip specs because captions follow standard patterns: `"Figure N-M: HTRANS timing diagram"`, `"Figure N-M: Transfer state machine"`
+
+Tier B — VLM enrichment (requires running VLM service):
+- Triggered by `specforge enrich <source-ir> --vlm-provider <provider>`
+- Providers supported:
+  - **`ollama`** (recommended for local/offline) — `http://localhost:11434/v1/chat/completions`; use `llava:13b` or `ibm/granite-docling:258m` model; no API key required
+  - **`openai`** (cloud) — `https://api.openai.com/v1/chat/completions`; set `OPENAI_API_KEY`; use `gpt-4o` model
+  - **`lmstudio`** — `http://localhost:1234/v1/chat/completions`; load a vision model in LM Studio
+  - **`skip`** (default) — no VLM enrichment
+- The enrichment step is decoupled from `ingest` so it can be retried without re-running Docling
+- A `SPECFORGE_VLM_HELPER` env var override enables unit testing without a live VLM
+
+Docling itself provides a `VlmPipeline` that can process entire documents with a VLM. For our use case we prefer selective enrichment (figure-by-figure) after standard Docling ingest, because:
+1. It is cheaper (only send figures classified as diagrams, not entire pages)
+2. It allows retrying/switching VLM providers without re-running Docling
+3. It keeps SourceIR and EvidenceIR cleanly separated
+
+**Step 3.1** — `SourceIR`: `DiagramKind` classification from caption text
+- Add `DiagramKind` enum: `TimingDiagram`, `StateMachineDiagram`, `BlockDiagram`, `RegisterBitfield`, `TruthTable`, `FlowChart`, `Unknown`
+- Add `VisualAsset.diagram_kind: DiagramKind` field (set in Python helper from caption pattern matching)
+- Caption patterns: `"timing diagram"`, `"timing waveform"`, `"transfer state machine"`, `"state diagram"`, `"block diagram"`, etc.
+- Status: **❌ not started — next (zero VLM deps)**
+
+**Step 3.2** — `EvidenceIR`/`SourceIR`: VLM enrichment → `TimingDiagramRecord`
+- New `specforge enrich` command (or `--enrich-vlm` flag)
+- For each `VisualAsset` where `diagram_kind == TimingDiagram`: send image + caption to VLM
+- VLM prompt (structured): `"Describe this timing diagram. For each signal shown, list its name and value (HIGH/LOW/X/VALID) at each labeled clock cycle. List any timing annotations."`
+- Parse VLM response into `TimingDiagramRecord { signals: Vec<{name, cycles: Vec<{label, value}>}>, annotations: Vec<String> }`
+- Store as `VisualObservation { kind: TimingDiagramExtraction, text: json(record) }`
+- Downstream `SemanticIR` parses into additional `TimingConstraintRecord` entries
 - Status: **❌ not started**
 
-### Tier 3 — Visual content understanding (requires VLM integration)
-These steps require an external VLM call (OpenAI GPT-4V, Anthropic Claude Vision, Google Gemini Vision). The type system in `VisualObservation` already reserves the observation kinds needed: `Description`, `Classification`, `ChartExtraction`, `OcrTranscription`, `TableTranscription`, `FormulaTranscription`.
-
-**Step 3.1** — `SourceIR`/`EvidenceIR`: visual asset type classification
-- Classify each `VisualAsset` with a specific diagram type beyond caption-text heuristics:
-  - `timing_diagram` — waveforms on horizontal time axis (the most normative content in chip specs)
-  - `state_machine_diagram` — boxes and arrows with guard labels
-  - `block_diagram` — component rectangles with connections
-  - `truth_table` — tabular with binary inputs/outputs
-  - `register_bitfield` — horizontal bit field layout
-  - `flow_chart` — diamond decision nodes
-- Add `VisualAsset.diagram_kind: DiagramKind` field to `source.rs`
-- A lightweight classifier on caption text reliably handles most chip spec figures
-- Status: **❌ not started**
-
-**Step 3.2** — `EvidenceIR`: VLM timing diagram extraction → `TimingDiagramRecord`
-- For each `VisualAsset` classified as `timing_diagram`, send image + caption to VLM
-- Extract: signal names on vertical axis, their values (HIGH/LOW/VALID/X) per labeled clock cycle, timing annotations (tSU, tHD, cycle counts)
-- Output: `VisualObservation.kind = TimingDiagramExtraction` with a structured `TimingDiagramRecord` containing typed signal-cycle pairs
-- Downstream: `SemanticIR` parses into `TimingConstraintRecord` entries
-- Status: **❌ not started**
-
-**Step 3.3** — `EvidenceIR`: VLM state machine extraction → `StateMachineExtraction`
-- For each `VisualAsset` classified as `state_machine_diagram`, send to VLM
-- Extract: state names (boxes), transition labels (guard conditions on arrows), initial state marker
-- Output: `VisualObservation.kind = StateMachineExtraction` with typed state/transition records
-- Downstream: `SemanticIR` parses into `RegularStateRecord` + `StateTransitionRecord` entries
+**Step 3.3** — `EvidenceIR`/`SourceIR`: VLM enrichment → `StateMachineExtraction`
+- For each `VisualAsset` where `diagram_kind == StateMachineDiagram`: send to VLM
+- VLM prompt: `"Describe this state machine diagram. List all states, their names, and any initial/reset markers. For each transition arrow, give the source state, target state, and guard condition label."`
+- Parse VLM response into `StateMachineRecord { states: Vec<{name, is_initial}>, transitions: Vec<{from, to, guard}> }`
+- Store as `VisualObservation { kind: StateMachineExtraction, text: json(record) }`
+- Downstream `SemanticIR` merges these into `RegularStateRecord` + `StateTransitionRecord` entries
 - Status: **❌ not started**
 
 ### Tier 4 — Architecture hardening and validation

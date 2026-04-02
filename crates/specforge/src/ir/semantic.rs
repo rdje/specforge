@@ -51,6 +51,12 @@ pub struct SemanticIr {
     /// Timing constraint records synthesized from `timing_parameter` tables in `SourceIR`.
     #[serde(default)]
     pub timing_constraints: Vec<TimingConstraintRecord>,
+    /// Level 2 NLP: structured signal constraint records from `SignalValueConstraint` sentences.
+    #[serde(default)]
+    pub signal_constraints: Vec<SignalConstraintRecord>,
+    /// Level 2 NLP: structured conditional rule records from `ConditionalRule` sentences.
+    #[serde(default)]
+    pub conditional_rules: Vec<ConditionalRuleRecord>,
     pub residual_decisions: Vec<ResidualDecisionPacket>,
 }
 
@@ -115,6 +121,8 @@ impl SemanticIr {
         // These were synthesized directly from SourceIR structured table cell grids.
         let register_records = evidence_ir.register_records.clone();
         let timing_constraints = evidence_ir.timing_constraints.clone();
+        let signal_constraints = evidence_ir.signal_constraints.clone();
+        let conditional_rules = evidence_ir.conditional_rules.clone();
 
         Ok(Self {
             schema_version: 1,
@@ -142,6 +150,8 @@ impl SemanticIr {
             explicit_tops,
             register_records,
             timing_constraints,
+            signal_constraints,
+            conditional_rules,
             residual_decisions,
         })
     }
@@ -691,10 +701,12 @@ pub struct ExplicitTopLinkEndpoint {
     pub signal_name: String,
 }
 
-// Register and timing types are defined in `source.rs` to avoid circular imports
-// (evidence.rs → source, semantic.rs → source, but evidence.rs cannot → semantic.rs).
+// Structured extraction types are defined in `source.rs` to avoid circular imports.
 // Re-exported here so IntentIR and adapters can import them from `semantic`.
-pub use crate::ir::source::{RegisterFieldRecord, RegisterRecord, TimingConstraintRecord};
+pub use crate::ir::source::{
+    ConditionalRuleRecord, RegisterFieldRecord, RegisterRecord, SignalConstraintKind,
+    SignalConstraintRecord, TimingConstraintRecord,
+};
 
 #[derive(Debug, Clone)]
 struct SemanticContext {
@@ -4794,6 +4806,7 @@ mod tests {
             source_ref: Some("#/pictures/0".to_string()),
             placeholder_text: None,
             note: None,
+            diagram_kind: crate::ir::source::DiagramKind::BlockDiagram,
         });
         source_ir.write_to_disk()?;
 
