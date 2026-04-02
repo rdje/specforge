@@ -14,11 +14,13 @@ const VLM_HELPER_ENV: &str = "SPECFORGE_VLM_HELPER";
 
 /// Enrich an EvidenceIR artifact with LLM-extracted NLP constraints.
 ///
-/// Architecture (NLP Level 3):
+/// Architecture (NLP Level 3 — Layers B+C):
 ///   Input:  EvidenceIR with `NormativeStatement` sentences that Level 1/2 pattern-matching
 ///           could not classify into `SignalValueConstraint` or `ConditionalRule`.
 ///   Action: Send each sentence to a small LLM (qwen2.5vl:7b via Ollama, or OpenAI, LM Studio)
-///           with a structured extraction prompt.
+///           with a structured extraction prompt grounded by known declared signal names.
+///   Passes: Runs up to `max_passes` iterations; each pass re-checks sentences not yet
+///           extracted and stops when a full pass yields zero new records (convergence).
 ///   Output: New `SignalConstraintRecord` or `ConditionalRuleRecord` entries appended to the
 ///           EvidenceIR's `signal_constraints` / `conditional_rules` fields.
 ///           The EvidenceIR JSON is written back to disk.
@@ -33,38 +35,6 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
 
     let mut evidence_ir = EvidenceIr::load_from_path(&evidence_ir_path)?;
 
-    // Collect NormativeStatement sentences not already covered by Level 2 extraction.
-    // We skip sentences whose text already appears as the source_text of an existing record.
-    let existing_signal_texts: std::collections::HashSet<String> = evidence_ir
-        .signal_constraints
-        .iter()
-        .map(|r| r.source_text.clone())
-        .collect();
-    let existing_rule_texts: std::collections::HashSet<String> = evidence_ir
-        .conditional_rules
-        .iter()
-        .map(|r| r.source_text.clone())
-        .collect();
-
-    let candidate_statements: Vec<_> = evidence_ir
-        .extracted_statements
-        .iter()
-        .filter(|s| {
-            matches!(s.class, StatementClass::NormativeStatement)
-                && !existing_signal_texts.contains(&s.text)
-                && !existing_rule_texts.contains(&s.text)
-                && s.text.split_whitespace().count() >= 5
-        })
-        .cloned()
-        .collect();
-
-    let total_candidates = candidate_statements.len();
-    let limit = if args.max_sentences == 0 {
-        total_candidates
-    } else {
-        args.max_sentences.min(total_candidates)
-    };
-
     println!("command: nlp-enrich");
     println!("mode: {}", if args.dry_run { "dry-run" } else { "execute" });
     println!("evidence_ir_path: {}", evidence_ir_path.display());
@@ -72,8 +42,6 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
         "document_key: {}",
         evidence_ir.document_identity.document_key
     );
-    println!("normative_statement_candidates: {total_candidates}");
-    println!("sentences_to_enrich: {limit}");
     println!(
         "existing_signal_constraints: {}",
         evidence_ir.signal_constraints.len()
@@ -85,10 +53,12 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
 
     match args.vlm_provider {
         VlmProviderArg::Skip => {
+            // Count candidates so the dry-run hint is informative.
+            let candidates = count_candidate_statements(&evidence_ir);
             println!("llm_provider: skip");
             println!("nlp_enrichment: skipped");
             println!(
-                "hint: re-run with --vlm-provider ollama --vlm-model qwen2.5vl:7b to enrich {limit} sentences"
+                "hint: re-run with --vlm-provider ollama --vlm-model qwen2.5vl:7b to enrich {candidates} sentences"
             );
             return Ok(());
         }
@@ -102,7 +72,6 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
             println!("llm_provider: {provider_name}");
 
             let model = args.vlm_model.unwrap_or_else(|| match provider {
-                // qwen2.5vl:7b handles text-only NLP efficiently (same model as VLM enrichment).
                 VlmProviderArg::Ollama => "qwen2.5vl:7b".to_string(),
                 VlmProviderArg::OpenAi => "gpt-4o".to_string(),
                 VlmProviderArg::LmStudio => "qwen2.5vl:7b".to_string(),
@@ -117,79 +86,177 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
                 VlmProviderArg::Skip => unreachable!(),
             };
 
-            let mut signal_counter = evidence_ir.signal_constraints.len() + 1;
-            let mut rule_counter = evidence_ir.conditional_rules.len() + 1;
-            let mut new_signal_constraints = Vec::new();
-            let mut new_conditional_rules = Vec::new();
-            let mut calls_made = 0usize;
-            let mut errors = 0usize;
-            let mut skipped_none = 0usize;
+            // Layer B: Build grounding signal list.
+            // Explicit --grounding-signals overrides auto-extraction.
+            // Empty string disables grounding.
+            let grounding_signals: Vec<String> = match &args.grounding_signals {
+                Some(explicit) if explicit.is_empty() => Vec::new(), // disabled
+                Some(explicit) => explicit
+                    .split(',')
+                    .map(|s| s.trim().to_ascii_uppercase())
+                    .filter(|s| !s.is_empty())
+                    .collect(),
+                None => auto_extract_declared_signals(&evidence_ir), // auto
+            };
+            println!("grounding_signals: {}", grounding_signals.len());
+            if !grounding_signals.is_empty() {
+                println!(
+                    "  known_signals: {}",
+                    grounding_signals
+                        .iter()
+                        .take(10)
+                        .cloned()
+                        .collect::<Vec<_>>()
+                        .join(", ")
+                );
+            }
 
-            for statement in candidate_statements.iter().take(limit) {
-                if args.dry_run {
-                    println!(
-                        "  [dry-run] would enrich: \"{}\"",
-                        truncate_for_display(&statement.text, 80)
-                    );
-                    continue;
+            // Layer C: multi-pass loop with convergence check.
+            let max_passes = args.max_passes.max(1);
+            let mut total_signal_constraints = 0usize;
+            let mut total_conditional_rules = 0usize;
+            let mut total_calls = 0usize;
+            let mut total_errors = 0usize;
+
+            for pass in 1..=max_passes {
+                println!("--- pass {pass}/{max_passes} ---");
+
+                // Re-derive candidates each pass so already-extracted sentences are skipped.
+                let existing_signal_texts: std::collections::HashSet<String> = evidence_ir
+                    .signal_constraints
+                    .iter()
+                    .map(|r| r.source_text.clone())
+                    .collect();
+                let existing_rule_texts: std::collections::HashSet<String> = evidence_ir
+                    .conditional_rules
+                    .iter()
+                    .map(|r| r.source_text.clone())
+                    .collect();
+
+                let candidate_statements: Vec<_> = evidence_ir
+                    .extracted_statements
+                    .iter()
+                    .filter(|s| {
+                        matches!(s.class, StatementClass::NormativeStatement)
+                            && !existing_signal_texts.contains(&s.text)
+                            && !existing_rule_texts.contains(&s.text)
+                            && s.text.split_whitespace().count() >= 5
+                    })
+                    .cloned()
+                    .collect();
+
+                let total_candidates = candidate_statements.len();
+                let limit = if args.max_sentences == 0 {
+                    total_candidates
+                } else {
+                    args.max_sentences.min(total_candidates)
+                };
+
+                println!("normative_statement_candidates: {total_candidates}");
+                println!("sentences_this_pass: {limit}");
+
+                if limit == 0 {
+                    println!("convergence: no remaining candidates — stopping.");
+                    break;
                 }
 
-                calls_made += 1;
-                match call_llm_for_sentence(
-                    &statement.text,
-                    &statement.statement_id,
-                    &model,
-                    &api_url,
-                    provider,
-                ) {
-                    Ok(NlpExtractionResult::SignalConstraint(mut record)) => {
-                        record.constraint_id = format!("nlp3_sigcon_{signal_counter:04}");
-                        signal_counter += 1;
+                let mut signal_counter = evidence_ir.signal_constraints.len() + 1;
+                let mut rule_counter = evidence_ir.conditional_rules.len() + 1;
+                let mut new_signal_constraints = Vec::new();
+                let mut new_conditional_rules = Vec::new();
+                let mut calls_made = 0usize;
+                let mut errors = 0usize;
+                let mut skipped_none = 0usize;
+
+                for statement in candidate_statements.iter().take(limit) {
+                    if args.dry_run {
                         println!(
-                            "  signal_constraint: {} {:?} ({})",
-                            record.subject_signal,
-                            record.constraint_kind,
-                            truncate_for_display(&statement.text, 60)
+                            "  [dry-run] would enrich: \"{}\"",
+                            truncate_for_display(&statement.text, 80)
                         );
-                        new_signal_constraints.push(record);
+                        continue;
                     }
-                    Ok(NlpExtractionResult::ConditionalRule(mut record)) => {
-                        record.rule_id = format!("nlp3_condrule_{rule_counter:04}");
-                        rule_counter += 1;
-                        println!(
-                            "  conditional_rule: antecedent='{}' ({})",
-                            truncate_for_display(&record.antecedent_text, 40),
-                            truncate_for_display(&statement.text, 60)
-                        );
-                        new_conditional_rules.push(record);
+
+                    calls_made += 1;
+                    match call_llm_for_sentence(
+                        &statement.text,
+                        &statement.statement_id,
+                        &model,
+                        &api_url,
+                        provider,
+                        &grounding_signals,
+                    ) {
+                        Ok(NlpExtractionResult::SignalConstraint(mut record)) => {
+                            record.constraint_id = format!("nlp3_sigcon_{signal_counter:04}");
+                            record.source_text = statement.text.clone();
+                            signal_counter += 1;
+                            println!(
+                                "  signal_constraint: {} {:?} ({})",
+                                record.subject_signal,
+                                record.constraint_kind,
+                                truncate_for_display(&statement.text, 60)
+                            );
+                            new_signal_constraints.push(record);
+                        }
+                        Ok(NlpExtractionResult::ConditionalRule(mut record)) => {
+                            record.rule_id = format!("nlp3_condrule_{rule_counter:04}");
+                            record.source_text = statement.text.clone();
+                            rule_counter += 1;
+                            println!(
+                                "  conditional_rule: antecedent='{}' ({})",
+                                truncate_for_display(&record.antecedent_text, 40),
+                                truncate_for_display(&statement.text, 60)
+                            );
+                            new_conditional_rules.push(record);
+                        }
+                        Ok(NlpExtractionResult::None) => {
+                            skipped_none += 1;
+                        }
+                        Err(e) => {
+                            eprintln!(
+                                "warning: LLM call failed for statement {}: {e}",
+                                statement.statement_id
+                            );
+                            errors += 1;
+                        }
                     }
-                    Ok(NlpExtractionResult::None) => {
-                        skipped_none += 1;
-                    }
-                    Err(e) => {
-                        eprintln!(
-                            "warning: LLM call failed for statement {}: {e}",
-                            statement.statement_id
-                        );
-                        errors += 1;
-                    }
+                }
+
+                println!("llm_calls_made: {calls_made}");
+                println!("new_signal_constraints: {}", new_signal_constraints.len());
+                println!("new_conditional_rules: {}", new_conditional_rules.len());
+                println!("no_extraction: {skipped_none}");
+                println!("errors: {errors}");
+
+                total_calls += calls_made;
+                total_errors += errors;
+
+                let pass_extracted = new_signal_constraints.len() + new_conditional_rules.len();
+                total_signal_constraints += new_signal_constraints.len();
+                total_conditional_rules += new_conditional_rules.len();
+
+                if !args.dry_run && pass_extracted > 0 {
+                    evidence_ir
+                        .signal_constraints
+                        .extend(new_signal_constraints);
+                    evidence_ir.conditional_rules.extend(new_conditional_rules);
+                    // Write after every pass so progress is durable.
+                    evidence_ir.write_to_disk()?;
+                }
+
+                // Layer C convergence: stop if nothing was extracted this pass.
+                if pass_extracted == 0 && !args.dry_run {
+                    println!("convergence: pass extracted 0 new records — stopping.");
+                    break;
                 }
             }
 
-            println!("llm_calls_made: {calls_made}");
-            println!("new_signal_constraints: {}", new_signal_constraints.len());
-            println!("new_conditional_rules: {}", new_conditional_rules.len());
-            println!("no_extraction: {skipped_none}");
-            println!("errors: {errors}");
-
-            if !args.dry_run
-                && (!new_signal_constraints.is_empty() || !new_conditional_rules.is_empty())
-            {
-                evidence_ir
-                    .signal_constraints
-                    .extend(new_signal_constraints);
-                evidence_ir.conditional_rules.extend(new_conditional_rules);
-                evidence_ir.write_to_disk()?;
+            if !args.dry_run {
+                println!("--- summary ---");
+                println!("total_llm_calls: {total_calls}");
+                println!("total_new_signal_constraints: {total_signal_constraints}");
+                println!("total_new_conditional_rules: {total_conditional_rules}");
+                println!("total_errors: {total_errors}");
                 println!(
                     "enriched_evidence_ir_path: {}",
                     evidence_ir.artifact_layout.evidence_ir_path.display()
@@ -212,6 +279,64 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
     Ok(())
 }
 
+/// Count NormativeStatement sentences not yet covered by existing records.
+fn count_candidate_statements(evidence_ir: &EvidenceIr) -> usize {
+    let existing_signal_texts: std::collections::HashSet<String> = evidence_ir
+        .signal_constraints
+        .iter()
+        .map(|r| r.source_text.clone())
+        .collect();
+    let existing_rule_texts: std::collections::HashSet<String> = evidence_ir
+        .conditional_rules
+        .iter()
+        .map(|r| r.source_text.clone())
+        .collect();
+    evidence_ir
+        .extracted_statements
+        .iter()
+        .filter(|s| {
+            matches!(s.class, StatementClass::NormativeStatement)
+                && !existing_signal_texts.contains(&s.text)
+                && !existing_rule_texts.contains(&s.text)
+                && s.text.split_whitespace().count() >= 5
+        })
+        .count()
+}
+
+/// Auto-extract declared signal names from synthesized `Signal X is input/output` statements
+/// in the EvidenceIR. These come from signal description tables and are authoritative.
+/// Used as grounding context so the LLM can resolve implicit/pronoun references.
+fn auto_extract_declared_signals(evidence_ir: &EvidenceIr) -> Vec<String> {
+    let mut signals: Vec<String> = evidence_ir
+        .extracted_statements
+        .iter()
+        .filter_map(|s| parse_signal_declaration_name(&s.text))
+        .collect();
+    signals.sort();
+    signals.dedup();
+    signals
+}
+
+/// Parse the signal name from a synthesized `Signal X is input/output [width N].` statement.
+fn parse_signal_declaration_name(text: &str) -> Option<String> {
+    let lowered = text.to_ascii_lowercase();
+    if !lowered.starts_with("signal ") {
+        return None;
+    }
+    // After "Signal ": the next whitespace-delimited token is the signal name.
+    let rest = &text[7..];
+    let name: String = rest
+        .split(|c: char| !c.is_ascii_alphanumeric() && c != '_')
+        .next()
+        .unwrap_or("")
+        .to_ascii_uppercase();
+    if name.len() >= 2 && name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_') {
+        Some(name)
+    } else {
+        None
+    }
+}
+
 /// Result of one LLM extraction call on a single normative sentence.
 enum NlpExtractionResult {
     SignalConstraint(SignalConstraintRecord),
@@ -223,11 +348,21 @@ enum NlpExtractionResult {
 /// Build the structured extraction prompt for a single normative sentence.
 ///
 /// The prompt is deliberately concise to work well with small models (7B).
-/// We use a single JSON response format that covers all extraction types.
-fn build_nlp_prompt(sentence: &str) -> String {
+/// When `grounding_signals` is non-empty (Layer B), the known signal list is injected
+/// before the sentence so the LLM can resolve implicit references like "it" or "the address".
+fn build_nlp_prompt(sentence: &str, grounding_signals: &[String]) -> String {
+    let grounding_section = if grounding_signals.is_empty() {
+        String::new()
+    } else {
+        format!(
+            "Known hardware signals in this specification: {}\n\n",
+            grounding_signals.join(", ")
+        )
+    };
     format!(
         "You are a hardware protocol specification analyzer.\n\
          Extract a structured hardware constraint from the following sentence.\n\n\
+         {grounding_section}\
          Sentence: \"{sentence}\"\n\n\
          Respond with exactly one JSON object (no other text):\n\
          - If a named signal has a behavioral constraint:\n\
@@ -254,6 +389,7 @@ fn call_llm_for_sentence(
     model: &str,
     api_url: &str,
     provider: VlmProviderArg,
+    grounding_signals: &[String],
 ) -> Result<NlpExtractionResult> {
     // Allow test override via SPECFORGE_VLM_HELPER env var.
     let raw_response = if let Some(helper_path) = std::env::var_os(VLM_HELPER_ENV) {
@@ -273,7 +409,7 @@ fn call_llm_for_sentence(
             });
         }
     } else {
-        let prompt = build_nlp_prompt(sentence);
+        let prompt = build_nlp_prompt(sentence, grounding_signals);
         let request_body = build_text_chat_request(model, &prompt);
 
         let mut cmd = Command::new("curl");
@@ -619,6 +755,8 @@ mod tests {
             vlm_model: Some("qwen2.5vl:7b".to_string()),
             dry_run: false,
             max_sentences: 0,
+            grounding_signals: None,
+            max_passes: 1,
         });
         unsafe { std::env::remove_var(VLM_HELPER_ENV) };
         result?;
@@ -670,6 +808,8 @@ mod tests {
             vlm_model: None,
             dry_run: true,
             max_sentences: 0,
+            grounding_signals: None,
+            max_passes: 1,
         })?;
         unsafe { std::env::remove_var(VLM_HELPER_ENV) };
 
@@ -708,5 +848,119 @@ mod tests {
         assert!(
             matches!(result, NlpExtractionResult::ConditionalRule(r) if r.antecedent_text == "HREADY is LOW")
         );
+    }
+
+    // ── Layer B: grounding signals in prompt ────────────────────────────
+
+    #[test]
+    fn build_nlp_prompt_includes_grounding_signals_when_provided() {
+        let grounding = vec![
+            "HADDR".to_string(),
+            "HTRANS".to_string(),
+            "HREADY".to_string(),
+        ];
+        let prompt = build_nlp_prompt("The signal shall be held stable.", &grounding);
+        assert!(
+            prompt.contains("HADDR") && prompt.contains("HTRANS") && prompt.contains("HREADY"),
+            "grounding signals must appear in the prompt"
+        );
+        assert!(
+            prompt.contains("Known hardware signals"),
+            "grounding section header must appear"
+        );
+    }
+
+    #[test]
+    fn build_nlp_prompt_without_grounding_has_no_known_signals_section() {
+        let prompt = build_nlp_prompt("HTRANS shall be IDLE.", &[]);
+        assert!(
+            !prompt.contains("Known hardware signals"),
+            "empty grounding must not produce a Known hardware signals section"
+        );
+    }
+
+    #[test]
+    fn parse_signal_declaration_name_extracts_uppercase_signal() {
+        assert_eq!(
+            parse_signal_declaration_name("Signal HADDR is output width 32."),
+            Some("HADDR".to_string())
+        );
+        assert_eq!(
+            parse_signal_declaration_name("Signal HTRANS is output width 2."),
+            Some("HTRANS".to_string())
+        );
+        assert_eq!(
+            parse_signal_declaration_name("Not a signal declaration."),
+            None
+        );
+    }
+
+    // ── Layer C: multi-pass convergence ───────────────────────────────
+
+    #[test]
+    fn nlp_enrich_multi_pass_stops_on_convergence() -> Result<()> {
+        // With max_passes=3, if the first pass extracts everything, the second pass should
+        // find 0 candidates and stop (convergence). This verifies the loop terminates.
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(
+            &source,
+            "# Protocol\nHTRANS cannot change during a waited transfer.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        // Inject a NormativeStatement for the mock to extract.
+        evidence_ir
+            .extracted_statements
+            .push(crate::ir::evidence::ExtractedStatement {
+                statement_id: "stmt_multi_pass".to_string(),
+                text: "HTRANS cannot change during a waited transfer".to_string(),
+                class: crate::ir::evidence::StatementClass::NormativeStatement,
+                modality: crate::ir::evidence::EvidenceModality::Text,
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            });
+        evidence_ir.write_to_disk()?;
+
+        let helper = write_mock_helper(
+            tempdir.path(),
+            &[(
+                "HTRANS",
+                r#"{"type":"signal_constraint","subject_signal":"HTRANS","constraint_kind":"must_not_change","negated":false}"#,
+            )],
+        );
+
+        unsafe { std::env::set_var(VLM_HELPER_ENV, &helper) };
+        let result = run(NlpEnrichArgs {
+            evidence_ir: evidence_ir.artifact_layout.evidence_ir_path.clone(),
+            vlm_provider: VlmProviderArg::Ollama,
+            vlm_model: Some("qwen2.5vl:7b".to_string()),
+            dry_run: false,
+            max_sentences: 0,
+            grounding_signals: None,
+            max_passes: 3, // 3 passes requested, but should stop after 1 (convergence)
+        });
+        unsafe { std::env::remove_var(VLM_HELPER_ENV) };
+        result?;
+
+        // Verify the constraint was added and the EvidenceIR is consistent.
+        let enriched = EvidenceIr::load_from_path(&evidence_ir.artifact_layout.evidence_ir_path)?;
+        assert!(
+            enriched
+                .signal_constraints
+                .iter()
+                .any(|r| r.subject_signal == "HTRANS"),
+            "HTRANS constraint should have been extracted in first pass"
+        );
+
+        Ok(())
     }
 }

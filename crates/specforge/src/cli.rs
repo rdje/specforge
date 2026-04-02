@@ -115,9 +115,18 @@ pub struct NlpEnrichArgs {
     /// Show what would be enriched without making LLM calls
     #[arg(long)]
     pub dry_run: bool,
-    /// Maximum number of NormativeStatement sentences to send to LLM (0 = all)
+    /// Maximum number of NormativeStatement sentences to send to LLM per pass (0 = all)
     #[arg(long, default_value = "0")]
     pub max_sentences: usize,
+    /// Comma-separated declared signal names to ground the LLM prompt context.
+    /// If omitted, signals are auto-extracted from synthesized Signal declarations
+    /// in the EvidenceIR. Pass an empty string to disable grounding entirely.
+    #[arg(long)]
+    pub grounding_signals: Option<String>,
+    /// Run up to N enrichment passes, stopping early if a pass extracts nothing new.
+    /// Multi-pass is useful because each extracted record can ground subsequent passes.
+    #[arg(long, default_value = "1")]
+    pub max_passes: usize,
 }
 
 #[derive(Debug, Args)]

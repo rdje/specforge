@@ -119,8 +119,48 @@ impl SemanticIr {
             build_residual_decisions(&context, &interfaces, actor_build.explicit_actor_count);
         // Carry structured table records forward from EvidenceIR.
         let register_records = evidence_ir.register_records.clone();
-        let signal_constraints = evidence_ir.signal_constraints.clone();
-        let conditional_rules = evidence_ir.conditional_rules.clone();
+
+        // Layer D: Declared-signal gating.
+        // Build the set of authoritative signal names from High-confidence interface records
+        // (those that came from formal `Signal X is input/output` declarations synthesized
+        // from signal description tables).  NLP records for signals outside this set are
+        // heuristic noise and are suppressed so they do not pollute downstream scoring.
+        // If no explicit declarations exist (e.g. pure prose specs with no tables), the set
+        // is empty and gating is disabled so we never drop records unnecessarily.
+        let declared_signal_names: std::collections::HashSet<String> = interfaces
+            .iter()
+            .flat_map(|iface| &iface.signal_records)
+            .filter(|r| matches!(r.automation_confidence, AutomationConfidence::High))
+            .map(|r| r.signal_name.clone())
+            .collect();
+
+        let signal_constraints = if declared_signal_names.is_empty() {
+            evidence_ir.signal_constraints.clone()
+        } else {
+            evidence_ir
+                .signal_constraints
+                .iter()
+                .filter(|r| declared_signal_names.contains(&r.subject_signal))
+                .cloned()
+                .collect()
+        };
+        let conditional_rules = if declared_signal_names.is_empty() {
+            evidence_ir.conditional_rules.clone()
+        } else {
+            evidence_ir
+                .conditional_rules
+                .iter()
+                .filter(|r| {
+                    // Keep rules where the consequent signal is declared, or rules with
+                    // no specific consequent signal (system-level behavioral rules).
+                    r.consequent_signal
+                        .as_ref()
+                        .map(|s| declared_signal_names.contains(s))
+                        .unwrap_or(true)
+                })
+                .cloned()
+                .collect()
+        };
 
         // Merge timing constraints: table-synthesized + VLM diagram observations.
         let mut timing_constraints = evidence_ir.timing_constraints.clone();
@@ -5900,6 +5940,101 @@ mod tests {
         let hresp = find_signal("HRESP").expect("HRESP should be extracted from table");
         assert_eq!(hresp.direction_hint, Some(InterfaceSignalDirection::Input));
         assert_eq!(hresp.width_hint, Some(1));
+
+        Ok(())
+    }
+
+    // ── Layer D: declared-signal gating ────────────────────────────────
+
+    #[test]
+    fn signal_constraints_for_undeclared_signals_are_filtered_by_layer_d() -> Result<()> {
+        // Build an EvidenceIR with:
+        //   • A synthesized "Signal HREADY is input width 1." declaration  (declared signal)
+        //   • A signal_constraint for HREADY  (should survive gating)
+        //   • A signal_constraint for NOTSIG  (undeclared, should be removed)
+        // After SemanticIR.build(), only the HREADY constraint must appear.
+        use crate::ir::evidence::{
+            EvidenceIr, EvidenceModality, ExtractedStatement, StatementClass,
+        };
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            "# Protocol\nHREADY shall be asserted when the transfer completes.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        // Inject a formal signal declaration (as synthesized from a signal description table).
+        evidence_ir.extracted_statements.push(ExtractedStatement {
+            statement_id: "stmt_decl_hready".to_string(),
+            text: "Signal HREADY is input width 1.".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        });
+
+        // Add a constraint for the declared signal HREADY.
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_hready".to_string(),
+            subject_signal: "HREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: Some("transfer completes".to_string()),
+            negated: false,
+            source_text: "HREADY shall be asserted when the transfer completes.".to_string(),
+            supporting_statement_ids: vec!["stmt_001".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+
+        // Add a constraint for an undeclared signal NOTSIG (heuristic noise).
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_notsig".to_string(),
+            subject_signal: "NOTSIG".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeStable,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "NOTSIG must be stable.".to_string(),
+            supporting_statement_ids: vec!["stmt_002".to_string()],
+            automation_confidence: AutomationConfidence::Low,
+        });
+
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        // HREADY (declared) must pass the gate.
+        assert!(
+            semantic_ir
+                .signal_constraints
+                .iter()
+                .any(|r| r.subject_signal == "HREADY"),
+            "HREADY is a declared signal and its constraint must survive Layer D gating"
+        );
+        // NOTSIG (undeclared) must be filtered out.
+        assert!(
+            !semantic_ir
+                .signal_constraints
+                .iter()
+                .any(|r| r.subject_signal == "NOTSIG"),
+            "NOTSIG is not declared and its constraint must be removed by Layer D gating"
+        );
 
         Ok(())
     }

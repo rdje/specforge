@@ -311,9 +311,24 @@ impl EvidenceIr {
                 .iter()
                 .filter_map(|asset_id| asset_id_to_visual_evidence_id.get(asset_id).cloned())
                 .collect();
+            // Layer A: suppress NormativeStatement for sentences inside boilerplate sections
+            // (introduction, legal, revision history, etc.) — these are compliance obligations,
+            // not hardware behavioral constraints.
+            let section_is_boilerplate = section_index
+                .map(|idx| is_boilerplate_section_title(&section_anchors[idx].title))
+                .unwrap_or(false);
+            let raw_class = classify_statement(&block.text);
+            let class = if section_is_boilerplate
+                && matches!(raw_class, StatementClass::NormativeStatement)
+            {
+                StatementClass::SourceFact
+            } else {
+                raw_class
+            };
+
             extracted_statements.push(ExtractedStatement {
                 statement_id: format!("statement_{statement_counter:04}"),
-                class: classify_statement(&block.text),
+                class,
                 modality: if related_visual_evidence_ids.is_empty() {
                     EvidenceModality::Text
                 } else {
@@ -898,6 +913,58 @@ fn infer_visual_role(
         VisualAssetKind::Screenshot => VisualEvidenceRole::Illustrative,
         VisualAssetKind::Unknown => VisualEvidenceRole::Unknown,
     }
+}
+
+/// Returns `true` if the section title indicates boilerplate content (legal notices,
+/// introduction, revision history, references, etc.) where normative language is used
+/// for compliance purposes rather than hardware behavior constraints.
+fn is_boilerplate_section_title(title: &str) -> bool {
+    let lowered = title.to_ascii_lowercase();
+    contains_any(
+        &lowered,
+        &[
+            // Document preamble / meta content
+            "introduction",
+            "preface",
+            "foreword",
+            "scope",
+            "about this",
+            "how to read",
+            "document organization",
+            "document conventions",
+            "document structure",
+            // Legal / intellectual property
+            "legal notice",
+            "legal notices",
+            "copyright",
+            "patent",
+            "license",
+            "licence",
+            "proprietary",
+            "confidential",
+            // Versioning / change tracking
+            "revision history",
+            "change history",
+            "version history",
+            "change log",
+            "changelog",
+            // Normative reference boilerplate
+            "normative references",
+            "informative references",
+            "bibliography",
+            "references",
+            // Terminology / abbreviation glossaries
+            "glossary",
+            "acronyms",
+            "abbreviations",
+            "definitions",
+            "terms and definitions",
+            // Related document indexes
+            "related documents",
+            "related specifications",
+            "related standards",
+        ],
+    )
 }
 
 fn classify_statement(text: &str) -> StatementClass {
@@ -2555,6 +2622,92 @@ mod tests {
                 "HIGH is a logic level, not a signal"
             );
         }
+    }
+
+    // ── Layer A: section-aware boilerplate suppression ────────────────────
+
+    #[test]
+    fn is_boilerplate_section_title_matches_common_boilerplate_headings() {
+        use super::is_boilerplate_section_title;
+
+        // Typical boilerplate sections in chip specs.
+        assert!(is_boilerplate_section_title("1 Introduction"));
+        assert!(is_boilerplate_section_title("Introduction"));
+        assert!(is_boilerplate_section_title("Revision History"));
+        assert!(is_boilerplate_section_title("Copyright and Legal Notices"));
+        assert!(is_boilerplate_section_title("Normative References"));
+        assert!(is_boilerplate_section_title("Informative References"));
+        assert!(is_boilerplate_section_title("Glossary"));
+        assert!(is_boilerplate_section_title("Acronyms and Abbreviations"));
+        assert!(is_boilerplate_section_title("Bibliography"));
+        assert!(is_boilerplate_section_title("Terms and Definitions"));
+        assert!(is_boilerplate_section_title("About this Document"));
+        assert!(is_boilerplate_section_title("Scope"));
+
+        // Behavioral / normative sections must NOT be suppressed.
+        assert!(!is_boilerplate_section_title("Signal Description"));
+        assert!(!is_boilerplate_section_title("Transfer Types"));
+        assert!(!is_boilerplate_section_title("Protocol Operation"));
+        assert!(!is_boilerplate_section_title("Bus Arbitration"));
+        assert!(!is_boilerplate_section_title("Register Map"));
+    }
+
+    #[test]
+    fn normative_sentence_in_introduction_section_is_suppressed_to_source_fact() -> Result<()> {
+        // Layer A: a sentence with SHALL/MUST in an Introduction heading is a
+        // legal compliance statement, not a hardware behavioral constraint.
+        // It must be downgraded to SourceFact so it doesn't inflate NormativeStatement counts.
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        // The intro sentence has "shall" → would normally be NormativeStatement, but must
+        // be suppressed to SourceFact by Layer A (boilerplate section).
+        // The protocol sentence has "shall not" and no value-binding phrase → NormativeStatement.
+        // (Note: sentences like "HREADY shall be asserted" are SignalValueConstraint, which is
+        // more specific than NormativeStatement and is unaffected by Layer A.)
+        fs::write(
+            &source,
+            concat!(
+                "# Introduction\n",
+                "Implementations shall comply with this version of the specification.\n",
+                "\n",
+                "# Protocol Rules\n",
+                "Burst transfers shall not be interrupted by intervening requests.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        let intro_stmt = evidence_ir
+            .extracted_statements
+            .iter()
+            .find(|s| s.text.contains("comply"))
+            .expect("should find the intro normative sentence");
+        let protocol_stmt = evidence_ir
+            .extracted_statements
+            .iter()
+            .find(|s| s.text.contains("interrupted"))
+            .expect("should find the protocol normative sentence");
+
+        assert_eq!(
+            intro_stmt.class,
+            StatementClass::SourceFact,
+            "Introduction normative sentence must be suppressed to SourceFact (Layer A)"
+        );
+        assert_eq!(
+            protocol_stmt.class,
+            StatementClass::NormativeStatement,
+            "Protocol section normative sentence must remain NormativeStatement"
+        );
+
+        Ok(())
     }
 
     #[test]

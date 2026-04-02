@@ -6,7 +6,7 @@ use crate::ir::IrStage;
 use crate::ir::evidence::{EvidenceIr, StatementClass, VisualObservationKind};
 use crate::ir::intent::IntentIr;
 use crate::ir::semantic::SemanticIr;
-use crate::ir::source::{DiagramKind, SourceIr};
+use crate::ir::source::{AutomationConfidence, DiagramKind, SourceIr};
 
 pub fn run(args: ValidateArgs) -> Result<()> {
     // Auto-detect stage from artifact JSON `stage` field.
@@ -326,31 +326,44 @@ fn validate_intent_ir(ir: &IntentIr) {
     println!("document_key: {}", ir.document_identity.document_key);
     println!();
 
-    println!("=== Signal Coverage ===");
-    let total_signals: usize = ir.interfaces.iter().map(|i| i.signal_records.len()).sum();
-    let with_direction: usize = ir
+    // Layer E: only count declared (High-confidence) signal records for coverage.
+    // Heuristic signals (AutomationConfidence::Low) are noise from NLP token extraction;
+    // they have no direction/width and dilute coverage percentages.
+    let declared_signals: Vec<_> = ir
         .interfaces
         .iter()
         .flat_map(|i| &i.signal_records)
+        .filter(|s| s.automation_confidence == AutomationConfidence::High)
+        .collect();
+    let heuristic_signals: usize = ir
+        .interfaces
+        .iter()
+        .flat_map(|i| &i.signal_records)
+        .filter(|s| s.automation_confidence != AutomationConfidence::High)
+        .count();
+
+    println!("=== Signal Coverage ===");
+    let declared_count = declared_signals.len();
+    let with_direction = declared_signals
+        .iter()
         .filter(|s| s.direction_hint.is_some())
         .count();
-    let with_width: usize = ir
-        .interfaces
+    let with_width = declared_signals
         .iter()
-        .flat_map(|i| &i.signal_records)
         .filter(|s| s.width_hint.is_some())
         .count();
-    let dir_pct = if total_signals > 0 {
-        with_direction * 100 / total_signals
+    let dir_pct = if declared_count > 0 {
+        with_direction * 100 / declared_count
     } else {
         0
     };
-    let w_pct = if total_signals > 0 {
-        with_width * 100 / total_signals
+    let w_pct = if declared_count > 0 {
+        with_width * 100 / declared_count
     } else {
         0
     };
-    println!("  total_signal_records: {total_signals}");
+    println!("  declared_signal_records: {declared_count}");
+    println!("  heuristic_signal_records (excluded from coverage): {heuristic_signals}");
     println!("  with_direction: {with_direction} ({dir_pct}%)");
     println!("  with_width: {with_width} ({w_pct}%)");
     println!();
@@ -369,27 +382,67 @@ fn validate_intent_ir(ir: &IntentIr) {
     println!("  conditional_rules: {}", ir.conditional_rules.len());
     println!();
 
-    println!("=== Quality Score ===");
-    let sig_score = dir_pct.min(100);
+    // Layer E: spec-type-aware quality scoring.
+    //
+    // Points breakdown (total max = 100):
+    //   Signal direction coverage (declared only): 0–25 pts
+    //   Signal width coverage    (declared only):  0–10 pts
+    //   NLP constraint richness  (sig + cond):     0–30 pts  (capped at 30 constraints)
+    //   Encoding enum definitions:                 0–15 pts
+    //   Register map records:                      0–5  pts
+    //   Timing constraint records:                 0–5  pts
+    //   State machine (FSM specs):                 0–5  pts  (bonus, not penalised if absent)
+    //   System contract (clock/reset):             0–5  pts  (bonus, not penalised if absent)
+    //
+    // The FSM/contract bonuses are additive rather than penalties so that bus protocol
+    // specs like AHB (which have no FSM or explicit clock declaration) are scored on the
+    // merit of what they *do* contain rather than penalised for spec-appropriate omissions.
     let has_states = !ir.regular_states.is_empty();
     let has_enums = !ir.symbol_definitions.is_empty();
     let has_constraints = ir.signal_constraints.len() + ir.conditional_rules.len();
     let has_system_contract = ir.system_contract.is_some();
-    println!("  signal_direction_coverage: {dir_pct}%");
-    println!("  signal_width_coverage: {w_pct}%");
+    let has_registers = !ir.register_records.is_empty();
+    let has_timing = !ir.timing_constraints.is_empty();
+
+    let dir_score = dir_pct as f64 * 0.25; // 0–25
+    let width_score = w_pct as f64 * 0.10; // 0–10
+    let constraint_score = has_constraints.min(30) as f64; // 0–30
+    let enum_score = if has_enums { 15.0_f64 } else { 0.0 }; // 0–15
+    let register_score = if has_registers { 5.0_f64 } else { 0.0 }; // 0–5
+    let timing_score = if has_timing { 5.0_f64 } else { 0.0 }; // 0–5
+    let fsm_score = if has_states { 5.0_f64 } else { 0.0 }; // 0–5  (bonus)
+    let contract_score = if has_system_contract { 5.0_f64 } else { 0.0 }; // 0–5  (bonus)
+
+    let score = (dir_score
+        + width_score
+        + constraint_score
+        + enum_score
+        + register_score
+        + timing_score
+        + fsm_score
+        + contract_score)
+        .min(100.0);
+
+    println!("=== Quality Score ===");
+    println!("  signal_direction_coverage: {dir_pct}% (declared signals only)");
+    println!("  signal_width_coverage: {w_pct}% (declared signals only)");
     println!("  has_encoding_enums: {has_enums}");
+    println!("  has_register_map: {has_registers}");
+    println!("  has_timing_constraints: {has_timing}");
     println!("  has_state_machine: {has_states}");
     println!("  has_system_contract: {has_system_contract}");
     println!("  structured_nlp_constraints: {has_constraints}");
     println!("  residual_decisions: {}", ir.residual_decisions.len());
     println!();
-
-    let score = (sig_score as f64
-        + if has_enums { 20.0 } else { 0.0 }
-        + if has_states { 20.0 } else { 0.0 }
-        + if has_system_contract { 10.0 } else { 0.0 }
-        + (has_constraints.min(20) as f64))
-        / 1.7;
+    println!("  score_breakdown:");
+    println!("    signal_direction:  {dir_score:.1}/25");
+    println!("    signal_width:      {width_score:.1}/10");
+    println!("    nlp_constraints:   {constraint_score:.0}/30");
+    println!("    encoding_enums:    {enum_score:.0}/15");
+    println!("    register_map:      {register_score:.0}/5");
+    println!("    timing:            {timing_score:.0}/5");
+    println!("    fsm_bonus:         {fsm_score:.0}/5");
+    println!("    contract_bonus:    {contract_score:.0}/5");
     let grade = match score as u32 {
         90..=100 => "EXCELLENT",
         70..=89 => "GOOD",

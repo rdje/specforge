@@ -1,4 +1,38 @@
 # CHANGES
+## 2026-04-02 (NLP pipeline Layers A/B/C/D/E: boilerplate suppression, grounded multi-pass NLP, declared-signal gating, spec-type-aware scoring)
+- **Layer A — Section-aware boilerplate suppression** (`evidence.rs`)
+  - New `is_boilerplate_section_title()` helper: matches Introduction, Revision History, Legal Notice, Normative/Informative References, Glossary, Acronyms, Bibliography, Scope, Terms and Definitions, About this Document, and related headings
+  - `EvidenceIr::build()` block loop: looks up each sentence's section heading; if boilerplate, downgrades `NormativeStatement` → `SourceFact`
+  - Effect: ~12 legal/compliance normative sentences removed from residual pool per real spec (e.g. AHB). Residuals: 59 → ~47
+  - 2 tests: `is_boilerplate_section_title` unit test (12 positive + 5 negative assertions), integration test verifying intro section normative sentence becomes SourceFact while protocol section stays NormativeStatement
+- **Layer D — Declared-signal gating** (`semantic.rs`)
+  - `SemanticIr::build()`: after `build_interfaces()`, extracts declared signal set from `AutomationConfidence::High` interface records (those from formal `Signal X is input/output` synthesized declarations)
+  - Filters `signal_constraints` and `conditional_rules` to only records where the subject/consequent signal is in the declared set; gating is disabled (all kept) if no signal declarations exist (prose-only specs)
+  - Effect: heuristic noise signals (from NLP token extraction) suppressed from NLP records; only real declared signals survive. Eliminates the signal noise that diluted coverage metrics
+  - 1 test: `signal_constraints_for_undeclared_signals_are_filtered_by_layer_d` — HREADY (declared) survives, NOTSIG (undeclared) removed
+- **Layer E — Spec-type-aware quality scoring** (`validate.rs`)
+  - Imports `AutomationConfidence` to filter signal records in `validate_intent_ir()`
+  - Coverage metrics now count ONLY `AutomationConfidence::High` (declared) signals; heuristic signals reported separately as `heuristic_signal_records (excluded from coverage)`
+  - New formula (100 pt max, additive, no FSM penalty for non-FSM specs):
+    - Signal direction coverage (declared only): 0–25 pts
+    - Signal width coverage (declared only): 0–10 pts
+    - NLP constraint richness (signal + conditional, capped at 30): 0–30 pts
+    - Encoding enum definitions: 0–15 pts
+    - Register map records: 0–5 pts
+    - Timing constraint records: 0–5 pts
+    - State machine (bonus, not penalty): 0–5 pts
+    - System contract (bonus, not penalty): 0–5 pts
+  - Score breakdown printed per component for transparency
+  - AHB projected score after all layers: ~80/100 (GOOD) vs. 27/100 before
+- **Layers B+C — Grounded multi-pass NLP Level 3** (`cli.rs`, `nlp_enrich.rs`)
+  - `NlpEnrichArgs`: added `--grounding-signals` (comma-separated declared signal names, or omit for auto-extraction) and `--max-passes` (default 1; multi-pass stops early on convergence)
+  - `auto_extract_declared_signals()`: parses `Signal X is input/output` statements from EvidenceIR to auto-build grounding list
+  - `build_nlp_prompt()` now accepts `grounding_signals: &[String]`; injects "Known hardware signals: HADDR, HTRANS, ..." section before the sentence when non-empty
+  - Multi-pass loop: each pass re-derives candidates (skipping already-extracted sentences); stops when pass extracts 0 new records (convergence) OR max_passes reached; writes EvidenceIR after every productive pass
+  - `count_candidate_statements()` extracted as helper for `skip` mode hint
+  - 5 new tests: prompt includes grounding signals, no grounding section when empty, `parse_signal_declaration_name` extracts uppercase name, multi-pass convergence test (max_passes=3 stops after 1 productive pass)
+  - Updated existing tests to include new `grounding_signals: None, max_passes: 1` fields
+- **Test suite: 75 → 82 (+7 tests, all passing)**
 ## 2026-04-02 (NLP Level 1+2 pattern expansion: ~50%→70%+ coverage uplift)
 - **Level 1 `classify_statement()` vocabulary expanded significantly**
   - `NormativeStatement`: added `cannot/can not`, `is not permitted/allowed`, `are not permitted/allowed`, `may not`, `is forbidden/illegal`, `will not`, `must/shall never`, `it is mandatory`, `is not valid/legal/supported`, `are required`
