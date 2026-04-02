@@ -694,16 +694,39 @@ impl SemanticContext {
             .map(|span| (span.span_id.clone(), (span.line_start, span.line_end)))
             .collect();
 
+        // Build set of boilerplate section IDs to exclude legal/administrative content from
+        // semantic extraction. Real chip specs typically open with license text, proprietary
+        // notices, change history, and revision information that pollutes actor/interface/invariant
+        // extraction if left in the statement stream.
+        let boilerplate_section_ids: BTreeSet<String> = evidence_ir
+            .section_anchors
+            .iter()
+            .filter(|anchor| is_boilerplate_section_title(&anchor.title))
+            .map(|anchor| anchor.section_id.clone())
+            .collect();
+
         let mut section_statement_ids: BTreeMap<String, Vec<String>> = BTreeMap::new();
         let statements = evidence_ir
             .extracted_statements
             .iter()
-            .map(|statement| {
+            .filter_map(|statement| {
                 let section_ids = section_ids_for_statement(
                     statement.evidence_span_ids.as_slice(),
                     &spans_by_id,
                     &evidence_ir.section_anchors,
                 );
+
+                // Skip statements that belong exclusively to boilerplate sections.
+                // A statement with no section membership is kept (it may be in the document
+                // preamble before the first heading and should still be evaluated).
+                if !section_ids.is_empty()
+                    && section_ids
+                        .iter()
+                        .all(|id| boilerplate_section_ids.contains(id))
+                {
+                    return None;
+                }
+
                 for section_id in &section_ids {
                     section_statement_ids
                         .entry(section_id.clone())
@@ -711,14 +734,14 @@ impl SemanticContext {
                         .push(statement.statement_id.clone());
                 }
 
-                StatementContext {
+                Some(StatementContext {
                     statement_id: statement.statement_id.clone(),
                     class: statement.class,
                     text: statement.text.clone(),
                     related_visual_evidence_ids: statement.related_visual_evidence_ids.clone(),
                     section_ids,
                     signals: extract_signal_tokens(&statement.text),
-                }
+                })
             })
             .collect();
 
@@ -989,6 +1012,15 @@ fn build_interfaces(context: &SemanticContext) -> Vec<InterfaceRecord> {
     let empty_known_signal_names = BTreeSet::<String>::new();
     let empty_known_symbol_names = BTreeSet::<String>::new();
 
+    // Build section title lookup for signal table row parsing. This enables extracting
+    // direction and width from markdown tables in real chip specs (e.g. AMBA AHB/APB/AXI)
+    // where signals are described in tabular form rather than the formal declaration syntax.
+    let section_title_by_id: HashMap<&str, &str> = context
+        .section_anchors
+        .iter()
+        .map(|anchor| (anchor.section_id.as_str(), anchor.title.as_str()))
+        .collect();
+
     for statement in &context.statements {
         if let Some(signal_declaration) = parse_explicit_signal_declaration(&statement.text) {
             let key = explicit_interface_key(statement.section_ids.as_slice());
@@ -1006,6 +1038,39 @@ fn build_interfaces(context: &SemanticContext) -> Vec<InterfaceRecord> {
                 signal_declaration.width_hint,
                 &statement.statement_id,
                 AutomationConfidence::High,
+            );
+            continue;
+        }
+
+        // Try to extract a signal declaration from a markdown signal-description table row.
+        // This handles real-world chip protocol specs (AMBA AHB, APB, AXI, etc.) where signal
+        // names, directions, and widths are described in structured tables rather than in the
+        // formal "Signal X is input width N." declaration syntax. The extracted records carry
+        // Medium confidence because the parsing relies on section title heuristics rather than
+        // explicit formal declarations.
+        let statement_section_titles: Vec<&str> = statement
+            .section_ids
+            .iter()
+            .filter_map(|id| section_title_by_id.get(id.as_str()).copied())
+            .collect();
+        if let Some(signal_declaration) =
+            parse_signal_table_row(&statement.text, &statement_section_titles)
+        {
+            let key = explicit_interface_key(statement.section_ids.as_slice());
+            let entry = accumulators
+                .entry(key)
+                .or_insert_with(|| InterfaceAccumulator {
+                    signals: BTreeSet::new(),
+                    signal_records: BTreeMap::new(),
+                    supporting_statement_ids: BTreeSet::new(),
+                });
+            register_interface_signal_record(
+                entry,
+                &signal_declaration.signal_name,
+                Some(signal_declaration.direction_hint),
+                signal_declaration.width_hint,
+                &statement.statement_id,
+                AutomationConfidence::Medium,
             );
             continue;
         }
@@ -1060,6 +1125,22 @@ fn build_interfaces(context: &SemanticContext) -> Vec<InterfaceRecord> {
 
     accumulators
         .into_iter()
+        .filter(|(key, entry)| {
+            // Always keep explicitly declared interfaces (from formal `Signal X is input/output`
+            // declarations). These are identified by their explicit key prefix.
+            if key.starts_with("explicit_interface__") || key == "explicit_document_interface" {
+                return true;
+            }
+            // For heuristic interfaces built from co-mentioned signal tokens: large signal sets
+            // (>8 signals) are typical of legal/boilerplate text where many unrelated words are
+            // treated as signal tokens. Require them to appear in at least 2 separate statements
+            // to confirm they represent a real recurring interface boundary rather than noise.
+            // Small signal sets (real hardware interfaces have 2–8 signals) are always kept.
+            if entry.signals.len() > 8 {
+                return entry.supporting_statement_ids.len() >= 2;
+            }
+            true
+        })
         .map(|(key, entry)| {
             let signals: Vec<String> = entry.signals.into_iter().collect();
             InterfaceRecord {
@@ -3856,6 +3937,7 @@ fn looks_like_signal_token(token: &str) -> bool {
 
 fn signal_stop_words() -> BTreeSet<&'static str> {
     [
+        // --- Tool-internal terms ---
         "IR",
         "PDF",
         "JSON",
@@ -3873,6 +3955,445 @@ fn signal_stop_words() -> BTreeSet<&'static str> {
         "INTENTIR",
         "API",
         "URL",
+        // --- Common English function words appearing in ALL CAPS in technical specs ---
+        "A",
+        "AN",
+        "THE",
+        "AND",
+        "OR",
+        "NOT",
+        "NOR",
+        "BUT",
+        "YET",
+        "SO",
+        "IF",
+        "AS",
+        "AT",
+        "BY",
+        "IN",
+        "ON",
+        "OF",
+        "TO",
+        "UP",
+        "OUT",
+        "IS",
+        "ARE",
+        "WAS",
+        "WERE",
+        "BE",
+        "BEEN",
+        "BEING",
+        "DO",
+        "DOES",
+        "DID",
+        "HAS",
+        "HAVE",
+        "HAD",
+        "CAN",
+        "MAY",
+        "MUST",
+        "SHALL",
+        "WILL",
+        "WOULD",
+        "SHOULD",
+        "COULD",
+        "NO",
+        "YES",
+        "OK",
+        "THIS",
+        "THAT",
+        "THESE",
+        "THOSE",
+        "WITH",
+        "FROM",
+        "INTO",
+        "ONTO",
+        "UPON",
+        "OVER",
+        "UNDER",
+        "ABOUT",
+        "ABOVE",
+        "BELOW",
+        "BEFORE",
+        "AFTER",
+        "DURING",
+        "SINCE",
+        "UNTIL",
+        "WHEN",
+        "WHERE",
+        "WHO",
+        "WHAT",
+        "HOW",
+        "WHY",
+        "WHICH",
+        "EACH",
+        "BOTH",
+        "ALL",
+        "ANY",
+        "SOME",
+        "NONE",
+        "MORE",
+        "LESS",
+        "SUCH",
+        "SAME",
+        "ONLY",
+        "ALSO",
+        "EVEN",
+        "JUST",
+        "THEN",
+        "THAN",
+        "FOR",
+        "EITHER",
+        "NEITHER",
+        "HOWEVER",
+        "THEREFORE",
+        "THUS",
+        "HENCE",
+        "ONE",
+        "TWO",
+        "THREE",
+        "FOUR",
+        "FIVE",
+        "SIX",
+        "ONCE",
+        "TWICE",
+        "II",
+        "III",
+        "IV",
+        "VI",
+        "VII",
+        "VIII",
+        "USE",
+        "USED",
+        "USING",
+        "USER",
+        "USERS",
+        "NEW",
+        "OLD",
+        "SAME",
+        "NEXT",
+        "LAST",
+        "FIRST",
+        "PRIOR",
+        // --- Common English words that appear ALL CAPS in formal/technical documents ---
+        // Note: do NOT add words that are legitimate hardware signal names such as VALID, READY,
+        // ACTIVE, IDLE, DONE, FULL, EMPTY, READ, WRITE, BUSY, GRANT, REQ — those ARE real signals.
+        "HIGH",
+        "LOW",
+        "TRUE",
+        "FALSE",
+        "NULL",
+        "VOID",
+        "OPTIONAL",
+        "MANDATORY",
+        "RECOMMENDED",
+        "PROHIBITED",
+        "RESERVED",
+        "IMPLEMENTATION",
+        "DEFINED",
+        "DEFAULT",
+        "NOTE",
+        "NOTES",
+        "WARNING",
+        "CAUTION",
+        "IMPORTANT",
+        // --- Legal and contractual vocabulary (common in chip spec front matter) ---
+        "LICENSE",
+        "LICENCE",
+        "LICENSEE",
+        "LICENSOR",
+        "LICENSED",
+        "LICENSES",
+        "COPYRIGHT",
+        "COPYRIGHTED",
+        "COPYRIGHTS",
+        "AGREEMENT",
+        "AGREED",
+        "AGREES",
+        "DISCLAIMER",
+        "DISCLAIMED",
+        "WARRANTY",
+        "WARRANTIES",
+        "WARRANTED",
+        "PATENT",
+        "PATENTS",
+        "PATENTED",
+        "CLAIM",
+        "CLAIMS",
+        "CLAIMED",
+        "LIABILITY",
+        "LIABILITIES",
+        "LIABLE",
+        "INDEMNIFY",
+        "INDEMNIFIED",
+        "INDEMNIFICATION",
+        "TERMINATE",
+        "TERMINATION",
+        "TERMINATED",
+        "SUBLICENSE",
+        "SUBLICENSED",
+        "ROYALTY",
+        "ROYALTIES",
+        "TRADEMARK",
+        "TRADEMARKS",
+        "CONFIDENTIAL",
+        "NON",
+        "PROPRIETARY",
+        "INTELLECTUAL",
+        "PROPERTY",
+        "RIGHTS",
+        "RIGHTSHOLDER",
+        "EXPRESS",
+        "IMPLIED",
+        "STATUTORY",
+        "LIMITATION",
+        "LIMITED",
+        "UNLIMITED",
+        "NOTWITHSTANDING",
+        "REGARDLESS",
+        "IRRESPECTIVE",
+        "PROVISION",
+        "PROVISIONS",
+        "CLAUSE",
+        "ARTICLE",
+        "SUBSECTION",
+        "CONTRACT",
+        "TERMS",
+        "CONDITIONS",
+        "CONDITION",
+        "ACCEPT",
+        "ACCEPTANCE",
+        "ACCOMPANYING",
+        "AGREE",
+        "BOUND",
+        "CLICKING",
+        "COPYING",
+        "END",
+        "ENTITY",
+        "INCLUDING",
+        "INDICATE",
+        "INDIVIDUAL",
+        "LEGAL",
+        "OBLIGATION",
+        "OBLIGATIONS",
+        "OTHERWISE",
+        "RELEVANT",
+        "SINGLE",
+        "SPECIFICATION",
+        "WITHOUT",
+        "YOU",
+        "YOUR",
+        "CLICKING",
+        "EXCEPT",
+        "SUBJECT",
+        "TORT",
+        "LAW",
+        "LAWS",
+        "CONSEQUENTIAL",
+        "INCIDENTAL",
+        "PUNITIVE",
+        "INDIRECT",
+        "DIRECT",
+        "SPECIAL",
+        "EXEMPLARY",
+        "AGGREGATE",
+        "MAXIMUM",
+        "DAMAGES",
+        "DAMAGE",
+        "LOSS",
+        "LOSSES",
+        "ARISING",
+        "CAUSED",
+        "THEORY",
+        "POSSIBILITY",
+        "ADVISED",
+        "EXTENT",
+        "EVENT",
+        "DOCUMENT",
+        "FULLEST",
+        "PETMITTED",
+        "RELEASES",
+        "DEMANDS",
+        "CONTAIN",
+        "CONTAINED",
+        "CREATED",
+        "EXCEED",
+        "EXCESS",
+        "ENLARGE",
+        "EXTEND",
+        "EXISTENCE",
+        "FEES",
+        "MADE",
+        "MATTER",
+        "OBLIGATIONS",
+        "PAID",
+        "PRODUCT",
+        "SUIT",
+        "TECHNOLOGY",
+        "UNDER",
+        "CONTRARY",
+        "CONNECT",
+        "CONNECTION",
+        "WAIVER",
+        // --- AMBA/ARM protocol family names (not hardware signal names) ---
+        "AMBA",
+        "AHB",
+        "AHB5",
+        "APB",
+        "APB3",
+        "APB4",
+        "AXI",
+        "AXI4",
+        "AXI5",
+        "ACE",
+        "ACE5",
+        "CHI",
+        "ATB",
+        "DTI",
+        "LTI",
+        "CXS",
+        "GFB",
+        "LPI",
+        "ASB",
+        "ASH",
+        "ACP",
+        // --- Company, organization, and standard body names ---
+        "ARM",
+        "AMD",
+        "INTEL",
+        "NVIDIA",
+        "QUALCOMM",
+        "SAMSUNG",
+        "TSMC",
+        "SIFIVE",
+        "RISC",
+        "MIPS",
+        "SYNOPSYS",
+        "CADENCE",
+        "MENTOR",
+        "SIEMENS",
+        "XILINX",
+        "ALTERA",
+        "LATTICE",
+        "MICROCHIP",
+        "IEEE",
+        "JEDEC",
+        "IETF",
+        "ISO",
+        "IEC",
+        "ANSI",
+        "NIST",
+        // --- Document structure and publication metadata ---
+        "CHAPTER",
+        "SECTION",
+        "TABLE",
+        "FIGURE",
+        "APPENDIX",
+        "ANNEX",
+        "SCHEDULE",
+        "EXHIBIT",
+        "EXAMPLE",
+        "REFERENCE",
+        "REFERENCES",
+        "REVISION",
+        "VERSION",
+        "RELEASE",
+        "ISSUE",
+        "HISTORY",
+        "OVERVIEW",
+        "INTRODUCTION",
+        "SUMMARY",
+        "ABSTRACT",
+        "PREFACE",
+        "GLOSSARY",
+        "ACRONYM",
+        "ABBREVIATION",
+        "DEFINITION",
+        "DESCRIPTION",
+        // --- Publication ID prefixes common in ARM/AMBA specifications ---
+        "IHI",
+        "DDI",
+        "DEN",
+        "DVI",
+        "AEI",
+        // --- Timing diagram cycle/slot labels (T0–T9 are clock cycle markers, not signal names) ---
+        "T0",
+        "T1",
+        "T2",
+        "T3",
+        "T4",
+        "T5",
+        "T6",
+        "T7",
+        "T8",
+        "T9",
+        // --- Bit-position descriptors (Least/Most Significant; these describe field positions) ---
+        "LS",
+        "MS",
+        "LSB",
+        "MSB",
+        // --- AMBA AHB HTRANS encoding values (these are register-field values, not signal names) ---
+        "NONSEQ",
+        "NONSEQUENTIAL",
+        // --- AMBA AHB HBURST encoding values (burst type names, not signal names) ---
+        "INCR4",
+        "INCR8",
+        "INCR16",
+        "WRAP4",
+        "WRAP8",
+        "WRAP16",
+        // --- Interface/connection type names that appear as ALL CAPS context words ---
+        "OC",
+        // --- Memory technology type names (DRAM, SRAM etc. are memory arrays, not port signals) ---
+        "DRAM",
+        "SRAM",
+        // --- Timing diagram notation words (appear in legend explanations, not signal names) ---
+        "CAPITALS",
+        "SMALL",
+        // --- Common technology abbreviations that are never hardware signal names ---
+        "CPU",
+        "GPU",
+        "DMA",
+        "ROM",
+        "RAM",
+        "BIOS",
+        "USB",
+        "UART",
+        "FIFO",
+        "LIFO",
+        "CRC",
+        "ECC",
+        "SOC",
+        "NOC",
+        "NIC",
+        "PHY",
+        "PLL",
+        "DLL",
+        "ADC",
+        "DAC",
+        "FPGA",
+        "ASIC",
+        "EDA",
+        "ISA",
+        "ABI",
+        "MMU",
+        "TLB",
+        "PCIE",
+        "DDR",
+        "LPDDR",
+        "SDRAM",
+        "HDMI",
+        "MIPI",
+        "LVDS",
+        "SMP",
+        "AMP",
+        "NUMA",
+        "SIMD",
+        "SUBORDINATE",
+        "MANAGER",
+        "INITIATOR",
+        "MASTER",
+        "SLAVE",
     ]
     .into_iter()
     .collect()
@@ -4128,6 +4649,149 @@ fn contains_phrase(text: &str, phrase: &str) -> bool {
     }
 
     false
+}
+
+fn parse_signal_table_row(
+    text: &str,
+    section_titles: &[&str],
+) -> Option<ParsedInterfaceSignalDeclaration> {
+    let text = text.trim();
+    // Must be a markdown table row (starts with `|`).
+    if !text.starts_with('|') {
+        return None;
+    }
+
+    // Split by `|` and collect non-empty cells.
+    let cells: Vec<&str> = text
+        .split('|')
+        .map(str::trim)
+        .filter(|c| !c.is_empty())
+        .collect();
+
+    if cells.len() < 3 {
+        return None;
+    }
+
+    let first_cell = cells[0];
+
+    // Skip separator rows (e.g. `|------|------|`) and header rows.
+    if first_cell
+        .chars()
+        .all(|c| matches!(c, '-' | '=' | ':' | ' '))
+    {
+        return None;
+    }
+    if first_cell.eq_ignore_ascii_case("name")
+        || first_cell.eq_ignore_ascii_case("signal")
+        || first_cell.eq_ignore_ascii_case("port")
+        || first_cell.eq_ignore_ascii_case("pin")
+    {
+        return None;
+    }
+
+    // First token in the first cell must look like a hardware signal name.
+    // Strip footnote markers (e.g. "HSELx a" → use "HSELx").
+    let raw_name = first_cell.split_whitespace().next()?;
+    if !looks_like_signal_token(raw_name) {
+        return None;
+    }
+    let signal_name = raw_name.to_ascii_uppercase();
+    if signal_stop_words().contains(signal_name.as_str()) {
+        return None;
+    }
+
+    // Width from the 3rd cell (index 2): accept simple positive integers only.
+    // Parameter-based widths (ADDR_WIDTH, DATA_WIDTH/8) are left as None.
+    let width_hint = cells.get(2).and_then(|cell| {
+        let trimmed = cell.trim();
+        trimmed.parse::<u32>().ok().filter(|&w| w > 0 && w <= 1024)
+    });
+
+    // Infer direction from the section context.
+    //   "Manager signals" → Output (Manager drives these toward Subordinates)
+    //   "Subordinate signals" → Input (Subordinate drives these; from Manager perspective = input)
+    //   "Global signals" / "System signals" → Input (clock, reset are inputs to all)
+    //   "Decoder signals" / "Select signals" → Input (select signals come from the Decoder)
+    //   Multiplexor / Response sections → Input (responses come back to the Manager)
+    let direction_hint = section_titles.iter().find_map(|title| {
+        let lowered = title.to_ascii_lowercase();
+        if lowered.contains("manager signal")
+            || lowered.contains("manager port")
+            || lowered.contains("initiator signal")
+            || lowered.contains("master signal")
+        {
+            Some(InterfaceSignalDirection::Output)
+        } else if lowered.contains("subordinate signal")
+            || lowered.contains("slave signal")
+            || lowered.contains("responder signal")
+            || lowered.contains("multiplexor signal")
+            || lowered.contains("response signal")
+        {
+            Some(InterfaceSignalDirection::Input)
+        } else if lowered.contains("global signal")
+            || lowered.contains("system signal")
+            || lowered.contains("clock signal")
+            || lowered.contains("decoder signal")
+            || lowered.contains("select signal")
+        {
+            Some(InterfaceSignalDirection::Input)
+        } else {
+            None
+        }
+    });
+
+    // Only emit a table-parsed signal record when direction was explicitly inferred from the
+    // section context. Using a fallback direction of `Internal` would create spurious
+    // direction conflicts when the same signal appears in both a protocol table (where
+    // direction is known) and a check/parity table (where direction cannot be determined
+    // from the section title). Requiring an explicit direction match prevents those conflicts
+    // while still allowing the table to enrich width-only records for clearly named sections.
+    let direction_hint = direction_hint?;
+
+    Some(ParsedInterfaceSignalDeclaration {
+        signal_name,
+        direction_hint,
+        width_hint,
+    })
+}
+
+fn is_boilerplate_section_title(title: &str) -> bool {
+    let lowered = title.to_ascii_lowercase();
+    // Legal sections common to ARM/chip specifications
+    if lowered.contains("licence") || lowered.contains("license") {
+        return true;
+    }
+    contains_any_phrase(
+        &lowered,
+        &[
+            "proprietary notice",
+            "proprietary information",
+            "change history",
+            "revision history",
+            "release information",
+            "release note",
+            "release history",
+            "preface",
+            "about this document",
+            "how to use this",
+            "how to read",
+            "intended audience",
+            "feedback",
+            "contact",
+            "non-confidential",
+            "confidentiality",
+            "legal notice",
+            "legal information",
+            "terms of use",
+            "terms and conditions",
+            "end user",
+            "specification licence",
+            "specification license",
+            "trademark",
+            "copyright notice",
+            "disclaimer",
+        ],
+    )
 }
 
 fn canonicalize_existing_path(path: &Path) -> Result<PathBuf> {
@@ -4828,6 +5492,85 @@ mod tests {
                 .iter()
                 .any(|fragment| fragment.block_name == "busy")
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn extracts_signal_direction_and_width_from_markdown_signal_description_table() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("signal_table_spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        // Simulate the table format used in real AMBA chip specs: signals described
+        // in named tables under section headings that identify the direction context.
+        fs::write(
+            &source,
+            concat!(
+                "# Manager signals\n",
+                "| Name   | Destination | Width | Description            |\n",
+                "|--------|-------------|-------|------------------------|\n",
+                "| HADDR  | Subordinate | 32    | Address bus            |\n",
+                "| HWRITE | Subordinate | 1     | Write enable           |\n",
+                "| HTRANS | Subordinate | 2     | Transfer type          |\n",
+                "\n",
+                "# Subordinate signals\n",
+                "| Name      | Destination | Width | Description            |\n",
+                "|-----------|-------------|-------|------------------------|\n",
+                "| HREADYOUT | Manager     | 1     | Transfer done          |\n",
+                "| HRESP     | Manager     | 1     | Transfer response      |\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        // Manager signals should be extracted as Output with explicit widths.
+        let find_signal = |name: &str| -> Option<super::InterfaceSignalRecord> {
+            semantic_ir.interfaces.iter().find_map(|iface| {
+                iface
+                    .signal_records
+                    .iter()
+                    .find(|sig| sig.signal_name == name)
+                    .cloned()
+            })
+        };
+
+        let haddr = find_signal("HADDR").expect("HADDR should be extracted from table");
+        assert_eq!(haddr.direction_hint, Some(InterfaceSignalDirection::Output));
+        assert_eq!(haddr.width_hint, Some(32));
+
+        let hwrite = find_signal("HWRITE").expect("HWRITE should be extracted from table");
+        assert_eq!(hwrite.direction_hint, Some(InterfaceSignalDirection::Output));
+        assert_eq!(hwrite.width_hint, Some(1));
+
+        let htrans = find_signal("HTRANS").expect("HTRANS should be extracted from table");
+        assert_eq!(htrans.direction_hint, Some(InterfaceSignalDirection::Output));
+        assert_eq!(htrans.width_hint, Some(2));
+
+        // Subordinate signals should be extracted as Input with explicit widths.
+        let hreadyout = find_signal("HREADYOUT").expect("HREADYOUT should be extracted from table");
+        assert_eq!(
+            hreadyout.direction_hint,
+            Some(InterfaceSignalDirection::Input)
+        );
+        assert_eq!(hreadyout.width_hint, Some(1));
+
+        let hresp = find_signal("HRESP").expect("HRESP should be extracted from table");
+        assert_eq!(hresp.direction_hint, Some(InterfaceSignalDirection::Input));
+        assert_eq!(hresp.width_hint, Some(1));
 
         Ok(())
     }

@@ -46,6 +46,9 @@
 - Structured `?top:name` `.fsm` emission implemented for explicit canonical composition cases: Done
 - Selector/test-node and compound-update lowering into emitted `.fsm` text implemented: Done
 - Direct-module alias-root decision recorded and speculative `.fsm` adapter root-kind placeholders removed: Done
+- SemanticIR extraction quality improved for real chip spec PDFs (boilerplate filtering, expanded stop words, interface noise filtering): Done
+- SemanticIR signal-table row parsing implemented (direction and width from PDF signal description tables): Done
+- Docling installed and first real-world PDF (AMBA AHB) exercised end-to-end through the full pipeline: Done
 - SystemVerilog/Verilog/VHDL adapters implemented: Not Started
 - Validation and back-annotation pipeline implemented: Not Started
 - End-to-end source-to-IntentIR pipeline implemented: Done

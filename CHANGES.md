@@ -1,4 +1,25 @@
 # CHANGES
+## 2026-04-02 (continued)
+- improved `SemanticIR` extraction quality for real chip specification PDFs with three targeted fixes:
+  - **expanded `signal_stop_words()`** with ~200 entries covering legal/contractual vocabulary, common English all-caps words (HIGH, LOW, etc.), AMBA/ARM protocol family names, company names, document structure words, and technology abbreviations that are never hardware signal names; this eliminates legal front-matter contamination from signal extraction
+  - **added boilerplate section filtering** in `SemanticContext::from_evidence_ir` so statements from sections matching legal/admin patterns (licence, proprietary notice, change history, etc.) are excluded from actor/interface/invariant extraction entirely
+  - **added interface noise filtering** in `build_interfaces` so heuristic interfaces with >8 signals require ≥2 supporting statements; this eliminates the large spurious interfaces created by co-mentions in legal paragraphs while keeping all small hardware signal groups
+- added **markdown signal-table row parsing** in `build_interfaces`: when a table row's first cell looks like a hardware signal name and the section title matches a known direction context ("Manager signals" → output, "Subordinate signals" → input, "Global/Decoder signals" → input), the row is parsed directly into a typed `InterfaceSignalRecord` with explicit direction and width, extracted at Medium automation confidence
+- validated improvements on the AMBA AHB Protocol Specification PDF (`IHI0033_C_2021-09_AMBA_5_AHB_Protocol_Specification.pdf`):
+  - 104 page artifacts and 70 visual assets materialized correctly by Docling
+  - `interface_count` reduced from 172 → 94 (45% reduction, legal text gone)
+  - `signal_candidate_count` in the adapter reduced from 250 → 57 (77% reduction, mostly real AHB signals)
+  - 16 AHB signals now carry explicit direction and width from signal table parsing:
+    - Manager outputs (direction=output): HADDR, HBURST, HEXCL, HMASTER, HMASTLOCK, HNONSEC, HPROT, HSIZE, HTRANS, HWDATA, HWRITE, HWSTRB
+    - Subordinate outputs / Manager inputs (direction=input): HEXOKAY, HRDATA, HREADYOUT, HRESP
+    - Key widths extracted: HTRANS=2, HSIZE=3, HWRITE=1, HMASTLOCK=1, HEXCL=1, HNONSEC=1, HREADYOUT=1, HRESP=1, HEXOKAY=1
+  - adapter correctly blocked (honest: AHB spec prose does not carry formal control blocks or system contract declarations)
+- added 1 new regression test: `extracts_signal_direction_and_width_from_markdown_signal_description_table`
+  - verifies Manager-section rows are extracted as Output with correct numeric widths
+  - verifies Subordinate-section rows are extracted as Input with correct numeric widths
+  - total tests: 48 passing, 0 failing
+- installed Docling 2.84.0 globally into Python 3.11 (`/opt/homebrew/lib/python3.11/site-packages/`) to enable PDF processing
+- all `cargo fmt` and `cargo test` checks pass
 ## 2026-04-02
 - widened `SemanticIR` so it now preserves canonical `.fsm`-relevant symbol-definition and structured-control surface rather than relying only on legacy decision-tree fragments:
   - canonical symbol definitions for `Constant`, `Define`, `Param`, and `Enum`

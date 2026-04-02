@@ -360,8 +360,10 @@
   - passed and materialized a renderable `.fsm` adapter artifact with `lowering_status: renderable`, `selected_root_kind: top`, 2 module candidates, 1 top candidate, 3 residual decisions, and an emitted `generated/adapters/fsm/explicit_top/datapath.fsm`
 - repo-wide stale-name sweep
   - remaining `spec2fsm` references are historical notes only, not active CLI or architecture surfaces
+- `cargo fmt --all --manifest-path Cargo.toml --check` and `cargo test --manifest-path Cargo.toml`
+  - passed after the full widened reset contract, selector/test-node, compound-update, and direct-module decision slice with 47 tests passing (commit `27511f840d5b8f4e8a45f772b97602471aea5828`)
 
 ## Current recommendation
 - keep the current single-crate workspace for one more slice
-- next, promote explicit composition/module/top facts for honest broader-root lowering while keeping the canonical model backend-neutral
+- next, start the validation/back-annotation pipeline so stage and adapter outputs have reproducible artifact-linked reports
 - keep `IntentIR` canonical and resist any temptation to make `.fsm` the hidden endpoint again

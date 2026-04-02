@@ -52,8 +52,8 @@
   - adapters
 
 ## Latest committed baseline
-- latest_commit_hash: `464a1a1d73d352f08396cb24e544c3675e4d74d5`
-- latest_commit_brief_message: `Implement honest structured fsm root lowering`
+- latest_commit_hash: `27511f840d5b8f4e8a45f772b97602471aea5828`
+- latest_commit_brief_message: `Widen honest .fsm lowering and tighten root kinds`
 - continuity_rule:
   - refresh this section whenever a new latest committed baseline exists at the time `MEMORY.md` is updated
 
@@ -95,7 +95,9 @@
 - the user has now clarified the real-hardware reset model in more detail, and the canonical reset contract now preserves reset kind, polarity, assertion timing, release timing, and reset-target semantics explicitly rather than leaving them implicit
 
 ## In-flight work in this session
-- the direct-module defer decision slice, validation, and continuity/doc refresh are complete; wait for the user's next direction or commit request
+- real-world PDF testing against AMBA AHB spec is active (user instruction: "test using AHB pdf until further notice")
+- three SemanticIR extraction quality improvements for real chip spec PDFs have been implemented and validated
+- Docling 2.84.0 installed globally into Python 3.11 for PDF processing
 
 ## Current execution checkpoint
 - `IntentIR` now has a real build/materialization path
