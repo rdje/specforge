@@ -16,8 +16,14 @@ use crate::ir::source::{RegisterFieldRecord, RegisterRecord, TimingConstraintRec
 #[serde(rename_all = "snake_case")]
 pub enum StatementClass {
     SourceFact,
+    /// Sentence explicitly constraining a hardware signal to a specific logic value or
+    /// protocol state. These are the most precise and directly actionable constraints.
+    /// Examples: "HTRANS must be IDLE when HREADY is LOW",
+    ///           "HWRITE shall remain HIGH throughout the burst",
+    ///           "HREADYOUT must be asserted when transfer is accepted".
+    SignalValueConstraint,
     /// Sentence with `shall`/`must`/`shall not`/`required`/`prohibited` in a non-boilerplate
-    /// section. These are normative behavioral requirements.
+    /// section. General normative behavioral requirements not covered by a more specific class.
     NormativeStatement,
     /// Sentence containing cycle counts, setup/hold time references, or latency bounds.
     /// Examples: "within 2 cycles", "tSU setup time", "at least N clock periods".
@@ -903,6 +909,13 @@ fn classify_statement(text: &str) -> StatementClass {
     ) {
         return StatementClass::LocalDesignDecision;
     }
+    // Signal value constraints — most specific class; check before normative and conditional.
+    // Pattern: HARDWARE_SIGNAL (must|shall) (be|remain|stay|become|not change) LOGIC_VALUE
+    // or: HARDWARE_SIGNAL is (HIGH|LOW|asserted|deasserted) [when CONDITION]
+    if is_signal_value_constraint(text) {
+        return StatementClass::SignalValueConstraint;
+    }
+
     // Timing constraints — check before normative so "shall be asserted within 2 cycles"
     // gets the more specific TimingConstraint class.
     if contains_any(
@@ -1105,6 +1118,110 @@ fn is_hardware_signal_token(token: &str) -> bool {
             .chars()
             .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_')
         && token.chars().any(|c| c.is_ascii_uppercase())
+}
+
+/// Returns `true` if the sentence explicitly constrains a hardware signal to a specific
+/// logic value or protocol state.
+///
+/// Detection uses two complementary patterns:
+///
+/// **Value-binding phrases** — the sentence explicitly binds a signal to a value:
+///   `must/shall be HIGH/LOW/asserted/deasserted/stable/IDLE/SEQ/...`
+///   `must/shall remain HIGH/LOW/asserted/deasserted`
+///   `must/shall not change`
+///   `is HIGH/LOW when`  (a signal state conditional)
+///
+/// **Hardware signal reference** — there must also be an uppercase token of 3+ chars
+/// that plausibly names a hardware signal. This filters out pure prose like
+/// "code quality must be high" from matching.
+fn is_signal_value_constraint(text: &str) -> bool {
+    let lowered = text.to_ascii_lowercase();
+
+    // Step 1: Check for a value-binding phrase.
+    // These phrases all indicate a signal is constrained to a specific logic level,
+    // stable state, or protocol encoding value.
+    let has_value_binding = contains_any(
+        &lowered,
+        &[
+            // Logic levels
+            "must be high",
+            "shall be high",
+            "must be low",
+            "shall be low",
+            "must remain high",
+            "shall remain high",
+            "must remain low",
+            "shall remain low",
+            "must stay high",
+            "shall stay high",
+            "must stay low",
+            "shall stay low",
+            "is high when",
+            "is low when",
+            // Assertion / de-assertion
+            "must be asserted",
+            "shall be asserted",
+            "must be deasserted",
+            "shall be deasserted",
+            "must remain asserted",
+            "shall remain asserted",
+            "must remain deasserted",
+            "shall remain deasserted",
+            "must be driven high",
+            "shall be driven high",
+            "must be driven low",
+            "shall be driven low",
+            // Stability
+            "must be stable",
+            "shall be stable",
+            "must not change",
+            "shall not change",
+            "must remain stable",
+            "shall remain stable",
+            // Protocol states (HTRANS, HBURST, HRESP encoding values)
+            "must be idle",
+            "shall be idle",
+            "must be nonseq",
+            "shall be nonseq",
+            "must be seq",
+            "shall be seq",
+            "must be busy",
+            "shall be busy",
+            "must be okay",
+            "shall be okay",
+            "must be error",
+            "shall be error",
+            "must be valid",
+            "shall be valid",
+            "must be invalid",
+            "shall be invalid",
+            // Valid/ready handshake patterns
+            "must be held",
+            "shall be held",
+            "must hold the",
+            "shall hold the",
+        ],
+    );
+
+    if !has_value_binding {
+        return false;
+    }
+
+    // Step 2: The sentence must also contain at least one token that looks like a
+    // hardware signal name: all-uppercase, 3+ chars, starts with a letter.
+    // This prevents "values must be high quality" from matching.
+    text.split(|c: char| !(c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_'))
+        .any(|token| {
+            token.len() >= 3
+                && token
+                    .chars()
+                    .next()
+                    .map(|c| c.is_ascii_uppercase())
+                    .unwrap_or(false)
+                && token
+                    .chars()
+                    .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_')
+        })
 }
 
 /// Tokens that pass `is_hardware_signal_token` but are component names, role names,
