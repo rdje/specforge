@@ -220,22 +220,72 @@ The alias feedback loop: once an actor-signal triple is extracted in pass N, the
 
 ---
 
-## The behavioral layer: timing and FSMs
+## The behavioral layer: the synchronous clock-tick transfer model
 
-Every behavioral constraint in a chip spec is ultimately about signal values at specific clock edges. Key principles:
-- All digital hardware protocols are synchronous
-- The clock signal is special: it is the universal time reference
-- "At the rising edge of HCLK" = one time step
-- State machine transitions happen on clock edges
-- Timing constraints (setup/hold, latency) are measured in clock cycles
+Every behavioral constraint in a chip spec is a statement about signal values at specific instants relative to clock edges. This is the foundational physical model of synchronous RTL design.
 
-The behavioral extraction feeds:
-- **FSM records**: states, transitions, guards (already in SemanticIR from VLM + formal syntax)
-- **TimingConstraintRecord**: setup/hold, latency in cycles (already in SemanticIR from tables + VLM)
-- **SignalConstraintRecord**: what value a signal must have under what condition (already in EvidenceIR Level 2+3 NLP)
-- **ConditionalRuleRecord**: when condition X, signal S must do Y (already in EvidenceIR Level 2+3 NLP)
+### Clock ticks and the T-/T+ notation
 
-The knowledge graph (Layer 1: structural) and the behavioral records (Layer 2: temporal) together constitute a complete model of the protocol — sufficient to generate an RTL implementation.
+A free-running clock has an infinite sequence of ticks at times `T0, T1 = T0+P, T2 = T0+2P, ...` where P is the clock period (constant for a non-drifting clock). Each tick is a zero-width instant corresponding to the posedge (rising edge) of the clock signal.
+
+For any tick at time Tn:
+- `Tn−` = the instant immediately BEFORE the tick = the stable value that registers see and capture
+- `Tn+` = the instant immediately AFTER the tick = the new value that registers emit
+
+### The two fundamental synchronous actions
+
+**Drive/Assert at Tn**: the actor makes the signal take its new value starting at `Tn+`. The signal holds that value until at least `T(n+1)−`.
+
+**Sample/Read at Tn**: the actor captures the value that the signal had at `Tn−` (the stable value just before the tick).
+
+### The minimum synchronous transfer: 1 clock cycle
+
+```
+T0:  Actor A drives signal S    →  S becomes valid at T0+
+T1:  Actor B samples signal S   →  B reads S value at T1−  (= what A put there at T0+)
+```
+
+B CANNOT sample at T0 — the new value was not present at T0−. T1 is the earliest possible read. This is why 1 clock cycle (2 consecutive ticks) is the minimum transfer latency in any synchronous system. It is an architectural invariant, not a performance number.
+
+Multi-cycle transfers: B may sample at `T2−`, `T3−`, ..., `TN−` based on the protocol handshake. The protocol defines WHEN B is allowed to sample. AHB HREADY, AXI READY/VALID, APB PREADY — all implement this latency contract.
+
+### Mapping spec sentences to the clock-tick model
+
+Every behavioral constraint in a chip spec is an implicit statement about signal values at `Tn−` or `Tn+`. The spec uses natural language; the clock-tick model is the physical interpretation:
+
+| Spec sentence | Physical meaning |
+|---|---|
+| "HADDR must be stable when HREADY is LOW" | ∀ Tn : HREADY(Tn−) = LOW → HADDR(Tn+) = HADDR(Tn−) |
+| "HTRANS must be NONSEQ during the address phase" | ∀ Tn in address phase : HTRANS(Tn−) = NONSEQ |
+| "PREADY is sampled on the rising edge of PCLK" | B reads PREADY(Tn−) at each tick Tn |
+| "The transfer completes within 2 clock cycles" | latency(A drives S → B samples S) ≤ 2P |
+| "HWRITE is tied HIGH for the entire burst" | ∀ Tn in burst : HWRITE(Tn−) = HIGH → HWRITE(Tn+) = HIGH |
+
+### VALID/READY handshake is the clock-tick model in action
+
+The VALID/READY (or HREADY/HTRANS) handshake used in AHB, AXI, and APB is an implementation of the clock-tick transfer model with variable latency:
+- Sender asserts VALID at Tn (S valid at Tn+)
+- Receiver asserts READY at Tm (Tm ≥ Tn)
+- Transfer captured on the FIRST tick where VALID(Tn−) = HIGH AND READY(Tn−) = HIGH
+- The latency is (m − n) clock cycles, bounded by protocol constraints
+
+### What the existing IR records represent
+
+The current IR records are correct but implicit about the clock-tick model:
+
+`SignalConstraintRecord { subject: HADDR, kind: MustBeStable, condition: "HREADY is LOW" }`
+⇒ Physical meaning: ∀ Tn : HREADY(Tn−) = LOW → HADDR(Tn+) = HADDR(Tn−)
+
+`ConditionalRuleRecord { antecedent: "HREADY is asserted", consequent_signal: HTRANS, action: "must be NONSEQ" }`
+⇒ Physical meaning: ∀ Tn : HREADY(Tn−) = HIGH → HTRANS(Tn−) = NONSEQ
+
+When the RTL code generator or assertion generator processes these records, it applies the clock-tick model to produce:
+```systemverilog
+assert property (@(posedge HCLK) !HREADY |-> $stable(HADDR));
+assert property (@(posedge HCLK) HREADY |-> HTRANS == NONSEQ);
+```
+
+The knowledge graph (Layer 1: structural) and the behavioral records (Layer 2: temporal / clock-tick) together constitute a complete model of the protocol — sufficient to generate synthesizable RTL and verification assertions.
 
 ---
 
