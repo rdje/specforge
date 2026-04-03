@@ -1,4 +1,54 @@
 # CHANGES
+## 2026-04-03 (R13: Tier 2 Knowledge Graph — actor-signal relation extraction)
+
+### New types (source.rs)
+- RelationKind enum (Drives | Reads)
+- ActorSignalRelation struct { relation_id, actor_name, signal_name, relation, source_statement_ids, automation_confidence }
+
+### New EvidenceIR field (evidence.rs)
+- actor_signal_relations: Vec<ActorSignalRelation> (serde default = empty; extracted at build time)
+
+### Tier 2 extraction: two complementary sources
+1. **Prose verb-pattern extraction** (extract_actor_signal_relations()):
+   - Passive drives: "SIGNAL is {driven|asserted|returned|...} by ACTOR" and "...from ACTOR"
+   - Active drives: "ACTOR {drives|asserts|returns|...} SIGNAL" and "ACTOR must {drive|...} SIGNAL"
+   - Passive reads: "SIGNAL is {read|sampled|monitored|...} by ACTOR"
+   - Active reads: "ACTOR {reads|samples|...} SIGNAL"
+   - Only searches for confirmed signal names (from tables + declarations)
+2. **Signal table Source column extraction** (extract_relations_from_signal_tables()):
+   - Reads Source/Driver/Direction column from signal_description tables
+   - APB "PADDR | Requester | ..." → (Requester, Drives, PADDR)
+   - APB "PREADY | Completer | ..." → (Completer, Drives, PREADY)
+   - AHB tables already have direction column (covered by existing synthesis)
+   - AXI tables have no Source column (no triples from tables, only from prose)
+
+### Signal name collection: two sources
+- collect_signal_names_from_tables(): ALL first-column signal names from signal_description tables (regardless of whether direction was extracted — covers APB/AXI where Source column is non-standard)
+- collect_known_signal_names(): Signal names from existing "Signal X is input/output" prose declarations
+- Union of both used as the search universe for prose verb patterns
+
+### Direction synthesis: non-conflicting
+- synthesize_directions_from_relations(): creates "Signal X is output." for Drives triples
+- Skips signals already declared from tables (table declarations are authoritative)
+- KG synthesis only adds direction for signals that had NO prior table-derived declaration
+
+### Updated Layer D (semantic.rs) and Layer E (validate.rs)
+- Declared signal set now includes Medium confidence (KG-derived) signals in addition to High confidence (table-derived)
+
+### Results after R13
+| Spec | Before R13 | After R13 | Change |
+|------|-----------|-----------|--------|
+| AHB  | 86/100 GOOD     | 85/100 GOOD | -1 (21 vs 17 declared, 100% dir, 47% width) |
+| APB  | 35/100 NEEDS IMP | 60/100 ADEQUATE | +25 pts, 18 declared signals, 100% dir |
+| AXI  | 85/100 (misleading, 1 sig) | 75/100 GOOD (honest, 182 signals) | Honest |
+
+### Tests: 6 new (90 → 96, all passing)
+- passive_drive_pattern_extracts_actor_and_signal
+- active_drive_pattern_extracts_actor_and_signal
+- passive_read_pattern_extracts_actor_and_signal
+- must_drive_pattern_extracts_actor_from_requester_sentence
+- synthesize_directions_produces_signal_is_output_declaration
+- kg_extraction_produces_graph_declarations_in_evidence_ir
 ## 2026-04-02 (AHB + APB end-to-end pipeline validation run)
 
 ### AHB (IHI0033_C) results — full feedback loop on existing SourceIR

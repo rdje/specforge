@@ -326,20 +326,21 @@ fn validate_intent_ir(ir: &IntentIr) {
     println!("document_key: {}", ir.document_identity.document_key);
     println!();
 
-    // Layer E: only count declared (High-confidence) signal records for coverage.
-    // Heuristic signals (AutomationConfidence::Low) are noise from NLP token extraction;
-    // they have no direction/width and dilute coverage percentages.
+    // Layer E: count declared signals as High OR Medium confidence.
+    // High = from structured signal description tables (most authoritative).
+    // Medium = from Tier 2 KG actor-signal relation extraction from prose.
+    // Low = heuristic co-mention noise — excluded from coverage metrics.
     let declared_signals: Vec<_> = ir
         .interfaces
         .iter()
         .flat_map(|i| &i.signal_records)
-        .filter(|s| s.automation_confidence == AutomationConfidence::High)
+        .filter(|s| !matches!(s.automation_confidence, AutomationConfidence::Low))
         .collect();
     let heuristic_signals: usize = ir
         .interfaces
         .iter()
         .flat_map(|i| &i.signal_records)
-        .filter(|s| s.automation_confidence != AutomationConfidence::High)
+        .filter(|s| matches!(s.automation_confidence, AutomationConfidence::Low))
         .count();
 
     println!("=== Signal Coverage ===");

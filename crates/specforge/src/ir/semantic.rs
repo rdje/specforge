@@ -127,10 +127,13 @@ impl SemanticIr {
         // heuristic noise and are suppressed so they do not pollute downstream scoring.
         // If no explicit declarations exist (e.g. pure prose specs with no tables), the set
         // is empty and gating is disabled so we never drop records unnecessarily.
+        // Declared signals = High confidence (from structured tables) OR
+        // Medium confidence (from Tier 2 KG actor-signal relation extraction).
+        // Low confidence = heuristic co-mention noise; still excluded.
         let declared_signal_names: std::collections::HashSet<String> = interfaces
             .iter()
             .flat_map(|iface| &iface.signal_records)
-            .filter(|r| matches!(r.automation_confidence, AutomationConfidence::High))
+            .filter(|r| !matches!(r.automation_confidence, AutomationConfidence::Low))
             .map(|r| r.signal_name.clone())
             .collect();
 

@@ -246,6 +246,40 @@ pub struct ContentSectionRecord {
     pub section_kind: SectionKind,
 }
 
+/// The kind of relation between an actor and a signal in the knowledge graph.
+/// Extracted from prose verb phrases (Tier 2 pattern matching or Tier 3 LLM).
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum RelationKind {
+    /// The actor DRIVES / ASSERTS / OUTPUTS this signal — signal is an OUTPUT of this actor.
+    /// Extracted from: "is driven by", "is asserted by", "drives", "asserts", etc.
+    Drives,
+    /// The actor READS / SAMPLES / MONITORS this signal — signal is an INPUT to this actor.
+    /// Extracted from: "is read by", "is sampled by", "reads", "samples", etc.
+    Reads,
+}
+
+/// One actor–signal relation extracted from a prose sentence.
+/// Forms a node in the knowledge graph:
+///   `(actor_name) —[Drives|Reads]—> (signal_name)`
+///
+/// Direction is derived: if (A, Drives, S) then S is output_of[A] and input_of[others].
+/// Actor identity is behavioral: names like “Manager”, “Requester”, “master”, “slave”
+/// are all accepted as-is — the graph normalises them through co-occurrence,
+/// not through a hardcoded vocabulary.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ActorSignalRelation {
+    pub relation_id: String,
+    /// Actor name as it appears in the spec (e.g. "Manager", "slave", "Requester").
+    pub actor_name: String,
+    /// Uppercase signal name (e.g. "PREADY", "HTRANS", "AWADDR").
+    pub signal_name: String,
+    /// Whether the actor drives or reads the signal.
+    pub relation: RelationKind,
+    pub source_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
 /// The kind of constraint that a `SignalConstraintRecord` captures.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case", tag = "kind")]

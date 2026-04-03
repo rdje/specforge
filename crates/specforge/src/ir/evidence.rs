@@ -7,12 +7,12 @@ use serde::{Deserialize, Serialize};
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::source::{
-    AutomationConfidence, NormalizationStatus, SectionKind, SourceIr, TableKind, VisualAsset,
-    VisualAssetKind, document_key,
+    ActorSignalRelation, ConditionalRuleRecord, RegisterFieldRecord, RegisterRecord, RelationKind,
+    SignalConstraintKind, SignalConstraintRecord, TimingConstraintRecord,
 };
 use crate::ir::source::{
-    ConditionalRuleRecord, RegisterFieldRecord, RegisterRecord, SignalConstraintKind,
-    SignalConstraintRecord, TimingConstraintRecord,
+    AutomationConfidence, NormalizationStatus, SectionKind, SourceIr, TableKind, VisualAsset,
+    VisualAssetKind, document_key,
 };
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
@@ -111,7 +111,13 @@ pub struct EvidenceIr {
     /// Level 2 NLP: structured records extracted from `ConditionalRule` sentences.
     #[serde(default)]
     pub conditional_rules: Vec<ConditionalRuleRecord>,
-    /// Form 2 signal alias map — populated by `specforge nlp-enrich` when Level 3
+    /// Tier 2 Knowledge Graph: actor–signal relation triples extracted from prose verb phrases.
+    /// Each record encodes (actor, drives|reads, signal) derived from sentences like
+    /// "PREADY is driven by the slave" or "The Manager drives HTRANS".
+    /// Together these form the structural knowledge graph of the specification.
+    #[serde(default)]
+    pub actor_signal_relations: Vec<ActorSignalRelation>,
+    /// Form 2 signal alias map
     /// extracts a constraint from a sentence where the signal name doesn't appear
     /// literally (e.g. "address bus" → "HADDR").  Persisted across runs so the
     /// alias vocabulary accumulates.  Applied at the start of each enrichment pass
@@ -427,6 +433,47 @@ impl EvidenceIr {
         let conditional_rules =
             extract_conditional_rules(&extracted_statements, &mut constraint_counter);
 
+        // Tier 2 Knowledge Graph: extract actor–signal relation triples from ALL prose sentences.
+        //
+        // Two sources of known signal names (union of both):
+        //   1. Signal names from signal-description table rows (first column), even if direction
+        //      could not be inferred from the table (covers APB/AXI where source column says
+        //      "Requester"/"Completer" or is absent entirely).
+        //   2. Signal names from explicit "Signal X is input/output" prose declarations
+        //      (covers markdown specs and any manually written declarations).
+        let signal_names_from_tables = collect_signal_names_from_tables(&source_ir);
+        let signal_names_from_decls = collect_known_signal_names(&extracted_statements);
+        let mut known_signals = signal_names_from_tables;
+        known_signals.extend(signal_names_from_decls.iter().cloned());
+
+        // Extract actor-signal relations from two sources:
+        // 1. Prose verb patterns (Tier 2 pattern matching on statements)
+        // 2. Signal description table structure (Source/Driver column directly encodes who drives)
+        let mut actor_signal_relations =
+            extract_actor_signal_relations(&extracted_statements, &known_signals);
+        let table_relations = extract_relations_from_signal_tables(&source_ir);
+        actor_signal_relations.extend(table_relations);
+        // Deduplicate by (actor_name, signal_name, relation) so table and prose sources
+        // don’t produce duplicate triples.
+        actor_signal_relations.dedup_by_key(|r| {
+            (
+                r.actor_name.clone(),
+                r.signal_name.clone(),
+                matches!(r.relation, RelationKind::Drives) as u8,
+            )
+        });
+
+        // Synthesize direction declarations ONLY for signals without an existing table declaration.
+        // Signals already declared from tables are authoritative; do not overwrite them.
+        let mut dir_counter = statement_counter;
+        let direction_declarations = synthesize_directions_from_relations(
+            &actor_signal_relations,
+            &signal_names_from_decls,
+            &mut dir_counter,
+        );
+        let mut extracted_statements = extracted_statements;
+        extracted_statements.extend(direction_declarations);
+
         Ok(Self {
             schema_version: 1,
             stage: IrStage::EvidenceIr,
@@ -442,7 +489,8 @@ impl EvidenceIr {
             timing_constraints,
             signal_constraints,
             conditional_rules,
-            signal_alias_map: BTreeMap::new(), // populated by nlp-enrich (Form 2)
+            actor_signal_relations,
+            signal_alias_map: BTreeMap::new(),
         })
     }
 
@@ -1009,7 +1057,546 @@ fn infer_visual_role(
     }
 }
 
-/// Returns `true` if the section title indicates boilerplate content (legal notices,
+// ─────────────────────────────────────────────────────────────────────────────
+// Tier 2 Knowledge Graph: actor–signal relation extraction
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// Collect all hardware signal names that have been formally declared via
+/// synthesized `Signal X is input/output` statements.  These come from signal
+/// description tables (High confidence) and are the known universe of signals
+/// we should look for in prose.
+fn collect_known_signal_names(
+    statements: &[ExtractedStatement],
+) -> std::collections::HashSet<String> {
+    let mut names = std::collections::HashSet::new();
+    for stmt in statements {
+        let text = &stmt.text;
+        let lowered = text.to_ascii_lowercase();
+        // Scan for ALL "Signal X is..." occurrences.
+        // Handles both single-line declarations and merged multi-signal blocks
+        // (consecutive non-empty lines are concatenated into one statement during markdown parsing).
+        // A valid declaration starts either at position 0 or after ". " (sentence boundary).
+        for (idx, _) in lowered.match_indices("signal ") {
+            let is_declaration_start = idx == 0 || (idx >= 2 && &lowered[idx - 2..idx] == ". ");
+            if !is_declaration_start {
+                continue;
+            }
+            let name_start = idx + 7; // past "signal "
+            if name_start > text.len() {
+                continue;
+            }
+            let name: String = text[name_start..]
+                .split(|c: char| !c.is_ascii_alphanumeric() && c != '_')
+                .next()
+                .unwrap_or("")
+                .to_ascii_uppercase();
+            // Only keep plausible hardware signal names: uppercase, 2-30 chars
+            if name.len() >= 2
+                && name.len() <= 30
+                && name
+                    .chars()
+                    .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_')
+            {
+                names.insert(name);
+            }
+        }
+    }
+    names
+}
+
+/// Collect hardware signal names from ALL signal-description table rows (first column),
+/// regardless of whether direction could be determined.  This covers specs like APB and AXI
+/// where the Source/Direction column uses non-standard values ("Requester", "Completer")
+/// or is absent entirely.
+fn collect_signal_names_from_tables(source_ir: &SourceIr) -> std::collections::HashSet<String> {
+    let mut names = std::collections::HashSet::new();
+    for table in &source_ir.structured_tables {
+        if !matches!(table.table_kind, TableKind::SignalDescription) {
+            continue;
+        }
+        for row in &table.body_rows {
+            let Some(first_cell) = row.first() else {
+                continue;
+            };
+            let token = first_cell
+                .text
+                .split_whitespace()
+                .next()
+                .unwrap_or("")
+                .to_ascii_uppercase();
+            if is_hardware_signal_token(&token) && !is_signal_synthesis_non_signal(&token) {
+                names.insert(token);
+            }
+        }
+    }
+    names
+}
+
+/// Extract actor–signal relation triples directly from signal-description table structure.
+///
+/// The Source/Driver column of a signal-description table encodes the same information
+/// as a prose sentence: `PADDR | Requester | ...` means `(Requester, Drives, PADDR)`.
+/// This is part of the knowledge graph — the table is part of the document, and the
+/// Source column directly records which actor drives each signal.
+///
+/// Unlike prose extraction, no verb-pattern matching is needed here: the table cell
+/// value IS the actor name, and the table structure implies the Drives relation.
+/// Actor names are stored as-is ("Requester", "Completer", "Clock", etc.) without
+/// vocabulary normalisation.
+fn extract_relations_from_signal_tables(source_ir: &SourceIr) -> Vec<ActorSignalRelation> {
+    let mut records = Vec::new();
+    let mut counter = 1usize;
+
+    for table in &source_ir.structured_tables {
+        if !matches!(table.table_kind, TableKind::SignalDescription) {
+            continue;
+        }
+
+        // Find the column index for a Source/Driver/Direction column.
+        let header_texts: Vec<String> = table
+            .header_rows
+            .first()
+            .map(|row| row.iter().map(|c| c.text.to_ascii_lowercase()).collect())
+            .unwrap_or_default();
+        let source_col = header_texts.iter().position(|h| {
+            h.contains("source")
+                || h.contains("driver")
+                || h.contains("direction")
+                || h.contains("destination")
+        });
+
+        let Some(src_col_idx) = source_col else {
+            continue; // no Source column in this table (e.g. AXI Name|Width|Default|Description)
+        };
+
+        for row in &table.body_rows {
+            // Signal name from first column
+            let Some(name_cell) = row.first() else {
+                continue;
+            };
+            let signal_token = name_cell
+                .text
+                .split_whitespace()
+                .next()
+                .unwrap_or("")
+                .to_ascii_uppercase();
+            if !is_hardware_signal_token(&signal_token)
+                || is_signal_synthesis_non_signal(&signal_token)
+            {
+                continue;
+            }
+
+            // Actor name from Source column
+            let Some(source_cell) = row.get(src_col_idx) else {
+                continue;
+            };
+            let actor = source_cell.text.trim().to_string();
+            if actor.is_empty() {
+                continue;
+            }
+
+            // Determine relation: the Source column says who drives the signal.
+            // If the cell says "input" or "output" explicitly, use that.
+            // Otherwise the Source column value is the driving actor.
+            let actor_lower = actor.to_ascii_lowercase();
+            let relation = if actor_lower == "input" {
+                // Unusual: Source column says direction directly
+                RelationKind::Reads // input = the actor READS this (but we don’t know who)
+            } else {
+                RelationKind::Drives // any other value = the named actor drives this signal
+            };
+
+            records.push(ActorSignalRelation {
+                relation_id: format!("tbl_asr_{counter:04}"),
+                actor_name: actor,
+                signal_name: signal_token,
+                relation,
+                source_statement_ids: vec![table.table_id.clone()],
+                automation_confidence: AutomationConfidence::Medium,
+            });
+            counter += 1;
+        }
+    }
+
+    records
+}
+
+/// Tier 2: Extract actor–signal relation triples from prose sentences using
+/// verb-pattern matching.  Only sentences that mention a known signal name are
+/// processed, keeping precision high.
+///
+/// Two pattern families are recognised:
+///
+/// **Passive drives** (signal is subject, actor is after a preposition):
+///   `"PREADY is driven by the slave"`  →  (slave, Drives, PREADY)
+///   `"RDATA is returned from the Completer"`  →  (Completer, Drives, RDATA)
+///
+/// **Active drives** (actor is sentence subject before the verb):
+///   `"The Manager drives HTRANS"`  →  (Manager, Drives, HTRANS)
+///   `"The Requester must drive PSEL"`  →  (Requester, Drives, PSEL)
+///
+/// **Passive reads** (signal is subject, actor samples after a preposition):
+///   `"HREADY is sampled by the Manager"`  →  (Manager, Reads, HREADY)
+///
+/// **Active reads** (actor is sentence subject):
+///   `"The Manager samples HREADY"`  →  (Manager, Reads, HREADY)
+fn extract_actor_signal_relations(
+    statements: &[ExtractedStatement],
+    known_signals: &std::collections::HashSet<String>,
+) -> Vec<ActorSignalRelation> {
+    if known_signals.is_empty() {
+        return Vec::new();
+    }
+
+    // Passive patterns: "{signal} is {verb} by|from {actor}"
+    const PASSIVE_DRIVES_VERBS: &[&str] = &[
+        "driven",
+        "asserted",
+        "provided",
+        "returned",
+        "sent",
+        "sourced",
+        "generated",
+        "issued",
+        "set",
+        "produced",
+        "supplied",
+        "output",
+        "outputted",
+        "activated",
+        "presented",
+        "placed",
+        "applied",
+    ];
+    const PASSIVE_READS_VERBS: &[&str] = &[
+        "read",
+        "sampled",
+        "monitored",
+        "accepted",
+        "received",
+        "captured",
+        "observed",
+        "detected",
+        "checked",
+        "latched",
+    ];
+    // Active patterns: "{actor} {verb} {signal}"  (verb immediately before signal)
+    const ACTIVE_DRIVES_VERBS: &[&str] = &[
+        "drives",
+        "asserts",
+        "provides",
+        "returns",
+        "sources",
+        "generates",
+        "issues",
+        "sets",
+        "produces",
+        "supplies",
+        "outputs",
+        "sends",
+        "activates",
+        "presents",
+        "applies",
+        "places",
+        "drive",
+    ];
+    const ACTIVE_READS_VERBS: &[&str] = &[
+        "reads", "samples", "monitors", "accepts", "receives", "captures", "observes", "detects",
+        "checks", "latches", "read", "sample", "monitor", "accept", "receive",
+    ];
+
+    let mut records = Vec::new();
+    let mut counter = 1usize;
+    let mut seen: std::collections::HashSet<(String, String, u8)> =
+        std::collections::HashSet::new();
+
+    for stmt in statements {
+        // Skip synthesized declarations and table rows
+        if stmt.text.starts_with("Signal ")
+            || stmt.text.starts_with("Enum ")
+            || stmt.text.starts_with('|')
+            || stmt.text.starts_with('-')
+        {
+            continue;
+        }
+
+        let text = &stmt.text;
+        let lowered = text.to_ascii_lowercase();
+
+        for signal in known_signals {
+            let sig_lower = signal.to_ascii_lowercase();
+            if !lowered.contains(&sig_lower) {
+                continue;
+            }
+
+            // ── Passive drives: "{sig} is {verb} by|from {actor}" ────────────
+            // Direct full-pattern search: find the complete phrase then extract what follows.
+            for verb in PASSIVE_DRIVES_VERBS {
+                for prep in &["by", "from"] {
+                    // Pattern: "{signal} is {verb} {prep} " with trailing space so actor starts right after
+                    let full_pat = format!("{} is {} {} ", sig_lower, verb, prep);
+                    if let Some(actor_start_in_lower) = lowered.find(&full_pat) {
+                        let actor_start = actor_start_in_lower + full_pat.len();
+                        if actor_start <= text.len() {
+                            let after = &text[actor_start..];
+                            if let Some(actor) = extract_actor_phrase(after) {
+                                let key = (actor.clone(), signal.clone(), 0u8);
+                                if seen.insert(key) {
+                                    records.push(ActorSignalRelation {
+                                        relation_id: format!("asr_{counter:04}"),
+                                        actor_name: actor,
+                                        signal_name: signal.clone(),
+                                        relation: RelationKind::Drives,
+                                        source_statement_ids: vec![stmt.statement_id.clone()],
+                                        automation_confidence: AutomationConfidence::Medium,
+                                    });
+                                    counter += 1;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // ── Passive reads: "{sig} is {verb} by|from {actor}" ─────────────
+            for verb in PASSIVE_READS_VERBS {
+                for preposition in &[" by ", " from "] {
+                    let by_pat = format!("{} is {} {}", sig_lower, verb, preposition.trim());
+                    if let Some(pat_pos) = lowered.find(&by_pat) {
+                        let actor_start = pat_pos + by_pat.len();
+                        if actor_start <= text.len() {
+                            if let Some(actor) = extract_actor_phrase(&text[actor_start..]) {
+                                let key = (actor.clone(), signal.clone(), 1u8);
+                                if seen.insert(key) {
+                                    records.push(ActorSignalRelation {
+                                        relation_id: format!("asr_{counter:04}"),
+                                        actor_name: actor,
+                                        signal_name: signal.clone(),
+                                        relation: RelationKind::Reads,
+                                        source_statement_ids: vec![stmt.statement_id.clone()],
+                                        automation_confidence: AutomationConfidence::Medium,
+                                    });
+                                    counter += 1;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // ── Active drives: "{actor} {verb} {signal}" ────────────────────
+            for verb in ACTIVE_DRIVES_VERBS {
+                // Look for " {verb} {signal}" in the lowered text
+                let active_pat = format!(" {} {}", verb, sig_lower);
+                if let Some(verb_end_pos) = lowered.find(&active_pat) {
+                    // Subject is the text before verb_end_pos
+                    let before = &text[..verb_end_pos];
+                    if let Some(actor) = extract_subject_phrase(before) {
+                        let key = (actor.clone(), signal.clone(), 0u8);
+                        if seen.insert(key) {
+                            records.push(ActorSignalRelation {
+                                relation_id: format!("asr_{counter:04}"),
+                                actor_name: actor,
+                                signal_name: signal.clone(),
+                                relation: RelationKind::Drives,
+                                source_statement_ids: vec![stmt.statement_id.clone()],
+                                automation_confidence: AutomationConfidence::Medium,
+                            });
+                            counter += 1;
+                        }
+                    }
+                }
+                // Also try "must {verb}" pattern: "the Requester must drive PSEL"
+                let must_pat = format!(" must {} {}", verb, sig_lower);
+                if let Some(verb_end_pos) = lowered.find(&must_pat) {
+                    let before = &text[..verb_end_pos];
+                    if let Some(actor) = extract_subject_phrase(before) {
+                        let key = (actor.clone(), signal.clone(), 0u8);
+                        if seen.insert(key) {
+                            records.push(ActorSignalRelation {
+                                relation_id: format!("asr_{counter:04}"),
+                                actor_name: actor,
+                                signal_name: signal.clone(),
+                                relation: RelationKind::Drives,
+                                source_statement_ids: vec![stmt.statement_id.clone()],
+                                automation_confidence: AutomationConfidence::Medium,
+                            });
+                            counter += 1;
+                        }
+                    }
+                }
+            }
+
+            // ── Active reads: "{actor} {verb} {signal}" ─────────────────────
+            for verb in ACTIVE_READS_VERBS {
+                let active_pat = format!(" {} {}", verb, sig_lower);
+                if let Some(verb_end_pos) = lowered.find(&active_pat) {
+                    let before = &text[..verb_end_pos];
+                    if let Some(actor) = extract_subject_phrase(before) {
+                        let key = (actor.clone(), signal.clone(), 1u8);
+                        if seen.insert(key) {
+                            records.push(ActorSignalRelation {
+                                relation_id: format!("asr_{counter:04}"),
+                                actor_name: actor,
+                                signal_name: signal.clone(),
+                                relation: RelationKind::Reads,
+                                source_statement_ids: vec![stmt.statement_id.clone()],
+                                automation_confidence: AutomationConfidence::Medium,
+                            });
+                            counter += 1;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    records
+}
+
+/// Synthesize `Signal X is output.` declarations from the Drives triples in the
+/// knowledge graph.  These are added to `extracted_statements` so they flow into
+/// `SemanticIr::build_interfaces()` exactly like table-synthesized declarations.
+///
+/// Only unique (signal_name) entries are produced — duplicate Drives triples for
+/// the same signal (different actor names) produce a single declaration.
+fn synthesize_directions_from_relations(
+    relations: &[ActorSignalRelation],
+    already_declared: &std::collections::HashSet<String>,
+    counter: &mut usize,
+) -> Vec<ExtractedStatement> {
+    let mut seen: std::collections::HashSet<String> = std::collections::HashSet::new();
+    let mut statements = Vec::new();
+
+    for rel in relations {
+        if !matches!(rel.relation, RelationKind::Drives) {
+            continue;
+        }
+        // Skip signals already declared from signal description tables.
+        // Table declarations are authoritative and must not be overwritten by
+        // KG-derived declarations (which don’t have width info and may get direction wrong
+        // when multiple actors share a signal).
+        if already_declared.contains(&rel.signal_name) {
+            continue;
+        }
+        // One declaration per unique signal name — direction = output (from the driving actor).
+        if seen.insert(rel.signal_name.clone()) {
+            *counter += 1;
+            let text = format!("Signal {} is output.", rel.signal_name);
+            statements.push(ExtractedStatement {
+                statement_id: format!("statement_{counter:04}"),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text,
+                evidence_span_ids: rel.source_statement_ids.clone(),
+                related_visual_evidence_ids: vec![],
+            });
+        }
+    }
+    statements
+}
+
+/// Extract the actor name from the text that follows a passive verb phrase
+/// like `"is driven by "` or `"is asserted from "`.
+/// Returns the first 1–3 meaningful words stripped of leading articles.
+///
+/// Examples:
+///   `"the slave, which ..."` → `Some("slave")`
+///   `"the Completer to indicate"` → `Some("Completer")`
+///   `"a Manager or Subordinate"` → `Some("Manager")`
+fn extract_actor_phrase(text: &str) -> Option<String> {
+    let trimmed = text.trim_start();
+    // Strip leading article determiners (the, a, an, this, its, each, all, every, any)
+    let stripped = {
+        let lowered = trimmed.to_ascii_lowercase();
+        let mut result = trimmed;
+        for prefix in &[
+            "the ", "a ", "an ", "this ", "its ", "each ", "all ", "every ", "any ",
+        ] {
+            if lowered.starts_with(prefix) {
+                result = &trimmed[prefix.len()..];
+                break;
+            }
+        }
+        result
+    };
+    // Collect words until a delimiter or stop-word
+    const STOP_DELIMITERS: &[char] = &['.', ',', ';', '(', ')'];
+    const STOP_WORDS: &[&str] = &[
+        "to", "for", "and", "or", "in", "at", "on", "with", "when", "if", "by", "from", "that",
+        "which", "where", "as", "is", "are", "has", "have", "will", "shall",
+    ];
+    let mut words: Vec<&str> = Vec::new();
+    for word in stripped.split_whitespace() {
+        // Stop at punctuation
+        let clean: &str = word.trim_end_matches(STOP_DELIMITERS);
+        if clean.is_empty() {
+            break;
+        }
+        // Stop at stop-words (but only after collecting at least one word)
+        if !words.is_empty() && STOP_WORDS.contains(&clean.to_ascii_lowercase().as_str()) {
+            break;
+        }
+        words.push(clean);
+        if words.len() >= 2 {
+            break; // two words is enough for compound actor names
+        }
+    }
+    if words.is_empty() {
+        return None;
+    }
+    let actor = words.join(" ");
+    // Reject trivial / single-character results
+    if actor.len() < 2 {
+        return None;
+    }
+    Some(actor)
+}
+
+/// Extract the actor name from the text BEFORE an active verb phrase like
+/// `"drives HTRANS"`.  Returns the last 1–2 meaningful words of the subject,
+/// stripped of trailing articles and punctuation.
+///
+/// Examples:
+///   `"The Manager"` → `Some("Manager")`
+///   `"The Completer device"` → `Some("Completer device")`
+///   `"AMBA AHB The Manager"` → `Some("Manager")`
+fn extract_subject_phrase(text: &str) -> Option<String> {
+    const SKIP_WORDS: &[&str] = &[
+        "the", "a", "an", "this", "that", "and", "or", "when", "if", ".", ",", ";", "(", ")", ":",
+    ];
+    let words: Vec<&str> = text.split_whitespace().collect();
+    // Work backwards from the end to find the last meaningful word(s)
+    let mut actor_words: Vec<&str> = Vec::new();
+    for word in words.iter().rev() {
+        let clean = word.trim_matches(|c: char| !c.is_ascii_alphabetic());
+        if clean.is_empty() {
+            break;
+        }
+        let lower = clean.to_ascii_lowercase();
+        if SKIP_WORDS.contains(&lower.as_str()) {
+            if !actor_words.is_empty() {
+                break; // stop collecting after hitting an article
+            }
+            continue; // skip leading articles at the front of our backward scan
+        }
+        actor_words.push(clean);
+        if actor_words.len() >= 2 {
+            break;
+        }
+    }
+    if actor_words.is_empty() {
+        return None;
+    }
+    actor_words.reverse();
+    let actor = actor_words.join(" ");
+    if actor.len() < 2 {
+        return None;
+    }
+    Some(actor)
+}
+
+/// Returns `true` if the section title indicates boilerplate content
 /// introduction, revision history, references, etc.) where normative language is used
 /// for compliance purposes rather than hardware behavior constraints.
 fn is_boilerplate_section_title(title: &str) -> bool {
@@ -2791,6 +3378,208 @@ mod tests {
                 "HIGH is a logic level, not a signal"
             );
         }
+    }
+
+    // ── Tier 2 Knowledge Graph: actor–signal relation extraction ────────────
+
+    #[test]
+    fn passive_drive_pattern_extracts_actor_and_signal() {
+        use super::{
+            EvidenceModality, ExtractedStatement, RelationKind, StatementClass,
+            collect_known_signal_names, extract_actor_signal_relations,
+        };
+
+        let signals = ["PREADY".to_string()]
+            .into_iter()
+            .collect::<std::collections::HashSet<_>>();
+        let stmts = vec![ExtractedStatement {
+            statement_id: "s1".to_string(),
+            text: "PREADY is driven by the slave.".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }];
+        let relations = extract_actor_signal_relations(&stmts, &signals);
+        assert!(
+            relations.iter().any(|r| r.signal_name == "PREADY"
+                && matches!(r.relation, RelationKind::Drives)
+                && r.actor_name == "slave"),
+            "passive 'is driven by' must extract (slave, Drives, PREADY), got: {:?}",
+            relations
+        );
+    }
+
+    #[test]
+    fn active_drive_pattern_extracts_actor_and_signal() {
+        use super::{
+            EvidenceModality, ExtractedStatement, RelationKind, StatementClass,
+            extract_actor_signal_relations,
+        };
+
+        let signals = ["HTRANS".to_string()]
+            .into_iter()
+            .collect::<std::collections::HashSet<_>>();
+        let stmts = vec![ExtractedStatement {
+            statement_id: "s2".to_string(),
+            text: "The Manager drives HTRANS to indicate the transfer type.".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }];
+        let relations = extract_actor_signal_relations(&stmts, &signals);
+        assert!(
+            relations.iter().any(|r| r.signal_name == "HTRANS"
+                && matches!(r.relation, RelationKind::Drives)
+                && r.actor_name == "Manager"),
+            "active 'drives SIGNAL' must extract (Manager, Drives, HTRANS), got: {:?}",
+            relations
+        );
+    }
+
+    #[test]
+    fn passive_read_pattern_extracts_actor_and_signal() {
+        use super::{
+            EvidenceModality, ExtractedStatement, RelationKind, StatementClass,
+            extract_actor_signal_relations,
+        };
+
+        let signals = ["HREADY".to_string()]
+            .into_iter()
+            .collect::<std::collections::HashSet<_>>();
+        let stmts = vec![ExtractedStatement {
+            statement_id: "s3".to_string(),
+            text: "HREADY is sampled by the Manager on every rising edge.".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }];
+        let relations = extract_actor_signal_relations(&stmts, &signals);
+        assert!(
+            relations.iter().any(|r| r.signal_name == "HREADY"
+                && matches!(r.relation, RelationKind::Reads)
+                && r.actor_name == "Manager"),
+            "passive 'is sampled by' must extract (Manager, Reads, HREADY), got: {:?}",
+            relations
+        );
+    }
+
+    #[test]
+    fn must_drive_pattern_extracts_actor_from_requester_sentence() {
+        // Validates APB-style sentence: "The Requester must drive PSEL"
+        use super::{
+            EvidenceModality, ExtractedStatement, RelationKind, StatementClass,
+            extract_actor_signal_relations,
+        };
+
+        let signals = ["PSEL".to_string()]
+            .into_iter()
+            .collect::<std::collections::HashSet<_>>();
+        let stmts = vec![ExtractedStatement {
+            statement_id: "s4".to_string(),
+            text: "The Requester must drive PSEL before asserting PENABLE.".to_string(),
+            class: StatementClass::NormativeStatement,
+            modality: EvidenceModality::Text,
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }];
+        let relations = extract_actor_signal_relations(&stmts, &signals);
+        assert!(
+            relations.iter().any(|r| r.signal_name == "PSEL"
+                && matches!(r.relation, RelationKind::Drives)
+                && r.actor_name == "Requester"),
+            "'must drive SIGNAL' must extract (Requester, Drives, PSEL), got: {:?}",
+            relations
+        );
+    }
+
+    #[test]
+    fn synthesize_directions_produces_signal_is_output_declaration() {
+        use super::synthesize_directions_from_relations;
+        use crate::ir::source::{ActorSignalRelation, AutomationConfidence, RelationKind};
+
+        let relations = vec![ActorSignalRelation {
+            relation_id: "asr_0001".to_string(),
+            actor_name: "slave".to_string(),
+            signal_name: "PREADY".to_string(),
+            relation: RelationKind::Drives,
+            source_statement_ids: vec!["s1".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        }];
+        let mut counter = 10usize;
+        let already_declared: std::collections::HashSet<String> = std::collections::HashSet::new();
+        let stmts =
+            synthesize_directions_from_relations(&relations, &already_declared, &mut counter);
+        assert_eq!(stmts.len(), 1);
+        assert_eq!(stmts[0].text, "Signal PREADY is output.");
+        assert_eq!(stmts[0].class, StatementClass::SourceFact);
+    }
+
+    #[test]
+    fn kg_extraction_produces_graph_declarations_in_evidence_ir() -> Result<()> {
+        // Integration test: a spec with APB-style prose should produce actor-signal
+        // relations and synthesized Signal X is output. declarations in EvidenceIR.
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        // Include a table-synthesized Signal PREADY declaration AND a prose sentence
+        // that references PREADY and another known signal HTRANS.
+        fs::write(
+            &source,
+            concat!(
+                "# Signals\n",
+                "Signal PREADY is input width 1.\n",
+                "Signal HTRANS is output width 2.\n",
+                "\n",
+                "# Protocol\n",
+                "PREADY is driven by the slave to indicate transfer completion.\n",
+                "The Manager drives HTRANS to specify the transfer type.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        // The KG should have found both relations.
+        assert!(
+            evidence_ir.actor_signal_relations.iter().any(|r| {
+                use crate::ir::source::RelationKind;
+                r.signal_name == "PREADY"
+                    && matches!(r.relation, RelationKind::Drives)
+                    && r.actor_name == "slave"
+            }),
+            "expected (slave, Drives, PREADY) in actor_signal_relations"
+        );
+        assert!(
+            evidence_ir.actor_signal_relations.iter().any(|r| {
+                use crate::ir::source::RelationKind;
+                r.signal_name == "HTRANS"
+                    && matches!(r.relation, RelationKind::Drives)
+                    && r.actor_name == "Manager"
+            }),
+            "expected (Manager, Drives, HTRANS) in actor_signal_relations"
+        );
+
+        // No direction synthesis for PREADY because it is already declared in the spec
+        // ("Signal PREADY is input width 1."). Table declarations are authoritative.
+        // The KG relation records are the important output for already-declared signals.
+        assert!(
+            !evidence_ir
+                .extracted_statements
+                .iter()
+                .any(|s| s.text == "Signal PREADY is output."),
+            "KG synthesis must NOT override an existing table declaration for PREADY"
+        );
+
+        Ok(())
     }
 
     // ── Form 2: signal alias learning ───────────────────────────────────
