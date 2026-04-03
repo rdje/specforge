@@ -112,8 +112,7 @@ def classify_diagram_kind(caption_text, asset_kind):
     # Always unknown for table regions (they are handled structurally).
     if asset_kind == "table_region":
         return "unknown"
-    # Timing diagram: waveform, timing, clock, waveform, signal transitions.
-    # In chip spec figures, "transfer", "burst", "wait state" diagrams are timing diagrams.
+    # Timing diagram — pass 1: explicit timing/waveform vocabulary.
     if any(kw in lowered for kw in [
         "timing diagram", "timing waveform", "waveform diagram", "waveform",
         "timing", "handshake timing", "clock timing", "signal timing",
@@ -128,6 +127,22 @@ def classify_diagram_kind(caption_text, asset_kind):
         "error response",
         "transfer type example",
         "four-beat", "eight-beat", "sixteen-beat",
+    ]):
+        return "timing_diagram"
+    # Timing diagram — pass 2: figures whose captions use protocol execution vocabulary.
+    # Bus protocol specs name clocked waveform figures after the operation they depict
+    # ("write transaction", "VALID before READY handshake", "exit from reset", …).
+    # Any figure—identified by "figure" in the caption—that mentions a transfer,
+    # transaction, handshake, or burst operation is treated as a timing waveform.
+    # This is intentionally inclusive: the VLM handles borderline cases gracefully;
+    # it is worse to discard a real timing diagram than to forward a data-layout one.
+    if "figure" in lowered and any(kw in lowered for kw in [
+        "transfer",        # write/read/failed/example transfer diagrams
+        "transaction",     # AXI uses “transaction” where AHB/APB use “transfer”
+        "handshake",       # VALID/READY handshake waveforms
+        "burst",           # burst transfer/transaction waveforms
+        "exit from reset", # reset de-assertion waveform
+        "sequence diagram", # sequential/credit-control visualisations
     ]):
         return "timing_diagram"
     # State machine / state transition diagram.

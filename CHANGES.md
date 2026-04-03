@@ -1,4 +1,20 @@
 # CHANGES
+## 2026-04-03 (broader timing_diagram classification for figure captions)
+
+### Fixed: classify_diagram_kind() in docling_backend.rs Python helper
+- Added a second pass to the timing_diagram check: for any asset whose caption
+  contains "figure", also classify as timing_diagram when caption uses protocol
+  execution vocabulary: "transfer", "transaction", "handshake", "burst",
+  "exit from reset", "sequence diagram".
+- Rationale: bus protocol specs name clocked waveform figures after the operation
+  they depict. Explicit "timing" / "waveform" words are often absent. The check
+  is intentionally inclusive; VLM handles borderline cases gracefully.
+- Simulated impact on AXI after re-ingest:
+  - timing_diagram: 2 → 20 (+18)
+  - New: VALID/READY handshake waveforms, write/read transaction dependencies,
+    atomic transactions, wrapping transfers, PCMO, snoop, sequence diagrams.
+  - Non-timing figures (architecture, data structure, topology) stay unknown.
+- 96/96 tests pass.
 ## 2026-04-03 (caption-gated signal_description classification in Docling ingest helper)
 
 ### Fixed: classify_table_kind() in docling_backend.rs Python helper
