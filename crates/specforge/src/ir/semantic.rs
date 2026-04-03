@@ -8,7 +8,7 @@ use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::evidence::{EvidenceIr, StatementClass, VisualEvidenceRole, VisualObservationKind};
 use crate::ir::source::{
-    AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket, document_key,
+    AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket, WidthHint, document_key,
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -303,7 +303,7 @@ pub struct InterfaceSignalRecord {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub direction_hint: Option<InterfaceSignalDirection>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub width_hint: Option<u32>,
+    pub width_hint: Option<WidthHint>,
     pub supporting_statement_ids: Vec<String>,
     pub automation_confidence: AutomationConfidence,
 }
@@ -738,7 +738,7 @@ pub struct ExplicitTopPortRecord {
     pub port_name: String,
     pub direction_hint: InterfaceSignalDirection,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub width_hint: Option<u32>,
+    pub width_hint: Option<WidthHint>,
     pub declaration_order: u32,
     pub supporting_statement_ids: Vec<String>,
     pub automation_confidence: AutomationConfidence,
@@ -924,7 +924,7 @@ struct InterfaceAccumulator {
 #[derive(Debug, Clone)]
 struct InterfaceSignalAccumulator {
     direction_hint: Option<InterfaceSignalDirection>,
-    width_hint: Option<u32>,
+    width_hint: Option<WidthHint>,
     supporting_statement_ids: BTreeSet<String>,
     automation_confidence: AutomationConfidence,
 }
@@ -987,7 +987,7 @@ struct InitAssignmentAccumulator {
 struct ParsedInterfaceSignalDeclaration {
     signal_name: String,
     direction_hint: InterfaceSignalDirection,
-    width_hint: Option<u32>,
+    width_hint: Option<WidthHint>,
 }
 
 #[derive(Debug, Clone)]
@@ -3409,8 +3409,10 @@ impl<'a> ControlExpressionParser<'a> {
                 continue;
             }
             if self.consume("@") {
+                // WidthCast uses a literal numeric width (e.g. signal@32),
+                // not a parametric expression — use parse_u32_token here.
                 suffixes.push(ControlReferenceSuffix::WidthCast {
-                    width: parse_width_token(&self.next_owned()?)?,
+                    width: parse_u32_token(&self.next_owned()?)?,
                 });
                 continue;
             }
@@ -3560,7 +3562,7 @@ fn parse_interface_signal_direction(token: &str) -> Option<InterfaceSignalDirect
     None
 }
 
-fn parse_optional_width_hint(tokens: &[&str], index: &mut usize) -> Option<u32> {
+fn parse_optional_width_hint(tokens: &[&str], index: &mut usize) -> Option<WidthHint> {
     let Some(token) = tokens.get(*index).copied() else {
         return None;
     };
@@ -3576,7 +3578,11 @@ fn parse_optional_width_hint(tokens: &[&str], index: &mut usize) -> Option<u32> 
     Some(width)
 }
 
-fn parse_width_token(token: &str) -> Option<u32> {
+/// Parse a single width token into a `WidthHint`.
+/// Handles:
+/// - Numeric: `"32"`, `"1"`, `"4-bit"`, `"8-bits"` → `Numeric(n)`
+/// - Parametric: `"ADDR_WIDTH"`, `"DATA_WIDTH/8"` → `Parametric(expr)`
+fn parse_width_token(token: &str) -> Option<WidthHint> {
     let trimmed = token
         .trim()
         .trim_end_matches('.')
@@ -3586,8 +3592,18 @@ fn parse_width_token(token: &str) -> Option<u32> {
         .strip_suffix("-bit")
         .or_else(|| trimmed.strip_suffix("-bits"))
         .unwrap_or(trimmed);
-    let width = trimmed.parse::<u32>().ok()?;
-    (width > 0).then_some(width)
+
+    // Try numeric first
+    if let Ok(n) = trimmed.parse::<u32>() {
+        return (n > 0).then_some(WidthHint::Numeric(n));
+    }
+
+    // Non-numeric but contains alphabetic chars → parametric expression
+    if !trimmed.is_empty() && trimmed.chars().any(|c| c.is_ascii_alphabetic()) {
+        return Some(WidthHint::Parametric(trimmed.to_string()));
+    }
+
+    None
 }
 
 fn known_explicit_signal_names(context: &SemanticContext) -> BTreeSet<String> {
@@ -3639,7 +3655,7 @@ fn register_interface_signal_record(
     accumulator: &mut InterfaceAccumulator,
     signal_name: &str,
     direction_hint: Option<InterfaceSignalDirection>,
-    width_hint: Option<u32>,
+    width_hint: Option<WidthHint>,
     supporting_statement_id: &str,
     automation_confidence: AutomationConfidence,
 ) {
@@ -3665,9 +3681,9 @@ fn register_interface_signal_record(
         max_automation_confidence(entry.automation_confidence, automation_confidence);
 }
 
-fn merge_signal_hint<T: Copy + Eq>(target: &mut Option<T>, incoming: Option<T>) {
-    match (*target, incoming) {
-        (None, Some(value)) => *target = Some(value),
+fn merge_signal_hint<T: Clone + Eq>(target: &mut Option<T>, incoming: Option<T>) {
+    match (target.as_ref(), incoming.as_ref()) {
+        (None, Some(value)) => *target = Some(value.clone()),
         (Some(existing), Some(value)) if existing != value => *target = None,
         _ => {}
     }
@@ -4955,7 +4971,9 @@ mod tests {
 
     use crate::error::Result;
     use crate::ir::evidence::EvidenceIr;
-    use crate::ir::source::{AutomationConfidence, SourceIr, VisualAsset, VisualAssetKind};
+    use crate::ir::source::{
+        AutomationConfidence, SourceIr, VisualAsset, VisualAssetKind, WidthHint,
+    };
 
     use super::{
         ControlActionRecord, ControlBinaryOperator, ControlBlockRole,
@@ -5118,12 +5136,12 @@ mod tests {
         assert!(explicit_interface.signal_records.iter().any(|signal| {
             signal.signal_name == "DATA_IN"
                 && signal.direction_hint == Some(InterfaceSignalDirection::Input)
-                && signal.width_hint == Some(8)
+                && signal.width_hint == Some(WidthHint::Numeric(8))
         }));
         assert!(explicit_interface.signal_records.iter().any(|signal| {
             signal.signal_name == "ZERO_FLAG"
                 && signal.direction_hint == Some(InterfaceSignalDirection::Output)
-                && signal.width_hint == Some(1)
+                && signal.width_hint == Some(WidthHint::Numeric(1))
         }));
         assert_eq!(semantic_ir.decision_tree_fragments.len(), 2);
         assert!(semantic_ir.decision_tree_fragments.iter().any(|fragment| {
@@ -5543,7 +5561,7 @@ mod tests {
                     interface.signal_records.iter().any(|signal| {
                         signal.signal_name == "input_data"
                             && signal.direction_hint == Some(InterfaceSignalDirection::Input)
-                            && signal.width_hint == Some(8)
+                            && signal.width_hint == Some(WidthHint::Numeric(8))
                     })
                 })
         }));
@@ -5559,7 +5577,7 @@ mod tests {
         assert!(explicit_top.ports.iter().any(|port| {
             port.port_name == "result_data"
                 && port.direction_hint == InterfaceSignalDirection::Output
-                && port.width_hint == Some(8)
+                && port.width_hint == Some(WidthHint::Numeric(8))
         }));
         assert!(explicit_top.children.iter().any(|child| {
             child.instance_name == "producer" && child.source_module_name == "producer_core"
@@ -5916,21 +5934,21 @@ mod tests {
 
         let haddr = find_signal("HADDR").expect("HADDR should be extracted from table");
         assert_eq!(haddr.direction_hint, Some(InterfaceSignalDirection::Output));
-        assert_eq!(haddr.width_hint, Some(32));
+        assert_eq!(haddr.width_hint, Some(WidthHint::Numeric(32)));
 
         let hwrite = find_signal("HWRITE").expect("HWRITE should be extracted from table");
         assert_eq!(
             hwrite.direction_hint,
             Some(InterfaceSignalDirection::Output)
         );
-        assert_eq!(hwrite.width_hint, Some(1));
+        assert_eq!(hwrite.width_hint, Some(WidthHint::Numeric(1)));
 
         let htrans = find_signal("HTRANS").expect("HTRANS should be extracted from table");
         assert_eq!(
             htrans.direction_hint,
             Some(InterfaceSignalDirection::Output)
         );
-        assert_eq!(htrans.width_hint, Some(2));
+        assert_eq!(htrans.width_hint, Some(WidthHint::Numeric(2)));
 
         // Subordinate signals should be extracted as Input with explicit widths.
         let hreadyout = find_signal("HREADYOUT").expect("HREADYOUT should be extracted from table");
@@ -5938,11 +5956,11 @@ mod tests {
             hreadyout.direction_hint,
             Some(InterfaceSignalDirection::Input)
         );
-        assert_eq!(hreadyout.width_hint, Some(1));
+        assert_eq!(hreadyout.width_hint, Some(WidthHint::Numeric(1)));
 
         let hresp = find_signal("HRESP").expect("HRESP should be extracted from table");
         assert_eq!(hresp.direction_hint, Some(InterfaceSignalDirection::Input));
-        assert_eq!(hresp.width_hint, Some(1));
+        assert_eq!(hresp.width_hint, Some(WidthHint::Numeric(1)));
 
         Ok(())
     }

@@ -246,6 +246,43 @@ pub struct ContentSectionRecord {
     pub section_kind: SectionKind,
 }
 
+/// Width specification for a hardware signal port or pin.
+///
+/// Bit widths in RTL design are either:
+/// - **Numeric**: a fixed compile-time constant (always positive, typically a power of 2
+///   or an even multiple: 1, 2, 3, 4, 8, 16, 32, 64, 128, 256, …)
+/// - **Parametric**: a user-configurable RTL parameter that the integrator sets at
+///   instantiation time (e.g. `ADDR_WIDTH = 32`, `DATA_WIDTH = 64`).
+///   A parametric width is NOT unknown — it is a fully specified design intent whose
+///   concrete value is supplied by whoever instantiates the IP.
+///
+/// **Serialization**: `WidthHint::Numeric(32)` → JSON `32`; `WidthHint::Parametric("ADDR_WIDTH")`
+/// → JSON `"ADDR_WIDTH"`.  This is backward-compatible with the legacy `width_hint: u32` field.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(untagged)]
+pub enum WidthHint {
+    /// A fixed numeric bit width (e.g. 1, 2, 32, 64).
+    Numeric(u32),
+    /// A user-configurable RTL parameter expression (e.g. "ADDR_WIDTH", "DATA_WIDTH/8").
+    /// The actual value is bound at instantiation time by the integrator.
+    Parametric(String),
+}
+
+impl WidthHint {
+    /// Returns the numeric value if this is a fixed-width hint, otherwise `None`.
+    pub fn as_numeric(&self) -> Option<u32> {
+        match self {
+            Self::Numeric(bits) => Some(*bits),
+            Self::Parametric(_) => None,
+        }
+    }
+
+    /// Returns `true` if this is a user-configurable parametric width.
+    pub fn is_parametric(&self) -> bool {
+        matches!(self, Self::Parametric(_))
+    }
+}
+
 /// The kind of relation between an actor and a signal in the knowledge graph.
 /// Extracted from prose verb phrases (Tier 2 pattern matching or Tier 3 LLM).
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]

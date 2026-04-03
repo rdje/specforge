@@ -8,7 +8,7 @@ use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::source::{
     ActorSignalRelation, ConditionalRuleRecord, RegisterFieldRecord, RegisterRecord, RelationKind,
-    SignalConstraintKind, SignalConstraintRecord, TimingConstraintRecord,
+    SignalConstraintKind, SignalConstraintRecord, TimingConstraintRecord, WidthHint,
 };
 use crate::ir::source::{
     AutomationConfidence, NormalizationStatus, SectionKind, SourceIr, TableKind, VisualAsset,
@@ -463,12 +463,18 @@ impl EvidenceIr {
             )
         });
 
+        // Collect signal widths from all signal-description table Width columns.
+        // These are passed to synthesize_directions_from_relations() so that KG-synthesized
+        // declarations carry width information (e.g. "Signal PADDR is output width ADDR_WIDTH.").
+        let signal_widths_from_tables = collect_signal_widths_from_tables(&source_ir);
+
         // Synthesize direction declarations ONLY for signals without an existing table declaration.
         // Signals already declared from tables are authoritative; do not overwrite them.
         let mut dir_counter = statement_counter;
         let direction_declarations = synthesize_directions_from_relations(
             &actor_signal_relations,
             &signal_names_from_decls,
+            &signal_widths_from_tables,
             &mut dir_counter,
         );
         let mut extracted_statements = extracted_statements;
@@ -1221,6 +1227,61 @@ fn extract_relations_from_signal_tables(source_ir: &SourceIr) -> Vec<ActorSignal
     records
 }
 
+/// Collect hardware signal widths from signal-description table Width columns.
+/// Returns a map of signal_name → WidthHint.
+/// Used to enrich KG-synthesized direction declarations with width information
+/// (e.g. "Signal PADDR is output width ADDR_WIDTH.") even when direction
+/// must come from prose rather than the table.
+fn collect_signal_widths_from_tables(
+    source_ir: &SourceIr,
+) -> std::collections::HashMap<String, WidthHint> {
+    let mut widths = std::collections::HashMap::new();
+    for table in &source_ir.structured_tables {
+        if !matches!(table.table_kind, TableKind::SignalDescription) {
+            continue;
+        }
+        let header_texts: Vec<String> = table
+            .header_rows
+            .first()
+            .map(|row| row.iter().map(|c| c.text.to_ascii_lowercase()).collect())
+            .unwrap_or_default();
+        let width_col = header_texts
+            .iter()
+            .position(|h| h.contains("width") || h.contains("bits") || h.contains("size"));
+        let Some(w_col) = width_col else {
+            continue;
+        };
+        for row in &table.body_rows {
+            let Some(name_cell) = row.first() else {
+                continue;
+            };
+            let signal = name_cell
+                .text
+                .split_whitespace()
+                .next()
+                .unwrap_or("")
+                .to_ascii_uppercase();
+            if !is_hardware_signal_token(&signal) || is_signal_synthesis_non_signal(&signal) {
+                continue;
+            }
+            if let Some(width_cell) = row.get(w_col) {
+                let t = width_cell.text.trim();
+                if t.is_empty() || t == "-" || t == "N/A" {
+                    continue;
+                }
+                if let Ok(n) = t.parse::<u32>() {
+                    if n > 0 {
+                        widths.insert(signal, WidthHint::Numeric(n));
+                    }
+                } else if t.chars().any(|c| c.is_ascii_alphabetic()) {
+                    widths.insert(signal, WidthHint::Parametric(t.to_string()));
+                }
+            }
+        }
+    }
+    widths
+}
+
 /// Tier 2: Extract actor–signal relation triples from prose sentences using
 /// verb-pattern matching.  Only sentences that mention a known signal name are
 /// processed, keeping precision high.
@@ -1463,6 +1524,7 @@ fn extract_actor_signal_relations(
 fn synthesize_directions_from_relations(
     relations: &[ActorSignalRelation],
     already_declared: &std::collections::HashSet<String>,
+    width_map: &std::collections::HashMap<String, WidthHint>,
     counter: &mut usize,
 ) -> Vec<ExtractedStatement> {
     let mut seen: std::collections::HashSet<String> = std::collections::HashSet::new();
@@ -1474,15 +1536,23 @@ fn synthesize_directions_from_relations(
         }
         // Skip signals already declared from signal description tables.
         // Table declarations are authoritative and must not be overwritten by
-        // KG-derived declarations (which don’t have width info and may get direction wrong
-        // when multiple actors share a signal).
+        // KG-derived declarations.
         if already_declared.contains(&rel.signal_name) {
             continue;
         }
         // One declaration per unique signal name — direction = output (from the driving actor).
         if seen.insert(rel.signal_name.clone()) {
             *counter += 1;
-            let text = format!("Signal {} is output.", rel.signal_name);
+            // Include width from the table Width column if available.
+            let text = match width_map.get(&rel.signal_name) {
+                Some(WidthHint::Numeric(bits)) => {
+                    format!("Signal {} is output width {bits}.", rel.signal_name)
+                }
+                Some(WidthHint::Parametric(expr)) => {
+                    format!("Signal {} is output width {expr}.", rel.signal_name)
+                }
+                None => format!("Signal {} is output.", rel.signal_name),
+            };
             statements.push(ExtractedStatement {
                 statement_id: format!("statement_{counter:04}"),
                 class: StatementClass::SourceFact,
@@ -2662,15 +2732,34 @@ fn synthesize_signal_declarations(
             })
             .or(default_dir);
 
-        // Parse numeric width; skip parametric widths like ADDR_WIDTH.
-        let width: Option<u32> = width_col.and_then(|col| {
-            row.get(col)
-                .and_then(|cell| cell.text.trim().parse::<u32>().ok())
-                .filter(|&w| w > 0 && w <= 1024)
+        // Extract width: numeric (e.g. 32) or parametric (e.g. ADDR_WIDTH, DATA_WIDTH/8).
+        // Both are valid RTL port widths; parametric means the integrator sets the value.
+        let width: Option<WidthHint> = width_col.and_then(|col| {
+            row.get(col).and_then(|cell| {
+                let t = cell.text.trim();
+                // Skip empty or placeholder cells
+                if t.is_empty() || t == "-" || t == "N/A" || t == "n/a" {
+                    return None;
+                }
+                // Try numeric first (positive; no artificial upper bound — bus widths can be large)
+                if let Ok(n) = t.parse::<u32>() {
+                    return (n > 0).then_some(WidthHint::Numeric(n));
+                }
+                // Non-numeric but contains alphabetic chars → parametric expression
+                if t.chars().any(|c| c.is_ascii_alphabetic()) {
+                    return Some(WidthHint::Parametric(t.to_string()));
+                }
+                None
+            })
         });
 
-        let text = match (direction, width) {
-            (Some(dir), Some(w)) => format!("Signal {token} is {dir} width {w}."),
+        let text = match (direction, &width) {
+            (Some(dir), Some(WidthHint::Numeric(bits))) => {
+                format!("Signal {token} is {dir} width {bits}.")
+            }
+            (Some(dir), Some(WidthHint::Parametric(expr))) => {
+                format!("Signal {token} is {dir} width {expr}.")
+            }
             (Some(dir), None) => format!("Signal {token} is {dir}."),
             _ => continue,
         };
@@ -3498,7 +3587,9 @@ mod tests {
     #[test]
     fn synthesize_directions_produces_signal_is_output_declaration() {
         use super::synthesize_directions_from_relations;
-        use crate::ir::source::{ActorSignalRelation, AutomationConfidence, RelationKind};
+        use crate::ir::source::{
+            ActorSignalRelation, AutomationConfidence, RelationKind, WidthHint,
+        };
 
         let relations = vec![ActorSignalRelation {
             relation_id: "asr_0001".to_string(),
@@ -3510,8 +3601,14 @@ mod tests {
         }];
         let mut counter = 10usize;
         let already_declared: std::collections::HashSet<String> = std::collections::HashSet::new();
-        let stmts =
-            synthesize_directions_from_relations(&relations, &already_declared, &mut counter);
+        let width_map: std::collections::HashMap<String, WidthHint> =
+            std::collections::HashMap::new();
+        let stmts = synthesize_directions_from_relations(
+            &relations,
+            &already_declared,
+            &width_map,
+            &mut counter,
+        );
         assert_eq!(stmts.len(), 1);
         assert_eq!(stmts[0].text, "Signal PREADY is output.");
         assert_eq!(stmts[0].class, StatementClass::SourceFact);

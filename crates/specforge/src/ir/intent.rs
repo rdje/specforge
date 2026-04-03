@@ -878,10 +878,10 @@ mod tests {
         )?;
 
         assert!(intent_ir.interfaces.iter().any(|interface| {
-            interface
-                .signal_records
-                .iter()
-                .any(|signal| signal.signal_name == "DATA_IN" && signal.width_hint == Some(8))
+            interface.signal_records.iter().any(|signal| {
+                signal.signal_name == "DATA_IN"
+                    && signal.width_hint.as_ref().and_then(|w| w.as_numeric()) == Some(8)
+            })
         }));
         assert_eq!(intent_ir.decision_tree_fragments.len(), 2);
         assert!(

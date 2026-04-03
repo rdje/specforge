@@ -868,11 +868,14 @@ fn build_signal_inventory_map_from_surface(
         }
 
         for signal in &interface.signal_records {
+            // Adapters currently use numeric widths only for port declarations (e.g. +size in FSM).
+            // Parametric widths (ADDR_WIDTH, DATA_WIDTH) are user-configurable and kept as None here;
+            // the SystemVerilog adapter (future) will emit them as parameter references.
             register_canonical_signal(
                 &mut inventory,
                 &signal.signal_name,
                 signal.direction_hint,
-                signal.width_hint,
+                signal.width_hint.as_ref().and_then(|w| w.as_numeric()),
                 &interface.interface_id,
                 "interface",
                 signal.automation_confidence,
@@ -1309,7 +1312,7 @@ fn build_top_signal_inventory(ports: &[ExplicitTopPortRecord]) -> Vec<FsmSignalC
         .map(|port| FsmSignalCandidate {
             signal_name: port.port_name.clone(),
             direction_hint: Some(port.direction_hint),
-            width_hint: port.width_hint,
+            width_hint: port.width_hint.as_ref().and_then(|w| w.as_numeric()),
             supporting_canonical_ids: port.supporting_statement_ids.clone(),
             mention_categories: vec!["top_port".to_string()],
             automation_confidence: port.automation_confidence,
@@ -1405,7 +1408,7 @@ fn analyze_top_renderability(
             port.port_name.clone(),
             RenderableEndpointPort {
                 direction_hint: port.direction_hint,
-                width_hint: port.width_hint,
+                width_hint: port.width_hint.as_ref().and_then(|w| w.as_numeric()),
             },
         );
     }
@@ -3587,7 +3590,9 @@ fn render_top_root(top_root: &FsmRenderableTopRoot) -> String {
 }
 
 fn render_top_port_token(port: &ExplicitTopPortRecord) -> String {
-    match (port.direction_hint, port.width_hint) {
+    // The FSM adapter uses numeric widths only; parametric widths are not yet rendered.
+    let numeric_width = port.width_hint.as_ref().and_then(|w| w.as_numeric());
+    match (port.direction_hint, numeric_width) {
         (InterfaceSignalDirection::Input, None | Some(1)) => port.port_name.clone(),
         (InterfaceSignalDirection::Input, Some(width)) => format!("{}<{width}", port.port_name),
         (InterfaceSignalDirection::Output, None | Some(1)) => format!("{}>", port.port_name),

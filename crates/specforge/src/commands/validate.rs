@@ -6,7 +6,7 @@ use crate::ir::IrStage;
 use crate::ir::evidence::{EvidenceIr, StatementClass, VisualObservationKind};
 use crate::ir::intent::IntentIr;
 use crate::ir::semantic::SemanticIr;
-use crate::ir::source::{AutomationConfidence, DiagramKind, SourceIr};
+use crate::ir::source::{AutomationConfidence, DiagramKind, SourceIr, WidthHint};
 
 pub fn run(args: ValidateArgs) -> Result<()> {
     // Auto-detect stage from artifact JSON `stage` field.
@@ -349,10 +349,17 @@ fn validate_intent_ir(ir: &IntentIr) {
         .iter()
         .filter(|s| s.direction_hint.is_some())
         .count();
-    let with_width = declared_signals
+    // Both numeric and parametric widths count as "known" — parametric means the
+    // integrator will set the value (e.g. ADDR_WIDTH=32) at instantiation time.
+    let with_numeric_width = declared_signals
         .iter()
-        .filter(|s| s.width_hint.is_some())
+        .filter(|s| matches!(s.width_hint, Some(WidthHint::Numeric(_))))
         .count();
+    let with_parametric_width = declared_signals
+        .iter()
+        .filter(|s| matches!(s.width_hint, Some(WidthHint::Parametric(_))))
+        .count();
+    let with_width = with_numeric_width + with_parametric_width;
     let dir_pct = if declared_count > 0 {
         with_direction * 100 / declared_count
     } else {
@@ -366,7 +373,9 @@ fn validate_intent_ir(ir: &IntentIr) {
     println!("  declared_signal_records: {declared_count}");
     println!("  heuristic_signal_records (excluded from coverage): {heuristic_signals}");
     println!("  with_direction: {with_direction} ({dir_pct}%)");
-    println!("  with_width: {with_width} ({w_pct}%)");
+    println!(
+        "  with_width: {with_width} ({w_pct}%) [{with_numeric_width} numeric, {with_parametric_width} parametric]"
+    );
     println!();
 
     println!("=== Intent Records ===");

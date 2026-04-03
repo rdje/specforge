@@ -1,4 +1,49 @@
 # CHANGES
+## 2026-04-03 (WidthHint: parametric widths + table width map for KG synthesis)
+
+### New type: WidthHint (source.rs)
+- Replaces Option<u32> for signal width throughout the IR
+- WidthHint::Numeric(u32) — fixed bit width (1, 2, 32, 64, ...)
+- WidthHint::Parametric(String) — user-configurable RTL parameter (ADDR_WIDTH, DATA_WIDTH/8, ...)
+- Backward-compatible serde: Numeric(32) -> JSON 32, Parametric("ADDR_WIDTH") -> JSON "ADDR_WIDTH"
+- Both variants count as "known width" in coverage metrics and scoring
+
+### Changed: synthesize_signal_declarations() in evidence.rs
+- Width parsing now returns Option<WidthHint> instead of Option<u32>
+- Numeric: parse::<u32>() -> WidthHint::Numeric
+- Parametric: non-numeric, non-empty, contains alphabetic -> WidthHint::Parametric
+- No artificial upper bound on numeric widths (removed the w <= 1024 filter)
+- Synthesized text includes parametric widths: "Signal PADDR is output width ADDR_WIDTH."
+
+### New: collect_signal_widths_from_tables() in evidence.rs
+- Extracts width (numeric or parametric) from signal-description table Width columns
+- Passed to synthesize_directions_from_relations() so KG-synthesized declarations carry width
+
+### Changed: synthesize_directions_from_relations() in evidence.rs
+- Now accepts width_map: HashMap<String, WidthHint>
+- Produces "Signal PADDR is output width ADDR_WIDTH." instead of just "Signal PADDR is output."
+
+### Changed throughout: semantic.rs, intent.rs, adapters.rs
+- InterfaceSignalRecord.width_hint: Option<u32> -> Option<WidthHint>
+- ExplicitTopPortRecord.width_hint: Option<u32> -> Option<WidthHint>
+- InterfaceSignalAccumulator.width_hint: Option<u32> -> Option<WidthHint>
+- ParsedInterfaceSignalDeclaration.width_hint: Option<u32> -> Option<WidthHint>
+- parse_width_token() -> returns Option<WidthHint> (both numeric and parametric)
+- merge_signal_hint<T: Copy+Eq> -> <T: Clone+Eq> (WidthHint is Clone but not Copy)
+- register_interface_signal_record() signature updated
+- WidthCast in expression parser kept as u32 (literal numeric, not parametric)
+- Adapters convert Option<WidthHint> -> Option<u32> via .as_numeric() for FSM emission
+
+### validate.rs: display numeric vs parametric width breakdown
+- "with_width: N (X%) [N numeric, N parametric]"
+- Both numeric and parametric count in width coverage score
+
+### Results
+| Spec | Before | After | Change |
+|------|--------|-------|--------|
+| AHB | 88/100 GOOD, 80% width | 90/100 EXCELLENT, 100% width [10 num, 11 para] | +2 pts |
+| APB | 60/100 ADEQUATE, 0% width | 70/100 GOOD, 100% width [10 num, 8 para] | +10 pts |
+| AXI | 75/100 GOOD, 0% width | 85/100 GOOD, 99% width [126 num, 51 para] | +10 pts |
 ## 2026-04-03 (R13: Tier 2 Knowledge Graph — actor-signal relation extraction)
 
 ### New types (source.rs)
