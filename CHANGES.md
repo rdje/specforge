@@ -1,4 +1,24 @@
 # CHANGES
+## 2026-04-03 (row-scan clock/reset detection, immune to Docling column-ordering bugs)
+
+### Fixed: synthesize_system_contract_from_table_descriptions() (evidence.rs)
+- Replaced column-index-based detection with a full row-scan that inspects every
+  cell in each body row, independent of column position.
+- Root cause: Docling mis-assigns body cells to wrong column buckets for tables with
+  visually distinctive (bold/boxed) cells whose PDF span-count arithmetic shifts.
+  AHB Table 2-1 "Global signals" is a confirmed instance: HCLK/HRESETn are in
+  col 0 of the PDF but Docling places them in col 3 of the parsed grid.
+- New per-row algorithm:
+  - Signal candidate: cell with ≤2 whitespace tokens, first token is a valid
+    hardware signal name (not a role word like CLOCK/RESET/SOURCE).
+    Excludes description cells (many words) and role cells ("Clock source" etc.).
+  - Clock/reset desc: scan all cells for keyword patterns; keep the longest
+    matching text so "The bus clock times all bus transfers…" beats "Clock source",
+    giving accurate polarity/kind inference for resets.
+- Result: AHB system contract (HCLK + HRESETn) correctly detected.
+- AHB score: 90/100 → 95/100 EXCELLENT (contract_bonus 0/5 → 5/5).
+- APB and AXI scores unchanged (signal tables were already correct).
+- 96/96 tests pass (no new tests needed — existing contract detection tests pass).
 ## 2026-04-03 (header-clue + positional column detection; AMBA 5 direction mapping)
 
 ### Fixed: synthesize_signal_declarations() — direction column semantics (evidence.rs)

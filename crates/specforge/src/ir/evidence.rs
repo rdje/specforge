@@ -2009,56 +2009,93 @@ fn synthesize_system_contract_from_table_descriptions(
         if !matches!(table.table_kind, TableKind::SignalDescription) {
             continue;
         }
-        // Column detection: use headers as a clue; fall back to positional convention.
-        //   • Name column        = header containing "signal"/"name"/"port"/"pin"; else col 0
-        //   • Description column = header containing "description"/"desc"; else last column
-        let hdr: Vec<String> = table
-            .header_rows
-            .first()
-            .map(|r| r.iter().map(|c| c.text.to_ascii_lowercase()).collect())
-            .unwrap_or_default();
-        let name_col: usize = hdr
-            .iter()
-            .position(|h| {
-                h.contains("signal")
-                    || h.contains("name")
-                    || h.contains("port")
-                    || h.contains("pin")
-            })
-            .unwrap_or(0);
-        let desc_col: usize = hdr
-            .iter()
-            .position(|h| h.contains("description") || h.contains("desc"))
-            .unwrap_or_else(|| (table.col_count as usize).saturating_sub(1));
 
         for row in &table.body_rows {
-            // Signal name: first token of the name column cell, uppercased.
-            let signal = row
-                .get(name_col)
-                .and_then(|c| c.text.split_whitespace().next().map(|s| s.to_ascii_uppercase()))
-                .unwrap_or_default();
-            if signal.is_empty() || !is_hardware_signal_token(&signal) {
-                continue;
+            // Scan ALL cells in the row rather than relying on fixed column indices.
+            //
+            // Docling sometimes mis-assigns body cells to wrong column buckets when a
+            // table has visually distinctive cells (bold/boxed signal names) whose
+            // internal structure causes span-count arithmetic to shift.  The AHB
+            // "Global signals" table is a confirmed instance: Docling places HCLK /
+            // HRESETn in the last column even though they are in the first column of
+            // the PDF.  Column-independent scanning is immune to this class of bug.
+            //
+            // Signal-name candidates: cells with ≤2 whitespace tokens where the first
+            // token is a valid hardware signal name (not a role word like CLOCK/RESET).
+            // This excludes description cells (many words) and role cells like
+            // "Clock source" / "Reset controller" (first token in exclusion list).
+            //
+            // For clock/reset descriptions: among all cells whose text contains a
+            // matching keyword, keep the longest one so that a rich description cell
+            // ("The bus clock times all bus transfers …") wins over a short role cell
+            // ("Clock source"), giving accurate polarity/kind inference for resets.
+            let mut row_signal: Option<String> = None;
+            let mut row_clock_desc: Option<String> = None;
+            let mut row_reset_desc: Option<String> = None;
+
+            for cell in row {
+                let cell_text = cell.text.trim();
+                if cell_text.is_empty() {
+                    continue;
+                }
+                let cell_lower = cell_text.to_ascii_lowercase();
+                let word_count = cell_text.split_whitespace().count();
+                let first_token = cell_text
+                    .split_whitespace()
+                    .next()
+                    .unwrap_or("")
+                    .to_ascii_uppercase();
+
+                // Signal name: short cell (name + optional footnote marker), valid token.
+                if row_signal.is_none()
+                    && word_count <= 2
+                    && is_hardware_signal_token(&first_token)
+                    && !is_signal_synthesis_non_signal(&first_token)
+                {
+                    row_signal = Some(first_token);
+                }
+
+                // Clock description — prefer longer / more informative text.
+                if cell_lower.starts_with("clock")
+                    || cell_lower.contains("clock signal")
+                    || cell_lower.contains("bus clock")
+                    || cell_lower.contains("is a clock")
+                    || cell_lower.contains("times all bus transfers")
+                    || cell_lower.contains("timed against the rising edge")
+                    || cell_lower.contains("sampled on the rising edge of")
+                    || cell_lower.contains("related to the rising edge")
+                    || cell_lower.contains("all signals are sampled")
+                    || cell_lower.contains("all signal timings")
+                {
+                    if row_clock_desc.as_ref().map(|d: &String| d.len()).unwrap_or(0)
+                        < cell_lower.len()
+                    {
+                        row_clock_desc = Some(cell_lower.clone());
+                    }
+                }
+
+                // Reset description — prefer longer / more informative text.
+                if cell_lower.starts_with("reset")
+                    || cell_lower.contains("reset signal")
+                    || cell_lower.contains("is the reset")
+                    || cell_lower.contains("is a reset")
+                    || cell_lower.contains("bus reset")
+                    || (cell_lower.contains("is an active") && cell_lower.contains("reset"))
+                {
+                    if row_reset_desc.as_ref().map(|d: &String| d.len()).unwrap_or(0)
+                        < cell_lower.len()
+                    {
+                        row_reset_desc = Some(cell_lower.clone());
+                    }
+                }
             }
 
-            // Description: the dedicated description column (header-detected or last column).
-            let desc = row
-                .get(desc_col)
-                .map(|c| c.text.to_ascii_lowercase())
-                .unwrap_or_default();
+            let Some(signal) = row_signal else {
+                continue;
+            };
 
-            // ── Clock detection ───────────────────────────────────────────
-            if !clock_found
-                && (desc.starts_with("clock")
-                    || desc.contains("clock signal")
-                    || desc.contains("bus clock")
-                    || desc.contains("is a clock")
-                    || desc.contains("timed against the rising edge")
-                    || desc.contains("sampled on the rising edge of")
-                    || desc.contains("related to the rising edge")
-                    || desc.contains("all signals are sampled")
-                    || desc.contains("all signal timings"))
-            {
+            // ── Clock detection ────────────────────────────────────────────────
+            if !clock_found && row_clock_desc.is_some() {
                 *statement_counter += 1;
                 statements.push(ExtractedStatement {
                     statement_id: format!("statement_{statement_counter:04}"),
@@ -2071,55 +2108,48 @@ fn synthesize_system_contract_from_table_descriptions(
                 clock_found = true;
             }
 
-            // ── Reset detection ───────────────────────────────────────────
-            if !reset_found
-                && (desc.starts_with("reset")
-                    || desc.contains("reset signal")
-                    || desc.contains("is the reset")
-                    || desc.contains("is a reset")
-                    || desc.contains("is an active")
-                        && (desc.contains("reset") || signal.ends_with('N')))
-            {
-                // Polarity: explicit "active-low" / "active low" wins; signal name
-                // ending with N or B implies active-low as a secondary indicator.
-                let polarity = if desc.contains("active-low")
-                    || desc.contains("active low")
-                    || desc.contains("active_low")
-                    || (!desc.contains("active-high")
-                        && !desc.contains("active high")
-                        && (signal.ends_with('N') || signal.ends_with('B')))
-                {
-                    "active low"
-                } else {
-                    "active high"
-                };
-
-                // Kind: check description first; active-low AMBA bus resets are
-                // conventionally asynchronous in their assertion.
-                let kind = if desc.contains("synchronous") {
-                    "synchronous"
-                } else if desc.contains("asynchronous") || desc.contains("async") {
-                    "asynchronous"
-                } else if polarity == "active low" {
-                    "asynchronous" // AMBA convention: active-low = asynchronous assertion
-                } else {
-                    "synchronous"
-                };
-
-                *statement_counter += 1;
-                statements.push(ExtractedStatement {
-                    statement_id: format!("statement_{statement_counter:04}"),
-                    class: StatementClass::SourceFact,
-                    modality: EvidenceModality::Text,
-                    text: format!("Reset {signal} is {kind} {polarity}."),
-                    evidence_span_ids: vec![],
-                    related_visual_evidence_ids: vec![],
-                });
-                reset_found = true;
+            // ── Reset detection ────────────────────────────────────────────────
+            if !reset_found {
+                if let Some(desc) = row_reset_desc {
+                    // Polarity: explicit keyword wins; signal ending with N or B is
+                    // a secondary indicator (AMBA naming convention).
+                    let polarity = if desc.contains("active-low")
+                        || desc.contains("active low")
+                        || desc.contains("active_low")
+                        || (!desc.contains("active-high")
+                            && !desc.contains("active high")
+                            && (signal.ends_with('N') || signal.ends_with('B')))
+                    {
+                        "active low"
+                    } else {
+                        "active high"
+                    };
+                    // Kind: explicit keyword wins; active-low AMBA resets are
+                    // conventionally asserted asynchronously.
+                    let kind = if desc.contains("synchronous") {
+                        "synchronous"
+                    } else if desc.contains("asynchronous") || desc.contains("async") {
+                        "asynchronous"
+                    } else if polarity == "active low" {
+                        "asynchronous"
+                    } else {
+                        "synchronous"
+                    };
+                    *statement_counter += 1;
+                    statements.push(ExtractedStatement {
+                        statement_id: format!("statement_{statement_counter:04}"),
+                        class: StatementClass::SourceFact,
+                        modality: EvidenceModality::Text,
+                        text: format!("Reset {signal} is {kind} {polarity}."),
+                        evidence_span_ids: vec![],
+                        related_visual_evidence_ids: vec![],
+                    });
+                    reset_found = true;
+                }
             }
 
             if clock_found && reset_found {
-                break 'outer; // Both found — no need to scan further tables.
+                break 'outer;
             }
         }
     }
