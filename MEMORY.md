@@ -80,14 +80,14 @@
 
 ## Exact next steps
 1. decide whether the untracked README-derived `generated/.../readme/` artifacts should be kept for continuity or removed before any commit
-2. if committing this slice, stage `crates/specforge/src/commands/nlp_enrich.rs` and the refreshed live docs, and only stage the README-derived generated artifacts if intentional versioning is desired
-3. begin the next roadmap slice at `R7` (validation back-annotation), keeping `R15` actor-relative direction modeling as the next larger architectural step
+2. if committing this slice, stage the new fixed-point orchestration files (`crates/specforge/src/commands/converge.rs`, `crates/specforge/src/test_support.rs`) plus the touched CLI/IR/doc files, and only stage the README-derived generated artifacts if intentional versioning is desired
+3. continue the remaining `R7` slice at validation back-annotation, now that the whole-pipeline convergence entrypoint is in place; keep `R15` actor-relative direction modeling as the next larger architectural step
 
 ## Remaining engineering gaps after this commit
 - validation back-annotation and artifact-linked reports (`R7`)
 - actor-relative direction modeling in `SemanticIR` / `IntentIR` (`R15`)
 - downstream interfaces still flatten actor-aware relations too early
-- the workspace still emits compile warnings in `commands/enrich.rs`, `ir/adapters.rs`, and `ir/semantic.rs`
+- the workspace still emits compile warnings in `ir/adapters.rs` and `ir/semantic.rs`
 
 ## If resuming from an interruption
 1. read `README.md`
@@ -96,4 +96,4 @@
 4. read `ROADMAP.md`
 5. read `RUST_CODEBASE_ANALYSIS.md`
 6. inspect `git --no-pager status --short`
-7. continue with `R7` unless the user redirects
+7. continue with validation back-annotation on top of `specforge converge` unless the user redirects

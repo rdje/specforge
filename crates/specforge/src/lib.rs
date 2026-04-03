@@ -2,6 +2,8 @@ pub mod cli;
 mod commands;
 pub mod error;
 pub mod ir;
+#[cfg(test)]
+pub(crate) mod test_support;
 
 use cli::{Cli, Commands};
 use error::Result;
@@ -9,6 +11,7 @@ use error::Result;
 pub fn run(cli: Cli) -> Result<()> {
     match cli.command {
         Commands::Inspect(args) => commands::inspect::run(args),
+        Commands::Converge(args) => commands::converge::run(args),
         Commands::Ingest(args) => commands::ingest::run(args),
         Commands::Evidence(args) => commands::evidence::run(args),
         Commands::Semantic(args) => commands::semantic::run(args),

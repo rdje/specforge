@@ -851,7 +851,6 @@ fn truncate_for_display(text: &str, max: usize) -> String {
 #[cfg(test)]
 mod tests {
     use std::fs;
-    use std::sync::{Mutex, OnceLock};
 
     use tempfile::tempdir;
 
@@ -860,13 +859,7 @@ mod tests {
     use crate::error::Result;
     use crate::ir::evidence::{EvidenceIr, StatementClass};
     use crate::ir::source::SourceIr;
-
-    /// Serializes all tests that read/write `SPECFORGE_VLM_HELPER` so they cannot
-    /// race when `cargo test` runs them in parallel within the same process.
-    fn vlm_helper_lock() -> std::sync::MutexGuard<'static, ()> {
-        static LOCK: OnceLock<Mutex<()>> = OnceLock::new();
-        LOCK.get_or_init(|| Mutex::new(())).lock().unwrap()
-    }
+    use crate::test_support::env_var_lock;
 
     /// Create a minimal mock VLM helper script that returns a predefined JSON based
     /// on the --sentence argument content. Used via SPECFORGE_VLM_HELPER.
@@ -896,7 +889,7 @@ mod tests {
         //   EvidenceIR with NormativeStatement sentences
         //     → nlp-enrich calls LLM (mocked via SPECFORGE_VLM_HELPER)
         //     → new SignalConstraintRecord added to evidence_ir.signal_constraints
-        let _lock = vlm_helper_lock();
+        let _lock = env_var_lock();
         let tempdir = tempdir()?;
         let source = tempdir.path().join("spec.md");
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
@@ -977,7 +970,7 @@ mod tests {
 
     #[test]
     fn nlp_enrich_dry_run_does_not_modify_evidence_ir() -> Result<()> {
-        let _lock = vlm_helper_lock();
+        let _lock = env_var_lock();
         let tempdir = tempdir()?;
         let source = tempdir.path().join("spec.md");
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
@@ -1118,7 +1111,7 @@ mod tests {
     fn nlp_enrich_learns_alias_and_stores_in_evidence_ir() -> Result<()> {
         // End-to-end test: when Level 3 extracts a constraint from a sentence where
         // the signal name is NOT in the text, the alias is stored in signal_alias_map.
-        let _lock = vlm_helper_lock();
+        let _lock = env_var_lock();
         let tempdir = tempdir()?;
         let source = tempdir.path().join("spec.md");
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
@@ -1188,7 +1181,7 @@ mod tests {
         // After nlp-enrich extracts a SignalConstraintRecord from a NormativeStatement,
         // the original ExtractedStatement.class must be updated from NormativeStatement
         // to SignalValueConstraint (Form 1 backannotation feedback loop).
-        let _lock = vlm_helper_lock();
+        let _lock = env_var_lock();
         let tempdir = tempdir()?;
         let source = tempdir.path().join("spec.md");
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
@@ -1302,7 +1295,7 @@ mod tests {
     fn nlp_enrich_multi_pass_stops_on_convergence() -> Result<()> {
         // After the first pass extracts the only candidate, the residual drops to 0
         // and the loop stops on convergence (residual-stable criterion).
-        let _lock = vlm_helper_lock();
+        let _lock = env_var_lock();
         let tempdir = tempdir()?;
         let source = tempdir.path().join("spec.md");
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");

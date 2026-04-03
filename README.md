@@ -14,6 +14,7 @@ Use it first for the project objective, document navigation, and the current imp
 - the Rust workspace and active CLI/crate identity are now `specforge`
 - the current `specforge` CLI surface supports:
   - `inspect <path>`
+  - `converge <source> --target fsm`
   - `ingest <source> --dry-run`
   - `ingest <source>`
   - `evidence <source-ir> --dry-run`
@@ -29,6 +30,7 @@ Use it first for the project objective, document navigation, and the current imp
 - `specforge semantic` now computes and materializes `SemanticIR` at `generated/semantic_ir/<document_key>/semantic_ir.json`
 - `specforge intent` now computes and materializes `IntentIR` at `generated/intent_ir/<document_key>/intent_ir.json`
 - `specforge adapt --target fsm` now computes and materializes typed adapter artifacts at `generated/adapters/fsm/<document_key>/adapter.json`
+- `specforge converge <source> --target fsm` now ingests once, optionally reuses VLM/NLP enrichment, rebuilds the downstream IR stages, and stops when the persisted knowledge snapshot is stable across passes
 - a pinned `subs/fsmgen` git submodule now exists as a local `.fsm` reference implementation for upcoming adapter work
 - the `SourceIR` schema now reserves:
   - parser-backend identity
@@ -187,6 +189,7 @@ Use it first for the project objective, document navigation, and the current imp
 cargo test
 cargo run -p specforge -- --help
 cargo run -p specforge -- inspect README.md
+cargo run -p specforge -- converge README.md --target fsm
 cargo run -p specforge -- ingest README.md --dry-run
 cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json --dry-run
 cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json --dry-run
@@ -203,6 +206,7 @@ cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --targ
 - `specforge intent <semantic-ir>` materializes `generated/intent_ir/<document_key>/intent_ir.json`
 - `specforge adapt <intent-ir> --target fsm --dry-run` prints computed adapter JSON without writing artifacts
 - `specforge adapt <intent-ir> --target fsm` materializes `generated/adapters/fsm/<document_key>/adapter.json` and writes an emitted `.fsm` file when the canonical interface/control/system/init/state surface or explicit module/top composition surface is explicit enough for honest standalone DT, structured FSM, or first-slice `?top:name` lowering
+- `specforge converge <source> --target fsm` materializes the loop-backed pipeline entrypoint and stops when `SourceIR`/`EvidenceIR`/`SemanticIR`/`IntentIR`/adapter facts stop changing
 - PDF execute-mode ingest expects `docling` to be importable from `python3` or `python`; when it lives elsewhere, set `SPECFORGE_DOCLING_PYTHON=/path/to/python`
 
 ## Planned product shape
@@ -217,6 +221,7 @@ cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --targ
 - `IntentIR` is the canonical endpoint
 - `.fsm` is an adapter target, not the core endpoint
 - the pipeline is explicit: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+- the staged pipeline can now be driven through a fixed-point entrypoint that re-runs downstream stages until the persisted knowledge snapshot stabilizes
 - automation-first, manual-last
 - actor-first extraction
 - typed IR over string-based generation

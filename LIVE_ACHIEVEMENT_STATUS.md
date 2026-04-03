@@ -17,7 +17,9 @@
 - `specforge enrich` command created: Done
 - `specforge validate` command created: Done
 - `specforge nlp-enrich` command created: Done
+- `specforge converge` command created: Done
 - End-to-end source-to-IntentIR pipeline implemented: Done
+- Whole-pipeline fixed-point knowledge-snapshot loop implemented: Done
 - SourceIR type system implemented: Done
 - Structured PDF normalization orchestration implemented: Done
 - SourceIR SOTA capture: structured table cell grids, typed content elements, section hierarchy with `SectionKind`, document profile, table kind classification: Done
@@ -43,10 +45,10 @@
 - `WidthHint` / parametric-width support propagated through the IR pipeline: Done
 - AMBA `Source` / `Driver` / `Destination` signal-table direction handling implemented: Done
 - Refreshed AHB/APB/AXI validation baseline recorded (APB 90, AHB 95, AXI 90): Done
-- Test suite expanded to 99 tests; all passing: Done
+- Test suite expanded to 100 tests; all passing: Done
 - SystemVerilog/Verilog/VHDL adapters implemented: Not Started
 - Validation back-annotation and artifact-linked reports: Not Started
 - Actor-relative direction model in `SemanticIR` / `IntentIR`: Not Started
 
 ## Highest-priority remaining gap
-- Build validation back-annotation and artifact-linked reports on the current staged IR surface; actor-relative direction modeling remains the next larger architectural step before downstream RTL adapters
+- Build validation back-annotation and artifact-linked reports on top of the now loop-backed staged IR surface; actor-relative direction modeling remains the next larger architectural step before downstream RTL adapters

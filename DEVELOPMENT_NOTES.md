@@ -218,6 +218,9 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
   - `extract_dynamic_signal_constraints()`
   - `dedup_actor_signal_relations()`
   - `converge_evidence_extractions()`
+- `crates/specforge/src/commands/converge.rs` now provides the top-level fixed-point entrypoint for the staged pipeline: materialize `SourceIR` once, optionally enrich figures and normative prose, rebuild downstream IR stages, lower adapters, snapshot the resulting artifact facts, and stop when the snapshot is unchanged
+- `EvidenceIr::build()` now carries forward persisted alias-learning state, NLP-upgraded statement classes, and structured NLP records when the rebuilt source/evidence surface still matches, so a second pass does not forget what the first pass learned
+- `crates/specforge/src/commands/enrich.rs` now skips figures whose `VisualAsset.note` already contains a VLM extraction payload, keeping multi-pass orchestration idempotent instead of re-querying the same diagram every pass
 - `synthesize_encoding_declarations()` now delegates to `synthesize_encoding_declarations_for_enum()` so the same enum synthesis logic can be reused by both the initial table pass and the anchored rescan path
 - the convergence loop is monotone: each pass only adds new synthesized statements/records, then stops when no new evidence is created
 - discovered enum/value atoms now come from extracted tables and synthesized `Enum ...` source facts rather than a protocol-specific baked-in list
@@ -228,7 +231,8 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 - regression tests added:
   - `anchored_encoding_scan_unlocks_dynamic_value_constraint_extraction`
   - `prose_polarity_refines_asserted_constraint_kind`
-- `cargo test --manifest-path Cargo.toml` now passes with 98 tests
+- `converge_rebuilds_pipeline_until_snapshot_stabilizes`
+- `cargo test --manifest-path Cargo.toml` now passes with 100 tests
 - `cargo build --release --manifest-path Cargo.toml` passes
 - refreshed representative validation baselines from generated `IntentIR` artifacts:
   - APB: 90/100 EXCELLENT

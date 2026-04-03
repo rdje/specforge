@@ -19,6 +19,8 @@ pub struct Cli {
 pub enum Commands {
     /// Inspect a source path and report the detected source kind
     Inspect(InspectArgs),
+    /// Iterate the staged pipeline until the materialized knowledge snapshot stops growing
+    Converge(ConvergeArgs),
     /// Build or materialize a SourceIR artifact for a source
     Ingest(IngestArgs),
     /// Build or materialize an EvidenceIR artifact from a SourceIR JSON file
@@ -41,6 +43,33 @@ pub enum Commands {
 pub struct InspectArgs {
     /// Path to inspect
     pub path: PathBuf,
+}
+
+#[derive(Debug, Args)]
+pub struct ConvergeArgs {
+    /// Source specification file to iterate on
+    pub source: PathBuf,
+    /// Adapter target to materialize each pass
+    #[arg(long, value_enum, default_value = "fsm")]
+    pub target: AdapterTargetArg,
+    /// Safety cap on whole-pipeline convergence passes
+    #[arg(long, default_value = "8")]
+    pub max_iterations: usize,
+    /// VLM provider to use for figure enrichment during each pass
+    #[arg(long, value_enum, default_value = "skip")]
+    pub vlm_provider: VlmProviderArg,
+    /// Model name override for figure enrichment
+    #[arg(long)]
+    pub vlm_model: Option<String>,
+    /// LLM provider to use for Level 3 NLP backannotation during each pass
+    #[arg(long, value_enum, default_value = "skip")]
+    pub nlp_provider: VlmProviderArg,
+    /// Model name override for NLP Level 3 backannotation
+    #[arg(long)]
+    pub nlp_model: Option<String>,
+    /// Maximum number of sentences to send to NLP Level 3 per pass (0 = all)
+    #[arg(long, default_value = "0")]
+    pub nlp_max_sentences: usize,
 }
 
 #[derive(Debug, Args)]

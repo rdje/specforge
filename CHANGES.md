@@ -1,5 +1,30 @@
 # CHANGES
 
+## 2026-04-03 (whole-pipeline converge command + preserved loopback knowledge)
+
+### Added: `specforge converge`
+- Introduced a new top-level `converge` command that materializes the staged pipeline as a fixed-point loop instead of a one-shot chain.
+- The command ingests a source once, optionally re-runs VLM figure enrichment and NLP Level 3 backannotation, rebuilds `EvidenceIR`, `SemanticIR`, `IntentIR`, and the selected adapter artifact, and stops when the persisted knowledge snapshot is unchanged between passes.
+- The snapshot currently covers the staged artifacts that already persist facts today: `SourceIR`, `EvidenceIR`, `SemanticIR`, `IntentIR`, and adapter artifacts.
+
+### Changed: `EvidenceIr::build()` now preserves prior loopback knowledge across rebuilds
+- When rebuilding from the same persisted `SourceIR`, `EvidenceIr::build()` now carries forward:
+  - learned signal aliases,
+  - NLP-upgraded `ExtractedStatement` classes,
+  - prior `SignalConstraintRecord`s,
+  - prior `ConditionalRuleRecord`s.
+- This closes the architectural gap where pass `N+1` could previously forget what `nlp-enrich` discovered in pass `N`.
+
+### Changed: `specforge enrich` is now idempotent for already-enriched figures
+- Timing/state-machine diagrams whose `VisualAsset.note` already contains a VLM extraction payload are skipped on later passes.
+- This keeps multi-pass orchestration from re-querying the same diagram needlessly.
+
+### Validation
+- Added regression tests:
+  - `converge_rebuilds_pipeline_until_snapshot_stabilizes`
+  - a shared process-global test env lock now serializes `SPECFORGE_VLM_HELPER` mutations across convergence/NLP tests
+- `cargo test --manifest-path Cargo.toml` → 100/100 passed
+
 ## 2026-04-03 (nlp-enrich alias marker filter + README staged-flow validation)
 
 ### Fixed: `extract_alias_phrase()` in `crates/specforge/src/commands/nlp_enrich.rs`

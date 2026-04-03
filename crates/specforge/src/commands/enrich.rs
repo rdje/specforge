@@ -1,5 +1,4 @@
 use std::fs;
-use std::path::PathBuf;
 use std::process::Command;
 
 use crate::cli::{EnrichArgs, VlmProviderArg};
@@ -151,6 +150,9 @@ fn enrich_visual_assets(
     for asset in &mut updated_assets {
         match asset.diagram_kind {
             DiagramKind::TimingDiagram => {
+                if asset_already_has_vlm_note(asset, "timing_diagram") {
+                    continue;
+                }
                 if dry_run {
                     println!(
                         "  [dry-run] would enrich timing diagram: {} ({})",
@@ -176,6 +178,9 @@ fn enrich_visual_assets(
                 }
             }
             DiagramKind::StateMachineDiagram => {
+                if asset_already_has_vlm_note(asset, "state_machine") {
+                    continue;
+                }
                 if dry_run {
                     println!(
                         "  [dry-run] would enrich state machine: {} ({})",
@@ -211,6 +216,14 @@ fn enrich_visual_assets(
         state_machine_enriched,
         errors,
     })
+}
+
+fn asset_already_has_vlm_note(asset: &VisualAsset, diagram_type: &str) -> bool {
+    match (diagram_type, asset.note.as_deref()) {
+        ("timing_diagram", Some(note)) => note.starts_with("vlm_timing_diagram_extraction:"),
+        ("state_machine", Some(note)) => note.starts_with("vlm_state_machine_extraction:"),
+        _ => false,
+    }
 }
 
 /// Build the structured VLM prompt for a given diagram type.

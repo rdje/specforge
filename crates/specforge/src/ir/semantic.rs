@@ -4787,6 +4787,86 @@ fn extract_records_from_vlm_observations(
     (timing_records, state_records, transition_records)
 }
 
+fn parse_visual_observation_json(text: &str) -> Option<serde_json::Value> {
+    let trimmed = text.trim();
+    serde_json::from_str::<serde_json::Value>(trimmed)
+        .ok()
+        .or_else(|| {
+            extract_markdown_code_block(trimmed)
+                .and_then(|candidate| serde_json::from_str::<serde_json::Value>(candidate).ok())
+        })
+        .or_else(|| {
+            extract_first_json_object(trimmed)
+                .and_then(|candidate| serde_json::from_str::<serde_json::Value>(candidate).ok())
+        })
+}
+
+fn extract_markdown_code_block(text: &str) -> Option<&str> {
+    let (fence_start, fence_len) = text
+        .find("```json")
+        .map(|index| (index, "```json".len()))
+        .or_else(|| text.find("```JSON").map(|index| (index, "```JSON".len())))
+        .or_else(|| text.find("```").map(|index| (index, "```".len())))?;
+
+    let mut inner = &text[fence_start + fence_len..];
+    inner = inner.trim_start_matches(|ch: char| ch.is_ascii_whitespace());
+    if let Some(stripped) = inner.strip_prefix("json") {
+        inner = stripped.trim_start_matches(|ch: char| ch.is_ascii_whitespace());
+    } else if let Some(stripped) = inner.strip_prefix("JSON") {
+        inner = stripped.trim_start_matches(|ch: char| ch.is_ascii_whitespace());
+    }
+
+    if let Some(end) = inner.find("```") {
+        return Some(inner[..end].trim());
+    }
+
+    Some(inner.trim())
+}
+
+fn extract_first_json_object(text: &str) -> Option<&str> {
+    let start = text.find(['{', '['])?;
+    let opening = text[start..].chars().next()?;
+    let closing = match opening {
+        '{' => '}',
+        '[' => ']',
+        _ => return None,
+    };
+
+    let mut depth = 0usize;
+    let mut in_string = false;
+    let mut escaping = false;
+
+    for (offset, ch) in text[start..].char_indices() {
+        if in_string {
+            if escaping {
+                escaping = false;
+                continue;
+            }
+            match ch {
+                '\\' => escaping = true,
+                '"' => in_string = false,
+                _ => {}
+            }
+            continue;
+        }
+
+        match ch {
+            '"' => in_string = true,
+            ch if ch == opening => depth += 1,
+            ch if ch == closing => {
+                depth = depth.saturating_sub(1);
+                if depth == 0 {
+                    let end = start + offset + ch.len_utf8();
+                    return Some(&text[start..end]);
+                }
+            }
+            _ => {}
+        }
+    }
+
+    None
+}
+
 /// Parse a `TimingDiagramExtraction` JSON observation into `TimingConstraintRecord` entries.
 /// Expected format:
 /// `{"signals":[{"name":str,"values":[{"cycle":str,"state":str}]}],"annotations":[str]}`
@@ -4795,8 +4875,7 @@ fn parse_timing_diagram_observation(
     evidence_id: &str,
     records: &mut Vec<TimingConstraintRecord>,
 ) {
-    // Use serde_json for robust parsing.
-    let Ok(value) = serde_json::from_str::<serde_json::Value>(json_text) else {
+    let Some(value) = parse_visual_observation_json(json_text) else {
         return;
     };
 
@@ -4834,7 +4913,7 @@ fn parse_state_machine_observation(
     state_records: &mut Vec<RegularStateRecord>,
     transition_records: &mut Vec<StateTransitionRecord>,
 ) {
-    let Ok(value) = serde_json::from_str::<serde_json::Value>(json_text) else {
+    let Some(value) = parse_visual_observation_json(json_text) else {
         return;
     };
 
@@ -5791,6 +5870,126 @@ mod tests {
                 .iter()
                 .any(|t| t.source_state == "IDLE" && t.target_state == "BUSY"),
             "expected IDLE→BUSY transition from VLM extraction"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn vlm_timing_diagram_observation_accepts_fenced_json_with_trailing_prose() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("timing_fenced_spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(&source, "# Timing\n")?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.visual_assets.push(VisualAsset {
+            asset_id: "picture_0003".to_string(),
+            asset_kind: VisualAssetKind::Diagram,
+            page_id: Some("page_0001".to_string()),
+            image_path: None,
+            caption_text: Some("Figure 3-2 Write transfer with wait states".to_string()),
+            caption_source_path: None,
+            source_ref: None,
+            placeholder_text: None,
+            note: Some(
+                "vlm_timing_diagram_extraction: ```json\n{\n  \"signals\": [\n    {\n      \"name\": \"PCLK\",\n      \"values\": [\n        {\"cycle\": \"T4\", \"state\": \"HIGH\"}\n      ]\n    }\n  ],\n  \"annotations\": [\n    \"setup time of data signal during T4\",\n    \"hold time of data signal during T4\"\n  ]\n}\n```\nThe waveform also highlights the transfer boundary around T4."
+                    .to_string(),
+            ),
+            diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        assert!(
+            semantic_ir.timing_constraints.iter().any(|tc| {
+                tc.description
+                    .as_deref()
+                    .map(|description| description.contains("setup time"))
+                    .unwrap_or(false)
+            }),
+            "expected timing constraint from fenced VLM annotation"
+        );
+        assert!(
+            semantic_ir.timing_constraints.iter().any(|tc| {
+                tc.description
+                    .as_deref()
+                    .map(|description| description.contains("hold time"))
+                    .unwrap_or(false)
+            }),
+            "expected timing constraint from fenced VLM annotation"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn vlm_state_machine_observation_accepts_fenced_json_with_trailing_prose() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("sm_fenced_spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(&source, "# State Machine\n")?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.visual_assets.push(VisualAsset {
+            asset_id: "picture_0004".to_string(),
+            asset_kind: VisualAssetKind::Diagram,
+            page_id: Some("page_0001".to_string()),
+            image_path: None,
+            caption_text: Some("Figure 4-1 State diagram".to_string()),
+            caption_source_path: None,
+            source_ref: None,
+            placeholder_text: None,
+            note: Some(
+                "vlm_state_machine_extraction: ```json\n{\n  \"states\": [\n    {\"name\": \"IDLE\", \"is_initial\": true},\n    {\"name\": \"SETUP\"},\n    {\"name\": \"ACCESS\"}\n  ],\n  \"transitions\": [\n    {\"from\": \"IDLE\", \"to\": \"SETUP\", \"guard\": \"Transfer\"},\n    {\"from\": \"SETUP\", \"to\": \"ACCESS\", \"guard\": \"PREADY = 1 and transfer\"}\n  ]\n}\n```\nThis state diagram highlights the ACCESS phase."
+                    .to_string(),
+            ),
+            diagram_kind: crate::ir::source::DiagramKind::StateMachineDiagram,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        assert!(
+            semantic_ir
+                .regular_states
+                .iter()
+                .any(|state| state.state_name == "IDLE" && state.is_initial),
+            "expected IDLE initial state from fenced VLM extraction"
+        );
+        assert!(
+            semantic_ir
+                .state_transitions
+                .iter()
+                .any(|transition| {
+                    transition.source_state == "SETUP" && transition.target_state == "ACCESS"
+                }),
+            "expected SETUP→ACCESS transition from fenced VLM extraction"
         );
 
         Ok(())

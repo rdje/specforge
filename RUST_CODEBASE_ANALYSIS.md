@@ -7,6 +7,7 @@
 ## Executive summary
 - the repository now contains a single active `specforge` crate and CLI with an executable surface of:
   - `inspect`
+  - `converge`
   - `ingest`
   - `evidence`
   - `semantic`
@@ -17,17 +18,20 @@
   - `nlp-enrich`
 - the canonical product boundary remains `IntentIR`, not `.fsm`
 - the staged pipeline is operational through `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+- a whole-pipeline fixed-point entrypoint now exists via `specforge converge`, which reuses persisted artifacts and stops when the cross-stage knowledge snapshot is stable
 - `SourceIR` now captures structured Docling output, typed content elements, structured tables, visual assets, and document-profile metadata
 - `EvidenceIR` now synthesizes typed declarations and records from tables, preserves typed NLP outputs, persists alias-learning state, extracts actor-signal relation triples from prose and signal-description tables, and runs a monotone convergence loop so discovered enum facts and prose polarity can unlock additional signal constraints without hardcoded protocol-specific value lists
 - `SemanticIR` now lifts that evidence into interfaces, system/reset/init records, control/state records, timing/register records, and filtered NLP constraints, with VLM observations merged into the semantic surface
 - `IntentIR` now carries forward the canonical signal/control/system/state/register/timing surface needed for honest downstream lowering
 - the current `.fsm` adapter slice is real and intentionally narrow: it can emit honest `?dt:name`, `?fsm:name`, and `?top:name` outputs when the canonical facts are explicit enough
-- the enrichment and validation toolchain is also real: `specforge enrich`, `specforge validate`, and `specforge nlp-enrich` are wired into the CLI and exercised by the workspace tests
-- the remaining small `extract_alias_phrase()` cleanup is now closed; the dominant architectural gap is that the downstream interface model still collapses actor-aware relation evidence into actor-agnostic `direction_hint` records, which is the main blocker before serious SystemVerilog adapter work
-- the workspace currently validates with `cargo test --manifest-path Cargo.toml`, with 99 passing tests
+- the enrichment, convergence, and validation toolchain is also real: `specforge enrich`, `specforge nlp-enrich`, `specforge converge`, and `specforge validate` are wired into the CLI and exercised by the workspace tests
+- the remaining dominant gaps are validation back-annotation on the staged IR surface and the downstream actor-relative signal model needed before serious SystemVerilog adapter work
+- the workspace currently validates with `cargo test --manifest-path Cargo.toml`, with 100 passing tests
 
 
 ## Session update (2026-04-03)
+- `specforge converge` now drives the persisted `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters` path as a fixed-point loop and stops when the materialized knowledge snapshot is stable
+- `EvidenceIr::build()` now preserves compatible alias-learning state, NLP-upgraded statement classes, and structured NLP records across rebuilds so pass `N+1` does not forget pass `N`
 - `EvidenceIr::build()` now uses `converge_evidence_extractions()` instead of a one-shot extraction tail, allowing new enum facts and polarity facts to feed later passes in the same build
 - signal-anchored encoding rescans recover weakly labeled encoding tables without introducing a new hardcoded APB/AHB/AXI value list
 - refreshed current baselines from generated `IntentIR`: APB 90/100 EXCELLENT, AHB 95/100 EXCELLENT, AXI 90/100 GOOD
@@ -49,6 +53,7 @@
 - `crates/specforge/src/cli.rs`
 - `crates/specforge/src/error.rs`
 - `crates/specforge/src/commands/inspect.rs`
+- `crates/specforge/src/commands/converge.rs`
 - `crates/specforge/src/commands/ingest.rs`
 - `crates/specforge/src/commands/evidence.rs`
 - `crates/specforge/src/commands/semantic.rs`
@@ -57,6 +62,7 @@
 - `crates/specforge/src/commands/enrich.rs`
 - `crates/specforge/src/commands/validate.rs`
 - `crates/specforge/src/commands/nlp_enrich.rs`
+- `crates/specforge/src/test_support.rs`
 - `crates/specforge/src/ir/mod.rs`
 - `crates/specforge/src/ir/source.rs`
 - `crates/specforge/src/ir/source/docling_backend.rs`
@@ -110,6 +116,8 @@
   - typed error/result boundary
 - `src/commands/inspect.rs`
   - deterministic source/path inspection command
+- `src/commands/converge.rs`
+  - fixed-point orchestration command over persisted `SourceIR`/`EvidenceIR`/`SemanticIR`/`IntentIR`/adapter artifacts
 - `src/commands/ingest.rs`
   - `SourceIR` preview/materialization command
 - `src/commands/evidence.rs`
@@ -126,6 +134,8 @@
   - stage-aware artifact validation and quality-scoring command
 - `src/commands/nlp_enrich.rs`
   - LLM-backed NLP Level 3 enrichment command for `EvidenceIR`
+- `src/test_support.rs`
+  - shared process-global test synchronization utilities for env-var-mutating CLI tests
 - `src/ir/mod.rs`
   - stage identifiers for `source_ir`, `evidence_ir`, `semantic_ir`, and `intent_ir`
 - `src/ir/source.rs`
@@ -166,7 +176,7 @@
 - only the `.fsm` adapter is implemented today; SystemVerilog, Verilog, and VHDL adapters are still absent
 - validation exists, but validation back-annotation into persisted IR artifacts and live docs is still absent
 - the actor-signal relation graph is extracted in `EvidenceIR`, but downstream interface records still flatten that information into actor-agnostic `direction_hint` values
-- the workspace still emits six compiler warnings in normal `cargo test` / `cargo run` flows: one unused import in `commands/enrich.rs` and five dead-code helpers across `ir/adapters.rs` and `ir/semantic.rs`
+- the workspace still emits five compiler warnings in normal `cargo test` / `cargo run` flows: five dead-code helpers across `ir/adapters.rs` and `ir/semantic.rs`
 - the current renderable `.fsm` slices are intentionally narrow: they handle explicit standalone combinational/sequential DT control, canonical symbol-definition sections, structured reset-role blocks, selector/test-node branches, compound-update shorthand, explicit structured FSM-root cases, and explicit top-root composition, while broader unsupported selector/predicate shapes and non-FSM backends stay deferred
 
 ## Architectural recommendation

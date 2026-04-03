@@ -124,6 +124,7 @@
 - done:
   - `specforge validate <artifact>` command: auto-detects IR stage, reports signal coverage %, NLP coverage, VLM readiness, structured extraction counts, quality score 0–100 with grade
   - validate tests for all four IR stages
+  - `specforge converge <source> --target <adapter>` now materializes a whole-pipeline fixed-point loop: ingest once, reuse persisted `SourceIR`, rebuild `EvidenceIR` / `SemanticIR` / `IntentIR` / adapters, optionally re-run VLM + NLP enrichment, and stop when the persisted knowledge snapshot is stable
 - remaining:
   - back-annotation of findings into IR artifacts and live docs
   - adapter validation (SystemVerilog/Verilog/VHDL targets)
@@ -282,5 +283,5 @@
 5. Build the SystemVerilog adapter on top of the actor-relative model (R16)
 
 ## Immediate next milestone
-- R7: build validation/back-annotation and artifact-linked reporting on the current staged IR surface
+- R7 remaining slice: build validation/back-annotation and artifact-linked reporting on the current staged IR surface
 - R15 remains the next larger architectural slice before downstream RTL adapters

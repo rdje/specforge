@@ -441,7 +441,7 @@ impl EvidenceIr {
                 &mut statement_counter,
             );
 
-        Ok(Self {
+        let mut evidence_ir = Self {
             schema_version: 1,
             stage: IrStage::EvidenceIr,
             source_ir_path,
@@ -458,7 +458,10 @@ impl EvidenceIr {
             conditional_rules,
             actor_signal_relations,
             signal_alias_map: BTreeMap::new(),
-        })
+        };
+        evidence_ir.carry_forward_existing_knowledge()?;
+
+        Ok(evidence_ir)
     }
 
     /// Form 2: Signal alias learning feedback loop.
@@ -559,6 +562,31 @@ impl EvidenceIr {
         )?;
         Ok(())
     }
+
+    fn carry_forward_existing_knowledge(&mut self) -> Result<()> {
+        if !self.artifact_layout.evidence_ir_path.exists() {
+            return Ok(());
+        }
+
+        let existing = Self::load_from_path(&self.artifact_layout.evidence_ir_path)?;
+        if existing.source_ir_path != self.source_ir_path
+            || existing.document_identity != self.document_identity
+            || existing.section_anchors.len() != self.section_anchors.len()
+            || existing.extracted_statements.len() != self.extracted_statements.len()
+        {
+            return Ok(());
+        }
+
+        self.signal_alias_map.extend(existing.signal_alias_map);
+        carry_forward_statement_classes(
+            &mut self.extracted_statements,
+            &existing.extracted_statements,
+        );
+        merge_signal_constraints(&mut self.signal_constraints, &existing.signal_constraints);
+        merge_conditional_rules(&mut self.conditional_rules, &existing.conditional_rules);
+
+        Ok(())
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -571,6 +599,98 @@ pub struct EvidenceArtifactLayout {
 pub struct EvidenceDocumentIdentity {
     pub document_key: String,
     pub display_name: String,
+}
+
+fn carry_forward_statement_classes(
+    current: &mut [ExtractedStatement],
+    existing: &[ExtractedStatement],
+) {
+    let existing_by_id: HashMap<&str, StatementClass> = existing
+        .iter()
+        .filter_map(|statement| match statement.class {
+            StatementClass::SignalValueConstraint | StatementClass::ConditionalRule => {
+                Some((statement.statement_id.as_str(), statement.class))
+            }
+            _ => None,
+        })
+        .collect();
+    let existing_by_text: HashMap<&str, StatementClass> = existing
+        .iter()
+        .filter_map(|statement| match statement.class {
+            StatementClass::SignalValueConstraint | StatementClass::ConditionalRule => {
+                Some((statement.text.as_str(), statement.class))
+            }
+            _ => None,
+        })
+        .collect();
+
+    for statement in current {
+        if !matches!(statement.class, StatementClass::NormativeStatement) {
+            continue;
+        }
+
+        if let Some(class) = existing_by_id
+            .get(statement.statement_id.as_str())
+            .or_else(|| existing_by_text.get(statement.text.as_str()))
+            .copied()
+        {
+            statement.class = class;
+        }
+    }
+}
+
+fn merge_signal_constraints(
+    current: &mut Vec<SignalConstraintRecord>,
+    existing: &[SignalConstraintRecord],
+) {
+    let mut known_keys = current
+        .iter()
+        .map(signal_constraint_merge_key)
+        .collect::<HashSet<_>>();
+    for record in existing {
+        let key = signal_constraint_merge_key(record);
+        if known_keys.insert(key) {
+            current.push(record.clone());
+        }
+    }
+}
+
+fn merge_conditional_rules(
+    current: &mut Vec<ConditionalRuleRecord>,
+    existing: &[ConditionalRuleRecord],
+) {
+    let mut known_keys = current
+        .iter()
+        .map(conditional_rule_merge_key)
+        .collect::<HashSet<_>>();
+    for record in existing {
+        let key = conditional_rule_merge_key(record);
+        if known_keys.insert(key) {
+            current.push(record.clone());
+        }
+    }
+}
+
+fn signal_constraint_merge_key(record: &SignalConstraintRecord) -> String {
+    format!(
+        "{}|{:?}|{:?}|{:?}|{}|{}",
+        record.subject_signal,
+        record.constraint_kind,
+        record.target_value,
+        record.condition_text,
+        record.negated,
+        record.source_text
+    )
+}
+
+fn conditional_rule_merge_key(record: &ConditionalRuleRecord) -> String {
+    format!(
+        "{}|{:?}|{}|{}",
+        record.antecedent_text,
+        record.consequent_signal,
+        record.consequent_action,
+        record.source_text
+    )
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -1953,7 +2073,11 @@ fn infer_encoding_column_indices(
     let header_texts: Vec<String> = table
         .header_rows
         .first()
-        .map(|row| row.iter().map(|cell| cell.text.to_ascii_lowercase()).collect())
+        .map(|row| {
+            row.iter()
+                .map(|cell| cell.text.to_ascii_lowercase())
+                .collect()
+        })
         .unwrap_or_default();
     let enum_name_lower = enum_name.to_ascii_lowercase();
 
@@ -2037,7 +2161,9 @@ fn looks_like_encoding_literal(text: &str) -> bool {
         return true;
     }
 
-    lowered.chars().all(|c| matches!(c, '0' | '1' | 'x' | 'z' | '_' | '?'))
+    lowered
+        .chars()
+        .all(|c| matches!(c, '0' | '1' | 'x' | 'z' | '_' | '?'))
         && lowered.chars().any(|c| matches!(c, '0' | '1'))
 }
 
@@ -2052,7 +2178,11 @@ fn table_looks_like_encoding(
     let header_texts: Vec<String> = table
         .header_rows
         .first()
-        .map(|row| row.iter().map(|cell| cell.text.to_ascii_lowercase()).collect())
+        .map(|row| {
+            row.iter()
+                .map(|cell| cell.text.to_ascii_lowercase())
+                .collect()
+        })
         .unwrap_or_default();
     let has_name_column = header_texts.iter().any(|header| {
         header.contains("name")
@@ -2082,7 +2212,8 @@ fn table_looks_like_encoding(
         .body_rows
         .iter()
         .filter(|row| {
-            row.iter().any(|cell| looks_like_encoding_literal(&cell.text))
+            row.iter()
+                .any(|cell| looks_like_encoding_literal(&cell.text))
                 || row.iter().any(|cell| {
                     let lowered = cell.text.to_ascii_lowercase();
                     lowered.contains(&format!("{anchor_lower}["))
@@ -2133,7 +2264,8 @@ fn scan_encoding_tables_by_signal_anchor(
             .map(|(_, title)| title.clone())
             .unwrap_or_default();
 
-        let Some(anchor_signal) = derive_encoding_enum_name(table, &section_title, Some(known_signals))
+        let Some(anchor_signal) =
+            derive_encoding_enum_name(table, &section_title, Some(known_signals))
         else {
             continue;
         };
@@ -2287,7 +2419,8 @@ fn extract_dynamic_signal_constraints(
         }
 
         let lowered = statement.text.to_ascii_lowercase();
-        let Some(value) = extract_discovered_state_value_from_text(&lowered, discovered_values) else {
+        let Some(value) = extract_discovered_state_value_from_text(&lowered, discovered_values)
+        else {
             continue;
         };
 
@@ -2295,8 +2428,10 @@ fn extract_dynamic_signal_constraints(
         let mut subject_signals =
             collect_subject_signal_tokens_with_discovered_values(subject_part, discovered_values);
         if subject_signals.is_empty() {
-            subject_signals =
-                collect_subject_signal_tokens_with_discovered_values(&statement.text, discovered_values);
+            subject_signals = collect_subject_signal_tokens_with_discovered_values(
+                &statement.text,
+                discovered_values,
+            );
         }
         if subject_signals.is_empty() {
             continue;
@@ -2484,7 +2619,10 @@ fn synthesize_system_contract_from_table_descriptions(
                     || cell_lower.contains("all signals are sampled")
                     || cell_lower.contains("all signal timings")
                 {
-                    if row_clock_desc.as_ref().map(|d: &String| d.len()).unwrap_or(0)
+                    if row_clock_desc
+                        .as_ref()
+                        .map(|d: &String| d.len())
+                        .unwrap_or(0)
                         < cell_lower.len()
                     {
                         row_clock_desc = Some(cell_lower.clone());
@@ -2499,7 +2637,10 @@ fn synthesize_system_contract_from_table_descriptions(
                     || cell_lower.contains("bus reset")
                     || (cell_lower.contains("is an active") && cell_lower.contains("reset"))
                 {
-                    if row_reset_desc.as_ref().map(|d: &String| d.len()).unwrap_or(0)
+                    if row_reset_desc
+                        .as_ref()
+                        .map(|d: &String| d.len())
+                        .unwrap_or(0)
                         < cell_lower.len()
                     {
                         row_reset_desc = Some(cell_lower.clone());
@@ -3309,10 +3450,7 @@ fn synthesize_signal_declarations(
     let name_col: usize = header_texts
         .iter()
         .position(|h| {
-            h.contains("signal")
-                || h.contains("name")
-                || h.contains("port")
-                || h.contains("pin")
+            h.contains("signal") || h.contains("name") || h.contains("port") || h.contains("pin")
         })
         .unwrap_or(0);
 
@@ -3331,9 +3469,7 @@ fn synthesize_signal_declarations(
     //        signal flows TO that actor → output from the driver's port.
     //
     // All three are detected from headers; only the first matching column type is used.
-    let explicit_dir_col = header_texts
-        .iter()
-        .position(|h| h.contains("direction"));
+    let explicit_dir_col = header_texts.iter().position(|h| h.contains("direction"));
     let source_col = header_texts
         .iter()
         .position(|h| h.contains("source") || h.contains("driver"));
@@ -3740,9 +3876,7 @@ fn synthesize_timing_constraints(source_ir: &SourceIr) -> Vec<TimingConstraintRe
     records
 }
 
-fn dedup_actor_signal_relations(
-    relations: Vec<ActorSignalRelation>,
-) -> Vec<ActorSignalRelation> {
+fn dedup_actor_signal_relations(relations: Vec<ActorSignalRelation>) -> Vec<ActorSignalRelation> {
     let mut deduped = Vec::new();
     let mut seen = HashSet::new();
     for relation in relations {
@@ -3789,7 +3923,8 @@ fn converge_evidence_extractions(
         let mut known_signals = signal_names_from_tables.clone();
         known_signals.extend(collect_known_signal_names(&extracted_statements));
         let discovered_values = collect_discovered_enum_values(&[extracted_statements.as_slice()]);
-        let signal_polarity = extract_signal_polarity_from_prose(&extracted_statements, &known_signals);
+        let signal_polarity =
+            extract_signal_polarity_from_prose(&extracted_statements, &known_signals);
 
         let mut constraint_counter = 1usize;
         let mut signal_constraints =
@@ -4509,7 +4644,10 @@ mod tests {
             ]],
             body_rows: vec![
                 vec![make_table_cell("00", false), make_table_cell("IDLE", false)],
-                vec![make_table_cell("01", false), make_table_cell("SETUP", false)],
+                vec![
+                    make_table_cell("01", false),
+                    make_table_cell("SETUP", false),
+                ],
             ],
             row_count: 2,
             col_count: 2,
