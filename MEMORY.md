@@ -52,10 +52,17 @@
   - adapters
 
 ## Latest committed baseline
-- latest_commit_hash: `463e9fa` (short) — see `git log --oneline -1` for full hash
-- latest_commit_brief_message: `NLP Level 1+2 pattern expansion: ~50%→70%+ coverage uplift`
+- latest_commit_hash: `fdee7c2`
+- latest_commit_brief_message: `chore: AHB+APB end-to-end pipeline run; add APB artifacts`
 - continuity_rule:
   - refresh this section whenever a new latest committed baseline exists at the time `MEMORY.md` is updated
+
+## Recent commit chain (last 5)
+- `fdee7c2` chore: AHB+APB end-to-end pipeline run; add APB artifacts (AHB=86/100, APB=35/100)
+- `115cfc5` refactor(nlp): remove --max-passes, use residual-stable convergence criterion
+- `c015f61` feat(nlp): Form 2 signal alias learning feedback loop
+- `8820698` feat(nlp): Form 1 backannotation feedback loop
+- `d1ad9c5` feat(nlp): implement Layers A/B/C/D/E — boilerplate suppression, grounded multi-pass NLP, declared-signal gating, spec-type-aware scoring
 
 ## Important session history
 - the repository bootstrap and first baseline commit were completed earlier in the session
@@ -94,7 +101,40 @@
 - the current slice has now reviewed the `fsmgen` direct-root contract and confirmed that `?mod:` / `?module:` remain compatibility-level accepted spellings rather than a settled backend-neutral direct-module distinction for SpecForge, so the adapter root-kind surface now stays limited to `dt` / `fsm` / `top`
 - the user has now clarified the real-hardware reset model in more detail, and the canonical reset contract now preserves reset kind, polarity, assertion timing, release timing, and reset-target semantics explicitly rather than leaving them implicit
 
-## In-flight work in this session
+## In-flight work in this session (2026-04-03)
+
+### Completed this session
+- Layer A (boilerplate suppression), Layer D (declared-signal gating), Layer E (spec-type-aware quality scoring) implemented
+- Form 1 (backannotation), Form 2 (signal alias learning), residual-stable convergence loop implemented
+- 90 tests, all passing
+- AHB pipeline run: 86/100 GOOD
+- APB pipeline run: 35/100 (Requester/Completer direction bug)
+- AXI pipeline run: 85/100 (misleading: 1 of ~100+ signals declared)
+- Docling Python at `/opt/homebrew/opt/python@3.11/bin/python3.11` (set SPECFORGE_DOCLING_PYTHON)
+
+### Key architectural decision made this session
+A deep discussion with the user established the knowledge graph extraction vision. See `KNOWLEDGE_GRAPH_ARCHITECTURE.md` (new) and `DEVELOPMENT_NOTES.md` §Knowledge graph extraction for the full design record. Summary:
+- Tables give signal NAMES; prose gives RELATIONS between actors and signals
+- Direction is ALWAYS relative to a specific actor, never absolute
+- Actor identity is behavioral (what it DOES), not lexical (what it is called)
+- Verb phrases encode typed triples: (actor, drives|reads, signal)
+- The structural knowledge graph = the block diagram
+- The behavioral layer (signals over time, clock-driven) = the waveforms/FSM
+- New IR type needed: `ActorSignalRelation { actor_name, signal_name, relation: Drives|Reads }`
+- New command planned: `specforge signal-resolve`
+
+### Immediately pending bugs to fix
+1. **Bug 1 — alias garbage filter** (2 lines): `extract_alias_phrase()` in `nlp_enrich.rs` produces "- the address" from markdown list items. Reject phrases starting with "-", "|", "#".
+2. **Bug 2 — APB direction from Source column** (5 lines): In `synthesize_signal_declarations()` in `evidence.rs`, extend direction cell value parser: requester/initiator/manager/master→output; completer/responder/subordinate/slave/target→input; clock/reset/system→input.
+
+### Next actions in order
+1. Fix Bug 1 and Bug 2 (quick, ~30 min)
+2. Re-run APB pipeline (expected ~75/100)
+3. Implement ActorSignalRelation record type + Tier 2 prose extraction (R13)
+4. Implement `specforge signal-resolve` command (R14)
+5. Re-run APB and AXI (expected 80-90+/100)
+
+## Old in-flight work (pre-2026-04-03 session)
 - real-world PDF testing against AMBA AHB spec is active (user instruction: "test using AHB pdf until further notice")
 - SOTA SourceIR/EvidenceIR extraction architecture fully implemented and validated on AHB PDF
 - EXTRACTION_ARCHITECTURE.md created as the permanent reference document for the SOTA extraction vision

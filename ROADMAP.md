@@ -179,8 +179,9 @@
   - SemanticIR merges VLM-sourced timing constraints and state/transition records
   - Full test coverage for the VLM wiring chain
 
-### R11 NLP Level 3 enrichment
-- status: In Progress
+### R11 NLP Level 3 enrichment + feedback loops
+- status: Done (2026-04-03)
+- reference: `EXTRACTION_ARCHITECTURE.md` §Step 3.4
 - reference: `EXTRACTION_ARCHITECTURE.md` §Step 3.4
 - goals:
   - reclassify ambiguous `NormativeStatement` sentences that Level 2 pattern-matching cannot handle
@@ -196,27 +197,87 @@
   - NLP Level 1+2 pattern expansion: ~50%→70%+ estimated coverage without any LLM calls
   - 20 new NLP tests (regression coverage for all new patterns + Level 3 pipeline)
 
-### R12 AHB end-to-end validation run
-- status: Not Started
+### R11 NLP Level 3 enrichment + feedback loops
+- status: Done (2026-04-03)
+- reference: `EXTRACTION_ARCHITECTURE.md` §Step 3.4
+- done:
+  - `specforge nlp-enrich` command with Ollama/OpenAI/LM Studio support
+  - qwen2.5vl:7b pulled and ready as default model
+  - Layer A: boilerplate section suppression in EvidenceIR classification
+  - Layer D: declared-signal gating in SemanticIR (filter NLP records to declared signals only)
+  - Layer E: spec-type-aware quality scoring in validate (no FSM penalty for bus protocol specs)
+  - Layer B: LLM grounding with declared signal names injected into prompt
+  - Layer C: residual-stable convergence loop (no max-passes — terminates when residual unchanged)
+  - Form 1: backannotation — ExtractedStatement.class updated after successful Level 3 extraction
+  - Form 2: signal alias learning — alias_map persisted in EvidenceIR; apply_alias_reclassification() at each pass start
+  - 90 tests, all passing
+- validation results:
+  - AHB (IHI0033_C): 86/100 GOOD; 46 residual NormativeStatements (structural sentences)
+  - APB (IHI0024_E): 35/100 NEEDS IMPROVEMENT (Requester/Completer direction bug — see R13)
+  - AXI (IHI0022_L): 85/100 (misleading — only 1 of ~100+ signals declared; see R13/R14)
+
+### R12 Multi-spec validation + quick fixes
+- status: In Progress
 - goals:
-  - run complete pipeline on AMBA AHB PDF with all NLP improvements active
-  - measure actual NormativeStatement residual before/after Level 1+2 expansion
-  - run `specforge validate` at each stage and record quality scores
-  - run `specforge nlp-enrich` with qwen2.5vl:7b to measure Level 3 uplift
-  - identify remaining coverage gaps before RTL adapter work begins
+  - fix Bug 1: alias extraction garbage filter (reject phrases starting with "-", "|", "#")
+  - fix Bug 2: extend direction cell value parser for Requester/Completer/initiator/responder/clock/reset
+  - re-run APB pipeline after fixes (expected ~75/100)
+  - re-run AXI pipeline (expected still ~85 until R13 implemented)
+  - validate that AHB score is stable at 86/100
+
+### R13 Actor-signal relation extraction: Tier 2 prose patterns
+- status: Not Started
+- reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md`
+- goals:
+  - add `ActorSignalRelation { actor_name, signal_name, relation: Drives|Reads }` to `source.rs`
+  - add `actor_signal_relations: Vec<ActorSignalRelation>` field to `EvidenceIr`
+  - implement `extract_actor_signal_relations()` in `evidence.rs` using verb-pattern rules
+  - use relation graph in `SemanticIr::build_interfaces()` to compute direction from graph
 - completion criteria:
-  - all five pipeline stages complete without errors on real AHB PDF
-  - `validate intent_ir` quality score recorded with grade
-  - NormativeStatement count measured before and after NLP enrichment
+  - APB: all 17 signals get direction from prose triples → score ≥80/100
+  - AXI: ~80+ signals get direction from prose triples → score ~80/100
+  - AHB: 17 signals validated from both tables AND prose (cross-validation, higher confidence)
+  - 10+ regression tests covering verb-pattern extraction
+
+### R14 Actor-signal relation extraction: Tier 3 LLM
+- status: Not Started
+- reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md`
+- goals:
+  - add `signal_relation` extraction type to `nlp-enrich` prompt
+  - implement `specforge signal-resolve` command (or integrate into `nlp-enrich --resolve-signals`)
+  - handle complex sentences where Tier 2 verb patterns don’t match
+- completion criteria:
+  - all three specs (AHB, APB, AXI) score ≥85/100 with correct signal counts (not misleading)
+  - `specforge signal-resolve` command documented in `USER_GUIDE.md`
+
+### R15 Actor-relative direction model in SemanticIR
+- status: Not Started
+- reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` §Phase 4
+- goals:
+  - replace `direction_hint: Option<InterfaceSignalDirection>` with actor-relative model
+  - `InterfaceSignalRecord` carries `drives_actors: Vec<String>` and `read_by_actors: Vec<String>`
+  - direction for adapter lowering computed relative to the target actor at adapter time
+- completion criteria:
+  - SystemVerilog adapter can generate correct port directions for any actor
+  - IntentIR carries a proper directed graph, not a flat list with implicit actor context
+
+### R16 SystemVerilog adapter
+- status: Not Started
+- prerequisites: R13 or R15 (need reliable signal direction per actor)
+- goals:
+  - generate a correct SystemVerilog interface from IntentIR
+  - generate a correct SystemVerilog module template for each actor
+  - port directions computed from actor-signal relation graph
 
 ## Recommended implementation order
-1. keep the `IntentIR` product boundary explicit in all docs and code
-2. build adapters after `IntentIR` is stable
-3. push data richness into `SourceIR` and `EvidenceIR` (R8, R9) before patching downstream stages
-4. integrate VLM visual understanding (R10) after structured extraction is solid
-5. validate NLP coverage improvements on real PDF (R12) before starting RTL adapter work
-6. integrate validation and back-annotation (R7)
-7. SystemVerilog adapter (R6 remaining)
+1. Keep `IntentIR` as the canonical product boundary in all code and docs
+2. Fix quick bugs (R12) before architectural changes
+3. Implement actor-signal relation extraction Tier 2 (R13) — highest ROI, covers APB and AXI
+4. Implement actor-signal relation Tier 3 LLM (R14) for complex sentence coverage
+5. Actor-relative direction model (R15) before SystemVerilog adapter
+6. SystemVerilog adapter (R16) after direction model is correct
+7. Back-annotation and validation improvements (R7)
 
 ## Immediate next milestone
-- R12: run AHB end-to-end with `specforge validate` to quantify coverage improvements from all NLP work; record quality scores and guide RTL adapter priority
+- R12: fix Bug 1 (alias garbage) and Bug 2 (Requester/Completer direction); re-run APB to confirm score improvement
+- R13: implement `extract_actor_signal_relations()` with Tier 2 verb patterns; expect APB and AXI to reach 80+/100

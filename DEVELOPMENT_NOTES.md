@@ -170,6 +170,35 @@
 - explicit reset phrasing accepts both `Reset rst_n is asynchronous active low.` and `Reset rst is synchronous active high.`
 - when explicit polarity wording is omitted, the current parser infers active-low from `_n` / `_b` reset naming and otherwise falls back to active-high with lower automation confidence
 
+## Knowledge graph extraction — design decisions (2026-04-03)
+
+### Why direction_hint is architecturally incomplete
+The current `InterfaceSignalRecord.direction_hint: Option<InterfaceSignalDirection>` is relative to an unnamed implicit actor. "PREADY is input" is meaningless without knowing input-to-whom. "PREADY is input_of[Manager]" is meaningful. This must eventually become an actor-relative model.
+
+### Tables vs prose: complementary roles, not redundant
+Tables provide signal NAMES reliably and WIDTH sometimes. Tables rarely provide direction in a machine-readable form across all specs. AMBA 5 specs (APB, AXI5) use "Requester"/"Completer" instead of "output"/"input" in their Source columns. AXI5 signal tables have no direction column at all. The prose always has the directionality information encoded in verb phrases.
+
+### Actor identity is behavioral, not lexical
+Do not anchor actor detection to vocabulary. "Manager", "master", "initiator", "Requester" all mean the same thing: an entity that initiates transactions. "Subordinate", "slave", "completer", "Responder" all mean: an entity that responds. What matters is what the entity DOES in sentences, not what it is called.
+
+### Verb phrases are relations
+Every sentence that connects an actor to a signal encodes a typed relation:
+- Drives: drives, asserts, activates, outputs, returns, generates, provides (and passives: is driven by, is asserted by, etc.)
+- Reads: reads, samples, monitors, accepts, receives (and passives: is read by, is sampled by, etc.)
+- Transfer: A transfers X to B → A drives X, B reads X
+These triples (actor, relation, signal) form the structural knowledge graph of the spec.
+
+### The two-layer model of a chip spec
+- Layer 1 (structural): who the actors are, what signals connect them, direction per actor — this is the block diagram
+- Layer 2 (behavioral): how signals change over clock cycles, state machines, timing — this is the waveforms/FSM
+All digital protocols are synchronous. The clock is the universal time reference. All timing is in clock cycles.
+
+### Validated pipeline results (2026-04-03)
+- AHB (IHI0033_C): 86/100 GOOD — works because section headings happen to say "Manager signals"
+- APB (IHI0024_E): 35/100 NEEDS IMPROVEMENT — "Requester"/"Completer" in Source column not recognized → 0 declared signals
+- AXI (IHI0022_L): 85/100 (misleading) — 1 declared signal out of ~100+; score inflated by 1/1=100%
+Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementation plan.
+
 ## Documentation surface currently steering the implementation
 - `README.md`
   - single entry point and quick orientation
