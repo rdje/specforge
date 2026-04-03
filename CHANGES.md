@@ -1,4 +1,42 @@
 # CHANGES
+## 2026-04-03 (header-clue + positional column detection; AMBA 5 direction mapping)
+
+### Fixed: synthesize_signal_declarations() — direction column semantics (evidence.rs)
+- Split the single dir_col into three distinct column types with correct semantics:
+  - `explicit_dir_col`: header contains "direction" → literal input/output cell value
+  - `source_col`: header contains "source" or "driver" → cell names the DRIVING actor
+    - Requester/Initiator/Master → output; Completer/Subordinate/Slave/Target/Responder → input
+    - Clock/Reset/System-bus/Global → input (infrastructure distributed into all blocks)
+  - `dest_col`: header contains "destination" → cell names the RECEIVING actor (inverted)
+    - Signal flows TO Subordinate/Completer → output; flows TO Manager/Requester → input
+- Fixes APB: "Source" column with values "Requester"/"Completer"/"Clock"/"System bus reset"
+  was previously unrecognised → all APB signals silently dropped; now correctly mapped
+- Fixes AHB test: "Destination" column with "Subordinate"/"Manager" values now uses
+  inverted semantics (flowing TO Subordinate = output, not input)
+
+### Fixed: name column now header-detected with positional fallback (evidence.rs)
+- name_col: search headers for signal/name/port/pin; fall back to col 0 (leftmost)
+- Previously hardcoded to row.first(); now honours header position when available
+
+### Fixed: emit width-only declaration when direction is unknown (evidence.rs)
+- Added (None, Some(WidthHint::Numeric)) and (None, Some(WidthHint::Parametric)) arms
+- Signals with known width but no determinable direction now emit "Signal X is width N."
+  instead of being silently dropped
+
+### Fixed: infer_signal_direction_from_section() (evidence.rs)
+- Added "requester" → output (AMBA 5 APB terminology)
+- Added "completer"/"target" → input
+- Added "reset" to the infrastructure group → input
+
+### Fixed: synthesize_system_contract_from_table_descriptions() (evidence.rs)
+- Replaced misleading comment "No header analysis needed" with header-first detection
+- name_col: headers with signal/name/port/pin → else col 0
+- desc_col: headers with description/desc → else last column
+
+### Fixed: duplicate OKAY pattern in collect_subject_signal_tokens() (evidence.rs)
+- Removed second OKAY from the exclusion match arm (compiler unreachable_patterns warning)
+
+### Test suite: 96/96 pass (no change in count)
 ## 2026-04-03 (WidthHint: parametric widths + table width map for KG synthesis)
 
 ### New type: WidthHint (source.rs)

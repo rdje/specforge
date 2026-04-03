@@ -421,6 +421,16 @@ impl EvidenceIr {
         let synthesized = synthesize_declarations_from_tables(&source_ir, &mut statement_counter);
         extracted_statements.extend(synthesized);
 
+        // Extract system contract (clock + reset) from the Description/last column of
+        // signal-description tables.  AMBA specs always identify PCLK/HCLK/ACLK as
+        // "clock signal" and PRESETn/HRESETn/ARESETn as "reset signal" and "active-LOW"
+        // in the Description column.  Synthesizing formal declarations lets the existing
+        // SemanticIR parsers (parse_explicit_system_clock / parse_explicit_system_reset)
+        // pick them up without any changes downstream.
+        let contract_stmts =
+            synthesize_system_contract_from_table_descriptions(&source_ir, &mut statement_counter);
+        extracted_statements.extend(contract_stmts);
+
         // Synthesize typed register and timing records from structured tables.
         let register_records = synthesize_register_records(&source_ir);
         let timing_constraints = synthesize_timing_constraints(&source_ir);
@@ -1977,6 +1987,146 @@ fn synthesize_declarations_from_tables(
     statements
 }
 
+/// Extract system contract declarations (clock signal, reset signal) from the
+/// Description column of signal-description tables.
+///
+/// Pattern: the Description column of any `signal_description` table in AMBA
+/// specs always has the first sentence identify the signal role:
+///   - "Clock. PCLK is a clock signal..." → synthesise `"Clock PCLK."`
+///   - "Reset. PRESETn is the reset signal and is active-LOW." → `"Reset PRESETn is asynchronous active low."`
+///
+/// The synthesized statements are processed by `parse_explicit_system_clock()`
+/// and `parse_explicit_system_reset()` in SemanticIR without any downstream changes.
+fn synthesize_system_contract_from_table_descriptions(
+    source_ir: &SourceIr,
+    statement_counter: &mut usize,
+) -> Vec<ExtractedStatement> {
+    let mut statements = Vec::new();
+    let mut clock_found = false;
+    let mut reset_found = false;
+
+    'outer: for table in &source_ir.structured_tables {
+        if !matches!(table.table_kind, TableKind::SignalDescription) {
+            continue;
+        }
+        // Column detection: use headers as a clue; fall back to positional convention.
+        //   • Name column        = header containing "signal"/"name"/"port"/"pin"; else col 0
+        //   • Description column = header containing "description"/"desc"; else last column
+        let hdr: Vec<String> = table
+            .header_rows
+            .first()
+            .map(|r| r.iter().map(|c| c.text.to_ascii_lowercase()).collect())
+            .unwrap_or_default();
+        let name_col: usize = hdr
+            .iter()
+            .position(|h| {
+                h.contains("signal")
+                    || h.contains("name")
+                    || h.contains("port")
+                    || h.contains("pin")
+            })
+            .unwrap_or(0);
+        let desc_col: usize = hdr
+            .iter()
+            .position(|h| h.contains("description") || h.contains("desc"))
+            .unwrap_or_else(|| (table.col_count as usize).saturating_sub(1));
+
+        for row in &table.body_rows {
+            // Signal name: first token of the name column cell, uppercased.
+            let signal = row
+                .get(name_col)
+                .and_then(|c| c.text.split_whitespace().next().map(|s| s.to_ascii_uppercase()))
+                .unwrap_or_default();
+            if signal.is_empty() || !is_hardware_signal_token(&signal) {
+                continue;
+            }
+
+            // Description: the dedicated description column (header-detected or last column).
+            let desc = row
+                .get(desc_col)
+                .map(|c| c.text.to_ascii_lowercase())
+                .unwrap_or_default();
+
+            // ── Clock detection ───────────────────────────────────────────
+            if !clock_found
+                && (desc.starts_with("clock")
+                    || desc.contains("clock signal")
+                    || desc.contains("bus clock")
+                    || desc.contains("is a clock")
+                    || desc.contains("timed against the rising edge")
+                    || desc.contains("sampled on the rising edge of")
+                    || desc.contains("related to the rising edge")
+                    || desc.contains("all signals are sampled")
+                    || desc.contains("all signal timings"))
+            {
+                *statement_counter += 1;
+                statements.push(ExtractedStatement {
+                    statement_id: format!("statement_{statement_counter:04}"),
+                    class: StatementClass::SourceFact,
+                    modality: EvidenceModality::Text,
+                    text: format!("Clock {signal}."),
+                    evidence_span_ids: vec![],
+                    related_visual_evidence_ids: vec![],
+                });
+                clock_found = true;
+            }
+
+            // ── Reset detection ───────────────────────────────────────────
+            if !reset_found
+                && (desc.starts_with("reset")
+                    || desc.contains("reset signal")
+                    || desc.contains("is the reset")
+                    || desc.contains("is a reset")
+                    || desc.contains("is an active")
+                        && (desc.contains("reset") || signal.ends_with('N')))
+            {
+                // Polarity: explicit "active-low" / "active low" wins; signal name
+                // ending with N or B implies active-low as a secondary indicator.
+                let polarity = if desc.contains("active-low")
+                    || desc.contains("active low")
+                    || desc.contains("active_low")
+                    || (!desc.contains("active-high")
+                        && !desc.contains("active high")
+                        && (signal.ends_with('N') || signal.ends_with('B')))
+                {
+                    "active low"
+                } else {
+                    "active high"
+                };
+
+                // Kind: check description first; active-low AMBA bus resets are
+                // conventionally asynchronous in their assertion.
+                let kind = if desc.contains("synchronous") {
+                    "synchronous"
+                } else if desc.contains("asynchronous") || desc.contains("async") {
+                    "asynchronous"
+                } else if polarity == "active low" {
+                    "asynchronous" // AMBA convention: active-low = asynchronous assertion
+                } else {
+                    "synchronous"
+                };
+
+                *statement_counter += 1;
+                statements.push(ExtractedStatement {
+                    statement_id: format!("statement_{statement_counter:04}"),
+                    class: StatementClass::SourceFact,
+                    modality: EvidenceModality::Text,
+                    text: format!("Reset {signal} is {kind} {polarity}."),
+                    evidence_span_ids: vec![],
+                    related_visual_evidence_ids: vec![],
+                });
+                reset_found = true;
+            }
+
+            if clock_found && reset_found {
+                break 'outer; // Both found — no need to scan further tables.
+            }
+        }
+    }
+
+    statements
+}
+
 /// Infer signal direction from a section kind + title for signal description tables.
 fn infer_signal_direction_from_section(kind: SectionKind, title: &str) -> Option<&'static str> {
     // Explicit section kind takes priority.
@@ -1988,19 +2138,30 @@ fn infer_signal_direction_from_section(kind: SectionKind, title: &str) -> Option
         _ => {}
     }
     let lowered = title.to_ascii_lowercase();
-    if lowered.contains("manager") || lowered.contains("initiator") || lowered.contains("master") {
+    // Driving actors (Source side) → output from that actor's perspective.
+    // Covers AMBA 3/4 (Master/Slave), AMBA 5 (Manager/Subordinate), APB 5 (Requester/Completer).
+    if lowered.contains("manager")
+        || lowered.contains("initiator")
+        || lowered.contains("master")
+        || lowered.contains("requester")
+    {
         return Some("output");
     }
     if lowered.contains("subordinate")
         || lowered.contains("slave")
         || lowered.contains("responder")
         || lowered.contains("multiplexor")
+        || lowered.contains("completer")
+        || lowered.contains("target")
     {
         return Some("input");
     }
+    // Infrastructure signals (clock, reset, global decoder) are distributed
+    // into all blocks — treat as input.
     if lowered.contains("global")
         || lowered.contains("system")
         || lowered.contains("clock")
+        || lowered.contains("reset")
         || lowered.contains("decoder")
     {
         return Some("input");
@@ -2208,7 +2369,7 @@ fn collect_subject_signal_tokens(text: &str) -> Vec<String> {
                     // Logic levels and protocol state values are never signal subjects.
                     "HIGH" | "LOW" | "IDLE" | "BUSY" | "NONSEQ" | "SEQ" | "OKAY" | "ERROR"
                         | "VALID" | "INVALID" | "NONE" | "ALL" | "ANY" | "BOTH"
-                        | "SINGLE" | "INCR" | "WRAP" | "OKAY" | "RETRY" | "SPLIT"
+                        | "SINGLE" | "INCR" | "WRAP" | "RETRY" | "SPLIT"
                         | "BYTE" | "HALF" | "WORD"
                         // Protocol family and company names
                         | "AMBA" | "AHB" | "AHB5" | "APB" | "AXI" | "CHI" | "ARM" | "AMD"
@@ -2687,23 +2848,56 @@ fn synthesize_signal_declarations(
         return statements;
     }
 
-    // Find width column index from header rows.
+    // ── Column detection: use headers as a clue, fall back to positional convention ─
+    // By convention across all bus protocol specs the signal name is in the leftmost
+    // column and the description in the rightmost column.  Headers, when present,
+    // are used to find width and source/direction columns more precisely.
     let header_texts: Vec<String> = table
         .header_rows
         .first()
         .map(|row| row.iter().map(|c| c.text.to_ascii_lowercase()).collect())
         .unwrap_or_default();
+
+    // Name column: keyword match on headers; fall back to col 0 (leftmost).
+    let name_col: usize = header_texts
+        .iter()
+        .position(|h| {
+            h.contains("signal")
+                || h.contains("name")
+                || h.contains("port")
+                || h.contains("pin")
+        })
+        .unwrap_or(0);
+
+    // Width column: "width" or "size" are the standard header names (case-insensitive);
+    // "bits" is accepted as an alias.
     let width_col = header_texts
         .iter()
-        .position(|h| h.contains("width") || h.contains("bits") || h.contains("size"));
-    let dir_col = header_texts
+        .position(|h| h.contains("width") || h.contains("size") || h.contains("bits"));
+
+    // Direction is expressed in one of three ways across specs:
+    //
+    //   1. Explicit "Direction" column   → literal "input"/"output" values.
+    //   2. "Source" / "Driver" column    → names the DRIVING actor.
+    //        driving actor = output from that actor's port; input to all others.
+    //   3. "Destination" column          → names the RECEIVING actor (inverted semantics).
+    //        signal flows TO that actor → output from the driver's port.
+    //
+    // All three are detected from headers; only the first matching column type is used.
+    let explicit_dir_col = header_texts
         .iter()
-        .position(|h| h.contains("direction") || h.contains("source") || h.contains("destination"));
+        .position(|h| h.contains("direction"));
+    let source_col = header_texts
+        .iter()
+        .position(|h| h.contains("source") || h.contains("driver"));
+    let dest_col = header_texts
+        .iter()
+        .position(|h| h.contains("destination") || h.contains("dest"));
 
     let default_dir = infer_signal_direction_from_section(section_kind, section_title);
 
     for row in &table.body_rows {
-        let Some(name_cell) = row.first() else {
+        let Some(name_cell) = row.get(name_col) else {
             continue;
         };
         // Strip footnote markers (e.g. "HSELx a" → use "HSELX").
@@ -2717,8 +2911,8 @@ fn synthesize_signal_declarations(
             continue;
         }
 
-        // Determine direction from an explicit column or fall back to section context.
-        let direction = dir_col
+        // Determine direction — try each column type in priority order.
+        let direction = explicit_dir_col
             .and_then(|col| row.get(col))
             .and_then(|cell| {
                 let t = cell.text.to_ascii_lowercase();
@@ -2729,6 +2923,62 @@ fn synthesize_signal_declarations(
                 } else {
                     None
                 }
+            })
+            .or_else(|| {
+                // Source column: the cell names the DRIVING actor.
+                //   Requester / Initiator / Master         → output (signal driven from this actor)
+                //   Completer / Subordinate / Slave / Target → input  (signal driven by the other side)
+                //   Clock / Reset / System-bus / Global     → input  (infrastructure)
+                source_col.and_then(|col| row.get(col)).and_then(|cell| {
+                    let t = cell.text.to_ascii_lowercase();
+                    if t.contains("output")
+                        || t.contains("requester")
+                        || t.contains("initiator")
+                        || t.contains("master")
+                    {
+                        Some("output")
+                    } else if t.contains("input")
+                        || t.contains("completer")
+                        || t.contains("subordinate")
+                        || t.contains("slave")
+                        || t.contains("responder")
+                        || t.contains("target")
+                    {
+                        Some("input")
+                    } else if t.contains("clock")
+                        || t.contains("reset")
+                        || t.contains("system bus")
+                        || t.contains("global")
+                    {
+                        Some("input") // Infrastructure signals distributed as inputs
+                    } else {
+                        None
+                    }
+                })
+            })
+            .or_else(|| {
+                // Destination column: the cell names the RECEIVING actor (inverted semantics).
+                //   Signal flows TO Subordinate/Completer/Slave/Target → output from driver
+                //   Signal flows TO Manager/Requester/Initiator/Master  → input  to driver
+                dest_col.and_then(|col| row.get(col)).and_then(|cell| {
+                    let t = cell.text.to_ascii_lowercase();
+                    if t.contains("subordinate")
+                        || t.contains("completer")
+                        || t.contains("slave")
+                        || t.contains("target")
+                        || t.contains("responder")
+                    {
+                        Some("output") // flows TO the subordinate side
+                    } else if t.contains("manager")
+                        || t.contains("requester")
+                        || t.contains("initiator")
+                        || t.contains("master")
+                    {
+                        Some("input") // flows TO the manager side
+                    } else {
+                        None
+                    }
+                })
             })
             .or(default_dir);
 
@@ -2761,7 +3011,13 @@ fn synthesize_signal_declarations(
                 format!("Signal {token} is {dir} width {expr}.")
             }
             (Some(dir), None) => format!("Signal {token} is {dir}."),
-            _ => continue,
+            // Direction unknown but width is known: emit a width-only declaration.
+            // Downstream scoring still benefits from knowing the signal exists and its width.
+            (None, Some(WidthHint::Numeric(bits))) => format!("Signal {token} is width {bits}."),
+            (None, Some(WidthHint::Parametric(expr))) => {
+                format!("Signal {token} is width {expr}.")
+            }
+            _ => continue, // No direction AND no width — not enough info to synthesize
         };
 
         *statement_counter += 1;
