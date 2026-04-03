@@ -40,64 +40,54 @@
 - `subs/fsmgen/` is a local read-only reference checkout for `.fsm` behavior
 
 ## Completed technical work in this session
-- `EvidenceIr::build()` no longer stops after a one-shot extraction block; it now runs a monotone convergence loop in `crates/specforge/src/ir/evidence.rs`
-- new convergence helpers landed in `crates/specforge/src/ir/evidence.rs`, including:
-  - `scan_encoding_tables_by_signal_anchor()`
-  - `collect_discovered_enum_values()`
-  - `extract_discovered_state_value_from_text()`
-  - `extract_signal_polarity_from_prose()`
-  - `apply_signal_polarity_to_constraints()`
-  - `extract_dynamic_signal_constraints()`
-  - `dedup_actor_signal_relations()`
-  - `converge_evidence_extractions()`
-- `synthesize_encoding_declarations()` now delegates to `synthesize_encoding_declarations_for_enum()` so anchored rescans and the original table pass share the same enum synthesis logic
-- no new APB/AHB/AXI-specific enum/value list was hardcoded; discovered enum/value atoms come from extracted tables and synthesized `Enum ...` facts only
-- `docling_backend.rs` also has pending table-kind classification changes that widen `classify_table_kind()` to use caption, header, and body-row evidence together, including body-aware encoding detection
-- regression tests added:
-  - `anchored_encoding_scan_unlocks_dynamic_value_constraint_extraction`
-  - `prose_polarity_refines_asserted_constraint_kind`
+- followed the repo bootstrap contract from `README.md` into `SESSION_BOOTSTRAP.md`, reviewed the live docs, and inspected the current Rust codebase/CLI surface against the documented architecture
+- `crates/specforge/src/commands/nlp_enrich.rs` now rejects alias subjects beginning with markdown/table markers `-`, `|`, or `#`, closing the remaining Form 2 alias-garbage cleanup in `extract_alias_phrase()`
+- regression test added:
+  - `extract_alias_phrase_rejects_markdown_marker_prefixes`
 - validation completed:
-  - `cargo test --manifest-path Cargo.toml` → 98 passed
-  - `cargo build --release --manifest-path Cargo.toml` → passed
-  - `target/release/specforge validate generated/intent_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/intent_ir.json` → 90/100 EXCELLENT
-  - `target/release/specforge validate generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json` → 95/100 EXCELLENT
-  - `target/release/specforge validate generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json` → 90/100 GOOD
-- refreshed generated `evidence_ir`, `semantic_ir`, and `intent_ir` artifacts for APB/AHB/AXI are still in the working tree and should be committed with the code
+  - `cargo test --manifest-path Cargo.toml` → 99 passed
+  - `cargo run -p specforge -- --help` → passed
+  - `cargo run -p specforge -- inspect README.md` → passed
+  - `cargo run -p specforge -- ingest README.md --dry-run` → passed
+  - `cargo run -p specforge -- ingest README.md` → passed
+  - `cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json --dry-run` → passed
+  - `cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json` → passed
+  - `cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json --dry-run` → passed
+  - `cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json` → passed
+  - `cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json --dry-run` → passed
+  - `cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json` → passed
+  - `cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --target fsm --dry-run` → passed
+- generated README artifacts now exist under:
+  - `generated/source_ir/readme/`
+  - `generated/evidence_ir/readme/`
+  - `generated/semantic_ir/readme/`
+  - `generated/intent_ir/readme/`
 
 ## Current working tree before commit
 - modified tracked files currently include:
-  - `LIVE_ACHIEVEMENT_STATUS.md`
-  - `ROADMAP.md`
-  - `RUST_CODEBASE_ANALYSIS.md`
-  - `crates/specforge/src/ir/evidence.rs`
-  - `crates/specforge/src/ir/source/docling_backend.rs`
-  - `generated/evidence_ir/...` for APB/AHB/AXI
-  - `generated/semantic_ir/...` for APB/AHB/AXI
-  - `generated/intent_ir/...` for APB/AHB/AXI
-- tracked docs already refreshed for the pending commit:
+  - `crates/specforge/src/commands/nlp_enrich.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
-  - `MEMORY.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
   - `RUST_CODEBASE_ANALYSIS.md`
-- the user explicitly called out `LIVE_ACHIEVEMENT_STATUS.md`, `ROADMAP.md`, `RUST_CODEBASE_ANALYSIS.md`, `crates/specforge/src/ir/evidence.rs`, and `crates/specforge/src/ir/source/docling_backend.rs` as files not to forget
-- no approval is required during the commit workflow
+  - `MEMORY.md`
+- untracked generated artifacts currently include:
+  - `generated/source_ir/readme/`
+  - `generated/evidence_ir/readme/`
+  - `generated/semantic_ir/readme/`
+  - `generated/intent_ir/readme/`
 
 ## Exact next steps
-1. write `git_message_brief.txt`
-2. stage only the intended tracked files
-3. commit with `git commit -F git_message_brief.txt` and include `Co-Authored-By: Oz <oz-agent@warp.dev>`
-4. clear `git_message_brief.txt`
-5. verify post-conditions:
-   - `git ls-files --error-unmatch git_message_brief.txt` must fail
-   - `wc -c git_message_brief.txt` must report `0`
-   - `git status --short` must show only the expected leftovers, if any
+1. decide whether the untracked README-derived `generated/.../readme/` artifacts should be kept for continuity or removed before any commit
+2. if committing this slice, stage `crates/specforge/src/commands/nlp_enrich.rs` and the refreshed live docs, and only stage the README-derived generated artifacts if intentional versioning is desired
+3. begin the next roadmap slice at `R7` (validation back-annotation), keeping `R15` actor-relative direction modeling as the next larger architectural step
 
 ## Remaining engineering gaps after this commit
-- finish the markdown-marker alias garbage filter in `crates/specforge/src/commands/nlp_enrich.rs`
-- choose between validation/back-annotation (`R7`) and actor-relative direction modeling (`R15`) as the next larger implementation slice
+- validation back-annotation and artifact-linked reports (`R7`)
+- actor-relative direction modeling in `SemanticIR` / `IntentIR` (`R15`)
 - downstream interfaces still flatten actor-aware relations too early
+- the workspace still emits compile warnings in `commands/enrich.rs`, `ir/adapters.rs`, and `ir/semantic.rs`
 
 ## If resuming from an interruption
 1. read `README.md`
@@ -106,4 +96,4 @@
 4. read `ROADMAP.md`
 5. read `RUST_CODEBASE_ANALYSIS.md`
 6. inspect `git --no-pager status --short`
-7. continue the commit workflow unless the user redirects
+7. continue with `R7` unless the user redirects

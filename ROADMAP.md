@@ -206,7 +206,7 @@
   - initial AHB/APB/AXI validation runs established the post-NLP-L3 baseline that R12/R13 now refine
 
 ### R12 Multi-spec validation + quick fixes
-- status: In Progress
+- status: Done
 - goals:
   - finish the remaining alias garbage filter in `extract_alias_phrase()`
   - keep AMBA-style signal-table direction parsing stable for `Source` / `Driver` / `Destination` columns and role names such as Requester, Completer, Manager, Subordinate, clock, and reset
@@ -214,12 +214,11 @@
 - done:
   - direction/source/destination column handling widened for AMBA 5 terminology and infrastructure signals
   - width-only and parametric-width declarations landed so coverage reporting is more honest
+  - `extract_alias_phrase()` now rejects alias subjects beginning with markdown/table markers `-`, `|`, or `#`
   - representative APB/AHB/AXI baselines were refreshed from the current extraction stack:
     - APB 90/100 EXCELLENT
     - AHB 95/100 EXCELLENT
     - AXI 90/100 GOOD
-- remaining:
-  - reject alias phrases beginning with `-`, `|`, or `#`
 
 ### R13 Actor-signal relation extraction: Tier 2 prose patterns
 - status: Mostly Done (Tier 2 relations and convergent EvidenceIR reuse landed; downstream actor-relative carry-through is still deferred)
@@ -277,12 +276,11 @@
 
 ## Recommended implementation order
 1. Keep `IntentIR` as the canonical product boundary in all code and docs
-2. Finish the remaining R12 alias cleanup on the current multi-spec extraction stack
-3. Complete validation/back-annotation on the current IR surface (R7)
-4. Promote the downstream signal model from flat direction hints to actor-relative semantics (R15)
-5. Extend relation extraction for harder prose with Tier 3 support (R14)
-6. Build the SystemVerilog adapter on top of the actor-relative model (R16)
+2. Complete validation/back-annotation on the current IR surface (R7)
+3. Promote the downstream signal model from flat direction hints to actor-relative semantics (R15)
+4. Extend relation extraction for harder prose with Tier 3 support (R14)
+5. Build the SystemVerilog adapter on top of the actor-relative model (R16)
 
 ## Immediate next milestone
-- R12: finish the remaining alias garbage filter in `extract_alias_phrase()`
-- R7/R15 handoff: use the refreshed 90/95/90 APB/AHB/AXI baseline to decide whether validation back-annotation or actor-relative direction modeling should be the next larger slice before downstream RTL adapters
+- R7: build validation/back-annotation and artifact-linked reporting on the current staged IR surface
+- R15 remains the next larger architectural slice before downstream RTL adapters

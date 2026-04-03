@@ -23,15 +23,17 @@
 - `IntentIR` now carries forward the canonical signal/control/system/state/register/timing surface needed for honest downstream lowering
 - the current `.fsm` adapter slice is real and intentionally narrow: it can emit honest `?dt:name`, `?fsm:name`, and `?top:name` outputs when the canonical facts are explicit enough
 - the enrichment and validation toolchain is also real: `specforge enrich`, `specforge validate`, and `specforge nlp-enrich` are wired into the CLI and exercised by the workspace tests
-- the dominant architectural gap is no longer “missing NLP Level 3”; it is that the downstream interface model still collapses actor-aware relation evidence into actor-agnostic `direction_hint` records, which is the main blocker before serious SystemVerilog adapter work
-- the workspace currently validates with `cargo test --manifest-path Cargo.toml`, with 98 passing tests
+- the remaining small `extract_alias_phrase()` cleanup is now closed; the dominant architectural gap is that the downstream interface model still collapses actor-aware relation evidence into actor-agnostic `direction_hint` records, which is the main blocker before serious SystemVerilog adapter work
+- the workspace currently validates with `cargo test --manifest-path Cargo.toml`, with 99 passing tests
 
 
 ## Session update (2026-04-03)
 - `EvidenceIr::build()` now uses `converge_evidence_extractions()` instead of a one-shot extraction tail, allowing new enum facts and polarity facts to feed later passes in the same build
 - signal-anchored encoding rescans recover weakly labeled encoding tables without introducing a new hardcoded APB/AHB/AXI value list
 - refreshed current baselines from generated `IntentIR`: APB 90/100 EXCELLENT, AHB 95/100 EXCELLENT, AXI 90/100 GOOD
-- the dominant architectural gap remains downstream actor-relative signal modeling; the small near-term cleanup is still the markdown-marker alias filter in `extract_alias_phrase()`
+- `extract_alias_phrase()` now rejects markdown/table marker prefixes `-`, `|`, and `#`, closing the last small R12 cleanup in the NLP alias-learning loop
+- the documented README staged flow was re-executed on `README.md` through `inspect -> ingest -> evidence -> semantic -> intent -> adapt --dry-run`, confirming the current entry path still runs end-to-end
+- the dominant architectural gap remains downstream actor-relative signal modeling; the next workflow gap is validation back-annotation on the staged IR surface
 
 ## Observed current state
 ### Repository contents directly observed
@@ -164,7 +166,7 @@
 - only the `.fsm` adapter is implemented today; SystemVerilog, Verilog, and VHDL adapters are still absent
 - validation exists, but validation back-annotation into persisted IR artifacts and live docs is still absent
 - the actor-signal relation graph is extracted in `EvidenceIR`, but downstream interface records still flatten that information into actor-agnostic `direction_hint` values
-- the alias-learning pipeline exists, but `extract_alias_phrase()` still lacks the explicit markdown-marker garbage filter previously identified for leading `-`, `|`, and `#`
+- the workspace still emits six compiler warnings in normal `cargo test` / `cargo run` flows: one unused import in `commands/enrich.rs` and five dead-code helpers across `ir/adapters.rs` and `ir/semantic.rs`
 - the current renderable `.fsm` slices are intentionally narrow: they handle explicit standalone combinational/sequential DT control, canonical symbol-definition sections, structured reset-role blocks, selector/test-node branches, compound-update shorthand, explicit structured FSM-root cases, and explicit top-root composition, while broader unsupported selector/predicate shapes and non-FSM backends stay deferred
 
 ## Architectural recommendation
@@ -179,13 +181,11 @@
 
 ### Recommended growth path from the current codebase
 #### Keep in the current crate for the next slices
-- finish the remaining post-R13 cleanup on the current multi-spec pipeline:
-  - the alias garbage filter in `extract_alias_phrase()`
-  - keep the refreshed APB/AHB/AXI 90/95/90 baseline stable as follow-on work lands
 - build the validation/back-annotation pipeline for staged IR and adapter artifacts
 - promote the downstream signal-direction model from flat hints to actor-relative semantics before serious SystemVerilog adapter work
 - keep compatibility-level `?mod:name` / `?module:name` spellings outside the adapter root-kind model until a real backend-neutral direct-module distinction exists
 - keep any new composition/control enrichment backend-neutral so the canonical model boundary stays intact
+- keep the refreshed APB/AHB/AXI 90/95/90 baseline stable as follow-on work lands
 
 #### Split into dedicated crates when pressure becomes real
 - `specforge-source`
@@ -283,7 +283,7 @@
 - this is acceptable temporarily, but should be closed soon so the first stage is truly operational for PDFs
 
 ## Testing implications
-- current test count: 98 (all passing)
+- current test count: 99 (all passing)
 - current tests cover:
   - source-kind detection
   - deterministic source key naming
@@ -307,12 +307,12 @@
   - handshake-driven `IntentIR` identity/behavior/constraint/assumption construction
   - residual-decision preservation from `SemanticIR` into `IntentIR`
   - NLP Level 3 extraction, backannotation, and alias learning
+  - markdown-marker alias rejection for Form 2 alias learning
   - actor-signal relation extraction from prose and table roles
   - AMBA `Source` / `Driver` / `Destination` signal-direction handling
   - `.fsm` adapter renderability (12 adapter cases)
   - `specforge validate` for all four IR stages
 - next tests should cover:
-  - the remaining alias-garbage filter in `extract_alias_phrase()`
   - richer APB and AXI end-to-end fixtures for relation-driven direction coverage
   - actor-relative direction modeling once it lands in `SemanticIR` / `IntentIR`
   - validation back-annotation persistence
@@ -323,21 +323,31 @@
 - `cargo run --manifest-path Cargo.toml -p specforge -- --help`
   - passed and confirmed the current CLI surface includes `enrich`, `validate`, and `nlp-enrich`
 - `cargo test --manifest-path Cargo.toml`
-  - passed with 98 tests
-- `cargo build --release --manifest-path Cargo.toml`
-  - passed
-- `target/release/specforge validate generated/intent_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/intent_ir.json`
-  - 90/100 EXCELLENT
-- `target/release/specforge validate generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json`
-  - 95/100 EXCELLENT
-- `target/release/specforge validate generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json`
-  - 90/100 GOOD
+  - passed with 99 tests
+- `cargo run -p specforge -- inspect README.md`
+  - passed; confirmed the repo entry source is detected as markdown
+- `cargo run -p specforge -- ingest README.md --dry-run`
+  - passed; confirmed `SourceIR` planning for the README entrypoint
+- `cargo run -p specforge -- ingest README.md`
+  - passed; materialized `generated/source_ir/readme/source_ir.json`
+- `cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json --dry-run`
+  - passed; confirmed README-backed `EvidenceIR` preview
+- `cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json`
+  - passed; materialized `generated/evidence_ir/readme/evidence_ir.json` with 15 section anchors and 190 extracted statements
+- `cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json --dry-run`
+  - passed; confirmed README-backed `SemanticIR` preview
+- `cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json`
+  - passed; materialized `generated/semantic_ir/readme/semantic_ir.json` with 2 actors, 6 phases, 5 invariants, and 8 gates
+- `cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json --dry-run`
+  - passed; confirmed README-backed `IntentIR` preview
+- `cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json`
+  - passed; materialized `generated/intent_ir/readme/intent_ir.json` with 2 actors, 14 behaviors, 6 constraints, and 1 assumption
+- `cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --target fsm --dry-run`
+  - passed; produced the expected honest blocked `.fsm` adapter plan for the README-derived intent surface
 
 ## Current recommendation
 - keep the current single-crate workspace for one more slice
 - keep `IntentIR` canonical and resist any temptation to make `.fsm` the hidden endpoint again
-- treat the small remaining alias-marker filter as cleanup, not as the main architectural blocker
-- the next larger engineering decision should be between:
-  - building validation/back-annotation on the current staged IR surface, and
-  - promoting the signal model toward actor-relative direction semantics before downstream RTL adapter work
+- take the alias-marker cleanup as complete and treat it as evidence that the current multi-spec extraction stack is ready for the next slice
+- build validation/back-annotation on the current staged IR surface next, then promote the signal model toward actor-relative direction semantics before downstream RTL adapter work
 - do not treat NLP Level 3 as the missing piece anymore; the pipeline now has both Level 3 enrichment and convergent typed EvidenceIR reuse

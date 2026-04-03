@@ -458,6 +458,9 @@ fn extract_alias_phrase(sentence: &str, subject_signal: &str) -> Option<String> 
     if subject_raw.is_empty() {
         return None;
     }
+    if subject_raw.starts_with(['-', '|', '#']) {
+        return None;
+    }
 
     // Strip leading articles / determiners then normalize.
     let stripped = strip_leading_articles(subject_raw);
@@ -1093,6 +1096,22 @@ mod tests {
                 "alias phrase must not exceed 4 words, got: \"{phrase}\""
             );
         }
+    }
+
+    #[test]
+    fn extract_alias_phrase_rejects_markdown_marker_prefixes() {
+        assert!(
+            extract_alias_phrase("- the address shall remain stable", "HADDR").is_none(),
+            "bullet-style markdown prefixes must not become learned aliases"
+        );
+        assert!(
+            extract_alias_phrase("| the address bus shall remain stable", "HADDR").is_none(),
+            "table-cell markdown prefixes must not become learned aliases"
+        );
+        assert!(
+            extract_alias_phrase("# the address bus shall remain stable", "HADDR").is_none(),
+            "heading-style markdown prefixes must not become learned aliases"
+        );
     }
 
     #[test]

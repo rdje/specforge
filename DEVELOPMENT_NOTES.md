@@ -235,8 +235,30 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
   - AHB: 95/100 EXCELLENT
   - AXI: 90/100 GOOD
 
+## Markdown-marker alias cleanup (2026-04-03)
+
+### Root cause
+- Form 2 alias learning in `specforge nlp-enrich` could still absorb markdown formatting noise when a normative sentence started with a bullet marker, table-cell marker, or heading marker before the real noun phrase.
+- The concrete failure mode was learning aliases such as `- the address` instead of a real phrase such as `address bus`.
+
+### Implementation shape
+- `crates/specforge/src/commands/nlp_enrich.rs` now rejects alias subjects that begin with `-`, `|`, or `#` before article stripping and phrase normalization.
+- The ordinary noun-phrase path is unchanged, so genuine prose aliases still accumulate in `signal_alias_map`.
+- Added regression coverage for marker-prefixed alias subjects.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml` now passes with 99 tests.
+- The staged README workflow was re-run end-to-end on `README.md` through:
+  - `inspect`
+  - `ingest`
+  - `evidence`
+  - `semantic`
+  - `intent`
+  - `.fsm` adapter dry-run
+- The repo entry flow remains executable after the alias cleanup, and the README-derived staged artifacts materialize successfully under `generated/.../readme/`.
+
 ### Remaining follow-up
-- the remaining small cleanup on the current extraction stack is the markdown-marker alias filter in `extract_alias_phrase()`
+- validation/back-annotation on staged IR and adapter artifacts is now the next workflow gap
 - the larger downstream architectural gap is still actor-relative direction modeling in `SemanticIR` / `IntentIR`
 
 ## Documentation surface currently steering the implementation

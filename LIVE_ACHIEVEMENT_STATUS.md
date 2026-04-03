@@ -37,15 +37,16 @@
 - `specforge nlp-enrich` Level 3 NLP feedback loop implemented: Done
 - Layer A/B/C/D/E NLP controls implemented: Done
 - Form 1 backannotation and Form 2 signal alias learning implemented: Done
+- Markdown-marker alias garbage filter in `specforge nlp-enrich`: Done
 - Tier 2 actor-signal relation extraction from prose and signal-description tables implemented: Done
 - Convergent EvidenceIR enrichment for anchored encodings and prose polarity implemented: Done
 - `WidthHint` / parametric-width support propagated through the IR pipeline: Done
 - AMBA `Source` / `Driver` / `Destination` signal-table direction handling implemented: Done
 - Refreshed AHB/APB/AXI validation baseline recorded (APB 90, AHB 95, AXI 90): Done
-- Test suite expanded to 98 tests; all passing: Done
+- Test suite expanded to 99 tests; all passing: Done
 - SystemVerilog/Verilog/VHDL adapters implemented: Not Started
 - Validation back-annotation and artifact-linked reports: Not Started
 - Actor-relative direction model in `SemanticIR` / `IntentIR`: Not Started
 
 ## Highest-priority remaining gap
-- Finish the remaining markdown-marker alias garbage filter in `specforge nlp-enrich`, then choose between validation back-annotation and actor-relative direction modeling before starting downstream RTL adapters
+- Build validation back-annotation and artifact-linked reports on the current staged IR surface; actor-relative direction modeling remains the next larger architectural step before downstream RTL adapters

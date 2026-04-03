@@ -1,5 +1,34 @@
 # CHANGES
 
+## 2026-04-03 (nlp-enrich alias marker filter + README staged-flow validation)
+
+### Fixed: `extract_alias_phrase()` in `crates/specforge/src/commands/nlp_enrich.rs`
+- Alias learning now rejects subject phrases that begin with markdown/table markers `-`, `|`, or `#`.
+- This closes the remaining Form 2 cleanup gap where bullet rows, table cells, or heading-prefixed text could otherwise be learned as garbage aliases such as `- the address`.
+- Ordinary prose alias learning remains unchanged for real noun phrases such as `address bus`.
+
+### Validation
+- Added regression test:
+  - `extract_alias_phrase_rejects_markdown_marker_prefixes`
+- `cargo test --manifest-path Cargo.toml` → 99/99 passed
+- Re-executed the documented README entry flow on `README.md`:
+  - `cargo run -p specforge -- --help`
+  - `cargo run -p specforge -- inspect README.md`
+  - `cargo run -p specforge -- ingest README.md --dry-run`
+  - `cargo run -p specforge -- ingest README.md`
+  - `cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json --dry-run`
+  - `cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json`
+  - `cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json --dry-run`
+  - `cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json`
+  - `cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json --dry-run`
+  - `cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json`
+  - `cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --target fsm --dry-run`
+- Materialized README artifacts now validate the staged flow end-to-end:
+  - SourceIR: 0 page artifacts, 0 visual assets
+  - EvidenceIR: 15 section anchors, 190 evidence spans, 190 extracted statements
+  - SemanticIR: 2 actors, 6 phases, 5 invariants, 8 gates
+  - IntentIR: 2 actors, 14 behaviors, 6 constraints, 1 assumption
+
 ## 2026-04-03 (convergent EvidenceIR enrichment + refreshed APB/AHB/AXI artifacts)
 
 ### Added: monotone convergent extraction loop in `evidence.rs`
