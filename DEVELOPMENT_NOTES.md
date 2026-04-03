@@ -199,6 +199,46 @@ All digital protocols are synchronous. The clock is the universal time reference
 - AXI (IHI0022_L): 85/100 (misleading) — 1 declared signal out of ~100+; score inflated by 1/1=100%
 Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementation plan.
 
+
+## Convergent EvidenceIR enrichment without hardcoded value lists (2026-04-03)
+
+### Why the earlier one-shot build order was insufficient
+- the old `EvidenceIr::build()` sequence could synthesize useful `Enum ...` facts from tables and then end before later prose extraction had a chance to reuse those values
+- weakly labeled encoding tables were easy to miss unless their headers already looked like explicit encoding tables
+- asserted/deasserted signal constraints stayed polarity-agnostic even when the prose explicitly said a reset or control signal was active low/high
+- a hardcoded APB/AHB/AXI value list was explicitly rejected; value recovery had to stay grounded in extracted PDF content
+
+### Implementation shape
+- `crates/specforge/src/ir/evidence.rs` now includes:
+  - `scan_encoding_tables_by_signal_anchor()`
+  - `collect_discovered_enum_values()`
+  - `extract_discovered_state_value_from_text()`
+  - `extract_signal_polarity_from_prose()`
+  - `apply_signal_polarity_to_constraints()`
+  - `extract_dynamic_signal_constraints()`
+  - `dedup_actor_signal_relations()`
+  - `converge_evidence_extractions()`
+- `synthesize_encoding_declarations()` now delegates to `synthesize_encoding_declarations_for_enum()` so the same enum synthesis logic can be reused by both the initial table pass and the anchored rescan path
+- the convergence loop is monotone: each pass only adds new synthesized statements/records, then stops when no new evidence is created
+- discovered enum/value atoms now come from extracted tables and synthesized `Enum ...` source facts rather than a protocol-specific baked-in list
+- polarity refinement happens after prose extraction so `must_be_asserted` / `must_be_deasserted` can collapse to `must_be_low` / `must_be_high` when the spec explicitly states active-low/high semantics
+- `crates/specforge/src/ir/source/docling_backend.rs` now lets `classify_table_kind()` look at captions, headers, and body rows together, which improves signal-description and encoding-table detection before `EvidenceIR` sees the table
+
+### Validation and observed impact
+- regression tests added:
+  - `anchored_encoding_scan_unlocks_dynamic_value_constraint_extraction`
+  - `prose_polarity_refines_asserted_constraint_kind`
+- `cargo test --manifest-path Cargo.toml` now passes with 98 tests
+- `cargo build --release --manifest-path Cargo.toml` passes
+- refreshed representative validation baselines from generated `IntentIR` artifacts:
+  - APB: 90/100 EXCELLENT
+  - AHB: 95/100 EXCELLENT
+  - AXI: 90/100 GOOD
+
+### Remaining follow-up
+- the remaining small cleanup on the current extraction stack is the markdown-marker alias filter in `extract_alias_phrase()`
+- the larger downstream architectural gap is still actor-relative direction modeling in `SemanticIR` / `IntentIR`
+
 ## Documentation surface currently steering the implementation
 - `README.md`
   - single entry point and quick orientation

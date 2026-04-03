@@ -1,4 +1,52 @@
 # CHANGES
+
+## 2026-04-03 (convergent EvidenceIR enrichment + refreshed APB/AHB/AXI artifacts)
+
+### Added: monotone convergent extraction loop in `evidence.rs`
+- Replaced the one-shot post-table extraction tail in `EvidenceIr::build()` with `converge_evidence_extractions()`.
+- Each pass now:
+  - seeds from table-derived signal/enum facts,
+  - rescans signal-anchored encoding tables,
+  - collects newly discovered enum/value atoms,
+  - extracts additional prose value constraints,
+  - refines asserted/deasserted constraints with active-low/high polarity prose,
+  - synthesizes KG-derived direction declarations,
+  - repeats until no new synthesized statements appear.
+- Rationale: the previous build order could synthesize useful `Enum ...` facts and then end the build before later prose extraction had a chance to reuse them in the same build.
+
+### Added: anchored encoding-table recovery without hardcoded protocol value lists
+- New helpers in `crates/specforge/src/ir/evidence.rs`:
+  - `scan_encoding_tables_by_signal_anchor()`
+  - `collect_discovered_enum_values()`
+  - `extract_discovered_state_value_from_text()`
+  - `extract_signal_polarity_from_prose()`
+  - `apply_signal_polarity_to_constraints()`
+  - `extract_dynamic_signal_constraints()`
+  - `dedup_actor_signal_relations()`
+- `synthesize_encoding_declarations()` now delegates to `synthesize_encoding_declarations_for_enum()` so the same encoding synthesis logic can be reused by the convergence loop.
+- No new APB/AHB/AXI-specific enum/value list was added; discovered values come from extracted tables and synthesized `Enum ...` statements only.
+
+### Changed: `classify_table_kind()` in `docling_backend.rs`
+- Signature widened to `classify_table_kind(header_rows, body_rows=None, caption_text=None)`.
+- Table classification now uses caption cues, header cues, and first-column body content together instead of headers alone.
+- Added content-based encoding detection for weakly labeled tables by scanning body rows for binary/hex literals and bit-field references such as `HTRANS[1:0]`.
+- The call site now passes `body_rows` into the helper so the classifier can use real cell content.
+
+### Validation
+- Added regression tests:
+  - `anchored_encoding_scan_unlocks_dynamic_value_constraint_extraction`
+  - `prose_polarity_refines_asserted_constraint_kind`
+- `cargo test --manifest-path Cargo.toml` → 98/98 passed
+- `cargo build --release --manifest-path Cargo.toml` → passed
+- Refreshed generated APB/AHB/AXI artifacts and revalidated the current `IntentIR` outputs:
+  - APB: 90/100 EXCELLENT
+  - AHB: 95/100 EXCELLENT
+  - AXI: 90/100 GOOD
+- Net score change from the earlier baseline:
+  - APB: 75 → 90
+  - AHB: 95 → 95
+  - AXI: 90 → 90
+
 ## 2026-04-03 (broader timing_diagram classification for figure captions)
 
 ### Fixed: classify_diagram_kind() in docling_backend.rs Python helper

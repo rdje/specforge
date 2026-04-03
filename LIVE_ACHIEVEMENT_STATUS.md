@@ -13,66 +13,39 @@
 - `specforge evidence` EvidenceIR command created: Done
 - `specforge semantic` SemanticIR command created: Done
 - `specforge intent` IntentIR command created: Done
-- SourceIR type system implemented: Done
-- EvidenceIR scaffolding implemented: Done
-- SourceIR page/visual artifact scaffolding implemented: Done
-- EvidenceIR multimodal visual-evidence scaffolding implemented: Done
-- SemanticIR scaffolding implemented: Done
-- IntentIR scaffolding implemented: Done
-- Adapter layer scaffolding implemented: Done
-- Pinned `fsmgen` reference submodule added: Done
-- Renamed CLI and staged IR architecture validation completed: Done
-- SOTA multimodal ingestion architecture defined: Done
-- Multimodal SourceIR/EvidenceIR schema validation completed: Done
-- Structured PDF normalization orchestration implemented: Done
-- EvidenceIR extraction implemented: Done
-- SemanticIR construction implemented: Done
-- SemanticIR typed signal/control enrichment implemented: Done
-- SemanticIR system/init enrichment implemented: Done
-- IntentIR construction implemented: Done
-- IntentIR canonical interface/control carry-through implemented: Done
-- IntentIR canonical system/init carry-through implemented: Done
 - `specforge adapt` command created: Done
-- First DT-centric `.fsm` adapter artifact implemented: Done
-- Standalone renderable `.fsm` text emission implemented for explicit canonical cases: Done
-- Standalone sequential/system-contract `.fsm` emission implemented for explicit canonical DT cases: Done
-- Structured `?fsm:name` `.fsm` emission implemented for explicit canonical FSM cases: Done
-- Canonical symbol-definition and structured-control widening for `.fsm` semantics implemented: Done
-- Honest `.fsm` lowering for canonical symbol-definition sections and reset-role blocks implemented: Done
-- Explicit active-high synchronous reset phrasing accepted in reset parsing: Done
-- First-class canonical reset polarity/assertion/release/target semantics implemented: Done
-- Reset-contract carry-through and honest `.fsm` polarity validation implemented: Done
-- Explicit module/top composition carry-through implemented: Done
-- Structured `?top:name` `.fsm` emission implemented for explicit canonical composition cases: Done
-- Selector/test-node and compound-update lowering into emitted `.fsm` text implemented: Done
-- Direct-module alias-root decision recorded and speculative `.fsm` adapter root-kind placeholders removed: Done
-- SemanticIR extraction quality improved for real chip spec PDFs (boilerplate filtering, expanded stop words, interface noise filtering): Done
-- SemanticIR signal-table row parsing implemented (direction and width from PDF signal description tables): Done
-- EXTRACTION_ARCHITECTURE.md created as comprehensive reference for SOTA extraction vision: Done
-- SourceIR SOTA capture: structured table cell grids, typed content elements, section hierarchy with SectionKind, document profile, table kind classification: Done
-- EvidenceIR SOTA typed evidence: signal declarations and encoding enum declarations synthesized from structured table cells, NormativeStatement classification added: Done
-- SemanticIR parse_signal_table_row band-aid removed (declarations now flow from EvidenceIR): Done
-- Tier 2: RegisterRecord, RegisterFieldRecord, TimingConstraintRecord type system implemented; EvidenceIR synthesizes from structured tables: Done
-- Tier 2: TimingConstraint and ConditionalRule StatementClass sub-classes added to EvidenceIR classification: Done
-- EXTRACTION_ARCHITECTURE.md updated as precise authoritative reference with exact type names and implementation status: Done
-- Level 2 NLP: SignalConstraintRecord and ConditionalRuleRecord structured extraction from classified sentences: Done
-- DiagramKind classification: timing_diagram/state_machine/block_diagram from caption text (zero VLM deps): Done
-- specforge enrich command: VLM enrichment pipeline with Ollama/OpenAI/LM Studio providers: Done
-- 17 AHB timing diagrams correctly classified, ready for VLM enrichment: Done
-- Docling installed and first real-world PDF (AMBA AHB) exercised end-to-end through the full pipeline: Done
-- VLM observations (TimingDiagramExtraction, StateMachineExtraction) injected into EvidenceIR from enriched VisualAsset.note: Done
-- SemanticIR VLM wiring: timing constraints merged from VLM diagram annotations; state/transition records merged from VLM state machine extraction: Done
-- specforge validate command implemented for all four IR stages with quality score and coverage metrics: Done
-- EXTRACTION_ARCHITECTURE.md corrected with all Tier 1–3 implementation statuses; NLP Level 3 plan added as next step: Done
-- VLM truncation bug fixed (120-char cap removed); serde_json response parsing; max_tokens 2048: Done
-- qwen2.5vl:7b set as default Ollama model for VLM+NLP; model pulled and ready (6GB): Done
-- specforge nlp-enrich command (NLP Level 3): LLM-based reclassification of NormativeStatement sentences: Done
-- NLP Level 1+2 pattern expansion (~50%→70%+ coverage): cannot/is not permitted/unless/provided that/is tied high/multi-signal extraction: Done
-- Test suite expanded to 75 tests; all passing: Done
-- SystemVerilog/Verilog/VHDL adapters implemented: Not Started
-- AHB end-to-end pipeline run to validate NLP improvements: Not Started
-- Validation back-annotation and artifact-linked reports: Not Started
+- `specforge enrich` command created: Done
+- `specforge validate` command created: Done
+- `specforge nlp-enrich` command created: Done
 - End-to-end source-to-IntentIR pipeline implemented: Done
+- SourceIR type system implemented: Done
+- Structured PDF normalization orchestration implemented: Done
+- SourceIR SOTA capture: structured table cell grids, typed content elements, section hierarchy with `SectionKind`, document profile, table kind classification: Done
+- EvidenceIR extraction implemented: Done
+- EvidenceIR typed table synthesis for signals, enums, registers, and timing records implemented: Done
+- `NormativeStatement`, `TimingConstraint`, and `ConditionalRule` statement classification implemented: Done
+- SemanticIR construction implemented: Done
+- SemanticIR typed signal/control/system/init/state enrichment implemented: Done
+- IntentIR construction implemented: Done
+- IntentIR canonical interface/control/system/init carry-through implemented: Done
+- `.fsm` adapter artifact and honest renderable lowering for explicit DT/FSM/top cases implemented: Done
+- Canonical symbol-definition, reset-role, selector/test-node, and compound-update lowering for `.fsm` implemented: Done
+- Reset-contract carry-through and honest `.fsm` polarity validation implemented: Done
+- `specforge enrich` VLM observation pipeline implemented: Done
+- VLM observations injected into EvidenceIR and merged into SemanticIR timing/state records: Done
+- `specforge validate` quality scoring and stage-aware validation implemented: Done
+- `specforge nlp-enrich` Level 3 NLP feedback loop implemented: Done
+- Layer A/B/C/D/E NLP controls implemented: Done
+- Form 1 backannotation and Form 2 signal alias learning implemented: Done
+- Tier 2 actor-signal relation extraction from prose and signal-description tables implemented: Done
+- Convergent EvidenceIR enrichment for anchored encodings and prose polarity implemented: Done
+- `WidthHint` / parametric-width support propagated through the IR pipeline: Done
+- AMBA `Source` / `Driver` / `Destination` signal-table direction handling implemented: Done
+- Refreshed AHB/APB/AXI validation baseline recorded (APB 90, AHB 95, AXI 90): Done
+- Test suite expanded to 98 tests; all passing: Done
+- SystemVerilog/Verilog/VHDL adapters implemented: Not Started
+- Validation back-annotation and artifact-linked reports: Not Started
+- Actor-relative direction model in `SemanticIR` / `IntentIR`: Not Started
 
 ## Highest-priority remaining gap
-- Run AHB end-to-end pipeline with `specforge validate` to measure actual NLP coverage uplift and identify remaining gaps before starting RTL adapter work
+- Finish the remaining markdown-marker alias garbage filter in `specforge nlp-enrich`, then choose between validation back-annotation and actor-relative direction modeling before starting downstream RTL adapters

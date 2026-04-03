@@ -217,33 +217,42 @@ def classify_section(title):
     return "normative"
 
 
-def classify_table_kind(header_rows, caption_text=None):
-    """Classify a table's purpose from its header cell text and caption.
+def classify_table_kind(header_rows, body_rows=None, caption_text=None):
+    """Classify a table's purpose from its header cells, body content, and caption.
 
     Returns one of: signal_description, encoding, register_map,
     timing_parameter, feature_matrix, unknown.
 
-    The caption is the primary discriminator: some tables share the
-    Name|Width|Description header structure with interface signal tables
-    but actually describe protocol payload fields (e.g. DVM message fields),
-    encoding formats, or other non-interface concepts.  Checking the caption
-    first prevents those tables from being misclassified as signal_description.
+    Classification order:
+    1. Caption-based positive: tables whose caption contains "signal" / "signals"
+       are interface signal description tables — caption authorship intent is the
+       most reliable single signal.
+    2. Caption-based exclusion: payload/message-field tables share the
+       Name|Width|Description header layout but are not interface signal tables.
+    3. Header-based: existing vocabulary checks on column headers.
+    4. Content-based encoding detection: when headers lack explicit encoding
+       vocabulary, scan the first column of body rows for binary/hex literals
+       or bit-field references (SIGNAL[N], SIGNAL[N:M]) — these are the patterns
+       that identify value-encoding tables regardless of how their headers are named.
     """
-    if not header_rows:
+    body = body_rows or []
+    if not header_rows and not body:
         return "unknown"
     cap_lower = (caption_text or "").lower()
     # Flatten all header cell texts to lowercase for pattern matching.
     all_headers = [cell["text"].lower() for row in header_rows for cell in row]
     header_set = set(all_headers)
-
-    # Signal description: first column is a signal/port name column.
-    # Guard: tables whose caption identifies them as protocol payload/message
-    # field definitions use the same header structure as interface signal tables
-    # but are NOT interface signal tables.  Exclude them from signal_description.
     first_header = all_headers[0] if all_headers else ""
-    has_name_col = any(kw in first_header for kw in ["name", "signal", "port", "pin"])
-    has_width_col = any(any(kw in h for kw in ["width", "bits", "size"]) for h in all_headers)
-    has_dir_col = any(any(kw in h for kw in ["direction", "source", "destination"]) for h in all_headers)
+
+    # ── 1. Caption-based positive: signal / interface table ──────────────────────
+    # Chip-design PDFs consistently include "signal" or "signals" in the caption
+    # of interface signal tables ("Table 2-1 APB signal descriptions",
+    # "Table 2-2 Manager signals", …).  This is more reliable than header vocab.
+    cap_words = set(re.split(r'[\s\-_:/]+', cap_lower))
+    caption_names_signals = "table" in cap_lower and bool(
+        cap_words & {"signal", "signals", "port", "ports", "pin", "pins"}
+    )
+    # Still exclude payload tables even if they happen to mention "signal".
     caption_is_payload = any(kw in cap_lower for kw in [
         "message field", "message fields",
         "payload field", "payload fields",
@@ -251,14 +260,39 @@ def classify_table_kind(header_rows, caption_text=None):
         "command field", "command fields",
         "frame field", "frame fields",
     ])
+    if caption_names_signals and not caption_is_payload:
+        return "signal_description"
+
+    # ── 2+3. Header-based signal description (with payload exclusion) ────────
+    has_name_col = any(kw in first_header for kw in ["name", "signal", "port", "pin"])
+    has_width_col = any(any(kw in h for kw in ["width", "bits", "size"]) for h in all_headers)
+    has_dir_col = any(any(kw in h for kw in ["direction", "source", "destination"]) for h in all_headers)
     if not caption_is_payload and has_name_col and (has_width_col or has_dir_col):
         return "signal_description"
 
-    # Encoding: value/encoding columns alongside a name/description column.
+    # ── Header-based encoding (explicit vocabulary) ───────────────────────
     has_value_col = any(any(kw in h for kw in ["value", "encoding", "code", "binary", "hex"]) for h in all_headers)
     has_meaning_col = any(any(kw in h for kw in ["name", "meaning", "description", "transfer type", "type"]) for h in all_headers)
     if has_value_col and has_meaning_col:
         return "encoding"
+
+    # ── 4. Content-based encoding detection (body scan) ───────────────────
+    # Encoding/value tables for individual signal fields often have no explicit
+    # "value" or "encoding" column header.  Instead, look at what the first column
+    # of body rows actually contains:
+    #   • Binary / hex literals  — 0b00, 2'b01, 0x1A  → value encoding table
+    #   • Bit-field references   — PPROT[0], HTRANS[1:0]  → bit-field description
+    # If at least 2 rows match, treat as encoding.
+    if len(body) >= 2:
+        first_col = [row[0]["text"].strip() for row in body[:12] if row]
+        binary_re = re.compile(r"0b[01]+|[0-9]+'b[01]+|0x[0-9a-fA-F]+")
+        bitfield_re = re.compile(r"\w+\[\d+(?::\d+)?\]")
+        encoding_hits = sum(
+            1 for v in first_col
+            if binary_re.search(v) or bitfield_re.search(v)
+        )
+        if encoding_hits >= 2:
+            return "encoding"
 
     # Register map: offset/address + field name + access type.
     has_addr_col = any(any(kw in h for kw in ["offset", "address", "addr", "base"]) for h in all_headers)
@@ -470,7 +504,7 @@ def main():
                 col_count = element.data.num_cols if element.data else 0
             except Exception:
                 pass
-            table_kind = classify_table_kind(header_rows, caption_text)
+            table_kind = classify_table_kind(header_rows, body_rows, caption_text)
             structured_tables.append({
                 "table_id": asset_id,
                 "asset_id": asset_id,

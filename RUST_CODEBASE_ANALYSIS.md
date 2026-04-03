@@ -5,24 +5,33 @@
 - remain useful even while only the early IR stages are implemented
 
 ## Executive summary
-- the repository now contains a renamed `specforge` crate and CLI rather than the older `spec2fsm` identity
-- the canonical product boundary is now `IntentIR`, not `.fsm`
-- the codebase has been reshaped around an explicit staged IR pipeline:
-  - `SourceIR`
-  - `EvidenceIR`
-  - `SemanticIR`
-  - `IntentIR`
-  - adapters
-- the implemented executable stages today are `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR`
-- `SourceIR` now has a real Docling-backed PDF materialization path that emits promoted markdown, page artifacts, visual assets, metadata JSON, and backend raw JSON
-- `EvidenceIR` now has a real builder that emits typed multimodal evidence records instead of remaining text-only scaffolding
-- `SemanticIR` now has a real builder that lifts grounded evidence into inspectable semantic records and residual decisions
-- `IntentIR` now has a real builder that canonicalizes semantic records into inspectable backend-neutral intent artifacts
-- the first `.fsm` adapter slices now materialize typed adapter artifacts and can emit honest standalone `?dt:name`, structured `?fsm:name`, and explicit `?top:name` text when the canonical facts are complete, including canonical symbol-definition sections, structured reset-role blocks, selector/test-node branches, and compound-update shorthand from the widened semantic model
-- the canonical reset model now preserves reset kind, polarity, assertion timing, release timing, and reset-target semantics explicitly, and the `.fsm` adapter keeps the reduced target surface honest by requiring reset polarity to remain recoverable from the reset signal name
-- the current adapter root-kind model is now intentionally limited to `?dt:name`, `?fsm:name`, and `?top:name`; compatibility-level `?mod:name` / `?module:name` spellings remain outside that model until a real backend-neutral direct-module distinction exists
-- the Tier 1–3 SOTA extraction pipeline is now complete: structured tables, typed NLP records (Level 1–2), VLM visual enrichment, and `specforge validate` for all four IR stages
-- the next slice should implement NLP Level 3 (`specforge nlp-enrich`) for LLM-based reclassification of ambiguous `NormativeStatement` sentences
+- the repository now contains a single active `specforge` crate and CLI with an executable surface of:
+  - `inspect`
+  - `ingest`
+  - `evidence`
+  - `semantic`
+  - `intent`
+  - `adapt`
+  - `enrich`
+  - `validate`
+  - `nlp-enrich`
+- the canonical product boundary remains `IntentIR`, not `.fsm`
+- the staged pipeline is operational through `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+- `SourceIR` now captures structured Docling output, typed content elements, structured tables, visual assets, and document-profile metadata
+- `EvidenceIR` now synthesizes typed declarations and records from tables, preserves typed NLP outputs, persists alias-learning state, extracts actor-signal relation triples from prose and signal-description tables, and runs a monotone convergence loop so discovered enum facts and prose polarity can unlock additional signal constraints without hardcoded protocol-specific value lists
+- `SemanticIR` now lifts that evidence into interfaces, system/reset/init records, control/state records, timing/register records, and filtered NLP constraints, with VLM observations merged into the semantic surface
+- `IntentIR` now carries forward the canonical signal/control/system/state/register/timing surface needed for honest downstream lowering
+- the current `.fsm` adapter slice is real and intentionally narrow: it can emit honest `?dt:name`, `?fsm:name`, and `?top:name` outputs when the canonical facts are explicit enough
+- the enrichment and validation toolchain is also real: `specforge enrich`, `specforge validate`, and `specforge nlp-enrich` are wired into the CLI and exercised by the workspace tests
+- the dominant architectural gap is no longer “missing NLP Level 3”; it is that the downstream interface model still collapses actor-aware relation evidence into actor-agnostic `direction_hint` records, which is the main blocker before serious SystemVerilog adapter work
+- the workspace currently validates with `cargo test --manifest-path Cargo.toml`, with 98 passing tests
+
+
+## Session update (2026-04-03)
+- `EvidenceIr::build()` now uses `converge_evidence_extractions()` instead of a one-shot extraction tail, allowing new enum facts and polarity facts to feed later passes in the same build
+- signal-anchored encoding rescans recover weakly labeled encoding tables without introducing a new hardcoded APB/AHB/AXI value list
+- refreshed current baselines from generated `IntentIR`: APB 90/100 EXCELLENT, AHB 95/100 EXCELLENT, AXI 90/100 GOOD
+- the dominant architectural gap remains downstream actor-relative signal modeling; the small near-term cleanup is still the markdown-marker alias filter in `extract_alias_phrase()`
 
 ## Observed current state
 ### Repository contents directly observed
@@ -45,6 +54,7 @@
 - `crates/specforge/src/commands/adapt.rs`
 - `crates/specforge/src/commands/enrich.rs`
 - `crates/specforge/src/commands/validate.rs`
+- `crates/specforge/src/commands/nlp_enrich.rs`
 - `crates/specforge/src/ir/mod.rs`
 - `crates/specforge/src/ir/source.rs`
 - `crates/specforge/src/ir/source/docling_backend.rs`
@@ -65,8 +75,8 @@
 - no additional real builders beyond the current `SourceIR`/`EvidenceIR`/`SemanticIR`/`IntentIR` slices and the first `.fsm` adapter slice
 
 ### Immediate implication
-- the codebase now has a clean top-level architectural story
-- the current risk is no longer naming confusion; it is execution lag between the declared staged architecture and the still-limited implemented builders
+- the codebase is no longer mostly scaffolding; the main open problem is how to preserve and exploit actor-relative signal semantics cleanly downstream
+- the practical risk is architectural flattening: `EvidenceIR` now knows more about actor/signal relations than `SemanticIR` and `IntentIR` currently expose directly
 
 ## What the tool needs to do
 - build `SourceIR` from raw specifications and normalized artifacts
@@ -108,20 +118,26 @@
   - `IntentIR` preview/materialization command
 - `src/commands/adapt.rs`
   - `.fsm` adapter preview/materialization command
+- `src/commands/enrich.rs`
+  - VLM-backed visual enrichment command for `SourceIR`
+- `src/commands/validate.rs`
+  - stage-aware artifact validation and quality-scoring command
+- `src/commands/nlp_enrich.rs`
+  - LLM-backed NLP Level 3 enrichment command for `EvidenceIR`
 - `src/ir/mod.rs`
   - stage identifiers for `source_ir`, `evidence_ir`, `semantic_ir`, and `intent_ir`
 - `src/ir/source.rs`
-  - concrete `SourceIR` implementation and PDF materialization lifecycle
+  - concrete `SourceIR` implementation, structured source types, `WidthHint`, and actor-signal relation type definitions
 - `src/ir/source/docling_backend.rs`
   - external backend discovery, Docling command orchestration, and the embedded Python helper for structured PDF normalization
 - `src/ir/evidence.rs`
-  - concrete `EvidenceIR` builder, markdown parsing, caption/reference linking, and extraction heuristics
+  - concrete `EvidenceIR` builder, markdown parsing, caption/reference linking, table synthesis, typed NLP extraction, alias persistence, and actor-signal relation extraction
 - `src/ir/semantic.rs`
-  - concrete `SemanticIR` builder, semantic lifting heuristics, and residual-decision generation
+  - concrete `SemanticIR` builder, semantic lifting heuristics, VLM merge logic, and residual-decision generation
 - `src/ir/intent.rs`
   - concrete `IntentIR` builder, canonicalization heuristics, and residual-decision preservation
 - `src/ir/adapters.rs`
-  - typed adapter artifacts, DT-centric `.fsm` lowering logic, renderability gating, and adapter-side residual-decision generation
+  - typed adapter artifacts, `.fsm` lowering logic, renderability gating, and adapter-side residual-decision generation
 
 ## Assessment of current structure
 ### What is good
@@ -145,11 +161,11 @@
 - the `.fsm` adapter can now emit a real standalone `?dt:name` file for explicit combinational and sequential DT cases, canonical symbol-definition sections, structured reset-role blocks, selector/test-node branches, compound-update shorthand, and a real structured `?fsm:name` file for explicit state-graph cases when those canonical facts are explicit enough
 
 ### What is still insufficient
-- only `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR` have real builders today
-- VLM enrichment (`specforge enrich`) and `specforge validate` are now implemented; NLP Level 3 (`specforge nlp-enrich`) is the next gap
-- the current renderable `.fsm` slices are intentionally narrow: they handle explicit standalone combinational/sequential DT control, canonical symbol-definition sections, structured reset-role blocks, selector/test-node branches, compound-update shorthand, explicit structured FSM-root cases, and the first explicit top-root composition slice, while unsupported selector/predicate shapes stay deferred and compatibility-level direct-module spellings remain outside the current canonical root-kind model
-- back-annotation of validation findings into IR artifacts is still absent
-- NLP Level 3 (LLM reclassification of ambiguous `NormativeStatement` sentences) is not yet implemented
+- only the `.fsm` adapter is implemented today; SystemVerilog, Verilog, and VHDL adapters are still absent
+- validation exists, but validation back-annotation into persisted IR artifacts and live docs is still absent
+- the actor-signal relation graph is extracted in `EvidenceIR`, but downstream interface records still flatten that information into actor-agnostic `direction_hint` values
+- the alias-learning pipeline exists, but `extract_alias_phrase()` still lacks the explicit markdown-marker garbage filter previously identified for leading `-`, `|`, and `#`
+- the current renderable `.fsm` slices are intentionally narrow: they handle explicit standalone combinational/sequential DT control, canonical symbol-definition sections, structured reset-role blocks, selector/test-node branches, compound-update shorthand, explicit structured FSM-root cases, and explicit top-root composition, while broader unsupported selector/predicate shapes and non-FSM backends stay deferred
 
 ## Architectural recommendation
 ### Core architectural stance
@@ -159,10 +175,15 @@
 - keep residual decisions explicit at every stage
 - do not let convenience around one backend contaminate the stage-neutral model
 - use structured parsing first and selective multimodal enrichment second, rather than collapsing the problem into markdown-only OCR or ungrounded VLM generation
+- keep actor/signal relations first-class long enough that downstream adapter work does not have to rediscover them from flattened `input` / `output` hints
 
 ### Recommended growth path from the current codebase
-#### Keep in the current crate for one more slice
-- start the validation/back-annotation pipeline for staged IR and adapter artifacts
+#### Keep in the current crate for the next slices
+- finish the remaining post-R13 cleanup on the current multi-spec pipeline:
+  - the alias garbage filter in `extract_alias_phrase()`
+  - keep the refreshed APB/AHB/AXI 90/95/90 baseline stable as follow-on work lands
+- build the validation/back-annotation pipeline for staged IR and adapter artifacts
+- promote the downstream signal-direction model from flat hints to actor-relative semantics before serious SystemVerilog adapter work
 - keep compatibility-level `?mod:name` / `?module:name` spellings outside the adapter root-kind model until a real backend-neutral direct-module distinction exists
 - keep any new composition/control enrichment backend-neutral so the canonical model boundary stays intact
 
@@ -170,7 +191,7 @@
 - `specforge-source`
   - source registration, normalization, converter orchestration
 - `specforge-evidence`
-  - section anchors, evidence spans, statement extraction and provenance
+  - section anchors, evidence spans, statement extraction, relation extraction, and provenance
 - `specforge-semantic`
   - actor and semantic lifting
 - `specforge-intent`
@@ -178,7 +199,7 @@
 - `specforge-adapters`
   - target-specific lowerings
 - `specforge-validate`
-  - validation, diagnostics, back-annotation
+  - validation, diagnostics, and back-annotation
 
 ## Mapping from staged architecture to the current modules
 ### SourceIR
@@ -191,7 +212,12 @@
   - `src/commands/evidence.rs`
   - `src/ir/evidence.rs`
 - current executable behavior:
-  - builds `EvidenceIR` from ready `SourceIR`, promoted markdown, and visual-asset manifests
+  - builds `EvidenceIR` from ready `SourceIR`, promoted markdown, visual-asset manifests, and structured tables
+  - synthesizes signal, enum, register, and timing evidence from structured tables
+  - extracts structured signal constraints and conditional rules from classified sentences
+  - extracts actor-signal relation triples from prose verb patterns and signal-description table role columns
+  - re-enters a monotone convergence loop so signal anchors, discovered enum members, dynamic prose constraints, polarity refinement, and KG-derived direction synthesis can reinforce one another before hand-off to `SemanticIR`
+  - persists signal-alias state so `specforge nlp-enrich` can tighten the evidence iteratively across passes
 
 ### SemanticIR
 - current declared ownership:
@@ -201,6 +227,8 @@
   - requires real `EvidenceIR`
 - current executable behavior:
   - builds `SemanticIR` from persisted `EvidenceIR`, deriving actors, interfaces, typed signal records, backend-neutral control fragments, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions
+  - merges VLM timing/state observations and filters NLP outputs through the declared-signal gate
+  - still represents interface directions as actor-agnostic hints rather than a true actor-relative graph
 
 ### IntentIR
 - current declared ownership:
@@ -216,6 +244,7 @@
   - `src/commands/adapt.rs` — `.fsm` adapter preview/materialization command
   - `src/commands/enrich.rs` — VLM diagram enrichment command (Ollama/OpenAI/LM Studio)
   - `src/commands/validate.rs` — artifact health validation command with quality score
+  - `src/commands/nlp_enrich.rs` — NLP Level 3 evidence-enrichment command
   - `src/ir/mod.rs`
 - dependency:
   - requires stable `IntentIR`
@@ -232,17 +261,16 @@
   - emits a real structured `?fsm:name` file only when the state graph, transition targets, and state-body control are explicit enough to avoid semantic invention
   - emits a real explicit `?top:name` source document only when the top ports, child modules, and links are explicit enough to avoid semantic invention
 - next real implementation target:
-  - start validation/back-annotation on the current staged IR and `.fsm` adapter artifact surface
+  - finish validation/back-annotation on the current staged IR and `.fsm` adapter artifact surface, then move the signal model toward actor-relative semantics before adding non-FSM adapters
 
 ## Major risks
 ### Risk: backend leakage into IntentIR
 - if `.fsm` or RTL-specific assumptions creep back into the canonical model, the pivot fails even if the names remain correct
+### Risk: actor-agnostic direction collapse
+- if the current actor-signal relation graph is flattened too early into one-size-fits-all `input` / `output` hints, downstream adapters will encode the wrong actor perspective and hide the real structural knowledge the pipeline already extracted
 
-### Risk: stage scaffolding without stage execution
-- if `EvidenceIR`, `SemanticIR`, and `IntentIR` remain only structs for too long, the architecture becomes performative rather than operational
-
-### Risk: incomplete provenance in EvidenceIR
-- if evidence ranges are not carried forward precisely, later semantic lifting and validation will be fragile
+### Risk: incomplete validation/back-annotation
+- if validation findings never flow back into persisted artifacts and live docs, the pipeline will remain executable but harder to trust, compare, and iterate on
 
 ### Risk: markdown-only drift for PDFs
 - if the real builder treats markdown as the only normalized representation, the system will silently lose figure, chart, and layout semantics before `EvidenceIR`
@@ -255,7 +283,7 @@
 - this is acceptable temporarily, but should be closed soon so the first stage is truly operational for PDFs
 
 ## Testing implications
-- current test count: 55 (all passing)
+- current test count: 98 (all passing)
 - current tests cover:
   - source-kind detection
   - deterministic source key naming
@@ -263,120 +291,53 @@
   - directory residual decision emission
   - PDF normalization planning
   - PDF materialization through a stubbed backend override
+  - Docling table-kind and diagram-kind classification
   - markdown-backed `EvidenceIR` construction
+  - table-synthesized signal, enum, register, and timing evidence
+  - anchored encoding-table rescans and dynamic value-constraint extraction
+  - polarity refinement from active-low / active-high prose
   - caption and figure-reference grounding into visual evidence
   - VLM observation injection (TimingDiagramExtraction, StateMachineExtraction from VisualAsset.note)
   - handshake-driven `SemanticIR` actor/interface/invariant extraction
   - structured-table signal direction+width extraction through EvidenceIR → SemanticIR
+  - parametric-width handling through the IR pipeline
   - VLM timing diagram annotation → TimingConstraintRecord in SemanticIR
   - VLM state machine extraction → RegularStateRecord + StateTransitionRecord in SemanticIR
   - ambiguous visual-grounding residual decisions in `SemanticIR`
   - handshake-driven `IntentIR` identity/behavior/constraint/assumption construction
   - residual-decision preservation from `SemanticIR` into `IntentIR`
+  - NLP Level 3 extraction, backannotation, and alias learning
+  - actor-signal relation extraction from prose and table roles
+  - AMBA `Source` / `Driver` / `Destination` signal-direction handling
   - `.fsm` adapter renderability (12 adapter cases)
   - `specforge validate` for all four IR stages
 - next tests should cover:
-  - structured PDF normalization failure handling against missing runtimes and malformed backend output
-  - additional `EvidenceIR` extraction on richer visual-asset fixtures
-  - figure extraction and caption-linking fidelity across ambiguous numbering cases
-  - visual evidence grounding and confidence propagation beyond the current heuristic pass
-  - provenance retention across stage boundaries
-  - richer `SemanticIR` snapshots and residual-decision coverage on protocol-heavy fixtures
-  - richer `IntentIR` snapshots and canonicalization coverage on protocol-heavy fixtures
-  - wider `.fsm` renderability coverage and snapshot stability, especially direct-module alias and broader composition-root cases
-  - future adapter targets beyond the first `.fsm` slice
+  - the remaining alias-garbage filter in `extract_alias_phrase()`
+  - richer APB and AXI end-to-end fixtures for relation-driven direction coverage
+  - actor-relative direction modeling once it lands in `SemanticIR` / `IntentIR`
+  - validation back-annotation persistence
+  - wider `.fsm` renderability coverage and snapshot stability on protocol-heavy fixtures
+  - future adapter targets beyond the current `.fsm` slice
 
 ## Validation completed in this session
-- `cargo fmt --all --manifest-path Cargo.toml`
-  - passed after the first-class reset-contract widening
-- `cargo fmt --all --manifest-path Cargo.toml --check`
-  - passed after the documentation refresh, confirming the Rust workspace still formats cleanly
+- `cargo run --manifest-path Cargo.toml -p specforge -- --help`
+  - passed and confirmed the current CLI surface includes `enrich`, `validate`, and `nlp-enrich`
 - `cargo test --manifest-path Cargo.toml`
-  - passed for the widened reset-contract slice with 44 tests passing
-- `cargo run --manifest-path Cargo.toml -- ingest <temp>/inferred_reset_cli.md`
-  - passed and started a temporary inferred-polarity reset CLI pipeclean for the widened reset-contract slice
-- `cargo run --manifest-path Cargo.toml -- evidence generated/source_ir/inferred_reset_cli/source_ir.json`
-  - passed and preserved the inferred reset fixture into `EvidenceIR`
-- `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/inferred_reset_cli/evidence_ir.json`
-  - passed and materialized `SemanticIR` with an asynchronous active-low reset contract inferred from `rst_n`, `assertion_timing: asynchronous_to_clock`, `release_timing: synchronous_to_clock`, `target_kind: dedicated_reset_pin`, and `automation_confidence: medium`
-- `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/inferred_reset_cli/semantic_ir.json`
-  - passed and carried the widened reset contract unchanged into `IntentIR`
-- `cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/inferred_reset_cli/intent_ir.json --target fsm`
-  - passed and materialized a renderable `.fsm` adapter artifact with `lowering_status: renderable`, `selected_root_kind: dt`, and emitted `generated/adapters/fsm/inferred_reset_cli/inferred_reset_cli.fsm`
-- `cargo run -p specforge -- --help`
-  - passed and reports the staged `SourceIR`, `EvidenceIR`, `SemanticIR`, `IntentIR`, and adapter direction
-- `cargo run -p specforge -- ingest README.md --dry-run`
-  - passed and emits `SourceIR` JSON with parser backend, page-artifact manifests, visual-asset manifests, placeholder bindings, and downstream stage planning fields
-- `cargo run -p specforge -- ingest README.md`
-  - passed after the PDF materialization changes, confirming the markdown execute path still behaves correctly
-- `SPECFORGE_DOCLING_PYTHON=/tmp/specforge-docling-venv/bin/python cargo run -p specforge -- ingest /tmp/specforge-docling-sample.pdf`
-  - passed and materialized a real PDF `SourceIR` with 9 page artifacts, 11 visual assets, promoted markdown, metadata JSON, backend raw JSON, and manifest files
-- `cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json --dry-run`
-  - passed and previewed a markdown-backed `EvidenceIR`
-- `cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json`
-  - passed and materialized a markdown-backed `EvidenceIR` with 14 section anchors, 167 evidence spans, and 167 extracted statements
-- `cargo run -p specforge -- evidence generated/source_ir/specforge_docling_sample/source_ir.json`
-  - passed and materialized a PDF-backed `EvidenceIR` with 18 section anchors, 225 evidence spans, 11 visual evidence items, 19 evidence links, and 225 extracted statements
-- `cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json --dry-run`
-  - passed and previewed a markdown-backed `SemanticIR`
-- `cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json`
-  - passed and materialized a markdown-backed `SemanticIR` with 2 actors, 4 phases, 3 invariants, 3 gates, 1 abstraction, and 12 decomposition candidates
-- `cargo run -p specforge -- semantic generated/evidence_ir/specforge_docling_sample/evidence_ir.json`
-  - passed and materialized a PDF-backed `SemanticIR` with 2 actors, 22 interfaces, 7 phases, 17 invariants, 2 contracts, 20 gates, 12 decomposition candidates, and 2 residual decisions
-- `cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json --dry-run`
-  - passed and previewed a markdown-backed `IntentIR`
-- `cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json`
-  - passed and materialized a markdown-backed `IntentIR` with 2 actors, 7 behaviors, 3 constraints, 1 assumption, and 0 residual decisions
-- `cargo run -p specforge -- intent generated/semantic_ir/specforge_docling_sample/semantic_ir.json`
-  - passed and materialized a PDF-backed `IntentIR` with 2 actors, 28 behaviors, 24 constraints, 1 assumption, and 2 residual decisions
-- `cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/handshake/intent_ir.json --target fsm`
-  - passed and materialized a typed `.fsm` adapter artifact with `lowering_status: blocked`, `selected_root_kind: dt`, 2 signal candidates, 1 DT candidate, and 3 adapter residual decisions
-- `cargo run --manifest-path Cargo.toml -- ingest <temp>/comb_dt.md`
-  - passed and started a temporary explicit-control CLI pipeclean for the first renderable standalone `.fsm` slice
-- `cargo run --manifest-path Cargo.toml -- evidence generated/source_ir/comb_dt/source_ir.json`
-  - passed and preserved the explicit-control fixture into `EvidenceIR`
-- `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/comb_dt/evidence_ir.json`
-  - passed and materialized `SemanticIR` with one typed interface and two canonical control fragments
-- `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/comb_dt/semantic_ir.json`
-  - passed and carried the canonical interface/control surface into `IntentIR`
-- `cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/comb_dt/intent_ir.json --target fsm`
-  - passed and materialized a renderable `.fsm` adapter artifact with `lowering_status: renderable`, `selected_root_kind: dt`, 3 signal candidates, 1 DT candidate, 2 residual decisions, and an emitted `generated/adapters/fsm/comb_dt/comb_dt.fsm`
-- `cargo run --manifest-path Cargo.toml -- ingest <temp>/seq_dt.md`
-  - passed and started a temporary explicit sequential-control CLI pipeclean for the standalone sequential `.fsm` slice
-- `cargo run --manifest-path Cargo.toml -- evidence generated/source_ir/seq_dt/source_ir.json`
-  - passed and preserved the explicit sequential-control fixture into `EvidenceIR`
-- `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/seq_dt/evidence_ir.json`
-  - passed and materialized `SemanticIR` with one typed interface, an explicit system contract, one init assignment, and one sequential DT fragment
-- `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/seq_dt/semantic_ir.json`
-  - passed and carried the canonical interface/system/init/control surface into `IntentIR`
-- `cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/seq_dt/intent_ir.json --target fsm`
-  - passed and materialized a renderable `.fsm` adapter artifact with `lowering_status: renderable`, `selected_root_kind: dt`, 4 signal candidates, 1 DT candidate, 4 residual decisions, and an emitted `generated/adapters/fsm/seq_dt/seq_dt.fsm`
-- `cargo run --manifest-path Cargo.toml -- ingest <temp>/explicit_fsm.md`
-  - passed and started a temporary explicit FSM-root CLI pipeclean for the structured `?fsm:name` slice
-- `cargo run --manifest-path Cargo.toml -- evidence generated/source_ir/explicit_fsm/source_ir.json`
-  - passed and preserved the explicit FSM fixture into `EvidenceIR`
-- `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/explicit_fsm/evidence_ir.json`
-  - passed and materialized `SemanticIR` with one typed interface, explicit regular states, explicit transitions, and one standalone guarded DT fragment
-- `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/explicit_fsm/semantic_ir.json`
-  - passed and carried the canonical interface/system/init/control/state/transition surface into `IntentIR`
-- `cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/explicit_fsm/intent_ir.json --target fsm`
-  - passed and materialized a renderable `.fsm` adapter artifact with `lowering_status: renderable`, `selected_root_kind: fsm`, 7 signal candidates, 1 DT candidate, 2 state candidates, 2 transition candidates, 2 residual decisions, and an emitted `generated/adapters/fsm/explicit_fsm/explicit_fsm.fsm`
-- `cargo run --manifest-path Cargo.toml -- ingest <temp>/explicit_top.md`
-  - passed and started a temporary explicit top-composition CLI pipeclean for the first `?top:name` slice
-- `cargo run --manifest-path Cargo.toml -- evidence generated/source_ir/explicit_top/source_ir.json`
-  - passed and preserved the explicit top-composition fixture into `EvidenceIR`
-- `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/explicit_top/evidence_ir.json`
-  - passed and materialized `SemanticIR` with explicit module and top-composition records
-- `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/explicit_top/semantic_ir.json`
-  - passed and carried the explicit module/top composition surface into `IntentIR`
-- `cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/explicit_top/intent_ir.json --target fsm`
-  - passed and materialized a renderable `.fsm` adapter artifact with `lowering_status: renderable`, `selected_root_kind: top`, 2 module candidates, 1 top candidate, 3 residual decisions, and an emitted `generated/adapters/fsm/explicit_top/datapath.fsm`
-- repo-wide stale-name sweep
-  - remaining `spec2fsm` references are historical notes only, not active CLI or architecture surfaces
-- `cargo fmt --all --manifest-path Cargo.toml --check` and `cargo test --manifest-path Cargo.toml`
-  - passed after the full widened reset contract, selector/test-node, compound-update, and direct-module decision slice with 47 tests passing (commit `27511f840d5b8f4e8a45f772b97602471aea5828`)
+  - passed with 98 tests
+- `cargo build --release --manifest-path Cargo.toml`
+  - passed
+- `target/release/specforge validate generated/intent_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/intent_ir.json`
+  - 90/100 EXCELLENT
+- `target/release/specforge validate generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json`
+  - 95/100 EXCELLENT
+- `target/release/specforge validate generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json`
+  - 90/100 GOOD
 
 ## Current recommendation
 - keep the current single-crate workspace for one more slice
-- next, start the validation/back-annotation pipeline so stage and adapter outputs have reproducible artifact-linked reports
 - keep `IntentIR` canonical and resist any temptation to make `.fsm` the hidden endpoint again
+- treat the small remaining alias-marker filter as cleanup, not as the main architectural blocker
+- the next larger engineering decision should be between:
+  - building validation/back-annotation on the current staged IR surface, and
+  - promoting the signal model toward actor-relative direction semantics before downstream RTL adapter work
+- do not treat NLP Level 3 as the missing piece anymore; the pipeline now has both Level 3 enrichment and convergent typed EvidenceIR reuse

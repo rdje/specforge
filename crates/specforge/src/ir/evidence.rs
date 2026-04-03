@@ -416,79 +416,30 @@ impl EvidenceIr {
         }
 
         // Synthesize typed declarations from structured table data in SourceIR.
-        // This is the correct layer for this extraction: SourceIR captured the cell grids;
-        // EvidenceIR produces the typed evidence; SemanticIR lifts without re-parsing.
+        // This provides the first seed set for the convergent loop:
+        //   1. direct signal declarations from signal-description tables
+        //   2. direct enum facts from tables already classified as encodings
         let synthesized = synthesize_declarations_from_tables(&source_ir, &mut statement_counter);
-        extracted_statements.extend(synthesized);
 
-        // Extract system contract (clock + reset) from the Description/last column of
-        // signal-description tables.  AMBA specs always identify PCLK/HCLK/ACLK as
-        // "clock signal" and PRESETn/HRESETn/ARESETn as "reset signal" and "active-LOW"
-        // in the Description column.  Synthesizing formal declarations lets the existing
-        // SemanticIR parsers (parse_explicit_system_clock / parse_explicit_system_reset)
-        // pick them up without any changes downstream.
+        // Extract system contract (clock + reset) from signal-description prose in tables.
         let contract_stmts =
             synthesize_system_contract_from_table_descriptions(&source_ir, &mut statement_counter);
-        extracted_statements.extend(contract_stmts);
 
         // Synthesize typed register and timing records from structured tables.
         let register_records = synthesize_register_records(&source_ir);
         let timing_constraints = synthesize_timing_constraints(&source_ir);
 
-        // Level 2 NLP: extract structured records from already-classified normative sentences.
-        // These operate on classified statement text, not raw text, so precision is high.
-        let mut constraint_counter = 1usize;
-        let signal_constraints =
-            extract_signal_constraints(&extracted_statements, &mut constraint_counter);
-        let conditional_rules =
-            extract_conditional_rules(&extracted_statements, &mut constraint_counter);
-
-        // Tier 2 Knowledge Graph: extract actor–signal relation triples from ALL prose sentences.
-        //
-        // Two sources of known signal names (union of both):
-        //   1. Signal names from signal-description table rows (first column), even if direction
-        //      could not be inferred from the table (covers APB/AXI where source column says
-        //      "Requester"/"Completer" or is absent entirely).
-        //   2. Signal names from explicit "Signal X is input/output" prose declarations
-        //      (covers markdown specs and any manually written declarations).
-        let signal_names_from_tables = collect_signal_names_from_tables(&source_ir);
-        let signal_names_from_decls = collect_known_signal_names(&extracted_statements);
-        let mut known_signals = signal_names_from_tables;
-        known_signals.extend(signal_names_from_decls.iter().cloned());
-
-        // Extract actor-signal relations from two sources:
-        // 1. Prose verb patterns (Tier 2 pattern matching on statements)
-        // 2. Signal description table structure (Source/Driver column directly encodes who drives)
-        let mut actor_signal_relations =
-            extract_actor_signal_relations(&extracted_statements, &known_signals);
-        let table_relations = extract_relations_from_signal_tables(&source_ir);
-        actor_signal_relations.extend(table_relations);
-        // Deduplicate by (actor_name, signal_name, relation) so table and prose sources
-        // don’t produce duplicate triples.
-        actor_signal_relations.dedup_by_key(|r| {
-            (
-                r.actor_name.clone(),
-                r.signal_name.clone(),
-                matches!(r.relation, RelationKind::Drives) as u8,
-            )
-        });
-
-        // Collect signal widths from all signal-description table Width columns.
-        // These are passed to synthesize_directions_from_relations() so that KG-synthesized
-        // declarations carry width information (e.g. "Signal PADDR is output width ADDR_WIDTH.").
-        let signal_widths_from_tables = collect_signal_widths_from_tables(&source_ir);
-
-        // Synthesize direction declarations ONLY for signals without an existing table declaration.
-        // Signals already declared from tables are authoritative; do not overwrite them.
-        let mut dir_counter = statement_counter;
-        let direction_declarations = synthesize_directions_from_relations(
-            &actor_signal_relations,
-            &signal_names_from_decls,
-            &signal_widths_from_tables,
-            &mut dir_counter,
-        );
-        let mut extracted_statements = extracted_statements;
-        extracted_statements.extend(direction_declarations);
+        // Replace the previous one-shot extraction with a monotone convergent loop:
+        // discovered signals unlock anchored encoding tables, which unlock new value atoms,
+        // which unlock additional prose-derived constraints.
+        let (extracted_statements, signal_constraints, conditional_rules, actor_signal_relations) =
+            converge_evidence_extractions(
+                &source_ir,
+                extracted_statements,
+                synthesized,
+                contract_stmts,
+                &mut statement_counter,
+            );
 
         Ok(Self {
             schema_version: 1,
@@ -1919,6 +1870,472 @@ fn contains_reference_token(text: &str, token: &str) -> bool {
     false
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum SignalPolarity {
+    ActiveHigh,
+    ActiveLow,
+}
+
+fn extract_enum_member_name(text: &str) -> Option<String> {
+    let normalized = text.split_whitespace().collect::<Vec<_>>().join(" ");
+    let normalized = normalized.trim().trim_end_matches('.');
+    let tokens: Vec<&str> = normalized.split_whitespace().collect();
+    if tokens.len() < 5 || !tokens[0].eq_ignore_ascii_case("enum") || tokens[3] != "=" {
+        return None;
+    }
+
+    let member_name = tokens[2].trim_matches(|c: char| !c.is_ascii_alphanumeric() && c != '_');
+    if member_name.is_empty() {
+        None
+    } else {
+        Some(member_name.to_ascii_uppercase())
+    }
+}
+
+fn collect_discovered_enum_values(statement_groups: &[&[ExtractedStatement]]) -> HashSet<String> {
+    let mut values = HashSet::new();
+    for group in statement_groups {
+        for statement in *group {
+            if let Some(member_name) = extract_enum_member_name(&statement.text) {
+                values.insert(member_name);
+            }
+        }
+    }
+    values
+}
+
+fn derive_encoding_enum_name(
+    table: &crate::ir::source::StructuredTableRecord,
+    section_title: &str,
+    known_signals: Option<&HashSet<String>>,
+) -> Option<String> {
+    if let Some(known_signals) = known_signals {
+        let caption_lower = table
+            .caption_text
+            .as_deref()
+            .unwrap_or("")
+            .to_ascii_lowercase();
+        let section_lower = section_title.to_ascii_lowercase();
+        let header_lower = table
+            .header_rows
+            .iter()
+            .flatten()
+            .map(|cell| cell.text.as_str())
+            .collect::<Vec<_>>()
+            .join(" ")
+            .to_ascii_lowercase();
+        let mut ordered_signals: Vec<&String> = known_signals.iter().collect();
+        ordered_signals.sort_by_key(|signal| std::cmp::Reverse(signal.len()));
+
+        for signal in ordered_signals {
+            let signal_lower = signal.to_ascii_lowercase();
+            if contains_reference_token(&caption_lower, &signal_lower)
+                || contains_reference_token(&section_lower, &signal_lower)
+                || contains_reference_token(&header_lower, &signal_lower)
+                || header_lower.contains(&format!("{signal_lower}["))
+            {
+                return Some(signal.clone());
+            }
+        }
+    }
+
+    let enum_name_source = table.caption_text.as_deref().unwrap_or(section_title);
+    enum_name_source
+        .split_whitespace()
+        .find(|token| is_hardware_signal_token(&token.to_ascii_uppercase()))
+        .map(|token| token.to_ascii_uppercase())
+}
+
+fn infer_encoding_column_indices(
+    table: &crate::ir::source::StructuredTableRecord,
+    enum_name: &str,
+) -> (usize, usize) {
+    let header_texts: Vec<String> = table
+        .header_rows
+        .first()
+        .map(|row| row.iter().map(|cell| cell.text.to_ascii_lowercase()).collect())
+        .unwrap_or_default();
+    let enum_name_lower = enum_name.to_ascii_lowercase();
+
+    let mut name_col = header_texts.iter().position(|header| {
+        header.contains("name")
+            || header.contains("meaning")
+            || header.contains("description")
+            || header.contains("state")
+            || header.contains("transfer")
+            || header.contains("response")
+            || header.contains("type")
+    });
+    let mut value_col = header_texts.iter().position(|header| {
+        header.contains("value")
+            || header.contains("encoding")
+            || header.contains("code")
+            || header.contains("binary")
+            || header.contains("hex")
+            || header.contains("bit")
+            || contains_reference_token(header, &enum_name_lower)
+            || header.contains(&format!("{enum_name_lower}["))
+    });
+
+    if value_col.is_none()
+        && table
+            .body_rows
+            .iter()
+            .filter_map(|row| row.first())
+            .any(|cell| looks_like_encoding_literal(&cell.text))
+    {
+        value_col = Some(0);
+    }
+
+    let value_col = value_col.unwrap_or(0);
+    if name_col.is_none() || name_col == Some(value_col) {
+        name_col = (0..table.col_count as usize).find(|index| *index != value_col);
+    }
+
+    (name_col.unwrap_or(0), value_col)
+}
+
+fn parse_encoding_numeric_literal(text: &str) -> Option<u32> {
+    let trimmed = text.trim().trim_matches(|c: char| c == '[' || c == ']');
+    if trimmed.is_empty() {
+        return None;
+    }
+    if let Ok(value) = trimmed.parse::<u32>() {
+        return Some(value);
+    }
+
+    let lowered = trimmed.to_ascii_lowercase();
+    if let Some(bits) = lowered.strip_prefix("0b") {
+        return u32::from_str_radix(bits, 2).ok();
+    }
+    if let Some(hex) = lowered.strip_prefix("0x") {
+        return u32::from_str_radix(hex, 16).ok();
+    }
+    if let Some((_, bits)) = lowered.split_once("'b") {
+        return u32::from_str_radix(bits, 2).ok();
+    }
+    if let Some((_, hex)) = lowered.split_once("'h") {
+        return u32::from_str_radix(hex, 16).ok();
+    }
+    if lowered.chars().all(|c| matches!(c, '0' | '1')) {
+        return u32::from_str_radix(&lowered, 2).ok();
+    }
+
+    None
+}
+
+fn looks_like_encoding_literal(text: &str) -> bool {
+    let lowered = text.trim().to_ascii_lowercase().replace(' ', "");
+    if lowered.is_empty() {
+        return false;
+    }
+    if lowered.starts_with("0b")
+        || lowered.starts_with("0x")
+        || lowered.contains("'b")
+        || lowered.contains("'h")
+    {
+        return true;
+    }
+
+    lowered.chars().all(|c| matches!(c, '0' | '1' | 'x' | 'z' | '_' | '?'))
+        && lowered.chars().any(|c| matches!(c, '0' | '1'))
+}
+
+fn table_looks_like_encoding(
+    table: &crate::ir::source::StructuredTableRecord,
+    anchor_signal: &str,
+) -> bool {
+    if matches!(table.table_kind, TableKind::Encoding) {
+        return true;
+    }
+
+    let header_texts: Vec<String> = table
+        .header_rows
+        .first()
+        .map(|row| row.iter().map(|cell| cell.text.to_ascii_lowercase()).collect())
+        .unwrap_or_default();
+    let has_name_column = header_texts.iter().any(|header| {
+        header.contains("name")
+            || header.contains("meaning")
+            || header.contains("description")
+            || header.contains("state")
+            || header.contains("transfer")
+            || header.contains("response")
+            || header.contains("type")
+    });
+    let anchor_lower = anchor_signal.to_ascii_lowercase();
+    let has_value_column = header_texts.iter().any(|header| {
+        header.contains("value")
+            || header.contains("encoding")
+            || header.contains("code")
+            || header.contains("binary")
+            || header.contains("hex")
+            || header.contains("bit")
+            || contains_reference_token(header, &anchor_lower)
+            || header.contains(&format!("{anchor_lower}["))
+    });
+    if has_name_column && has_value_column {
+        return true;
+    }
+
+    let evidence_hits = table
+        .body_rows
+        .iter()
+        .filter(|row| {
+            row.iter().any(|cell| looks_like_encoding_literal(&cell.text))
+                || row.iter().any(|cell| {
+                    let lowered = cell.text.to_ascii_lowercase();
+                    lowered.contains(&format!("{anchor_lower}["))
+                        || contains_reference_token(&lowered, &anchor_lower)
+                })
+        })
+        .count();
+    evidence_hits >= 2
+}
+
+fn scan_encoding_tables_by_signal_anchor(
+    source_ir: &SourceIr,
+    known_signals: &HashSet<String>,
+    statement_counter: &mut usize,
+) -> Vec<ExtractedStatement> {
+    if known_signals.is_empty() || source_ir.structured_tables.is_empty() {
+        return Vec::new();
+    }
+
+    let mut page_to_section: BTreeMap<u32, String> = BTreeMap::new();
+    for section in &source_ir.document_sections {
+        if let Some(page_num) = section
+            .page_id
+            .as_deref()
+            .and_then(page_number_from_page_id)
+        {
+            page_to_section.insert(page_num, section.title.clone());
+        }
+    }
+
+    let mut statements = Vec::new();
+    for table in &source_ir.structured_tables {
+        if matches!(
+            table.table_kind,
+            TableKind::SignalDescription | TableKind::RegisterMap | TableKind::TimingParameter
+        ) {
+            continue;
+        }
+
+        let table_page = table
+            .page_id
+            .as_deref()
+            .and_then(page_number_from_page_id)
+            .unwrap_or(0);
+        let section_title = page_to_section
+            .range(..=table_page)
+            .next_back()
+            .map(|(_, title)| title.clone())
+            .unwrap_or_default();
+
+        let Some(anchor_signal) = derive_encoding_enum_name(table, &section_title, Some(known_signals))
+        else {
+            continue;
+        };
+        if !table_looks_like_encoding(table, &anchor_signal) {
+            continue;
+        }
+
+        statements.extend(synthesize_encoding_declarations_for_enum(
+            table,
+            &anchor_signal,
+            statement_counter,
+        ));
+    }
+
+    statements
+}
+
+fn collect_subject_signal_tokens_with_discovered_values(
+    text: &str,
+    discovered_values: &HashSet<String>,
+) -> Vec<String> {
+    collect_subject_signal_tokens(text)
+        .into_iter()
+        .filter(|token| !discovered_values.contains(token))
+        .collect()
+}
+
+fn extract_discovered_state_value_from_text(
+    lowered: &str,
+    discovered_values: &HashSet<String>,
+) -> Option<String> {
+    let mut ordered_values: Vec<&String> = discovered_values.iter().collect();
+    ordered_values.sort_by_key(|value| std::cmp::Reverse(value.len()));
+    for value in ordered_values {
+        let value_lower = value.to_ascii_lowercase();
+        if contains_any(
+            lowered,
+            &[
+                &format!("must be {value_lower}"),
+                &format!("shall be {value_lower}"),
+                &format!("must remain {value_lower}"),
+                &format!("shall remain {value_lower}"),
+                &format!("is {value_lower} when"),
+            ],
+        ) {
+            return Some(value.clone());
+        }
+    }
+    None
+}
+
+fn extract_signal_polarity_from_prose(
+    statements: &[ExtractedStatement],
+    known_signals: &HashSet<String>,
+) -> HashMap<String, SignalPolarity> {
+    let mut polarity_map = HashMap::new();
+    let mut conflicting_signals = HashSet::new();
+    let mut ordered_signals: Vec<&String> = known_signals.iter().collect();
+    ordered_signals.sort();
+
+    for statement in statements {
+        let lowered = statement.text.to_ascii_lowercase();
+        let polarity = if lowered.contains("active low")
+            || lowered.contains("active-low")
+            || lowered.contains("asserted low")
+            || lowered.contains("low asserted")
+        {
+            Some(SignalPolarity::ActiveLow)
+        } else if lowered.contains("active high")
+            || lowered.contains("active-high")
+            || lowered.contains("asserted high")
+            || lowered.contains("high asserted")
+        {
+            Some(SignalPolarity::ActiveHigh)
+        } else {
+            None
+        };
+        let Some(polarity) = polarity else {
+            continue;
+        };
+
+        let mentioned_signals: Vec<String> = ordered_signals
+            .iter()
+            .filter_map(|signal| {
+                let signal_lower = signal.to_ascii_lowercase();
+                contains_reference_token(&lowered, &signal_lower).then_some((*signal).clone())
+            })
+            .collect();
+        if mentioned_signals.len() != 1 {
+            continue;
+        }
+
+        let signal_name = mentioned_signals[0].clone();
+        if conflicting_signals.contains(&signal_name) {
+            continue;
+        }
+        match polarity_map.get(&signal_name).copied() {
+            None => {
+                polarity_map.insert(signal_name, polarity);
+            }
+            Some(existing) if existing == polarity => {}
+            Some(_) => {
+                polarity_map.remove(&signal_name);
+                conflicting_signals.insert(signal_name);
+            }
+        }
+    }
+
+    polarity_map
+}
+
+fn apply_signal_polarity_to_constraints(
+    constraints: &mut [SignalConstraintRecord],
+    signal_polarity: &HashMap<String, SignalPolarity>,
+) {
+    for constraint in constraints {
+        let Some(polarity) = signal_polarity.get(&constraint.subject_signal).copied() else {
+            continue;
+        };
+        constraint.constraint_kind = match (&constraint.constraint_kind, polarity) {
+            (SignalConstraintKind::MustBeAsserted, SignalPolarity::ActiveLow) => {
+                SignalConstraintKind::MustBeLow
+            }
+            (SignalConstraintKind::MustBeAsserted, SignalPolarity::ActiveHigh) => {
+                SignalConstraintKind::MustBeHigh
+            }
+            (SignalConstraintKind::MustBeDeasserted, SignalPolarity::ActiveLow) => {
+                SignalConstraintKind::MustBeHigh
+            }
+            (SignalConstraintKind::MustBeDeasserted, SignalPolarity::ActiveHigh) => {
+                SignalConstraintKind::MustBeLow
+            }
+            _ => constraint.constraint_kind.clone(),
+        };
+    }
+}
+
+fn extract_dynamic_signal_constraints(
+    statements: &[ExtractedStatement],
+    counter: &mut usize,
+    discovered_values: &HashSet<String>,
+) -> Vec<SignalConstraintRecord> {
+    if discovered_values.is_empty() {
+        return Vec::new();
+    }
+
+    let mut records = Vec::new();
+    for statement in statements {
+        if matches!(statement.class, StatementClass::SignalValueConstraint) {
+            continue;
+        }
+
+        let lowered = statement.text.to_ascii_lowercase();
+        let Some(value) = extract_discovered_state_value_from_text(&lowered, discovered_values) else {
+            continue;
+        };
+
+        let subject_part = text_before_condition_marker(&statement.text);
+        let mut subject_signals =
+            collect_subject_signal_tokens_with_discovered_values(subject_part, discovered_values);
+        if subject_signals.is_empty() {
+            subject_signals =
+                collect_subject_signal_tokens_with_discovered_values(&statement.text, discovered_values);
+        }
+        if subject_signals.is_empty() {
+            continue;
+        }
+
+        let condition_text = extract_condition_clause(&statement.text);
+        let negated = contains_any(
+            &lowered,
+            &[
+                "must not",
+                "shall not",
+                "must never",
+                "shall never",
+                "cannot",
+                "will not",
+            ],
+        );
+
+        for subject_signal in subject_signals {
+            *counter += 1;
+            records.push(SignalConstraintRecord {
+                constraint_id: format!("dyn_sigcon_{counter:04}"),
+                subject_signal,
+                constraint_kind: SignalConstraintKind::MustBeValue {
+                    value: value.clone(),
+                },
+                target_value: Some(value.clone()),
+                condition_text: condition_text.clone(),
+                negated,
+                source_text: statement.text.clone(),
+                supporting_statement_ids: vec![statement.statement_id.clone()],
+                automation_confidence: AutomationConfidence::Medium,
+            });
+        }
+    }
+
+    records
+}
+
 /// Synthesizes formal typed declarations from the structured table data captured in `SourceIR`.
 ///
 /// This is the correct architectural layer for table-to-declaration conversion:
@@ -3069,51 +3486,23 @@ fn synthesize_encoding_declarations(
     section_title: &str,
     statement_counter: &mut usize,
 ) -> Vec<ExtractedStatement> {
-    let mut statements = Vec::new();
     if table.body_rows.is_empty() {
-        return statements;
+        return Vec::new();
     }
 
-    // Derive enum name from caption or section title.
-    // e.g. "HTRANS encoding" → "HTRANS", "Table 5-3 HBURST values" → "HBURST"
-    let enum_name_source = table.caption_text.as_deref().unwrap_or(section_title);
-    // Extract the first all-uppercase token that looks like a signal name.
-    let enum_name: Option<String> = enum_name_source
-        .split_whitespace()
-        .find(|tok| is_hardware_signal_token(&tok.to_ascii_uppercase()))
-        .map(|tok| tok.to_ascii_uppercase());
-    let Some(enum_name) = enum_name else {
-        return statements;
+    let Some(enum_name) = derive_encoding_enum_name(table, section_title, None) else {
+        return Vec::new();
     };
+    synthesize_encoding_declarations_for_enum(table, &enum_name, statement_counter)
+}
 
-    // Find header column indices.
-    let header_texts: Vec<String> = table
-        .header_rows
-        .first()
-        .map(|row| row.iter().map(|c| c.text.to_ascii_lowercase()).collect())
-        .unwrap_or_default();
-    // Name/meaning column: the column that names each encoding value.
-    let name_col = header_texts
-        .iter()
-        .position(|h| {
-            h.contains("name")
-                || h.contains("meaning")
-                || h.contains("transfer")
-                || h.contains("type")
-                || h.contains("description")
-        })
-        .unwrap_or(0);
-    // Value column: binary/hex encoding value.
-    let value_col = header_texts
-        .iter()
-        .position(|h| {
-            h.contains("value")
-                || h.contains("encoding")
-                || h.contains("code")
-                || h.contains("binary")
-                || h.contains("hex")
-        })
-        .unwrap_or(1);
+fn synthesize_encoding_declarations_for_enum(
+    table: &crate::ir::source::StructuredTableRecord,
+    enum_name: &str,
+    statement_counter: &mut usize,
+) -> Vec<ExtractedStatement> {
+    let mut statements = Vec::new();
+    let (name_col, value_col) = infer_encoding_column_indices(table, enum_name);
 
     for (row_idx, row) in table.body_rows.iter().enumerate() {
         let Some(name_cell) = row.get(name_col) else {
@@ -3142,19 +3531,7 @@ fn synthesize_encoding_declarations(
         // Numeric value: use value_col if available and parseable, otherwise use row index.
         let value: u32 = row
             .get(value_col)
-            .and_then(|cell| {
-                let t = cell.text.trim();
-                // Try direct integer, then strip binary prefix like 2'b00 or 0b00.
-                t.parse::<u32>().ok().or_else(|| {
-                    let stripped = t
-                        .trim_start_matches(|c: char| c.is_ascii_digit())
-                        .trim_start_matches("'b")
-                        .trim_start_matches("'h");
-                    u32::from_str_radix(stripped, 2)
-                        .ok()
-                        .or_else(|| u32::from_str_radix(stripped, 16).ok())
-                })
-            })
+            .and_then(|cell| parse_encoding_numeric_literal(&cell.text))
             .unwrap_or(row_idx as u32);
 
         // Synthesize: "Enum HTRANS IDLE = 0."
@@ -3363,6 +3740,114 @@ fn synthesize_timing_constraints(source_ir: &SourceIr) -> Vec<TimingConstraintRe
     records
 }
 
+fn dedup_actor_signal_relations(
+    relations: Vec<ActorSignalRelation>,
+) -> Vec<ActorSignalRelation> {
+    let mut deduped = Vec::new();
+    let mut seen = HashSet::new();
+    for relation in relations {
+        let key = (
+            relation.actor_name.clone(),
+            relation.signal_name.clone(),
+            matches!(relation.relation, RelationKind::Drives) as u8,
+        );
+        if seen.insert(key) {
+            deduped.push(relation);
+        }
+    }
+    deduped
+}
+
+fn converge_evidence_extractions(
+    source_ir: &SourceIr,
+    base_extracted_statements: Vec<ExtractedStatement>,
+    seed_synthesized_statements: Vec<ExtractedStatement>,
+    contract_statements: Vec<ExtractedStatement>,
+    statement_counter: &mut usize,
+) -> (
+    Vec<ExtractedStatement>,
+    Vec<SignalConstraintRecord>,
+    Vec<ConditionalRuleRecord>,
+    Vec<ActorSignalRelation>,
+) {
+    let signal_names_from_tables = collect_signal_names_from_tables(source_ir);
+    let signal_widths_from_tables = collect_signal_widths_from_tables(source_ir);
+    let table_relations = extract_relations_from_signal_tables(source_ir);
+    let mut dynamic_synthesized_statements = Vec::new();
+    let mut final_extracted_statements = Vec::new();
+    let mut final_signal_constraints = Vec::new();
+    let mut final_conditional_rules = Vec::new();
+    let mut final_actor_signal_relations = Vec::new();
+    let max_passes = source_ir.structured_tables.len().max(1) + 4;
+
+    for _pass in 0..max_passes {
+        let mut extracted_statements = base_extracted_statements.clone();
+        extracted_statements.extend(seed_synthesized_statements.iter().cloned());
+        extracted_statements.extend(contract_statements.iter().cloned());
+        extracted_statements.extend(dynamic_synthesized_statements.iter().cloned());
+
+        let mut known_signals = signal_names_from_tables.clone();
+        known_signals.extend(collect_known_signal_names(&extracted_statements));
+        let discovered_values = collect_discovered_enum_values(&[extracted_statements.as_slice()]);
+        let signal_polarity = extract_signal_polarity_from_prose(&extracted_statements, &known_signals);
+
+        let mut constraint_counter = 1usize;
+        let mut signal_constraints =
+            extract_signal_constraints(&extracted_statements, &mut constraint_counter);
+        signal_constraints.extend(extract_dynamic_signal_constraints(
+            &extracted_statements,
+            &mut constraint_counter,
+            &discovered_values,
+        ));
+        apply_signal_polarity_to_constraints(&mut signal_constraints, &signal_polarity);
+        let conditional_rules =
+            extract_conditional_rules(&extracted_statements, &mut constraint_counter);
+
+        let mut actor_signal_relations =
+            extract_actor_signal_relations(&extracted_statements, &known_signals);
+        actor_signal_relations.extend(table_relations.iter().cloned());
+        let actor_signal_relations = dedup_actor_signal_relations(actor_signal_relations);
+
+        let already_declared = collect_known_signal_names(&extracted_statements);
+        let mut candidate_statements =
+            scan_encoding_tables_by_signal_anchor(source_ir, &known_signals, statement_counter);
+        candidate_statements.extend(synthesize_directions_from_relations(
+            &actor_signal_relations,
+            &already_declared,
+            &signal_widths_from_tables,
+            statement_counter,
+        ));
+
+        let mut known_statement_texts = extracted_statements
+            .iter()
+            .map(|statement| statement.text.clone())
+            .collect::<HashSet<_>>();
+        let mut new_dynamic_statements = Vec::new();
+        for statement in candidate_statements {
+            if known_statement_texts.insert(statement.text.clone()) {
+                new_dynamic_statements.push(statement);
+            }
+        }
+
+        final_extracted_statements = extracted_statements;
+        final_signal_constraints = signal_constraints;
+        final_conditional_rules = conditional_rules;
+        final_actor_signal_relations = actor_signal_relations;
+
+        if new_dynamic_statements.is_empty() {
+            break;
+        }
+        dynamic_synthesized_statements.extend(new_dynamic_statements);
+    }
+
+    (
+        final_extracted_statements,
+        final_signal_constraints,
+        final_conditional_rules,
+        final_actor_signal_relations,
+    )
+}
+
 /// Inject VLM-derived observations from `SourceIR.visual_assets[*].note` into the
 /// corresponding `VisualEvidenceItem.observations` entries.
 ///
@@ -3495,9 +3980,21 @@ mod tests {
     use tempfile::tempdir;
 
     use crate::error::Result;
-    use crate::ir::source::{SourceIr, VisualAsset, VisualAssetKind};
+    use crate::ir::source::{
+        SourceIr, StructuredTableCellRecord, StructuredTableRecord, TableKind, VisualAsset,
+        VisualAssetKind,
+    };
 
     use super::{EvidenceIr, EvidenceLinkKind, StatementClass, VisualObservationKind};
+
+    fn make_table_cell(text: &str, is_header: bool) -> StructuredTableCellRecord {
+        StructuredTableCellRecord {
+            text: text.to_string(),
+            row_span: 1,
+            col_span: 1,
+            is_header,
+        }
+    }
 
     #[test]
     fn builds_evidence_ir_from_markdown_source_ir() -> Result<()> {
@@ -3598,7 +4095,6 @@ mod tests {
             StatementClass, classify_statement, collect_subject_signal_tokens,
             is_signal_value_constraint, text_before_condition_marker,
         };
-        use crate::ir::source::SignalConstraintKind;
 
         // ── Level 1: NormativeStatement new vocabulary ──────────────────────
 
@@ -3761,7 +4257,7 @@ mod tests {
     fn passive_drive_pattern_extracts_actor_and_signal() {
         use super::{
             EvidenceModality, ExtractedStatement, RelationKind, StatementClass,
-            collect_known_signal_names, extract_actor_signal_relations,
+            extract_actor_signal_relations,
         };
 
         let signals = ["PREADY".to_string()]
@@ -3960,6 +4456,128 @@ mod tests {
                 .iter()
                 .any(|s| s.text == "Signal PREADY is output."),
             "KG synthesis must NOT override an existing table declaration for PREADY"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn anchored_encoding_scan_unlocks_dynamic_value_constraint_extraction() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(
+            &source,
+            "# Protocol\nHTRANS must be SETUP when HREADY is HIGH.\n",
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_signal_desc".to_string(),
+            asset_id: "asset_signal_desc".to_string(),
+            page_id: None,
+            caption_text: Some("Signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Source", true),
+                make_table_cell("Width", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("HTRANS", false),
+                make_table_cell("Manager", false),
+                make_table_cell("2", false),
+                make_table_cell("Transfer type signal", false),
+            ]],
+            row_count: 1,
+            col_count: 4,
+        });
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_htrans_encoding".to_string(),
+            asset_id: "asset_htrans_encoding".to_string(),
+            page_id: None,
+            caption_text: Some("HTRANS encodings".to_string()),
+            source_ref: None,
+            table_kind: TableKind::Unknown,
+            header_rows: vec![vec![
+                make_table_cell("HTRANS[1:0]", true),
+                make_table_cell("Transfer type", true),
+            ]],
+            body_rows: vec![
+                vec![make_table_cell("00", false), make_table_cell("IDLE", false)],
+                vec![make_table_cell("01", false), make_table_cell("SETUP", false)],
+            ],
+            row_count: 2,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        assert!(
+            evidence_ir
+                .extracted_statements
+                .iter()
+                .any(|statement| statement.text == "Enum HTRANS SETUP = 1."),
+            "expected anchored scan to synthesize Enum HTRANS SETUP = 1."
+        );
+        assert!(
+            evidence_ir.signal_constraints.iter().any(|constraint| {
+                constraint.subject_signal == "HTRANS"
+                    && constraint.target_value.as_deref() == Some("SETUP")
+                    && matches!(
+                        constraint.constraint_kind,
+                        crate::ir::source::SignalConstraintKind::MustBeValue { ref value }
+                            if value == "SETUP"
+                    )
+                    && constraint.condition_text.as_deref() == Some("HREADY is HIGH")
+            }),
+            "expected discovered enum value SETUP to unlock a dynamic signal constraint"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn prose_polarity_refines_asserted_constraint_kind() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("reset.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Reset\n",
+                "Signal RST_N is input width 1.\n",
+                "RST_N is an active low reset signal.\n",
+                "RST_N must be asserted during initialization.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        assert!(
+            evidence_ir.signal_constraints.iter().any(|constraint| {
+                constraint.subject_signal == "RST_N"
+                    && matches!(
+                        constraint.constraint_kind,
+                        crate::ir::source::SignalConstraintKind::MustBeLow
+                    )
+            }),
+            "expected active-low prose to refine asserted constraint into MustBeLow"
         );
 
         Ok(())
