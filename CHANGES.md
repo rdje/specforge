@@ -1,4 +1,24 @@
 # CHANGES
+## 2026-04-03 (caption-gated signal_description classification in Docling ingest helper)
+
+### Fixed: classify_table_kind() in docling_backend.rs Python helper
+- Added `caption_text=None` parameter; caption is now checked BEFORE header-based classification.
+- Root cause: protocol payload/message field tables share the Name|Width|Description
+  header structure with interface signal tables but describe message payload fields,
+  not hardware interface pins. Without a caption check they were misclassified as
+  signal_description.
+  - AXI "Table A15.3: DVM message fields" is the confirmed instance: VA, PA, ASID,
+    ASIDV, VMID, VMIDV, DVMType are DVM message payload fields, not interface signals.
+- Fix: `caption_is_payload` flag blocks signal_description when caption contains:
+  "message field(s)", "payload field(s)", "packet field(s)", "command field(s)",
+  "frame field(s)".
+- Call site updated: `classify_table_kind(header_rows, caption_text)`.
+- Impact (requires re-ingest to take effect):
+  - AXI DVM message field table: signal_description → unknown
+  - DVM fields removed from declared signal set
+  - 82 legitimate AXI signal_description tables unaffected
+  - Width coverage: 98% → 100% after re-ingest + pipeline re-run
+- 96/96 tests pass
 ## 2026-04-03 (row-scan clock/reset detection, immune to Docling column-ordering bugs)
 
 ### Fixed: synthesize_system_contract_from_table_descriptions() (evidence.rs)

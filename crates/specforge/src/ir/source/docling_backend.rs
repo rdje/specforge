@@ -202,24 +202,41 @@ def classify_section(title):
     return "normative"
 
 
-def classify_table_kind(header_rows):
-    """Classify a table's purpose from its header cell text.
+def classify_table_kind(header_rows, caption_text=None):
+    """Classify a table's purpose from its header cell text and caption.
 
     Returns one of: signal_description, encoding, register_map,
     timing_parameter, feature_matrix, unknown.
+
+    The caption is the primary discriminator: some tables share the
+    Name|Width|Description header structure with interface signal tables
+    but actually describe protocol payload fields (e.g. DVM message fields),
+    encoding formats, or other non-interface concepts.  Checking the caption
+    first prevents those tables from being misclassified as signal_description.
     """
     if not header_rows:
         return "unknown"
+    cap_lower = (caption_text or "").lower()
     # Flatten all header cell texts to lowercase for pattern matching.
     all_headers = [cell["text"].lower() for row in header_rows for cell in row]
     header_set = set(all_headers)
 
     # Signal description: first column is a signal/port name column.
+    # Guard: tables whose caption identifies them as protocol payload/message
+    # field definitions use the same header structure as interface signal tables
+    # but are NOT interface signal tables.  Exclude them from signal_description.
     first_header = all_headers[0] if all_headers else ""
     has_name_col = any(kw in first_header for kw in ["name", "signal", "port", "pin"])
     has_width_col = any(any(kw in h for kw in ["width", "bits", "size"]) for h in all_headers)
     has_dir_col = any(any(kw in h for kw in ["direction", "source", "destination"]) for h in all_headers)
-    if has_name_col and (has_width_col or has_dir_col):
+    caption_is_payload = any(kw in cap_lower for kw in [
+        "message field", "message fields",
+        "payload field", "payload fields",
+        "packet field", "packet fields",
+        "command field", "command fields",
+        "frame field", "frame fields",
+    ])
+    if not caption_is_payload and has_name_col and (has_width_col or has_dir_col):
         return "signal_description"
 
     # Encoding: value/encoding columns alongside a name/description column.
@@ -438,7 +455,7 @@ def main():
                 col_count = element.data.num_cols if element.data else 0
             except Exception:
                 pass
-            table_kind = classify_table_kind(header_rows)
+            table_kind = classify_table_kind(header_rows, caption_text)
             structured_tables.append({
                 "table_id": asset_id,
                 "asset_id": asset_id,
