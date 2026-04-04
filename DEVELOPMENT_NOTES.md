@@ -1036,3 +1036,30 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 - the next honest follow-up is to let those canonical observations participate in stronger arbitration, not just preservation:
   - modality-aware role preference when evidence strengths differ
   - richer reporting of which canonical role meanings are single-source vs multi-source grounded
+
+## 2026-04-04 - canonical semantic-role consensus now uses preserved observations
+- the previous slice preserved canonical `semantic_observations`, but one remaining downstream consumer was still weaker than the new data model:
+  - handshake-role resolution still consulted merged `semantic_tags`
+  - validation could count observations, but it could not tell whether a canonical role meaning was weakly grounded or reinforced by multiple sources
+- that was no longer good enough for the SOTA-quality target because the canonical layers still had richer provenance than the consumer logic was using
+- `crates/specforge/src/ir/semantic.rs` now resolves a per-signal `resolved_semantic_role` from canonical observations first and only falls back to merged tags when no observation-backed consensus exists
+- `InterfaceSignalRecord` now also carries `semantic_grounding_strength` so the canonical layers can distinguish:
+  - `single_source`
+  - `multi_source`
+- grounding strength is currently derived from the count of distinct preserved observations supporting the resolved role, which keeps the model honest without pretending a single observation is stronger than it is
+- handshake-role derivation now uses that canonical resolved role surface before any tag-only fallback, which means a provenance-backed role consensus outranks the older lossy tag merge
+- `crates/specforge/src/commands/validate.rs` now reports:
+  - `with_resolved_semantic_role`
+  - `with_single_source_semantic_grounding`
+  - `with_multi_source_semantic_grounding`
+- regression coverage now proves:
+  - single-source table/caption grounding resolves a semantic role with `single_source`
+  - agreeing visual + table evidence resolves the same role with `multi_source`
+  - `IntentIR` carries that new canonical surface forward unchanged
+- validation for this slice:
+  - `cargo fmt --all` passed
+  - `cargo test --manifest-path Cargo.toml` passed with `162/162`
+- the next honest follow-up is stronger arbitration rather than more preservation:
+  - weigh source kinds and automation confidence when multiple compatible observations support a role
+  - distinguish repeated same-modality support from truly cross-modality reinforcement
+  - reuse the new resolved-role surface when richer protocol meanings beyond ready/valid are added

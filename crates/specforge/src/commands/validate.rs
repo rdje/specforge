@@ -244,6 +244,27 @@ fn interface_signal_semantic_observations_count(
         .sum()
 }
 
+fn interface_signals_with_resolved_semantic_role_count(
+    interfaces: &[crate::ir::semantic::InterfaceRecord],
+) -> usize {
+    interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+        .filter(|signal| signal.resolved_semantic_role.is_some())
+        .count()
+}
+
+fn interface_signals_with_semantic_grounding_strength_count(
+    interfaces: &[crate::ir::semantic::InterfaceRecord],
+    grounding_strength: crate::ir::semantic::SemanticGroundingStrength,
+) -> usize {
+    interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+        .filter(|signal| signal.semantic_grounding_strength == Some(grounding_strength))
+        .count()
+}
+
 fn interface_signals_with_visual_semantic_grounding_count(
     interfaces: &[crate::ir::semantic::InterfaceRecord],
 ) -> usize {
@@ -1016,6 +1037,18 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         .count();
     let with_semantic_tags = interface_signals_with_semantic_tags_count(&ir.interfaces);
     let semantic_observations = interface_signal_semantic_observations_count(&ir.interfaces);
+    let with_resolved_semantic_role =
+        interface_signals_with_resolved_semantic_role_count(&ir.interfaces);
+    let with_single_source_semantic_grounding =
+        interface_signals_with_semantic_grounding_strength_count(
+            &ir.interfaces,
+            crate::ir::semantic::SemanticGroundingStrength::SingleSource,
+        );
+    let with_multi_source_semantic_grounding =
+        interface_signals_with_semantic_grounding_strength_count(
+            &ir.interfaces,
+            crate::ir::semantic::SemanticGroundingStrength::MultiSource,
+        );
     let with_visual_semantic_grounding =
         interface_signals_with_visual_semantic_grounding_count(&ir.interfaces);
     let fully_typed = ir
@@ -1058,7 +1091,10 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     println!("  with_compat_direction_hint: {with_compat_direction_hint} ({compat_dir_pct}%)");
     println!("  with_width: {with_width} ({w_pct}%)");
     println!("  with_semantic_tags: {with_semantic_tags}");
+    println!("  with_resolved_semantic_role: {with_resolved_semantic_role}");
     println!("  semantic_observations: {semantic_observations}");
+    println!("  with_single_source_semantic_grounding: {with_single_source_semantic_grounding}");
+    println!("  with_multi_source_semantic_grounding: {with_multi_source_semantic_grounding}");
     println!("  with_visual_semantic_grounding: {with_visual_semantic_grounding}");
     println!("  fully_typed (resolved_direction+width): {fully_typed} ({ft_pct}%)");
     println!();
@@ -1407,7 +1443,19 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             ),
             metric("with_width", with_width.to_string()),
             metric("with_semantic_tags", with_semantic_tags.to_string()),
+            metric(
+                "with_resolved_semantic_role",
+                with_resolved_semantic_role.to_string(),
+            ),
             metric("semantic_observations", semantic_observations.to_string()),
+            metric(
+                "with_single_source_semantic_grounding",
+                with_single_source_semantic_grounding.to_string(),
+            ),
+            metric(
+                "with_multi_source_semantic_grounding",
+                with_multi_source_semantic_grounding.to_string(),
+            ),
             metric(
                 "with_visual_semantic_grounding",
                 with_visual_semantic_grounding.to_string(),
@@ -1530,6 +1578,18 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     let with_width = with_numeric_width + with_parametric_width;
     let with_semantic_tags = interface_signals_with_semantic_tags_count(&ir.interfaces);
     let semantic_observations = interface_signal_semantic_observations_count(&ir.interfaces);
+    let with_resolved_semantic_role =
+        interface_signals_with_resolved_semantic_role_count(&ir.interfaces);
+    let with_single_source_semantic_grounding =
+        interface_signals_with_semantic_grounding_strength_count(
+            &ir.interfaces,
+            crate::ir::semantic::SemanticGroundingStrength::SingleSource,
+        );
+    let with_multi_source_semantic_grounding =
+        interface_signals_with_semantic_grounding_strength_count(
+            &ir.interfaces,
+            crate::ir::semantic::SemanticGroundingStrength::MultiSource,
+        );
     let with_visual_semantic_grounding =
         interface_signals_with_visual_semantic_grounding_count(&ir.interfaces);
     let dir_pct = if declared_count > 0 {
@@ -1561,7 +1621,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         "  with_width: {with_width} ({w_pct}%) [{with_numeric_width} numeric, {with_parametric_width} parametric]"
     );
     println!("  with_semantic_tags: {with_semantic_tags}");
+    println!("  with_resolved_semantic_role: {with_resolved_semantic_role}");
     println!("  semantic_observations: {semantic_observations}");
+    println!("  with_single_source_semantic_grounding: {with_single_source_semantic_grounding}");
+    println!("  with_multi_source_semantic_grounding: {with_multi_source_semantic_grounding}");
     println!("  with_visual_semantic_grounding: {with_visual_semantic_grounding}");
     println!();
 
@@ -1975,7 +2038,19 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             ),
             metric("with_width", with_width.to_string()),
             metric("with_semantic_tags", with_semantic_tags.to_string()),
+            metric(
+                "with_resolved_semantic_role",
+                with_resolved_semantic_role.to_string(),
+            ),
             metric("semantic_observations", semantic_observations.to_string()),
+            metric(
+                "with_single_source_semantic_grounding",
+                with_single_source_semantic_grounding.to_string(),
+            ),
+            metric(
+                "with_multi_source_semantic_grounding",
+                with_multi_source_semantic_grounding.to_string(),
+            ),
             metric(
                 "with_visual_semantic_grounding",
                 with_visual_semantic_grounding.to_string(),
@@ -3107,10 +3182,106 @@ mod tests {
 
         let report = validate_intent_ir(&intent_ir, "signal_semantic_tags".to_string());
         assert_eq!(metric_value(&report, "with_semantic_tags"), Some("2"));
+        assert_eq!(
+            metric_value(&report, "with_resolved_semantic_role"),
+            Some("2")
+        );
         assert_eq!(metric_value(&report, "semantic_observations"), Some("2"));
+        assert_eq!(
+            metric_value(&report, "with_single_source_semantic_grounding"),
+            Some("2")
+        );
+        assert_eq!(
+            metric_value(&report, "with_multi_source_semantic_grounding"),
+            Some("0")
+        );
         assert_eq!(
             metric_value(&report, "with_visual_semantic_grounding"),
             Some("0")
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_intent_ir_counts_multi_source_semantic_grounding() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(&source, "# Protocol\nSignal XREQ is output width 1.\n")?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.visual_assets.push(VisualAsset {
+            asset_id: "figure_xreq".to_string(),
+            asset_kind: VisualAssetKind::Diagram,
+            page_id: Some("page_0001".to_string()),
+            image_path: None,
+            caption_text: Some("Figure 1: XREQ valid timing.".to_string()),
+            caption_source_path: None,
+            source_ref: None,
+            placeholder_text: None,
+            note: None,
+            diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+        });
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_xreq_roles".to_string(),
+            asset_id: "table_xreq_roles".to_string(),
+            page_id: None,
+            caption_text: Some("Handshake signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("XREQ", false),
+                make_table_cell(
+                    "Indicates that address and control information are valid for transfer.",
+                    false,
+                ),
+            ]],
+            row_count: 1,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let report = validate_intent_ir(&intent_ir, "signal_semantic_multi_source".to_string());
+        assert_eq!(
+            metric_value(&report, "with_resolved_semantic_role"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&report, "with_single_source_semantic_grounding"),
+            Some("0")
+        );
+        assert_eq!(
+            metric_value(&report, "with_multi_source_semantic_grounding"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&report, "with_visual_semantic_grounding"),
+            Some("1")
         );
 
         Ok(())

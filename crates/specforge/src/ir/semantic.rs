@@ -460,10 +460,46 @@ pub struct InterfaceSignalRecord {
     pub width_hint: Option<WidthHint>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub semantic_tags: Vec<SignalSemanticTag>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub resolved_semantic_role: Option<InterfaceSignalSemanticRole>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub semantic_grounding_strength: Option<SemanticGroundingStrength>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub semantic_observations: Vec<InterfaceSignalSemanticObservationRecord>,
     pub supporting_statement_ids: Vec<String>,
     pub automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum InterfaceSignalSemanticRole {
+    HandshakeValidLike,
+    HandshakeReadyLike,
+}
+
+impl InterfaceSignalSemanticRole {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::HandshakeValidLike => "handshake_valid_like",
+            Self::HandshakeReadyLike => "handshake_ready_like",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum SemanticGroundingStrength {
+    SingleSource,
+    MultiSource,
+}
+
+impl SemanticGroundingStrength {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::SingleSource => "single_source",
+            Self::MultiSource => "multi_source",
+        }
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -1558,17 +1594,29 @@ fn build_interfaces(
                 signal_records: entry
                     .signal_records
                     .into_iter()
-                    .map(|(signal_name, signal)| InterfaceSignalRecord {
-                        signal_name,
-                        direction_hint: signal.direction_hint,
-                        width_hint: signal.width_hint,
-                        semantic_tags: signal.semantic_tags.into_iter().collect(),
-                        semantic_observations: signal.semantic_observations,
-                        supporting_statement_ids: signal
-                            .supporting_statement_ids
-                            .into_iter()
-                            .collect(),
-                        automation_confidence: signal.automation_confidence,
+                    .map(|(signal_name, signal)| {
+                        let semantic_tags: Vec<SignalSemanticTag> =
+                            signal.semantic_tags.into_iter().collect();
+                        let semantic_observations = signal.semantic_observations;
+                        let (resolved_semantic_role, semantic_grounding_strength) =
+                            resolve_interface_signal_semantic_role(
+                                &semantic_tags,
+                                &semantic_observations,
+                            );
+                        InterfaceSignalRecord {
+                            signal_name,
+                            direction_hint: signal.direction_hint,
+                            width_hint: signal.width_hint,
+                            semantic_tags,
+                            resolved_semantic_role,
+                            semantic_grounding_strength,
+                            semantic_observations,
+                            supporting_statement_ids: signal
+                                .supporting_statement_ids
+                                .into_iter()
+                                .collect(),
+                            automation_confidence: signal.automation_confidence,
+                        }
                     })
                     .collect(),
                 supporting_statement_ids: entry.supporting_statement_ids.into_iter().collect(),
@@ -5675,6 +5723,96 @@ enum HandshakeSignalRole {
     Ready,
 }
 
+fn resolve_interface_signal_semantic_role(
+    semantic_tags: &[SignalSemanticTag],
+    semantic_observations: &[InterfaceSignalSemanticObservationRecord],
+) -> (
+    Option<InterfaceSignalSemanticRole>,
+    Option<SemanticGroundingStrength>,
+) {
+    let valid_supporting_observations = semantic_observations
+        .iter()
+        .filter(|observation| {
+            observation_supports_semantic_role(
+                observation,
+                InterfaceSignalSemanticRole::HandshakeValidLike,
+            )
+        })
+        .count();
+    let ready_supporting_observations = semantic_observations
+        .iter()
+        .filter(|observation| {
+            observation_supports_semantic_role(
+                observation,
+                InterfaceSignalSemanticRole::HandshakeReadyLike,
+            )
+        })
+        .count();
+
+    match (
+        valid_supporting_observations > 0,
+        ready_supporting_observations > 0,
+    ) {
+        (true, false) => (
+            Some(InterfaceSignalSemanticRole::HandshakeValidLike),
+            Some(grounding_strength_for_support_count(
+                valid_supporting_observations,
+            )),
+        ),
+        (false, true) => (
+            Some(InterfaceSignalSemanticRole::HandshakeReadyLike),
+            Some(grounding_strength_for_support_count(
+                ready_supporting_observations,
+            )),
+        ),
+        (true, true) => (None, None),
+        (false, false) => {
+            let has_valid_tag = semantic_tags_support_semantic_role(
+                semantic_tags,
+                InterfaceSignalSemanticRole::HandshakeValidLike,
+            );
+            let has_ready_tag = semantic_tags_support_semantic_role(
+                semantic_tags,
+                InterfaceSignalSemanticRole::HandshakeReadyLike,
+            );
+            match (has_valid_tag, has_ready_tag) {
+                (true, false) => (Some(InterfaceSignalSemanticRole::HandshakeValidLike), None),
+                (false, true) => (Some(InterfaceSignalSemanticRole::HandshakeReadyLike), None),
+                _ => (None, None),
+            }
+        }
+    }
+}
+
+fn observation_supports_semantic_role(
+    observation: &InterfaceSignalSemanticObservationRecord,
+    role: InterfaceSignalSemanticRole,
+) -> bool {
+    semantic_tags_support_semantic_role(&observation.semantic_tags, role)
+}
+
+fn semantic_tags_support_semantic_role(
+    semantic_tags: &[SignalSemanticTag],
+    role: InterfaceSignalSemanticRole,
+) -> bool {
+    semantic_tags.iter().any(|tag| match role {
+        InterfaceSignalSemanticRole::HandshakeValidLike => {
+            matches!(tag, SignalSemanticTag::HandshakeValidLike)
+        }
+        InterfaceSignalSemanticRole::HandshakeReadyLike => {
+            matches!(tag, SignalSemanticTag::HandshakeReadyLike)
+        }
+    })
+}
+
+fn grounding_strength_for_support_count(observation_count: usize) -> SemanticGroundingStrength {
+    if observation_count > 1 {
+        SemanticGroundingStrength::MultiSource
+    } else {
+        SemanticGroundingStrength::SingleSource
+    }
+}
+
 fn handshake_roles_by_signal(
     interfaces: &[InterfaceRecord],
 ) -> BTreeMap<String, HandshakeSignalRole> {
@@ -5682,27 +5820,45 @@ fn handshake_roles_by_signal(
         .iter()
         .flat_map(|interface| interface.signal_records.iter())
         .filter_map(|signal| {
-            classify_handshake_signal_from_semantic_tags(signal)
+            classify_handshake_signal_from_interface_signal(signal)
                 .map(|role| (signal.signal_name.clone(), role))
         })
         .collect()
 }
 
-fn classify_handshake_signal_from_semantic_tags(
+fn classify_handshake_signal_from_interface_signal(
     signal: &InterfaceSignalRecord,
 ) -> Option<HandshakeSignalRole> {
-    let has_valid_tag = signal
-        .semantic_tags
-        .iter()
-        .any(|tag| matches!(tag, SignalSemanticTag::HandshakeValidLike));
-    let has_ready_tag = signal
-        .semantic_tags
-        .iter()
-        .any(|tag| matches!(tag, SignalSemanticTag::HandshakeReadyLike));
+    signal
+        .resolved_semantic_role
+        .map(handshake_role_from_resolved_semantic_role)
+        .or_else(|| classify_handshake_signal_from_semantic_tags(&signal.semantic_tags))
+}
+
+fn classify_handshake_signal_from_semantic_tags(
+    semantic_tags: &[SignalSemanticTag],
+) -> Option<HandshakeSignalRole> {
+    let has_valid_tag = semantic_tags_support_semantic_role(
+        semantic_tags,
+        InterfaceSignalSemanticRole::HandshakeValidLike,
+    );
+    let has_ready_tag = semantic_tags_support_semantic_role(
+        semantic_tags,
+        InterfaceSignalSemanticRole::HandshakeReadyLike,
+    );
     match (has_valid_tag, has_ready_tag) {
         (true, false) => Some(HandshakeSignalRole::Valid),
         (false, true) => Some(HandshakeSignalRole::Ready),
         _ => None,
+    }
+}
+
+fn handshake_role_from_resolved_semantic_role(
+    role: InterfaceSignalSemanticRole,
+) -> HandshakeSignalRole {
+    match role {
+        InterfaceSignalSemanticRole::HandshakeValidLike => HandshakeSignalRole::Valid,
+        InterfaceSignalSemanticRole::HandshakeReadyLike => HandshakeSignalRole::Ready,
     }
 }
 
@@ -8124,6 +8280,14 @@ mod tests {
             xreq.semantic_tags
                 .contains(&SignalSemanticTag::HandshakeValidLike)
         );
+        assert_eq!(
+            xreq.resolved_semantic_role,
+            Some(super::InterfaceSignalSemanticRole::HandshakeValidLike)
+        );
+        assert_eq!(
+            xreq.semantic_grounding_strength,
+            Some(super::SemanticGroundingStrength::SingleSource)
+        );
         assert!(xreq.semantic_observations.iter().any(|observation| {
             matches!(
                 observation.source_kind,
@@ -8141,6 +8305,14 @@ mod tests {
             xack.semantic_tags
                 .contains(&SignalSemanticTag::HandshakeReadyLike)
         );
+        assert_eq!(
+            xack.resolved_semantic_role,
+            Some(super::InterfaceSignalSemanticRole::HandshakeReadyLike)
+        );
+        assert_eq!(
+            xack.semantic_grounding_strength,
+            Some(super::SemanticGroundingStrength::SingleSource)
+        );
         assert!(xack.semantic_observations.iter().any(|observation| {
             matches!(
                 observation.source_kind,
@@ -8149,6 +8321,81 @@ mod tests {
                 .supporting_table_ids
                 .contains(&"table_signal_semantic_tags".to_string())
         }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn marks_multi_source_semantic_grounding_on_interface_signals() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("semantic_role_multi_source.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(&source, "# Protocol\nSignal XREQ is output width 1.\n")?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.visual_assets.push(VisualAsset {
+            asset_id: "figure_xreq".to_string(),
+            asset_kind: VisualAssetKind::Diagram,
+            page_id: Some("page_0001".to_string()),
+            image_path: None,
+            caption_text: Some("Figure 1: XREQ valid timing.".to_string()),
+            caption_source_path: None,
+            source_ref: None,
+            placeholder_text: None,
+            note: None,
+            diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+        });
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_xreq_roles".to_string(),
+            asset_id: "table_xreq_roles".to_string(),
+            page_id: None,
+            caption_text: Some("Handshake signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("XREQ", false),
+                make_table_cell(
+                    "Indicates that address and control information are valid for transfer.",
+                    false,
+                ),
+            ]],
+            row_count: 1,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let xreq = semantic_ir
+            .interfaces
+            .iter()
+            .flat_map(|interface| interface.signal_records.iter())
+            .find(|signal| signal.signal_name == "XREQ")
+            .expect("expected XREQ interface signal");
+        assert_eq!(xreq.semantic_observations.len(), 2);
+        assert_eq!(
+            xreq.resolved_semantic_role,
+            Some(super::InterfaceSignalSemanticRole::HandshakeValidLike)
+        );
+        assert_eq!(
+            xreq.semantic_grounding_strength,
+            Some(super::SemanticGroundingStrength::MultiSource)
+        );
 
         Ok(())
     }

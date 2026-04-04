@@ -2059,6 +2059,14 @@ mod tests {
             xreq.semantic_tags
                 .contains(&SignalSemanticTag::HandshakeValidLike)
         );
+        assert_eq!(
+            xreq.resolved_semantic_role,
+            Some(crate::ir::semantic::InterfaceSignalSemanticRole::HandshakeValidLike)
+        );
+        assert_eq!(
+            xreq.semantic_grounding_strength,
+            Some(crate::ir::semantic::SemanticGroundingStrength::SingleSource)
+        );
         assert_eq!(xreq.semantic_observations.len(), 1);
         assert!(xreq.semantic_observations.iter().any(|observation| {
             matches!(
@@ -2076,6 +2084,14 @@ mod tests {
         assert!(
             xack.semantic_tags
                 .contains(&SignalSemanticTag::HandshakeReadyLike)
+        );
+        assert_eq!(
+            xack.resolved_semantic_role,
+            Some(crate::ir::semantic::InterfaceSignalSemanticRole::HandshakeReadyLike)
+        );
+        assert_eq!(
+            xack.semantic_grounding_strength,
+            Some(crate::ir::semantic::SemanticGroundingStrength::SingleSource)
         );
         assert_eq!(xack.semantic_observations.len(), 1);
         assert!(xack.semantic_observations.iter().any(|observation| {

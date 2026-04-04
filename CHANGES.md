@@ -1,5 +1,32 @@
 # CHANGES
 
+## 2026-04-04 (canonical semantic-role consensus from preserved observations)
+
+### Added: resolved semantic-role consensus on canonical interface signals
+- `SemanticIR` now resolves `resolved_semantic_role` on `InterfaceSignalRecord` from canonical `semantic_observations` before falling back to merged `semantic_tags`.
+- `IntentIR` carries that same canonical resolved-role surface forward unchanged.
+
+### Added: grounding-strength visibility for semantic roles
+- `InterfaceSignalRecord` now also carries `semantic_grounding_strength`.
+- The canonical layers can now distinguish single-source grounding from multi-source grounding for resolved role meaning.
+
+### Changed: validation now exposes semantic grounding quality directly
+- `specforge validate` now reports:
+  - `with_resolved_semantic_role`
+  - `with_single_source_semantic_grounding`
+  - `with_multi_source_semantic_grounding`
+- This makes it visible when canonical role meaning is merely present versus reinforced by multiple preserved observations.
+
+### Added: regression coverage for observation-backed role consensus
+- Added tests for:
+  - single-source resolved semantic roles on interface signals
+  - multi-source semantic grounding on interface signals
+  - validation counts for multi-source semantic grounding
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 162/162 passed
+
 ## 2026-04-04 (canonical semantic-role observation carry-through)
 
 ### Added: per-signal semantic observations in canonical IR

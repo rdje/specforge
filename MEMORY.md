@@ -22,17 +22,17 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `6ff9406`
-- latest_commit_brief_message: `feat(evidence): ground semantic roles in multimodal evidence`
-- note: current uncommitted work replaces lossy tag-only carry-through with canonical per-signal semantic observations, updates semantic/intent validation metrics, and syncs the live docs
+- latest_commit_hash: `f8673f0`
+- latest_commit_brief_message: `feat(ir): preserve semantic role provenance`
+- note: current uncommitted work upgrades canonical semantic-role consumption by resolving per-signal semantic roles plus grounding strength from preserved observations, updates validation metrics, and syncs the live docs
 
 ## Recent commit chain (last 5)
+- `f8673f0` feat(ir): preserve semantic role provenance
 - `6ff9406` feat(evidence): ground semantic roles in multimodal evidence
 - `2087422` feat(ir): carry semantic role conflicts downstream
 - `f8f587c` feat(evidence): surface semantic role conflicts
 - `bb7ab41` docs(sourceir): log ingest maturity boundary
 - `43c201f` feat(evidence): infer semantic roles from prose aliases
-- `bd6916f` feat(semantic): derive handshake temporal predicates
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -44,13 +44,14 @@
 - `VALIDATION_SNAPSHOT.md` is now a tracked continuity doc refreshed from persisted validation reports
 
 ## Completed technical work in this session
-- `crates/specforge/src/ir/semantic.rs` now carries `semantic_observations` on `InterfaceSignalRecord`, preserving role source kind, source text, and provenance instead of only merged `semantic_tags`
-- `crates/specforge/src/ir/intent.rs` now carries that same per-signal semantic observation surface into the canonical endpoint
-- `crates/specforge/src/commands/validate.rs` now reports canonical `semantic_observations` counts and `with_visual_semantic_grounding`
-- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, and `CHANGES.md` so the canonical observation carry-through is visible in continuity docs
+- `crates/specforge/src/ir/semantic.rs` now resolves canonical `resolved_semantic_role` plus `semantic_grounding_strength` on `InterfaceSignalRecord` from preserved `semantic_observations`
+- handshake-role derivation now uses that canonical resolved-role surface before any tag-only fallback
+- `crates/specforge/src/ir/intent.rs` now carries the same resolved-role and grounding-strength surface into the canonical endpoint
+- `crates/specforge/src/commands/validate.rs` now reports `with_resolved_semantic_role`, `with_single_source_semantic_grounding`, and `with_multi_source_semantic_grounding`
+- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, and `CHANGES.md` so the canonical role-consensus slice is visible in continuity docs
 - validation ran for this task:
   - `cargo fmt --all` passed
-  - `cargo test --manifest-path Cargo.toml` passed with `160/160`
+  - `cargo test --manifest-path Cargo.toml` passed with `162/162`
 
 ## Current working tree before commit
 - modified tracked files currently include:
@@ -66,15 +67,15 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the canonical semantic-role observation carry-through slice
-2. continue the semantic-truthfulness program by broadening multimodal role grounding and conflict/arbitration coverage
+1. commit the canonical semantic-role consensus slice
+2. continue the semantic-truthfulness program by adding stronger semantic-role arbitration beyond count-based grounding strength
 3. keep adapter work de-prioritized until the graph, temporal, arbitration, and evaluation surfaces are materially stronger
 
 ## Remaining engineering gaps after this commit
 - remaining actor-relative direction modeling in `SemanticIR` / `IntentIR` (`R15`)
 - richer explicit clock-tick temporal semantics (`R15b`)
 - KG-guided multimodal rescans (`R15c`)
-- broader evidence arbitration / conflict handling beyond polarity, interface-shape, and multi-producer ambiguity (`R15d`)
+- broader evidence arbitration / conflict handling beyond polarity, interface-shape, multi-producer ambiguity, and count-based semantic-role grounding (`R15d`)
 - KG-quality evaluation and benchmark hardening (`R15e`)
 - Tier 3 relation extraction after the graph/temporal/eval surfaces are ready (`R14`)
 - some downstream compatibility and consumer paths still rely on flat `direction_hint` instead of the graph-native surface
