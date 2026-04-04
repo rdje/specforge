@@ -202,6 +202,25 @@ fn temporal_rules_with_actor_grounding_count(
         .count()
 }
 
+fn temporal_rules_with_handshake_completion_count(
+    temporal_rules: &[crate::ir::semantic::TemporalRuleRecord],
+) -> usize {
+    temporal_rules
+        .iter()
+        .filter(|rule| {
+            rule.antecedents
+                .iter()
+                .chain(rule.consequents.iter())
+                .any(|predicate| {
+                    matches!(
+                        predicate,
+                        crate::ir::semantic::TemporalPredicateRecord::HandshakeComplete { .. }
+                    )
+                })
+        })
+        .count()
+}
+
 fn temporal_rules_with_multi_predicate_antecedents_count(
     temporal_rules: &[crate::ir::semantic::TemporalRuleRecord],
 ) -> usize {
@@ -885,6 +904,10 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         temporal_rules_with_actor_grounding_count(&ir.temporal_rules)
     );
     println!(
+        "  temporal_rules_with_handshake_completion: {}",
+        temporal_rules_with_handshake_completion_count(&ir.temporal_rules)
+    );
+    println!(
         "  signal_constraints (Level 2 NLP): {}",
         ir.signal_constraints.len()
     );
@@ -965,6 +988,8 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         temporal_rules_with_cycle_window_count(&ir.temporal_rules);
     let temporal_rules_with_actor_grounding =
         temporal_rules_with_actor_grounding_count(&ir.temporal_rules);
+    let temporal_rules_with_handshake_completion =
+        temporal_rules_with_handshake_completion_count(&ir.temporal_rules);
     let temporal_rules_with_multi_predicate_antecedents =
         temporal_rules_with_multi_predicate_antecedents_count(&ir.temporal_rules);
 
@@ -1199,6 +1224,10 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 temporal_rules_with_actor_grounding.to_string(),
             ),
             metric(
+                "temporal_rules_with_handshake_completion",
+                temporal_rules_with_handshake_completion.to_string(),
+            ),
+            metric(
                 "temporal_rules_with_multi_predicate_antecedents",
                 temporal_rules_with_multi_predicate_antecedents.to_string(),
             ),
@@ -1320,6 +1349,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     println!(
         "  temporal_rules_with_actor_grounding: {}",
         temporal_rules_with_actor_grounding_count(&ir.temporal_rules)
+    );
+    println!(
+        "  temporal_rules_with_handshake_completion: {}",
+        temporal_rules_with_handshake_completion_count(&ir.temporal_rules)
     );
     println!("  signal_constraints: {}", ir.signal_constraints.len());
     println!("  conditional_rules: {}", ir.conditional_rules.len());
@@ -1459,6 +1492,8 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         temporal_rules_with_cycle_window_count(&ir.temporal_rules);
     let temporal_rules_with_actor_grounding =
         temporal_rules_with_actor_grounding_count(&ir.temporal_rules);
+    let temporal_rules_with_handshake_completion =
+        temporal_rules_with_handshake_completion_count(&ir.temporal_rules);
     let temporal_rules_with_multi_predicate_antecedents =
         temporal_rules_with_multi_predicate_antecedents_count(&ir.temporal_rules);
 
@@ -1702,6 +1737,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             metric(
                 "temporal_rules_with_actor_grounding",
                 temporal_rules_with_actor_grounding.to_string(),
+            ),
+            metric(
+                "temporal_rules_with_handshake_completion",
+                temporal_rules_with_handshake_completion.to_string(),
             ),
             metric(
                 "temporal_rules_with_multi_predicate_antecedents",
@@ -2337,6 +2376,68 @@ mod tests {
         assert_eq!(metric_value(&report, "temporal_rules"), Some("1"));
         assert_eq!(
             metric_value(&report, "temporal_rules_with_multi_predicate_antecedents"),
+            Some("1")
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_intent_ir_counts_handshake_temporal_rules() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal AWVALID is input width 1.\n\n",
+                "Signal AWREADY is input width 1.\n\n",
+                "Signal PAYLOAD is output width 32.\n\n",
+                "Clock clk.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_payload_handshake".to_string(),
+            subject_signal: "PAYLOAD".to_string(),
+            constraint_kind: SignalConstraintKind::MustNotChange,
+            target_value: None,
+            condition_text: Some("when AWVALID is HIGH and AWREADY is HIGH".to_string()),
+            negated: false,
+            source_text: "PAYLOAD must not change when AWVALID is HIGH and AWREADY is HIGH."
+                .to_string(),
+            supporting_statement_ids: vec!["stmt_temporal_handshake".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let report = validate_intent_ir(&intent_ir, "temporal_handshake".to_string());
+        assert_eq!(metric_value(&report, "temporal_rules"), Some("1"));
+        assert_eq!(
+            metric_value(&report, "temporal_rules_with_handshake_completion"),
             Some("1")
         );
 

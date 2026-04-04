@@ -577,6 +577,11 @@ pub enum TemporalPredicateRecord {
         signal_name: String,
         phase: TickPhase,
     },
+    HandshakeComplete {
+        valid_signal: String,
+        ready_signal: String,
+        phase: TickPhase,
+    },
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -5331,7 +5336,9 @@ fn build_temporal_rules(
         let antecedents = constraint
             .condition_text
             .as_deref()
-            .map(|text| parse_temporal_condition_predicates(text, &known_signals))
+            .map(|text| {
+                parse_temporal_condition_predicates(text, &known_signals, TickPhase::PreTick)
+            })
             .unwrap_or_default();
         let consequents =
             temporal_consequents_from_signal_constraint(constraint, &unique_producer_by_signal);
@@ -5364,7 +5371,11 @@ fn build_temporal_rules(
             rule_id: format!("temporal_conditional_rule_{}", rule.rule_id),
             clock_signal: default_clock.clone(),
             edge: default_edge,
-            antecedents: parse_temporal_condition_predicates(&rule.antecedent_text, &known_signals),
+            antecedents: parse_temporal_condition_predicates(
+                &rule.antecedent_text,
+                &known_signals,
+                TickPhase::PreTick,
+            ),
             consequents,
             cycle_window: extract_cycle_window_from_text(&rule.source_text),
             source_text: rule.source_text.clone(),
@@ -5407,6 +5418,7 @@ fn temporal_clock_signal(
 fn parse_temporal_condition_predicates(
     text: &str,
     known_signals: &BTreeSet<String>,
+    phase: TickPhase,
 ) -> Vec<TemporalPredicateRecord> {
     let normalized = text
         .trim()
@@ -5418,15 +5430,16 @@ fn parse_temporal_condition_predicates(
         .trim_start_matches("While ")
         .trim();
     let mut seen = BTreeSet::new();
-    split_temporal_condition_clauses(normalized, known_signals)
+    let predicates = split_temporal_condition_clauses(normalized, known_signals)
         .into_iter()
-        .filter_map(|clause| parse_temporal_condition_clause(&clause, known_signals))
+        .filter_map(|clause| parse_temporal_condition_clause(&clause, known_signals, phase))
         .filter(|predicate| {
             serde_json::to_string(predicate)
                 .map(|key| seen.insert(key))
                 .unwrap_or(true)
         })
-        .collect()
+        .collect::<Vec<_>>();
+    enrich_handshake_completion_predicates(predicates)
 }
 
 fn split_temporal_condition_clauses(text: &str, known_signals: &BTreeSet<String>) -> Vec<String> {
@@ -5485,6 +5498,7 @@ fn split_temporal_condition_segment_on_and(
 fn parse_temporal_condition_clause(
     text: &str,
     known_signals: &BTreeSet<String>,
+    phase: TickPhase,
 ) -> Option<TemporalPredicateRecord> {
     let signal_name = find_known_signal_name(text, known_signals)?;
     let value = if contains_phrase_case_insensitive(text, "LOW") {
@@ -5502,8 +5516,92 @@ fn parse_temporal_condition_clause(
     Some(TemporalPredicateRecord::SignalValue {
         signal_name,
         value,
-        phase: TickPhase::PreTick,
+        phase,
     })
+}
+
+fn enrich_handshake_completion_predicates(
+    mut predicates: Vec<TemporalPredicateRecord>,
+) -> Vec<TemporalPredicateRecord> {
+    let mut existing = predicates
+        .iter()
+        .filter_map(|predicate| match predicate {
+            TemporalPredicateRecord::HandshakeComplete {
+                valid_signal,
+                ready_signal,
+                phase,
+            } => serde_json::to_string(&(valid_signal, ready_signal, phase)).ok(),
+            _ => None,
+        })
+        .collect::<BTreeSet<_>>();
+
+    let mut valid_assertions = Vec::<(String, TickPhase)>::new();
+    let mut ready_assertions = Vec::<(String, TickPhase)>::new();
+    for predicate in &predicates {
+        let TemporalPredicateRecord::SignalValue {
+            signal_name,
+            value,
+            phase,
+        } = predicate
+        else {
+            continue;
+        };
+        if !is_handshake_asserted_value(value) {
+            continue;
+        }
+        match classify_handshake_signal(signal_name) {
+            Some(HandshakeSignalRole::Valid) => {
+                valid_assertions.push((signal_name.clone(), *phase))
+            }
+            Some(HandshakeSignalRole::Ready) => {
+                ready_assertions.push((signal_name.clone(), *phase))
+            }
+            None => {}
+        }
+    }
+
+    for (valid_signal, phase) in &valid_assertions {
+        for (ready_signal, ready_phase) in &ready_assertions {
+            if phase != ready_phase || valid_signal == ready_signal {
+                continue;
+            }
+            let signature = serde_json::to_string(&(valid_signal, ready_signal, phase))
+                .unwrap_or_else(|_| format!("{valid_signal}:{ready_signal}:{phase:?}"));
+            if existing.insert(signature) {
+                predicates.push(TemporalPredicateRecord::HandshakeComplete {
+                    valid_signal: valid_signal.clone(),
+                    ready_signal: ready_signal.clone(),
+                    phase: *phase,
+                });
+            }
+        }
+    }
+
+    predicates
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum HandshakeSignalRole {
+    Valid,
+    Ready,
+}
+
+fn classify_handshake_signal(signal_name: &str) -> Option<HandshakeSignalRole> {
+    let normalized = signal_name.to_ascii_lowercase();
+    if normalized.contains("valid") {
+        Some(HandshakeSignalRole::Valid)
+    } else if normalized.contains("ready") {
+        Some(HandshakeSignalRole::Ready)
+    } else {
+        None
+    }
+}
+
+fn is_handshake_asserted_value(value: &str) -> bool {
+    matches!(
+        value.to_ascii_uppercase().as_str(),
+        "HIGH" | "ASSERTED" | "1" | "TRUE"
+    )
 }
 
 fn temporal_consequents_from_signal_constraint(
@@ -5679,7 +5777,7 @@ fn temporal_consequents_from_conditional_rule(
                 .collect()
         })
         .unwrap_or_else(|| {
-            parse_temporal_condition_predicates(action, known_signals)
+            parse_temporal_condition_predicates(action, known_signals, TickPhase::PostTick)
                 .into_iter()
                 .map(|predicate| match predicate {
                     TemporalPredicateRecord::SignalValue { value, .. } => {
@@ -5689,6 +5787,15 @@ fn temporal_consequents_from_conditional_rule(
                             phase: TickPhase::PostTick,
                         }
                     }
+                    TemporalPredicateRecord::HandshakeComplete {
+                        valid_signal,
+                        ready_signal,
+                        ..
+                    } => TemporalPredicateRecord::HandshakeComplete {
+                        valid_signal,
+                        ready_signal,
+                        phase: TickPhase::PostTick,
+                    },
                     other => other,
                 })
                 .collect()
@@ -8256,6 +8363,73 @@ mod tests {
                     value,
                     phase: super::TickPhase::PreTick,
                 } if signal_name == "HSEL" && value == "HIGH"
+            )
+        }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn derives_handshake_completion_from_valid_ready_guard() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("temporal_handshake_guard.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal AWVALID is input width 1.\n\n",
+                "Signal AWREADY is input width 1.\n\n",
+                "Signal PAYLOAD is output width 32.\n\n",
+                "Clock clk.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_payload_handshake".to_string(),
+            subject_signal: "PAYLOAD".to_string(),
+            constraint_kind: SignalConstraintKind::MustNotChange,
+            target_value: None,
+            condition_text: Some("when AWVALID is HIGH and AWREADY is HIGH".to_string()),
+            negated: false,
+            source_text: "PAYLOAD must not change when AWVALID is HIGH and AWREADY is HIGH."
+                .to_string(),
+            supporting_statement_ids: vec!["stmt_temporal_handshake".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| rule.rule_id == "temporal_signal_constraint_sigcon_payload_handshake")
+            .expect("expected temporal rule derived from valid/ready guard");
+        assert!(rule.antecedents.iter().any(|predicate| {
+            matches!(
+                predicate,
+                super::TemporalPredicateRecord::HandshakeComplete {
+                    valid_signal,
+                    ready_signal,
+                    phase: super::TickPhase::PreTick,
+                } if valid_signal == "AWVALID" && ready_signal == "AWREADY"
             )
         }));
 

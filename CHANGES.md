@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-04-04 (typed ready/valid handshake completion)
+
+### Added: protocol-native handshake predicates in the temporal layer
+- `SemanticIR` now derives `TemporalPredicateRecord::HandshakeComplete` when a temporal rule contains grounded asserted `VALID` and `READY` signals in the same phase.
+- This keeps ready/valid transfer completion visible as a first-class protocol event instead of only as two separate scalar guard clauses.
+
+### Changed: validation now reports handshake-predicate coverage
+- `specforge validate` now reports `temporal_rules_with_handshake_completion` for `SemanticIR` and `IntentIR`.
+- This makes handshake-semantic coverage visible in the live validation surface instead of hiding it inside raw temporal-rule counts.
+
+### Added: regression coverage for handshake temporal lift
+- Added tests for:
+  - deriving a typed handshake predicate from a valid/ready guard in `SemanticIR`
+  - carrying that predicate into `IntentIR`
+  - reporting handshake-predicate coverage in `specforge validate`
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 141/141 passed
+
 ## 2026-04-04 (idiomatic one-cycle temporal language)
 
 ### Added: idiomatic one-cycle latency recovery in the temporal-rule layer

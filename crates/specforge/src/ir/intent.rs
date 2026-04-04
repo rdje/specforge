@@ -1799,6 +1799,78 @@ mod tests {
     }
 
     #[test]
+    fn carries_handshake_temporal_predicates_into_intent_ir() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::semantic::{TemporalPredicateRecord, TickPhase};
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("intent_temporal_handshake.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal AWVALID is input width 1.\n\n",
+                "Signal AWREADY is input width 1.\n\n",
+                "Signal PAYLOAD is output width 32.\n\n",
+                "Clock clk.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_payload_handshake".to_string(),
+            subject_signal: "PAYLOAD".to_string(),
+            constraint_kind: SignalConstraintKind::MustNotChange,
+            target_value: None,
+            condition_text: Some("when AWVALID is HIGH and AWREADY is HIGH".to_string()),
+            negated: false,
+            source_text: "PAYLOAD must not change when AWVALID is HIGH and AWREADY is HIGH."
+                .to_string(),
+            supporting_statement_ids: vec!["stmt_temporal_handshake".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        assert!(intent_ir.temporal_rules.iter().any(|rule| {
+            rule.rule_id == "temporal_signal_constraint_sigcon_payload_handshake"
+                && rule.antecedents.iter().any(|predicate| {
+                    matches!(
+                        predicate,
+                        TemporalPredicateRecord::HandshakeComplete {
+                            valid_signal,
+                            ready_signal,
+                            phase: TickPhase::PreTick,
+                        } if valid_signal == "AWVALID" && ready_signal == "AWREADY"
+                    )
+                })
+        }));
+
+        Ok(())
+    }
+
+    #[test]
     fn carries_typed_temporal_conflicts_into_intent_ir() -> Result<()> {
         use crate::ir::evidence::EvidenceIr;
         use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};

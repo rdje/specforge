@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `a57a564`
-- latest_commit_brief_message: `feat(semantic): surface interface signal conflicts`
-- note: current uncommitted work expands `R15b` so idiomatic one-cycle phrases like `next cycle`, `next tick`, and `next rising edge` become bounded `cycle_window` semantics instead of staying unbounded prose
+- latest_commit_hash: `41d6bfd`
+- latest_commit_brief_message: `feat(semantic): recover idiomatic one-cycle phrases`
+- note: current uncommitted work expands `R15b` again so grounded ready/valid completion becomes a typed temporal predicate instead of remaining only two scalar guards
 
 ## Recent commit chain (last 5)
+- `41d6bfd` feat(semantic): recover idiomatic one-cycle phrases
 - `a57a564` feat(semantic): surface interface signal conflicts
 - `ee20e34` feat(semantic): surface structural kg conflicts
 - `b68be48` feat(evidence): surface polarity conflicts explicitly
 - `8c97c77` feat(evidence): mine polarity from signal tables
-- `93d376c` feat(semantic): surface temporal conflicts
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -43,19 +43,24 @@
 - `VALIDATION_SNAPSHOT.md` is now a tracked continuity doc refreshed from persisted validation reports
 
 ## Completed technical work in this session
-- `SemanticIR` now recognizes idiomatic one-cycle temporal phrases like `next cycle`, `next clock cycle`, `next tick`, `next rising edge`, and `following` / `subsequent` variants
-- those phrases now lift into `CycleWindowRecord { min_cycles: Some(1), max_cycles: Some(1) }` so they join the same canonical temporal-rule surface as numeric phrases like `within 2 cycles`
+- `SemanticIR` now derives `TemporalPredicateRecord::HandshakeComplete` when grounded `VALID` and `READY` assertions co-occur in the same temporal context
+- those handshake predicates are additive:
+  - the original scalar `SignalValue` guard predicates are still preserved
+  - the higher-level transfer event is now carried alongside them for downstream reasoning
 - added regression tests for:
-  - direct parser recovery of a single-cycle window from idiomatic one-cycle phrases
-  - end-to-end temporal-rule derivation from a `next tick` signal constraint
-- synced the roadmap/status/analysis/README/change docs so future sessions know the temporal layer now understands idiomatic one-cycle protocol language
+  - deriving a handshake predicate from a valid/ready guard in `SemanticIR`
+  - carrying that predicate into `IntentIR`
+  - surfacing handshake coverage in `specforge validate`
+- synced the roadmap/status/analysis/README/change docs so future sessions know handshake completion is now a typed part of the temporal model
 - validation ran for this task:
   - `cargo fmt --all` passed
-  - `cargo test --manifest-path Cargo.toml` passed with 138 tests
+  - `cargo test --manifest-path Cargo.toml` passed with 141 tests
 
 ## Current working tree before commit
 - modified tracked files currently include:
   - `crates/specforge/src/ir/semantic.rs`
+  - `crates/specforge/src/ir/intent.rs`
+  - `crates/specforge/src/commands/validate.rs`
   - `README.md`
   - `ROADMAP.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -66,8 +71,8 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the idiomatic one-cycle temporal-language slice; do not stage `generated/`
-2. continue `R15b` by broadening explicit temporal semantics beyond simple one-cycle idioms into richer tick-relative phrasing and arbitration
+1. commit the typed handshake-temporal slice; do not stage `generated/`
+2. continue `R15b` by broadening explicit temporal semantics beyond scalar guards and handshake events into richer tick-relative phrasing and arbitration
 3. move on to `R15c` KG-guided multimodal rescans once the next temporal slice is landed cleanly
 
 ## Remaining engineering gaps after this commit

@@ -775,3 +775,18 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 - validation for this slice:
   - `cargo fmt --all` passed
   - `cargo test --manifest-path Cargo.toml` passed with `138/138`
+
+## 2026-04-04 - typed ready/valid handshake completion
+- `crates/specforge/src/ir/semantic.rs` now defines `TemporalPredicateRecord::HandshakeComplete`
+- the semantic temporal lift now adds that predicate when a temporal context contains a grounded `VALID`-like signal and a grounded `READY`-like signal that are both asserted in the same phase
+- this is additive, not lossy:
+  - the original `SignalValue` guard predicates are still preserved
+  - the higher-level handshake event is carried alongside them for downstream protocol reasoning
+- `crates/specforge/src/commands/validate.rs` now reports `temporal_rules_with_handshake_completion`
+- added regression coverage for:
+  - deriving a handshake predicate from a valid/ready compound guard in `SemanticIR`
+  - carrying that predicate into `IntentIR`
+  - surfacing the handshake metric in `specforge validate`
+- validation for this slice:
+  - `cargo fmt --all` passed
+  - `cargo test --manifest-path Cargo.toml` passed with `141/141`
