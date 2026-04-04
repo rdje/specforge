@@ -95,6 +95,66 @@
 - adapter expansion and adapter validation should be treated as horizon work until the semantic truthfulness program above is materially complete
 - the key principle is that adapters should consume truth, not compensate for missing truth; when the pipeline struggles, the right fix is usually better evidence lifting, better temporal modeling, or better KG evaluation rather than smarter lowering
 
+## Programming semantic intent without a black-box PDF-to-code pipeline
+- the right goal is not to program a general reader of English
+- the right goal is to program a compiler for protocol meaning
+- this means the implementation should be organized around a typed domain model first, then around increasingly strong evidence-to-model mappings
+
+### The five implementation pillars
+- deterministic extraction where the domain is crisp
+  - tables, widths, enum rows, clock/reset declarations, polarity cues, section kinds, figure kinds, and layout metadata should be extracted deterministically whenever possible
+  - these surfaces should not be deferred to AI if the source structure already makes them mechanically recoverable
+- a typed protocol-world model as the semantic target
+  - the system should define the world it is trying to recover:
+    - actors
+    - signals
+    - actor-signal roles
+    - timing predicates
+    - state transitions
+    - dependencies
+    - handshake events
+    - other domain-specific protocol facts
+  - prose, tables, figures, and captions are then evidence for those typed facts rather than the final representation themselves
+- evidence aggregation instead of one-shot interpretation
+  - no single modality should have to "win" by default
+  - the pipeline should accumulate candidate facts across prose, tables, figures, captions, and layout
+  - convergence, rescans, backannotation, and validation should decide what survives into canonical IR
+- bounded AI, not full-pipeline AI
+  - VLM/NLP/LLM use is valuable for hard spans, images, and local ambiguity
+  - but the correct role is local hypothesis generation, not unrestricted start-to-finish interpretation
+  - every AI-derived candidate should be forced back through:
+    - schema checks
+    - grounding checks
+    - conflict and arbitration checks
+    - convergence checks
+    - validation
+- explicit uncertainty as a first-class output
+  - if the system cannot safely promote a candidate fact, it should preserve that uncertainty explicitly
+  - alternatives, conflicts, and residual decisions are not failures of the architecture; they are part of the truthfulness contract
+  - the system should avoid fabricating semantic certainty just to look complete
+
+### Why this is programmable
+- unrestricted natural-language semantics is open-ended, but protocol semantics is much narrower
+- chip-design specs repeatedly talk about a constrained universe:
+  - who drives what
+  - who samples what
+  - when a transfer completes
+  - when a signal must remain stable
+  - what values mean
+  - what state comes next
+- that narrower universe is exactly what the staged IR should model and validate
+
+### Near-term implementation consequences
+- keep adding typed semantic surfaces instead of broadening free-form text dependence
+- prefer meaning-based inference over spelling-only heuristics when the KG and evidence can support it
+- use KG-guided rescans to turn one recovered fact into the search anchor for the next pass
+- keep validation focused on both correctness and honesty:
+  - precision and false-positive control
+  - contradiction surfacing
+  - residual quality
+  - rejection of weakly grounded AI hypotheses
+- do not treat end-to-end AI confidence as a substitute for typed provenance and arbitration
+
 ## Current repository observations
 - the repository now contains a renamed `specforge` crate and CLI
 - the active Rust codebase no longer treats `spec2fsm` as the primary identity

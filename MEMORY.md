@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `41d6bfd`
-- latest_commit_brief_message: `feat(semantic): recover idiomatic one-cycle phrases`
-- note: current uncommitted work expands `R15b` again so grounded ready/valid completion becomes a typed temporal predicate instead of remaining only two scalar guards
+- latest_commit_hash: `bd6916f`
+- latest_commit_brief_message: `feat(semantic): derive handshake temporal predicates`
+- note: current uncommitted work is docs-only and logs the implementation doctrine for programming protocol semantics via typed world models, evidence aggregation, bounded AI hypotheses, and explicit uncertainty
 
 ## Recent commit chain (last 5)
+- `bd6916f` feat(semantic): derive handshake temporal predicates
 - `41d6bfd` feat(semantic): recover idiomatic one-cycle phrases
 - `a57a564` feat(semantic): surface interface signal conflicts
 - `ee20e34` feat(semantic): surface structural kg conflicts
 - `b68be48` feat(evidence): surface polarity conflicts explicitly
-- `8c97c77` feat(evidence): mine polarity from signal tables
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -43,37 +43,29 @@
 - `VALIDATION_SNAPSHOT.md` is now a tracked continuity doc refreshed from persisted validation reports
 
 ## Completed technical work in this session
-- `SemanticIR` now derives `TemporalPredicateRecord::HandshakeComplete` when grounded `VALID` and `READY` assertions co-occur in the same temporal context
-- those handshake predicates are additive:
-  - the original scalar `SignalValue` guard predicates are still preserved
-  - the higher-level transfer event is now carried alongside them for downstream reasoning
-- added regression tests for:
-  - deriving a handshake predicate from a valid/ready guard in `SemanticIR`
-  - carrying that predicate into `IntentIR`
-  - surfacing handshake coverage in `specforge validate`
-- synced the roadmap/status/analysis/README/change docs so future sessions know handshake completion is now a typed part of the temporal model
+- logged the semantic-programming doctrine in the live docs:
+  - deterministic extraction where the source surface is crisp
+  - typed protocol-world modeling as the semantic target
+  - evidence aggregation and convergence instead of one-shot interpretation
+  - bounded AI as local hypothesis generation rather than end-to-end black-box interpretation
+  - explicit uncertainty, conflicts, and residual decisions as part of the truthfulness contract
+- updated `ROADMAP.md`, `DEVELOPMENT_NOTES.md`, `README.md`, `CHANGES.md`, and `MEMORY.md` so future sessions inherit that steering explicitly
 - validation ran for this task:
-  - `cargo fmt --all` passed
-  - `cargo test --manifest-path Cargo.toml` passed with 141 tests
+  - docs-only change; Rust tests were not run
 
 ## Current working tree before commit
 - modified tracked files currently include:
-  - `crates/specforge/src/ir/semantic.rs`
-  - `crates/specforge/src/ir/intent.rs`
-  - `crates/specforge/src/commands/validate.rs`
   - `README.md`
   - `ROADMAP.md`
-  - `LIVE_ACHIEVEMENT_STATUS.md`
-  - `RUST_CODEBASE_ANALYSIS.md`
   - `DEVELOPMENT_NOTES.md`
   - `CHANGES.md`
   - `MEMORY.md`
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the typed handshake-temporal slice; do not stage `generated/`
-2. continue `R15b` by broadening explicit temporal semantics beyond scalar guards and handshake events into richer tick-relative phrasing and arbitration
-3. move on to `R15c` KG-guided multimodal rescans once the next temporal slice is landed cleanly
+1. commit the semantic-programming doctrine docs slice
+2. continue `R15b` and `R15c` using the newly logged doctrine as the implementation guardrail
+3. keep adapter work de-prioritized until the graph, temporal, arbitration, and evaluation surfaces are materially stronger
 
 ## Remaining engineering gaps after this commit
 - remaining actor-relative direction modeling in `SemanticIR` / `IntentIR` (`R15`)

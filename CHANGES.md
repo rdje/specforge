@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-04-04 (semantic-programming doctrine logged)
+
+### Changed: the live roadmap now encodes how semantic intent should be programmed
+- Logged a cross-cutting implementation doctrine in `ROADMAP.md`:
+  - deterministic extraction where the source is crisp
+  - typed protocol-world modeling as the semantic target
+  - evidence aggregation and convergence instead of one-shot interpretation
+  - bounded AI hypotheses rather than end-to-end black-box AI
+  - explicit uncertainty, conflicts, and residual decisions as part of the truthfulness contract
+
+### Added: detailed engineering guidance for programming semantics without full-pipeline AI
+- Logged the full steering rationale in `DEVELOPMENT_NOTES.md` as a durable implementation note for future sessions.
+- Refreshed `README.md` so the project objective explicitly states that `specforge` is building a typed protocol compiler, not an unrestricted English reader.
+
+### Validation
+- docs-only change; no Rust tests were run
 ## 2026-04-04 (typed ready/valid handshake completion)
 
 ### Added: protocol-native handshake predicates in the temporal layer

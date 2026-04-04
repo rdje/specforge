@@ -10,6 +10,38 @@
 ## Canonical pipeline
 - `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## Cross-cutting implementation doctrine
+- do not try to program a general reader of English; program a compiler for protocol meaning
+- define the protocol-world model first:
+  - actors
+  - signals
+  - roles
+  - timing predicates
+  - state transitions
+  - dependencies
+  - handshake events
+- prefer deterministic extraction when the source surface is crisp:
+  - signal tables
+  - widths
+  - enum rows
+  - clock/reset declarations
+  - polarity cues
+  - section/figure/table kinds
+- treat prose, tables, figures, captions, and layout as evidence for typed domain facts, not as final outputs themselves
+- use convergence, backannotation, and evidence aggregation to decide what survives into canonical IR
+- use AI/VLM/NLP as bounded local hypothesis generators for hard spans or images, not as an unstructured end-to-end PDF-to-intent black box
+- every AI-derived hypothesis must be forced back through:
+  - schema checks
+  - grounding checks
+  - conflict/arbitration checks
+  - convergence checks
+  - validation
+- preserve ambiguity explicitly:
+  - keep alternatives when the evidence is not yet decisive
+  - surface contradictions and residual decisions
+  - do not fabricate semantic certainty
+- roadmap progress should favor meaning-based role inference and protocol semantics over literal spelling heuristics whenever the evidence can support that shift
+
 ## Major workstreams
 ### R0 Repository, workflow, and continuity bootstrap
 - status: Done
@@ -316,10 +348,12 @@
   - use known signals, actors, enum members, states, and value atoms as anchors for repeated rescans over tables, prose, and figures
   - make the KG a search index for the next pass instead of treating each modality as a one-shot extraction source
   - stop iterating only when backannotated knowledge stabilizes
+  - evolve semantic role detection from literal spellings toward meaning-based inference using aliases, table descriptions, actor relations, and repeated multimodal grounding
 - completion criteria:
   - anchored rescans over tables, prose, and figures are first-class parts of the convergent loop
   - weakly labeled signal-detail tables and additional polarity/timing/value facts can be recovered from known anchors
   - convergence reporting counts genuinely new persisted facts instead of duplicate vector growth
+  - handshake, role, and timing semantics no longer depend only on literal signal naming when the document provides enough grounded evidence to infer the same meaning
 
 ### R15d Evidence arbitration and cross-modality conflict resolution
 - status: In Progress
@@ -327,6 +361,7 @@
   - define how table, prose, and figure evidence reinforce or conflict
   - preserve contradictory evidence explicitly instead of flattening it away
   - rank evidence by provenance strength and automation confidence without hiding disagreement
+  - treat AI/VLM/NLP outputs as candidate evidence that must earn promotion into canonical facts through typed grounding and arbitration, not as self-justifying truth
 - done:
   - `EvidenceIR` now persists `signal_polarity_conflicts: Vec<SignalPolarityConflictRecord>` when prose and signal-description tables disagree on active-high/active-low semantics
   - `specforge validate` now reports and flags those polarity conflicts explicitly, so contradictory polarity stays inspectable instead of only affecting the derived constraint kind
@@ -338,6 +373,7 @@
   - a typed arbitration/conflict surface exists for unresolved multimodal disagreements
   - validation can flag contradictory direction, timing, and value facts
   - representative APB/AHB/AXI disagreements are inspectable rather than silently overwritten
+  - AI-derived hypotheses that cannot be grounded or arbitrated remain explicit residuals/conflicts instead of silently entering canonical IR
 
 ### R15e KG-quality evaluation and benchmark hardening
 - status: Not Started
@@ -345,10 +381,15 @@
   - move quality assessment beyond aggregate score
   - add curated gold fixtures, negative fixtures, and precision/recall-style checks for the most important KG surfaces
   - measure false positives for relations, enums, widths, timing, and structured constraints
+  - measure uncertainty quality too:
+    - whether unresolved ambiguity is preserved honestly
+    - whether contradiction surfacing fires when it should
+    - whether weak AI hypotheses are rejected when grounding is insufficient
 - completion criteria:
   - curated APB/AHB/AXI gold fixtures exist for actor relations, signal inventory, timing, and structured constraints
   - negative fixtures exist for alias noise, bogus actor attribution, spurious timing extraction, and table misclassification
   - roadmap progress is driven by KG accuracy and false-positive control, not only one scalar score
+  - benchmark results include explicit checks for residual quality, conflict surfacing, and bounded-hypothesis rejection behavior
 
 ### R16 SystemVerilog adapter (Horizon)
 - status: Horizon
