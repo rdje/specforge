@@ -270,11 +270,13 @@ impl KnowledgeSnapshot {
         let semantic_snapshot = SemanticSnapshot::from_ir(&semantic);
         let intent_snapshot = IntentSnapshot::from_ir(&intent);
         let adapter_snapshot = AdapterSnapshot::from_artifact(&adapter);
+        // Knowledge convergence is about persisted IR facts, not downstream residual work.
+        // Adapter residual decisions can legitimately shrink as the IR gets better, so they
+        // must not count against the monotone knowledge metric.
         let total_fact_count = source_snapshot.fact_count()
             + evidence_snapshot.fact_count()
             + semantic_snapshot.fact_count()
-            + intent_snapshot.fact_count()
-            + adapter_snapshot.fact_count();
+            + intent_snapshot.fact_count();
 
         Ok(Self {
             total_fact_count,
@@ -649,17 +651,6 @@ impl AdapterSnapshot {
             top_candidates,
             renderable,
         }
-    }
-
-    fn fact_count(&self) -> usize {
-        self.residual_decisions
-            + self.signal_inventory
-            + self.decision_tree_candidates
-            + self.state_candidates
-            + self.transition_candidates
-            + self.module_candidates
-            + self.top_candidates
-            + usize::from(self.renderable)
     }
 }
 

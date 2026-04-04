@@ -1,5 +1,30 @@
 # CHANGES
 
+## 2026-04-04 (full-converge defaults + AXI convergence stabilization)
+
+### Changed: `specforge converge` now defaults to the full Ollama-backed loop
+- `ConvergeArgs` now default `--vlm-provider` and `--nlp-provider` to `ollama` instead of `skip`.
+- The intended default pipeline path is now encoded in the CLI itself: figure enrichment and NLP Level 3 run automatically during `specforge converge` unless the caller explicitly opts out.
+
+### Fixed: monotone knowledge accounting no longer treats fewer residuals as less knowledge
+- `crates/specforge/src/commands/converge.rs` no longer counts downstream adapter residual work toward `knowledge_fact_count`.
+- This fixes the false `pipeline knowledge shrank` failure mode seen on a full AXI rerun, where later passes correctly reduced residual decisions but the old accounting treated that as regression.
+- `EvidenceIr` and `specforge nlp-enrich` now also normalize duplicate loopback NLP records before persistence so repeated identical extractions do not inflate later passes.
+
+### Validation
+- Added regression tests:
+  - `dedup_loopback_records_removes_duplicate_constraints_and_rules`
+  - `nlp_enrich_dedups_duplicate_extractions_before_persisting`
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 110/110 passed
+- Full original-PDF AXI converge:
+  - `cargo run -p specforge -- converge /Users/richarddje/Documents/livework/chipdoc/arm/amba/core/axi/current/IHI0022_L_2025-08_AMBA_AXI_Protocol_Specification.pdf --target fsm --max-iterations 5 --vlm-provider ollama --vlm-model qwen2.5vl:7b --nlp-provider ollama --nlp-model qwen2.5vl:7b` → converged in 2 passes
+- Refreshed projected AMBA validation snapshot:
+  - APB `IHI0024_D`: 95/100 EXCELLENT
+  - AHB `IHI0033_C`: 95/100 EXCELLENT
+  - AXI `IHI0022_L`: 94/100 EXCELLENT
+  - `cargo run -p specforge -- project-validation generated/intent_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/intent_ir.json generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json` → passed
+
 ## 2026-04-04 (validation snapshot projection into tracked live docs)
 
 ### Added: deterministic live-doc projection for persisted validation reports

@@ -567,6 +567,13 @@ impl EvidenceIr {
         Ok(())
     }
 
+    pub fn dedup_loopback_records(&mut self) -> bool {
+        let mut changed = false;
+        changed |= dedup_signal_constraints_in_place(&mut self.signal_constraints);
+        changed |= dedup_conditional_rules_in_place(&mut self.conditional_rules);
+        changed
+    }
+
     fn carry_forward_existing_knowledge(&mut self) -> Result<()> {
         if !self.artifact_layout.evidence_ir_path.exists() {
             return Ok(());
@@ -588,6 +595,7 @@ impl EvidenceIr {
         );
         merge_signal_constraints(&mut self.signal_constraints, &existing.signal_constraints);
         merge_conditional_rules(&mut self.conditional_rules, &existing.conditional_rules);
+        self.dedup_loopback_records();
 
         Ok(())
     }
@@ -673,6 +681,20 @@ fn merge_conditional_rules(
             current.push(record.clone());
         }
     }
+}
+
+fn dedup_signal_constraints_in_place(records: &mut Vec<SignalConstraintRecord>) -> bool {
+    let original_len = records.len();
+    let mut seen = HashSet::new();
+    records.retain(|record| seen.insert(signal_constraint_merge_key(record)));
+    records.len() != original_len
+}
+
+fn dedup_conditional_rules_in_place(records: &mut Vec<ConditionalRuleRecord>) -> bool {
+    let original_len = records.len();
+    let mut seen = HashSet::new();
+    records.retain(|record| seen.insert(conditional_rule_merge_key(record)));
+    records.len() != original_len
 }
 
 fn signal_constraint_merge_key(record: &SignalConstraintRecord) -> String {
@@ -4838,6 +4860,60 @@ mod tests {
             "already-covered sentence must not be reclassified"
         );
         assert!(new_records.is_empty());
+    }
+
+    #[test]
+    fn dedup_loopback_records_removes_duplicate_constraints_and_rules() {
+        use crate::ir::source::{
+            AutomationConfidence, ConditionalRuleRecord, SignalConstraintKind,
+            SignalConstraintRecord,
+        };
+
+        let tempdir = tempfile::tempdir().unwrap();
+        let source = tempdir.path().join("s.md");
+        std::fs::write(&source, "# P\nContent.\n").unwrap();
+        let sib = tempdir.path().join("src_ir");
+        let eib = tempdir.path().join("ev_ir");
+        let source_ir = SourceIr::build(&source, &sib).unwrap();
+        source_ir.write_to_disk().unwrap();
+        let mut ev = EvidenceIr::build(&source_ir.artifact_layout.source_ir_path, &eib).unwrap();
+
+        let sig = SignalConstraintRecord {
+            constraint_id: "dup_sig_1".to_string(),
+            subject_signal: "HADDR".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeStable,
+            target_value: None,
+            condition_text: Some("while HREADY is LOW".to_string()),
+            negated: false,
+            source_text: "HADDR must remain stable while HREADY is LOW.".to_string(),
+            supporting_statement_ids: vec!["statement_0001".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        ev.signal_constraints.push(sig.clone());
+        ev.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "dup_sig_2".to_string(),
+            ..sig
+        });
+
+        let rule = ConditionalRuleRecord {
+            rule_id: "dup_rule_1".to_string(),
+            antecedent_text: "AWVALID and AWREADY are asserted".to_string(),
+            consequent_signal: Some("BVALID".to_string()),
+            consequent_action: "must_be_asserted".to_string(),
+            source_text: "When AWVALID and AWREADY are asserted, BVALID must be asserted."
+                .to_string(),
+            supporting_statement_ids: vec!["statement_0002".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        ev.conditional_rules.push(rule.clone());
+        ev.conditional_rules.push(ConditionalRuleRecord {
+            rule_id: "dup_rule_2".to_string(),
+            ..rule
+        });
+
+        assert!(ev.dedup_loopback_records());
+        assert_eq!(ev.signal_constraints.len(), 1);
+        assert_eq!(ev.conditional_rules.len(), 1);
     }
 
     // ── Layer A: section-aware boilerplate suppression ────────────────────

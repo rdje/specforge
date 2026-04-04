@@ -57,14 +57,16 @@ pub struct ConvergeArgs {
     /// Safety cap on whole-pipeline convergence passes
     #[arg(long, default_value = "8")]
     pub max_iterations: usize,
-    /// VLM provider to use for figure enrichment during each pass
-    #[arg(long, value_enum, default_value = "skip")]
+    /// VLM provider to use for figure enrichment during each pass.
+    /// Defaults to `ollama`; pass `--vlm-provider skip` to opt out.
+    #[arg(long, value_enum, default_value = "ollama")]
     pub vlm_provider: VlmProviderArg,
     /// Model name override for figure enrichment
     #[arg(long)]
     pub vlm_model: Option<String>,
-    /// LLM provider to use for Level 3 NLP backannotation during each pass
-    #[arg(long, value_enum, default_value = "skip")]
+    /// LLM provider to use for Level 3 NLP backannotation during each pass.
+    /// Defaults to `ollama`; pass `--nlp-provider skip` to opt out.
+    #[arg(long, value_enum, default_value = "ollama")]
     pub nlp_provider: VlmProviderArg,
     /// Model name override for NLP Level 3 backannotation
     #[arg(long)]
@@ -175,7 +177,7 @@ pub struct ProjectValidationArgs {
 /// VLM provider selection for the `enrich` command.
 #[derive(Debug, Clone, Copy, ValueEnum)]
 pub enum VlmProviderArg {
-    /// Local Ollama server at http://localhost:11434. Use `llava:13b` or `ibm/granite-docling:258m`.
+    /// Local Ollama server at http://localhost:11434. Common model: `qwen2.5vl:7b`.
     Ollama,
     /// OpenAI cloud API. Requires `OPENAI_API_KEY` environment variable. Uses `gpt-4o`.
     OpenAi,
@@ -214,4 +216,22 @@ pub struct AdaptArgs {
     /// Do not write adapter artifacts; print the computed adapter JSON instead
     #[arg(long)]
     pub dry_run: bool,
+}
+
+#[cfg(test)]
+mod tests {
+    use clap::Parser;
+
+    use super::{Cli, Commands, VlmProviderArg};
+
+    #[test]
+    fn converge_defaults_to_ollama_for_vlm_and_nlp() {
+        let cli = Cli::parse_from(["specforge", "converge", "spec.pdf"]);
+        let Commands::Converge(args) = cli.command else {
+            panic!("expected converge command");
+        };
+
+        assert!(matches!(args.vlm_provider, VlmProviderArg::Ollama));
+        assert!(matches!(args.nlp_provider, VlmProviderArg::Ollama));
+    }
 }

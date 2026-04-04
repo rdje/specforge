@@ -22,63 +22,63 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `fc66933`
-- latest_commit_brief_message: `feat(ir): preserve kg and backannotate validation`
-- note: current uncommitted work adds deterministic live-doc projection for persisted validation reports via `specforge project-validation`
+- latest_commit_hash: `894c538`
+- latest_commit_brief_message: `feat(validation): project reports into live docs`
+- note: current uncommitted work makes full Ollama-backed `specforge converge` the default pipeline path, fixes false converge shrink failures caused by adapter residual accounting, and refreshes the local AXI baseline to 94/100
 
 ## Recent commit chain (last 5)
+- `894c538` feat(validation): project reports into live docs
 - `fc66933` feat(ir): preserve kg and backannotate validation
 - `e8aae43` feat(core): add convergent IR pipeline loop
 - `0ab3b02` fix(nlp): filter markdown alias markers
 - `2c9bd30` feat(evidence): converge extraction and refresh AMBA artifacts
-- `1a5f7bc` fix(ingest): broader timing_diagram classification for figure captions
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - runnable CLI surface includes `inspect`, `converge`, `ingest`, `evidence`, `semantic`, `intent`, `adapt`, `enrich`, `validate`, `project-validation`, and `nlp-enrich`
+- `specforge converge` now defaults to full Ollama-backed VLM image enrichment plus NLP Level 3 backannotation; use `--vlm-provider skip` and/or `--nlp-provider skip` only when intentionally narrowing the loop
 - canonical generated artifact roots are under `generated/source_ir/`, `generated/evidence_ir/`, `generated/semantic_ir/`, and `generated/intent_ir/`
 - `generated/` is git-ignored and intentionally untracked; continuity must live in docs, not versioned artifacts
 - `subs/fsmgen/` is a local read-only reference checkout for `.fsm` behavior
 - `VALIDATION_SNAPSHOT.md` is now a tracked continuity doc refreshed from persisted validation reports
 
 ## Completed technical work in this session
-- landed the next `R7` slice:
-  - added `specforge project-validation <artifact>...`
-  - the new command validates the passed artifacts, reloads their persisted `validation_reports`, writes tracked `VALIDATION_SNAPSHOT.md`, and refreshes the managed validation block in `LIVE_ACHIEVEMENT_STATUS.md`
-  - staged validation continuity no longer depends on hand-editing score snapshots after local runs
+- made full Ollama-backed `specforge converge` the default loop-backed pipeline path in the CLI
+- fixed the converge knowledge-count accounting so decreasing adapter residual decisions no longer trigger false `pipeline knowledge shrank` errors
+- normalized duplicate loopback NLP records before persistence in `EvidenceIR` / `specforge nlp-enrich`
+- re-ran AXI `IHI0022_L` from the original PDF through full `specforge converge` with Ollama VLM + NLP Level 3:
+  - converged cleanly in 2 passes
+  - recovered timing constraints and validated at 94/100 EXCELLENT
 - refreshed the tracked validation snapshot from the current AMBA `IntentIR` artifacts:
   - APB `IHI0024_D`: 95/100 EXCELLENT
   - AHB `IHI0033_C`: 95/100 EXCELLENT
-  - AXI `IHI0022_L`: 89/100 GOOD
-- live docs were refreshed so roadmap/status/analysis reflect:
-  - live-doc projection of staged validation findings is now implemented
-  - adapter validation is the remaining `R7` gap
-  - actor-relative direction modeling remains `In Progress`
-  - test suite = `107` passing
+  - AXI `IHI0022_L`: 94/100 EXCELLENT
+- live docs were refreshed so roadmap/status/analysis reflect the new converge defaults, the stabilized AXI rerun, and the 110-test baseline
 - validation completed:
   - `cargo fmt --all` → passed
-  - `cargo test --manifest-path Cargo.toml` → `107` passed
+  - `cargo test --manifest-path Cargo.toml` → `110` passed
+  - `cargo run -p specforge -- converge /Users/richarddje/Documents/livework/chipdoc/arm/amba/core/axi/current/IHI0022_L_2025-08_AMBA_AXI_Protocol_Specification.pdf --target fsm --max-iterations 5 --vlm-provider ollama --vlm-model qwen2.5vl:7b --nlp-provider ollama --nlp-model qwen2.5vl:7b` → converged in `2` passes
   - `cargo run -p specforge -- project-validation generated/intent_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/intent_ir.json generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json` → passed
 
 ## Current working tree before commit
 - modified tracked files currently include:
   - `crates/specforge/src/cli.rs`
-  - `crates/specforge/src/lib.rs`
-  - `crates/specforge/src/commands/mod.rs`
-  - `crates/specforge/src/commands/project_validation.rs`
-  - `CHANGES.md`
-  - `DEVELOPMENT_NOTES.md`
-  - `LIVE_ACHIEVEMENT_STATUS.md`
+  - `crates/specforge/src/commands/converge.rs`
+  - `crates/specforge/src/commands/nlp_enrich.rs`
+  - `crates/specforge/src/ir/evidence.rs`
   - `README.md`
   - `ROADMAP.md`
+  - `LIVE_ACHIEVEMENT_STATUS.md`
   - `RUST_CODEBASE_ANALYSIS.md`
   - `USER_GUIDE.md`
+  - `DEVELOPMENT_NOTES.md`
+  - `CHANGES.md`
   - `VALIDATION_SNAPSHOT.md`
   - `MEMORY.md`
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the live-doc projection slice with the new CLI command, `VALIDATION_SNAPSHOT.md`, and the refreshed roadmap/status/memory docs; do not stage `generated/`
+1. commit the converge-defaults + AXI-stabilization slice with the refreshed live docs; do not stage `generated/`
 2. continue the remaining `R15` slice by making the actor-relative graph, not compatibility `direction_hint`, the primary downstream direction model
 3. extend validation/reporting from staged IR artifacts into downstream adapter artifacts after the graph-first direction work is further along
 

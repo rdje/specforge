@@ -215,6 +215,7 @@ cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --targ
 7. validate the result and back-annotate findings
 
 ## Planned command shape
+- `specforge converge <source> --target <fsm|systemverilog|verilog|vhdl>` defaults to full Ollama-backed VLM image enrichment plus NLP Level 3 backannotation; pass `--vlm-provider skip` and/or `--nlp-provider skip` only when you intentionally want a narrower run
 - `specforge ingest <source>`
 - `specforge inspect <artifact-or-path>`
 - `specforge evidence <source-ir>`

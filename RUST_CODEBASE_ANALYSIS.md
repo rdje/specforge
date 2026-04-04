@@ -19,7 +19,7 @@
   - `nlp-enrich`
 - the canonical product boundary remains `IntentIR`, not `.fsm`
 - the staged pipeline is operational through `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
-- a whole-pipeline fixed-point entrypoint now exists via `specforge converge`, which reuses persisted artifacts and stops when the cross-stage knowledge snapshot is stable
+- a whole-pipeline fixed-point entrypoint now exists via `specforge converge`, which reuses persisted artifacts, defaults to Ollama VLM + NLP Level 3, and stops when the cross-stage knowledge snapshot is stable
 - `SourceIR` now captures structured Docling output, typed content elements, structured tables, visual assets, and document-profile metadata
 - `EvidenceIR` now synthesizes typed declarations and records from tables, preserves typed NLP outputs, persists alias-learning state, extracts actor-signal relation triples from prose and signal-description tables, and runs a monotone convergence loop so discovered enum facts and prose polarity can unlock additional signal constraints without hardcoded protocol-specific value lists
 - `SemanticIR` now lifts that evidence into interfaces, actor-relative port/connectivity records, system/reset/init records, control/state records, timing/register records, and filtered NLP constraints, with VLM observations merged into the semantic surface
@@ -27,7 +27,7 @@
 - the current `.fsm` adapter slice is real and intentionally narrow: it can emit honest `?dt:name`, `?fsm:name`, and `?top:name` outputs when the canonical facts are explicit enough
 - the enrichment, convergence, and validation toolchain is also real: `specforge enrich`, `specforge nlp-enrich`, `specforge converge`, and `specforge validate` are wired into the CLI and exercised by the workspace tests
 - the remaining dominant gaps are finishing the transition away from compatibility-only flat direction hints and extending validation beyond the staged IR surface before serious SystemVerilog adapter work
-- the workspace currently validates with `cargo test --manifest-path Cargo.toml`, with 107 passing tests
+- the workspace currently validates with `cargo test --manifest-path Cargo.toml`, with 110 passing tests
 
 
 ## Session update (2026-04-04)
@@ -39,9 +39,11 @@
 - `SemanticIR` / `IntentIR` now preserve the structural KG downstream via `actor_signal_relations`, `actor_ports`, and `signal_connectivity`, so actor-aware evidence is no longer trapped in `EvidenceIR`
 - `specforge validate` now writes deterministic stage-local `validation_report.json` sidecars and backannotates the current report into `validation_reports` on `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR`
 - `specforge project-validation <artifact>...` now refreshes `VALIDATION_SNAPSHOT.md` and the managed validation block in `LIVE_ACHIEVEMENT_STATUS.md` from persisted IR validation reports
+- `specforge converge` now excludes downstream adapter residual work from `knowledge_fact_count`, so fewer adapter residual decisions do not falsely trip the monotone-knowledge guard
 - `generated/` is now intentionally git-ignored and untracked, so local validation snapshots must be recorded in the live docs instead of relying on versioned artifacts
-- latest local validation snapshot is now APB 95/100 EXCELLENT, AHB 95/100 EXCELLENT, AXI 89/100 GOOD
+- latest local validation snapshot is now APB 95/100 EXCELLENT, AHB 95/100 EXCELLENT, AXI 94/100 EXCELLENT
 - APB `IHI0024_D` was re-run from the original PDF through full `specforge converge` with Ollama VLM + NLP Level 3 and converged in 2 passes
+- AXI `IHI0022_L` was re-run from the original PDF through full `specforge converge` with Ollama VLM + NLP Level 3, converged in 2 passes, and recovered timing to reach 94/100 EXCELLENT
 - `extract_alias_phrase()` now rejects markdown/table marker prefixes `-`, `|`, and `#`, closing the last small R12 cleanup in the NLP alias-learning loop
 - the documented README staged flow was re-executed on `README.md` through `inspect -> ingest -> evidence -> semantic -> intent -> adapt --dry-run`, confirming the current entry path still runs end-to-end
 - the next workflow gap is adapter validation; the next structural KG gap is making the actor-relative graph, rather than compatibility `direction_hint`, the primary downstream direction model
@@ -203,7 +205,7 @@
 - finish moving the downstream signal-direction model from compatibility flat hints to actor-relative semantics before serious SystemVerilog adapter work
 - keep compatibility-level `?mod:name` / `?module:name` spellings outside the adapter root-kind model until a real backend-neutral direct-module distinction exists
 - keep any new composition/control enrichment backend-neutral so the canonical model boundary stays intact
-- keep the latest local APB/AHB/AXI 95/95/89 snapshot visible as follow-on work lands, and replace the AXI number after a full original-PDF converge rerun
+- keep the latest local APB/AHB/AXI 95/95/94 snapshot visible as follow-on work lands, and close the remaining AXI width/connectivity gaps from that improved baseline
 
 #### Split into dedicated crates when pressure becomes real
 - `specforge-source`

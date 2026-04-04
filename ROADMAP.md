@@ -124,7 +124,7 @@
 - done:
   - `specforge validate <artifact>` command: auto-detects IR stage, reports signal coverage %, NLP coverage, VLM readiness, structured extraction counts, quality score 0–100 with grade
   - validate tests for all four IR stages
-  - `specforge converge <source> --target <adapter>` now materializes a whole-pipeline fixed-point loop: ingest once, reuse persisted `SourceIR`, rebuild `EvidenceIR` / `SemanticIR` / `IntentIR` / adapters, optionally re-run VLM + NLP enrichment, and stop when the persisted knowledge snapshot is stable
+  - `specforge converge <source> --target <adapter>` now materializes a whole-pipeline fixed-point loop: ingest once, reuse persisted `SourceIR`, rebuild `EvidenceIR` / `SemanticIR` / `IntentIR` / adapters, re-run Ollama VLM + NLP enrichment by default, and stop when the persisted knowledge snapshot is stable
   - `specforge validate <artifact>` now backannotates a deterministic `validation_report.json` sidecar next to the validated IR artifact and writes the latest report back into the artifact's `validation_reports` field
   - validation findings are now graph-aware for the four IR stages, including producer/consumer gaps and compatibility-surface lag on the actor-relative KG
   - `specforge project-validation <artifact>...` now validates the passed artifacts and projects their persisted reports into tracked live docs via `VALIDATION_SNAPSHOT.md` plus a managed validation block in `LIVE_ACHIEVEMENT_STATUS.md`
@@ -221,7 +221,7 @@
   - representative local APB/AHB/AXI validation snapshots were refreshed from the current extraction stack:
     - APB 95/100 EXCELLENT
     - AHB 95/100 EXCELLENT
-    - AXI 89/100 GOOD
+    - AXI 94/100 EXCELLENT
 
 ### R13 Actor-signal relation extraction: Tier 2 prose patterns
 - status: Done
@@ -239,7 +239,7 @@
   - regression tests added for relation extraction and direction synthesis
   - relation-derived declarations now feed the convergent `EvidenceIR` loop, so discovered signal anchors can unlock additional encoding enums and value constraints
   - downstream `SemanticIR` / `IntentIR` now carry the extracted graph directly via `actor_signal_relations`, `actor_ports`, and `signal_connectivity` instead of forcing later stages to rediscover relation evidence from prose
-  - refreshed baselines now show stable honest coverage improvements: APB 95/100, AHB 95/100, AXI 89/100
+  - refreshed baselines now show stable honest coverage improvements: APB 95/100, AHB 95/100, AXI 94/100
 - completion criteria:
   - APB direction coverage reaches a stable honest baseline from relation extraction
   - AXI large-signal coverage improves without relying on misleading single-signal metrics

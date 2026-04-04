@@ -37,6 +37,7 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
     };
 
     let mut evidence_ir = EvidenceIr::load_from_path(&evidence_ir_path)?;
+    let normalized_existing_records = evidence_ir.dedup_loopback_records();
 
     println!("command: nlp-enrich");
     println!("mode: {}", if args.dry_run { "dry-run" } else { "execute" });
@@ -126,6 +127,7 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
             let mut total_calls = 0usize;
             let mut total_errors = 0usize;
             let mut total_alias_reclassified = 0usize;
+            let mut normalized_records_written = false;
 
             loop {
                 pass_number += 1;
@@ -142,6 +144,7 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
                         println!("  alias_reclassified: {alias_n} NormativeStatements via Form 2");
                         total_alias_reclassified += alias_n;
                         evidence_ir.signal_constraints.extend(alias_records);
+                        evidence_ir.dedup_loopback_records();
                     }
                 }
 
@@ -329,16 +332,24 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
                         .signal_constraints
                         .extend(new_signal_constraints);
                     evidence_ir.conditional_rules.extend(new_conditional_rules);
+                    evidence_ir.dedup_loopback_records();
                     // Write after every pass so progress is durable.
                     evidence_ir.write_to_disk()?;
+                    normalized_records_written = true;
                 } else if evidence_ir.signal_alias_map.len() > alias_map_size_before_llm {
                     // New aliases were learned this pass but the LLM extracted nothing new.
                     // Persist so the alias map accumulates correctly.
+                    evidence_ir.dedup_loopback_records();
                     evidence_ir.write_to_disk()?;
+                    normalized_records_written = true;
                 }
                 // (No explicit convergence break here: the residual-stable check at the
                 //  top of the next iteration handles it cleanly.)
             } // end convergence loop
+
+            if !args.dry_run && normalized_existing_records && !normalized_records_written {
+                evidence_ir.write_to_disk()?;
+            }
 
             if !args.dry_run {
                 println!("--- summary ---");
@@ -1353,6 +1364,74 @@ mod tests {
                 .iter()
                 .any(|r| r.subject_signal == "HTRANS"),
             "HTRANS constraint should have been extracted in first pass"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn nlp_enrich_dedups_duplicate_extractions_before_persisting() -> Result<()> {
+        let _lock = env_var_lock();
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(&source, "# Protocol\nSome content.\n")?;
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        let duplicate_text = "HWRITE shall remain HIGH during the burst";
+        for suffix in ["a", "b"] {
+            evidence_ir
+                .extracted_statements
+                .push(crate::ir::evidence::ExtractedStatement {
+                    statement_id: format!("stmt_duplicate_{suffix}"),
+                    text: duplicate_text.to_string(),
+                    class: StatementClass::NormativeStatement,
+                    modality: crate::ir::evidence::EvidenceModality::Text,
+                    evidence_span_ids: vec![],
+                    related_visual_evidence_ids: vec![],
+                });
+        }
+        evidence_ir.write_to_disk()?;
+
+        let helper = write_mock_helper(
+            tempdir.path(),
+            &[(
+                "HWRITE",
+                r#"{"type":"signal_constraint","subject_signal":"HWRITE","constraint_kind":"must_be_high","negated":false}"#,
+            )],
+        );
+
+        unsafe { std::env::set_var(VLM_HELPER_ENV, &helper) };
+        run(NlpEnrichArgs {
+            evidence_ir: evidence_ir.artifact_layout.evidence_ir_path.clone(),
+            vlm_provider: VlmProviderArg::Ollama,
+            vlm_model: Some("qwen2.5vl:7b".to_string()),
+            dry_run: false,
+            max_sentences: 0,
+            grounding_signals: None,
+        })?;
+        unsafe { std::env::remove_var(VLM_HELPER_ENV) };
+
+        let enriched = EvidenceIr::load_from_path(&evidence_ir.artifact_layout.evidence_ir_path)?;
+        let persisted_matches = enriched
+            .signal_constraints
+            .iter()
+            .filter(|record| {
+                record.subject_signal == "HWRITE"
+                    && matches!(record.constraint_kind, SignalConstraintKind::MustBeHigh)
+                    && record.source_text == duplicate_text
+            })
+            .count();
+        assert_eq!(
+            persisted_matches, 1,
+            "duplicate LLM extractions for identical source text must be deduplicated"
         );
 
         Ok(())
