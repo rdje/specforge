@@ -57,6 +57,7 @@
 - SemanticIR / IntentIR per-signal semantic observation provenance implemented: Done
 - Canonical semantic-role consensus plus grounding-strength reporting implemented: Done
 - Cross-modality semantic grounding distinction implemented: Done
+- Canonical semantic consensus summaries and fallback-gap reporting implemented: Done
 - `specforge nlp-enrich` refreshes signal-semantic hints after alias learning/backannotation: Done
 - EvidenceIR semantic-role conflict surfacing and validation reporting implemented: Done
 - SemanticIR / IntentIR semantic-role conflict carry-through and validation reporting implemented: Done
@@ -70,7 +71,7 @@
 - Live-doc projection of persisted IR validation findings implemented: Done
 - Latest local validation snapshot projected into tracked docs: Done
 - Full Ollama-backed `specforge converge` defaults enabled: Done
-- Test suite expanded to 165 tests; all passing: Done
+- Test suite expanded to 166 tests; all passing: Done
 - Explicit clock-tick temporal model in `SemanticIR` / `IntentIR`: In Progress
 - KG-guided multimodal rescans as a first-class convergent workstream: In Progress
 - Cross-modality evidence arbitration / conflict handling: In Progress
@@ -80,7 +81,7 @@
 - Actor-relative direction model in `SemanticIR` / `IntentIR`: In Progress
 
 ## Highest-priority remaining gap
-- Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then deepen semantic-role arbitration beyond modality-aware grounding while continuing richer multimodal grounding, structural/temporal arbitration, and KG-quality evaluation
+- Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then deepen semantic-role arbitration beyond consensus profiling while continuing richer multimodal grounding, structural/temporal arbitration, and KG-quality evaluation
 
 ## Validation Projection
 

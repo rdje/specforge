@@ -1,5 +1,36 @@
 # CHANGES
 
+## 2026-04-04 (canonical semantic consensus summaries)
+
+### Added: explicit semantic consensus summaries on canonical interface signals
+- `SemanticIR` now carries `semantic_consensus` on `InterfaceSignalRecord` when a resolved role is backed by preserved observations.
+- `IntentIR` now carries that same consensus summary forward unchanged.
+
+### Added: semantic consensus profile details
+- `semantic_consensus` currently records:
+  - winning role
+  - grounding strength
+  - supporting source kinds
+  - supporting observation count
+  - strongest supporting automation confidence
+
+### Changed: validation now surfaces fallback-only resolved roles
+- `specforge validate` now reports:
+  - `with_semantic_consensus`
+  - `with_high_confidence_semantic_consensus`
+  - `resolved_semantic_roles_without_consensus`
+- It also emits an explicit finding when a resolved semantic role still lacks canonical consensus metadata.
+
+### Added: regression coverage for canonical semantic consensus
+- Added tests for:
+  - consensus details on single-source, same-modality multi-source, and cross-modality semantic grounding
+  - consensus carry-through into `IntentIR`
+  - validation reporting and findings for resolved roles without consensus
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 166/166 passed
+
 ## 2026-04-04 (modality-aware semantic grounding strength)
 
 ### Changed: semantic grounding strength now distinguishes cross-modality reinforcement

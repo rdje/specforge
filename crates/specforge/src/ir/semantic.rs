@@ -464,6 +464,8 @@ pub struct InterfaceSignalRecord {
     pub resolved_semantic_role: Option<InterfaceSignalSemanticRole>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub semantic_grounding_strength: Option<SemanticGroundingStrength>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub semantic_consensus: Option<InterfaceSignalSemanticConsensusRecord>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub semantic_observations: Vec<InterfaceSignalSemanticObservationRecord>,
     pub supporting_statement_ids: Vec<String>,
@@ -502,6 +504,16 @@ impl SemanticGroundingStrength {
             Self::CrossModality => "cross_modality",
         }
     }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct InterfaceSignalSemanticConsensusRecord {
+    pub role: InterfaceSignalSemanticRole,
+    pub grounding_strength: SemanticGroundingStrength,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub supporting_source_kinds: Vec<SignalSemanticHintSourceKind>,
+    pub supporting_observation_count: usize,
+    pub automation_confidence: AutomationConfidence,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -1600,11 +1612,14 @@ fn build_interfaces(
                         let semantic_tags: Vec<SignalSemanticTag> =
                             signal.semantic_tags.into_iter().collect();
                         let semantic_observations = signal.semantic_observations;
-                        let (resolved_semantic_role, semantic_grounding_strength) =
-                            resolve_interface_signal_semantic_role(
-                                &semantic_tags,
-                                &semantic_observations,
-                            );
+                        let (
+                            resolved_semantic_role,
+                            semantic_grounding_strength,
+                            semantic_consensus,
+                        ) = resolve_interface_signal_semantic_role(
+                            &semantic_tags,
+                            &semantic_observations,
+                        );
                         InterfaceSignalRecord {
                             signal_name,
                             direction_hint: signal.direction_hint,
@@ -1612,6 +1627,7 @@ fn build_interfaces(
                             semantic_tags,
                             resolved_semantic_role,
                             semantic_grounding_strength,
+                            semantic_consensus,
                             semantic_observations,
                             supporting_statement_ids: signal
                                 .supporting_statement_ids
@@ -5738,6 +5754,7 @@ fn resolve_interface_signal_semantic_role(
 ) -> (
     Option<InterfaceSignalSemanticRole>,
     Option<SemanticGroundingStrength>,
+    Option<InterfaceSignalSemanticConsensusRecord>,
 ) {
     let valid_supporting_observations: Vec<&InterfaceSignalSemanticObservationRecord> =
         semantic_observations
@@ -5769,14 +5786,22 @@ fn resolve_interface_signal_semantic_role(
             Some(grounding_strength_for_supporting_observations(
                 &valid_supporting_observations,
             )),
+            Some(build_semantic_consensus(
+                InterfaceSignalSemanticRole::HandshakeValidLike,
+                &valid_supporting_observations,
+            )),
         ),
         (false, true) => (
             Some(InterfaceSignalSemanticRole::HandshakeReadyLike),
             Some(grounding_strength_for_supporting_observations(
                 &ready_supporting_observations,
             )),
+            Some(build_semantic_consensus(
+                InterfaceSignalSemanticRole::HandshakeReadyLike,
+                &ready_supporting_observations,
+            )),
         ),
-        (true, true) => (None, None),
+        (true, true) => (None, None, None),
         (false, false) => {
             let has_valid_tag = semantic_tags_support_semantic_role(
                 semantic_tags,
@@ -5787,9 +5812,17 @@ fn resolve_interface_signal_semantic_role(
                 InterfaceSignalSemanticRole::HandshakeReadyLike,
             );
             match (has_valid_tag, has_ready_tag) {
-                (true, false) => (Some(InterfaceSignalSemanticRole::HandshakeValidLike), None),
-                (false, true) => (Some(InterfaceSignalSemanticRole::HandshakeReadyLike), None),
-                _ => (None, None),
+                (true, false) => (
+                    Some(InterfaceSignalSemanticRole::HandshakeValidLike),
+                    None,
+                    None,
+                ),
+                (false, true) => (
+                    Some(InterfaceSignalSemanticRole::HandshakeReadyLike),
+                    None,
+                    None,
+                ),
+                _ => (None, None, None),
             }
         }
     }
@@ -5831,6 +5864,32 @@ fn grounding_strength_for_supporting_observations(
         SemanticGroundingStrength::CrossModality
     } else {
         SemanticGroundingStrength::MultiSource
+    }
+}
+
+fn build_semantic_consensus(
+    role: InterfaceSignalSemanticRole,
+    observations: &[&InterfaceSignalSemanticObservationRecord],
+) -> InterfaceSignalSemanticConsensusRecord {
+    let grounding_strength = grounding_strength_for_supporting_observations(observations);
+    let supporting_source_kinds = observations
+        .iter()
+        .map(|observation| observation.source_kind)
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect();
+    let automation_confidence =
+        observations
+            .iter()
+            .fold(AutomationConfidence::Low, |current, observation| {
+                max_automation_confidence(current, observation.automation_confidence)
+            });
+    InterfaceSignalSemanticConsensusRecord {
+        role,
+        grounding_strength,
+        supporting_source_kinds,
+        supporting_observation_count: observations.len(),
+        automation_confidence,
     }
 }
 
@@ -8325,6 +8384,27 @@ mod tests {
             xreq.semantic_grounding_strength,
             Some(super::SemanticGroundingStrength::SingleSource)
         );
+        let xreq_consensus = xreq
+            .semantic_consensus
+            .as_ref()
+            .expect("expected XREQ semantic consensus");
+        assert_eq!(
+            xreq_consensus.role,
+            super::InterfaceSignalSemanticRole::HandshakeValidLike
+        );
+        assert_eq!(
+            xreq_consensus.grounding_strength,
+            super::SemanticGroundingStrength::SingleSource
+        );
+        assert_eq!(xreq_consensus.supporting_observation_count, 1);
+        assert_eq!(
+            xreq_consensus.supporting_source_kinds,
+            vec![SignalSemanticHintSourceKind::VisualCaption]
+        );
+        assert_eq!(
+            xreq_consensus.automation_confidence,
+            AutomationConfidence::Low
+        );
         assert!(xreq.semantic_observations.iter().any(|observation| {
             matches!(
                 observation.source_kind,
@@ -8349,6 +8429,27 @@ mod tests {
         assert_eq!(
             xack.semantic_grounding_strength,
             Some(super::SemanticGroundingStrength::SingleSource)
+        );
+        let xack_consensus = xack
+            .semantic_consensus
+            .as_ref()
+            .expect("expected XACK semantic consensus");
+        assert_eq!(
+            xack_consensus.role,
+            super::InterfaceSignalSemanticRole::HandshakeReadyLike
+        );
+        assert_eq!(
+            xack_consensus.grounding_strength,
+            super::SemanticGroundingStrength::SingleSource
+        );
+        assert_eq!(xack_consensus.supporting_observation_count, 1);
+        assert_eq!(
+            xack_consensus.supporting_source_kinds,
+            vec![SignalSemanticHintSourceKind::SignalDescriptionTable]
+        );
+        assert_eq!(
+            xack_consensus.automation_confidence,
+            AutomationConfidence::Medium
         );
         assert!(xack.semantic_observations.iter().any(|observation| {
             matches!(
@@ -8433,6 +8534,26 @@ mod tests {
             xreq.semantic_grounding_strength,
             Some(super::SemanticGroundingStrength::CrossModality)
         );
+        let xreq_consensus = xreq
+            .semantic_consensus
+            .as_ref()
+            .expect("expected XREQ semantic consensus");
+        assert_eq!(
+            xreq_consensus.grounding_strength,
+            super::SemanticGroundingStrength::CrossModality
+        );
+        assert_eq!(xreq_consensus.supporting_observation_count, 2);
+        assert_eq!(
+            xreq_consensus.supporting_source_kinds,
+            vec![
+                SignalSemanticHintSourceKind::SignalDescriptionTable,
+                SignalSemanticHintSourceKind::VisualCaption
+            ]
+        );
+        assert_eq!(
+            xreq_consensus.automation_confidence,
+            AutomationConfidence::Medium
+        );
 
         Ok(())
     }
@@ -8516,6 +8637,23 @@ mod tests {
         assert_eq!(
             xreq.semantic_grounding_strength,
             Some(super::SemanticGroundingStrength::MultiSource)
+        );
+        let xreq_consensus = xreq
+            .semantic_consensus
+            .as_ref()
+            .expect("expected XREQ semantic consensus");
+        assert_eq!(
+            xreq_consensus.grounding_strength,
+            super::SemanticGroundingStrength::MultiSource
+        );
+        assert_eq!(xreq_consensus.supporting_observation_count, 2);
+        assert_eq!(
+            xreq_consensus.supporting_source_kinds,
+            vec![SignalSemanticHintSourceKind::SignalDescriptionTable]
+        );
+        assert_eq!(
+            xreq_consensus.automation_confidence,
+            AutomationConfidence::Medium
         );
 
         Ok(())

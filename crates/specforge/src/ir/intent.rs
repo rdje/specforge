@@ -2067,6 +2067,27 @@ mod tests {
             xreq.semantic_grounding_strength,
             Some(crate::ir::semantic::SemanticGroundingStrength::SingleSource)
         );
+        let xreq_consensus = xreq
+            .semantic_consensus
+            .as_ref()
+            .expect("expected XREQ semantic consensus");
+        assert_eq!(
+            xreq_consensus.role,
+            crate::ir::semantic::InterfaceSignalSemanticRole::HandshakeValidLike
+        );
+        assert_eq!(
+            xreq_consensus.grounding_strength,
+            crate::ir::semantic::SemanticGroundingStrength::SingleSource
+        );
+        assert_eq!(xreq_consensus.supporting_observation_count, 1);
+        assert_eq!(
+            xreq_consensus.supporting_source_kinds,
+            vec![crate::ir::evidence::SignalSemanticHintSourceKind::SignalDescriptionTable]
+        );
+        assert_eq!(
+            xreq_consensus.automation_confidence,
+            AutomationConfidence::Medium
+        );
         assert_eq!(xreq.semantic_observations.len(), 1);
         assert!(xreq.semantic_observations.iter().any(|observation| {
             matches!(
@@ -2092,6 +2113,27 @@ mod tests {
         assert_eq!(
             xack.semantic_grounding_strength,
             Some(crate::ir::semantic::SemanticGroundingStrength::SingleSource)
+        );
+        let xack_consensus = xack
+            .semantic_consensus
+            .as_ref()
+            .expect("expected XACK semantic consensus");
+        assert_eq!(
+            xack_consensus.role,
+            crate::ir::semantic::InterfaceSignalSemanticRole::HandshakeReadyLike
+        );
+        assert_eq!(
+            xack_consensus.grounding_strength,
+            crate::ir::semantic::SemanticGroundingStrength::SingleSource
+        );
+        assert_eq!(xack_consensus.supporting_observation_count, 1);
+        assert_eq!(
+            xack_consensus.supporting_source_kinds,
+            vec![crate::ir::evidence::SignalSemanticHintSourceKind::SignalDescriptionTable]
+        );
+        assert_eq!(
+            xack_consensus.automation_confidence,
+            AutomationConfidence::Medium
         );
         assert_eq!(xack.semantic_observations.len(), 1);
         assert!(xack.semantic_observations.iter().any(|observation| {
@@ -2191,6 +2233,26 @@ mod tests {
         assert_eq!(
             xreq.semantic_grounding_strength,
             Some(crate::ir::semantic::SemanticGroundingStrength::CrossModality)
+        );
+        let xreq_consensus = xreq
+            .semantic_consensus
+            .as_ref()
+            .expect("expected XREQ semantic consensus");
+        assert_eq!(
+            xreq_consensus.grounding_strength,
+            crate::ir::semantic::SemanticGroundingStrength::CrossModality
+        );
+        assert_eq!(xreq_consensus.supporting_observation_count, 2);
+        assert_eq!(
+            xreq_consensus.supporting_source_kinds,
+            vec![
+                crate::ir::evidence::SignalSemanticHintSourceKind::SignalDescriptionTable,
+                crate::ir::evidence::SignalSemanticHintSourceKind::VisualCaption
+            ]
+        );
+        assert_eq!(
+            xreq_consensus.automation_confidence,
+            AutomationConfidence::Medium
         );
         assert_eq!(xreq.semantic_observations.len(), 2);
 

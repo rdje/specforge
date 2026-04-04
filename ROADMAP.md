@@ -368,6 +368,7 @@
   - caption/VLM-grounded semantic hints now carry explicit visual-evidence provenance instead of degrading to anonymous text-only hints
   - `SemanticIR` / `IntentIR` now carry per-signal `semantic_observations`, preserving role provenance and source kind in the canonical layers instead of only keeping merged `semantic_tags`
   - `SemanticIR` / `IntentIR` now also resolve per-signal `resolved_semantic_role` plus modality-aware `semantic_grounding_strength` from those canonical observations, so downstream consumers can prefer provenance-backed role consensus and validation can separate single-source grounding, same-modality repetition, and true cross-modality reinforcement
+  - `SemanticIR` / `IntentIR` now also carry an explicit per-signal `semantic_consensus` summary for observation-backed role meanings, including supporting source kinds, observation count, and strongest supporting automation confidence, and validation now flags any resolved role that still lacks that richer consensus profile
 - completion criteria:
   - anchored rescans over tables, prose, and figures are first-class parts of the convergent loop
   - weakly labeled signal-detail tables and additional polarity/timing/value facts can be recovered from known anchors

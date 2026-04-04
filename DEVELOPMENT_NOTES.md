@@ -1086,3 +1086,34 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
   - rank source kinds and automation confidence within compatible cross-modality sets
   - distinguish cross-modality agreement from cross-modality contradiction with stronger canonical arbitration metadata
   - generalize the same grounding-quality model beyond ready/valid-style semantic roles
+
+## 2026-04-04 - canonical semantic consensus now summarizes why a role won
+- after the modality-aware grounding slice, one more canonical gap was still visible:
+  - `resolved_semantic_role` and `semantic_grounding_strength` told us the winner and a coarse bucket
+  - but downstream consumers still had to inspect raw `semantic_observations` to learn how many observations backed that role, which source kinds contributed, and what the strongest supporting confidence was
+  - resolved roles could also still exist without an explicit consensus summary if they came from older fallback carry-through
+- that was not strong enough for the project quality bar because canonical consumers should not have to reverse-engineer consensus state from raw observations just to judge whether a role meaning is robust
+- `crates/specforge/src/ir/semantic.rs` now defines `semantic_consensus` on `InterfaceSignalRecord`
+- that summary currently carries:
+  - winning role
+  - grounding strength
+  - supporting source kinds
+  - supporting observation count
+  - strongest supporting automation confidence
+- `semantic_consensus` is only present when the role is backed by preserved observations, which keeps the fallback path explicit rather than pretending every resolved role has the same quality of support
+- `crates/specforge/src/commands/validate.rs` now reports:
+  - `with_semantic_consensus`
+  - `with_high_confidence_semantic_consensus`
+  - `resolved_semantic_roles_without_consensus`
+- validation now also emits an explicit info finding when resolved semantic roles still exist without a canonical consensus summary
+- regression coverage now proves:
+  - semantic consensus details are preserved for single-source, same-modality multi-source, and cross-modality grounding
+  - `IntentIR` carries the semantic-consensus summary unchanged
+  - validation flags an `IntentIR` when a resolved role still lacks consensus metadata
+- validation for this slice:
+  - `cargo fmt --all` passed
+  - `cargo test --manifest-path Cargo.toml` passed with `166/166`
+- the next honest follow-up is stronger arbitration, not more summary:
+  - weight source kinds and automation confidence inside compatible consensus sets
+  - add explicit winner-vs-runner-up style arbitration metadata when compatible evidence competes in strength
+  - extend the same consensus/arbitration model beyond the current ready/valid semantic-role family

@@ -265,6 +265,42 @@ fn interface_signals_with_semantic_grounding_strength_count(
         .count()
 }
 
+fn interface_signals_with_semantic_consensus_count(
+    interfaces: &[crate::ir::semantic::InterfaceRecord],
+) -> usize {
+    interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+        .filter(|signal| signal.semantic_consensus.is_some())
+        .count()
+}
+
+fn interface_signals_with_high_confidence_semantic_consensus_count(
+    interfaces: &[crate::ir::semantic::InterfaceRecord],
+) -> usize {
+    interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+        .filter(|signal| {
+            signal.semantic_consensus.as_ref().is_some_and(|consensus| {
+                consensus.automation_confidence == AutomationConfidence::High
+            })
+        })
+        .count()
+}
+
+fn resolved_semantic_roles_without_consensus_count(
+    interfaces: &[crate::ir::semantic::InterfaceRecord],
+) -> usize {
+    interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+        .filter(|signal| {
+            signal.resolved_semantic_role.is_some() && signal.semantic_consensus.is_none()
+        })
+        .count()
+}
+
 fn interface_signals_with_visual_semantic_grounding_count(
     interfaces: &[crate::ir::semantic::InterfaceRecord],
 ) -> usize {
@@ -1039,6 +1075,11 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     let semantic_observations = interface_signal_semantic_observations_count(&ir.interfaces);
     let with_resolved_semantic_role =
         interface_signals_with_resolved_semantic_role_count(&ir.interfaces);
+    let with_semantic_consensus = interface_signals_with_semantic_consensus_count(&ir.interfaces);
+    let with_high_confidence_semantic_consensus =
+        interface_signals_with_high_confidence_semantic_consensus_count(&ir.interfaces);
+    let resolved_semantic_roles_without_consensus =
+        resolved_semantic_roles_without_consensus_count(&ir.interfaces);
     let with_single_source_semantic_grounding =
         interface_signals_with_semantic_grounding_strength_count(
             &ir.interfaces,
@@ -1097,6 +1138,13 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     println!("  with_width: {with_width} ({w_pct}%)");
     println!("  with_semantic_tags: {with_semantic_tags}");
     println!("  with_resolved_semantic_role: {with_resolved_semantic_role}");
+    println!("  with_semantic_consensus: {with_semantic_consensus}");
+    println!(
+        "  with_high_confidence_semantic_consensus: {with_high_confidence_semantic_consensus}"
+    );
+    println!(
+        "  resolved_semantic_roles_without_consensus: {resolved_semantic_roles_without_consensus}"
+    );
     println!("  semantic_observations: {semantic_observations}");
     println!("  with_single_source_semantic_grounding: {with_single_source_semantic_grounding}");
     println!("  with_multi_source_semantic_grounding: {with_multi_source_semantic_grounding}");
@@ -1327,6 +1375,17 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 .collect(),
         ));
     }
+    if resolved_semantic_roles_without_consensus > 0 {
+        findings.push(finding(
+            "semantic_resolved_roles_without_consensus_present",
+            ValidationFindingSeverity::Info,
+            "semantic_role_consensus",
+            format!(
+                "{resolved_semantic_roles_without_consensus} resolved semantic role(s) still rely on fallback carry-through without an explicit canonical consensus profile"
+            ),
+            Vec::new(),
+        ));
+    }
     if !ir.actor_ports.is_empty() && missing_graph_direction_count > 0 {
         findings.push(finding(
             "semantic_graph_direction_coverage_incomplete",
@@ -1452,6 +1511,18 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             metric(
                 "with_resolved_semantic_role",
                 with_resolved_semantic_role.to_string(),
+            ),
+            metric(
+                "with_semantic_consensus",
+                with_semantic_consensus.to_string(),
+            ),
+            metric(
+                "with_high_confidence_semantic_consensus",
+                with_high_confidence_semantic_consensus.to_string(),
+            ),
+            metric(
+                "resolved_semantic_roles_without_consensus",
+                resolved_semantic_roles_without_consensus.to_string(),
             ),
             metric("semantic_observations", semantic_observations.to_string()),
             metric(
@@ -1590,6 +1661,11 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     let semantic_observations = interface_signal_semantic_observations_count(&ir.interfaces);
     let with_resolved_semantic_role =
         interface_signals_with_resolved_semantic_role_count(&ir.interfaces);
+    let with_semantic_consensus = interface_signals_with_semantic_consensus_count(&ir.interfaces);
+    let with_high_confidence_semantic_consensus =
+        interface_signals_with_high_confidence_semantic_consensus_count(&ir.interfaces);
+    let resolved_semantic_roles_without_consensus =
+        resolved_semantic_roles_without_consensus_count(&ir.interfaces);
     let with_single_source_semantic_grounding =
         interface_signals_with_semantic_grounding_strength_count(
             &ir.interfaces,
@@ -1637,6 +1713,13 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     );
     println!("  with_semantic_tags: {with_semantic_tags}");
     println!("  with_resolved_semantic_role: {with_resolved_semantic_role}");
+    println!("  with_semantic_consensus: {with_semantic_consensus}");
+    println!(
+        "  with_high_confidence_semantic_consensus: {with_high_confidence_semantic_consensus}"
+    );
+    println!(
+        "  resolved_semantic_roles_without_consensus: {resolved_semantic_roles_without_consensus}"
+    );
     println!("  semantic_observations: {semantic_observations}");
     println!("  with_single_source_semantic_grounding: {with_single_source_semantic_grounding}");
     println!("  with_multi_source_semantic_grounding: {with_multi_source_semantic_grounding}");
@@ -1921,6 +2004,17 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 .collect(),
         ));
     }
+    if resolved_semantic_roles_without_consensus > 0 {
+        findings.push(finding(
+            "intent_resolved_roles_without_consensus_present",
+            ValidationFindingSeverity::Info,
+            "semantic_role_consensus",
+            format!(
+                "{resolved_semantic_roles_without_consensus} resolved semantic role(s) still rely on fallback carry-through without an explicit canonical consensus profile"
+            ),
+            Vec::new(),
+        ));
+    }
     if !ir.actor_ports.is_empty() && missing_graph_direction_count > 0 {
         findings.push(finding(
             "intent_graph_direction_coverage_incomplete",
@@ -2057,6 +2151,18 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             metric(
                 "with_resolved_semantic_role",
                 with_resolved_semantic_role.to_string(),
+            ),
+            metric(
+                "with_semantic_consensus",
+                with_semantic_consensus.to_string(),
+            ),
+            metric(
+                "with_high_confidence_semantic_consensus",
+                with_high_confidence_semantic_consensus.to_string(),
+            ),
+            metric(
+                "resolved_semantic_roles_without_consensus",
+                resolved_semantic_roles_without_consensus.to_string(),
             ),
             metric("semantic_observations", semantic_observations.to_string()),
             metric(
@@ -3206,6 +3312,15 @@ mod tests {
             metric_value(&report, "with_resolved_semantic_role"),
             Some("2")
         );
+        assert_eq!(metric_value(&report, "with_semantic_consensus"), Some("2"));
+        assert_eq!(
+            metric_value(&report, "with_high_confidence_semantic_consensus"),
+            Some("0")
+        );
+        assert_eq!(
+            metric_value(&report, "resolved_semantic_roles_without_consensus"),
+            Some("0")
+        );
         assert_eq!(metric_value(&report, "semantic_observations"), Some("2"));
         assert_eq!(
             metric_value(&report, "with_single_source_semantic_grounding"),
@@ -3294,6 +3409,15 @@ mod tests {
         assert_eq!(
             metric_value(&report, "with_resolved_semantic_role"),
             Some("1")
+        );
+        assert_eq!(metric_value(&report, "with_semantic_consensus"), Some("1"));
+        assert_eq!(
+            metric_value(&report, "with_high_confidence_semantic_consensus"),
+            Some("0")
+        );
+        assert_eq!(
+            metric_value(&report, "resolved_semantic_roles_without_consensus"),
+            Some("0")
         );
         assert_eq!(
             metric_value(&report, "with_single_source_semantic_grounding"),
@@ -3395,6 +3519,15 @@ mod tests {
             metric_value(&report, "with_resolved_semantic_role"),
             Some("1")
         );
+        assert_eq!(metric_value(&report, "with_semantic_consensus"), Some("1"));
+        assert_eq!(
+            metric_value(&report, "with_high_confidence_semantic_consensus"),
+            Some("0")
+        );
+        assert_eq!(
+            metric_value(&report, "resolved_semantic_roles_without_consensus"),
+            Some("0")
+        );
         assert_eq!(
             metric_value(&report, "with_single_source_semantic_grounding"),
             Some("0")
@@ -3411,6 +3544,101 @@ mod tests {
             metric_value(&report, "with_visual_semantic_grounding"),
             Some("0")
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_intent_ir_flags_resolved_roles_without_consensus() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal XREQ is output width 1.\n\n",
+                "Signal XACK is input width 1.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_signal_semantic_tags".to_string(),
+            asset_id: "table_signal_semantic_tags".to_string(),
+            page_id: None,
+            caption_text: Some("Handshake signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("XREQ", false),
+                    make_table_cell(
+                        "Indicates that address and control information are valid for transfer.",
+                        false,
+                    ),
+                ],
+                vec![
+                    make_table_cell("XACK", false),
+                    make_table_cell(
+                        "Indicates that the subordinate can accept the transfer.",
+                        false,
+                    ),
+                ],
+            ],
+            row_count: 2,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let mut intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+        let xreq = intent_ir
+            .interfaces
+            .iter_mut()
+            .flat_map(|interface| interface.signal_records.iter_mut())
+            .find(|signal| signal.signal_name == "XREQ")
+            .expect("expected XREQ interface signal");
+        xreq.semantic_consensus = None;
+
+        let report = validate_intent_ir(
+            &intent_ir,
+            "resolved_semantic_roles_without_consensus".to_string(),
+        );
+        assert_eq!(
+            metric_value(&report, "with_resolved_semantic_role"),
+            Some("2")
+        );
+        assert_eq!(metric_value(&report, "with_semantic_consensus"), Some("1"));
+        assert_eq!(
+            metric_value(&report, "resolved_semantic_roles_without_consensus"),
+            Some("1")
+        );
+        assert!(has_finding(
+            &report,
+            "intent_resolved_roles_without_consensus_present"
+        ));
 
         Ok(())
     }
