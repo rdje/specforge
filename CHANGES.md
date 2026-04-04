@@ -1,5 +1,33 @@
 # CHANGES
 
+## 2026-04-04 (modality-aware semantic grounding strength)
+
+### Changed: semantic grounding strength now distinguishes cross-modality reinforcement
+- `SemanticIR` now derives `semantic_grounding_strength` as:
+  - `single_source`
+  - `multi_source`
+  - `cross_modality`
+- `IntentIR` carries that stronger distinction forward unchanged.
+
+### Changed: repeated same-modality evidence no longer overclaims cross-modality support
+- Repeated observations from one modality family now stay `multi_source`.
+- Support spanning more than one modality family across table/prose/visual evidence now upgrades to `cross_modality`.
+
+### Added: validation metric for cross-modality semantic grounding
+- `specforge validate` now reports:
+  - `with_cross_modality_semantic_grounding`
+
+### Added: regression coverage for modality-aware role grounding
+- Added tests for:
+  - cross-modality semantic grounding on interface signals
+  - same-modality multi-source semantic grounding on interface signals
+  - cross-modality grounding carry-through into `IntentIR`
+  - validation counts for both cross-modality and same-modality multi-source grounding
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 165/165 passed
+
 ## 2026-04-04 (canonical semantic-role consensus from preserved observations)
 
 ### Added: resolved semantic-role consensus on canonical interface signals

@@ -1063,3 +1063,26 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
   - weigh source kinds and automation confidence when multiple compatible observations support a role
   - distinguish repeated same-modality support from truly cross-modality reinforcement
   - reuse the new resolved-role surface when richer protocol meanings beyond ready/valid are added
+
+## 2026-04-04 - semantic grounding strength is now modality-aware
+- the previous semantic-role consensus slice still had one remaining quality issue:
+  - `semantic_grounding_strength = multi_source` only meant "more than one supporting observation"
+  - that overclaimed confidence because two table observations are not the same thing as table-plus-visual reinforcement
+- that distinction matters for a SOTA-grade KG because downstream consumers should know whether semantic agreement is repeated within one modality or reinforced across independent evidence modalities
+- `crates/specforge/src/ir/semantic.rs` now derives `semantic_grounding_strength` as:
+  - `single_source`
+  - `multi_source` for repeated support within the same modality family
+  - `cross_modality` when support spans more than one modality family across table/prose/visual evidence
+- `specforge validate` now reports:
+  - `with_cross_modality_semantic_grounding`
+- regression coverage now proves:
+  - visual + table support upgrades a resolved role to `cross_modality`
+  - repeated table-only support remains `multi_source`
+  - `IntentIR` carries the stronger distinction unchanged
+- validation for this slice:
+  - `cargo fmt --all` passed
+  - `cargo test --manifest-path Cargo.toml` passed with `165/165`
+- the next honest follow-up is stronger arbitration inside those buckets:
+  - rank source kinds and automation confidence within compatible cross-modality sets
+  - distinguish cross-modality agreement from cross-modality contradiction with stronger canonical arbitration metadata
+  - generalize the same grounding-quality model beyond ready/valid-style semantic roles

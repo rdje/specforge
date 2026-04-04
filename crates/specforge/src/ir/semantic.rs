@@ -491,6 +491,7 @@ impl InterfaceSignalSemanticRole {
 pub enum SemanticGroundingStrength {
     SingleSource,
     MultiSource,
+    CrossModality,
 }
 
 impl SemanticGroundingStrength {
@@ -498,6 +499,7 @@ impl SemanticGroundingStrength {
         match self {
             Self::SingleSource => "single_source",
             Self::MultiSource => "multi_source",
+            Self::CrossModality => "cross_modality",
         }
     }
 }
@@ -5723,6 +5725,13 @@ enum HandshakeSignalRole {
     Ready,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+enum SemanticObservationModality {
+    Table,
+    Prose,
+    Visual,
+}
+
 fn resolve_interface_signal_semantic_role(
     semantic_tags: &[SignalSemanticTag],
     semantic_observations: &[InterfaceSignalSemanticObservationRecord],
@@ -5730,39 +5739,41 @@ fn resolve_interface_signal_semantic_role(
     Option<InterfaceSignalSemanticRole>,
     Option<SemanticGroundingStrength>,
 ) {
-    let valid_supporting_observations = semantic_observations
-        .iter()
-        .filter(|observation| {
-            observation_supports_semantic_role(
-                observation,
-                InterfaceSignalSemanticRole::HandshakeValidLike,
-            )
-        })
-        .count();
-    let ready_supporting_observations = semantic_observations
-        .iter()
-        .filter(|observation| {
-            observation_supports_semantic_role(
-                observation,
-                InterfaceSignalSemanticRole::HandshakeReadyLike,
-            )
-        })
-        .count();
+    let valid_supporting_observations: Vec<&InterfaceSignalSemanticObservationRecord> =
+        semantic_observations
+            .iter()
+            .filter(|observation| {
+                observation_supports_semantic_role(
+                    observation,
+                    InterfaceSignalSemanticRole::HandshakeValidLike,
+                )
+            })
+            .collect();
+    let ready_supporting_observations: Vec<&InterfaceSignalSemanticObservationRecord> =
+        semantic_observations
+            .iter()
+            .filter(|observation| {
+                observation_supports_semantic_role(
+                    observation,
+                    InterfaceSignalSemanticRole::HandshakeReadyLike,
+                )
+            })
+            .collect();
 
     match (
-        valid_supporting_observations > 0,
-        ready_supporting_observations > 0,
+        !valid_supporting_observations.is_empty(),
+        !ready_supporting_observations.is_empty(),
     ) {
         (true, false) => (
             Some(InterfaceSignalSemanticRole::HandshakeValidLike),
-            Some(grounding_strength_for_support_count(
-                valid_supporting_observations,
+            Some(grounding_strength_for_supporting_observations(
+                &valid_supporting_observations,
             )),
         ),
         (false, true) => (
             Some(InterfaceSignalSemanticRole::HandshakeReadyLike),
-            Some(grounding_strength_for_support_count(
-                ready_supporting_observations,
+            Some(grounding_strength_for_supporting_observations(
+                &ready_supporting_observations,
             )),
         ),
         (true, true) => (None, None),
@@ -5805,11 +5816,37 @@ fn semantic_tags_support_semantic_role(
     })
 }
 
-fn grounding_strength_for_support_count(observation_count: usize) -> SemanticGroundingStrength {
-    if observation_count > 1 {
-        SemanticGroundingStrength::MultiSource
-    } else {
+fn grounding_strength_for_supporting_observations(
+    observations: &[&InterfaceSignalSemanticObservationRecord],
+) -> SemanticGroundingStrength {
+    if observations.len() <= 1 {
         SemanticGroundingStrength::SingleSource
+    } else if observations
+        .iter()
+        .map(|observation| semantic_observation_modality(observation.source_kind))
+        .collect::<BTreeSet<_>>()
+        .len()
+        > 1
+    {
+        SemanticGroundingStrength::CrossModality
+    } else {
+        SemanticGroundingStrength::MultiSource
+    }
+}
+
+fn semantic_observation_modality(
+    source_kind: SignalSemanticHintSourceKind,
+) -> SemanticObservationModality {
+    match source_kind {
+        SignalSemanticHintSourceKind::SignalDescriptionTable => SemanticObservationModality::Table,
+        SignalSemanticHintSourceKind::ProseStatement
+        | SignalSemanticHintSourceKind::AliasGroundedProseStatement => {
+            SemanticObservationModality::Prose
+        }
+        SignalSemanticHintSourceKind::VisualCaption
+        | SignalSemanticHintSourceKind::VlmTimingDiagramAnnotation => {
+            SemanticObservationModality::Visual
+        }
     }
 }
 
@@ -8326,7 +8363,7 @@ mod tests {
     }
 
     #[test]
-    fn marks_multi_source_semantic_grounding_on_interface_signals() -> Result<()> {
+    fn marks_cross_modality_semantic_grounding_on_interface_signals() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("semantic_role_multi_source.md");
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
@@ -8363,6 +8400,90 @@ mod tests {
                 make_table_cell("XREQ", false),
                 make_table_cell(
                     "Indicates that address and control information are valid for transfer.",
+                    false,
+                ),
+            ]],
+            row_count: 1,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let xreq = semantic_ir
+            .interfaces
+            .iter()
+            .flat_map(|interface| interface.signal_records.iter())
+            .find(|signal| signal.signal_name == "XREQ")
+            .expect("expected XREQ interface signal");
+        assert_eq!(xreq.semantic_observations.len(), 2);
+        assert_eq!(
+            xreq.resolved_semantic_role,
+            Some(super::InterfaceSignalSemanticRole::HandshakeValidLike)
+        );
+        assert_eq!(
+            xreq.semantic_grounding_strength,
+            Some(super::SemanticGroundingStrength::CrossModality)
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn marks_same_modality_repetition_as_multi_source_grounding() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("semantic_role_same_modality.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(&source, "# Protocol\nSignal XREQ is output width 1.\n")?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_xreq_roles_1".to_string(),
+            asset_id: "table_xreq_roles_1".to_string(),
+            page_id: None,
+            caption_text: Some("Primary handshake signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("XREQ", false),
+                make_table_cell(
+                    "Indicates that address and control information are valid for transfer.",
+                    false,
+                ),
+            ]],
+            row_count: 1,
+            col_count: 2,
+        });
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_xreq_roles_2".to_string(),
+            asset_id: "table_xreq_roles_2".to_string(),
+            page_id: None,
+            caption_text: Some("Secondary handshake signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("XREQ", false),
+                make_table_cell(
+                    "Asserted when transfer information is valid on the channel.",
                     false,
                 ),
             ]],

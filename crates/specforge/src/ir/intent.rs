@@ -2105,6 +2105,99 @@ mod tests {
     }
 
     #[test]
+    fn carries_cross_modality_semantic_grounding_into_intent_ir() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{
+            StructuredTableCellRecord, StructuredTableRecord, TableKind, VisualAsset,
+            VisualAssetKind,
+        };
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("intent_semantic_cross_modality.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(&source, "# Protocol\nSignal XREQ is output width 1.\n")?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.visual_assets.push(VisualAsset {
+            asset_id: "figure_xreq".to_string(),
+            asset_kind: VisualAssetKind::Diagram,
+            page_id: Some("page_0001".to_string()),
+            image_path: None,
+            caption_text: Some("Figure 1: XREQ valid timing.".to_string()),
+            caption_source_path: None,
+            source_ref: None,
+            placeholder_text: None,
+            note: None,
+            diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+        });
+        let make_cell = |text: &str, is_header: bool| StructuredTableCellRecord {
+            text: text.to_string(),
+            row_span: 1,
+            col_span: 1,
+            is_header,
+        };
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_xreq_roles".to_string(),
+            asset_id: "table_xreq_roles".to_string(),
+            page_id: None,
+            caption_text: Some("Handshake signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_cell("Signal", true),
+                make_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_cell("XREQ", false),
+                make_cell(
+                    "Indicates that address and control information are valid for transfer.",
+                    false,
+                ),
+            ]],
+            row_count: 1,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let xreq = intent_ir
+            .interfaces
+            .iter()
+            .flat_map(|interface| interface.signal_records.iter())
+            .find(|signal| signal.signal_name == "XREQ")
+            .expect("expected XREQ interface signal");
+        assert_eq!(
+            xreq.resolved_semantic_role,
+            Some(crate::ir::semantic::InterfaceSignalSemanticRole::HandshakeValidLike)
+        );
+        assert_eq!(
+            xreq.semantic_grounding_strength,
+            Some(crate::ir::semantic::SemanticGroundingStrength::CrossModality)
+        );
+        assert_eq!(xreq.semantic_observations.len(), 2);
+
+        Ok(())
+    }
+
+    #[test]
     fn carries_typed_temporal_conflicts_into_intent_ir() -> Result<()> {
         use crate::ir::evidence::EvidenceIr;
         use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};

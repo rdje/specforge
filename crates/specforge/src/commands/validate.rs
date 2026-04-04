@@ -1049,6 +1049,11 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             &ir.interfaces,
             crate::ir::semantic::SemanticGroundingStrength::MultiSource,
         );
+    let with_cross_modality_semantic_grounding =
+        interface_signals_with_semantic_grounding_strength_count(
+            &ir.interfaces,
+            crate::ir::semantic::SemanticGroundingStrength::CrossModality,
+        );
     let with_visual_semantic_grounding =
         interface_signals_with_visual_semantic_grounding_count(&ir.interfaces);
     let fully_typed = ir
@@ -1095,6 +1100,7 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     println!("  semantic_observations: {semantic_observations}");
     println!("  with_single_source_semantic_grounding: {with_single_source_semantic_grounding}");
     println!("  with_multi_source_semantic_grounding: {with_multi_source_semantic_grounding}");
+    println!("  with_cross_modality_semantic_grounding: {with_cross_modality_semantic_grounding}");
     println!("  with_visual_semantic_grounding: {with_visual_semantic_grounding}");
     println!("  fully_typed (resolved_direction+width): {fully_typed} ({ft_pct}%)");
     println!();
@@ -1457,6 +1463,10 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 with_multi_source_semantic_grounding.to_string(),
             ),
             metric(
+                "with_cross_modality_semantic_grounding",
+                with_cross_modality_semantic_grounding.to_string(),
+            ),
+            metric(
                 "with_visual_semantic_grounding",
                 with_visual_semantic_grounding.to_string(),
             ),
@@ -1590,6 +1600,11 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             &ir.interfaces,
             crate::ir::semantic::SemanticGroundingStrength::MultiSource,
         );
+    let with_cross_modality_semantic_grounding =
+        interface_signals_with_semantic_grounding_strength_count(
+            &ir.interfaces,
+            crate::ir::semantic::SemanticGroundingStrength::CrossModality,
+        );
     let with_visual_semantic_grounding =
         interface_signals_with_visual_semantic_grounding_count(&ir.interfaces);
     let dir_pct = if declared_count > 0 {
@@ -1625,6 +1640,7 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     println!("  semantic_observations: {semantic_observations}");
     println!("  with_single_source_semantic_grounding: {with_single_source_semantic_grounding}");
     println!("  with_multi_source_semantic_grounding: {with_multi_source_semantic_grounding}");
+    println!("  with_cross_modality_semantic_grounding: {with_cross_modality_semantic_grounding}");
     println!("  with_visual_semantic_grounding: {with_visual_semantic_grounding}");
     println!();
 
@@ -2050,6 +2066,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             metric(
                 "with_multi_source_semantic_grounding",
                 with_multi_source_semantic_grounding.to_string(),
+            ),
+            metric(
+                "with_cross_modality_semantic_grounding",
+                with_cross_modality_semantic_grounding.to_string(),
             ),
             metric(
                 "with_visual_semantic_grounding",
@@ -3196,6 +3216,10 @@ mod tests {
             Some("0")
         );
         assert_eq!(
+            metric_value(&report, "with_cross_modality_semantic_grounding"),
+            Some("0")
+        );
+        assert_eq!(
             metric_value(&report, "with_visual_semantic_grounding"),
             Some("0")
         );
@@ -3204,7 +3228,7 @@ mod tests {
     }
 
     #[test]
-    fn validate_intent_ir_counts_multi_source_semantic_grounding() -> Result<()> {
+    fn validate_intent_ir_counts_cross_modality_semantic_grounding() -> Result<()> {
         use crate::ir::evidence::EvidenceIr;
 
         let tempdir = tempdir()?;
@@ -3277,11 +3301,115 @@ mod tests {
         );
         assert_eq!(
             metric_value(&report, "with_multi_source_semantic_grounding"),
+            Some("0")
+        );
+        assert_eq!(
+            metric_value(&report, "with_cross_modality_semantic_grounding"),
             Some("1")
         );
         assert_eq!(
             metric_value(&report, "with_visual_semantic_grounding"),
             Some("1")
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_intent_ir_counts_same_modality_multi_source_semantic_grounding() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(&source, "# Protocol\nSignal XREQ is output width 1.\n")?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_xreq_roles_1".to_string(),
+            asset_id: "table_xreq_roles_1".to_string(),
+            page_id: None,
+            caption_text: Some("Primary handshake signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("XREQ", false),
+                make_table_cell(
+                    "Indicates that address and control information are valid for transfer.",
+                    false,
+                ),
+            ]],
+            row_count: 1,
+            col_count: 2,
+        });
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_xreq_roles_2".to_string(),
+            asset_id: "table_xreq_roles_2".to_string(),
+            page_id: None,
+            caption_text: Some("Secondary handshake signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("XREQ", false),
+                make_table_cell(
+                    "Asserted when transfer information is valid on the channel.",
+                    false,
+                ),
+            ]],
+            row_count: 1,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let report = validate_intent_ir(
+            &intent_ir,
+            "signal_semantic_same_modality_multi_source".to_string(),
+        );
+        assert_eq!(
+            metric_value(&report, "with_resolved_semantic_role"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&report, "with_single_source_semantic_grounding"),
+            Some("0")
+        );
+        assert_eq!(
+            metric_value(&report, "with_multi_source_semantic_grounding"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&report, "with_cross_modality_semantic_grounding"),
+            Some("0")
+        );
+        assert_eq!(
+            metric_value(&report, "with_visual_semantic_grounding"),
+            Some("0")
         );
 
         Ok(())
