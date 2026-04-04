@@ -71,6 +71,38 @@
 - deterministic stages should own ingest, normalization, artifact materialization, and validation boundaries
 - interpretation-heavy stages such as actor discovery and semantic lifting can use assisted reasoning later, but must still emit typed artifacts with provenance
 
+### SourceIR maturity boundary
+- `specforge ingest` and `SourceIR` are not the same thing:
+  - `ingest` is the stage/command that performs source normalization and materialization
+  - `SourceIR` is the typed artifact/model produced by that stage
+- this distinction matters because implementation effort on Tier 1 was not "docs about PDFs"; it was information-preservation work on the deterministic foundation the later KG layers depend on
+- the project should treat `SourceIR` as strategically high leverage because later stages cannot recover structure that ingest already lost:
+  - table identity
+  - table cell grids
+  - section hierarchy
+  - figure/caption linkage
+  - page-local provenance
+  - visual asset identity
+- that earlier investment was objectively correct because it reduces AI uncertainty and raises the ceiling for every later stage
+- but Tier 1 should not now become the default focus of the roadmap
+- the honest maturity assessment is:
+  - `SourceIR` is strong in architecture
+  - `specforge ingest` is operational and useful
+  - neither should be assumed robust against every real chip-design PDF "without flinching"
+- the unresolved Tier 1 risks are mostly robustness risks, not missing-concept risks:
+  - scanned/OCR-heavy PDFs
+  - multi-column reading-order drift
+  - rotated, split, or nested tables
+  - unusual caption/figure layouts
+  - backend-dependent table-kind classification errors
+  - vendor-specific appendices, sidebars, and footnote-heavy pages
+- the correct remaining Tier 1 posture is therefore surgical hardening, not broad feature expansion:
+  - add robustness benchmarks on varied PDF corpora
+  - improve failure-mode detection and honest residuals
+  - strengthen source-level validation metrics
+  - patch capture bottlenecks when real documents expose them
+- unless a real PDF proves otherwise, the center of gravity should stay in `EvidenceIR -> SemanticIR -> IntentIR`, where semantic truthfulness is still the dominant risk
+
 ### Continuity as infrastructure
 - live documentation is not optional process overhead
 - `README.md`, `INTENTIR_SPEC.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `USER_GUIDE.md`, `DEVELOPMENT_NOTES.md`, `CHANGES.md`, and `MEMORY.md` are part of the engineering system

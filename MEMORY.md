@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `dbae9b7`
-- latest_commit_brief_message: `feat(semantic): infer handshake roles from signal meaning`
-- note: current uncommitted work broadens that role inference into prose and alias-grounded prose, refreshes the role hints during `nlp-enrich`, updates validation source-kind reporting, and syncs the live docs
+- latest_commit_hash: `43c201f`
+- latest_commit_brief_message: `feat(evidence): infer semantic roles from prose aliases`
+- note: current uncommitted work is docs-only and logs the maturity boundary for `specforge ingest` / `SourceIR`, including why Tier 1 mattered earlier and why future Tier 1 work should now be robustness hardening rather than broad feature expansion
 
 ## Recent commit chain (last 5)
+- `43c201f` feat(evidence): infer semantic roles from prose aliases
 - `dbae9b7` feat(semantic): infer handshake roles from signal meaning
 - `d323658` docs(roadmap): log semantic programming doctrine
 - `bd6916f` feat(semantic): derive handshake temporal predicates
 - `41d6bfd` feat(semantic): recover idiomatic one-cycle phrases
-- `a57a564` feat(semantic): surface interface signal conflicts
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -43,40 +43,25 @@
 - `VALIDATION_SNAPSHOT.md` is now a tracked continuity doc refreshed from persisted validation reports
 
 ## Completed technical work in this session
-- `crates/specforge/src/ir/evidence.rs` now refreshes `signal_semantic_hints` from:
-  - `SignalDescription` table descriptions
-  - direct `SourceFact` prose descriptions
-  - alias-grounded prose descriptions
-- `crates/specforge/src/commands/nlp_enrich.rs` now refreshes `signal_semantic_hints` before persisting updated `EvidenceIR`, so alias learning can feed role grounding immediately
-- `crates/specforge/src/ir/semantic.rs` continues to carry those roles as per-signal `semantic_tags` and uses them before literal `VALID` / `READY` fallback for typed handshake derivation
-- `crates/specforge/src/commands/validate.rs` now reports:
-  - `signal_semantic_hints` for `EvidenceIR`
-  - source-kind breakout for `signal_semantic_hints` in `EvidenceIR`
-  - `with_semantic_tags` for `SemanticIR`
-  - `with_semantic_tags` for `IntentIR`
-- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, `CHANGES.md`, and `MEMORY.md` so the new meaning-grounded role surface is visible in continuity docs
+- logged the Tier 1 maturity boundary for `specforge ingest` / `SourceIR`:
+  - earlier SourceIR work was objectively correct because it preserves deterministic document structure that later KG stages cannot recover if lost
+  - `SourceIR` is architecturally strong but should not be assumed robust against every chip-design PDF
+  - the remaining Tier 1 work should be robustness hardening, not broad concept expansion, unless real PDFs expose a capture bottleneck
+- updated `DEVELOPMENT_NOTES.md`, `ROADMAP.md`, `CHANGES.md`, and `MEMORY.md` so future sessions inherit that steering explicitly
 - validation ran for this task:
-  - `cargo fmt --all` passed
-  - `cargo test --manifest-path Cargo.toml` passed with `149/149`
+  - docs-only change; Rust tests were not run
 
 ## Current working tree before commit
 - modified tracked files currently include:
-  - `crates/specforge/src/commands/nlp_enrich.rs`
-  - `crates/specforge/src/ir/evidence.rs`
-  - `crates/specforge/src/ir/semantic.rs`
-  - `crates/specforge/src/commands/validate.rs`
-  - `README.md`
   - `ROADMAP.md`
-  - `LIVE_ACHIEVEMENT_STATUS.md`
-  - `RUST_CODEBASE_ANALYSIS.md`
   - `DEVELOPMENT_NOTES.md`
   - `CHANGES.md`
   - `MEMORY.md`
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the prose / alias-grounded semantic-role slice
-2. continue `R15c` by broadening semantic-role inference beyond tables and prose into richer multimodal grounding
+1. commit the SourceIR / ingest maturity-guidance docs slice
+2. continue the semantic-truthfulness program, keeping Tier 1 work focused on robustness hardening when real PDFs expose capture bottlenecks
 3. keep adapter work de-prioritized until the graph, temporal, arbitration, and evaluation surfaces are materially stronger
 
 ## Remaining engineering gaps after this commit
@@ -88,6 +73,7 @@
 - Tier 3 relation extraction after the graph/temporal/eval surfaces are ready (`R14`)
 - some downstream compatibility and consumer paths still rely on flat `direction_hint` instead of the graph-native surface
 - meaning-based role inference now covers signal-description tables plus conservative prose and alias-grounded prose, but it still needs richer multimodal grounding so protocol semantics do not depend only on text surfaces
+- `SourceIR` / ingest are strong enough to remain the foundation, but not strong enough to be assumed universal; future Tier 1 work should stay focused on robustness and honest failure handling
 - adapter expansion and adapter validation are now intentionally horizon work
 - the workspace still emits compile warnings in `ir/adapters.rs` and `ir/semantic.rs`
 

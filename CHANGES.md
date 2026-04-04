@@ -1,5 +1,26 @@
 # CHANGES
 
+## 2026-04-04 (SourceIR and ingest maturity guidance logged)
+
+### Added: explicit steering on SourceIR maturity and remaining Tier 1 work
+- Logged a durable implementation note clarifying that `specforge ingest` and `SourceIR` are different responsibilities:
+  - ingest is the stage/command
+  - `SourceIR` is the typed artifact/model
+- Recorded the current maturity boundary:
+  - architecturally strong and high leverage
+  - not yet proven universal against arbitrary chip-spec PDFs
+
+### Changed: roadmap now treats remaining Tier 1 work as robustness hardening
+- `ROADMAP.md` now says the remaining `SourceIR` / ingest work should be:
+  - robustness benchmarking
+  - failure-mode detection
+  - better fallback behavior
+  - stronger source-level validation
+- It also makes explicit that broad new Tier 1 expansion should stay secondary unless real PDFs expose a capture bottleneck.
+
+### Validation
+- docs-only change; Rust tests were not run
+
 ## 2026-04-04 (prose and alias-grounded semantic handshake roles)
 
 ### Added: prose and alias-grounded semantic role hints in `EvidenceIR`

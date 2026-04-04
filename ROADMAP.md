@@ -181,6 +181,14 @@
   - `SourceIr.document_profile` carries title and counts
   - `StructuredTableRecord.table_kind` classifies every table
   - `SourceIR` drops no structured information that Docling provides
+- follow-up guidance:
+  - treat `SourceIR` and `specforge ingest` as architecturally strong but not universally solved
+  - do not prioritize broad new Tier 1 concept expansion ahead of semantic truthfulness unless a real PDF exposes a capture bottleneck
+  - the remaining Tier 1 work should be robustness-oriented:
+    - benchmark against varied real chip-spec PDFs
+    - detect ugly-layout / OCR / table-split failure modes honestly
+    - improve fallback behavior and source-level validation
+    - preserve residual decisions when structured capture is not trustworthy
 
 ### R9 EvidenceIR SOTA typed evidence (Tier 2 of EXTRACTION_ARCHITECTURE.md)
 - status: Mostly Done (typed evidence + convergent enrichment landed; remaining completeness work is incremental hardening)
