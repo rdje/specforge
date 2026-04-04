@@ -22,11 +22,12 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `fbd0310`
-- latest_commit_brief_message: `feat(validation): score direction from graph first`
-- note: current uncommitted work adds the first typed temporal-rule surface to `SemanticIR` / `IntentIR`, teaches validation to report temporal grounding gaps, and syncs the continuity docs to that state
+- latest_commit_hash: `8bbfe1f`
+- latest_commit_brief_message: `feat(semantic): add typed temporal rules`
+- note: current uncommitted work adds cycle-window recovery to the typed temporal-rule layer, updates validation to count bounded temporal rules, and syncs the continuity docs to that state
 
 ## Recent commit chain (last 5)
+- `8bbfe1f` feat(semantic): add typed temporal rules
 - `fbd0310` feat(validation): score direction from graph first
 - `ddd2cac` docs: capture multimodal extraction steering
 - `1064bec` feat(converge): default to full ollama loop
@@ -44,18 +45,16 @@
 - `VALIDATION_SNAPSHOT.md` is now a tracked continuity doc refreshed from persisted validation reports
 
 ## Completed technical work in this session
-- `SemanticIR` now carries a first typed `temporal_rules` layer derived from structured signal constraints, conditional rules, and timing descriptions
-- `IntentIR` now carries the same `temporal_rules` forward so downstream consumers can target typed clocked behavior, not only raw timing/constraint text
-- temporal grounding now reuses an explicit clock declaration even when a full `SystemContractRecord` is not present yet
-- `specforge validate` now reports temporal-rule counts and flags missing clock/edge grounding for `SemanticIR` / `IntentIR`
+- the typed temporal-rule layer now also recovers bounded `cycle_window` latency from prose such as `within 2 cycles`, `for 2 cycles`, `at least N cycles`, and from timing rows whose unit is already `cycles`
+- `specforge validate` now reports `temporal_rules_with_cycle_window` and flags temporal-rule sets that still have no bounded latency at all
 - added regression tests for:
-  - temporal-rule derivation from conditioned signal constraints
-  - temporal-rule carry-through into `IntentIR`
-  - validation findings for ungrounded temporal rules
-- synced the roadmap/status/analysis/README/change docs so future sessions know `R15b` has started with a real typed temporal surface
+  - cycle-window derivation from cycle-bounded signal constraints
+  - cycle-window carry-through into `IntentIR`
+  - validation metrics for bounded temporal rules
+- synced the roadmap/status/analysis/README/change docs so future sessions know the temporal layer now carries bounded latency, not only edge predicates
 - validation ran for this task:
   - `cargo fmt --all` passed
-  - `cargo test --manifest-path Cargo.toml` passed with 114 tests
+  - `cargo test --manifest-path Cargo.toml` passed with 115 tests
 
 ## Current working tree before commit
 - modified tracked files currently include:
@@ -72,9 +71,9 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the initial temporal-rule slice; do not stage `generated/`
+1. commit the cycle-window temporal slice; do not stage `generated/`
 2. continue the remaining `R15` slice by moving direct downstream `direction_hint` consumers onto actor-relative graph semantics
-3. deepen `R15b` with richer temporal predicates, cycle windows, and contradiction detection before moving on to `R15c`
+3. deepen `R15b` with actor-relative drive events, richer temporal composition, and contradiction detection before moving on to `R15c`
 
 ## Remaining engineering gaps after this commit
 - remaining actor-relative direction modeling in `SemanticIR` / `IntentIR` (`R15`)
@@ -94,4 +93,4 @@
 4. read `ROADMAP.md`
 5. read `RUST_CODEBASE_ANALYSIS.md`
 6. inspect `git --no-pager status --short`
-7. continue with the remaining graph-first `R15` consumer migration and the next `R15b` temporal-deepening slice unless the user redirects
+7. continue with the remaining graph-first `R15` consumer migration and the next temporal-deepening slice unless the user redirects

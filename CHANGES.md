@@ -1,5 +1,30 @@
 # CHANGES
 
+## 2026-04-04 (cycle-window recovery in temporal rules)
+
+### Added: bounded latency windows in the temporal-rule layer
+- `SemanticIR` temporal-rule derivation now recovers `CycleWindowRecord` bounds from prose such as:
+  - `within 2 cycles`
+  - `for 2 cycles`
+  - `at least 1 cycle`
+  - `at most 3 cycles`
+  - `between 1 and 3 cycles`
+- Timing rows whose unit is already `cycles` now also project their numeric min/max/typ values into `cycle_window`.
+
+### Changed: validation now counts bounded temporal rules
+- `specforge validate` now reports `temporal_rules_with_cycle_window` for `SemanticIR` and `IntentIR`.
+- Validation now flags when typed temporal rules exist but none of them currently carry explicit cycle-window bounds.
+
+### Added: regression coverage for cycle-window carry-through
+- Added tests for:
+  - cycle-window derivation from a cycle-bounded signal constraint
+  - cycle-window carry-through into `IntentIR`
+  - validation metrics for bounded temporal rules
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 115/115 passed
+
 ## 2026-04-04 (typed temporal-rule surface in SemanticIR / IntentIR)
 
 ### Added: initial clock-tick temporal rules in the canonical IR layers

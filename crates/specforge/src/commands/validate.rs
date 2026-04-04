@@ -172,6 +172,15 @@ fn temporal_rules_missing_clock_grounding_count(
         .count()
 }
 
+fn temporal_rules_with_cycle_window_count(
+    temporal_rules: &[crate::ir::semantic::TemporalRuleRecord],
+) -> usize {
+    temporal_rules
+        .iter()
+        .filter(|rule| rule.cycle_window.is_some())
+        .count()
+}
+
 fn write_validation_report_sidecar(
     artifact_path: &Path,
     report: &ValidationReportRecord,
@@ -760,6 +769,8 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     let missing_compat_direction_count = total_signals.saturating_sub(with_compat_direction_hint);
     let missing_temporal_clock_grounding =
         temporal_rules_missing_clock_grounding_count(&ir.temporal_rules);
+    let temporal_rules_with_cycle_window =
+        temporal_rules_with_cycle_window_count(&ir.temporal_rules);
 
     let mut findings = Vec::new();
     if !ir.actor_signal_relations.is_empty() && ir.actor_ports.is_empty() {
@@ -825,6 +836,16 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             format!(
                 "{missing_temporal_clock_grounding} temporal rule(s) still lack explicit clock or edge grounding"
             ),
+            Vec::new(),
+        ));
+    }
+    if !ir.temporal_rules.is_empty() && temporal_rules_with_cycle_window == 0 {
+        findings.push(finding(
+            "semantic_temporal_rules_missing_cycle_windows",
+            ValidationFindingSeverity::Info,
+            "temporal_grounding",
+            "typed temporal rules exist, but none currently carry explicit cycle-window bounds"
+                .to_string(),
             Vec::new(),
         ));
     }
@@ -903,6 +924,10 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 ir.timing_constraints.len().to_string(),
             ),
             metric("temporal_rules", ir.temporal_rules.len().to_string()),
+            metric(
+                "temporal_rules_with_cycle_window",
+                temporal_rules_with_cycle_window.to_string(),
+            ),
             metric(
                 "temporal_rules_missing_clock_grounding",
                 missing_temporal_clock_grounding.to_string(),
@@ -1109,6 +1134,8 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     let missing_graph_direction_count = declared_count.saturating_sub(with_graph_direction);
     let missing_temporal_clock_grounding =
         temporal_rules_missing_clock_grounding_count(&ir.temporal_rules);
+    let temporal_rules_with_cycle_window =
+        temporal_rules_with_cycle_window_count(&ir.temporal_rules);
 
     let mut findings = Vec::new();
     if !ir.actor_signal_relations.is_empty() && ir.actor_ports.is_empty() {
@@ -1175,6 +1202,16 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             format!(
                 "{missing_temporal_clock_grounding} temporal rule(s) still lack explicit clock or edge grounding"
             ),
+            Vec::new(),
+        ));
+    }
+    if !ir.temporal_rules.is_empty() && temporal_rules_with_cycle_window == 0 {
+        findings.push(finding(
+            "intent_temporal_rules_missing_cycle_windows",
+            ValidationFindingSeverity::Info,
+            "temporal_grounding",
+            "typed temporal rules exist, but none currently carry explicit cycle-window bounds"
+                .to_string(),
             Vec::new(),
         ));
     }
@@ -1263,6 +1300,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 ir.timing_constraints.len().to_string(),
             ),
             metric("temporal_rules", ir.temporal_rules.len().to_string()),
+            metric(
+                "temporal_rules_with_cycle_window",
+                temporal_rules_with_cycle_window.to_string(),
+            ),
             metric(
                 "temporal_rules_missing_clock_grounding",
                 missing_temporal_clock_grounding.to_string(),
@@ -1607,7 +1648,7 @@ mod tests {
             target_value: None,
             condition_text: Some("when HREADY is LOW".to_string()),
             negated: false,
-            source_text: "HTRANS must not change when HREADY is LOW.".to_string(),
+            source_text: "HTRANS must not change when HREADY is LOW for 2 cycles.".to_string(),
             supporting_statement_ids: vec!["stmt_temporal".to_string()],
             automation_confidence: AutomationConfidence::Medium,
         });
@@ -1624,6 +1665,10 @@ mod tests {
 
         let report = validate_intent_ir(&intent_ir, "temporal_grounding".to_string());
         assert_eq!(metric_value(&report, "temporal_rules"), Some("1"));
+        assert_eq!(
+            metric_value(&report, "temporal_rules_with_cycle_window"),
+            Some("1")
+        );
         assert_eq!(
             metric_value(&report, "temporal_rules_missing_clock_grounding"),
             Some("1")

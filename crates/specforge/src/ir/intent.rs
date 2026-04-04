@@ -1388,7 +1388,7 @@ mod tests {
             target_value: None,
             condition_text: Some("when HREADY is LOW".to_string()),
             negated: false,
-            source_text: "HTRANS must not change when HREADY is LOW.".to_string(),
+            source_text: "HTRANS must not change when HREADY is LOW for 2 cycles.".to_string(),
             supporting_statement_ids: vec!["stmt_temporal".to_string()],
             automation_confidence: AutomationConfidence::Medium,
         });
@@ -1410,6 +1410,13 @@ mod tests {
         );
         assert!(intent_ir.temporal_rules.iter().any(|rule| {
             rule.clock_signal.as_deref() == Some("clk")
+                && matches!(
+                    rule.cycle_window.as_ref(),
+                    Some(crate::ir::semantic::CycleWindowRecord {
+                        min_cycles: Some(2),
+                        max_cycles: Some(2),
+                    })
+                )
                 && rule.consequents.iter().any(|predicate| {
                     matches!(
                         predicate,

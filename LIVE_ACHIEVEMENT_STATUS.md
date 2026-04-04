@@ -44,6 +44,7 @@
 - Actor-relative KG carry-through into `SemanticIR` / `IntentIR` (`actor_signal_relations`, `actor_ports`, `signal_connectivity`) implemented: Done
 - Graph-first direction coverage/scoring in `specforge validate` implemented: Done
 - Initial typed `temporal_rules` surface in `SemanticIR` / `IntentIR` implemented: Done
+- Cycle-window recovery for typed temporal rules implemented: Done
 - Convergent EvidenceIR enrichment for anchored encodings and prose polarity implemented: Done
 - `WidthHint` / parametric-width support propagated through the IR pipeline: Done
 - AMBA `Source` / `Driver` / `Destination` signal-table direction handling implemented: Done
@@ -52,7 +53,7 @@
 - Live-doc projection of persisted IR validation findings implemented: Done
 - Latest local validation snapshot projected into tracked docs: Done
 - Full Ollama-backed `specforge converge` defaults enabled: Done
-- Test suite expanded to 114 tests; all passing: Done
+- Test suite expanded to 115 tests; all passing: Done
 - Explicit clock-tick temporal model in `SemanticIR` / `IntentIR`: In Progress
 - KG-guided multimodal rescans as a first-class convergent workstream: Not Started
 - Cross-modality evidence arbitration / conflict handling: Not Started
@@ -62,7 +63,7 @@
 - Actor-relative direction model in `SemanticIR` / `IntentIR`: In Progress
 
 ## Highest-priority remaining gap
-- Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then deepen the new temporal-rule surface into full clock-tick semantics before moving on to KG-guided rescans, evidence arbitration, and KG-quality evaluation
+- Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then deepen the temporal layer with actor-relative drive events, richer temporal composition, and contradiction handling before moving on to KG-guided rescans, evidence arbitration, and KG-quality evaluation
 
 ## Validation Projection
 

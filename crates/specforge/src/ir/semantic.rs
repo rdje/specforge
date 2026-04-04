@@ -5112,7 +5112,7 @@ fn build_temporal_rules(
             edge: default_edge,
             antecedents,
             consequents,
-            cycle_window: None,
+            cycle_window: extract_cycle_window_from_text(&constraint.source_text),
             source_text: constraint.source_text.clone(),
             supporting_statement_ids: constraint.supporting_statement_ids.clone(),
             automation_confidence: constraint.automation_confidence,
@@ -5130,7 +5130,7 @@ fn build_temporal_rules(
             edge: default_edge,
             antecedents: parse_temporal_condition_predicates(&rule.antecedent_text, &known_signals),
             consequents,
-            cycle_window: None,
+            cycle_window: extract_cycle_window_from_text(&rule.source_text),
             source_text: rule.source_text.clone(),
             supporting_statement_ids: rule.supporting_statement_ids.clone(),
             automation_confidence: rule.automation_confidence,
@@ -5360,10 +5360,48 @@ fn temporal_rule_from_timing_constraint(
         edge,
         antecedents: Vec::new(),
         consequents: vec![consequent],
-        cycle_window: None,
+        cycle_window: extract_cycle_window_from_timing_constraint(timing, description),
         source_text: description.to_string(),
         supporting_statement_ids: timing.supporting_statement_ids.clone(),
         automation_confidence: timing.automation_confidence,
+    })
+}
+
+fn extract_cycle_window_from_timing_constraint(
+    timing: &TimingConstraintRecord,
+    description: &str,
+) -> Option<CycleWindowRecord> {
+    extract_cycle_window_from_text(description).or_else(|| {
+        let unit_mentions_cycles = timing
+            .unit
+            .as_deref()
+            .map(|unit| unit.to_ascii_lowercase().contains("cycle"))
+            .unwrap_or(false);
+        if !unit_mentions_cycles {
+            return None;
+        }
+
+        let min_cycles = timing
+            .min_value
+            .as_deref()
+            .and_then(parse_cycle_count_value);
+        let max_cycles = timing
+            .max_value
+            .as_deref()
+            .and_then(parse_cycle_count_value);
+        let typ_cycles = timing
+            .typ_value
+            .as_deref()
+            .and_then(parse_cycle_count_value);
+
+        if min_cycles.is_none() && max_cycles.is_none() && typ_cycles.is_none() {
+            return None;
+        }
+
+        Some(CycleWindowRecord {
+            min_cycles: min_cycles.or(typ_cycles),
+            max_cycles: max_cycles.or(typ_cycles),
+        })
     })
 }
 
@@ -5385,6 +5423,164 @@ fn dedup_temporal_rules(rules: Vec<TemporalRuleRecord>) -> Vec<TemporalRuleRecor
         }
     }
     deduped
+}
+
+fn extract_cycle_window_from_text(text: &str) -> Option<CycleWindowRecord> {
+    let normalized = text.to_ascii_lowercase();
+    let tokens = normalized
+        .split(|ch: char| !ch.is_ascii_alphanumeric())
+        .filter(|token| !token.is_empty())
+        .collect::<Vec<_>>();
+
+    if tokens.is_empty() {
+        return None;
+    }
+
+    for index in 0..tokens.len() {
+        if tokens[index] != "between" {
+            continue;
+        }
+        let Some(min_cycles) = tokens
+            .get(index + 1)
+            .copied()
+            .and_then(parse_cycle_count_value)
+        else {
+            continue;
+        };
+        let and_index = if tokens.get(index + 2) == Some(&"and") {
+            index + 2
+        } else {
+            continue;
+        };
+        let Some(max_cycles) = tokens
+            .get(and_index + 1)
+            .copied()
+            .and_then(parse_cycle_count_value)
+        else {
+            continue;
+        };
+        if tokens[and_index + 2..]
+            .iter()
+            .any(|token| *token == "cycle" || *token == "cycles")
+        {
+            return Some(CycleWindowRecord {
+                min_cycles: Some(min_cycles),
+                max_cycles: Some(max_cycles),
+            });
+        }
+    }
+
+    for index in 0..tokens.len() {
+        let Some(count) = tokens
+            .get(index + 1)
+            .copied()
+            .and_then(parse_cycle_count_value)
+        else {
+            continue;
+        };
+        let trailing_mentions_cycles = tokens[index + 2..]
+            .iter()
+            .take(3)
+            .any(|token| *token == "cycle" || *token == "cycles");
+        if !trailing_mentions_cycles {
+            continue;
+        }
+
+        match tokens[index] {
+            "within" => {
+                return Some(CycleWindowRecord {
+                    min_cycles: None,
+                    max_cycles: Some(count),
+                });
+            }
+            "after" => {
+                return Some(CycleWindowRecord {
+                    min_cycles: Some(count),
+                    max_cycles: Some(count),
+                });
+            }
+            "for" => {
+                return Some(CycleWindowRecord {
+                    min_cycles: Some(count),
+                    max_cycles: Some(count),
+                });
+            }
+            _ => {}
+        }
+    }
+
+    for index in 0..tokens.len().saturating_sub(2) {
+        if tokens[index] == "at" && tokens[index + 1] == "least" {
+            let Some(count) = parse_cycle_count_value(tokens[index + 2]) else {
+                continue;
+            };
+            if tokens[index + 3..]
+                .iter()
+                .take(3)
+                .any(|token| *token == "cycle" || *token == "cycles")
+            {
+                return Some(CycleWindowRecord {
+                    min_cycles: Some(count),
+                    max_cycles: None,
+                });
+            }
+        }
+        if tokens[index] == "at" && tokens[index + 1] == "most" {
+            let Some(count) = parse_cycle_count_value(tokens[index + 2]) else {
+                continue;
+            };
+            if tokens[index + 3..]
+                .iter()
+                .take(3)
+                .any(|token| *token == "cycle" || *token == "cycles")
+            {
+                return Some(CycleWindowRecord {
+                    min_cycles: None,
+                    max_cycles: Some(count),
+                });
+            }
+        }
+        if tokens[index] == "no"
+            && tokens[index + 1] == "more"
+            && tokens.get(index + 2) == Some(&"than")
+        {
+            let Some(count) = tokens
+                .get(index + 3)
+                .copied()
+                .and_then(parse_cycle_count_value)
+            else {
+                continue;
+            };
+            if tokens[index + 4..]
+                .iter()
+                .take(3)
+                .any(|token| *token == "cycle" || *token == "cycles")
+            {
+                return Some(CycleWindowRecord {
+                    min_cycles: None,
+                    max_cycles: Some(count),
+                });
+            }
+        }
+    }
+
+    None
+}
+
+fn parse_cycle_count_value(token: &str) -> Option<u32> {
+    parse_u32_token(token).or_else(|| match token {
+        "one" => Some(1),
+        "two" => Some(2),
+        "three" => Some(3),
+        "four" => Some(4),
+        "five" => Some(5),
+        "six" => Some(6),
+        "seven" => Some(7),
+        "eight" => Some(8),
+        "nine" => Some(9),
+        "ten" => Some(10),
+        _ => None,
+    })
 }
 
 fn find_known_signal_name(text: &str, known_signals: &BTreeSet<String>) -> Option<String> {
@@ -7041,6 +7237,66 @@ mod tests {
                 } if signal_name == "HTRANS"
             )
         }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn derives_cycle_window_from_temporal_constraint_text() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("temporal_cycles.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal PREADY is input width 1.\n\n",
+                "Clock clk.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pready_latency".to_string(),
+            subject_signal: "PREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PREADY must be asserted within 2 cycles.".to_string(),
+            supporting_statement_ids: vec!["stmt_cycle_window".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| rule.rule_id == "temporal_signal_constraint_sigcon_pready_latency")
+            .expect("expected temporal rule derived from cycle-bounded constraint");
+        let cycle_window = rule
+            .cycle_window
+            .as_ref()
+            .expect("expected cycle window to be derived from 'within 2 cycles'");
+        assert_eq!(cycle_window.min_cycles, None);
+        assert_eq!(cycle_window.max_cycles, Some(2));
 
         Ok(())
     }

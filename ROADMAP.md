@@ -296,6 +296,7 @@
     - signal value-at-phase facts
     - signal stability across `pre_tick -> post_tick`
     - signal sampling on clock edges, with optional actor grounding
+  - temporal rules now recover bounded `cycle_window` latency from phrases like `within 2 cycles` and from timing rows whose unit is already `cycles`
   - temporal derivation now uses an explicit clock declaration even when a full reset-bearing `SystemContractRecord` is not yet available
   - `specforge validate` now reports temporal-rule counts plus missing clock/edge grounding diagnostics
 - completion criteria:

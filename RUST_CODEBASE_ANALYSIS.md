@@ -26,8 +26,8 @@
 - `IntentIR` now carries forward the canonical signal/control/system/state/register/timing surface plus the actor-relative KG needed for honest downstream lowering
 - the current `.fsm` adapter slice is real and intentionally narrow: it can emit honest `?dt:name`, `?fsm:name`, and `?top:name` outputs when the canonical facts are explicit enough
 - the enrichment, convergence, and validation toolchain is also real: `specforge enrich`, `specforge nlp-enrich`, `specforge converge`, and `specforge validate` are wired into the CLI and exercised by the workspace tests
-- the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the new temporal-rule layer into full explicit clocked semantics, KG-guided rescans, evidence arbitration, and benchmark-quality evaluation; adapter expansion is now horizon work
-- the workspace currently validates with `cargo test --manifest-path Cargo.toml`, with 114 passing tests
+- the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the new temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, and benchmark-quality evaluation; adapter expansion is now horizon work
+- the workspace currently validates with `cargo test --manifest-path Cargo.toml`, with 115 passing tests
 
 
 ## Session update (2026-04-04)
@@ -39,6 +39,7 @@
 - `SemanticIR` / `IntentIR` now preserve the structural KG downstream via `actor_signal_relations`, `actor_ports`, and `signal_connectivity`, so actor-aware evidence is no longer trapped in `EvidenceIR`
 - `specforge validate` now scores semantic and intent direction coverage from the actor-relative graph first, exposing flat `direction_hint` lag separately instead of treating compatibility-hint absence as semantic failure
 - `SemanticIR` / `IntentIR` now also carry a first typed `temporal_rules` layer derived from constraints and timing observations, and validation now reports missing clock/edge grounding for that surface
+- the temporal-rule layer now also recovers bounded `cycle_window` latency from structured prose/timing text and exposes that coverage in validation
 - `specforge validate` now writes deterministic stage-local `validation_report.json` sidecars and backannotates the current report into `validation_reports` on `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR`
 - `specforge project-validation <artifact>...` now refreshes `VALIDATION_SNAPSHOT.md` and the managed validation block in `LIVE_ACHIEVEMENT_STATUS.md` from persisted IR validation reports
 - `specforge converge` now excludes downstream adapter residual work from `knowledge_fact_count`, so fewer adapter residual decisions do not falsely trip the monotone-knowledge guard
@@ -97,7 +98,7 @@
 - the codebase is no longer mostly scaffolding; the main open problem is semantic truthfulness across the four IR layers, especially graph primacy, temporal semantics, multimodal rescans, and evidence arbitration
 - the practical risk is now split across two partial migrations:
   - `SemanticIR` and `IntentIR` still expose both graph-native actor-relative records and legacy flat `direction_hint` fields; validation/scoring is now graph-first, but some downstream compatibility and consumer paths still consult the flat hints directly
-  - the new temporal-rule layer is real, but it is still a first slice that covers only a narrow set of value/stability/edge-sampling patterns
+  - the new temporal-rule layer is real and now includes bounded cycle windows, but it still covers only a narrow set of value/stability/edge-sampling/latency patterns and does not yet arbitrate contradictions
 - the continuity risk around untracked generated artifacts is lower now that validation snapshots can be re-projected into tracked docs deterministically, but the docs still depend on someone running the projection flow after meaningful validation runs
 
 ## What the tool needs to do

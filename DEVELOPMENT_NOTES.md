@@ -462,6 +462,33 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 - this is the first typed temporal layer, not the full temporal semantics program
 - cycle windows, actor-relative drive events, multi-predicate antecedents, contradiction detection, and richer VLM timing lift still need to land before `R15b` can be considered complete
 
+## Cycle-window recovery in temporal rules (2026-04-04)
+
+### Why this slice landed now
+- the first temporal-rule pass captured phase-relative value/stability/sampling semantics, but still left latency unbounded
+- the roadmap explicitly calls out cycle windows, and the docs already frame many protocol guarantees in terms of bounded cycle counts
+- recovering bounded windows from the prose we already structure is a high-value next increment because it upgrades the temporal layer from "what happens on an edge" to "within how many cycles it must happen"
+
+### Implementation shape
+- `crates/specforge/src/ir/semantic.rs` now derives `CycleWindowRecord` from temporal source text patterns such as:
+  - `within N cycles`
+  - `for N cycles`
+  - `at least N cycles`
+  - `at most N cycles`
+  - `between N and M cycles`
+- timing constraints whose unit is already `cycles` now also project numeric `min/typ/max` values into the typed temporal-rule `cycle_window`
+- the temporal layer remains conservative: if no trustworthy cycle-bound phrase is found, the rule stays unbounded instead of inventing latency
+
+### Validation
+- `crates/specforge/src/commands/validate.rs` now reports `temporal_rules_with_cycle_window`
+- validation now explicitly flags temporal-rule sets that still have no bounded cycle windows at all
+- `cargo fmt --all` passed
+- `cargo test --manifest-path Cargo.toml` now passes with 115 tests
+
+### Remaining follow-up
+- this still does not cover richer latency language like protocol-phase aliases, burst-relative windows, or contradictory latency evidence across modalities
+- actor-relative drive events and multi-step temporal rules are still the next meaningful `R15b` deepening steps
+
 ## Documentation surface currently steering the implementation
 - `README.md`
   - single entry point and quick orientation
