@@ -7,7 +7,7 @@ use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::evidence::{EvidenceIr, StatementClass, VisualObservationKind};
 use crate::ir::intent::IntentIr;
-use crate::ir::semantic::{ActorPortRecord, ActorRelativeDirection, SemanticIr};
+use crate::ir::semantic::{ActorPortRecord, ActorRelativeDirection, ClockEdge, SemanticIr};
 use crate::ir::source::{
     AutomationConfidence, DiagramKind, SourceIr, ValidationFindingRecord,
     ValidationFindingSeverity, ValidationMetricRecord, ValidationReportRecord, WidthHint,
@@ -161,6 +161,15 @@ fn resolved_direction_counts<'a>(
 fn backannotate_report(target: &mut Vec<ValidationReportRecord>, report: &ValidationReportRecord) {
     target.clear();
     target.push(report.clone());
+}
+
+fn temporal_rules_missing_clock_grounding_count(
+    temporal_rules: &[crate::ir::semantic::TemporalRuleRecord],
+) -> usize {
+    temporal_rules
+        .iter()
+        .filter(|rule| rule.clock_signal.is_none() || matches!(rule.edge, ClockEdge::Unknown))
+        .count()
 }
 
 fn write_validation_report_sidecar(
@@ -707,6 +716,7 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     println!("  state_transitions: {}", ir.state_transitions.len());
     println!("  register_records: {}", ir.register_records.len());
     println!("  timing_constraints: {}", ir.timing_constraints.len());
+    println!("  temporal_rules: {}", ir.temporal_rules.len());
     println!(
         "  signal_constraints (Level 2 NLP): {}",
         ir.signal_constraints.len()
@@ -748,6 +758,8 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         .collect();
     let missing_graph_direction_count = total_signals.saturating_sub(with_graph_direction);
     let missing_compat_direction_count = total_signals.saturating_sub(with_compat_direction_hint);
+    let missing_temporal_clock_grounding =
+        temporal_rules_missing_clock_grounding_count(&ir.temporal_rules);
 
     let mut findings = Vec::new();
     if !ir.actor_signal_relations.is_empty() && ir.actor_ports.is_empty() {
@@ -802,6 +814,31 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             format!(
                 "{missing_compat_direction_count} interface signal record(s) still lack flat compatibility direction hints"
             ),
+            Vec::new(),
+        ));
+    }
+    if !ir.temporal_rules.is_empty() && missing_temporal_clock_grounding > 0 {
+        findings.push(finding(
+            "semantic_temporal_rules_missing_clock_grounding",
+            ValidationFindingSeverity::Info,
+            "temporal_grounding",
+            format!(
+                "{missing_temporal_clock_grounding} temporal rule(s) still lack explicit clock or edge grounding"
+            ),
+            Vec::new(),
+        ));
+    }
+    if ir.temporal_rules.is_empty()
+        && (!ir.timing_constraints.is_empty()
+            || !ir.signal_constraints.is_empty()
+            || !ir.conditional_rules.is_empty())
+    {
+        findings.push(finding(
+            "semantic_temporal_rule_surface_missing",
+            ValidationFindingSeverity::Info,
+            "temporal_grounding",
+            "semantic evidence includes timing/constraint records but no typed temporal rules were derived"
+                .to_string(),
             Vec::new(),
         ));
     }
@@ -864,6 +901,11 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             metric(
                 "timing_constraints",
                 ir.timing_constraints.len().to_string(),
+            ),
+            metric("temporal_rules", ir.temporal_rules.len().to_string()),
+            metric(
+                "temporal_rules_missing_clock_grounding",
+                missing_temporal_clock_grounding.to_string(),
             ),
             metric(
                 "signal_constraints",
@@ -966,6 +1008,7 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     println!("  state_transitions: {}", ir.state_transitions.len());
     println!("  register_records: {}", ir.register_records.len());
     println!("  timing_constraints: {}", ir.timing_constraints.len());
+    println!("  temporal_rules: {}", ir.temporal_rules.len());
     println!("  signal_constraints: {}", ir.signal_constraints.len());
     println!("  conditional_rules: {}", ir.conditional_rules.len());
     println!();
@@ -1064,6 +1107,8 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         .map(|record| record.signal_name.clone())
         .collect();
     let missing_graph_direction_count = declared_count.saturating_sub(with_graph_direction);
+    let missing_temporal_clock_grounding =
+        temporal_rules_missing_clock_grounding_count(&ir.temporal_rules);
 
     let mut findings = Vec::new();
     if !ir.actor_signal_relations.is_empty() && ir.actor_ports.is_empty() {
@@ -1119,6 +1164,31 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 "{} declared signal record(s) still lack flat compatibility direction hints even though actor-relative ports exist",
                 declared_count.saturating_sub(with_compat_direction_hint)
             ),
+            Vec::new(),
+        ));
+    }
+    if !ir.temporal_rules.is_empty() && missing_temporal_clock_grounding > 0 {
+        findings.push(finding(
+            "intent_temporal_rules_missing_clock_grounding",
+            ValidationFindingSeverity::Info,
+            "temporal_grounding",
+            format!(
+                "{missing_temporal_clock_grounding} temporal rule(s) still lack explicit clock or edge grounding"
+            ),
+            Vec::new(),
+        ));
+    }
+    if ir.temporal_rules.is_empty()
+        && (!ir.timing_constraints.is_empty()
+            || !ir.signal_constraints.is_empty()
+            || !ir.conditional_rules.is_empty())
+    {
+        findings.push(finding(
+            "intent_temporal_rule_surface_missing",
+            ValidationFindingSeverity::Info,
+            "temporal_grounding",
+            "intent evidence includes timing/constraint records but no typed temporal rules were carried forward"
+                .to_string(),
             Vec::new(),
         ));
     }
@@ -1191,6 +1261,11 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             metric(
                 "timing_constraints",
                 ir.timing_constraints.len().to_string(),
+            ),
+            metric("temporal_rules", ir.temporal_rules.len().to_string()),
+            metric(
+                "temporal_rules_missing_clock_grounding",
+                missing_temporal_clock_grounding.to_string(),
             ),
             metric(
                 "signal_constraints",
@@ -1419,6 +1494,13 @@ mod tests {
             .map(|metric| metric.value.as_str())
     }
 
+    fn has_finding(report: &ValidationReportRecord, finding_id: &str) -> bool {
+        report
+            .findings
+            .iter()
+            .any(|finding| finding.finding_id == finding_id)
+    }
+
     #[test]
     fn validate_intent_ir_scores_direction_from_graph_before_compat_hints() -> Result<()> {
         let tempdir = tempdir()?;
@@ -1488,6 +1570,68 @@ mod tests {
             metric_value(&graph_only_report, "with_compat_direction_hint"),
             Some("0")
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_intent_ir_flags_temporal_rules_missing_clock_grounding() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal HREADY is input width 1.\n\n",
+                "Signal HTRANS is input width 2.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_htrans_stable".to_string(),
+            subject_signal: "HTRANS".to_string(),
+            constraint_kind: SignalConstraintKind::MustNotChange,
+            target_value: None,
+            condition_text: Some("when HREADY is LOW".to_string()),
+            negated: false,
+            source_text: "HTRANS must not change when HREADY is LOW.".to_string(),
+            supporting_statement_ids: vec!["stmt_temporal".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let report = validate_intent_ir(&intent_ir, "temporal_grounding".to_string());
+        assert_eq!(metric_value(&report, "temporal_rules"), Some("1"));
+        assert_eq!(
+            metric_value(&report, "temporal_rules_missing_clock_grounding"),
+            Some("1")
+        );
+        assert!(has_finding(
+            &report,
+            "intent_temporal_rules_missing_clock_grounding"
+        ));
 
         Ok(())
     }

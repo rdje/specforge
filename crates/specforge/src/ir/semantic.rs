@@ -58,6 +58,9 @@ pub struct SemanticIr {
     /// Timing constraint records synthesized from `timing_parameter` tables in `SourceIR`.
     #[serde(default)]
     pub timing_constraints: Vec<TimingConstraintRecord>,
+    /// Clock-tick temporal rules derived from timing, constraint, and conditional evidence.
+    #[serde(default)]
+    pub temporal_rules: Vec<TemporalRuleRecord>,
     /// Level 2 NLP: structured signal constraint records from `SignalValueConstraint` sentences.
     #[serde(default)]
     pub signal_constraints: Vec<SignalConstraintRecord>,
@@ -181,6 +184,14 @@ impl SemanticIr {
         let (vlm_timing, vlm_states, vlm_transitions) =
             extract_records_from_vlm_observations(&evidence_ir);
         timing_constraints.extend(vlm_timing);
+        let temporal_rules = build_temporal_rules(
+            &context,
+            interfaces.as_slice(),
+            system_contract.as_ref(),
+            signal_constraints.as_slice(),
+            conditional_rules.as_slice(),
+            timing_constraints.as_slice(),
+        );
 
         // Merge state/transition records: formal syntax + VLM diagram observations.
         // VLM-sourced records are appended so they don’t replace existing formal records.
@@ -233,6 +244,7 @@ impl SemanticIr {
             explicit_tops,
             register_records,
             timing_constraints,
+            temporal_rules,
             signal_constraints,
             conditional_rules,
             residual_decisions,
@@ -430,6 +442,70 @@ pub struct SystemContractRecord {
     pub assertion_timing: SystemResetTimingRelation,
     pub release_timing: SystemResetTimingRelation,
     pub target_kind: SystemResetTargetKind,
+    pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum ClockEdge {
+    Rising,
+    Falling,
+    Unknown,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum TickPhase {
+    PreTick,
+    PostTick,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct CycleWindowRecord {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub min_cycles: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub max_cycles: Option<u32>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case", tag = "kind")]
+pub enum TemporalPredicateRecord {
+    SignalValue {
+        signal_name: String,
+        value: String,
+        phase: TickPhase,
+    },
+    SignalStable {
+        signal_name: String,
+        from_phase: TickPhase,
+        to_phase: TickPhase,
+    },
+    ActorSamplesSignal {
+        actor_name: String,
+        signal_name: String,
+        phase: TickPhase,
+    },
+    SignalSampled {
+        signal_name: String,
+        phase: TickPhase,
+    },
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct TemporalRuleRecord {
+    pub rule_id: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub clock_signal: Option<String>,
+    pub edge: ClockEdge,
+    #[serde(default)]
+    pub antecedents: Vec<TemporalPredicateRecord>,
+    #[serde(default)]
+    pub consequents: Vec<TemporalPredicateRecord>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub cycle_window: Option<CycleWindowRecord>,
+    pub source_text: String,
     pub supporting_statement_ids: Vec<String>,
     pub automation_confidence: AutomationConfidence,
 }
@@ -4995,6 +5071,404 @@ fn build_timing_constraints(context: &SemanticContext) -> Vec<TimingConstraintRe
     Vec::new()
 }
 
+fn build_temporal_rules(
+    context: &SemanticContext,
+    interfaces: &[InterfaceRecord],
+    system_contract: Option<&SystemContractRecord>,
+    signal_constraints: &[SignalConstraintRecord],
+    conditional_rules: &[ConditionalRuleRecord],
+    timing_constraints: &[TimingConstraintRecord],
+) -> Vec<TemporalRuleRecord> {
+    let known_signals = interfaces
+        .iter()
+        .flat_map(|interface| {
+            interface
+                .signal_records
+                .iter()
+                .map(|signal| signal.signal_name.clone())
+        })
+        .collect::<BTreeSet<_>>();
+    let default_clock = temporal_clock_signal(context, system_contract);
+    let default_edge = if default_clock.is_some() {
+        ClockEdge::Rising
+    } else {
+        ClockEdge::Unknown
+    };
+    let mut rules = Vec::new();
+
+    for constraint in signal_constraints {
+        let antecedents = constraint
+            .condition_text
+            .as_deref()
+            .map(|text| parse_temporal_condition_predicates(text, &known_signals))
+            .unwrap_or_default();
+        let consequents = temporal_consequents_from_signal_constraint(constraint);
+        if consequents.is_empty() {
+            continue;
+        }
+        rules.push(TemporalRuleRecord {
+            rule_id: format!("temporal_signal_constraint_{}", constraint.constraint_id),
+            clock_signal: default_clock.clone(),
+            edge: default_edge,
+            antecedents,
+            consequents,
+            cycle_window: None,
+            source_text: constraint.source_text.clone(),
+            supporting_statement_ids: constraint.supporting_statement_ids.clone(),
+            automation_confidence: constraint.automation_confidence,
+        });
+    }
+
+    for rule in conditional_rules {
+        let consequents = temporal_consequents_from_conditional_rule(rule, &known_signals);
+        if consequents.is_empty() {
+            continue;
+        }
+        rules.push(TemporalRuleRecord {
+            rule_id: format!("temporal_conditional_rule_{}", rule.rule_id),
+            clock_signal: default_clock.clone(),
+            edge: default_edge,
+            antecedents: parse_temporal_condition_predicates(&rule.antecedent_text, &known_signals),
+            consequents,
+            cycle_window: None,
+            source_text: rule.source_text.clone(),
+            supporting_statement_ids: rule.supporting_statement_ids.clone(),
+            automation_confidence: rule.automation_confidence,
+        });
+    }
+
+    for timing in timing_constraints {
+        let Some(description) = timing.description.as_deref() else {
+            continue;
+        };
+        let Some(rule) = temporal_rule_from_timing_constraint(
+            timing,
+            description,
+            &known_signals,
+            default_clock.as_deref(),
+        ) else {
+            continue;
+        };
+        rules.push(rule);
+    }
+
+    dedup_temporal_rules(rules)
+}
+
+fn temporal_clock_signal(
+    context: &SemanticContext,
+    system_contract: Option<&SystemContractRecord>,
+) -> Option<String> {
+    let mut clock_signal = system_contract.map(|contract| contract.clock_signal.clone());
+    for statement in &context.statements {
+        if let Some(parsed_clock) = parse_explicit_system_clock(&statement.text) {
+            let _ = merge_named_hint(&mut clock_signal, &parsed_clock);
+        }
+    }
+    clock_signal
+}
+
+fn parse_temporal_condition_predicates(
+    text: &str,
+    known_signals: &BTreeSet<String>,
+) -> Vec<TemporalPredicateRecord> {
+    let normalized = text
+        .trim()
+        .trim_start_matches("when ")
+        .trim_start_matches("When ")
+        .trim_start_matches("if ")
+        .trim_start_matches("If ")
+        .trim_start_matches("while ")
+        .trim_start_matches("While ")
+        .trim();
+    let Some(signal_name) = find_known_signal_name(normalized, known_signals) else {
+        return Vec::new();
+    };
+    let value = if contains_phrase_case_insensitive(normalized, "LOW") {
+        Some("LOW".to_string())
+    } else if contains_phrase_case_insensitive(normalized, "HIGH") {
+        Some("HIGH".to_string())
+    } else if contains_phrase_case_insensitive(normalized, "asserted") {
+        Some("ASSERTED".to_string())
+    } else if contains_phrase_case_insensitive(normalized, "deasserted") {
+        Some("DEASSERTED".to_string())
+    } else {
+        extract_symbolic_value(normalized, Some(&signal_name))
+    };
+
+    value
+        .map(|value| {
+            vec![TemporalPredicateRecord::SignalValue {
+                signal_name,
+                value,
+                phase: TickPhase::PreTick,
+            }]
+        })
+        .unwrap_or_default()
+}
+
+fn temporal_consequents_from_signal_constraint(
+    constraint: &SignalConstraintRecord,
+) -> Vec<TemporalPredicateRecord> {
+    match &constraint.constraint_kind {
+        SignalConstraintKind::MustNotChange
+        | SignalConstraintKind::MustBeStable
+        | SignalConstraintKind::MustHoldData => vec![TemporalPredicateRecord::SignalStable {
+            signal_name: constraint.subject_signal.clone(),
+            from_phase: TickPhase::PreTick,
+            to_phase: TickPhase::PostTick,
+        }],
+        SignalConstraintKind::MustBeHigh => vec![TemporalPredicateRecord::SignalValue {
+            signal_name: constraint.subject_signal.clone(),
+            value: "HIGH".to_string(),
+            phase: TickPhase::PostTick,
+        }],
+        SignalConstraintKind::MustBeLow => vec![TemporalPredicateRecord::SignalValue {
+            signal_name: constraint.subject_signal.clone(),
+            value: "LOW".to_string(),
+            phase: TickPhase::PostTick,
+        }],
+        SignalConstraintKind::MustBeAsserted => vec![TemporalPredicateRecord::SignalValue {
+            signal_name: constraint.subject_signal.clone(),
+            value: "ASSERTED".to_string(),
+            phase: TickPhase::PostTick,
+        }],
+        SignalConstraintKind::MustBeDeasserted => vec![TemporalPredicateRecord::SignalValue {
+            signal_name: constraint.subject_signal.clone(),
+            value: "DEASSERTED".to_string(),
+            phase: TickPhase::PostTick,
+        }],
+        SignalConstraintKind::MustBeValue { value } => vec![TemporalPredicateRecord::SignalValue {
+            signal_name: constraint.subject_signal.clone(),
+            value: constraint
+                .target_value
+                .clone()
+                .unwrap_or_else(|| value.clone()),
+            phase: TickPhase::PostTick,
+        }],
+    }
+}
+
+fn temporal_consequents_from_conditional_rule(
+    rule: &ConditionalRuleRecord,
+    known_signals: &BTreeSet<String>,
+) -> Vec<TemporalPredicateRecord> {
+    let Some(signal_name) = rule.consequent_signal.clone() else {
+        return Vec::new();
+    };
+    let action = rule.consequent_action.trim();
+    let action_lower = action.to_ascii_lowercase();
+    if action_lower.contains("not change")
+        || action_lower.contains("be stable")
+        || action_lower.contains("remain stable")
+        || action_lower.contains("hold")
+    {
+        return vec![TemporalPredicateRecord::SignalStable {
+            signal_name,
+            from_phase: TickPhase::PreTick,
+            to_phase: TickPhase::PostTick,
+        }];
+    }
+    if action_lower.contains("deasserted") {
+        return vec![TemporalPredicateRecord::SignalValue {
+            signal_name,
+            value: "DEASSERTED".to_string(),
+            phase: TickPhase::PostTick,
+        }];
+    }
+    if action_lower.contains("asserted") {
+        return vec![TemporalPredicateRecord::SignalValue {
+            signal_name,
+            value: "ASSERTED".to_string(),
+            phase: TickPhase::PostTick,
+        }];
+    }
+    if action_lower.contains(" low") || action_lower == "low" {
+        return vec![TemporalPredicateRecord::SignalValue {
+            signal_name,
+            value: "LOW".to_string(),
+            phase: TickPhase::PostTick,
+        }];
+    }
+    if action_lower.contains(" high") || action_lower == "high" {
+        return vec![TemporalPredicateRecord::SignalValue {
+            signal_name,
+            value: "HIGH".to_string(),
+            phase: TickPhase::PostTick,
+        }];
+    }
+
+    extract_symbolic_value(action, Some(&signal_name))
+        .map(|value| {
+            vec![TemporalPredicateRecord::SignalValue {
+                signal_name: signal_name.clone(),
+                value,
+                phase: TickPhase::PostTick,
+            }]
+        })
+        .unwrap_or_else(|| {
+            parse_temporal_condition_predicates(action, known_signals)
+                .into_iter()
+                .map(|predicate| match predicate {
+                    TemporalPredicateRecord::SignalValue { value, .. } => {
+                        TemporalPredicateRecord::SignalValue {
+                            signal_name: signal_name.clone(),
+                            value,
+                            phase: TickPhase::PostTick,
+                        }
+                    }
+                    other => other,
+                })
+                .collect()
+        })
+}
+
+fn temporal_rule_from_timing_constraint(
+    timing: &TimingConstraintRecord,
+    description: &str,
+    known_signals: &BTreeSet<String>,
+    default_clock: Option<&str>,
+) -> Option<TemporalRuleRecord> {
+    let signal_name = find_known_signal_name(description, known_signals)?;
+    let description_lower = description.to_ascii_lowercase();
+    let edge = if description_lower.contains("falling edge") {
+        ClockEdge::Falling
+    } else if description_lower.contains("rising edge") || description_lower.contains("posedge") {
+        ClockEdge::Rising
+    } else {
+        ClockEdge::Unknown
+    };
+    if !description_lower.contains("sampled") && !description_lower.contains("captured") {
+        return None;
+    }
+
+    let actor_name = extract_actor_after_by(description);
+    let consequent = actor_name
+        .map(|actor_name| TemporalPredicateRecord::ActorSamplesSignal {
+            actor_name,
+            signal_name: signal_name.clone(),
+            phase: TickPhase::PreTick,
+        })
+        .unwrap_or_else(|| TemporalPredicateRecord::SignalSampled {
+            signal_name: signal_name.clone(),
+            phase: TickPhase::PreTick,
+        });
+
+    Some(TemporalRuleRecord {
+        rule_id: format!("temporal_timing_{}", timing.constraint_id),
+        clock_signal: default_clock.map(str::to_string),
+        edge,
+        antecedents: Vec::new(),
+        consequents: vec![consequent],
+        cycle_window: None,
+        source_text: description.to_string(),
+        supporting_statement_ids: timing.supporting_statement_ids.clone(),
+        automation_confidence: timing.automation_confidence,
+    })
+}
+
+fn dedup_temporal_rules(rules: Vec<TemporalRuleRecord>) -> Vec<TemporalRuleRecord> {
+    let mut seen = BTreeSet::new();
+    let mut deduped = Vec::new();
+    for rule in rules {
+        let key = serde_json::to_string(&(
+            &rule.clock_signal,
+            rule.edge,
+            &rule.antecedents,
+            &rule.consequents,
+            &rule.cycle_window,
+            &rule.source_text,
+        ))
+        .unwrap_or_else(|_| rule.rule_id.clone());
+        if seen.insert(key) {
+            deduped.push(rule);
+        }
+    }
+    deduped
+}
+
+fn find_known_signal_name(text: &str, known_signals: &BTreeSet<String>) -> Option<String> {
+    let mut best_match = None::<String>;
+    for signal_name in known_signals {
+        if contains_phrase_case_insensitive(text, signal_name) {
+            match best_match.as_ref() {
+                Some(existing) if existing.len() >= signal_name.len() => {}
+                _ => best_match = Some(signal_name.clone()),
+            }
+        }
+    }
+    best_match
+}
+
+fn contains_phrase_case_insensitive(text: &str, phrase: &str) -> bool {
+    let text_lower = text.to_ascii_lowercase();
+    let phrase_lower = phrase.to_ascii_lowercase();
+    contains_text_phrase(&text_lower, &phrase_lower)
+}
+
+fn contains_text_phrase(text: &str, phrase: &str) -> bool {
+    for (index, _) in text.match_indices(phrase) {
+        let prefix_ok = text[..index]
+            .chars()
+            .next_back()
+            .map(|character| !character.is_ascii_alphanumeric() && character != '_')
+            .unwrap_or(true);
+        let suffix_index = index + phrase.len();
+        let suffix_ok = text[suffix_index..]
+            .chars()
+            .next()
+            .map(|character| !character.is_ascii_alphanumeric() && character != '_')
+            .unwrap_or(true);
+        if prefix_ok && suffix_ok {
+            return true;
+        }
+    }
+    false
+}
+
+fn extract_symbolic_value(text: &str, excluded_signal: Option<&str>) -> Option<String> {
+    text.split(|ch: char| !ch.is_ascii_alphanumeric() && ch != '_')
+        .filter(|token| !token.is_empty())
+        .find_map(|token| {
+            let uppercase = token
+                .chars()
+                .any(|character| character.is_ascii_uppercase());
+            if !uppercase {
+                return None;
+            }
+            if matches!(
+                token,
+                "HIGH" | "LOW" | "ASSERTED" | "DEASSERTED" | "WHEN" | "IF" | "WHILE"
+            ) {
+                return None;
+            }
+            if excluded_signal.is_some_and(|signal| token.eq_ignore_ascii_case(signal)) {
+                return None;
+            }
+            Some(token.to_string())
+        })
+}
+
+fn extract_actor_after_by(text: &str) -> Option<String> {
+    let lower = text.to_ascii_lowercase();
+    let by_index = lower.find(" by ")?;
+    let actor_text = text[by_index + 4..]
+        .split(['.', ',', ';'])
+        .next()
+        .unwrap_or("")
+        .trim();
+    let actor_text = actor_text
+        .strip_prefix("the ")
+        .or_else(|| actor_text.strip_prefix("The "))
+        .unwrap_or(actor_text)
+        .trim();
+    if actor_text.is_empty() {
+        None
+    } else {
+        Some(actor_text.to_string())
+    }
+}
+
 /// Parse VLM-derived `VisualObservation` entries from `EvidenceIR` into typed
 /// `SemanticIR` records.
 ///
@@ -6490,6 +6964,83 @@ mod tests {
                 .iter()
                 .any(|name| name.eq_ignore_ascii_case("Requester"))
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn derives_temporal_rules_from_constraints_and_clock_context() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("temporal.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal HREADY is input width 1.\n\n",
+                "Signal HTRANS is input width 2.\n\n",
+                "Clock clk.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_htrans_stable".to_string(),
+            subject_signal: "HTRANS".to_string(),
+            constraint_kind: SignalConstraintKind::MustNotChange,
+            target_value: None,
+            condition_text: Some("when HREADY is LOW".to_string()),
+            negated: false,
+            source_text: "HTRANS must not change when HREADY is LOW.".to_string(),
+            supporting_statement_ids: vec!["stmt_temporal".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| rule.rule_id == "temporal_signal_constraint_sigcon_htrans_stable")
+            .expect("expected temporal rule derived from signal constraint");
+        assert_eq!(rule.clock_signal.as_deref(), Some("clk"));
+        assert_eq!(rule.edge, super::ClockEdge::Rising);
+        assert!(rule.antecedents.iter().any(|predicate| {
+            matches!(
+                predicate,
+                super::TemporalPredicateRecord::SignalValue {
+                    signal_name,
+                    value,
+                    phase: super::TickPhase::PreTick,
+                } if signal_name == "HREADY" && value == "LOW"
+            )
+        }));
+        assert!(rule.consequents.iter().any(|predicate| {
+            matches!(
+                predicate,
+                super::TemporalPredicateRecord::SignalStable {
+                    signal_name,
+                    from_phase: super::TickPhase::PreTick,
+                    to_phase: super::TickPhase::PostTick,
+                } if signal_name == "HTRANS"
+            )
+        }));
 
         Ok(())
     }

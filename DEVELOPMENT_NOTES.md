@@ -426,6 +426,42 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 - some downstream consumers still read flat `direction_hint` fields directly, so this slice fixes scoring truthfulness but does not finish the whole `R15` program
 - the next graph-first work should move remaining consumer logic onto actor-relative relations and keep `direction_hint` purely as a derived compatibility surface
 
+## Initial typed temporal-rule surface in SemanticIR / IntentIR (2026-04-04)
+
+### Why this slice landed now
+- the roadmap already promoted explicit clock-tick semantics to first-class status, but the code still represented timing mainly as free-form timing-parameter records plus prose-derived signal/conditional constraints
+- that meant the behavioral KG had useful ingredients but no canonical temporal rule layer to unify them
+- the right first `R15b` move was to add a typed temporal surface now, even if the extraction heuristics are still intentionally narrow
+
+### Implementation shape
+- `crates/specforge/src/ir/semantic.rs` now defines:
+  - `ClockEdge`
+  - `TickPhase`
+  - `CycleWindowRecord`
+  - `TemporalPredicateRecord`
+  - `TemporalRuleRecord`
+- `SemanticIR` now carries `temporal_rules`
+- `IntentIR` now carries the same `temporal_rules` forward as canonical behavioral structure
+- the first derivation pass currently lifts:
+  - conditioned signal constraints like `HTRANS must not change when HREADY is LOW`
+  - structured conditional rules with recognizable value/stability consequents
+  - timing descriptions that say a signal is sampled on a rising/falling edge
+- temporal grounding now uses an explicit `Clock <signal>.` declaration even when a full `SystemContractRecord` is not yet available
+
+### Validation
+- `crates/specforge/src/commands/validate.rs` now reports:
+  - `temporal_rules`
+  - `temporal_rules_missing_clock_grounding`
+- validation now flags:
+  - temporal evidence without any typed temporal-rule derivation
+  - typed temporal rules that still lack explicit clock/edge grounding
+- `cargo fmt --all` passed
+- `cargo test --manifest-path Cargo.toml` now passes with 114 tests
+
+### Remaining follow-up
+- this is the first typed temporal layer, not the full temporal semantics program
+- cycle windows, actor-relative drive events, multi-predicate antecedents, contradiction detection, and richer VLM timing lift still need to land before `R15b` can be considered complete
+
 ## Documentation surface currently steering the implementation
 - `README.md`
   - single entry point and quick orientation

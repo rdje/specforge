@@ -10,7 +10,8 @@ use crate::ir::semantic::{
     ActorPortRecord, ConditionalRuleRecord, ControlBlockRecord, DecisionTreeFragmentRecord,
     ExplicitModuleRecord, ExplicitTopRecord, InitAssignmentRecord, InterfaceRecord, RegisterRecord,
     RegularStateRecord, SemanticIr, SignalConnectivityRecord, SignalConstraintRecord,
-    StateTransitionRecord, SymbolDefinitionRecord, SystemContractRecord, TimingConstraintRecord,
+    StateTransitionRecord, SymbolDefinitionRecord, SystemContractRecord, TemporalRuleRecord,
+    TimingConstraintRecord,
 };
 use crate::ir::source::{
     ActorSignalRelation, AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket,
@@ -61,6 +62,9 @@ pub struct IntentIr {
     /// Timing constraint records carried forward from `SemanticIR`.
     #[serde(default)]
     pub timing_constraints: Vec<TimingConstraintRecord>,
+    /// Clock-tick temporal rules carried forward from `SemanticIR`.
+    #[serde(default)]
+    pub temporal_rules: Vec<TemporalRuleRecord>,
     /// Level 2 NLP: signal constraint records carried forward from `SemanticIR`.
     #[serde(default)]
     pub signal_constraints: Vec<SignalConstraintRecord>,
@@ -124,6 +128,7 @@ impl IntentIr {
         let explicit_tops = semantic_ir.explicit_tops.clone();
         let register_records = semantic_ir.register_records.clone();
         let timing_constraints = semantic_ir.timing_constraints.clone();
+        let temporal_rules = semantic_ir.temporal_rules.clone();
         let signal_constraints = semantic_ir.signal_constraints.clone();
         let conditional_rules = semantic_ir.conditional_rules.clone();
         let residual_decisions =
@@ -171,6 +176,7 @@ impl IntentIr {
             explicit_tops,
             register_records,
             timing_constraints,
+            temporal_rules,
             signal_constraints,
             conditional_rules,
             residual_decisions,
@@ -1340,6 +1346,80 @@ mod tests {
                     .producer_actor_names
                     .iter()
                     .any(|name| name.eq_ignore_ascii_case("Completer"))
+        }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn carries_temporal_rules_into_intent_ir() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::semantic::{TemporalPredicateRecord, TickPhase};
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("intent_temporal.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal HREADY is input width 1.\n\n",
+                "Signal HTRANS is input width 2.\n\n",
+                "Clock clk.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_htrans_stable".to_string(),
+            subject_signal: "HTRANS".to_string(),
+            constraint_kind: SignalConstraintKind::MustNotChange,
+            target_value: None,
+            condition_text: Some("when HREADY is LOW".to_string()),
+            negated: false,
+            source_text: "HTRANS must not change when HREADY is LOW.".to_string(),
+            supporting_statement_ids: vec!["stmt_temporal".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        assert_eq!(
+            intent_ir.temporal_rules.len(),
+            semantic_ir.temporal_rules.len()
+        );
+        assert!(intent_ir.temporal_rules.iter().any(|rule| {
+            rule.clock_signal.as_deref() == Some("clk")
+                && rule.consequents.iter().any(|predicate| {
+                    matches!(
+                        predicate,
+                        TemporalPredicateRecord::SignalStable {
+                            signal_name,
+                            from_phase: TickPhase::PreTick,
+                            to_phase: TickPhase::PostTick,
+                        } if signal_name == "HTRANS"
+                    )
+                })
         }));
 
         Ok(())

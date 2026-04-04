@@ -22,11 +22,12 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `2030e6d`
-- latest_commit_brief_message: `docs(roadmap): prioritize semantic truthfulness`
-- note: current uncommitted work makes validation/scoring graph-first for signal direction coverage and syncs the continuity docs to that behavior
+- latest_commit_hash: `fbd0310`
+- latest_commit_brief_message: `feat(validation): score direction from graph first`
+- note: current uncommitted work adds the first typed temporal-rule surface to `SemanticIR` / `IntentIR`, teaches validation to report temporal grounding gaps, and syncs the continuity docs to that state
 
 ## Recent commit chain (last 5)
+- `fbd0310` feat(validation): score direction from graph first
 - `ddd2cac` docs: capture multimodal extraction steering
 - `1064bec` feat(converge): default to full ollama loop
 - `894c538` feat(validation): project reports into live docs
@@ -43,17 +44,25 @@
 - `VALIDATION_SNAPSHOT.md` is now a tracked continuity doc refreshed from persisted validation reports
 
 ## Completed technical work in this session
-- `specforge validate` now scores semantic and intent signal-direction coverage from actor-relative `actor_ports` first, falling back to flat compatibility `direction_hint` values only when the graph does not resolve the signal
-- semantic and intent validation metrics now expose `with_resolved_direction`, `with_graph_direction`, and `with_compat_direction_hint` separately
-- added a regression test that proves removing flat compatibility hints from an otherwise graph-complete `IntentIR` fixture does not lower the direction score
-- synced the roadmap/status/analysis/change docs so future sessions know validation/scoring is now graph-first even though some downstream consumers still read flat hints directly
+- `SemanticIR` now carries a first typed `temporal_rules` layer derived from structured signal constraints, conditional rules, and timing descriptions
+- `IntentIR` now carries the same `temporal_rules` forward so downstream consumers can target typed clocked behavior, not only raw timing/constraint text
+- temporal grounding now reuses an explicit clock declaration even when a full `SystemContractRecord` is not present yet
+- `specforge validate` now reports temporal-rule counts and flags missing clock/edge grounding for `SemanticIR` / `IntentIR`
+- added regression tests for:
+  - temporal-rule derivation from conditioned signal constraints
+  - temporal-rule carry-through into `IntentIR`
+  - validation findings for ungrounded temporal rules
+- synced the roadmap/status/analysis/README/change docs so future sessions know `R15b` has started with a real typed temporal surface
 - validation ran for this task:
   - `cargo fmt --all` passed
-  - `cargo test --manifest-path Cargo.toml` passed with 111 tests
+  - `cargo test --manifest-path Cargo.toml` passed with 114 tests
 
 ## Current working tree before commit
 - modified tracked files currently include:
+  - `crates/specforge/src/ir/semantic.rs`
+  - `crates/specforge/src/ir/intent.rs`
   - `crates/specforge/src/commands/validate.rs`
+  - `README.md`
   - `ROADMAP.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `RUST_CODEBASE_ANALYSIS.md`
@@ -63,13 +72,13 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the graph-first validation/scoring slice; do not stage `generated/`
-2. continue the remaining `R15` slice by moving any direct downstream `direction_hint` consumers onto actor-relative graph semantics
-3. start the explicit temporal-semantics (`R15b`) and KG-guided rescan (`R15c`) workstreams before reopening adapter work
+1. commit the initial temporal-rule slice; do not stage `generated/`
+2. continue the remaining `R15` slice by moving direct downstream `direction_hint` consumers onto actor-relative graph semantics
+3. deepen `R15b` with richer temporal predicates, cycle windows, and contradiction detection before moving on to `R15c`
 
 ## Remaining engineering gaps after this commit
 - remaining actor-relative direction modeling in `SemanticIR` / `IntentIR` (`R15`)
-- explicit clock-tick temporal semantics (`R15b`)
+- richer explicit clock-tick temporal semantics (`R15b`)
 - KG-guided multimodal rescans (`R15c`)
 - evidence arbitration / conflict handling (`R15d`)
 - KG-quality evaluation and benchmark hardening (`R15e`)
@@ -85,4 +94,4 @@
 4. read `ROADMAP.md`
 5. read `RUST_CODEBASE_ANALYSIS.md`
 6. inspect `git --no-pager status --short`
-7. continue with the remaining graph-first `R15` consumer migration unless the user redirects
+7. continue with the remaining graph-first `R15` consumer migration and the next `R15b` temporal-deepening slice unless the user redirects

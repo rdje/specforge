@@ -283,12 +283,21 @@
   - `IntentIR` carries a proper directed graph, not a flat list with implicit actor context
 
 ### R15b Explicit clock-tick temporal model in SemanticIR / IntentIR
-- status: Not Started
+- status: In Progress
 - reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md`
 - goals:
   - make the clock-tick mental model explicit in the typed IR, not only implicit in prose-derived timing strings
   - represent synchronous behavior in terms of pre/post tick phases, clock edges, and cycle windows
   - unify prose timing, table timing, and VLM timing observations under one canonical temporal-rule surface
+- done:
+  - `SemanticIR` now carries `temporal_rules: Vec<TemporalRuleRecord>`
+  - `IntentIR` now carries the same `temporal_rules` forward as canonical output
+  - the first temporal predicate set now represents:
+    - signal value-at-phase facts
+    - signal stability across `pre_tick -> post_tick`
+    - signal sampling on clock edges, with optional actor grounding
+  - temporal derivation now uses an explicit clock declaration even when a full reset-bearing `SystemContractRecord` is not yet available
+  - `specforge validate` now reports temporal-rule counts plus missing clock/edge grounding diagnostics
 - completion criteria:
   - a typed temporal-rule representation exists in `SemanticIR` and carries forward into `IntentIR`
   - APB/AHB/AXI timing behavior can be represented in actor-relative, tick-relative form rather than only as free-form timing text

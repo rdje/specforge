@@ -1,5 +1,35 @@
 # CHANGES
 
+## 2026-04-04 (typed temporal-rule surface in SemanticIR / IntentIR)
+
+### Added: initial clock-tick temporal rules in the canonical IR layers
+- `SemanticIR` now carries `temporal_rules: Vec<TemporalRuleRecord>` alongside legacy timing/constraint records.
+- `IntentIR` now carries the same `temporal_rules` surface forward so downstream consumers can target a typed temporal layer instead of only free-form timing text.
+- The first predicate set covers:
+  - signal value predicates at explicit tick phases
+  - signal stability across `pre_tick -> post_tick`
+  - signal sampling on clock edges, with optional actor grounding
+
+### Changed: temporal grounding no longer depends on a full reset contract
+- Temporal-rule derivation now reuses an explicit clock declaration even when the spec has not yet surfaced a full `SystemContractRecord`.
+- This lets timing/constraint semantics ground to a real clock as soon as `Clock <signal>.` is known, instead of waiting for both clock and reset declarations.
+
+### Changed: validation now reports temporal-rule presence and grounding gaps
+- `specforge validate` now reports `temporal_rules` and `temporal_rules_missing_clock_grounding` for `SemanticIR` and `IntentIR`.
+- Validation findings now explicitly call out:
+  - when typed temporal rules exist but still lack clock/edge grounding
+  - when timing/constraint evidence exists but no typed temporal rules were derived
+
+### Added: regression coverage for the new temporal layer
+- Added end-to-end tests for:
+  - temporal-rule derivation from a conditioned signal constraint plus explicit clock context
+  - temporal-rule carry-through from `SemanticIR` into `IntentIR`
+  - validation diagnostics for ungrounded temporal rules
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 114/114 passed
+
 ## 2026-04-04 (graph-first direction scoring in validation)
 
 ### Changed: `specforge validate` now scores direction coverage from the actor-relative graph first
