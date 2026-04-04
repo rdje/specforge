@@ -361,7 +361,7 @@
 - done:
   - `EvidenceIR` now persists `signal_semantic_hints: Vec<SignalSemanticHintRecord>` mined from `SignalDescription` table descriptions when the text establishes semantic roles such as request-valid or accept-ready meaning
   - `SemanticIR` / `IntentIR` now carry `semantic_tags` on interface signals so those meaning-grounded roles survive downstream instead of being trapped inside the table-extraction stage
-  - handshake completion derivation now consults those semantic tags before falling back to literal signal-name heuristics, so protocol meaning can already outrank spelling when the table evidence is explicit enough
+  - handshake completion derivation now consults those semantic tags before falling back to literal signal-name heuristics, and contested semantic arbitration now blocks that fallback, so protocol meaning outranks spelling when the preserved evidence is explicit enough to disagree
   - `EvidenceIR` now also refreshes those semantic hints from `SourceFact` prose descriptions and alias-grounded prose descriptions, so Form 2 alias learning can feed semantic role inference instead of stopping at constraint reclassification
   - `specforge nlp-enrich` now refreshes `signal_semantic_hints` before persistence whenever alias learning or backannotation changes the evidence state
   - `EvidenceIR` now also refreshes `signal_semantic_hints` from grounded visual captions and VLM timing-diagram annotations when they explicitly name a single known signal and establish a role meaning
@@ -377,6 +377,7 @@
   - weakly labeled signal-detail tables and additional polarity/timing/value facts can be recovered from known anchors
   - convergence reporting counts genuinely new persisted facts instead of duplicate vector growth
   - handshake, role, and timing semantics no longer depend only on literal signal naming when the document provides enough grounded evidence to infer the same meaning
+  - literal handshake-name heuristics do not override preserved contested semantic evidence
 
 ### R15d Evidence arbitration and cross-modality conflict resolution
 - status: In Progress

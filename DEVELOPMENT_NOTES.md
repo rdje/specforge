@@ -1167,7 +1167,20 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 - validation for this slice:
   - `cargo fmt --all` passed
   - `cargo test --manifest-path Cargo.toml` passed with `167/167`
-- the next honest follow-up is true arbitration metadata:
-  - rank candidate strengths explicitly instead of only storing weights
-  - surface winner-vs-runner-up margin when exactly one candidate wins safely
-  - keep conflict cases honest while still giving downstream consumers stronger typed arbitration context
+
+## 2026-04-05 - contested semantic evidence now blocks literal handshake-name fallback
+- after adding canonical `semantic_arbitration`, one remaining weakness was still visible in the temporal layer:
+  - `HandshakeComplete` derivation could still fall back to raw signal spelling when a signal name looked like `*VALID*` or `*READY*`
+  - that meant a signal with explicit contested semantic evidence could still be coerced back into a handshake role by its spelling alone
+- that was below the project quality bar because preserved semantic disagreement should outrank heuristic spelling, not the other way around
+- `crates/specforge/src/ir/semantic.rs` now builds a handshake-role context instead of a bare role map
+- that context still carries resolved handshake roles, but it also tracks signals whose literal name fallback must be blocked because `semantic_arbitration` is non-decisive
+- the temporal handshake derivation path now uses that richer context for both antecedent parsing and conditional-rule consequent parsing
+- the practical effect is:
+  - resolved semantic meaning still drives handshake-role recovery
+  - plain literal `VALID` / `READY` naming still works when no preserved semantic disagreement exists
+  - but contested semantic-role evidence now suppresses literal handshake-name fallback instead of getting silently overridden by it
+- regression coverage now proves that a contested signal like `XVALID` does not generate a typed `HandshakeComplete` predicate merely because of its spelling when preserved evidence still disagrees about whether it is valid-like or ready-like
+- validation for this slice:
+  - `cargo fmt --all` passed
+  - `cargo test --manifest-path Cargo.toml` passed with `168/168`

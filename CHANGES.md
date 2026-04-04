@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-05 (contested semantic evidence outranks handshake-name heuristics)
+
+### Changed: temporal handshake derivation now respects contested semantic arbitration
+- `SemanticIR` now builds a richer handshake-role context instead of relying only on a resolved-role map plus raw signal-name fallback.
+- Signals with non-decisive `semantic_arbitration` now block literal `VALID` / `READY` name fallback during typed `HandshakeComplete` derivation.
+
+### Why this matters
+- A signal like `XVALID` can now stay honestly unresolved when preserved evidence disagrees about whether it is valid-like or ready-like.
+- Literal spelling no longer overrides explicit contested semantic evidence in the temporal layer.
+
+### Added: regression coverage for blocked handshake-name fallback
+- Added a semantic regression proving that contested role evidence suppresses typed `HandshakeComplete` derivation even when the signal name looks handshake-shaped.
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 168/168 passed
+
+
 ## 2026-04-05 (canonical semantic arbitration summaries)
 
 ### Added: explicit semantic arbitration summaries on canonical interface signals

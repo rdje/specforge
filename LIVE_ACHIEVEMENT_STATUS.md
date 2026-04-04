@@ -60,6 +60,7 @@
 - Canonical semantic consensus summaries and fallback-gap reporting implemented: Done
 - Canonical semantic candidate arbitration surface implemented: Done
 - Canonical semantic arbitration summaries plus decisive/non-decisive validation reporting implemented: Done
+- Contested semantic arbitration now blocks literal handshake-name fallback: Done
 - `specforge nlp-enrich` refreshes signal-semantic hints after alias learning/backannotation: Done
 - EvidenceIR semantic-role conflict surfacing and validation reporting implemented: Done
 - SemanticIR / IntentIR semantic-role conflict carry-through and validation reporting implemented: Done
@@ -73,7 +74,7 @@
 - Live-doc projection of persisted IR validation findings implemented: Done
 - Latest local validation snapshot projected into tracked docs: Done
 - Full Ollama-backed `specforge converge` defaults enabled: Done
-- Test suite expanded to 167 tests; all passing: Done
+- Test suite expanded to 168 tests; all passing: Done
 - Explicit clock-tick temporal model in `SemanticIR` / `IntentIR`: In Progress
 - KG-guided multimodal rescans as a first-class convergent workstream: In Progress
 - Cross-modality evidence arbitration / conflict handling: In Progress

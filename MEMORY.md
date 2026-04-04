@@ -22,11 +22,12 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `98083b8`
-- latest_commit_brief_message: `feat(semantic): preserve role candidates`
-- note: current uncommitted work adds explicit canonical semantic arbitration summaries, exposes decisive vs non-decisive arbitration in validation, and syncs the live docs
+- latest_commit_hash: `cddd9b3`
+- latest_commit_brief_message: `feat(semantic): surface role arbitration state`
+- note: current uncommitted work makes typed handshake derivation respect contested semantic arbitration by blocking literal handshake-name fallback when preserved evidence still disagrees
 
 ## Recent commit chain (last 5)
+- `cddd9b3` feat(semantic): surface role arbitration state
 - `98083b8` feat(semantic): preserve role candidates
 - `63e2c51` feat(semantic): persist role consensus summaries
 - `d5974a4` feat(semantic): distinguish cross-modality grounding
@@ -46,20 +47,17 @@
 - `VALIDATION_SNAPSHOT.md` is now a tracked continuity doc refreshed from persisted validation reports
 
 ## Completed technical work in this session
-- `crates/specforge/src/ir/semantic.rs` now carries explicit `semantic_arbitration` on `InterfaceSignalRecord`, preserving lead-vs-runner-up role state, evidence margin, and decisive-vs-contested status on top of canonical semantic candidates
-- `resolved_semantic_role` / `semantic_consensus` still build only when exactly one role candidate survives safely; contested arbitration remains explicit without forcing an unsafe winner
-- `crates/specforge/src/ir/intent.rs` now carries the same semantic-arbitration surface into the canonical endpoint
-- `crates/specforge/src/commands/validate.rs` now reports `with_semantic_arbitration`, `with_decisive_semantic_arbitration`, and `with_non_decisive_semantic_arbitration`, and emits an explicit finding when semantic arbitration stays contested
-- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, and `CHANGES.md` so the canonical semantic-arbitration slice is visible in continuity docs
+- `crates/specforge/src/ir/semantic.rs` now builds a richer handshake-role context for temporal derivation instead of relying only on resolved roles plus raw signal-name fallback
+- signals with non-decisive `semantic_arbitration` now block literal handshake-name fallback, so preserved contested semantic evidence outranks heuristic `VALID` / `READY` spellings during typed `HandshakeComplete` derivation
+- added regression coverage proving that a contested signal like `XVALID` no longer produces a typed handshake-complete predicate just because of its spelling
+- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, and `CHANGES.md` so the handshake-heuristic hardening slice is visible in continuity docs
 - validation ran for this task:
   - `cargo fmt --all` passed
-  - `cargo test --manifest-path Cargo.toml` passed with `167/167`
+  - `cargo test --manifest-path Cargo.toml` passed with `168/168`
 
 ## Current working tree before commit
 - modified tracked files currently include:
   - `crates/specforge/src/ir/semantic.rs`
-  - `crates/specforge/src/ir/intent.rs`
-  - `crates/specforge/src/commands/validate.rs`
   - `README.md`
   - `ROADMAP.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -69,8 +67,8 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the canonical semantic-arbitration slice
-2. continue the semantic-truthfulness program by making use of preserved arbitration metadata in downstream temporal/role reasoning without violating the current safe no-forced-winner policy
+1. commit the handshake-heuristic hardening slice
+2. continue the semantic-truthfulness program by carrying the same “preserved disagreement outranks heuristic fallback” rule into more downstream semantic consumers beyond typed handshake completion
 3. keep adapter work de-prioritized until the graph, temporal, arbitration, and evaluation surfaces are materially stronger
 
 ## Remaining engineering gaps after this commit
@@ -81,7 +79,7 @@
 - KG-quality evaluation and benchmark hardening (`R15e`)
 - Tier 3 relation extraction after the graph/temporal/eval surfaces are ready (`R14`)
 - some downstream compatibility and consumer paths still rely on flat `direction_hint` instead of the graph-native surface
-- meaning-based role inference now covers tables, prose, alias-grounded prose, visual captions, and VLM timing annotations, and canonical layers now preserve that provenance, but arbitration across those modality-specific candidates is still early
+- meaning-based role inference now covers tables, prose, alias-grounded prose, visual captions, and VLM timing annotations, and canonical layers now preserve that provenance, but broader downstream use of preserved arbitration state is still early
 - semantic-role disagreement is now surfaced explicitly across `EvidenceIR`, `SemanticIR`, and `IntentIR`, but richer multimodal role grounding and broader arbitration still need to grow
 - `SourceIR` / ingest are strong enough to remain the foundation, but not strong enough to be assumed universal; future Tier 1 work should stay focused on robustness and honest failure handling
 - adapter expansion and adapter validation are now intentionally horizon work

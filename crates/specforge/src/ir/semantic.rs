@@ -5507,7 +5507,7 @@ fn build_temporal_rules(
     } else {
         ClockEdge::Unknown
     };
-    let handshake_roles_by_signal = handshake_roles_by_signal(interfaces);
+    let handshake_role_context = handshake_role_context(interfaces);
     let unique_producer_by_signal = unique_producer_by_signal(signal_connectivity);
     let mut rules = Vec::new();
 
@@ -5520,7 +5520,7 @@ fn build_temporal_rules(
                     text,
                     &known_signals,
                     TickPhase::PreTick,
-                    &handshake_roles_by_signal,
+                    &handshake_role_context,
                 )
             })
             .unwrap_or_default();
@@ -5547,7 +5547,7 @@ fn build_temporal_rules(
             rule,
             &known_signals,
             &unique_producer_by_signal,
-            &handshake_roles_by_signal,
+            &handshake_role_context,
         );
         if consequents.is_empty() {
             continue;
@@ -5560,7 +5560,7 @@ fn build_temporal_rules(
                 &rule.antecedent_text,
                 &known_signals,
                 TickPhase::PreTick,
-                &handshake_roles_by_signal,
+                &handshake_role_context,
             ),
             consequents,
             cycle_window: extract_cycle_window_from_text(&rule.source_text),
@@ -5605,7 +5605,7 @@ fn parse_temporal_condition_predicates(
     text: &str,
     known_signals: &BTreeSet<String>,
     phase: TickPhase,
-    handshake_roles_by_signal: &BTreeMap<String, HandshakeSignalRole>,
+    handshake_role_context: &HandshakeRoleContext,
 ) -> Vec<TemporalPredicateRecord> {
     let normalized = text
         .trim()
@@ -5626,7 +5626,7 @@ fn parse_temporal_condition_predicates(
                 .unwrap_or(true)
         })
         .collect::<Vec<_>>();
-    enrich_handshake_completion_predicates(predicates, handshake_roles_by_signal)
+    enrich_handshake_completion_predicates(predicates, handshake_role_context)
 }
 
 fn split_temporal_condition_clauses(text: &str, known_signals: &BTreeSet<String>) -> Vec<String> {
@@ -5709,7 +5709,7 @@ fn parse_temporal_condition_clause(
 
 fn enrich_handshake_completion_predicates(
     mut predicates: Vec<TemporalPredicateRecord>,
-    handshake_roles_by_signal: &BTreeMap<String, HandshakeSignalRole>,
+    handshake_role_context: &HandshakeRoleContext,
 ) -> Vec<TemporalPredicateRecord> {
     let mut existing = predicates
         .iter()
@@ -5737,7 +5737,7 @@ fn enrich_handshake_completion_predicates(
         if !is_handshake_asserted_value(value) {
             continue;
         }
-        match classify_handshake_signal(signal_name, handshake_roles_by_signal) {
+        match classify_handshake_signal(signal_name, handshake_role_context) {
             Some(HandshakeSignalRole::Valid) => {
                 valid_assertions.push((signal_name.clone(), *phase))
             }
@@ -5772,6 +5772,12 @@ fn enrich_handshake_completion_predicates(
 enum HandshakeSignalRole {
     Valid,
     Ready,
+}
+
+#[derive(Debug, Default)]
+struct HandshakeRoleContext {
+    resolved_roles_by_signal: BTreeMap<String, HandshakeSignalRole>,
+    heuristic_blocked_signals: BTreeSet<String>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
@@ -6013,17 +6019,31 @@ fn semantic_observation_modality(
     }
 }
 
-fn handshake_roles_by_signal(
-    interfaces: &[InterfaceRecord],
-) -> BTreeMap<String, HandshakeSignalRole> {
-    interfaces
+fn handshake_role_context(interfaces: &[InterfaceRecord]) -> HandshakeRoleContext {
+    let mut context = HandshakeRoleContext::default();
+    for signal in interfaces
         .iter()
         .flat_map(|interface| interface.signal_records.iter())
-        .filter_map(|signal| {
-            classify_handshake_signal_from_interface_signal(signal)
-                .map(|role| (signal.signal_name.clone(), role))
-        })
-        .collect()
+    {
+        if handshake_name_fallback_is_blocked(signal) {
+            context
+                .heuristic_blocked_signals
+                .insert(signal.signal_name.clone());
+        }
+        if let Some(role) = classify_handshake_signal_from_interface_signal(signal) {
+            context
+                .resolved_roles_by_signal
+                .insert(signal.signal_name.clone(), role);
+        }
+    }
+    context
+}
+
+fn handshake_name_fallback_is_blocked(signal: &InterfaceSignalRecord) -> bool {
+    signal
+        .semantic_arbitration
+        .as_ref()
+        .is_some_and(|arbitration| !arbitration.decisive)
 }
 
 fn classify_handshake_signal_from_interface_signal(
@@ -6064,10 +6084,20 @@ fn handshake_role_from_resolved_semantic_role(
 
 fn classify_handshake_signal(
     signal_name: &str,
-    handshake_roles_by_signal: &BTreeMap<String, HandshakeSignalRole>,
+    handshake_role_context: &HandshakeRoleContext,
 ) -> Option<HandshakeSignalRole> {
-    if let Some(role) = handshake_roles_by_signal.get(signal_name).copied() {
+    if let Some(role) = handshake_role_context
+        .resolved_roles_by_signal
+        .get(signal_name)
+        .copied()
+    {
         return Some(role);
+    }
+    if handshake_role_context
+        .heuristic_blocked_signals
+        .contains(signal_name)
+    {
+        return None;
     }
     let normalized = signal_name.to_ascii_lowercase();
     if normalized.contains("valid") {
@@ -6168,7 +6198,7 @@ fn temporal_consequents_from_conditional_rule(
     rule: &ConditionalRuleRecord,
     known_signals: &BTreeSet<String>,
     unique_producer_by_signal: &BTreeMap<String, String>,
-    handshake_roles_by_signal: &BTreeMap<String, HandshakeSignalRole>,
+    handshake_role_context: &HandshakeRoleContext,
 ) -> Vec<TemporalPredicateRecord> {
     let Some(signal_name) = rule.consequent_signal.clone() else {
         return Vec::new();
@@ -6264,7 +6294,7 @@ fn temporal_consequents_from_conditional_rule(
                 action,
                 known_signals,
                 TickPhase::PostTick,
-                handshake_roles_by_signal,
+                handshake_role_context,
             )
             .into_iter()
             .map(|predicate| match predicate {
@@ -9534,6 +9564,144 @@ mod tests {
                     ready_signal,
                     phase: super::TickPhase::PreTick,
                 } if valid_signal == "XREQ" && ready_signal == "XACK"
+            )
+        }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn contested_semantic_roles_block_handshake_name_fallback() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{
+            ContentSectionRecord, SectionKind, SignalConstraintKind, SignalConstraintRecord,
+            StructuredTableCellRecord, StructuredTableRecord, TableKind,
+        };
+
+        let tempdir = tempdir()?;
+        let source = tempdir
+            .path()
+            .join("temporal_contested_semantic_handshake_guard.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal XVALID is input width 1.\n\n",
+                "Signal XACK is input width 1.\n\n",
+                "Signal PAYLOAD is output width 32.\n\n",
+                "Clock clk.\n\n",
+                "XVALID indicates that the subordinate can accept the transfer.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.document_sections.push(ContentSectionRecord {
+            section_id: "sec_0001_channel_signals".to_string(),
+            title: "Channel signals".to_string(),
+            heading_level: 2,
+            page_id: None,
+            source_ref: None,
+            reading_order: 1,
+            section_kind: SectionKind::SignalDescription,
+        });
+        let make_cell = |text: &str, is_header: bool| StructuredTableCellRecord {
+            text: text.to_string(),
+            row_span: 1,
+            col_span: 1,
+            is_header,
+        };
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_contested_semantic_handshake_desc".to_string(),
+            asset_id: "table_contested_semantic_handshake_desc".to_string(),
+            page_id: None,
+            caption_text: Some("Handshake signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_cell("Signal", true),
+                make_cell("Source", true),
+                make_cell("Width", true),
+                make_cell("Description", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_cell("XVALID", false),
+                    make_cell("Requester", false),
+                    make_cell("1", false),
+                    make_cell(
+                        "Indicates that address and control information are valid for transfer.",
+                        false,
+                    ),
+                ],
+                vec![
+                    make_cell("XACK", false),
+                    make_cell("Subordinate", false),
+                    make_cell("1", false),
+                    make_cell(
+                        "Indicates that the subordinate can accept the transfer.",
+                        false,
+                    ),
+                ],
+            ],
+            row_count: 2,
+            col_count: 4,
+        });
+        source_ir.write_to_disk()?;
+
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_payload_contested_semantic_handshake".to_string(),
+            subject_signal: "PAYLOAD".to_string(),
+            constraint_kind: SignalConstraintKind::MustNotChange,
+            target_value: None,
+            condition_text: Some("when XVALID is HIGH and XACK is HIGH".to_string()),
+            negated: false,
+            source_text: "PAYLOAD must not change when XVALID is HIGH and XACK is HIGH."
+                .to_string(),
+            supporting_statement_ids: vec![
+                "stmt_temporal_contested_semantic_handshake".to_string(),
+            ],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let xvalid = semantic_ir
+            .interfaces
+            .iter()
+            .flat_map(|interface| interface.signal_records.iter())
+            .find(|signal| signal.signal_name == "XVALID")
+            .expect("expected XVALID interface signal");
+        let arbitration = xvalid
+            .semantic_arbitration
+            .as_ref()
+            .expect("expected XVALID semantic arbitration");
+        assert!(!arbitration.decisive);
+
+        let rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| {
+                rule.rule_id
+                    == "temporal_signal_constraint_sigcon_payload_contested_semantic_handshake"
+            })
+            .expect("expected temporal rule derived from contested semantic handshake guard");
+        assert!(!rule.antecedents.iter().any(|predicate| {
+            matches!(
+                predicate,
+                super::TemporalPredicateRecord::HandshakeComplete { .. }
             )
         }));
 
