@@ -10,8 +10,8 @@ use crate::ir::semantic::{
     ActorPortRecord, ConditionalRuleRecord, ControlBlockRecord, DecisionTreeFragmentRecord,
     ExplicitModuleRecord, ExplicitTopRecord, InitAssignmentRecord, InterfaceRecord, RegisterRecord,
     RegularStateRecord, SemanticIr, SignalConnectivityRecord, SignalConstraintRecord,
-    StateTransitionRecord, SymbolDefinitionRecord, SystemContractRecord, TemporalRuleRecord,
-    TimingConstraintRecord,
+    StateTransitionRecord, SymbolDefinitionRecord, SystemContractRecord, TemporalConflictRecord,
+    TemporalRuleRecord, TimingConstraintRecord,
 };
 use crate::ir::source::{
     ActorSignalRelation, AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket,
@@ -65,6 +65,9 @@ pub struct IntentIr {
     /// Clock-tick temporal rules carried forward from `SemanticIR`.
     #[serde(default)]
     pub temporal_rules: Vec<TemporalRuleRecord>,
+    /// Explicit conflicts detected across contradictory temporal value obligations.
+    #[serde(default)]
+    pub temporal_conflicts: Vec<TemporalConflictRecord>,
     /// Level 2 NLP: signal constraint records carried forward from `SemanticIR`.
     #[serde(default)]
     pub signal_constraints: Vec<SignalConstraintRecord>,
@@ -129,6 +132,7 @@ impl IntentIr {
         let register_records = semantic_ir.register_records.clone();
         let timing_constraints = semantic_ir.timing_constraints.clone();
         let temporal_rules = semantic_ir.temporal_rules.clone();
+        let temporal_conflicts = semantic_ir.temporal_conflicts.clone();
         let signal_constraints = semantic_ir.signal_constraints.clone();
         let conditional_rules = semantic_ir.conditional_rules.clone();
         let residual_decisions =
@@ -177,6 +181,7 @@ impl IntentIr {
             register_records,
             timing_constraints,
             temporal_rules,
+            temporal_conflicts,
             signal_constraints,
             conditional_rules,
             residual_decisions,
@@ -1653,6 +1658,82 @@ mod tests {
                     )
                 })
         }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn carries_typed_temporal_conflicts_into_intent_ir() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("intent_temporal_conflict.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal HREADY is input width 1.\n\n",
+                "Signal PREADY is output width 1.\n\n",
+                "Clock clk.\n\n",
+                "The Completer drives PREADY.\n\n",
+                "The Requester reads PREADY.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pready_high".to_string(),
+            subject_signal: "PREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeHigh,
+            target_value: None,
+            condition_text: Some("when HREADY is LOW".to_string()),
+            negated: false,
+            source_text: "PREADY must be HIGH when HREADY is LOW.".to_string(),
+            supporting_statement_ids: vec!["stmt_pready_high".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pready_low".to_string(),
+            subject_signal: "PREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeLow,
+            target_value: None,
+            condition_text: Some("when HREADY is LOW".to_string()),
+            negated: false,
+            source_text: "PREADY must be LOW when HREADY is LOW.".to_string(),
+            supporting_statement_ids: vec!["stmt_pready_low".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        assert_eq!(intent_ir.temporal_conflicts.len(), 1);
+        let conflict = &intent_ir.temporal_conflicts[0];
+        assert_eq!(conflict.signal_name, "PREADY");
+        assert_eq!(
+            conflict.conflicting_values,
+            vec!["HIGH".to_string(), "LOW".to_string()]
+        );
 
         Ok(())
     }

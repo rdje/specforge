@@ -40,6 +40,7 @@ Use it first for the project objective, document navigation, and the current imp
 - and it now reuses unique KG producers to emit actor-grounded drive predicates for value-timed rules, so temporal semantics can point back to who actually drives the signal
 - stable/hold rules now also keep that actor responsibility via actor-grounded stability predicates instead of flattening every producer obligation into a signal-only invariant
 - compound `when/if` guards like `HREADY is LOW and HSEL is HIGH` now survive into the typed temporal layer as multiple antecedent predicates instead of being flattened into a single partial condition
+- contradictory temporal value obligations under the same grounded context now surface as typed `temporal_conflicts` records instead of staying implicit in the rule set
 - a pinned `subs/fsmgen` git submodule now exists as a local `.fsm` reference implementation for upcoming adapter work
 - the `SourceIR` schema now reserves:
   - parser-backend identity
@@ -58,7 +59,7 @@ Use it first for the project objective, document navigation, and the current imp
   - `IntentIR`
   - typed adapter lowering
 - the first real `.fsm` adapter slices now materialize typed adapter artifacts, emit explicit standalone `?dt:name` text for honest canonical DT cases, emit structured `?fsm:name` text when the canonical state graph is explicit, emit explicit `?top:name` source documents when module/top composition facts are explicit, lower canonical symbol-definition sections, structured reset-role blocks, selector/test-node branches, and compound-update shorthand from the widened semantic model when those canonical shapes map directly into `.fsm`, keep reset polarity honest through the reset signal name because emitted `.fsm` text still carries only `sreset` / `asreset` plus the signal, keep unsupported selector predicates and other unsafe broader-root cases blocked with explicit residual decisions instead of fabricating target syntax, and intentionally keep compatibility-level `?mod:name` / `?module:name` spellings outside the current canonical root-kind model until a real backend-neutral direct-module distinction exists
-- the next implementation milestone is semantic-truthfulness hardening: finish the remaining graph-first direction migration, deepen the temporal-rule surface into richer contradiction-aware clock-tick semantics, add KG-guided rescans and evidence arbitration, and treat adapter expansion as horizon work until the canonical four-layer pipeline is top-notch
+- the next implementation milestone is semantic-truthfulness hardening: finish the remaining graph-first direction migration, deepen the temporal-rule surface into richer temporal arbitration across modalities and actors, add KG-guided rescans and evidence arbitration, and treat adapter expansion as horizon work until the canonical four-layer pipeline is top-notch
 
 ## Working naming
 - repository / project / CLI / crate name: `specforge`

@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `f8b3f29`
-- latest_commit_brief_message: `feat(semantic): ground stability rules in actors`
-- note: current uncommitted work preserves compound temporal guards as multi-predicate antecedents in the typed temporal-rule layer, updates validation to count that richer guard surface explicitly, and syncs the continuity docs to that state
+- latest_commit_hash: `40f656a`
+- latest_commit_brief_message: `feat(semantic): preserve compound temporal guards`
+- note: current uncommitted work adds typed `temporal_conflicts` records for contradictory value obligations, updates validation to surface those conflicts explicitly, and syncs the continuity docs to that state
 
 ## Recent commit chain (last 5)
+- `40f656a` feat(semantic): preserve compound temporal guards
 - `f8b3f29` feat(semantic): ground stability rules in actors
 - `25c55e4` feat(semantic): ground temporal rules in actors
 - `9f0c2b0` feat(semantic): recover temporal cycle windows
 - `8bbfe1f` feat(semantic): add typed temporal rules
-- `fbd0310` feat(validation): score direction from graph first
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -43,16 +43,16 @@
 - `VALIDATION_SNAPSHOT.md` is now a tracked continuity doc refreshed from persisted validation reports
 
 ## Completed technical work in this session
-- the typed temporal-rule layer now preserves compound guards like `when HREADY is LOW and HSEL is HIGH` as multiple antecedent predicates when each clause anchors to a known signal
-- `specforge validate` now reports `temporal_rules_with_multi_predicate_antecedents` for `SemanticIR` and `IntentIR`
+- the typed temporal layer now derives `temporal_conflicts` for contradictory value obligations that target the same signal/phase under the same grounded context
+- `specforge validate` now reports `temporal_conflicts` for `SemanticIR` and `IntentIR` and flags those contradictions explicitly
 - added regression tests for:
-  - multi-predicate temporal antecedent derivation in `SemanticIR`
-  - multi-predicate temporal antecedent carry-through into `IntentIR`
-  - validation metrics for multi-predicate temporal antecedents
-- synced the roadmap/status/analysis/README/change docs so future sessions know compound temporal guards now survive into the canonical temporal layer
+  - typed temporal conflict derivation in `SemanticIR`
+  - typed temporal conflict carry-through into `IntentIR`
+  - validation findings for temporal conflicts
+- synced the roadmap/status/analysis/README/change docs so future sessions know contradiction data is now preserved explicitly in the temporal layer
 - validation ran for this task:
   - `cargo fmt --all` passed
-  - `cargo test --manifest-path Cargo.toml` passed with 124 tests
+  - `cargo test --manifest-path Cargo.toml` passed with 127 tests
 
 ## Current working tree before commit
 - modified tracked files currently include:
@@ -69,9 +69,9 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the compound temporal antecedent slice; do not stage `generated/`
+1. commit the typed temporal conflict slice; do not stage `generated/`
 2. continue the remaining `R15` slice by moving direct downstream `direction_hint` consumers onto actor-relative graph semantics
-3. deepen `R15b` with contradiction detection and temporal arbitration before moving on to `R15c`
+3. deepen `R15b` with broader temporal arbitration across actor/modality evidence before moving on to `R15c`
 
 ## Remaining engineering gaps after this commit
 - remaining actor-relative direction modeling in `SemanticIR` / `IntentIR` (`R15`)
@@ -91,4 +91,4 @@
 4. read `ROADMAP.md`
 5. read `RUST_CODEBASE_ANALYSIS.md`
 6. inspect `git --no-pager status --short`
-7. continue with the remaining graph-first `R15` consumer migration and the next contradiction/arbitration temporal slice unless the user redirects
+7. continue with the remaining graph-first `R15` consumer migration and the next broader temporal-arbitration slice unless the user redirects

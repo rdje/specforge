@@ -756,6 +756,7 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     println!("  register_records: {}", ir.register_records.len());
     println!("  timing_constraints: {}", ir.timing_constraints.len());
     println!("  temporal_rules: {}", ir.temporal_rules.len());
+    println!("  temporal_conflicts: {}", ir.temporal_conflicts.len());
     println!(
         "  temporal_rules_with_actor_grounding: {}",
         temporal_rules_with_actor_grounding_count(&ir.temporal_rules)
@@ -900,6 +901,21 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             Vec::new(),
         ));
     }
+    if !ir.temporal_conflicts.is_empty() {
+        findings.push(finding(
+            "semantic_temporal_conflicts_present",
+            ValidationFindingSeverity::Warning,
+            "temporal_conflicts",
+            format!(
+                "{} typed temporal conflict(s) detected across contradictory value obligations",
+                ir.temporal_conflicts.len()
+            ),
+            ir.temporal_conflicts
+                .iter()
+                .map(|conflict| conflict.conflict_id.clone())
+                .collect(),
+        ));
+    }
     if ir.temporal_rules.is_empty()
         && (!ir.timing_constraints.is_empty()
             || !ir.signal_constraints.is_empty()
@@ -975,6 +991,10 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 ir.timing_constraints.len().to_string(),
             ),
             metric("temporal_rules", ir.temporal_rules.len().to_string()),
+            metric(
+                "temporal_conflicts",
+                ir.temporal_conflicts.len().to_string(),
+            ),
             metric(
                 "temporal_rules_with_cycle_window",
                 temporal_rules_with_cycle_window.to_string(),
@@ -1093,6 +1113,7 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     println!("  register_records: {}", ir.register_records.len());
     println!("  timing_constraints: {}", ir.timing_constraints.len());
     println!("  temporal_rules: {}", ir.temporal_rules.len());
+    println!("  temporal_conflicts: {}", ir.temporal_conflicts.len());
     println!(
         "  temporal_rules_with_actor_grounding: {}",
         temporal_rules_with_actor_grounding_count(&ir.temporal_rules)
@@ -1295,6 +1316,21 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             Vec::new(),
         ));
     }
+    if !ir.temporal_conflicts.is_empty() {
+        findings.push(finding(
+            "intent_temporal_conflicts_present",
+            ValidationFindingSeverity::Warning,
+            "temporal_conflicts",
+            format!(
+                "{} typed temporal conflict(s) detected across contradictory value obligations",
+                ir.temporal_conflicts.len()
+            ),
+            ir.temporal_conflicts
+                .iter()
+                .map(|conflict| conflict.conflict_id.clone())
+                .collect(),
+        ));
+    }
     if ir.temporal_rules.is_empty()
         && (!ir.timing_constraints.is_empty()
             || !ir.signal_constraints.is_empty()
@@ -1380,6 +1416,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 ir.timing_constraints.len().to_string(),
             ),
             metric("temporal_rules", ir.temporal_rules.len().to_string()),
+            metric(
+                "temporal_conflicts",
+                ir.temporal_conflicts.len().to_string(),
+            ),
             metric(
                 "temporal_rules_with_cycle_window",
                 temporal_rules_with_cycle_window.to_string(),
@@ -1958,6 +1998,77 @@ mod tests {
             metric_value(&report, "temporal_rules_with_multi_predicate_antecedents"),
             Some("1")
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_intent_ir_flags_typed_temporal_conflicts() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal HREADY is input width 1.\n\n",
+                "Signal PREADY is output width 1.\n\n",
+                "Clock clk.\n\n",
+                "The Completer drives PREADY.\n\n",
+                "The Requester reads PREADY.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pready_high".to_string(),
+            subject_signal: "PREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeHigh,
+            target_value: None,
+            condition_text: Some("when HREADY is LOW".to_string()),
+            negated: false,
+            source_text: "PREADY must be HIGH when HREADY is LOW.".to_string(),
+            supporting_statement_ids: vec!["stmt_pready_high".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pready_low".to_string(),
+            subject_signal: "PREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeLow,
+            target_value: None,
+            condition_text: Some("when HREADY is LOW".to_string()),
+            negated: false,
+            source_text: "PREADY must be LOW when HREADY is LOW.".to_string(),
+            supporting_statement_ids: vec!["stmt_pready_low".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let report = validate_intent_ir(&intent_ir, "temporal_conflicts".to_string());
+        assert_eq!(metric_value(&report, "temporal_rules"), Some("2"));
+        assert_eq!(metric_value(&report, "temporal_conflicts"), Some("1"));
+        assert!(has_finding(&report, "intent_temporal_conflicts_present"));
 
         Ok(())
     }

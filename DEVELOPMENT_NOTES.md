@@ -561,6 +561,34 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 - contradiction detection and cross-modality arbitration are still the next major `R15b` steps
 - the current compound-guard lift is intentionally conjunctive-only; disjunctive and more symbolic temporal composition still need a first-class model
 
+## Typed temporal conflict records (2026-04-04)
+
+### Why this slice landed now
+- once the temporal layer could preserve richer guards, the next truthfulness gap was no longer “can we express the precondition,” but “can we say when two typed rules disagree under that same precondition”
+- leaving that disagreement implicit would weaken the whole provenance-first story, because downstream consumers would still need to rediscover contradictions by re-reading the rule set
+- the next honest `R15b` move was therefore to preserve contradictory temporal value obligations as explicit typed records before attempting broader arbitration
+
+### Implementation shape
+- `crates/specforge/src/ir/semantic.rs` now defines `TemporalConflictRecord` and derives it from typed temporal rules
+- the first conflict detector is intentionally narrow and high-confidence:
+  - it groups signal-value consequents by clock/edge, antecedent set, cycle window, signal, and phase
+  - it emits a conflict only when multiple distinct values are required for the same signal/phase under the same grounded context
+- `IntentIR` now carries the same `temporal_conflicts` surface forward so contradiction information is preserved beyond the semantic stage
+
+### Validation
+- `crates/specforge/src/commands/validate.rs` now reports `temporal_conflicts` for `SemanticIR` and `IntentIR`
+- validation now emits explicit findings when typed temporal conflicts are present
+- added end-to-end tests for:
+  - deriving a typed temporal conflict from contradictory value obligations in `SemanticIR`
+  - carrying that conflict into `IntentIR`
+  - validating that the contradiction surfaces as a typed temporal-conflict finding
+- `cargo fmt --all` passed
+- `cargo test --manifest-path Cargo.toml` now passes with 127 tests
+
+### Remaining follow-up
+- this is still only the first contradiction slice; it does not yet arbitrate between prose/table/figure evidence or handle richer predicate clashes like stability-vs-transition or actor-vs-actor disagreements
+- broader temporal arbitration remains a follow-on task, not something this slice pretends to solve
+
 ## Documentation surface currently steering the implementation
 - `README.md`
   - single entry point and quick orientation

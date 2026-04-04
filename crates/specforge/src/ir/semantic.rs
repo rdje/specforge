@@ -61,6 +61,9 @@ pub struct SemanticIr {
     /// Clock-tick temporal rules derived from timing, constraint, and conditional evidence.
     #[serde(default)]
     pub temporal_rules: Vec<TemporalRuleRecord>,
+    /// Explicit conflicts detected across contradictory temporal value obligations.
+    #[serde(default)]
+    pub temporal_conflicts: Vec<TemporalConflictRecord>,
     /// Level 2 NLP: structured signal constraint records from `SignalValueConstraint` sentences.
     #[serde(default)]
     pub signal_constraints: Vec<SignalConstraintRecord>,
@@ -193,6 +196,7 @@ impl SemanticIr {
             conditional_rules.as_slice(),
             timing_constraints.as_slice(),
         );
+        let temporal_conflicts = build_temporal_conflicts(&temporal_rules);
 
         // Merge state/transition records: formal syntax + VLM diagram observations.
         // VLM-sourced records are appended so they don’t replace existing formal records.
@@ -246,6 +250,7 @@ impl SemanticIr {
             register_records,
             timing_constraints,
             temporal_rules,
+            temporal_conflicts,
             signal_constraints,
             conditional_rules,
             residual_decisions,
@@ -518,6 +523,27 @@ pub struct TemporalRuleRecord {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cycle_window: Option<CycleWindowRecord>,
     pub source_text: String,
+    pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct TemporalConflictRecord {
+    pub conflict_id: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub clock_signal: Option<String>,
+    pub edge: ClockEdge,
+    #[serde(default)]
+    pub antecedents: Vec<TemporalPredicateRecord>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub cycle_window: Option<CycleWindowRecord>,
+    pub signal_name: String,
+    pub phase: TickPhase,
+    #[serde(default)]
+    pub conflicting_values: Vec<String>,
+    #[serde(default)]
+    pub supporting_rule_ids: Vec<String>,
+    #[serde(default)]
     pub supporting_statement_ids: Vec<String>,
     pub automation_confidence: AutomationConfidence,
 }
@@ -1142,6 +1168,20 @@ struct InitAssignmentAccumulator {
     value: DecisionTreeValueRecord,
     supporting_statement_ids: BTreeSet<String>,
     conflicting_value: bool,
+}
+
+#[derive(Debug, Clone)]
+struct TemporalConflictAccumulator {
+    clock_signal: Option<String>,
+    edge: ClockEdge,
+    antecedents: Vec<TemporalPredicateRecord>,
+    cycle_window: Option<CycleWindowRecord>,
+    signal_name: String,
+    phase: TickPhase,
+    conflicting_values: BTreeSet<String>,
+    supporting_rule_ids: BTreeSet<String>,
+    supporting_statement_ids: BTreeSet<String>,
+    automation_confidence: AutomationConfidence,
 }
 
 #[derive(Debug, Clone)]
@@ -5580,6 +5620,93 @@ fn dedup_temporal_rules(rules: Vec<TemporalRuleRecord>) -> Vec<TemporalRuleRecor
     deduped
 }
 
+fn build_temporal_conflicts(temporal_rules: &[TemporalRuleRecord]) -> Vec<TemporalConflictRecord> {
+    let mut accumulators = BTreeMap::<String, TemporalConflictAccumulator>::new();
+
+    for rule in temporal_rules {
+        for predicate in &rule.consequents {
+            let TemporalPredicateRecord::SignalValue {
+                signal_name,
+                value,
+                phase,
+            } = predicate
+            else {
+                continue;
+            };
+
+            let key = temporal_conflict_group_key(rule, signal_name, *phase);
+            let entry = accumulators
+                .entry(key)
+                .or_insert_with(|| TemporalConflictAccumulator {
+                    clock_signal: rule.clock_signal.clone(),
+                    edge: rule.edge,
+                    antecedents: rule.antecedents.clone(),
+                    cycle_window: rule.cycle_window.clone(),
+                    signal_name: signal_name.clone(),
+                    phase: *phase,
+                    conflicting_values: BTreeSet::new(),
+                    supporting_rule_ids: BTreeSet::new(),
+                    supporting_statement_ids: BTreeSet::new(),
+                    automation_confidence: rule.automation_confidence,
+                });
+            entry.conflicting_values.insert(value.clone());
+            entry.supporting_rule_ids.insert(rule.rule_id.clone());
+            entry
+                .supporting_statement_ids
+                .extend(rule.supporting_statement_ids.iter().cloned());
+            entry.automation_confidence =
+                min_automation_confidence(entry.automation_confidence, rule.automation_confidence);
+        }
+    }
+
+    accumulators
+        .into_iter()
+        .filter_map(|(_, entry)| (entry.conflicting_values.len() > 1).then_some(entry))
+        .enumerate()
+        .map(|(index, entry)| TemporalConflictRecord {
+            conflict_id: format!("temporal_conflict_{:04}", index + 1),
+            clock_signal: entry.clock_signal,
+            edge: entry.edge,
+            antecedents: entry.antecedents,
+            cycle_window: entry.cycle_window,
+            signal_name: entry.signal_name,
+            phase: entry.phase,
+            conflicting_values: entry.conflicting_values.into_iter().collect(),
+            supporting_rule_ids: entry.supporting_rule_ids.into_iter().collect(),
+            supporting_statement_ids: entry.supporting_statement_ids.into_iter().collect(),
+            automation_confidence: entry.automation_confidence,
+        })
+        .collect()
+}
+
+fn temporal_conflict_group_key(
+    rule: &TemporalRuleRecord,
+    signal_name: &str,
+    phase: TickPhase,
+) -> String {
+    let mut antecedent_signatures = rule
+        .antecedents
+        .iter()
+        .map(|predicate| serde_json::to_string(predicate).unwrap_or_default())
+        .collect::<Vec<_>>();
+    antecedent_signatures.sort();
+
+    serde_json::to_string(&(
+        &rule.clock_signal,
+        rule.edge,
+        antecedent_signatures,
+        &rule.cycle_window,
+        signal_name,
+        phase,
+    ))
+    .unwrap_or_else(|_| {
+        format!(
+            "{:?}:{:?}:{signal_name}:{phase:?}",
+            rule.clock_signal, rule.edge
+        )
+    })
+}
+
 fn unique_producer_by_signal(
     signal_connectivity: &[SignalConnectivityRecord],
 ) -> BTreeMap<String, String> {
@@ -7702,6 +7829,79 @@ mod tests {
                 } if signal_name == "HSEL" && value == "HIGH"
             )
         }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn derives_typed_temporal_conflicts_from_conflicting_value_rules() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("temporal_conflict.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal HREADY is input width 1.\n\n",
+                "Signal PREADY is output width 1.\n\n",
+                "Clock clk.\n\n",
+                "The Completer drives PREADY.\n\n",
+                "The Requester reads PREADY.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pready_high".to_string(),
+            subject_signal: "PREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeHigh,
+            target_value: None,
+            condition_text: Some("when HREADY is LOW".to_string()),
+            negated: false,
+            source_text: "PREADY must be HIGH when HREADY is LOW.".to_string(),
+            supporting_statement_ids: vec!["stmt_pready_high".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pready_low".to_string(),
+            subject_signal: "PREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeLow,
+            target_value: None,
+            condition_text: Some("when HREADY is LOW".to_string()),
+            negated: false,
+            source_text: "PREADY must be LOW when HREADY is LOW.".to_string(),
+            supporting_statement_ids: vec!["stmt_pready_low".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        assert_eq!(semantic_ir.temporal_conflicts.len(), 1);
+        let conflict = &semantic_ir.temporal_conflicts[0];
+        assert_eq!(conflict.signal_name, "PREADY");
+        assert_eq!(conflict.phase, super::TickPhase::PostTick);
+        assert_eq!(
+            conflict.conflicting_values,
+            vec!["HIGH".to_string(), "LOW".to_string()]
+        );
+        assert_eq!(conflict.supporting_rule_ids.len(), 2);
+        assert_eq!(conflict.antecedents.len(), 1);
 
         Ok(())
     }

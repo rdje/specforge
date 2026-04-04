@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-04-04 (typed temporal conflict records)
+
+### Added: explicit temporal conflict records in the canonical IR layers
+- `SemanticIR` now derives `temporal_conflicts: Vec<TemporalConflictRecord>` from contradictory typed temporal value obligations.
+- `IntentIR` now carries the same conflict surface forward so disagreement remains explicit downstream.
+
+### Changed: validation now reports and flags typed temporal conflicts
+- `specforge validate` now reports `temporal_conflicts` for `SemanticIR` and `IntentIR`.
+- Validation now emits a dedicated warning when contradictory temporal value obligations are present in the typed rule set.
+
+### Added: regression coverage for temporal contradiction surfacing
+- Added end-to-end tests for:
+  - deriving a typed temporal conflict from contradictory value obligations in `SemanticIR`
+  - carrying the conflict into `IntentIR`
+  - validating that the contradiction is surfaced as a temporal-conflict finding
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 127/127 passed
+
 ## 2026-04-04 (compound temporal antecedents in typed temporal rules)
 
 ### Added: conjunctive temporal guards now survive as multiple typed antecedents
