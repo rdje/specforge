@@ -8,7 +8,8 @@ use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::evidence::{EvidenceIr, StatementClass, VisualEvidenceRole, VisualObservationKind};
 use crate::ir::source::{
-    AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket, WidthHint, document_key,
+    ActorSignalRelation, AutomationConfidence, CandidateInterpretation, RelationKind,
+    ResidualDecisionPacket, ValidationReportRecord, WidthHint, document_key,
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -19,6 +20,12 @@ pub struct SemanticIr {
     pub artifact_layout: SemanticArtifactLayout,
     pub document_identity: SemanticDocumentIdentity,
     pub actors: Vec<ActorRecord>,
+    #[serde(default)]
+    pub actor_signal_relations: Vec<ActorSignalRelation>,
+    #[serde(default)]
+    pub actor_ports: Vec<ActorPortRecord>,
+    #[serde(default)]
+    pub signal_connectivity: Vec<SignalConnectivityRecord>,
     pub interfaces: Vec<InterfaceRecord>,
     pub phases: Vec<PhaseRecord>,
     pub invariants: Vec<InvariantRecord>,
@@ -58,6 +65,8 @@ pub struct SemanticIr {
     #[serde(default)]
     pub conditional_rules: Vec<ConditionalRuleRecord>,
     pub residual_decisions: Vec<ResidualDecisionPacket>,
+    #[serde(default)]
+    pub validation_reports: Vec<ValidationReportRecord>,
 }
 
 impl SemanticIr {
@@ -94,6 +103,8 @@ impl SemanticIr {
         let context = SemanticContext::from_evidence_ir(&evidence_ir);
         let interfaces = build_interfaces(&context);
         let actor_build = build_actors(&context, &interfaces);
+        let actor_ports = build_actor_ports(&context, &interfaces);
+        let signal_connectivity = build_signal_connectivity(&actor_ports);
         let phases = build_phases(&context);
         let interface_ids_by_signal = interface_ids_by_signal(&interfaces);
         let invariants = build_invariants(&context, &interface_ids_by_signal);
@@ -200,6 +211,9 @@ impl SemanticIr {
             artifact_layout,
             document_identity,
             actors: actor_build.actors,
+            actor_signal_relations: context.actor_signal_relations.clone(),
+            actor_ports,
+            signal_connectivity,
             interfaces,
             phases,
             invariants,
@@ -222,6 +236,7 @@ impl SemanticIr {
             signal_constraints,
             conditional_rules,
             residual_decisions,
+            validation_reports: Vec::new(),
         })
     }
 
@@ -265,9 +280,53 @@ pub struct SemanticDocumentIdentity {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct ActorRecord {
     pub actor_id: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub actor_name: Option<String>,
     pub role_summary: String,
     pub supporting_statement_ids: Vec<String>,
     pub supporting_section_ids: Vec<String>,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum ActorRelativeDirection {
+    Input,
+    Output,
+    InOut,
+    Unknown,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ActorPortRecord {
+    pub actor_id: String,
+    pub actor_name: String,
+    pub signal_name: String,
+    pub direction: ActorRelativeDirection,
+    #[serde(default)]
+    pub relation_basis: Vec<RelationKind>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub width_hint: Option<WidthHint>,
+    #[serde(default)]
+    pub source_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct SignalConnectivityRecord {
+    pub signal_name: String,
+    #[serde(default)]
+    pub producer_actor_ids: Vec<String>,
+    #[serde(default)]
+    pub producer_actor_names: Vec<String>,
+    #[serde(default)]
+    pub consumer_actor_ids: Vec<String>,
+    #[serde(default)]
+    pub consumer_actor_names: Vec<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub width_hint: Option<WidthHint>,
+    #[serde(default)]
+    pub source_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -782,6 +841,7 @@ struct SemanticContext {
     statements: Vec<StatementContext>,
     section_anchors: Vec<SemanticSectionContext>,
     visual_roles_by_id: HashMap<String, VisualEvidenceRole>,
+    actor_signal_relations: Vec<ActorSignalRelation>,
 }
 
 impl SemanticContext {
@@ -866,6 +926,7 @@ impl SemanticContext {
             statements,
             section_anchors,
             visual_roles_by_id,
+            actor_signal_relations: evidence_ir.actor_signal_relations.clone(),
         }
     }
 }
@@ -909,9 +970,21 @@ struct ActorBuildResult {
 
 #[derive(Debug, Clone)]
 struct ActorAccumulator {
+    actor_name: Option<String>,
     role_summary: String,
     supporting_statement_ids: BTreeSet<String>,
     supporting_section_ids: BTreeSet<String>,
+}
+
+#[derive(Debug, Clone)]
+struct ActorPortAccumulator {
+    actor_id: String,
+    actor_name: String,
+    drives: bool,
+    reads: bool,
+    width_hint: Option<WidthHint>,
+    source_statement_ids: BTreeSet<String>,
+    automation_confidence: AutomationConfidence,
 }
 
 #[derive(Debug, Clone)]
@@ -1781,6 +1854,7 @@ fn build_explicit_module_record(accumulator: ExplicitModuleAccumulator) -> Expli
         statements: accumulator.statements,
         section_anchors: Vec::new(),
         visual_roles_by_id: HashMap::new(),
+        actor_signal_relations: Vec::new(),
     };
     let interfaces = build_interfaces(&scoped_context);
     let system_contract = build_system_contract(&scoped_context);
@@ -1946,6 +2020,34 @@ fn build_actors(context: &SemanticContext, interfaces: &[InterfaceRecord]) -> Ac
     let mut accumulators: BTreeMap<String, ActorAccumulator> = BTreeMap::new();
     let mut actor_id_by_term = HashMap::new();
 
+    for relation in &context.actor_signal_relations {
+        let actor_id = actor_id_for_name(&relation.actor_name);
+        actor_id_by_term.insert(relation.actor_name.to_ascii_lowercase(), actor_id.clone());
+        let entry = accumulators
+            .entry(actor_id)
+            .or_insert_with(|| ActorAccumulator {
+                actor_name: Some(relation.actor_name.clone()),
+                role_summary: format!(
+                    "semantic role inferred from actor-signal relation evidence around `{}`",
+                    relation.actor_name
+                ),
+                supporting_statement_ids: BTreeSet::new(),
+                supporting_section_ids: BTreeSet::new(),
+            });
+        if entry.actor_name.is_none() {
+            entry.actor_name = Some(relation.actor_name.clone());
+        }
+        entry
+            .supporting_statement_ids
+            .extend(relation.source_statement_ids.iter().cloned());
+        entry
+            .supporting_section_ids
+            .extend(statement_ids_to_section_ids(
+                context,
+                relation.source_statement_ids.as_slice(),
+            ));
+    }
+
     for statement in &context.statements {
         let lowered_text = statement.text.to_ascii_lowercase();
         for term in ACTOR_TERMS {
@@ -1958,10 +2060,14 @@ fn build_actors(context: &SemanticContext, interfaces: &[InterfaceRecord]) -> Ac
             let entry = accumulators
                 .entry(actor_id)
                 .or_insert_with(|| ActorAccumulator {
+                    actor_name: Some((*term).to_string()),
                     role_summary: format!("semantic role inferred around `{term}` evidence"),
                     supporting_statement_ids: BTreeSet::new(),
                     supporting_section_ids: BTreeSet::new(),
                 });
+            if entry.actor_name.is_none() {
+                entry.actor_name = Some((*term).to_string());
+            }
             entry
                 .supporting_statement_ids
                 .insert(statement.statement_id.clone());
@@ -1985,6 +2091,7 @@ fn build_actors(context: &SemanticContext, interfaces: &[InterfaceRecord]) -> Ac
             accumulators.insert(
                 actor_id,
                 ActorAccumulator {
+                    actor_name: None,
                     role_summary: format!(
                         "semantic channel inferred from grouped interface signals: {}",
                         interface.signals.join(", ")
@@ -2004,6 +2111,7 @@ fn build_actors(context: &SemanticContext, interfaces: &[InterfaceRecord]) -> Ac
         .into_iter()
         .map(|(actor_id, entry)| ActorRecord {
             actor_id,
+            actor_name: entry.actor_name,
             role_summary: entry.role_summary,
             supporting_statement_ids: entry.supporting_statement_ids.into_iter().collect(),
             supporting_section_ids: entry.supporting_section_ids.into_iter().collect(),
@@ -2015,6 +2123,114 @@ fn build_actors(context: &SemanticContext, interfaces: &[InterfaceRecord]) -> Ac
         actor_id_by_term,
         explicit_actor_count,
     }
+}
+
+fn build_actor_ports(
+    context: &SemanticContext,
+    interfaces: &[InterfaceRecord],
+) -> Vec<ActorPortRecord> {
+    let mut accumulators: BTreeMap<(String, String), ActorPortAccumulator> = BTreeMap::new();
+    let signal_widths = signal_width_hints_by_name(interfaces);
+
+    for relation in &context.actor_signal_relations {
+        let key = (relation.actor_name.clone(), relation.signal_name.clone());
+        let entry = accumulators
+            .entry(key)
+            .or_insert_with(|| ActorPortAccumulator {
+                actor_id: actor_id_for_name(&relation.actor_name),
+                actor_name: relation.actor_name.clone(),
+                drives: false,
+                reads: false,
+                width_hint: signal_widths.get(&relation.signal_name).cloned().flatten(),
+                source_statement_ids: BTreeSet::new(),
+                automation_confidence: relation.automation_confidence,
+            });
+        match relation.relation {
+            RelationKind::Drives => entry.drives = true,
+            RelationKind::Reads => entry.reads = true,
+        }
+        if entry.width_hint.is_none() {
+            entry.width_hint = signal_widths.get(&relation.signal_name).cloned().flatten();
+        }
+        entry
+            .source_statement_ids
+            .extend(relation.source_statement_ids.iter().cloned());
+        entry.automation_confidence =
+            max_automation_confidence(entry.automation_confidence, relation.automation_confidence);
+    }
+
+    accumulators
+        .into_iter()
+        .map(|((_actor_name, signal_name), entry)| {
+            let (direction, relation_basis) =
+                actor_relative_direction_and_basis(entry.drives, entry.reads);
+            ActorPortRecord {
+                actor_id: entry.actor_id,
+                actor_name: entry.actor_name,
+                signal_name,
+                direction,
+                relation_basis,
+                width_hint: entry.width_hint,
+                source_statement_ids: entry.source_statement_ids.into_iter().collect(),
+                automation_confidence: entry.automation_confidence,
+            }
+        })
+        .collect()
+}
+
+fn build_signal_connectivity(actor_ports: &[ActorPortRecord]) -> Vec<SignalConnectivityRecord> {
+    let mut accumulators: BTreeMap<String, SignalConnectivityRecord> = BTreeMap::new();
+
+    for port in actor_ports {
+        let entry = accumulators
+            .entry(port.signal_name.clone())
+            .or_insert_with(|| SignalConnectivityRecord {
+                signal_name: port.signal_name.clone(),
+                producer_actor_ids: Vec::new(),
+                producer_actor_names: Vec::new(),
+                consumer_actor_ids: Vec::new(),
+                consumer_actor_names: Vec::new(),
+                width_hint: port.width_hint.clone(),
+                source_statement_ids: Vec::new(),
+                automation_confidence: port.automation_confidence,
+            });
+
+        merge_signal_hint(&mut entry.width_hint, port.width_hint.clone());
+        entry.automation_confidence =
+            min_automation_confidence(entry.automation_confidence, port.automation_confidence);
+
+        for statement_id in &port.source_statement_ids {
+            if !entry.source_statement_ids.contains(statement_id) {
+                entry.source_statement_ids.push(statement_id.clone());
+            }
+        }
+
+        if matches!(
+            port.direction,
+            ActorRelativeDirection::Output | ActorRelativeDirection::InOut
+        ) {
+            if !entry.producer_actor_ids.contains(&port.actor_id) {
+                entry.producer_actor_ids.push(port.actor_id.clone());
+            }
+            if !entry.producer_actor_names.contains(&port.actor_name) {
+                entry.producer_actor_names.push(port.actor_name.clone());
+            }
+        }
+
+        if matches!(
+            port.direction,
+            ActorRelativeDirection::Input | ActorRelativeDirection::InOut
+        ) {
+            if !entry.consumer_actor_ids.contains(&port.actor_id) {
+                entry.consumer_actor_ids.push(port.actor_id.clone());
+            }
+            if !entry.consumer_actor_names.contains(&port.actor_name) {
+                entry.consumer_actor_names.push(port.actor_name.clone());
+            }
+        }
+    }
+
+    accumulators.into_values().collect()
 }
 
 fn build_phases(context: &SemanticContext) -> Vec<PhaseRecord> {
@@ -3651,6 +3867,41 @@ fn explicit_interface_key(section_ids: &[String]) -> String {
     format!("explicit_interface__{}", section_ids.join("__"))
 }
 
+fn actor_id_for_name(actor_name: &str) -> String {
+    format!("actor_{}", document_key(actor_name))
+}
+
+fn actor_relative_direction_and_basis(
+    drives: bool,
+    reads: bool,
+) -> (ActorRelativeDirection, Vec<RelationKind>) {
+    match (drives, reads) {
+        (true, true) => (
+            ActorRelativeDirection::InOut,
+            vec![RelationKind::Drives, RelationKind::Reads],
+        ),
+        (true, false) => (ActorRelativeDirection::Output, vec![RelationKind::Drives]),
+        (false, true) => (ActorRelativeDirection::Input, vec![RelationKind::Reads]),
+        (false, false) => (ActorRelativeDirection::Unknown, Vec::new()),
+    }
+}
+
+fn signal_width_hints_by_name(
+    interfaces: &[InterfaceRecord],
+) -> HashMap<String, Option<WidthHint>> {
+    let mut widths = HashMap::new();
+
+    for signal in interfaces
+        .iter()
+        .flat_map(|interface| &interface.signal_records)
+    {
+        let entry = widths.entry(signal.signal_name.clone()).or_insert(None);
+        merge_signal_hint(entry, signal.width_hint.clone());
+    }
+
+    widths
+}
+
 fn register_interface_signal_record(
     accumulator: &mut InterfaceAccumulator,
     signal_name: &str,
@@ -5055,7 +5306,7 @@ mod tests {
     };
 
     use super::{
-        ControlActionRecord, ControlBinaryOperator, ControlBlockRole,
+        ActorRelativeDirection, ControlActionRecord, ControlBinaryOperator, ControlBlockRole,
         ControlCompoundUpdateOperation, ControlDualOutputKind, ControlExpressionRecord,
         ControlReferenceKind, ControlReferenceSuffix, DecisionTreeActionRecord,
         DecisionTreeAssignmentKind, DecisionTreeComparisonOperator, DecisionTreeGuardRecord,
@@ -5983,12 +6234,9 @@ mod tests {
             "expected IDLE initial state from fenced VLM extraction"
         );
         assert!(
-            semantic_ir
-                .state_transitions
-                .iter()
-                .any(|transition| {
-                    transition.source_state == "SETUP" && transition.target_state == "ACCESS"
-                }),
+            semantic_ir.state_transitions.iter().any(|transition| {
+                transition.source_state == "SETUP" && transition.target_state == "ACCESS"
+            }),
             "expected SETUP→ACCESS transition from fenced VLM extraction"
         );
 
@@ -6160,6 +6408,88 @@ mod tests {
         let hresp = find_signal("HRESP").expect("HRESP should be extracted from table");
         assert_eq!(hresp.direction_hint, Some(InterfaceSignalDirection::Input));
         assert_eq!(hresp.width_hint, Some(WidthHint::Numeric(1)));
+
+        Ok(())
+    }
+
+    #[test]
+    fn carries_actor_relative_ports_and_signal_connectivity() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("kg_ports.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            "# Protocol\nSignal PREADY is output width 1.\n\nSignal PADDR is input width 32.\n\nThe Completer drives PREADY.\n\nThe Requester reads PREADY.\n\nThe Requester drives PADDR.\n\nThe Completer samples PADDR.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        assert!(
+            semantic_ir
+                .actors
+                .iter()
+                .filter_map(|actor| actor.actor_name.as_deref())
+                .any(|name| name.eq_ignore_ascii_case("Completer"))
+        );
+        assert!(
+            semantic_ir
+                .actors
+                .iter()
+                .filter_map(|actor| actor.actor_name.as_deref())
+                .any(|name| name.eq_ignore_ascii_case("Requester"))
+        );
+
+        let completer_pready = semantic_ir
+            .actor_ports
+            .iter()
+            .find(|port| {
+                port.actor_name.eq_ignore_ascii_case("Completer") && port.signal_name == "PREADY"
+            })
+            .expect("expected Completer/PREADY actor-relative port");
+        assert_eq!(completer_pready.direction, ActorRelativeDirection::Output);
+        assert_eq!(completer_pready.width_hint, Some(WidthHint::Numeric(1)));
+
+        let requester_pready = semantic_ir
+            .actor_ports
+            .iter()
+            .find(|port| {
+                port.actor_name.eq_ignore_ascii_case("Requester") && port.signal_name == "PREADY"
+            })
+            .expect("expected Requester/PREADY actor-relative port");
+        assert_eq!(requester_pready.direction, ActorRelativeDirection::Input);
+
+        let pready_connectivity = semantic_ir
+            .signal_connectivity
+            .iter()
+            .find(|record| record.signal_name == "PREADY")
+            .expect("expected signal connectivity for PREADY");
+        assert_eq!(pready_connectivity.width_hint, Some(WidthHint::Numeric(1)));
+        assert!(
+            pready_connectivity
+                .producer_actor_names
+                .iter()
+                .any(|name| name.eq_ignore_ascii_case("Completer"))
+        );
+        assert!(
+            pready_connectivity
+                .consumer_actor_names
+                .iter()
+                .any(|name| name.eq_ignore_ascii_case("Requester"))
+        );
 
         Ok(())
     }

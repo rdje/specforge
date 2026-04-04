@@ -125,8 +125,10 @@
   - `specforge validate <artifact>` command: auto-detects IR stage, reports signal coverage %, NLP coverage, VLM readiness, structured extraction counts, quality score 0–100 with grade
   - validate tests for all four IR stages
   - `specforge converge <source> --target <adapter>` now materializes a whole-pipeline fixed-point loop: ingest once, reuse persisted `SourceIR`, rebuild `EvidenceIR` / `SemanticIR` / `IntentIR` / adapters, optionally re-run VLM + NLP enrichment, and stop when the persisted knowledge snapshot is stable
+  - `specforge validate <artifact>` now backannotates a deterministic `validation_report.json` sidecar next to the validated IR artifact and writes the latest report back into the artifact's `validation_reports` field
+  - validation findings are now graph-aware for the four IR stages, including producer/consumer gaps and compatibility-surface lag on the actor-relative KG
 - remaining:
-  - back-annotation of findings into IR artifacts and live docs
+  - project validation findings into the live docs automatically or through a dedicated projection flow
   - adapter validation (SystemVerilog/Verilog/VHDL targets)
 
 ### R8 SourceIR SOTA capture (Tier 1 of EXTRACTION_ARCHITECTURE.md)
@@ -216,13 +218,13 @@
   - direction/source/destination column handling widened for AMBA 5 terminology and infrastructure signals
   - width-only and parametric-width declarations landed so coverage reporting is more honest
   - `extract_alias_phrase()` now rejects alias subjects beginning with markdown/table markers `-`, `|`, or `#`
-  - representative APB/AHB/AXI baselines were refreshed from the current extraction stack:
-    - APB 90/100 EXCELLENT
+  - representative local APB/AHB/AXI validation snapshots were refreshed from the current extraction stack:
+    - APB 95/100 EXCELLENT
     - AHB 95/100 EXCELLENT
-    - AXI 90/100 GOOD
+    - AXI 89/100 GOOD
 
 ### R13 Actor-signal relation extraction: Tier 2 prose patterns
-- status: Mostly Done (Tier 2 relations and convergent EvidenceIR reuse landed; downstream actor-relative carry-through is still deferred)
+- status: Done
 - reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md`
 - goals:
   - represent actor-signal relations explicitly in the typed pipeline
@@ -236,15 +238,13 @@
   - KG-derived direction declarations synthesized back into `EvidenceIR` for downstream `SemanticIR` parsing
   - regression tests added for relation extraction and direction synthesis
   - relation-derived declarations now feed the convergent `EvidenceIR` loop, so discovered signal anchors can unlock additional encoding enums and value constraints
-  - refreshed baselines now show stable honest coverage improvements: APB 90/100, AHB 95/100, AXI 90/100
+  - downstream `SemanticIR` / `IntentIR` now carry the extracted graph directly via `actor_signal_relations`, `actor_ports`, and `signal_connectivity` instead of forcing later stages to rediscover relation evidence from prose
+  - refreshed baselines now show stable honest coverage improvements: APB 95/100, AHB 95/100, AXI 89/100
 - completion criteria:
   - APB direction coverage reaches a stable honest baseline from relation extraction
   - AXI large-signal coverage improves without relying on misleading single-signal metrics
   - AHB cross-validation between table-derived and prose-derived facts is inspectable
   - downstream stages preserve enough relation information that actor-relative modeling does not need to rediscover the graph from raw prose
-- remaining:
-  - carry actor-signal relations into the downstream signal model instead of flattening them to actor-agnostic direction hints before adapter time
-
 ### R14 Actor-signal relation extraction: Tier 3 LLM
 - status: Not Started
 - reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md`
@@ -257,12 +257,20 @@
   - the relation-resolution workflow is documented in `USER_GUIDE.md`
 
 ### R15 Actor-relative direction model in SemanticIR
-- status: Not Started
+- status: In Progress
 - reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` §Phase 4
 - goals:
   - replace `direction_hint: Option<InterfaceSignalDirection>` with an actor-relative model
   - make `InterfaceSignalRecord` carry actor-relative drive/read information instead of a single flattened perspective
   - compute adapter-facing port directions relative to the target actor at adapter time
+- done:
+  - `SemanticIR` now carries `actor_signal_relations`, `actor_ports`, and `signal_connectivity`
+  - `IntentIR` now preserves the same actor-relative KG surface as canonical output
+  - `ActorRecord` / `IntentActor` now preserve the surfaced actor name when it is grounded by relation evidence
+  - `specforge validate` now reports actor-signal relation, actor-port, and connectivity counts for `SemanticIR` / `IntentIR`
+- remaining:
+  - make the actor-relative graph, not flat `direction_hint`, the primary downstream signal-direction surface
+  - compute adapter-facing port directions from the actor-relative graph at render time
 - completion criteria:
   - SystemVerilog adapter can generate correct port directions for any actor
   - `IntentIR` carries a proper directed graph, not a flat list with implicit actor context
@@ -284,4 +292,4 @@
 
 ## Immediate next milestone
 - R7 remaining slice: build validation/back-annotation and artifact-linked reporting on the current staged IR surface
-- R15 remains the next larger architectural slice before downstream RTL adapters
+- R15 remaining slice: finish the transition from compatibility `direction_hint` fields to actor-relative graph-first downstream semantics

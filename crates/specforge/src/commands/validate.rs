@@ -1,4 +1,6 @@
 use std::collections::HashMap;
+use std::fs;
+use std::path::{Path, PathBuf};
 
 use crate::cli::ValidateArgs;
 use crate::error::{AppError, Result};
@@ -6,11 +8,14 @@ use crate::ir::IrStage;
 use crate::ir::evidence::{EvidenceIr, StatementClass, VisualObservationKind};
 use crate::ir::intent::IntentIr;
 use crate::ir::semantic::SemanticIr;
-use crate::ir::source::{AutomationConfidence, DiagramKind, SourceIr, WidthHint};
+use crate::ir::source::{
+    AutomationConfidence, DiagramKind, SourceIr, ValidationFindingRecord,
+    ValidationFindingSeverity, ValidationMetricRecord, ValidationReportRecord, WidthHint,
+};
 
 pub fn run(args: ValidateArgs) -> Result<()> {
     // Auto-detect stage from artifact JSON `stage` field.
-    let raw = std::fs::read_to_string(&args.artifact)
+    let raw = fs::read_to_string(&args.artifact)
         .map_err(|_| AppError::MissingPath(args.artifact.clone()))?;
 
     #[derive(serde::Deserialize)]
@@ -26,27 +31,188 @@ pub fn run(args: ValidateArgs) -> Result<()> {
 
     match probe.stage {
         IrStage::SourceIr => {
-            let ir = SourceIr::load_from_path(&args.artifact)?;
-            validate_source_ir(&ir);
+            let mut ir = SourceIr::load_from_path(&args.artifact)?;
+            let report = validate_source_ir(&ir, source_ir_fingerprint(&ir)?);
+            persist_source_validation(&mut ir, &args.artifact, &report)?;
+            print_validation_backannotation(&args.artifact, &report)?;
         }
         IrStage::EvidenceIr => {
-            let ir = EvidenceIr::load_from_path(&args.artifact)?;
-            validate_evidence_ir(&ir);
+            let mut ir = EvidenceIr::load_from_path(&args.artifact)?;
+            let report = validate_evidence_ir(&ir, evidence_ir_fingerprint(&ir)?);
+            persist_evidence_validation(&mut ir, &args.artifact, &report)?;
+            print_validation_backannotation(&args.artifact, &report)?;
         }
         IrStage::SemanticIr => {
-            let ir = SemanticIr::load_from_path(&args.artifact)?;
-            validate_semantic_ir(&ir);
+            let mut ir = SemanticIr::load_from_path(&args.artifact)?;
+            let report = validate_semantic_ir(&ir, semantic_ir_fingerprint(&ir)?);
+            persist_semantic_validation(&mut ir, &args.artifact, &report)?;
+            print_validation_backannotation(&args.artifact, &report)?;
         }
         IrStage::IntentIr => {
-            let ir = IntentIr::load_from_path(&args.artifact)?;
-            validate_intent_ir(&ir);
+            let mut ir = IntentIr::load_from_path(&args.artifact)?;
+            let report = validate_intent_ir(&ir, intent_ir_fingerprint(&ir)?);
+            persist_intent_validation(&mut ir, &args.artifact, &report)?;
+            print_validation_backannotation(&args.artifact, &report)?;
         }
     }
 
     Ok(())
 }
 
-fn validate_source_ir(ir: &SourceIr) {
+fn stable_fingerprint(text: &str) -> String {
+    let mut hash = 0xcbf29ce484222325_u64;
+    for byte in text.as_bytes() {
+        hash ^= u64::from(*byte);
+        hash = hash.wrapping_mul(0x100000001b3);
+    }
+    format!("{hash:016x}")
+}
+
+fn source_ir_fingerprint(ir: &SourceIr) -> Result<String> {
+    let mut clone = ir.clone();
+    clone.validation_reports.clear();
+    Ok(stable_fingerprint(&clone.to_pretty_json()?))
+}
+
+fn evidence_ir_fingerprint(ir: &EvidenceIr) -> Result<String> {
+    let mut clone = ir.clone();
+    clone.validation_reports.clear();
+    Ok(stable_fingerprint(&clone.to_pretty_json()?))
+}
+
+fn semantic_ir_fingerprint(ir: &SemanticIr) -> Result<String> {
+    let mut clone = ir.clone();
+    clone.validation_reports.clear();
+    Ok(stable_fingerprint(&clone.to_pretty_json()?))
+}
+
+fn intent_ir_fingerprint(ir: &IntentIr) -> Result<String> {
+    let mut clone = ir.clone();
+    clone.validation_reports.clear();
+    Ok(stable_fingerprint(&clone.to_pretty_json()?))
+}
+
+fn validation_report_path_for(artifact_path: &Path) -> Result<PathBuf> {
+    let artifact_dir = artifact_path.parent().ok_or_else(|| {
+        AppError::InvalidStageArtifact(format!(
+            "cannot derive validation report path for {}",
+            artifact_path.display()
+        ))
+    })?;
+    Ok(artifact_dir.join("validation_report.json"))
+}
+
+fn metric(name: &str, value: impl Into<String>) -> ValidationMetricRecord {
+    ValidationMetricRecord {
+        name: name.to_string(),
+        value: value.into(),
+    }
+}
+
+fn finding(
+    finding_id: &str,
+    severity: ValidationFindingSeverity,
+    category: &str,
+    summary: impl Into<String>,
+    related_ids: Vec<String>,
+) -> ValidationFindingRecord {
+    ValidationFindingRecord {
+        finding_id: finding_id.to_string(),
+        severity,
+        category: category.to_string(),
+        summary: summary.into(),
+        related_ids,
+    }
+}
+
+fn backannotate_report(target: &mut Vec<ValidationReportRecord>, report: &ValidationReportRecord) {
+    target.clear();
+    target.push(report.clone());
+}
+
+fn write_validation_report_sidecar(
+    artifact_path: &Path,
+    report: &ValidationReportRecord,
+) -> Result<()> {
+    let report_path = validation_report_path_for(artifact_path)?;
+    fs::write(report_path, serde_json::to_string_pretty(report)?)?;
+    Ok(())
+}
+
+fn print_validation_findings(report: &ValidationReportRecord) {
+    println!("=== Validation Findings ===");
+    println!("  count: {}", report.findings.len());
+    if report.findings.is_empty() {
+        println!("  none");
+    } else {
+        for finding in &report.findings {
+            println!(
+                "  - [{}:{}] {}",
+                finding.severity.as_str(),
+                finding.category,
+                finding.summary
+            );
+            if !finding.related_ids.is_empty() {
+                println!("    related_ids: {}", finding.related_ids.join(", "));
+            }
+        }
+    }
+    println!();
+}
+
+fn print_validation_backannotation(
+    artifact_path: &Path,
+    report: &ValidationReportRecord,
+) -> Result<()> {
+    let report_path = validation_report_path_for(artifact_path)?;
+    println!("=== Validation Backannotation ===");
+    println!("  artifact_path: {}", artifact_path.display());
+    println!("  validation_report_path: {}", report_path.display());
+    println!("  artifact_fingerprint: {}", report.artifact_fingerprint);
+    Ok(())
+}
+
+fn persist_source_validation(
+    ir: &mut SourceIr,
+    artifact_path: &Path,
+    report: &ValidationReportRecord,
+) -> Result<()> {
+    backannotate_report(&mut ir.validation_reports, report);
+    ir.write_to_disk()?;
+    write_validation_report_sidecar(artifact_path, report)
+}
+
+fn persist_evidence_validation(
+    ir: &mut EvidenceIr,
+    artifact_path: &Path,
+    report: &ValidationReportRecord,
+) -> Result<()> {
+    backannotate_report(&mut ir.validation_reports, report);
+    ir.write_to_disk()?;
+    write_validation_report_sidecar(artifact_path, report)
+}
+
+fn persist_semantic_validation(
+    ir: &mut SemanticIr,
+    artifact_path: &Path,
+    report: &ValidationReportRecord,
+) -> Result<()> {
+    backannotate_report(&mut ir.validation_reports, report);
+    ir.write_to_disk()?;
+    write_validation_report_sidecar(artifact_path, report)
+}
+
+fn persist_intent_validation(
+    ir: &mut IntentIr,
+    artifact_path: &Path,
+    report: &ValidationReportRecord,
+) -> Result<()> {
+    backannotate_report(&mut ir.validation_reports, report);
+    ir.write_to_disk()?;
+    write_validation_report_sidecar(artifact_path, report)
+}
+
+fn validate_source_ir(ir: &SourceIr, artifact_fingerprint: String) -> ValidationReportRecord {
     println!("command: validate");
     println!("stage: source_ir");
     println!("document_key: {}", ir.document_identity.document_key);
@@ -148,9 +314,99 @@ fn validate_source_ir(ir: &SourceIr) {
     println!();
     println!("=== Residual Decisions ===");
     println!("  count: {}", ir.residual_decisions.len());
+
+    let figures_ready_for_vlm = timing_count + state_count;
+    let mut findings = Vec::new();
+    if figures_ready_for_vlm > 0 && vlm_enriched == 0 {
+        findings.push(finding(
+            "source_vlm_enrichment_missing",
+            ValidationFindingSeverity::Warning,
+            "visual_enrichment",
+            format!(
+                "{figures_ready_for_vlm} classified timing/state diagrams are still missing VLM enrichment"
+            ),
+            ir.visual_assets
+                .iter()
+                .filter(|asset| {
+                    matches!(
+                        asset.diagram_kind,
+                        DiagramKind::TimingDiagram | DiagramKind::StateMachineDiagram
+                    )
+                })
+                .map(|asset| asset.asset_id.clone())
+                .take(6)
+                .collect(),
+        ));
+    }
+    if unknown_count > 0 {
+        findings.push(finding(
+            "source_unknown_diagrams_remaining",
+            ValidationFindingSeverity::Info,
+            "diagram_classification",
+            format!("{unknown_count} visual assets remain unclassified"),
+            ir.visual_assets
+                .iter()
+                .filter(|asset| matches!(asset.diagram_kind, DiagramKind::Unknown))
+                .map(|asset| asset.asset_id.clone())
+                .take(6)
+                .collect(),
+        ));
+    }
+    if !ir.residual_decisions.is_empty() {
+        findings.push(finding(
+            "source_residual_decisions_present",
+            ValidationFindingSeverity::Warning,
+            "residual_decisions",
+            format!(
+                "SourceIR still carries {} residual decision packet(s)",
+                ir.residual_decisions.len()
+            ),
+            ir.residual_decisions
+                .iter()
+                .map(|packet| packet.packet_id.clone())
+                .collect(),
+        ));
+    }
+
+    let report = ValidationReportRecord {
+        report_id: format!("validation_source_ir_{artifact_fingerprint}"),
+        validated_stage: IrStage::SourceIr,
+        artifact_fingerprint,
+        summary: format!(
+            "SourceIR validation for {} with {} finding(s)",
+            ir.document_identity.display_name,
+            findings.len()
+        ),
+        overall_score: None,
+        grade: None,
+        metrics: vec![
+            metric("pages", ir.page_artifacts.len().to_string()),
+            metric("visual_assets", ir.visual_assets.len().to_string()),
+            metric("structured_tables", ir.structured_tables.len().to_string()),
+            metric("content_elements", ir.content_elements.len().to_string()),
+            metric("document_sections", ir.document_sections.len().to_string()),
+            metric("timing_diagrams", timing_count.to_string()),
+            metric("state_machine_diagrams", state_count.to_string()),
+            metric("block_diagrams", block_count.to_string()),
+            metric("unknown_diagrams", unknown_count.to_string()),
+            metric(
+                "diagram_classification_coverage_pct",
+                format!("{diagram_coverage:.0}"),
+            ),
+            metric("figures_ready_for_vlm", figures_ready_for_vlm.to_string()),
+            metric("figures_already_enriched", vlm_enriched.to_string()),
+            metric(
+                "residual_decisions",
+                ir.residual_decisions.len().to_string(),
+            ),
+        ],
+        findings,
+    };
+    print_validation_findings(&report);
+    report
 }
 
-fn validate_evidence_ir(ir: &EvidenceIr) {
+fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> ValidationReportRecord {
     println!("command: validate");
     println!("stage: evidence_ir");
     println!("document_key: {}", ir.document_identity.document_key);
@@ -231,9 +487,114 @@ fn validate_evidence_ir(ir: &EvidenceIr) {
         .filter(|e| e.caption_text.is_some())
         .count();
     println!("  with_caption: {with_caption}");
+
+    let normative_count = classes.get("normative_statement").copied().unwrap_or(0);
+    let mut findings = Vec::new();
+    if total == 0 {
+        findings.push(finding(
+            "evidence_no_extracted_statements",
+            ValidationFindingSeverity::Error,
+            "statement_extraction",
+            "EvidenceIR contains no extracted statements",
+            Vec::new(),
+        ));
+    }
+    if timing_obs == 0 && state_obs == 0 && !ir.visual_evidence.is_empty() {
+        findings.push(finding(
+            "evidence_missing_vlm_observations",
+            ValidationFindingSeverity::Warning,
+            "visual_enrichment",
+            "Visual evidence is present, but no VLM timing/state observations were injected into EvidenceIR",
+            ir.visual_evidence
+                .iter()
+                .map(|item| item.evidence_id.clone())
+                .take(6)
+                .collect(),
+        ));
+    }
+    if ir.actor_signal_relations.is_empty()
+        && (!ir.signal_constraints.is_empty() || !ir.conditional_rules.is_empty())
+    {
+        findings.push(finding(
+            "evidence_structural_kg_missing",
+            ValidationFindingSeverity::Warning,
+            "knowledge_graph",
+            "Behavioral evidence exists, but the structural actor-signal graph is still empty in EvidenceIR",
+            Vec::new(),
+        ));
+    }
+    if normative_count > 0 {
+        findings.push(finding(
+            "evidence_normative_residuals_remaining",
+            ValidationFindingSeverity::Info,
+            "nlp_residuals",
+            format!(
+                "{normative_count} normative statements remain only partially structured in EvidenceIR"
+            ),
+            Vec::new(),
+        ));
+    }
+
+    let report = ValidationReportRecord {
+        report_id: format!("validation_evidence_ir_{artifact_fingerprint}"),
+        validated_stage: IrStage::EvidenceIr,
+        artifact_fingerprint,
+        summary: format!(
+            "EvidenceIR validation for {} with {} finding(s)",
+            ir.document_identity.display_name,
+            findings.len()
+        ),
+        overall_score: None,
+        grade: None,
+        metrics: vec![
+            metric("total_statements", total.to_string()),
+            metric("nlp_coverage_pct", nlp_coverage.to_string()),
+            metric(
+                "signal_value_constraint_statements",
+                classes
+                    .get("signal_value_constraint")
+                    .copied()
+                    .unwrap_or(0)
+                    .to_string(),
+            ),
+            metric(
+                "conditional_rule_statements",
+                classes
+                    .get("conditional_rule")
+                    .copied()
+                    .unwrap_or(0)
+                    .to_string(),
+            ),
+            metric("normative_statements", normative_count.to_string()),
+            metric(
+                "signal_constraints",
+                ir.signal_constraints.len().to_string(),
+            ),
+            metric("conditional_rules", ir.conditional_rules.len().to_string()),
+            metric(
+                "actor_signal_relations",
+                ir.actor_signal_relations.len().to_string(),
+            ),
+            metric("register_records", ir.register_records.len().to_string()),
+            metric(
+                "timing_constraints",
+                ir.timing_constraints.len().to_string(),
+            ),
+            metric("timing_diagram_extractions", timing_obs.to_string()),
+            metric("state_machine_extractions", state_obs.to_string()),
+            metric(
+                "visual_evidence_total",
+                ir.visual_evidence.len().to_string(),
+            ),
+            metric("visual_evidence_with_caption", with_caption.to_string()),
+        ],
+        findings,
+    };
+    print_validation_findings(&report);
+    report
 }
 
-fn validate_semantic_ir(ir: &SemanticIr) {
+fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> ValidationReportRecord {
     println!("command: validate");
     println!("stage: semantic_ir");
     println!("document_key: {}", ir.document_identity.document_key);
@@ -282,6 +643,12 @@ fn validate_semantic_ir(ir: &SemanticIr) {
 
     println!("=== Semantic Records ===");
     println!("  actors: {}", ir.actors.len());
+    println!(
+        "  actor_signal_relations: {}",
+        ir.actor_signal_relations.len()
+    );
+    println!("  actor_ports: {}", ir.actor_ports.len());
+    println!("  signal_connectivity: {}", ir.signal_connectivity.len());
     println!("  interfaces: {}", ir.interfaces.len());
     println!("  invariants: {}", ir.invariants.len());
     println!(
@@ -318,9 +685,138 @@ fn validate_semantic_ir(ir: &SemanticIr) {
     for rd in &ir.residual_decisions {
         println!("  - [{}] {}", rd.packet_id, rd.question);
     }
+
+    let missing_producer_signals: Vec<String> = ir
+        .signal_connectivity
+        .iter()
+        .filter(|record| record.producer_actor_ids.is_empty())
+        .map(|record| record.signal_name.clone())
+        .collect();
+    let missing_consumer_signals: Vec<String> = ir
+        .signal_connectivity
+        .iter()
+        .filter(|record| record.consumer_actor_ids.is_empty())
+        .map(|record| record.signal_name.clone())
+        .collect();
+    let missing_direction_count = total_signals.saturating_sub(with_direction);
+
+    let mut findings = Vec::new();
+    if !ir.actor_signal_relations.is_empty() && ir.actor_ports.is_empty() {
+        findings.push(finding(
+            "semantic_actor_ports_missing",
+            ValidationFindingSeverity::Error,
+            "knowledge_graph",
+            "SemanticIR carries actor-signal relations but failed to synthesize actor-relative ports",
+            Vec::new(),
+        ));
+    }
+    if !missing_producer_signals.is_empty() {
+        findings.push(finding(
+            "semantic_connectivity_missing_producer",
+            ValidationFindingSeverity::Warning,
+            "signal_connectivity",
+            format!(
+                "{} signal(s) in SemanticIR connectivity have no resolved producer actor",
+                missing_producer_signals.len()
+            ),
+            missing_producer_signals.iter().take(8).cloned().collect(),
+        ));
+    }
+    if !missing_consumer_signals.is_empty() {
+        findings.push(finding(
+            "semantic_connectivity_missing_consumer",
+            ValidationFindingSeverity::Warning,
+            "signal_connectivity",
+            format!(
+                "{} signal(s) in SemanticIR connectivity have no resolved consumer actor",
+                missing_consumer_signals.len()
+            ),
+            missing_consumer_signals.iter().take(8).cloned().collect(),
+        ));
+    }
+    if missing_direction_count > 0 {
+        findings.push(finding(
+            "semantic_compat_direction_hints_incomplete",
+            ValidationFindingSeverity::Info,
+            "compatibility_surface",
+            format!(
+                "{missing_direction_count} interface signal record(s) still lack flat compatibility direction hints"
+            ),
+            Vec::new(),
+        ));
+    }
+    if !ir.residual_decisions.is_empty() {
+        findings.push(finding(
+            "semantic_residual_decisions_present",
+            ValidationFindingSeverity::Warning,
+            "residual_decisions",
+            format!(
+                "SemanticIR still carries {} residual decision packet(s)",
+                ir.residual_decisions.len()
+            ),
+            ir.residual_decisions
+                .iter()
+                .map(|packet| packet.packet_id.clone())
+                .collect(),
+        ));
+    }
+
+    let report = ValidationReportRecord {
+        report_id: format!("validation_semantic_ir_{artifact_fingerprint}"),
+        validated_stage: IrStage::SemanticIr,
+        artifact_fingerprint,
+        summary: format!(
+            "SemanticIR validation for {} with {} finding(s)",
+            ir.document_identity.display_name,
+            findings.len()
+        ),
+        overall_score: None,
+        grade: None,
+        metrics: vec![
+            metric("total_signal_records", total_signals.to_string()),
+            metric("with_direction", with_direction.to_string()),
+            metric("with_width", with_width.to_string()),
+            metric("fully_typed", fully_typed.to_string()),
+            metric("actors", ir.actors.len().to_string()),
+            metric(
+                "actor_signal_relations",
+                ir.actor_signal_relations.len().to_string(),
+            ),
+            metric("actor_ports", ir.actor_ports.len().to_string()),
+            metric(
+                "signal_connectivity",
+                ir.signal_connectivity.len().to_string(),
+            ),
+            metric("interfaces", ir.interfaces.len().to_string()),
+            metric("invariants", ir.invariants.len().to_string()),
+            metric(
+                "symbol_definitions",
+                ir.symbol_definitions.len().to_string(),
+            ),
+            metric("regular_states", ir.regular_states.len().to_string()),
+            metric("state_transitions", ir.state_transitions.len().to_string()),
+            metric("register_records", ir.register_records.len().to_string()),
+            metric(
+                "timing_constraints",
+                ir.timing_constraints.len().to_string(),
+            ),
+            metric(
+                "signal_constraints",
+                ir.signal_constraints.len().to_string(),
+            ),
+            metric("conditional_rules", ir.conditional_rules.len().to_string()),
+            metric(
+                "residual_decisions",
+                ir.residual_decisions.len().to_string(),
+            ),
+        ],
+        findings,
+    };
+    print_validation_findings(&report);
+    report
 }
 
-fn validate_intent_ir(ir: &IntentIr) {
+fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> ValidationReportRecord {
     println!("command: validate");
     println!("stage: intent_ir");
     println!("document_key: {}", ir.document_identity.document_key);
@@ -380,6 +876,12 @@ fn validate_intent_ir(ir: &IntentIr) {
 
     println!("=== Intent Records ===");
     println!("  actors: {}", ir.actors.len());
+    println!(
+        "  actor_signal_relations: {}",
+        ir.actor_signal_relations.len()
+    );
+    println!("  actor_ports: {}", ir.actor_ports.len());
+    println!("  signal_connectivity: {}", ir.signal_connectivity.len());
     println!("  behaviors: {}", ir.behaviors.len());
     println!("  constraints: {}", ir.constraints.len());
     println!("  assumptions: {}", ir.assumptions.len());
@@ -468,6 +970,147 @@ fn validate_intent_ir(ir: &IntentIr) {
     for rd in &ir.residual_decisions {
         println!("  - [{}] {}", rd.packet_id, rd.question);
     }
+
+    let missing_producer_signals: Vec<String> = ir
+        .signal_connectivity
+        .iter()
+        .filter(|record| record.producer_actor_ids.is_empty())
+        .map(|record| record.signal_name.clone())
+        .collect();
+    let missing_consumer_signals: Vec<String> = ir
+        .signal_connectivity
+        .iter()
+        .filter(|record| record.consumer_actor_ids.is_empty())
+        .map(|record| record.signal_name.clone())
+        .collect();
+
+    let mut findings = Vec::new();
+    if !ir.actor_signal_relations.is_empty() && ir.actor_ports.is_empty() {
+        findings.push(finding(
+            "intent_actor_ports_missing",
+            ValidationFindingSeverity::Error,
+            "knowledge_graph",
+            "IntentIR carries actor-signal relations but no actor-relative ports",
+            Vec::new(),
+        ));
+    }
+    if !missing_producer_signals.is_empty() {
+        findings.push(finding(
+            "intent_connectivity_missing_producer",
+            ValidationFindingSeverity::Warning,
+            "signal_connectivity",
+            format!(
+                "{} signal(s) in IntentIR connectivity have no resolved producer actor",
+                missing_producer_signals.len()
+            ),
+            missing_producer_signals.iter().take(8).cloned().collect(),
+        ));
+    }
+    if !missing_consumer_signals.is_empty() {
+        findings.push(finding(
+            "intent_connectivity_missing_consumer",
+            ValidationFindingSeverity::Warning,
+            "signal_connectivity",
+            format!(
+                "{} signal(s) in IntentIR connectivity have no resolved consumer actor",
+                missing_consumer_signals.len()
+            ),
+            missing_consumer_signals.iter().take(8).cloned().collect(),
+        ));
+    }
+    if !ir.actor_ports.is_empty() && with_direction < declared_count {
+        findings.push(finding(
+            "intent_compat_direction_hints_lag_graph",
+            ValidationFindingSeverity::Info,
+            "compatibility_surface",
+            format!(
+                "{} declared signal record(s) still lack flat compatibility direction hints even though actor-relative ports exist",
+                declared_count.saturating_sub(with_direction)
+            ),
+            Vec::new(),
+        ));
+    }
+    if score < 90.0 {
+        findings.push(finding(
+            "intent_quality_below_excellent_threshold",
+            ValidationFindingSeverity::Warning,
+            "quality_score",
+            format!("IntentIR quality score is {score:.0}/100 ({grade})"),
+            Vec::new(),
+        ));
+    }
+    if !ir.residual_decisions.is_empty() {
+        findings.push(finding(
+            "intent_residual_decisions_present",
+            ValidationFindingSeverity::Warning,
+            "residual_decisions",
+            format!(
+                "IntentIR still carries {} residual decision packet(s)",
+                ir.residual_decisions.len()
+            ),
+            ir.residual_decisions
+                .iter()
+                .map(|packet| packet.packet_id.clone())
+                .collect(),
+        ));
+    }
+
+    let report = ValidationReportRecord {
+        report_id: format!("validation_intent_ir_{artifact_fingerprint}"),
+        validated_stage: IrStage::IntentIr,
+        artifact_fingerprint,
+        summary: format!(
+            "IntentIR validation for {} with {} finding(s)",
+            ir.document_identity.display_name,
+            findings.len()
+        ),
+        overall_score: Some(score.round() as u32),
+        grade: Some(grade.to_string()),
+        metrics: vec![
+            metric("declared_signal_records", declared_count.to_string()),
+            metric("heuristic_signal_records", heuristic_signals.to_string()),
+            metric("with_direction", with_direction.to_string()),
+            metric("with_width", with_width.to_string()),
+            metric("actors", ir.actors.len().to_string()),
+            metric(
+                "actor_signal_relations",
+                ir.actor_signal_relations.len().to_string(),
+            ),
+            metric("actor_ports", ir.actor_ports.len().to_string()),
+            metric(
+                "signal_connectivity",
+                ir.signal_connectivity.len().to_string(),
+            ),
+            metric("behaviors", ir.behaviors.len().to_string()),
+            metric("constraints", ir.constraints.len().to_string()),
+            metric("assumptions", ir.assumptions.len().to_string()),
+            metric(
+                "symbol_definitions",
+                ir.symbol_definitions.len().to_string(),
+            ),
+            metric("regular_states", ir.regular_states.len().to_string()),
+            metric("state_transitions", ir.state_transitions.len().to_string()),
+            metric("register_records", ir.register_records.len().to_string()),
+            metric(
+                "timing_constraints",
+                ir.timing_constraints.len().to_string(),
+            ),
+            metric(
+                "signal_constraints",
+                ir.signal_constraints.len().to_string(),
+            ),
+            metric("conditional_rules", ir.conditional_rules.len().to_string()),
+            metric(
+                "residual_decisions",
+                ir.residual_decisions.len().to_string(),
+            ),
+            metric("overall_score", format!("{score:.0}")),
+            metric("grade", grade.to_string()),
+        ],
+        findings,
+    };
+    print_validation_findings(&report);
+    report
 }
 
 fn sorted_by_value<'a>(map: &'a HashMap<&str, usize>) -> Vec<(&'a &'a str, &'a usize)> {
@@ -502,6 +1145,35 @@ mod tests {
         run(ValidateArgs {
             artifact: source_ir.artifact_layout.source_ir_path,
         })
+    }
+
+    #[test]
+    fn validate_source_ir_backannotates_artifact_and_writes_sidecar() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Spec\nSome content.\n")?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+
+        let artifact_path = source_ir.artifact_layout.source_ir_path.clone();
+        run(ValidateArgs {
+            artifact: artifact_path.clone(),
+        })?;
+
+        let reloaded = SourceIr::load_from_path(&artifact_path)?;
+        assert_eq!(reloaded.validation_reports.len(), 1);
+        assert_eq!(
+            reloaded.validation_reports[0].validated_stage,
+            IrStage::SourceIr
+        );
+        assert!(
+            validation_report_path_for(&artifact_path)?.exists(),
+            "expected stage-local validation_report.json sidecar to exist"
+        );
+
+        Ok(())
     }
 
     #[test]
@@ -590,5 +1262,55 @@ mod tests {
         run(ValidateArgs {
             artifact: intent_ir.artifact_layout.intent_ir_path,
         })
+    }
+
+    #[test]
+    fn validate_intent_ir_backannotates_current_score_into_artifact() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(
+            &source,
+            "# Spec\nSignal DATA_IN is input width 8.\n\nSignal DATA_OUT is output width 8.\n\nBlock pass: DATA_OUT = DATA_IN.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+        intent_ir.write_to_disk()?;
+
+        let artifact_path = intent_ir.artifact_layout.intent_ir_path.clone();
+        run(ValidateArgs {
+            artifact: artifact_path.clone(),
+        })?;
+
+        let reloaded = IntentIr::load_from_path(&artifact_path)?;
+        assert_eq!(reloaded.validation_reports.len(), 1);
+        let report = &reloaded.validation_reports[0];
+        assert_eq!(report.validated_stage, IrStage::IntentIr);
+        assert!(report.overall_score.is_some());
+        assert!(report.grade.is_some());
+        assert!(
+            validation_report_path_for(&artifact_path)?.exists(),
+            "expected stage-local validation_report.json sidecar to exist"
+        );
+
+        Ok(())
     }
 }

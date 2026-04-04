@@ -41,14 +41,17 @@
 - Form 1 backannotation and Form 2 signal alias learning implemented: Done
 - Markdown-marker alias garbage filter in `specforge nlp-enrich`: Done
 - Tier 2 actor-signal relation extraction from prose and signal-description tables implemented: Done
+- Actor-relative KG carry-through into `SemanticIR` / `IntentIR` (`actor_signal_relations`, `actor_ports`, `signal_connectivity`) implemented: Done
 - Convergent EvidenceIR enrichment for anchored encodings and prose polarity implemented: Done
 - `WidthHint` / parametric-width support propagated through the IR pipeline: Done
 - AMBA `Source` / `Driver` / `Destination` signal-table direction handling implemented: Done
-- Refreshed AHB/APB/AXI validation baseline recorded (APB 90, AHB 95, AXI 90): Done
-- Test suite expanded to 100 tests; all passing: Done
+- `generated/` artifacts removed from git tracking and ignored by default: Done
+- Latest local APB/AHB/AXI validation snapshot recorded (APB 95, AHB 95, AXI 89): Done
+- IR-stage validation back-annotation and stage-local `validation_report.json` artifacts implemented: Done
+- Test suite expanded to 106 tests; all passing: Done
 - SystemVerilog/Verilog/VHDL adapters implemented: Not Started
-- Validation back-annotation and artifact-linked reports: Not Started
-- Actor-relative direction model in `SemanticIR` / `IntentIR`: Not Started
+- Live-doc projection of validation findings and adapter validation: Not Started
+- Actor-relative direction model in `SemanticIR` / `IntentIR`: In Progress
 
 ## Highest-priority remaining gap
-- Build validation back-annotation and artifact-linked reports on top of the now loop-backed staged IR surface; actor-relative direction modeling remains the next larger architectural step before downstream RTL adapters
+- Project validation findings into the live docs on top of the now loop-backed staged IR surface, then finish replacing compatibility `direction_hint` usage with the actor-relative graph as the primary downstream signal model

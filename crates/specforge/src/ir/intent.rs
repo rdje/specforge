@@ -7,13 +7,14 @@ use serde::{Deserialize, Serialize};
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::semantic::{
-    ConditionalRuleRecord, ControlBlockRecord, DecisionTreeFragmentRecord, ExplicitModuleRecord,
-    ExplicitTopRecord, InitAssignmentRecord, InterfaceRecord, RegisterRecord, RegularStateRecord,
-    SemanticIr, SignalConstraintRecord, StateTransitionRecord, SymbolDefinitionRecord,
-    SystemContractRecord, TimingConstraintRecord,
+    ActorPortRecord, ConditionalRuleRecord, ControlBlockRecord, DecisionTreeFragmentRecord,
+    ExplicitModuleRecord, ExplicitTopRecord, InitAssignmentRecord, InterfaceRecord, RegisterRecord,
+    RegularStateRecord, SemanticIr, SignalConnectivityRecord, SignalConstraintRecord,
+    StateTransitionRecord, SymbolDefinitionRecord, SystemContractRecord, TimingConstraintRecord,
 };
 use crate::ir::source::{
-    AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket, document_key,
+    ActorSignalRelation, AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket,
+    ValidationReportRecord, document_key,
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -25,6 +26,12 @@ pub struct IntentIr {
     pub document_identity: IntentDocumentIdentity,
     pub intent_identity: IntentIdentity,
     pub actors: Vec<IntentActor>,
+    #[serde(default)]
+    pub actor_signal_relations: Vec<ActorSignalRelation>,
+    #[serde(default)]
+    pub actor_ports: Vec<ActorPortRecord>,
+    #[serde(default)]
+    pub signal_connectivity: Vec<SignalConnectivityRecord>,
     #[serde(default)]
     pub interfaces: Vec<InterfaceRecord>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -61,6 +68,8 @@ pub struct IntentIr {
     #[serde(default)]
     pub conditional_rules: Vec<ConditionalRuleRecord>,
     pub residual_decisions: Vec<ResidualDecisionPacket>,
+    #[serde(default)]
+    pub validation_reports: Vec<ValidationReportRecord>,
 }
 
 impl IntentIr {
@@ -95,6 +104,9 @@ impl IntentIr {
         };
 
         let context = IntentContext::from_semantic_ir(&semantic_ir);
+        let actor_signal_relations = semantic_ir.actor_signal_relations.clone();
+        let actor_ports = semantic_ir.actor_ports.clone();
+        let signal_connectivity = semantic_ir.signal_connectivity.clone();
         let interfaces = semantic_ir.interfaces.clone();
         let system_contract = semantic_ir.system_contract.clone();
         let actors = build_intent_actors(&context);
@@ -141,6 +153,9 @@ impl IntentIr {
             document_identity,
             intent_identity,
             actors,
+            actor_signal_relations,
+            actor_ports,
+            signal_connectivity,
             interfaces,
             system_contract,
             behaviors,
@@ -159,6 +174,7 @@ impl IntentIr {
             signal_constraints,
             conditional_rules,
             residual_decisions,
+            validation_reports: Vec::new(),
         })
     }
 
@@ -194,6 +210,8 @@ pub struct IntentIdentity {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct IntentActor {
     pub actor_id: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub actor_name: Option<String>,
     pub responsibilities: Vec<String>,
     pub supporting_actor_ids: Vec<String>,
 }
@@ -240,6 +258,7 @@ impl IntentContext {
             .iter()
             .map(|actor| SemanticActorContext {
                 actor_id: actor.actor_id.clone(),
+                actor_name: actor.actor_name.clone(),
                 role_summary: actor.role_summary.clone(),
                 supporting_statement_ids: actor.supporting_statement_ids.clone(),
                 supporting_section_ids: actor.supporting_section_ids.clone(),
@@ -316,6 +335,7 @@ impl IntentContext {
 #[derive(Debug, Clone)]
 struct SemanticActorContext {
     actor_id: String,
+    actor_name: Option<String>,
     role_summary: String,
     supporting_statement_ids: Vec<String>,
     supporting_section_ids: Vec<String>,
@@ -428,6 +448,7 @@ fn build_intent_actors(context: &IntentContext) -> Vec<IntentActor> {
 
         actors.push(IntentActor {
             actor_id: actor.actor_id.clone(),
+            actor_name: actor.actor_name.clone(),
             responsibilities: responsibilities.into_iter().collect(),
             supporting_actor_ids: vec![actor.actor_id.clone()],
         });
@@ -1258,6 +1279,68 @@ mod tests {
                 .summary
                 .contains("state transitions")
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn carries_actor_relative_ports_and_connectivity_into_intent_ir() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("kg_intent.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            "# Protocol\nSignal PREADY is output width 1.\n\nThe Completer drives PREADY.\n\nThe Requester reads PREADY.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        assert_eq!(
+            intent_ir.actor_signal_relations.len(),
+            semantic_ir.actor_signal_relations.len()
+        );
+        assert_eq!(intent_ir.actor_ports.len(), semantic_ir.actor_ports.len());
+        assert_eq!(
+            intent_ir.signal_connectivity.len(),
+            semantic_ir.signal_connectivity.len()
+        );
+        assert!(intent_ir.actors.iter().any(|actor| {
+            actor
+                .actor_name
+                .as_deref()
+                .map(|name| name.eq_ignore_ascii_case("Completer"))
+                .unwrap_or(false)
+        }));
+        assert!(intent_ir.actor_ports.iter().any(|port| {
+            port.actor_name.eq_ignore_ascii_case("Requester") && port.signal_name == "PREADY"
+        }));
+        assert!(intent_ir.signal_connectivity.iter().any(|record| {
+            record.signal_name == "PREADY"
+                && record
+                    .producer_actor_names
+                    .iter()
+                    .any(|name| name.eq_ignore_ascii_case("Completer"))
+        }));
 
         Ok(())
     }

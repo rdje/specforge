@@ -22,71 +22,66 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `1a5f7bc`
-- latest_commit_brief_message: `fix(ingest): broader timing_diagram classification for figure captions`
-- note: this is the pre-commit baseline; after the next commit, refresh this section again so it points at the newly created commit
+- latest_commit_hash: `e8aae43`
+- latest_commit_brief_message: `feat(core): add convergent IR pipeline loop`
+- note: current uncommitted work is the first `R15` carry-through slice that preserves the actor-relative KG in `SemanticIR` / `IntentIR`
 
 ## Recent commit chain (last 5)
+- `e8aae43` feat(core): add convergent IR pipeline loop
+- `0ab3b02` fix(nlp): filter markdown alias markers
+- `2c9bd30` feat(evidence): converge extraction and refresh AMBA artifacts
 - `1a5f7bc` fix(ingest): broader timing_diagram classification for figure captions
 - `a264144` fix(ingest): caption-gated signal_description classification
-- `dc3b34d` fix(evidence): row-scan contract detection, immune to Docling column-ordering bugs
-- `3e6ab6c` fix(evidence): header-clue + positional column detection; AMBA 5 direction mapping
-- `c8915fa` feat(ir): WidthHint enum — parametric widths + table width map for KG synthesis
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- runnable CLI surface includes `inspect`, `ingest`, `evidence`, `semantic`, `intent`, `adapt`, `enrich`, `validate`, and `nlp-enrich`
+- runnable CLI surface includes `inspect`, `converge`, `ingest`, `evidence`, `semantic`, `intent`, `adapt`, `enrich`, `validate`, and `nlp-enrich`
 - canonical generated artifact roots are under `generated/source_ir/`, `generated/evidence_ir/`, `generated/semantic_ir/`, and `generated/intent_ir/`
+- `generated/` is git-ignored and intentionally untracked; continuity must live in docs, not versioned artifacts
 - `subs/fsmgen/` is a local read-only reference checkout for `.fsm` behavior
 
 ## Completed technical work in this session
-- followed the repo bootstrap contract from `README.md` into `SESSION_BOOTSTRAP.md`, reviewed the live docs, and inspected the current Rust codebase/CLI surface against the documented architecture
-- `crates/specforge/src/commands/nlp_enrich.rs` now rejects alias subjects beginning with markdown/table markers `-`, `|`, or `#`, closing the remaining Form 2 alias-garbage cleanup in `extract_alias_phrase()`
-- regression test added:
-  - `extract_alias_phrase_rejects_markdown_marker_prefixes`
+- landed the first `R15` slice:
+  - `SemanticIR` now preserves `actor_signal_relations`, `actor_ports`, and `signal_connectivity`
+  - `IntentIR` now preserves the same actor-relative KG surface as canonical output
+  - `ActorRecord` / `IntentActor` now preserve grounded actor names when relation evidence exists
+  - `specforge validate` now reports KG-native counts for `SemanticIR` / `IntentIR`
+- landed the next `R7` slice:
+  - `specforge validate` now writes a deterministic `validation_report.json` sidecar for each IR-stage artifact
+  - the validated artifact now stores the latest report in `validation_reports`
+  - validation findings are now graph-aware for the actor-relative KG surface
+- live docs were refreshed so roadmap/status/analysis reflect:
+  - latest local APB/AHB/AXI snapshot = `95 / 95 / 89`
+  - actor-relative KG carry-through is now `In Progress`, not `Not Started`
+  - IR-stage validation backannotation is now implemented
+  - test suite = `106` passing
 - validation completed:
-  - `cargo test --manifest-path Cargo.toml` → 99 passed
-  - `cargo run -p specforge -- --help` → passed
-  - `cargo run -p specforge -- inspect README.md` → passed
-  - `cargo run -p specforge -- ingest README.md --dry-run` → passed
-  - `cargo run -p specforge -- ingest README.md` → passed
-  - `cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json --dry-run` → passed
-  - `cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json` → passed
-  - `cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json --dry-run` → passed
-  - `cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json` → passed
-  - `cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json --dry-run` → passed
-  - `cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json` → passed
-  - `cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --target fsm --dry-run` → passed
-- generated README artifacts now exist under:
-  - `generated/source_ir/readme/`
-  - `generated/evidence_ir/readme/`
-  - `generated/semantic_ir/readme/`
-  - `generated/intent_ir/readme/`
+  - `cargo fmt --all` → passed
+  - `cargo test --manifest-path Cargo.toml` → `106` passed
 
 ## Current working tree before commit
 - modified tracked files currently include:
-  - `crates/specforge/src/commands/nlp_enrich.rs`
+  - `crates/specforge/src/commands/validate.rs`
+  - `crates/specforge/src/ir/semantic.rs`
+  - `crates/specforge/src/ir/intent.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
+  - `README.md`
   - `ROADMAP.md`
   - `RUST_CODEBASE_ANALYSIS.md`
   - `MEMORY.md`
-- untracked generated artifacts currently include:
-  - `generated/source_ir/readme/`
-  - `generated/evidence_ir/readme/`
-  - `generated/semantic_ir/readme/`
-  - `generated/intent_ir/readme/`
+- generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. decide whether the untracked README-derived `generated/.../readme/` artifacts should be kept for continuity or removed before any commit
-2. if committing this slice, stage the new fixed-point orchestration files (`crates/specforge/src/commands/converge.rs`, `crates/specforge/src/test_support.rs`) plus the touched CLI/IR/doc files, and only stage the README-derived generated artifacts if intentional versioning is desired
-3. continue the remaining `R7` slice at validation back-annotation, now that the whole-pipeline convergence entrypoint is in place; keep `R15` actor-relative direction modeling as the next larger architectural step
+1. if committing this slice, stage the IR/validator/doc updates for actor-relative KG carry-through; do not stage `generated/`
+2. continue `R7` by projecting the persisted validation findings into the live docs instead of keeping that step manual
+3. continue the remaining `R15` slice by making the actor-relative graph, not compatibility `direction_hint`, the primary downstream direction model
 
 ## Remaining engineering gaps after this commit
-- validation back-annotation and artifact-linked reports (`R7`)
-- actor-relative direction modeling in `SemanticIR` / `IntentIR` (`R15`)
-- downstream interfaces still flatten actor-aware relations too early
+- live-doc projection of validation findings and adapter validation (`R7`)
+- remaining actor-relative direction modeling in `SemanticIR` / `IntentIR` (`R15`)
+- downstream scoring and compatibility paths still rely on flat `direction_hint` more than the new graph-native surface
 - the workspace still emits compile warnings in `ir/adapters.rs` and `ir/semantic.rs`
 
 ## If resuming from an interruption
@@ -96,4 +91,4 @@
 4. read `ROADMAP.md`
 5. read `RUST_CODEBASE_ANALYSIS.md`
 6. inspect `git --no-pager status --short`
-7. continue with validation back-annotation on top of `specforge converge` unless the user redirects
+7. continue with live-doc projection for persisted validation findings unless the user redirects

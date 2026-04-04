@@ -21,23 +21,28 @@
 - a whole-pipeline fixed-point entrypoint now exists via `specforge converge`, which reuses persisted artifacts and stops when the cross-stage knowledge snapshot is stable
 - `SourceIR` now captures structured Docling output, typed content elements, structured tables, visual assets, and document-profile metadata
 - `EvidenceIR` now synthesizes typed declarations and records from tables, preserves typed NLP outputs, persists alias-learning state, extracts actor-signal relation triples from prose and signal-description tables, and runs a monotone convergence loop so discovered enum facts and prose polarity can unlock additional signal constraints without hardcoded protocol-specific value lists
-- `SemanticIR` now lifts that evidence into interfaces, system/reset/init records, control/state records, timing/register records, and filtered NLP constraints, with VLM observations merged into the semantic surface
-- `IntentIR` now carries forward the canonical signal/control/system/state/register/timing surface needed for honest downstream lowering
+- `SemanticIR` now lifts that evidence into interfaces, actor-relative port/connectivity records, system/reset/init records, control/state records, timing/register records, and filtered NLP constraints, with VLM observations merged into the semantic surface
+- `IntentIR` now carries forward the canonical signal/control/system/state/register/timing surface plus the actor-relative KG needed for honest downstream lowering
 - the current `.fsm` adapter slice is real and intentionally narrow: it can emit honest `?dt:name`, `?fsm:name`, and `?top:name` outputs when the canonical facts are explicit enough
 - the enrichment, convergence, and validation toolchain is also real: `specforge enrich`, `specforge nlp-enrich`, `specforge converge`, and `specforge validate` are wired into the CLI and exercised by the workspace tests
-- the remaining dominant gaps are validation back-annotation on the staged IR surface and the downstream actor-relative signal model needed before serious SystemVerilog adapter work
-- the workspace currently validates with `cargo test --manifest-path Cargo.toml`, with 100 passing tests
+- the remaining dominant gaps are live-doc projection of validation findings on the staged IR surface and finishing the transition away from compatibility-only flat direction hints before serious SystemVerilog adapter work
+- the workspace currently validates with `cargo test --manifest-path Cargo.toml`, with 106 passing tests
 
 
-## Session update (2026-04-03)
+## Session update (2026-04-04)
 - `specforge converge` now drives the persisted `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters` path as a fixed-point loop and stops when the materialized knowledge snapshot is stable
 - `EvidenceIr::build()` now preserves compatible alias-learning state, NLP-upgraded statement classes, and structured NLP records across rebuilds so pass `N+1` does not forget pass `N`
 - `EvidenceIr::build()` now uses `converge_evidence_extractions()` instead of a one-shot extraction tail, allowing new enum facts and polarity facts to feed later passes in the same build
 - signal-anchored encoding rescans recover weakly labeled encoding tables without introducing a new hardcoded APB/AHB/AXI value list
-- refreshed current baselines from generated `IntentIR`: APB 90/100 EXCELLENT, AHB 95/100 EXCELLENT, AXI 90/100 GOOD
+- `SemanticIR` now tolerates raw JSON, fenced JSON, and prose-wrapped JSON in VLM timing/state observations, restoring timing/state lift from real Ollama outputs
+- `SemanticIR` / `IntentIR` now preserve the structural KG downstream via `actor_signal_relations`, `actor_ports`, and `signal_connectivity`, so actor-aware evidence is no longer trapped in `EvidenceIR`
+- `specforge validate` now writes deterministic stage-local `validation_report.json` sidecars and backannotates the current report into `validation_reports` on `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR`
+- `generated/` is now intentionally git-ignored and untracked, so local validation snapshots must be recorded in the live docs instead of relying on versioned artifacts
+- latest local validation snapshot is now APB 95/100 EXCELLENT, AHB 95/100 EXCELLENT, AXI 89/100 GOOD
+- APB `IHI0024_D` was re-run from the original PDF through full `specforge converge` with Ollama VLM + NLP Level 3 and converged in 2 passes
 - `extract_alias_phrase()` now rejects markdown/table marker prefixes `-`, `|`, and `#`, closing the last small R12 cleanup in the NLP alias-learning loop
 - the documented README staged flow was re-executed on `README.md` through `inspect -> ingest -> evidence -> semantic -> intent -> adapt --dry-run`, confirming the current entry path still runs end-to-end
-- the dominant architectural gap remains downstream actor-relative signal modeling; the next workflow gap is validation back-annotation on the staged IR surface
+- the next workflow gap is projecting validation findings into the live docs; the next structural KG gap is making the actor-relative graph, rather than compatibility `direction_hint`, the primary downstream direction model
 
 ## Observed current state
 ### Repository contents directly observed
@@ -83,8 +88,8 @@
 - no additional real builders beyond the current `SourceIR`/`EvidenceIR`/`SemanticIR`/`IntentIR` slices and the first `.fsm` adapter slice
 
 ### Immediate implication
-- the codebase is no longer mostly scaffolding; the main open problem is how to preserve and exploit actor-relative signal semantics cleanly downstream
-- the practical risk is architectural flattening: `EvidenceIR` now knows more about actor/signal relations than `SemanticIR` and `IntentIR` currently expose directly
+- the codebase is no longer mostly scaffolding; the main open problem is how to finish making the actor-relative graph the default downstream signal model
+- the practical risk is partial dual-surface drift: `SemanticIR` and `IntentIR` now expose both graph-native actor-relative records and legacy flat `direction_hint` fields, and the latter still drive some scoring and compatibility paths
 
 ## What the tool needs to do
 - build `SourceIR` from raw specifications and normalized artifacts
@@ -174,8 +179,8 @@
 
 ### What is still insufficient
 - only the `.fsm` adapter is implemented today; SystemVerilog, Verilog, and VHDL adapters are still absent
-- validation exists, but validation back-annotation into persisted IR artifacts and live docs is still absent
-- the actor-signal relation graph is extracted in `EvidenceIR`, but downstream interface records still flatten that information into actor-agnostic `direction_hint` values
+- validation now backannotates persisted IR artifacts and writes stage-local sidecars, but live-doc projection is still absent
+- the actor-signal relation graph now survives into `SemanticIR` / `IntentIR`, but legacy interface records still flatten some downstream consumers onto actor-agnostic `direction_hint` values
 - the workspace still emits five compiler warnings in normal `cargo test` / `cargo run` flows: five dead-code helpers across `ir/adapters.rs` and `ir/semantic.rs`
 - the current renderable `.fsm` slices are intentionally narrow: they handle explicit standalone combinational/sequential DT control, canonical symbol-definition sections, structured reset-role blocks, selector/test-node branches, compound-update shorthand, explicit structured FSM-root cases, and explicit top-root composition, while broader unsupported selector/predicate shapes and non-FSM backends stay deferred
 
@@ -191,11 +196,11 @@
 
 ### Recommended growth path from the current codebase
 #### Keep in the current crate for the next slices
-- build the validation/back-annotation pipeline for staged IR and adapter artifacts
-- promote the downstream signal-direction model from flat hints to actor-relative semantics before serious SystemVerilog adapter work
+- build live-doc projection on top of the new validation backannotation pipeline for staged IR and adapter artifacts
+- finish moving the downstream signal-direction model from compatibility flat hints to actor-relative semantics before serious SystemVerilog adapter work
 - keep compatibility-level `?mod:name` / `?module:name` spellings outside the adapter root-kind model until a real backend-neutral direct-module distinction exists
 - keep any new composition/control enrichment backend-neutral so the canonical model boundary stays intact
-- keep the refreshed APB/AHB/AXI 90/95/90 baseline stable as follow-on work lands
+- keep the latest local APB/AHB/AXI 95/95/89 snapshot visible as follow-on work lands, and replace the AXI number after a full original-PDF converge rerun
 
 #### Split into dedicated crates when pressure becomes real
 - `specforge-source`
@@ -236,9 +241,9 @@
 - dependency:
   - requires real `EvidenceIR`
 - current executable behavior:
-  - builds `SemanticIR` from persisted `EvidenceIR`, deriving actors, interfaces, typed signal records, backend-neutral control fragments, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions
+  - builds `SemanticIR` from persisted `EvidenceIR`, deriving actors, actor-relative port/connectivity records, interfaces, typed signal records, backend-neutral control fragments, phases, invariants, contracts, gates, abstractions, decomposition candidates, and residual decisions
   - merges VLM timing/state observations and filters NLP outputs through the declared-signal gate
-  - still represents interface directions as actor-agnostic hints rather than a true actor-relative graph
+  - now preserves `actor_signal_relations`, `actor_ports`, and `signal_connectivity`, but still keeps compatibility-level actor-agnostic `direction_hint` values on interface records
 
 ### IntentIR
 - current declared ownership:
@@ -271,7 +276,7 @@
   - emits a real structured `?fsm:name` file only when the state graph, transition targets, and state-body control are explicit enough to avoid semantic invention
   - emits a real explicit `?top:name` source document only when the top ports, child modules, and links are explicit enough to avoid semantic invention
 - next real implementation target:
-  - finish validation/back-annotation on the current staged IR and `.fsm` adapter artifact surface, then move the signal model toward actor-relative semantics before adding non-FSM adapters
+  - finish live-doc projection on top of the current staged IR validation surface, then complete the transition to graph-first actor-relative direction semantics before adding non-FSM adapters
 
 ## Major risks
 ### Risk: backend leakage into IntentIR
@@ -359,5 +364,5 @@
 - keep the current single-crate workspace for one more slice
 - keep `IntentIR` canonical and resist any temptation to make `.fsm` the hidden endpoint again
 - take the alias-marker cleanup as complete and treat it as evidence that the current multi-spec extraction stack is ready for the next slice
-- build validation/back-annotation on the current staged IR surface next, then promote the signal model toward actor-relative direction semantics before downstream RTL adapter work
+- build live-doc projection on top of the current staged IR validation surface next, then finish promoting the signal model from compatibility hints to actor-relative direction semantics before downstream RTL adapter work
 - do not treat NLP Level 3 as the missing piece anymore; the pipeline now has both Level 3 enrichment and convergent typed EvidenceIR reuse

@@ -1,5 +1,49 @@
 # CHANGES
 
+## 2026-04-04 (validation back-annotation on IR artifacts)
+
+### Added: persisted validation reports for the four IR stages
+- `specforge validate <artifact>` now writes a deterministic `validation_report.json` sidecar next to `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR` artifacts
+- the same validation report is now backannotated into the artifact itself via a `validation_reports` field
+- `SemanticIR` / `IntentIR` validation findings now include graph-aware checks for missing producers, missing consumers, and compatibility-surface lag relative to the actor-relative KG
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 106/106 passed
+
+## 2026-04-04 (actor-relative KG carry-through into SemanticIR / IntentIR)
+
+### Added: downstream preservation of the structural knowledge graph
+- `SemanticIR` now preserves the extracted actor-signal graph via:
+  - `actor_signal_relations`
+  - `actor_ports`
+  - `signal_connectivity`
+- `IntentIR` now carries the same actor-relative KG surface forward as canonical output instead of forcing downstream consumers to rediscover relation evidence from `EvidenceIR`
+- actor records now preserve grounded actor names when relation evidence makes them explicit
+
+### Changed: validation now surfaces KG-native counts
+- `specforge validate` now reports actor-signal relation, actor-port, and signal-connectivity counts for `SemanticIR` and `IntentIR`
+- flat `direction_hint` fields remain as a compatibility surface, but they are no longer the only downstream representation of signal direction semantics
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 104/104 passed
+
+## 2026-04-04 (continuity sync + local validation snapshot)
+
+### Changed: live continuity docs now reflect the current post-converge state
+- Updated the live documentation surface so crash recovery and handoff notes match the current repository status after the converge/VLM work.
+- `generated/` is now treated as a local artifact root only: artifacts still materialize there, but the directory is git-ignored and no longer versioned.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml` → 102/102 passed
+- Current local validation snapshot:
+  - APB `IHI0024_D`: 95/100 EXCELLENT after a full original-PDF `specforge converge` run with Ollama VLM + NLP Level 3; converged in 2 passes
+  - AHB `IHI0033_C`: 95/100 EXCELLENT from the current local `IntentIR` snapshot
+  - AXI `IHI0022_L`: 89/100 GOOD from the current local `IntentIR` snapshot
+- Current AXI caveat:
+  - the local AXI `SourceIR` has 20 timing diagrams classified, but the current local artifact still lacks persisted VLM timing enrichment, so timing remains the most obvious remaining score gap
+
 ## 2026-04-03 (whole-pipeline converge command + preserved loopback knowledge)
 
 ### Added: `specforge converge`

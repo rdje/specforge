@@ -447,6 +447,56 @@ pub struct DocumentProfile {
     pub section_count: u32,
 }
 
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum ValidationFindingSeverity {
+    Info,
+    Warning,
+    Error,
+}
+
+impl ValidationFindingSeverity {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Info => "info",
+            Self::Warning => "warning",
+            Self::Error => "error",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ValidationMetricRecord {
+    pub name: String,
+    pub value: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ValidationFindingRecord {
+    pub finding_id: String,
+    pub severity: ValidationFindingSeverity,
+    pub category: String,
+    pub summary: String,
+    #[serde(default)]
+    pub related_ids: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ValidationReportRecord {
+    pub report_id: String,
+    pub validated_stage: IrStage,
+    pub artifact_fingerprint: String,
+    pub summary: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub overall_score: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub grade: Option<String>,
+    #[serde(default)]
+    pub metrics: Vec<ValidationMetricRecord>,
+    #[serde(default)]
+    pub findings: Vec<ValidationFindingRecord>,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct SourceIr {
     pub schema_version: u32,
@@ -475,6 +525,8 @@ pub struct SourceIr {
     pub document_profile: Option<DocumentProfile>,
     pub placeholder_bindings: Vec<PlaceholderBinding>,
     pub residual_decisions: Vec<ResidualDecisionPacket>,
+    #[serde(default)]
+    pub validation_reports: Vec<ValidationReportRecord>,
     pub downstream_stages: Vec<IrStage>,
     pub adapter_targets: Vec<AdapterTarget>,
     pub planned_actions: Vec<String>,
@@ -621,6 +673,7 @@ impl SourceIr {
             document_profile: None,
             placeholder_bindings: Vec::new(),
             residual_decisions,
+            validation_reports: Vec::new(),
             downstream_stages: vec![IrStage::EvidenceIr, IrStage::SemanticIr, IrStage::IntentIr],
             adapter_targets: vec![
                 AdapterTarget::Fsm,

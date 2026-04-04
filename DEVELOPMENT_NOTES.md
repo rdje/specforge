@@ -232,12 +232,13 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
   - `anchored_encoding_scan_unlocks_dynamic_value_constraint_extraction`
   - `prose_polarity_refines_asserted_constraint_kind`
 - `converge_rebuilds_pipeline_until_snapshot_stabilizes`
-- `cargo test --manifest-path Cargo.toml` now passes with 100 tests
+- `cargo test --manifest-path Cargo.toml` now passes with 102 tests
 - `cargo build --release --manifest-path Cargo.toml` passes
-- refreshed representative validation baselines from generated `IntentIR` artifacts:
-  - APB: 90/100 EXCELLENT
+- refreshed representative local validation snapshots:
+  - APB: 95/100 EXCELLENT
   - AHB: 95/100 EXCELLENT
-  - AXI: 90/100 GOOD
+  - AXI: 89/100 GOOD
+- `generated/` is now git-ignored and intentionally untracked, so these validation snapshots live in the docs rather than in versioned artifacts
 
 ## Markdown-marker alias cleanup (2026-04-03)
 
@@ -251,7 +252,7 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 - Added regression coverage for marker-prefixed alias subjects.
 
 ### Validation
-- `cargo test --manifest-path Cargo.toml` now passes with 99 tests.
+- `cargo test --manifest-path Cargo.toml` now passes with 102 tests.
 - The staged README workflow was re-run end-to-end on `README.md` through:
   - `inspect`
   - `ingest`
@@ -259,11 +260,74 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
   - `semantic`
   - `intent`
   - `.fsm` adapter dry-run
-- The repo entry flow remains executable after the alias cleanup, and the README-derived staged artifacts materialize successfully under `generated/.../readme/`.
+- The repo entry flow remains executable after the alias cleanup, and the README-derived staged artifacts still materialize successfully under `generated/.../readme/` as local ignored outputs.
 
 ### Remaining follow-up
 - validation/back-annotation on staged IR and adapter artifacts is now the next workflow gap
 - the larger downstream architectural gap is still actor-relative direction modeling in `SemanticIR` / `IntentIR`
+
+## Validation back-annotation on IR artifacts (2026-04-04)
+
+### Why this slice landed now
+- the validation command already computed useful stage-aware diagnostics, but they vanished after printing
+- the roadmap required reproducible artifact-linked reports, and the new actor-relative KG surface made graph-aware validation materially more useful
+- the best next `R7` slice was therefore to persist validation state on the four IR stages before attempting automated live-doc projection
+
+### Implementation shape
+- shared validation report types now live in `crates/specforge/src/ir/source.rs`:
+  - `ValidationReportRecord`
+  - `ValidationMetricRecord`
+  - `ValidationFindingRecord`
+  - `ValidationFindingSeverity`
+- `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR` now carry `validation_reports: Vec<ValidationReportRecord>`
+- `crates/specforge/src/commands/validate.rs` now:
+  - computes a deterministic fingerprint for the artifact content with existing validation reports stripped
+  - prints the stage-aware validation summary as before
+  - writes a stage-local `validation_report.json` sidecar next to the artifact
+  - backannotates the latest report into the artifact's `validation_reports` field
+- the semantic/intent validators now emit graph-aware findings for:
+  - signals with no resolved producers
+  - signals with no resolved consumers
+  - compatibility `direction_hint` lag relative to the actor-relative KG
+
+### Validation
+- `cargo fmt --all` passed
+- `cargo test --manifest-path Cargo.toml` now passes with 106 tests
+- new regression coverage landed for:
+  - source-stage validation backannotation + sidecar persistence
+  - intent-stage score backannotation + sidecar persistence
+
+### Remaining follow-up
+- live-doc projection is still manual; validation reports now exist on disk and in the IR, but are not yet auto-summarized into the status docs
+- adapter validation remains outside this slice
+
+## Actor-relative KG carry-through in SemanticIR / IntentIR (2026-04-04)
+
+### Why this slice landed now
+- `EvidenceIR` already held the best structural graph in the pipeline via `actor_signal_relations`
+- leaving that graph trapped in `EvidenceIR` meant later stages still defaulted to actor-agnostic `direction_hint` values
+- the first necessary `R15` slice was therefore to preserve the graph downstream before trying to make adapters depend on it
+
+### Implementation shape
+- `crates/specforge/src/ir/semantic.rs` now carries:
+  - `actor_signal_relations: Vec<ActorSignalRelation>`
+  - `actor_ports: Vec<ActorPortRecord>`
+  - `signal_connectivity: Vec<SignalConnectivityRecord>`
+- `build_actors()` now seeds actor records from relation evidence, preserving grounded actor names when available
+- `crates/specforge/src/ir/intent.rs` now preserves the same actor-relative KG surface as canonical output
+- `crates/specforge/src/commands/validate.rs` now reports actor-signal relation, actor-port, and connectivity counts for `SemanticIR` and `IntentIR`
+- legacy `InterfaceSignalRecord.direction_hint` remains in place as a compatibility surface; it is no longer the only downstream signal-direction representation
+
+### Validation
+- `cargo fmt --all` passed
+- `cargo test --manifest-path Cargo.toml` now passes with 104 tests
+- new regression coverage landed for:
+  - actor-relative port/connectivity construction in `SemanticIR`
+  - actor-relative KG carry-through into `IntentIR`
+
+### Remaining follow-up
+- validation/back-annotation should become graph-aware so missing producers/consumers and contradictory actor relations surface explicitly
+- `direction_hint` still drives some scoring/compatibility paths, so the remaining `R15` work is to make the graph-native actor-relative surface the primary downstream direction model
 
 ## Documentation surface currently steering the implementation
 - `README.md`

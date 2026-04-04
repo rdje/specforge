@@ -8,7 +8,8 @@ use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::source::{
     ActorSignalRelation, ConditionalRuleRecord, RegisterFieldRecord, RegisterRecord, RelationKind,
-    SignalConstraintKind, SignalConstraintRecord, TimingConstraintRecord, WidthHint,
+    SignalConstraintKind, SignalConstraintRecord, TimingConstraintRecord, ValidationReportRecord,
+    WidthHint,
 };
 use crate::ir::source::{
     AutomationConfidence, NormalizationStatus, SectionKind, SourceIr, TableKind, VisualAsset,
@@ -124,6 +125,8 @@ pub struct EvidenceIr {
     /// to reclassify remaining NormativeStatements without LLM calls.
     #[serde(default)]
     pub signal_alias_map: BTreeMap<String, String>,
+    #[serde(default)]
+    pub validation_reports: Vec<ValidationReportRecord>,
 }
 
 impl EvidenceIr {
@@ -458,6 +461,7 @@ impl EvidenceIr {
             conditional_rules,
             actor_signal_relations,
             signal_alias_map: BTreeMap::new(),
+            validation_reports: Vec::new(),
         };
         evidence_ir.carry_forward_existing_knowledge()?;
 
