@@ -82,6 +82,19 @@
 - the current local AMBA validation baseline is APB 95/100, AHB 95/100, AXI 94/100 after full original-PDF converge runs with Ollama
 - AXI `IHI0022_L` now converges cleanly in 2 outer passes; the old false failure was caused by counting decreasing adapter residual decisions against the monotone knowledge metric
 
+## Roadmap reassessment: semantic truthfulness before adapters
+- the current roadmap spine is correct: `IntentIR` remains the canonical boundary, the four-layer IR split remains the right architecture, and multimodal evidence remains the right extraction strategy
+- the next phase should now be framed explicitly as semantic-truthfulness hardening, because the dominant risk is no longer "can we lower to more targets?" but "how trustworthy is the recovered knowledge?"
+- the near-term sequence should therefore be:
+  - finish making the actor-relative graph the primary downstream signal model
+  - make the clock-tick temporal model explicit in `SemanticIR` / `IntentIR`
+  - make KG-guided multimodal rescans a first-class convergent workstream
+  - add typed evidence arbitration for cross-modality disagreement
+  - add gold fixtures, negative fixtures, and false-positive tracking for the KG
+  - only then push harder Tier 3 relation extraction
+- adapter expansion and adapter validation should be treated as horizon work until the semantic truthfulness program above is materially complete
+- the key principle is that adapters should consume truth, not compensate for missing truth; when the pipeline struggles, the right fix is usually better evidence lifting, better temporal modeling, or better KG evaluation rather than smarter lowering
+
 ## Current repository observations
 - the repository now contains a renamed `specforge` crate and CLI
 - the active Rust codebase no longer treats `spec2fsm` as the primary identity

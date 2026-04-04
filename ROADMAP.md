@@ -4,6 +4,7 @@
 - keep `.fsm`, SystemVerilog, Verilog, and VHDL as adapter targets downstream of `IntentIR`
 - preserve deterministic provenance, typed intermediate data, and explicit residual decisions across all stages
 - treat text, layout, figures, captions, tables, and charts as first-class evidence rather than markdown decoration
+- prioritize semantic truthfulness and KG quality ahead of adapter breadth until the canonical four-layer pipeline is top-notch
 - make the workflow resumable and understandable through live project documentation
 
 ## Canonical pipeline
@@ -92,7 +93,7 @@
   - assumptions, abstractions, and residual decisions remain explicit
 
 ### R6 Adapter layer
-- status: In Progress
+- status: Horizon (minimal `.fsm` slice landed; further adapter expansion is intentionally deferred)
 - goals:
   - define target-specific lowering boundaries for:
     - `.fsm`
@@ -129,7 +130,8 @@
   - validation findings are now graph-aware for the four IR stages, including producer/consumer gaps and compatibility-surface lag on the actor-relative KG
   - `specforge project-validation <artifact>...` now validates the passed artifacts and projects their persisted reports into tracked live docs via `VALIDATION_SNAPSHOT.md` plus a managed validation block in `LIVE_ACHIEVEMENT_STATUS.md`
 - remaining:
-  - adapter validation (SystemVerilog/Verilog/VHDL targets)
+  - extend validation into the upcoming semantic-truthfulness surfaces (temporal rules, arbitration/conflict records, and KG-quality benchmarks)
+  - keep adapter validation (SystemVerilog/Verilog/VHDL targets) as horizon work until the semantic pipeline is materially harder to fool
 
 ### R8 SourceIR SOTA capture (Tier 1 of EXTRACTION_ARCHITECTURE.md)
 - status: Done
@@ -248,12 +250,16 @@
 ### R14 Actor-signal relation extraction: Tier 3 LLM
 - status: Not Started
 - reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md`
+- prerequisites:
+  - graph-first downstream semantics from `R15`
+  - temporal/benchmark hardening from `R15b`–`R15e`
 - goals:
   - add `signal_relation` extraction type to the NLP prompt surface
   - implement `specforge signal-resolve` (or equivalent integrated relation-resolution flow)
   - handle complex sentences where Tier 2 verb patterns do not match cleanly
 - completion criteria:
-  - all three specs (AHB, APB, AXI) score ≥85/100 with honest signal counts
+  - Tier 3 relation extraction improves actor-signal gold-fixture recall on hard prose without materially reducing precision
+  - extracted relation records participate cleanly in the convergent backannotation loop without duplicate inflation or graph drift
   - the relation-resolution workflow is documented in `USER_GUIDE.md`
 
 ### R15 Actor-relative direction model in SemanticIR
@@ -270,14 +276,61 @@
   - `specforge validate` now reports actor-signal relation, actor-port, and connectivity counts for `SemanticIR` / `IntentIR`
 - remaining:
   - make the actor-relative graph, not flat `direction_hint`, the primary downstream signal-direction surface
-  - compute adapter-facing port directions from the actor-relative graph at render time
+  - compute target-actor-relative port directions from the actor-relative graph whenever a downstream consumer needs them
 - completion criteria:
-  - SystemVerilog adapter can generate correct port directions for any actor
+  - downstream consumers can compute correct actor-relative port directions without depending on flat compatibility `direction_hint`
   - `IntentIR` carries a proper directed graph, not a flat list with implicit actor context
 
-### R16 SystemVerilog adapter
+### R15b Explicit clock-tick temporal model in SemanticIR / IntentIR
 - status: Not Started
-- prerequisites: R15 (or an equivalent actor-relative direction surface)
+- reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md`
+- goals:
+  - make the clock-tick mental model explicit in the typed IR, not only implicit in prose-derived timing strings
+  - represent synchronous behavior in terms of pre/post tick phases, clock edges, and cycle windows
+  - unify prose timing, table timing, and VLM timing observations under one canonical temporal-rule surface
+- completion criteria:
+  - a typed temporal-rule representation exists in `SemanticIR` and carries forward into `IntentIR`
+  - APB/AHB/AXI timing behavior can be represented in actor-relative, tick-relative form rather than only as free-form timing text
+  - validation can flag unresolved or contradictory temporal grounding explicitly
+
+### R15c KG-guided multimodal rescans
+- status: Not Started
+- reference: `DEVELOPMENT_NOTES.md`
+- goals:
+  - use known signals, actors, enum members, states, and value atoms as anchors for repeated rescans over tables, prose, and figures
+  - make the KG a search index for the next pass instead of treating each modality as a one-shot extraction source
+  - stop iterating only when backannotated knowledge stabilizes
+- completion criteria:
+  - anchored rescans over tables, prose, and figures are first-class parts of the convergent loop
+  - weakly labeled signal-detail tables and additional polarity/timing/value facts can be recovered from known anchors
+  - convergence reporting counts genuinely new persisted facts instead of duplicate vector growth
+
+### R15d Evidence arbitration and cross-modality conflict resolution
+- status: Not Started
+- goals:
+  - define how table, prose, and figure evidence reinforce or conflict
+  - preserve contradictory evidence explicitly instead of flattening it away
+  - rank evidence by provenance strength and automation confidence without hiding disagreement
+- completion criteria:
+  - a typed arbitration/conflict surface exists for unresolved multimodal disagreements
+  - validation can flag contradictory direction, timing, and value facts
+  - representative APB/AHB/AXI disagreements are inspectable rather than silently overwritten
+
+### R15e KG-quality evaluation and benchmark hardening
+- status: Not Started
+- goals:
+  - move quality assessment beyond aggregate score
+  - add curated gold fixtures, negative fixtures, and precision/recall-style checks for the most important KG surfaces
+  - measure false positives for relations, enums, widths, timing, and structured constraints
+- completion criteria:
+  - curated APB/AHB/AXI gold fixtures exist for actor relations, signal inventory, timing, and structured constraints
+  - negative fixtures exist for alias noise, bogus actor attribution, spurious timing extraction, and table misclassification
+  - roadmap progress is driven by KG accuracy and false-positive control, not only one scalar score
+
+### R16 SystemVerilog adapter (Horizon)
+- status: Horizon
+- prerequisites:
+  - `R15`, `R15b`, `R15c`, `R15d`, `R15e`, and `R14` are materially complete
 - goals:
   - generate a correct SystemVerilog interface from `IntentIR`
   - generate a correct SystemVerilog module template for each actor
@@ -285,11 +338,15 @@
 
 ## Recommended implementation order
 1. Keep `IntentIR` as the canonical product boundary in all code and docs
-2. Complete validation/back-annotation on the current IR surface (R7)
-3. Promote the downstream signal model from flat direction hints to actor-relative semantics (R15)
-4. Extend relation extraction for harder prose with Tier 3 support (R14)
-5. Build the SystemVerilog adapter on top of the actor-relative model (R16)
+2. Finish the graph-first downstream signal model so `direction_hint` is no longer the primary semantic surface (`R15`)
+3. Land the explicit clock-tick temporal model (`R15b`)
+4. Make KG-guided multimodal rescans a first-class convergent workstream (`R15c`)
+5. Add typed evidence arbitration and conflict resolution across modalities (`R15d`)
+6. Harden evaluation with gold fixtures, negative fixtures, and false-positive control (`R15e`)
+7. Extend relation extraction for harder prose with Tier 3 support only after the graph/temporal/eval surfaces are ready (`R14`)
+8. Treat new adapter families and adapter validation as horizon work until the semantic pipeline is materially harder to fool (`R16`)
 
 ## Immediate next milestone
-- R7 remaining slice: extend validation beyond the staged IR surface into downstream adapter artifacts
-- R15 remaining slice: finish the transition from compatibility `direction_hint` fields to actor-relative graph-first downstream semantics
+- `R15`: finish the transition from compatibility `direction_hint` fields to actor-relative graph-first downstream semantics
+- `R15b`: introduce the explicit clock-tick temporal model so behavioral truth is first-class in `SemanticIR` / `IntentIR`
+- `R15c`: make KG-guided multimodal rescans a named workstream in the convergent pipeline

@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `1064bec`
-- latest_commit_brief_message: `feat(converge): default to full ollama loop`
-- note: current uncommitted work is a docs-only steering update that logs multimodal semantic recovery and KG-guided rescans as the preferred implementation direction
+- latest_commit_hash: `ddd2cac`
+- latest_commit_brief_message: `docs: capture multimodal extraction steering`
+- note: current uncommitted work retunes the roadmap and live docs so semantic truthfulness, not adapter breadth, is the explicit near-term program
 
 ## Recent commit chain (last 5)
+- `ddd2cac` docs: capture multimodal extraction steering
 - `1064bec` feat(converge): default to full ollama loop
 - `894c538` feat(validation): project reports into live docs
 - `fc66933` feat(ir): preserve kg and backannotate validation
 - `e8aae43` feat(core): add convergent IR pipeline loop
-- `0ab3b02` fix(nlp): filter markdown alias markers
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -43,29 +43,39 @@
 - `VALIDATION_SNAPSHOT.md` is now a tracked continuity doc refreshed from persisted validation reports
 
 ## Completed technical work in this session
-- logged a new steering principle in `DEVELOPMENT_NOTES.md`:
-  - the project goal is grounded implementation-intent recovery from chip-design PDFs, not PDF parsing for its own sake
-  - tables, figures, and prose are all first-class evidence surfaces
-  - the preferred future tactic is KG-guided staged rescanning until the backannotated knowledge stabilizes
-- updated continuity docs so the steering note is recoverable in future sessions
+- logged a roadmap reassessment in the steering docs:
+  - the roadmap spine is still right, but semantic truthfulness is now the explicit near-term program
+  - graph-first semantics, explicit temporal semantics, KG-guided rescans, evidence arbitration, and KG-quality evaluation were all promoted into the roadmap
+  - adapter expansion and adapter validation were demoted to horizon work
+- updated roadmap/status/analysis/README continuity docs so future sessions are steered by the new priority order instead of stale adapter-first hints
 - validation not run for this task because the change is documentation-only
 
 ## Current working tree before commit
 - modified tracked files currently include:
+  - `ROADMAP.md`
+  - `LIVE_ACHIEVEMENT_STATUS.md`
+  - `RUST_CODEBASE_ANALYSIS.md`
+  - `README.md`
+  - `USER_GUIDE.md`
   - `DEVELOPMENT_NOTES.md`
   - `CHANGES.md`
   - `MEMORY.md`
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the steering-note doc update; do not stage `generated/`
+1. commit the roadmap-retune doc update; do not stage `generated/`
 2. continue the remaining `R15` slice by making the actor-relative graph, not compatibility `direction_hint`, the primary downstream direction model
-3. extend validation/reporting from staged IR artifacts into downstream adapter artifacts after the graph-first direction work is further along
+3. start the new explicit temporal-semantics (`R15b`) and KG-guided rescan (`R15c`) workstreams before reopening adapter work
 
 ## Remaining engineering gaps after this commit
-- adapter validation beyond the staged IR surface (`R7`)
 - remaining actor-relative direction modeling in `SemanticIR` / `IntentIR` (`R15`)
+- explicit clock-tick temporal semantics (`R15b`)
+- KG-guided multimodal rescans (`R15c`)
+- evidence arbitration / conflict handling (`R15d`)
+- KG-quality evaluation and benchmark hardening (`R15e`)
+- Tier 3 relation extraction after the graph/temporal/eval surfaces are ready (`R14`)
 - downstream scoring and compatibility paths still rely on flat `direction_hint` more than the new graph-native surface
+- adapter expansion and adapter validation are now intentionally horizon work
 - the workspace still emits compile warnings in `ir/adapters.rs` and `ir/semantic.rs`
 
 ## If resuming from an interruption

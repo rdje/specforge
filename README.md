@@ -53,7 +53,7 @@ Use it first for the project objective, document navigation, and the current imp
   - `IntentIR`
   - typed adapter lowering
 - the first real `.fsm` adapter slices now materialize typed adapter artifacts, emit explicit standalone `?dt:name` text for honest canonical DT cases, emit structured `?fsm:name` text when the canonical state graph is explicit, emit explicit `?top:name` source documents when module/top composition facts are explicit, lower canonical symbol-definition sections, structured reset-role blocks, selector/test-node branches, and compound-update shorthand from the widened semantic model when those canonical shapes map directly into `.fsm`, keep reset polarity honest through the reset signal name because emitted `.fsm` text still carries only `sreset` / `asreset` plus the signal, keep unsupported selector predicates and other unsafe broader-root cases blocked with explicit residual decisions instead of fabricating target syntax, and intentionally keep compatibility-level `?mod:name` / `?module:name` spellings outside the current canonical root-kind model until a real backend-neutral direct-module distinction exists
-- the next implementation milestone is to keep shifting downstream direction handling from flat compatibility hints to the actor-relative graph while keeping adapter validation separate from semantic validation
+- the next implementation milestone is semantic-truthfulness hardening: finish graph-first direction handling, add explicit clock-tick temporal rules, add KG-guided rescans and evidence arbitration, and treat adapter expansion as horizon work until the canonical four-layer pipeline is top-notch
 
 ## Working naming
 - repository / project / CLI / crate name: `specforge`

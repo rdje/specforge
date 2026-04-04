@@ -51,12 +51,16 @@
 - Latest local validation snapshot projected into tracked docs: Done
 - Full Ollama-backed `specforge converge` defaults enabled: Done
 - Test suite expanded to 110 tests; all passing: Done
-- SystemVerilog/Verilog/VHDL adapters implemented: Not Started
-- Adapter validation (SystemVerilog/Verilog/VHDL targets): Not Started
+- Explicit clock-tick temporal model in `SemanticIR` / `IntentIR`: Not Started
+- KG-guided multimodal rescans as a first-class convergent workstream: Not Started
+- Cross-modality evidence arbitration / conflict handling: Not Started
+- KG-quality evaluation with gold fixtures and negative fixtures: Not Started
+- SystemVerilog/Verilog/VHDL adapter expansion: Horizon
+- Adapter validation (SystemVerilog/Verilog/VHDL targets): Horizon
 - Actor-relative direction model in `SemanticIR` / `IntentIR`: In Progress
 
 ## Highest-priority remaining gap
-- Finish replacing compatibility `direction_hint` usage with the actor-relative graph as the primary downstream signal model, then extend validation beyond the staged IR surface into the downstream adapters
+- Finish replacing compatibility `direction_hint` usage with the actor-relative graph as the primary downstream signal model, then land explicit clock-tick temporal rules, KG-guided rescans, evidence arbitration, and KG-quality evaluation before reopening adapter work
 
 ## Validation Projection
 

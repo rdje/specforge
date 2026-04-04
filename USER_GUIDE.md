@@ -241,7 +241,7 @@ cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --targ
 - the current `IntentIR` canonicalization logic is still heuristic and conservative, so adapter work should refine backend lowering rather than treat the current pass as a complete semantic endpoint
 - the first `.fsm` adapter slices are implemented and can now emit standalone renderable `?dt:name` text for explicit canonical combinational and sequential DT cases, structured renderable `?fsm:name` text for explicit canonical state-graph cases, canonical symbol-definition/reset-role lowering, selector/test-node branches, compound-update shorthand for honest canonical cases, and first-slice renderable `?top:name` text for explicit canonical composition cases, but unsupported selector/predicate shapes still remain deferred and compatibility-level `?mod:name` / `?module:name` spellings stay outside the current canonical root-kind model
 - `specforge validate <artifact>` now backannotates the latest validation report into the artifact and writes a stage-local `validation_report.json` sidecar
-- `specforge project-validation <artifact>...` now turns those persisted reports into tracked markdown continuity docs, but adapter validation is still future work
+- `specforge project-validation <artifact>...` now turns those persisted reports into tracked markdown continuity docs, and broader adapter validation remains intentionally deferred until semantic truthfulness is stronger
 
 ## Where to look next
 - `README.md`

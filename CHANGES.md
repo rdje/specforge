@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-04-04 (roadmap retuned around semantic truthfulness)
+
+### Changed: roadmap priorities now explicitly favor KG quality over adapter breadth
+- Logged the roadmap reassessment in `DEVELOPMENT_NOTES.md`: the existing four-layer architecture is still right, but the near-term program must be semantic-truthfulness hardening rather than adapter expansion.
+- Updated `ROADMAP.md` so the next named milestones are:
+  - graph-first downstream semantics
+  - explicit clock-tick temporal modeling
+  - KG-guided multimodal rescans
+  - cross-modality evidence arbitration
+  - KG-quality evaluation with gold and negative fixtures
+- Demoted SystemVerilog/Verilog/VHDL adapter expansion and adapter validation to horizon work until the semantic pipeline is materially harder to fool.
+
+### Changed: continuity docs now steer future sessions toward the truth-model program
+- Updated `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `README.md`, and `USER_GUIDE.md` so they no longer imply that adapter validation is the next priority.
+- The repo now consistently states that adapters should consume truth, not compensate for missing truth in the KG and temporal model.
+
 ## 2026-04-04 (steering note: multimodal semantic recovery)
 
 ### Changed: implementation guidance now explicitly centers multimodal semantic recovery

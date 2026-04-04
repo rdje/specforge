@@ -26,7 +26,7 @@
 - `IntentIR` now carries forward the canonical signal/control/system/state/register/timing surface plus the actor-relative KG needed for honest downstream lowering
 - the current `.fsm` adapter slice is real and intentionally narrow: it can emit honest `?dt:name`, `?fsm:name`, and `?top:name` outputs when the canonical facts are explicit enough
 - the enrichment, convergence, and validation toolchain is also real: `specforge enrich`, `specforge nlp-enrich`, `specforge converge`, and `specforge validate` are wired into the CLI and exercised by the workspace tests
-- the remaining dominant gaps are finishing the transition away from compatibility-only flat direction hints and extending validation beyond the staged IR surface before serious SystemVerilog adapter work
+- the remaining dominant gaps are semantic-truthfulness gaps: graph-first downstream semantics, explicit clocked temporal semantics, KG-guided rescans, evidence arbitration, and benchmark-quality evaluation; adapter expansion is now horizon work
 - the workspace currently validates with `cargo test --manifest-path Cargo.toml`, with 110 passing tests
 
 
@@ -46,7 +46,7 @@
 - AXI `IHI0022_L` was re-run from the original PDF through full `specforge converge` with Ollama VLM + NLP Level 3, converged in 2 passes, and recovered timing to reach 94/100 EXCELLENT
 - `extract_alias_phrase()` now rejects markdown/table marker prefixes `-`, `|`, and `#`, closing the last small R12 cleanup in the NLP alias-learning loop
 - the documented README staged flow was re-executed on `README.md` through `inspect -> ingest -> evidence -> semantic -> intent -> adapt --dry-run`, confirming the current entry path still runs end-to-end
-- the next workflow gap is adapter validation; the next structural KG gap is making the actor-relative graph, rather than compatibility `direction_hint`, the primary downstream direction model
+- the roadmap now explicitly treats adapter expansion as horizon work; the next structural gaps are making the actor-relative graph primary, adding explicit temporal semantics, and hardening KG quality/evaluation
 
 ## Observed current state
 ### Repository contents directly observed
@@ -92,7 +92,7 @@
 - no additional real builders beyond the current `SourceIR`/`EvidenceIR`/`SemanticIR`/`IntentIR` slices and the first `.fsm` adapter slice
 
 ### Immediate implication
-- the codebase is no longer mostly scaffolding; the main open problem is how to finish making the actor-relative graph the default downstream signal model
+- the codebase is no longer mostly scaffolding; the main open problem is semantic truthfulness across the four IR layers, especially graph primacy, temporal semantics, multimodal rescans, and evidence arbitration
 - the practical risk is partial dual-surface drift: `SemanticIR` and `IntentIR` now expose both graph-native actor-relative records and legacy flat `direction_hint` fields, and the latter still drive some scoring and compatibility paths
 - the continuity risk around untracked generated artifacts is lower now that validation snapshots can be re-projected into tracked docs deterministically, but the docs still depend on someone running the projection flow after meaningful validation runs
 
