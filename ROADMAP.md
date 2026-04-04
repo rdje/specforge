@@ -127,8 +127,8 @@
   - `specforge converge <source> --target <adapter>` now materializes a whole-pipeline fixed-point loop: ingest once, reuse persisted `SourceIR`, rebuild `EvidenceIR` / `SemanticIR` / `IntentIR` / adapters, optionally re-run VLM + NLP enrichment, and stop when the persisted knowledge snapshot is stable
   - `specforge validate <artifact>` now backannotates a deterministic `validation_report.json` sidecar next to the validated IR artifact and writes the latest report back into the artifact's `validation_reports` field
   - validation findings are now graph-aware for the four IR stages, including producer/consumer gaps and compatibility-surface lag on the actor-relative KG
+  - `specforge project-validation <artifact>...` now validates the passed artifacts and projects their persisted reports into tracked live docs via `VALIDATION_SNAPSHOT.md` plus a managed validation block in `LIVE_ACHIEVEMENT_STATUS.md`
 - remaining:
-  - project validation findings into the live docs automatically or through a dedicated projection flow
   - adapter validation (SystemVerilog/Verilog/VHDL targets)
 
 ### R8 SourceIR SOTA capture (Tier 1 of EXTRACTION_ARCHITECTURE.md)
@@ -291,5 +291,5 @@
 5. Build the SystemVerilog adapter on top of the actor-relative model (R16)
 
 ## Immediate next milestone
-- R7 remaining slice: build validation/back-annotation and artifact-linked reporting on the current staged IR surface
+- R7 remaining slice: extend validation beyond the staged IR surface into downstream adapter artifacts
 - R15 remaining slice: finish the transition from compatibility `direction_hint` fields to actor-relative graph-first downstream semantics

@@ -6,5 +6,6 @@ pub mod ingest;
 pub mod inspect;
 pub mod intent;
 pub mod nlp_enrich;
+pub mod project_validation;
 pub mod semantic;
 pub mod validate;

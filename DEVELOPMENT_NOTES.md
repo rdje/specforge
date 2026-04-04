@@ -298,8 +298,43 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
   - intent-stage score backannotation + sidecar persistence
 
 ### Remaining follow-up
-- live-doc projection is still manual; validation reports now exist on disk and in the IR, but are not yet auto-summarized into the status docs
+- live-doc projection is no longer manual for staged IR artifacts; persisted reports can now be re-projected into tracked docs through `specforge project-validation`
 - adapter validation remains outside this slice
+
+## Live-doc projection of persisted validation reports (2026-04-04)
+
+### Why this slice landed now
+- `validation_reports` already existed on the staged IR artifacts, but the tracked markdown continuity surface still had to be edited by hand after validation runs
+- `generated/` is intentionally untracked, so the repo needed a deterministic way to pull validation state back into tracked docs after meaningful local runs
+- keeping the projection flow separate from `specforge validate` preserves a clean boundary: validation owns artifact truth, projection owns tracked-document continuity
+
+### Implementation shape
+- added `crates/specforge/src/commands/project_validation.rs` plus the `specforge project-validation <artifact>...` CLI command
+- the command now:
+  - validates each passed artifact through the existing `specforge validate` flow so persisted reports are current
+  - reloads the latest backannotated `validation_reports` from those artifacts
+  - writes a tracked `VALIDATION_SNAPSHOT.md` summary document
+  - updates the managed `Validation Projection` block in `LIVE_ACHIEVEMENT_STATUS.md`
+- the projection is deterministic:
+  - artifacts are sorted by `document_key`
+  - findings are sorted by severity then category/id
+  - repo-internal artifact paths are rendered relative to the repo root, never as checkout-specific absolute paths
+
+### Validation
+- regression coverage now verifies that `specforge project-validation`:
+  - validates an `IntentIR` artifact when needed
+  - writes `VALIDATION_SNAPSHOT.md`
+  - updates the managed live-status block
+- `cargo fmt --all` passed
+- `cargo test --manifest-path Cargo.toml` now passes with 107 tests
+- the tracked validation snapshot was refreshed from the current APB/AHB/AXI `IntentIR` artifacts:
+  - APB `IHI0024_D`: 95/100 EXCELLENT
+  - AHB `IHI0033_C`: 95/100 EXCELLENT
+  - AXI `IHI0022_L`: 89/100 GOOD
+
+### Remaining follow-up
+- adapter validation is still outside the current projection flow
+- `R15` still needs to demote flat compatibility `direction_hint` handling in favor of the actor-relative graph as the primary downstream surface
 
 ## Actor-relative KG carry-through in SemanticIR / IntentIR (2026-04-04)
 

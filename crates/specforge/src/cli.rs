@@ -35,6 +35,8 @@ pub enum Commands {
     Enrich(EnrichArgs),
     /// Validate an IR artifact and report extraction coverage metrics
     Validate(ValidateArgs),
+    /// Validate artifacts and project their latest reports into tracked live docs
+    ProjectValidation(ProjectValidationArgs),
     /// Enrich an EvidenceIR artifact with LLM-extracted NLP Level 3 constraints
     NlpEnrich(NlpEnrichArgs),
 }
@@ -158,6 +160,16 @@ pub struct NlpEnrichArgs {
 pub struct ValidateArgs {
     /// Path to any IR artifact (source_ir.json, evidence_ir.json, semantic_ir.json, intent_ir.json)
     pub artifact: std::path::PathBuf,
+}
+
+#[derive(Debug, Args)]
+pub struct ProjectValidationArgs {
+    /// One or more IR artifacts whose latest validation should be projected into the live docs
+    #[arg(required = true)]
+    pub artifacts: Vec<std::path::PathBuf>,
+    /// Repository root containing the tracked live docs to update
+    #[arg(long, default_value = ".")]
+    pub repo_root: std::path::PathBuf,
 }
 
 /// VLM provider selection for the `enrich` command.

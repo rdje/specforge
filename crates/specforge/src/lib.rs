@@ -19,6 +19,7 @@ pub fn run(cli: Cli) -> Result<()> {
         Commands::Adapt(args) => commands::adapt::run(args),
         Commands::Enrich(args) => commands::enrich::run(args),
         Commands::Validate(args) => commands::validate::run(args),
+        Commands::ProjectValidation(args) => commands::project_validation::run(args),
         Commands::NlpEnrich(args) => commands::nlp_enrich::run(args),
     }
 }

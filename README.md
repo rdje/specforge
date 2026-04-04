@@ -25,6 +25,7 @@ Use it first for the project objective, document navigation, and the current imp
   - `intent <semantic-ir>`
   - `adapt <intent-ir> --target fsm --dry-run`
   - `adapt <intent-ir> --target fsm`
+  - `project-validation <artifact>...`
 - `specforge ingest` now computes and materializes `SourceIR` at `generated/source_ir/<document_key>/source_ir.json`
 - `specforge evidence` now computes and materializes `EvidenceIR` at `generated/evidence_ir/<document_key>/evidence_ir.json`
 - `specforge semantic` now computes and materializes `SemanticIR` at `generated/semantic_ir/<document_key>/semantic_ir.json`
@@ -32,6 +33,7 @@ Use it first for the project objective, document navigation, and the current imp
 - `specforge adapt --target fsm` now computes and materializes typed adapter artifacts at `generated/adapters/fsm/<document_key>/adapter.json`
 - `specforge converge <source> --target fsm` now ingests once, optionally reuses VLM/NLP enrichment, rebuilds the downstream IR stages, and stops when the persisted knowledge snapshot is stable across passes
 - `specforge validate <artifact>` now writes a deterministic stage-local `validation_report.json` sidecar and backannotates the latest report into the artifact's `validation_reports` field
+- `specforge project-validation <artifact>...` now validates the passed artifacts and refreshes the tracked validation snapshot docs from their persisted reports
 - `SemanticIR` and `IntentIR` now preserve the structural KG downstream via `actor_signal_relations`, `actor_ports`, and `signal_connectivity`, while keeping flat `direction_hint` fields only as a compatibility surface
 - a pinned `subs/fsmgen` git submodule now exists as a local `.fsm` reference implementation for upcoming adapter work
 - the `SourceIR` schema now reserves:
@@ -51,7 +53,7 @@ Use it first for the project objective, document navigation, and the current imp
   - `IntentIR`
   - typed adapter lowering
 - the first real `.fsm` adapter slices now materialize typed adapter artifacts, emit explicit standalone `?dt:name` text for honest canonical DT cases, emit structured `?fsm:name` text when the canonical state graph is explicit, emit explicit `?top:name` source documents when module/top composition facts are explicit, lower canonical symbol-definition sections, structured reset-role blocks, selector/test-node branches, and compound-update shorthand from the widened semantic model when those canonical shapes map directly into `.fsm`, keep reset polarity honest through the reset signal name because emitted `.fsm` text still carries only `sreset` / `asreset` plus the signal, keep unsupported selector predicates and other unsafe broader-root cases blocked with explicit residual decisions instead of fabricating target syntax, and intentionally keep compatibility-level `?mod:name` / `?module:name` spellings outside the current canonical root-kind model until a real backend-neutral direct-module distinction exists
-- the next implementation milestone is to project validation findings into the live docs and then keep shifting downstream direction handling from flat compatibility hints to the actor-relative graph
+- the next implementation milestone is to keep shifting downstream direction handling from flat compatibility hints to the actor-relative graph while keeping adapter validation separate from semantic validation
 
 ## Working naming
 - repository / project / CLI / crate name: `specforge`
@@ -68,12 +70,13 @@ Use it first for the project objective, document navigation, and the current imp
 3. `INTENTIR_SPEC.md`
 4. `ROADMAP.md`
 5. `LIVE_ACHIEVEMENT_STATUS.md`
-6. `RUST_CODEBASE_ANALYSIS.md`
-7. `USER_GUIDE.md`
-8. `DEVELOPMENT_NOTES.md`
-9. `CHANGES.md`
-10. `MEMORY.md`
-11. `COMMIT.md`
+6. `VALIDATION_SNAPSHOT.md`
+7. `RUST_CODEBASE_ANALYSIS.md`
+8. `USER_GUIDE.md`
+9. `DEVELOPMENT_NOTES.md`
+10. `CHANGES.md`
+11. `MEMORY.md`
+12. `COMMIT.md`
 
 ## Documentation index
 - `README.md`
@@ -86,6 +89,8 @@ Use it first for the project objective, document navigation, and the current imp
   - live roadmap for project objectives, sequencing, and remaining work
 - `LIVE_ACHIEVEMENT_STATUS.md`
   - authoritative live progress snapshot using the project status vocabulary
+- `VALIDATION_SNAPSHOT.md`
+  - tracked projection of the latest persisted validation reports into a crash-safe markdown summary
 - `RUST_CODEBASE_ANALYSIS.md`
   - live deep-dive analysis of the Rust codebase and its architecture
 - `USER_GUIDE.md`
@@ -108,6 +113,7 @@ Use it first for the project objective, document navigation, and the current imp
 - `INTENTIR_SPEC.md`
 - `ROADMAP.md`
 - `LIVE_ACHIEVEMENT_STATUS.md`
+- `VALIDATION_SNAPSHOT.md`
 - `RUST_CODEBASE_ANALYSIS.md`
 - `USER_GUIDE.md`
 - `DEVELOPMENT_NOTES.md`
@@ -163,6 +169,8 @@ Use it first for the project objective, document navigation, and the current imp
   - `IntentIR` preview/materialization command
 - `crates/specforge/src/commands/adapt.rs`
   - `.fsm` adapter preview/materialization command for the current honest DT/FSM/top lowering slices
+- `crates/specforge/src/commands/project_validation.rs`
+  - validation snapshot projection command for tracked live docs
 - `crates/specforge/src/ir/mod.rs`
   - staged IR namespace and stage identifiers
 - `crates/specforge/src/ir/source.rs`
@@ -197,6 +205,7 @@ cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json --d
 cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json --dry-run
 cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json --dry-run
 cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --target fsm --dry-run
+cargo run -p specforge -- project-validation generated/intent_ir/readme/intent_ir.json
 ```
 - `specforge ingest <source> --dry-run` prints computed `SourceIR` JSON without writing artifacts
 - `specforge ingest <source>` materializes `generated/source_ir/<document_key>/source_ir.json`
@@ -209,6 +218,7 @@ cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --targ
 - `specforge adapt <intent-ir> --target fsm --dry-run` prints computed adapter JSON without writing artifacts
 - `specforge adapt <intent-ir> --target fsm` materializes `generated/adapters/fsm/<document_key>/adapter.json` and writes an emitted `.fsm` file when the canonical interface/control/system/init/state surface or explicit module/top composition surface is explicit enough for honest standalone DT, structured FSM, or first-slice `?top:name` lowering
 - `specforge converge <source> --target fsm` materializes the loop-backed pipeline entrypoint and stops when `SourceIR`/`EvidenceIR`/`SemanticIR`/`IntentIR`/adapter facts stop changing
+- `specforge project-validation <artifact>...` validates the passed artifacts, persists their latest reports, refreshes `VALIDATION_SNAPSHOT.md`, and updates the managed validation projection block in `LIVE_ACHIEVEMENT_STATUS.md`
 - PDF execute-mode ingest expects `docling` to be importable from `python3` or `python`; when it lives elsewhere, set `SPECFORGE_DOCLING_PYTHON=/path/to/python`
 
 ## Planned product shape

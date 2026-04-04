@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-04-04 (validation snapshot projection into tracked live docs)
+
+### Added: deterministic live-doc projection for persisted validation reports
+- Added `specforge project-validation <artifact>...`.
+- The new command validates each passed IR artifact, reuses the persisted `validation_reports`, writes a tracked `VALIDATION_SNAPSHOT.md`, and refreshes the managed validation projection block in `LIVE_ACHIEVEMENT_STATUS.md`.
+- Projection output is deterministic: artifact ordering uses `document_key`, findings sort by severity/category/id, and repo-internal artifact paths are rendered as relative paths.
+
+### Changed: staged validation continuity no longer depends on manual markdown edits
+- `generated/` remains untracked, but validation snapshots can now be pulled back into tracked docs on demand after local APB/AHB/AXI or other validation runs.
+- The live roadmap/status/docs now treat staged IR validation projection as implemented; remaining validation work is adapter-focused.
+- Refreshed the tracked validation snapshot against the current AMBA `IntentIR` artifacts:
+  - APB `IHI0024_D`: 95/100 EXCELLENT
+  - AHB `IHI0033_C`: 95/100 EXCELLENT
+  - AXI `IHI0022_L`: 89/100 GOOD
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 107/107 passed
+- `cargo run -p specforge -- project-validation generated/intent_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/intent_ir.json generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json` → passed
+
 ## 2026-04-04 (validation back-annotation on IR artifacts)
 
 ### Added: persisted validation reports for the four IR stages

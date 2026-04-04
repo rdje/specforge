@@ -22,64 +22,68 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `e8aae43`
-- latest_commit_brief_message: `feat(core): add convergent IR pipeline loop`
-- note: current uncommitted work is the first `R15` carry-through slice that preserves the actor-relative KG in `SemanticIR` / `IntentIR`
+- latest_commit_hash: `fc66933`
+- latest_commit_brief_message: `feat(ir): preserve kg and backannotate validation`
+- note: current uncommitted work adds deterministic live-doc projection for persisted validation reports via `specforge project-validation`
 
 ## Recent commit chain (last 5)
+- `fc66933` feat(ir): preserve kg and backannotate validation
 - `e8aae43` feat(core): add convergent IR pipeline loop
 - `0ab3b02` fix(nlp): filter markdown alias markers
 - `2c9bd30` feat(evidence): converge extraction and refresh AMBA artifacts
 - `1a5f7bc` fix(ingest): broader timing_diagram classification for figure captions
-- `a264144` fix(ingest): caption-gated signal_description classification
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- runnable CLI surface includes `inspect`, `converge`, `ingest`, `evidence`, `semantic`, `intent`, `adapt`, `enrich`, `validate`, and `nlp-enrich`
+- runnable CLI surface includes `inspect`, `converge`, `ingest`, `evidence`, `semantic`, `intent`, `adapt`, `enrich`, `validate`, `project-validation`, and `nlp-enrich`
 - canonical generated artifact roots are under `generated/source_ir/`, `generated/evidence_ir/`, `generated/semantic_ir/`, and `generated/intent_ir/`
 - `generated/` is git-ignored and intentionally untracked; continuity must live in docs, not versioned artifacts
 - `subs/fsmgen/` is a local read-only reference checkout for `.fsm` behavior
+- `VALIDATION_SNAPSHOT.md` is now a tracked continuity doc refreshed from persisted validation reports
 
 ## Completed technical work in this session
-- landed the first `R15` slice:
-  - `SemanticIR` now preserves `actor_signal_relations`, `actor_ports`, and `signal_connectivity`
-  - `IntentIR` now preserves the same actor-relative KG surface as canonical output
-  - `ActorRecord` / `IntentActor` now preserve grounded actor names when relation evidence exists
-  - `specforge validate` now reports KG-native counts for `SemanticIR` / `IntentIR`
 - landed the next `R7` slice:
-  - `specforge validate` now writes a deterministic `validation_report.json` sidecar for each IR-stage artifact
-  - the validated artifact now stores the latest report in `validation_reports`
-  - validation findings are now graph-aware for the actor-relative KG surface
+  - added `specforge project-validation <artifact>...`
+  - the new command validates the passed artifacts, reloads their persisted `validation_reports`, writes tracked `VALIDATION_SNAPSHOT.md`, and refreshes the managed validation block in `LIVE_ACHIEVEMENT_STATUS.md`
+  - staged validation continuity no longer depends on hand-editing score snapshots after local runs
+- refreshed the tracked validation snapshot from the current AMBA `IntentIR` artifacts:
+  - APB `IHI0024_D`: 95/100 EXCELLENT
+  - AHB `IHI0033_C`: 95/100 EXCELLENT
+  - AXI `IHI0022_L`: 89/100 GOOD
 - live docs were refreshed so roadmap/status/analysis reflect:
-  - latest local APB/AHB/AXI snapshot = `95 / 95 / 89`
-  - actor-relative KG carry-through is now `In Progress`, not `Not Started`
-  - IR-stage validation backannotation is now implemented
-  - test suite = `106` passing
+  - live-doc projection of staged validation findings is now implemented
+  - adapter validation is the remaining `R7` gap
+  - actor-relative direction modeling remains `In Progress`
+  - test suite = `107` passing
 - validation completed:
   - `cargo fmt --all` → passed
-  - `cargo test --manifest-path Cargo.toml` → `106` passed
+  - `cargo test --manifest-path Cargo.toml` → `107` passed
+  - `cargo run -p specforge -- project-validation generated/intent_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/intent_ir.json generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json` → passed
 
 ## Current working tree before commit
 - modified tracked files currently include:
-  - `crates/specforge/src/commands/validate.rs`
-  - `crates/specforge/src/ir/semantic.rs`
-  - `crates/specforge/src/ir/intent.rs`
+  - `crates/specforge/src/cli.rs`
+  - `crates/specforge/src/lib.rs`
+  - `crates/specforge/src/commands/mod.rs`
+  - `crates/specforge/src/commands/project_validation.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `README.md`
   - `ROADMAP.md`
   - `RUST_CODEBASE_ANALYSIS.md`
+  - `USER_GUIDE.md`
+  - `VALIDATION_SNAPSHOT.md`
   - `MEMORY.md`
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. if committing this slice, stage the IR/validator/doc updates for actor-relative KG carry-through; do not stage `generated/`
-2. continue `R7` by projecting the persisted validation findings into the live docs instead of keeping that step manual
-3. continue the remaining `R15` slice by making the actor-relative graph, not compatibility `direction_hint`, the primary downstream direction model
+1. commit the live-doc projection slice with the new CLI command, `VALIDATION_SNAPSHOT.md`, and the refreshed roadmap/status/memory docs; do not stage `generated/`
+2. continue the remaining `R15` slice by making the actor-relative graph, not compatibility `direction_hint`, the primary downstream direction model
+3. extend validation/reporting from staged IR artifacts into downstream adapter artifacts after the graph-first direction work is further along
 
 ## Remaining engineering gaps after this commit
-- live-doc projection of validation findings and adapter validation (`R7`)
+- adapter validation beyond the staged IR surface (`R7`)
 - remaining actor-relative direction modeling in `SemanticIR` / `IntentIR` (`R15`)
 - downstream scoring and compatibility paths still rely on flat `direction_hint` more than the new graph-native surface
 - the workspace still emits compile warnings in `ir/adapters.rs` and `ir/semantic.rs`
@@ -91,4 +95,4 @@
 4. read `ROADMAP.md`
 5. read `RUST_CODEBASE_ANALYSIS.md`
 6. inspect `git --no-pager status --short`
-7. continue with live-doc projection for persisted validation findings unless the user redirects
+7. continue with the remaining graph-first `R15` direction-model work unless the user redirects

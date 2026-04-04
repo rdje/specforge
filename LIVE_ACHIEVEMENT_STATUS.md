@@ -46,12 +46,26 @@
 - `WidthHint` / parametric-width support propagated through the IR pipeline: Done
 - AMBA `Source` / `Driver` / `Destination` signal-table direction handling implemented: Done
 - `generated/` artifacts removed from git tracking and ignored by default: Done
-- Latest local APB/AHB/AXI validation snapshot recorded (APB 95, AHB 95, AXI 89): Done
 - IR-stage validation back-annotation and stage-local `validation_report.json` artifacts implemented: Done
-- Test suite expanded to 106 tests; all passing: Done
+- Live-doc projection of persisted IR validation findings implemented: Done
+- Latest local validation snapshot projected into tracked docs: Done
+- Test suite expanded to 107 tests; all passing: Done
 - SystemVerilog/Verilog/VHDL adapters implemented: Not Started
-- Live-doc projection of validation findings and adapter validation: Not Started
+- Adapter validation (SystemVerilog/Verilog/VHDL targets): Not Started
 - Actor-relative direction model in `SemanticIR` / `IntentIR`: In Progress
 
 ## Highest-priority remaining gap
-- Project validation findings into the live docs on top of the now loop-backed staged IR surface, then finish replacing compatibility `direction_hint` usage with the actor-relative graph as the primary downstream signal model
+- Finish replacing compatibility `direction_hint` usage with the actor-relative graph as the primary downstream signal model, then extend validation beyond the staged IR surface into the downstream adapters
+
+## Validation Projection
+
+<!-- validation_projection:start -->
+- Latest projected validation snapshot:
+  - `IHI0022_L_2025-08_AMBA_AXI_Protocol_Specification.pdf` (`intent_ir`): `89/100 GOOD` from `generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json`
+  - `IHI0024_D_2021-04_AMBA_APB_Protocol_Specification.pdf` (`intent_ir`): `95/100 EXCELLENT` from `generated/intent_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/intent_ir.json`
+  - `IHI0033_C_2021-09_AMBA_5_AHB_Protocol_Specification.pdf` (`intent_ir`): `95/100 EXCELLENT` from `generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json`
+- Highest-signal projected findings:
+  - `IHI0022_L_2025-08_AMBA_AXI_Protocol_Specification.pdf`: [warning:quality_score] IntentIR quality score is 89/100 (GOOD)
+  - `IHI0024_D_2021-04_AMBA_APB_Protocol_Specification.pdf`: [warning:residual_decisions] IntentIR still carries 2 residual decision packet(s)
+  - `IHI0033_C_2021-09_AMBA_5_AHB_Protocol_Specification.pdf`: [warning:residual_decisions] IntentIR still carries 2 residual decision packet(s)
+<!-- validation_projection:end -->
