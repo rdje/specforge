@@ -27,7 +27,7 @@
 - the current `.fsm` adapter slice is real and intentionally narrow: it can emit honest `?dt:name`, `?fsm:name`, and `?top:name` outputs when the canonical facts are explicit enough
 - the enrichment, convergence, and validation toolchain is also real: `specforge enrich`, `specforge nlp-enrich`, `specforge converge`, and `specforge validate` are wired into the CLI and exercised by the workspace tests
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, and benchmark-quality evaluation; adapter expansion is now horizon work
-- the workspace currently validates with `cargo test --manifest-path Cargo.toml`, with 171 passing tests
+- the workspace currently validates with `cargo test --manifest-path Cargo.toml`, with 173 passing tests
 
 
 ## Session update (2026-04-04)
@@ -49,6 +49,7 @@
 - the temporal handshake layer now respects that arbitration state too: contested semantic-role evidence blocks literal `VALID` / `READY` name fallback instead of being silently overridden by it
 - that blocked heuristic path is now surfaced explicitly as semantic residual state and validation metrics/findings, so withheld handshake promotion is inspectable rather than only implicit
 - `SemanticIR` / `IntentIR` now also resolve canonical per-signal semantic roles plus modality-aware `semantic_grounding_strength` from those observations, so downstream consumers can prefer provenance-backed role consensus and validation can distinguish single-source grounding, same-modality repetition, and cross-modality reinforcement
+- fallback-only resolved semantic roles are no longer only validator-visible drift: `SemanticIR` now emits a dedicated residual packet when a role still lacks observation-backed consensus, and `IntentIR` carries the same provisional state as an explicit assumption
 - `SemanticIR` / `IntentIR` now also carry explicit `semantic_consensus` summaries for observation-backed role meaning, including supporting source kinds, supporting observation count, and strongest supporting automation confidence, and validation now flags any resolved role still lacking that richer profile
 - `specforge nlp-enrich` now refreshes `signal_semantic_hints` before writing updated `EvidenceIR`, so alias learning can immediately feed downstream semantic-role inference instead of waiting for a later rebuild path
 - `EvidenceIR` now also persists typed `signal_semantic_conflicts` when the same signal accumulates incompatible valid-like and ready-like role evidence, and `specforge validate` reports that disagreement explicitly instead of hiding it inside a dual-tag ambiguity

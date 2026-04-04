@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-05 (fallback-only semantic roles are now explicit provisional state)
+
+### Added: residual surfacing for resolved semantic roles without consensus
+- `SemanticIR` now emits a `semantic_resolved_role_without_consensus` residual decision when a signal still carries a resolved semantic role but lacks preserved observation-backed consensus.
+
+### Added: explicit IntentIR assumption for provisional semantic meaning
+- `IntentIR` now turns that carried residual into `assumption_semantic_role_without_consensus` so provisional role meaning stays visible in the canonical artifact.
+
+### Added: regression coverage for provisional semantic-role visibility
+- Added assertions proving:
+  - the semantic residual packet is emitted for fallback-only resolved roles
+  - the intent stage carries that packet forward
+  - `IntentIR` emits the matching provisional-role assumption
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 173/173 passed
+
 ## 2026-04-05 (blocked handshake fallback is now explicit residual state)
 
 ### Added: residual surfacing for intentionally blocked handshake promotion

@@ -1205,3 +1205,21 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 - validation for this slice:
   - `cargo fmt --all` passed
   - `cargo test --manifest-path Cargo.toml` passed with `171/171`
+
+## 2026-04-05 - fallback-only semantic roles are now explicit provisional state
+- another quiet truthfulness gap remained after semantic consensus and arbitration became first-class:
+  - validation could already tell us when a resolved semantic role still lacked preserved observation-backed consensus
+  - but the canonical IR itself still looked more confident than it really was unless a user happened to run `specforge validate`
+- that was below the project bar because provisional meaning should be visible in the artifact itself, not only in post-hoc diagnostics
+- `crates/specforge/src/ir/semantic.rs` now emits a `semantic_resolved_role_without_consensus` residual decision whenever a signal still carries a resolved semantic role but no preserved `semantic_consensus`
+- `crates/specforge/src/ir/intent.rs` now turns that carried residual into an explicit `assumption_semantic_role_without_consensus`, so the canonical intent layer says plainly that some role meaning is still provisional in this pass
+- this keeps the truthfulness contract aligned across layers:
+  - canonical role structure can still be useful
+  - weaker fallback-only meaning is not hidden as if it were fully grounded
+  - users and downstream tools can see the provisional status directly from the IR
+- regression coverage now proves:
+  - `SemanticIR` emits the residual packet for resolved roles without consensus
+  - `IntentIR` carries the packet and emits the matching assumption
+- validation for this slice:
+  - `cargo fmt --all` passed
+  - `cargo test --manifest-path Cargo.toml` passed with `173/173`

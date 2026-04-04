@@ -2955,6 +2955,34 @@ fn build_residual_decisions(
         });
     }
 
+    let fallback_only_semantic_roles =
+        resolved_semantic_roles_without_consensus_signal_names(interfaces);
+    if !fallback_only_semantic_roles.is_empty() {
+        packets.push(ResidualDecisionPacket {
+            packet_id: "semantic_resolved_role_without_consensus".to_string(),
+            question:
+                "Should fallback-only semantic role resolutions remain canonical without observation-backed consensus?"
+                    .to_string(),
+            why_unresolved: format!(
+                "Signals {} currently resolve a semantic role, but that role still lacks preserved observation-backed consensus, so SemanticIR is carrying a provisional meaning rather than a fully grounded canonical one.",
+                fallback_only_semantic_roles.join(", ")
+            ),
+            automation_confidence: AutomationConfidence::Medium,
+            candidate_interpretations: vec![
+                CandidateInterpretation {
+                    interpretation_id: "keep_provisional_role".to_string(),
+                    description: "Keep the fallback semantic role as a provisional canonical hint until stronger grounding arrives.".to_string(),
+                    downstream_impact: "Downstream consumers keep some useful role structure, but they must treat the meaning as weaker than observation-backed consensus.".to_string(),
+                },
+                CandidateInterpretation {
+                    interpretation_id: "clear_unbacked_role".to_string(),
+                    description: "Clear the fallback semantic role until preserved observations support a true consensus.".to_string(),
+                    downstream_impact: "The canonical model becomes more conservative, but some useful protocol role structure disappears until later passes recover it safely.".to_string(),
+                },
+            ],
+        });
+    }
+
     let overlapping_signals = overlapping_interface_signals(interfaces);
     if !overlapping_signals.is_empty() {
         packets.push(ResidualDecisionPacket {
@@ -6088,6 +6116,21 @@ fn handshake_name_fallback_blocked_signal_names(interfaces: &[InterfaceRecord]) 
         .collect()
 }
 
+fn resolved_semantic_roles_without_consensus_signal_names(
+    interfaces: &[InterfaceRecord],
+) -> Vec<String> {
+    interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+        .filter(|signal| {
+            signal.resolved_semantic_role.is_some() && signal.semantic_consensus.is_none()
+        })
+        .map(|signal| signal.signal_name.clone())
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect()
+}
+
 fn classify_handshake_signal_from_interface_signal(
     signal: &InterfaceSignalRecord,
 ) -> Option<HandshakeSignalRole> {
@@ -7067,7 +7110,7 @@ fn canonicalize_existing_path(path: &Path) -> Result<PathBuf> {
 
 #[cfg(test)]
 mod tests {
-    use std::fs;
+    use std::{collections::HashMap, fs};
 
     use tempfile::tempdir;
 
@@ -7213,6 +7256,45 @@ mod tests {
         );
 
         Ok(())
+    }
+
+    #[test]
+    fn emits_residual_decision_for_resolved_semantic_roles_without_consensus() {
+        let context = super::SemanticContext {
+            statements: Vec::new(),
+            section_anchors: Vec::new(),
+            visual_roles_by_id: HashMap::new(),
+            actor_signal_relations: Vec::new(),
+            signal_semantic_hints: Vec::new(),
+        };
+        let interfaces = vec![super::InterfaceRecord {
+            interface_id: "if_req".to_string(),
+            signals: vec!["XREQ".to_string()],
+            signal_records: vec![super::InterfaceSignalRecord {
+                signal_name: "XREQ".to_string(),
+                direction_hint: None,
+                width_hint: None,
+                semantic_tags: vec![SignalSemanticTag::HandshakeValidLike],
+                semantic_candidates: Vec::new(),
+                semantic_arbitration: None,
+                resolved_semantic_role: Some(
+                    super::InterfaceSignalSemanticRole::HandshakeValidLike,
+                ),
+                semantic_grounding_strength: None,
+                semantic_consensus: None,
+                semantic_observations: Vec::new(),
+                supporting_statement_ids: Vec::new(),
+                automation_confidence: AutomationConfidence::Medium,
+            }],
+            supporting_statement_ids: Vec::new(),
+        }];
+
+        let packets = super::build_residual_decisions(&context, &interfaces, 1);
+        assert!(
+            packets
+                .iter()
+                .any(|packet| { packet.packet_id == "semantic_resolved_role_without_consensus" })
+        );
     }
 
     #[test]

@@ -646,6 +646,20 @@ fn build_assumptions(context: &IntentContext, actors: &[IntentActor]) -> Vec<Int
         });
     }
 
+    if context
+        .residual_decisions
+        .iter()
+        .any(|packet| packet.packet_id == "semantic_resolved_role_without_consensus")
+    {
+        let statement =
+            "Some carried semantic roles remain provisional because they still lack preserved observation-backed consensus in this IntentIR pass.".to_string();
+        assumptions.push(IntentAssumption {
+            assumption_id: "assumption_semantic_role_without_consensus".to_string(),
+            statement,
+            supporting_semantic_ids: vec!["semantic_resolved_role_without_consensus".to_string()],
+        });
+    }
+
     assumptions
 }
 
@@ -761,8 +775,8 @@ mod tests {
         SystemResetTargetKind, SystemResetTimingRelation,
     };
     use crate::ir::source::{
-        AutomationConfidence, SourceIr, StructuredTableCellRecord, StructuredTableRecord,
-        TableKind, VisualAsset, VisualAssetKind,
+        AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket, SourceIr,
+        StructuredTableCellRecord, StructuredTableRecord, TableKind, VisualAsset, VisualAssetKind,
     };
 
     use super::IntentIr;
@@ -899,6 +913,76 @@ mod tests {
                 .intent_ir_path
                 .ends_with("generated/intent_ir/control/intent_ir.json")
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn emits_assumption_for_semantic_roles_without_consensus() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("provisional_semantic_role.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            "# Protocol\nSignal XREQ is input width 1.\n\nSignal XACK is output width 1.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let mut semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.residual_decisions.push(ResidualDecisionPacket {
+            packet_id: "semantic_resolved_role_without_consensus".to_string(),
+            question:
+                "Should fallback-only semantic role resolutions remain canonical without observation-backed consensus?"
+                    .to_string(),
+            why_unresolved:
+                "Signal XREQ currently resolves a semantic role without observation-backed consensus."
+                    .to_string(),
+            automation_confidence: AutomationConfidence::Medium,
+            candidate_interpretations: vec![
+                CandidateInterpretation {
+                    interpretation_id: "keep_provisional_role".to_string(),
+                    description: "Keep the provisional semantic role.".to_string(),
+                    downstream_impact:
+                        "Downstream consumers keep the weaker semantic hint.".to_string(),
+                },
+                CandidateInterpretation {
+                    interpretation_id: "clear_unbacked_role".to_string(),
+                    description: "Clear the unbacked semantic role.".to_string(),
+                    downstream_impact:
+                        "Canonical meaning stays conservative until stronger evidence arrives."
+                            .to_string(),
+                },
+            ],
+        });
+        semantic_ir.write_to_disk()?;
+
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        assert!(
+            intent_ir
+                .residual_decisions
+                .iter()
+                .any(|packet| { packet.packet_id == "semantic_resolved_role_without_consensus" })
+        );
+        assert!(intent_ir.assumptions.iter().any(|assumption| {
+            assumption.assumption_id == "assumption_semantic_role_without_consensus"
+        }));
 
         Ok(())
     }

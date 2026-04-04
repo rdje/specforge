@@ -22,20 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `cddd9b3`
-- latest_commit_brief_message: `feat(semantic): surface role arbitration state`
-- note: current uncommitted work turns blocked handshake-name fallback into explicit residual/validation state so withheld heuristic promotion is visible to users
+- latest_commit_hash: `29107c8`
+- latest_commit_brief_message: `feat(semantic): surface blocked handshake fallback`
+- note: current uncommitted work turns fallback-only resolved semantic roles into explicit residual/assumption state so provisional canonical meaning is visible before validation runs
 
 ## Recent commit chain (last 5)
+- `29107c8` feat(semantic): surface blocked handshake fallback
+- `99c93bb` feat(semantic): block handshake fallback on contested roles
 - `cddd9b3` feat(semantic): surface role arbitration state
 - `98083b8` feat(semantic): preserve role candidates
 - `63e2c51` feat(semantic): persist role consensus summaries
-- `d5974a4` feat(semantic): distinguish cross-modality grounding
-- `c4ba7e5` feat(semantic): resolve grounded semantic roles
-- `f8673f0` feat(ir): preserve semantic role provenance
-- `6ff9406` feat(evidence): ground semantic roles in multimodal evidence
-- `2087422` feat(ir): carry semantic role conflicts downstream
-- `f8f587c` feat(evidence): surface semantic role conflicts
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -47,31 +43,30 @@
 - `VALIDATION_SNAPSHOT.md` is now a tracked continuity doc refreshed from persisted validation reports
 
 ## Completed technical work in this session
-- `crates/specforge/src/ir/semantic.rs` now emits `semantic_handshake_name_fallback_blocked` residual decisions when a handshake-shaped signal intentionally blocks literal name fallback because preserved semantic arbitration is still contested
-- `crates/specforge/src/ir/intent.rs` now carries that residual packet forward
-- `crates/specforge/src/commands/validate.rs` now reports `with_blocked_handshake_name_fallback` and emits explicit semantic/intent findings for blocked handshake fallback
-- added regression coverage proving that the residual packet is emitted, carried into `IntentIR`, and reported by both validation stages
-- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, and `CHANGES.md` so the blocked-fallback visibility slice is visible in continuity docs
+- `crates/specforge/src/ir/semantic.rs` now emits `semantic_resolved_role_without_consensus` residual decisions when a signal still carries a resolved semantic role without preserved observation-backed consensus
+- `crates/specforge/src/ir/intent.rs` now turns that carried residual into `assumption_semantic_role_without_consensus`, keeping provisional canonical meaning explicit in `IntentIR`
+- added regression coverage proving that the semantic residual packet is emitted and that `IntentIR` carries it forward and emits the matching assumption
+- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, and `CHANGES.md` so the provisional-role visibility slice is visible in continuity docs
 - validation ran for this task:
   - `cargo fmt --all` passed
-  - `cargo test --manifest-path Cargo.toml` passed with `171/171`
+  - `cargo test --manifest-path Cargo.toml` passed with `173/173`
 
 ## Current working tree before commit
 - modified tracked files currently include:
   - `crates/specforge/src/ir/semantic.rs`
   - `crates/specforge/src/ir/intent.rs`
-  - `crates/specforge/src/commands/validate.rs`
   - `README.md`
   - `ROADMAP.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `RUST_CODEBASE_ANALYSIS.md`
   - `DEVELOPMENT_NOTES.md`
   - `CHANGES.md`
+  - `MEMORY.md`
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the blocked-fallback visibility slice
-2. continue the semantic-truthfulness program by carrying the same “preserved disagreement outranks heuristic fallback” rule into more downstream semantic consumers beyond typed handshake completion, while keeping withheld promotions explicitly inspectable
+1. commit the provisional semantic-role visibility slice
+2. continue the semantic-truthfulness program by carrying the same “provisional meaning must stay explicit” rule into more downstream semantic consumers and arbitration surfaces
 3. keep adapter work de-prioritized until the graph, temporal, arbitration, and evaluation surfaces are materially stronger
 
 ## Remaining engineering gaps after this commit
