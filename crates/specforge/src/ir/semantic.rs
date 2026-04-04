@@ -26,6 +26,8 @@ pub struct SemanticIr {
     pub actor_ports: Vec<ActorPortRecord>,
     #[serde(default)]
     pub signal_connectivity: Vec<SignalConnectivityRecord>,
+    #[serde(default)]
+    pub signal_connectivity_conflicts: Vec<SignalConnectivityConflictRecord>,
     pub interfaces: Vec<InterfaceRecord>,
     pub phases: Vec<PhaseRecord>,
     pub invariants: Vec<InvariantRecord>,
@@ -111,6 +113,8 @@ impl SemanticIr {
         let actor_build = build_actors(&context, &interfaces);
         let actor_ports = build_actor_ports(&context, &interfaces);
         let signal_connectivity = build_signal_connectivity(&actor_ports);
+        let signal_connectivity_conflicts =
+            build_signal_connectivity_conflicts(signal_connectivity.as_slice());
         let phases = build_phases(&context);
         let interface_ids_by_signal = interface_ids_by_signal(&interfaces);
         let invariants = build_invariants(&context, &interface_ids_by_signal);
@@ -230,6 +234,7 @@ impl SemanticIr {
             actor_signal_relations: context.actor_signal_relations.clone(),
             actor_ports,
             signal_connectivity,
+            signal_connectivity_conflicts,
             interfaces,
             phases,
             invariants,
@@ -344,6 +349,34 @@ pub struct SignalConnectivityRecord {
     pub width_hint: Option<WidthHint>,
     #[serde(default)]
     pub source_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum SignalConnectivityConflictKind {
+    MultipleProducers,
+}
+
+impl SignalConnectivityConflictKind {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::MultipleProducers => "multiple_producers",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct SignalConnectivityConflictRecord {
+    pub conflict_id: String,
+    pub signal_name: String,
+    pub conflict_kind: SignalConnectivityConflictKind,
+    #[serde(default)]
+    pub conflicting_actor_ids: Vec<String>,
+    #[serde(default)]
+    pub conflicting_actor_names: Vec<String>,
+    #[serde(default)]
+    pub supporting_statement_ids: Vec<String>,
     pub automation_confidence: AutomationConfidence,
 }
 
@@ -2359,6 +2392,40 @@ fn build_signal_connectivity(actor_ports: &[ActorPortRecord]) -> Vec<SignalConne
     }
 
     accumulators.into_values().collect()
+}
+
+fn build_signal_connectivity_conflicts(
+    signal_connectivity: &[SignalConnectivityRecord],
+) -> Vec<SignalConnectivityConflictRecord> {
+    let mut conflicts = Vec::new();
+
+    for record in signal_connectivity {
+        if record.producer_actor_ids.len() <= 1 {
+            continue;
+        }
+
+        let mut conflicting_actor_ids = record.producer_actor_ids.clone();
+        conflicting_actor_ids.sort();
+        conflicting_actor_ids.dedup();
+        let mut conflicting_actor_names = record.producer_actor_names.clone();
+        conflicting_actor_names.sort();
+        conflicting_actor_names.dedup();
+        let mut supporting_statement_ids = record.source_statement_ids.clone();
+        supporting_statement_ids.sort();
+        supporting_statement_ids.dedup();
+
+        conflicts.push(SignalConnectivityConflictRecord {
+            conflict_id: format!("signal_connectivity_conflict_{:04}", conflicts.len() + 1),
+            signal_name: record.signal_name.clone(),
+            conflict_kind: SignalConnectivityConflictKind::MultipleProducers,
+            conflicting_actor_ids,
+            conflicting_actor_names,
+            supporting_statement_ids,
+            automation_confidence: record.automation_confidence,
+        });
+    }
+
+    conflicts
 }
 
 fn build_phases(context: &SemanticContext) -> Vec<PhaseRecord> {
@@ -7459,6 +7526,60 @@ mod tests {
                 .consumer_actor_names
                 .iter()
                 .any(|name| name.eq_ignore_ascii_case("Requester"))
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn surfaces_signal_connectivity_conflicts_for_multiple_producers() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("kg_producer_conflict.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal PREADY is output width 1.\n\n",
+                "The Completer drives PREADY.\n\n",
+                "The Monitor drives PREADY.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        assert_eq!(semantic_ir.signal_connectivity_conflicts.len(), 1);
+        let conflict = &semantic_ir.signal_connectivity_conflicts[0];
+        assert_eq!(conflict.signal_name, "PREADY");
+        assert!(matches!(
+            conflict.conflict_kind,
+            super::SignalConnectivityConflictKind::MultipleProducers
+        ));
+        assert!(
+            conflict
+                .conflicting_actor_names
+                .iter()
+                .any(|name| name.eq_ignore_ascii_case("Completer"))
+        );
+        assert!(
+            conflict
+                .conflicting_actor_names
+                .iter()
+                .any(|name| name.eq_ignore_ascii_case("Monitor"))
         );
 
         Ok(())

@@ -9,9 +9,9 @@ use crate::ir::IrStage;
 use crate::ir::semantic::{
     ActorPortRecord, ConditionalRuleRecord, ControlBlockRecord, DecisionTreeFragmentRecord,
     ExplicitModuleRecord, ExplicitTopRecord, InitAssignmentRecord, InterfaceRecord, RegisterRecord,
-    RegularStateRecord, SemanticIr, SignalConnectivityRecord, SignalConstraintRecord,
-    StateTransitionRecord, SymbolDefinitionRecord, SystemContractRecord, TemporalConflictRecord,
-    TemporalRuleRecord, TimingConstraintRecord,
+    RegularStateRecord, SemanticIr, SignalConnectivityConflictRecord, SignalConnectivityRecord,
+    SignalConstraintRecord, StateTransitionRecord, SymbolDefinitionRecord, SystemContractRecord,
+    TemporalConflictRecord, TemporalRuleRecord, TimingConstraintRecord,
 };
 use crate::ir::source::{
     ActorSignalRelation, AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket,
@@ -33,6 +33,8 @@ pub struct IntentIr {
     pub actor_ports: Vec<ActorPortRecord>,
     #[serde(default)]
     pub signal_connectivity: Vec<SignalConnectivityRecord>,
+    #[serde(default)]
+    pub signal_connectivity_conflicts: Vec<SignalConnectivityConflictRecord>,
     #[serde(default)]
     pub interfaces: Vec<InterfaceRecord>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -114,6 +116,7 @@ impl IntentIr {
         let actor_signal_relations = semantic_ir.actor_signal_relations.clone();
         let actor_ports = semantic_ir.actor_ports.clone();
         let signal_connectivity = semantic_ir.signal_connectivity.clone();
+        let signal_connectivity_conflicts = semantic_ir.signal_connectivity_conflicts.clone();
         let interfaces = semantic_ir.interfaces.clone();
         let system_contract = semantic_ir.system_contract.clone();
         let actors = build_intent_actors(&context);
@@ -165,6 +168,7 @@ impl IntentIr {
             actor_signal_relations,
             actor_ports,
             signal_connectivity,
+            signal_connectivity_conflicts,
             interfaces,
             system_contract,
             behaviors,
@@ -1335,6 +1339,10 @@ mod tests {
             intent_ir.signal_connectivity.len(),
             semantic_ir.signal_connectivity.len()
         );
+        assert_eq!(
+            intent_ir.signal_connectivity_conflicts.len(),
+            semantic_ir.signal_connectivity_conflicts.len()
+        );
         assert!(intent_ir.actors.iter().any(|actor| {
             actor
                 .actor_name
@@ -1352,6 +1360,62 @@ mod tests {
                     .iter()
                     .any(|name| name.eq_ignore_ascii_case("Completer"))
         }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn carries_signal_connectivity_conflicts_into_intent_ir() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("intent_kg_conflict.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal PREADY is output width 1.\n\n",
+                "The Completer drives PREADY.\n\n",
+                "The Monitor drives PREADY.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        assert_eq!(intent_ir.signal_connectivity_conflicts.len(), 1);
+        let conflict = &intent_ir.signal_connectivity_conflicts[0];
+        assert_eq!(conflict.signal_name, "PREADY");
+        assert!(
+            conflict
+                .conflicting_actor_names
+                .iter()
+                .any(|name| name.eq_ignore_ascii_case("Completer"))
+        );
+        assert!(
+            conflict
+                .conflicting_actor_names
+                .iter()
+                .any(|name| name.eq_ignore_ascii_case("Monitor"))
+        );
 
         Ok(())
     }

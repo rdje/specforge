@@ -245,6 +245,21 @@ fn describe_signal_polarity_conflict(
         .join("; ")
 }
 
+fn describe_signal_connectivity_conflict(
+    conflict: &crate::ir::semantic::SignalConnectivityConflictRecord,
+) -> String {
+    let actors = if conflict.conflicting_actor_names.is_empty() {
+        conflict.conflicting_actor_ids.join(", ")
+    } else {
+        conflict.conflicting_actor_names.join(", ")
+    };
+    if actors.is_empty() {
+        conflict.conflict_kind.as_str().to_string()
+    } else {
+        format!("{} via {}", conflict.conflict_kind.as_str(), actors)
+    }
+}
+
 fn write_validation_report_sidecar(
     artifact_path: &Path,
     report: &ValidationReportRecord,
@@ -819,6 +834,10 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     );
     println!("  actor_ports: {}", ir.actor_ports.len());
     println!("  signal_connectivity: {}", ir.signal_connectivity.len());
+    println!(
+        "  signal_connectivity_conflicts: {}",
+        ir.signal_connectivity_conflicts.len()
+    );
     println!("  interfaces: {}", ir.interfaces.len());
     println!("  invariants: {}", ir.invariants.len());
     println!(
@@ -860,6 +879,23 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     println!("  count: {}", ir.residual_decisions.len());
     for rd in &ir.residual_decisions {
         println!("  - [{}] {}", rd.packet_id, rd.question);
+    }
+    if !ir.signal_connectivity_conflicts.is_empty() {
+        println!();
+        println!("=== Signal Connectivity Conflicts ===");
+        for conflict in ir.signal_connectivity_conflicts.iter().take(8) {
+            println!(
+                "  - {}: {}",
+                conflict.signal_name,
+                describe_signal_connectivity_conflict(conflict)
+            );
+        }
+        if ir.signal_connectivity_conflicts.len() > 8 {
+            println!(
+                "  ... and {} more conflict(s)",
+                ir.signal_connectivity_conflicts.len() - 8
+            );
+        }
     }
 
     let missing_producer_signals: Vec<String> = ir
@@ -917,6 +953,21 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 missing_consumer_signals.len()
             ),
             missing_consumer_signals.iter().take(8).cloned().collect(),
+        ));
+    }
+    if !ir.signal_connectivity_conflicts.is_empty() {
+        findings.push(finding(
+            "semantic_signal_connectivity_conflicts_present",
+            ValidationFindingSeverity::Warning,
+            "signal_connectivity",
+            format!(
+                "{} signal connectivity conflict(s) detected; the structural KG still has unresolved producer ambiguity",
+                ir.signal_connectivity_conflicts.len()
+            ),
+            ir.signal_connectivity_conflicts
+                .iter()
+                .map(|conflict| conflict.conflict_id.clone())
+                .collect(),
         ));
     }
     if !ir.actor_ports.is_empty() && missing_graph_direction_count > 0 {
@@ -1051,6 +1102,10 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 "signal_connectivity",
                 ir.signal_connectivity.len().to_string(),
             ),
+            metric(
+                "signal_connectivity_conflicts",
+                ir.signal_connectivity_conflicts.len().to_string(),
+            ),
             metric("interfaces", ir.interfaces.len().to_string()),
             metric("invariants", ir.invariants.len().to_string()),
             metric(
@@ -1178,6 +1233,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     );
     println!("  actor_ports: {}", ir.actor_ports.len());
     println!("  signal_connectivity: {}", ir.signal_connectivity.len());
+    println!(
+        "  signal_connectivity_conflicts: {}",
+        ir.signal_connectivity_conflicts.len()
+    );
     println!("  behaviors: {}", ir.behaviors.len());
     println!("  constraints: {}", ir.constraints.len());
     println!("  assumptions: {}", ir.assumptions.len());
@@ -1276,6 +1335,23 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     for rd in &ir.residual_decisions {
         println!("  - [{}] {}", rd.packet_id, rd.question);
     }
+    if !ir.signal_connectivity_conflicts.is_empty() {
+        println!();
+        println!("=== Signal Connectivity Conflicts ===");
+        for conflict in ir.signal_connectivity_conflicts.iter().take(8) {
+            println!(
+                "  - {}: {}",
+                conflict.signal_name,
+                describe_signal_connectivity_conflict(conflict)
+            );
+        }
+        if ir.signal_connectivity_conflicts.len() > 8 {
+            println!(
+                "  ... and {} more conflict(s)",
+                ir.signal_connectivity_conflicts.len() - 8
+            );
+        }
+    }
 
     let missing_producer_signals: Vec<String> = ir
         .signal_connectivity
@@ -1331,6 +1407,21 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 missing_consumer_signals.len()
             ),
             missing_consumer_signals.iter().take(8).cloned().collect(),
+        ));
+    }
+    if !ir.signal_connectivity_conflicts.is_empty() {
+        findings.push(finding(
+            "intent_signal_connectivity_conflicts_present",
+            ValidationFindingSeverity::Warning,
+            "signal_connectivity",
+            format!(
+                "{} signal connectivity conflict(s) detected; the carried structural KG still has unresolved producer ambiguity",
+                ir.signal_connectivity_conflicts.len()
+            ),
+            ir.signal_connectivity_conflicts
+                .iter()
+                .map(|conflict| conflict.conflict_id.clone())
+                .collect(),
         ));
     }
     if !ir.actor_ports.is_empty() && missing_graph_direction_count > 0 {
@@ -1474,6 +1565,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             metric(
                 "signal_connectivity",
                 ir.signal_connectivity.len().to_string(),
+            ),
+            metric(
+                "signal_connectivity_conflicts",
+                ir.signal_connectivity_conflicts.len().to_string(),
             ),
             metric("behaviors", ir.behaviors.len().to_string()),
             metric("constraints", ir.constraints.len().to_string()),
@@ -2209,6 +2304,54 @@ mod tests {
         assert_eq!(metric_value(&report, "temporal_rules"), Some("2"));
         assert_eq!(metric_value(&report, "temporal_conflicts"), Some("1"));
         assert!(has_finding(&report, "intent_temporal_conflicts_present"));
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_intent_ir_flags_signal_connectivity_conflicts() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal PREADY is output width 1.\n\n",
+                "The Completer drives PREADY.\n\n",
+                "The Monitor drives PREADY.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let report = validate_intent_ir(&intent_ir, "signal_connectivity_conflicts".to_string());
+        assert_eq!(
+            metric_value(&report, "signal_connectivity_conflicts"),
+            Some("1")
+        );
+        assert!(has_finding(
+            &report,
+            "intent_signal_connectivity_conflicts_present"
+        ));
 
         Ok(())
     }

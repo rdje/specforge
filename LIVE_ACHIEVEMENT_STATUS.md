@@ -42,6 +42,7 @@
 - Markdown-marker alias garbage filter in `specforge nlp-enrich`: Done
 - Tier 2 actor-signal relation extraction from prose and signal-description tables implemented: Done
 - Actor-relative KG carry-through into `SemanticIR` / `IntentIR` (`actor_signal_relations`, `actor_ports`, `signal_connectivity`) implemented: Done
+- Signal-connectivity conflict surfacing for multi-producer ambiguity implemented: Done
 - Graph-first direction coverage/scoring in `specforge validate` implemented: Done
 - Initial typed `temporal_rules` surface in `SemanticIR` / `IntentIR` implemented: Done
 - Cycle-window recovery for typed temporal rules implemented: Done
@@ -58,7 +59,7 @@
 - Live-doc projection of persisted IR validation findings implemented: Done
 - Latest local validation snapshot projected into tracked docs: Done
 - Full Ollama-backed `specforge converge` defaults enabled: Done
-- Test suite expanded to 130 tests; all passing: Done
+- Test suite expanded to 133 tests; all passing: Done
 - Explicit clock-tick temporal model in `SemanticIR` / `IntentIR`: In Progress
 - KG-guided multimodal rescans as a first-class convergent workstream: Not Started
 - Cross-modality evidence arbitration / conflict handling: In Progress
@@ -68,7 +69,7 @@
 - Actor-relative direction model in `SemanticIR` / `IntentIR`: In Progress
 
 ## Highest-priority remaining gap
-- Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then deepen temporal/evidence arbitration beyond the newly landed polarity-conflict slice before moving on to KG-guided rescans and KG-quality evaluation
+- Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then broaden structural/temporal evidence arbitration beyond the landed polarity and multi-producer conflict slices before moving on to KG-guided rescans and KG-quality evaluation
 
 ## Validation Projection
 

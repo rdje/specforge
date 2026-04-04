@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-04-04 (structural KG conflict surfacing for multi-producer ambiguity)
+
+### Added: typed structural connectivity conflicts in the canonical IR layers
+- `SemanticIR` now persists `signal_connectivity_conflicts` when the structural KG resolves more than one producer for the same signal.
+- `IntentIR` now carries the same conflict surface forward so unresolved producer ambiguity remains explicit at the canonical endpoint.
+
+### Changed: validation now clearly reports structural producer ambiguity
+- `specforge validate` now prints a dedicated signal-connectivity-conflict section for `SemanticIR` and `IntentIR`.
+- Validation now emits a warning finding and metric when the structural KG still has unresolved multi-producer ambiguity.
+
+### Added: regression coverage for structural KG conflict surfacing
+- Added tests for:
+  - deriving a signal-connectivity conflict from two producer claims in `SemanticIR`
+  - carrying that conflict into `IntentIR`
+  - flagging that carried conflict in `specforge validate`
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 133/133 passed
+
 ## 2026-04-04 (explicit polarity-conflict surfacing in EvidenceIR validation)
 
 ### Added: typed polarity-conflict records in `EvidenceIR`

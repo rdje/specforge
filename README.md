@@ -35,6 +35,7 @@ Use it first for the project objective, document navigation, and the current imp
 - `specforge validate <artifact>` now writes a deterministic stage-local `validation_report.json` sidecar and backannotates the latest report into the artifact's `validation_reports` field
 - `specforge project-validation <artifact>...` now validates the passed artifacts and refreshes the tracked validation snapshot docs from their persisted reports
 - `SemanticIR` and `IntentIR` now preserve the structural KG downstream via `actor_signal_relations`, `actor_ports`, and `signal_connectivity`, while keeping flat `direction_hint` fields only as a compatibility surface
+- `SemanticIR` and `IntentIR` now also carry `signal_connectivity_conflicts` so unresolved multi-producer structural ambiguity stays explicit in the canonical layers instead of hiding inside raw connectivity vectors
 - `SemanticIR` and `IntentIR` now also carry an initial typed `temporal_rules` surface so clocked behavior is no longer represented only as free-form timing text and prose constraints
 - that temporal surface now also recovers bounded `cycle_window` latency from prose/timing text like `within 2 cycles` instead of leaving every temporal rule unbounded
 - and it now reuses unique KG producers to emit actor-grounded drive predicates for value-timed rules, so temporal semantics can point back to who actually drives the signal

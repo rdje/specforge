@@ -619,6 +619,35 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 - this is the first evidence-arbitration slice, not the whole arbitration story; only polarity disagreement is typed so far
 - the current polarity scan is still text-pattern based; richer table-structure understanding and non-signal-description table rescans remain future work
 
+## Structural KG conflict surfacing for multi-producer ambiguity (2026-04-04)
+
+### Why this slice landed now
+- after surfacing polarity disagreement, the next obvious truthfulness gap was in the structural KG itself: `signal_connectivity` could already show more than one producer for a signal, but that ambiguity remained implicit in raw vectors instead of becoming a typed, validator-visible conflict
+- for a project that wants the KG to be trustworthy, unresolved producer ambiguity cannot stay hidden behind “just inspect the connectivity list”
+
+### Implementation shape
+- `crates/specforge/src/ir/semantic.rs` now derives `signal_connectivity_conflicts` from `signal_connectivity`
+- the first conflict kind is `multiple_producers`
+- each conflict keeps:
+  - the signal name
+  - the conflicting actor ids / actor names
+  - the supporting statement ids
+  - automation confidence
+- `crates/specforge/src/ir/intent.rs` now carries that structural conflict surface forward so the canonical endpoint keeps the ambiguity explicit
+- `crates/specforge/src/commands/validate.rs` now prints and flags those conflicts for both `SemanticIR` and `IntentIR`
+
+### Validation
+- added end-to-end tests for:
+  - deriving a structural signal-connectivity conflict in `SemanticIR`
+  - carrying that conflict into `IntentIR`
+  - reporting the conflict in `specforge validate`
+- `cargo fmt --all` passed
+- `cargo test --manifest-path Cargo.toml` now passes with 133 tests
+
+### Remaining follow-up
+- this is still the first structural-KG arbitration slice, not the whole graph-conflict story
+- it currently surfaces multi-producer ambiguity only; broader graph disagreement like conflicting widths, contradictory read/write claims, or modality-ranked arbitration remains future work
+
 ## Documentation surface currently steering the implementation
 - `README.md`
   - single entry point and quick orientation
