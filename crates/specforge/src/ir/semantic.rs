@@ -483,6 +483,12 @@ pub enum TemporalPredicateRecord {
         signal_name: String,
         phase: TickPhase,
     },
+    ActorMaintainsSignalStable {
+        actor_name: String,
+        signal_name: String,
+        from_phase: TickPhase,
+        to_phase: TickPhase,
+    },
     SignalStable {
         signal_name: String,
         from_phase: TickPhase,
@@ -5231,14 +5237,27 @@ fn temporal_consequents_from_signal_constraint(
             signal_name: constraint.subject_signal.clone(),
             phase: TickPhase::PostTick,
         });
+    let actor_maintains_predicate = unique_producer_by_signal
+        .get(&constraint.subject_signal)
+        .map(
+            |actor_name| TemporalPredicateRecord::ActorMaintainsSignalStable {
+                actor_name: actor_name.clone(),
+                signal_name: constraint.subject_signal.clone(),
+                from_phase: TickPhase::PreTick,
+                to_phase: TickPhase::PostTick,
+            },
+        );
     match &constraint.constraint_kind {
         SignalConstraintKind::MustNotChange
         | SignalConstraintKind::MustBeStable
-        | SignalConstraintKind::MustHoldData => vec![TemporalPredicateRecord::SignalStable {
-            signal_name: constraint.subject_signal.clone(),
-            from_phase: TickPhase::PreTick,
-            to_phase: TickPhase::PostTick,
-        }],
+        | SignalConstraintKind::MustHoldData => actor_maintains_predicate
+            .into_iter()
+            .chain(std::iter::once(TemporalPredicateRecord::SignalStable {
+                signal_name: constraint.subject_signal.clone(),
+                from_phase: TickPhase::PreTick,
+                to_phase: TickPhase::PostTick,
+            }))
+            .collect(),
         SignalConstraintKind::MustBeHigh => actor_drive_predicate
             .into_iter()
             .chain(std::iter::once(TemporalPredicateRecord::SignalValue {
@@ -5300,6 +5319,16 @@ fn temporal_consequents_from_conditional_rule(
             signal_name: signal_name.clone(),
             phase: TickPhase::PostTick,
         });
+    let actor_maintains_predicate = unique_producer_by_signal
+        .get(&signal_name)
+        .map(
+            |actor_name| TemporalPredicateRecord::ActorMaintainsSignalStable {
+                actor_name: actor_name.clone(),
+                signal_name: signal_name.clone(),
+                from_phase: TickPhase::PreTick,
+                to_phase: TickPhase::PostTick,
+            },
+        );
     let action = rule.consequent_action.trim();
     let action_lower = action.to_ascii_lowercase();
     if action_lower.contains("not change")
@@ -5307,11 +5336,14 @@ fn temporal_consequents_from_conditional_rule(
         || action_lower.contains("remain stable")
         || action_lower.contains("hold")
     {
-        return vec![TemporalPredicateRecord::SignalStable {
-            signal_name,
-            from_phase: TickPhase::PreTick,
-            to_phase: TickPhase::PostTick,
-        }];
+        return actor_maintains_predicate
+            .into_iter()
+            .chain(std::iter::once(TemporalPredicateRecord::SignalStable {
+                signal_name,
+                from_phase: TickPhase::PreTick,
+                to_phase: TickPhase::PostTick,
+            }))
+            .collect();
     }
     if action_lower.contains("deasserted") {
         return actor_drive_predicate
@@ -7449,6 +7481,83 @@ mod tests {
                     value,
                     phase: super::TickPhase::PostTick,
                 } if signal_name == "PREADY" && value == "ASSERTED"
+            )
+        }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn derives_actor_grounded_stability_event_from_stable_constraint() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("temporal_actor_stable.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal PREADY is output width 1.\n\n",
+                "Clock clk.\n\n",
+                "The Completer drives PREADY.\n\n",
+                "The Requester reads PREADY.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pready_stable".to_string(),
+            subject_signal: "PREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeStable,
+            target_value: None,
+            condition_text: Some("when HREADY is LOW".to_string()),
+            negated: false,
+            source_text: "PREADY must be stable for 2 cycles.".to_string(),
+            supporting_statement_ids: vec!["stmt_actor_stable".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| rule.rule_id == "temporal_signal_constraint_sigcon_pready_stable")
+            .expect("expected temporal rule derived from stable constraint");
+        assert!(rule.consequents.iter().any(|predicate| {
+            matches!(
+                predicate,
+                super::TemporalPredicateRecord::ActorMaintainsSignalStable {
+                    actor_name,
+                    signal_name,
+                    from_phase: super::TickPhase::PreTick,
+                    to_phase: super::TickPhase::PostTick,
+                } if actor_name.eq_ignore_ascii_case("Completer") && signal_name == "PREADY"
+            )
+        }));
+        assert!(rule.consequents.iter().any(|predicate| {
+            matches!(
+                predicate,
+                super::TemporalPredicateRecord::SignalStable {
+                    signal_name,
+                    from_phase: super::TickPhase::PreTick,
+                    to_phase: super::TickPhase::PostTick,
+                } if signal_name == "PREADY"
             )
         }));
 

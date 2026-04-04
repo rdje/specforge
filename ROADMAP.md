@@ -297,6 +297,7 @@
     - signal stability across `pre_tick -> post_tick`
     - signal sampling on clock edges, with optional actor grounding
     - actor-relative drive predicates when the structural KG resolves a unique signal producer
+    - actor-relative stability predicates when the structural KG resolves a unique producer for a stable/hold obligation
   - temporal rules now recover bounded `cycle_window` latency from phrases like `within 2 cycles` and from timing rows whose unit is already `cycles`
   - temporal derivation now uses an explicit clock declaration even when a full reset-bearing `SystemContractRecord` is not yet available
   - `specforge validate` now reports temporal-rule counts plus missing clock/edge grounding and actor-grounding diagnostics

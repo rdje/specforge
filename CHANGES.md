@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-04-04 (actor-grounded stability semantics in temporal rules)
+
+### Added: actor-relative stability predicates in the temporal layer
+- `TemporalPredicateRecord` now includes `ActorMaintainsSignalStable`.
+- Stable/hold-style temporal consequents now emit actor-grounded stability predicates when the structural KG resolves a unique producer for the signal.
+- This means the temporal layer can now express not just that a signal remains stable, but which actor is responsible for maintaining that stability across the tick window.
+
+### Changed: actor-grounding validation now counts actor-grounded stability too
+- `specforge validate` now treats `ActorMaintainsSignalStable` as actor-grounded temporal evidence alongside `ActorDrivesSignal` and `ActorSamplesSignal`.
+
+### Added: regression coverage for actor-grounded stability lift
+- Added end-to-end tests for:
+  - deriving `ActorMaintainsSignalStable` from a stable constraint with a unique producer
+  - carrying actor-grounded stability rules into `IntentIR`
+  - validation metrics for actor-grounded stability rules
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 121/121 passed
+
 ## 2026-04-04 (actor-grounded temporal drive events)
 
 ### Added: actor-relative drive predicates in typed temporal rules

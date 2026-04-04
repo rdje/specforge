@@ -460,7 +460,7 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 
 ### Remaining follow-up
 - this is the first typed temporal layer, not the full temporal semantics program
-- cycle windows, richer drive-maintains-stability semantics, multi-predicate antecedents, contradiction detection, and richer VLM timing lift still need to land before `R15b` can be considered complete
+- at that point, cycle windows, richer drive-maintains-stability semantics, multi-predicate antecedents, contradiction detection, and richer VLM timing lift still needed to land before `R15b` could be considered complete
 
 ## Cycle-window recovery in temporal rules (2026-04-04)
 
@@ -487,7 +487,7 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 
 ### Remaining follow-up
 - this still does not cover richer latency language like protocol-phase aliases, burst-relative windows, or contradictory latency evidence across modalities
-- multi-step temporal rules, richer actor-relative stability semantics, and contradiction handling are still the next meaningful `R15b` deepening steps
+- at that point, multi-step temporal rules, richer actor-relative stability semantics, and contradiction handling were still the next meaningful `R15b` deepening steps
 
 ## Actor-grounded temporal drive events (2026-04-04)
 
@@ -511,7 +511,29 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 
 ### Remaining follow-up
 - this is still only the first actor-aware temporal slice
-- actor-relative drive-maintains-stability semantics, multi-step temporal chains, and contradiction/arbitration across competing actor-grounded rules still need to land before `R15b` is mature
+- at that point, actor-relative drive-maintains-stability semantics, multi-step temporal chains, and contradiction/arbitration across competing actor-grounded rules still needed to land before `R15b` was mature
+
+## Actor-grounded stability semantics in temporal rules (2026-04-04)
+
+### Why this slice landed now
+- the temporal layer had learned who drives a signal for value-setting rules, but stable/hold constraints still dropped back to signal-only semantics
+- that was an important semantic gap because many protocol rules are really producer obligations: not just “signal remains stable,” but “the producer must keep it stable”
+- the next honest `R15b` step was therefore to connect stability semantics back to the same unique-producer KG surface already used for value-drive rules
+
+### Implementation shape
+- `crates/specforge/src/ir/semantic.rs` now adds `TemporalPredicateRecord::ActorMaintainsSignalStable`
+- stable/hold-style consequents now emit `ActorMaintainsSignalStable` when:
+  - the rule targets a specific signal
+  - the structural KG resolves exactly one producer actor for that signal
+- the signal-level `SignalStable` predicate is still kept, so the temporal layer preserves both the abstract invariant and the actor-responsibility view
+
+### Validation
+- `crates/specforge/src/commands/validate.rs` now counts actor-grounded stability predicates as part of `temporal_rules_with_actor_grounding`
+- `cargo fmt --all` passed
+- `cargo test --manifest-path Cargo.toml` now passes with 121 tests
+
+### Remaining follow-up
+- multi-predicate antecedents, richer temporal composition, and contradiction/arbitration across actor-grounded temporal rules are still the next meaningful `R15b` deepening steps
 
 ## Documentation surface currently steering the implementation
 - `README.md`

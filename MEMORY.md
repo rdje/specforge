@@ -22,11 +22,12 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `9f0c2b0`
-- latest_commit_brief_message: `feat(semantic): recover temporal cycle windows`
-- note: current uncommitted work adds actor-grounded drive predicates to the typed temporal-rule layer, updates validation to count actor-grounded temporal rules, and syncs the continuity docs to that state
+- latest_commit_hash: `25c55e4`
+- latest_commit_brief_message: `feat(semantic): ground temporal rules in actors`
+- note: current uncommitted work adds actor-grounded stability predicates to the typed temporal-rule layer, updates validation to count them as actor-grounded temporal evidence, and syncs the continuity docs to that state
 
 ## Recent commit chain (last 5)
+- `25c55e4` feat(semantic): ground temporal rules in actors
 - `9f0c2b0` feat(semantic): recover temporal cycle windows
 - `8bbfe1f` feat(semantic): add typed temporal rules
 - `fbd0310` feat(validation): score direction from graph first
@@ -46,16 +47,16 @@
 - `VALIDATION_SNAPSHOT.md` is now a tracked continuity doc refreshed from persisted validation reports
 
 ## Completed technical work in this session
-- the typed temporal-rule layer now emits `ActorDrivesSignal` when a temporal value rule targets a signal with a unique producer in the structural KG
-- `specforge validate` now reports `temporal_rules_with_actor_grounding` and flags temporal-rule sets that coexist with actor-signal graph data but still have no actor-grounded temporal predicates
+- the typed temporal-rule layer now emits `ActorMaintainsSignalStable` for stable/hold rules when the structural KG resolves a unique producer
+- `specforge validate` now counts actor-grounded stability predicates as part of `temporal_rules_with_actor_grounding`
 - added regression tests for:
-  - actor-grounded drive-event derivation from value constraints
-  - actor-grounded temporal-rule carry-through into `IntentIR`
-  - validation metrics for actor-grounded temporal rules
-- synced the roadmap/status/analysis/README/change docs so future sessions know the temporal layer now reconnects back to the KG producers, not just signal-level timing text
+  - actor-grounded stability derivation from stable constraints
+  - actor-grounded stability carry-through into `IntentIR`
+  - validation metrics for actor-grounded stability rules
+- synced the roadmap/status/analysis/README/change docs so future sessions know the temporal layer now keeps producer responsibility for stability rules too
 - validation ran for this task:
   - `cargo fmt --all` passed
-  - `cargo test --manifest-path Cargo.toml` passed with 118 tests
+  - `cargo test --manifest-path Cargo.toml` passed with 121 tests
 
 ## Current working tree before commit
 - modified tracked files currently include:
@@ -72,9 +73,9 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the actor-grounded temporal slice; do not stage `generated/`
+1. commit the actor-grounded stability slice; do not stage `generated/`
 2. continue the remaining `R15` slice by moving direct downstream `direction_hint` consumers onto actor-relative graph semantics
-3. deepen `R15b` with drive-maintains-stability semantics, richer temporal composition, and contradiction detection before moving on to `R15c`
+3. deepen `R15b` with multi-predicate temporal composition and contradiction detection before moving on to `R15c`
 
 ## Remaining engineering gaps after this commit
 - remaining actor-relative direction modeling in `SemanticIR` / `IntentIR` (`R15`)
@@ -94,4 +95,4 @@
 4. read `ROADMAP.md`
 5. read `RUST_CODEBASE_ANALYSIS.md`
 6. inspect `git --no-pager status --short`
-7. continue with the remaining graph-first `R15` consumer migration and the next actor-aware temporal-deepening slice unless the user redirects
+7. continue with the remaining graph-first `R15` consumer migration and the next temporal-composition slice unless the user redirects
