@@ -1579,6 +1579,23 @@ mod tests {
                 .semantic_tags
                 .contains(&crate::ir::evidence::SignalSemanticTag::HandshakeReadyLike)
         }));
+        let xctrl = intent_ir
+            .interfaces
+            .iter()
+            .flat_map(|interface| interface.signal_records.iter())
+            .find(|signal| signal.signal_name == "XCTRL")
+            .expect("expected XCTRL interface signal");
+        assert_eq!(xctrl.semantic_candidates.len(), 2);
+        assert!(xctrl.resolved_semantic_role.is_none());
+        assert!(xctrl.semantic_consensus.is_none());
+        assert!(xctrl.semantic_candidates.iter().any(|candidate| {
+            candidate.role == crate::ir::semantic::InterfaceSignalSemanticRole::HandshakeValidLike
+                && candidate.evidence_weight == 6
+        }));
+        assert!(xctrl.semantic_candidates.iter().any(|candidate| {
+            candidate.role == crate::ir::semantic::InterfaceSignalSemanticRole::HandshakeReadyLike
+                && candidate.evidence_weight == 3
+        }));
 
         Ok(())
     }
@@ -2088,6 +2105,26 @@ mod tests {
             xreq_consensus.automation_confidence,
             AutomationConfidence::Medium
         );
+        assert_eq!(xreq.semantic_candidates.len(), 1);
+        let xreq_candidate = &xreq.semantic_candidates[0];
+        assert_eq!(
+            xreq_candidate.role,
+            crate::ir::semantic::InterfaceSignalSemanticRole::HandshakeValidLike
+        );
+        assert_eq!(
+            xreq_candidate.grounding_strength,
+            crate::ir::semantic::SemanticGroundingStrength::SingleSource
+        );
+        assert_eq!(xreq_candidate.supporting_observation_count, 1);
+        assert_eq!(
+            xreq_candidate.supporting_source_kinds,
+            vec![crate::ir::evidence::SignalSemanticHintSourceKind::SignalDescriptionTable]
+        );
+        assert_eq!(
+            xreq_candidate.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert_eq!(xreq_candidate.evidence_weight, 6);
         assert_eq!(xreq.semantic_observations.len(), 1);
         assert!(xreq.semantic_observations.iter().any(|observation| {
             matches!(
@@ -2135,6 +2172,26 @@ mod tests {
             xack_consensus.automation_confidence,
             AutomationConfidence::Medium
         );
+        assert_eq!(xack.semantic_candidates.len(), 1);
+        let xack_candidate = &xack.semantic_candidates[0];
+        assert_eq!(
+            xack_candidate.role,
+            crate::ir::semantic::InterfaceSignalSemanticRole::HandshakeReadyLike
+        );
+        assert_eq!(
+            xack_candidate.grounding_strength,
+            crate::ir::semantic::SemanticGroundingStrength::SingleSource
+        );
+        assert_eq!(xack_candidate.supporting_observation_count, 1);
+        assert_eq!(
+            xack_candidate.supporting_source_kinds,
+            vec![crate::ir::evidence::SignalSemanticHintSourceKind::SignalDescriptionTable]
+        );
+        assert_eq!(
+            xack_candidate.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert_eq!(xack_candidate.evidence_weight, 6);
         assert_eq!(xack.semantic_observations.len(), 1);
         assert!(xack.semantic_observations.iter().any(|observation| {
             matches!(
@@ -2254,6 +2311,25 @@ mod tests {
             xreq_consensus.automation_confidence,
             AutomationConfidence::Medium
         );
+        assert_eq!(xreq.semantic_candidates.len(), 1);
+        let xreq_candidate = &xreq.semantic_candidates[0];
+        assert_eq!(
+            xreq_candidate.grounding_strength,
+            crate::ir::semantic::SemanticGroundingStrength::CrossModality
+        );
+        assert_eq!(xreq_candidate.supporting_observation_count, 2);
+        assert_eq!(
+            xreq_candidate.supporting_source_kinds,
+            vec![
+                crate::ir::evidence::SignalSemanticHintSourceKind::SignalDescriptionTable,
+                crate::ir::evidence::SignalSemanticHintSourceKind::VisualCaption
+            ]
+        );
+        assert_eq!(
+            xreq_candidate.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert_eq!(xreq_candidate.evidence_weight, 10);
         assert_eq!(xreq.semantic_observations.len(), 2);
 
         Ok(())

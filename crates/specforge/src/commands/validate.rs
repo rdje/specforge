@@ -254,6 +254,36 @@ fn interface_signals_with_resolved_semantic_role_count(
         .count()
 }
 
+fn interface_signal_semantic_candidates_count(
+    interfaces: &[crate::ir::semantic::InterfaceRecord],
+) -> usize {
+    interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+        .map(|signal| signal.semantic_candidates.len())
+        .sum()
+}
+
+fn interface_signals_with_semantic_candidates_count(
+    interfaces: &[crate::ir::semantic::InterfaceRecord],
+) -> usize {
+    interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+        .filter(|signal| !signal.semantic_candidates.is_empty())
+        .count()
+}
+
+fn interface_signals_with_multiple_semantic_candidates_count(
+    interfaces: &[crate::ir::semantic::InterfaceRecord],
+) -> usize {
+    interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+        .filter(|signal| signal.semantic_candidates.len() > 1)
+        .count()
+}
+
 fn interface_signals_with_semantic_grounding_strength_count(
     interfaces: &[crate::ir::semantic::InterfaceRecord],
     grounding_strength: crate::ir::semantic::SemanticGroundingStrength,
@@ -1073,6 +1103,10 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         .count();
     let with_semantic_tags = interface_signals_with_semantic_tags_count(&ir.interfaces);
     let semantic_observations = interface_signal_semantic_observations_count(&ir.interfaces);
+    let semantic_candidates = interface_signal_semantic_candidates_count(&ir.interfaces);
+    let with_semantic_candidates = interface_signals_with_semantic_candidates_count(&ir.interfaces);
+    let with_multiple_semantic_candidates =
+        interface_signals_with_multiple_semantic_candidates_count(&ir.interfaces);
     let with_resolved_semantic_role =
         interface_signals_with_resolved_semantic_role_count(&ir.interfaces);
     let with_semantic_consensus = interface_signals_with_semantic_consensus_count(&ir.interfaces);
@@ -1137,6 +1171,9 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     println!("  with_compat_direction_hint: {with_compat_direction_hint} ({compat_dir_pct}%)");
     println!("  with_width: {with_width} ({w_pct}%)");
     println!("  with_semantic_tags: {with_semantic_tags}");
+    println!("  semantic_candidates: {semantic_candidates}");
+    println!("  with_semantic_candidates: {with_semantic_candidates}");
+    println!("  with_multiple_semantic_candidates: {with_multiple_semantic_candidates}");
     println!("  with_resolved_semantic_role: {with_resolved_semantic_role}");
     println!("  with_semantic_consensus: {with_semantic_consensus}");
     println!(
@@ -1508,6 +1545,15 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             ),
             metric("with_width", with_width.to_string()),
             metric("with_semantic_tags", with_semantic_tags.to_string()),
+            metric("semantic_candidates", semantic_candidates.to_string()),
+            metric(
+                "with_semantic_candidates",
+                with_semantic_candidates.to_string(),
+            ),
+            metric(
+                "with_multiple_semantic_candidates",
+                with_multiple_semantic_candidates.to_string(),
+            ),
             metric(
                 "with_resolved_semantic_role",
                 with_resolved_semantic_role.to_string(),
@@ -1659,6 +1705,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     let with_width = with_numeric_width + with_parametric_width;
     let with_semantic_tags = interface_signals_with_semantic_tags_count(&ir.interfaces);
     let semantic_observations = interface_signal_semantic_observations_count(&ir.interfaces);
+    let semantic_candidates = interface_signal_semantic_candidates_count(&ir.interfaces);
+    let with_semantic_candidates = interface_signals_with_semantic_candidates_count(&ir.interfaces);
+    let with_multiple_semantic_candidates =
+        interface_signals_with_multiple_semantic_candidates_count(&ir.interfaces);
     let with_resolved_semantic_role =
         interface_signals_with_resolved_semantic_role_count(&ir.interfaces);
     let with_semantic_consensus = interface_signals_with_semantic_consensus_count(&ir.interfaces);
@@ -1712,6 +1762,9 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         "  with_width: {with_width} ({w_pct}%) [{with_numeric_width} numeric, {with_parametric_width} parametric]"
     );
     println!("  with_semantic_tags: {with_semantic_tags}");
+    println!("  semantic_candidates: {semantic_candidates}");
+    println!("  with_semantic_candidates: {with_semantic_candidates}");
+    println!("  with_multiple_semantic_candidates: {with_multiple_semantic_candidates}");
     println!("  with_resolved_semantic_role: {with_resolved_semantic_role}");
     println!("  with_semantic_consensus: {with_semantic_consensus}");
     println!(
@@ -2148,6 +2201,15 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             ),
             metric("with_width", with_width.to_string()),
             metric("with_semantic_tags", with_semantic_tags.to_string()),
+            metric("semantic_candidates", semantic_candidates.to_string()),
+            metric(
+                "with_semantic_candidates",
+                with_semantic_candidates.to_string(),
+            ),
+            metric(
+                "with_multiple_semantic_candidates",
+                with_multiple_semantic_candidates.to_string(),
+            ),
             metric(
                 "with_resolved_semantic_role",
                 with_resolved_semantic_role.to_string(),
@@ -3308,6 +3370,12 @@ mod tests {
 
         let report = validate_intent_ir(&intent_ir, "signal_semantic_tags".to_string());
         assert_eq!(metric_value(&report, "with_semantic_tags"), Some("2"));
+        assert_eq!(metric_value(&report, "semantic_candidates"), Some("2"));
+        assert_eq!(metric_value(&report, "with_semantic_candidates"), Some("2"));
+        assert_eq!(
+            metric_value(&report, "with_multiple_semantic_candidates"),
+            Some("0")
+        );
         assert_eq!(
             metric_value(&report, "with_resolved_semantic_role"),
             Some("2")
@@ -3406,6 +3474,12 @@ mod tests {
         )?;
 
         let report = validate_intent_ir(&intent_ir, "signal_semantic_multi_source".to_string());
+        assert_eq!(metric_value(&report, "semantic_candidates"), Some("1"));
+        assert_eq!(metric_value(&report, "with_semantic_candidates"), Some("1"));
+        assert_eq!(
+            metric_value(&report, "with_multiple_semantic_candidates"),
+            Some("0")
+        );
         assert_eq!(
             metric_value(&report, "with_resolved_semantic_role"),
             Some("1")
@@ -3514,6 +3588,12 @@ mod tests {
         let report = validate_intent_ir(
             &intent_ir,
             "signal_semantic_same_modality_multi_source".to_string(),
+        );
+        assert_eq!(metric_value(&report, "semantic_candidates"), Some("1"));
+        assert_eq!(metric_value(&report, "with_semantic_candidates"), Some("1"));
+        assert_eq!(
+            metric_value(&report, "with_multiple_semantic_candidates"),
+            Some("0")
         );
         assert_eq!(
             metric_value(&report, "with_resolved_semantic_role"),
@@ -3626,6 +3706,12 @@ mod tests {
             &intent_ir,
             "resolved_semantic_roles_without_consensus".to_string(),
         );
+        assert_eq!(metric_value(&report, "semantic_candidates"), Some("2"));
+        assert_eq!(metric_value(&report, "with_semantic_candidates"), Some("2"));
+        assert_eq!(
+            metric_value(&report, "with_multiple_semantic_candidates"),
+            Some("0")
+        );
         assert_eq!(
             metric_value(&report, "with_resolved_semantic_role"),
             Some("2")
@@ -3639,6 +3725,78 @@ mod tests {
             &report,
             "intent_resolved_roles_without_consensus_present"
         ));
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_intent_ir_counts_multiple_semantic_candidates_for_conflicts() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("intent_semantic_role_conflict.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal XCTRL is input width 1.\n\n",
+                "XCTRL indicates that the subordinate can accept the transfer.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_semantic_conflict".to_string(),
+            asset_id: "asset_semantic_conflict".to_string(),
+            page_id: None,
+            caption_text: Some("Control signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("XCTRL", false),
+                make_table_cell(
+                    "Indicates that address and control information are valid for transfer.",
+                    false,
+                ),
+            ]],
+            row_count: 1,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let report = validate_intent_ir(&intent_ir, "semantic_candidates_conflict".to_string());
+        assert_eq!(metric_value(&report, "semantic_candidates"), Some("2"));
+        assert_eq!(metric_value(&report, "with_semantic_candidates"), Some("1"));
+        assert_eq!(
+            metric_value(&report, "with_multiple_semantic_candidates"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&report, "with_resolved_semantic_role"),
+            Some("0")
+        );
 
         Ok(())
     }

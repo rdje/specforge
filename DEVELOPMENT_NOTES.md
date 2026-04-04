@@ -1117,3 +1117,40 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
   - weight source kinds and automation confidence inside compatible consensus sets
   - add explicit winner-vs-runner-up style arbitration metadata when compatible evidence competes in strength
   - extend the same consensus/arbitration model beyond the current ready/valid semantic-role family
+
+## 2026-04-04 - canonical semantic candidates now preserve competing role hypotheses
+- after the semantic-consensus slice, another gap was still obvious:
+  - canonical consumers could inspect the winning consensus when a role resolved cleanly
+  - but they still could not inspect competing role candidates without going back to raw `semantic_observations`
+  - that meant unresolved role competition was visible only indirectly through conflict records, not as a first-class candidate surface on the signal itself
+- that was too lossy for the project quality bar because arbitration work should happen on typed candidate profiles, not by forcing every downstream consumer to reconstruct them from raw observations
+- `crates/specforge/src/ir/semantic.rs` now carries `semantic_candidates` on `InterfaceSignalRecord`
+- each candidate currently records:
+  - role
+  - grounding strength
+  - supporting source kinds
+  - supporting observation count
+  - strongest supporting automation confidence
+  - deterministic evidence weight
+- the current deterministic evidence weight is intentionally simple and transparent:
+  - source-kind prior
+  - plus automation-confidence prior
+  - preserved for inspection, not yet used to force unsafe winner selection across incompatible roles
+- `resolved_semantic_role` / `semantic_consensus` now build from that candidate layer when exactly one role candidate survives
+- when multiple role candidates exist, the canonical signal now preserves them explicitly instead of flattening the situation to only `signal_semantic_conflicts`
+- `crates/specforge/src/commands/validate.rs` now reports:
+  - `semantic_candidates`
+  - `with_semantic_candidates`
+  - `with_multiple_semantic_candidates`
+- regression coverage now proves:
+  - candidate details are preserved for single-source, same-modality multi-source, and cross-modality role meanings
+  - conflicting ready-like vs valid-like evidence produces two canonical candidates with no resolved role or consensus
+  - `IntentIR` carries those candidate profiles forward unchanged
+  - validation counts signals with multiple semantic candidates explicitly
+- validation for this slice:
+  - `cargo fmt --all` passed
+  - `cargo test --manifest-path Cargo.toml` passed with `167/167`
+- the next honest follow-up is true arbitration metadata:
+  - rank candidate strengths explicitly instead of only storing weights
+  - surface winner-vs-runner-up margin when exactly one candidate wins safely
+  - keep conflict cases honest while still giving downstream consumers stronger typed arbitration context

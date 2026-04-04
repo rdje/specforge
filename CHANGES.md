@@ -1,5 +1,41 @@
 # CHANGES
 
+## 2026-04-04 (canonical semantic candidate arbitration surface)
+
+### Added: explicit semantic candidates on canonical interface signals
+- `SemanticIR` now carries `semantic_candidates` on `InterfaceSignalRecord`.
+- `IntentIR` carries that same candidate-arbitration surface forward unchanged.
+
+### Added: typed candidate profiles for competing role meanings
+- Each semantic candidate now records:
+  - role
+  - grounding strength
+  - supporting source kinds
+  - supporting observation count
+  - strongest supporting automation confidence
+  - deterministic evidence weight
+
+### Changed: resolved semantic roles now build from canonical candidates
+- Observation-backed resolved roles and consensus summaries are now built from the canonical candidate layer.
+- When multiple role candidates exist, the signal keeps those candidates explicit instead of flattening the situation into only a conflict record.
+
+### Added: validation metrics for canonical semantic arbitration
+- `specforge validate` now reports:
+  - `semantic_candidates`
+  - `with_semantic_candidates`
+  - `with_multiple_semantic_candidates`
+
+### Added: regression coverage for canonical semantic candidates
+- Added tests for:
+  - candidate details on single-source, same-modality multi-source, and cross-modality role meanings
+  - conflicting role meanings producing multiple canonical candidates without a resolved role
+  - candidate carry-through into `IntentIR`
+  - validation counts for multiple semantic candidates
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 167/167 passed
+
 ## 2026-04-04 (canonical semantic consensus summaries)
 
 ### Added: explicit semantic consensus summaries on canonical interface signals

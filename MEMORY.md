@@ -22,11 +22,12 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `d5974a4`
-- latest_commit_brief_message: `feat(semantic): distinguish cross-modality grounding`
-- note: current uncommitted work adds explicit canonical semantic-consensus summaries, exposes fallback-only resolved roles in validation, and syncs the live docs
+- latest_commit_hash: `63e2c51`
+- latest_commit_brief_message: `feat(semantic): persist role consensus summaries`
+- note: current uncommitted work adds explicit canonical semantic candidates, exposes candidate counts in validation, and syncs the live docs
 
 ## Recent commit chain (last 5)
+- `63e2c51` feat(semantic): persist role consensus summaries
 - `d5974a4` feat(semantic): distinguish cross-modality grounding
 - `c4ba7e5` feat(semantic): resolve grounded semantic roles
 - `f8673f0` feat(ir): preserve semantic role provenance
@@ -45,14 +46,14 @@
 - `VALIDATION_SNAPSHOT.md` is now a tracked continuity doc refreshed from persisted validation reports
 
 ## Completed technical work in this session
-- `crates/specforge/src/ir/semantic.rs` now carries an explicit `semantic_consensus` summary for observation-backed resolved roles, including supporting source kinds, observation count, and strongest supporting automation confidence
-- `SemanticIR` now keeps fallback-only resolved roles explicit by leaving `semantic_consensus` absent when no preserved observation-backed consensus exists
-- `crates/specforge/src/ir/intent.rs` now carries the same semantic-consensus summary into the canonical endpoint
-- `crates/specforge/src/commands/validate.rs` now reports `with_semantic_consensus`, `with_high_confidence_semantic_consensus`, and `resolved_semantic_roles_without_consensus`, and emits a finding when fallback-only resolved roles remain
-- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, and `CHANGES.md` so the canonical semantic-consensus slice is visible in continuity docs
+- `crates/specforge/src/ir/semantic.rs` now carries explicit `semantic_candidates` on `InterfaceSignalRecord`, preserving competing role hypotheses with typed support profiles instead of forcing consumers to reconstruct them from raw observations
+- `resolved_semantic_role` / `semantic_consensus` now build from those canonical candidates when exactly one role candidate survives safely
+- `crates/specforge/src/ir/intent.rs` now carries the same semantic-candidate surface into the canonical endpoint
+- `crates/specforge/src/commands/validate.rs` now reports `semantic_candidates`, `with_semantic_candidates`, and `with_multiple_semantic_candidates`
+- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, and `CHANGES.md` so the canonical semantic-candidate slice is visible in continuity docs
 - validation ran for this task:
   - `cargo fmt --all` passed
-  - `cargo test --manifest-path Cargo.toml` passed with `166/166`
+  - `cargo test --manifest-path Cargo.toml` passed with `167/167`
 
 ## Current working tree before commit
 - modified tracked files currently include:
@@ -68,15 +69,15 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the canonical semantic-consensus slice
-2. continue the semantic-truthfulness program by adding stronger semantic-role arbitration beyond consensus summaries and grounding buckets
+1. commit the canonical semantic-candidate slice
+2. continue the semantic-truthfulness program by adding stronger semantic-role arbitration beyond candidate/consensus summaries and grounding buckets
 3. keep adapter work de-prioritized until the graph, temporal, arbitration, and evaluation surfaces are materially stronger
 
 ## Remaining engineering gaps after this commit
 - remaining actor-relative direction modeling in `SemanticIR` / `IntentIR` (`R15`)
 - richer explicit clock-tick temporal semantics (`R15b`)
 - KG-guided multimodal rescans (`R15c`)
-- broader evidence arbitration / conflict handling beyond polarity, interface-shape, multi-producer ambiguity, modality-aware semantic-role grounding, and consensus summaries (`R15d`)
+- broader evidence arbitration / conflict handling beyond polarity, interface-shape, multi-producer ambiguity, modality-aware semantic-role grounding, consensus summaries, and semantic candidates (`R15d`)
 - KG-quality evaluation and benchmark hardening (`R15e`)
 - Tier 3 relation extraction after the graph/temporal/eval surfaces are ready (`R14`)
 - some downstream compatibility and consumer paths still rely on flat `direction_hint` instead of the graph-native surface

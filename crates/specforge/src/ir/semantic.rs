@@ -460,6 +460,8 @@ pub struct InterfaceSignalRecord {
     pub width_hint: Option<WidthHint>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub semantic_tags: Vec<SignalSemanticTag>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub semantic_candidates: Vec<InterfaceSignalSemanticCandidateRecord>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub resolved_semantic_role: Option<InterfaceSignalSemanticRole>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -504,6 +506,17 @@ impl SemanticGroundingStrength {
             Self::CrossModality => "cross_modality",
         }
     }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct InterfaceSignalSemanticCandidateRecord {
+    pub role: InterfaceSignalSemanticRole,
+    pub grounding_strength: SemanticGroundingStrength,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub supporting_source_kinds: Vec<SignalSemanticHintSourceKind>,
+    pub supporting_observation_count: usize,
+    pub automation_confidence: AutomationConfidence,
+    pub evidence_weight: u32,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -1613,6 +1626,7 @@ fn build_interfaces(
                             signal.semantic_tags.into_iter().collect();
                         let semantic_observations = signal.semantic_observations;
                         let (
+                            semantic_candidates,
                             resolved_semantic_role,
                             semantic_grounding_strength,
                             semantic_consensus,
@@ -1625,6 +1639,7 @@ fn build_interfaces(
                             direction_hint: signal.direction_hint,
                             width_hint: signal.width_hint,
                             semantic_tags,
+                            semantic_candidates,
                             resolved_semantic_role,
                             semantic_grounding_strength,
                             semantic_consensus,
@@ -5752,57 +5767,22 @@ fn resolve_interface_signal_semantic_role(
     semantic_tags: &[SignalSemanticTag],
     semantic_observations: &[InterfaceSignalSemanticObservationRecord],
 ) -> (
+    Vec<InterfaceSignalSemanticCandidateRecord>,
     Option<InterfaceSignalSemanticRole>,
     Option<SemanticGroundingStrength>,
     Option<InterfaceSignalSemanticConsensusRecord>,
 ) {
-    let valid_supporting_observations: Vec<&InterfaceSignalSemanticObservationRecord> =
-        semantic_observations
-            .iter()
-            .filter(|observation| {
-                observation_supports_semantic_role(
-                    observation,
-                    InterfaceSignalSemanticRole::HandshakeValidLike,
-                )
-            })
-            .collect();
-    let ready_supporting_observations: Vec<&InterfaceSignalSemanticObservationRecord> =
-        semantic_observations
-            .iter()
-            .filter(|observation| {
-                observation_supports_semantic_role(
-                    observation,
-                    InterfaceSignalSemanticRole::HandshakeReadyLike,
-                )
-            })
-            .collect();
+    let semantic_candidates = build_semantic_candidates(semantic_observations);
 
-    match (
-        !valid_supporting_observations.is_empty(),
-        !ready_supporting_observations.is_empty(),
-    ) {
-        (true, false) => (
-            Some(InterfaceSignalSemanticRole::HandshakeValidLike),
-            Some(grounding_strength_for_supporting_observations(
-                &valid_supporting_observations,
-            )),
-            Some(build_semantic_consensus(
-                InterfaceSignalSemanticRole::HandshakeValidLike,
-                &valid_supporting_observations,
-            )),
+    match semantic_candidates.as_slice() {
+        [candidate] => (
+            semantic_candidates.clone(),
+            Some(candidate.role),
+            Some(candidate.grounding_strength),
+            Some(build_semantic_consensus(candidate)),
         ),
-        (false, true) => (
-            Some(InterfaceSignalSemanticRole::HandshakeReadyLike),
-            Some(grounding_strength_for_supporting_observations(
-                &ready_supporting_observations,
-            )),
-            Some(build_semantic_consensus(
-                InterfaceSignalSemanticRole::HandshakeReadyLike,
-                &ready_supporting_observations,
-            )),
-        ),
-        (true, true) => (None, None, None),
-        (false, false) => {
+        [_, ..] => (semantic_candidates, None, None, None),
+        [] => {
             let has_valid_tag = semantic_tags_support_semantic_role(
                 semantic_tags,
                 InterfaceSignalSemanticRole::HandshakeValidLike,
@@ -5813,19 +5793,44 @@ fn resolve_interface_signal_semantic_role(
             );
             match (has_valid_tag, has_ready_tag) {
                 (true, false) => (
+                    Vec::new(),
                     Some(InterfaceSignalSemanticRole::HandshakeValidLike),
                     None,
                     None,
                 ),
                 (false, true) => (
+                    Vec::new(),
                     Some(InterfaceSignalSemanticRole::HandshakeReadyLike),
                     None,
                     None,
                 ),
-                _ => (None, None, None),
+                _ => (Vec::new(), None, None, None),
             }
         }
     }
+}
+
+fn build_semantic_candidates(
+    semantic_observations: &[InterfaceSignalSemanticObservationRecord],
+) -> Vec<InterfaceSignalSemanticCandidateRecord> {
+    [
+        InterfaceSignalSemanticRole::HandshakeValidLike,
+        InterfaceSignalSemanticRole::HandshakeReadyLike,
+    ]
+    .into_iter()
+    .filter_map(|role| {
+        let supporting_observations: Vec<&InterfaceSignalSemanticObservationRecord> =
+            semantic_observations
+                .iter()
+                .filter(|observation| observation_supports_semantic_role(observation, role))
+                .collect();
+        if supporting_observations.is_empty() {
+            None
+        } else {
+            Some(build_semantic_candidate(role, &supporting_observations))
+        }
+    })
+    .collect()
 }
 
 fn observation_supports_semantic_role(
@@ -5867,10 +5872,10 @@ fn grounding_strength_for_supporting_observations(
     }
 }
 
-fn build_semantic_consensus(
+fn build_semantic_candidate(
     role: InterfaceSignalSemanticRole,
     observations: &[&InterfaceSignalSemanticObservationRecord],
-) -> InterfaceSignalSemanticConsensusRecord {
+) -> InterfaceSignalSemanticCandidateRecord {
     let grounding_strength = grounding_strength_for_supporting_observations(observations);
     let supporting_source_kinds = observations
         .iter()
@@ -5884,12 +5889,52 @@ fn build_semantic_consensus(
             .fold(AutomationConfidence::Low, |current, observation| {
                 max_automation_confidence(current, observation.automation_confidence)
             });
-    InterfaceSignalSemanticConsensusRecord {
+    let evidence_weight = observations
+        .iter()
+        .map(|observation| semantic_observation_weight(observation))
+        .sum();
+    InterfaceSignalSemanticCandidateRecord {
         role,
         grounding_strength,
         supporting_source_kinds,
         supporting_observation_count: observations.len(),
         automation_confidence,
+        evidence_weight,
+    }
+}
+
+fn build_semantic_consensus(
+    candidate: &InterfaceSignalSemanticCandidateRecord,
+) -> InterfaceSignalSemanticConsensusRecord {
+    InterfaceSignalSemanticConsensusRecord {
+        role: candidate.role,
+        grounding_strength: candidate.grounding_strength,
+        supporting_source_kinds: candidate.supporting_source_kinds.clone(),
+        supporting_observation_count: candidate.supporting_observation_count,
+        automation_confidence: candidate.automation_confidence,
+    }
+}
+
+fn semantic_observation_weight(observation: &InterfaceSignalSemanticObservationRecord) -> u32 {
+    semantic_source_kind_weight(observation.source_kind)
+        + automation_confidence_weight(observation.automation_confidence)
+}
+
+fn semantic_source_kind_weight(source_kind: SignalSemanticHintSourceKind) -> u32 {
+    match source_kind {
+        SignalSemanticHintSourceKind::SignalDescriptionTable => 4,
+        SignalSemanticHintSourceKind::VisualCaption => 3,
+        SignalSemanticHintSourceKind::ProseStatement => 2,
+        SignalSemanticHintSourceKind::VlmTimingDiagramAnnotation => 2,
+        SignalSemanticHintSourceKind::AliasGroundedProseStatement => 1,
+    }
+}
+
+fn automation_confidence_weight(confidence: AutomationConfidence) -> u32 {
+    match confidence {
+        AutomationConfidence::High => 3,
+        AutomationConfidence::Medium => 2,
+        AutomationConfidence::Low => 1,
     }
 }
 
@@ -8299,6 +8344,23 @@ mod tests {
                 .semantic_tags
                 .contains(&SignalSemanticTag::HandshakeReadyLike)
         }));
+        let xctrl = semantic_ir
+            .interfaces
+            .iter()
+            .flat_map(|interface| interface.signal_records.iter())
+            .find(|signal| signal.signal_name == "XCTRL")
+            .expect("expected XCTRL interface signal");
+        assert_eq!(xctrl.semantic_candidates.len(), 2);
+        assert!(xctrl.resolved_semantic_role.is_none());
+        assert!(xctrl.semantic_consensus.is_none());
+        assert!(xctrl.semantic_candidates.iter().any(|candidate| {
+            candidate.role == super::InterfaceSignalSemanticRole::HandshakeValidLike
+                && candidate.evidence_weight == 6
+        }));
+        assert!(xctrl.semantic_candidates.iter().any(|candidate| {
+            candidate.role == super::InterfaceSignalSemanticRole::HandshakeReadyLike
+                && candidate.evidence_weight == 3
+        }));
 
         Ok(())
     }
@@ -8384,6 +8446,26 @@ mod tests {
             xreq.semantic_grounding_strength,
             Some(super::SemanticGroundingStrength::SingleSource)
         );
+        assert_eq!(xreq.semantic_candidates.len(), 1);
+        let xreq_candidate = &xreq.semantic_candidates[0];
+        assert_eq!(
+            xreq_candidate.role,
+            super::InterfaceSignalSemanticRole::HandshakeValidLike
+        );
+        assert_eq!(
+            xreq_candidate.grounding_strength,
+            super::SemanticGroundingStrength::SingleSource
+        );
+        assert_eq!(xreq_candidate.supporting_observation_count, 1);
+        assert_eq!(
+            xreq_candidate.supporting_source_kinds,
+            vec![SignalSemanticHintSourceKind::VisualCaption]
+        );
+        assert_eq!(
+            xreq_candidate.automation_confidence,
+            AutomationConfidence::Low
+        );
+        assert_eq!(xreq_candidate.evidence_weight, 4);
         let xreq_consensus = xreq
             .semantic_consensus
             .as_ref()
@@ -8430,6 +8512,26 @@ mod tests {
             xack.semantic_grounding_strength,
             Some(super::SemanticGroundingStrength::SingleSource)
         );
+        assert_eq!(xack.semantic_candidates.len(), 1);
+        let xack_candidate = &xack.semantic_candidates[0];
+        assert_eq!(
+            xack_candidate.role,
+            super::InterfaceSignalSemanticRole::HandshakeReadyLike
+        );
+        assert_eq!(
+            xack_candidate.grounding_strength,
+            super::SemanticGroundingStrength::SingleSource
+        );
+        assert_eq!(xack_candidate.supporting_observation_count, 1);
+        assert_eq!(
+            xack_candidate.supporting_source_kinds,
+            vec![SignalSemanticHintSourceKind::SignalDescriptionTable]
+        );
+        assert_eq!(
+            xack_candidate.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert_eq!(xack_candidate.evidence_weight, 6);
         let xack_consensus = xack
             .semantic_consensus
             .as_ref()
@@ -8534,6 +8636,25 @@ mod tests {
             xreq.semantic_grounding_strength,
             Some(super::SemanticGroundingStrength::CrossModality)
         );
+        assert_eq!(xreq.semantic_candidates.len(), 1);
+        let xreq_candidate = &xreq.semantic_candidates[0];
+        assert_eq!(
+            xreq_candidate.grounding_strength,
+            super::SemanticGroundingStrength::CrossModality
+        );
+        assert_eq!(xreq_candidate.supporting_observation_count, 2);
+        assert_eq!(
+            xreq_candidate.supporting_source_kinds,
+            vec![
+                SignalSemanticHintSourceKind::SignalDescriptionTable,
+                SignalSemanticHintSourceKind::VisualCaption
+            ]
+        );
+        assert_eq!(
+            xreq_candidate.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert_eq!(xreq_candidate.evidence_weight, 10);
         let xreq_consensus = xreq
             .semantic_consensus
             .as_ref()
@@ -8638,6 +8759,22 @@ mod tests {
             xreq.semantic_grounding_strength,
             Some(super::SemanticGroundingStrength::MultiSource)
         );
+        assert_eq!(xreq.semantic_candidates.len(), 1);
+        let xreq_candidate = &xreq.semantic_candidates[0];
+        assert_eq!(
+            xreq_candidate.grounding_strength,
+            super::SemanticGroundingStrength::MultiSource
+        );
+        assert_eq!(xreq_candidate.supporting_observation_count, 2);
+        assert_eq!(
+            xreq_candidate.supporting_source_kinds,
+            vec![SignalSemanticHintSourceKind::SignalDescriptionTable]
+        );
+        assert_eq!(
+            xreq_candidate.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert_eq!(xreq_candidate.evidence_weight, 12);
         let xreq_consensus = xreq
             .semantic_consensus
             .as_ref()
