@@ -38,7 +38,7 @@ Use it first for the project objective, document navigation, and the current imp
 - `SemanticIR` and `IntentIR` now also carry `interface_signal_conflicts` so conflicting direction/width evidence for the same signal stays explicit instead of only collapsing the canonical hint to `None`
 - `SemanticIR` and `IntentIR` now also carry `signal_connectivity_conflicts` so unresolved multi-producer structural ambiguity stays explicit in the canonical layers instead of hiding inside raw connectivity vectors
 - `SemanticIR` and `IntentIR` now also carry an initial typed `temporal_rules` surface so clocked behavior is no longer represented only as free-form timing text and prose constraints
-- that temporal surface now also recovers bounded `cycle_window` latency from prose/timing text like `within 2 cycles` instead of leaving every temporal rule unbounded
+- that temporal surface now also recovers bounded `cycle_window` latency from prose/timing text like `within 2 cycles`, `next cycle`, `next tick`, and `next rising edge` instead of leaving every temporal rule unbounded
 - and it now reuses unique KG producers to emit actor-grounded drive predicates for value-timed rules, so temporal semantics can point back to who actually drives the signal
 - stable/hold rules now also keep that actor responsibility via actor-grounded stability predicates instead of flattening every producer obligation into a signal-only invariant
 - compound `when/if` guards like `HREADY is LOW and HSEL is HIGH` now survive into the typed temporal layer as multiple antecedent predicates instead of being flattened into a single partial condition

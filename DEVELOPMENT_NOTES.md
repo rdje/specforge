@@ -759,3 +759,19 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 ## Immediate next engineering target
 - build the validation/back-annotation pipeline so staged IR and adapter outputs have reproducible artifact-linked reports
 - keep broader target structure deferred until the canonical model carries it explicitly
+
+## 2026-04-04 - idiomatic one-cycle temporal language
+- `crates/specforge/src/ir/semantic.rs` now recognizes idiomatic one-cycle latency phrases in the temporal lift:
+  - `next cycle`
+  - `next clock cycle`
+  - `next tick`
+  - `next rising edge`
+  - `following` / `subsequent` variants of those phrases
+- these phrases now map onto the same canonical `CycleWindowRecord { min_cycles: Some(1), max_cycles: Some(1) }` surface already used for numeric latency bounds
+- this keeps the clock-tick model unified instead of creating a side heuristic for prose that describes one-cycle latency without an explicit numeral
+- added regression coverage for:
+  - direct parser recovery of single-cycle windows from idiomatic phrases
+  - end-to-end temporal-rule derivation from a `next tick` signal constraint
+- validation for this slice:
+  - `cargo fmt --all` passed
+  - `cargo test --manifest-path Cargo.toml` passed with `138/138`

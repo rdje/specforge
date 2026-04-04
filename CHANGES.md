@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-04 (idiomatic one-cycle temporal language)
+
+### Added: idiomatic one-cycle latency recovery in the temporal-rule layer
+- `SemanticIR` temporal derivation now recognizes common protocol phrases such as `next cycle`, `next clock cycle`, `next tick`, and `next rising edge`.
+- `following` and `subsequent` one-cycle variants now also map onto the canonical `CycleWindowRecord` surface instead of being left as unbounded prose.
+
+### Changed: the explicit clock-tick model now covers both numeric and idiomatic latency language
+- One-cycle prose no longer needs an explicit numeral like `within 1 cycle` to become a bounded temporal rule.
+- This keeps the temporal model aligned with how real chip-design PDFs often describe synchronous behavior.
+
+### Added: regression coverage for idiomatic one-cycle phrases
+- Added tests for:
+  - direct parser recovery of a single-cycle window from `next cycle`, `next tick`, and `next rising edge`
+  - end-to-end temporal-rule derivation from a `next tick` signal constraint in `SemanticIR`
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 138/138 passed
+
 ## 2026-04-04 (interface-signal conflict surfacing for conflicting declarations)
 
 ### Added: typed interface-signal conflicts in the canonical IR layers

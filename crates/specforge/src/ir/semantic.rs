@@ -6041,7 +6041,41 @@ fn extract_cycle_window_from_text(text: &str) -> Option<CycleWindowRecord> {
         }
     }
 
+    let single_cycle_phrases = [
+        ["next", "cycle"].as_slice(),
+        ["next", "clock", "cycle"].as_slice(),
+        ["following", "cycle"].as_slice(),
+        ["subsequent", "cycle"].as_slice(),
+        ["next", "tick"].as_slice(),
+        ["following", "tick"].as_slice(),
+        ["subsequent", "tick"].as_slice(),
+        ["next", "rising", "edge"].as_slice(),
+        ["following", "rising", "edge"].as_slice(),
+        ["subsequent", "rising", "edge"].as_slice(),
+    ];
+    if single_cycle_phrases
+        .iter()
+        .any(|phrase| contains_token_phrase(&tokens, phrase))
+    {
+        return Some(CycleWindowRecord {
+            min_cycles: Some(1),
+            max_cycles: Some(1),
+        });
+    }
+
     None
+}
+
+fn contains_token_phrase(tokens: &[&str], phrase: &[&str]) -> bool {
+    if phrase.is_empty() || tokens.len() < phrase.len() {
+        return false;
+    }
+    tokens.windows(phrase.len()).any(|window| {
+        window
+            .iter()
+            .zip(phrase.iter())
+            .all(|(lhs, rhs)| lhs == rhs)
+    })
 }
 
 fn parse_cycle_count_value(token: &str) -> Option<u32> {
@@ -7911,6 +7945,87 @@ mod tests {
             .expect("expected cycle window to be derived from 'within 2 cycles'");
         assert_eq!(cycle_window.min_cycles, None);
         assert_eq!(cycle_window.max_cycles, Some(2));
+
+        Ok(())
+    }
+
+    #[test]
+    fn extracts_single_cycle_window_from_idiomatic_clock_tick_phrases() {
+        let next_cycle =
+            super::extract_cycle_window_from_text("The response must arrive on the next cycle.")
+                .expect("expected cycle window from 'next cycle'");
+        assert_eq!(next_cycle.min_cycles, Some(1));
+        assert_eq!(next_cycle.max_cycles, Some(1));
+
+        let next_tick =
+            super::extract_cycle_window_from_text("The receiver samples DATA on the next tick.")
+                .expect("expected cycle window from 'next tick'");
+        assert_eq!(next_tick.min_cycles, Some(1));
+        assert_eq!(next_tick.max_cycles, Some(1));
+
+        let next_edge =
+            super::extract_cycle_window_from_text("VALID is sampled on the next rising edge.")
+                .expect("expected cycle window from 'next rising edge'");
+        assert_eq!(next_edge.min_cycles, Some(1));
+        assert_eq!(next_edge.max_cycles, Some(1));
+    }
+
+    #[test]
+    fn derives_single_cycle_window_from_next_tick_constraint_text() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("temporal_next_tick.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal PREADY is input width 1.\n\n",
+                "Clock clk.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pready_next_tick".to_string(),
+            subject_signal: "PREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PREADY must be asserted on the next tick.".to_string(),
+            supporting_statement_ids: vec!["stmt_next_tick".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| rule.rule_id == "temporal_signal_constraint_sigcon_pready_next_tick")
+            .expect("expected temporal rule derived from next-tick constraint");
+        let cycle_window = rule
+            .cycle_window
+            .as_ref()
+            .expect("expected cycle window to be derived from 'next tick'");
+        assert_eq!(cycle_window.min_cycles, Some(1));
+        assert_eq!(cycle_window.max_cycles, Some(1));
 
         Ok(())
     }

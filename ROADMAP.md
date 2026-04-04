@@ -299,7 +299,7 @@
     - actor-relative drive predicates when the structural KG resolves a unique signal producer
     - actor-relative stability predicates when the structural KG resolves a unique producer for a stable/hold obligation
     - compound conjunctive guards as multiple antecedent predicates when each clause is grounded to a known signal
-  - temporal rules now recover bounded `cycle_window` latency from phrases like `within 2 cycles` and from timing rows whose unit is already `cycles`
+  - temporal rules now recover bounded `cycle_window` latency from phrases like `within 2 cycles`, `next cycle`, `next tick`, `next rising edge`, and from timing rows whose unit is already `cycles`
   - `SemanticIR` / `IntentIR` now also carry `temporal_conflicts: Vec<TemporalConflictRecord>` for contradictory value obligations that target the same signal/phase under the same grounded context
   - temporal derivation now uses an explicit clock declaration even when a full reset-bearing `SystemContractRecord` is not yet available
   - `specforge validate` now reports temporal-rule counts plus missing clock/edge grounding, actor-grounding diagnostics, multi-predicate antecedent coverage, and typed temporal conflict counts
