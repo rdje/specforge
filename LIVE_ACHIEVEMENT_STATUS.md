@@ -52,6 +52,8 @@
 - Multi-predicate temporal antecedents preserved in typed temporal rules: Done
 - Ready/valid handshake completion surfaced as typed temporal predicates: Done
 - Signal-semantic hints from description tables carried into `SemanticIR` / `IntentIR`: Done
+- Signal-semantic hints from prose and alias-grounded prose carried into `SemanticIR` / `IntentIR`: Done
+- `specforge nlp-enrich` refreshes signal-semantic hints after alias learning/backannotation: Done
 - Typed temporal conflict records for contradictory value obligations implemented: Done
 - Convergent EvidenceIR enrichment for anchored encodings and polarity from prose/signal tables implemented: Done
 - EvidenceIR polarity-conflict surfacing and validation reporting implemented: Done
@@ -62,7 +64,7 @@
 - Live-doc projection of persisted IR validation findings implemented: Done
 - Latest local validation snapshot projected into tracked docs: Done
 - Full Ollama-backed `specforge converge` defaults enabled: Done
-- Test suite expanded to 146 tests; all passing: Done
+- Test suite expanded to 149 tests; all passing: Done
 - Explicit clock-tick temporal model in `SemanticIR` / `IntentIR`: In Progress
 - KG-guided multimodal rescans as a first-class convergent workstream: In Progress
 - Cross-modality evidence arbitration / conflict handling: In Progress
@@ -72,7 +74,7 @@
 - Actor-relative direction model in `SemanticIR` / `IntentIR`: In Progress
 
 ## Highest-priority remaining gap
-- Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then broaden meaning-based role inference beyond signal-description tables into aliases, prose, and multimodal grounding while continuing structural/temporal arbitration and KG-quality evaluation
+- Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then broaden the new table/prose/alias-grounded role inference into richer multimodal grounding while continuing structural/temporal arbitration and KG-quality evaluation
 
 ## Validation Projection
 

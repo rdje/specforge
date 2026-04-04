@@ -329,7 +329,7 @@
     - signal stability across `pre_tick -> post_tick`
     - signal sampling on clock edges, with optional actor grounding
     - ready/valid handshake completion when grounded `VALID` and `READY` assertions co-occur in the same temporal context
-    - meaning-grounded handshake completion when signal-description text already establishes valid-like and ready-like roles even if the spellings are not literally `VALID` / `READY`
+    - meaning-grounded handshake completion when signal-description text, prose descriptions, or alias-grounded prose descriptions already establish valid-like and ready-like roles even if the spellings are not literally `VALID` / `READY`
     - actor-relative drive predicates when the structural KG resolves a unique signal producer
     - actor-relative stability predicates when the structural KG resolves a unique producer for a stable/hold obligation
     - compound conjunctive guards as multiple antecedent predicates when each clause is grounded to a known signal
@@ -354,6 +354,8 @@
   - `EvidenceIR` now persists `signal_semantic_hints: Vec<SignalSemanticHintRecord>` mined from `SignalDescription` table descriptions when the text establishes semantic roles such as request-valid or accept-ready meaning
   - `SemanticIR` / `IntentIR` now carry `semantic_tags` on interface signals so those meaning-grounded roles survive downstream instead of being trapped inside the table-extraction stage
   - handshake completion derivation now consults those semantic tags before falling back to literal signal-name heuristics, so protocol meaning can already outrank spelling when the table evidence is explicit enough
+  - `EvidenceIR` now also refreshes those semantic hints from `SourceFact` prose descriptions and alias-grounded prose descriptions, so Form 2 alias learning can feed semantic role inference instead of stopping at constraint reclassification
+  - `specforge nlp-enrich` now refreshes `signal_semantic_hints` before persistence whenever alias learning or backannotation changes the evidence state
 - completion criteria:
   - anchored rescans over tables, prose, and figures are first-class parts of the convergent loop
   - weakly labeled signal-detail tables and additional polarity/timing/value facts can be recovered from known anchors

@@ -1,5 +1,31 @@
 # CHANGES
 
+## 2026-04-04 (prose and alias-grounded semantic handshake roles)
+
+### Added: prose and alias-grounded semantic role hints in `EvidenceIR`
+- `EvidenceIR` now refreshes `signal_semantic_hints` from direct prose descriptions and alias-grounded prose descriptions, not only from `SignalDescription` tables.
+- This means learned aliases can now contribute to typed semantic role grounding instead of only helping constraint reclassification.
+
+### Changed: `nlp-enrich` now refreshes role hints before persistence
+- `specforge nlp-enrich` now calls `refresh_signal_semantic_hints()` before writing updated `EvidenceIR`.
+- Alias learning and backannotation can therefore feed the same loop-backed semantic-role surface immediately.
+
+### Changed: validation now exposes where semantic role hints came from
+- `specforge validate` now reports:
+  - `signal_semantic_hints_from_tables`
+  - `signal_semantic_hints_from_prose`
+  - `signal_semantic_hints_from_alias_grounded_prose`
+
+### Added: regression coverage for prose / alias-grounded role inference
+- Added tests for:
+  - alias-grounded prose descriptions producing semantic handshake hints in `EvidenceIR`
+  - deriving a typed handshake predicate from alias-grounded semantic hints in `SemanticIR`
+  - reporting alias-grounded semantic-hint counts in `specforge validate`
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 149/149 passed
+
 ## 2026-04-04 (meaning-grounded handshake roles from signal descriptions)
 
 ### Added: typed semantic role hints in `EvidenceIR`

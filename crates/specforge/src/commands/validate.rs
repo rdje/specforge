@@ -5,7 +5,10 @@ use std::path::{Path, PathBuf};
 use crate::cli::ValidateArgs;
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
-use crate::ir::evidence::{EvidenceIr, StatementClass, VisualObservationKind};
+use crate::ir::evidence::{
+    EvidenceIr, SignalSemanticHintRecord, SignalSemanticHintSourceKind, StatementClass,
+    VisualObservationKind,
+};
 use crate::ir::intent::IntentIr;
 use crate::ir::semantic::{ActorPortRecord, ActorRelativeDirection, ClockEdge, SemanticIr};
 use crate::ir::source::{
@@ -228,6 +231,16 @@ fn interface_signals_with_semantic_tags_count(
         .iter()
         .flat_map(|interface| interface.signal_records.iter())
         .filter(|signal| !signal.semantic_tags.is_empty())
+        .count()
+}
+
+fn signal_semantic_hints_by_source_kind_count(
+    hints: &[SignalSemanticHintRecord],
+    source_kind: SignalSemanticHintSourceKind,
+) -> usize {
+    hints
+        .iter()
+        .filter(|hint| hint.source_kind == source_kind)
         .count()
 }
 
@@ -597,6 +610,20 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
     println!("document_key: {}", ir.document_identity.document_key);
     println!();
 
+    let signal_semantic_hints_from_tables = signal_semantic_hints_by_source_kind_count(
+        &ir.signal_semantic_hints,
+        SignalSemanticHintSourceKind::SignalDescriptionTable,
+    );
+    let signal_semantic_hints_from_prose = signal_semantic_hints_by_source_kind_count(
+        &ir.signal_semantic_hints,
+        SignalSemanticHintSourceKind::ProseStatement,
+    );
+    let signal_semantic_hints_from_alias_grounded_prose =
+        signal_semantic_hints_by_source_kind_count(
+            &ir.signal_semantic_hints,
+            SignalSemanticHintSourceKind::AliasGroundedProseStatement,
+        );
+
     println!("=== Statement Classification ===");
     let total = ir.extracted_statements.len();
     let mut classes: HashMap<&str, usize> = HashMap::new();
@@ -649,6 +676,9 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         "  signal_semantic_hints: {}",
         ir.signal_semantic_hints.len()
     );
+    println!("    from_signal_description_tables: {signal_semantic_hints_from_tables}");
+    println!("    from_prose_statements: {signal_semantic_hints_from_prose}");
+    println!("    from_alias_grounded_prose: {signal_semantic_hints_from_alias_grounded_prose}");
     println!();
 
     println!("=== VLM Observations ===");
@@ -812,6 +842,18 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             metric(
                 "signal_semantic_hints",
                 ir.signal_semantic_hints.len().to_string(),
+            ),
+            metric(
+                "signal_semantic_hints_from_tables",
+                signal_semantic_hints_from_tables.to_string(),
+            ),
+            metric(
+                "signal_semantic_hints_from_prose",
+                signal_semantic_hints_from_prose.to_string(),
+            ),
+            metric(
+                "signal_semantic_hints_from_alias_grounded_prose",
+                signal_semantic_hints_from_alias_grounded_prose.to_string(),
             ),
             metric("timing_diagram_extractions", timing_obs.to_string()),
             metric("state_machine_extractions", state_obs.to_string()),
@@ -1997,6 +2039,64 @@ mod tests {
         let report = validate_evidence_ir(&evidence_ir, "signal_semantic_hints".to_string());
 
         assert_eq!(metric_value(&report, "signal_semantic_hints"), Some("2"));
+        assert_eq!(
+            metric_value(&report, "signal_semantic_hints_from_tables"),
+            Some("2")
+        );
+        assert_eq!(
+            metric_value(&report, "signal_semantic_hints_from_alias_grounded_prose"),
+            Some("0")
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_evidence_ir_counts_alias_grounded_signal_semantic_hints() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("alias_semantic_hints.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Channel\n",
+                "Signal XREQ is input width 1.\n\n",
+                "Signal XACK is input width 1.\n\n",
+                "The request phase indicates that address and control information are valid for transfer.\n\n",
+                "The accept phase indicates that the subordinate can accept the transfer.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir
+            .signal_alias_map
+            .insert("request phase".to_string(), "XREQ".to_string());
+        evidence_ir
+            .signal_alias_map
+            .insert("accept phase".to_string(), "XACK".to_string());
+        evidence_ir.refresh_signal_semantic_hints()?;
+
+        let report = validate_evidence_ir(
+            &evidence_ir,
+            "alias_grounded_signal_semantic_hints".to_string(),
+        );
+
+        assert_eq!(metric_value(&report, "signal_semantic_hints"), Some("2"));
+        assert_eq!(
+            metric_value(&report, "signal_semantic_hints_from_alias_grounded_prose"),
+            Some("2")
+        );
+        assert_eq!(
+            metric_value(&report, "signal_semantic_hints_from_tables"),
+            Some("0")
+        );
 
         Ok(())
     }

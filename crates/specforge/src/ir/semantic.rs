@@ -8650,6 +8650,86 @@ mod tests {
     }
 
     #[test]
+    fn derives_handshake_completion_from_alias_grounded_semantic_signal_hints() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir
+            .path()
+            .join("temporal_alias_grounded_semantic_handshake_guard.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal XREQ is input width 1.\n\n",
+                "Signal XACK is input width 1.\n\n",
+                "Signal PAYLOAD is output width 32.\n\n",
+                "Clock clk.\n\n",
+                "The request phase indicates that address and control information are valid for transfer.\n\n",
+                "The accept phase indicates that the subordinate can accept the transfer.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir
+            .signal_alias_map
+            .insert("request phase".to_string(), "XREQ".to_string());
+        evidence_ir
+            .signal_alias_map
+            .insert("accept phase".to_string(), "XACK".to_string());
+        evidence_ir.refresh_signal_semantic_hints()?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_payload_alias_semantic_handshake".to_string(),
+            subject_signal: "PAYLOAD".to_string(),
+            constraint_kind: SignalConstraintKind::MustNotChange,
+            target_value: None,
+            condition_text: Some("when XREQ is HIGH and XACK is HIGH".to_string()),
+            negated: false,
+            source_text: "PAYLOAD must not change when XREQ is HIGH and XACK is HIGH.".to_string(),
+            supporting_statement_ids: vec!["stmt_temporal_alias_semantic_handshake".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| {
+                rule.rule_id == "temporal_signal_constraint_sigcon_payload_alias_semantic_handshake"
+            })
+            .expect("expected temporal rule derived from alias-grounded semantic handshake guard");
+        assert!(rule.antecedents.iter().any(|predicate| {
+            matches!(
+                predicate,
+                super::TemporalPredicateRecord::HandshakeComplete {
+                    valid_signal,
+                    ready_signal,
+                    phase: super::TickPhase::PreTick,
+                } if valid_signal == "XREQ" && ready_signal == "XACK"
+            )
+        }));
+
+        Ok(())
+    }
+
+    #[test]
     fn derives_typed_temporal_conflicts_from_conflicting_value_rules() -> Result<()> {
         use crate::ir::evidence::EvidenceIr;
         use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};

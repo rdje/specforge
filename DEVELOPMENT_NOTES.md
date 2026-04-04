@@ -875,3 +875,29 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
   - `cargo fmt --all` passed
   - `cargo test --manifest-path Cargo.toml` passed with `146/146`
 - the next honest follow-up is to broaden the same meaning-based role inference beyond signal-description tables into aliases, prose, and multimodal grounding so handshake and role semantics do not depend on one table shape
+
+## 2026-04-04 - prose and alias-grounded handshake roles in EvidenceIR
+- the previous slice established the typed role surface, but it still depended on signal-description tables as the only evidence source for `signal_semantic_hints`
+- that was not enough for the roadmap target:
+  - some specs explain role meaning in prose paragraphs rather than in the table row itself
+  - some later passes learn a useful alias but, before this slice, that alias only helped constraint reclassification and not semantic role grounding
+- `crates/specforge/src/ir/evidence.rs` now refreshes `signal_semantic_hints` from:
+  - signal-description tables
+  - `SourceFact` prose descriptions that explicitly mention a signal
+  - alias-grounded prose descriptions where Form 2 alias learning resolves the prose subject to a canonical signal
+- the current prose path is still intentionally conservative:
+  - it only promotes `SourceFact` statements, not arbitrary normative text
+  - it requires exactly one resolved signal target after combining direct signal mentions and alias resolution
+  - it reuses the same narrow handshake-role tagger instead of inventing a second looser semantic path
+- `crates/specforge/src/commands/nlp_enrich.rs` now calls `refresh_signal_semantic_hints()` before persisting updated `EvidenceIR`
+- this closes an important loopback gap:
+  - alias learning no longer stops at `SignalConstraintRecord` recovery
+  - the same learned alias vocabulary can now immediately feed role grounding for downstream temporal semantics
+- `crates/specforge/src/commands/validate.rs` now also breaks out `signal_semantic_hints` by source kind, including alias-grounded prose
+- validation for this slice:
+  - `cargo fmt --all` passed
+  - `cargo test --manifest-path Cargo.toml` passed with `149/149`
+- the next honest follow-up is multimodal grounding beyond prose and tables:
+  - diagram captions
+  - VLM timing/state explanations
+  - richer actor/role phrasing in normative prose

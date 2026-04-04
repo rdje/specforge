@@ -333,6 +333,7 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
                         .extend(new_signal_constraints);
                     evidence_ir.conditional_rules.extend(new_conditional_rules);
                     evidence_ir.dedup_loopback_records();
+                    evidence_ir.refresh_signal_semantic_hints()?;
                     // Write after every pass so progress is durable.
                     evidence_ir.write_to_disk()?;
                     normalized_records_written = true;
@@ -340,6 +341,7 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
                     // New aliases were learned this pass but the LLM extracted nothing new.
                     // Persist so the alias map accumulates correctly.
                     evidence_ir.dedup_loopback_records();
+                    evidence_ir.refresh_signal_semantic_hints()?;
                     evidence_ir.write_to_disk()?;
                     normalized_records_written = true;
                 }
@@ -348,6 +350,7 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
             } // end convergence loop
 
             if !args.dry_run && normalized_existing_records && !normalized_records_written {
+                evidence_ir.refresh_signal_semantic_hints()?;
                 evidence_ir.write_to_disk()?;
             }
 
