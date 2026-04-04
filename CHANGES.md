@@ -1,5 +1,12 @@
 # CHANGES
 
+## 2026-04-04 (steering note: multimodal semantic recovery)
+
+### Changed: implementation guidance now explicitly centers multimodal semantic recovery
+- Logged the current extraction philosophy in `DEVELOPMENT_NOTES.md` as a steering principle for future work.
+- The note makes the target explicit: recover enough grounded intent from tables, figures, and prose for downstream RTL/verification generation rather than treating PDF parsing as the end goal.
+- It also records the preferred tactic for future hurdles: use the KG as a search index for repeated rescans, keep the pipeline provenance-first, and prefer reusable document-native lifting strategies over speculative adapter-side inference.
+
 ## 2026-04-04 (full-converge defaults + AXI convergence stabilization)
 
 ### Changed: `specforge converge` now defaults to the full Ollama-backed loop

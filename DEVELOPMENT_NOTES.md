@@ -36,6 +36,25 @@
 - markdown is a convenient normalized view for humans and some downstream text steps, but it is not the only system of record for PDF sources
 - the normalization layer should remain backend-pluggable so `specforge` can keep pace with the state of the art without destabilizing later IR stages
 
+### Multimodal semantic recovery as the core extraction strategy
+- the real objective is not "parse PDFs" but recover enough grounded implementation intent from chip-design documents that downstream tools can generate RTL, verification artifacts, and related implementation-facing outputs
+- this requires treating the full document as an evidence field instead of privileging prose alone:
+  - tables are latent declarations, encodings, polarity facts, timing fragments, and actor-role hints
+  - figures are executable behavioral evidence, not decorative assets
+  - prose often carries the protocol law that explains how the tables and figures should be interpreted
+- the system should therefore keep trying to make sense of as many document regions as possible, provided the recovered facts remain provenance-carrying and typed
+- the elegant path is staged synthesis, not brute-force prompting and not a pile of protocol-specific heuristics:
+  - let early recovered facts seed a KG
+  - use that KG as a search index for the next rescan over tables, figures, and prose
+  - let each pass unlock new anchors, attributes, and temporal relations
+  - stop only when the backannotated knowledge stabilizes
+- "thinking out of the box" in this project means inventing document-native recovery strategies when ordinary extraction fails, while still keeping the architecture disciplined:
+  - preserve provenance
+  - preserve ambiguity as residual decisions
+  - keep the IR boundaries clean
+  - prefer reusable evidence-to-knowledge lifting patterns over one-off protocol patches
+- the downstream adapters should consume truth, not beautified guesses; when in doubt, the right move is to enrich the KG and temporal model, not to make the adapters more speculative
+
 ### Staged IR pipeline
 - `SourceIR` captures normalized source identity, parser backend choice, page artifacts, visual assets, and ingest intent
 - `EvidenceIR` captures text anchors, visual evidence, cross-links between text and figures, extracted statements, and statement classification
