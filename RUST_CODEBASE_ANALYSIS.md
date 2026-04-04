@@ -26,8 +26,8 @@
 - `IntentIR` now carries forward the canonical signal/control/system/state/register/timing surface plus the actor-relative KG needed for honest downstream lowering
 - the current `.fsm` adapter slice is real and intentionally narrow: it can emit honest `?dt:name`, `?fsm:name`, and `?top:name` outputs when the canonical facts are explicit enough
 - the enrichment, convergence, and validation toolchain is also real: `specforge enrich`, `specforge nlp-enrich`, `specforge converge`, and `specforge validate` are wired into the CLI and exercised by the workspace tests
-- the remaining dominant gaps are semantic-truthfulness gaps: graph-first downstream semantics, explicit clocked temporal semantics, KG-guided rescans, evidence arbitration, and benchmark-quality evaluation; adapter expansion is now horizon work
-- the workspace currently validates with `cargo test --manifest-path Cargo.toml`, with 110 passing tests
+- the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, explicit clocked temporal semantics, KG-guided rescans, evidence arbitration, and benchmark-quality evaluation; adapter expansion is now horizon work
+- the workspace currently validates with `cargo test --manifest-path Cargo.toml`, with 111 passing tests
 
 
 ## Session update (2026-04-04)
@@ -37,6 +37,7 @@
 - signal-anchored encoding rescans recover weakly labeled encoding tables without introducing a new hardcoded APB/AHB/AXI value list
 - `SemanticIR` now tolerates raw JSON, fenced JSON, and prose-wrapped JSON in VLM timing/state observations, restoring timing/state lift from real Ollama outputs
 - `SemanticIR` / `IntentIR` now preserve the structural KG downstream via `actor_signal_relations`, `actor_ports`, and `signal_connectivity`, so actor-aware evidence is no longer trapped in `EvidenceIR`
+- `specforge validate` now scores semantic and intent direction coverage from the actor-relative graph first, exposing flat `direction_hint` lag separately instead of treating compatibility-hint absence as semantic failure
 - `specforge validate` now writes deterministic stage-local `validation_report.json` sidecars and backannotates the current report into `validation_reports` on `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR`
 - `specforge project-validation <artifact>...` now refreshes `VALIDATION_SNAPSHOT.md` and the managed validation block in `LIVE_ACHIEVEMENT_STATUS.md` from persisted IR validation reports
 - `specforge converge` now excludes downstream adapter residual work from `knowledge_fact_count`, so fewer adapter residual decisions do not falsely trip the monotone-knowledge guard
@@ -93,7 +94,7 @@
 
 ### Immediate implication
 - the codebase is no longer mostly scaffolding; the main open problem is semantic truthfulness across the four IR layers, especially graph primacy, temporal semantics, multimodal rescans, and evidence arbitration
-- the practical risk is partial dual-surface drift: `SemanticIR` and `IntentIR` now expose both graph-native actor-relative records and legacy flat `direction_hint` fields, and the latter still drive some scoring and compatibility paths
+- the practical risk is partial dual-surface drift: `SemanticIR` and `IntentIR` now expose both graph-native actor-relative records and legacy flat `direction_hint` fields; validation/scoring is now graph-first, but some downstream compatibility and consumer paths still consult the flat hints directly
 - the continuity risk around untracked generated artifacts is lower now that validation snapshots can be re-projected into tracked docs deterministically, but the docs still depend on someone running the projection flow after meaningful validation runs
 
 ## What the tool needs to do

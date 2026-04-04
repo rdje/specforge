@@ -402,6 +402,30 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 - validation/back-annotation should become graph-aware so missing producers/consumers and contradictory actor relations surface explicitly
 - `direction_hint` still drives some scoring/compatibility paths, so the remaining `R15` work is to make the graph-native actor-relative surface the primary downstream direction model
 
+## Graph-first direction scoring in validation (2026-04-04)
+
+### Why this slice landed now
+- the previous `R15` slice preserved the actor-relative KG downstream, but the validator still treated flat `direction_hint` coverage as the effective truth surface for scoring
+- that created the wrong incentive: a graph-complete artifact could still look incomplete merely because the compatibility view lagged behind
+- the right next step was to make validation honest about the canonical signal model before continuing into temporal semantics or deeper KG work
+
+### Implementation shape
+- `crates/specforge/src/commands/validate.rs` now derives direction coverage from `actor_ports` first and only uses `InterfaceSignalRecord.direction_hint` as compatibility fallback
+- semantic and intent validation metrics now separate:
+  - `with_resolved_direction`
+  - `with_graph_direction`
+  - `with_compat_direction_hint`
+- compatibility-surface lag remains a visible informational finding so older downstream consumers still get called out, but the quality score now follows the actor-relative graph when it is sufficient
+
+### Validation
+- `cargo fmt --all` passed
+- `cargo test --manifest-path Cargo.toml` now passes with 111 tests
+- new regression coverage verifies that removing flat compatibility hints from an otherwise graph-complete `IntentIR` fixture does not reduce direction scoring
+
+### Remaining follow-up
+- some downstream consumers still read flat `direction_hint` fields directly, so this slice fixes scoring truthfulness but does not finish the whole `R15` program
+- the next graph-first work should move remaining consumer logic onto actor-relative relations and keep `direction_hint` purely as a derived compatibility surface
+
 ## Documentation surface currently steering the implementation
 - `README.md`
   - single entry point and quick orientation

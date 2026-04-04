@@ -274,6 +274,7 @@
   - `IntentIR` now preserves the same actor-relative KG surface as canonical output
   - `ActorRecord` / `IntentActor` now preserve the surfaced actor name when it is grounded by relation evidence
   - `specforge validate` now reports actor-signal relation, actor-port, and connectivity counts for `SemanticIR` / `IntentIR`
+  - `specforge validate` now scores semantic and intent signal-direction coverage from the actor-relative graph first, with flat `direction_hint` lag exposed as compatibility diagnostics rather than truth-model loss
 - remaining:
   - make the actor-relative graph, not flat `direction_hint`, the primary downstream signal-direction surface
   - compute target-actor-relative port directions from the actor-relative graph whenever a downstream consumer needs them

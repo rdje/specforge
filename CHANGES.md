@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-04 (graph-first direction scoring in validation)
+
+### Changed: `specforge validate` now scores direction coverage from the actor-relative graph first
+- `validate_semantic_ir()` and `validate_intent_ir()` now treat actor-relative `actor_ports` coverage as the primary signal-direction surface and only fall back to flat `direction_hint` values as a compatibility layer.
+- Validation metrics now split direction coverage into:
+  - `with_resolved_direction`
+  - `with_graph_direction`
+  - `with_compat_direction_hint`
+- Compatibility lag still surfaces as an informational finding, but flat `direction_hint` absence no longer lowers direction coverage when the actor-relative graph already resolves the signal.
+
+### Added: regression coverage for graph-first validation behavior
+- Added `validate_intent_ir_scores_direction_from_graph_before_compat_hints`.
+- The regression locks the expected behavior: removing flat compatibility hints from an `IntentIR` fixture with intact actor-relative ports must not lower the direction score.
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 111/111 passed
+
 ## 2026-04-04 (roadmap retuned around semantic truthfulness)
 
 ### Changed: roadmap priorities now explicitly favor KG quality over adapter breadth

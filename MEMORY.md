@@ -22,9 +22,9 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `ddd2cac`
-- latest_commit_brief_message: `docs: capture multimodal extraction steering`
-- note: current uncommitted work retunes the roadmap and live docs so semantic truthfulness, not adapter breadth, is the explicit near-term program
+- latest_commit_hash: `2030e6d`
+- latest_commit_brief_message: `docs(roadmap): prioritize semantic truthfulness`
+- note: current uncommitted work makes validation/scoring graph-first for signal direction coverage and syncs the continuity docs to that behavior
 
 ## Recent commit chain (last 5)
 - `ddd2cac` docs: capture multimodal extraction steering
@@ -43,29 +43,29 @@
 - `VALIDATION_SNAPSHOT.md` is now a tracked continuity doc refreshed from persisted validation reports
 
 ## Completed technical work in this session
-- logged a roadmap reassessment in the steering docs:
-  - the roadmap spine is still right, but semantic truthfulness is now the explicit near-term program
-  - graph-first semantics, explicit temporal semantics, KG-guided rescans, evidence arbitration, and KG-quality evaluation were all promoted into the roadmap
-  - adapter expansion and adapter validation were demoted to horizon work
-- updated roadmap/status/analysis/README continuity docs so future sessions are steered by the new priority order instead of stale adapter-first hints
-- validation not run for this task because the change is documentation-only
+- `specforge validate` now scores semantic and intent signal-direction coverage from actor-relative `actor_ports` first, falling back to flat compatibility `direction_hint` values only when the graph does not resolve the signal
+- semantic and intent validation metrics now expose `with_resolved_direction`, `with_graph_direction`, and `with_compat_direction_hint` separately
+- added a regression test that proves removing flat compatibility hints from an otherwise graph-complete `IntentIR` fixture does not lower the direction score
+- synced the roadmap/status/analysis/change docs so future sessions know validation/scoring is now graph-first even though some downstream consumers still read flat hints directly
+- validation ran for this task:
+  - `cargo fmt --all` passed
+  - `cargo test --manifest-path Cargo.toml` passed with 111 tests
 
 ## Current working tree before commit
 - modified tracked files currently include:
+  - `crates/specforge/src/commands/validate.rs`
   - `ROADMAP.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `RUST_CODEBASE_ANALYSIS.md`
-  - `README.md`
-  - `USER_GUIDE.md`
   - `DEVELOPMENT_NOTES.md`
   - `CHANGES.md`
   - `MEMORY.md`
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the roadmap-retune doc update; do not stage `generated/`
-2. continue the remaining `R15` slice by making the actor-relative graph, not compatibility `direction_hint`, the primary downstream direction model
-3. start the new explicit temporal-semantics (`R15b`) and KG-guided rescan (`R15c`) workstreams before reopening adapter work
+1. commit the graph-first validation/scoring slice; do not stage `generated/`
+2. continue the remaining `R15` slice by moving any direct downstream `direction_hint` consumers onto actor-relative graph semantics
+3. start the explicit temporal-semantics (`R15b`) and KG-guided rescan (`R15c`) workstreams before reopening adapter work
 
 ## Remaining engineering gaps after this commit
 - remaining actor-relative direction modeling in `SemanticIR` / `IntentIR` (`R15`)
@@ -74,7 +74,7 @@
 - evidence arbitration / conflict handling (`R15d`)
 - KG-quality evaluation and benchmark hardening (`R15e`)
 - Tier 3 relation extraction after the graph/temporal/eval surfaces are ready (`R14`)
-- downstream scoring and compatibility paths still rely on flat `direction_hint` more than the new graph-native surface
+- some downstream compatibility and consumer paths still rely on flat `direction_hint` instead of the graph-native surface
 - adapter expansion and adapter validation are now intentionally horizon work
 - the workspace still emits compile warnings in `ir/adapters.rs` and `ir/semantic.rs`
 
@@ -85,4 +85,4 @@
 4. read `ROADMAP.md`
 5. read `RUST_CODEBASE_ANALYSIS.md`
 6. inspect `git --no-pager status --short`
-7. continue with the remaining graph-first `R15` direction-model work unless the user redirects
+7. continue with the remaining graph-first `R15` consumer migration unless the user redirects

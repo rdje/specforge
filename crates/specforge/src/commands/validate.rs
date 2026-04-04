@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{BTreeSet, HashMap};
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -7,7 +7,7 @@ use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::evidence::{EvidenceIr, StatementClass, VisualObservationKind};
 use crate::ir::intent::IntentIr;
-use crate::ir::semantic::SemanticIr;
+use crate::ir::semantic::{ActorPortRecord, ActorRelativeDirection, SemanticIr};
 use crate::ir::source::{
     AutomationConfidence, DiagramKind, SourceIr, ValidationFindingRecord,
     ValidationFindingSeverity, ValidationMetricRecord, ValidationReportRecord, WidthHint,
@@ -123,6 +123,39 @@ fn finding(
         summary: summary.into(),
         related_ids,
     }
+}
+
+fn graph_direction_signal_names(actor_ports: &[ActorPortRecord]) -> BTreeSet<String> {
+    actor_ports
+        .iter()
+        .filter(|port| !matches!(port.direction, ActorRelativeDirection::Unknown))
+        .map(|port| port.signal_name.clone())
+        .collect()
+}
+
+fn resolved_direction_counts<'a>(
+    signal_records: impl IntoIterator<Item = &'a crate::ir::semantic::InterfaceSignalRecord>,
+    graph_direction_signals: &BTreeSet<String>,
+) -> (usize, usize, usize) {
+    let mut resolved = 0usize;
+    let mut graph = 0usize;
+    let mut compat = 0usize;
+
+    for signal in signal_records {
+        let graph_has_direction = graph_direction_signals.contains(&signal.signal_name);
+        let compat_has_direction = signal.direction_hint.is_some();
+        if graph_has_direction || compat_has_direction {
+            resolved += 1;
+        }
+        if graph_has_direction {
+            graph += 1;
+        }
+        if compat_has_direction {
+            compat += 1;
+        }
+    }
+
+    (resolved, graph, compat)
 }
 
 fn backannotate_report(target: &mut Vec<ValidationReportRecord>, report: &ValidationReportRecord) {
@@ -602,12 +635,12 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
 
     println!("=== Interface / Signal Coverage ===");
     let total_signals: usize = ir.interfaces.iter().map(|i| i.signal_records.len()).sum();
-    let with_direction: usize = ir
-        .interfaces
-        .iter()
-        .flat_map(|i| &i.signal_records)
-        .filter(|s| s.direction_hint.is_some())
-        .count();
+    let graph_direction_signals = graph_direction_signal_names(&ir.actor_ports);
+    let (with_direction, with_graph_direction, with_compat_direction_hint) =
+        resolved_direction_counts(
+            ir.interfaces.iter().flat_map(|i| i.signal_records.iter()),
+            &graph_direction_signals,
+        );
     let with_width: usize = ir
         .interfaces
         .iter()
@@ -618,7 +651,10 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         .interfaces
         .iter()
         .flat_map(|i| &i.signal_records)
-        .filter(|s| s.direction_hint.is_some() && s.width_hint.is_some())
+        .filter(|s| {
+            s.width_hint.is_some()
+                && (graph_direction_signals.contains(&s.signal_name) || s.direction_hint.is_some())
+        })
         .count();
     println!("  total_signal_records: {total_signals}");
     let dir_pct = if total_signals > 0 {
@@ -636,9 +672,21 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     } else {
         0
     };
-    println!("  with_direction: {with_direction} ({dir_pct}%)");
+    let graph_dir_pct = if total_signals > 0 {
+        with_graph_direction * 100 / total_signals
+    } else {
+        0
+    };
+    let compat_dir_pct = if total_signals > 0 {
+        with_compat_direction_hint * 100 / total_signals
+    } else {
+        0
+    };
+    println!("  with_resolved_direction: {with_direction} ({dir_pct}%)");
+    println!("  with_graph_direction: {with_graph_direction} ({graph_dir_pct}%)");
+    println!("  with_compat_direction_hint: {with_compat_direction_hint} ({compat_dir_pct}%)");
     println!("  with_width: {with_width} ({w_pct}%)");
-    println!("  fully_typed (direction+width): {fully_typed} ({ft_pct}%)");
+    println!("  fully_typed (resolved_direction+width): {fully_typed} ({ft_pct}%)");
     println!();
 
     println!("=== Semantic Records ===");
@@ -698,7 +746,8 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         .filter(|record| record.consumer_actor_ids.is_empty())
         .map(|record| record.signal_name.clone())
         .collect();
-    let missing_direction_count = total_signals.saturating_sub(with_direction);
+    let missing_graph_direction_count = total_signals.saturating_sub(with_graph_direction);
+    let missing_compat_direction_count = total_signals.saturating_sub(with_compat_direction_hint);
 
     let mut findings = Vec::new();
     if !ir.actor_signal_relations.is_empty() && ir.actor_ports.is_empty() {
@@ -734,13 +783,24 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             missing_consumer_signals.iter().take(8).cloned().collect(),
         ));
     }
-    if missing_direction_count > 0 {
+    if !ir.actor_ports.is_empty() && missing_graph_direction_count > 0 {
+        findings.push(finding(
+            "semantic_graph_direction_coverage_incomplete",
+            ValidationFindingSeverity::Info,
+            "knowledge_graph",
+            format!(
+                "{missing_graph_direction_count} interface signal record(s) still lack graph-derived direction coverage"
+            ),
+            Vec::new(),
+        ));
+    }
+    if missing_compat_direction_count > 0 {
         findings.push(finding(
             "semantic_compat_direction_hints_incomplete",
             ValidationFindingSeverity::Info,
             "compatibility_surface",
             format!(
-                "{missing_direction_count} interface signal record(s) still lack flat compatibility direction hints"
+                "{missing_compat_direction_count} interface signal record(s) still lack flat compatibility direction hints"
             ),
             Vec::new(),
         ));
@@ -774,7 +834,12 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         grade: None,
         metrics: vec![
             metric("total_signal_records", total_signals.to_string()),
-            metric("with_direction", with_direction.to_string()),
+            metric("with_resolved_direction", with_direction.to_string()),
+            metric("with_graph_direction", with_graph_direction.to_string()),
+            metric(
+                "with_compat_direction_hint",
+                with_compat_direction_hint.to_string(),
+            ),
             metric("with_width", with_width.to_string()),
             metric("fully_typed", fully_typed.to_string()),
             metric("actors", ir.actors.len().to_string()),
@@ -841,10 +906,9 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
 
     println!("=== Signal Coverage ===");
     let declared_count = declared_signals.len();
-    let with_direction = declared_signals
-        .iter()
-        .filter(|s| s.direction_hint.is_some())
-        .count();
+    let graph_direction_signals = graph_direction_signal_names(&ir.actor_ports);
+    let (with_direction, with_graph_direction, with_compat_direction_hint) =
+        resolved_direction_counts(declared_signals.iter().copied(), &graph_direction_signals);
     // Both numeric and parametric widths count as "known" — parametric means the
     // integrator will set the value (e.g. ADDR_WIDTH=32) at instantiation time.
     let with_numeric_width = declared_signals
@@ -866,9 +930,21 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     } else {
         0
     };
+    let graph_dir_pct = if declared_count > 0 {
+        with_graph_direction * 100 / declared_count
+    } else {
+        0
+    };
+    let compat_dir_pct = if declared_count > 0 {
+        with_compat_direction_hint * 100 / declared_count
+    } else {
+        0
+    };
     println!("  declared_signal_records: {declared_count}");
     println!("  heuristic_signal_records (excluded from coverage): {heuristic_signals}");
-    println!("  with_direction: {with_direction} ({dir_pct}%)");
+    println!("  with_resolved_direction: {with_direction} ({dir_pct}%)");
+    println!("  with_graph_direction: {with_graph_direction} ({graph_dir_pct}%)");
+    println!("  with_compat_direction_hint: {with_compat_direction_hint} ({compat_dir_pct}%)");
     println!(
         "  with_width: {with_width} ({w_pct}%) [{with_numeric_width} numeric, {with_parametric_width} parametric]"
     );
@@ -936,7 +1012,11 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         .min(100.0);
 
     println!("=== Quality Score ===");
-    println!("  signal_direction_coverage: {dir_pct}% (declared signals only)");
+    println!(
+        "  signal_direction_coverage: {dir_pct}% (declared signals only, graph-first with compatibility fallback)"
+    );
+    println!("  graph_direction_coverage: {graph_dir_pct}% (declared signals only)");
+    println!("  compatibility_direction_hints: {compat_dir_pct}% (declared signals only)");
     println!("  signal_width_coverage: {w_pct}% (declared signals only)");
     println!("  has_encoding_enums: {has_enums}");
     println!("  has_register_map: {has_registers}");
@@ -983,6 +1063,7 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         .filter(|record| record.consumer_actor_ids.is_empty())
         .map(|record| record.signal_name.clone())
         .collect();
+    let missing_graph_direction_count = declared_count.saturating_sub(with_graph_direction);
 
     let mut findings = Vec::new();
     if !ir.actor_signal_relations.is_empty() && ir.actor_ports.is_empty() {
@@ -1018,14 +1099,25 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             missing_consumer_signals.iter().take(8).cloned().collect(),
         ));
     }
-    if !ir.actor_ports.is_empty() && with_direction < declared_count {
+    if !ir.actor_ports.is_empty() && missing_graph_direction_count > 0 {
+        findings.push(finding(
+            "intent_graph_direction_coverage_incomplete",
+            ValidationFindingSeverity::Info,
+            "knowledge_graph",
+            format!(
+                "{missing_graph_direction_count} declared signal record(s) still lack graph-derived direction coverage"
+            ),
+            Vec::new(),
+        ));
+    }
+    if !ir.actor_ports.is_empty() && with_compat_direction_hint < declared_count {
         findings.push(finding(
             "intent_compat_direction_hints_lag_graph",
             ValidationFindingSeverity::Info,
             "compatibility_surface",
             format!(
                 "{} declared signal record(s) still lack flat compatibility direction hints even though actor-relative ports exist",
-                declared_count.saturating_sub(with_direction)
+                declared_count.saturating_sub(with_compat_direction_hint)
             ),
             Vec::new(),
         ));
@@ -1069,7 +1161,12 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         metrics: vec![
             metric("declared_signal_records", declared_count.to_string()),
             metric("heuristic_signal_records", heuristic_signals.to_string()),
-            metric("with_direction", with_direction.to_string()),
+            metric("with_resolved_direction", with_direction.to_string()),
+            metric("with_graph_direction", with_graph_direction.to_string()),
+            metric(
+                "with_compat_direction_hint",
+                with_compat_direction_hint.to_string(),
+            ),
             metric("with_width", with_width.to_string()),
             metric("actors", ir.actors.len().to_string()),
             metric(
@@ -1309,6 +1406,87 @@ mod tests {
         assert!(
             validation_report_path_for(&artifact_path)?.exists(),
             "expected stage-local validation_report.json sidecar to exist"
+        );
+
+        Ok(())
+    }
+
+    fn metric_value<'a>(report: &'a ValidationReportRecord, name: &str) -> Option<&'a str> {
+        report
+            .metrics
+            .iter()
+            .find(|metric| metric.name == name)
+            .map(|metric| metric.value.as_str())
+    }
+
+    #[test]
+    fn validate_intent_ir_scores_direction_from_graph_before_compat_hints() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal PREADY is output width 1.\n",
+                "\n",
+                "Signal PADDR is input width 32.\n",
+                "\n",
+                "The Completer drives PREADY.\n",
+                "\n",
+                "The Requester reads PREADY.\n",
+                "\n",
+                "The Requester drives PADDR.\n",
+                "\n",
+                "The Completer samples PADDR.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let with_hints_report = validate_intent_ir(&intent_ir, "with_hints".to_string());
+
+        let mut graph_only_intent = intent_ir.clone();
+        for interface in &mut graph_only_intent.interfaces {
+            for signal in &mut interface.signal_records {
+                signal.direction_hint = None;
+            }
+        }
+        let graph_only_report = validate_intent_ir(&graph_only_intent, "graph_only".to_string());
+
+        assert_eq!(
+            with_hints_report.overall_score, graph_only_report.overall_score,
+            "graph-derived direction coverage should preserve the IntentIR score even when flat compatibility hints are absent"
+        );
+        assert_eq!(
+            metric_value(&graph_only_report, "with_resolved_direction"),
+            Some("2")
+        );
+        assert_eq!(
+            metric_value(&graph_only_report, "with_graph_direction"),
+            Some("2")
+        );
+        assert_eq!(
+            metric_value(&graph_only_report, "with_compat_direction_hint"),
+            Some("0")
         );
 
         Ok(())
