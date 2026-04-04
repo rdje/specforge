@@ -54,6 +54,7 @@
 - Signal-semantic hints from description tables carried into `SemanticIR` / `IntentIR`: Done
 - Signal-semantic hints from prose and alias-grounded prose carried into `SemanticIR` / `IntentIR`: Done
 - `specforge nlp-enrich` refreshes signal-semantic hints after alias learning/backannotation: Done
+- EvidenceIR semantic-role conflict surfacing and validation reporting implemented: Done
 - Typed temporal conflict records for contradictory value obligations implemented: Done
 - Convergent EvidenceIR enrichment for anchored encodings and polarity from prose/signal tables implemented: Done
 - EvidenceIR polarity-conflict surfacing and validation reporting implemented: Done
@@ -64,7 +65,7 @@
 - Live-doc projection of persisted IR validation findings implemented: Done
 - Latest local validation snapshot projected into tracked docs: Done
 - Full Ollama-backed `specforge converge` defaults enabled: Done
-- Test suite expanded to 149 tests; all passing: Done
+- Test suite expanded to 151 tests; all passing: Done
 - Explicit clock-tick temporal model in `SemanticIR` / `IntentIR`: In Progress
 - KG-guided multimodal rescans as a first-class convergent workstream: In Progress
 - Cross-modality evidence arbitration / conflict handling: In Progress

@@ -287,6 +287,41 @@ fn describe_signal_polarity_conflict(
         .join("; ")
 }
 
+fn describe_signal_semantic_conflict(
+    conflict: &crate::ir::evidence::SignalSemanticConflictRecord,
+) -> String {
+    conflict
+        .observations
+        .iter()
+        .map(|observation| {
+            let mut refs = observation
+                .supporting_statement_ids
+                .iter()
+                .chain(observation.supporting_table_ids.iter())
+                .cloned()
+                .collect::<Vec<_>>();
+            refs.sort();
+            refs.dedup();
+            let tags = observation
+                .semantic_tags
+                .iter()
+                .map(|tag| tag.as_str())
+                .collect::<Vec<_>>()
+                .join("|");
+            if refs.is_empty() {
+                format!("{tags} via {}", observation.source_kind.as_str())
+            } else {
+                format!(
+                    "{tags} via {} ({})",
+                    observation.source_kind.as_str(),
+                    refs.join(", ")
+                )
+            }
+        })
+        .collect::<Vec<_>>()
+        .join("; ")
+}
+
 fn describe_signal_connectivity_conflict(
     conflict: &crate::ir::semantic::SignalConnectivityConflictRecord,
 ) -> String {
@@ -676,6 +711,10 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         "  signal_semantic_hints: {}",
         ir.signal_semantic_hints.len()
     );
+    println!(
+        "  signal_semantic_conflicts: {}",
+        ir.signal_semantic_conflicts.len()
+    );
     println!("    from_signal_description_tables: {signal_semantic_hints_from_tables}");
     println!("    from_prose_statements: {signal_semantic_hints_from_prose}");
     println!("    from_alias_grounded_prose: {signal_semantic_hints_from_alias_grounded_prose}");
@@ -724,6 +763,23 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             println!(
                 "  ... and {} more conflict(s)",
                 ir.signal_polarity_conflicts.len() - 8
+            );
+        }
+    }
+    if !ir.signal_semantic_conflicts.is_empty() {
+        println!();
+        println!("=== Signal Semantic Conflicts ===");
+        for conflict in ir.signal_semantic_conflicts.iter().take(8) {
+            println!(
+                "  - {}: {}",
+                conflict.signal_name,
+                describe_signal_semantic_conflict(conflict)
+            );
+        }
+        if ir.signal_semantic_conflicts.len() > 8 {
+            println!(
+                "  ... and {} more conflict(s)",
+                ir.signal_semantic_conflicts.len() - 8
             );
         }
     }
@@ -789,6 +845,21 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
                 .collect(),
         ));
     }
+    if !ir.signal_semantic_conflicts.is_empty() {
+        findings.push(finding(
+            "evidence_signal_semantic_conflicts_present",
+            ValidationFindingSeverity::Warning,
+            "semantic_role_conflicts",
+            format!(
+                "{} signal semantic conflict(s) detected; meaning-based role evidence currently assigns incompatible roles to the same signal",
+                ir.signal_semantic_conflicts.len()
+            ),
+            ir.signal_semantic_conflicts
+                .iter()
+                .map(|conflict| conflict.conflict_id.clone())
+                .collect(),
+        ));
+    }
 
     let report = ValidationReportRecord {
         report_id: format!("validation_evidence_ir_{artifact_fingerprint}"),
@@ -842,6 +913,10 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             metric(
                 "signal_semantic_hints",
                 ir.signal_semantic_hints.len().to_string(),
+            ),
+            metric(
+                "signal_semantic_conflicts",
+                ir.signal_semantic_conflicts.len().to_string(),
             ),
             metric(
                 "signal_semantic_hints_from_tables",
@@ -2097,6 +2172,63 @@ mod tests {
             metric_value(&report, "signal_semantic_hints_from_tables"),
             Some("0")
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_evidence_ir_flags_signal_semantic_conflicts() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("semantic_hint_conflict.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Channel\n",
+                "Signal XCTRL is input width 1.\n\n",
+                "XCTRL indicates that the subordinate can accept the transfer.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_semantic_conflict".to_string(),
+            asset_id: "asset_semantic_conflict".to_string(),
+            page_id: None,
+            caption_text: Some("Control signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("XCTRL", false),
+                make_table_cell(
+                    "Indicates that address and control information are valid for transfer.",
+                    false,
+                ),
+            ]],
+            row_count: 1,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        let report = validate_evidence_ir(&evidence_ir, "signal_semantic_conflicts".to_string());
+
+        assert_eq!(
+            metric_value(&report, "signal_semantic_conflicts"),
+            Some("1")
+        );
+        assert!(has_finding(
+            &report,
+            "evidence_signal_semantic_conflicts_present"
+        ));
 
         Ok(())
     }

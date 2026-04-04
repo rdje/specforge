@@ -933,3 +933,27 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
   - diagram captions
   - VLM timing/state explanations
   - richer actor/role phrasing in normative prose
+
+## 2026-04-04 - explicit semantic-role conflicts in EvidenceIR
+- the previous role-inference slices expanded the evidence sources for `signal_semantic_hints`, which made the truthfulness risk more obvious:
+  - the same signal can accumulate incompatible role evidence
+  - for example, one source can make it look valid-like while another makes it look ready-like
+- before this slice, that disagreement would survive only as a dual-tag ambiguity on the signal and later handshake-role classification would quietly return `None`
+- that was too silent for a project that is explicitly trying to surface conflicts instead of hiding them
+- `crates/specforge/src/ir/evidence.rs` now persists `signal_semantic_conflicts` as a first-class typed record
+- each conflict keeps:
+  - the signal name
+  - the conflicting role observations
+  - the source kind
+  - supporting statement/table references
+- `crates/specforge/src/commands/validate.rs` now:
+  - prints a dedicated `Signal Semantic Conflicts` section for `EvidenceIR`
+  - emits a `signal_semantic_conflicts` metric
+  - raises a warning finding when incompatible role evidence is present
+- this is the right truthfulness behavior:
+  - the pipeline can still carry the underlying evidence forward
+  - but the disagreement is no longer silent
+  - users can inspect and judge whether the semantic role inference needs more evidence or arbitration
+- validation for this slice:
+  - `cargo fmt --all` passed
+  - `cargo test --manifest-path Cargo.toml` passed with `151/151`

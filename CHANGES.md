@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-04 (explicit semantic-role conflict surfacing)
+
+### Added: typed semantic-role conflicts in `EvidenceIR`
+- `EvidenceIR` now persists `signal_semantic_conflicts` when meaning-based role evidence assigns incompatible roles to the same signal.
+- This keeps role disagreement explicit instead of leaving it hidden inside a dual-tag ambiguity.
+
+### Changed: validation now reports semantic-role disagreement clearly
+- `specforge validate` now prints a dedicated semantic-role-conflict section for `EvidenceIR`.
+- Validation now emits a `signal_semantic_conflicts` metric and a warning finding when incompatible role evidence is present.
+
+### Added: regression coverage for semantic-role conflict surfacing
+- Added tests for:
+  - surfacing a role conflict when one source makes a signal look valid-like and another makes it look ready-like
+  - flagging that conflict explicitly in `specforge validate`
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 151/151 passed
+
 ## 2026-04-04 (SourceIR and ingest maturity guidance logged)
 
 ### Added: explicit steering on SourceIR maturity and remaining Tier 1 work

@@ -121,6 +121,11 @@ pub struct EvidenceIr {
     /// signal spelling alone.
     #[serde(default)]
     pub signal_semantic_hints: Vec<SignalSemanticHintRecord>,
+    /// Explicit conflicts where semantic-role evidence assigns incompatible roles to the same
+    /// signal. These conflicts stay visible instead of silently collapsing into an ambiguous
+    /// dual-tag fallback.
+    #[serde(default)]
+    pub signal_semantic_conflicts: Vec<SignalSemanticConflictRecord>,
     /// Tier 2 Knowledge Graph: actor–signal relation triples extracted from prose verb phrases.
     /// Each record encodes (actor, drives|reads, signal) derived from sentences like
     /// "PREADY is driven by the slave" or "The Manager drives HTRANS".
@@ -475,6 +480,7 @@ impl EvidenceIr {
             conditional_rules,
             signal_polarity_conflicts,
             signal_semantic_hints: Vec::new(),
+            signal_semantic_conflicts: Vec::new(),
             actor_signal_relations,
             signal_alias_map: BTreeMap::new(),
             validation_reports: Vec::new(),
@@ -577,11 +583,13 @@ impl EvidenceIr {
 
     pub fn refresh_signal_semantic_hints(&mut self) -> Result<()> {
         let source_ir = SourceIr::load_from_path(&self.source_ir_path)?;
-        self.signal_semantic_hints = synthesize_signal_semantic_hints(
+        let (signal_semantic_hints, signal_semantic_conflicts) = synthesize_signal_semantic_hints(
             &source_ir,
             &self.extracted_statements,
             &self.signal_alias_map,
         );
+        self.signal_semantic_hints = signal_semantic_hints;
+        self.signal_semantic_conflicts = signal_semantic_conflicts;
         Ok(())
     }
 
@@ -714,6 +722,16 @@ pub enum SignalSemanticHintSourceKind {
     AliasGroundedProseStatement,
 }
 
+impl SignalSemanticHintSourceKind {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::SignalDescriptionTable => "signal_description_table",
+            Self::ProseStatement => "prose_statement",
+            Self::AliasGroundedProseStatement => "alias_grounded_prose_statement",
+        }
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct SignalSemanticHintRecord {
     pub signal_name: String,
@@ -722,7 +740,29 @@ pub struct SignalSemanticHintRecord {
     pub source_kind: SignalSemanticHintSourceKind,
     pub source_text: String,
     #[serde(default)]
+    pub supporting_statement_ids: Vec<String>,
+    #[serde(default)]
     pub supporting_table_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct SignalSemanticConflictObservationRecord {
+    #[serde(default)]
+    pub semantic_tags: Vec<SignalSemanticTag>,
+    pub source_kind: SignalSemanticHintSourceKind,
+    pub source_text: String,
+    #[serde(default)]
+    pub supporting_statement_ids: Vec<String>,
+    #[serde(default)]
+    pub supporting_table_ids: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct SignalSemanticConflictRecord {
+    pub conflict_id: String,
+    pub signal_name: String,
+    pub observations: Vec<SignalSemanticConflictObservationRecord>,
     pub automation_confidence: AutomationConfidence,
 }
 
@@ -3020,7 +3060,10 @@ fn synthesize_signal_semantic_hints(
     source_ir: &SourceIr,
     statements: &[ExtractedStatement],
     signal_alias_map: &BTreeMap<String, String>,
-) -> Vec<SignalSemanticHintRecord> {
+) -> (
+    Vec<SignalSemanticHintRecord>,
+    Vec<SignalSemanticConflictRecord>,
+) {
     let mut hints = synthesize_signal_semantic_hints_from_tables(source_ir);
     let mut seen = hints
         .iter()
@@ -3031,7 +3074,8 @@ fn synthesize_signal_semantic_hints(
             hints.push(hint);
         }
     }
-    hints
+    let conflicts = detect_signal_semantic_conflicts(&hints);
+    (hints, conflicts)
 }
 
 fn signal_semantic_hint_key(hint: &SignalSemanticHintRecord) -> String {
@@ -3133,6 +3177,7 @@ fn synthesize_signal_semantic_hints_from_tables(
                 semantic_tags,
                 source_kind: SignalSemanticHintSourceKind::SignalDescriptionTable,
                 source_text: description.to_string(),
+                supporting_statement_ids: Vec::new(),
                 supporting_table_ids: vec![table.table_id.clone()],
                 automation_confidence: AutomationConfidence::Medium,
             });
@@ -3193,12 +3238,56 @@ fn synthesize_signal_semantic_hints_from_prose(
             semantic_tags,
             source_kind,
             source_text: statement.text.clone(),
+            supporting_statement_ids: vec![statement.statement_id.clone()],
             supporting_table_ids: Vec::new(),
             automation_confidence: AutomationConfidence::Low,
         });
     }
 
     hints
+}
+
+fn detect_signal_semantic_conflicts(
+    hints: &[SignalSemanticHintRecord],
+) -> Vec<SignalSemanticConflictRecord> {
+    let mut hints_by_signal = BTreeMap::<String, Vec<&SignalSemanticHintRecord>>::new();
+    for hint in hints {
+        hints_by_signal
+            .entry(hint.signal_name.clone())
+            .or_default()
+            .push(hint);
+    }
+
+    let mut conflicts = Vec::new();
+    let mut conflict_counter = 1usize;
+    for (signal_name, observations) in hints_by_signal {
+        let distinct_tags = observations
+            .iter()
+            .flat_map(|hint| hint.semantic_tags.iter().copied())
+            .collect::<BTreeSet<_>>();
+        if distinct_tags.len() < 2 {
+            continue;
+        }
+
+        conflicts.push(SignalSemanticConflictRecord {
+            conflict_id: format!("semantic_conflict_{conflict_counter:04}"),
+            signal_name,
+            observations: observations
+                .into_iter()
+                .map(|hint| SignalSemanticConflictObservationRecord {
+                    semantic_tags: hint.semantic_tags.clone(),
+                    source_kind: hint.source_kind,
+                    source_text: hint.source_text.clone(),
+                    supporting_statement_ids: hint.supporting_statement_ids.clone(),
+                    supporting_table_ids: hint.supporting_table_ids.clone(),
+                })
+                .collect(),
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        conflict_counter += 1;
+    }
+
+    conflicts
 }
 
 fn resolve_signal_semantic_target_from_prose(
@@ -5556,6 +5645,68 @@ mod tests {
                 && hint
                     .semantic_tags
                     .contains(&super::SignalSemanticTag::HandshakeReadyLike)
+        }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn conflicting_semantic_hints_are_surfaced_explicitly() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("semantic_hint_conflict.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Channel\n",
+                "Signal XCTRL is input width 1.\n\n",
+                "XCTRL indicates that the subordinate can accept the transfer.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_semantic_conflict".to_string(),
+            asset_id: "asset_semantic_conflict".to_string(),
+            page_id: None,
+            caption_text: Some("Control signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("XCTRL", false),
+                make_table_cell(
+                    "Indicates that address and control information are valid for transfer.",
+                    false,
+                ),
+            ]],
+            row_count: 1,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        assert_eq!(evidence_ir.signal_semantic_conflicts.len(), 1);
+        let conflict = &evidence_ir.signal_semantic_conflicts[0];
+        assert_eq!(conflict.signal_name, "XCTRL");
+        assert!(conflict.observations.iter().any(|observation| {
+            observation
+                .semantic_tags
+                .contains(&super::SignalSemanticTag::HandshakeValidLike)
+        }));
+        assert!(conflict.observations.iter().any(|observation| {
+            observation
+                .semantic_tags
+                .contains(&super::SignalSemanticTag::HandshakeReadyLike)
         }));
 
         Ok(())
