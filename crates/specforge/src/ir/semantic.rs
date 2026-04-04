@@ -7,8 +7,9 @@ use serde::{Deserialize, Serialize};
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::evidence::{
-    EvidenceIr, SignalSemanticConflictRecord, SignalSemanticHintRecord, SignalSemanticTag,
-    StatementClass, VisualEvidenceRole, VisualObservationKind, parse_visual_observation_json,
+    EvidenceIr, SignalSemanticConflictRecord, SignalSemanticHintRecord,
+    SignalSemanticHintSourceKind, SignalSemanticTag, StatementClass, VisualEvidenceRole,
+    VisualObservationKind, parse_visual_observation_json,
 };
 use crate::ir::source::{
     ActorSignalRelation, AutomationConfidence, CandidateInterpretation, RelationKind,
@@ -459,7 +460,24 @@ pub struct InterfaceSignalRecord {
     pub width_hint: Option<WidthHint>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub semantic_tags: Vec<SignalSemanticTag>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub semantic_observations: Vec<InterfaceSignalSemanticObservationRecord>,
     pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct InterfaceSignalSemanticObservationRecord {
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub semantic_tags: Vec<SignalSemanticTag>,
+    pub source_kind: SignalSemanticHintSourceKind,
+    pub source_text: String,
+    #[serde(default)]
+    pub supporting_statement_ids: Vec<String>,
+    #[serde(default)]
+    pub supporting_table_ids: Vec<String>,
+    #[serde(default)]
+    pub supporting_visual_evidence_ids: Vec<String>,
     pub automation_confidence: AutomationConfidence,
 }
 
@@ -1198,6 +1216,7 @@ struct InterfaceSignalAccumulator {
     direction_hint: Option<InterfaceSignalDirection>,
     width_hint: Option<WidthHint>,
     semantic_tags: BTreeSet<SignalSemanticTag>,
+    semantic_observations: Vec<InterfaceSignalSemanticObservationRecord>,
     direction_observations: BTreeMap<String, BTreeSet<String>>,
     width_observations: BTreeMap<String, BTreeSet<String>>,
     supporting_statement_ids: BTreeSet<String>,
@@ -1477,11 +1496,7 @@ fn build_interfaces(
     for hint in &context.signal_semantic_hints {
         for accumulator in accumulators.values_mut() {
             if accumulator.signal_records.contains_key(&hint.signal_name) {
-                register_interface_signal_semantic_tags(
-                    accumulator,
-                    &hint.signal_name,
-                    hint.semantic_tags.as_slice(),
-                );
+                register_interface_signal_semantic_hint(accumulator, &hint.signal_name, hint);
             }
         }
     }
@@ -1548,6 +1563,7 @@ fn build_interfaces(
                         direction_hint: signal.direction_hint,
                         width_hint: signal.width_hint,
                         semantic_tags: signal.semantic_tags.into_iter().collect(),
+                        semantic_observations: signal.semantic_observations,
                         supporting_statement_ids: signal
                             .supporting_statement_ids
                             .into_iter()
@@ -4234,6 +4250,7 @@ fn register_interface_signal_record(
             direction_hint: None,
             width_hint: None,
             semantic_tags: BTreeSet::new(),
+            semantic_observations: Vec::new(),
             direction_observations: BTreeMap::new(),
             width_observations: BTreeMap::new(),
             supporting_statement_ids: BTreeSet::new(),
@@ -4262,18 +4279,39 @@ fn register_interface_signal_record(
         max_automation_confidence(entry.automation_confidence, automation_confidence);
 }
 
-fn register_interface_signal_semantic_tags(
+fn register_interface_signal_semantic_hint(
     accumulator: &mut InterfaceAccumulator,
     signal_name: &str,
-    semantic_tags: &[SignalSemanticTag],
+    hint: &SignalSemanticHintRecord,
 ) {
-    if semantic_tags.is_empty() {
+    if hint.semantic_tags.is_empty() {
         return;
     }
     let Some(entry) = accumulator.signal_records.get_mut(signal_name) else {
         return;
     };
-    entry.semantic_tags.extend(semantic_tags.iter().copied());
+    entry
+        .semantic_tags
+        .extend(hint.semantic_tags.iter().copied());
+    let observation = InterfaceSignalSemanticObservationRecord {
+        semantic_tags: hint.semantic_tags.clone(),
+        source_kind: hint.source_kind,
+        source_text: hint.source_text.clone(),
+        supporting_statement_ids: hint.supporting_statement_ids.clone(),
+        supporting_table_ids: hint.supporting_table_ids.clone(),
+        supporting_visual_evidence_ids: hint.supporting_visual_evidence_ids.clone(),
+        automation_confidence: hint.automation_confidence,
+    };
+    if !entry.semantic_observations.iter().any(|existing| {
+        existing.semantic_tags == observation.semantic_tags
+            && existing.source_kind == observation.source_kind
+            && existing.source_text == observation.source_text
+            && existing.supporting_statement_ids == observation.supporting_statement_ids
+            && existing.supporting_table_ids == observation.supporting_table_ids
+            && existing.supporting_visual_evidence_ids == observation.supporting_visual_evidence_ids
+    }) {
+        entry.semantic_observations.push(observation);
+    }
 }
 
 fn width_hint_key(width_hint: &WidthHint) -> String {
@@ -6613,9 +6651,9 @@ mod tests {
         ControlCompoundUpdateOperation, ControlDualOutputKind, ControlExpressionRecord,
         ControlReferenceKind, ControlReferenceSuffix, DecisionTreeActionRecord,
         DecisionTreeAssignmentKind, DecisionTreeComparisonOperator, DecisionTreeGuardRecord,
-        DecisionTreeValueRecord, InterfaceSignalDirection, SemanticIr, SignalSemanticTag,
-        SymbolDefinitionKind, SystemResetKind, SystemResetPolarity, SystemResetTargetKind,
-        SystemResetTimingRelation,
+        DecisionTreeValueRecord, InterfaceSignalDirection, SemanticIr,
+        SignalSemanticHintSourceKind, SignalSemanticTag, SymbolDefinitionKind, SystemResetKind,
+        SystemResetPolarity, SystemResetTargetKind, SystemResetTimingRelation,
     };
 
     fn make_table_cell(text: &str, is_header: bool) -> StructuredTableCellRecord {
@@ -8008,6 +8046,108 @@ mod tests {
             observation
                 .semantic_tags
                 .contains(&SignalSemanticTag::HandshakeReadyLike)
+        }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn carries_semantic_observations_into_interface_records() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("semantic_role_observations.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal XREQ is input width 1.\n\n",
+                "Signal XACK is input width 1.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.visual_assets.push(VisualAsset {
+            asset_id: "figure_xreq".to_string(),
+            asset_kind: VisualAssetKind::Diagram,
+            page_id: Some("page_0001".to_string()),
+            image_path: None,
+            caption_text: Some("Figure 1: XREQ valid timing.".to_string()),
+            caption_source_path: None,
+            source_ref: None,
+            placeholder_text: None,
+            note: None,
+            diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+        });
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_signal_semantic_tags".to_string(),
+            asset_id: "table_signal_semantic_tags".to_string(),
+            page_id: None,
+            caption_text: Some("Handshake signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("XACK", false),
+                make_table_cell(
+                    "Indicates that the subordinate can accept the transfer.",
+                    false,
+                ),
+            ]],
+            row_count: 1,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let xreq = semantic_ir
+            .interfaces
+            .iter()
+            .flat_map(|interface| interface.signal_records.iter())
+            .find(|signal| signal.signal_name == "XREQ")
+            .expect("expected XREQ interface signal");
+        assert!(
+            xreq.semantic_tags
+                .contains(&SignalSemanticTag::HandshakeValidLike)
+        );
+        assert!(xreq.semantic_observations.iter().any(|observation| {
+            matches!(
+                observation.source_kind,
+                SignalSemanticHintSourceKind::VisualCaption
+            ) && !observation.supporting_visual_evidence_ids.is_empty()
+        }));
+
+        let xack = semantic_ir
+            .interfaces
+            .iter()
+            .flat_map(|interface| interface.signal_records.iter())
+            .find(|signal| signal.signal_name == "XACK")
+            .expect("expected XACK interface signal");
+        assert!(
+            xack.semantic_tags
+                .contains(&SignalSemanticTag::HandshakeReadyLike)
+        );
+        assert!(xack.semantic_observations.iter().any(|observation| {
+            matches!(
+                observation.source_kind,
+                SignalSemanticHintSourceKind::SignalDescriptionTable
+            ) && observation
+                .supporting_table_ids
+                .contains(&"table_signal_semantic_tags".to_string())
         }));
 
         Ok(())

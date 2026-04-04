@@ -2059,6 +2059,13 @@ mod tests {
             xreq.semantic_tags
                 .contains(&SignalSemanticTag::HandshakeValidLike)
         );
+        assert_eq!(xreq.semantic_observations.len(), 1);
+        assert!(xreq.semantic_observations.iter().any(|observation| {
+            matches!(
+                observation.source_kind,
+                crate::ir::evidence::SignalSemanticHintSourceKind::SignalDescriptionTable
+            )
+        }));
 
         let xack = intent_ir
             .interfaces
@@ -2070,6 +2077,13 @@ mod tests {
             xack.semantic_tags
                 .contains(&SignalSemanticTag::HandshakeReadyLike)
         );
+        assert_eq!(xack.semantic_observations.len(), 1);
+        assert!(xack.semantic_observations.iter().any(|observation| {
+            matches!(
+                observation.source_kind,
+                crate::ir::evidence::SignalSemanticHintSourceKind::SignalDescriptionTable
+            )
+        }));
 
         Ok(())
     }

@@ -366,6 +366,7 @@
   - `specforge nlp-enrich` now refreshes `signal_semantic_hints` before persistence whenever alias learning or backannotation changes the evidence state
   - `EvidenceIR` now also refreshes `signal_semantic_hints` from grounded visual captions and VLM timing-diagram annotations when they explicitly name a single known signal and establish a role meaning
   - caption/VLM-grounded semantic hints now carry explicit visual-evidence provenance instead of degrading to anonymous text-only hints
+  - `SemanticIR` / `IntentIR` now carry per-signal `semantic_observations`, preserving role provenance and source kind in the canonical layers instead of only keeping merged `semantic_tags`
 - completion criteria:
   - anchored rescans over tables, prose, and figures are first-class parts of the convergent loop
   - weakly labeled signal-detail tables and additional polarity/timing/value facts can be recovered from known anchors

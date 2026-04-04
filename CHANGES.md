@@ -1,5 +1,28 @@
 # CHANGES
 
+## 2026-04-04 (canonical semantic-role observation carry-through)
+
+### Added: per-signal semantic observations in canonical IR
+- `SemanticIR` now carries `semantic_observations` on `InterfaceSignalRecord`.
+- `IntentIR` now carries the same role-observation surface forward.
+- These observations preserve source kind, source text, and statement/table/visual provenance instead of flattening everything into merged `semantic_tags`.
+
+### Changed: validation now exposes canonical role-grounding depth
+- `specforge validate` now reports:
+  - `semantic_observations`
+  - `with_visual_semantic_grounding`
+- This makes it visible when canonical signal meaning is actually grounded in preserved provenance rather than only implied by merged tags.
+
+### Added: regression coverage for canonical observation preservation
+- Added tests for:
+  - carrying semantic observations into `SemanticIR` interface records
+  - carrying semantic observations into `IntentIR`
+  - exposing canonical semantic-observation counts in validation
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 160/160 passed
+
 ## 2026-04-04 (initial multimodal semantic-role grounding)
 
 ### Added: visual semantic-role hints in `EvidenceIR`

@@ -1008,3 +1008,31 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
   - richer actor/role phrasing in normative prose
   - state-machine/VLM explanation grounding beyond timing annotations
   - modality-aware arbitration when caption, prose, table, and VLM role candidates disagree
+
+## 2026-04-04 - canonical semantic-role observations replace lossy tag-only carry-through
+- after the multimodal grounding slice, a new quality gap became obvious in the canonical layers:
+  - `EvidenceIR` had rich semantic-role hints with provenance
+  - `SemanticIR` / `IntentIR` kept only merged `semantic_tags`
+  - that meant canonical consumers lost the distinction between table/prose/visual support and could not inspect how a role meaning had been established
+- that was a lossy design, so it was not good enough for the project quality bar
+- `crates/specforge/src/ir/semantic.rs` now defines `semantic_observations` on `InterfaceSignalRecord`
+- each observation keeps:
+  - semantic tags
+  - source kind
+  - source text
+  - statement/table/visual provenance ids
+  - automation confidence
+- `SemanticIR` now builds those observations directly from `EvidenceIR.signal_semantic_hints`
+- `IntentIR` now carries the same per-signal semantic observation surface forward unchanged
+- `crates/specforge/src/commands/validate.rs` now reports:
+  - `semantic_observations`
+  - `with_visual_semantic_grounding`
+- this is a better canonical design because:
+  - merged `semantic_tags` still exist for quick downstream use
+  - but the canonical layers no longer destroy the richer provenance needed for inspection, arbitration, and future SOTA-quality consumers
+- validation for this slice:
+  - `cargo fmt --all` passed
+  - `cargo test --manifest-path Cargo.toml` passed with `160/160`
+- the next honest follow-up is to let those canonical observations participate in stronger arbitration, not just preservation:
+  - modality-aware role preference when evidence strengths differ
+  - richer reporting of which canonical role meanings are single-source vs multi-source grounded

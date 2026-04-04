@@ -234,6 +234,34 @@ fn interface_signals_with_semantic_tags_count(
         .count()
 }
 
+fn interface_signal_semantic_observations_count(
+    interfaces: &[crate::ir::semantic::InterfaceRecord],
+) -> usize {
+    interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+        .map(|signal| signal.semantic_observations.len())
+        .sum()
+}
+
+fn interface_signals_with_visual_semantic_grounding_count(
+    interfaces: &[crate::ir::semantic::InterfaceRecord],
+) -> usize {
+    interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+        .filter(|signal| {
+            signal.semantic_observations.iter().any(|observation| {
+                matches!(
+                    observation.source_kind,
+                    SignalSemanticHintSourceKind::VisualCaption
+                        | SignalSemanticHintSourceKind::VlmTimingDiagramAnnotation
+                )
+            })
+        })
+        .count()
+}
+
 fn signal_semantic_hints_by_source_kind_count(
     hints: &[SignalSemanticHintRecord],
     source_kind: SignalSemanticHintSourceKind,
@@ -987,6 +1015,9 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         .filter(|s| s.width_hint.is_some())
         .count();
     let with_semantic_tags = interface_signals_with_semantic_tags_count(&ir.interfaces);
+    let semantic_observations = interface_signal_semantic_observations_count(&ir.interfaces);
+    let with_visual_semantic_grounding =
+        interface_signals_with_visual_semantic_grounding_count(&ir.interfaces);
     let fully_typed = ir
         .interfaces
         .iter()
@@ -1027,6 +1058,8 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     println!("  with_compat_direction_hint: {with_compat_direction_hint} ({compat_dir_pct}%)");
     println!("  with_width: {with_width} ({w_pct}%)");
     println!("  with_semantic_tags: {with_semantic_tags}");
+    println!("  semantic_observations: {semantic_observations}");
+    println!("  with_visual_semantic_grounding: {with_visual_semantic_grounding}");
     println!("  fully_typed (resolved_direction+width): {fully_typed} ({ft_pct}%)");
     println!();
 
@@ -1374,6 +1407,11 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             ),
             metric("with_width", with_width.to_string()),
             metric("with_semantic_tags", with_semantic_tags.to_string()),
+            metric("semantic_observations", semantic_observations.to_string()),
+            metric(
+                "with_visual_semantic_grounding",
+                with_visual_semantic_grounding.to_string(),
+            ),
             metric("fully_typed", fully_typed.to_string()),
             metric("actors", ir.actors.len().to_string()),
             metric(
@@ -1491,6 +1529,9 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         .count();
     let with_width = with_numeric_width + with_parametric_width;
     let with_semantic_tags = interface_signals_with_semantic_tags_count(&ir.interfaces);
+    let semantic_observations = interface_signal_semantic_observations_count(&ir.interfaces);
+    let with_visual_semantic_grounding =
+        interface_signals_with_visual_semantic_grounding_count(&ir.interfaces);
     let dir_pct = if declared_count > 0 {
         with_direction * 100 / declared_count
     } else {
@@ -1520,6 +1561,8 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         "  with_width: {with_width} ({w_pct}%) [{with_numeric_width} numeric, {with_parametric_width} parametric]"
     );
     println!("  with_semantic_tags: {with_semantic_tags}");
+    println!("  semantic_observations: {semantic_observations}");
+    println!("  with_visual_semantic_grounding: {with_visual_semantic_grounding}");
     println!();
 
     println!("=== Intent Records ===");
@@ -1932,6 +1975,11 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             ),
             metric("with_width", with_width.to_string()),
             metric("with_semantic_tags", with_semantic_tags.to_string()),
+            metric("semantic_observations", semantic_observations.to_string()),
+            metric(
+                "with_visual_semantic_grounding",
+                with_visual_semantic_grounding.to_string(),
+            ),
             metric("actors", ir.actors.len().to_string()),
             metric(
                 "actor_signal_relations",
@@ -3059,6 +3107,11 @@ mod tests {
 
         let report = validate_intent_ir(&intent_ir, "signal_semantic_tags".to_string());
         assert_eq!(metric_value(&report, "with_semantic_tags"), Some("2"));
+        assert_eq!(metric_value(&report, "semantic_observations"), Some("2"));
+        assert_eq!(
+            metric_value(&report, "with_visual_semantic_grounding"),
+            Some("0")
+        );
 
         Ok(())
     }

@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `2087422`
-- latest_commit_brief_message: `feat(ir): carry semantic role conflicts downstream`
-- note: current uncommitted work adds initial multimodal semantic-role grounding from visual captions and VLM timing annotations, updates evidence validation metrics, and syncs the live docs
+- latest_commit_hash: `6ff9406`
+- latest_commit_brief_message: `feat(evidence): ground semantic roles in multimodal evidence`
+- note: current uncommitted work replaces lossy tag-only carry-through with canonical per-signal semantic observations, updates semantic/intent validation metrics, and syncs the live docs
 
 ## Recent commit chain (last 5)
+- `6ff9406` feat(evidence): ground semantic roles in multimodal evidence
 - `2087422` feat(ir): carry semantic role conflicts downstream
 - `f8f587c` feat(evidence): surface semantic role conflicts
 - `bb7ab41` docs(sourceir): log ingest maturity boundary
 - `43c201f` feat(evidence): infer semantic roles from prose aliases
-- `dbae9b7` feat(semantic): infer handshake roles from signal meaning
 - `bd6916f` feat(semantic): derive handshake temporal predicates
 
 ## Current repository state
@@ -44,20 +44,18 @@
 - `VALIDATION_SNAPSHOT.md` is now a tracked continuity doc refreshed from persisted validation reports
 
 ## Completed technical work in this session
-- `crates/specforge/src/ir/evidence.rs` now mines `signal_semantic_hints` from grounded visual captions and VLM timing-diagram annotations in addition to tables/prose
-- VLM timing-annotation grounding now reuses a shared robust JSON recovery path instead of maintaining a separate weaker parser
-- `SignalSemanticHintRecord` now carries `supporting_visual_evidence_ids`, so multimodal role hints keep explicit visual provenance
-- `crates/specforge/src/commands/validate.rs` now reports `signal_semantic_hints_from_visual_captions` and `signal_semantic_hints_from_vlm_timing_annotations`
-- `crates/specforge/src/ir/semantic.rs` now has an end-to-end proof that caption-grounded role hints can derive a typed `HandshakeComplete`
-- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, and `CHANGES.md` so the multimodal grounding slice is visible in continuity docs
+- `crates/specforge/src/ir/semantic.rs` now carries `semantic_observations` on `InterfaceSignalRecord`, preserving role source kind, source text, and provenance instead of only merged `semantic_tags`
+- `crates/specforge/src/ir/intent.rs` now carries that same per-signal semantic observation surface into the canonical endpoint
+- `crates/specforge/src/commands/validate.rs` now reports canonical `semantic_observations` counts and `with_visual_semantic_grounding`
+- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, and `CHANGES.md` so the canonical observation carry-through is visible in continuity docs
 - validation ran for this task:
   - `cargo fmt --all` passed
-  - `cargo test --manifest-path Cargo.toml` passed with `159/159`
+  - `cargo test --manifest-path Cargo.toml` passed with `160/160`
 
 ## Current working tree before commit
 - modified tracked files currently include:
-  - `crates/specforge/src/ir/evidence.rs`
   - `crates/specforge/src/ir/semantic.rs`
+  - `crates/specforge/src/ir/intent.rs`
   - `crates/specforge/src/commands/validate.rs`
   - `README.md`
   - `ROADMAP.md`
@@ -68,7 +66,7 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the initial multimodal semantic-role grounding slice
+1. commit the canonical semantic-role observation carry-through slice
 2. continue the semantic-truthfulness program by broadening multimodal role grounding and conflict/arbitration coverage
 3. keep adapter work de-prioritized until the graph, temporal, arbitration, and evaluation surfaces are materially stronger
 
@@ -80,7 +78,7 @@
 - KG-quality evaluation and benchmark hardening (`R15e`)
 - Tier 3 relation extraction after the graph/temporal/eval surfaces are ready (`R14`)
 - some downstream compatibility and consumer paths still rely on flat `direction_hint` instead of the graph-native surface
-- meaning-based role inference now covers tables, prose, alias-grounded prose, visual captions, and VLM timing annotations, but it still needs broader multimodal grounding and arbitration so protocol semantics do not depend on only a narrow slice of visual evidence
+- meaning-based role inference now covers tables, prose, alias-grounded prose, visual captions, and VLM timing annotations, and canonical layers now preserve that provenance, but arbitration across those modality-specific candidates is still early
 - semantic-role disagreement is now surfaced explicitly across `EvidenceIR`, `SemanticIR`, and `IntentIR`, but richer multimodal role grounding and broader arbitration still need to grow
 - `SourceIR` / ingest are strong enough to remain the foundation, but not strong enough to be assumed universal; future Tier 1 work should stay focused on robustness and honest failure handling
 - adapter expansion and adapter validation are now intentionally horizon work
