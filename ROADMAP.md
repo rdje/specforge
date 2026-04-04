@@ -382,6 +382,8 @@
   - `specforge validate` now reports and flags those polarity conflicts explicitly, so contradictory polarity stays inspectable instead of only affecting the derived constraint kind
   - `EvidenceIR` now persists `signal_semantic_conflicts: Vec<SignalSemanticConflictRecord>` when meaning-based role evidence assigns incompatible roles to the same signal
   - `specforge validate` now reports and flags those semantic-role conflicts explicitly instead of leaving incompatible role evidence hidden inside a dual-tag ambiguity
+  - `SemanticIR` / `IntentIR` now carry `signal_semantic_conflicts` forward, so unresolved role disagreement remains visible in the canonical layers instead of disappearing after `EvidenceIR`
+  - `specforge validate` now reports and flags those carried semantic-role conflicts for both `SemanticIR` and `IntentIR`
   - `SemanticIR` / `IntentIR` now persist `interface_signal_conflicts: Vec<InterfaceSignalConflictRecord>` when conflicting declarations disagree on signal direction or width
   - `specforge validate` now reports and flags those interface-signal conflicts explicitly, so incompatible shape evidence stays inspectable instead of silently nulling the canonical hint
   - `SemanticIR` / `IntentIR` now persist `signal_connectivity_conflicts: Vec<SignalConnectivityConflictRecord>` when the structural KG resolves multiple producers for the same signal

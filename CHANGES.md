@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-04-04 (semantic-role conflict carry-through into canonical IR)
+
+### Added: carried semantic-role conflicts in `SemanticIR` and `IntentIR`
+- `SemanticIR` now carries `signal_semantic_conflicts` forward from `EvidenceIR`.
+- `IntentIR` now carries the same explicit role-conflict surface into the canonical endpoint.
+
+### Changed: validation now reports semantic-role disagreement end-to-end
+- `specforge validate` now prints and flags `signal_semantic_conflicts` for `SemanticIR` and `IntentIR`, not only for `EvidenceIR`.
+- This keeps unresolved role disagreement visible to downstream consumers instead of letting it disappear after the evidence stage.
+
+### Added: regression coverage for canonical conflict carry-through
+- Added tests for:
+  - carrying semantic-role conflicts into `SemanticIR`
+  - carrying semantic-role conflicts into `IntentIR`
+  - flagging those conflicts from semantic-stage and intent-stage validation
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 155/155 passed
+
 ## 2026-04-04 (explicit semantic-role conflict surfacing)
 
 ### Added: typed semantic-role conflicts in `EvidenceIR`

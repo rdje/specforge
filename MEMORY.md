@@ -22,11 +22,12 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `bb7ab41`
-- latest_commit_brief_message: `docs(sourceir): log ingest maturity boundary`
-- note: current uncommitted work adds explicit semantic-role conflict surfacing in `EvidenceIR`, updates evidence-stage validation, and syncs the live docs
+- latest_commit_hash: `f8f587c`
+- latest_commit_brief_message: `feat(evidence): surface semantic role conflicts`
+- note: current uncommitted work carries `signal_semantic_conflicts` through `SemanticIR` / `IntentIR`, updates semantic/intent validation, and syncs the live docs
 
 ## Recent commit chain (last 5)
+- `f8f587c` feat(evidence): surface semantic role conflicts
 - `bb7ab41` docs(sourceir): log ingest maturity boundary
 - `43c201f` feat(evidence): infer semantic roles from prose aliases
 - `dbae9b7` feat(semantic): infer handshake roles from signal meaning
@@ -43,18 +44,18 @@
 - `VALIDATION_SNAPSHOT.md` is now a tracked continuity doc refreshed from persisted validation reports
 
 ## Completed technical work in this session
-- `crates/specforge/src/ir/evidence.rs` now persists `signal_semantic_conflicts` when meaning-based role evidence assigns incompatible roles to the same signal
-- `crates/specforge/src/commands/validate.rs` now reports:
-  - `signal_semantic_conflicts` for `EvidenceIR`
-  - a dedicated validation warning when semantic-role disagreement is present
-- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, `CHANGES.md`, and `MEMORY.md` so the new conflict surface is visible in continuity docs
+- `crates/specforge/src/ir/semantic.rs` now carries `signal_semantic_conflicts` forward from `EvidenceIR`
+- `crates/specforge/src/ir/intent.rs` now carries the same semantic-role conflict surface into the canonical endpoint
+- `crates/specforge/src/commands/validate.rs` now reports and flags `signal_semantic_conflicts` for both `SemanticIR` and `IntentIR`
+- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, and `CHANGES.md` so the canonical conflict carry-through is visible in continuity docs
 - validation ran for this task:
   - `cargo fmt --all` passed
-  - `cargo test --manifest-path Cargo.toml` passed with `151/151`
+  - `cargo test --manifest-path Cargo.toml` passed with `155/155`
 
 ## Current working tree before commit
 - modified tracked files currently include:
-  - `crates/specforge/src/ir/evidence.rs`
+  - `crates/specforge/src/ir/semantic.rs`
+  - `crates/specforge/src/ir/intent.rs`
   - `crates/specforge/src/commands/validate.rs`
   - `README.md`
   - `ROADMAP.md`
@@ -62,11 +63,10 @@
   - `RUST_CODEBASE_ANALYSIS.md`
   - `DEVELOPMENT_NOTES.md`
   - `CHANGES.md`
-  - `MEMORY.md`
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the semantic-role conflict surfacing slice
+1. commit the canonical semantic-role conflict carry-through slice
 2. continue the semantic-truthfulness program by broadening multimodal role grounding and conflict/arbitration coverage
 3. keep adapter work de-prioritized until the graph, temporal, arbitration, and evaluation surfaces are materially stronger
 
@@ -79,7 +79,7 @@
 - Tier 3 relation extraction after the graph/temporal/eval surfaces are ready (`R14`)
 - some downstream compatibility and consumer paths still rely on flat `direction_hint` instead of the graph-native surface
 - meaning-based role inference now covers signal-description tables plus conservative prose and alias-grounded prose, but it still needs richer multimodal grounding so protocol semantics do not depend only on text surfaces
-- semantic-role disagreement is now surfaced explicitly in `EvidenceIR`, but broader conflict carry-through and arbitration across later IR stages still needs to grow
+- semantic-role disagreement is now surfaced explicitly across `EvidenceIR`, `SemanticIR`, and `IntentIR`, but richer multimodal role grounding and broader arbitration still need to grow
 - `SourceIR` / ingest are strong enough to remain the foundation, but not strong enough to be assumed universal; future Tier 1 work should stay focused on robustness and honest failure handling
 - adapter expansion and adapter validation are now intentionally horizon work
 - the workspace still emits compile warnings in `ir/adapters.rs` and `ir/semantic.rs`

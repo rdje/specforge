@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
+use crate::ir::evidence::SignalSemanticConflictRecord;
 use crate::ir::semantic::{
     ActorPortRecord, ConditionalRuleRecord, ControlBlockRecord, DecisionTreeFragmentRecord,
     ExplicitModuleRecord, ExplicitTopRecord, InitAssignmentRecord, InterfaceRecord,
@@ -38,6 +39,8 @@ pub struct IntentIr {
     pub interface_signal_conflicts: Vec<InterfaceSignalConflictRecord>,
     #[serde(default)]
     pub signal_connectivity_conflicts: Vec<SignalConnectivityConflictRecord>,
+    #[serde(default)]
+    pub signal_semantic_conflicts: Vec<SignalSemanticConflictRecord>,
     #[serde(default)]
     pub interfaces: Vec<InterfaceRecord>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -121,6 +124,7 @@ impl IntentIr {
         let signal_connectivity = semantic_ir.signal_connectivity.clone();
         let interface_signal_conflicts = semantic_ir.interface_signal_conflicts.clone();
         let signal_connectivity_conflicts = semantic_ir.signal_connectivity_conflicts.clone();
+        let signal_semantic_conflicts = semantic_ir.signal_semantic_conflicts.clone();
         let interfaces = semantic_ir.interfaces.clone();
         let system_contract = semantic_ir.system_contract.clone();
         let actors = build_intent_actors(&context);
@@ -174,6 +178,7 @@ impl IntentIr {
             signal_connectivity,
             interface_signal_conflicts,
             signal_connectivity_conflicts,
+            signal_semantic_conflicts,
             interfaces,
             system_contract,
             behaviors,
@@ -755,9 +760,21 @@ mod tests {
         ControlBlockRole, SemanticIr, SymbolDefinitionKind, SystemResetKind, SystemResetPolarity,
         SystemResetTargetKind, SystemResetTimingRelation,
     };
-    use crate::ir::source::{AutomationConfidence, SourceIr, VisualAsset, VisualAssetKind};
+    use crate::ir::source::{
+        AutomationConfidence, SourceIr, StructuredTableCellRecord, StructuredTableRecord,
+        TableKind, VisualAsset, VisualAssetKind,
+    };
 
     use super::IntentIr;
+
+    fn make_table_cell(text: &str, is_header: bool) -> StructuredTableCellRecord {
+        StructuredTableCellRecord {
+            text: text.to_string(),
+            row_span: 1,
+            col_span: 1,
+            is_header,
+        }
+    }
 
     #[test]
     fn builds_intent_ir_from_handshake_semantics() -> Result<()> {
@@ -1488,6 +1505,80 @@ mod tests {
                 .iter()
                 .any(|name| name.eq_ignore_ascii_case("Monitor"))
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn carries_signal_semantic_conflicts_into_intent_ir() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("intent_semantic_role_conflict.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal XCTRL is input width 1.\n\n",
+                "XCTRL indicates that the subordinate can accept the transfer.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_semantic_conflict".to_string(),
+            asset_id: "asset_semantic_conflict".to_string(),
+            page_id: None,
+            caption_text: Some("Control signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("XCTRL", false),
+                make_table_cell(
+                    "Indicates that address and control information are valid for transfer.",
+                    false,
+                ),
+            ]],
+            row_count: 1,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        assert_eq!(intent_ir.signal_semantic_conflicts.len(), 1);
+        let conflict = &intent_ir.signal_semantic_conflicts[0];
+        assert_eq!(conflict.signal_name, "XCTRL");
+        assert!(conflict.observations.iter().any(|observation| {
+            observation
+                .semantic_tags
+                .contains(&crate::ir::evidence::SignalSemanticTag::HandshakeValidLike)
+        }));
+        assert!(conflict.observations.iter().any(|observation| {
+            observation
+                .semantic_tags
+                .contains(&crate::ir::evidence::SignalSemanticTag::HandshakeReadyLike)
+        }));
 
         Ok(())
     }

@@ -1024,6 +1024,10 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         "  signal_connectivity_conflicts: {}",
         ir.signal_connectivity_conflicts.len()
     );
+    println!(
+        "  signal_semantic_conflicts: {}",
+        ir.signal_semantic_conflicts.len()
+    );
     println!("  interfaces: {}", ir.interfaces.len());
     println!("  invariants: {}", ir.invariants.len());
     println!(
@@ -1101,6 +1105,23 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             println!(
                 "  ... and {} more conflict(s)",
                 ir.interface_signal_conflicts.len() - 8
+            );
+        }
+    }
+    if !ir.signal_semantic_conflicts.is_empty() {
+        println!();
+        println!("=== Signal Semantic Conflicts ===");
+        for conflict in ir.signal_semantic_conflicts.iter().take(8) {
+            println!(
+                "  - {}: {}",
+                conflict.signal_name,
+                describe_signal_semantic_conflict(conflict)
+            );
+        }
+        if ir.signal_semantic_conflicts.len() > 8 {
+            println!(
+                "  ... and {} more conflict(s)",
+                ir.signal_semantic_conflicts.len() - 8
             );
         }
     }
@@ -1189,6 +1210,21 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 ir.interface_signal_conflicts.len()
             ),
             ir.interface_signal_conflicts
+                .iter()
+                .map(|conflict| conflict.conflict_id.clone())
+                .collect(),
+        ));
+    }
+    if !ir.signal_semantic_conflicts.is_empty() {
+        findings.push(finding(
+            "semantic_signal_semantic_conflicts_present",
+            ValidationFindingSeverity::Warning,
+            "semantic_role_conflicts",
+            format!(
+                "{} semantic-role conflict(s) remain unresolved in the carried canonical semantic surface",
+                ir.signal_semantic_conflicts.len()
+            ),
+            ir.signal_semantic_conflicts
                 .iter()
                 .map(|conflict| conflict.conflict_id.clone())
                 .collect(),
@@ -1335,6 +1371,10 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 "signal_connectivity_conflicts",
                 ir.signal_connectivity_conflicts.len().to_string(),
             ),
+            metric(
+                "signal_semantic_conflicts",
+                ir.signal_semantic_conflicts.len().to_string(),
+            ),
             metric("interfaces", ir.interfaces.len().to_string()),
             metric("invariants", ir.invariants.len().to_string()),
             metric(
@@ -1476,6 +1516,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         "  signal_connectivity_conflicts: {}",
         ir.signal_connectivity_conflicts.len()
     );
+    println!(
+        "  signal_semantic_conflicts: {}",
+        ir.signal_semantic_conflicts.len()
+    );
     println!("  behaviors: {}", ir.behaviors.len());
     println!("  constraints: {}", ir.constraints.len());
     println!("  assumptions: {}", ir.assumptions.len());
@@ -1612,6 +1656,23 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             );
         }
     }
+    if !ir.signal_semantic_conflicts.is_empty() {
+        println!();
+        println!("=== Signal Semantic Conflicts ===");
+        for conflict in ir.signal_semantic_conflicts.iter().take(8) {
+            println!(
+                "  - {}: {}",
+                conflict.signal_name,
+                describe_signal_semantic_conflict(conflict)
+            );
+        }
+        if ir.signal_semantic_conflicts.len() > 8 {
+            println!(
+                "  ... and {} more conflict(s)",
+                ir.signal_semantic_conflicts.len() - 8
+            );
+        }
+    }
 
     let missing_producer_signals: Vec<String> = ir
         .signal_connectivity
@@ -1696,6 +1757,21 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 ir.interface_signal_conflicts.len()
             ),
             ir.interface_signal_conflicts
+                .iter()
+                .map(|conflict| conflict.conflict_id.clone())
+                .collect(),
+        ));
+    }
+    if !ir.signal_semantic_conflicts.is_empty() {
+        findings.push(finding(
+            "intent_signal_semantic_conflicts_present",
+            ValidationFindingSeverity::Warning,
+            "semantic_role_conflicts",
+            format!(
+                "{} semantic-role conflict(s) remain unresolved in the carried canonical intent surface",
+                ir.signal_semantic_conflicts.len()
+            ),
+            ir.signal_semantic_conflicts
                 .iter()
                 .map(|conflict| conflict.conflict_id.clone())
                 .collect(),
@@ -1851,6 +1927,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             metric(
                 "signal_connectivity_conflicts",
                 ir.signal_connectivity_conflicts.len().to_string(),
+            ),
+            metric(
+                "signal_semantic_conflicts",
+                ir.signal_semantic_conflicts.len().to_string(),
             ),
             metric("behaviors", ir.behaviors.len().to_string()),
             metric("constraints", ir.constraints.len().to_string()),
@@ -2228,6 +2308,70 @@ mod tests {
         assert!(has_finding(
             &report,
             "evidence_signal_semantic_conflicts_present"
+        ));
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_semantic_ir_flags_signal_semantic_conflicts() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("semantic_stage_role_conflict.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Channel\n",
+                "Signal XCTRL is input width 1.\n\n",
+                "XCTRL indicates that the subordinate can accept the transfer.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_semantic_conflict".to_string(),
+            asset_id: "asset_semantic_conflict".to_string(),
+            page_id: None,
+            caption_text: Some("Control signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("XCTRL", false),
+                make_table_cell(
+                    "Indicates that address and control information are valid for transfer.",
+                    false,
+                ),
+            ]],
+            row_count: 1,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let report = validate_semantic_ir(&semantic_ir, "signal_semantic_conflicts".to_string());
+
+        assert_eq!(
+            metric_value(&report, "signal_semantic_conflicts"),
+            Some("1")
+        );
+        assert!(has_finding(
+            &report,
+            "semantic_signal_semantic_conflicts_present"
         ));
 
         Ok(())
@@ -2946,6 +3090,75 @@ mod tests {
         assert!(has_finding(
             &report,
             "intent_signal_connectivity_conflicts_present"
+        ));
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_intent_ir_flags_signal_semantic_conflicts() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("intent_semantic_role_conflict.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Channel\n",
+                "Signal XCTRL is input width 1.\n\n",
+                "XCTRL indicates that the subordinate can accept the transfer.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_semantic_conflict".to_string(),
+            asset_id: "asset_semantic_conflict".to_string(),
+            page_id: None,
+            caption_text: Some("Control signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("XCTRL", false),
+                make_table_cell(
+                    "Indicates that address and control information are valid for transfer.",
+                    false,
+                ),
+            ]],
+            row_count: 1,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let report = validate_intent_ir(&intent_ir, "signal_semantic_conflicts".to_string());
+        assert_eq!(
+            metric_value(&report, "signal_semantic_conflicts"),
+            Some("1")
+        );
+        assert!(has_finding(
+            &report,
+            "intent_signal_semantic_conflicts_present"
         ));
 
         Ok(())

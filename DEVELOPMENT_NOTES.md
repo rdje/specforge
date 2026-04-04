@@ -957,3 +957,27 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 - validation for this slice:
   - `cargo fmt --all` passed
   - `cargo test --manifest-path Cargo.toml` passed with `151/151`
+
+## 2026-04-04 - carry semantic-role conflicts into SemanticIR and IntentIR
+- surfacing `signal_semantic_conflicts` only in `EvidenceIR` was a good first truthfulness step, but it still left a canonical-layer gap:
+  - downstream consumers could inspect `semantic_tags`
+  - validation at the semantic/intent stages could see that some roles were missing
+  - but the explicit reason, contradictory role evidence for the same signal, disappeared once the pipeline moved past `EvidenceIR`
+- that was still too silent for a graph-first canonical pipeline
+- `crates/specforge/src/ir/semantic.rs` now carries `signal_semantic_conflicts` forward from `EvidenceIR`
+- `crates/specforge/src/ir/intent.rs` now carries the same conflict surface forward again into the canonical endpoint
+- `crates/specforge/src/commands/validate.rs` now:
+  - reports `signal_semantic_conflicts` for both `SemanticIR` and `IntentIR`
+  - prints the same conflict details there, not only at the evidence stage
+  - raises explicit warning findings when those carried semantic-role conflicts are still unresolved
+- this keeps the truthfulness story intact end-to-end:
+  - evidence can disagree
+  - that disagreement can survive into canonical IR
+  - downstream lowering or review can see the unresolved ambiguity instead of only seeing the absence of a derived handshake role
+- validation for this slice:
+  - `cargo fmt --all` passed
+  - `cargo test --manifest-path Cargo.toml` passed with `155/155`
+- the next honest follow-up remains richer multimodal role grounding and broader arbitration:
+  - diagram captions
+  - VLM timing/state explanations
+  - modality-aware arbitration once multiple grounded role candidates survive into the same canonical signal
