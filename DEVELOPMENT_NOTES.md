@@ -1138,15 +1138,32 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
   - preserved for inspection, not yet used to force unsafe winner selection across incompatible roles
 - `resolved_semantic_role` / `semantic_consensus` now build from that candidate layer when exactly one role candidate survives
 - when multiple role candidates exist, the canonical signal now preserves them explicitly instead of flattening the situation to only `signal_semantic_conflicts`
+- `crates/specforge/src/ir/semantic.rs` now also carries `semantic_arbitration` on `InterfaceSignalRecord`
+- each arbitration summary currently records:
+  - candidate count
+  - leading role
+  - leading evidence weight
+  - runner-up role and evidence weight when present
+  - lead margin over the runner-up
+  - decisive vs non-decisive status
+- the current policy remains intentionally conservative:
+  - arbitration metadata is preserved for inspection
+  - multiple candidates still do not force a resolved role
+  - consensus is still emitted only when exactly one candidate survives safely
 - `crates/specforge/src/commands/validate.rs` now reports:
   - `semantic_candidates`
   - `with_semantic_candidates`
   - `with_multiple_semantic_candidates`
+  - `with_semantic_arbitration`
+  - `with_decisive_semantic_arbitration`
+  - `with_non_decisive_semantic_arbitration`
 - regression coverage now proves:
   - candidate details are preserved for single-source, same-modality multi-source, and cross-modality role meanings
+  - arbitration details are preserved for both decisive and contested role meanings
   - conflicting ready-like vs valid-like evidence produces two canonical candidates with no resolved role or consensus
   - `IntentIR` carries those candidate profiles forward unchanged
   - validation counts signals with multiple semantic candidates explicitly
+  - validation reports non-decisive semantic arbitration explicitly
 - validation for this slice:
   - `cargo fmt --all` passed
   - `cargo test --manifest-path Cargo.toml` passed with `167/167`

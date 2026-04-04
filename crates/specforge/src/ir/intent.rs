@@ -1588,6 +1588,23 @@ mod tests {
         assert_eq!(xctrl.semantic_candidates.len(), 2);
         assert!(xctrl.resolved_semantic_role.is_none());
         assert!(xctrl.semantic_consensus.is_none());
+        let arbitration = xctrl
+            .semantic_arbitration
+            .as_ref()
+            .expect("expected XCTRL semantic arbitration");
+        assert_eq!(arbitration.candidate_count, 2);
+        assert_eq!(
+            arbitration.leading_role,
+            crate::ir::semantic::InterfaceSignalSemanticRole::HandshakeValidLike
+        );
+        assert_eq!(arbitration.leading_evidence_weight, 6);
+        assert_eq!(
+            arbitration.runner_up_role,
+            Some(crate::ir::semantic::InterfaceSignalSemanticRole::HandshakeReadyLike)
+        );
+        assert_eq!(arbitration.runner_up_evidence_weight, Some(3));
+        assert_eq!(arbitration.margin_over_runner_up, Some(3));
+        assert!(!arbitration.decisive);
         assert!(xctrl.semantic_candidates.iter().any(|candidate| {
             candidate.role == crate::ir::semantic::InterfaceSignalSemanticRole::HandshakeValidLike
                 && candidate.evidence_weight == 6
@@ -2125,6 +2142,20 @@ mod tests {
             AutomationConfidence::Medium
         );
         assert_eq!(xreq_candidate.evidence_weight, 6);
+        let xreq_arbitration = xreq
+            .semantic_arbitration
+            .as_ref()
+            .expect("expected XREQ semantic arbitration");
+        assert_eq!(xreq_arbitration.candidate_count, 1);
+        assert_eq!(
+            xreq_arbitration.leading_role,
+            crate::ir::semantic::InterfaceSignalSemanticRole::HandshakeValidLike
+        );
+        assert_eq!(xreq_arbitration.leading_evidence_weight, 6);
+        assert_eq!(xreq_arbitration.runner_up_role, None);
+        assert_eq!(xreq_arbitration.runner_up_evidence_weight, None);
+        assert_eq!(xreq_arbitration.margin_over_runner_up, None);
+        assert!(xreq_arbitration.decisive);
         assert_eq!(xreq.semantic_observations.len(), 1);
         assert!(xreq.semantic_observations.iter().any(|observation| {
             matches!(
@@ -2192,6 +2223,20 @@ mod tests {
             AutomationConfidence::Medium
         );
         assert_eq!(xack_candidate.evidence_weight, 6);
+        let xack_arbitration = xack
+            .semantic_arbitration
+            .as_ref()
+            .expect("expected XACK semantic arbitration");
+        assert_eq!(xack_arbitration.candidate_count, 1);
+        assert_eq!(
+            xack_arbitration.leading_role,
+            crate::ir::semantic::InterfaceSignalSemanticRole::HandshakeReadyLike
+        );
+        assert_eq!(xack_arbitration.leading_evidence_weight, 6);
+        assert_eq!(xack_arbitration.runner_up_role, None);
+        assert_eq!(xack_arbitration.runner_up_evidence_weight, None);
+        assert_eq!(xack_arbitration.margin_over_runner_up, None);
+        assert!(xack_arbitration.decisive);
         assert_eq!(xack.semantic_observations.len(), 1);
         assert!(xack.semantic_observations.iter().any(|observation| {
             matches!(

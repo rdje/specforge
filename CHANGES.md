@@ -1,5 +1,38 @@
 # CHANGES
 
+## 2026-04-05 (canonical semantic arbitration summaries)
+
+### Added: explicit semantic arbitration summaries on canonical interface signals
+- `SemanticIR` now carries `semantic_arbitration` on `InterfaceSignalRecord`.
+- `IntentIR` carries that same semantic-arbitration surface forward unchanged.
+
+### Added: lead-vs-runner-up visibility without unsafe role forcing
+- Each arbitration summary currently records:
+  - candidate count
+  - leading role
+  - leading evidence weight
+  - runner-up role and evidence weight when present
+  - lead margin over the runner-up
+  - decisive vs non-decisive status
+- Multiple candidates still do not force a resolved semantic role; the arbitration surface is preserved for inspection while the canonical winner remains `None`.
+
+### Added: validation reporting for decisive vs contested semantic roles
+- `specforge validate` now reports:
+  - `with_semantic_arbitration`
+  - `with_decisive_semantic_arbitration`
+  - `with_non_decisive_semantic_arbitration`
+- It also emits an explicit finding when canonical semantic-role arbitration remains non-decisive.
+
+### Added: regression coverage for semantic arbitration summaries
+- Added assertions for:
+  - decisive arbitration on single-candidate role meaning
+  - non-decisive arbitration on conflicting role meaning
+  - arbitration carry-through into `IntentIR`
+  - validation metrics and findings for contested semantic arbitration
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 167/167 passed
 ## 2026-04-04 (canonical semantic candidate arbitration surface)
 
 ### Added: explicit semantic candidates on canonical interface signals

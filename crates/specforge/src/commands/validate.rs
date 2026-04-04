@@ -284,6 +284,46 @@ fn interface_signals_with_multiple_semantic_candidates_count(
         .count()
 }
 
+fn interface_signals_with_semantic_arbitration_count(
+    interfaces: &[crate::ir::semantic::InterfaceRecord],
+) -> usize {
+    interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+        .filter(|signal| signal.semantic_arbitration.is_some())
+        .count()
+}
+
+fn interface_signals_with_decisive_semantic_arbitration_count(
+    interfaces: &[crate::ir::semantic::InterfaceRecord],
+) -> usize {
+    interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+        .filter(|signal| {
+            signal
+                .semantic_arbitration
+                .as_ref()
+                .is_some_and(|arbitration| arbitration.decisive)
+        })
+        .count()
+}
+
+fn interface_signals_with_non_decisive_semantic_arbitration_count(
+    interfaces: &[crate::ir::semantic::InterfaceRecord],
+) -> usize {
+    interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+        .filter(|signal| {
+            signal
+                .semantic_arbitration
+                .as_ref()
+                .is_some_and(|arbitration| !arbitration.decisive)
+        })
+        .count()
+}
+
 fn interface_signals_with_semantic_grounding_strength_count(
     interfaces: &[crate::ir::semantic::InterfaceRecord],
     grounding_strength: crate::ir::semantic::SemanticGroundingStrength,
@@ -1107,6 +1147,12 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     let with_semantic_candidates = interface_signals_with_semantic_candidates_count(&ir.interfaces);
     let with_multiple_semantic_candidates =
         interface_signals_with_multiple_semantic_candidates_count(&ir.interfaces);
+    let with_semantic_arbitration =
+        interface_signals_with_semantic_arbitration_count(&ir.interfaces);
+    let with_decisive_semantic_arbitration =
+        interface_signals_with_decisive_semantic_arbitration_count(&ir.interfaces);
+    let with_non_decisive_semantic_arbitration =
+        interface_signals_with_non_decisive_semantic_arbitration_count(&ir.interfaces);
     let with_resolved_semantic_role =
         interface_signals_with_resolved_semantic_role_count(&ir.interfaces);
     let with_semantic_consensus = interface_signals_with_semantic_consensus_count(&ir.interfaces);
@@ -1174,6 +1220,9 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     println!("  semantic_candidates: {semantic_candidates}");
     println!("  with_semantic_candidates: {with_semantic_candidates}");
     println!("  with_multiple_semantic_candidates: {with_multiple_semantic_candidates}");
+    println!("  with_semantic_arbitration: {with_semantic_arbitration}");
+    println!("  with_decisive_semantic_arbitration: {with_decisive_semantic_arbitration}");
+    println!("  with_non_decisive_semantic_arbitration: {with_non_decisive_semantic_arbitration}");
     println!("  with_resolved_semantic_role: {with_resolved_semantic_role}");
     println!("  with_semantic_consensus: {with_semantic_consensus}");
     println!(
@@ -1412,6 +1461,17 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 .collect(),
         ));
     }
+    if with_non_decisive_semantic_arbitration > 0 {
+        findings.push(finding(
+            "semantic_non_decisive_semantic_arbitration_present",
+            ValidationFindingSeverity::Info,
+            "semantic_role_arbitration",
+            format!(
+                "{with_non_decisive_semantic_arbitration} interface signal(s) still have competing semantic role candidates; the canonical surface preserves the current lead, runner-up, and evidence margin without forcing an unsafe winner"
+            ),
+            Vec::new(),
+        ));
+    }
     if resolved_semantic_roles_without_consensus > 0 {
         findings.push(finding(
             "semantic_resolved_roles_without_consensus_present",
@@ -1553,6 +1613,18 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             metric(
                 "with_multiple_semantic_candidates",
                 with_multiple_semantic_candidates.to_string(),
+            ),
+            metric(
+                "with_semantic_arbitration",
+                with_semantic_arbitration.to_string(),
+            ),
+            metric(
+                "with_decisive_semantic_arbitration",
+                with_decisive_semantic_arbitration.to_string(),
+            ),
+            metric(
+                "with_non_decisive_semantic_arbitration",
+                with_non_decisive_semantic_arbitration.to_string(),
             ),
             metric(
                 "with_resolved_semantic_role",
@@ -1709,6 +1781,12 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     let with_semantic_candidates = interface_signals_with_semantic_candidates_count(&ir.interfaces);
     let with_multiple_semantic_candidates =
         interface_signals_with_multiple_semantic_candidates_count(&ir.interfaces);
+    let with_semantic_arbitration =
+        interface_signals_with_semantic_arbitration_count(&ir.interfaces);
+    let with_decisive_semantic_arbitration =
+        interface_signals_with_decisive_semantic_arbitration_count(&ir.interfaces);
+    let with_non_decisive_semantic_arbitration =
+        interface_signals_with_non_decisive_semantic_arbitration_count(&ir.interfaces);
     let with_resolved_semantic_role =
         interface_signals_with_resolved_semantic_role_count(&ir.interfaces);
     let with_semantic_consensus = interface_signals_with_semantic_consensus_count(&ir.interfaces);
@@ -1765,6 +1843,9 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     println!("  semantic_candidates: {semantic_candidates}");
     println!("  with_semantic_candidates: {with_semantic_candidates}");
     println!("  with_multiple_semantic_candidates: {with_multiple_semantic_candidates}");
+    println!("  with_semantic_arbitration: {with_semantic_arbitration}");
+    println!("  with_decisive_semantic_arbitration: {with_decisive_semantic_arbitration}");
+    println!("  with_non_decisive_semantic_arbitration: {with_non_decisive_semantic_arbitration}");
     println!("  with_resolved_semantic_role: {with_resolved_semantic_role}");
     println!("  with_semantic_consensus: {with_semantic_consensus}");
     println!(
@@ -2057,6 +2138,17 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 .collect(),
         ));
     }
+    if with_non_decisive_semantic_arbitration > 0 {
+        findings.push(finding(
+            "intent_non_decisive_semantic_arbitration_present",
+            ValidationFindingSeverity::Info,
+            "semantic_role_arbitration",
+            format!(
+                "{with_non_decisive_semantic_arbitration} declared signal(s) still have competing semantic role candidates; the canonical surface preserves the current lead, runner-up, and evidence margin without forcing an unsafe winner"
+            ),
+            Vec::new(),
+        ));
+    }
     if resolved_semantic_roles_without_consensus > 0 {
         findings.push(finding(
             "intent_resolved_roles_without_consensus_present",
@@ -2209,6 +2301,18 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             metric(
                 "with_multiple_semantic_candidates",
                 with_multiple_semantic_candidates.to_string(),
+            ),
+            metric(
+                "with_semantic_arbitration",
+                with_semantic_arbitration.to_string(),
+            ),
+            metric(
+                "with_decisive_semantic_arbitration",
+                with_decisive_semantic_arbitration.to_string(),
+            ),
+            metric(
+                "with_non_decisive_semantic_arbitration",
+                with_non_decisive_semantic_arbitration.to_string(),
             ),
             metric(
                 "with_resolved_semantic_role",
@@ -2767,9 +2871,25 @@ mod tests {
             metric_value(&report, "signal_semantic_conflicts"),
             Some("1")
         );
+        assert_eq!(
+            metric_value(&report, "with_semantic_arbitration"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&report, "with_decisive_semantic_arbitration"),
+            Some("0")
+        );
+        assert_eq!(
+            metric_value(&report, "with_non_decisive_semantic_arbitration"),
+            Some("1")
+        );
         assert!(has_finding(
             &report,
             "semantic_signal_semantic_conflicts_present"
+        ));
+        assert!(has_finding(
+            &report,
+            "semantic_non_decisive_semantic_arbitration_present"
         ));
 
         Ok(())
@@ -3377,6 +3497,18 @@ mod tests {
             Some("0")
         );
         assert_eq!(
+            metric_value(&report, "with_semantic_arbitration"),
+            Some("2")
+        );
+        assert_eq!(
+            metric_value(&report, "with_decisive_semantic_arbitration"),
+            Some("2")
+        );
+        assert_eq!(
+            metric_value(&report, "with_non_decisive_semantic_arbitration"),
+            Some("0")
+        );
+        assert_eq!(
             metric_value(&report, "with_resolved_semantic_role"),
             Some("2")
         );
@@ -3478,6 +3610,18 @@ mod tests {
         assert_eq!(metric_value(&report, "with_semantic_candidates"), Some("1"));
         assert_eq!(
             metric_value(&report, "with_multiple_semantic_candidates"),
+            Some("0")
+        );
+        assert_eq!(
+            metric_value(&report, "with_semantic_arbitration"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&report, "with_decisive_semantic_arbitration"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&report, "with_non_decisive_semantic_arbitration"),
             Some("0")
         );
         assert_eq!(
@@ -3593,6 +3737,18 @@ mod tests {
         assert_eq!(metric_value(&report, "with_semantic_candidates"), Some("1"));
         assert_eq!(
             metric_value(&report, "with_multiple_semantic_candidates"),
+            Some("0")
+        );
+        assert_eq!(
+            metric_value(&report, "with_semantic_arbitration"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&report, "with_decisive_semantic_arbitration"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&report, "with_non_decisive_semantic_arbitration"),
             Some("0")
         );
         assert_eq!(
@@ -3713,6 +3869,18 @@ mod tests {
             Some("0")
         );
         assert_eq!(
+            metric_value(&report, "with_semantic_arbitration"),
+            Some("2")
+        );
+        assert_eq!(
+            metric_value(&report, "with_decisive_semantic_arbitration"),
+            Some("2")
+        );
+        assert_eq!(
+            metric_value(&report, "with_non_decisive_semantic_arbitration"),
+            Some("0")
+        );
+        assert_eq!(
             metric_value(&report, "with_resolved_semantic_role"),
             Some("2")
         );
@@ -3794,9 +3962,25 @@ mod tests {
             Some("1")
         );
         assert_eq!(
+            metric_value(&report, "with_semantic_arbitration"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&report, "with_decisive_semantic_arbitration"),
+            Some("0")
+        );
+        assert_eq!(
+            metric_value(&report, "with_non_decisive_semantic_arbitration"),
+            Some("1")
+        );
+        assert_eq!(
             metric_value(&report, "with_resolved_semantic_role"),
             Some("0")
         );
+        assert!(has_finding(
+            &report,
+            "intent_non_decisive_semantic_arbitration_present"
+        ));
 
         Ok(())
     }

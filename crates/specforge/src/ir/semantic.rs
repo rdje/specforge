@@ -463,6 +463,8 @@ pub struct InterfaceSignalRecord {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub semantic_candidates: Vec<InterfaceSignalSemanticCandidateRecord>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub semantic_arbitration: Option<InterfaceSignalSemanticArbitrationRecord>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub resolved_semantic_role: Option<InterfaceSignalSemanticRole>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub semantic_grounding_strength: Option<SemanticGroundingStrength>,
@@ -517,6 +519,20 @@ pub struct InterfaceSignalSemanticCandidateRecord {
     pub supporting_observation_count: usize,
     pub automation_confidence: AutomationConfidence,
     pub evidence_weight: u32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct InterfaceSignalSemanticArbitrationRecord {
+    pub candidate_count: usize,
+    pub leading_role: InterfaceSignalSemanticRole,
+    pub leading_evidence_weight: u32,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub runner_up_role: Option<InterfaceSignalSemanticRole>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub runner_up_evidence_weight: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub margin_over_runner_up: Option<u32>,
+    pub decisive: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -1627,6 +1643,7 @@ fn build_interfaces(
                         let semantic_observations = signal.semantic_observations;
                         let (
                             semantic_candidates,
+                            semantic_arbitration,
                             resolved_semantic_role,
                             semantic_grounding_strength,
                             semantic_consensus,
@@ -1640,6 +1657,7 @@ fn build_interfaces(
                             width_hint: signal.width_hint,
                             semantic_tags,
                             semantic_candidates,
+                            semantic_arbitration,
                             resolved_semantic_role,
                             semantic_grounding_strength,
                             semantic_consensus,
@@ -5768,20 +5786,23 @@ fn resolve_interface_signal_semantic_role(
     semantic_observations: &[InterfaceSignalSemanticObservationRecord],
 ) -> (
     Vec<InterfaceSignalSemanticCandidateRecord>,
+    Option<InterfaceSignalSemanticArbitrationRecord>,
     Option<InterfaceSignalSemanticRole>,
     Option<SemanticGroundingStrength>,
     Option<InterfaceSignalSemanticConsensusRecord>,
 ) {
     let semantic_candidates = build_semantic_candidates(semantic_observations);
+    let semantic_arbitration = build_semantic_arbitration(&semantic_candidates);
 
     match semantic_candidates.as_slice() {
         [candidate] => (
             semantic_candidates.clone(),
+            semantic_arbitration,
             Some(candidate.role),
             Some(candidate.grounding_strength),
             Some(build_semantic_consensus(candidate)),
         ),
-        [_, ..] => (semantic_candidates, None, None, None),
+        [_, ..] => (semantic_candidates, semantic_arbitration, None, None, None),
         [] => {
             let has_valid_tag = semantic_tags_support_semantic_role(
                 semantic_tags,
@@ -5794,17 +5815,19 @@ fn resolve_interface_signal_semantic_role(
             match (has_valid_tag, has_ready_tag) {
                 (true, false) => (
                     Vec::new(),
+                    None,
                     Some(InterfaceSignalSemanticRole::HandshakeValidLike),
                     None,
                     None,
                 ),
                 (false, true) => (
                     Vec::new(),
+                    None,
                     Some(InterfaceSignalSemanticRole::HandshakeReadyLike),
                     None,
                     None,
                 ),
-                _ => (Vec::new(), None, None, None),
+                _ => (Vec::new(), None, None, None, None),
             }
         }
     }
@@ -5813,7 +5836,7 @@ fn resolve_interface_signal_semantic_role(
 fn build_semantic_candidates(
     semantic_observations: &[InterfaceSignalSemanticObservationRecord],
 ) -> Vec<InterfaceSignalSemanticCandidateRecord> {
-    [
+    let mut candidates: Vec<InterfaceSignalSemanticCandidateRecord> = [
         InterfaceSignalSemanticRole::HandshakeValidLike,
         InterfaceSignalSemanticRole::HandshakeReadyLike,
     ]
@@ -5830,7 +5853,23 @@ fn build_semantic_candidates(
             Some(build_semantic_candidate(role, &supporting_observations))
         }
     })
-    .collect()
+    .collect();
+    candidates.sort_by(|left, right| {
+        right
+            .evidence_weight
+            .cmp(&left.evidence_weight)
+            .then_with(|| {
+                right
+                    .supporting_observation_count
+                    .cmp(&left.supporting_observation_count)
+            })
+            .then_with(|| {
+                automation_confidence_rank(right.automation_confidence)
+                    .cmp(&automation_confidence_rank(left.automation_confidence))
+            })
+            .then_with(|| left.role.as_str().cmp(right.role.as_str()))
+    });
+    candidates
 }
 
 fn observation_supports_semantic_role(
@@ -5913,6 +5952,26 @@ fn build_semantic_consensus(
         supporting_observation_count: candidate.supporting_observation_count,
         automation_confidence: candidate.automation_confidence,
     }
+}
+
+fn build_semantic_arbitration(
+    candidates: &[InterfaceSignalSemanticCandidateRecord],
+) -> Option<InterfaceSignalSemanticArbitrationRecord> {
+    let leading_candidate = candidates.first()?;
+    let runner_up_candidate = candidates.get(1);
+    Some(InterfaceSignalSemanticArbitrationRecord {
+        candidate_count: candidates.len(),
+        leading_role: leading_candidate.role,
+        leading_evidence_weight: leading_candidate.evidence_weight,
+        runner_up_role: runner_up_candidate.map(|candidate| candidate.role),
+        runner_up_evidence_weight: runner_up_candidate.map(|candidate| candidate.evidence_weight),
+        margin_over_runner_up: runner_up_candidate.map(|candidate| {
+            leading_candidate
+                .evidence_weight
+                .saturating_sub(candidate.evidence_weight)
+        }),
+        decisive: candidates.len() == 1,
+    })
 }
 
 fn semantic_observation_weight(observation: &InterfaceSignalSemanticObservationRecord) -> u32 {
@@ -8353,6 +8412,23 @@ mod tests {
         assert_eq!(xctrl.semantic_candidates.len(), 2);
         assert!(xctrl.resolved_semantic_role.is_none());
         assert!(xctrl.semantic_consensus.is_none());
+        let arbitration = xctrl
+            .semantic_arbitration
+            .as_ref()
+            .expect("expected XCTRL semantic arbitration");
+        assert_eq!(arbitration.candidate_count, 2);
+        assert_eq!(
+            arbitration.leading_role,
+            super::InterfaceSignalSemanticRole::HandshakeValidLike
+        );
+        assert_eq!(arbitration.leading_evidence_weight, 6);
+        assert_eq!(
+            arbitration.runner_up_role,
+            Some(super::InterfaceSignalSemanticRole::HandshakeReadyLike)
+        );
+        assert_eq!(arbitration.runner_up_evidence_weight, Some(3));
+        assert_eq!(arbitration.margin_over_runner_up, Some(3));
+        assert!(!arbitration.decisive);
         assert!(xctrl.semantic_candidates.iter().any(|candidate| {
             candidate.role == super::InterfaceSignalSemanticRole::HandshakeValidLike
                 && candidate.evidence_weight == 6
@@ -8466,6 +8542,20 @@ mod tests {
             AutomationConfidence::Low
         );
         assert_eq!(xreq_candidate.evidence_weight, 4);
+        let xreq_arbitration = xreq
+            .semantic_arbitration
+            .as_ref()
+            .expect("expected XREQ semantic arbitration");
+        assert_eq!(xreq_arbitration.candidate_count, 1);
+        assert_eq!(
+            xreq_arbitration.leading_role,
+            super::InterfaceSignalSemanticRole::HandshakeValidLike
+        );
+        assert_eq!(xreq_arbitration.leading_evidence_weight, 4);
+        assert_eq!(xreq_arbitration.runner_up_role, None);
+        assert_eq!(xreq_arbitration.runner_up_evidence_weight, None);
+        assert_eq!(xreq_arbitration.margin_over_runner_up, None);
+        assert!(xreq_arbitration.decisive);
         let xreq_consensus = xreq
             .semantic_consensus
             .as_ref()
@@ -8532,6 +8622,20 @@ mod tests {
             AutomationConfidence::Medium
         );
         assert_eq!(xack_candidate.evidence_weight, 6);
+        let xack_arbitration = xack
+            .semantic_arbitration
+            .as_ref()
+            .expect("expected XACK semantic arbitration");
+        assert_eq!(xack_arbitration.candidate_count, 1);
+        assert_eq!(
+            xack_arbitration.leading_role,
+            super::InterfaceSignalSemanticRole::HandshakeReadyLike
+        );
+        assert_eq!(xack_arbitration.leading_evidence_weight, 6);
+        assert_eq!(xack_arbitration.runner_up_role, None);
+        assert_eq!(xack_arbitration.runner_up_evidence_weight, None);
+        assert_eq!(xack_arbitration.margin_over_runner_up, None);
+        assert!(xack_arbitration.decisive);
         let xack_consensus = xack
             .semantic_consensus
             .as_ref()

@@ -22,11 +22,12 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `63e2c51`
-- latest_commit_brief_message: `feat(semantic): persist role consensus summaries`
-- note: current uncommitted work adds explicit canonical semantic candidates, exposes candidate counts in validation, and syncs the live docs
+- latest_commit_hash: `98083b8`
+- latest_commit_brief_message: `feat(semantic): preserve role candidates`
+- note: current uncommitted work adds explicit canonical semantic arbitration summaries, exposes decisive vs non-decisive arbitration in validation, and syncs the live docs
 
 ## Recent commit chain (last 5)
+- `98083b8` feat(semantic): preserve role candidates
 - `63e2c51` feat(semantic): persist role consensus summaries
 - `d5974a4` feat(semantic): distinguish cross-modality grounding
 - `c4ba7e5` feat(semantic): resolve grounded semantic roles
@@ -34,7 +35,6 @@
 - `6ff9406` feat(evidence): ground semantic roles in multimodal evidence
 - `2087422` feat(ir): carry semantic role conflicts downstream
 - `f8f587c` feat(evidence): surface semantic role conflicts
-- `bb7ab41` docs(sourceir): log ingest maturity boundary
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -46,11 +46,11 @@
 - `VALIDATION_SNAPSHOT.md` is now a tracked continuity doc refreshed from persisted validation reports
 
 ## Completed technical work in this session
-- `crates/specforge/src/ir/semantic.rs` now carries explicit `semantic_candidates` on `InterfaceSignalRecord`, preserving competing role hypotheses with typed support profiles instead of forcing consumers to reconstruct them from raw observations
-- `resolved_semantic_role` / `semantic_consensus` now build from those canonical candidates when exactly one role candidate survives safely
-- `crates/specforge/src/ir/intent.rs` now carries the same semantic-candidate surface into the canonical endpoint
-- `crates/specforge/src/commands/validate.rs` now reports `semantic_candidates`, `with_semantic_candidates`, and `with_multiple_semantic_candidates`
-- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, and `CHANGES.md` so the canonical semantic-candidate slice is visible in continuity docs
+- `crates/specforge/src/ir/semantic.rs` now carries explicit `semantic_arbitration` on `InterfaceSignalRecord`, preserving lead-vs-runner-up role state, evidence margin, and decisive-vs-contested status on top of canonical semantic candidates
+- `resolved_semantic_role` / `semantic_consensus` still build only when exactly one role candidate survives safely; contested arbitration remains explicit without forcing an unsafe winner
+- `crates/specforge/src/ir/intent.rs` now carries the same semantic-arbitration surface into the canonical endpoint
+- `crates/specforge/src/commands/validate.rs` now reports `with_semantic_arbitration`, `with_decisive_semantic_arbitration`, and `with_non_decisive_semantic_arbitration`, and emits an explicit finding when semantic arbitration stays contested
+- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, and `CHANGES.md` so the canonical semantic-arbitration slice is visible in continuity docs
 - validation ran for this task:
   - `cargo fmt --all` passed
   - `cargo test --manifest-path Cargo.toml` passed with `167/167`
@@ -69,15 +69,15 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the canonical semantic-candidate slice
-2. continue the semantic-truthfulness program by adding stronger semantic-role arbitration beyond candidate/consensus summaries and grounding buckets
+1. commit the canonical semantic-arbitration slice
+2. continue the semantic-truthfulness program by making use of preserved arbitration metadata in downstream temporal/role reasoning without violating the current safe no-forced-winner policy
 3. keep adapter work de-prioritized until the graph, temporal, arbitration, and evaluation surfaces are materially stronger
 
 ## Remaining engineering gaps after this commit
 - remaining actor-relative direction modeling in `SemanticIR` / `IntentIR` (`R15`)
 - richer explicit clock-tick temporal semantics (`R15b`)
 - KG-guided multimodal rescans (`R15c`)
-- broader evidence arbitration / conflict handling beyond polarity, interface-shape, multi-producer ambiguity, modality-aware semantic-role grounding, consensus summaries, and semantic candidates (`R15d`)
+- broader evidence arbitration / conflict handling beyond polarity, interface-shape, multi-producer ambiguity, modality-aware semantic-role grounding, consensus summaries, semantic candidates, and semantic arbitration summaries (`R15d`)
 - KG-quality evaluation and benchmark hardening (`R15e`)
 - Tier 3 relation extraction after the graph/temporal/eval surfaces are ready (`R14`)
 - some downstream compatibility and consumer paths still rely on flat `direction_hint` instead of the graph-native surface

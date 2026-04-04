@@ -59,6 +59,7 @@
 - Cross-modality semantic grounding distinction implemented: Done
 - Canonical semantic consensus summaries and fallback-gap reporting implemented: Done
 - Canonical semantic candidate arbitration surface implemented: Done
+- Canonical semantic arbitration summaries plus decisive/non-decisive validation reporting implemented: Done
 - `specforge nlp-enrich` refreshes signal-semantic hints after alias learning/backannotation: Done
 - EvidenceIR semantic-role conflict surfacing and validation reporting implemented: Done
 - SemanticIR / IntentIR semantic-role conflict carry-through and validation reporting implemented: Done
