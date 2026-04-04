@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-04 (signal-table polarity refinement in convergent evidence)
+
+### Added: signal-description tables now contribute polarity facts
+- The convergent `EvidenceIR` loop now scans `SignalDescription` tables for active-high/active-low signal facts using known signals as anchors.
+- This lets table rows refine asserted/deasserted constraints even when the polarity never appears in prose.
+
+### Changed: polarity merging is now cross-modality and conservative
+- Prose polarity and signal-table polarity are now merged before constraint refinement.
+- Conflicting polarity across prose and tables cancels the refinement instead of forcing a wrong `MustBeHigh` / `MustBeLow` conversion.
+
+### Added: regression coverage for table-driven polarity refinement
+- Added end-to-end tests for:
+  - table-driven active-low polarity refinement
+  - preserving polarity neutrality when prose and table evidence disagree
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 129/129 passed
+
 ## 2026-04-04 (typed temporal conflict records)
 
 ### Added: explicit temporal conflict records in the canonical IR layers

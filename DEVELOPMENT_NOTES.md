@@ -589,6 +589,32 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 - this is still only the first contradiction slice; it does not yet arbitrate between prose/table/figure evidence or handle richer predicate clashes like stability-vs-transition or actor-vs-actor disagreements
 - broader temporal arbitration remains a follow-on task, not something this slice pretends to solve
 
+## Signal-table polarity refinement in convergent EvidenceIR (2026-04-04)
+
+### Why this slice landed now
+- the evidence loop already used known signals to unlock encoding tables, but polarity refinement was still prose-only even though protocol PDFs often place active-high/active-low semantics in signal-description rows
+- that left a real multimodal gap: the KG could know the signal inventory and still miss polarity facts that were sitting in the same table family that introduced those signals
+- the next honest evidence-side step was therefore to let the convergent loop mine `SignalDescription` tables for polarity using known signals as anchors
+
+### Implementation shape
+- `crates/specforge/src/ir/evidence.rs` now collects polarity facts from both:
+  - prose statements mentioning a known signal with active-high/active-low language
+  - `SignalDescription` table rows whose signal cell anchors to a known signal and whose row text carries active-high/active-low language
+- polarity facts from prose and tables are merged conservatively:
+  - matching polarity reinforces the fact
+  - contradictory polarity removes the fact instead of forcing a wrong refinement
+- the merged polarity map is then reused by the existing asserted/deasserted constraint refinement step
+
+### Validation
+- added end-to-end tests for:
+  - refining an asserted constraint from a signal-description table row that says the signal is active low
+  - keeping a constraint polarity-neutral when prose and table polarity disagree
+- `cargo fmt --all` passed
+- `cargo test --manifest-path Cargo.toml` now passes with 129 tests
+
+### Remaining follow-up
+- the current polarity scan is still text-pattern based; richer table-structure understanding and non-signal-description table rescans remain future work
+
 ## Documentation surface currently steering the implementation
 - `README.md`
   - single entry point and quick orientation

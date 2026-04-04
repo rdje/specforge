@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `40f656a`
-- latest_commit_brief_message: `feat(semantic): preserve compound temporal guards`
-- note: current uncommitted work adds typed `temporal_conflicts` records for contradictory value obligations, updates validation to surface those conflicts explicitly, and syncs the continuity docs to that state
+- latest_commit_hash: `93d376c`
+- latest_commit_brief_message: `feat(semantic): surface temporal conflicts`
+- note: current uncommitted work lets the convergent evidence loop mine `SignalDescription` tables for polarity, merges that polarity conservatively with prose, and syncs the continuity docs to that state
 
 ## Recent commit chain (last 5)
+- `93d376c` feat(semantic): surface temporal conflicts
 - `40f656a` feat(semantic): preserve compound temporal guards
 - `f8b3f29` feat(semantic): ground stability rules in actors
 - `25c55e4` feat(semantic): ground temporal rules in actors
 - `9f0c2b0` feat(semantic): recover temporal cycle windows
-- `8bbfe1f` feat(semantic): add typed temporal rules
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -43,16 +43,15 @@
 - `VALIDATION_SNAPSHOT.md` is now a tracked continuity doc refreshed from persisted validation reports
 
 ## Completed technical work in this session
-- the typed temporal layer now derives `temporal_conflicts` for contradictory value obligations that target the same signal/phase under the same grounded context
-- `specforge validate` now reports `temporal_conflicts` for `SemanticIR` and `IntentIR` and flags those contradictions explicitly
+- the convergent evidence loop now derives polarity facts from `SignalDescription` table rows as well as prose
+- polarity facts from prose and tables now merge conservatively, so contradictory evidence keeps asserted/deasserted constraints polarity-neutral
 - added regression tests for:
-  - typed temporal conflict derivation in `SemanticIR`
-  - typed temporal conflict carry-through into `IntentIR`
-  - validation findings for temporal conflicts
-- synced the roadmap/status/analysis/README/change docs so future sessions know contradiction data is now preserved explicitly in the temporal layer
+  - table-driven polarity refinement for asserted constraints
+  - conservative fallback when prose and table polarity disagree
+- synced the roadmap/status/analysis/README/change docs so future sessions know polarity refinement is now multimodal at the evidence stage
 - validation ran for this task:
   - `cargo fmt --all` passed
-  - `cargo test --manifest-path Cargo.toml` passed with 127 tests
+  - `cargo test --manifest-path Cargo.toml` passed with 129 tests
 
 ## Current working tree before commit
 - modified tracked files currently include:
@@ -69,9 +68,9 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the typed temporal conflict slice; do not stage `generated/`
-2. continue the remaining `R15` slice by moving direct downstream `direction_hint` consumers onto actor-relative graph semantics
-3. deepen `R15b` with broader temporal arbitration across actor/modality evidence before moving on to `R15c`
+1. commit the signal-table polarity slice; do not stage `generated/`
+2. continue the remaining `R15` slice by moving direct downstream `direction_hint` consumers onto actor-relative graph semantics when that work is canonical-side rather than adapter-expansion work
+3. deepen the KG-guided evidence loop further with additional signal-detail table rescans and broader temporal arbitration
 
 ## Remaining engineering gaps after this commit
 - remaining actor-relative direction modeling in `SemanticIR` / `IntentIR` (`R15`)
@@ -91,4 +90,4 @@
 4. read `ROADMAP.md`
 5. read `RUST_CODEBASE_ANALYSIS.md`
 6. inspect `git --no-pager status --short`
-7. continue with the remaining graph-first `R15` consumer migration and the next broader temporal-arbitration slice unless the user redirects
+7. continue with the next evidence-loop hardening slice unless the user redirects

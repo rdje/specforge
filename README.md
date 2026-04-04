@@ -41,6 +41,7 @@ Use it first for the project objective, document navigation, and the current imp
 - stable/hold rules now also keep that actor responsibility via actor-grounded stability predicates instead of flattening every producer obligation into a signal-only invariant
 - compound `when/if` guards like `HREADY is LOW and HSEL is HIGH` now survive into the typed temporal layer as multiple antecedent predicates instead of being flattened into a single partial condition
 - contradictory temporal value obligations under the same grounded context now surface as typed `temporal_conflicts` records instead of staying implicit in the rule set
+- the convergent `EvidenceIR` loop now also mines `SignalDescription` tables for active-high/active-low facts and merges them conservatively with prose polarity before refining asserted/deasserted constraints
 - a pinned `subs/fsmgen` git submodule now exists as a local `.fsm` reference implementation for upcoming adapter work
 - the `SourceIR` schema now reserves:
   - parser-backend identity

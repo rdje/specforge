@@ -2354,21 +2354,7 @@ fn extract_signal_polarity_from_prose(
 
     for statement in statements {
         let lowered = statement.text.to_ascii_lowercase();
-        let polarity = if lowered.contains("active low")
-            || lowered.contains("active-low")
-            || lowered.contains("asserted low")
-            || lowered.contains("low asserted")
-        {
-            Some(SignalPolarity::ActiveLow)
-        } else if lowered.contains("active high")
-            || lowered.contains("active-high")
-            || lowered.contains("asserted high")
-            || lowered.contains("high asserted")
-        {
-            Some(SignalPolarity::ActiveHigh)
-        } else {
-            None
-        };
+        let polarity = detect_signal_polarity(&lowered);
         let Some(polarity) = polarity else {
             continue;
         };
@@ -2385,22 +2371,154 @@ fn extract_signal_polarity_from_prose(
         }
 
         let signal_name = mentioned_signals[0].clone();
-        if conflicting_signals.contains(&signal_name) {
+        record_signal_polarity(
+            &mut polarity_map,
+            &mut conflicting_signals,
+            signal_name,
+            polarity,
+        );
+    }
+
+    polarity_map
+}
+
+fn extract_signal_polarity_from_signal_tables(
+    source_ir: &SourceIr,
+    known_signals: &HashSet<String>,
+) -> HashMap<String, SignalPolarity> {
+    let mut polarity_map = HashMap::new();
+    let mut conflicting_signals = HashSet::new();
+
+    for table in &source_ir.structured_tables {
+        if !matches!(table.table_kind, TableKind::SignalDescription) {
             continue;
         }
-        match polarity_map.get(&signal_name).copied() {
-            None => {
-                polarity_map.insert(signal_name, polarity);
+
+        for row in &table.body_rows {
+            let row_text = row
+                .iter()
+                .map(|cell| cell.text.trim())
+                .filter(|text| !text.is_empty())
+                .collect::<Vec<_>>()
+                .join(" ");
+            if row_text.is_empty() {
+                continue;
             }
-            Some(existing) if existing == polarity => {}
-            Some(_) => {
-                polarity_map.remove(&signal_name);
-                conflicting_signals.insert(signal_name);
-            }
+
+            let lowered = row_text.to_ascii_lowercase();
+            let Some(polarity) = detect_signal_polarity(&lowered) else {
+                continue;
+            };
+            let Some(signal_name) = signal_name_from_signal_table_row(row, known_signals) else {
+                continue;
+            };
+
+            record_signal_polarity(
+                &mut polarity_map,
+                &mut conflicting_signals,
+                signal_name,
+                polarity,
+            );
         }
     }
 
     polarity_map
+}
+
+fn collect_signal_polarity_facts(
+    source_ir: &SourceIr,
+    statements: &[ExtractedStatement],
+    known_signals: &HashSet<String>,
+) -> HashMap<String, SignalPolarity> {
+    let mut polarity_map = HashMap::new();
+    let mut conflicting_signals = HashSet::new();
+
+    for (signal_name, polarity) in extract_signal_polarity_from_prose(statements, known_signals) {
+        record_signal_polarity(
+            &mut polarity_map,
+            &mut conflicting_signals,
+            signal_name,
+            polarity,
+        );
+    }
+    for (signal_name, polarity) in
+        extract_signal_polarity_from_signal_tables(source_ir, known_signals)
+    {
+        record_signal_polarity(
+            &mut polarity_map,
+            &mut conflicting_signals,
+            signal_name,
+            polarity,
+        );
+    }
+
+    polarity_map
+}
+
+fn signal_name_from_signal_table_row(
+    row: &[crate::ir::source::StructuredTableCellRecord],
+    known_signals: &HashSet<String>,
+) -> Option<String> {
+    for cell in row {
+        let trimmed = cell.text.trim();
+        if trimmed.is_empty() {
+            continue;
+        }
+
+        let candidate = trimmed
+            .split_whitespace()
+            .next()
+            .unwrap_or("")
+            .trim_matches(|character: char| !character.is_ascii_alphanumeric() && character != '_')
+            .to_ascii_uppercase();
+        if candidate.is_empty() {
+            continue;
+        }
+        if known_signals.contains(&candidate) {
+            return Some(candidate);
+        }
+    }
+
+    None
+}
+
+fn detect_signal_polarity(text_lower: &str) -> Option<SignalPolarity> {
+    if text_lower.contains("active low")
+        || text_lower.contains("active-low")
+        || text_lower.contains("asserted low")
+        || text_lower.contains("low asserted")
+    {
+        Some(SignalPolarity::ActiveLow)
+    } else if text_lower.contains("active high")
+        || text_lower.contains("active-high")
+        || text_lower.contains("asserted high")
+        || text_lower.contains("high asserted")
+    {
+        Some(SignalPolarity::ActiveHigh)
+    } else {
+        None
+    }
+}
+
+fn record_signal_polarity(
+    polarity_map: &mut HashMap<String, SignalPolarity>,
+    conflicting_signals: &mut HashSet<String>,
+    signal_name: String,
+    polarity: SignalPolarity,
+) {
+    if conflicting_signals.contains(&signal_name) {
+        return;
+    }
+    match polarity_map.get(&signal_name).copied() {
+        None => {
+            polarity_map.insert(signal_name, polarity);
+        }
+        Some(existing) if existing == polarity => {}
+        Some(_) => {
+            polarity_map.remove(&signal_name);
+            conflicting_signals.insert(signal_name);
+        }
+    }
 }
 
 fn apply_signal_polarity_to_constraints(
@@ -3950,7 +4068,7 @@ fn converge_evidence_extractions(
         known_signals.extend(collect_known_signal_names(&extracted_statements));
         let discovered_values = collect_discovered_enum_values(&[extracted_statements.as_slice()]);
         let signal_polarity =
-            extract_signal_polarity_from_prose(&extracted_statements, &known_signals);
+            collect_signal_polarity_facts(source_ir, &extracted_statements, &known_signals);
 
         let mut constraint_counter = 1usize;
         let mut signal_constraints =
@@ -4742,6 +4860,119 @@ mod tests {
                     )
             }),
             "expected active-low prose to refine asserted constraint into MustBeLow"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn signal_table_polarity_refines_asserted_constraint_kind() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("reset_table.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Reset\n",
+                "Signal PRESETN is input width 1.\n",
+                "PRESETN must be asserted during initialization.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_reset_desc".to_string(),
+            asset_id: "asset_reset_desc".to_string(),
+            page_id: None,
+            caption_text: Some("Reset signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("PRESETN", false),
+                make_table_cell("Active low reset input", false),
+            ]],
+            row_count: 1,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        assert!(
+            evidence_ir.signal_constraints.iter().any(|constraint| {
+                constraint.subject_signal == "PRESETN"
+                    && matches!(
+                        constraint.constraint_kind,
+                        crate::ir::source::SignalConstraintKind::MustBeLow
+                    )
+            }),
+            "expected active-low signal table row to refine asserted constraint into MustBeLow"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn conflicting_prose_and_table_polarity_keeps_constraint_polarity_neutral() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("reset_conflict.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Reset\n",
+                "Signal PRESETN is input width 1.\n",
+                "PRESETN is an active low reset signal.\n",
+                "PRESETN must be asserted during initialization.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_reset_desc_conflict".to_string(),
+            asset_id: "asset_reset_desc_conflict".to_string(),
+            page_id: None,
+            caption_text: Some("Reset signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("PRESETN", false),
+                make_table_cell("Active high reset input", false),
+            ]],
+            row_count: 1,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        assert!(
+            evidence_ir.signal_constraints.iter().any(|constraint| {
+                constraint.subject_signal == "PRESETN"
+                    && matches!(
+                        constraint.constraint_kind,
+                        crate::ir::source::SignalConstraintKind::MustBeAsserted
+                    )
+            }),
+            "expected conflicting prose/table polarity to keep asserted constraint polarity-neutral"
         );
 
         Ok(())

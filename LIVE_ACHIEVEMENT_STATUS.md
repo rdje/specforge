@@ -49,7 +49,7 @@
 - Actor-grounded stability predicates in typed temporal rules implemented: Done
 - Multi-predicate temporal antecedents preserved in typed temporal rules: Done
 - Typed temporal conflict records for contradictory value obligations implemented: Done
-- Convergent EvidenceIR enrichment for anchored encodings and prose polarity implemented: Done
+- Convergent EvidenceIR enrichment for anchored encodings and polarity from prose/signal tables implemented: Done
 - `WidthHint` / parametric-width support propagated through the IR pipeline: Done
 - AMBA `Source` / `Driver` / `Destination` signal-table direction handling implemented: Done
 - `generated/` artifacts removed from git tracking and ignored by default: Done
@@ -57,7 +57,7 @@
 - Live-doc projection of persisted IR validation findings implemented: Done
 - Latest local validation snapshot projected into tracked docs: Done
 - Full Ollama-backed `specforge converge` defaults enabled: Done
-- Test suite expanded to 127 tests; all passing: Done
+- Test suite expanded to 129 tests; all passing: Done
 - Explicit clock-tick temporal model in `SemanticIR` / `IntentIR`: In Progress
 - KG-guided multimodal rescans as a first-class convergent workstream: Not Started
 - Cross-modality evidence arbitration / conflict handling: Not Started
