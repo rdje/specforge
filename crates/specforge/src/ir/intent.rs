@@ -8,10 +8,11 @@ use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::semantic::{
     ActorPortRecord, ConditionalRuleRecord, ControlBlockRecord, DecisionTreeFragmentRecord,
-    ExplicitModuleRecord, ExplicitTopRecord, InitAssignmentRecord, InterfaceRecord, RegisterRecord,
-    RegularStateRecord, SemanticIr, SignalConnectivityConflictRecord, SignalConnectivityRecord,
-    SignalConstraintRecord, StateTransitionRecord, SymbolDefinitionRecord, SystemContractRecord,
-    TemporalConflictRecord, TemporalRuleRecord, TimingConstraintRecord,
+    ExplicitModuleRecord, ExplicitTopRecord, InitAssignmentRecord, InterfaceRecord,
+    InterfaceSignalConflictRecord, RegisterRecord, RegularStateRecord, SemanticIr,
+    SignalConnectivityConflictRecord, SignalConnectivityRecord, SignalConstraintRecord,
+    StateTransitionRecord, SymbolDefinitionRecord, SystemContractRecord, TemporalConflictRecord,
+    TemporalRuleRecord, TimingConstraintRecord,
 };
 use crate::ir::source::{
     ActorSignalRelation, AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket,
@@ -33,6 +34,8 @@ pub struct IntentIr {
     pub actor_ports: Vec<ActorPortRecord>,
     #[serde(default)]
     pub signal_connectivity: Vec<SignalConnectivityRecord>,
+    #[serde(default)]
+    pub interface_signal_conflicts: Vec<InterfaceSignalConflictRecord>,
     #[serde(default)]
     pub signal_connectivity_conflicts: Vec<SignalConnectivityConflictRecord>,
     #[serde(default)]
@@ -116,6 +119,7 @@ impl IntentIr {
         let actor_signal_relations = semantic_ir.actor_signal_relations.clone();
         let actor_ports = semantic_ir.actor_ports.clone();
         let signal_connectivity = semantic_ir.signal_connectivity.clone();
+        let interface_signal_conflicts = semantic_ir.interface_signal_conflicts.clone();
         let signal_connectivity_conflicts = semantic_ir.signal_connectivity_conflicts.clone();
         let interfaces = semantic_ir.interfaces.clone();
         let system_contract = semantic_ir.system_contract.clone();
@@ -168,6 +172,7 @@ impl IntentIr {
             actor_signal_relations,
             actor_ports,
             signal_connectivity,
+            interface_signal_conflicts,
             signal_connectivity_conflicts,
             interfaces,
             system_contract,
@@ -1340,6 +1345,10 @@ mod tests {
             semantic_ir.signal_connectivity.len()
         );
         assert_eq!(
+            intent_ir.interface_signal_conflicts.len(),
+            semantic_ir.interface_signal_conflicts.len()
+        );
+        assert_eq!(
             intent_ir.signal_connectivity_conflicts.len(),
             semantic_ir.signal_connectivity_conflicts.len()
         );
@@ -1359,6 +1368,69 @@ mod tests {
                     .producer_actor_names
                     .iter()
                     .any(|name| name.eq_ignore_ascii_case("Completer"))
+        }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn carries_interface_signal_conflicts_into_intent_ir() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("intent_signal_conflict.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal DATA is input width 8.\n\n",
+                "Signal DATA is output width 16.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        assert_eq!(intent_ir.interface_signal_conflicts.len(), 2);
+        assert!(intent_ir.interface_signal_conflicts.iter().any(|conflict| {
+            conflict.signal_name == "DATA"
+                && conflict
+                    .observations
+                    .iter()
+                    .any(|observation| observation.value_text == "input")
+                && conflict
+                    .observations
+                    .iter()
+                    .any(|observation| observation.value_text == "output")
+        }));
+        assert!(intent_ir.interface_signal_conflicts.iter().any(|conflict| {
+            conflict.signal_name == "DATA"
+                && conflict
+                    .observations
+                    .iter()
+                    .any(|observation| observation.value_text == "8")
+                && conflict
+                    .observations
+                    .iter()
+                    .any(|observation| observation.value_text == "16")
         }));
 
         Ok(())

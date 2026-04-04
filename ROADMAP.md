@@ -329,6 +329,8 @@
 - done:
   - `EvidenceIR` now persists `signal_polarity_conflicts: Vec<SignalPolarityConflictRecord>` when prose and signal-description tables disagree on active-high/active-low semantics
   - `specforge validate` now reports and flags those polarity conflicts explicitly, so contradictory polarity stays inspectable instead of only affecting the derived constraint kind
+  - `SemanticIR` / `IntentIR` now persist `interface_signal_conflicts: Vec<InterfaceSignalConflictRecord>` when conflicting declarations disagree on signal direction or width
+  - `specforge validate` now reports and flags those interface-signal conflicts explicitly, so incompatible shape evidence stays inspectable instead of silently nulling the canonical hint
   - `SemanticIR` / `IntentIR` now persist `signal_connectivity_conflicts: Vec<SignalConnectivityConflictRecord>` when the structural KG resolves multiple producers for the same signal
   - `specforge validate` now reports and flags those structural connectivity conflicts explicitly, so producer ambiguity stays inspectable instead of remaining hidden inside connectivity vectors
 - completion criteria:

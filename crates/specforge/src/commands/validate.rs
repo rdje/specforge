@@ -260,6 +260,32 @@ fn describe_signal_connectivity_conflict(
     }
 }
 
+fn describe_interface_signal_conflict(
+    conflict: &crate::ir::semantic::InterfaceSignalConflictRecord,
+) -> String {
+    let values = conflict
+        .observations
+        .iter()
+        .map(|observation| {
+            if observation.supporting_statement_ids.is_empty() {
+                observation.value_text.clone()
+            } else {
+                format!(
+                    "{} ({})",
+                    observation.value_text,
+                    observation.supporting_statement_ids.join(", ")
+                )
+            }
+        })
+        .collect::<Vec<_>>()
+        .join("; ");
+    if values.is_empty() {
+        conflict.conflict_kind.as_str().to_string()
+    } else {
+        format!("{}: {}", conflict.conflict_kind.as_str(), values)
+    }
+}
+
 fn write_validation_report_sidecar(
     artifact_path: &Path,
     report: &ValidationReportRecord,
@@ -835,6 +861,10 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     println!("  actor_ports: {}", ir.actor_ports.len());
     println!("  signal_connectivity: {}", ir.signal_connectivity.len());
     println!(
+        "  interface_signal_conflicts: {}",
+        ir.interface_signal_conflicts.len()
+    );
+    println!(
         "  signal_connectivity_conflicts: {}",
         ir.signal_connectivity_conflicts.len()
     );
@@ -894,6 +924,23 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             println!(
                 "  ... and {} more conflict(s)",
                 ir.signal_connectivity_conflicts.len() - 8
+            );
+        }
+    }
+    if !ir.interface_signal_conflicts.is_empty() {
+        println!();
+        println!("=== Interface Signal Conflicts ===");
+        for conflict in ir.interface_signal_conflicts.iter().take(8) {
+            println!(
+                "  - {}: {}",
+                conflict.signal_name,
+                describe_interface_signal_conflict(conflict)
+            );
+        }
+        if ir.interface_signal_conflicts.len() > 8 {
+            println!(
+                "  ... and {} more conflict(s)",
+                ir.interface_signal_conflicts.len() - 8
             );
         }
     }
@@ -965,6 +1012,21 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 ir.signal_connectivity_conflicts.len()
             ),
             ir.signal_connectivity_conflicts
+                .iter()
+                .map(|conflict| conflict.conflict_id.clone())
+                .collect(),
+        ));
+    }
+    if !ir.interface_signal_conflicts.is_empty() {
+        findings.push(finding(
+            "semantic_interface_signal_conflicts_present",
+            ValidationFindingSeverity::Warning,
+            "interface_signal_conflicts",
+            format!(
+                "{} interface signal conflict(s) detected; conflicting direction/width evidence is still unresolved in the canonical interface surface",
+                ir.interface_signal_conflicts.len()
+            ),
+            ir.interface_signal_conflicts
                 .iter()
                 .map(|conflict| conflict.conflict_id.clone())
                 .collect(),
@@ -1103,6 +1165,10 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 ir.signal_connectivity.len().to_string(),
             ),
             metric(
+                "interface_signal_conflicts",
+                ir.interface_signal_conflicts.len().to_string(),
+            ),
+            metric(
                 "signal_connectivity_conflicts",
                 ir.signal_connectivity_conflicts.len().to_string(),
             ),
@@ -1234,6 +1300,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     println!("  actor_ports: {}", ir.actor_ports.len());
     println!("  signal_connectivity: {}", ir.signal_connectivity.len());
     println!(
+        "  interface_signal_conflicts: {}",
+        ir.interface_signal_conflicts.len()
+    );
+    println!(
         "  signal_connectivity_conflicts: {}",
         ir.signal_connectivity_conflicts.len()
     );
@@ -1352,6 +1422,23 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             );
         }
     }
+    if !ir.interface_signal_conflicts.is_empty() {
+        println!();
+        println!("=== Interface Signal Conflicts ===");
+        for conflict in ir.interface_signal_conflicts.iter().take(8) {
+            println!(
+                "  - {}: {}",
+                conflict.signal_name,
+                describe_interface_signal_conflict(conflict)
+            );
+        }
+        if ir.interface_signal_conflicts.len() > 8 {
+            println!(
+                "  ... and {} more conflict(s)",
+                ir.interface_signal_conflicts.len() - 8
+            );
+        }
+    }
 
     let missing_producer_signals: Vec<String> = ir
         .signal_connectivity
@@ -1419,6 +1506,21 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 ir.signal_connectivity_conflicts.len()
             ),
             ir.signal_connectivity_conflicts
+                .iter()
+                .map(|conflict| conflict.conflict_id.clone())
+                .collect(),
+        ));
+    }
+    if !ir.interface_signal_conflicts.is_empty() {
+        findings.push(finding(
+            "intent_interface_signal_conflicts_present",
+            ValidationFindingSeverity::Warning,
+            "interface_signal_conflicts",
+            format!(
+                "{} interface signal conflict(s) detected; conflicting direction/width evidence is still unresolved in the carried interface surface",
+                ir.interface_signal_conflicts.len()
+            ),
+            ir.interface_signal_conflicts
                 .iter()
                 .map(|conflict| conflict.conflict_id.clone())
                 .collect(),
@@ -1565,6 +1667,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             metric(
                 "signal_connectivity",
                 ir.signal_connectivity.len().to_string(),
+            ),
+            metric(
+                "interface_signal_conflicts",
+                ir.interface_signal_conflicts.len().to_string(),
             ),
             metric(
                 "signal_connectivity_conflicts",
@@ -2351,6 +2457,53 @@ mod tests {
         assert!(has_finding(
             &report,
             "intent_signal_connectivity_conflicts_present"
+        ));
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_intent_ir_flags_interface_signal_conflicts() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal DATA is input width 8.\n\n",
+                "Signal DATA is output width 16.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let report = validate_intent_ir(&intent_ir, "interface_signal_conflicts".to_string());
+        assert_eq!(
+            metric_value(&report, "interface_signal_conflicts"),
+            Some("2")
+        );
+        assert!(has_finding(
+            &report,
+            "intent_interface_signal_conflicts_present"
         ));
 
         Ok(())

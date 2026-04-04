@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-04-04 (interface-signal conflict surfacing for conflicting declarations)
+
+### Added: typed interface-signal conflicts in the canonical IR layers
+- `SemanticIR` now persists `interface_signal_conflicts` when conflicting declarations disagree on a signal's direction or width.
+- `IntentIR` now carries the same conflict surface forward so canonical interface-shape disagreement remains explicit downstream.
+
+### Changed: validation now clearly reports interface-shape disagreement
+- `specforge validate` now prints a dedicated interface-signal-conflict section for `SemanticIR` and `IntentIR`.
+- Validation now emits a warning finding and metric when conflicting direction/width evidence is still unresolved in the canonical interface surface.
+
+### Added: regression coverage for interface-signal conflict surfacing
+- Added tests for:
+  - deriving direction and width conflicts from contradictory explicit declarations in `SemanticIR`
+  - carrying those conflicts into `IntentIR`
+  - flagging them in `specforge validate`
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 136/136 passed
+
 ## 2026-04-04 (structural KG conflict surfacing for multi-producer ambiguity)
 
 ### Added: typed structural connectivity conflicts in the canonical IR layers

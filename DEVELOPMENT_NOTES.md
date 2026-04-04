@@ -648,6 +648,36 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 - this is still the first structural-KG arbitration slice, not the whole graph-conflict story
 - it currently surfaces multi-producer ambiguity only; broader graph disagreement like conflicting widths, contradictory read/write claims, or modality-ranked arbitration remains future work
 
+## Interface-signal conflict surfacing for conflicting declarations (2026-04-04)
+
+### Why this slice landed now
+- after surfacing polarity conflicts and multi-producer ambiguity, another quiet truthfulness failure remained in the canonical interface surface itself: conflicting explicit signal declarations could disagree on direction or width, and the builder would only collapse the hint to `None`
+- that meant disagreement was technically preserved only as absence, which is too implicit for a project that wants a top-notch KG and canonical IR
+
+### Implementation shape
+- `crates/specforge/src/ir/semantic.rs` now derives `interface_signal_conflicts` while building interfaces
+- the first conflict kinds are:
+  - `direction_mismatch`
+  - `width_mismatch`
+- each conflict keeps:
+  - the signal name
+  - the conflicting observed values
+  - the supporting statement ids for each observed value
+  - automation confidence
+- `crates/specforge/src/ir/intent.rs` now carries that interface-shape conflict surface forward
+- `crates/specforge/src/commands/validate.rs` now prints and flags those conflicts for both `SemanticIR` and `IntentIR`
+
+### Validation
+- added end-to-end tests for:
+  - deriving direction/width conflicts from contradictory explicit declarations in `SemanticIR`
+  - carrying those interface conflicts into `IntentIR`
+  - reporting them in `specforge validate`
+- `cargo fmt --all` passed
+- `cargo test --manifest-path Cargo.toml` now passes with 136 tests
+
+### Remaining follow-up
+- this still only covers explicit interface-shape disagreement; it does not yet arbitrate conflicting width/direction evidence across all modalities or between canonical interface hints and actor-relative graph evidence
+
 ## Documentation surface currently steering the implementation
 - `README.md`
   - single entry point and quick orientation

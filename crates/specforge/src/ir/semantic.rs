@@ -27,6 +27,8 @@ pub struct SemanticIr {
     #[serde(default)]
     pub signal_connectivity: Vec<SignalConnectivityRecord>,
     #[serde(default)]
+    pub interface_signal_conflicts: Vec<InterfaceSignalConflictRecord>,
+    #[serde(default)]
     pub signal_connectivity_conflicts: Vec<SignalConnectivityConflictRecord>,
     pub interfaces: Vec<InterfaceRecord>,
     pub phases: Vec<PhaseRecord>,
@@ -109,7 +111,7 @@ impl SemanticIr {
         };
 
         let context = SemanticContext::from_evidence_ir(&evidence_ir);
-        let interfaces = build_interfaces(&context);
+        let (interfaces, interface_signal_conflicts) = build_interfaces(&context);
         let actor_build = build_actors(&context, &interfaces);
         let actor_ports = build_actor_ports(&context, &interfaces);
         let signal_connectivity = build_signal_connectivity(&actor_ports);
@@ -234,6 +236,7 @@ impl SemanticIr {
             actor_signal_relations: context.actor_signal_relations.clone(),
             actor_ports,
             signal_connectivity,
+            interface_signal_conflicts,
             signal_connectivity_conflicts,
             interfaces,
             phases,
@@ -377,6 +380,39 @@ pub struct SignalConnectivityConflictRecord {
     pub conflicting_actor_names: Vec<String>,
     #[serde(default)]
     pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum InterfaceSignalConflictKind {
+    DirectionMismatch,
+    WidthMismatch,
+}
+
+impl InterfaceSignalConflictKind {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::DirectionMismatch => "direction_mismatch",
+            Self::WidthMismatch => "width_mismatch",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct InterfaceSignalConflictObservationRecord {
+    pub value_text: String,
+    #[serde(default)]
+    pub supporting_statement_ids: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct InterfaceSignalConflictRecord {
+    pub conflict_id: String,
+    pub signal_name: String,
+    pub conflict_kind: InterfaceSignalConflictKind,
+    #[serde(default)]
+    pub observations: Vec<InterfaceSignalConflictObservationRecord>,
     pub automation_confidence: AutomationConfidence,
 }
 
@@ -1145,6 +1181,8 @@ struct InterfaceAccumulator {
 struct InterfaceSignalAccumulator {
     direction_hint: Option<InterfaceSignalDirection>,
     width_hint: Option<WidthHint>,
+    direction_observations: BTreeMap<String, BTreeSet<String>>,
+    width_observations: BTreeMap<String, BTreeSet<String>>,
     supporting_statement_ids: BTreeSet<String>,
     automation_confidence: AutomationConfidence,
 }
@@ -1338,7 +1376,9 @@ struct ExplicitTopAccumulator {
     supporting_statement_ids: BTreeSet<String>,
 }
 
-fn build_interfaces(context: &SemanticContext) -> Vec<InterfaceRecord> {
+fn build_interfaces(
+    context: &SemanticContext,
+) -> (Vec<InterfaceRecord>, Vec<InterfaceSignalConflictRecord>) {
     let mut accumulators: BTreeMap<String, InterfaceAccumulator> = BTreeMap::new();
     let empty_regular_state_names = BTreeSet::<String>::new();
     let empty_known_signal_names = BTreeSet::<String>::new();
@@ -1417,7 +1457,8 @@ fn build_interfaces(context: &SemanticContext) -> Vec<InterfaceRecord> {
         }
     }
 
-    accumulators
+    let mut interface_conflicts = Vec::new();
+    let interfaces = accumulators
         .into_iter()
         .filter(|(key, entry)| {
             // Always keep explicitly declared interfaces (from formal `Signal X is input/output`
@@ -1437,6 +1478,36 @@ fn build_interfaces(context: &SemanticContext) -> Vec<InterfaceRecord> {
         })
         .map(|(key, entry)| {
             let signals: Vec<String> = entry.signals.into_iter().collect();
+            for (signal_name, signal) in &entry.signal_records {
+                if signal.direction_observations.len() > 1 {
+                    interface_conflicts.push(InterfaceSignalConflictRecord {
+                        conflict_id: format!(
+                            "interface_signal_conflict_{:04}",
+                            interface_conflicts.len() + 1
+                        ),
+                        signal_name: signal_name.clone(),
+                        conflict_kind: InterfaceSignalConflictKind::DirectionMismatch,
+                        observations: build_interface_signal_conflict_observations(
+                            &signal.direction_observations,
+                        ),
+                        automation_confidence: signal.automation_confidence,
+                    });
+                }
+                if signal.width_observations.len() > 1 {
+                    interface_conflicts.push(InterfaceSignalConflictRecord {
+                        conflict_id: format!(
+                            "interface_signal_conflict_{:04}",
+                            interface_conflicts.len() + 1
+                        ),
+                        signal_name: signal_name.clone(),
+                        conflict_kind: InterfaceSignalConflictKind::WidthMismatch,
+                        observations: build_interface_signal_conflict_observations(
+                            &signal.width_observations,
+                        ),
+                        automation_confidence: signal.automation_confidence,
+                    });
+                }
+            }
             InterfaceRecord {
                 interface_id: format!("interface_{}", document_key(&key)),
                 signals,
@@ -1457,7 +1528,9 @@ fn build_interfaces(context: &SemanticContext) -> Vec<InterfaceRecord> {
                 supporting_statement_ids: entry.supporting_statement_ids.into_iter().collect(),
             }
         })
-        .collect()
+        .collect();
+
+    (interfaces, interface_conflicts)
 }
 
 fn build_system_contract(context: &SemanticContext) -> Option<SystemContractRecord> {
@@ -2017,7 +2090,7 @@ fn build_explicit_module_record(accumulator: ExplicitModuleAccumulator) -> Expli
         visual_roles_by_id: HashMap::new(),
         actor_signal_relations: Vec::new(),
     };
-    let interfaces = build_interfaces(&scoped_context);
+    let (interfaces, _interface_signal_conflicts) = build_interfaces(&scoped_context);
     let system_contract = build_system_contract(&scoped_context);
     let init_assignments = build_init_assignments(&scoped_context);
     let regular_states = build_regular_states(&scoped_context);
@@ -4097,6 +4170,20 @@ fn signal_width_hints_by_name(
     widths
 }
 
+fn build_interface_signal_conflict_observations(
+    observations: &BTreeMap<String, BTreeSet<String>>,
+) -> Vec<InterfaceSignalConflictObservationRecord> {
+    observations
+        .iter()
+        .map(
+            |(value_text, supporting_statement_ids)| InterfaceSignalConflictObservationRecord {
+                value_text: value_text.clone(),
+                supporting_statement_ids: supporting_statement_ids.iter().cloned().collect(),
+            },
+        )
+        .collect()
+}
+
 fn register_interface_signal_record(
     accumulator: &mut InterfaceAccumulator,
     signal_name: &str,
@@ -4115,9 +4202,25 @@ fn register_interface_signal_record(
         .or_insert_with(|| InterfaceSignalAccumulator {
             direction_hint: None,
             width_hint: None,
+            direction_observations: BTreeMap::new(),
+            width_observations: BTreeMap::new(),
             supporting_statement_ids: BTreeSet::new(),
             automation_confidence,
         });
+    if let Some(direction_hint) = direction_hint {
+        entry
+            .direction_observations
+            .entry(direction_hint.as_str().to_string())
+            .or_default()
+            .insert(supporting_statement_id.to_string());
+    }
+    if let Some(width_hint) = width_hint.clone() {
+        entry
+            .width_observations
+            .entry(width_hint_key(&width_hint))
+            .or_default()
+            .insert(supporting_statement_id.to_string());
+    }
     merge_signal_hint(&mut entry.direction_hint, direction_hint);
     merge_signal_hint(&mut entry.width_hint, width_hint);
     entry
@@ -4125,6 +4228,13 @@ fn register_interface_signal_record(
         .insert(supporting_statement_id.to_string());
     entry.automation_confidence =
         max_automation_confidence(entry.automation_confidence, automation_confidence);
+}
+
+fn width_hint_key(width_hint: &WidthHint) -> String {
+    match width_hint {
+        WidthHint::Numeric(bits) => bits.to_string(),
+        WidthHint::Parametric(expr) => expr.clone(),
+    }
 }
 
 fn merge_signal_hint<T: Clone + Eq>(target: &mut Option<T>, incoming: Option<T>) {
@@ -7275,6 +7385,89 @@ mod tests {
                 transition.source_state == "SETUP" && transition.target_state == "ACCESS"
             }),
             "expected SETUP→ACCESS transition from fenced VLM extraction"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn surfaces_interface_signal_conflicts_for_conflicting_explicit_declarations() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("signal_conflict.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal DATA is input width 8.\n\n",
+                "Signal DATA is output width 16.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let data_signal = semantic_ir
+            .interfaces
+            .iter()
+            .flat_map(|interface| interface.signal_records.iter())
+            .find(|signal| signal.signal_name == "DATA")
+            .expect("expected DATA interface signal");
+        assert_eq!(data_signal.direction_hint, None);
+        assert_eq!(data_signal.width_hint, None);
+        assert_eq!(semantic_ir.interface_signal_conflicts.len(), 2);
+        assert!(
+            semantic_ir
+                .interface_signal_conflicts
+                .iter()
+                .any(|conflict| {
+                    conflict.signal_name == "DATA"
+                        && matches!(
+                            conflict.conflict_kind,
+                            super::InterfaceSignalConflictKind::DirectionMismatch
+                        )
+                        && conflict
+                            .observations
+                            .iter()
+                            .any(|observation| observation.value_text == "input")
+                        && conflict
+                            .observations
+                            .iter()
+                            .any(|observation| observation.value_text == "output")
+                })
+        );
+        assert!(
+            semantic_ir
+                .interface_signal_conflicts
+                .iter()
+                .any(|conflict| {
+                    conflict.signal_name == "DATA"
+                        && matches!(
+                            conflict.conflict_kind,
+                            super::InterfaceSignalConflictKind::WidthMismatch
+                        )
+                        && conflict
+                            .observations
+                            .iter()
+                            .any(|observation| observation.value_text == "8")
+                        && conflict
+                            .observations
+                            .iter()
+                            .any(|observation| observation.value_text == "16")
+                })
         );
 
         Ok(())
