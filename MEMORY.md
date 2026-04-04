@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `bd6916f`
-- latest_commit_brief_message: `feat(semantic): derive handshake temporal predicates`
-- note: current uncommitted work is docs-only and logs the implementation doctrine for programming protocol semantics via typed world models, evidence aggregation, bounded AI hypotheses, and explicit uncertainty
+- latest_commit_hash: `d323658`
+- latest_commit_brief_message: `docs(roadmap): log semantic programming doctrine`
+- note: current uncommitted work implements meaning-grounded handshake-role inference from signal-description tables, carries that role surface through `SemanticIR` / `IntentIR`, updates validation metrics, and syncs the live docs
 
 ## Recent commit chain (last 5)
+- `d323658` docs(roadmap): log semantic programming doctrine
 - `bd6916f` feat(semantic): derive handshake temporal predicates
 - `41d6bfd` feat(semantic): recover idiomatic one-cycle phrases
 - `a57a564` feat(semantic): surface interface signal conflicts
 - `ee20e34` feat(semantic): surface structural kg conflicts
-- `b68be48` feat(evidence): surface polarity conflicts explicitly
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -43,28 +43,37 @@
 - `VALIDATION_SNAPSHOT.md` is now a tracked continuity doc refreshed from persisted validation reports
 
 ## Completed technical work in this session
-- logged the semantic-programming doctrine in the live docs:
-  - deterministic extraction where the source surface is crisp
-  - typed protocol-world modeling as the semantic target
-  - evidence aggregation and convergence instead of one-shot interpretation
-  - bounded AI as local hypothesis generation rather than end-to-end black-box interpretation
-  - explicit uncertainty, conflicts, and residual decisions as part of the truthfulness contract
-- updated `ROADMAP.md`, `DEVELOPMENT_NOTES.md`, `README.md`, `CHANGES.md`, and `MEMORY.md` so future sessions inherit that steering explicitly
+- `crates/specforge/src/ir/evidence.rs` now persists `signal_semantic_hints` mined from `SignalDescription` table descriptions when the table text establishes handshake-like valid/request or ready/accept meaning
+- `crates/specforge/src/ir/semantic.rs` now carries those roles as per-signal `semantic_tags` on `InterfaceSignalRecord`
+- `crates/specforge/src/ir/intent.rs` now preserves the same `semantic_tags` surface at the canonical endpoint
+- typed handshake derivation now consults the meaning-grounded semantic tags before falling back to literal `VALID` / `READY` name heuristics
+- `crates/specforge/src/commands/validate.rs` now reports:
+  - `signal_semantic_hints` for `EvidenceIR`
+  - `with_semantic_tags` for `SemanticIR`
+  - `with_semantic_tags` for `IntentIR`
+- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, `CHANGES.md`, and `MEMORY.md` so the new meaning-grounded role surface is visible in continuity docs
 - validation ran for this task:
-  - docs-only change; Rust tests were not run
+  - `cargo fmt --all` passed
+  - `cargo test --manifest-path Cargo.toml` passed with `146/146`
 
 ## Current working tree before commit
 - modified tracked files currently include:
+  - `crates/specforge/src/ir/evidence.rs`
+  - `crates/specforge/src/ir/semantic.rs`
+  - `crates/specforge/src/ir/intent.rs`
+  - `crates/specforge/src/commands/validate.rs`
   - `README.md`
   - `ROADMAP.md`
+  - `LIVE_ACHIEVEMENT_STATUS.md`
+  - `RUST_CODEBASE_ANALYSIS.md`
   - `DEVELOPMENT_NOTES.md`
   - `CHANGES.md`
   - `MEMORY.md`
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the semantic-programming doctrine docs slice
-2. continue `R15b` and `R15c` using the newly logged doctrine as the implementation guardrail
+1. commit the meaning-grounded handshake-role slice
+2. continue `R15b` / `R15c` by broadening semantic-role inference beyond signal-description tables into aliases, prose, and multimodal grounding
 3. keep adapter work de-prioritized until the graph, temporal, arbitration, and evaluation surfaces are materially stronger
 
 ## Remaining engineering gaps after this commit
@@ -75,6 +84,7 @@
 - KG-quality evaluation and benchmark hardening (`R15e`)
 - Tier 3 relation extraction after the graph/temporal/eval surfaces are ready (`R14`)
 - some downstream compatibility and consumer paths still rely on flat `direction_hint` instead of the graph-native surface
+- meaning-based role inference is now started through signal-description tables, but it still needs to expand into aliases, prose, and multimodal grounding so protocol semantics do not depend on one table shape
 - adapter expansion and adapter validation are now intentionally horizon work
 - the workspace still emits compile warnings in `ir/adapters.rs` and `ir/semantic.rs`
 

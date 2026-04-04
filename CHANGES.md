@@ -1,5 +1,30 @@
 # CHANGES
 
+## 2026-04-04 (meaning-grounded handshake roles from signal descriptions)
+
+### Added: typed semantic role hints in `EvidenceIR`
+- `EvidenceIR` now persists `signal_semantic_hints` mined from `SignalDescription` table descriptions when the text establishes handshake-like request/valid or accept/ready meaning.
+- The new records preserve source text, supporting table ids, and automation confidence instead of collapsing immediately into opaque downstream behavior.
+
+### Changed: handshake detection now prefers grounded meaning before literal naming
+- `SemanticIR` now carries per-signal `semantic_tags`, and `IntentIR` preserves the same surface at the canonical endpoint.
+- Typed `HandshakeComplete` derivation now consults those meaning-grounded semantic tags before falling back to literal `VALID` / `READY` signal-name heuristics.
+
+### Changed: validation now reports the new meaning-grounded role surface
+- `specforge validate` now reports `signal_semantic_hints` for `EvidenceIR`.
+- `specforge validate` now reports `with_semantic_tags` for `SemanticIR` and `IntentIR`.
+
+### Added: regression coverage for meaning-grounded handshake-role carry-through
+- Added tests for:
+  - mining handshake-role semantic hints from signal-description tables in `EvidenceIR`
+  - deriving a typed handshake predicate from semantic signal hints in `SemanticIR`
+  - carrying signal semantic tags into `IntentIR`
+  - reporting the new validation metrics in `specforge validate`
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 146/146 passed
+
 ## 2026-04-04 (semantic-programming doctrine logged)
 
 ### Changed: the live roadmap now encodes how semantic intent should be programmed

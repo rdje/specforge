@@ -116,6 +116,10 @@ pub struct EvidenceIr {
     /// These conflicts stay visible instead of silently collapsing into a neutral fallback.
     #[serde(default)]
     pub signal_polarity_conflicts: Vec<SignalPolarityConflictRecord>,
+    /// Typed semantic hints mined from signal-description text, kept explicit so later
+    /// semantic stages can use meaning-based roles instead of literal signal spelling alone.
+    #[serde(default)]
+    pub signal_semantic_hints: Vec<SignalSemanticHintRecord>,
     /// Tier 2 Knowledge Graph: actor–signal relation triples extracted from prose verb phrases.
     /// Each record encodes (actor, drives|reads, signal) derived from sentences like
     /// "PREADY is driven by the slave" or "The Manager drives HTRANS".
@@ -435,6 +439,7 @@ impl EvidenceIr {
         // Synthesize typed register and timing records from structured tables.
         let register_records = synthesize_register_records(&source_ir);
         let timing_constraints = synthesize_timing_constraints(&source_ir);
+        let signal_semantic_hints = synthesize_signal_semantic_hints(&source_ir);
 
         // Replace the previous one-shot extraction with a monotone convergent loop:
         // discovered signals unlock anchored encoding tables, which unlock new value atoms,
@@ -469,6 +474,7 @@ impl EvidenceIr {
             signal_constraints,
             conditional_rules,
             signal_polarity_conflicts,
+            signal_semantic_hints,
             actor_signal_relations,
             signal_alias_map: BTreeMap::new(),
             validation_reports: Vec::new(),
@@ -670,6 +676,40 @@ pub struct SignalPolarityConflictRecord {
     pub conflict_id: String,
     pub signal_name: String,
     pub observations: Vec<SignalPolarityObservationRecord>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[serde(rename_all = "snake_case")]
+pub enum SignalSemanticTag {
+    HandshakeValidLike,
+    HandshakeReadyLike,
+}
+
+impl SignalSemanticTag {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::HandshakeValidLike => "handshake_valid_like",
+            Self::HandshakeReadyLike => "handshake_ready_like",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum SignalSemanticHintSourceKind {
+    SignalDescriptionTable,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct SignalSemanticHintRecord {
+    pub signal_name: String,
+    #[serde(default)]
+    pub semantic_tags: Vec<SignalSemanticTag>,
+    pub source_kind: SignalSemanticHintSourceKind,
+    pub source_text: String,
+    #[serde(default)]
+    pub supporting_table_ids: Vec<String>,
     pub automation_confidence: AutomationConfidence,
 }
 
@@ -2963,6 +3003,140 @@ fn synthesize_system_contract_from_table_descriptions(
     statements
 }
 
+fn synthesize_signal_semantic_hints(source_ir: &SourceIr) -> Vec<SignalSemanticHintRecord> {
+    let mut hints = Vec::new();
+    let mut seen = BTreeSet::<String>::new();
+
+    for table in &source_ir.structured_tables {
+        if !matches!(table.table_kind, TableKind::SignalDescription) {
+            continue;
+        }
+
+        let header_texts: Vec<String> = table
+            .header_rows
+            .first()
+            .map(|row| row.iter().map(|c| c.text.to_ascii_lowercase()).collect())
+            .unwrap_or_default();
+        let name_col = header_texts
+            .iter()
+            .position(|h| {
+                h.contains("signal")
+                    || h.contains("name")
+                    || h.contains("port")
+                    || h.contains("pin")
+            })
+            .unwrap_or(0);
+        let description_col = header_texts.iter().position(|h| {
+            h.contains("description") || h.contains("meaning") || h.contains("function")
+        });
+        let Some(description_col) = description_col else {
+            continue;
+        };
+
+        for row in &table.body_rows {
+            let Some(name_cell) = row.get(name_col) else {
+                continue;
+            };
+            let signal_name = name_cell
+                .text
+                .split_whitespace()
+                .next()
+                .unwrap_or("")
+                .to_ascii_uppercase();
+            if !is_hardware_signal_token(&signal_name)
+                || is_signal_synthesis_non_signal(&signal_name)
+            {
+                continue;
+            }
+
+            let Some(description_cell) = row.get(description_col) else {
+                continue;
+            };
+            let description = description_cell.text.trim();
+            if description.is_empty() {
+                continue;
+            }
+
+            let semantic_tags = infer_signal_semantic_tags_from_description(description);
+            if semantic_tags.is_empty() {
+                continue;
+            }
+
+            let key = format!(
+                "{}:{}:{}",
+                signal_name,
+                table.table_id,
+                semantic_tags
+                    .iter()
+                    .map(|tag| tag.as_str())
+                    .collect::<Vec<_>>()
+                    .join(",")
+            );
+            if !seen.insert(key) {
+                continue;
+            }
+
+            hints.push(SignalSemanticHintRecord {
+                signal_name,
+                semantic_tags,
+                source_kind: SignalSemanticHintSourceKind::SignalDescriptionTable,
+                source_text: description.to_string(),
+                supporting_table_ids: vec![table.table_id.clone()],
+                automation_confidence: AutomationConfidence::Medium,
+            });
+        }
+    }
+
+    hints
+}
+
+fn infer_signal_semantic_tags_from_description(description: &str) -> Vec<SignalSemanticTag> {
+    let lowered = description.to_ascii_lowercase();
+    let mut tags = BTreeSet::new();
+
+    if contains_any(
+        &lowered,
+        &[
+            " valid",
+            "valid ",
+            "information is available",
+            "data is available",
+            "address is available",
+            "control is available",
+            "request is pending",
+            "request pending",
+            "request present",
+            "transaction request",
+            "transfer request",
+        ],
+    ) {
+        tags.insert(SignalSemanticTag::HandshakeValidLike);
+    }
+
+    if contains_any(
+        &lowered,
+        &[
+            " ready",
+            "ready ",
+            "can accept",
+            "able to accept",
+            "accept the transfer",
+            "accept transfer",
+            "accept data",
+            "accept address",
+            "acknowledge",
+            "acknowledges",
+            "acknowledged",
+            "complete the transfer",
+            "transfer can complete",
+        ],
+    ) {
+        tags.insert(SignalSemanticTag::HandshakeReadyLike);
+    }
+
+    tags.into_iter().collect()
+}
+
 /// Infer signal direction from a section kind + title for signal description tables.
 fn infer_signal_direction_from_section(kind: SectionKind, title: &str) -> Option<&'static str> {
     // Explicit section kind takes priority.
@@ -5100,6 +5274,76 @@ mod tests {
             observation.polarity,
             super::SignalPolarity::ActiveHigh
         )));
+
+        Ok(())
+    }
+
+    #[test]
+    fn signal_table_descriptions_produce_semantic_handshake_hints() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("handshake_hints.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Channel\n",
+                "Signal XREQ is input width 1.\n",
+                "Signal XACK is input width 1.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_handshake_desc".to_string(),
+            asset_id: "asset_handshake_desc".to_string(),
+            page_id: None,
+            caption_text: Some("Handshake signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("XREQ", false),
+                    make_table_cell(
+                        "Indicates that address and control information are valid for transfer.",
+                        false,
+                    ),
+                ],
+                vec![
+                    make_table_cell("XACK", false),
+                    make_table_cell(
+                        "Indicates that the subordinate can accept the transfer.",
+                        false,
+                    ),
+                ],
+            ],
+            row_count: 2,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        assert!(evidence_ir.signal_semantic_hints.iter().any(|hint| {
+            hint.signal_name == "XREQ"
+                && hint
+                    .semantic_tags
+                    .contains(&super::SignalSemanticTag::HandshakeValidLike)
+        }));
+        assert!(evidence_ir.signal_semantic_hints.iter().any(|hint| {
+            hint.signal_name == "XACK"
+                && hint
+                    .semantic_tags
+                    .contains(&super::SignalSemanticTag::HandshakeReadyLike)
+        }));
 
         Ok(())
     }

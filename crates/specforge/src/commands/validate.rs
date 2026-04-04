@@ -221,6 +221,16 @@ fn temporal_rules_with_handshake_completion_count(
         .count()
 }
 
+fn interface_signals_with_semantic_tags_count(
+    interfaces: &[crate::ir::semantic::InterfaceRecord],
+) -> usize {
+    interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+        .filter(|signal| !signal.semantic_tags.is_empty())
+        .count()
+}
+
 fn temporal_rules_with_multi_predicate_antecedents_count(
     temporal_rules: &[crate::ir::semantic::TemporalRuleRecord],
 ) -> usize {
@@ -635,6 +645,10 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         "  signal_polarity_conflicts: {}",
         ir.signal_polarity_conflicts.len()
     );
+    println!(
+        "  signal_semantic_hints: {}",
+        ir.signal_semantic_hints.len()
+    );
     println!();
 
     println!("=== VLM Observations ===");
@@ -795,6 +809,10 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
                 "signal_polarity_conflicts",
                 ir.signal_polarity_conflicts.len().to_string(),
             ),
+            metric(
+                "signal_semantic_hints",
+                ir.signal_semantic_hints.len().to_string(),
+            ),
             metric("timing_diagram_extractions", timing_obs.to_string()),
             metric("state_machine_extractions", state_obs.to_string()),
             metric(
@@ -829,6 +847,7 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         .flat_map(|i| &i.signal_records)
         .filter(|s| s.width_hint.is_some())
         .count();
+    let with_semantic_tags = interface_signals_with_semantic_tags_count(&ir.interfaces);
     let fully_typed = ir
         .interfaces
         .iter()
@@ -868,6 +887,7 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     println!("  with_graph_direction: {with_graph_direction} ({graph_dir_pct}%)");
     println!("  with_compat_direction_hint: {with_compat_direction_hint} ({compat_dir_pct}%)");
     println!("  with_width: {with_width} ({w_pct}%)");
+    println!("  with_semantic_tags: {with_semantic_tags}");
     println!("  fully_typed (resolved_direction+width): {fully_typed} ({ft_pct}%)");
     println!();
 
@@ -1178,6 +1198,7 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 with_compat_direction_hint.to_string(),
             ),
             metric("with_width", with_width.to_string()),
+            metric("with_semantic_tags", with_semantic_tags.to_string()),
             metric("fully_typed", fully_typed.to_string()),
             metric("actors", ir.actors.len().to_string()),
             metric(
@@ -1290,6 +1311,7 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         .filter(|s| matches!(s.width_hint, Some(WidthHint::Parametric(_))))
         .count();
     let with_width = with_numeric_width + with_parametric_width;
+    let with_semantic_tags = interface_signals_with_semantic_tags_count(&ir.interfaces);
     let dir_pct = if declared_count > 0 {
         with_direction * 100 / declared_count
     } else {
@@ -1318,6 +1340,7 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     println!(
         "  with_width: {with_width} ({w_pct}%) [{with_numeric_width} numeric, {with_parametric_width} parametric]"
     );
+    println!("  with_semantic_tags: {with_semantic_tags}");
     println!();
 
     println!("=== Intent Records ===");
@@ -1693,6 +1716,7 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 with_compat_direction_hint.to_string(),
             ),
             metric("with_width", with_width.to_string()),
+            metric("with_semantic_tags", with_semantic_tags.to_string()),
             metric("actors", ir.actors.len().to_string()),
             metric(
                 "actor_signal_relations",
@@ -1914,6 +1938,65 @@ mod tests {
             &report,
             "evidence_signal_polarity_conflicts_present"
         ));
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_evidence_ir_counts_signal_semantic_hints() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("semantic_hints.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Channel\n",
+                "Signal XREQ is input width 1.\n",
+                "Signal XACK is input width 1.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_handshake_desc".to_string(),
+            asset_id: "asset_handshake_desc".to_string(),
+            page_id: None,
+            caption_text: Some("Handshake signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("XREQ", false),
+                    make_table_cell(
+                        "Indicates that address and control information are valid for transfer.",
+                        false,
+                    ),
+                ],
+                vec![
+                    make_table_cell("XACK", false),
+                    make_table_cell(
+                        "Indicates that the subordinate can accept the transfer.",
+                        false,
+                    ),
+                ],
+            ],
+            row_count: 2,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        let report = validate_evidence_ir(&evidence_ir, "signal_semantic_hints".to_string());
+
+        assert_eq!(metric_value(&report, "signal_semantic_hints"), Some("2"));
 
         Ok(())
     }
@@ -2440,6 +2523,79 @@ mod tests {
             metric_value(&report, "temporal_rules_with_handshake_completion"),
             Some("1")
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_intent_ir_counts_signals_with_semantic_tags() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal XREQ is output width 1.\n\n",
+                "Signal XACK is input width 1.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_signal_semantic_tags".to_string(),
+            asset_id: "table_signal_semantic_tags".to_string(),
+            page_id: None,
+            caption_text: Some("Handshake signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("XREQ", false),
+                    make_table_cell(
+                        "Indicates that address and control information are valid for transfer.",
+                        false,
+                    ),
+                ],
+                vec![
+                    make_table_cell("XACK", false),
+                    make_table_cell(
+                        "Indicates that the subordinate can accept the transfer.",
+                        false,
+                    ),
+                ],
+            ],
+            row_count: 2,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let report = validate_intent_ir(&intent_ir, "signal_semantic_tags".to_string());
+        assert_eq!(metric_value(&report, "with_semantic_tags"), Some("2"));
 
         Ok(())
     }

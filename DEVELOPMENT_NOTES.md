@@ -850,3 +850,28 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 - validation for this slice:
   - `cargo fmt --all` passed
   - `cargo test --manifest-path Cargo.toml` passed with `141/141`
+
+## 2026-04-04 - meaning-grounded handshake roles from signal descriptions
+- the previous handshake slice was intentionally conservative and still depended on literal `VALID` / `READY` signal naming when no richer role evidence existed
+- that was useful, but it was not yet aligned with the project doctrine that protocol meaning should outrank spelling when the document provides enough grounded evidence
+- `crates/specforge/src/ir/evidence.rs` now mines `SignalDescription` tables for typed `signal_semantic_hints`:
+  - `HandshakeValidLike`
+  - `HandshakeReadyLike`
+- these hints are conservative and provenance-carrying:
+  - they only land when the description text itself says something semantically close to "information/request is valid" or "the receiver can accept / acknowledge / complete the transfer"
+  - they preserve the source text, table provenance, and automation confidence instead of collapsing immediately into an irreversible interpretation
+- `crates/specforge/src/ir/semantic.rs` now carries those roles forward as per-signal `semantic_tags` on `InterfaceSignalRecord`
+- `crates/specforge/src/ir/intent.rs` now preserves the same `semantic_tags` surface at the canonical endpoint
+- handshake derivation now consults those meaning-grounded semantic tags before falling back to literal signal-name heuristics
+- this is the right architectural direction:
+  - protocol meaning can now begin to outrank orthography
+  - the pipeline is still not pretending to solve open-ended language understanding
+  - instead, it is recovering a narrow typed protocol-role surface from grounded table evidence and then reusing it downstream
+- `crates/specforge/src/commands/validate.rs` now reports:
+  - `signal_semantic_hints` for `EvidenceIR`
+  - `with_semantic_tags` for `SemanticIR` and `IntentIR`
+- this keeps the new meaning-grounded role surface visible in validation instead of hiding it inside the temporal-rule count
+- validation for this slice:
+  - `cargo fmt --all` passed
+  - `cargo test --manifest-path Cargo.toml` passed with `146/146`
+- the next honest follow-up is to broaden the same meaning-based role inference beyond signal-description tables into aliases, prose, and multimodal grounding so handshake and role semantics do not depend on one table shape
