@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `93d376c`
-- latest_commit_brief_message: `feat(semantic): surface temporal conflicts`
-- note: current uncommitted work lets the convergent evidence loop mine `SignalDescription` tables for polarity, merges that polarity conservatively with prose, and syncs the continuity docs to that state
+- latest_commit_hash: `8c97c77`
+- latest_commit_brief_message: `feat(evidence): mine polarity from signal tables`
+- note: current uncommitted work persists `EvidenceIR` polarity conflicts, makes `specforge validate` report them explicitly, and syncs the continuity docs to that state
 
 ## Recent commit chain (last 5)
+- `8c97c77` feat(evidence): mine polarity from signal tables
 - `93d376c` feat(semantic): surface temporal conflicts
 - `40f656a` feat(semantic): preserve compound temporal guards
 - `f8b3f29` feat(semantic): ground stability rules in actors
 - `25c55e4` feat(semantic): ground temporal rules in actors
-- `9f0c2b0` feat(semantic): recover temporal cycle windows
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -43,20 +43,19 @@
 - `VALIDATION_SNAPSHOT.md` is now a tracked continuity doc refreshed from persisted validation reports
 
 ## Completed technical work in this session
-- the convergent evidence loop now derives polarity facts from `SignalDescription` table rows as well as prose
-- polarity facts from prose and tables now merge conservatively, so contradictory evidence keeps asserted/deasserted constraints polarity-neutral
+- `EvidenceIR` now persists typed `signal_polarity_conflicts` when prose and signal-description tables disagree on active-high/active-low semantics for the same signal
+- `specforge validate` now prints and flags those polarity conflicts explicitly instead of leaving them visible only as polarity-neutral derived constraints
 - added regression tests for:
-  - table-driven polarity refinement for asserted constraints
-  - conservative fallback when prose and table polarity disagree
-- synced the roadmap/status/analysis/README/change docs so future sessions know polarity refinement is now multimodal at the evidence stage
+  - preserving a typed polarity conflict while keeping the derived constraint neutral
+  - reporting the polarity conflict explicitly in `specforge validate`
+- synced the roadmap/status/analysis/README/change docs so future sessions know evidence arbitration has started with polarity-conflict surfacing
 - validation ran for this task:
   - `cargo fmt --all` passed
-  - `cargo test --manifest-path Cargo.toml` passed with 129 tests
+  - `cargo test --manifest-path Cargo.toml` passed with 130 tests
 
 ## Current working tree before commit
 - modified tracked files currently include:
-  - `crates/specforge/src/ir/semantic.rs`
-  - `crates/specforge/src/ir/intent.rs`
+  - `crates/specforge/src/ir/evidence.rs`
   - `crates/specforge/src/commands/validate.rs`
   - `README.md`
   - `ROADMAP.md`
@@ -68,15 +67,15 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the signal-table polarity slice; do not stage `generated/`
+1. commit the polarity-conflict surfacing slice; do not stage `generated/`
 2. continue the remaining `R15` slice by moving direct downstream `direction_hint` consumers onto actor-relative graph semantics when that work is canonical-side rather than adapter-expansion work
-3. deepen the KG-guided evidence loop further with additional signal-detail table rescans and broader temporal arbitration
+3. deepen the first evidence-arbitration slice beyond polarity into direction/timing/value disagreement surfaces
 
 ## Remaining engineering gaps after this commit
 - remaining actor-relative direction modeling in `SemanticIR` / `IntentIR` (`R15`)
 - richer explicit clock-tick temporal semantics (`R15b`)
 - KG-guided multimodal rescans (`R15c`)
-- evidence arbitration / conflict handling (`R15d`)
+- broader evidence arbitration / conflict handling beyond polarity (`R15d`)
 - KG-quality evaluation and benchmark hardening (`R15e`)
 - Tier 3 relation extraction after the graph/temporal/eval surfaces are ready (`R14`)
 - some downstream compatibility and consumer paths still rely on flat `direction_hint` instead of the graph-native surface

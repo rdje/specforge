@@ -321,11 +321,14 @@
   - convergence reporting counts genuinely new persisted facts instead of duplicate vector growth
 
 ### R15d Evidence arbitration and cross-modality conflict resolution
-- status: Not Started
+- status: In Progress
 - goals:
   - define how table, prose, and figure evidence reinforce or conflict
   - preserve contradictory evidence explicitly instead of flattening it away
   - rank evidence by provenance strength and automation confidence without hiding disagreement
+- done:
+  - `EvidenceIR` now persists `signal_polarity_conflicts: Vec<SignalPolarityConflictRecord>` when prose and signal-description tables disagree on active-high/active-low semantics
+  - `specforge validate` now reports and flags those polarity conflicts explicitly, so contradictory polarity stays inspectable instead of only affecting the derived constraint kind
 - completion criteria:
   - a typed arbitration/conflict surface exists for unresolved multimodal disagreements
   - validation can flag contradictory direction, timing, and value facts

@@ -50,6 +50,7 @@
 - Multi-predicate temporal antecedents preserved in typed temporal rules: Done
 - Typed temporal conflict records for contradictory value obligations implemented: Done
 - Convergent EvidenceIR enrichment for anchored encodings and polarity from prose/signal tables implemented: Done
+- EvidenceIR polarity-conflict surfacing and validation reporting implemented: Done
 - `WidthHint` / parametric-width support propagated through the IR pipeline: Done
 - AMBA `Source` / `Driver` / `Destination` signal-table direction handling implemented: Done
 - `generated/` artifacts removed from git tracking and ignored by default: Done
@@ -57,17 +58,17 @@
 - Live-doc projection of persisted IR validation findings implemented: Done
 - Latest local validation snapshot projected into tracked docs: Done
 - Full Ollama-backed `specforge converge` defaults enabled: Done
-- Test suite expanded to 129 tests; all passing: Done
+- Test suite expanded to 130 tests; all passing: Done
 - Explicit clock-tick temporal model in `SemanticIR` / `IntentIR`: In Progress
 - KG-guided multimodal rescans as a first-class convergent workstream: Not Started
-- Cross-modality evidence arbitration / conflict handling: Not Started
+- Cross-modality evidence arbitration / conflict handling: In Progress
 - KG-quality evaluation with gold fixtures and negative fixtures: Not Started
 - SystemVerilog/Verilog/VHDL adapter expansion: Horizon
 - Adapter validation (SystemVerilog/Verilog/VHDL targets): Horizon
 - Actor-relative direction model in `SemanticIR` / `IntentIR`: In Progress
 
 ## Highest-priority remaining gap
-- Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then deepen the temporal layer with richer temporal arbitration across actors/modalities before moving on to KG-guided rescans, evidence arbitration, and KG-quality evaluation
+- Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then deepen temporal/evidence arbitration beyond the newly landed polarity-conflict slice before moving on to KG-guided rescans and KG-quality evaluation
 
 ## Validation Projection
 

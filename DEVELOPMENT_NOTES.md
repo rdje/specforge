@@ -604,15 +604,19 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
   - matching polarity reinforces the fact
   - contradictory polarity removes the fact instead of forcing a wrong refinement
 - the merged polarity map is then reused by the existing asserted/deasserted constraint refinement step
+- `EvidenceIR` now also persists a typed `signal_polarity_conflicts` surface, so contradictory polarity remains explicit in the artifact instead of only being visible indirectly through a polarity-neutral derived constraint
+- `specforge validate` now prints and flags those polarity conflicts, including which polarity each modality asserted and which statement/table ids supported it
 
 ### Validation
 - added end-to-end tests for:
   - refining an asserted constraint from a signal-description table row that says the signal is active low
   - keeping a constraint polarity-neutral when prose and table polarity disagree
+  - reporting the polarity conflict explicitly from `specforge validate`
 - `cargo fmt --all` passed
-- `cargo test --manifest-path Cargo.toml` now passes with 129 tests
+- `cargo test --manifest-path Cargo.toml` now passes with 130 tests
 
 ### Remaining follow-up
+- this is the first evidence-arbitration slice, not the whole arbitration story; only polarity disagreement is typed so far
 - the current polarity scan is still text-pattern based; richer table-structure understanding and non-signal-description table rescans remain future work
 
 ## Documentation surface currently steering the implementation

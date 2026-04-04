@@ -211,6 +211,40 @@ fn temporal_rules_with_multi_predicate_antecedents_count(
         .count()
 }
 
+fn describe_signal_polarity_conflict(
+    conflict: &crate::ir::evidence::SignalPolarityConflictRecord,
+) -> String {
+    conflict
+        .observations
+        .iter()
+        .map(|observation| {
+            let mut refs = observation
+                .supporting_statement_ids
+                .iter()
+                .chain(observation.supporting_table_ids.iter())
+                .cloned()
+                .collect::<Vec<_>>();
+            refs.sort();
+            refs.dedup();
+            if refs.is_empty() {
+                format!(
+                    "{} via {}",
+                    observation.polarity.as_str(),
+                    observation.source_kind.as_str()
+                )
+            } else {
+                format!(
+                    "{} via {} ({})",
+                    observation.polarity.as_str(),
+                    observation.source_kind.as_str(),
+                    refs.join(", ")
+                )
+            }
+        })
+        .collect::<Vec<_>>()
+        .join("; ")
+}
+
 fn write_validation_report_sidecar(
     artifact_path: &Path,
     report: &ValidationReportRecord,
@@ -537,6 +571,10 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         "  timing_constraints (from tables): {}",
         ir.timing_constraints.len()
     );
+    println!(
+        "  signal_polarity_conflicts: {}",
+        ir.signal_polarity_conflicts.len()
+    );
     println!();
 
     println!("=== VLM Observations ===");
@@ -568,6 +606,23 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         .filter(|e| e.caption_text.is_some())
         .count();
     println!("  with_caption: {with_caption}");
+    if !ir.signal_polarity_conflicts.is_empty() {
+        println!();
+        println!("=== Signal Polarity Conflicts ===");
+        for conflict in ir.signal_polarity_conflicts.iter().take(8) {
+            println!(
+                "  - {}: {}",
+                conflict.signal_name,
+                describe_signal_polarity_conflict(conflict)
+            );
+        }
+        if ir.signal_polarity_conflicts.len() > 8 {
+            println!(
+                "  ... and {} more conflict(s)",
+                ir.signal_polarity_conflicts.len() - 8
+            );
+        }
+    }
 
     let normative_count = classes.get("normative_statement").copied().unwrap_or(0);
     let mut findings = Vec::new();
@@ -615,6 +670,21 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             Vec::new(),
         ));
     }
+    if !ir.signal_polarity_conflicts.is_empty() {
+        findings.push(finding(
+            "evidence_signal_polarity_conflicts_present",
+            ValidationFindingSeverity::Warning,
+            "polarity_conflicts",
+            format!(
+                "{} signal polarity conflict(s) detected across polarity evidence; asserted/deasserted constraints stayed polarity-neutral rather than forcing a wrong refinement",
+                ir.signal_polarity_conflicts.len()
+            ),
+            ir.signal_polarity_conflicts
+                .iter()
+                .map(|conflict| conflict.conflict_id.clone())
+                .collect(),
+        ));
+    }
 
     let report = ValidationReportRecord {
         report_id: format!("validation_evidence_ir_{artifact_fingerprint}"),
@@ -660,6 +730,10 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             metric(
                 "timing_constraints",
                 ir.timing_constraints.len().to_string(),
+            ),
+            metric(
+                "signal_polarity_conflicts",
+                ir.signal_polarity_conflicts.len().to_string(),
             ),
             metric("timing_diagram_extractions", timing_obs.to_string()),
             metric("state_machine_extractions", state_obs.to_string()),
@@ -1471,7 +1545,18 @@ mod tests {
     use crate::ir::evidence::EvidenceIr;
     use crate::ir::intent::IntentIr;
     use crate::ir::semantic::SemanticIr;
-    use crate::ir::source::SourceIr;
+    use crate::ir::source::{
+        SourceIr, StructuredTableCellRecord, StructuredTableRecord, TableKind,
+    };
+
+    fn make_table_cell(text: &str, is_header: bool) -> StructuredTableCellRecord {
+        StructuredTableCellRecord {
+            text: text.to_string(),
+            row_span: 1,
+            col_span: 1,
+            is_header,
+        }
+    }
 
     #[test]
     fn validate_source_ir_artifact_reports_without_error() -> Result<()> {
@@ -1536,6 +1621,61 @@ mod tests {
         run(ValidateArgs {
             artifact: evidence_ir.artifact_layout.evidence_ir_path,
         })
+    }
+
+    #[test]
+    fn validate_evidence_ir_flags_signal_polarity_conflicts() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("reset_conflict.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Reset\n",
+                "Signal PRESETN is input width 1.\n",
+                "PRESETN is an active low reset signal.\n",
+                "PRESETN must be asserted during initialization.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_reset_desc_conflict".to_string(),
+            asset_id: "asset_reset_desc_conflict".to_string(),
+            page_id: None,
+            caption_text: Some("Reset signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("PRESETN", false),
+                make_table_cell("Active high reset input", false),
+            ]],
+            row_count: 1,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        let report = validate_evidence_ir(&evidence_ir, "signal_polarity_conflicts".to_string());
+
+        assert_eq!(
+            metric_value(&report, "signal_polarity_conflicts"),
+            Some("1")
+        );
+        assert!(has_finding(
+            &report,
+            "evidence_signal_polarity_conflicts_present"
+        ));
+
+        Ok(())
     }
 
     #[test]

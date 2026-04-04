@@ -1,4 +1,4 @@
-use std::collections::{BTreeMap, HashMap, HashSet};
+use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -112,6 +112,10 @@ pub struct EvidenceIr {
     /// Level 2 NLP: structured records extracted from `ConditionalRule` sentences.
     #[serde(default)]
     pub conditional_rules: Vec<ConditionalRuleRecord>,
+    /// Explicit conflicts where polarity evidence disagrees across prose/table sources.
+    /// These conflicts stay visible instead of silently collapsing into a neutral fallback.
+    #[serde(default)]
+    pub signal_polarity_conflicts: Vec<SignalPolarityConflictRecord>,
     /// Tier 2 Knowledge Graph: actor–signal relation triples extracted from prose verb phrases.
     /// Each record encodes (actor, drives|reads, signal) derived from sentences like
     /// "PREADY is driven by the slave" or "The Manager drives HTRANS".
@@ -435,14 +439,19 @@ impl EvidenceIr {
         // Replace the previous one-shot extraction with a monotone convergent loop:
         // discovered signals unlock anchored encoding tables, which unlock new value atoms,
         // which unlock additional prose-derived constraints.
-        let (extracted_statements, signal_constraints, conditional_rules, actor_signal_relations) =
-            converge_evidence_extractions(
-                &source_ir,
-                extracted_statements,
-                synthesized,
-                contract_stmts,
-                &mut statement_counter,
-            );
+        let (
+            extracted_statements,
+            signal_constraints,
+            conditional_rules,
+            signal_polarity_conflicts,
+            actor_signal_relations,
+        ) = converge_evidence_extractions(
+            &source_ir,
+            extracted_statements,
+            synthesized,
+            contract_stmts,
+            &mut statement_counter,
+        );
 
         let mut evidence_ir = Self {
             schema_version: 1,
@@ -459,6 +468,7 @@ impl EvidenceIr {
             timing_constraints,
             signal_constraints,
             conditional_rules,
+            signal_polarity_conflicts,
             actor_signal_relations,
             signal_alias_map: BTreeMap::new(),
             validation_reports: Vec::new(),
@@ -611,6 +621,56 @@ pub struct EvidenceArtifactLayout {
 pub struct EvidenceDocumentIdentity {
     pub document_key: String,
     pub display_name: String,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[serde(rename_all = "snake_case")]
+pub enum SignalPolarity {
+    ActiveHigh,
+    ActiveLow,
+}
+
+impl SignalPolarity {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::ActiveHigh => "active_high",
+            Self::ActiveLow => "active_low",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[serde(rename_all = "snake_case")]
+pub enum SignalPolarityEvidenceSourceKind {
+    ProseStatement,
+    SignalDescriptionTable,
+}
+
+impl SignalPolarityEvidenceSourceKind {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::ProseStatement => "prose_statement",
+            Self::SignalDescriptionTable => "signal_description_table",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct SignalPolarityObservationRecord {
+    pub polarity: SignalPolarity,
+    pub source_kind: SignalPolarityEvidenceSourceKind,
+    #[serde(default)]
+    pub supporting_statement_ids: Vec<String>,
+    #[serde(default)]
+    pub supporting_table_ids: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct SignalPolarityConflictRecord {
+    pub conflict_id: String,
+    pub signal_name: String,
+    pub observations: Vec<SignalPolarityObservationRecord>,
+    pub automation_confidence: AutomationConfidence,
 }
 
 fn carry_forward_statement_classes(
@@ -2016,10 +2076,19 @@ fn contains_reference_token(text: &str, token: &str) -> bool {
     false
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum SignalPolarity {
-    ActiveHigh,
-    ActiveLow,
+#[derive(Debug, Clone, Default)]
+struct SignalPolarityFactCollection {
+    resolved: HashMap<String, SignalPolarity>,
+    conflicts: Vec<SignalPolarityConflictRecord>,
+}
+
+#[derive(Debug, Clone)]
+struct SignalPolarityObservationCandidate {
+    signal_name: String,
+    polarity: SignalPolarity,
+    source_kind: SignalPolarityEvidenceSourceKind,
+    supporting_statement_ids: Vec<String>,
+    supporting_table_ids: Vec<String>,
 }
 
 fn extract_enum_member_name(text: &str) -> Option<String> {
@@ -2346,9 +2415,8 @@ fn extract_discovered_state_value_from_text(
 fn extract_signal_polarity_from_prose(
     statements: &[ExtractedStatement],
     known_signals: &HashSet<String>,
-) -> HashMap<String, SignalPolarity> {
-    let mut polarity_map = HashMap::new();
-    let mut conflicting_signals = HashSet::new();
+) -> Vec<SignalPolarityObservationCandidate> {
+    let mut observations = Vec::new();
     let mut ordered_signals: Vec<&String> = known_signals.iter().collect();
     ordered_signals.sort();
 
@@ -2370,24 +2438,23 @@ fn extract_signal_polarity_from_prose(
             continue;
         }
 
-        let signal_name = mentioned_signals[0].clone();
-        record_signal_polarity(
-            &mut polarity_map,
-            &mut conflicting_signals,
-            signal_name,
+        observations.push(SignalPolarityObservationCandidate {
+            signal_name: mentioned_signals[0].clone(),
             polarity,
-        );
+            source_kind: SignalPolarityEvidenceSourceKind::ProseStatement,
+            supporting_statement_ids: vec![statement.statement_id.clone()],
+            supporting_table_ids: Vec::new(),
+        });
     }
 
-    polarity_map
+    observations
 }
 
 fn extract_signal_polarity_from_signal_tables(
     source_ir: &SourceIr,
     known_signals: &HashSet<String>,
-) -> HashMap<String, SignalPolarity> {
-    let mut polarity_map = HashMap::new();
-    let mut conflicting_signals = HashSet::new();
+) -> Vec<SignalPolarityObservationCandidate> {
+    let mut observations = Vec::new();
 
     for table in &source_ir.structured_tables {
         if !matches!(table.table_kind, TableKind::SignalDescription) {
@@ -2413,46 +2480,63 @@ fn extract_signal_polarity_from_signal_tables(
                 continue;
             };
 
-            record_signal_polarity(
-                &mut polarity_map,
-                &mut conflicting_signals,
+            observations.push(SignalPolarityObservationCandidate {
                 signal_name,
                 polarity,
-            );
+                source_kind: SignalPolarityEvidenceSourceKind::SignalDescriptionTable,
+                supporting_statement_ids: Vec::new(),
+                supporting_table_ids: vec![table.table_id.clone()],
+            });
         }
     }
 
-    polarity_map
+    observations
 }
 
 fn collect_signal_polarity_facts(
     source_ir: &SourceIr,
     statements: &[ExtractedStatement],
     known_signals: &HashSet<String>,
-) -> HashMap<String, SignalPolarity> {
-    let mut polarity_map = HashMap::new();
-    let mut conflicting_signals = HashSet::new();
+) -> SignalPolarityFactCollection {
+    let mut observations_by_signal =
+        BTreeMap::<String, Vec<SignalPolarityObservationRecord>>::new();
 
-    for (signal_name, polarity) in extract_signal_polarity_from_prose(statements, known_signals) {
-        record_signal_polarity(
-            &mut polarity_map,
-            &mut conflicting_signals,
-            signal_name,
-            polarity,
-        );
+    for observation in extract_signal_polarity_from_prose(statements, known_signals) {
+        record_signal_polarity_observation(&mut observations_by_signal, observation);
     }
-    for (signal_name, polarity) in
-        extract_signal_polarity_from_signal_tables(source_ir, known_signals)
-    {
-        record_signal_polarity(
-            &mut polarity_map,
-            &mut conflicting_signals,
-            signal_name,
-            polarity,
-        );
+    for observation in extract_signal_polarity_from_signal_tables(source_ir, known_signals) {
+        record_signal_polarity_observation(&mut observations_by_signal, observation);
     }
 
-    polarity_map
+    let mut resolved = HashMap::new();
+    let mut conflicts = Vec::new();
+    let mut conflict_counter = 1usize;
+
+    for (signal_name, observations) in observations_by_signal {
+        let polarities = observations
+            .iter()
+            .map(|observation| observation.polarity)
+            .collect::<BTreeSet<_>>();
+        if polarities.len() == 1 {
+            if let Some(polarity) = polarities.iter().next().copied() {
+                resolved.insert(signal_name, polarity);
+            }
+            continue;
+        }
+
+        conflicts.push(SignalPolarityConflictRecord {
+            conflict_id: format!("polarity_conflict_{conflict_counter:04}"),
+            signal_name,
+            observations,
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        conflict_counter += 1;
+    }
+
+    SignalPolarityFactCollection {
+        resolved,
+        conflicts,
+    }
 }
 
 fn signal_name_from_signal_table_row(
@@ -2500,25 +2584,45 @@ fn detect_signal_polarity(text_lower: &str) -> Option<SignalPolarity> {
     }
 }
 
-fn record_signal_polarity(
-    polarity_map: &mut HashMap<String, SignalPolarity>,
-    conflicting_signals: &mut HashSet<String>,
-    signal_name: String,
-    polarity: SignalPolarity,
+fn record_signal_polarity_observation(
+    observations_by_signal: &mut BTreeMap<String, Vec<SignalPolarityObservationRecord>>,
+    observation: SignalPolarityObservationCandidate,
 ) {
-    if conflicting_signals.contains(&signal_name) {
+    let entry = observations_by_signal
+        .entry(observation.signal_name)
+        .or_default();
+    if let Some(existing) = entry.iter_mut().find(|existing| {
+        existing.polarity == observation.polarity && existing.source_kind == observation.source_kind
+    }) {
+        merge_observation_ids(
+            &mut existing.supporting_statement_ids,
+            observation.supporting_statement_ids,
+        );
+        merge_observation_ids(
+            &mut existing.supporting_table_ids,
+            observation.supporting_table_ids,
+        );
         return;
     }
-    match polarity_map.get(&signal_name).copied() {
-        None => {
-            polarity_map.insert(signal_name, polarity);
-        }
-        Some(existing) if existing == polarity => {}
-        Some(_) => {
-            polarity_map.remove(&signal_name);
-            conflicting_signals.insert(signal_name);
-        }
-    }
+
+    let mut record = SignalPolarityObservationRecord {
+        polarity: observation.polarity,
+        source_kind: observation.source_kind,
+        supporting_statement_ids: observation.supporting_statement_ids,
+        supporting_table_ids: observation.supporting_table_ids,
+    };
+    record.supporting_statement_ids.sort();
+    record.supporting_statement_ids.dedup();
+    record.supporting_table_ids.sort();
+    record.supporting_table_ids.dedup();
+    entry.push(record);
+    entry.sort_by_key(|record| (record.source_kind, record.polarity));
+}
+
+fn merge_observation_ids(target: &mut Vec<String>, new_ids: Vec<String>) {
+    target.extend(new_ids);
+    target.sort();
+    target.dedup();
 }
 
 fn apply_signal_polarity_to_constraints(
@@ -4046,6 +4150,7 @@ fn converge_evidence_extractions(
     Vec<ExtractedStatement>,
     Vec<SignalConstraintRecord>,
     Vec<ConditionalRuleRecord>,
+    Vec<SignalPolarityConflictRecord>,
     Vec<ActorSignalRelation>,
 ) {
     let signal_names_from_tables = collect_signal_names_from_tables(source_ir);
@@ -4055,6 +4160,7 @@ fn converge_evidence_extractions(
     let mut final_extracted_statements = Vec::new();
     let mut final_signal_constraints = Vec::new();
     let mut final_conditional_rules = Vec::new();
+    let mut final_signal_polarity_conflicts = Vec::new();
     let mut final_actor_signal_relations = Vec::new();
     let max_passes = source_ir.structured_tables.len().max(1) + 4;
 
@@ -4078,7 +4184,7 @@ fn converge_evidence_extractions(
             &mut constraint_counter,
             &discovered_values,
         ));
-        apply_signal_polarity_to_constraints(&mut signal_constraints, &signal_polarity);
+        apply_signal_polarity_to_constraints(&mut signal_constraints, &signal_polarity.resolved);
         let conditional_rules =
             extract_conditional_rules(&extracted_statements, &mut constraint_counter);
 
@@ -4111,6 +4217,7 @@ fn converge_evidence_extractions(
         final_extracted_statements = extracted_statements;
         final_signal_constraints = signal_constraints;
         final_conditional_rules = conditional_rules;
+        final_signal_polarity_conflicts = signal_polarity.conflicts;
         final_actor_signal_relations = actor_signal_relations;
 
         if new_dynamic_statements.is_empty() {
@@ -4123,6 +4230,7 @@ fn converge_evidence_extractions(
         final_extracted_statements,
         final_signal_constraints,
         final_conditional_rules,
+        final_signal_polarity_conflicts,
         final_actor_signal_relations,
     )
 }
@@ -4974,6 +5082,24 @@ mod tests {
             }),
             "expected conflicting prose/table polarity to keep asserted constraint polarity-neutral"
         );
+        assert_eq!(evidence_ir.signal_polarity_conflicts.len(), 1);
+        let conflict = &evidence_ir.signal_polarity_conflicts[0];
+        assert_eq!(conflict.signal_name, "PRESETN");
+        assert_eq!(conflict.observations.len(), 2);
+        assert!(conflict.observations.iter().any(|observation| matches!(
+            observation.source_kind,
+            super::SignalPolarityEvidenceSourceKind::ProseStatement
+        ) && matches!(
+            observation.polarity,
+            super::SignalPolarity::ActiveLow
+        )));
+        assert!(conflict.observations.iter().any(|observation| matches!(
+            observation.source_kind,
+            super::SignalPolarityEvidenceSourceKind::SignalDescriptionTable
+        ) && matches!(
+            observation.polarity,
+            super::SignalPolarity::ActiveHigh
+        )));
 
         Ok(())
     }

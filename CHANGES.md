@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-04 (explicit polarity-conflict surfacing in EvidenceIR validation)
+
+### Added: typed polarity-conflict records in `EvidenceIR`
+- `EvidenceIR` now persists `signal_polarity_conflicts` when prose and signal-description tables disagree on active-high/active-low semantics for the same anchored signal.
+- This keeps contradictory polarity inspectable instead of only letting it disappear into a polarity-neutral derived constraint.
+
+### Changed: validation now clearly reports polarity disagreement
+- `specforge validate` now prints a dedicated polarity-conflict section for `EvidenceIR`.
+- Validation now emits a warning finding and metric when signal polarity evidence disagrees across sources.
+
+### Added: regression coverage for polarity-conflict reporting
+- Added tests for:
+  - persisting a polarity conflict while keeping the derived constraint neutral
+  - flagging that persisted conflict in `specforge validate`
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 130/130 passed
+
 ## 2026-04-04 (signal-table polarity refinement in convergent evidence)
 
 ### Added: signal-description tables now contribute polarity facts
