@@ -1,5 +1,30 @@
 # CHANGES
 
+## 2026-04-04 (initial multimodal semantic-role grounding)
+
+### Added: visual semantic-role hints in `EvidenceIR`
+- `EvidenceIR` now mines `signal_semantic_hints` from grounded visual captions and VLM timing-diagram annotations.
+- The visual path stays conservative: it only promotes hints when the text implies a role meaning and resolves to exactly one known signal.
+
+### Added: explicit visual provenance for semantic-role hints
+- `SignalSemanticHintRecord` now carries `supporting_visual_evidence_ids`.
+- This keeps caption/VLM-derived role hints tied to concrete visual evidence instead of degrading into anonymous strings.
+
+### Changed: validation now reports multimodal role-hint sources
+- `specforge validate` now emits:
+  - `signal_semantic_hints_from_visual_captions`
+  - `signal_semantic_hints_from_vlm_timing_annotations`
+
+### Added: end-to-end proof that visual grounding affects semantics
+- Added tests for:
+  - caption-grounded semantic-role hints
+  - VLM timing-annotation-grounded semantic-role hints
+  - semantic handshake completion derived from caption-grounded role hints
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 159/159 passed
+
 ## 2026-04-04 (semantic-role conflict carry-through into canonical IR)
 
 ### Added: carried semantic-role conflicts in `SemanticIR` and `IntentIR`

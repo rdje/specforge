@@ -364,6 +364,8 @@
   - handshake completion derivation now consults those semantic tags before falling back to literal signal-name heuristics, so protocol meaning can already outrank spelling when the table evidence is explicit enough
   - `EvidenceIR` now also refreshes those semantic hints from `SourceFact` prose descriptions and alias-grounded prose descriptions, so Form 2 alias learning can feed semantic role inference instead of stopping at constraint reclassification
   - `specforge nlp-enrich` now refreshes `signal_semantic_hints` before persistence whenever alias learning or backannotation changes the evidence state
+  - `EvidenceIR` now also refreshes `signal_semantic_hints` from grounded visual captions and VLM timing-diagram annotations when they explicitly name a single known signal and establish a role meaning
+  - caption/VLM-grounded semantic hints now carry explicit visual-evidence provenance instead of degrading to anonymous text-only hints
 - completion criteria:
   - anchored rescans over tables, prose, and figures are first-class parts of the convergent loop
   - weakly labeled signal-detail tables and additional polarity/timing/value facts can be recovered from known anchors

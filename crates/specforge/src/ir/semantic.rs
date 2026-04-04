@@ -8,7 +8,7 @@ use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::evidence::{
     EvidenceIr, SignalSemanticConflictRecord, SignalSemanticHintRecord, SignalSemanticTag,
-    StatementClass, VisualEvidenceRole, VisualObservationKind,
+    StatementClass, VisualEvidenceRole, VisualObservationKind, parse_visual_observation_json,
 };
 use crate::ir::source::{
     ActorSignalRelation, AutomationConfidence, CandidateInterpretation, RelationKind,
@@ -6420,86 +6420,6 @@ fn extract_records_from_vlm_observations(
     (timing_records, state_records, transition_records)
 }
 
-fn parse_visual_observation_json(text: &str) -> Option<serde_json::Value> {
-    let trimmed = text.trim();
-    serde_json::from_str::<serde_json::Value>(trimmed)
-        .ok()
-        .or_else(|| {
-            extract_markdown_code_block(trimmed)
-                .and_then(|candidate| serde_json::from_str::<serde_json::Value>(candidate).ok())
-        })
-        .or_else(|| {
-            extract_first_json_object(trimmed)
-                .and_then(|candidate| serde_json::from_str::<serde_json::Value>(candidate).ok())
-        })
-}
-
-fn extract_markdown_code_block(text: &str) -> Option<&str> {
-    let (fence_start, fence_len) = text
-        .find("```json")
-        .map(|index| (index, "```json".len()))
-        .or_else(|| text.find("```JSON").map(|index| (index, "```JSON".len())))
-        .or_else(|| text.find("```").map(|index| (index, "```".len())))?;
-
-    let mut inner = &text[fence_start + fence_len..];
-    inner = inner.trim_start_matches(|ch: char| ch.is_ascii_whitespace());
-    if let Some(stripped) = inner.strip_prefix("json") {
-        inner = stripped.trim_start_matches(|ch: char| ch.is_ascii_whitespace());
-    } else if let Some(stripped) = inner.strip_prefix("JSON") {
-        inner = stripped.trim_start_matches(|ch: char| ch.is_ascii_whitespace());
-    }
-
-    if let Some(end) = inner.find("```") {
-        return Some(inner[..end].trim());
-    }
-
-    Some(inner.trim())
-}
-
-fn extract_first_json_object(text: &str) -> Option<&str> {
-    let start = text.find(['{', '['])?;
-    let opening = text[start..].chars().next()?;
-    let closing = match opening {
-        '{' => '}',
-        '[' => ']',
-        _ => return None,
-    };
-
-    let mut depth = 0usize;
-    let mut in_string = false;
-    let mut escaping = false;
-
-    for (offset, ch) in text[start..].char_indices() {
-        if in_string {
-            if escaping {
-                escaping = false;
-                continue;
-            }
-            match ch {
-                '\\' => escaping = true,
-                '"' => in_string = false,
-                _ => {}
-            }
-            continue;
-        }
-
-        match ch {
-            '"' => in_string = true,
-            ch if ch == opening => depth += 1,
-            ch if ch == closing => {
-                depth = depth.saturating_sub(1);
-                if depth == 0 {
-                    let end = start + offset + ch.len_utf8();
-                    return Some(&text[start..end]);
-                }
-            }
-            _ => {}
-        }
-    }
-
-    None
-}
-
 /// Parse a `TimingDiagramExtraction` JSON observation into `TimingConstraintRecord` entries.
 /// Expected format:
 /// `{"signals":[{"name":str,"values":[{"cycle":str,"state":str}]}],"annotations":[str]}`
@@ -8719,6 +8639,102 @@ mod tests {
                 rule.rule_id == "temporal_signal_constraint_sigcon_payload_semantic_handshake"
             })
             .expect("expected temporal rule derived from semantically grounded handshake guard");
+        assert!(rule.antecedents.iter().any(|predicate| {
+            matches!(
+                predicate,
+                super::TemporalPredicateRecord::HandshakeComplete {
+                    valid_signal,
+                    ready_signal,
+                    phase: super::TickPhase::PreTick,
+                } if valid_signal == "XREQ" && ready_signal == "XACK"
+            )
+        }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn derives_handshake_completion_from_visual_caption_semantic_hints() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir
+            .path()
+            .join("temporal_visual_caption_semantic_handshake_guard.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal XREQ is input width 1.\n\n",
+                "Signal XACK is input width 1.\n\n",
+                "Signal PAYLOAD is output width 32.\n\n",
+                "Clock clk.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.visual_assets.push(VisualAsset {
+            asset_id: "figure_xreq".to_string(),
+            asset_kind: VisualAssetKind::Diagram,
+            page_id: Some("page_0001".to_string()),
+            image_path: None,
+            caption_text: Some("Figure 1: XREQ valid timing.".to_string()),
+            caption_source_path: None,
+            source_ref: None,
+            placeholder_text: None,
+            note: None,
+            diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+        });
+        source_ir.visual_assets.push(VisualAsset {
+            asset_id: "figure_xack".to_string(),
+            asset_kind: VisualAssetKind::Diagram,
+            page_id: Some("page_0002".to_string()),
+            image_path: None,
+            caption_text: Some("Figure 2: XACK ready timing.".to_string()),
+            caption_source_path: None,
+            source_ref: None,
+            placeholder_text: None,
+            note: None,
+            diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+        });
+        source_ir.write_to_disk()?;
+
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_payload_visual_semantic_handshake".to_string(),
+            subject_signal: "PAYLOAD".to_string(),
+            constraint_kind: SignalConstraintKind::MustNotChange,
+            target_value: None,
+            condition_text: Some("when XREQ is HIGH and XACK is HIGH".to_string()),
+            negated: false,
+            source_text: "PAYLOAD must not change when XREQ is HIGH and XACK is HIGH.".to_string(),
+            supporting_statement_ids: vec!["stmt_temporal_visual_semantic_handshake".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| {
+                rule.rule_id
+                    == "temporal_signal_constraint_sigcon_payload_visual_semantic_handshake"
+            })
+            .expect("expected temporal rule derived from visual-caption grounded handshake guard");
         assert!(rule.antecedents.iter().any(|predicate| {
             matches!(
                 predicate,

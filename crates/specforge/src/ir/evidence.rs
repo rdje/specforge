@@ -587,6 +587,7 @@ impl EvidenceIr {
             &source_ir,
             &self.extracted_statements,
             &self.signal_alias_map,
+            &self.visual_evidence,
         );
         self.signal_semantic_hints = signal_semantic_hints;
         self.signal_semantic_conflicts = signal_semantic_conflicts;
@@ -720,6 +721,8 @@ pub enum SignalSemanticHintSourceKind {
     SignalDescriptionTable,
     ProseStatement,
     AliasGroundedProseStatement,
+    VisualCaption,
+    VlmTimingDiagramAnnotation,
 }
 
 impl SignalSemanticHintSourceKind {
@@ -728,6 +731,8 @@ impl SignalSemanticHintSourceKind {
             Self::SignalDescriptionTable => "signal_description_table",
             Self::ProseStatement => "prose_statement",
             Self::AliasGroundedProseStatement => "alias_grounded_prose_statement",
+            Self::VisualCaption => "visual_caption",
+            Self::VlmTimingDiagramAnnotation => "vlm_timing_diagram_annotation",
         }
     }
 }
@@ -743,6 +748,8 @@ pub struct SignalSemanticHintRecord {
     pub supporting_statement_ids: Vec<String>,
     #[serde(default)]
     pub supporting_table_ids: Vec<String>,
+    #[serde(default)]
+    pub supporting_visual_evidence_ids: Vec<String>,
     pub automation_confidence: AutomationConfidence,
 }
 
@@ -756,6 +763,8 @@ pub struct SignalSemanticConflictObservationRecord {
     pub supporting_statement_ids: Vec<String>,
     #[serde(default)]
     pub supporting_table_ids: Vec<String>,
+    #[serde(default)]
+    pub supporting_visual_evidence_ids: Vec<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -3060,16 +3069,29 @@ fn synthesize_signal_semantic_hints(
     source_ir: &SourceIr,
     statements: &[ExtractedStatement],
     signal_alias_map: &BTreeMap<String, String>,
+    visual_evidence: &[VisualEvidenceItem],
 ) -> (
     Vec<SignalSemanticHintRecord>,
     Vec<SignalSemanticConflictRecord>,
 ) {
     let mut hints = synthesize_signal_semantic_hints_from_tables(source_ir);
+    let known_signals = collect_known_signal_names_for_semantic_hints(source_ir, statements);
     let mut seen = hints
         .iter()
         .map(signal_semantic_hint_key)
         .collect::<BTreeSet<_>>();
-    for hint in synthesize_signal_semantic_hints_from_prose(statements, signal_alias_map) {
+    for hint in
+        synthesize_signal_semantic_hints_from_prose(statements, signal_alias_map, &known_signals)
+    {
+        if seen.insert(signal_semantic_hint_key(&hint)) {
+            hints.push(hint);
+        }
+    }
+    for hint in synthesize_signal_semantic_hints_from_visual_evidence(
+        visual_evidence,
+        signal_alias_map,
+        &known_signals,
+    ) {
         if seen.insert(signal_semantic_hint_key(&hint)) {
             hints.push(hint);
         }
@@ -3079,22 +3101,38 @@ fn synthesize_signal_semantic_hints(
 }
 
 fn signal_semantic_hint_key(hint: &SignalSemanticHintRecord) -> String {
+    let mut visual_ids = hint.supporting_visual_evidence_ids.clone();
+    visual_ids.sort();
+    visual_ids.dedup();
     format!(
-        "{}:{}:{}:{}",
+        "{}:{}:{}:{}:{}",
         hint.signal_name,
         match hint.source_kind {
             SignalSemanticHintSourceKind::SignalDescriptionTable => "signal_description_table",
             SignalSemanticHintSourceKind::ProseStatement => "prose_statement",
             SignalSemanticHintSourceKind::AliasGroundedProseStatement =>
                 "alias_grounded_prose_statement",
+            SignalSemanticHintSourceKind::VisualCaption => "visual_caption",
+            SignalSemanticHintSourceKind::VlmTimingDiagramAnnotation =>
+                "vlm_timing_diagram_annotation",
         },
         hint.source_text,
+        visual_ids.join(","),
         hint.semantic_tags
             .iter()
             .map(|tag| tag.as_str())
             .collect::<Vec<_>>()
             .join(",")
     )
+}
+
+fn collect_known_signal_names_for_semantic_hints(
+    source_ir: &SourceIr,
+    statements: &[ExtractedStatement],
+) -> HashSet<String> {
+    let mut known_signals = collect_known_signal_names(statements);
+    known_signals.extend(collect_signal_names_from_tables(source_ir));
+    known_signals
 }
 
 fn synthesize_signal_semantic_hints_from_tables(
@@ -3179,6 +3217,7 @@ fn synthesize_signal_semantic_hints_from_tables(
                 source_text: description.to_string(),
                 supporting_statement_ids: Vec::new(),
                 supporting_table_ids: vec![table.table_id.clone()],
+                supporting_visual_evidence_ids: Vec::new(),
                 automation_confidence: AutomationConfidence::Medium,
             });
         }
@@ -3190,10 +3229,10 @@ fn synthesize_signal_semantic_hints_from_tables(
 fn synthesize_signal_semantic_hints_from_prose(
     statements: &[ExtractedStatement],
     signal_alias_map: &BTreeMap<String, String>,
+    known_signals: &HashSet<String>,
 ) -> Vec<SignalSemanticHintRecord> {
     let mut hints = Vec::new();
     let mut seen = BTreeSet::<String>::new();
-    let known_signals = collect_known_signal_names(statements);
 
     for statement in statements {
         if !matches!(statement.class, StatementClass::SourceFact) {
@@ -3205,24 +3244,24 @@ fn synthesize_signal_semantic_hints_from_prose(
             continue;
         }
 
-        let Some((signal_name, source_kind)) = resolve_signal_semantic_target_from_prose(
+        let Some((signal_name, alias_grounded)) = resolve_signal_semantic_target_from_text(
             &statement.text,
-            &known_signals,
+            known_signals,
             signal_alias_map,
         ) else {
             continue;
+        };
+        let source_kind = if alias_grounded {
+            SignalSemanticHintSourceKind::AliasGroundedProseStatement
+        } else {
+            SignalSemanticHintSourceKind::ProseStatement
         };
 
         let key = format!(
             "{}:{}:{}:{}",
             signal_name,
             statement.statement_id,
-            match source_kind {
-                SignalSemanticHintSourceKind::SignalDescriptionTable => "signal_description_table",
-                SignalSemanticHintSourceKind::ProseStatement => "prose_statement",
-                SignalSemanticHintSourceKind::AliasGroundedProseStatement =>
-                    "alias_grounded_prose_statement",
-            },
+            source_kind.as_str(),
             semantic_tags
                 .iter()
                 .map(|tag| tag.as_str())
@@ -3240,11 +3279,119 @@ fn synthesize_signal_semantic_hints_from_prose(
             source_text: statement.text.clone(),
             supporting_statement_ids: vec![statement.statement_id.clone()],
             supporting_table_ids: Vec::new(),
+            supporting_visual_evidence_ids: Vec::new(),
             automation_confidence: AutomationConfidence::Low,
         });
     }
 
     hints
+}
+
+fn synthesize_signal_semantic_hints_from_visual_evidence(
+    visual_evidence: &[VisualEvidenceItem],
+    signal_alias_map: &BTreeMap<String, String>,
+    known_signals: &HashSet<String>,
+) -> Vec<SignalSemanticHintRecord> {
+    let mut hints = Vec::new();
+    let mut seen = BTreeSet::<String>::new();
+
+    for visual_item in visual_evidence {
+        if let Some(caption_text) = visual_item.caption_text.as_deref() {
+            push_visual_signal_semantic_hint(
+                &mut hints,
+                &mut seen,
+                caption_text,
+                SignalSemanticHintSourceKind::VisualCaption,
+                &visual_item.evidence_id,
+                known_signals,
+                signal_alias_map,
+                AutomationConfidence::Low,
+            );
+        }
+
+        for observation in &visual_item.observations {
+            if !matches!(
+                observation.kind,
+                VisualObservationKind::TimingDiagramExtraction
+            ) {
+                continue;
+            }
+            let Some(json_value) = parse_visual_observation_json(&observation.text) else {
+                continue;
+            };
+            let Some(annotations) = json_value
+                .get("annotations")
+                .and_then(|value| value.as_array())
+            else {
+                continue;
+            };
+            for annotation in annotations {
+                let Some(annotation_text) = annotation.as_str() else {
+                    continue;
+                };
+                push_visual_signal_semantic_hint(
+                    &mut hints,
+                    &mut seen,
+                    annotation_text,
+                    SignalSemanticHintSourceKind::VlmTimingDiagramAnnotation,
+                    &visual_item.evidence_id,
+                    known_signals,
+                    signal_alias_map,
+                    AutomationConfidence::Low,
+                );
+            }
+        }
+    }
+
+    hints
+}
+
+fn push_visual_signal_semantic_hint(
+    hints: &mut Vec<SignalSemanticHintRecord>,
+    seen: &mut BTreeSet<String>,
+    source_text: &str,
+    source_kind: SignalSemanticHintSourceKind,
+    visual_evidence_id: &str,
+    known_signals: &HashSet<String>,
+    signal_alias_map: &BTreeMap<String, String>,
+    automation_confidence: AutomationConfidence,
+) {
+    let semantic_tags = infer_signal_semantic_tags_from_description(source_text);
+    if semantic_tags.is_empty() {
+        return;
+    }
+
+    let Some((signal_name, _alias_grounded)) =
+        resolve_signal_semantic_target_from_text(source_text, known_signals, signal_alias_map)
+    else {
+        return;
+    };
+
+    let key = format!(
+        "{}:{}:{}:{}",
+        signal_name,
+        visual_evidence_id,
+        source_kind.as_str(),
+        semantic_tags
+            .iter()
+            .map(|tag| tag.as_str())
+            .collect::<Vec<_>>()
+            .join(",")
+    );
+    if !seen.insert(key) {
+        return;
+    }
+
+    hints.push(SignalSemanticHintRecord {
+        signal_name,
+        semantic_tags,
+        source_kind,
+        source_text: source_text.to_string(),
+        supporting_statement_ids: Vec::new(),
+        supporting_table_ids: Vec::new(),
+        supporting_visual_evidence_ids: vec![visual_evidence_id.to_string()],
+        automation_confidence,
+    });
 }
 
 fn detect_signal_semantic_conflicts(
@@ -3280,6 +3427,7 @@ fn detect_signal_semantic_conflicts(
                     source_text: hint.source_text.clone(),
                     supporting_statement_ids: hint.supporting_statement_ids.clone(),
                     supporting_table_ids: hint.supporting_table_ids.clone(),
+                    supporting_visual_evidence_ids: hint.supporting_visual_evidence_ids.clone(),
                 })
                 .collect(),
             automation_confidence: AutomationConfidence::Medium,
@@ -3290,11 +3438,11 @@ fn detect_signal_semantic_conflicts(
     conflicts
 }
 
-fn resolve_signal_semantic_target_from_prose(
+fn resolve_signal_semantic_target_from_text(
     text: &str,
     known_signals: &HashSet<String>,
     signal_alias_map: &BTreeMap<String, String>,
-) -> Option<(String, SignalSemanticHintSourceKind)> {
+) -> Option<(String, bool)> {
     let lowered = text.to_ascii_lowercase();
     let mut direct_matches = BTreeSet::new();
     for signal_name in known_signals {
@@ -3320,12 +3468,7 @@ fn resolve_signal_semantic_target_from_prose(
     }
 
     let signal_name = resolved.into_iter().next()?;
-    let source_kind = if alias_matches.is_empty() {
-        SignalSemanticHintSourceKind::ProseStatement
-    } else {
-        SignalSemanticHintSourceKind::AliasGroundedProseStatement
-    };
-    Some((signal_name, source_kind))
+    Some((signal_name, !alias_matches.is_empty()))
 }
 
 fn collect_hardware_signal_tokens_anywhere(text: &str) -> BTreeSet<String> {
@@ -4708,6 +4851,84 @@ fn inject_vlm_observations(
     }
 }
 
+pub(crate) fn parse_visual_observation_json(text: &str) -> Option<serde_json::Value> {
+    let trimmed = text.trim();
+    serde_json::from_str::<serde_json::Value>(trimmed)
+        .ok()
+        .or_else(|| {
+            extract_markdown_code_block(trimmed)
+                .and_then(|candidate| serde_json::from_str::<serde_json::Value>(candidate).ok())
+        })
+        .or_else(|| {
+            extract_first_json_object(trimmed)
+                .and_then(|candidate| serde_json::from_str::<serde_json::Value>(candidate).ok())
+        })
+}
+
+fn extract_markdown_code_block(text: &str) -> Option<&str> {
+    let (fence_start, fence_len) = text
+        .find("```json")
+        .map(|index| (index, "```json".len()))
+        .or_else(|| text.find("```JSON").map(|index| (index, "```JSON".len())))
+        .or_else(|| text.find("```").map(|index| (index, "```".len())))?;
+
+    let mut inner = &text[fence_start + fence_len..];
+    inner = inner.trim_start_matches(|ch: char| ch.is_ascii_whitespace());
+    if let Some(stripped) = inner.strip_prefix("json") {
+        inner = stripped.trim_start_matches(|ch: char| ch.is_ascii_whitespace());
+    } else if let Some(stripped) = inner.strip_prefix("JSON") {
+        inner = stripped.trim_start_matches(|ch: char| ch.is_ascii_whitespace());
+    }
+
+    if let Some(end) = inner.find("```") {
+        return Some(inner[..end].trim());
+    }
+
+    Some(inner.trim())
+}
+
+fn extract_first_json_object(text: &str) -> Option<&str> {
+    let start = text.find(['{', '['])?;
+    let opening = text[start..].chars().next()?;
+    let closing = match opening {
+        '{' => '}',
+        '[' => ']',
+        _ => return None,
+    };
+
+    let mut depth = 0usize;
+    let mut in_string = false;
+    let mut escape = false;
+    for (offset, ch) in text[start..].char_indices() {
+        if in_string {
+            if escape {
+                escape = false;
+                continue;
+            }
+            match ch {
+                '\\' => escape = true,
+                '"' => in_string = false,
+                _ => {}
+            }
+            continue;
+        }
+
+        match ch {
+            '"' => in_string = true,
+            ch if ch == opening => depth += 1,
+            ch if ch == closing => {
+                depth = depth.saturating_sub(1);
+                if depth == 0 {
+                    return Some(&text[start..start + offset + ch.len_utf8()]);
+                }
+            }
+            _ => {}
+        }
+    }
+
+    None
+}
+
 fn canonicalize_existing_path(path: &Path) -> Result<PathBuf> {
     if !path.exists() {
         return Err(AppError::MissingPath(path.to_path_buf()));
@@ -5645,6 +5866,130 @@ mod tests {
                 && hint
                     .semantic_tags
                     .contains(&super::SignalSemanticTag::HandshakeReadyLike)
+        }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn visual_captions_produce_semantic_handshake_hints() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("caption_grounded_handshake_hints.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Channel\n",
+                "Signal XREQ is input width 1.\n\n",
+                "Signal XACK is input width 1.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.visual_assets.push(VisualAsset {
+            asset_id: "figure_xreq".to_string(),
+            asset_kind: VisualAssetKind::Diagram,
+            page_id: Some("page_0001".to_string()),
+            image_path: None,
+            caption_text: Some("Figure 1: XREQ valid timing.".to_string()),
+            caption_source_path: None,
+            source_ref: None,
+            placeholder_text: None,
+            note: None,
+            diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+        });
+        source_ir.visual_assets.push(VisualAsset {
+            asset_id: "figure_xack".to_string(),
+            asset_kind: VisualAssetKind::Diagram,
+            page_id: Some("page_0002".to_string()),
+            image_path: None,
+            caption_text: Some("Figure 2: XACK ready timing.".to_string()),
+            caption_source_path: None,
+            source_ref: None,
+            placeholder_text: None,
+            note: None,
+            diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        assert!(evidence_ir.signal_semantic_hints.iter().any(|hint| {
+            hint.signal_name == "XREQ"
+                && matches!(
+                    hint.source_kind,
+                    super::SignalSemanticHintSourceKind::VisualCaption
+                )
+                && hint
+                    .semantic_tags
+                    .contains(&super::SignalSemanticTag::HandshakeValidLike)
+                && !hint.supporting_visual_evidence_ids.is_empty()
+        }));
+        assert!(evidence_ir.signal_semantic_hints.iter().any(|hint| {
+            hint.signal_name == "XACK"
+                && matches!(
+                    hint.source_kind,
+                    super::SignalSemanticHintSourceKind::VisualCaption
+                )
+                && hint
+                    .semantic_tags
+                    .contains(&super::SignalSemanticTag::HandshakeReadyLike)
+                && !hint.supporting_visual_evidence_ids.is_empty()
+        }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn vlm_timing_annotations_produce_semantic_handshake_hints() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("vlm_handshake_hints.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(
+            &source,
+            concat!("# Channel\n", "Signal XACK is input width 1.\n",),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.visual_assets.push(VisualAsset {
+            asset_id: "figure_vlm_xack".to_string(),
+            asset_kind: VisualAssetKind::Diagram,
+            page_id: Some("page_0001".to_string()),
+            image_path: None,
+            caption_text: Some("Figure 3: Transfer timing".to_string()),
+            caption_source_path: None,
+            source_ref: None,
+            placeholder_text: None,
+            note: Some(
+                "vlm_timing_diagram_extraction: ```json\n{\n  \"signals\": [{\"name\": \"XACK\", \"values\": [{\"cycle\": \"T1\", \"state\": \"HIGH\"}]}],\n  \"annotations\": [\n    \"XACK indicates that the subordinate can accept the transfer.\"\n  ]\n}\n```"
+                    .to_string(),
+            ),
+            diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        assert!(evidence_ir.signal_semantic_hints.iter().any(|hint| {
+            hint.signal_name == "XACK"
+                && matches!(
+                    hint.source_kind,
+                    super::SignalSemanticHintSourceKind::VlmTimingDiagramAnnotation
+                )
+                && hint
+                    .semantic_tags
+                    .contains(&super::SignalSemanticTag::HandshakeReadyLike)
+                && !hint.supporting_visual_evidence_ids.is_empty()
         }));
 
         Ok(())

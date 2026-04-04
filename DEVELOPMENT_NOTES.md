@@ -981,3 +981,30 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
   - diagram captions
   - VLM timing/state explanations
   - modality-aware arbitration once multiple grounded role candidates survive into the same canonical signal
+
+## 2026-04-04 - initial multimodal semantic-role grounding
+- the previous role-inference slices were still too text-centric:
+  - signal-description tables worked
+  - direct prose and alias-grounded prose worked
+  - but captions and VLM timing explanations, both first-class evidence sources in this project, still could not contribute to the role surface
+- that was below the intended quality bar for a multimodal protocol compiler
+- `crates/specforge/src/ir/evidence.rs` now refreshes `signal_semantic_hints` from:
+  - grounded visual captions
+  - VLM timing-diagram annotations
+- the new visual path stays intentionally conservative:
+  - it only promotes hints when the caption or annotation implies a handshake-like role meaning
+  - it only accepts the evidence when exactly one known signal can be resolved from the text
+  - VLM timing annotations reuse the same robust fenced/prose-wrapped JSON extraction path that the semantic VLM lift already needed for real Ollama output
+- `SignalSemanticHintRecord` now also carries `supporting_visual_evidence_ids`, so caption/VLM-derived hints keep explicit provenance rather than collapsing into anonymous text
+- `crates/specforge/src/commands/validate.rs` now breaks out:
+  - `signal_semantic_hints_from_visual_captions`
+  - `signal_semantic_hints_from_vlm_timing_annotations`
+- the new multimodal slice is not just stored; it already feeds downstream semantics:
+  - a new end-to-end semantic test shows caption-grounded role hints can derive a typed `HandshakeComplete` predicate
+- validation for this slice:
+  - `cargo fmt --all` passed
+  - `cargo test --manifest-path Cargo.toml` passed with `159/159`
+- the next honest follow-up remains broader multimodal and arbitration depth:
+  - richer actor/role phrasing in normative prose
+  - state-machine/VLM explanation grounding beyond timing annotations
+  - modality-aware arbitration when caption, prose, table, and VLM role candidates disagree

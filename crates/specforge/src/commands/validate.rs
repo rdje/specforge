@@ -298,6 +298,7 @@ fn describe_signal_semantic_conflict(
                 .supporting_statement_ids
                 .iter()
                 .chain(observation.supporting_table_ids.iter())
+                .chain(observation.supporting_visual_evidence_ids.iter())
                 .cloned()
                 .collect::<Vec<_>>();
             refs.sort();
@@ -658,6 +659,15 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             &ir.signal_semantic_hints,
             SignalSemanticHintSourceKind::AliasGroundedProseStatement,
         );
+    let signal_semantic_hints_from_visual_captions = signal_semantic_hints_by_source_kind_count(
+        &ir.signal_semantic_hints,
+        SignalSemanticHintSourceKind::VisualCaption,
+    );
+    let signal_semantic_hints_from_vlm_timing_annotations =
+        signal_semantic_hints_by_source_kind_count(
+            &ir.signal_semantic_hints,
+            SignalSemanticHintSourceKind::VlmTimingDiagramAnnotation,
+        );
 
     println!("=== Statement Classification ===");
     let total = ir.extracted_statements.len();
@@ -718,6 +728,10 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
     println!("    from_signal_description_tables: {signal_semantic_hints_from_tables}");
     println!("    from_prose_statements: {signal_semantic_hints_from_prose}");
     println!("    from_alias_grounded_prose: {signal_semantic_hints_from_alias_grounded_prose}");
+    println!("    from_visual_captions: {signal_semantic_hints_from_visual_captions}");
+    println!(
+        "    from_vlm_timing_annotations: {signal_semantic_hints_from_vlm_timing_annotations}"
+    );
     println!();
 
     println!("=== VLM Observations ===");
@@ -929,6 +943,14 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             metric(
                 "signal_semantic_hints_from_alias_grounded_prose",
                 signal_semantic_hints_from_alias_grounded_prose.to_string(),
+            ),
+            metric(
+                "signal_semantic_hints_from_visual_captions",
+                signal_semantic_hints_from_visual_captions.to_string(),
+            ),
+            metric(
+                "signal_semantic_hints_from_vlm_timing_annotations",
+                signal_semantic_hints_from_vlm_timing_annotations.to_string(),
             ),
             metric("timing_diagram_extractions", timing_obs.to_string()),
             metric("state_machine_extractions", state_obs.to_string()),
@@ -2007,7 +2029,8 @@ mod tests {
     use crate::ir::intent::IntentIr;
     use crate::ir::semantic::SemanticIr;
     use crate::ir::source::{
-        SourceIr, StructuredTableCellRecord, StructuredTableRecord, TableKind,
+        SourceIr, StructuredTableCellRecord, StructuredTableRecord, TableKind, VisualAsset,
+        VisualAssetKind,
     };
 
     fn make_table_cell(text: &str, is_header: bool) -> StructuredTableCellRecord {
@@ -2251,6 +2274,70 @@ mod tests {
         assert_eq!(
             metric_value(&report, "signal_semantic_hints_from_tables"),
             Some("0")
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_evidence_ir_counts_visual_signal_semantic_hints() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("visual_semantic_hints.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Channel\n",
+                "Signal XREQ is input width 1.\n\n",
+                "Signal XACK is input width 1.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.visual_assets.push(VisualAsset {
+            asset_id: "figure_xreq".to_string(),
+            asset_kind: VisualAssetKind::Diagram,
+            page_id: Some("page_0001".to_string()),
+            image_path: None,
+            caption_text: Some("Figure 1: XREQ valid timing.".to_string()),
+            caption_source_path: None,
+            source_ref: None,
+            placeholder_text: None,
+            note: None,
+            diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+        });
+        source_ir.visual_assets.push(VisualAsset {
+            asset_id: "figure_xack".to_string(),
+            asset_kind: VisualAssetKind::Diagram,
+            page_id: Some("page_0002".to_string()),
+            image_path: None,
+            caption_text: Some("Figure 2: Transfer timing".to_string()),
+            caption_source_path: None,
+            source_ref: None,
+            placeholder_text: None,
+            note: Some(
+                "vlm_timing_diagram_extraction: ```json\n{\n  \"signals\": [{\"name\": \"XACK\", \"values\": [{\"cycle\": \"T1\", \"state\": \"HIGH\"}]}],\n  \"annotations\": [\n    \"XACK indicates that the subordinate can accept the transfer.\"\n  ]\n}\n```"
+                    .to_string(),
+            ),
+            diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        let report = validate_evidence_ir(&evidence_ir, "visual_signal_semantic_hints".to_string());
+
+        assert_eq!(metric_value(&report, "signal_semantic_hints"), Some("2"));
+        assert_eq!(
+            metric_value(&report, "signal_semantic_hints_from_visual_captions"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&report, "signal_semantic_hints_from_vlm_timing_annotations"),
+            Some("1")
         );
 
         Ok(())
