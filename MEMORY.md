@@ -24,7 +24,7 @@
 ## Latest committed baseline
 - latest_commit_hash: `cddd9b3`
 - latest_commit_brief_message: `feat(semantic): surface role arbitration state`
-- note: current uncommitted work makes typed handshake derivation respect contested semantic arbitration by blocking literal handshake-name fallback when preserved evidence still disagrees
+- note: current uncommitted work turns blocked handshake-name fallback into explicit residual/validation state so withheld heuristic promotion is visible to users
 
 ## Recent commit chain (last 5)
 - `cddd9b3` feat(semantic): surface role arbitration state
@@ -47,17 +47,20 @@
 - `VALIDATION_SNAPSHOT.md` is now a tracked continuity doc refreshed from persisted validation reports
 
 ## Completed technical work in this session
-- `crates/specforge/src/ir/semantic.rs` now builds a richer handshake-role context for temporal derivation instead of relying only on resolved roles plus raw signal-name fallback
-- signals with non-decisive `semantic_arbitration` now block literal handshake-name fallback, so preserved contested semantic evidence outranks heuristic `VALID` / `READY` spellings during typed `HandshakeComplete` derivation
-- added regression coverage proving that a contested signal like `XVALID` no longer produces a typed handshake-complete predicate just because of its spelling
-- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, and `CHANGES.md` so the handshake-heuristic hardening slice is visible in continuity docs
+- `crates/specforge/src/ir/semantic.rs` now emits `semantic_handshake_name_fallback_blocked` residual decisions when a handshake-shaped signal intentionally blocks literal name fallback because preserved semantic arbitration is still contested
+- `crates/specforge/src/ir/intent.rs` now carries that residual packet forward
+- `crates/specforge/src/commands/validate.rs` now reports `with_blocked_handshake_name_fallback` and emits explicit semantic/intent findings for blocked handshake fallback
+- added regression coverage proving that the residual packet is emitted, carried into `IntentIR`, and reported by both validation stages
+- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, and `CHANGES.md` so the blocked-fallback visibility slice is visible in continuity docs
 - validation ran for this task:
   - `cargo fmt --all` passed
-  - `cargo test --manifest-path Cargo.toml` passed with `168/168`
+  - `cargo test --manifest-path Cargo.toml` passed with `171/171`
 
 ## Current working tree before commit
 - modified tracked files currently include:
   - `crates/specforge/src/ir/semantic.rs`
+  - `crates/specforge/src/ir/intent.rs`
+  - `crates/specforge/src/commands/validate.rs`
   - `README.md`
   - `ROADMAP.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -67,8 +70,8 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the handshake-heuristic hardening slice
-2. continue the semantic-truthfulness program by carrying the same “preserved disagreement outranks heuristic fallback” rule into more downstream semantic consumers beyond typed handshake completion
+1. commit the blocked-fallback visibility slice
+2. continue the semantic-truthfulness program by carrying the same “preserved disagreement outranks heuristic fallback” rule into more downstream semantic consumers beyond typed handshake completion, while keeping withheld promotions explicitly inspectable
 3. keep adapter work de-prioritized until the graph, temporal, arbitration, and evaluation surfaces are materially stronger
 
 ## Remaining engineering gaps after this commit

@@ -2927,6 +2927,34 @@ fn build_residual_decisions(
         });
     }
 
+    let blocked_handshake_fallback_signals =
+        handshake_name_fallback_blocked_signal_names(interfaces);
+    if !blocked_handshake_fallback_signals.is_empty() {
+        packets.push(ResidualDecisionPacket {
+            packet_id: "semantic_handshake_name_fallback_blocked".to_string(),
+            question:
+                "Should handshake-shaped signal names override contested semantic role evidence?"
+                    .to_string(),
+            why_unresolved: format!(
+                "Signals {} look handshake-shaped by name, but preserved semantic arbitration is still non-decisive, so SemanticIR blocks literal VALID/READY fallback instead of promoting a potentially wrong role.",
+                blocked_handshake_fallback_signals.join(", ")
+            ),
+            automation_confidence: AutomationConfidence::Medium,
+            candidate_interpretations: vec![
+                CandidateInterpretation {
+                    interpretation_id: "preserve_contested_semantics".to_string(),
+                    description: "Keep the role unresolved until stronger multimodal evidence or user guidance breaks the tie.".to_string(),
+                    downstream_impact: "Typed temporal handshake predicates stay conservative, but some protocol progress semantics remain deferred.".to_string(),
+                },
+                CandidateInterpretation {
+                    interpretation_id: "trust_name_heuristic".to_string(),
+                    description: "Let the handshake-shaped signal name override the contested semantic evidence.".to_string(),
+                    downstream_impact: "More temporal handshake structure appears immediately, but semantic invention risk increases because spelling outranks preserved disagreement.".to_string(),
+                },
+            ],
+        });
+    }
+
     let overlapping_signals = overlapping_interface_signals(interfaces);
     if !overlapping_signals.is_empty() {
         packets.push(ResidualDecisionPacket {
@@ -6046,6 +6074,20 @@ fn handshake_name_fallback_is_blocked(signal: &InterfaceSignalRecord) -> bool {
         .is_some_and(|arbitration| !arbitration.decisive)
 }
 
+fn handshake_name_fallback_blocked_signal_names(interfaces: &[InterfaceRecord]) -> Vec<String> {
+    interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+        .filter(|signal| {
+            handshake_name_fallback_is_blocked(signal)
+                && classify_handshake_signal_from_name(&signal.signal_name).is_some()
+        })
+        .map(|signal| signal.signal_name.clone())
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect()
+}
+
 fn classify_handshake_signal_from_interface_signal(
     signal: &InterfaceSignalRecord,
 ) -> Option<HandshakeSignalRole> {
@@ -6099,6 +6141,10 @@ fn classify_handshake_signal(
     {
         return None;
     }
+    classify_handshake_signal_from_name(signal_name)
+}
+
+fn classify_handshake_signal_from_name(signal_name: &str) -> Option<HandshakeSignalRole> {
     let normalized = signal_name.to_ascii_lowercase();
     if normalized.contains("valid") {
         Some(HandshakeSignalRole::Valid)
@@ -9704,6 +9750,12 @@ mod tests {
                 super::TemporalPredicateRecord::HandshakeComplete { .. }
             )
         }));
+        assert!(
+            semantic_ir
+                .residual_decisions
+                .iter()
+                .any(|packet| { packet.packet_id == "semantic_handshake_name_fallback_blocked" })
+        );
 
         Ok(())
     }

@@ -324,6 +324,36 @@ fn interface_signals_with_non_decisive_semantic_arbitration_count(
         .count()
 }
 
+fn interface_signals_with_blocked_handshake_name_fallback(
+    interfaces: &[crate::ir::semantic::InterfaceRecord],
+) -> Vec<String> {
+    interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+        .filter(|signal| {
+            signal
+                .semantic_arbitration
+                .as_ref()
+                .is_some_and(|arbitration| !arbitration.decisive)
+                && handshake_name_heuristic_role(&signal.signal_name).is_some()
+        })
+        .map(|signal| signal.signal_name.clone())
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect()
+}
+
+fn handshake_name_heuristic_role(signal_name: &str) -> Option<&'static str> {
+    let normalized = signal_name.to_ascii_lowercase();
+    if normalized.contains("valid") {
+        Some("valid")
+    } else if normalized.contains("ready") {
+        Some("ready")
+    } else {
+        None
+    }
+}
+
 fn interface_signals_with_semantic_grounding_strength_count(
     interfaces: &[crate::ir::semantic::InterfaceRecord],
     grounding_strength: crate::ir::semantic::SemanticGroundingStrength,
@@ -1153,6 +1183,8 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         interface_signals_with_decisive_semantic_arbitration_count(&ir.interfaces);
     let with_non_decisive_semantic_arbitration =
         interface_signals_with_non_decisive_semantic_arbitration_count(&ir.interfaces);
+    let blocked_handshake_name_fallback =
+        interface_signals_with_blocked_handshake_name_fallback(&ir.interfaces);
     let with_resolved_semantic_role =
         interface_signals_with_resolved_semantic_role_count(&ir.interfaces);
     let with_semantic_consensus = interface_signals_with_semantic_consensus_count(&ir.interfaces);
@@ -1223,6 +1255,10 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     println!("  with_semantic_arbitration: {with_semantic_arbitration}");
     println!("  with_decisive_semantic_arbitration: {with_decisive_semantic_arbitration}");
     println!("  with_non_decisive_semantic_arbitration: {with_non_decisive_semantic_arbitration}");
+    println!(
+        "  with_blocked_handshake_name_fallback: {}",
+        blocked_handshake_name_fallback.len()
+    );
     println!("  with_resolved_semantic_role: {with_resolved_semantic_role}");
     println!("  with_semantic_consensus: {with_semantic_consensus}");
     println!(
@@ -1472,6 +1508,18 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             Vec::new(),
         ));
     }
+    if !blocked_handshake_name_fallback.is_empty() {
+        findings.push(finding(
+            "semantic_handshake_name_fallback_blocked_present",
+            ValidationFindingSeverity::Info,
+            "semantic_role_arbitration",
+            format!(
+                "{} handshake-shaped signal(s) intentionally block literal VALID/READY fallback because preserved semantic arbitration is still contested",
+                blocked_handshake_name_fallback.len()
+            ),
+            blocked_handshake_name_fallback.clone(),
+        ));
+    }
     if resolved_semantic_roles_without_consensus > 0 {
         findings.push(finding(
             "semantic_resolved_roles_without_consensus_present",
@@ -1625,6 +1673,10 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             metric(
                 "with_non_decisive_semantic_arbitration",
                 with_non_decisive_semantic_arbitration.to_string(),
+            ),
+            metric(
+                "with_blocked_handshake_name_fallback",
+                blocked_handshake_name_fallback.len().to_string(),
             ),
             metric(
                 "with_resolved_semantic_role",
@@ -1787,6 +1839,8 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         interface_signals_with_decisive_semantic_arbitration_count(&ir.interfaces);
     let with_non_decisive_semantic_arbitration =
         interface_signals_with_non_decisive_semantic_arbitration_count(&ir.interfaces);
+    let blocked_handshake_name_fallback =
+        interface_signals_with_blocked_handshake_name_fallback(&ir.interfaces);
     let with_resolved_semantic_role =
         interface_signals_with_resolved_semantic_role_count(&ir.interfaces);
     let with_semantic_consensus = interface_signals_with_semantic_consensus_count(&ir.interfaces);
@@ -1846,6 +1900,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     println!("  with_semantic_arbitration: {with_semantic_arbitration}");
     println!("  with_decisive_semantic_arbitration: {with_decisive_semantic_arbitration}");
     println!("  with_non_decisive_semantic_arbitration: {with_non_decisive_semantic_arbitration}");
+    println!(
+        "  with_blocked_handshake_name_fallback: {}",
+        blocked_handshake_name_fallback.len()
+    );
     println!("  with_resolved_semantic_role: {with_resolved_semantic_role}");
     println!("  with_semantic_consensus: {with_semantic_consensus}");
     println!(
@@ -2149,6 +2207,18 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             Vec::new(),
         ));
     }
+    if !blocked_handshake_name_fallback.is_empty() {
+        findings.push(finding(
+            "intent_handshake_name_fallback_blocked_present",
+            ValidationFindingSeverity::Info,
+            "semantic_role_arbitration",
+            format!(
+                "{} handshake-shaped signal(s) intentionally block literal VALID/READY fallback because preserved semantic arbitration is still contested",
+                blocked_handshake_name_fallback.len()
+            ),
+            blocked_handshake_name_fallback.clone(),
+        ));
+    }
     if resolved_semantic_roles_without_consensus > 0 {
         findings.push(finding(
             "intent_resolved_roles_without_consensus_present",
@@ -2315,6 +2385,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 with_non_decisive_semantic_arbitration.to_string(),
             ),
             metric(
+                "with_blocked_handshake_name_fallback",
+                blocked_handshake_name_fallback.len().to_string(),
+            ),
+            metric(
                 "with_resolved_semantic_role",
                 with_resolved_semantic_role.to_string(),
             ),
@@ -2444,8 +2518,8 @@ mod tests {
     use crate::ir::intent::IntentIr;
     use crate::ir::semantic::SemanticIr;
     use crate::ir::source::{
-        SourceIr, StructuredTableCellRecord, StructuredTableRecord, TableKind, VisualAsset,
-        VisualAssetKind,
+        SignalConstraintKind, SignalConstraintRecord, SourceIr, StructuredTableCellRecord,
+        StructuredTableRecord, TableKind, VisualAsset, VisualAssetKind,
     };
 
     fn make_table_cell(text: &str, is_header: bool) -> StructuredTableCellRecord {
@@ -2890,6 +2964,106 @@ mod tests {
         assert!(has_finding(
             &report,
             "semantic_non_decisive_semantic_arbitration_present"
+        ));
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_semantic_ir_reports_blocked_handshake_name_fallback() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir
+            .path()
+            .join("semantic_contested_semantic_handshake_guard.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal XVALID is input width 1.\n\n",
+                "Signal XACK is input width 1.\n\n",
+                "Signal PAYLOAD is output width 32.\n\n",
+                "Clock clk.\n\n",
+                "XVALID indicates that the subordinate can accept the transfer.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_contested_semantic_handshake_desc".to_string(),
+            asset_id: "table_contested_semantic_handshake_desc".to_string(),
+            page_id: None,
+            caption_text: Some("Handshake signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Source", true),
+                make_table_cell("Width", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("XVALID", false),
+                    make_table_cell("Requester", false),
+                    make_table_cell("1", false),
+                    make_table_cell(
+                        "Indicates that address and control information are valid for transfer.",
+                        false,
+                    ),
+                ],
+                vec![
+                    make_table_cell("XACK", false),
+                    make_table_cell("Subordinate", false),
+                    make_table_cell("1", false),
+                    make_table_cell(
+                        "Indicates that the subordinate can accept the transfer.",
+                        false,
+                    ),
+                ],
+            ],
+            row_count: 2,
+            col_count: 4,
+        });
+        source_ir.write_to_disk()?;
+
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_payload_contested_semantic_handshake".to_string(),
+            subject_signal: "PAYLOAD".to_string(),
+            constraint_kind: SignalConstraintKind::MustNotChange,
+            target_value: None,
+            condition_text: Some("when XVALID is HIGH and XACK is HIGH".to_string()),
+            negated: false,
+            source_text: "PAYLOAD must not change when XVALID is HIGH and XACK is HIGH."
+                .to_string(),
+            supporting_statement_ids: vec![
+                "stmt_temporal_contested_semantic_handshake".to_string(),
+            ],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let report =
+            validate_semantic_ir(&semantic_ir, "blocked_handshake_name_fallback".to_string());
+        assert_eq!(
+            metric_value(&report, "with_blocked_handshake_name_fallback"),
+            Some("1")
+        );
+        assert!(has_finding(
+            &report,
+            "semantic_handshake_name_fallback_blocked_present"
         ));
 
         Ok(())
@@ -3980,6 +4154,111 @@ mod tests {
         assert!(has_finding(
             &report,
             "intent_non_decisive_semantic_arbitration_present"
+        ));
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_intent_ir_reports_blocked_handshake_name_fallback() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir
+            .path()
+            .join("intent_contested_semantic_handshake_guard.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal XVALID is input width 1.\n\n",
+                "Signal XACK is input width 1.\n\n",
+                "Signal PAYLOAD is output width 32.\n\n",
+                "Clock clk.\n\n",
+                "XVALID indicates that the subordinate can accept the transfer.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_contested_semantic_handshake_desc".to_string(),
+            asset_id: "table_contested_semantic_handshake_desc".to_string(),
+            page_id: None,
+            caption_text: Some("Handshake signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Source", true),
+                make_table_cell("Width", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("XVALID", false),
+                    make_table_cell("Requester", false),
+                    make_table_cell("1", false),
+                    make_table_cell(
+                        "Indicates that address and control information are valid for transfer.",
+                        false,
+                    ),
+                ],
+                vec![
+                    make_table_cell("XACK", false),
+                    make_table_cell("Subordinate", false),
+                    make_table_cell("1", false),
+                    make_table_cell(
+                        "Indicates that the subordinate can accept the transfer.",
+                        false,
+                    ),
+                ],
+            ],
+            row_count: 2,
+            col_count: 4,
+        });
+        source_ir.write_to_disk()?;
+
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_payload_contested_semantic_handshake".to_string(),
+            subject_signal: "PAYLOAD".to_string(),
+            constraint_kind: SignalConstraintKind::MustNotChange,
+            target_value: None,
+            condition_text: Some("when XVALID is HIGH and XACK is HIGH".to_string()),
+            negated: false,
+            source_text: "PAYLOAD must not change when XVALID is HIGH and XACK is HIGH."
+                .to_string(),
+            supporting_statement_ids: vec![
+                "stmt_temporal_contested_semantic_handshake".to_string(),
+            ],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let report = validate_intent_ir(&intent_ir, "blocked_handshake_name_fallback".to_string());
+        assert_eq!(
+            metric_value(&report, "with_blocked_handshake_name_fallback"),
+            Some("1")
+        );
+        assert!(has_finding(
+            &report,
+            "intent_handshake_name_fallback_blocked_present"
         ));
 
         Ok(())

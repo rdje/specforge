@@ -904,6 +904,121 @@ mod tests {
     }
 
     #[test]
+    fn preserves_blocked_handshake_fallback_residual_decisions_in_intent_ir() -> Result<()> {
+        use crate::ir::source::{
+            ContentSectionRecord, SectionKind, SignalConstraintKind, SignalConstraintRecord,
+        };
+
+        let tempdir = tempdir()?;
+        let source = tempdir
+            .path()
+            .join("intent_contested_semantic_handshake_guard.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal XVALID is input width 1.\n\n",
+                "Signal XACK is input width 1.\n\n",
+                "Signal PAYLOAD is output width 32.\n\n",
+                "Clock clk.\n\n",
+                "XVALID indicates that the subordinate can accept the transfer.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.document_sections.push(ContentSectionRecord {
+            section_id: "sec_0001_channel_signals".to_string(),
+            title: "Channel signals".to_string(),
+            heading_level: 2,
+            page_id: None,
+            source_ref: None,
+            reading_order: 1,
+            section_kind: SectionKind::SignalDescription,
+        });
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_contested_semantic_handshake_desc".to_string(),
+            asset_id: "table_contested_semantic_handshake_desc".to_string(),
+            page_id: None,
+            caption_text: Some("Handshake signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Source", true),
+                make_table_cell("Width", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("XVALID", false),
+                    make_table_cell("Requester", false),
+                    make_table_cell("1", false),
+                    make_table_cell(
+                        "Indicates that address and control information are valid for transfer.",
+                        false,
+                    ),
+                ],
+                vec![
+                    make_table_cell("XACK", false),
+                    make_table_cell("Subordinate", false),
+                    make_table_cell("1", false),
+                    make_table_cell(
+                        "Indicates that the subordinate can accept the transfer.",
+                        false,
+                    ),
+                ],
+            ],
+            row_count: 2,
+            col_count: 4,
+        });
+        source_ir.write_to_disk()?;
+
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_payload_contested_semantic_handshake".to_string(),
+            subject_signal: "PAYLOAD".to_string(),
+            constraint_kind: SignalConstraintKind::MustNotChange,
+            target_value: None,
+            condition_text: Some("when XVALID is HIGH and XACK is HIGH".to_string()),
+            negated: false,
+            source_text: "PAYLOAD must not change when XVALID is HIGH and XACK is HIGH."
+                .to_string(),
+            supporting_statement_ids: vec![
+                "stmt_temporal_contested_semantic_handshake".to_string(),
+            ],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        assert!(
+            intent_ir
+                .residual_decisions
+                .iter()
+                .any(|packet| { packet.packet_id == "semantic_handshake_name_fallback_blocked" })
+        );
+
+        Ok(())
+    }
+
+    #[test]
     fn carries_typed_interface_and_control_fragments_into_intent_ir() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("comb_dt.md");

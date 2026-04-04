@@ -1184,3 +1184,24 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 - validation for this slice:
   - `cargo fmt --all` passed
   - `cargo test --manifest-path Cargo.toml` passed with `168/168`
+
+## 2026-04-05 - blocked handshake fallback is now explicit residual/validation state
+- after the handshake-fallback hardening landed, one usability gap remained:
+  - the temporal layer behaved more honestly, but a user still had to infer from missing `HandshakeComplete` predicates that a handshake-shaped signal had been intentionally withheld
+  - that was too implicit for the project quality bar because withheld heuristic promotion should be inspectable, not just silently absent
+- `crates/specforge/src/ir/semantic.rs` now emits `semantic_handshake_name_fallback_blocked` residual decisions when a signal looks handshake-shaped by name but preserved `semantic_arbitration` is still non-decisive
+- `crates/specforge/src/commands/validate.rs` now reports:
+  - `with_blocked_handshake_name_fallback`
+  - `semantic_handshake_name_fallback_blocked_present`
+  - `intent_handshake_name_fallback_blocked_present`
+- that makes the system say, explicitly:
+  - this signal looked like a `VALID` / `READY` candidate by name
+  - preserved evidence still disagreed
+  - so the heuristic promotion was intentionally withheld
+- regression coverage now proves:
+  - `SemanticIR` emits the new residual decision packet
+  - `IntentIR` carries that packet forward
+  - both semantic and intent validation report the blocked-fallback state explicitly
+- validation for this slice:
+  - `cargo fmt --all` passed
+  - `cargo test --manifest-path Cargo.toml` passed with `171/171`

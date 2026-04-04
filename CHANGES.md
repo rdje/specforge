@@ -1,5 +1,27 @@
 # CHANGES
 
+## 2026-04-05 (blocked handshake fallback is now explicit residual state)
+
+### Added: residual surfacing for intentionally blocked handshake promotion
+- `SemanticIR` now emits a `semantic_handshake_name_fallback_blocked` residual decision when a signal looks handshake-shaped by name but preserved semantic arbitration is still contested.
+- `IntentIR` carries that residual packet forward unchanged.
+
+### Added: validation visibility for blocked handshake fallback
+- `specforge validate` now reports:
+  - `with_blocked_handshake_name_fallback`
+- It also emits explicit semantic and intent findings when handshake-shaped signals intentionally block literal `VALID` / `READY` fallback.
+
+### Added: regression coverage for blocked fallback visibility
+- Added assertions proving:
+  - the semantic residual packet is emitted
+  - the intent stage carries it forward
+  - semantic and intent validation both report the blocked-fallback state
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 171/171 passed
+
+
 ## 2026-04-05 (contested semantic evidence outranks handshake-name heuristics)
 
 ### Changed: temporal handshake derivation now respects contested semantic arbitration
