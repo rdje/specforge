@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-04-04 (compound temporal antecedents in typed temporal rules)
+
+### Added: conjunctive temporal guards now survive as multiple typed antecedents
+- `parse_temporal_condition_predicates()` now preserves compound guards like `when HREADY is LOW and HSEL is HIGH` as multiple antecedent predicates when each clause grounds to a known signal.
+- This means the typed temporal layer no longer drops half of a conjunctive protocol precondition during semantic lift.
+
+### Changed: validation now reports multi-predicate temporal guard coverage
+- `specforge validate` now reports `temporal_rules_with_multi_predicate_antecedents` for `SemanticIR` and `IntentIR`.
+- This gives the live validation surface an explicit signal that conjunctive temporal guards are surviving into the canonical IR.
+
+### Added: regression coverage for compound temporal guards
+- Added end-to-end tests for:
+  - deriving multi-predicate antecedents from a compound temporal guard in `SemanticIR`
+  - carrying those antecedents into `IntentIR`
+  - validation metrics for multi-predicate temporal antecedents
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 124/124 passed
+
 ## 2026-04-04 (actor-grounded stability semantics in temporal rules)
 
 ### Added: actor-relative stability predicates in the temporal layer

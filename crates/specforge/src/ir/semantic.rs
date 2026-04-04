@@ -5200,30 +5200,93 @@ fn parse_temporal_condition_predicates(
         .trim_start_matches("while ")
         .trim_start_matches("While ")
         .trim();
-    let Some(signal_name) = find_known_signal_name(normalized, known_signals) else {
+    let mut seen = BTreeSet::new();
+    split_temporal_condition_clauses(normalized, known_signals)
+        .into_iter()
+        .filter_map(|clause| parse_temporal_condition_clause(&clause, known_signals))
+        .filter(|predicate| {
+            serde_json::to_string(predicate)
+                .map(|key| seen.insert(key))
+                .unwrap_or(true)
+        })
+        .collect()
+}
+
+fn split_temporal_condition_clauses(text: &str, known_signals: &BTreeSet<String>) -> Vec<String> {
+    let mut segments = text
+        .split(',')
+        .flat_map(|segment| segment.split("&&"))
+        .map(str::trim)
+        .filter(|segment| !segment.is_empty())
+        .map(ToOwned::to_owned)
+        .collect::<Vec<_>>();
+
+    if segments.is_empty() {
         return Vec::new();
-    };
-    let value = if contains_phrase_case_insensitive(normalized, "LOW") {
+    }
+
+    let mut clauses = Vec::new();
+    for segment in segments.drain(..) {
+        clauses.extend(split_temporal_condition_segment_on_and(
+            &segment,
+            known_signals,
+        ));
+    }
+    clauses
+}
+
+fn split_temporal_condition_segment_on_and(
+    text: &str,
+    known_signals: &BTreeSet<String>,
+) -> Vec<String> {
+    let lowered = text.to_ascii_lowercase();
+    if !lowered.contains(" and ") {
+        return vec![text.trim().to_string()];
+    }
+
+    let candidate_parts = lowered.match_indices(" and ").map(|(index, _)| index).fold(
+        (Vec::new(), 0usize),
+        |(mut parts, start), index| {
+            parts.push(text[start..index].trim().to_string());
+            (parts, index + 5)
+        },
+    );
+    let (mut parts, last_start) = candidate_parts;
+    parts.push(text[last_start..].trim().to_string());
+
+    let all_parts_are_signal_anchored = parts.len() > 1
+        && parts
+            .iter()
+            .all(|part| !part.is_empty() && find_known_signal_name(part, known_signals).is_some());
+    if all_parts_are_signal_anchored {
+        parts
+    } else {
+        vec![text.trim().to_string()]
+    }
+}
+
+fn parse_temporal_condition_clause(
+    text: &str,
+    known_signals: &BTreeSet<String>,
+) -> Option<TemporalPredicateRecord> {
+    let signal_name = find_known_signal_name(text, known_signals)?;
+    let value = if contains_phrase_case_insensitive(text, "LOW") {
         Some("LOW".to_string())
-    } else if contains_phrase_case_insensitive(normalized, "HIGH") {
+    } else if contains_phrase_case_insensitive(text, "HIGH") {
         Some("HIGH".to_string())
-    } else if contains_phrase_case_insensitive(normalized, "asserted") {
+    } else if contains_phrase_case_insensitive(text, "asserted") {
         Some("ASSERTED".to_string())
-    } else if contains_phrase_case_insensitive(normalized, "deasserted") {
+    } else if contains_phrase_case_insensitive(text, "deasserted") {
         Some("DEASSERTED".to_string())
     } else {
-        extract_symbolic_value(normalized, Some(&signal_name))
-    };
+        extract_symbolic_value(text, Some(&signal_name))
+    }?;
 
-    value
-        .map(|value| {
-            vec![TemporalPredicateRecord::SignalValue {
-                signal_name,
-                value,
-                phase: TickPhase::PreTick,
-            }]
-        })
-        .unwrap_or_default()
+    Some(TemporalPredicateRecord::SignalValue {
+        signal_name,
+        value,
+        phase: TickPhase::PreTick,
+    })
 }
 
 fn temporal_consequents_from_signal_constraint(
@@ -7558,6 +7621,85 @@ mod tests {
                     from_phase: super::TickPhase::PreTick,
                     to_phase: super::TickPhase::PostTick,
                 } if signal_name == "PREADY"
+            )
+        }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn derives_multi_predicate_antecedents_from_compound_guard() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("temporal_compound_guard.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal HREADY is input width 1.\n\n",
+                "Signal HSEL is input width 1.\n\n",
+                "Signal HTRANS is output width 2.\n\n",
+                "Clock clk.\n\n",
+                "The Manager drives HTRANS.\n\n",
+                "The Subordinate reads HTRANS.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_htrans_compound_guard".to_string(),
+            subject_signal: "HTRANS".to_string(),
+            constraint_kind: SignalConstraintKind::MustNotChange,
+            target_value: None,
+            condition_text: Some("when HREADY is LOW and HSEL is HIGH".to_string()),
+            negated: false,
+            source_text: "HTRANS must not change when HREADY is LOW and HSEL is HIGH.".to_string(),
+            supporting_statement_ids: vec!["stmt_temporal_compound_guard".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| rule.rule_id == "temporal_signal_constraint_sigcon_htrans_compound_guard")
+            .expect("expected temporal rule derived from compound guard");
+        assert_eq!(rule.antecedents.len(), 2);
+        assert!(rule.antecedents.iter().any(|predicate| {
+            matches!(
+                predicate,
+                super::TemporalPredicateRecord::SignalValue {
+                    signal_name,
+                    value,
+                    phase: super::TickPhase::PreTick,
+                } if signal_name == "HREADY" && value == "LOW"
+            )
+        }));
+        assert!(rule.antecedents.iter().any(|predicate| {
+            matches!(
+                predicate,
+                super::TemporalPredicateRecord::SignalValue {
+                    signal_name,
+                    value,
+                    phase: super::TickPhase::PreTick,
+                } if signal_name == "HSEL" && value == "HIGH"
             )
         }));
 

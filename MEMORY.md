@@ -22,20 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `25c55e4`
-- latest_commit_brief_message: `feat(semantic): ground temporal rules in actors`
-- note: current uncommitted work adds actor-grounded stability predicates to the typed temporal-rule layer, updates validation to count them as actor-grounded temporal evidence, and syncs the continuity docs to that state
+- latest_commit_hash: `f8b3f29`
+- latest_commit_brief_message: `feat(semantic): ground stability rules in actors`
+- note: current uncommitted work preserves compound temporal guards as multi-predicate antecedents in the typed temporal-rule layer, updates validation to count that richer guard surface explicitly, and syncs the continuity docs to that state
 
 ## Recent commit chain (last 5)
+- `f8b3f29` feat(semantic): ground stability rules in actors
 - `25c55e4` feat(semantic): ground temporal rules in actors
 - `9f0c2b0` feat(semantic): recover temporal cycle windows
 - `8bbfe1f` feat(semantic): add typed temporal rules
 - `fbd0310` feat(validation): score direction from graph first
-- `ddd2cac` docs: capture multimodal extraction steering
-- `1064bec` feat(converge): default to full ollama loop
-- `894c538` feat(validation): project reports into live docs
-- `fc66933` feat(ir): preserve kg and backannotate validation
-- `e8aae43` feat(core): add convergent IR pipeline loop
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -47,16 +43,16 @@
 - `VALIDATION_SNAPSHOT.md` is now a tracked continuity doc refreshed from persisted validation reports
 
 ## Completed technical work in this session
-- the typed temporal-rule layer now emits `ActorMaintainsSignalStable` for stable/hold rules when the structural KG resolves a unique producer
-- `specforge validate` now counts actor-grounded stability predicates as part of `temporal_rules_with_actor_grounding`
+- the typed temporal-rule layer now preserves compound guards like `when HREADY is LOW and HSEL is HIGH` as multiple antecedent predicates when each clause anchors to a known signal
+- `specforge validate` now reports `temporal_rules_with_multi_predicate_antecedents` for `SemanticIR` and `IntentIR`
 - added regression tests for:
-  - actor-grounded stability derivation from stable constraints
-  - actor-grounded stability carry-through into `IntentIR`
-  - validation metrics for actor-grounded stability rules
-- synced the roadmap/status/analysis/README/change docs so future sessions know the temporal layer now keeps producer responsibility for stability rules too
+  - multi-predicate temporal antecedent derivation in `SemanticIR`
+  - multi-predicate temporal antecedent carry-through into `IntentIR`
+  - validation metrics for multi-predicate temporal antecedents
+- synced the roadmap/status/analysis/README/change docs so future sessions know compound temporal guards now survive into the canonical temporal layer
 - validation ran for this task:
   - `cargo fmt --all` passed
-  - `cargo test --manifest-path Cargo.toml` passed with 121 tests
+  - `cargo test --manifest-path Cargo.toml` passed with 124 tests
 
 ## Current working tree before commit
 - modified tracked files currently include:
@@ -73,9 +69,9 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the actor-grounded stability slice; do not stage `generated/`
+1. commit the compound temporal antecedent slice; do not stage `generated/`
 2. continue the remaining `R15` slice by moving direct downstream `direction_hint` consumers onto actor-relative graph semantics
-3. deepen `R15b` with multi-predicate temporal composition and contradiction detection before moving on to `R15c`
+3. deepen `R15b` with contradiction detection and temporal arbitration before moving on to `R15c`
 
 ## Remaining engineering gaps after this commit
 - remaining actor-relative direction modeling in `SemanticIR` / `IntentIR` (`R15`)
@@ -95,4 +91,4 @@
 4. read `ROADMAP.md`
 5. read `RUST_CODEBASE_ANALYSIS.md`
 6. inspect `git --no-pager status --short`
-7. continue with the remaining graph-first `R15` consumer migration and the next temporal-composition slice unless the user redirects
+7. continue with the remaining graph-first `R15` consumer migration and the next contradiction/arbitration temporal slice unless the user redirects

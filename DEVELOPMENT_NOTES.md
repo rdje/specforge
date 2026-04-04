@@ -535,6 +535,32 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 ### Remaining follow-up
 - multi-predicate antecedents, richer temporal composition, and contradiction/arbitration across actor-grounded temporal rules are still the next meaningful `R15b` deepening steps
 
+## Compound temporal antecedents in typed temporal rules (2026-04-04)
+
+### Why this slice landed now
+- the temporal layer had started to capture edge-relative value/stability obligations, but compound guards were still being flattened to a single partial condition during semantic lift
+- that was a real semantic loss for protocols, because many obligations are conjunctive rather than unary: `when HREADY is LOW and HSEL is HIGH` should survive as two grounded preconditions, not one half-parsed hint
+- the next honest `R15b` step was therefore to preserve conjunctive guards without over-claiming full contradiction solving yet
+
+### Implementation shape
+- `crates/specforge/src/ir/semantic.rs` now splits compound temporal guard text on conjunctions only when each resulting clause is anchored to a known signal
+- the temporal layer remains conservative: ambiguous `and` usage that cannot be grounded clause-by-clause stays unsplit rather than inventing structure
+- `parse_temporal_condition_predicates()` now returns multiple `SignalValue` antecedents for compound guards like `when HREADY is LOW and HSEL is HIGH`
+- `IntentIR` carries those richer antecedent vectors forward unchanged as part of the canonical temporal-rule surface
+
+### Validation
+- `crates/specforge/src/commands/validate.rs` now reports `temporal_rules_with_multi_predicate_antecedents`
+- added end-to-end tests for:
+  - deriving multi-predicate antecedents in `SemanticIR`
+  - carrying them into `IntentIR`
+  - validating that the richer temporal guard surface is counted explicitly
+- `cargo fmt --all` passed
+- `cargo test --manifest-path Cargo.toml` now passes with 124 tests
+
+### Remaining follow-up
+- contradiction detection and cross-modality arbitration are still the next major `R15b` steps
+- the current compound-guard lift is intentionally conjunctive-only; disjunctive and more symbolic temporal composition still need a first-class model
+
 ## Documentation surface currently steering the implementation
 - `README.md`
   - single entry point and quick orientation
