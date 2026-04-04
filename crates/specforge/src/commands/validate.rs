@@ -331,11 +331,13 @@ fn interface_signals_with_blocked_handshake_name_fallback(
         .iter()
         .flat_map(|interface| interface.signal_records.iter())
         .filter(|signal| {
-            signal
-                .semantic_arbitration
-                .as_ref()
-                .is_some_and(|arbitration| !arbitration.decisive)
-                && handshake_name_heuristic_role(&signal.signal_name).is_some()
+            handshake_name_heuristic_role(&signal.signal_name).is_some()
+                && (signal
+                    .semantic_arbitration
+                    .as_ref()
+                    .is_some_and(|arbitration| !arbitration.decisive)
+                    || (signal.resolved_semantic_role.is_some()
+                        && signal.semantic_consensus.is_none()))
         })
         .map(|signal| signal.signal_name.clone())
         .collect::<BTreeSet<_>>()
@@ -1514,7 +1516,7 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             ValidationFindingSeverity::Info,
             "semantic_role_arbitration",
             format!(
-                "{} handshake-shaped signal(s) intentionally block literal VALID/READY fallback because preserved semantic arbitration is still contested",
+                "{} handshake-shaped signal(s) intentionally block literal VALID/READY fallback because their preserved semantic role state is still contested or only provisional",
                 blocked_handshake_name_fallback.len()
             ),
             blocked_handshake_name_fallback.clone(),
@@ -2213,7 +2215,7 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             ValidationFindingSeverity::Info,
             "semantic_role_arbitration",
             format!(
-                "{} handshake-shaped signal(s) intentionally block literal VALID/READY fallback because preserved semantic arbitration is still contested",
+                "{} handshake-shaped signal(s) intentionally block literal VALID/READY fallback because their preserved semantic role state is still contested or only provisional",
                 blocked_handshake_name_fallback.len()
             ),
             blocked_handshake_name_fallback.clone(),
@@ -4066,6 +4068,97 @@ mod tests {
         assert!(has_finding(
             &report,
             "intent_resolved_roles_without_consensus_present"
+        ));
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_intent_ir_reports_blocked_handshake_fallback_for_provisional_roles() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal XREQ is output width 1.\n\n",
+                "Signal XACK is input width 1.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_signal_semantic_tags".to_string(),
+            asset_id: "table_signal_semantic_tags".to_string(),
+            page_id: None,
+            caption_text: Some("Handshake signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("XREQ", false),
+                    make_table_cell(
+                        "Indicates that address and control information are valid for transfer.",
+                        false,
+                    ),
+                ],
+                vec![
+                    make_table_cell("XACK", false),
+                    make_table_cell(
+                        "Indicates that the subordinate can accept the transfer.",
+                        false,
+                    ),
+                ],
+            ],
+            row_count: 2,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let mut intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+        let xreq = intent_ir
+            .interfaces
+            .iter_mut()
+            .flat_map(|interface| interface.signal_records.iter_mut())
+            .find(|signal| signal.signal_name == "XREQ")
+            .expect("expected XREQ interface signal");
+        xreq.signal_name = "XVALID".to_string();
+        xreq.semantic_consensus = None;
+
+        let report = validate_intent_ir(
+            &intent_ir,
+            "blocked_handshake_fallback_for_provisional_roles".to_string(),
+        );
+        assert_eq!(
+            metric_value(&report, "with_blocked_handshake_name_fallback"),
+            Some("1")
+        );
+        assert!(has_finding(
+            &report,
+            "intent_handshake_name_fallback_blocked_present"
         ));
 
         Ok(())

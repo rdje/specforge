@@ -1223,3 +1223,23 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 - validation for this slice:
   - `cargo fmt --all` passed
   - `cargo test --manifest-path Cargo.toml` passed with `173/173`
+
+## 2026-04-05 - provisional semantic roles no longer drive typed handshake semantics
+- after making fallback-only semantic roles explicit residual/assumption state, one consumer still remained too trusting:
+  - the handshake-role context could still read `resolved_semantic_role` directly even when no preserved `semantic_consensus` existed
+  - that meant provisional fallback-only meaning could still shape typed `HandshakeComplete` semantics more strongly than the truthfulness contract allowed
+- `crates/specforge/src/ir/semantic.rs` now hardens that path:
+  - typed handshake-role recovery only trusts observation-backed `semantic_consensus`
+  - fallback-only resolved roles no longer populate canonical handshake-role context by themselves
+  - handshake-shaped signals with provisional fallback-only roles now also block raw name fallback, not just contested-arbitration cases
+- `crates/specforge/src/commands/validate.rs` now reports that blocked fallback state for handshake-shaped provisional-role cases too, so the user can see when spelling was intentionally refused because role grounding stayed weaker than consensus
+- this is the stronger semantic shape:
+  - consensus-backed role meaning can drive typed handshake semantics
+  - provisional fallback-only meaning remains visible but does not get promoted into stronger protocol events silently
+  - spelling can still help when no richer semantic state exists, but it no longer overrides either contested or provisional role evidence
+- regression coverage now proves:
+  - provisional fallback-only semantic roles do not drive handshake-role context
+  - handshake-shaped provisional-role signals are counted as blocked name-fallback cases during validation
+- validation for this slice:
+  - `cargo fmt --all` passed
+  - `cargo test --manifest-path Cargo.toml` passed with `175/175`

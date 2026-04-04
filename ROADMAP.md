@@ -374,6 +374,7 @@
   - `SemanticIR` / `IntentIR` now also carry an explicit per-signal `semantic_consensus` summary for observation-backed role meanings, including supporting source kinds, observation count, and strongest supporting automation confidence, and validation now flags any resolved role that still lacks that richer consensus profile
   - `specforge validate` now also reports decisive vs non-decisive semantic arbitration explicitly, so unresolved role competition is visible to users as a first-class canonical state rather than hidden behind absent resolved roles
   - fallback-only resolved semantic roles now also surface as an explicit `semantic_resolved_role_without_consensus` residual decision in `SemanticIR`, and `IntentIR` adds a matching assumption so provisional meaning is visible even before a validator runs
+  - typed handshake-role recovery now only trusts observation-backed semantic consensus; fallback-only resolved roles no longer drive canonical handshake-role classification, and handshake-shaped signals with provisional role state now block raw name fallback too
 - completion criteria:
   - anchored rescans over tables, prose, and figures are first-class parts of the convergent loop
   - weakly labeled signal-detail tables and additional polarity/timing/value facts can be recovered from known anchors
@@ -381,6 +382,7 @@
   - handshake, role, and timing semantics no longer depend only on literal signal naming when the document provides enough grounded evidence to infer the same meaning
   - literal handshake-name heuristics do not override preserved contested semantic evidence
   - provisional fallback-only semantic roles do not hide behind a silent canonical winner; they remain explicit residual/assumption state until stronger grounding arrives
+  - provisional fallback-only semantic roles also do not silently drive typed handshake semantics until observation-backed consensus exists
 
 ### R15d Evidence arbitration and cross-modality conflict resolution
 - status: In Progress

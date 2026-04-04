@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-05 (provisional semantic roles no longer drive typed handshake recovery)
+
+### Changed: handshake-role recovery now requires observation-backed consensus
+- `SemanticIR` no longer lets fallback-only resolved semantic roles populate the canonical handshake-role context by themselves.
+- Typed handshake-role recovery now trusts observation-backed `semantic_consensus` instead of any resolved role value that still lacks preserved grounding.
+
+### Changed: provisional fallback-only role state now blocks handshake name fallback too
+- Handshake-shaped signals with fallback-only provisional roles now block literal `VALID` / `READY` name fallback, not only signals with contested semantic arbitration.
+- `specforge validate` now reports those blocked fallback cases under the existing handshake-fallback metric/finding surface.
+
+### Added: regression coverage for provisional-role handshake blocking
+- Added assertions proving:
+  - provisional fallback-only semantic roles do not populate canonical handshake-role context
+  - handshake-shaped provisional-role signals are reported as blocked name-fallback cases in validation
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 175/175 passed
+
 ## 2026-04-05 (fallback-only semantic roles are now explicit provisional state)
 
 ### Added: residual surfacing for resolved semantic roles without consensus

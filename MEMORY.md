@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `29107c8`
-- latest_commit_brief_message: `feat(semantic): surface blocked handshake fallback`
-- note: current uncommitted work turns fallback-only resolved semantic roles into explicit residual/assumption state so provisional canonical meaning is visible before validation runs
+- latest_commit_hash: `4ad132b`
+- latest_commit_brief_message: `feat(semantic): surface provisional role residuals`
+- note: current uncommitted work hardens handshake-role consumers so fallback-only provisional semantic roles no longer drive typed handshake recovery and handshake-shaped provisional-role signals now block raw name fallback too
 
 ## Recent commit chain (last 5)
+- `4ad132b` feat(semantic): surface provisional role residuals
 - `29107c8` feat(semantic): surface blocked handshake fallback
 - `99c93bb` feat(semantic): block handshake fallback on contested roles
 - `cddd9b3` feat(semantic): surface role arbitration state
 - `98083b8` feat(semantic): preserve role candidates
-- `63e2c51` feat(semantic): persist role consensus summaries
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -43,18 +43,19 @@
 - `VALIDATION_SNAPSHOT.md` is now a tracked continuity doc refreshed from persisted validation reports
 
 ## Completed technical work in this session
-- `crates/specforge/src/ir/semantic.rs` now emits `semantic_resolved_role_without_consensus` residual decisions when a signal still carries a resolved semantic role without preserved observation-backed consensus
-- `crates/specforge/src/ir/intent.rs` now turns that carried residual into `assumption_semantic_role_without_consensus`, keeping provisional canonical meaning explicit in `IntentIR`
-- added regression coverage proving that the semantic residual packet is emitted and that `IntentIR` carries it forward and emits the matching assumption
-- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, and `CHANGES.md` so the provisional-role visibility slice is visible in continuity docs
+- `crates/specforge/src/ir/semantic.rs` now requires observation-backed `semantic_consensus` before a signal can populate the canonical handshake-role context
+- handshake-shaped signals with fallback-only provisional roles now block literal name fallback too, so spelling no longer silently re-promotes weaker role meaning into typed handshake semantics
+- `crates/specforge/src/commands/validate.rs` now reports blocked handshake fallback for those provisional-role cases under the existing handshake-fallback surface
+- added regression coverage proving that provisional roles do not drive handshake-role context and that validation reports the blocked fallback case
+- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, and `CHANGES.md` so the stricter handshake-consumer rule is visible in continuity docs
 - validation ran for this task:
   - `cargo fmt --all` passed
-  - `cargo test --manifest-path Cargo.toml` passed with `173/173`
+  - `cargo test --manifest-path Cargo.toml` passed with `175/175`
 
 ## Current working tree before commit
 - modified tracked files currently include:
   - `crates/specforge/src/ir/semantic.rs`
-  - `crates/specforge/src/ir/intent.rs`
+  - `crates/specforge/src/commands/validate.rs`
   - `README.md`
   - `ROADMAP.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -65,8 +66,8 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the provisional semantic-role visibility slice
-2. continue the semantic-truthfulness program by carrying the same “provisional meaning must stay explicit” rule into more downstream semantic consumers and arbitration surfaces
+1. commit the stricter handshake-consumer slice
+2. continue the semantic-truthfulness program by carrying the same “consensus-backed meaning outranks weaker fallback meaning” rule into more downstream semantic consumers and arbitration surfaces
 3. keep adapter work de-prioritized until the graph, temporal, arbitration, and evaluation surfaces are materially stronger
 
 ## Remaining engineering gaps after this commit

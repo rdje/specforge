@@ -2933,23 +2933,23 @@ fn build_residual_decisions(
         packets.push(ResidualDecisionPacket {
             packet_id: "semantic_handshake_name_fallback_blocked".to_string(),
             question:
-                "Should handshake-shaped signal names override contested semantic role evidence?"
+                "Should handshake-shaped signal names override contested or provisional semantic role evidence?"
                     .to_string(),
             why_unresolved: format!(
-                "Signals {} look handshake-shaped by name, but preserved semantic arbitration is still non-decisive, so SemanticIR blocks literal VALID/READY fallback instead of promoting a potentially wrong role.",
+                "Signals {} look handshake-shaped by name, but their preserved semantic role state is still contested or only provisional, so SemanticIR blocks literal VALID/READY fallback instead of promoting a potentially wrong role.",
                 blocked_handshake_fallback_signals.join(", ")
             ),
             automation_confidence: AutomationConfidence::Medium,
             candidate_interpretations: vec![
                 CandidateInterpretation {
                     interpretation_id: "preserve_contested_semantics".to_string(),
-                    description: "Keep the role unresolved until stronger multimodal evidence or user guidance breaks the tie.".to_string(),
-                    downstream_impact: "Typed temporal handshake predicates stay conservative, but some protocol progress semantics remain deferred.".to_string(),
+                    description: "Keep the role unresolved until stronger multimodal evidence or user guidance turns the semantic meaning into a grounded consensus.".to_string(),
+                    downstream_impact: "Typed temporal handshake predicates stay conservative, but some protocol progress semantics remain deferred while provisional meaning stays explicit.".to_string(),
                 },
                 CandidateInterpretation {
                     interpretation_id: "trust_name_heuristic".to_string(),
-                    description: "Let the handshake-shaped signal name override the contested semantic evidence.".to_string(),
-                    downstream_impact: "More temporal handshake structure appears immediately, but semantic invention risk increases because spelling outranks preserved disagreement.".to_string(),
+                    description: "Let the handshake-shaped signal name override the contested or provisional semantic evidence.".to_string(),
+                    downstream_impact: "More temporal handshake structure appears immediately, but semantic invention risk increases because spelling outranks preserved disagreement or weaker fallback-only meaning.".to_string(),
                 },
             ],
         });
@@ -6100,6 +6100,7 @@ fn handshake_name_fallback_is_blocked(signal: &InterfaceSignalRecord) -> bool {
         .semantic_arbitration
         .as_ref()
         .is_some_and(|arbitration| !arbitration.decisive)
+        || (signal.resolved_semantic_role.is_some() && signal.semantic_consensus.is_none())
 }
 
 fn handshake_name_fallback_blocked_signal_names(interfaces: &[InterfaceRecord]) -> Vec<String> {
@@ -6134,28 +6135,11 @@ fn resolved_semantic_roles_without_consensus_signal_names(
 fn classify_handshake_signal_from_interface_signal(
     signal: &InterfaceSignalRecord,
 ) -> Option<HandshakeSignalRole> {
-    signal
-        .resolved_semantic_role
-        .map(handshake_role_from_resolved_semantic_role)
-        .or_else(|| classify_handshake_signal_from_semantic_tags(&signal.semantic_tags))
-}
-
-fn classify_handshake_signal_from_semantic_tags(
-    semantic_tags: &[SignalSemanticTag],
-) -> Option<HandshakeSignalRole> {
-    let has_valid_tag = semantic_tags_support_semantic_role(
-        semantic_tags,
-        InterfaceSignalSemanticRole::HandshakeValidLike,
-    );
-    let has_ready_tag = semantic_tags_support_semantic_role(
-        semantic_tags,
-        InterfaceSignalSemanticRole::HandshakeReadyLike,
-    );
-    match (has_valid_tag, has_ready_tag) {
-        (true, false) => Some(HandshakeSignalRole::Valid),
-        (false, true) => Some(HandshakeSignalRole::Ready),
-        _ => None,
-    }
+    signal.semantic_consensus.as_ref().and_then(|_| {
+        signal
+            .resolved_semantic_role
+            .map(handshake_role_from_resolved_semantic_role)
+    })
 }
 
 fn handshake_role_from_resolved_semantic_role(
@@ -7294,6 +7278,43 @@ mod tests {
             packets
                 .iter()
                 .any(|packet| { packet.packet_id == "semantic_resolved_role_without_consensus" })
+        );
+    }
+
+    #[test]
+    fn provisional_semantic_roles_do_not_drive_handshake_role_context() {
+        let interfaces = vec![super::InterfaceRecord {
+            interface_id: "if_req".to_string(),
+            signals: vec!["XVALID".to_string()],
+            signal_records: vec![super::InterfaceSignalRecord {
+                signal_name: "XVALID".to_string(),
+                direction_hint: None,
+                width_hint: None,
+                semantic_tags: vec![SignalSemanticTag::HandshakeValidLike],
+                semantic_candidates: Vec::new(),
+                semantic_arbitration: None,
+                resolved_semantic_role: Some(
+                    super::InterfaceSignalSemanticRole::HandshakeValidLike,
+                ),
+                semantic_grounding_strength: None,
+                semantic_consensus: None,
+                semantic_observations: Vec::new(),
+                supporting_statement_ids: Vec::new(),
+                automation_confidence: AutomationConfidence::Medium,
+            }],
+            supporting_statement_ids: Vec::new(),
+        }];
+
+        let context = super::handshake_role_context(&interfaces);
+
+        assert_eq!(
+            super::classify_handshake_signal("XVALID", &context),
+            None,
+            "fallback-only semantic roles should not drive typed handshake classification"
+        );
+        assert!(
+            context.heuristic_blocked_signals.contains("XVALID"),
+            "handshake-shaped signals with provisional semantic roles should block raw name fallback"
         );
     }
 
