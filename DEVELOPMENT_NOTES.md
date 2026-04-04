@@ -460,7 +460,7 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 
 ### Remaining follow-up
 - this is the first typed temporal layer, not the full temporal semantics program
-- cycle windows, actor-relative drive events, multi-predicate antecedents, contradiction detection, and richer VLM timing lift still need to land before `R15b` can be considered complete
+- cycle windows, richer drive-maintains-stability semantics, multi-predicate antecedents, contradiction detection, and richer VLM timing lift still need to land before `R15b` can be considered complete
 
 ## Cycle-window recovery in temporal rules (2026-04-04)
 
@@ -487,7 +487,31 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 
 ### Remaining follow-up
 - this still does not cover richer latency language like protocol-phase aliases, burst-relative windows, or contradictory latency evidence across modalities
-- actor-relative drive events and multi-step temporal rules are still the next meaningful `R15b` deepening steps
+- multi-step temporal rules, richer actor-relative stability semantics, and contradiction handling are still the next meaningful `R15b` deepening steps
+
+## Actor-grounded temporal drive events (2026-04-04)
+
+### Why this slice landed now
+- the temporal layer had started to recover value, stability, edge sampling, and bounded latency, but it still lost the producer actor even when the structural KG already knew exactly who drives the signal
+- that mismatch weakened the whole “KG-first” story: structural truth and temporal truth were still partially disconnected
+- the next honest `R15b` step was therefore to let temporal rules reuse unique producer information from `signal_connectivity`
+
+### Implementation shape
+- `crates/specforge/src/ir/semantic.rs` now adds `TemporalPredicateRecord::ActorDrivesSignal`
+- temporal derivation now emits `ActorDrivesSignal` for value-oriented consequents when:
+  - the rule targets a specific signal
+  - the structural KG resolves exactly one producer actor for that signal
+- the derivation remains conservative: ambiguous/multi-producer signals stay signal-only instead of inventing a wrong actor binding
+
+### Validation
+- `crates/specforge/src/commands/validate.rs` now reports `temporal_rules_with_actor_grounding`
+- validation now flags temporal-rule sets that coexist with a non-empty actor-signal graph but still have zero actor-grounded temporal predicates
+- `cargo fmt --all` passed
+- `cargo test --manifest-path Cargo.toml` now passes with 118 tests
+
+### Remaining follow-up
+- this is still only the first actor-aware temporal slice
+- actor-relative drive-maintains-stability semantics, multi-step temporal chains, and contradiction/arbitration across competing actor-grounded rules still need to land before `R15b` is mature
 
 ## Documentation surface currently steering the implementation
 - `README.md`

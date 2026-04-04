@@ -1,5 +1,26 @@
 # CHANGES
 
+## 2026-04-04 (actor-grounded temporal drive events)
+
+### Added: actor-relative drive predicates in typed temporal rules
+- `TemporalPredicateRecord` now includes `ActorDrivesSignal`.
+- Temporal-rule derivation now emits actor-relative drive predicates when the structural KG provides a unique producer for the constrained signal.
+- This keeps the temporal layer aligned with the structural graph instead of representing every bounded/value rule as a signal-only event.
+
+### Changed: validation now counts actor-grounded temporal rules
+- `specforge validate` now reports `temporal_rules_with_actor_grounding` for `SemanticIR` and `IntentIR`.
+- Validation now flags temporal-rule sets that exist alongside a non-empty actor-signal graph but still carry no actor-relative drive/sample grounding at all.
+
+### Added: regression coverage for actor-grounded temporal lift
+- Added end-to-end tests for:
+  - deriving `ActorDrivesSignal` from a value constraint with a unique producer in the KG
+  - carrying actor-grounded temporal rules into `IntentIR`
+  - validation metrics for actor-grounded temporal rules
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 118/118 passed
+
 ## 2026-04-04 (cycle-window recovery in temporal rules)
 
 ### Added: bounded latency windows in the temporal-rule layer

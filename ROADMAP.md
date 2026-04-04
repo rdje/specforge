@@ -296,9 +296,10 @@
     - signal value-at-phase facts
     - signal stability across `pre_tick -> post_tick`
     - signal sampling on clock edges, with optional actor grounding
+    - actor-relative drive predicates when the structural KG resolves a unique signal producer
   - temporal rules now recover bounded `cycle_window` latency from phrases like `within 2 cycles` and from timing rows whose unit is already `cycles`
   - temporal derivation now uses an explicit clock declaration even when a full reset-bearing `SystemContractRecord` is not yet available
-  - `specforge validate` now reports temporal-rule counts plus missing clock/edge grounding diagnostics
+  - `specforge validate` now reports temporal-rule counts plus missing clock/edge grounding and actor-grounding diagnostics
 - completion criteria:
   - a typed temporal-rule representation exists in `SemanticIR` and carries forward into `IntentIR`
   - APB/AHB/AXI timing behavior can be represented in actor-relative, tick-relative form rather than only as free-form timing text

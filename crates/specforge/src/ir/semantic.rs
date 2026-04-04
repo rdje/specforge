@@ -188,6 +188,7 @@ impl SemanticIr {
             &context,
             interfaces.as_slice(),
             system_contract.as_ref(),
+            signal_connectivity.as_slice(),
             signal_constraints.as_slice(),
             conditional_rules.as_slice(),
             timing_constraints.as_slice(),
@@ -475,6 +476,11 @@ pub enum TemporalPredicateRecord {
     SignalValue {
         signal_name: String,
         value: String,
+        phase: TickPhase,
+    },
+    ActorDrivesSignal {
+        actor_name: String,
+        signal_name: String,
         phase: TickPhase,
     },
     SignalStable {
@@ -5075,6 +5081,7 @@ fn build_temporal_rules(
     context: &SemanticContext,
     interfaces: &[InterfaceRecord],
     system_contract: Option<&SystemContractRecord>,
+    signal_connectivity: &[SignalConnectivityRecord],
     signal_constraints: &[SignalConstraintRecord],
     conditional_rules: &[ConditionalRuleRecord],
     timing_constraints: &[TimingConstraintRecord],
@@ -5094,6 +5101,7 @@ fn build_temporal_rules(
     } else {
         ClockEdge::Unknown
     };
+    let unique_producer_by_signal = unique_producer_by_signal(signal_connectivity);
     let mut rules = Vec::new();
 
     for constraint in signal_constraints {
@@ -5102,7 +5110,8 @@ fn build_temporal_rules(
             .as_deref()
             .map(|text| parse_temporal_condition_predicates(text, &known_signals))
             .unwrap_or_default();
-        let consequents = temporal_consequents_from_signal_constraint(constraint);
+        let consequents =
+            temporal_consequents_from_signal_constraint(constraint, &unique_producer_by_signal);
         if consequents.is_empty() {
             continue;
         }
@@ -5120,7 +5129,11 @@ fn build_temporal_rules(
     }
 
     for rule in conditional_rules {
-        let consequents = temporal_consequents_from_conditional_rule(rule, &known_signals);
+        let consequents = temporal_consequents_from_conditional_rule(
+            rule,
+            &known_signals,
+            &unique_producer_by_signal,
+        );
         if consequents.is_empty() {
             continue;
         }
@@ -5209,7 +5222,15 @@ fn parse_temporal_condition_predicates(
 
 fn temporal_consequents_from_signal_constraint(
     constraint: &SignalConstraintRecord,
+    unique_producer_by_signal: &BTreeMap<String, String>,
 ) -> Vec<TemporalPredicateRecord> {
+    let actor_drive_predicate = unique_producer_by_signal
+        .get(&constraint.subject_signal)
+        .map(|actor_name| TemporalPredicateRecord::ActorDrivesSignal {
+            actor_name: actor_name.clone(),
+            signal_name: constraint.subject_signal.clone(),
+            phase: TickPhase::PostTick,
+        });
     match &constraint.constraint_kind {
         SignalConstraintKind::MustNotChange
         | SignalConstraintKind::MustBeStable
@@ -5218,44 +5239,67 @@ fn temporal_consequents_from_signal_constraint(
             from_phase: TickPhase::PreTick,
             to_phase: TickPhase::PostTick,
         }],
-        SignalConstraintKind::MustBeHigh => vec![TemporalPredicateRecord::SignalValue {
-            signal_name: constraint.subject_signal.clone(),
-            value: "HIGH".to_string(),
-            phase: TickPhase::PostTick,
-        }],
-        SignalConstraintKind::MustBeLow => vec![TemporalPredicateRecord::SignalValue {
-            signal_name: constraint.subject_signal.clone(),
-            value: "LOW".to_string(),
-            phase: TickPhase::PostTick,
-        }],
-        SignalConstraintKind::MustBeAsserted => vec![TemporalPredicateRecord::SignalValue {
-            signal_name: constraint.subject_signal.clone(),
-            value: "ASSERTED".to_string(),
-            phase: TickPhase::PostTick,
-        }],
-        SignalConstraintKind::MustBeDeasserted => vec![TemporalPredicateRecord::SignalValue {
-            signal_name: constraint.subject_signal.clone(),
-            value: "DEASSERTED".to_string(),
-            phase: TickPhase::PostTick,
-        }],
-        SignalConstraintKind::MustBeValue { value } => vec![TemporalPredicateRecord::SignalValue {
-            signal_name: constraint.subject_signal.clone(),
-            value: constraint
-                .target_value
-                .clone()
-                .unwrap_or_else(|| value.clone()),
-            phase: TickPhase::PostTick,
-        }],
+        SignalConstraintKind::MustBeHigh => actor_drive_predicate
+            .into_iter()
+            .chain(std::iter::once(TemporalPredicateRecord::SignalValue {
+                signal_name: constraint.subject_signal.clone(),
+                value: "HIGH".to_string(),
+                phase: TickPhase::PostTick,
+            }))
+            .collect(),
+        SignalConstraintKind::MustBeLow => actor_drive_predicate
+            .into_iter()
+            .chain(std::iter::once(TemporalPredicateRecord::SignalValue {
+                signal_name: constraint.subject_signal.clone(),
+                value: "LOW".to_string(),
+                phase: TickPhase::PostTick,
+            }))
+            .collect(),
+        SignalConstraintKind::MustBeAsserted => actor_drive_predicate
+            .into_iter()
+            .chain(std::iter::once(TemporalPredicateRecord::SignalValue {
+                signal_name: constraint.subject_signal.clone(),
+                value: "ASSERTED".to_string(),
+                phase: TickPhase::PostTick,
+            }))
+            .collect(),
+        SignalConstraintKind::MustBeDeasserted => actor_drive_predicate
+            .into_iter()
+            .chain(std::iter::once(TemporalPredicateRecord::SignalValue {
+                signal_name: constraint.subject_signal.clone(),
+                value: "DEASSERTED".to_string(),
+                phase: TickPhase::PostTick,
+            }))
+            .collect(),
+        SignalConstraintKind::MustBeValue { value } => actor_drive_predicate
+            .into_iter()
+            .chain(std::iter::once(TemporalPredicateRecord::SignalValue {
+                signal_name: constraint.subject_signal.clone(),
+                value: constraint
+                    .target_value
+                    .clone()
+                    .unwrap_or_else(|| value.clone()),
+                phase: TickPhase::PostTick,
+            }))
+            .collect(),
     }
 }
 
 fn temporal_consequents_from_conditional_rule(
     rule: &ConditionalRuleRecord,
     known_signals: &BTreeSet<String>,
+    unique_producer_by_signal: &BTreeMap<String, String>,
 ) -> Vec<TemporalPredicateRecord> {
     let Some(signal_name) = rule.consequent_signal.clone() else {
         return Vec::new();
     };
+    let actor_drive_predicate = unique_producer_by_signal
+        .get(&signal_name)
+        .map(|actor_name| TemporalPredicateRecord::ActorDrivesSignal {
+            actor_name: actor_name.clone(),
+            signal_name: signal_name.clone(),
+            phase: TickPhase::PostTick,
+        });
     let action = rule.consequent_action.trim();
     let action_lower = action.to_ascii_lowercase();
     if action_lower.contains("not change")
@@ -5270,41 +5314,57 @@ fn temporal_consequents_from_conditional_rule(
         }];
     }
     if action_lower.contains("deasserted") {
-        return vec![TemporalPredicateRecord::SignalValue {
-            signal_name,
-            value: "DEASSERTED".to_string(),
-            phase: TickPhase::PostTick,
-        }];
+        return actor_drive_predicate
+            .into_iter()
+            .chain(std::iter::once(TemporalPredicateRecord::SignalValue {
+                signal_name,
+                value: "DEASSERTED".to_string(),
+                phase: TickPhase::PostTick,
+            }))
+            .collect();
     }
     if action_lower.contains("asserted") {
-        return vec![TemporalPredicateRecord::SignalValue {
-            signal_name,
-            value: "ASSERTED".to_string(),
-            phase: TickPhase::PostTick,
-        }];
+        return actor_drive_predicate
+            .into_iter()
+            .chain(std::iter::once(TemporalPredicateRecord::SignalValue {
+                signal_name,
+                value: "ASSERTED".to_string(),
+                phase: TickPhase::PostTick,
+            }))
+            .collect();
     }
     if action_lower.contains(" low") || action_lower == "low" {
-        return vec![TemporalPredicateRecord::SignalValue {
-            signal_name,
-            value: "LOW".to_string(),
-            phase: TickPhase::PostTick,
-        }];
+        return actor_drive_predicate
+            .into_iter()
+            .chain(std::iter::once(TemporalPredicateRecord::SignalValue {
+                signal_name,
+                value: "LOW".to_string(),
+                phase: TickPhase::PostTick,
+            }))
+            .collect();
     }
     if action_lower.contains(" high") || action_lower == "high" {
-        return vec![TemporalPredicateRecord::SignalValue {
-            signal_name,
-            value: "HIGH".to_string(),
-            phase: TickPhase::PostTick,
-        }];
+        return actor_drive_predicate
+            .into_iter()
+            .chain(std::iter::once(TemporalPredicateRecord::SignalValue {
+                signal_name,
+                value: "HIGH".to_string(),
+                phase: TickPhase::PostTick,
+            }))
+            .collect();
     }
 
     extract_symbolic_value(action, Some(&signal_name))
         .map(|value| {
-            vec![TemporalPredicateRecord::SignalValue {
-                signal_name: signal_name.clone(),
-                value,
-                phase: TickPhase::PostTick,
-            }]
+            actor_drive_predicate
+                .clone()
+                .into_iter()
+                .chain(std::iter::once(TemporalPredicateRecord::SignalValue {
+                    signal_name: signal_name.clone(),
+                    value,
+                    phase: TickPhase::PostTick,
+                }))
+                .collect()
         })
         .unwrap_or_else(|| {
             parse_temporal_condition_predicates(action, known_signals)
@@ -5423,6 +5483,24 @@ fn dedup_temporal_rules(rules: Vec<TemporalRuleRecord>) -> Vec<TemporalRuleRecor
         }
     }
     deduped
+}
+
+fn unique_producer_by_signal(
+    signal_connectivity: &[SignalConnectivityRecord],
+) -> BTreeMap<String, String> {
+    signal_connectivity
+        .iter()
+        .filter_map(|record| {
+            if record.producer_actor_names.len() == 1 {
+                Some((
+                    record.signal_name.clone(),
+                    record.producer_actor_names[0].clone(),
+                ))
+            } else {
+                None
+            }
+        })
+        .collect()
 }
 
 fn extract_cycle_window_from_text(text: &str) -> Option<CycleWindowRecord> {
@@ -7297,6 +7375,82 @@ mod tests {
             .expect("expected cycle window to be derived from 'within 2 cycles'");
         assert_eq!(cycle_window.min_cycles, None);
         assert_eq!(cycle_window.max_cycles, Some(2));
+
+        Ok(())
+    }
+
+    #[test]
+    fn derives_actor_grounded_drive_event_from_value_constraint() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("temporal_actor.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal PREADY is output width 1.\n\n",
+                "Clock clk.\n\n",
+                "The Completer drives PREADY.\n\n",
+                "The Requester reads PREADY.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pready_asserted".to_string(),
+            subject_signal: "PREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PREADY must be asserted within 2 cycles.".to_string(),
+            supporting_statement_ids: vec!["stmt_actor_temporal".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| rule.rule_id == "temporal_signal_constraint_sigcon_pready_asserted")
+            .expect("expected temporal rule derived from asserted value constraint");
+        assert!(rule.consequents.iter().any(|predicate| {
+            matches!(
+                predicate,
+                super::TemporalPredicateRecord::ActorDrivesSignal {
+                    actor_name,
+                    signal_name,
+                    phase: super::TickPhase::PostTick,
+                } if actor_name.eq_ignore_ascii_case("Completer") && signal_name == "PREADY"
+            )
+        }));
+        assert!(rule.consequents.iter().any(|predicate| {
+            matches!(
+                predicate,
+                super::TemporalPredicateRecord::SignalValue {
+                    signal_name,
+                    value,
+                    phase: super::TickPhase::PostTick,
+                } if signal_name == "PREADY" && value == "ASSERTED"
+            )
+        }));
 
         Ok(())
     }
