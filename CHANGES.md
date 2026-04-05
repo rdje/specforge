@@ -1,5 +1,31 @@
 # CHANGES
 
+## 2026-04-06 (KG fixtures now cover alias-dependent semantic caveats)
+
+### Added: richer canonical expectations in `specforge kg-bench`
+- KG fixtures can now assert:
+  - alias-dependent semantic consensus by signal
+  - alias-dependent semantic candidates by signal
+  - alias-dependent handshake-completion counts
+- `EvidenceIR` fixture patches can now seed alias maps and refresh semantic hints before downstream stages run.
+
+### Added: alias-dependent handshake-completion caveat fixture
+- Added a stage-patched tracked fixture proving that alias-grounded handshake recovery remains canonical only when its weaker grounding stays explicit through:
+  - semantic residual decisions
+  - intent assumptions
+  - validator findings
+
+### Why this matters
+- This extends `R15e` from benchmarking only hard rejection cases to also benchmarking “useful but caveated” semantic recovery.
+- The harness now protects both sides of the truthfulness contract:
+  - unsafe heuristic promotion must stay blocked
+  - weak but acceptable semantics must retain their caveat trail
+
+### Validation
+- `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` → passed
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 188/188 passed
+
 ## 2026-04-06 (KG fixtures can now patch staged inputs)
 
 ### Added: stage-patched KG fixtures

@@ -1,4 +1,4 @@
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -39,6 +39,10 @@ struct SourceIrPatch {
 #[derive(Debug, Default, Deserialize)]
 struct EvidenceIrPatch {
     #[serde(default)]
+    signal_alias_map: BTreeMap<String, String>,
+    #[serde(default)]
+    refresh_signal_semantic_hints: bool,
+    #[serde(default)]
     signal_constraints: Vec<crate::ir::source::SignalConstraintRecord>,
 }
 
@@ -74,8 +78,17 @@ struct CanonicalStageExpectations {
     semantic_consensus_signal_names_include: Vec<String>,
     #[serde(default)]
     semantic_consensus_signal_names_exclude: Vec<String>,
+    #[serde(default)]
+    alias_dependent_semantic_consensus_signal_names_include: Vec<String>,
+    #[serde(default)]
+    alias_dependent_semantic_consensus_signal_names_exclude: Vec<String>,
+    #[serde(default)]
+    alias_dependent_semantic_candidate_signal_names_include: Vec<String>,
+    #[serde(default)]
+    alias_dependent_semantic_candidate_signal_names_exclude: Vec<String>,
     temporal_rule_count: Option<usize>,
     temporal_rules_with_handshake_completion: Option<usize>,
+    temporal_rules_with_alias_dependent_handshake_completion: Option<usize>,
     signal_polarity_conflicts: Option<usize>,
     signal_semantic_conflicts: Option<usize>,
     signal_connectivity_conflicts: Option<usize>,
@@ -199,6 +212,15 @@ fn run_fixture(fixture_path: &Path) -> Result<FixtureOutcome> {
     let mut evidence_ir =
         EvidenceIr::build(&source_ir.artifact_layout.source_ir_path, &evidence_ir_root)?;
     if let Some(patch) = fixture.evidence_ir_patch.as_ref() {
+        evidence_ir.signal_alias_map.extend(
+            patch
+                .signal_alias_map
+                .iter()
+                .map(|(alias, signal_name)| (alias.clone(), signal_name.clone())),
+        );
+        if patch.refresh_signal_semantic_hints || !patch.signal_alias_map.is_empty() {
+            evidence_ir.refresh_signal_semantic_hints()?;
+        }
         evidence_ir
             .signal_constraints
             .extend(patch.signal_constraints.iter().cloned());
@@ -376,6 +398,50 @@ fn evaluate_canonical_expectations(
         failures,
     );
 
+    let alias_dependent_semantic_consensus_signals =
+        interface_signal_names_matching(interfaces, |signal| {
+            signal
+                .semantic_consensus
+                .as_ref()
+                .is_some_and(|consensus| consensus.alias_dependent)
+        });
+    assert_includes(
+        label,
+        "alias_dependent_semantic_consensus_signal_names_include",
+        &expectations.alias_dependent_semantic_consensus_signal_names_include,
+        &alias_dependent_semantic_consensus_signals,
+        failures,
+    );
+    assert_excludes(
+        label,
+        "alias_dependent_semantic_consensus_signal_names_exclude",
+        &expectations.alias_dependent_semantic_consensus_signal_names_exclude,
+        &alias_dependent_semantic_consensus_signals,
+        failures,
+    );
+
+    let alias_dependent_semantic_candidate_signals =
+        interface_signal_names_matching(interfaces, |signal| {
+            signal
+                .semantic_candidates
+                .iter()
+                .any(|candidate| candidate.alias_dependent)
+        });
+    assert_includes(
+        label,
+        "alias_dependent_semantic_candidate_signal_names_include",
+        &expectations.alias_dependent_semantic_candidate_signal_names_include,
+        &alias_dependent_semantic_candidate_signals,
+        failures,
+    );
+    assert_excludes(
+        label,
+        "alias_dependent_semantic_candidate_signal_names_exclude",
+        &expectations.alias_dependent_semantic_candidate_signal_names_exclude,
+        &alias_dependent_semantic_candidate_signals,
+        failures,
+    );
+
     for expected_port in &expectations.actor_ports_include {
         let found = actor_ports.iter().any(|port| {
             port.actor_name == expected_port.actor_name
@@ -436,6 +502,13 @@ fn evaluate_canonical_expectations(
         "temporal_rules_with_handshake_completion",
         expectations.temporal_rules_with_handshake_completion,
         temporal_rules_with_handshake_completion_count(temporal_rules),
+        failures,
+    );
+    assert_optional_count(
+        label,
+        "temporal_rules_with_alias_dependent_handshake_completion",
+        expectations.temporal_rules_with_alias_dependent_handshake_completion,
+        temporal_rules_with_alias_dependent_handshake_completion_count(interfaces, temporal_rules),
         failures,
     );
     assert_optional_count(
@@ -616,6 +689,42 @@ fn temporal_rules_with_handshake_completion_count(temporal_rules: &[TemporalRule
                     matches!(
                         predicate,
                         crate::ir::semantic::TemporalPredicateRecord::HandshakeComplete { .. }
+                    )
+                })
+        })
+        .count()
+}
+
+fn temporal_rules_with_alias_dependent_handshake_completion_count(
+    interfaces: &[InterfaceRecord],
+    temporal_rules: &[TemporalRuleRecord],
+) -> usize {
+    let alias_dependent_signals = interface_signal_names_matching(interfaces, |signal| {
+        signal
+            .semantic_consensus
+            .as_ref()
+            .is_some_and(|consensus| consensus.alias_dependent)
+    });
+
+    if alias_dependent_signals.is_empty() {
+        return 0;
+    }
+
+    temporal_rules
+        .iter()
+        .filter(|rule| {
+            rule.antecedents
+                .iter()
+                .chain(rule.consequents.iter())
+                .any(|predicate| {
+                    matches!(
+                        predicate,
+                        crate::ir::semantic::TemporalPredicateRecord::HandshakeComplete {
+                            valid_signal,
+                            ready_signal,
+                            ..
+                        } if alias_dependent_signals.contains(valid_signal)
+                            || alias_dependent_signals.contains(ready_signal)
                     )
                 })
         })

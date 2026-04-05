@@ -1,0 +1,66 @@
+{
+  "name": "alias_dependent_handshake_completion_caveat",
+  "source": "source.md",
+  "evidence_ir_patch": {
+    "signal_alias_map": {
+      "request phase": "XREQ",
+      "accept phase": "XACK"
+    },
+    "refresh_signal_semantic_hints": true,
+    "signal_constraints": [
+      {
+        "constraint_id": "sigcon_payload_alias_semantic_handshake",
+        "subject_signal": "PAYLOAD",
+        "constraint_kind": {
+          "kind": "must_not_change"
+        },
+        "target_value": null,
+        "condition_text": "when XREQ is HIGH and XACK is HIGH",
+        "negated": false,
+        "source_text": "PAYLOAD must not change when XREQ is HIGH and XACK is HIGH.",
+        "supporting_statement_ids": [
+          "stmt_temporal_alias_semantic_handshake"
+        ],
+        "automation_confidence": "medium"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["XREQ", "XACK", "PAYLOAD"],
+      "resolved_semantic_role_signal_names_include": ["XREQ", "XACK"],
+      "semantic_consensus_signal_names_include": ["XREQ", "XACK"],
+      "alias_dependent_semantic_consensus_signal_names_include": ["XREQ", "XACK"],
+      "alias_dependent_semantic_candidate_signal_names_include": ["XREQ", "XACK"],
+      "residual_decision_ids_include": ["semantic_alias_dependent_handshake_completion"],
+      "temporal_rule_count": 1,
+      "temporal_rules_with_handshake_completion": 1,
+      "temporal_rules_with_alias_dependent_handshake_completion": 1
+    },
+    "intent": {
+      "signal_names_include": ["XREQ", "XACK", "PAYLOAD"],
+      "resolved_semantic_role_signal_names_include": ["XREQ", "XACK"],
+      "semantic_consensus_signal_names_include": ["XREQ", "XACK"],
+      "alias_dependent_semantic_consensus_signal_names_include": ["XREQ", "XACK"],
+      "alias_dependent_semantic_candidate_signal_names_include": ["XREQ", "XACK"],
+      "residual_decision_ids_include": ["semantic_alias_dependent_handshake_completion"],
+      "assumption_ids_include": ["assumption_alias_dependent_handshake_completion"],
+      "temporal_rule_count": 1,
+      "temporal_rules_with_handshake_completion": 1,
+      "temporal_rules_with_alias_dependent_handshake_completion": 1
+    },
+    "validation": {
+      "semantic": {
+        "finding_ids_include": [
+          "semantic_alias_dependent_handshake_completion_present"
+        ]
+      },
+      "intent": {
+        "finding_ids_include": [
+          "intent_alias_dependent_semantic_consensus_present",
+          "intent_alias_dependent_handshake_completion_present"
+        ]
+      }
+    }
+  }
+}

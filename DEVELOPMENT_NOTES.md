@@ -245,6 +245,12 @@
 - the contested handshake-name fallback negative fixture is the first example of that approach:
   - stage-patched signal-description evidence and a guard constraint create a real semantic-role conflict
   - the benchmark then proves that typed `HandshakeComplete` recovery stays blocked instead of leaking through signal spelling
+- the alias-dependent handshake-completion caveat fixture is the complementary example:
+  - stage-patched alias learning plus a guard constraint create a real typed handshake recovery path
+  - the benchmark then proves that the recovery remains usable while still preserving the alias-dependent residual and intent assumption trail
+- together, these two fixtures protect both sides of the truthfulness contract:
+  - reject unsafe heuristic promotion
+  - preserve weaker-but-useful semantics explicitly instead of flattening their caveats away
 - this is the right shape for `R15e`:
   - start with fixtures that protect truthfulness invariants
   - then grow toward APB/AHB/AXI protocol-grade gold suites and broader negative corpora

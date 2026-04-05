@@ -24,7 +24,7 @@
 ## Latest committed baseline
 - latest_commit_hash: `f4258e5`
 - latest_commit_brief_message: `feat(quality): add kg benchmark fixtures`
-- note: current uncommitted work upgrades the KG benchmark harness with stage-patched fixtures, so richer structured semantic negatives can now be benchmarked without needing a full source document for every case
+- note: current uncommitted work upgrades the KG benchmark harness to cover alias-dependent semantic caveats too, so both blocked heuristic leakage and weaker-but-accepted semantics can be benchmarked explicitly
 
 ## Recent commit chain (last 5)
 - `f4258e5` feat(quality): add kg benchmark fixtures
@@ -45,9 +45,9 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
-- extended `specforge kg-bench` so fixtures can patch `SourceIR` and `EvidenceIR` before downstream stages run
-- added a stage-patched negative fixture for contested handshake-name fallback, proving that contested `XVALID`/`XACK` meaning blocks typed `HandshakeComplete` recovery
-- extended canonical fixture expectations with temporal-rule counts and handshake-completion counts
+- extended `specforge kg-bench` so fixtures can seed alias maps in `EvidenceIR`, refresh semantic hints, and assert alias-dependent semantic/temporal caveat state
+- added a stage-patched caveat fixture for alias-dependent handshake completion, proving that weaker alias-grounded semantics remain usable only when the residual/assumption trail stays explicit
+- extended canonical fixture expectations with alias-dependent consensus, alias-dependent candidate, and alias-dependent handshake-completion surfaces
 - synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `USER_GUIDE.md`, `DEVELOPMENT_NOTES.md`, and `CHANGES.md` so the richer `R15e` harness shape is captured in the live docs
 - validation ran for this task:
   - `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` passed
@@ -57,6 +57,7 @@
 ## Current working tree before commit
 - modified tracked files currently include:
   - `crates/specforge/src/commands/kg_bench.rs`
+  - `crates/specforge/test_data/kg_quality/alias_dependent_handshake_completion_caveat/...`
   - `crates/specforge/test_data/kg_quality/...`
   - `README.md`
   - `ROADMAP.md`
@@ -69,7 +70,7 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the stage-patched KG benchmark slice
+1. commit the alias-dependent KG benchmark slice
 2. expand the fixture harness toward protocol-grade APB/AHB/AXI gold suites and broader negative truthfulness fixtures
 3. keep adapter work de-prioritized until the graph, temporal, arbitration, and evaluation surfaces are materially stronger
 
