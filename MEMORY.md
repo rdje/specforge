@@ -22,11 +22,12 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `8eee95d`
-- latest_commit_brief_message: `feat(ir): carry polarity conflicts downstream`
-- note: current uncommitted work adds the first tracked KG-quality benchmark harness plus seed gold/negative fixtures, so `R15e` is no longer only a roadmap item
+- latest_commit_hash: `f4258e5`
+- latest_commit_brief_message: `feat(quality): add kg benchmark fixtures`
+- note: current uncommitted work upgrades the KG benchmark harness with stage-patched fixtures, so richer structured semantic negatives can now be benchmarked without needing a full source document for every case
 
 ## Recent commit chain (last 5)
+- `f4258e5` feat(quality): add kg benchmark fixtures
 - `8eee95d` feat(ir): carry polarity conflicts downstream
 - `3fef735` feat(ir): carry alias-grounded handshake caveats
 - `3f3545e` feat(validate): surface alias-dependent handshake completion
@@ -44,13 +45,10 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
-- added `specforge kg-bench` as a tracked KG-quality benchmark command
-- added tracked fixtures for:
-  - actor-port gold recovery
-  - name-only semantic-noise rejection
-  - multi-producer conflict surfacing
-  - actor-boundary residual quality
-- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `USER_GUIDE.md`, `DEVELOPMENT_NOTES.md`, and `CHANGES.md` so `R15e` now reflects a real executable harness instead of only planned work
+- extended `specforge kg-bench` so fixtures can patch `SourceIR` and `EvidenceIR` before downstream stages run
+- added a stage-patched negative fixture for contested handshake-name fallback, proving that contested `XVALID`/`XACK` meaning blocks typed `HandshakeComplete` recovery
+- extended canonical fixture expectations with temporal-rule counts and handshake-completion counts
+- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `USER_GUIDE.md`, `DEVELOPMENT_NOTES.md`, and `CHANGES.md` so the richer `R15e` harness shape is captured in the live docs
 - validation ran for this task:
   - `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` passed
   - `cargo fmt --all` passed
@@ -58,9 +56,6 @@
 
 ## Current working tree before commit
 - modified tracked files currently include:
-  - `crates/specforge/src/cli.rs`
-  - `crates/specforge/src/lib.rs`
-  - `crates/specforge/src/commands/mod.rs`
   - `crates/specforge/src/commands/kg_bench.rs`
   - `crates/specforge/test_data/kg_quality/...`
   - `README.md`
@@ -74,8 +69,8 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the KG-quality benchmark harness slice
-2. expand the new fixture harness toward protocol-grade APB/AHB/AXI gold suites and broader negative truthfulness fixtures
+1. commit the stage-patched KG benchmark slice
+2. expand the fixture harness toward protocol-grade APB/AHB/AXI gold suites and broader negative truthfulness fixtures
 3. keep adapter work de-prioritized until the graph, temporal, arbitration, and evaluation surfaces are materially stronger
 
 ## Remaining engineering gaps after this commit

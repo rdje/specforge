@@ -86,7 +86,9 @@
   - a negative name-only semantic noise fixture
   - a negative multi-producer conflict fixture that exercises validation findings
   - an actor-boundary residual-quality fixture
+  - a stage-patched contested-handshake fixture that proves contested `XVALID`/`XACK` meaning blocks typed `HandshakeComplete` recovery
 - that means benchmark hardening is no longer purely roadmap text; the repo now has a seed harness for false-positive control and residual-quality regression, even though protocol-grade APB/AHB/AXI gold fixtures are still ahead
+- the harness is also more realistic now than a pure markdown fixture runner because tracked fixtures can patch `SourceIR` and `EvidenceIR` surfaces directly, which is a practical way to benchmark richer multimodal/structured semantics without needing a heavyweight source document for every regression
 
 ## Observed current state
 ### Repository contents directly observed

@@ -10,7 +10,9 @@ use crate::commands::validate;
 use crate::error::{AppError, Result};
 use crate::ir::evidence::EvidenceIr;
 use crate::ir::intent::{IntentAssumption, IntentIr};
-use crate::ir::semantic::{ActorPortRecord, ActorRelativeDirection, InterfaceRecord, SemanticIr};
+use crate::ir::semantic::{
+    ActorPortRecord, ActorRelativeDirection, InterfaceRecord, SemanticIr, TemporalRuleRecord,
+};
 use crate::ir::source::{ResidualDecisionPacket, ValidationFindingRecord, ValidationReportRecord};
 use crate::ir::{intent, semantic, source};
 
@@ -21,7 +23,23 @@ struct KgBenchFixture {
     name: String,
     source: PathBuf,
     #[serde(default)]
+    source_ir_patch: Option<SourceIrPatch>,
+    #[serde(default)]
+    evidence_ir_patch: Option<EvidenceIrPatch>,
+    #[serde(default)]
     expectations: FixtureExpectations,
+}
+
+#[derive(Debug, Default, Deserialize)]
+struct SourceIrPatch {
+    #[serde(default)]
+    structured_tables: Vec<crate::ir::source::StructuredTableRecord>,
+}
+
+#[derive(Debug, Default, Deserialize)]
+struct EvidenceIrPatch {
+    #[serde(default)]
+    signal_constraints: Vec<crate::ir::source::SignalConstraintRecord>,
 }
 
 #[derive(Debug, Default, Deserialize)]
@@ -56,6 +74,8 @@ struct CanonicalStageExpectations {
     semantic_consensus_signal_names_include: Vec<String>,
     #[serde(default)]
     semantic_consensus_signal_names_exclude: Vec<String>,
+    temporal_rule_count: Option<usize>,
+    temporal_rules_with_handshake_completion: Option<usize>,
     signal_polarity_conflicts: Option<usize>,
     signal_semantic_conflicts: Option<usize>,
     signal_connectivity_conflicts: Option<usize>,
@@ -170,9 +190,19 @@ fn run_fixture(fixture_path: &Path) -> Result<FixtureOutcome> {
 
     let mut source_ir = source::SourceIr::build(&source_path, &source_ir_root)?;
     source_ir.materialize()?;
+    if let Some(patch) = fixture.source_ir_patch.as_ref() {
+        source_ir
+            .structured_tables
+            .extend(patch.structured_tables.iter().cloned());
+    }
     source_ir.write_to_disk()?;
-    let evidence_ir =
+    let mut evidence_ir =
         EvidenceIr::build(&source_ir.artifact_layout.source_ir_path, &evidence_ir_root)?;
+    if let Some(patch) = fixture.evidence_ir_patch.as_ref() {
+        evidence_ir
+            .signal_constraints
+            .extend(patch.signal_constraints.iter().cloned());
+    }
     evidence_ir.write_to_disk()?;
     let semantic_ir = semantic::SemanticIr::build(
         &evidence_ir.artifact_layout.evidence_ir_path,
@@ -233,6 +263,7 @@ fn run_fixture(fixture_path: &Path) -> Result<FixtureOutcome> {
             &semantic_ir.actor_ports,
             &semantic_ir.residual_decisions,
             &[],
+            &semantic_ir.temporal_rules,
             semantic_ir.signal_polarity_conflicts.len(),
             semantic_ir.signal_semantic_conflicts.len(),
             semantic_ir.signal_connectivity_conflicts.len(),
@@ -249,6 +280,7 @@ fn run_fixture(fixture_path: &Path) -> Result<FixtureOutcome> {
             &intent_ir.actor_ports,
             &intent_ir.residual_decisions,
             &intent_ir.assumptions,
+            &intent_ir.temporal_rules,
             intent_ir.signal_polarity_conflicts.len(),
             intent_ir.signal_semantic_conflicts.len(),
             intent_ir.signal_connectivity_conflicts.len(),
@@ -292,6 +324,7 @@ fn evaluate_canonical_expectations(
     actor_ports: &[ActorPortRecord],
     residual_decisions: &[ResidualDecisionPacket],
     assumptions: &[IntentAssumption],
+    temporal_rules: &[TemporalRuleRecord],
     signal_polarity_conflicts: usize,
     signal_semantic_conflicts: usize,
     signal_connectivity_conflicts: usize,
@@ -391,6 +424,20 @@ fn evaluate_canonical_expectations(
         failures,
     );
 
+    assert_optional_count(
+        label,
+        "temporal_rule_count",
+        expectations.temporal_rule_count,
+        temporal_rules.len(),
+        failures,
+    );
+    assert_optional_count(
+        label,
+        "temporal_rules_with_handshake_completion",
+        expectations.temporal_rules_with_handshake_completion,
+        temporal_rules_with_handshake_completion_count(temporal_rules),
+        failures,
+    );
     assert_optional_count(
         label,
         "signal_polarity_conflicts",
@@ -556,6 +603,23 @@ fn validation_finding_ids(findings: &[ValidationFindingRecord]) -> BTreeSet<Stri
         .iter()
         .map(|finding| finding.finding_id.clone())
         .collect()
+}
+
+fn temporal_rules_with_handshake_completion_count(temporal_rules: &[TemporalRuleRecord]) -> usize {
+    temporal_rules
+        .iter()
+        .filter(|rule| {
+            rule.antecedents
+                .iter()
+                .chain(rule.consequents.iter())
+                .any(|predicate| {
+                    matches!(
+                        predicate,
+                        crate::ir::semantic::TemporalPredicateRecord::HandshakeComplete { .. }
+                    )
+                })
+        })
+        .count()
 }
 
 fn assert_includes(

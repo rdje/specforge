@@ -444,6 +444,7 @@
     - a negative fixture for rejecting name-only semantic role noise
     - a negative fixture for surfacing multi-producer structural conflicts through validation
     - a residual-quality fixture for actor-boundary ambiguity
+    - a stage-patched negative fixture proving contested handshake-shaped signal names do not leak into typed `HandshakeComplete` predicates
 - remaining:
   - expand from seed fixtures to representative APB/AHB/AXI gold fixtures
   - add broader negative fixtures for bogus actor attribution, spurious timing extraction, table misclassification, and multimodal arbitration drift

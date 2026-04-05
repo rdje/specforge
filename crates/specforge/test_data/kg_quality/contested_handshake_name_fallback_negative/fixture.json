@@ -1,0 +1,149 @@
+{
+  "name": "contested_handshake_name_fallback_negative",
+  "source": "source.md",
+  "source_ir_patch": {
+    "structured_tables": [
+      {
+        "table_id": "table_contested_semantic_handshake_desc",
+        "asset_id": "table_contested_semantic_handshake_desc",
+        "page_id": null,
+        "caption_text": "Handshake signal descriptions",
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            {
+              "text": "Signal",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Source",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Width",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Description",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            }
+          ]
+        ],
+        "body_rows": [
+          [
+            {
+              "text": "XVALID",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Requester",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "1",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Indicates that address and control information are valid for transfer.",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ],
+          [
+            {
+              "text": "XACK",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Subordinate",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "1",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Indicates that the subordinate can accept the transfer.",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ]
+        ],
+        "row_count": 2,
+        "col_count": 4
+      }
+    ]
+  },
+  "evidence_ir_patch": {
+    "signal_constraints": [
+      {
+        "constraint_id": "sigcon_payload_contested_semantic_handshake",
+        "subject_signal": "PAYLOAD",
+        "constraint_kind": {
+          "kind": "must_not_change"
+        },
+        "target_value": null,
+        "condition_text": "when XVALID is HIGH and XACK is HIGH",
+        "negated": false,
+        "source_text": "PAYLOAD must not change when XVALID is HIGH and XACK is HIGH.",
+        "supporting_statement_ids": [
+          "stmt_temporal_contested_semantic_handshake"
+        ],
+        "automation_confidence": "medium"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["XVALID", "XACK", "PAYLOAD"],
+      "residual_decision_ids_include": ["semantic_handshake_name_fallback_blocked"],
+      "signal_semantic_conflicts": 1,
+      "temporal_rule_count": 1,
+      "temporal_rules_with_handshake_completion": 0
+    },
+    "intent": {
+      "signal_names_include": ["XVALID", "XACK", "PAYLOAD"],
+      "residual_decision_ids_include": ["semantic_handshake_name_fallback_blocked"],
+      "signal_semantic_conflicts": 1,
+      "temporal_rule_count": 1,
+      "temporal_rules_with_handshake_completion": 0
+    },
+    "validation": {
+      "semantic": {
+        "finding_ids_include": [
+          "semantic_handshake_name_fallback_blocked_present",
+          "semantic_signal_semantic_conflicts_present"
+        ]
+      },
+      "intent": {
+        "finding_ids_include": [
+          "intent_handshake_name_fallback_blocked_present",
+          "intent_signal_semantic_conflicts_present"
+        ]
+      }
+    }
+  }
+}

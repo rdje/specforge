@@ -1,5 +1,28 @@
 # CHANGES
 
+## 2026-04-06 (KG fixtures can now patch staged inputs)
+
+### Added: stage-patched KG fixtures
+- `specforge kg-bench` fixtures can now patch `SourceIR` and `EvidenceIR` inputs directly before downstream stages run.
+- This lets the tracked benchmark harness express richer structured/semantic conditions than plain markdown prose alone.
+
+### Added: contested handshake-name fallback negative fixture
+- Added a stage-patched tracked fixture proving that contested meaning for a handshake-shaped signal like `XVALID` blocks typed `HandshakeComplete` recovery.
+- The fixture injects:
+  - a structured signal-description table
+  - a typed signal constraint guard
+  - validation expectations showing the blocked fallback and preserved semantic-role conflict
+
+### Why this matters
+- This strengthens `R15e` from “benchmark simple markdown cases” into “benchmark real staged semantics.”
+- The harness now protects a high-value truthfulness invariant:
+  - contested semantic evidence must outrank handshake-name heuristics
+
+### Validation
+- `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` → passed
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 188/188 passed
+
 ## 2026-04-06 (tracked KG-quality benchmark harness landed)
 
 ### Added: `specforge kg-bench` command

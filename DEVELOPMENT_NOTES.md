@@ -233,6 +233,18 @@
   - name-only semantic-noise rejection
   - multi-producer conflict surfacing
   - actor-boundary residual quality
+- the harness also needs to be able to express richer staged conditions than plain markdown prose can capture on its own
+- that is why tracked fixtures are now allowed to patch `SourceIR` and `EvidenceIR` surfaces directly:
+  - inject a structured signal-description table
+  - inject a typed signal constraint
+  - then verify the downstream truthfulness behavior
+- this is an elegant middle ground:
+  - stronger than a prose-only fixture corpus
+  - much cheaper and more controllable than requiring a full external PDF for every narrow semantic regression
+  - still honest, because the patches target real IR surfaces rather than hidden test-only shortcuts
+- the contested handshake-name fallback negative fixture is the first example of that approach:
+  - stage-patched signal-description evidence and a guard constraint create a real semantic-role conflict
+  - the benchmark then proves that typed `HandshakeComplete` recovery stays blocked instead of leaking through signal spelling
 - this is the right shape for `R15e`:
   - start with fixtures that protect truthfulness invariants
   - then grow toward APB/AHB/AXI protocol-grade gold suites and broader negative corpora

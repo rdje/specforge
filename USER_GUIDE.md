@@ -102,6 +102,7 @@ cargo run -p specforge -- kg-bench
 - runs the tracked fixture set under `crates/specforge/test_data/kg_quality/`
 - fails if gold expectations, negative expectations, residual-quality checks, or validation-finding checks drift
 - this is the current user-facing truthfulness regression command for the staged KG surface
+- the harness can also patch `SourceIR` and `EvidenceIR` inputs for a fixture, which lets tracked regressions exercise richer structured/semantic cases than plain markdown text alone
   - visual evidence items from `SourceIR` visual assets
   - explicit `describes` and `cites` links for caption and figure/table references
   - extracted statements classified into source facts, derived rules, local design decisions, or explicit abstractions
