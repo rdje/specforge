@@ -3243,52 +3243,51 @@ fn synthesize_signal_semantic_hints_from_prose(
             continue;
         }
 
-        let Some((signal_name, alias_grounded)) = resolve_signal_semantic_target_from_text(
+        for target_context in extract_signal_semantic_target_contexts(
             &statement.text,
             known_signals,
             signal_alias_map,
-        ) else {
-            continue;
-        };
-        let sanitized_text = strip_signal_mentions_from_semantic_hint_text(
-            &statement.text,
-            known_signals.iter().map(String::as_str),
-        );
-        let semantic_tags = infer_signal_semantic_tags_from_description(&sanitized_text);
-        if semantic_tags.is_empty() {
-            continue;
-        }
-        let source_kind = if alias_grounded {
-            SignalSemanticHintSourceKind::AliasGroundedProseStatement
-        } else {
-            SignalSemanticHintSourceKind::ProseStatement
-        };
+        ) {
+            let sanitized_text = strip_signal_mentions_from_semantic_hint_text(
+                &target_context.context_text,
+                known_signals.iter().map(String::as_str),
+            );
+            let semantic_tags = infer_signal_semantic_tags_from_description(&sanitized_text);
+            if semantic_tags.is_empty() {
+                continue;
+            }
+            let source_kind = if target_context.alias_grounded {
+                SignalSemanticHintSourceKind::AliasGroundedProseStatement
+            } else {
+                SignalSemanticHintSourceKind::ProseStatement
+            };
 
-        let key = format!(
-            "{}:{}:{}:{}",
-            signal_name,
-            statement.statement_id,
-            source_kind.as_str(),
-            semantic_tags
-                .iter()
-                .map(|tag| tag.as_str())
-                .collect::<Vec<_>>()
-                .join(",")
-        );
-        if !seen.insert(key) {
-            continue;
-        }
+            let key = format!(
+                "{}:{}:{}:{}",
+                target_context.signal_name,
+                statement.statement_id,
+                source_kind.as_str(),
+                semantic_tags
+                    .iter()
+                    .map(|tag| tag.as_str())
+                    .collect::<Vec<_>>()
+                    .join(",")
+            );
+            if !seen.insert(key) {
+                continue;
+            }
 
-        hints.push(SignalSemanticHintRecord {
-            signal_name,
-            semantic_tags,
-            source_kind,
-            source_text: statement.text.clone(),
-            supporting_statement_ids: vec![statement.statement_id.clone()],
-            supporting_table_ids: Vec::new(),
-            supporting_visual_evidence_ids: Vec::new(),
-            automation_confidence: AutomationConfidence::Low,
-        });
+            hints.push(SignalSemanticHintRecord {
+                signal_name: target_context.signal_name,
+                semantic_tags,
+                source_kind,
+                source_text: statement.text.clone(),
+                supporting_statement_ids: vec![statement.statement_id.clone()],
+                supporting_table_ids: Vec::new(),
+                supporting_visual_evidence_ids: Vec::new(),
+                automation_confidence: AutomationConfidence::Low,
+            });
+        }
     }
 
     hints
@@ -3363,45 +3362,44 @@ fn push_visual_signal_semantic_hint(
     signal_alias_map: &BTreeMap<String, String>,
     automation_confidence: AutomationConfidence,
 ) {
-    let Some((signal_name, _alias_grounded)) =
-        resolve_signal_semantic_target_from_text(source_text, known_signals, signal_alias_map)
-    else {
-        return;
-    };
-    let sanitized_text = strip_signal_mentions_from_semantic_hint_text(
-        source_text,
-        known_signals.iter().map(String::as_str),
-    );
-    let semantic_tags = infer_signal_semantic_tags_from_description(&sanitized_text);
-    if semantic_tags.is_empty() {
-        return;
-    }
+    for target_context in
+        extract_signal_semantic_target_contexts(source_text, known_signals, signal_alias_map)
+    {
+        let sanitized_text = strip_signal_mentions_from_semantic_hint_text(
+            &target_context.context_text,
+            known_signals.iter().map(String::as_str),
+        );
+        let semantic_tags = infer_signal_semantic_tags_from_description(&sanitized_text);
+        if semantic_tags.is_empty() {
+            continue;
+        }
 
-    let key = format!(
-        "{}:{}:{}:{}",
-        signal_name,
-        visual_evidence_id,
-        source_kind.as_str(),
-        semantic_tags
-            .iter()
-            .map(|tag| tag.as_str())
-            .collect::<Vec<_>>()
-            .join(",")
-    );
-    if !seen.insert(key) {
-        return;
-    }
+        let key = format!(
+            "{}:{}:{}:{}",
+            target_context.signal_name,
+            visual_evidence_id,
+            source_kind.as_str(),
+            semantic_tags
+                .iter()
+                .map(|tag| tag.as_str())
+                .collect::<Vec<_>>()
+                .join(",")
+        );
+        if !seen.insert(key) {
+            continue;
+        }
 
-    hints.push(SignalSemanticHintRecord {
-        signal_name,
-        semantic_tags,
-        source_kind,
-        source_text: source_text.to_string(),
-        supporting_statement_ids: Vec::new(),
-        supporting_table_ids: Vec::new(),
-        supporting_visual_evidence_ids: vec![visual_evidence_id.to_string()],
-        automation_confidence,
-    });
+        hints.push(SignalSemanticHintRecord {
+            signal_name: target_context.signal_name,
+            semantic_tags,
+            source_kind,
+            source_text: source_text.to_string(),
+            supporting_statement_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
+            supporting_visual_evidence_ids: vec![visual_evidence_id.to_string()],
+            automation_confidence,
+        });
+    }
 }
 
 fn detect_signal_semantic_conflicts(
@@ -3448,44 +3446,215 @@ fn detect_signal_semantic_conflicts(
     conflicts
 }
 
-fn resolve_signal_semantic_target_from_text(
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct SignalSemanticTargetContext {
+    signal_name: String,
+    alias_grounded: bool,
+    context_text: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct SignalSemanticTargetMention {
+    signal_name: String,
+    alias_grounded: bool,
+    start: usize,
+    end: usize,
+}
+
+fn extract_signal_semantic_target_contexts(
     text: &str,
     known_signals: &HashSet<String>,
     signal_alias_map: &BTreeMap<String, String>,
-) -> Option<(String, bool)> {
-    let lowered = text.to_ascii_lowercase();
-    let mut direct_matches = BTreeSet::new();
-    for signal_name in known_signals {
-        if contains_reference_token(&lowered, &signal_name.to_ascii_lowercase()) {
-            direct_matches.insert(signal_name.clone());
+) -> Vec<SignalSemanticTargetContext> {
+    let mentions = collect_signal_semantic_target_mentions(text, known_signals, signal_alias_map);
+    if mentions.is_empty() {
+        return Vec::new();
+    }
+
+    let mut contexts = Vec::new();
+    let distinct_signals = mentions
+        .iter()
+        .map(|mention| mention.signal_name.as_str())
+        .collect::<BTreeSet<_>>();
+
+    if distinct_signals.len() == 1 {
+        let signal_name = mentions[0].signal_name.clone();
+        contexts.push(SignalSemanticTargetContext {
+            signal_name,
+            alias_grounded: mentions.iter().any(|mention| mention.alias_grounded),
+            context_text: text.to_string(),
+        });
+        return contexts;
+    }
+
+    let mut seen = BTreeSet::new();
+    for (index, mention) in mentions.iter().enumerate() {
+        let context_text = extract_signal_semantic_context_window(text, &mentions, index);
+        let context_text = context_text.trim();
+        if context_text.is_empty() {
+            continue;
         }
-    }
-    if direct_matches.is_empty() {
-        direct_matches.extend(collect_hardware_signal_tokens_anywhere(text));
-    }
-
-    let mut alias_matches = BTreeSet::new();
-    for (alias_phrase, signal_name) in signal_alias_map {
-        if lowered.contains(alias_phrase.as_str()) {
-            alias_matches.insert(signal_name.clone());
+        let key = format!(
+            "{}:{}:{}",
+            mention.signal_name,
+            mention.alias_grounded,
+            normalize_text_key(context_text)
+        );
+        if !seen.insert(key) {
+            continue;
         }
+        contexts.push(SignalSemanticTargetContext {
+            signal_name: mention.signal_name.clone(),
+            alias_grounded: mention.alias_grounded,
+            context_text: context_text.to_string(),
+        });
     }
 
-    let mut resolved = direct_matches.clone();
-    resolved.extend(alias_matches.iter().cloned());
-    if resolved.len() != 1 {
-        return None;
-    }
-
-    let signal_name = resolved.into_iter().next()?;
-    Some((signal_name, !alias_matches.is_empty()))
+    contexts
 }
 
-fn collect_hardware_signal_tokens_anywhere(text: &str) -> BTreeSet<String> {
-    text.split(|c: char| !(c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_'))
-        .filter(|token| is_hardware_signal_token(token) && !is_signal_synthesis_non_signal(token))
-        .map(ToString::to_string)
-        .collect()
+fn collect_signal_semantic_target_mentions(
+    text: &str,
+    known_signals: &HashSet<String>,
+    signal_alias_map: &BTreeMap<String, String>,
+) -> Vec<SignalSemanticTargetMention> {
+    let lowered = text.to_ascii_lowercase();
+    let mut mentions = Vec::new();
+
+    let mut ordered_signals: Vec<&String> = known_signals.iter().collect();
+    ordered_signals.sort_by_key(|signal_name| std::cmp::Reverse(signal_name.len()));
+    for signal_name in ordered_signals {
+        let token = signal_name.to_ascii_lowercase();
+        for (start, end) in find_reference_spans(&lowered, &token) {
+            mentions.push(SignalSemanticTargetMention {
+                signal_name: signal_name.clone(),
+                alias_grounded: false,
+                start,
+                end,
+            });
+        }
+    }
+
+    let mut ordered_aliases: Vec<(&String, &String)> = signal_alias_map.iter().collect();
+    ordered_aliases.sort_by_key(|(alias_phrase, _)| std::cmp::Reverse(alias_phrase.len()));
+    for (alias_phrase, signal_name) in ordered_aliases {
+        let alias_lower = alias_phrase.to_ascii_lowercase();
+        for (start, end) in find_reference_spans(&lowered, &alias_lower) {
+            mentions.push(SignalSemanticTargetMention {
+                signal_name: signal_name.clone(),
+                alias_grounded: true,
+                start,
+                end,
+            });
+        }
+    }
+
+    mentions.sort_by(|left, right| {
+        left.start
+            .cmp(&right.start)
+            .then_with(|| (right.end - right.start).cmp(&(left.end - left.start)))
+            .then_with(|| right.alias_grounded.cmp(&left.alias_grounded))
+            .then_with(|| left.signal_name.cmp(&right.signal_name))
+    });
+
+    let mut collapsed: Vec<SignalSemanticTargetMention> = Vec::new();
+    for mention in mentions {
+        if let Some(previous) = collapsed.last() {
+            if mention.start < previous.end {
+                continue;
+            }
+        }
+        collapsed.push(mention);
+    }
+    collapsed
+}
+
+fn find_reference_spans(text: &str, token: &str) -> Vec<(usize, usize)> {
+    let mut spans = Vec::new();
+    for (match_index, _) in text.match_indices(token) {
+        let prefix_ok = text[..match_index]
+            .chars()
+            .next_back()
+            .map(|character| !character.is_ascii_alphanumeric())
+            .unwrap_or(true);
+        let suffix_index = match_index + token.len();
+        let suffix_ok = text[suffix_index..]
+            .chars()
+            .next()
+            .map(|character| !character.is_ascii_alphanumeric())
+            .unwrap_or(true);
+        if prefix_ok && suffix_ok {
+            spans.push((match_index, suffix_index));
+        }
+    }
+    spans
+}
+
+fn extract_signal_semantic_context_window<'a>(
+    text: &'a str,
+    mentions: &[SignalSemanticTargetMention],
+    index: usize,
+) -> &'a str {
+    let lowered = text.to_ascii_lowercase();
+    let current = &mentions[index];
+
+    let start = if let Some(previous) = index.checked_sub(1).and_then(|idx| mentions.get(idx)) {
+        if let Some((separator_offset, separator_len)) =
+            find_last_clause_separator(&lowered[previous.end..current.start])
+        {
+            previous.end + separator_offset + separator_len
+        } else {
+            current.start
+        }
+    } else {
+        0
+    };
+
+    let end = if let Some(next) = mentions.get(index + 1) {
+        if let Some((separator_offset, _separator_len)) =
+            find_first_clause_separator(&lowered[current.end..next.start])
+        {
+            current.end + separator_offset
+        } else {
+            current.end
+        }
+    } else {
+        text.len()
+    };
+
+    text[start..end].trim()
+}
+
+fn find_first_clause_separator(text: &str) -> Option<(usize, usize)> {
+    clause_separator_offsets(text)
+        .into_iter()
+        .min_by_key(|(start, _)| *start)
+}
+
+fn find_last_clause_separator(text: &str) -> Option<(usize, usize)> {
+    clause_separator_offsets(text)
+        .into_iter()
+        .max_by_key(|(start, _)| *start)
+}
+
+fn clause_separator_offsets(text: &str) -> Vec<(usize, usize)> {
+    const SEPARATORS: &[&str] = &[
+        " and ",
+        " but ",
+        " while ",
+        " whereas ",
+        ";",
+        ",",
+        "\n",
+        ".",
+    ];
+    let mut offsets = Vec::new();
+    for separator in SEPARATORS {
+        for (start, _) in text.match_indices(separator) {
+            offsets.push((start, separator.len()));
+        }
+    }
+    offsets
 }
 
 fn infer_signal_semantic_tags_from_description(description: &str) -> Vec<SignalSemanticTag> {
@@ -5898,6 +6067,55 @@ mod tests {
     }
 
     #[test]
+    fn multi_signal_prose_descriptions_produce_per_signal_semantic_hints() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("multi_signal_prose_handshake_hints.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Channel\n",
+                "Signal XVALID is input width 1.\n\n",
+                "Signal XREADY is output width 1.\n\n",
+                "XVALID indicates that the request is pending and XREADY indicates that the subordinate can accept the transfer.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        assert!(evidence_ir.signal_semantic_hints.iter().any(|hint| {
+            hint.signal_name == "XVALID"
+                && matches!(
+                    hint.source_kind,
+                    super::SignalSemanticHintSourceKind::ProseStatement
+                )
+                && hint
+                    .semantic_tags
+                    .contains(&super::SignalSemanticTag::HandshakeValidLike)
+        }));
+        assert!(evidence_ir.signal_semantic_hints.iter().any(|hint| {
+            hint.signal_name == "XREADY"
+                && matches!(
+                    hint.source_kind,
+                    super::SignalSemanticHintSourceKind::ProseStatement
+                )
+                && hint
+                    .semantic_tags
+                    .contains(&super::SignalSemanticTag::HandshakeReadyLike)
+        }));
+
+        Ok(())
+    }
+
+    #[test]
     fn alias_grounded_prose_descriptions_produce_semantic_handshake_hints() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("alias_grounded_handshake_hints.md");
@@ -6023,6 +6241,71 @@ mod tests {
                     .semantic_tags
                     .contains(&super::SignalSemanticTag::HandshakeReadyLike)
                 && !hint.supporting_visual_evidence_ids.is_empty()
+        }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn multi_signal_visual_captions_produce_per_signal_semantic_hints() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir
+            .path()
+            .join("caption_multi_signal_handshake_hints.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Channel\n",
+                "Signal XVALID is input width 1.\n\n",
+                "Signal XREADY is input width 1.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.visual_assets.push(VisualAsset {
+            asset_id: "figure_xvalid_xready".to_string(),
+            asset_kind: VisualAssetKind::Diagram,
+            page_id: Some("page_0001".to_string()),
+            image_path: None,
+            caption_text: Some(
+                "Figure 1: XVALID indicates that the request is pending and XREADY indicates that the subordinate can accept the transfer."
+                    .to_string(),
+            ),
+            caption_source_path: None,
+            source_ref: None,
+            placeholder_text: None,
+            note: None,
+            diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        assert!(evidence_ir.signal_semantic_hints.iter().any(|hint| {
+            hint.signal_name == "XVALID"
+                && matches!(
+                    hint.source_kind,
+                    super::SignalSemanticHintSourceKind::VisualCaption
+                )
+                && hint
+                    .semantic_tags
+                    .contains(&super::SignalSemanticTag::HandshakeValidLike)
+        }));
+        assert!(evidence_ir.signal_semantic_hints.iter().any(|hint| {
+            hint.signal_name == "XREADY"
+                && matches!(
+                    hint.source_kind,
+                    super::SignalSemanticHintSourceKind::VisualCaption
+                )
+                && hint
+                    .semantic_tags
+                    .contains(&super::SignalSemanticTag::HandshakeReadyLike)
         }));
 
         Ok(())

@@ -187,6 +187,22 @@
   - rejection of weakly grounded AI hypotheses
 - do not treat end-to-end AI confidence as a substitute for typed provenance and arbitration
 
+## Clause-local semantic grounding for multi-signal text
+- semantic-role inference should not require an entire prose sentence or figure caption to resolve to exactly one signal before it can contribute meaning
+- real protocol text often explains multiple signals in one region:
+  - `XVALID indicates that the request is pending and XREADY indicates that the subordinate can accept the transfer`
+  - a single caption can similarly describe both sides of a handshake
+- the weaker version of the pipeline dropped or underused that evidence because it tried to resolve the whole text blob to one signal target
+- the stronger design is to carve multi-signal prose/caption regions into clause-local per-signal context windows:
+  - keep the whole-text path for genuinely single-target descriptions
+  - when multiple signals are mentioned, isolate local context around each mention using clause separators
+  - infer semantic tags from that local descriptive window, not from the full multi-signal text blob
+- this matches the project doctrine:
+  - deterministic and inspectable
+  - less lossy than the whole-text single-target rule
+  - avoids smearing valid-like and ready-like evidence across every mentioned signal
+  - recovers more meaning without asking runtime AI to solve the whole sentence end to end
+
 ## Current repository observations
 - the repository now contains a renamed `specforge` crate and CLI
 - the active Rust codebase no longer treats `spec2fsm` as the primary identity

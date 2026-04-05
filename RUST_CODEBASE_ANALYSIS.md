@@ -27,7 +27,7 @@
 - the current `.fsm` adapter slice is real and intentionally narrow: it can emit honest `?dt:name`, `?fsm:name`, and `?top:name` outputs when the canonical facts are explicit enough
 - the enrichment, convergence, and validation toolchain is also real: `specforge enrich`, `specforge nlp-enrich`, `specforge converge`, and `specforge validate` are wired into the CLI and exercised by the workspace tests
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, and benchmark-quality evaluation; adapter expansion is now horizon work
-- the workspace currently validates with `cargo test --manifest-path Cargo.toml`, with 176 passing tests
+- the workspace currently validates with `cargo test --manifest-path Cargo.toml`, with 178 passing tests
 
 
 ## Session update (2026-04-04)
@@ -43,6 +43,7 @@
 - the temporal-rule layer now also compresses grounded ready/valid completion guards into typed `HandshakeComplete` predicates, so protocol-native transfer events are no longer represented only as separate scalar value clauses
 - `EvidenceIR` now also persists typed `signal_semantic_hints` mined from signal-description text, direct prose descriptions, and alias-grounded prose descriptions, and `SemanticIR` / `IntentIR` now carry those roles as per-signal `semantic_tags`, so handshake-role inference can use meaning-grounded descriptions before falling back to literal `VALID` / `READY` spellings
 - that semantic-hint synthesis is now stricter too: prose/visual hint extraction strips explicit signal identifiers before tag inference, so declarations and captions no longer create semantic role consensus from the signal name token alone
+- semantic-hint synthesis is now also less lossy for multi-signal regions: prose statements and visual captions can be decomposed into clause-local per-signal context windows, so one region can ground valid-like meaning for one signal and ready-like meaning for another without forcing whole-text single-target resolution
 - `EvidenceIR` now also mines `signal_semantic_hints` from grounded visual captions and VLM timing-diagram annotations, using the same robust fenced/prose-wrapped JSON recovery path as the semantic VLM lift and preserving explicit visual-evidence provenance on those hints
 - `SemanticIR` / `IntentIR` no longer collapse that richer role evidence entirely into `semantic_tags`; they now also carry per-signal `semantic_observations`, preserving source kind and provenance in the canonical layers
 - `SemanticIR` / `IntentIR` now also carry per-signal `semantic_candidates`, keeping competing role hypotheses visible in the canonical layers instead of flattening them into only winner-or-none state

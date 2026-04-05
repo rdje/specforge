@@ -1,5 +1,29 @@
 # CHANGES
 
+## 2026-04-05 (multi-signal prose and captions now ground per-signal semantic roles)
+
+### Changed: semantic-role hint extraction now decomposes multi-signal text into per-signal context windows
+- `EvidenceIR` no longer requires a whole prose statement or visual caption to resolve to exactly one signal before it can contribute a semantic role hint.
+- When multiple known signals appear in the same sentence or caption, the extractor now carves out clause-local context windows around each signal mention and infers role meaning from that local description.
+
+### Why this matters
+- Text like `XVALID indicates request pending and XREADY indicates the subordinate can accept the transfer` can now produce:
+  - a valid-like hint for `XVALID`
+  - a ready-like hint for `XREADY`
+- The previous weaker behavior either dropped that region entirely or would have required unsafe whole-text attribution.
+
+### Added: regression coverage for multi-signal prose and caption grounding
+- Added evidence-stage regressions proving that:
+  - one prose sentence can contribute different semantic role hints to different signals
+  - one visual caption can contribute different semantic role hints to different signals
+
+### Cleanup
+- removed the dead single-target semantic-role helper after the stronger per-signal path replaced it
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 178/178 passed
+
 ## 2026-04-05 (signal names no longer self-justify semantic role hints)
 
 ### Changed: semantic-role hint inference now strips signal identifiers from prose/visual text

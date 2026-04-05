@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `83d28e3`
-- latest_commit_brief_message: `feat(semantic): require consensus for handshake roles`
-- note: current uncommitted work makes semantic-role hint inference ignore explicit signal identifiers, so consensus comes from descriptive language rather than from names like `AWVALID` / `AWREADY`
+- latest_commit_hash: `cbba105`
+- latest_commit_brief_message: `feat(evidence): ground semantic hints in description text`
+- note: current uncommitted work teaches semantic-role hint extraction to recover different role meanings for different signals from the same prose sentence or visual caption via clause-local per-signal context windows
 
 ## Recent commit chain (last 5)
+- `cbba105` feat(evidence): ground semantic hints in description text
 - `83d28e3` feat(semantic): require consensus for handshake roles
 - `4ad132b` feat(semantic): surface provisional role residuals
 - `29107c8` feat(semantic): surface blocked handshake fallback
 - `99c93bb` feat(semantic): block handshake fallback on contested roles
-- `cddd9b3` feat(semantic): surface role arbitration state
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -43,14 +43,17 @@
 - `VALIDATION_SNAPSHOT.md` is now a tracked continuity doc refreshed from persisted validation reports
 
 ## Completed technical work in this session
-- `crates/specforge/src/ir/evidence.rs` now strips explicit signal identifiers before semantic-role tag inference in prose descriptions, alias-grounded prose, visual captions, VLM timing annotations, and signal-description row text
-- declarations like `Signal AWVALID is input width 1.` therefore no longer create valid-like semantic hints from the identifier alone
-- descriptive language such as `request pending` and `can accept the transfer` still produces semantic hints as before, so meaning-bearing evidence keeps flowing into downstream consensus/arbitration surfaces
-- added regression coverage proving that handshake-shaped signal declarations alone do not create semantic hints
-- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, and `CHANGES.md` so the stricter semantic-hint grounding rule is visible in continuity docs
+- `crates/specforge/src/ir/evidence.rs` now decomposes multi-signal prose statements and visual captions into clause-local per-signal context windows before semantic-role tag inference
+- one document region can now contribute valid-like meaning for one signal and ready-like meaning for another without requiring the entire text to resolve to exactly one signal
+- this keeps the extraction deterministic and inspectable while avoiding the old failure mode where multi-signal descriptions were dropped or would have required unsafe whole-text attribution
+- removed the dead single-target semantic-role helper that the stronger per-signal path replaced
+- added regression coverage proving that:
+  - one prose sentence can produce different semantic role hints for different signals
+  - one visual caption can produce different semantic role hints for different signals
+- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, and `CHANGES.md` so the clause-local multi-signal semantic grounding rule is visible in continuity docs
 - validation ran for this task:
   - `cargo fmt --all` passed
-  - `cargo test --manifest-path Cargo.toml` passed with `176/176`
+  - `cargo test --manifest-path Cargo.toml` passed with `178/178`
 
 ## Current working tree before commit
 - modified tracked files currently include:
@@ -65,8 +68,8 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the stricter semantic-hint grounding slice
-2. continue the semantic-truthfulness program by carrying the same “descriptive evidence outranks identifier spelling” rule into more multimodal semantic consumers and arbitration surfaces
+1. commit the clause-local multi-signal semantic grounding slice
+2. continue the semantic-truthfulness program by carrying the same “local descriptive evidence outranks raw naming” rule into more multimodal semantic consumers and arbitration surfaces
 3. keep adapter work de-prioritized until the graph, temporal, arbitration, and evaluation surfaces are materially stronger
 
 ## Remaining engineering gaps after this commit
