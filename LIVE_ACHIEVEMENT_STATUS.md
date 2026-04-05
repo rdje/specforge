@@ -56,6 +56,7 @@
 - Signal-semantic hints from visual captions and VLM timing annotations carried into the semantic pipeline: Done
 - Prose/visual semantic-hint inference no longer treats signal identifiers as descriptive evidence: Done
 - Multi-signal prose/caption semantic-role grounding via clause-local per-signal windows: Done
+- Explicit signal mentions outrank aliases for semantic-role grounding in the same text region: Done
 - SemanticIR / IntentIR per-signal semantic observation provenance implemented: Done
 - Canonical semantic-role consensus plus grounding-strength reporting implemented: Done
 - Cross-modality semantic grounding distinction implemented: Done
@@ -79,7 +80,7 @@
 - Live-doc projection of persisted IR validation findings implemented: Done
 - Latest local validation snapshot projected into tracked docs: Done
 - Full Ollama-backed `specforge converge` defaults enabled: Done
-- Test suite expanded to 178 tests; all passing: Done
+- Test suite expanded to 179 tests; all passing: Done
 - Explicit clock-tick temporal model in `SemanticIR` / `IntentIR`: In Progress
 - KG-guided multimodal rescans as a first-class convergent workstream: In Progress
 - Cross-modality evidence arbitration / conflict handling: In Progress
@@ -89,7 +90,7 @@
 - Actor-relative direction model in `SemanticIR` / `IntentIR`: In Progress
 
 ## Highest-priority remaining gap
-- Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then deepen semantic-role arbitration beyond candidate/consensus profiling while continuing richer multimodal grounding, clause-local multimodal rescans, structural/temporal arbitration, and KG-quality evaluation
+- Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then deepen semantic-role arbitration beyond candidate/consensus profiling while continuing richer multimodal grounding, stricter alias-vs-direct arbitration, structural/temporal arbitration, and KG-quality evaluation
 
 ## Validation Projection
 

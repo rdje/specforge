@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-04-05 (explicit signal names now outrank aliases for semantic grounding)
+
+### Changed: alias-grounded semantic hints no longer double-count when direct signal names are present
+- `EvidenceIR` now suppresses alias-grounded targeting for a signal when the same prose sentence or visual caption already contains an explicit mention of that signal.
+- This means aliases stay a rescue path for implicit references, not an extra vote when the document is already explicit.
+
+### Why this matters
+- A sentence like `The request phase XREQ indicates that address and control information are valid for transfer.` now produces exactly one semantic hint for `XREQ`, grounded as direct prose rather than both direct and alias-grounded support.
+- That keeps semantic-role arbitration honest and prevents artificial support inflation.
+
+### Added: regression coverage for direct-name precedence over aliases
+- Added an evidence-stage regression proving that explicit signal mentions outrank alias-grounding for the same statement.
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 179/179 passed
+
 ## 2026-04-05 (multi-signal prose and captions now ground per-signal semantic roles)
 
 ### Changed: semantic-role hint extraction now decomposes multi-signal text into per-signal context windows

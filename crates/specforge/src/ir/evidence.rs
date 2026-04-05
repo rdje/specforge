@@ -3549,6 +3549,17 @@ fn collect_signal_semantic_target_mentions(
         }
     }
 
+    let signals_with_direct_mentions = mentions
+        .iter()
+        .filter(|mention| !mention.alias_grounded)
+        .map(|mention| mention.signal_name.clone())
+        .collect::<HashSet<_>>();
+    if !signals_with_direct_mentions.is_empty() {
+        mentions.retain(|mention| {
+            !mention.alias_grounded || !signals_with_direct_mentions.contains(&mention.signal_name)
+        });
+    }
+
     mentions.sort_by(|left, right| {
         left.start
             .cmp(&right.start)
@@ -6168,6 +6179,53 @@ mod tests {
                     .semantic_tags
                     .contains(&super::SignalSemanticTag::HandshakeReadyLike)
         }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn explicit_signal_mentions_outrank_alias_grounding_for_same_statement() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("direct_signal_outranks_alias.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Channel\n",
+                "Signal XREQ is input width 1.\n\n",
+                "The request phase XREQ indicates that address and control information are valid for transfer.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir
+            .signal_alias_map
+            .insert("request phase".to_string(), "XREQ".to_string());
+        evidence_ir.refresh_signal_semantic_hints()?;
+
+        let xreq_hints: Vec<_> = evidence_ir
+            .signal_semantic_hints
+            .iter()
+            .filter(|hint| hint.signal_name == "XREQ")
+            .collect();
+        assert_eq!(xreq_hints.len(), 1);
+        assert!(matches!(
+            xreq_hints[0].source_kind,
+            super::SignalSemanticHintSourceKind::ProseStatement
+        ));
+        assert!(
+            xreq_hints[0]
+                .semantic_tags
+                .contains(&super::SignalSemanticTag::HandshakeValidLike)
+        );
 
         Ok(())
     }

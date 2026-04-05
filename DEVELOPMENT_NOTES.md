@@ -202,6 +202,11 @@
   - less lossy than the whole-text single-target rule
   - avoids smearing valid-like and ready-like evidence across every mentioned signal
   - recovers more meaning without asking runtime AI to solve the whole sentence end to end
+- one more arbitration rule is important here: if the same text region contains both an alias and the explicit signal name for the same signal, the explicit signal mention should win
+- otherwise alias learning can accidentally overcount evidence in exactly the places where the document is already being explicit
+- the right interpretation is:
+  - aliases are a rescue path when the canonical signal name is absent
+  - aliases are not extra votes when the canonical signal name is already present
 
 ## Current repository observations
 - the repository now contains a renamed `specforge` crate and CLI
