@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `0ec1e73`
-- latest_commit_brief_message: `feat(evidence): split semantic hints by signal context`
-- note: current uncommitted work makes explicit signal mentions outrank aliases for the same signal inside one prose/caption region, so aliases help only when they are actually needed
+- latest_commit_hash: `f3c28cd`
+- latest_commit_brief_message: `feat(evidence): prefer direct signal grounding over aliases`
+- note: current uncommitted work makes alias dependence explicit on semantic role candidates and consensus summaries, so canonical role meaning can stay usable without hiding that it still depends on alias mapping
 
 ## Recent commit chain (last 5)
+- `f3c28cd` feat(evidence): prefer direct signal grounding over aliases
 - `0ec1e73` feat(evidence): split semantic hints by signal context
 - `cbba105` feat(evidence): ground semantic hints in description text
 - `83d28e3` feat(semantic): require consensus for handshake roles
 - `4ad132b` feat(semantic): surface provisional role residuals
-- `29107c8` feat(semantic): surface blocked handshake fallback
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -43,13 +43,16 @@
 - `VALIDATION_SNAPSHOT.md` is now a tracked continuity doc refreshed from persisted validation reports
 
 ## Completed technical work in this session
-- `crates/specforge/src/ir/evidence.rs` now makes explicit signal mentions outrank alias-grounding for the same signal inside one prose sentence or visual caption
-- alias learning therefore remains a rescue path for implicit references instead of inflating semantic-role support when the canonical signal name is already present
-- added regression coverage proving that a statement containing both `request phase` and `XREQ` yields one direct semantic hint rather than duplicate direct-plus-alias support
-- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, and `CHANGES.md` so the stricter alias-vs-direct arbitration rule is visible in continuity docs
+- `SemanticIR` / `IntentIR` now mark semantic role candidates and consensus summaries as `alias_dependent` when the recovered meaning still depends only on alias-grounded evidence
+- `specforge validate` now reports alias-dependent resolved semantic roles explicitly instead of leaving that dependency implicit in raw source-kind vectors
+- added regression coverage proving that:
+  - direct visual/table grounded semantic consensus is not alias-dependent
+  - alias-grounded semantic consensus is marked alias-dependent
+  - intent validation reports alias-dependent resolved roles
+- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, and `CHANGES.md` so the new alias-dependence visibility is captured in the live docs
 - validation ran for this task:
   - `cargo fmt --all` passed
-  - `cargo test --manifest-path Cargo.toml` passed with `179/179`
+  - `cargo test --manifest-path Cargo.toml` passed with `180/180`
 
 ## Current working tree before commit
 - modified tracked files currently include:
@@ -64,8 +67,8 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the alias-vs-direct semantic grounding arbitration slice
-2. continue the semantic-truthfulness program by carrying the same “explicit grounded evidence outranks fallback anchors” rule into more multimodal semantic consumers and arbitration surfaces
+1. commit the alias-dependence semantic visibility slice
+2. continue the semantic-truthfulness program by carrying the same “make weaker grounding explicit instead of hiding it” rule into more multimodal semantic consumers and arbitration surfaces
 3. keep adapter work de-prioritized until the graph, temporal, arbitration, and evaluation surfaces are materially stronger
 
 ## Remaining engineering gaps after this commit

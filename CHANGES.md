@@ -1,5 +1,27 @@
 # CHANGES
 
+## 2026-04-05 (alias-dependent semantic role meaning is now explicit)
+
+### Added: explicit alias-dependence on semantic candidates and consensus summaries
+- `SemanticIR` and `IntentIR` now mark semantic role candidates and consensus summaries as `alias_dependent` when the current meaning still depends only on alias-grounded evidence.
+- This keeps alias-grounded meaning usable while making that dependency explicit in the canonical IR instead of hiding it inside source-kind lists.
+
+### Added: validation reporting for alias-dependent resolved roles
+- `specforge validate` now reports:
+  - `with_alias_dependent_semantic_consensus`
+  - `alias_dependent_semantic_candidates`
+- It also emits an explicit finding when resolved semantic roles still depend only on alias-grounded evidence.
+
+### Added: regression coverage for alias-dependent canonical role visibility
+- Added assertions proving:
+  - alias-grounded semantic consensus is marked `alias_dependent`
+  - direct visual/table grounded semantic consensus is not marked `alias_dependent`
+  - intent validation reports alias-dependent resolved roles explicitly
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 180/180 passed
+
 ## 2026-04-05 (explicit signal names now outrank aliases for semantic grounding)
 
 ### Changed: alias-grounded semantic hints no longer double-count when direct signal names are present

@@ -207,6 +207,8 @@
 - the right interpretation is:
   - aliases are a rescue path when the canonical signal name is absent
   - aliases are not extra votes when the canonical signal name is already present
+- a related visibility rule matters too: when the best current role meaning still depends only on alias-grounded evidence, that dependency should be explicit in the canonical IR
+- alias-grounded meaning is still useful, but SOTA-quality truthfulness requires downstream consumers and validators to see when a role rests on alias mapping rather than direct signal mention or corroborating non-alias evidence
 
 ## Current repository observations
 - the repository now contains a renamed `specforge` crate and CLI

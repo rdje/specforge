@@ -368,6 +368,7 @@
   - prose/visual semantic-hint synthesis now strips explicit signal identifiers before role-tag inference, so the surrounding descriptive language must establish valid-like or ready-like meaning instead of letting names like `AWVALID` / `AWREADY` self-justify consensus
   - prose and visual semantic-hint synthesis now also decomposes multi-signal regions into clause-local per-signal context windows, so one sentence/caption can ground different role meanings for different signals without forcing whole-text single-target resolution
   - explicit signal mentions now outrank alias-grounding for the same signal inside one prose/caption region, so aliases only contribute when they were actually needed to anchor the meaning
+  - `SemanticIR` / `IntentIR` now also mark semantic candidates and consensus summaries as `alias_dependent` when the role meaning still depends only on alias-grounded evidence, and validation now reports that state explicitly
   - caption/VLM-grounded semantic hints now carry explicit visual-evidence provenance instead of degrading to anonymous text-only hints
   - `SemanticIR` / `IntentIR` now carry per-signal `semantic_observations`, preserving role provenance and source kind in the canonical layers instead of only keeping merged `semantic_tags`
   - `SemanticIR` / `IntentIR` now also carry explicit per-signal `semantic_candidates`, so competing role hypotheses remain inspectable in the canonical layers even when no role is safely resolved
@@ -389,6 +390,7 @@
   - signal identifiers alone do not create semantic-role consensus in prose/visual hint synthesis without descriptive language
   - multi-signal prose/caption regions can contribute different role hints to different signals when the local clause language is explicit enough to separate them safely
   - alias evidence does not inflate semantic-role support when an explicit signal mention already anchors the same local text region
+  - alias-dependent canonical role meaning remains inspectable as a first-class property instead of being hidden inside raw source-kind vectors
 
 ### R15d Evidence arbitration and cross-modality conflict resolution
 - status: In Progress

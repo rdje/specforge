@@ -299,6 +299,10 @@ fn min_automation_confidence(
     }
 }
 
+fn is_false(value: &bool) -> bool {
+    !*value
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct SemanticArtifactLayout {
     pub artifact_root: PathBuf,
@@ -519,6 +523,8 @@ pub struct InterfaceSignalSemanticCandidateRecord {
     pub supporting_observation_count: usize,
     pub automation_confidence: AutomationConfidence,
     pub evidence_weight: u32,
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub alias_dependent: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -543,6 +549,8 @@ pub struct InterfaceSignalSemanticConsensusRecord {
     pub supporting_source_kinds: Vec<SignalSemanticHintSourceKind>,
     pub supporting_observation_count: usize,
     pub automation_confidence: AutomationConfidence,
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub alias_dependent: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -6001,6 +6009,7 @@ fn build_semantic_candidate(
         supporting_observation_count: observations.len(),
         automation_confidence,
         evidence_weight,
+        alias_dependent: semantic_observations_are_alias_dependent(observations),
     }
 }
 
@@ -6013,6 +6022,7 @@ fn build_semantic_consensus(
         supporting_source_kinds: candidate.supporting_source_kinds.clone(),
         supporting_observation_count: candidate.supporting_observation_count,
         automation_confidence: candidate.automation_confidence,
+        alias_dependent: candidate.alias_dependent,
     }
 }
 
@@ -6073,6 +6083,18 @@ fn semantic_observation_modality(
             SemanticObservationModality::Visual
         }
     }
+}
+
+fn semantic_observations_are_alias_dependent(
+    observations: &[&InterfaceSignalSemanticObservationRecord],
+) -> bool {
+    !observations.is_empty()
+        && observations.iter().all(|observation| {
+            matches!(
+                observation.source_kind,
+                SignalSemanticHintSourceKind::AliasGroundedProseStatement
+            )
+        })
 }
 
 fn handshake_role_context(interfaces: &[InterfaceRecord]) -> HandshakeRoleContext {
@@ -8721,6 +8743,7 @@ mod tests {
             AutomationConfidence::Low
         );
         assert_eq!(xreq_candidate.evidence_weight, 4);
+        assert!(!xreq_candidate.alias_dependent);
         let xreq_arbitration = xreq
             .semantic_arbitration
             .as_ref()
@@ -8756,6 +8779,7 @@ mod tests {
             xreq_consensus.automation_confidence,
             AutomationConfidence::Low
         );
+        assert!(!xreq_consensus.alias_dependent);
         assert!(xreq.semantic_observations.iter().any(|observation| {
             matches!(
                 observation.source_kind,
@@ -8801,6 +8825,7 @@ mod tests {
             AutomationConfidence::Medium
         );
         assert_eq!(xack_candidate.evidence_weight, 6);
+        assert!(!xack_candidate.alias_dependent);
         let xack_arbitration = xack
             .semantic_arbitration
             .as_ref()
@@ -8836,6 +8861,7 @@ mod tests {
             xack_consensus.automation_confidence,
             AutomationConfidence::Medium
         );
+        assert!(!xack_consensus.alias_dependent);
         assert!(xack.semantic_observations.iter().any(|observation| {
             matches!(
                 observation.source_kind,
@@ -10035,6 +10061,33 @@ mod tests {
                 } if valid_signal == "XREQ" && ready_signal == "XACK"
             )
         }));
+
+        let xreq = semantic_ir
+            .interfaces
+            .iter()
+            .flat_map(|interface| interface.signal_records.iter())
+            .find(|signal| signal.signal_name == "XREQ")
+            .expect("expected XREQ interface signal");
+        assert!(xreq.semantic_candidates[0].alias_dependent);
+        assert!(
+            xreq.semantic_consensus
+                .as_ref()
+                .expect("expected XREQ semantic consensus")
+                .alias_dependent
+        );
+        let xack = semantic_ir
+            .interfaces
+            .iter()
+            .flat_map(|interface| interface.signal_records.iter())
+            .find(|signal| signal.signal_name == "XACK")
+            .expect("expected XACK interface signal");
+        assert!(xack.semantic_candidates[0].alias_dependent);
+        assert!(
+            xack.semantic_consensus
+                .as_ref()
+                .expect("expected XACK semantic consensus")
+                .alias_dependent
+        );
 
         Ok(())
     }

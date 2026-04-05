@@ -391,6 +391,37 @@ fn interface_signals_with_high_confidence_semantic_consensus_count(
         .count()
 }
 
+fn interface_signals_with_alias_dependent_semantic_consensus_count(
+    interfaces: &[crate::ir::semantic::InterfaceRecord],
+) -> usize {
+    interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+        .filter(|signal| {
+            signal
+                .semantic_consensus
+                .as_ref()
+                .is_some_and(|consensus| consensus.alias_dependent)
+        })
+        .count()
+}
+
+fn interface_signal_alias_dependent_semantic_candidates_count(
+    interfaces: &[crate::ir::semantic::InterfaceRecord],
+) -> usize {
+    interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+        .map(|signal| {
+            signal
+                .semantic_candidates
+                .iter()
+                .filter(|candidate| candidate.alias_dependent)
+                .count()
+        })
+        .sum()
+}
+
 fn resolved_semantic_roles_without_consensus_count(
     interfaces: &[crate::ir::semantic::InterfaceRecord],
 ) -> usize {
@@ -1192,6 +1223,10 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     let with_semantic_consensus = interface_signals_with_semantic_consensus_count(&ir.interfaces);
     let with_high_confidence_semantic_consensus =
         interface_signals_with_high_confidence_semantic_consensus_count(&ir.interfaces);
+    let with_alias_dependent_semantic_consensus =
+        interface_signals_with_alias_dependent_semantic_consensus_count(&ir.interfaces);
+    let alias_dependent_semantic_candidates =
+        interface_signal_alias_dependent_semantic_candidates_count(&ir.interfaces);
     let resolved_semantic_roles_without_consensus =
         resolved_semantic_roles_without_consensus_count(&ir.interfaces);
     let with_single_source_semantic_grounding =
@@ -1266,6 +1301,10 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     println!(
         "  with_high_confidence_semantic_consensus: {with_high_confidence_semantic_consensus}"
     );
+    println!(
+        "  with_alias_dependent_semantic_consensus: {with_alias_dependent_semantic_consensus}"
+    );
+    println!("  alias_dependent_semantic_candidates: {alias_dependent_semantic_candidates}");
     println!(
         "  resolved_semantic_roles_without_consensus: {resolved_semantic_roles_without_consensus}"
     );
@@ -1533,6 +1572,17 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             Vec::new(),
         ));
     }
+    if with_alias_dependent_semantic_consensus > 0 {
+        findings.push(finding(
+            "semantic_alias_dependent_semantic_consensus_present",
+            ValidationFindingSeverity::Info,
+            "semantic_role_consensus",
+            format!(
+                "{with_alias_dependent_semantic_consensus} resolved semantic role(s) currently depend only on alias-grounded evidence rather than direct signal mentions or corroborating non-alias modalities"
+            ),
+            Vec::new(),
+        ));
+    }
     if !ir.actor_ports.is_empty() && missing_graph_direction_count > 0 {
         findings.push(finding(
             "semantic_graph_direction_coverage_incomplete",
@@ -1693,6 +1743,14 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 with_high_confidence_semantic_consensus.to_string(),
             ),
             metric(
+                "with_alias_dependent_semantic_consensus",
+                with_alias_dependent_semantic_consensus.to_string(),
+            ),
+            metric(
+                "alias_dependent_semantic_candidates",
+                alias_dependent_semantic_candidates.to_string(),
+            ),
+            metric(
                 "resolved_semantic_roles_without_consensus",
                 resolved_semantic_roles_without_consensus.to_string(),
             ),
@@ -1848,6 +1906,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     let with_semantic_consensus = interface_signals_with_semantic_consensus_count(&ir.interfaces);
     let with_high_confidence_semantic_consensus =
         interface_signals_with_high_confidence_semantic_consensus_count(&ir.interfaces);
+    let with_alias_dependent_semantic_consensus =
+        interface_signals_with_alias_dependent_semantic_consensus_count(&ir.interfaces);
+    let alias_dependent_semantic_candidates =
+        interface_signal_alias_dependent_semantic_candidates_count(&ir.interfaces);
     let resolved_semantic_roles_without_consensus =
         resolved_semantic_roles_without_consensus_count(&ir.interfaces);
     let with_single_source_semantic_grounding =
@@ -1911,6 +1973,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     println!(
         "  with_high_confidence_semantic_consensus: {with_high_confidence_semantic_consensus}"
     );
+    println!(
+        "  with_alias_dependent_semantic_consensus: {with_alias_dependent_semantic_consensus}"
+    );
+    println!("  alias_dependent_semantic_candidates: {alias_dependent_semantic_candidates}");
     println!(
         "  resolved_semantic_roles_without_consensus: {resolved_semantic_roles_without_consensus}"
     );
@@ -2232,6 +2298,17 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             Vec::new(),
         ));
     }
+    if with_alias_dependent_semantic_consensus > 0 {
+        findings.push(finding(
+            "intent_alias_dependent_semantic_consensus_present",
+            ValidationFindingSeverity::Info,
+            "semantic_role_consensus",
+            format!(
+                "{with_alias_dependent_semantic_consensus} resolved semantic role(s) currently depend only on alias-grounded evidence rather than direct signal mentions or corroborating non-alias modalities"
+            ),
+            Vec::new(),
+        ));
+    }
     if !ir.actor_ports.is_empty() && missing_graph_direction_count > 0 {
         findings.push(finding(
             "intent_graph_direction_coverage_incomplete",
@@ -2401,6 +2478,14 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             metric(
                 "with_high_confidence_semantic_consensus",
                 with_high_confidence_semantic_consensus.to_string(),
+            ),
+            metric(
+                "with_alias_dependent_semantic_consensus",
+                with_alias_dependent_semantic_consensus.to_string(),
+            ),
+            metric(
+                "alias_dependent_semantic_candidates",
+                alias_dependent_semantic_candidates.to_string(),
             ),
             metric(
                 "resolved_semantic_roles_without_consensus",
@@ -3829,6 +3914,69 @@ mod tests {
             metric_value(&report, "with_visual_semantic_grounding"),
             Some("1")
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_intent_ir_reports_alias_dependent_semantic_consensus() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("alias_grounded_semantic_roles.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal XREQ is input width 1.\n\n",
+                "Signal XACK is input width 1.\n\n",
+                "The request phase indicates that address and control information are valid for transfer.\n\n",
+                "The accept phase indicates that the subordinate can accept the transfer.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir
+            .signal_alias_map
+            .insert("request phase".to_string(), "XREQ".to_string());
+        evidence_ir
+            .signal_alias_map
+            .insert("accept phase".to_string(), "XACK".to_string());
+        evidence_ir.refresh_signal_semantic_hints()?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let report = validate_intent_ir(&intent_ir, "alias_grounded_semantic_roles".to_string());
+        assert_eq!(
+            metric_value(&report, "with_alias_dependent_semantic_consensus"),
+            Some("2")
+        );
+        assert_eq!(
+            metric_value(&report, "alias_dependent_semantic_candidates"),
+            Some("2")
+        );
+        assert!(has_finding(
+            &report,
+            "intent_alias_dependent_semantic_consensus_present"
+        ));
 
         Ok(())
     }
