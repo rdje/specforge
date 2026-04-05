@@ -213,6 +213,9 @@
   - if a typed `HandshakeComplete` predicate exists only because valid-like / ready-like roles were recovered through alias mapping, that temporal convenience should be visible too
   - otherwise the temporal layer can look more grounded than it really is
 - the right posture is not to throw away alias-grounded handshake semantics by default, but to keep them explicitly marked as weaker temporal grounding until stronger direct or cross-modality evidence arrives
+- that visibility should not live only in the validator:
+  - the canonical artifacts themselves should carry a residual/assumption trail when alias-grounded role meaning is still what enables typed handshake completion
+  - otherwise crash recovery or offline artifact inspection can miss a real semantic caveat that the validator knew how to print
 
 ## Current repository observations
 - the repository now contains a renamed `specforge` crate and CLI

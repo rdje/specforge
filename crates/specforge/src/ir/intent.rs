@@ -660,6 +660,22 @@ fn build_assumptions(context: &IntentContext, actors: &[IntentActor]) -> Vec<Int
         });
     }
 
+    if context
+        .residual_decisions
+        .iter()
+        .any(|packet| packet.packet_id == "semantic_alias_dependent_handshake_completion")
+    {
+        let statement =
+            "Some typed handshake-completion semantics remain provisional because they still depend on alias-grounded semantic role consensus in this IntentIR pass.".to_string();
+        assumptions.push(IntentAssumption {
+            assumption_id: "assumption_alias_dependent_handshake_completion".to_string(),
+            statement,
+            supporting_semantic_ids: vec![
+                "semantic_alias_dependent_handshake_completion".to_string(),
+            ],
+        });
+    }
+
     assumptions
 }
 
@@ -1098,6 +1114,84 @@ mod tests {
                 .iter()
                 .any(|packet| { packet.packet_id == "semantic_handshake_name_fallback_blocked" })
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn emits_assumption_for_alias_dependent_handshake_completion() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir
+            .path()
+            .join("intent_alias_dependent_handshake_completion.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal XREQ is input width 1.\n\n",
+                "Signal XACK is input width 1.\n\n",
+                "Signal PAYLOAD is output width 32.\n\n",
+                "Clock clk.\n\n",
+                "The request phase indicates that address and control information are valid for transfer.\n\n",
+                "The accept phase indicates that the subordinate can accept the transfer.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir
+            .signal_alias_map
+            .insert("request phase".to_string(), "XREQ".to_string());
+        evidence_ir
+            .signal_alias_map
+            .insert("accept phase".to_string(), "XACK".to_string());
+        evidence_ir.refresh_signal_semantic_hints()?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_payload_alias_semantic_handshake".to_string(),
+            subject_signal: "PAYLOAD".to_string(),
+            constraint_kind: SignalConstraintKind::MustNotChange,
+            target_value: None,
+            condition_text: Some("when XREQ is HIGH and XACK is HIGH".to_string()),
+            negated: false,
+            source_text: "PAYLOAD must not change when XREQ is HIGH and XACK is HIGH.".to_string(),
+            supporting_statement_ids: vec!["stmt_temporal_alias_semantic_handshake".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        assert!(
+            intent_ir.residual_decisions.iter().any(|packet| {
+                packet.packet_id == "semantic_alias_dependent_handshake_completion"
+            })
+        );
+        assert!(intent_ir.assumptions.iter().any(|assumption| {
+            assumption.assumption_id == "assumption_alias_dependent_handshake_completion"
+        }));
 
         Ok(())
     }

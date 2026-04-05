@@ -145,8 +145,6 @@ impl SemanticIr {
         );
         let explicit_modules = build_explicit_modules(&context);
         let explicit_tops = build_explicit_tops(&context);
-        let residual_decisions =
-            build_residual_decisions(&context, &interfaces, actor_build.explicit_actor_count);
         // Carry structured table records forward from EvidenceIR.
         let register_records = evidence_ir.register_records.clone();
 
@@ -210,6 +208,12 @@ impl SemanticIr {
             timing_constraints.as_slice(),
         );
         let temporal_conflicts = build_temporal_conflicts(&temporal_rules);
+        let residual_decisions = build_residual_decisions(
+            &context,
+            &interfaces,
+            actor_build.explicit_actor_count,
+            temporal_rules.as_slice(),
+        );
 
         // Merge state/transition records: formal syntax + VLM diagram observations.
         // VLM-sourced records are appended so they don’t replace existing formal records.
@@ -2868,6 +2872,7 @@ fn build_residual_decisions(
     context: &SemanticContext,
     interfaces: &[InterfaceRecord],
     explicit_actor_count: usize,
+    temporal_rules: &[TemporalRuleRecord],
 ) -> Vec<ResidualDecisionPacket> {
     let mut packets = Vec::new();
 
@@ -2986,6 +2991,34 @@ fn build_residual_decisions(
                     interpretation_id: "clear_unbacked_role".to_string(),
                     description: "Clear the fallback semantic role until preserved observations support a true consensus.".to_string(),
                     downstream_impact: "The canonical model becomes more conservative, but some useful protocol role structure disappears until later passes recover it safely.".to_string(),
+                },
+            ],
+        });
+    }
+
+    let alias_dependent_handshake_signals =
+        alias_dependent_handshake_completion_signal_names(temporal_rules, interfaces);
+    if !alias_dependent_handshake_signals.is_empty() {
+        packets.push(ResidualDecisionPacket {
+            packet_id: "semantic_alias_dependent_handshake_completion".to_string(),
+            question:
+                "Should alias-grounded semantic role consensus be enough to keep typed handshake-completion semantics canonical?"
+                    .to_string(),
+            why_unresolved: format!(
+                "Typed HandshakeComplete predicates currently depend on alias-grounded semantic role consensus for signals {}. SemanticIR keeps that transfer-progress structure, but the current grounding is weaker than direct or corroborating non-alias evidence.",
+                alias_dependent_handshake_signals.join(", ")
+            ),
+            automation_confidence: AutomationConfidence::Medium,
+            candidate_interpretations: vec![
+                CandidateInterpretation {
+                    interpretation_id: "keep_alias_grounded_handshake".to_string(),
+                    description: "Keep the typed handshake-completion semantics, but treat them as provisional until direct or corroborating non-alias evidence arrives.".to_string(),
+                    downstream_impact: "Useful temporal progress structure stays available, but downstream consumers must preserve the weaker alias-dependent grounding explicitly.".to_string(),
+                },
+                CandidateInterpretation {
+                    interpretation_id: "require_stronger_handshake_grounding".to_string(),
+                    description: "Defer canonical handshake-completion semantics until direct signal mentions or corroborating non-alias modalities support the role meaning.".to_string(),
+                    downstream_impact: "The canonical temporal model becomes more conservative, but alias-only role recovery no longer contributes protocol-progress structure immediately.".to_string(),
                 },
             ],
         });
@@ -6154,6 +6187,50 @@ fn resolved_semantic_roles_without_consensus_signal_names(
         .collect()
 }
 
+fn alias_dependent_semantic_consensus_signal_names(
+    interfaces: &[InterfaceRecord],
+) -> BTreeSet<String> {
+    interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+        .filter(|signal| {
+            signal
+                .semantic_consensus
+                .as_ref()
+                .is_some_and(|consensus| consensus.alias_dependent)
+        })
+        .map(|signal| signal.signal_name.clone())
+        .collect()
+}
+
+fn alias_dependent_handshake_completion_signal_names(
+    temporal_rules: &[TemporalRuleRecord],
+    interfaces: &[InterfaceRecord],
+) -> Vec<String> {
+    let alias_dependent_signals = alias_dependent_semantic_consensus_signal_names(interfaces);
+    if alias_dependent_signals.is_empty() {
+        return Vec::new();
+    }
+
+    temporal_rules
+        .iter()
+        .flat_map(|rule| rule.antecedents.iter().chain(rule.consequents.iter()))
+        .filter_map(|predicate| match predicate {
+            TemporalPredicateRecord::HandshakeComplete {
+                valid_signal,
+                ready_signal,
+                ..
+            } => Some([valid_signal, ready_signal]),
+            _ => None,
+        })
+        .flat_map(|signals| signals.into_iter())
+        .filter(|signal_name| alias_dependent_signals.contains(*signal_name))
+        .cloned()
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect()
+}
+
 fn classify_handshake_signal_from_interface_signal(
     signal: &InterfaceSignalRecord,
 ) -> Option<HandshakeSignalRole> {
@@ -7295,7 +7372,7 @@ mod tests {
             supporting_statement_ids: Vec::new(),
         }];
 
-        let packets = super::build_residual_decisions(&context, &interfaces, 1);
+        let packets = super::build_residual_decisions(&context, &interfaces, 1, &[]);
         assert!(
             packets
                 .iter()
@@ -10087,6 +10164,11 @@ mod tests {
                 .as_ref()
                 .expect("expected XACK semantic consensus")
                 .alias_dependent
+        );
+        assert!(
+            semantic_ir.residual_decisions.iter().any(|packet| {
+                packet.packet_id == "semantic_alias_dependent_handshake_completion"
+            })
         );
 
         Ok(())

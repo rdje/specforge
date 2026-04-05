@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-05 (alias-dependent handshake completion is now canonical residual state)
+
+### Added: canonical residual and assumption carry-through for alias-dependent handshake semantics
+- `SemanticIR` now emits `semantic_alias_dependent_handshake_completion` when typed `HandshakeComplete` predicates still depend on alias-grounded semantic role consensus.
+- `IntentIR` now carries that caution forward as `assumption_alias_dependent_handshake_completion`, so the weaker grounding remains inspectable even before validation runs.
+
+### Why this matters
+- Validator findings are useful, but SOTA-quality continuity needs the canonical artifacts themselves to preserve important semantic caveats.
+- Alias-grounded transfer-progress structure remains usable, while still being marked as weaker than directly grounded or corroborated handshake semantics.
+
+### Added: regression coverage for canonical alias-dependent handshake caveats
+- Added semantic-stage coverage proving alias-grounded handshake completion emits a residual packet.
+- Added intent-stage coverage proving that residual packet becomes an explicit canonical assumption.
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 182/182 passed
+
 ## 2026-04-05 (alias-dependent handshake completion is now explicit in validation)
 
 ### Added: validation visibility for alias-dependent temporal handshake semantics

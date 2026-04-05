@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `efbc536`
-- latest_commit_brief_message: `feat(semantic): surface alias-dependent role grounding`
-- note: current uncommitted work makes alias-dependent typed handshake completion visible in validation, so temporal progress semantics do not hide weaker alias-only role grounding
+- latest_commit_hash: `3f3545e`
+- latest_commit_brief_message: `feat(validate): surface alias-dependent handshake completion`
+- note: current uncommitted work turns alias-dependent handshake completion into canonical residual/assumption state, so weaker temporal grounding stays visible even without running validation
 
 ## Recent commit chain (last 5)
+- `3f3545e` feat(validate): surface alias-dependent handshake completion
 - `efbc536` feat(semantic): surface alias-dependent role grounding
 - `f3c28cd` feat(evidence): prefer direct signal grounding over aliases
 - `0ec1e73` feat(evidence): split semantic hints by signal context
 - `cbba105` feat(evidence): ground semantic hints in description text
-- `83d28e3` feat(semantic): require consensus for handshake roles
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -43,17 +43,18 @@
 - `VALIDATION_SNAPSHOT.md` is now a tracked continuity doc refreshed from persisted validation reports
 
 ## Completed technical work in this session
-- `specforge validate` now reports when typed `HandshakeComplete` temporal predicates depend on alias-dependent semantic role consensus
-- this keeps alias-grounded transfer-progress semantics usable while making their weaker grounding visible instead of blending them into ordinary handshake-completion counts
-- added regression coverage proving that alias-grounded handshake completion is reported explicitly in intent validation
+- `SemanticIR` now emits `semantic_alias_dependent_handshake_completion` when typed `HandshakeComplete` predicates still depend on alias-grounded semantic role consensus
+- `IntentIR` now mirrors that caveat as `assumption_alias_dependent_handshake_completion`, so weaker temporal grounding remains inspectable even before validation runs
+- added regression coverage proving that alias-grounded handshake completion now emits canonical residual/assumption state across the semantic and intent layers
 - synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, and `CHANGES.md` so the new temporal alias-dependence visibility is captured in the live docs
 - validation ran for this task:
   - `cargo fmt --all` passed
-  - `cargo test --manifest-path Cargo.toml` passed with `181/181`
+  - `cargo test --manifest-path Cargo.toml` passed with `182/182`
 
 ## Current working tree before commit
 - modified tracked files currently include:
-  - `crates/specforge/src/commands/validate.rs`
+  - `crates/specforge/src/ir/semantic.rs`
+  - `crates/specforge/src/ir/intent.rs`
   - `README.md`
   - `ROADMAP.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -64,7 +65,7 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the alias-dependent temporal handshake visibility slice
+1. commit the canonical alias-dependent handshake residual/assumption slice
 2. continue the semantic-truthfulness program by carrying the same “make weaker grounding explicit instead of hiding it” rule into more multimodal semantic consumers and arbitration surfaces
 3. keep adapter work de-prioritized until the graph, temporal, arbitration, and evaluation surfaces are materially stronger
 
