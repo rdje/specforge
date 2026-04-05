@@ -16,6 +16,7 @@
 - `specforge adapt` command created: Done
 - `specforge enrich` command created: Done
 - `specforge validate` command created: Done
+- `specforge kg-bench` command created: Done
 - `specforge nlp-enrich` command created: Done
 - `specforge converge` command created: Done
 - End-to-end source-to-IntentIR pipeline implemented: Done
@@ -84,17 +85,18 @@
 - Live-doc projection of persisted IR validation findings implemented: Done
 - Latest local validation snapshot projected into tracked docs: Done
 - Full Ollama-backed `specforge converge` defaults enabled: Done
-- Test suite expanded to 186 tests; all passing: Done
+- Tracked KG-quality benchmark harness with initial gold/negative fixture pack implemented: Done
+- Test suite expanded to 188 tests; all passing: Done
 - Explicit clock-tick temporal model in `SemanticIR` / `IntentIR`: In Progress
 - KG-guided multimodal rescans as a first-class convergent workstream: In Progress
 - Cross-modality evidence arbitration / conflict handling: In Progress
-- KG-quality evaluation with gold fixtures and negative fixtures: Not Started
+- KG-quality evaluation with gold fixtures and negative fixtures: In Progress
 - SystemVerilog/Verilog/VHDL adapter expansion: Horizon
 - Adapter validation (SystemVerilog/Verilog/VHDL targets): Horizon
 - Actor-relative direction model in `SemanticIR` / `IntentIR`: In Progress
 
 ## Highest-priority remaining gap
-- Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then deepen semantic-role arbitration beyond candidate/consensus profiling while continuing richer multimodal grounding, stricter alias-vs-direct arbitration, structural/temporal arbitration, and KG-quality evaluation
+- Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then expand the new KG-quality harness from seed fixtures into representative APB/AHB/AXI gold suites and broader negative truthfulness checks while continuing richer multimodal grounding plus structural/temporal arbitration
 
 ## Validation Projection
 

@@ -37,6 +37,8 @@ pub enum Commands {
     Validate(ValidateArgs),
     /// Validate artifacts and project their latest reports into tracked live docs
     ProjectValidation(ProjectValidationArgs),
+    /// Run tracked KG-quality fixtures against the staged pipeline
+    KgBench(KgBenchArgs),
     /// Enrich an EvidenceIR artifact with LLM-extracted NLP Level 3 constraints
     NlpEnrich(NlpEnrichArgs),
 }
@@ -172,6 +174,15 @@ pub struct ProjectValidationArgs {
     /// Repository root containing the tracked live docs to update
     #[arg(long, default_value = ".")]
     pub repo_root: std::path::PathBuf,
+}
+
+#[derive(Debug, Args)]
+pub struct KgBenchArgs {
+    /// Directory containing tracked KG-quality fixture directories
+    #[arg(long, default_value = "crates/specforge/test_data/kg_quality")]
+    pub fixtures_root: std::path::PathBuf,
+    /// Optional fixture paths or fixture directories to run relative to fixtures_root
+    pub fixtures: Vec<std::path::PathBuf>,
 }
 
 /// VLM provider selection for the `enrich` command.

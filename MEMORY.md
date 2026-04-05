@@ -22,53 +22,60 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `3fef735`
-- latest_commit_brief_message: `feat(ir): carry alias-grounded handshake caveats`
-- note: current uncommitted work carries polarity conflicts into `SemanticIR` and `IntentIR`, so contradictory active-level evidence remains visible in the canonical layers instead of stopping at `EvidenceIR`
+- latest_commit_hash: `8eee95d`
+- latest_commit_brief_message: `feat(ir): carry polarity conflicts downstream`
+- note: current uncommitted work adds the first tracked KG-quality benchmark harness plus seed gold/negative fixtures, so `R15e` is no longer only a roadmap item
 
 ## Recent commit chain (last 5)
+- `8eee95d` feat(ir): carry polarity conflicts downstream
 - `3fef735` feat(ir): carry alias-grounded handshake caveats
 - `3f3545e` feat(validate): surface alias-dependent handshake completion
 - `efbc536` feat(semantic): surface alias-dependent role grounding
 - `f3c28cd` feat(evidence): prefer direct signal grounding over aliases
-- `0ec1e73` feat(evidence): split semantic hints by signal context
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- runnable CLI surface includes `inspect`, `converge`, `ingest`, `evidence`, `semantic`, `intent`, `adapt`, `enrich`, `validate`, `project-validation`, and `nlp-enrich`
+- runnable CLI surface includes `inspect`, `converge`, `ingest`, `evidence`, `semantic`, `intent`, `adapt`, `enrich`, `validate`, `kg-bench`, `project-validation`, and `nlp-enrich`
 - `specforge converge` now defaults to full Ollama-backed VLM image enrichment plus NLP Level 3 backannotation; use `--vlm-provider skip` and/or `--nlp-provider skip` only when intentionally narrowing the loop
 - canonical generated artifact roots are under `generated/source_ir/`, `generated/evidence_ir/`, `generated/semantic_ir/`, and `generated/intent_ir/`
 - `generated/` is git-ignored and intentionally untracked; continuity must live in docs, not versioned artifacts
 - `subs/fsmgen/` is a local read-only reference checkout for `.fsm` behavior
 - `VALIDATION_SNAPSHOT.md` is now a tracked continuity doc refreshed from persisted validation reports
+- tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
-- `SemanticIR` now carries `signal_polarity_conflicts` forward from `EvidenceIR`
-- `IntentIR` now carries that same polarity-conflict surface forward from `SemanticIR`
-- `specforge validate` now reports polarity conflicts for `SemanticIR` and `IntentIR`, so contradictory active-level evidence remains visible all the way to the canonical artifacts
-- added regression coverage for semantic and intent carry-through plus validator reporting at both canonical stages
-- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, and `CHANGES.md` so the new polarity-conflict carry-through is captured in the live docs
+- added `specforge kg-bench` as a tracked KG-quality benchmark command
+- added tracked fixtures for:
+  - actor-port gold recovery
+  - name-only semantic-noise rejection
+  - multi-producer conflict surfacing
+  - actor-boundary residual quality
+- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `USER_GUIDE.md`, `DEVELOPMENT_NOTES.md`, and `CHANGES.md` so `R15e` now reflects a real executable harness instead of only planned work
 - validation ran for this task:
+  - `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` passed
   - `cargo fmt --all` passed
-  - `cargo test --manifest-path Cargo.toml` passed with `186/186`
+  - `cargo test --manifest-path Cargo.toml` passed with `188/188`
 
 ## Current working tree before commit
 - modified tracked files currently include:
-  - `crates/specforge/src/commands/validate.rs`
-  - `crates/specforge/src/ir/semantic.rs`
-  - `crates/specforge/src/ir/intent.rs`
+  - `crates/specforge/src/cli.rs`
+  - `crates/specforge/src/lib.rs`
+  - `crates/specforge/src/commands/mod.rs`
+  - `crates/specforge/src/commands/kg_bench.rs`
+  - `crates/specforge/test_data/kg_quality/...`
   - `README.md`
   - `ROADMAP.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `RUST_CODEBASE_ANALYSIS.md`
+  - `USER_GUIDE.md`
   - `DEVELOPMENT_NOTES.md`
   - `CHANGES.md`
   - `MEMORY.md`
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the polarity-conflict canonical carry-through slice
-2. continue the semantic-truthfulness program by carrying the same “make weaker grounding explicit instead of hiding it” rule into more multimodal semantic consumers and arbitration surfaces
+1. commit the KG-quality benchmark harness slice
+2. expand the new fixture harness toward protocol-grade APB/AHB/AXI gold suites and broader negative truthfulness fixtures
 3. keep adapter work de-prioritized until the graph, temporal, arbitration, and evaluation surfaces are materially stronger
 
 ## Remaining engineering gaps after this commit
@@ -76,7 +83,7 @@
 - richer explicit clock-tick temporal semantics (`R15b`)
 - KG-guided multimodal rescans (`R15c`)
 - broader evidence arbitration / conflict handling beyond polarity, interface-shape, multi-producer ambiguity, modality-aware semantic-role grounding, consensus summaries, semantic candidates, and semantic arbitration summaries (`R15d`)
-- KG-quality evaluation and benchmark hardening (`R15e`)
+- broader KG-quality evaluation and benchmark hardening beyond the new seed fixture pack (`R15e`)
 - Tier 3 relation extraction after the graph/temporal/eval surfaces are ready (`R14`)
 - some downstream compatibility and consumer paths still rely on flat `direction_hint` instead of the graph-native surface
 - meaning-based role inference now covers tables, prose, alias-grounded prose, visual captions, and VLM timing annotations, and canonical layers now preserve that provenance, but broader downstream use of preserved arbitration state is still early
@@ -92,4 +99,4 @@
 4. read `ROADMAP.md`
 5. read `RUST_CODEBASE_ANALYSIS.md`
 6. inspect `git --no-pager status --short`
-7. continue with the next evidence-loop hardening slice unless the user redirects
+7. continue with the next benchmark/evaluation hardening slice unless the user redirects

@@ -1,0 +1,14 @@
+{
+  "name": "name_only_semantic_noise_negative",
+  "source": "source.md",
+  "expectations": {
+    "semantic": {
+      "resolved_semantic_role_signal_names_exclude": ["AWVALID", "WREADY"],
+      "semantic_consensus_signal_names_exclude": ["AWVALID", "WREADY"]
+    },
+    "intent": {
+      "resolved_semantic_role_signal_names_exclude": ["AWVALID", "WREADY"],
+      "semantic_consensus_signal_names_exclude": ["AWVALID", "WREADY"]
+    }
+  }
+}

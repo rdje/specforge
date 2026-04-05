@@ -26,6 +26,7 @@ Use it first for the project objective, document navigation, and the current imp
   - `intent <semantic-ir>`
   - `adapt <intent-ir> --target fsm --dry-run`
   - `adapt <intent-ir> --target fsm`
+  - `kg-bench`
   - `project-validation <artifact>...`
 - `specforge ingest` now computes and materializes `SourceIR` at `generated/source_ir/<document_key>/source_ir.json`
 - `specforge evidence` now computes and materializes `EvidenceIR` at `generated/evidence_ir/<document_key>/evidence_ir.json`
@@ -36,6 +37,7 @@ Use it first for the project objective, document navigation, and the current imp
 - the intended architecture is not "teach code to understand unrestricted English"; it is "teach the pipeline to recover typed protocol facts from multimodal evidence and validate them aggressively"
 - `specforge validate <artifact>` now writes a deterministic stage-local `validation_report.json` sidecar and backannotates the latest report into the artifact's `validation_reports` field
 - `specforge project-validation <artifact>...` now validates the passed artifacts and refreshes the tracked validation snapshot docs from their persisted reports
+- `specforge kg-bench` now runs tracked KG-quality fixtures through the staged pipeline, so gold expectations, negative expectations, residual quality, and conflict surfacing can be checked explicitly instead of relying only on aggregate scores
 - `SemanticIR` and `IntentIR` now preserve the structural KG downstream via `actor_signal_relations`, `actor_ports`, and `signal_connectivity`, while keeping flat `direction_hint` fields only as a compatibility surface
 - `SemanticIR` and `IntentIR` now also carry `interface_signal_conflicts` so conflicting direction/width evidence for the same signal stays explicit instead of only collapsing the canonical hint to `None`
 - `SemanticIR` and `IntentIR` now also carry `signal_connectivity_conflicts` so unresolved multi-producer structural ambiguity stays explicit in the canonical layers instead of hiding inside raw connectivity vectors
@@ -86,6 +88,7 @@ Use it first for the project objective, document navigation, and the current imp
   - typed adapter lowering
 - the first real `.fsm` adapter slices now materialize typed adapter artifacts, emit explicit standalone `?dt:name` text for honest canonical DT cases, emit structured `?fsm:name` text when the canonical state graph is explicit, emit explicit `?top:name` source documents when module/top composition facts are explicit, lower canonical symbol-definition sections, structured reset-role blocks, selector/test-node branches, and compound-update shorthand from the widened semantic model when those canonical shapes map directly into `.fsm`, keep reset polarity honest through the reset signal name because emitted `.fsm` text still carries only `sreset` / `asreset` plus the signal, keep unsupported selector predicates and other unsafe broader-root cases blocked with explicit residual decisions instead of fabricating target syntax, and intentionally keep compatibility-level `?mod:name` / `?module:name` spellings outside the current canonical root-kind model until a real backend-neutral direct-module distinction exists
 - the next implementation milestone is semantic-truthfulness hardening: finish the remaining graph-first direction migration, broaden the new meaning-based role inference beyond signal-description tables plus initial prose/alias grounding into richer multimodal grounding, deepen the temporal-rule surface into richer temporal arbitration across modalities and actors, add KG-guided rescans and evidence arbitration, and treat adapter expansion as horizon work until the canonical four-layer pipeline is top-notch
+- that truthfulness program now includes a tracked KG benchmark surface under `crates/specforge/test_data/kg_quality/`, with initial gold and negative fixtures for actor ports, name-only semantic noise rejection, multi-producer conflict surfacing, and actor-boundary residual quality
 
 ## Working naming
 - repository / project / CLI / crate name: `specforge`
@@ -203,6 +206,8 @@ Use it first for the project objective, document navigation, and the current imp
   - `.fsm` adapter preview/materialization command for the current honest DT/FSM/top lowering slices
 - `crates/specforge/src/commands/project_validation.rs`
   - validation snapshot projection command for tracked live docs
+- `crates/specforge/src/commands/kg_bench.rs`
+  - tracked KG-quality benchmark command for gold and negative fixture evaluation
 - `crates/specforge/src/ir/mod.rs`
   - staged IR namespace and stage identifiers
 - `crates/specforge/src/ir/source.rs`
@@ -221,6 +226,8 @@ Use it first for the project objective, document navigation, and the current imp
 ### Planned future implementation paths
 - `fixtures/`
   - sample specifications, PDFs, markdown conversions, and expected IR snapshots
+- `crates/specforge/test_data/kg_quality/`
+  - tracked KG-quality fixture set for graph truthfulness, false-positive control, conflict surfacing, and residual-quality checks
 - `examples/`
   - example invocations and example stage outputs
 - `generated/`
@@ -238,6 +245,7 @@ cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json
 cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json --dry-run
 cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --target fsm --dry-run
 cargo run -p specforge -- project-validation generated/intent_ir/readme/intent_ir.json
+cargo run -p specforge -- kg-bench
 ```
 - `specforge ingest <source> --dry-run` prints computed `SourceIR` JSON without writing artifacts
 - `specforge ingest <source>` materializes `generated/source_ir/<document_key>/source_ir.json`
@@ -251,6 +259,7 @@ cargo run -p specforge -- project-validation generated/intent_ir/readme/intent_i
 - `specforge adapt <intent-ir> --target fsm` materializes `generated/adapters/fsm/<document_key>/adapter.json` and writes an emitted `.fsm` file when the canonical interface/control/system/init/state surface or explicit module/top composition surface is explicit enough for honest standalone DT, structured FSM, or first-slice `?top:name` lowering
 - `specforge converge <source> --target fsm` materializes the loop-backed pipeline entrypoint, defaults to full Ollama VLM + NLP Level 3 enrichment, and stops when `SourceIR`/`EvidenceIR`/`SemanticIR`/`IntentIR`/adapter facts stop changing
 - `specforge project-validation <artifact>...` validates the passed artifacts, persists their latest reports, refreshes `VALIDATION_SNAPSHOT.md`, and updates the managed validation projection block in `LIVE_ACHIEVEMENT_STATUS.md`
+- `specforge kg-bench` runs the tracked fixture set under `crates/specforge/test_data/kg_quality/` and fails if any gold/negative KG expectation drifts
 - PDF execute-mode ingest expects `docling` to be importable from `python3` or `python`; when it lives elsewhere, set `SPECFORGE_DOCLING_PYTHON=/path/to/python`
 
 ## Planned product shape

@@ -1,0 +1,14 @@
+{
+  "name": "actor_boundary_residual",
+  "source": "source.md",
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["PREADY"],
+      "residual_decision_ids_include": ["semantic_actor_boundary_inference"]
+    },
+    "intent": {
+      "signal_names_include": ["PREADY"],
+      "residual_decision_ids_include": ["semantic_actor_boundary_inference"]
+    }
+  }
+}

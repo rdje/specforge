@@ -5,6 +5,7 @@ pub mod evidence;
 pub mod ingest;
 pub mod inspect;
 pub mod intent;
+pub mod kg_bench;
 pub mod nlp_enrich;
 pub mod project_validation;
 pub mod semantic;

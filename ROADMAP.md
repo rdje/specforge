@@ -422,7 +422,7 @@
   - AI-derived hypotheses that cannot be grounded or arbitrated remain explicit residuals/conflicts instead of silently entering canonical IR
 
 ### R15e KG-quality evaluation and benchmark hardening
-- status: Not Started
+- status: In Progress
 - goals:
   - move quality assessment beyond aggregate score
   - add curated gold fixtures, negative fixtures, and precision/recall-style checks for the most important KG surfaces
@@ -436,6 +436,18 @@
   - negative fixtures exist for alias noise, bogus actor attribution, spurious timing extraction, and table misclassification
   - roadmap progress is driven by KG accuracy and false-positive control, not only one scalar score
   - benchmark results include explicit checks for residual quality, conflict surfacing, and bounded-hypothesis rejection behavior
+- done:
+  - `specforge kg-bench` command now runs tracked KG-quality fixtures through `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR`
+  - tracked fixture support now lives under `crates/specforge/test_data/kg_quality/`
+  - the initial fixture pack includes:
+    - a gold fixture for actor-relative port recovery
+    - a negative fixture for rejecting name-only semantic role noise
+    - a negative fixture for surfacing multi-producer structural conflicts through validation
+    - a residual-quality fixture for actor-boundary ambiguity
+- remaining:
+  - expand from seed fixtures to representative APB/AHB/AXI gold fixtures
+  - add broader negative fixtures for bogus actor attribution, spurious timing extraction, table misclassification, and multimodal arbitration drift
+  - add more metric-oriented expectation surfaces once the first fixture pack stabilizes
 
 ### R16 SystemVerilog adapter (Horizon)
 - status: Horizon

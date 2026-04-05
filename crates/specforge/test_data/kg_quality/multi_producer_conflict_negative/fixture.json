@@ -1,0 +1,24 @@
+{
+  "name": "multi_producer_conflict_negative",
+  "source": "source.md",
+  "expectations": {
+    "semantic": {
+      "signal_connectivity_conflicts": 1
+    },
+    "intent": {
+      "signal_connectivity_conflicts": 1
+    },
+    "validation": {
+      "semantic": {
+        "finding_ids_include": [
+          "semantic_signal_connectivity_conflicts_present"
+        ]
+      },
+      "intent": {
+        "finding_ids_include": [
+          "intent_signal_connectivity_conflicts_present"
+        ]
+      }
+    }
+  }
+}

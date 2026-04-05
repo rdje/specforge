@@ -15,6 +15,7 @@
   - `adapt`
   - `enrich`
   - `validate`
+  - `kg-bench`
   - `project-validation`
   - `nlp-enrich`
 - the canonical product boundary remains `IntentIR`, not `.fsm`
@@ -25,9 +26,9 @@
 - `SemanticIR` now lifts that evidence into interfaces, explicit interface-signal conflict records for conflicting direction/width evidence, actor-relative port/connectivity records, explicit signal-connectivity conflict records for unresolved multi-producer ambiguity, system/reset/init records, control/state records, timing/register records, and filtered NLP constraints, with VLM observations merged into the semantic surface
 - `IntentIR` now carries forward the canonical signal/control/system/state/register/timing surface plus the actor-relative KG needed for honest downstream lowering
 - the current `.fsm` adapter slice is real and intentionally narrow: it can emit honest `?dt:name`, `?fsm:name`, and `?top:name` outputs when the canonical facts are explicit enough
-- the enrichment, convergence, and validation toolchain is also real: `specforge enrich`, `specforge nlp-enrich`, `specforge converge`, and `specforge validate` are wired into the CLI and exercised by the workspace tests
+- the enrichment, convergence, validation, and benchmark toolchain is also real: `specforge enrich`, `specforge nlp-enrich`, `specforge converge`, `specforge validate`, and `specforge kg-bench` are wired into the CLI and exercised by the workspace tests
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, and benchmark-quality evaluation; adapter expansion is now horizon work
-- the workspace currently validates with `cargo test --manifest-path Cargo.toml`, with 186 passing tests
+- the workspace currently validates with `cargo test --manifest-path Cargo.toml`, with 188 passing tests
 
 
 ## Session update (2026-04-04)
@@ -80,6 +81,12 @@
 - `extract_alias_phrase()` now rejects markdown/table marker prefixes `-`, `|`, and `#`, closing the last small R12 cleanup in the NLP alias-learning loop
 - the documented README staged flow was re-executed on `README.md` through `inspect -> ingest -> evidence -> semantic -> intent -> adapt --dry-run`, confirming the current entry path still runs end-to-end
 - the roadmap now explicitly treats adapter expansion as horizon work; the next structural gaps are making the actor-relative graph primary, broadening the new table/prose/alias-grounded role inference into richer multimodal grounding, adding deeper explicit temporal semantics, and hardening KG quality/evaluation
+- `specforge kg-bench` now provides the first tracked KG-quality fixture harness under `crates/specforge/test_data/kg_quality`, including:
+  - a gold actor-port recovery fixture
+  - a negative name-only semantic noise fixture
+  - a negative multi-producer conflict fixture that exercises validation findings
+  - an actor-boundary residual-quality fixture
+- that means benchmark hardening is no longer purely roadmap text; the repo now has a seed harness for false-positive control and residual-quality regression, even though protocol-grade APB/AHB/AXI gold fixtures are still ahead
 
 ## Observed current state
 ### Repository contents directly observed
@@ -177,6 +184,8 @@
   - VLM-backed visual enrichment command for `SourceIR`
 - `src/commands/validate.rs`
   - stage-aware artifact validation and quality-scoring command
+- `src/commands/kg_bench.rs`
+  - tracked KG-quality benchmark harness over staged IR artifacts and persisted validation findings
 - `src/commands/nlp_enrich.rs`
   - LLM-backed NLP Level 3 enrichment command for `EvidenceIR`
 - `src/test_support.rs`

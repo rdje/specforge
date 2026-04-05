@@ -12,6 +12,7 @@
 - the repository contains workflow and continuity documentation plus a runnable Rust CLI named `specforge`
 - the current CLI already supports:
   - `specforge inspect <path>`
+  - `specforge converge <source> --target fsm`
   - `specforge ingest <source> --dry-run`
   - `specforge ingest <source>`
   - `specforge evidence <source-ir> --dry-run`
@@ -22,6 +23,11 @@
   - `specforge intent <semantic-ir>`
   - `specforge adapt <intent-ir> --target fsm --dry-run`
   - `specforge adapt <intent-ir> --target fsm`
+  - `specforge enrich <source-ir>`
+  - `specforge validate <artifact>`
+  - `specforge kg-bench`
+  - `specforge project-validation <artifact>...`
+  - `specforge nlp-enrich <evidence-ir>`
 - the currently implemented executable IR stages are `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR`
 - `SourceIR` now handles existing Markdown directly and performs Docling-backed structured PDF normalization for PDF inputs
 - `EvidenceIR` now consumes ready `SourceIR` artifacts and extracts section anchors, evidence spans, visual evidence, figure/caption links, and heuristic statement classes
@@ -88,6 +94,14 @@ cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json
 - builds:
   - section anchors from promoted markdown headings
   - block-level evidence spans with line provenance
+
+### Run tracked KG-quality fixtures
+```bash
+cargo run -p specforge -- kg-bench
+```
+- runs the tracked fixture set under `crates/specforge/test_data/kg_quality/`
+- fails if gold expectations, negative expectations, residual-quality checks, or validation-finding checks drift
+- this is the current user-facing truthfulness regression command for the staged KG surface
   - visual evidence items from `SourceIR` visual assets
   - explicit `describes` and `cites` links for caption and figure/table references
   - extracted statements classified into source facts, derived rules, local design decisions, or explicit abstractions

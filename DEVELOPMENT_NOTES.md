@@ -217,6 +217,30 @@
   - the canonical artifacts themselves should carry a residual/assumption trail when alias-grounded role meaning is still what enables typed handshake completion
   - otherwise crash recovery or offline artifact inspection can miss a real semantic caveat that the validator knew how to print
 
+## KG benchmark harness as part of the truthfulness contract
+- aggregate quality scores are useful, but they are not enough to steer a SOTA-grade KG program by themselves
+- the project needs tracked fixtures that answer narrower questions directly:
+  - did we recover the actor-relative ports we expected?
+  - did we reject a false positive that only looked plausible by signal spelling?
+  - did a known structural conflict remain visible through validation and the canonical layers?
+  - did unresolved ambiguity stay explicit as a residual instead of being silently flattened away?
+- `specforge kg-bench` is the first implementation of that principle:
+  - it runs tracked fixtures through `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR`
+  - it can assert canonical IR expectations and persisted validation findings
+  - it keeps gold behavior and negative behavior in the same executable harness
+- the first fixture pack is intentionally small but strategically chosen:
+  - actor-port gold recovery
+  - name-only semantic-noise rejection
+  - multi-producer conflict surfacing
+  - actor-boundary residual quality
+- this is the right shape for `R15e`:
+  - start with fixtures that protect truthfulness invariants
+  - then grow toward APB/AHB/AXI protocol-grade gold suites and broader negative corpora
+- the benchmark harness should remain graph-first and honesty-first:
+  - benchmark canonical truth, not adapter output cosmetics
+  - benchmark conflict surfacing and residual quality, not only successful extraction
+  - benchmark bounded-hypothesis rejection, not only fact accumulation
+
 ## Current repository observations
 - the repository now contains a renamed `specforge` crate and CLI
 - the active Rust codebase no longer treats `spec2fsm` as the primary identity

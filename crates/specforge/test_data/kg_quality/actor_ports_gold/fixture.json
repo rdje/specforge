@@ -1,0 +1,36 @@
+{
+  "name": "actor_ports_gold",
+  "source": "source.md",
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["PREADY"],
+      "actor_ports_include": [
+        {
+          "actor_name": "Completer",
+          "signal_name": "PREADY",
+          "direction": "output"
+        },
+        {
+          "actor_name": "Requester",
+          "signal_name": "PREADY",
+          "direction": "input"
+        }
+      ]
+    },
+    "intent": {
+      "signal_names_include": ["PREADY"],
+      "actor_ports_include": [
+        {
+          "actor_name": "Completer",
+          "signal_name": "PREADY",
+          "direction": "output"
+        },
+        {
+          "actor_name": "Requester",
+          "signal_name": "PREADY",
+          "direction": "input"
+        }
+      ]
+    }
+  }
+}

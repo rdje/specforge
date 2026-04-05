@@ -1,5 +1,31 @@
 # CHANGES
 
+## 2026-04-06 (tracked KG-quality benchmark harness landed)
+
+### Added: `specforge kg-bench` command
+- Added a new `specforge kg-bench` CLI command that runs tracked KG-quality fixtures through the staged `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR` pipeline.
+- The command can assert canonical IR expectations and persisted validation findings, and it fails the run when any gold or negative fixture drifts.
+
+### Added: first tracked KG-quality fixture pack
+- Added tracked fixtures under `crates/specforge/test_data/kg_quality/` for:
+  - actor-relative port recovery
+  - rejection of name-only semantic role noise
+  - multi-producer structural conflict surfacing through validation
+  - actor-boundary residual quality
+
+### Why this matters
+- This starts `R15e` as a real executable benchmark surface instead of leaving KG-quality evaluation as roadmap text or scalar scores alone.
+- The benchmark harness now protects:
+  - canonical graph truthfulness
+  - false-positive control
+  - conflict surfacing
+  - residual-quality honesty
+
+### Validation
+- `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` → passed
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 188/188 passed
+
 ## 2026-04-06 (polarity conflicts now survive into canonical IR)
 
 ### Added: canonical carry-through for polarity disagreement
