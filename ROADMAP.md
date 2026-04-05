@@ -365,6 +365,7 @@
   - `EvidenceIR` now also refreshes those semantic hints from `SourceFact` prose descriptions and alias-grounded prose descriptions, so Form 2 alias learning can feed semantic role inference instead of stopping at constraint reclassification
   - `specforge nlp-enrich` now refreshes `signal_semantic_hints` before persistence whenever alias learning or backannotation changes the evidence state
   - `EvidenceIR` now also refreshes `signal_semantic_hints` from grounded visual captions and VLM timing-diagram annotations when they explicitly name a single known signal and establish a role meaning
+  - prose/visual semantic-hint synthesis now strips explicit signal identifiers before role-tag inference, so the surrounding descriptive language must establish valid-like or ready-like meaning instead of letting names like `AWVALID` / `AWREADY` self-justify consensus
   - caption/VLM-grounded semantic hints now carry explicit visual-evidence provenance instead of degrading to anonymous text-only hints
   - `SemanticIR` / `IntentIR` now carry per-signal `semantic_observations`, preserving role provenance and source kind in the canonical layers instead of only keeping merged `semantic_tags`
   - `SemanticIR` / `IntentIR` now also carry explicit per-signal `semantic_candidates`, so competing role hypotheses remain inspectable in the canonical layers even when no role is safely resolved
@@ -383,6 +384,7 @@
   - literal handshake-name heuristics do not override preserved contested semantic evidence
   - provisional fallback-only semantic roles do not hide behind a silent canonical winner; they remain explicit residual/assumption state until stronger grounding arrives
   - provisional fallback-only semantic roles also do not silently drive typed handshake semantics until observation-backed consensus exists
+  - signal identifiers alone do not create semantic-role consensus in prose/visual hint synthesis without descriptive language
 
 ### R15d Evidence arbitration and cross-modality conflict resolution
 - status: In Progress

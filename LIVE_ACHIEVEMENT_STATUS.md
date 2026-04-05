@@ -54,6 +54,7 @@
 - Signal-semantic hints from description tables carried into `SemanticIR` / `IntentIR`: Done
 - Signal-semantic hints from prose and alias-grounded prose carried into `SemanticIR` / `IntentIR`: Done
 - Signal-semantic hints from visual captions and VLM timing annotations carried into the semantic pipeline: Done
+- Prose/visual semantic-hint inference no longer treats signal identifiers as descriptive evidence: Done
 - SemanticIR / IntentIR per-signal semantic observation provenance implemented: Done
 - Canonical semantic-role consensus plus grounding-strength reporting implemented: Done
 - Cross-modality semantic grounding distinction implemented: Done
@@ -77,7 +78,7 @@
 - Live-doc projection of persisted IR validation findings implemented: Done
 - Latest local validation snapshot projected into tracked docs: Done
 - Full Ollama-backed `specforge converge` defaults enabled: Done
-- Test suite expanded to 175 tests; all passing: Done
+- Test suite expanded to 176 tests; all passing: Done
 - Explicit clock-tick temporal model in `SemanticIR` / `IntentIR`: In Progress
 - KG-guided multimodal rescans as a first-class convergent workstream: In Progress
 - Cross-modality evidence arbitration / conflict handling: In Progress

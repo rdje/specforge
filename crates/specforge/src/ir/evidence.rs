@@ -3191,7 +3191,11 @@ fn synthesize_signal_semantic_hints_from_tables(
                 continue;
             }
 
-            let semantic_tags = infer_signal_semantic_tags_from_description(description);
+            let sanitized_description = strip_signal_mentions_from_semantic_hint_text(
+                description,
+                std::iter::once(signal_name.as_str()),
+            );
+            let semantic_tags = infer_signal_semantic_tags_from_description(&sanitized_description);
             if semantic_tags.is_empty() {
                 continue;
             }
@@ -3239,11 +3243,6 @@ fn synthesize_signal_semantic_hints_from_prose(
             continue;
         }
 
-        let semantic_tags = infer_signal_semantic_tags_from_description(&statement.text);
-        if semantic_tags.is_empty() {
-            continue;
-        }
-
         let Some((signal_name, alias_grounded)) = resolve_signal_semantic_target_from_text(
             &statement.text,
             known_signals,
@@ -3251,6 +3250,14 @@ fn synthesize_signal_semantic_hints_from_prose(
         ) else {
             continue;
         };
+        let sanitized_text = strip_signal_mentions_from_semantic_hint_text(
+            &statement.text,
+            known_signals.iter().map(String::as_str),
+        );
+        let semantic_tags = infer_signal_semantic_tags_from_description(&sanitized_text);
+        if semantic_tags.is_empty() {
+            continue;
+        }
         let source_kind = if alias_grounded {
             SignalSemanticHintSourceKind::AliasGroundedProseStatement
         } else {
@@ -3356,16 +3363,19 @@ fn push_visual_signal_semantic_hint(
     signal_alias_map: &BTreeMap<String, String>,
     automation_confidence: AutomationConfidence,
 ) {
-    let semantic_tags = infer_signal_semantic_tags_from_description(source_text);
-    if semantic_tags.is_empty() {
-        return;
-    }
-
     let Some((signal_name, _alias_grounded)) =
         resolve_signal_semantic_target_from_text(source_text, known_signals, signal_alias_map)
     else {
         return;
     };
+    let sanitized_text = strip_signal_mentions_from_semantic_hint_text(
+        source_text,
+        known_signals.iter().map(String::as_str),
+    );
+    let semantic_tags = infer_signal_semantic_tags_from_description(&sanitized_text);
+    if semantic_tags.is_empty() {
+        return;
+    }
 
     let key = format!(
         "{}:{}:{}:{}",
@@ -3523,6 +3533,47 @@ fn infer_signal_semantic_tags_from_description(description: &str) -> Vec<SignalS
     }
 
     tags.into_iter().collect()
+}
+
+fn strip_signal_mentions_from_semantic_hint_text<'a>(
+    text: &str,
+    signal_names: impl IntoIterator<Item = &'a str>,
+) -> String {
+    let signal_tokens = signal_names
+        .into_iter()
+        .map(|name| name.trim().to_ascii_uppercase())
+        .filter(|name| !name.is_empty())
+        .collect::<HashSet<_>>();
+    if signal_tokens.is_empty() {
+        return text.to_string();
+    }
+
+    let mut output = String::with_capacity(text.len());
+    let mut token = String::new();
+
+    let flush_token = |token: &mut String, output: &mut String, signal_tokens: &HashSet<String>| {
+        if token.is_empty() {
+            return;
+        }
+        if signal_tokens.contains(&token.to_ascii_uppercase()) {
+            output.push(' ');
+        } else {
+            output.push_str(token);
+        }
+        token.clear();
+    };
+
+    for ch in text.chars() {
+        if ch.is_ascii_alphanumeric() || ch == '_' {
+            token.push(ch);
+        } else {
+            flush_token(&mut token, &mut output, &signal_tokens);
+            output.push(ch);
+        }
+    }
+    flush_token(&mut token, &mut output, &signal_tokens);
+
+    output
 }
 
 /// Infer signal direction from a section kind + title for signal description tables.
@@ -5810,6 +5861,38 @@ mod tests {
                     .semantic_tags
                     .contains(&super::SignalSemanticTag::HandshakeReadyLike)
         }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn signal_declarations_do_not_create_semantic_hints_from_names_alone() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("signal_name_only_handshake_terms.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Channel\n",
+                "Signal AWVALID is input width 1.\n\n",
+                "Signal AWREADY is output width 1.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        assert!(
+            evidence_ir.signal_semantic_hints.is_empty(),
+            "signal identifiers alone should not create semantic handshake hints without descriptive language"
+        );
 
         Ok(())
     }

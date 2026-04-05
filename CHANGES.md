@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-04-05 (signal names no longer self-justify semantic role hints)
+
+### Changed: semantic-role hint inference now strips signal identifiers from prose/visual text
+- `EvidenceIR` now removes explicit signal tokens before semantic-role tag inference on prose descriptions, alias-grounded prose, visual captions, VLM timing annotations, and signal-description row text.
+- This means identifiers like `AWVALID` / `AWREADY` no longer create valid-like or ready-like consensus by themselves.
+
+### Added: regression coverage for declaration-only handshake-shaped names
+- Added an evidence-stage regression proving that plain declarations such as `Signal AWVALID is input width 1.` do not create semantic handshake hints without descriptive language.
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 176/176 passed
+
 ## 2026-04-05 (provisional semantic roles no longer drive typed handshake recovery)
 
 ### Changed: handshake-role recovery now requires observation-backed consensus

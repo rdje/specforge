@@ -1243,3 +1243,25 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 - validation for this slice:
   - `cargo fmt --all` passed
   - `cargo test --manifest-path Cargo.toml` passed with `175/175`
+
+## 2026-04-05 - signal names no longer self-justify semantic role hints
+- the previous semantic-role grounding work made one quiet shortcut more visible:
+  - prose and visual semantic-hint inference was still scanning raw source text
+  - that meant a declaration like `Signal AWVALID is input width 1.` could create a valid-like semantic hint from the identifier token itself, even when no descriptive language explained the role
+- that was below the SOTA bar because consensus should come from meaning-bearing text, not from the signal name being embedded in a sentence
+- `crates/specforge/src/ir/evidence.rs` now strips explicit signal identifiers before running semantic-role tag inference for:
+  - prose `SourceFact` descriptions
+  - alias-grounded prose descriptions
+  - visual captions
+  - VLM timing-diagram annotations
+  - signal-description table rows already keep using their description cell, and now also strip the row signal token if it appears in the description text
+- the practical result is:
+  - declarations like `Signal AWVALID is input width 1.` no longer create semantic-role hints by themselves
+  - descriptive phrases such as `request pending`, `can accept`, or `accept the transfer` still work exactly as intended
+  - downstream consensus and arbitration surfaces now reflect descriptive grounding more honestly
+- regression coverage now proves:
+  - signal declarations with handshake-shaped identifiers alone do not create semantic hints
+  - the existing table/prose/visual semantic-hint paths still work when descriptive language is present
+- validation for this slice:
+  - `cargo fmt --all` passed
+  - `cargo test --manifest-path Cargo.toml` passed with `176/176`
