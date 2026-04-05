@@ -119,6 +119,14 @@
   "expectations": {
     "semantic": {
       "signal_names_include": ["XVALID", "XACK", "PAYLOAD"],
+      "semantic_candidate_signal_names_include": ["XVALID", "XACK"],
+      "multiple_semantic_candidate_signal_names_include": ["XVALID"],
+      "multiple_semantic_candidate_signal_names_exclude": ["XACK"],
+      "semantic_arbitration_signal_names_include": ["XVALID", "XACK"],
+      "decisive_semantic_arbitration_signal_names_include": ["XACK"],
+      "decisive_semantic_arbitration_signal_names_exclude": ["XVALID"],
+      "non_decisive_semantic_arbitration_signal_names_include": ["XVALID"],
+      "non_decisive_semantic_arbitration_signal_names_exclude": ["XACK"],
       "residual_decision_ids_include": ["semantic_handshake_name_fallback_blocked"],
       "signal_semantic_conflicts": 1,
       "temporal_rule_count": 1,
@@ -126,6 +134,14 @@
     },
     "intent": {
       "signal_names_include": ["XVALID", "XACK", "PAYLOAD"],
+      "semantic_candidate_signal_names_include": ["XVALID", "XACK"],
+      "multiple_semantic_candidate_signal_names_include": ["XVALID"],
+      "multiple_semantic_candidate_signal_names_exclude": ["XACK"],
+      "semantic_arbitration_signal_names_include": ["XVALID", "XACK"],
+      "decisive_semantic_arbitration_signal_names_include": ["XACK"],
+      "decisive_semantic_arbitration_signal_names_exclude": ["XVALID"],
+      "non_decisive_semantic_arbitration_signal_names_include": ["XVALID"],
+      "non_decisive_semantic_arbitration_signal_names_exclude": ["XACK"],
       "residual_decision_ids_include": ["semantic_handshake_name_fallback_blocked"],
       "signal_semantic_conflicts": 1,
       "temporal_rule_count": 1,
@@ -134,12 +150,14 @@
     "validation": {
       "semantic": {
         "finding_ids_include": [
+          "semantic_non_decisive_semantic_arbitration_present",
           "semantic_handshake_name_fallback_blocked_present",
           "semantic_signal_semantic_conflicts_present"
         ]
       },
       "intent": {
         "finding_ids_include": [
+          "intent_non_decisive_semantic_arbitration_present",
           "intent_handshake_name_fallback_blocked_present",
           "intent_signal_semantic_conflicts_present"
         ]

@@ -251,6 +251,10 @@
 - together, these two fixtures protect both sides of the truthfulness contract:
   - reject unsafe heuristic promotion
   - preserve weaker-but-useful semantics explicitly instead of flattening their caveats away
+- the next hardening step after those two fixtures is to benchmark the arbitration surface itself, not only its consequences:
+  - a contested fixture should prove the signal still has multiple semantic candidates and non-decisive arbitration
+  - a decisively grounded fixture should prove the signal has semantic arbitration too, but that it is decisively settled
+- that is a better quality bar because it checks the canonical truth model directly instead of backing into arbitration quality from blocked fallbacks, residuals, or validator findings alone
 - this is the right shape for `R15e`:
   - start with fixtures that protect truthfulness invariants
   - then grow toward APB/AHB/AXI protocol-grade gold suites and broader negative corpora

@@ -1,5 +1,28 @@
 # CHANGES
 
+## 2026-04-06 (KG fixtures now lock semantic arbitration state directly)
+
+### Added: canonical semantic-arbitration expectations in `specforge kg-bench`
+- KG fixtures can now assert:
+  - signals with any semantic candidates
+  - signals with multiple semantic candidates
+  - signals carrying semantic arbitration
+  - signals with decisive semantic arbitration
+  - signals with non-decisive semantic arbitration
+
+### Added: direct arbitration checks to the staged handshake fixtures
+- The contested handshake fallback fixture now proves that `XVALID` stays canonically contested while `XACK` stays decisively grounded.
+- The alias-dependent handshake caveat fixture now proves that `XREQ` and `XACK` stay decisively grounded even though their accepted handshake meaning remains explicitly caveated as alias-dependent.
+
+### Why this matters
+- This upgrades `R15e` from benchmarking arbitration side effects to benchmarking arbitration state directly.
+- The harness now checks the canonical truth model itself instead of inferring arbitration quality only from blocked heuristic fallback, residual packets, or validator findings.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` → passed
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 188/188 passed
+
 ## 2026-04-06 (KG fixtures now cover alias-dependent semantic caveats)
 
 ### Added: richer canonical expectations in `specforge kg-bench`

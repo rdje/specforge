@@ -22,16 +22,17 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `f4258e5`
-- latest_commit_brief_message: `feat(quality): add kg benchmark fixtures`
-- note: current uncommitted work upgrades the KG benchmark harness to cover alias-dependent semantic caveats too, so both blocked heuristic leakage and weaker-but-accepted semantics can be benchmarked explicitly
+- latest_commit_hash: `7807fa0`
+- latest_commit_brief_message: `feat(quality): benchmark alias-dependent caveats`
+- note: current uncommitted work upgrades the KG benchmark harness so fixtures can assert canonical semantic candidate and decisive-vs-contested arbitration state directly, not only downstream caveat or blocked-fallback side effects
 
 ## Recent commit chain (last 5)
+- `7807fa0` feat(quality): benchmark alias-dependent caveats
+- `2bed722` feat(quality): patch staged kg fixtures
 - `f4258e5` feat(quality): add kg benchmark fixtures
 - `8eee95d` feat(ir): carry polarity conflicts downstream
 - `3fef735` feat(ir): carry alias-grounded handshake caveats
 - `3f3545e` feat(validate): surface alias-dependent handshake completion
-- `efbc536` feat(semantic): surface alias-dependent role grounding
 - `f3c28cd` feat(evidence): prefer direct signal grounding over aliases
 
 ## Current repository state
@@ -45,9 +46,9 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
-- extended `specforge kg-bench` so fixtures can seed alias maps in `EvidenceIR`, refresh semantic hints, and assert alias-dependent semantic/temporal caveat state
-- added a stage-patched caveat fixture for alias-dependent handshake completion, proving that weaker alias-grounded semantics remain usable only when the residual/assumption trail stays explicit
-- extended canonical fixture expectations with alias-dependent consensus, alias-dependent candidate, and alias-dependent handshake-completion surfaces
+- extended `specforge kg-bench` so fixtures can assert canonical semantic candidates plus decisive vs non-decisive semantic arbitration directly
+- tightened the contested handshake fallback fixture so it proves `XVALID` stays contested while `XACK` remains decisively grounded
+- tightened the alias-dependent handshake caveat fixture so it proves `XREQ` and `XACK` are decisively grounded even while their accepted handshake meaning remains explicitly alias-dependent
 - synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `USER_GUIDE.md`, `DEVELOPMENT_NOTES.md`, and `CHANGES.md` so the richer `R15e` harness shape is captured in the live docs
 - validation ran for this task:
   - `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` passed
@@ -70,7 +71,7 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the alias-dependent KG benchmark slice
+1. commit the semantic-arbitration KG benchmark slice
 2. expand the fixture harness toward protocol-grade APB/AHB/AXI gold suites and broader negative truthfulness fixtures
 3. keep adapter work de-prioritized until the graph, temporal, arbitration, and evaluation surfaces are materially stronger
 

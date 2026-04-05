@@ -86,6 +86,26 @@ struct CanonicalStageExpectations {
     alias_dependent_semantic_candidate_signal_names_include: Vec<String>,
     #[serde(default)]
     alias_dependent_semantic_candidate_signal_names_exclude: Vec<String>,
+    #[serde(default)]
+    semantic_candidate_signal_names_include: Vec<String>,
+    #[serde(default)]
+    semantic_candidate_signal_names_exclude: Vec<String>,
+    #[serde(default)]
+    multiple_semantic_candidate_signal_names_include: Vec<String>,
+    #[serde(default)]
+    multiple_semantic_candidate_signal_names_exclude: Vec<String>,
+    #[serde(default)]
+    semantic_arbitration_signal_names_include: Vec<String>,
+    #[serde(default)]
+    semantic_arbitration_signal_names_exclude: Vec<String>,
+    #[serde(default)]
+    decisive_semantic_arbitration_signal_names_include: Vec<String>,
+    #[serde(default)]
+    decisive_semantic_arbitration_signal_names_exclude: Vec<String>,
+    #[serde(default)]
+    non_decisive_semantic_arbitration_signal_names_include: Vec<String>,
+    #[serde(default)]
+    non_decisive_semantic_arbitration_signal_names_exclude: Vec<String>,
     temporal_rule_count: Option<usize>,
     temporal_rules_with_handshake_completion: Option<usize>,
     temporal_rules_with_alias_dependent_handshake_completion: Option<usize>,
@@ -439,6 +459,102 @@ fn evaluate_canonical_expectations(
         "alias_dependent_semantic_candidate_signal_names_exclude",
         &expectations.alias_dependent_semantic_candidate_signal_names_exclude,
         &alias_dependent_semantic_candidate_signals,
+        failures,
+    );
+
+    let semantic_candidate_signals = interface_signal_names_matching(interfaces, |signal| {
+        !signal.semantic_candidates.is_empty()
+    });
+    assert_includes(
+        label,
+        "semantic_candidate_signal_names_include",
+        &expectations.semantic_candidate_signal_names_include,
+        &semantic_candidate_signals,
+        failures,
+    );
+    assert_excludes(
+        label,
+        "semantic_candidate_signal_names_exclude",
+        &expectations.semantic_candidate_signal_names_exclude,
+        &semantic_candidate_signals,
+        failures,
+    );
+
+    let multiple_semantic_candidate_signals =
+        interface_signal_names_matching(interfaces, |signal| signal.semantic_candidates.len() > 1);
+    assert_includes(
+        label,
+        "multiple_semantic_candidate_signal_names_include",
+        &expectations.multiple_semantic_candidate_signal_names_include,
+        &multiple_semantic_candidate_signals,
+        failures,
+    );
+    assert_excludes(
+        label,
+        "multiple_semantic_candidate_signal_names_exclude",
+        &expectations.multiple_semantic_candidate_signal_names_exclude,
+        &multiple_semantic_candidate_signals,
+        failures,
+    );
+
+    let semantic_arbitration_signals =
+        interface_signal_names_matching(interfaces, |signal| signal.semantic_arbitration.is_some());
+    assert_includes(
+        label,
+        "semantic_arbitration_signal_names_include",
+        &expectations.semantic_arbitration_signal_names_include,
+        &semantic_arbitration_signals,
+        failures,
+    );
+    assert_excludes(
+        label,
+        "semantic_arbitration_signal_names_exclude",
+        &expectations.semantic_arbitration_signal_names_exclude,
+        &semantic_arbitration_signals,
+        failures,
+    );
+
+    let decisive_semantic_arbitration_signals =
+        interface_signal_names_matching(interfaces, |signal| {
+            signal
+                .semantic_arbitration
+                .as_ref()
+                .is_some_and(|arbitration| arbitration.decisive)
+        });
+    assert_includes(
+        label,
+        "decisive_semantic_arbitration_signal_names_include",
+        &expectations.decisive_semantic_arbitration_signal_names_include,
+        &decisive_semantic_arbitration_signals,
+        failures,
+    );
+    assert_excludes(
+        label,
+        "decisive_semantic_arbitration_signal_names_exclude",
+        &expectations.decisive_semantic_arbitration_signal_names_exclude,
+        &decisive_semantic_arbitration_signals,
+        failures,
+    );
+
+    let non_decisive_semantic_arbitration_signals =
+        interface_signal_names_matching(interfaces, |signal| {
+            signal
+                .semantic_arbitration
+                .as_ref()
+                .is_some_and(|arbitration| !arbitration.decisive)
+        });
+    assert_includes(
+        label,
+        "non_decisive_semantic_arbitration_signal_names_include",
+        &expectations.non_decisive_semantic_arbitration_signal_names_include,
+        &non_decisive_semantic_arbitration_signals,
+        failures,
+    );
+    assert_excludes(
+        label,
+        "non_decisive_semantic_arbitration_signal_names_exclude",
+        &expectations.non_decisive_semantic_arbitration_signal_names_exclude,
+        &non_decisive_semantic_arbitration_signals,
         failures,
     );
 

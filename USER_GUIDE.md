@@ -103,6 +103,7 @@ cargo run -p specforge -- kg-bench
 - fails if gold expectations, negative expectations, residual-quality checks, or validation-finding checks drift
 - this is the current user-facing truthfulness regression command for the staged KG surface
 - the harness can also patch `SourceIR` and `EvidenceIR` inputs for a fixture, which lets tracked regressions exercise richer structured/semantic cases than plain markdown text alone
+- the harness can also assert canonical semantic candidates and decisive/non-decisive semantic arbitration directly, so fixture regressions can lock contested versus settled signal meaning explicitly
 - current tracked fixtures cover both blocked heuristic leakage and weaker alias-dependent semantics that must stay explicitly caveated
   - visual evidence items from `SourceIR` visual assets
   - explicit `describes` and `cites` links for caption and figure/table references

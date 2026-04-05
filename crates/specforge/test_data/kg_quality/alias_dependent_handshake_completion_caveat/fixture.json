@@ -28,6 +28,11 @@
   "expectations": {
     "semantic": {
       "signal_names_include": ["XREQ", "XACK", "PAYLOAD"],
+      "semantic_candidate_signal_names_include": ["XREQ", "XACK"],
+      "multiple_semantic_candidate_signal_names_exclude": ["XREQ", "XACK"],
+      "semantic_arbitration_signal_names_include": ["XREQ", "XACK"],
+      "decisive_semantic_arbitration_signal_names_include": ["XREQ", "XACK"],
+      "non_decisive_semantic_arbitration_signal_names_exclude": ["XREQ", "XACK"],
       "resolved_semantic_role_signal_names_include": ["XREQ", "XACK"],
       "semantic_consensus_signal_names_include": ["XREQ", "XACK"],
       "alias_dependent_semantic_consensus_signal_names_include": ["XREQ", "XACK"],
@@ -39,6 +44,11 @@
     },
     "intent": {
       "signal_names_include": ["XREQ", "XACK", "PAYLOAD"],
+      "semantic_candidate_signal_names_include": ["XREQ", "XACK"],
+      "multiple_semantic_candidate_signal_names_exclude": ["XREQ", "XACK"],
+      "semantic_arbitration_signal_names_include": ["XREQ", "XACK"],
+      "decisive_semantic_arbitration_signal_names_include": ["XREQ", "XACK"],
+      "non_decisive_semantic_arbitration_signal_names_exclude": ["XREQ", "XACK"],
       "resolved_semantic_role_signal_names_include": ["XREQ", "XACK"],
       "semantic_consensus_signal_names_include": ["XREQ", "XACK"],
       "alias_dependent_semantic_consensus_signal_names_include": ["XREQ", "XACK"],
