@@ -58,6 +58,7 @@
 - Multi-signal prose/caption semantic-role grounding via clause-local per-signal windows: Done
 - Explicit signal mentions outrank aliases for semantic-role grounding in the same text region: Done
 - Alias-dependent semantic role candidates/consensus surfaced explicitly in canonical IR and validation: Done
+- Alias-dependent typed handshake completion surfaced explicitly in validation: Done
 - SemanticIR / IntentIR per-signal semantic observation provenance implemented: Done
 - Canonical semantic-role consensus plus grounding-strength reporting implemented: Done
 - Cross-modality semantic grounding distinction implemented: Done
@@ -81,7 +82,7 @@
 - Live-doc projection of persisted IR validation findings implemented: Done
 - Latest local validation snapshot projected into tracked docs: Done
 - Full Ollama-backed `specforge converge` defaults enabled: Done
-- Test suite expanded to 180 tests; all passing: Done
+- Test suite expanded to 181 tests; all passing: Done
 - Explicit clock-tick temporal model in `SemanticIR` / `IntentIR`: In Progress
 - KG-guided multimodal rescans as a first-class convergent workstream: In Progress
 - Cross-modality evidence arbitration / conflict handling: In Progress

@@ -224,6 +224,52 @@ fn temporal_rules_with_handshake_completion_count(
         .count()
 }
 
+fn alias_dependent_semantic_consensus_signal_names(
+    interfaces: &[crate::ir::semantic::InterfaceRecord],
+) -> BTreeSet<String> {
+    interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+        .filter(|signal| {
+            signal
+                .semantic_consensus
+                .as_ref()
+                .is_some_and(|consensus| consensus.alias_dependent)
+        })
+        .map(|signal| signal.signal_name.clone())
+        .collect()
+}
+
+fn temporal_rules_with_alias_dependent_handshake_completion_count(
+    temporal_rules: &[crate::ir::semantic::TemporalRuleRecord],
+    interfaces: &[crate::ir::semantic::InterfaceRecord],
+) -> usize {
+    let alias_dependent_signals = alias_dependent_semantic_consensus_signal_names(interfaces);
+    if alias_dependent_signals.is_empty() {
+        return 0;
+    }
+
+    temporal_rules
+        .iter()
+        .filter(|rule| {
+            rule.antecedents
+                .iter()
+                .chain(rule.consequents.iter())
+                .any(|predicate| {
+                    matches!(
+                        predicate,
+                        crate::ir::semantic::TemporalPredicateRecord::HandshakeComplete {
+                            valid_signal,
+                            ready_signal,
+                            ..
+                        } if alias_dependent_signals.contains(valid_signal)
+                            || alias_dependent_signals.contains(ready_signal)
+                    )
+                })
+        })
+        .count()
+}
+
 fn interface_signals_with_semantic_tags_count(
     interfaces: &[crate::ir::semantic::InterfaceRecord],
 ) -> usize {
@@ -1357,6 +1403,13 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         temporal_rules_with_handshake_completion_count(&ir.temporal_rules)
     );
     println!(
+        "  temporal_rules_with_alias_dependent_handshake_completion: {}",
+        temporal_rules_with_alias_dependent_handshake_completion_count(
+            &ir.temporal_rules,
+            &ir.interfaces,
+        )
+    );
+    println!(
         "  signal_constraints (Level 2 NLP): {}",
         ir.signal_constraints.len()
     );
@@ -1456,6 +1509,11 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         temporal_rules_with_actor_grounding_count(&ir.temporal_rules);
     let temporal_rules_with_handshake_completion =
         temporal_rules_with_handshake_completion_count(&ir.temporal_rules);
+    let temporal_rules_with_alias_dependent_handshake_completion =
+        temporal_rules_with_alias_dependent_handshake_completion_count(
+            &ir.temporal_rules,
+            &ir.interfaces,
+        );
     let temporal_rules_with_multi_predicate_antecedents =
         temporal_rules_with_multi_predicate_antecedents_count(&ir.temporal_rules);
 
@@ -1654,6 +1712,17 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 .collect(),
         ));
     }
+    if temporal_rules_with_alias_dependent_handshake_completion > 0 {
+        findings.push(finding(
+            "semantic_alias_dependent_handshake_completion_present",
+            ValidationFindingSeverity::Info,
+            "temporal_grounding",
+            format!(
+                "{temporal_rules_with_alias_dependent_handshake_completion} typed temporal rule(s) currently derive HandshakeComplete predicates from alias-dependent semantic role consensus"
+            ),
+            Vec::new(),
+        ));
+    }
     if ir.temporal_rules.is_empty()
         && (!ir.timing_constraints.is_empty()
             || !ir.signal_constraints.is_empty()
@@ -1823,6 +1892,10 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             metric(
                 "temporal_rules_with_handshake_completion",
                 temporal_rules_with_handshake_completion.to_string(),
+            ),
+            metric(
+                "temporal_rules_with_alias_dependent_handshake_completion",
+                temporal_rules_with_alias_dependent_handshake_completion.to_string(),
             ),
             metric(
                 "temporal_rules_with_multi_predicate_antecedents",
@@ -2025,6 +2098,13 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         "  temporal_rules_with_handshake_completion: {}",
         temporal_rules_with_handshake_completion_count(&ir.temporal_rules)
     );
+    println!(
+        "  temporal_rules_with_alias_dependent_handshake_completion: {}",
+        temporal_rules_with_alias_dependent_handshake_completion_count(
+            &ir.temporal_rules,
+            &ir.interfaces,
+        )
+    );
     println!("  signal_constraints: {}", ir.signal_constraints.len());
     println!("  conditional_rules: {}", ir.conditional_rules.len());
     println!();
@@ -2182,6 +2262,11 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         temporal_rules_with_actor_grounding_count(&ir.temporal_rules);
     let temporal_rules_with_handshake_completion =
         temporal_rules_with_handshake_completion_count(&ir.temporal_rules);
+    let temporal_rules_with_alias_dependent_handshake_completion =
+        temporal_rules_with_alias_dependent_handshake_completion_count(
+            &ir.temporal_rules,
+            &ir.interfaces,
+        );
     let temporal_rules_with_multi_predicate_antecedents =
         temporal_rules_with_multi_predicate_antecedents_count(&ir.temporal_rules);
 
@@ -2381,6 +2466,17 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 .collect(),
         ));
     }
+    if temporal_rules_with_alias_dependent_handshake_completion > 0 {
+        findings.push(finding(
+            "intent_alias_dependent_handshake_completion_present",
+            ValidationFindingSeverity::Info,
+            "temporal_grounding",
+            format!(
+                "{temporal_rules_with_alias_dependent_handshake_completion} typed temporal rule(s) currently derive HandshakeComplete predicates from alias-dependent semantic role consensus"
+            ),
+            Vec::new(),
+        ));
+    }
     if ir.temporal_rules.is_empty()
         && (!ir.timing_constraints.is_empty()
             || !ir.signal_constraints.is_empty()
@@ -2560,6 +2656,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             metric(
                 "temporal_rules_with_handshake_completion",
                 temporal_rules_with_handshake_completion.to_string(),
+            ),
+            metric(
+                "temporal_rules_with_alias_dependent_handshake_completion",
+                temporal_rules_with_alias_dependent_handshake_completion.to_string(),
             ),
             metric(
                 "temporal_rules_with_multi_predicate_antecedents",
@@ -3976,6 +4076,88 @@ mod tests {
         assert!(has_finding(
             &report,
             "intent_alias_dependent_semantic_consensus_present"
+        ));
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_intent_ir_reports_alias_dependent_handshake_completion() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir
+            .path()
+            .join("alias_dependent_handshake_completion.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal XREQ is input width 1.\n\n",
+                "Signal XACK is input width 1.\n\n",
+                "Signal PAYLOAD is output width 32.\n\n",
+                "Clock clk.\n\n",
+                "The request phase indicates that address and control information are valid for transfer.\n\n",
+                "The accept phase indicates that the subordinate can accept the transfer.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir
+            .signal_alias_map
+            .insert("request phase".to_string(), "XREQ".to_string());
+        evidence_ir
+            .signal_alias_map
+            .insert("accept phase".to_string(), "XACK".to_string());
+        evidence_ir.refresh_signal_semantic_hints()?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_payload_alias_semantic_handshake".to_string(),
+            subject_signal: "PAYLOAD".to_string(),
+            constraint_kind: SignalConstraintKind::MustNotChange,
+            target_value: None,
+            condition_text: Some("when XREQ is HIGH and XACK is HIGH".to_string()),
+            negated: false,
+            source_text: "PAYLOAD must not change when XREQ is HIGH and XACK is HIGH.".to_string(),
+            supporting_statement_ids: vec!["stmt_temporal_alias_semantic_handshake".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let report = validate_intent_ir(
+            &intent_ir,
+            "alias_dependent_handshake_completion".to_string(),
+        );
+        assert_eq!(
+            metric_value(
+                &report,
+                "temporal_rules_with_alias_dependent_handshake_completion"
+            ),
+            Some("1")
+        );
+        assert!(has_finding(
+            &report,
+            "intent_alias_dependent_handshake_completion_present"
         ));
 
         Ok(())

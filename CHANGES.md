@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-05 (alias-dependent handshake completion is now explicit in validation)
+
+### Added: validation visibility for alias-dependent temporal handshake semantics
+- `specforge validate` now reports:
+  - `temporal_rules_with_alias_dependent_handshake_completion`
+- It also emits an explicit finding when typed `HandshakeComplete` predicates depend on alias-dependent semantic role consensus.
+
+### Why this matters
+- Alias-grounded handshake recovery remains useful, but it no longer looks as grounded as directly supported handshake semantics.
+- The temporal layer now makes that weaker grounding visible instead of blending it into the generic handshake-completion count.
+
+### Added: regression coverage for alias-dependent handshake validation
+- Added a validation regression proving that alias-grounded semantic role consensus feeding a typed handshake predicate is reported explicitly.
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 181/181 passed
+
 ## 2026-04-05 (alias-dependent semantic role meaning is now explicit)
 
 ### Added: explicit alias-dependence on semantic candidates and consensus summaries
