@@ -728,6 +728,9 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 - the merged polarity map is then reused by the existing asserted/deasserted constraint refinement step
 - `EvidenceIR` now also persists a typed `signal_polarity_conflicts` surface, so contradictory polarity remains explicit in the artifact instead of only being visible indirectly through a polarity-neutral derived constraint
 - `specforge validate` now prints and flags those polarity conflicts, including which polarity each modality asserted and which statement/table ids supported it
+- that conflict should not stop at the evidence stage:
+  - if downstream canonical layers carry reset and signal-level behavior, they also need to carry contradictory active-level evidence instead of pretending the disagreement ended upstream
+  - the right shape is the same one used for semantic-role conflicts: preserve the typed polarity conflict surface through `SemanticIR` and `IntentIR`, then report it there too
 
 ### Validation
 - added end-to-end tests for:

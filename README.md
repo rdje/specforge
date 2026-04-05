@@ -66,6 +66,7 @@ Use it first for the project objective, document navigation, and the current imp
 - compound `when/if` guards like `HREADY is LOW and HSEL is HIGH` now survive into the typed temporal layer as multiple antecedent predicates instead of being flattened into a single partial condition
 - contradictory temporal value obligations under the same grounded context now surface as typed `temporal_conflicts` records instead of staying implicit in the rule set
 - the convergent `EvidenceIR` loop now also mines `SignalDescription` tables for active-high/active-low facts, merges them conservatively with prose polarity before refining asserted/deasserted constraints, and persists explicit `signal_polarity_conflicts` records when prose/table evidence disagrees so validation can report the conflict instead of hiding it inside a neutral fallback
+- `SemanticIR` and `IntentIR` now also carry those `signal_polarity_conflicts`, so contradictory active-level evidence remains visible in the canonical layers instead of disappearing after `EvidenceIR`
 - a pinned `subs/fsmgen` git submodule now exists as a local `.fsm` reference implementation for upcoming adapter work
 - the `SourceIR` schema now reserves:
   - parser-backend identity

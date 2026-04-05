@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `3f3545e`
-- latest_commit_brief_message: `feat(validate): surface alias-dependent handshake completion`
-- note: current uncommitted work turns alias-dependent handshake completion into canonical residual/assumption state, so weaker temporal grounding stays visible even without running validation
+- latest_commit_hash: `3fef735`
+- latest_commit_brief_message: `feat(ir): carry alias-grounded handshake caveats`
+- note: current uncommitted work carries polarity conflicts into `SemanticIR` and `IntentIR`, so contradictory active-level evidence remains visible in the canonical layers instead of stopping at `EvidenceIR`
 
 ## Recent commit chain (last 5)
+- `3fef735` feat(ir): carry alias-grounded handshake caveats
 - `3f3545e` feat(validate): surface alias-dependent handshake completion
 - `efbc536` feat(semantic): surface alias-dependent role grounding
 - `f3c28cd` feat(evidence): prefer direct signal grounding over aliases
 - `0ec1e73` feat(evidence): split semantic hints by signal context
-- `cbba105` feat(evidence): ground semantic hints in description text
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -43,16 +43,18 @@
 - `VALIDATION_SNAPSHOT.md` is now a tracked continuity doc refreshed from persisted validation reports
 
 ## Completed technical work in this session
-- `SemanticIR` now emits `semantic_alias_dependent_handshake_completion` when typed `HandshakeComplete` predicates still depend on alias-grounded semantic role consensus
-- `IntentIR` now mirrors that caveat as `assumption_alias_dependent_handshake_completion`, so weaker temporal grounding remains inspectable even before validation runs
-- added regression coverage proving that alias-grounded handshake completion now emits canonical residual/assumption state across the semantic and intent layers
-- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, and `CHANGES.md` so the new temporal alias-dependence visibility is captured in the live docs
+- `SemanticIR` now carries `signal_polarity_conflicts` forward from `EvidenceIR`
+- `IntentIR` now carries that same polarity-conflict surface forward from `SemanticIR`
+- `specforge validate` now reports polarity conflicts for `SemanticIR` and `IntentIR`, so contradictory active-level evidence remains visible all the way to the canonical artifacts
+- added regression coverage for semantic and intent carry-through plus validator reporting at both canonical stages
+- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, and `CHANGES.md` so the new polarity-conflict carry-through is captured in the live docs
 - validation ran for this task:
   - `cargo fmt --all` passed
-  - `cargo test --manifest-path Cargo.toml` passed with `182/182`
+  - `cargo test --manifest-path Cargo.toml` passed with `186/186`
 
 ## Current working tree before commit
 - modified tracked files currently include:
+  - `crates/specforge/src/commands/validate.rs`
   - `crates/specforge/src/ir/semantic.rs`
   - `crates/specforge/src/ir/intent.rs`
   - `README.md`
@@ -65,7 +67,7 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the canonical alias-dependent handshake residual/assumption slice
+1. commit the polarity-conflict canonical carry-through slice
 2. continue the semantic-truthfulness program by carrying the same “make weaker grounding explicit instead of hiding it” rule into more multimodal semantic consumers and arbitration surfaces
 3. keep adapter work de-prioritized until the graph, temporal, arbitration, and evaluation surfaces are materially stronger
 

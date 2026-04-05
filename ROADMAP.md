@@ -406,6 +406,7 @@
 - done:
   - `EvidenceIR` now persists `signal_polarity_conflicts: Vec<SignalPolarityConflictRecord>` when prose and signal-description tables disagree on active-high/active-low semantics
   - `specforge validate` now reports and flags those polarity conflicts explicitly, so contradictory polarity stays inspectable instead of only affecting the derived constraint kind
+  - `SemanticIR` / `IntentIR` now carry those `signal_polarity_conflicts` forward too, and `specforge validate` now reports them at both canonical stages so contradictory active-level evidence no longer disappears after `EvidenceIR`
   - `EvidenceIR` now persists `signal_semantic_conflicts: Vec<SignalSemanticConflictRecord>` when meaning-based role evidence assigns incompatible roles to the same signal
   - `specforge validate` now reports and flags those semantic-role conflicts explicitly instead of leaving incompatible role evidence hidden inside a dual-tag ambiguity
   - `SemanticIR` / `IntentIR` now carry `signal_semantic_conflicts` forward, so unresolved role disagreement remains visible in the canonical layers instead of disappearing after `EvidenceIR`

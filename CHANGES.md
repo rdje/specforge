@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-06 (polarity conflicts now survive into canonical IR)
+
+### Added: canonical carry-through for polarity disagreement
+- `SemanticIR` now carries `signal_polarity_conflicts` forward from `EvidenceIR`.
+- `IntentIR` now carries the same polarity-conflict surface forward from `SemanticIR`.
+
+### Added: semantic and intent validation for polarity conflicts
+- `specforge validate` now reports `signal_polarity_conflicts` for both `SemanticIR` and `IntentIR`, not only for `EvidenceIR`.
+- Contradictory active-high/active-low evidence now stays visible all the way to the canonical artifacts instead of disappearing after the evidence stage.
+
+### Added: regression coverage for polarity-conflict carry-through
+- Added semantic-stage and intent-stage carry-through regressions for `signal_polarity_conflicts`.
+- Added validator regressions proving polarity conflicts are flagged at both canonical stages.
+
+### Validation
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 186/186 passed
+
 ## 2026-04-05 (alias-dependent handshake completion is now canonical residual state)
 
 ### Added: canonical residual and assumption carry-through for alias-dependent handshake semantics

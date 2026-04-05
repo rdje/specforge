@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
-use crate::ir::evidence::SignalSemanticConflictRecord;
+use crate::ir::evidence::{SignalPolarityConflictRecord, SignalSemanticConflictRecord};
 use crate::ir::semantic::{
     ActorPortRecord, ConditionalRuleRecord, ControlBlockRecord, DecisionTreeFragmentRecord,
     ExplicitModuleRecord, ExplicitTopRecord, InitAssignmentRecord, InterfaceRecord,
@@ -39,6 +39,8 @@ pub struct IntentIr {
     pub interface_signal_conflicts: Vec<InterfaceSignalConflictRecord>,
     #[serde(default)]
     pub signal_connectivity_conflicts: Vec<SignalConnectivityConflictRecord>,
+    #[serde(default)]
+    pub signal_polarity_conflicts: Vec<SignalPolarityConflictRecord>,
     #[serde(default)]
     pub signal_semantic_conflicts: Vec<SignalSemanticConflictRecord>,
     #[serde(default)]
@@ -124,6 +126,7 @@ impl IntentIr {
         let signal_connectivity = semantic_ir.signal_connectivity.clone();
         let interface_signal_conflicts = semantic_ir.interface_signal_conflicts.clone();
         let signal_connectivity_conflicts = semantic_ir.signal_connectivity_conflicts.clone();
+        let signal_polarity_conflicts = semantic_ir.signal_polarity_conflicts.clone();
         let signal_semantic_conflicts = semantic_ir.signal_semantic_conflicts.clone();
         let interfaces = semantic_ir.interfaces.clone();
         let system_contract = semantic_ir.system_contract.clone();
@@ -178,6 +181,7 @@ impl IntentIr {
             signal_connectivity,
             interface_signal_conflicts,
             signal_connectivity_conflicts,
+            signal_polarity_conflicts,
             signal_semantic_conflicts,
             interfaces,
             system_contract,
@@ -1906,6 +1910,69 @@ mod tests {
             candidate.role == crate::ir::semantic::InterfaceSignalSemanticRole::HandshakeReadyLike
                 && candidate.evidence_weight == 3
         }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn carries_signal_polarity_conflicts_into_intent_ir() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("intent_polarity_conflict.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Reset\n",
+                "Signal PRESETN is input width 1.\n\n",
+                "PRESETN is active HIGH.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_reset_desc_conflict".to_string(),
+            asset_id: "asset_reset_desc_conflict".to_string(),
+            page_id: None,
+            caption_text: Some("Reset signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("PRESETN", false),
+                make_table_cell("Active low reset.", false),
+            ]],
+            row_count: 1,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        assert_eq!(intent_ir.signal_polarity_conflicts.len(), 1);
+        let conflict = &intent_ir.signal_polarity_conflicts[0];
+        assert_eq!(conflict.signal_name, "PRESETN");
+        assert_eq!(conflict.observations.len(), 2);
 
         Ok(())
     }

@@ -27,7 +27,7 @@
 - the current `.fsm` adapter slice is real and intentionally narrow: it can emit honest `?dt:name`, `?fsm:name`, and `?top:name` outputs when the canonical facts are explicit enough
 - the enrichment, convergence, and validation toolchain is also real: `specforge enrich`, `specforge nlp-enrich`, `specforge converge`, and `specforge validate` are wired into the CLI and exercised by the workspace tests
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, and benchmark-quality evaluation; adapter expansion is now horizon work
-- the workspace currently validates with `cargo test --manifest-path Cargo.toml`, with 182 passing tests
+- the workspace currently validates with `cargo test --manifest-path Cargo.toml`, with 186 passing tests
 
 
 ## Session update (2026-04-04)
@@ -48,6 +48,7 @@
 - the canonical role surface is now more inspectable too: semantic candidates and consensus summaries carry an explicit `alias_dependent` flag, and validation reports alias-dependent resolved roles instead of forcing readers to infer that dependency from raw source-kind lists
 - that honesty surface now reaches the temporal layer too: validation reports when typed `HandshakeComplete` predicates depend on alias-dependent semantic consensus, so temporal progress semantics no longer look equally grounded when they still rely only on alias mapping
 - that weaker temporal grounding is now canonical too: `SemanticIR` emits an explicit residual packet for alias-dependent handshake completion, and `IntentIR` mirrors it as an assumption so the warning survives even without running the validator
+- contradictory polarity now survives downstream as well: `signal_polarity_conflicts` are no longer trapped in `EvidenceIR`, and validation now reports them for `SemanticIR` and `IntentIR` too
 - `EvidenceIR` now also mines `signal_semantic_hints` from grounded visual captions and VLM timing-diagram annotations, using the same robust fenced/prose-wrapped JSON recovery path as the semantic VLM lift and preserving explicit visual-evidence provenance on those hints
 - `SemanticIR` / `IntentIR` no longer collapse that richer role evidence entirely into `semantic_tags`; they now also carry per-signal `semantic_observations`, preserving source kind and provenance in the canonical layers
 - `SemanticIR` / `IntentIR` now also carry per-signal `semantic_candidates`, keeping competing role hypotheses visible in the canonical layers instead of flattening them into only winner-or-none state

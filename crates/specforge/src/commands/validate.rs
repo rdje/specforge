@@ -1379,6 +1379,10 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         ir.signal_connectivity_conflicts.len()
     );
     println!(
+        "  signal_polarity_conflicts: {}",
+        ir.signal_polarity_conflicts.len()
+    );
+    println!(
         "  signal_semantic_conflicts: {}",
         ir.signal_semantic_conflicts.len()
     );
@@ -1466,6 +1470,23 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             println!(
                 "  ... and {} more conflict(s)",
                 ir.interface_signal_conflicts.len() - 8
+            );
+        }
+    }
+    if !ir.signal_polarity_conflicts.is_empty() {
+        println!();
+        println!("=== Signal Polarity Conflicts ===");
+        for conflict in ir.signal_polarity_conflicts.iter().take(8) {
+            println!(
+                "  - {}: {}",
+                conflict.signal_name,
+                describe_signal_polarity_conflict(conflict)
+            );
+        }
+        if ir.signal_polarity_conflicts.len() > 8 {
+            println!(
+                "  ... and {} more conflict(s)",
+                ir.signal_polarity_conflicts.len() - 8
             );
         }
     }
@@ -1576,6 +1597,21 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 ir.interface_signal_conflicts.len()
             ),
             ir.interface_signal_conflicts
+                .iter()
+                .map(|conflict| conflict.conflict_id.clone())
+                .collect(),
+        ));
+    }
+    if !ir.signal_polarity_conflicts.is_empty() {
+        findings.push(finding(
+            "semantic_signal_polarity_conflicts_present",
+            ValidationFindingSeverity::Warning,
+            "polarity_conflicts",
+            format!(
+                "{} signal polarity conflict(s) remain unresolved in the carried canonical semantic surface",
+                ir.signal_polarity_conflicts.len()
+            ),
+            ir.signal_polarity_conflicts
                 .iter()
                 .map(|conflict| conflict.conflict_id.clone())
                 .collect(),
@@ -1860,6 +1896,10 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 ir.signal_connectivity_conflicts.len().to_string(),
             ),
             metric(
+                "signal_polarity_conflicts",
+                ir.signal_polarity_conflicts.len().to_string(),
+            ),
+            metric(
                 "signal_semantic_conflicts",
                 ir.signal_semantic_conflicts.len().to_string(),
             ),
@@ -2077,6 +2117,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         ir.signal_connectivity_conflicts.len()
     );
     println!(
+        "  signal_polarity_conflicts: {}",
+        ir.signal_polarity_conflicts.len()
+    );
+    println!(
         "  signal_semantic_conflicts: {}",
         ir.signal_semantic_conflicts.len()
     );
@@ -2223,6 +2267,23 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             );
         }
     }
+    if !ir.signal_polarity_conflicts.is_empty() {
+        println!();
+        println!("=== Signal Polarity Conflicts ===");
+        for conflict in ir.signal_polarity_conflicts.iter().take(8) {
+            println!(
+                "  - {}: {}",
+                conflict.signal_name,
+                describe_signal_polarity_conflict(conflict)
+            );
+        }
+        if ir.signal_polarity_conflicts.len() > 8 {
+            println!(
+                "  ... and {} more conflict(s)",
+                ir.signal_polarity_conflicts.len() - 8
+            );
+        }
+    }
     if !ir.signal_semantic_conflicts.is_empty() {
         println!();
         println!("=== Signal Semantic Conflicts ===");
@@ -2329,6 +2390,21 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 ir.interface_signal_conflicts.len()
             ),
             ir.interface_signal_conflicts
+                .iter()
+                .map(|conflict| conflict.conflict_id.clone())
+                .collect(),
+        ));
+    }
+    if !ir.signal_polarity_conflicts.is_empty() {
+        findings.push(finding(
+            "intent_signal_polarity_conflicts_present",
+            ValidationFindingSeverity::Warning,
+            "polarity_conflicts",
+            format!(
+                "{} signal polarity conflict(s) remain unresolved in the carried canonical intent surface",
+                ir.signal_polarity_conflicts.len()
+            ),
+            ir.signal_polarity_conflicts
                 .iter()
                 .map(|conflict| conflict.conflict_id.clone())
                 .collect(),
@@ -2621,6 +2697,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             metric(
                 "signal_connectivity_conflicts",
                 ir.signal_connectivity_conflicts.len().to_string(),
+            ),
+            metric(
+                "signal_polarity_conflicts",
+                ir.signal_polarity_conflicts.len().to_string(),
             ),
             metric(
                 "signal_semantic_conflicts",
@@ -3151,6 +3231,66 @@ mod tests {
         assert!(has_finding(
             &report,
             "semantic_non_decisive_semantic_arbitration_present"
+        ));
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_semantic_ir_flags_signal_polarity_conflicts() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("semantic_stage_polarity_conflict.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Reset\n",
+                "Signal PRESETN is input width 1.\n\n",
+                "PRESETN is active HIGH.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_reset_desc_conflict".to_string(),
+            asset_id: "asset_reset_desc_conflict".to_string(),
+            page_id: None,
+            caption_text: Some("Reset signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("PRESETN", false),
+                make_table_cell("Active low reset.", false),
+            ]],
+            row_count: 1,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let report = validate_semantic_ir(&semantic_ir, "signal_polarity_conflicts".to_string());
+        assert_eq!(
+            metric_value(&report, "signal_polarity_conflicts"),
+            Some("1")
+        );
+        assert!(has_finding(
+            &report,
+            "semantic_signal_polarity_conflicts_present"
         ));
 
         Ok(())
@@ -4870,6 +5010,72 @@ mod tests {
         assert!(has_finding(
             &report,
             "intent_signal_semantic_conflicts_present"
+        ));
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_intent_ir_flags_signal_polarity_conflicts() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("intent_polarity_conflict.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Reset\n",
+                "Signal PRESETN is input width 1.\n\n",
+                "PRESETN is active HIGH.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_reset_desc_conflict".to_string(),
+            asset_id: "asset_reset_desc_conflict".to_string(),
+            page_id: None,
+            caption_text: Some("Reset signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("PRESETN", false),
+                make_table_cell("Active low reset.", false),
+            ]],
+            row_count: 1,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let report = validate_intent_ir(&intent_ir, "signal_polarity_conflicts".to_string());
+        assert_eq!(
+            metric_value(&report, "signal_polarity_conflicts"),
+            Some("1")
+        );
+        assert!(has_finding(
+            &report,
+            "intent_signal_polarity_conflicts_present"
         ));
 
         Ok(())
