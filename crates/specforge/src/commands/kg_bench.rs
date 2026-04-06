@@ -11,7 +11,8 @@ use crate::error::{AppError, Result};
 use crate::ir::evidence::EvidenceIr;
 use crate::ir::intent::{IntentAssumption, IntentIr};
 use crate::ir::semantic::{
-    ActorPortRecord, ActorRelativeDirection, InterfaceRecord, SemanticIr, TemporalRuleRecord,
+    ActorPortRecord, ActorRelativeDirection, InterfaceRecord, InterfaceSignalDirection, SemanticIr,
+    TemporalRuleRecord,
 };
 use crate::ir::source::{
     ActorSignalRelation, RelationKind, ResidualDecisionPacket, ValidationFindingRecord,
@@ -39,6 +40,8 @@ struct SourceIrPatch {
     structured_tables: Vec<crate::ir::source::StructuredTableRecord>,
     #[serde(default)]
     visual_assets: Vec<crate::ir::source::VisualAsset>,
+    #[serde(default)]
+    document_sections: Vec<crate::ir::source::ContentSectionRecord>,
 }
 
 #[derive(Debug, Default, Deserialize)]
@@ -65,6 +68,8 @@ struct FixtureExpectations {
 struct CanonicalStageExpectations {
     #[serde(default)]
     signal_names_include: Vec<String>,
+    #[serde(default)]
+    signal_directions_include: Vec<ExpectedSignalDirection>,
     #[serde(default)]
     actor_ports_include: Vec<ExpectedActorPort>,
     #[serde(default)]
@@ -128,6 +133,12 @@ struct ExpectedActorPort {
     actor_name: String,
     signal_name: String,
     direction: ActorRelativeDirection,
+}
+
+#[derive(Debug, Deserialize)]
+struct ExpectedSignalDirection {
+    signal_name: String,
+    direction: InterfaceSignalDirection,
 }
 
 #[derive(Debug, Deserialize)]
@@ -248,6 +259,9 @@ fn run_fixture(fixture_path: &Path) -> Result<FixtureOutcome> {
         source_ir
             .visual_assets
             .extend(patch.visual_assets.iter().cloned());
+        source_ir
+            .document_sections
+            .extend(patch.document_sections.iter().cloned());
     }
     source_ir.write_to_disk()?;
     let mut evidence_ir =
@@ -435,6 +449,28 @@ fn evaluate_canonical_expectations(
         &signal_names,
         failures,
     );
+
+    for expected_direction in &expectations.signal_directions_include {
+        let Some(signal) = find_interface_signal(interfaces, &expected_direction.signal_name)
+        else {
+            failures.push(format!(
+                "{label}: missing signal `{}` while checking direction expectation",
+                expected_direction.signal_name
+            ));
+            continue;
+        };
+        if signal.direction_hint != Some(expected_direction.direction) {
+            failures.push(format!(
+                "{label}: expected signal `{}` direction `{}`, got `{}`",
+                expected_direction.signal_name,
+                interface_signal_direction_label(expected_direction.direction),
+                signal
+                    .direction_hint
+                    .map(interface_signal_direction_label)
+                    .unwrap_or("none")
+            ));
+        }
+    }
 
     let resolved_role_signals = interface_signal_names_matching(interfaces, |signal| {
         signal.resolved_semantic_role.is_some()
@@ -855,6 +891,16 @@ fn interface_signal_names_matching(
         .collect()
 }
 
+fn find_interface_signal<'a>(
+    interfaces: &'a [InterfaceRecord],
+    signal_name: &str,
+) -> Option<&'a crate::ir::semantic::InterfaceSignalRecord> {
+    interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+        .find(|signal| signal.signal_name == signal_name)
+}
+
 fn residual_decision_ids(residual_decisions: &[ResidualDecisionPacket]) -> BTreeSet<String> {
     residual_decisions
         .iter()
@@ -996,6 +1042,14 @@ fn actor_relative_direction_label(direction: ActorRelativeDirection) -> &'static
         ActorRelativeDirection::Output => "output",
         ActorRelativeDirection::InOut => "in_out",
         ActorRelativeDirection::Unknown => "unknown",
+    }
+}
+
+fn interface_signal_direction_label(direction: InterfaceSignalDirection) -> &'static str {
+    match direction {
+        InterfaceSignalDirection::Input => "input",
+        InterfaceSignalDirection::Output => "output",
+        InterfaceSignalDirection::Internal => "internal",
     }
 }
 

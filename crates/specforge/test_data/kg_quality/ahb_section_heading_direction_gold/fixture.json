@@ -1,0 +1,248 @@
+{
+  "name": "ahb_section_heading_direction_gold",
+  "source": "source.md",
+  "source_ir_patch": {
+    "document_sections": [
+      {
+        "section_id": "sec_0001_manager_signals",
+        "title": "Manager signals",
+        "heading_level": 2,
+        "page_id": "page_0001",
+        "source_ref": null,
+        "reading_order": 1,
+        "section_kind": "signal_description"
+      },
+      {
+        "section_id": "sec_0002_subordinate_signals",
+        "title": "Subordinate signals",
+        "heading_level": 2,
+        "page_id": "page_0002",
+        "source_ref": null,
+        "reading_order": 10,
+        "section_kind": "signal_description"
+      }
+    ],
+    "structured_tables": [
+      {
+        "table_id": "table_0001",
+        "asset_id": "table_0001",
+        "page_id": "page_0001",
+        "caption_text": null,
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            {
+              "text": "Name",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Destination",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Width",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            }
+          ]
+        ],
+        "body_rows": [
+          [
+            {
+              "text": "HADDR",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Subordinate",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "32",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ],
+          [
+            {
+              "text": "HWRITE",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Subordinate",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "1",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ],
+          [
+            {
+              "text": "HTRANS",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Subordinate",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "2",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ]
+        ],
+        "row_count": 3,
+        "col_count": 3
+      },
+      {
+        "table_id": "table_0002",
+        "asset_id": "table_0002",
+        "page_id": "page_0002",
+        "caption_text": null,
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            {
+              "text": "Name",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Destination",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Width",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            }
+          ]
+        ],
+        "body_rows": [
+          [
+            {
+              "text": "HREADYOUT",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Manager",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "1",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ],
+          [
+            {
+              "text": "HRESP",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Manager",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "1",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ]
+        ],
+        "row_count": 2,
+        "col_count": 3
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["HADDR", "HWRITE", "HTRANS", "HREADYOUT", "HRESP"],
+      "signal_directions_include": [
+        {
+          "signal_name": "HADDR",
+          "direction": "output"
+        },
+        {
+          "signal_name": "HWRITE",
+          "direction": "output"
+        },
+        {
+          "signal_name": "HTRANS",
+          "direction": "output"
+        },
+        {
+          "signal_name": "HREADYOUT",
+          "direction": "input"
+        },
+        {
+          "signal_name": "HRESP",
+          "direction": "input"
+        }
+      ]
+    },
+    "intent": {
+      "signal_names_include": ["HADDR", "HWRITE", "HTRANS", "HREADYOUT", "HRESP"],
+      "signal_directions_include": [
+        {
+          "signal_name": "HADDR",
+          "direction": "output"
+        },
+        {
+          "signal_name": "HWRITE",
+          "direction": "output"
+        },
+        {
+          "signal_name": "HTRANS",
+          "direction": "output"
+        },
+        {
+          "signal_name": "HREADYOUT",
+          "direction": "input"
+        },
+        {
+          "signal_name": "HRESP",
+          "direction": "input"
+        }
+      ]
+    }
+  }
+}

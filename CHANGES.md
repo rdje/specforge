@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-04-06 (KG fixtures now lock AHB section-heading direction recovery)
+
+### Added: AHB-style section-heading gold fixture
+- Added a tracked staged fixture proving that `Manager signals` / `Subordinate signals` section context recovers per-signal direction and width correctly for AHB-style signal tables.
+- The fixture locks canonical direction on `HADDR`, `HWRITE`, `HTRANS`, `HREADYOUT`, and `HRESP` through both `SemanticIR` and `IntentIR`.
+
+### Improved: `kg-bench` can now patch `document_sections` and assert per-signal direction directly
+- Added fixture support for patching `SourceIR.document_sections`, so section-heading-driven extraction paths are benchmarkable without needing heavyweight source documents.
+- Added canonical per-signal direction expectations, so tracked fixtures can lock actual signal direction instead of inferring it through aggregate validation metrics.
+
+### Why this matters
+- AHB extraction quality genuinely depends on section-heading context in some real specs. If that path regresses, the pipeline can still look healthy at a coarse metric level while silently losing signal truth.
+- This turns that protocol-family-specific path into executable benchmark coverage instead of leaving it as a fragile unit-test-only behavior.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality ahb_section_heading_direction_gold` → passed
+- `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` → passed
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 192/192 passed
+
 ## 2026-04-06 (KG fixtures now lock AMBA destination-column receiver semantics)
 
 ### Added: AMBA-style `Destination`-column gold fixture
