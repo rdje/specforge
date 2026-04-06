@@ -310,6 +310,15 @@
   - the harness therefore needs two more truth-model-native capabilities:
     - patching `SourceIR.document_sections`
     - asserting per-signal canonical direction directly
+- the next protocol-grade truthfulness step after that AHB section-context path was APB-specific role vocabulary, and it is now locked in the tracked fixture suite:
+  - APB-family signal tables often use `Requester` / `Completer` rather than `Requester` / `Subordinate`
+  - that path now has explicit benchmark coverage instead of being treated as already covered by the broader AMBA `Requester` / `Subordinate` gold fixture
+  - the tracked fixture proves that APB-specific source-role vocabulary is strong enough to recover:
+    - `(Requester, drives, PSEL)`
+    - `(Completer, drives, PREADY)`
+    - actor-relative output ports for both driven handshake-side signals
+    - table-grounded request/accept semantics
+    - typed handshake completion from one guarded APB-style stability constraint
 - the next negative truthfulness step after that first AMBA-style gold path should protect against bogus actor attribution in the same family of tables:
   - `Clock` / `Reset` / direction-placeholder rows inside `Source` / `Driver` / `Destination` columns are metadata, not protocol actors
   - the KG should keep direction and system-contract recovery for those infrastructure signals without inventing actors named `Clock`, `Reset`, or `input`

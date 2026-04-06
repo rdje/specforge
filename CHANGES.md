@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-04-06 (KG fixtures now lock APB Requester/Completer semantics)
+
+### Added: APB-style `Requester` / `Completer` gold fixture
+- Added a tracked staged fixture proving that APB-style `Source`-column signal tables recover `Requester` / `Completer` actor roles canonically instead of only being covered indirectly by broader AMBA fixtures.
+- The fixture locks `(Requester, drives, PSEL)` and `(Completer, drives, PREADY)`, the corresponding actor-relative output ports, table-grounded request/accept semantics, and a typed handshake-completion temporal rule from one guarded `PADDR must not change when PSEL is HIGH and PREADY is HIGH` constraint.
+
+### Why this matters
+- APB-family specs use `Completer` as real protocol vocabulary. If that family-specific role word regresses, the broader AMBA fixture set can still look healthy while APB truth quietly degrades.
+- This turns APB-specific table vocabulary into executable benchmark coverage rather than assuming it is already protected by the generic `Requester` / `Subordinate` path.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality apb_requester_completer_handshake_gold` → passed
+- `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` → passed
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → passed
+
 ## 2026-04-06 (KG fixtures now lock AHB section-heading direction recovery)
 
 ### Added: AHB-style section-heading gold fixture

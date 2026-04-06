@@ -456,6 +456,7 @@
     - a stage-patched visual-source conflict fixture proving a caption and a VLM timing note can disagree on the same signal role without collapsing into false visual consensus
     - a first representative AMBA-style gold fixture proving `Source`-column signal tables recover driver-side actor ports, table-grounded semantic request/accept roles, and typed handshake completion from a guarded constraint
     - a representative AMBA-style gold fixture proving `Destination`-column signal tables recover consumer-side `Reads` relations and actor-relative input ports end-to-end through `SemanticIR` and `IntentIR`
+    - a representative APB-style gold fixture proving `Requester` / `Completer` source roles survive canonically as driver-side actor relations, actor-relative ports, request/accept semantics, and typed handshake completion
     - a representative AHB-style gold fixture proving section-heading direction context like `Manager signals` / `Subordinate signals` recovers per-signal direction and width correctly even when the table itself only carries destination-side context
     - a negative fixture proving `Clock` / `Reset` infrastructure rows in AMBA-style `Source` columns do not become bogus protocol actors while real requester/subordinate rows still recover driver-side actor ports and semantic role grounding
     - a negative fixture proving a misclassified `Bits | Name | Description` field table does not synthesize fake top-level signals or semantic roles from field names like `REQ` / `ACK`
@@ -465,7 +466,7 @@
   - fixture expectations can now assert canonical semantic candidates plus decisive vs non-decisive semantic arbitration directly, so the benchmark harness checks the truth-model state itself rather than only downstream residual/finding side effects
   - fixture expectations can now also assert persisted validation metric values directly at the evidence, semantic, and intent stages, and `SourceIR` fixture patches can now inject visual assets as well as tables, so the harness can lock cross-modality grounding behavior and VLM-note semantic provenance with tracked staged fixtures
 - remaining:
-  - expand from seed fixtures and AMBA-style gold paths to representative APB/AHB/AXI gold fixtures
+  - expand from the current AMBA + APB + AHB gold paths to a broader AXI-focused gold suite plus richer APB/AHB timing and structured-constraint fixtures
   - add broader negative fixtures for multimodal arbitration drift and richer timing-annotation edge cases beyond the new low-value label filter
   - add broader metric-oriented expectation surfaces once the current canonical+metric fixture layer stabilizes
 

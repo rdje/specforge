@@ -1,0 +1,225 @@
+{
+  "name": "apb_requester_completer_handshake_gold",
+  "source": "source.md",
+  "source_ir_patch": {
+    "structured_tables": [
+      {
+        "table_id": "table_apb_request_phase",
+        "asset_id": "table_apb_request_phase",
+        "page_id": null,
+        "caption_text": "APB request phase signals",
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            {
+              "text": "Signal",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Source",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Width",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Description",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            }
+          ]
+        ],
+        "body_rows": [
+          [
+            {
+              "text": "PSEL",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Requester",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "1",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Transfer request. Indicates that address and control information are valid for transfer.",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ],
+          [
+            {
+              "text": "PREADY",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Completer",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "1",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Indicates that the completer can accept and complete the transfer.",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ]
+        ],
+        "row_count": 2,
+        "col_count": 4
+      }
+    ]
+  },
+  "evidence_ir_patch": {
+    "signal_constraints": [
+      {
+        "constraint_id": "sigcon_apb_payload_hold",
+        "subject_signal": "PADDR",
+        "constraint_kind": {
+          "kind": "must_not_change"
+        },
+        "target_value": null,
+        "condition_text": "when PSEL is HIGH and PREADY is HIGH",
+        "negated": false,
+        "source_text": "PADDR must not change when PSEL is HIGH and PREADY is HIGH.",
+        "supporting_statement_ids": [
+          "stmt_apb_payload_hold"
+        ],
+        "automation_confidence": "medium"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": [
+        "PSEL",
+        "PREADY",
+        "PADDR"
+      ],
+      "actor_signal_relations_include": [
+        {
+          "actor_name": "Requester",
+          "signal_name": "PSEL",
+          "relation": "drives"
+        },
+        {
+          "actor_name": "Completer",
+          "signal_name": "PREADY",
+          "relation": "drives"
+        }
+      ],
+      "actor_ports_include": [
+        {
+          "actor_name": "Requester",
+          "signal_name": "PSEL",
+          "direction": "output"
+        },
+        {
+          "actor_name": "Completer",
+          "signal_name": "PREADY",
+          "direction": "output"
+        }
+      ],
+      "resolved_semantic_role_signal_names_include": [
+        "PSEL",
+        "PREADY"
+      ],
+      "semantic_consensus_signal_names_include": [
+        "PSEL",
+        "PREADY"
+      ],
+      "temporal_rule_count": 1,
+      "temporal_rules_with_handshake_completion": 1
+    },
+    "intent": {
+      "signal_names_include": [
+        "PSEL",
+        "PREADY",
+        "PADDR"
+      ],
+      "actor_signal_relations_include": [
+        {
+          "actor_name": "Requester",
+          "signal_name": "PSEL",
+          "relation": "drives"
+        },
+        {
+          "actor_name": "Completer",
+          "signal_name": "PREADY",
+          "relation": "drives"
+        }
+      ],
+      "actor_ports_include": [
+        {
+          "actor_name": "Requester",
+          "signal_name": "PSEL",
+          "direction": "output"
+        },
+        {
+          "actor_name": "Completer",
+          "signal_name": "PREADY",
+          "direction": "output"
+        }
+      ],
+      "resolved_semantic_role_signal_names_include": [
+        "PSEL",
+        "PREADY"
+      ],
+      "semantic_consensus_signal_names_include": [
+        "PSEL",
+        "PREADY"
+      ],
+      "temporal_rule_count": 1,
+      "temporal_rules_with_handshake_completion": 1
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "actor_signal_relations": "2",
+          "signal_constraints": "1",
+          "signal_semantic_hints": "2",
+          "signal_semantic_hints_from_tables": "2"
+        }
+      },
+      "semantic": {
+        "metric_values": {
+          "actor_ports": "2",
+          "temporal_rules_with_handshake_completion": "1"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "actor_ports": "2",
+          "temporal_rules_with_handshake_completion": "1"
+        }
+      }
+    }
+  }
+}
