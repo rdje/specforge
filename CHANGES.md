@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-04-06 (cross-document learning plane captured in steering docs)
+
+### Added: explicit roadmap target for cross-document extractor learning
+- Logged the architecture for a separate cross-document learning plane that can improve extraction on PDF `N+1` using reusable priors learned from PDFs `1..N`.
+- Made the safety boundary explicit:
+  - per-document `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR` truth stays local and provenance-pure
+  - cross-document memory learns extraction priors, not undocumented facts
+
+### Added: detailed engineering note for prior-guided extraction
+- Captured the full doctrine in `DEVELOPMENT_NOTES.md`, including:
+  - the two-plane architecture
+  - examples of good priors versus bad fact leakage
+  - candidate memory shapes like `CorpusMemory`, `PriorGraph`, and `ExperienceIR`
+  - the retrieval / grounding / validation / feedback loop
+  - the rule that only validated/promoted outcomes should feed the learning plane
+
+### Why this matters
+- This is the clean path to making the extractor progressively more expert across many chip-spec PDFs without breaking the truthfulness contract of the canonical IR.
+- It steers future implementation toward learning reusable extraction intelligence rather than contaminating document-local truth.
+
 ## 2026-04-06 (KG fixtures now lock semantic arbitration state directly)
 
 ### Added: canonical semantic-arbitration expectations in `specforge kg-bench`

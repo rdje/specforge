@@ -22,17 +22,17 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `7807fa0`
-- latest_commit_brief_message: `feat(quality): benchmark alias-dependent caveats`
-- note: current uncommitted work upgrades the KG benchmark harness so fixtures can assert canonical semantic candidate and decisive-vs-contested arbitration state directly, not only downstream caveat or blocked-fallback side effects
+- latest_commit_hash: `442a867`
+- latest_commit_brief_message: `feat(quality): benchmark semantic arbitration`
+- note: current uncommitted work is docs-only and captures the new cross-document learning-plane doctrine: keep per-document IR truth local, but add a separate typed prior memory so the extractor can improve across PDFs without leaking facts
 
 ## Recent commit chain (last 5)
+- `442a867` feat(quality): benchmark semantic arbitration
 - `7807fa0` feat(quality): benchmark alias-dependent caveats
 - `2bed722` feat(quality): patch staged kg fixtures
 - `f4258e5` feat(quality): add kg benchmark fixtures
 - `8eee95d` feat(ir): carry polarity conflicts downstream
 - `3fef735` feat(ir): carry alias-grounded handshake caveats
-- `3f3545e` feat(validate): surface alias-dependent handshake completion
 - `f3c28cd` feat(evidence): prefer direct signal grounding over aliases
 
 ## Current repository state
@@ -46,34 +46,26 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
-- extended `specforge kg-bench` so fixtures can assert canonical semantic candidates plus decisive vs non-decisive semantic arbitration directly
-- tightened the contested handshake fallback fixture so it proves `XVALID` stays contested while `XACK` remains decisively grounded
-- tightened the alias-dependent handshake caveat fixture so it proves `XREQ` and `XACK` are decisively grounded even while their accepted handshake meaning remains explicitly alias-dependent
-- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `USER_GUIDE.md`, `DEVELOPMENT_NOTES.md`, and `CHANGES.md` so the richer `R15e` harness shape is captured in the live docs
-- validation ran for this task:
-  - `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` passed
-  - `cargo fmt --all` passed
-  - `cargo test --manifest-path Cargo.toml` passed with `188/188`
+- logged the cross-document learning architecture in `DEVELOPMENT_NOTES.md` so future work is guided by the two-plane design: document-local canonical IR plus a separate cross-document prior memory
+- added `R15f` to `ROADMAP.md` so the extractor-learning plane becomes an explicit planned workstream rather than an informal idea
+- synced `README.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, and `CHANGES.md` so future sessions can recover the doctrine cleanly after interruption
+- this was a docs-only task; the Rust test suite was not rerun
 
 ## Current working tree before commit
 - modified tracked files currently include:
-  - `crates/specforge/src/commands/kg_bench.rs`
-  - `crates/specforge/test_data/kg_quality/alias_dependent_handshake_completion_caveat/...`
-  - `crates/specforge/test_data/kg_quality/...`
   - `README.md`
   - `ROADMAP.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `RUST_CODEBASE_ANALYSIS.md`
-  - `USER_GUIDE.md`
   - `DEVELOPMENT_NOTES.md`
   - `CHANGES.md`
   - `MEMORY.md`
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the semantic-arbitration KG benchmark slice
-2. expand the fixture harness toward protocol-grade APB/AHB/AXI gold suites and broader negative truthfulness fixtures
-3. keep adapter work de-prioritized until the graph, temporal, arbitration, and evaluation surfaces are materially stronger
+1. commit the cross-document learning-plane docs slice
+2. keep finishing the current graph / temporal / arbitration / evaluation workstreams without weakening local truthfulness
+3. design the typed schema and trust/update rules for the future cross-document prior memory when the project reaches that roadmap slice
 
 ## Remaining engineering gaps after this commit
 - remaining actor-relative direction modeling in `SemanticIR` / `IntentIR` (`R15`)
@@ -81,6 +73,7 @@
 - KG-guided multimodal rescans (`R15c`)
 - broader evidence arbitration / conflict handling beyond polarity, interface-shape, multi-producer ambiguity, modality-aware semantic-role grounding, consensus summaries, semantic candidates, and semantic arbitration summaries (`R15d`)
 - broader KG-quality evaluation and benchmark hardening beyond the new seed fixture pack (`R15e`)
+- cross-document extractor learning and typed prior memory remain not started (`R15f`)
 - Tier 3 relation extraction after the graph/temporal/eval surfaces are ready (`R14`)
 - some downstream compatibility and consumer paths still rely on flat `direction_hint` instead of the graph-native surface
 - meaning-based role inference now covers tables, prose, alias-grounded prose, visual captions, and VLM timing annotations, and canonical layers now preserve that provenance, but broader downstream use of preserved arbitration state is still early
@@ -96,4 +89,4 @@
 4. read `ROADMAP.md`
 5. read `RUST_CODEBASE_ANALYSIS.md`
 6. inspect `git --no-pager status --short`
-7. continue with the next benchmark/evaluation hardening slice unless the user redirects
+7. continue with the current semantic-truthfulness roadmap unless the user redirects, while treating the new cross-document learning plane as a documented future workstream

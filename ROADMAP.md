@@ -40,6 +40,9 @@
   - keep alternatives when the evidence is not yet decisive
   - surface contradictions and residual decisions
   - do not fabricate semantic certainty
+- keep canonical document truth local and provenance-pure:
+  - each `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR` pipeline run should remain grounded only in the current document
+  - any future cross-document learning layer must learn reusable extraction priors rather than smuggling facts from earlier PDFs into later canonical artifacts
 - roadmap progress should favor meaning-based role inference and protocol semantics over literal spelling heuristics whenever the evidence can support that shift
 
 ## Major workstreams
@@ -452,10 +455,54 @@
   - add broader negative fixtures for bogus actor attribution, spurious timing extraction, table misclassification, and multimodal arbitration drift
   - add more metric-oriented expectation surfaces once the first fixture pack stabilizes
 
+### R15f Cross-document extraction learning plane
+- status: Not Started
+- goals:
+  - let the extraction system become stronger on PDF `N+1` because it has learned reusable analysis priors from PDFs `1..N`
+  - keep the per-document four-layer IR pipeline provenance-pure while adding a separate global typed learning layer
+  - teach the system how chip specifications tend to express meaning, not undocumented document facts
+- design constraints:
+  - the document plane stays local:
+    - `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR` for one document contains only facts justified by that document
+  - the learning plane stays separate:
+    - store typed reusable extraction knowledge such as `CorpusMemory`, `PriorGraph`, or `ExperienceIR`
+    - never let prior memory directly author canonical document facts without fresh local grounding
+  - the system should learn priors, not smuggle facts:
+    - good prior: phrases like `can accept the transfer` are often strong ready-like evidence
+    - bad prior: APB used signal `PREADY`, so a new document must mean the same thing without local evidence
+- target learned priors:
+  - recurring semantic-role language
+  - recurring alias language
+  - recurring table shapes and table-kind cues
+  - recurring visual motifs and caption cues
+  - actor taxonomies and protocol-family vocabulary
+  - temporal-language priors
+  - modality reliability priors
+  - false-positive patterns and known-dangerous heuristics
+  - protocol-family scoped extraction patterns
+- runtime shape:
+  - analyze the new PDF through the normal staged IR pipeline
+  - retrieve relevant priors from the cross-document memory
+  - use those priors only to propose bounded hypotheses or prioritize rescans
+  - require local grounding in the current PDF before promotion into canonical IR
+  - let validation and arbitration decide what survives
+  - feed only high-confidence, well-grounded, validated outcomes back into the learning plane
+- completion criteria:
+  - a typed cross-document prior store exists and is versioned separately from per-document IR artifacts
+  - priors can be queried by modality, protocol family, and extractor task
+  - `EvidenceIR` / `SemanticIR` builders can consume relevant priors as bounded suggestions without bypassing local grounding
+  - only validated/promoted outcomes are allowed to update the learning plane
+  - regression/benchmark coverage proves that prior memory improves extraction efficiency or recall without increasing fact leakage across documents
+- remaining:
+  - design the schema for typed prior memory and prior provenance
+  - decide how protocol-family scoping works without hardcoding brittle protocol logic
+  - define the trust/update policy for feeding validated outcomes back into memory
+  - add benchmarks that measure whether prior memory improves analysis of unseen PDFs honestly
+
 ### R16 SystemVerilog adapter (Horizon)
 - status: Horizon
 - prerequisites:
-  - `R15`, `R15b`, `R15c`, `R15d`, `R15e`, and `R14` are materially complete
+  - `R15`, `R15b`, `R15c`, `R15d`, `R15e`, `R15f`, and `R14` are materially complete
 - goals:
   - generate a correct SystemVerilog interface from `IntentIR`
   - generate a correct SystemVerilog module template for each actor
@@ -468,10 +515,12 @@
 4. Make KG-guided multimodal rescans a first-class convergent workstream (`R15c`)
 5. Add typed evidence arbitration and conflict resolution across modalities (`R15d`)
 6. Harden evaluation with gold fixtures, negative fixtures, and false-positive control (`R15e`)
-7. Extend relation extraction for harder prose with Tier 3 support only after the graph/temporal/eval surfaces are ready (`R14`)
-8. Treat new adapter families and adapter validation as horizon work until the semantic pipeline is materially harder to fool (`R16`)
+7. Add a separate cross-document learning plane for typed extraction priors while keeping canonical document truth local (`R15f`)
+8. Extend relation extraction for harder prose with Tier 3 support only after the graph/temporal/eval surfaces are ready (`R14`)
+9. Treat new adapter families and adapter validation as horizon work until the semantic pipeline is materially harder to fool (`R16`)
 
 ## Immediate next milestone
 - `R15`: finish the transition from compatibility `direction_hint` fields to actor-relative graph-first downstream semantics
 - `R15b`: introduce the explicit clock-tick temporal model so behavioral truth is first-class in `SemanticIR` / `IntentIR`
 - `R15c`: make KG-guided multimodal rescans a named workstream in the convergent pipeline
+- `R15f`: design the cross-document learning plane so the extractor can accumulate reusable priors without contaminating per-document canonical truth

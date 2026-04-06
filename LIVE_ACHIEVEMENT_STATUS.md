@@ -92,6 +92,7 @@
 - KG-guided multimodal rescans as a first-class convergent workstream: In Progress
 - Cross-modality evidence arbitration / conflict handling: In Progress
 - KG-quality evaluation with gold fixtures and negative fixtures: In Progress
+- Cross-document extraction learning plane with typed reusable priors: Not Started
 - SystemVerilog/Verilog/VHDL adapter expansion: Horizon
 - Adapter validation (SystemVerilog/Verilog/VHDL targets): Horizon
 - Actor-relative direction model in `SemanticIR` / `IntentIR`: In Progress

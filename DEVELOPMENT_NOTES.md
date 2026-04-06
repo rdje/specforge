@@ -263,6 +263,115 @@
   - benchmark conflict surfacing and residual quality, not only successful extraction
   - benchmark bounded-hypothesis rejection, not only fact accumulation
 
+## Cross-document learning without leaking facts across PDFs
+- the current four-layer IR pipeline is intentionally document-local:
+  - `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR` for PDF `#1` should stay grounded in PDF `#1`
+  - `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR` for PDF `#2` should stay grounded in PDF `#2`
+- that local grounding is a feature, not a weakness:
+  - canonical truth should remain provenance-pure
+  - earlier documents should not silently inject undocumented facts into later canonical artifacts
+- but there is a valid next architectural step beyond that siloing:
+  - add a separate cross-document learning plane so the extractor becomes stronger the more chip-spec PDFs it analyzes
+  - the thing that should learn across documents is the extraction intelligence, not the canonical truth of the current document
+
+### The two-plane architecture
+- document plane:
+  - `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR`
+  - contains only facts justified by the current PDF
+  - remains the provenance-carrying canonical path
+- learning plane:
+  - a global typed memory of reusable extraction knowledge
+  - potential names include `CorpusMemory`, `PriorGraph`, or `ExperienceIR`
+  - stores reusable priors, reliability information, and false-positive knowledge
+  - never becomes a back door that can directly author canonical facts without local evidence
+
+### What the cross-document memory should learn
+- recurring semantic-role language:
+  - `can accept the transfer`
+  - `request phase`
+  - `acknowledge`
+  - `response returned`
+- recurring alias patterns
+- recurring table shapes:
+  - signal-description tables
+  - encoding tables
+  - field-meaning tables
+  - timing tables
+- recurring visual motifs:
+  - handshake diagrams
+  - burst timing
+  - state bubbles
+  - arbitration waveforms
+- actor taxonomies:
+  - requester / initiator / master / manager
+  - subordinate / target / slave / peripheral
+- protocol-semantic motifs:
+  - ready / valid
+  - request / acknowledge
+  - grant
+  - command / response
+  - credit-based flow control
+- temporal-language priors
+- modality reliability priors
+- negative knowledge:
+  - common false positives
+  - misleading captions
+  - dangerous aliases
+  - over-eager heuristics
+- extractor reliability knowledge:
+  - which patterns are strong
+  - which are weak
+  - which are family-specific
+  - which are dangerous enough to require stronger corroboration
+
+### What it must not learn
+- it must not smuggle unsupported document facts from older PDFs into newer canonical outputs
+- bad version:
+  - `APB had signal X, so this new document probably means X too`
+- good version:
+  - `across many specifications, a phrase like "can accept the transfer" is strong evidence for a ready-like role`
+  - `across many specifications, a 4-column table like Signal / Source / Width / Description is often a signal-description table`
+  - `across many specifications, certain timing captions correlate strongly with handshake semantics`
+
+### Runtime shape for prior-guided extraction
+- analyze the new PDF through the normal staged pipeline
+- retrieve relevant priors from the cross-document memory
+- use those priors to:
+  - prioritize rescans
+  - propose bounded hypotheses
+  - decide which extractor families are worth attempting first
+  - phrase better bounded AI questions with stronger local context
+- require local grounding in the current PDF before any candidate fact becomes canonical
+- let validation and arbitration decide what survives into `IntentIR`
+- feed only high-confidence, well-grounded, validated outcomes back into the learning plane
+
+### Why this is the elegant version
+- it improves the extractor without corrupting the truth model
+- it lets the system become more expert about how chip specs express meaning
+- it preserves the main doctrine of the project:
+  - priors can guide extraction
+  - only local evidence can justify canonical facts
+- it should make the system progressively better at:
+  - spotting meaningful tables faster
+  - recognizing protocol roles from more varied prose
+  - interpreting figures more reliably
+  - rejecting weak heuristics earlier
+  - converging in fewer passes
+  - using AI in a more bounded and grounded way
+
+### The update rule is the critical safety boundary
+- the learning plane should only learn from promoted, well-grounded outcomes
+- it should not learn directly from raw guesses, weak one-off hypotheses, or unvalidated AI output
+- the right feedback source is validated/promoted knowledge, not transient extraction noise
+
+### Implementation direction
+- define a typed schema for cross-document prior memory
+- keep that schema versioned separately from per-document IR artifacts
+- scope priors by task, modality, and protocol family where appropriate
+- make prior retrieval advisory, not authoritative
+- benchmark whether prior memory helps on unseen PDFs without increasing cross-document fact leakage
+- treat this as a first-class architectural expansion after the current graph/temporal/arbitration work, not as a shortcut around local truthfulness
+
 ## Current repository observations
 - the repository now contains a renamed `specforge` crate and CLI
 - the active Rust codebase no longer treats `spec2fsm` as the primary identity
