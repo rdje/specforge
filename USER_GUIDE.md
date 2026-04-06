@@ -265,6 +265,7 @@ cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --targ
 - `specforge validate <artifact>` now backannotates the latest validation report into the artifact and writes a stage-local `validation_report.json` sidecar
 - `specforge project-validation <artifact>...` now turns those persisted reports into tracked markdown continuity docs, and broader adapter validation remains intentionally deferred until semantic truthfulness is stronger
 - `specforge learn-priors <intent-ir>...` now turns validated canonical `IntentIR` artifacts into a local `CorpusMemory` prior store under `generated/prior_memory/corpus_memory.json`, and the current slice learns reusable actor-taxonomy, semantic-role, and temporal-language priors without letting that memory author canonical facts directly
+- `specforge evidence <source-ir>` and `specforge converge <source>` now consult that same local prior store by default through `--prior-memory generated/prior_memory/corpus_memory.json`; missing prior files are treated as a no-op, and the first bounded consumer only uses actor-taxonomy priors to interpret explicit local actor terms already present in section headings and `Source` / `Destination` table columns
 
 ## Where to look next
 - `README.md`

@@ -85,6 +85,7 @@ fn run_convergence(args: ConvergeArgs) -> Result<ConvergenceReport> {
     println!("max_iterations: {}", args.max_iterations);
     println!("vlm_provider: {}", provider_name(args.vlm_provider));
     println!("nlp_provider: {}", provider_name(args.nlp_provider));
+    println!("prior_memory: {}", args.prior_memory.display());
 
     let mut previous_snapshot: Option<KnowledgeSnapshot> = None;
 
@@ -101,7 +102,11 @@ fn run_convergence(args: ConvergeArgs) -> Result<ConvergenceReport> {
             })?;
         }
 
-        let evidence_ir = EvidenceIr::build(&paths.source_ir_path, &evidence_artifact_base_root())?;
+        let evidence_ir = EvidenceIr::build_with_prior_memory(
+            &paths.source_ir_path,
+            &evidence_artifact_base_root(),
+            Some(args.prior_memory.as_path()),
+        )?;
         evidence_ir.write_to_disk()?;
         println!(
             "evidence_fact_count: {}",
@@ -722,6 +727,11 @@ mod tests {
             nlp_provider: VlmProviderArg::Ollama,
             nlp_model: Some("mock".to_string()),
             nlp_max_sentences: 0,
+            prior_memory: tempdir
+                .path()
+                .join("generated")
+                .join("prior_memory")
+                .join("corpus_memory.json"),
         });
 
         std::env::set_current_dir(cwd_before)?;

@@ -28,6 +28,25 @@ impl ProtocolFamily {
             Self::Unknown => "unknown",
         }
     }
+
+    pub fn infer(document_key: &str, display_name: &str) -> Self {
+        let normalized = format!(
+            "{} {}",
+            document_key.to_ascii_lowercase(),
+            display_name.to_ascii_lowercase()
+        );
+        if normalized.contains("axi") {
+            Self::AmbaAxi
+        } else if normalized.contains("ahb") {
+            Self::AmbaAhb
+        } else if normalized.contains("apb") {
+            Self::AmbaApb
+        } else if normalized.contains("amba") {
+            Self::AmbaGeneric
+        } else {
+            Self::Unknown
+        }
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -83,6 +102,40 @@ impl CorpusMemory {
             .collect()
     }
 
+    pub fn actor_taxonomy_role_for_term(
+        &self,
+        protocol_family: Option<ProtocolFamily>,
+        actor_term: &str,
+    ) -> Option<ActorTaxonomyRole> {
+        let normalized_term = normalize_actor_term(actor_term);
+        if normalized_term.is_empty() {
+            return None;
+        }
+
+        self.resolve_actor_taxonomy_role(protocol_family, |prior| {
+            prior.normalized_actor_term == normalized_term
+        })
+    }
+
+    pub fn actor_taxonomy_role_in_text(
+        &self,
+        protocol_family: Option<ProtocolFamily>,
+        text: &str,
+    ) -> Option<ActorTaxonomyRole> {
+        let normalized_text = normalize_actor_term(text);
+        if normalized_text.is_empty() {
+            return None;
+        }
+
+        if let Some(role) = self.actor_taxonomy_role_for_term(protocol_family, &normalized_text) {
+            return Some(role);
+        }
+
+        self.resolve_actor_taxonomy_role(protocol_family, |prior| {
+            normalized_text_contains_term(&normalized_text, &prior.normalized_actor_term)
+        })
+    }
+
     pub fn temporal_phrase_priors_for(
         &self,
         protocol_family: Option<ProtocolFamily>,
@@ -102,6 +155,92 @@ impl CorpusMemory {
             })
             .collect()
     }
+
+    fn resolve_actor_taxonomy_role<F>(
+        &self,
+        protocol_family: Option<ProtocolFamily>,
+        predicate: F,
+    ) -> Option<ActorTaxonomyRole>
+    where
+        F: Fn(&ActorTaxonomyPriorRecord) -> bool,
+    {
+        for scope in actor_taxonomy_search_scopes(protocol_family) {
+            let roles = self
+                .actor_taxonomy_priors
+                .iter()
+                .filter(|prior| {
+                    scope
+                        .map(|expected| prior.protocol_family == expected)
+                        .unwrap_or(true)
+                })
+                .filter(|prior| predicate(prior))
+                .map(|prior| prior.taxonomy_role)
+                .collect::<std::collections::BTreeSet<_>>();
+            if roles.len() == 1 {
+                return roles.into_iter().next();
+            }
+            if roles.len() > 1 {
+                return None;
+            }
+        }
+
+        None
+    }
+}
+
+pub fn normalize_actor_term(text: &str) -> String {
+    collapse_whitespace(
+        text.to_ascii_lowercase()
+            .chars()
+            .map(|ch| {
+                if ch.is_ascii_alphanumeric() || ch == '_' {
+                    ch
+                } else {
+                    ' '
+                }
+            })
+            .collect::<String>()
+            .trim(),
+    )
+}
+
+pub fn normalized_text_contains_term(text: &str, term: &str) -> bool {
+    let text_tokens = text
+        .split_whitespace()
+        .filter(|token| !token.is_empty())
+        .collect::<Vec<_>>();
+    let term_tokens = term
+        .split_whitespace()
+        .filter(|token| !token.is_empty())
+        .collect::<Vec<_>>();
+
+    if text_tokens.is_empty() || term_tokens.is_empty() || term_tokens.len() > text_tokens.len() {
+        return false;
+    }
+
+    text_tokens
+        .windows(term_tokens.len())
+        .any(|window| window == term_tokens.as_slice())
+}
+
+fn actor_taxonomy_search_scopes(
+    protocol_family: Option<ProtocolFamily>,
+) -> Vec<Option<ProtocolFamily>> {
+    let mut scopes = Vec::new();
+    if let Some(protocol_family) =
+        protocol_family.filter(|family| *family != ProtocolFamily::Unknown)
+    {
+        scopes.push(Some(protocol_family));
+        if protocol_family != ProtocolFamily::AmbaGeneric {
+            scopes.push(Some(ProtocolFamily::AmbaGeneric));
+        }
+    }
+    scopes.push(None);
+    scopes
+}
+
+fn collapse_whitespace(value: &str) -> String {
+    value.split_whitespace().collect::<Vec<_>>().join(" ")
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]

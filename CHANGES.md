@@ -1,5 +1,26 @@
 # CHANGES
 
+## 2026-04-06 (first bounded prior-consumption path landed)
+
+### Added: advisory prior-guided direction recovery in `EvidenceIR`
+- Extended [prior_memory.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/prior_memory.rs) with reusable actor-taxonomy lookup helpers, normalized actor-term matching, and protocol-family inference so the learning plane can be queried safely during extraction.
+- Extended [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) with `build_with_prior_memory(...)` plus the first bounded prior consumer:
+  - section-heading direction inference can now use actor-taxonomy priors
+  - `Source` / `Destination` column direction inference can now use actor-taxonomy priors
+  - prior guidance still requires explicit local actor terms already present in the current document
+- Extended [cli.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/cli.rs), [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/evidence.rs), and [converge.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/converge.rs) so `specforge evidence` and `specforge converge` now consult `--prior-memory generated/prior_memory/corpus_memory.json` by default.
+
+### Why this matters
+- The cross-document learning plane is no longer just storing priors; it now has its first real bounded consumer in the staged pipeline.
+- This replaces another brittle hardcoded actor-vocabulary heuristic with typed reusable memory while preserving the project’s truthfulness rule: priors may guide local interpretation, but they must not author canonical facts on their own.
+- It gives the extractor a safe path to improve on PDF `N+1` from validated experience on PDFs `1..N` without letting document pipelines contaminate one another.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml actor_taxonomy_priors_guide_source_column_direction_inference -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml actor_taxonomy_priors_guide_section_heading_direction_inference -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml converge_defaults_to_ollama_for_vlm_and_nlp -- --nocapture` → passed
+- `bash scripts/run_ci.sh` → passed (`202/202` tests)
+
 ## 2026-04-06 (typed prior memory now learns actor taxonomy too)
 
 ### Added: actor-taxonomy priors for `R15f`

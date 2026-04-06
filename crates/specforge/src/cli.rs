@@ -78,6 +78,9 @@ pub struct ConvergeArgs {
     /// Maximum number of sentences to send to NLP Level 3 per pass (0 = all)
     #[arg(long, default_value = "0")]
     pub nlp_max_sentences: usize,
+    /// Advisory local prior-memory store to consult during extraction when present
+    #[arg(long, default_value = "generated/prior_memory/corpus_memory.json")]
+    pub prior_memory: PathBuf,
 }
 
 #[derive(Debug, Args)]
@@ -93,6 +96,9 @@ pub struct IngestArgs {
 pub struct EvidenceArgs {
     /// Path to a SourceIR JSON artifact
     pub source_ir: PathBuf,
+    /// Advisory local prior-memory store to consult during extraction when present
+    #[arg(long, default_value = "generated/prior_memory/corpus_memory.json")]
+    pub prior_memory: PathBuf,
     /// Do not write EvidenceIR artifacts; print the computed EvidenceIR JSON instead
     #[arg(long)]
     pub dry_run: bool,
@@ -259,5 +265,28 @@ mod tests {
 
         assert!(matches!(args.vlm_provider, VlmProviderArg::Ollama));
         assert!(matches!(args.nlp_provider, VlmProviderArg::Ollama));
+        assert_eq!(
+            args.prior_memory,
+            PathBuf::from("generated/prior_memory/corpus_memory.json")
+        );
+    }
+
+    use std::path::PathBuf;
+
+    #[test]
+    fn evidence_defaults_to_local_prior_memory() {
+        let cli = Cli::parse_from([
+            "specforge",
+            "evidence",
+            "generated/source_ir/doc/source_ir.json",
+        ]);
+        let Commands::Evidence(args) = cli.command else {
+            panic!("expected evidence command");
+        };
+
+        assert_eq!(
+            args.prior_memory,
+            PathBuf::from("generated/prior_memory/corpus_memory.json")
+        );
     }
 }

@@ -82,6 +82,8 @@
   - semantic-role phrase priors from decisive, non-alias-dependent canonical semantic consensus plus preserved observation text
   - temporal-language phrase priors from canonical `temporal_rules` plus validated canonical `signal_constraints` / `conditional_rules`
 - the latest live AMBA prior-memory run across AXI/APB/AHB `IntentIR` artifacts currently yields `16` actor-taxonomy priors, `222` temporal phrase priors, and `0` semantic phrase priors, which is a useful honest signal that the prior store is already working while the canonical semantic-consensus surface on real artifacts still needs to deepen
+- the first bounded prior-consumption path is now landed too: `EvidenceIR` can consult the local `CorpusMemory` during `evidence` / `converge` and use actor-taxonomy priors only to interpret explicit local actor labels in section headings and `Source` / `Destination` columns
+- that matters because it replaces another brittle hardcoded-vocabulary heuristic with a typed reusable prior while still keeping canonical truth local; the prior can widen the meaning of a seen actor term like `Producer`, but it cannot invent a new actor, signal, or relation
 - `specforge converge` now excludes downstream adapter residual work from `knowledge_fact_count`, so fewer adapter residual decisions do not falsely trip the monotone-knowledge guard
 - `generated/` is now intentionally git-ignored and untracked, so local validation snapshots must be recorded in the live docs instead of relying on versioned artifacts
 - latest local validation snapshot is now APB 95/100 EXCELLENT, AHB 95/100 EXCELLENT, AXI 94/100 EXCELLENT
@@ -91,6 +93,7 @@
 - the documented README staged flow was re-executed on `README.md` through `inspect -> ingest -> evidence -> semantic -> intent -> adapt --dry-run`, confirming the current entry path still runs end-to-end
 - the roadmap now explicitly treats adapter expansion as horizon work; the next structural gaps are making the actor-relative graph primary, broadening the new table/prose/alias-grounded role inference into richer multimodal grounding, adding deeper explicit temporal semantics, and hardening KG quality/evaluation
 - the current architecture is still intentionally document-local, which is correct for truthfulness, but the next strategic expansion after the current semantic-truthfulness work should be a separate cross-document learning plane that stores reusable extraction priors rather than cross-document facts
+- the local test suite is now at `202/202` passing after the first prior-consumption slice landed
 - `specforge kg-bench` now provides the first tracked KG-quality fixture harness under `crates/specforge/test_data/kg_quality`, including:
   - a gold actor-port recovery fixture
   - a negative name-only semantic noise fixture

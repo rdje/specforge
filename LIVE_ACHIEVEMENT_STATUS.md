@@ -110,7 +110,8 @@
 - KG benchmark harness can now assert canonical actor-signal relations directly: Done
 - KG benchmark harness can now patch `document_sections` and assert per-signal directions directly: Done
 - Cross-document actor-taxonomy priors in typed prior memory: Done
-- Test suite expanded to 199 tests; all passing: Done
+- Prior-guided actor taxonomy consumption in `EvidenceIR`: Done
+- Test suite expanded to 202 tests; all passing: Done
 - Explicit clock-tick temporal model in `SemanticIR` / `IntentIR`: In Progress
 - KG-guided multimodal rescans as a first-class convergent workstream: In Progress
 - Cross-modality evidence arbitration / conflict handling: In Progress
@@ -122,7 +123,7 @@
 - Cross-document typed prior memory (`R15f`): In Progress
 
 ## Highest-priority remaining gap
-- Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then broaden the new `R15f` prior store from its first actor-taxonomy / temporal-language slices into table-shape, visual, modality-reliability, and negative-knowledge prior families while expanding the KG-quality harness from the current AMBA/APB/AHB plus richer timing gold suites into a broader AXI-focused suite plus remaining structured-constraint fixtures and spurious-timing negatives
+- Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then broaden `R15f` beyond its first actor-taxonomy store plus first bounded `EvidenceIR` consumer into semantic-role, temporal-language, table-shape, visual, modality-reliability, and negative-knowledge prior families while expanding the KG-quality harness from the current AMBA/APB/AHB plus richer timing gold suites into a broader AXI-focused suite plus remaining structured-constraint fixtures and spurious-timing negatives
 
 ## Validation Projection
 

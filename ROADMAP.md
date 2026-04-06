@@ -530,10 +530,12 @@
     - temporal-language phrase priors from canonical `temporal_rules` plus validated canonical `signal_constraints` / `conditional_rules`
   - the first query helpers can already filter actor-taxonomy priors by protocol family and taxonomy role, semantic priors by protocol family / source kind / role, and temporal priors by protocol family plus cycle-window / actor-grounding requirements
   - the latest live AMBA run across AXI/APB/AHB `IntentIR` artifacts now yields `16` actor-taxonomy priors and `222` temporal phrase priors while keeping semantic phrase priors at `0` until stronger observation-backed semantic consensus exists in the canonical artifacts
+  - `EvidenceIR` now has the first bounded prior-consumption path: `specforge evidence` / `specforge converge` consult the local `CorpusMemory` by default and can use actor-taxonomy priors to interpret explicit local actor terms in section headings and `Source` / `Destination` table columns
+  - that first consumer is still provenance-safe: prior memory can widen actor vocabulary, but it cannot create canonical actors, signals, or relations that are not explicitly present in the current PDF
 - remaining:
   - broaden the prior store beyond the first actor-taxonomy / semantic / temporal phrase families into table-shape, visual-motif, modality-reliability, and negative-knowledge priors
   - decide how protocol-family scoping should grow beyond the current AMBA family inference without hardcoding brittle protocol logic
-  - let `EvidenceIR` / `SemanticIR` consume retrieved priors as bounded suggestions without bypassing local grounding
+  - broaden prior consumption beyond the first actor-taxonomy direction-guidance slice into semantic-role, temporal-language, table-shape, visual-motif, modality-reliability, and negative-knowledge suggestions without bypassing local grounding
   - add benchmark coverage that measures whether prior memory improves analysis of unseen PDFs honestly instead of only growing the stored prior set
 
 ### R16 SystemVerilog adapter (Horizon)

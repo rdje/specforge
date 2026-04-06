@@ -6,6 +6,10 @@ use serde::{Deserialize, Serialize};
 
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
+use crate::ir::prior_memory::{
+    ActorTaxonomyRole, CorpusMemory, ProtocolFamily, normalize_actor_term,
+    normalized_text_contains_term,
+};
 use crate::ir::source::{
     ActorSignalRelation, ConditionalRuleRecord, RegisterFieldRecord, RegisterRecord, RelationKind,
     SignalConstraintKind, SignalConstraintRecord, TimingConstraintRecord, ValidationReportRecord,
@@ -143,6 +147,12 @@ pub struct EvidenceIr {
     pub validation_reports: Vec<ValidationReportRecord>,
 }
 
+#[derive(Debug, Clone)]
+struct EvidencePriorGuidance {
+    corpus_memory: CorpusMemory,
+    protocol_family: ProtocolFamily,
+}
+
 impl EvidenceIr {
     pub fn load_from_path(path: &Path) -> Result<Self> {
         if !path.exists() {
@@ -151,9 +161,19 @@ impl EvidenceIr {
 
         Ok(serde_json::from_str(&fs::read_to_string(path)?)?)
     }
+
     pub fn build(source_ir_path: &Path, artifact_base_root: &Path) -> Result<Self> {
+        Self::build_with_prior_memory(source_ir_path, artifact_base_root, None)
+    }
+
+    pub fn build_with_prior_memory(
+        source_ir_path: &Path,
+        artifact_base_root: &Path,
+        prior_memory_path: Option<&Path>,
+    ) -> Result<Self> {
         let source_ir_path = canonicalize_existing_path(source_ir_path)?;
         let source_ir = SourceIr::load_from_path(&source_ir_path)?;
+        let prior_guidance = load_evidence_prior_guidance(prior_memory_path, &source_ir)?;
 
         if !matches!(
             source_ir.normalization_plan.status,
@@ -436,7 +456,11 @@ impl EvidenceIr {
         // This provides the first seed set for the convergent loop:
         //   1. direct signal declarations from signal-description tables
         //   2. direct enum facts from tables already classified as encodings
-        let synthesized = synthesize_declarations_from_tables(&source_ir, &mut statement_counter);
+        let synthesized = synthesize_declarations_from_tables(
+            &source_ir,
+            &mut statement_counter,
+            prior_guidance.as_ref(),
+        );
 
         // Extract system contract (clock + reset) from signal-description prose in tables.
         let contract_stmts =
@@ -1405,6 +1429,28 @@ fn collect_signal_names_from_tables(source_ir: &SourceIr) -> std::collections::H
         }
     }
     names
+}
+
+fn load_evidence_prior_guidance(
+    prior_memory_path: Option<&Path>,
+    source_ir: &SourceIr,
+) -> Result<Option<EvidencePriorGuidance>> {
+    let Some(prior_memory_path) = prior_memory_path else {
+        return Ok(None);
+    };
+    if !prior_memory_path.exists() {
+        return Ok(None);
+    }
+
+    let corpus_memory =
+        serde_json::from_str::<CorpusMemory>(&fs::read_to_string(prior_memory_path)?)?;
+    Ok(Some(EvidencePriorGuidance {
+        protocol_family: ProtocolFamily::infer(
+            &source_ir.document_identity.document_key,
+            &source_ir.document_identity.display_name,
+        ),
+        corpus_memory,
+    }))
 }
 
 /// Extract actor–signal relation triples directly from signal-description table structure.
@@ -2950,6 +2996,7 @@ fn extract_dynamic_signal_constraints(
 fn synthesize_declarations_from_tables(
     source_ir: &SourceIr,
     statement_counter: &mut usize,
+    prior_guidance: Option<&EvidencePriorGuidance>,
 ) -> Vec<ExtractedStatement> {
     let mut statements = Vec::new();
     if source_ir.structured_tables.is_empty() {
@@ -2992,6 +3039,7 @@ fn synthesize_declarations_from_tables(
                     section_kind,
                     &section_title,
                     statement_counter,
+                    prior_guidance,
                 ));
             }
             TableKind::Encoding => {
@@ -3876,7 +3924,87 @@ fn strip_signal_mentions_from_semantic_hint_text<'a>(
 }
 
 /// Infer signal direction from a section kind + title for signal description tables.
-fn infer_signal_direction_from_section(kind: SectionKind, title: &str) -> Option<&'static str> {
+fn direction_for_actor_taxonomy_role(
+    role: ActorTaxonomyRole,
+    column_kind: RelationTableColumnKind,
+) -> &'static str {
+    match (column_kind, role) {
+        (RelationTableColumnKind::SourceLike, ActorTaxonomyRole::RequesterLike) => "output",
+        (RelationTableColumnKind::SourceLike, ActorTaxonomyRole::CompleterLike) => "input",
+        (RelationTableColumnKind::DestinationLike, ActorTaxonomyRole::RequesterLike) => "input",
+        (RelationTableColumnKind::DestinationLike, ActorTaxonomyRole::CompleterLike) => "output",
+    }
+}
+
+fn builtin_actor_taxonomy_role_in_text(text: &str) -> Option<ActorTaxonomyRole> {
+    let normalized = normalize_actor_term(text);
+    if normalized.is_empty() {
+        return None;
+    }
+
+    let requester_like = ["manager", "initiator", "master", "requester"]
+        .iter()
+        .any(|term| normalized_text_contains_term(&normalized, term));
+    let completer_like = [
+        "subordinate",
+        "slave",
+        "responder",
+        "multiplexor",
+        "completer",
+        "target",
+    ]
+    .iter()
+    .any(|term| normalized_text_contains_term(&normalized, term));
+
+    match (requester_like, completer_like) {
+        (true, false) => Some(ActorTaxonomyRole::RequesterLike),
+        (false, true) => Some(ActorTaxonomyRole::CompleterLike),
+        _ => None,
+    }
+}
+
+fn actor_taxonomy_role_in_text(
+    text: &str,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+) -> Option<ActorTaxonomyRole> {
+    builtin_actor_taxonomy_role_in_text(text).or_else(|| {
+        prior_guidance.and_then(|prior_guidance| {
+            prior_guidance
+                .corpus_memory
+                .actor_taxonomy_role_in_text(Some(prior_guidance.protocol_family), text)
+        })
+    })
+}
+
+fn infer_signal_direction_from_actor_text(
+    actor_text: &str,
+    column_kind: RelationTableColumnKind,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+) -> Option<&'static str> {
+    let lowered = actor_text.to_ascii_lowercase();
+    if lowered.contains("output") {
+        return Some("output");
+    }
+    if lowered.contains("input") {
+        return Some("input");
+    }
+    if lowered.contains("clock")
+        || lowered.contains("reset")
+        || lowered.contains("system bus")
+        || lowered.contains("global")
+    {
+        return Some("input");
+    }
+
+    actor_taxonomy_role_in_text(actor_text, prior_guidance)
+        .map(|role| direction_for_actor_taxonomy_role(role, column_kind))
+}
+
+fn infer_signal_direction_from_section(
+    kind: SectionKind,
+    title: &str,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+) -> Option<&'static str> {
     // Explicit section kind takes priority.
     match kind {
         SectionKind::SignalDescription => {}
@@ -3886,24 +4014,6 @@ fn infer_signal_direction_from_section(kind: SectionKind, title: &str) -> Option
         _ => {}
     }
     let lowered = title.to_ascii_lowercase();
-    // Driving actors (Source side) → output from that actor's perspective.
-    // Covers AMBA 3/4 (Master/Slave), AMBA 5 (Manager/Subordinate), APB 5 (Requester/Completer).
-    if lowered.contains("manager")
-        || lowered.contains("initiator")
-        || lowered.contains("master")
-        || lowered.contains("requester")
-    {
-        return Some("output");
-    }
-    if lowered.contains("subordinate")
-        || lowered.contains("slave")
-        || lowered.contains("responder")
-        || lowered.contains("multiplexor")
-        || lowered.contains("completer")
-        || lowered.contains("target")
-    {
-        return Some("input");
-    }
     // Infrastructure signals (clock, reset, global decoder) are distributed
     // into all blocks — treat as input.
     if lowered.contains("global")
@@ -3914,7 +4024,9 @@ fn infer_signal_direction_from_section(kind: SectionKind, title: &str) -> Option
     {
         return Some("input");
     }
-    None
+
+    actor_taxonomy_role_in_text(title, prior_guidance)
+        .map(|role| direction_for_actor_taxonomy_role(role, RelationTableColumnKind::SourceLike))
 }
 
 /// Returns true if the token looks like a hardware signal name:
@@ -4590,6 +4702,7 @@ fn synthesize_signal_declarations(
     section_kind: SectionKind,
     section_title: &str,
     statement_counter: &mut usize,
+    prior_guidance: Option<&EvidencePriorGuidance>,
 ) -> Vec<ExtractedStatement> {
     let mut statements = Vec::new();
     if table.body_rows.is_empty() || table.col_count < 2 {
@@ -4637,7 +4750,8 @@ fn synthesize_signal_declarations(
         .iter()
         .position(|h| h.contains("destination") || h.contains("dest"));
 
-    let default_dir = infer_signal_direction_from_section(section_kind, section_title);
+    let default_dir =
+        infer_signal_direction_from_section(section_kind, section_title, prior_guidance);
 
     for row in &table.body_rows {
         let Some(name_cell) = row.get(name_col) else {
@@ -4668,59 +4782,21 @@ fn synthesize_signal_declarations(
                 }
             })
             .or_else(|| {
-                // Source column: the cell names the DRIVING actor.
-                //   Requester / Initiator / Master         → output (signal driven from this actor)
-                //   Completer / Subordinate / Slave / Target → input  (signal driven by the other side)
-                //   Clock / Reset / System-bus / Global     → input  (infrastructure)
                 source_col.and_then(|col| row.get(col)).and_then(|cell| {
-                    let t = cell.text.to_ascii_lowercase();
-                    if t.contains("output")
-                        || t.contains("requester")
-                        || t.contains("initiator")
-                        || t.contains("master")
-                    {
-                        Some("output")
-                    } else if t.contains("input")
-                        || t.contains("completer")
-                        || t.contains("subordinate")
-                        || t.contains("slave")
-                        || t.contains("responder")
-                        || t.contains("target")
-                    {
-                        Some("input")
-                    } else if t.contains("clock")
-                        || t.contains("reset")
-                        || t.contains("system bus")
-                        || t.contains("global")
-                    {
-                        Some("input") // Infrastructure signals distributed as inputs
-                    } else {
-                        None
-                    }
+                    infer_signal_direction_from_actor_text(
+                        &cell.text,
+                        RelationTableColumnKind::SourceLike,
+                        prior_guidance,
+                    )
                 })
             })
             .or_else(|| {
-                // Destination column: the cell names the RECEIVING actor (inverted semantics).
-                //   Signal flows TO Subordinate/Completer/Slave/Target → output from driver
-                //   Signal flows TO Manager/Requester/Initiator/Master  → input  to driver
                 dest_col.and_then(|col| row.get(col)).and_then(|cell| {
-                    let t = cell.text.to_ascii_lowercase();
-                    if t.contains("subordinate")
-                        || t.contains("completer")
-                        || t.contains("slave")
-                        || t.contains("target")
-                        || t.contains("responder")
-                    {
-                        Some("output") // flows TO the subordinate side
-                    } else if t.contains("manager")
-                        || t.contains("requester")
-                        || t.contains("initiator")
-                        || t.contains("master")
-                    {
-                        Some("input") // flows TO the manager side
-                    } else {
-                        None
-                    }
+                    infer_signal_direction_from_actor_text(
+                        &cell.text,
+                        RelationTableColumnKind::DestinationLike,
+                        prior_guidance,
+                    )
                 })
             })
             .or(default_dir);
@@ -5353,13 +5429,19 @@ fn parse_prefixed_number(original_text: &str, lowered_text: &str, prefix: &str) 
 #[cfg(test)]
 mod tests {
     use std::fs;
+    use std::path::{Path, PathBuf};
 
     use tempfile::tempdir;
 
     use crate::error::Result;
+    use crate::ir::prior_memory::{
+        ActorTaxonomyPriorRecord, ActorTaxonomyRole, CorpusMemory, CorpusMemoryUpdatePolicyRecord,
+        PriorSourceArtifactRecord, ProtocolFamily,
+    };
+    use crate::ir::semantic::SemanticGroundingStrength;
     use crate::ir::source::{
-        SourceIr, StructuredTableCellRecord, StructuredTableRecord, TableKind, VisualAsset,
-        VisualAssetKind,
+        AutomationConfidence, SectionKind, SourceIr, StructuredTableCellRecord,
+        StructuredTableRecord, TableKind, VisualAsset, VisualAssetKind,
     };
 
     use super::{EvidenceIr, EvidenceLinkKind, StatementClass, VisualObservationKind};
@@ -5371,6 +5453,67 @@ mod tests {
             col_span: 1,
             is_header,
         }
+    }
+
+    fn write_actor_taxonomy_prior_memory(root: &Path) -> Result<PathBuf> {
+        let prior_memory_path = root
+            .join("generated")
+            .join("prior_memory")
+            .join("corpus_memory.json");
+        if let Some(parent) = prior_memory_path.parent() {
+            fs::create_dir_all(parent)?;
+        }
+
+        let corpus_memory = CorpusMemory {
+            schema_version: 2,
+            update_policy: CorpusMemoryUpdatePolicyRecord {
+                advisory_only: true,
+                requires_validated_intent_ir: true,
+                rejects_error_findings: true,
+                excludes_alias_dependent_semantic_consensus: true,
+                local_grounding_required_for_canonical_promotion: true,
+            },
+            source_artifacts: vec![PriorSourceArtifactRecord {
+                artifact_path: root.join("fixture_intent_ir.json"),
+                document_key: "fixture".to_string(),
+                display_name: "Fixture".to_string(),
+                protocol_family: ProtocolFamily::AmbaGeneric,
+                overall_score: Some(100),
+                grade: Some("EXCELLENT".to_string()),
+                accepted_for_learning: true,
+                skip_reason: None,
+            }],
+            actor_taxonomy_priors: vec![
+                ActorTaxonomyPriorRecord {
+                    prior_id: "actor_taxonomy_prior_0001".to_string(),
+                    normalized_actor_term: "producer".to_string(),
+                    taxonomy_role: ActorTaxonomyRole::RequesterLike,
+                    protocol_family: ProtocolFamily::AmbaGeneric,
+                    support_count: 3,
+                    supporting_document_keys: vec!["fixture".to_string()],
+                    strongest_automation_confidence: AutomationConfidence::High,
+                    strongest_grounding_strength: SemanticGroundingStrength::CrossModality,
+                },
+                ActorTaxonomyPriorRecord {
+                    prior_id: "actor_taxonomy_prior_0002".to_string(),
+                    normalized_actor_term: "consumer".to_string(),
+                    taxonomy_role: ActorTaxonomyRole::CompleterLike,
+                    protocol_family: ProtocolFamily::AmbaGeneric,
+                    support_count: 3,
+                    supporting_document_keys: vec!["fixture".to_string()],
+                    strongest_automation_confidence: AutomationConfidence::High,
+                    strongest_grounding_strength: SemanticGroundingStrength::CrossModality,
+                },
+            ],
+            semantic_phrase_priors: Vec::new(),
+            temporal_phrase_priors: Vec::new(),
+        };
+        fs::write(
+            &prior_memory_path,
+            serde_json::to_string_pretty(&corpus_memory)?,
+        )?;
+
+        Ok(prior_memory_path)
     }
 
     #[test]
@@ -5965,6 +6108,134 @@ mod tests {
             matches!(relations[0].relation, RelationKind::Reads),
             "destination columns must produce Reads relations, got: {:?}",
             relations
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn actor_taxonomy_priors_guide_source_column_direction_inference() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("producer_consumer.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let prior_memory_path = write_actor_taxonomy_prior_memory(tempdir.path())?;
+
+        fs::write(&source, "# Interface\n")?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_signal_desc".to_string(),
+            asset_id: "asset_signal_desc".to_string(),
+            page_id: None,
+            caption_text: Some("Producer and consumer signals".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Source", true),
+                make_table_cell("Width", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("XREQ", false),
+                    make_table_cell("Producer", false),
+                    make_table_cell("1", false),
+                    make_table_cell("Transfer request", false),
+                ],
+                vec![
+                    make_table_cell("XACK", false),
+                    make_table_cell("Consumer", false),
+                    make_table_cell("1", false),
+                    make_table_cell("Transfer accept", false),
+                ],
+            ],
+            row_count: 2,
+            col_count: 4,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build_with_prior_memory(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+            Some(&prior_memory_path),
+        )?;
+
+        assert!(
+            evidence_ir
+                .extracted_statements
+                .iter()
+                .any(|statement| statement.text == "Signal XREQ is output width 1."),
+            "expected requester-like prior to recover output direction for Producer source column"
+        );
+        assert!(
+            evidence_ir
+                .extracted_statements
+                .iter()
+                .any(|statement| statement.text == "Signal XACK is input width 1."),
+            "expected completer-like prior to recover input direction for Consumer source column"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn actor_taxonomy_priors_guide_section_heading_direction_inference() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("section_heading.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let prior_memory_path = write_actor_taxonomy_prior_memory(tempdir.path())?;
+
+        fs::write(&source, "# Interface\n")?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir
+            .document_sections
+            .push(crate::ir::source::ContentSectionRecord {
+                section_id: "section_producer_signals".to_string(),
+                title: "Producer signals".to_string(),
+                heading_level: 1,
+                page_id: Some("page_0001".to_string()),
+                source_ref: None,
+                reading_order: 1,
+                section_kind: SectionKind::SignalDescription,
+            });
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_section_signal_desc".to_string(),
+            asset_id: "asset_section_signal_desc".to_string(),
+            page_id: Some("page_0001".to_string()),
+            caption_text: Some("Section-guided signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Width", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("XREQ", false),
+                make_table_cell("1", false),
+                make_table_cell("Transfer request", false),
+            ]],
+            row_count: 1,
+            col_count: 3,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build_with_prior_memory(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+            Some(&prior_memory_path),
+        )?;
+
+        assert!(
+            evidence_ir
+                .extracted_statements
+                .iter()
+                .any(|statement| statement.text == "Signal XREQ is output width 1."),
+            "expected section-heading actor taxonomy prior to recover output direction"
         );
 
         Ok(())

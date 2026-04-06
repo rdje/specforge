@@ -9,7 +9,11 @@ fn default_artifact_base_root() -> PathBuf {
 }
 
 pub fn run(args: EvidenceArgs) -> Result<()> {
-    let evidence_ir = EvidenceIr::build(&args.source_ir, &default_artifact_base_root())?;
+    let evidence_ir = EvidenceIr::build_with_prior_memory(
+        &args.source_ir,
+        &default_artifact_base_root(),
+        Some(args.prior_memory.as_path()),
+    )?;
 
     if args.dry_run {
         println!("command: evidence");
@@ -48,6 +52,7 @@ pub fn run(args: EvidenceArgs) -> Result<()> {
             "extracted_statement_count: {}",
             evidence_ir.extracted_statements.len()
         );
+        println!("prior_memory_path: {}", args.prior_memory.display());
         println!("next_stage: semantic_ir");
     }
 

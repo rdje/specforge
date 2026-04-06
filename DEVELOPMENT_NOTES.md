@@ -529,6 +529,19 @@
   - broaden the store beyond actor-taxonomy into table-shape, visual-motif, modality-reliability, and negative-knowledge priors
   - then teach `EvidenceIR` / `SemanticIR` to consume those priors as bounded suggestions without weakening the local-grounding rule
 
+### First landed bounded prior-consumption slice
+- the first consumer is now real in `crates/specforge/src/ir/evidence.rs`
+- `specforge evidence <source_ir>` and `specforge converge <source>` now consult the local `CorpusMemory` by default through `--prior-memory generated/prior_memory/corpus_memory.json`
+- the first bounded use is intentionally narrow:
+  - actor-taxonomy priors can widen how `EvidenceIR` interprets explicit local actor labels in section headings and `Source` / `Destination` columns
+  - the prior can help classify `Producer` / `Consumer` as requester-like / completer-like when those terms are already present in the current PDF
+  - the prior cannot create a signal, actor, direction, or relation that is not explicitly grounded in the current document
+- this is the right first consumer because it replaces a brittle hardcoded vocabulary list with reusable typed memory without violating the “priors guide extraction, they do not author truth” rule
+- the next `R15f` consumer steps should still stay bounded:
+  - semantic-role priors as suggestion/ranking only
+  - temporal-language priors as phrase-prioritized parsing/rescan hints only
+  - table-shape / visual-motif / modality-reliability / negative-knowledge priors after that
+
 ## Current repository observations
 - the repository now contains a renamed `specforge` crate and CLI
 - the active Rust codebase no longer treats `spec2fsm` as the primary identity

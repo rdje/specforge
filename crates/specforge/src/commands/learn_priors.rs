@@ -10,7 +10,7 @@ use crate::ir::intent::IntentIr;
 use crate::ir::prior_memory::{
     ActorTaxonomyPriorRecord, ActorTaxonomyRole, CorpusMemory, CorpusMemoryUpdatePolicyRecord,
     PriorSourceArtifactRecord, ProtocolFamily, SemanticPhrasePriorRecord,
-    TemporalPhrasePriorRecord,
+    TemporalPhrasePriorRecord, normalize_actor_term,
 };
 use crate::ir::semantic::{
     ActorRelativeDirection, InterfaceSignalSemanticObservationRecord, InterfaceSignalSemanticRole,
@@ -81,7 +81,7 @@ pub fn run(args: LearnPriorsArgs) -> Result<()> {
             )));
         }
 
-        let protocol_family = infer_protocol_family(
+        let protocol_family = ProtocolFamily::infer(
             &intent_ir.document_identity.document_key,
             &intent_ir.document_identity.display_name,
         );
@@ -619,22 +619,6 @@ fn collect_actor_names(intent_ir: &IntentIr) -> BTreeSet<String> {
     actor_names
 }
 
-fn normalize_actor_term(text: &str) -> String {
-    collapse_whitespace(
-        text.to_ascii_lowercase()
-            .chars()
-            .map(|ch| {
-                if ch.is_ascii_alphanumeric() || ch == '_' {
-                    ch
-                } else {
-                    ' '
-                }
-            })
-            .collect::<String>()
-            .trim(),
-    )
-}
-
 fn actor_name_from_actor_id(actor_id: &str) -> Option<String> {
     actor_id
         .strip_prefix("actor_")
@@ -842,25 +826,6 @@ fn has_temporal_conflict_support(
             .iter()
             .any(|statement_id| supporting_statement_ids.contains(statement_id))
     })
-}
-
-fn infer_protocol_family(document_key: &str, display_name: &str) -> ProtocolFamily {
-    let normalized = format!(
-        "{} {}",
-        document_key.to_ascii_lowercase(),
-        display_name.to_ascii_lowercase()
-    );
-    if normalized.contains("axi") {
-        ProtocolFamily::AmbaAxi
-    } else if normalized.contains("ahb") {
-        ProtocolFamily::AmbaAhb
-    } else if normalized.contains("apb") {
-        ProtocolFamily::AmbaApb
-    } else if normalized.contains("amba") {
-        ProtocolFamily::AmbaGeneric
-    } else {
-        ProtocolFamily::Unknown
-    }
 }
 
 fn parse_protocol_family(value: &str) -> ProtocolFamily {
