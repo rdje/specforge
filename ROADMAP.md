@@ -454,6 +454,7 @@
     - a stage-patched VLM timing-note gold fixture proving a semantic hint can come from `vlm_timing_diagram_extraction` itself rather than only from captions, tables, or prose
     - a stage-patched VLM timing-note negative fixture proving waveform/tick annotations on a handshake-shaped signal name do not create semantic-role hints by spelling alone while timing extraction still succeeds
     - a stage-patched visual-source conflict fixture proving a caption and a VLM timing note can disagree on the same signal role without collapsing into false visual consensus
+    - a first representative AMBA-style gold fixture proving `Source`-column signal tables recover driver-side actor ports, table-grounded semantic request/accept roles, and typed handshake completion from a guarded constraint
   - fixture expectations can now assert canonical semantic candidates plus decisive vs non-decisive semantic arbitration directly, so the benchmark harness checks the truth-model state itself rather than only downstream residual/finding side effects
   - fixture expectations can now also assert persisted validation metric values directly at the evidence, semantic, and intent stages, and `SourceIR` fixture patches can now inject visual assets as well as tables, so the harness can lock cross-modality grounding behavior and VLM-note semantic provenance with tracked staged fixtures
 - remaining:

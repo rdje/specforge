@@ -292,6 +292,14 @@
     - `with_visual_semantic_grounding = 1`
     - `with_multi_source_semantic_grounding = 0`
     - semantic arbitration remains non-decisive
+- the next benchmark step after these seed multimodal cases should start the protocol-grade side of `R15e`:
+  - add representative AMBA-style gold fixtures, not only isolated negatives
+  - the first such gold fixture should prove that a `Source` column with values like `Requester` / `Subordinate` is enough to recover:
+    - driver-side actor-signal KG edges
+    - actor-relative output ports for the named driving side
+    - table-grounded semantic request/accept roles
+    - typed handshake completion when a guarded constraint references both signals
+  - this is a good first bridge from synthetic truthfulness fixtures toward real APB/AHB/AXI-style benchmark coverage
 - this is the right shape for `R15e`:
   - start with fixtures that protect truthfulness invariants
   - then grow toward APB/AHB/AXI protocol-grade gold suites and broader negative corpora

@@ -1,0 +1,183 @@
+{
+  "name": "amba_source_column_handshake_gold",
+  "source": "source.md",
+  "source_ir_patch": {
+    "structured_tables": [
+      {
+        "table_id": "table_amba_handshake_desc",
+        "asset_id": "table_amba_handshake_desc",
+        "page_id": null,
+        "caption_text": "AMBA-style handshake signal descriptions",
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            {
+              "text": "Signal",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Source",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Width",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Description",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            }
+          ]
+        ],
+        "body_rows": [
+          [
+            {
+              "text": "XREQ",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Requester",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "1",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Indicates that address and control information are valid for transfer.",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ],
+          [
+            {
+              "text": "XACK",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Subordinate",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "1",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Indicates that the subordinate can accept the transfer.",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ]
+        ],
+        "row_count": 2,
+        "col_count": 4
+      }
+    ]
+  },
+  "evidence_ir_patch": {
+    "signal_constraints": [
+      {
+        "constraint_id": "sigcon_payload_amba_handshake",
+        "subject_signal": "PAYLOAD",
+        "constraint_kind": {
+          "kind": "must_not_change"
+        },
+        "target_value": null,
+        "condition_text": "when XREQ is HIGH and XACK is HIGH",
+        "negated": false,
+        "source_text": "PAYLOAD must not change when XREQ is HIGH and XACK is HIGH.",
+        "supporting_statement_ids": ["stmt_payload_amba_handshake"],
+        "automation_confidence": "medium"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["XREQ", "XACK", "PAYLOAD"],
+      "actor_ports_include": [
+        {
+          "actor_name": "Requester",
+          "signal_name": "XREQ",
+          "direction": "output"
+        },
+        {
+          "actor_name": "Subordinate",
+          "signal_name": "XACK",
+          "direction": "output"
+        }
+      ],
+      "resolved_semantic_role_signal_names_include": ["XREQ", "XACK"],
+      "semantic_consensus_signal_names_include": ["XREQ", "XACK"],
+      "temporal_rule_count": 1,
+      "temporal_rules_with_handshake_completion": 1
+    },
+    "intent": {
+      "signal_names_include": ["XREQ", "XACK", "PAYLOAD"],
+      "actor_ports_include": [
+        {
+          "actor_name": "Requester",
+          "signal_name": "XREQ",
+          "direction": "output"
+        },
+        {
+          "actor_name": "Subordinate",
+          "signal_name": "XACK",
+          "direction": "output"
+        }
+      ],
+      "resolved_semantic_role_signal_names_include": ["XREQ", "XACK"],
+      "semantic_consensus_signal_names_include": ["XREQ", "XACK"],
+      "temporal_rule_count": 1,
+      "temporal_rules_with_handshake_completion": 1
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "actor_signal_relations": "2",
+          "signal_constraints": "1",
+          "signal_semantic_hints": "2",
+          "signal_semantic_hints_from_tables": "2"
+        }
+      },
+      "semantic": {
+        "metric_values": {
+          "actor_ports": "2",
+          "with_semantic_consensus": "4",
+          "with_decisive_semantic_arbitration": "4",
+          "temporal_rules_with_handshake_completion": "1"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "actor_ports": "2",
+          "with_semantic_consensus": "4",
+          "with_decisive_semantic_arbitration": "4",
+          "temporal_rules_with_handshake_completion": "1"
+        }
+      }
+    }
+  }
+}

@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `94f7826`
-- latest_commit_brief_message: `feat(quality): benchmark vlm timing-note noise rejection`
-- note: current uncommitted work adds a visual-source conflict fixture proving caption semantics and VLM timing-note semantics can disagree while staying grounded and contested
+- latest_commit_hash: `1d198fe`
+- latest_commit_brief_message: `feat(quality): benchmark visual semantic conflicts`
+- note: current uncommitted work adds the first representative AMBA-style gold fixture, proving `Source`-column tables can recover actor ports, semantic handshake meaning, and typed handshake completion
 
 ## Recent commit chain (last 5)
+- `1d198fe` feat(quality): benchmark visual semantic conflicts
 - `94f7826` feat(quality): benchmark vlm timing-note noise rejection
 - `9e39971` feat(quality): benchmark vlm timing-note grounding
 - `4ff4657` feat(quality): benchmark multimodal semantic conflicts
 - `8c8bdf4` feat(quality): benchmark cross-modality grounding
-- `df03118` docs(roadmap): capture cross-document learning plane
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -44,7 +44,7 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
-- added a tracked `visual_sources_semantic_conflict_negative` fixture that proves one visual asset can carry conflicting caption and VLM timing-note semantic hints without collapsing into false visual consensus
+- added a tracked `amba_source_column_handshake_gold` fixture that proves an AMBA-style `Source`-column table plus one guarded constraint recovers driver-side actor ports, semantic request/accept roles, and a typed handshake-completion temporal rule
 - synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `USER_GUIDE.md`, `DEVELOPMENT_NOTES.md`, `CHANGES.md`, and `MEMORY.md` so the richer `R15e` harness shape is captured in the live docs
 - validation ran for this task:
   - `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` passed
@@ -53,7 +53,7 @@
 
 ## Current working tree before commit
 - modified tracked files currently include:
-  - `crates/specforge/test_data/kg_quality/visual_sources_semantic_conflict_negative/...`
+  - `crates/specforge/test_data/kg_quality/amba_source_column_handshake_gold/...`
   - `README.md`
   - `ROADMAP.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -65,7 +65,7 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the visual-source semantic-conflict benchmark slice
+1. commit the first AMBA-style gold benchmark slice
 2. expand the fixture harness toward broader protocol-grade APB/AHB/AXI gold suites and harder multimodal/temporal negative cases
 3. keep finishing the current graph / temporal / arbitration / evaluation workstreams without weakening local truthfulness
 

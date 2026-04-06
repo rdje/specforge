@@ -145,6 +145,21 @@
 - `cargo fmt --all` → passed
 - `cargo test --manifest-path Cargo.toml` → 188/188 passed
 
+## 2026-04-06 (KG benchmark now includes a first AMBA-style gold fixture)
+
+### Added: representative AMBA-style handshake gold fixture
+- Added `crates/specforge/test_data/kg_quality/amba_source_column_handshake_gold/`.
+- The fixture patches an AMBA-style `Signal | Source | Width | Description` table with `Requester` / `Subordinate` source roles and one guarded `PAYLOAD must not change when XREQ is HIGH and XACK is HIGH` constraint.
+- It proves:
+  - `EvidenceIR` recovers `actor_signal_relations = 2`
+  - `SemanticIR` / `IntentIR` recover driver-side actor ports for `Requester -> XREQ` and `Subordinate -> XACK`
+  - table-grounded semantic role consensus survives for both handshake signals
+  - the guarded constraint lifts into one typed temporal rule with `HandshakeComplete`
+
+### Why this matters
+- This is the first tracked benchmark step from seed synthetic truthfulness checks toward representative APB/AHB/AXI-style gold coverage.
+- It locks an important real-doc pattern: AMBA-style `Source` columns can now be benchmarked end-to-end instead of only being covered by ad hoc unit tests.
+
 ## 2026-04-06 (KG benchmark now locks caption-vs-VLM visual semantic conflicts)
 
 ### Added: visual-source semantic-conflict negative fixture

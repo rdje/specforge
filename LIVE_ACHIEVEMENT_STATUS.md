@@ -92,6 +92,7 @@
 - KG benchmark harness now locks direct VLM timing-note semantic grounding behavior: Done
 - KG benchmark harness now locks direct VLM timing-note semantic-noise rejection behavior: Done
 - KG benchmark harness now locks caption-vs-VLM visual semantic conflict behavior: Done
+- KG benchmark harness now includes a first representative AMBA-style gold fixture: Done
 - Test suite expanded to 188 tests; all passing: Done
 - Explicit clock-tick temporal model in `SemanticIR` / `IntentIR`: In Progress
 - KG-guided multimodal rescans as a first-class convergent workstream: In Progress
