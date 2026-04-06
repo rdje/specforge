@@ -319,6 +319,16 @@
     - actor-relative output ports for both driven handshake-side signals
     - table-grounded request/accept semantics
     - typed handshake completion from one guarded APB-style stability constraint
+- the next protocol-grade truthfulness step after that APB role-vocabulary path is AXI width-only channel structure:
+  - AXI-family signal tables often carry `Name | Width | Description` but no direction column
+  - the missing directionality then has to come from prose drive/sample relations, not the table itself
+  - that path should be benchmarked explicitly because it is a real family-specific truthfulness risk:
+    - the table should still recover signal inventory and widths
+    - prose should recover `(Manager, drives, AWVALID)`, `(Subordinate, reads, AWVALID)`, `(Manager, drives, AWADDR)`, `(Subordinate, reads, AWADDR)`, `(Subordinate, drives, AWREADY)`, `(Manager, reads, AWREADY)`
+    - the combined table-plus-prose evidence should still yield request/accept semantics and typed handshake completion
+  - this is the right first AXI benchmark because it locks exactly the path that was historically brittle: no table direction column, but still enough structured evidence to recover truthful actor-relative ports
+  - the benchmark also exposed a real downstream gap: `EvidenceIR` already synthesized width-only declarations like `Signal AWVALID is width 1.`, but `SemanticIR` previously rejected them because its explicit-signal parser required `input` or `output`
+  - that parser is now widened so width-only synthesized declarations survive as canonical signal records with `direction_hint = None` until graph evidence resolves direction later
 - the next negative truthfulness step after that first AMBA-style gold path should protect against bogus actor attribution in the same family of tables:
   - `Clock` / `Reset` / direction-placeholder rows inside `Source` / `Driver` / `Destination` columns are metadata, not protocol actors
   - the KG should keep direction and system-contract recovery for those infrastructure signals without inventing actors named `Clock`, `Reset`, or `input`

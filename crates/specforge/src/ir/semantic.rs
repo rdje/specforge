@@ -1389,7 +1389,7 @@ struct TemporalConflictAccumulator {
 #[derive(Debug, Clone)]
 struct ParsedInterfaceSignalDeclaration {
     signal_name: String,
-    direction_hint: InterfaceSignalDirection,
+    direction_hint: Option<InterfaceSignalDirection>,
     width_hint: Option<WidthHint>,
 }
 
@@ -1532,7 +1532,7 @@ fn build_interfaces(
             register_interface_signal_record(
                 entry,
                 &signal_declaration.signal_name,
-                Some(signal_declaration.direction_hint),
+                signal_declaration.direction_hint,
                 signal_declaration.width_hint,
                 &statement.statement_id,
                 AutomationConfidence::High,
@@ -2317,11 +2317,14 @@ fn build_explicit_tops(context: &SemanticContext) -> Vec<ExplicitTopRecord> {
         };
 
         if let Some(parsed_port) = parse_explicit_top_port(scoped_text) {
+            let Some(direction_hint) = parsed_port.direction_hint else {
+                continue;
+            };
             let declaration_order =
                 u32::try_from(entry.ports.len()).expect("top port count should fit in u32");
             entry.ports.push(ExplicitTopPortRecord {
                 port_name: parsed_port.signal_name,
-                direction_hint: parsed_port.direction_hint,
+                direction_hint,
                 width_hint: parsed_port.width_hint,
                 declaration_order,
                 supporting_statement_ids: vec![statement.statement_id.clone()],
@@ -3114,10 +3117,24 @@ fn parse_explicit_signal_declaration(text: &str) -> Option<ParsedInterfaceSignal
         index += 1;
     }
 
-    let direction_hint = parse_interface_signal_direction(*tokens.get(index)?)?;
-    index += 1;
+    let direction_hint = tokens
+        .get(index)
+        .and_then(|token| parse_interface_signal_direction(token))
+        .inspect(|_| index += 1);
 
-    let width_hint = parse_optional_width_hint(tokens.as_slice(), &mut index);
+    let width_hint = if direction_hint.is_some()
+        || tokens
+            .get(index)
+            .is_some_and(|token| token.eq_ignore_ascii_case("width"))
+    {
+        parse_optional_width_hint(tokens.as_slice(), &mut index)
+    } else {
+        None
+    };
+
+    if direction_hint.is_none() && width_hint.is_none() {
+        return None;
+    }
     if index != tokens.len() {
         return None;
     }
@@ -10517,6 +10534,41 @@ mod tests {
                 .any(|r| r.subject_signal == "NOTSIG"),
             "NOTSIG is not declared and its constraint must be removed by Layer D gating"
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn width_only_signal_declarations_become_interface_signal_records() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("width_only.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(&source, "# Protocol\nSignal AWVALID is width 1.\n")?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let awvalid = semantic_ir
+            .interfaces
+            .iter()
+            .flat_map(|interface| interface.signal_records.iter())
+            .find(|signal| signal.signal_name == "AWVALID")
+            .expect("expected width-only AWVALID declaration to survive");
+        assert_eq!(awvalid.width_hint, Some(WidthHint::Numeric(1)));
+        assert_eq!(awvalid.direction_hint, None);
 
         Ok(())
     }

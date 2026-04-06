@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-04-06 (KG fixtures now lock AXI width-only prose-direction recovery)
+
+### Added: AXI-style width-only plus prose-direction gold fixture
+- Added a tracked staged fixture proving that AXI-style `Name | Width | Description` signal tables still recover truthful actor-relative ports when prose drive/sample relations provide the missing directionality.
+- The fixture locks AXI write-address-channel recovery end-to-end: table-grounded widths for `AWVALID`, `AWREADY`, and `AWADDR`; prose-grounded `Manager` / `Subordinate` `Drives` and `Reads` relations; request/accept semantic grounding; and typed handshake completion from one guarded `AWADDR must not change when AWVALID is HIGH and AWREADY is HIGH` constraint.
+
+### Fixed: width-only synthesized declarations now survive into canonical signal records
+- Widened the semantic explicit-signal parser so synthesized statements like `Signal AWVALID is width 1.` are treated as real interface-signal declarations even without an immediate `input` / `output` token.
+- This closes the AXI-family gap where width-only channel tables previously stopped at actor relations and connectivity instead of becoming canonical `SemanticIR` / `IntentIR` signal records.
+
+### Why this matters
+- AXI-family specs are a real stress case because the signal tables often omit direction columns entirely. If that mixed table-plus-prose recovery path regresses, the generic AMBA/APB/AHB fixture suite can still look healthy while AXI truth quietly drifts.
+- This turns that family-specific extraction pattern into executable benchmark coverage instead of leaving it protected only by aggregate PDF scores.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality axi_width_only_prose_direction_gold` → passed
+- `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` → passed
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → passed
+
 ## 2026-04-06 (KG fixtures now lock APB Requester/Completer semantics)
 
 ### Added: APB-style `Requester` / `Completer` gold fixture

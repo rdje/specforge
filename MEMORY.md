@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `5935c4f`
-- latest_commit_brief_message: `feat(quality): benchmark ahb section headings`
-- note: the current session adds a representative APB-style `Requester` / `Completer` gold fixture so APB-family role vocabulary is benchmarked directly instead of only being covered indirectly by the broader AMBA paths
+- latest_commit_hash: `be004c1`
+- latest_commit_brief_message: `feat(quality): benchmark apb requester completer`
+- note: the current session adds a representative AXI width-only plus prose-direction gold fixture so AXI-family table-plus-prose direction recovery is benchmarked directly instead of only being inferred from aggregate PDF scores
 
 ## Recent commit chain (last 5)
+- `be004c1` feat(quality): benchmark apb requester completer
 - `5935c4f` feat(quality): benchmark ahb section headings
 - `914985f` feat(quality): benchmark destination-column reads
 - `3b22d73` feat(semantic): reject spurious timing annotations
 - `858f4a8` feat(evidence): reject misclassified field tables
-- `cb9d7b2` feat(evidence): reject bogus source-column actors
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -44,17 +44,18 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
-- added a tracked `apb_requester_completer_handshake_gold` fixture that proves APB-style `Requester` / `Completer` source roles recover canonical actor relations, actor-relative ports, request/accept semantics, and typed handshake completion end-to-end through `SemanticIR` and `IntentIR`
-- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `USER_GUIDE.md`, `DEVELOPMENT_NOTES.md`, `CHANGES.md`, and `MEMORY.md` so the richer `R15e` APB benchmark coverage is captured in the live docs
+- added a tracked `axi_width_only_prose_direction_gold` fixture that proves AXI-style width-only channel tables plus prose drive/sample relations recover canonical actor relations, actor-relative ports, request/accept semantics, and typed handshake completion end-to-end through `SemanticIR` and `IntentIR`
+- widened the semantic explicit-signal parser so width-only synthesized declarations like `Signal AWVALID is width 1.` survive as canonical signal records until graph evidence resolves direction later
+- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `USER_GUIDE.md`, `DEVELOPMENT_NOTES.md`, `CHANGES.md`, and `MEMORY.md` so the richer `R15e` AXI benchmark coverage is captured in the live docs
 - validation ran for this task:
-  - `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality apb_requester_completer_handshake_gold` passed
+  - `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality axi_width_only_prose_direction_gold` passed
   - `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` passed
   - `cargo fmt --all` passed
   - `cargo test --manifest-path Cargo.toml` passed
 
 ## Current working tree before commit
 - modified tracked files currently include:
-  - `crates/specforge/test_data/kg_quality/apb_requester_completer_handshake_gold/...`
+  - `crates/specforge/test_data/kg_quality/axi_width_only_prose_direction_gold/...`
   - `README.md`
   - `ROADMAP.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -66,8 +67,8 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the APB `Requester` / `Completer` benchmark slice with the synced live docs
-2. expand the fixture harness toward broader AXI gold suites plus richer APB/AHB timing and structured-constraint fixtures
+1. commit the AXI width-only plus prose-direction benchmark slice with the synced live docs
+2. expand the fixture harness toward broader AXI channel/timing gold suites plus richer APB/AHB timing and structured-constraint fixtures
 3. keep the live docs aligned whenever the next truthfulness slice lands
 
 ## Remaining engineering gaps after this commit
