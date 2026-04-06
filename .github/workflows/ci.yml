@@ -32,8 +32,5 @@ jobs:
       - name: Cache Rust build artifacts
         uses: Swatinem/rust-cache@v2
 
-      - name: Check formatting
-        run: cargo fmt --all --check
-
-      - name: Run test suite
-        run: cargo test --manifest-path Cargo.toml
+      - name: Run CI suite
+        run: ./scripts/run_ci.sh

@@ -22,11 +22,12 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `40a14ed`
-- latest_commit_brief_message: `feat(learning): add local prior memory plane`
-- note: the current session adds the initial GitHub Actions CI baseline so the same Rust gate used locally now also runs automatically on GitHub `push` and `pull_request`
+- latest_commit_hash: `eecf375`
+- latest_commit_brief_message: `ci(repo): add GitHub Actions Rust checks`
+- note: the current session upgrades that baseline so local and hosted CI share one checked-in runner, making the full Rust CI path executable before push
 
 ## Recent commit chain (last 5)
+- `eecf375` ci(repo): add GitHub Actions Rust checks
 - `40a14ed` feat(learning): add local prior memory plane
 - `48034e9` chore(git): untrack swap files
 - `20cd24a` feat(quality): benchmark ahb timing semantics
@@ -38,6 +39,7 @@
 - runnable CLI surface includes `inspect`, `converge`, `ingest`, `evidence`, `semantic`, `intent`, `adapt`, `enrich`, `validate`, `kg-bench`, `project-validation`, `learn-priors`, and `nlp-enrich`
 - `specforge converge` now defaults to full Ollama-backed VLM image enrichment plus NLP Level 3 backannotation; use `--vlm-provider skip` and/or `--nlp-provider skip` only when intentionally narrowing the loop
 - GitHub Actions now mirrors the baseline Rust quality gate on every `push` / `pull_request` via `.github/workflows/ci.yml`
+- `scripts/run_ci.sh` is now the canonical Rust CI entrypoint and is reused by GitHub Actions, so the same hosted path can be exercised locally before push
 - canonical generated artifact roots are under `generated/source_ir/`, `generated/evidence_ir/`, `generated/semantic_ir/`, and `generated/intent_ir/`
 - `generated/` is git-ignored and intentionally untracked; continuity must live in docs, not versioned artifacts
 - `subs/fsmgen/` is a local read-only reference checkout for `.fsm` behavior
@@ -45,17 +47,17 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
-- added `.github/workflows/ci.yml`, the first repo-hosted CI workflow for the GitHub repository
-- the hosted CI gate is intentionally aligned with the local Rust gate:
-  - `cargo fmt --all --check`
-  - `cargo test --manifest-path Cargo.toml`
-- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, `CHANGES.md`, and `MEMORY.md` so CI is part of the documented project baseline and crash-safe continuity surface
+- added `scripts/run_ci.sh`, the canonical checked-in local CI runner for the Rust workspace
+- updated `.github/workflows/ci.yml` so GitHub Actions calls the same `./scripts/run_ci.sh` entrypoint instead of maintaining a separate inline command list
+- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, `CHANGES.md`, and `MEMORY.md` so the unified local/hosted CI path is continuity-safe
 - validation ran for this task:
+  - `./scripts/run_ci.sh` passed
   - `cargo fmt --all --check` passed
   - `cargo test --manifest-path Cargo.toml` passed
 
 ## Current working tree before commit
 - modified tracked files currently include:
+  - `scripts/run_ci.sh`
   - `.github/workflows/ci.yml`
   - `README.md`
   - `ROADMAP.md`
@@ -67,8 +69,8 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the GitHub Actions CI baseline with the synced live docs
-2. push `main` so the new GitHub-hosted CI starts running on the remote repository
+1. commit the unified local/hosted CI runner with the synced live docs
+2. push `main` so GitHub Actions starts using `./scripts/run_ci.sh`
 3. resume `R15f` by broadening the prior store beyond temporal-language priors into actor-taxonomy, table-shape, visual-motif, modality-reliability, and negative-knowledge priors
 
 ## Remaining engineering gaps after this commit

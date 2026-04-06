@@ -116,7 +116,8 @@
 
 ## GitHub CI baseline
 - repository-hosted CI is now part of the project baseline rather than an optional afterthought
-- the GitHub Actions workflow mirrors the local Rust gate exactly:
+- the GitHub Actions workflow now calls the same checked-in runner used locally: `./scripts/run_ci.sh`
+- the current canonical Rust CI runner executes:
   - `cargo fmt --all --check`
   - `cargo test --manifest-path Cargo.toml`
 - this keeps push-time validation honest without inventing a different hosted workflow contract from the one used during local task completion

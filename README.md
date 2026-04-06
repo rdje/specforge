@@ -41,6 +41,7 @@ Use it first for the project objective, document navigation, and the current imp
 - `specforge kg-bench` now runs tracked KG-quality fixtures through the staged pipeline, so gold expectations, negative expectations, residual quality, and conflict surfacing can be checked explicitly instead of relying only on aggregate scores
 - `specforge learn-priors <intent-ir>...` now builds a local typed `CorpusMemory` prior store under `generated/prior_memory/corpus_memory.json`, harvesting only from validated `IntentIR` artifacts and keeping the learning plane advisory-only
 - GitHub Actions CI now runs `cargo fmt --all --check` and `cargo test --manifest-path Cargo.toml` on every `push` and `pull_request`, so the local Rust quality gate is mirrored automatically on GitHub
+- the hosted CI path is now driven by `./scripts/run_ci.sh`, so the exact Rust CI suite can be run locally before push instead of only after GitHub receives the commit
 - the first `R15f` slice currently learns two safe prior families:
   - semantic-role phrase priors from decisive, non-alias-dependent semantic consensus plus preserved observation text
   - temporal-language phrase priors from canonical temporal rules and validated canonical `signal_constraints` / `conditional_rules`
@@ -180,6 +181,8 @@ Use it first for the project objective, document navigation, and the current imp
 - `.gitmodules`
 - `.github/workflows/ci.yml`
   - GitHub Actions CI workflow for Rust formatting and test validation on `push` and `pull_request`
+- `scripts/run_ci.sh`
+  - canonical local/hosted Rust CI runner used both on developer machines and inside GitHub Actions
 
 ### Local-only workflow paths
 - `git_message_brief.txt`
@@ -259,6 +262,7 @@ Use it first for the project objective, document navigation, and the current imp
 ## Quick start
 ```bash
 cargo test
+./scripts/run_ci.sh
 cargo run -p specforge -- --help
 cargo run -p specforge -- inspect README.md
 cargo run -p specforge -- converge README.md --target fsm

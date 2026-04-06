@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-06 (local and hosted CI now share one entrypoint)
+
+### Added: checked-in local CI runner
+- Added [run_ci.sh](/Users/richarddje/Documents/github/specforge/scripts/run_ci.sh), a repository-local CI entrypoint that runs the canonical Rust quality gate from the repo root:
+  - `cargo fmt --all --check`
+  - `cargo test --manifest-path Cargo.toml`
+
+### Changed: GitHub Actions now reuses the local runner
+- Updated [.github/workflows/ci.yml](/Users/richarddje/Documents/github/specforge/.github/workflows/ci.yml) so GitHub Actions calls `./scripts/run_ci.sh` instead of duplicating the commands inline.
+
+### Why this matters
+- The full Rust CI path can now be run locally before push, which makes CI breakage easier to catch on the developer machine instead of waiting for GitHub.
+- Using one checked-in entrypoint removes local-versus-hosted drift and makes future CI expansion safer.
+
+### Validation
+- `./scripts/run_ci.sh` → passed
+- `cargo fmt --all --check` → passed
+- `cargo test --manifest-path Cargo.toml` → passed
+
 ## 2026-04-06 (GitHub Actions CI baseline established)
 
 ### Added: repo-hosted Rust CI on `push` / `pull_request`

@@ -53,6 +53,7 @@
   - define the project objective and staged direction
   - define the commit workflow and continuity expectations
   - establish a baseline GitHub-hosted CI path for Rust validation on repository pushes
+  - keep the hosted CI path locally runnable so the same validation can be exercised before push
   - create a usable session bootstrap path for future AI/LLM sessions
 - completion criteria:
   - core live documents exist
@@ -60,6 +61,7 @@
   - SESSION_BOOTSTRAP is in place
   - roadmap and live-status files are established
   - formatter and test checks run automatically on GitHub `push` / `pull_request`
+  - the same CI entrypoint is runnable locally from the repository checkout
 
 ### R1 IntentIR pivot and CLI identity
 - status: Done

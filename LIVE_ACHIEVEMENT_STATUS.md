@@ -3,6 +3,7 @@
 - Git repository initialized: Done
 - Commit workflow document present and reviewed: Done
 - GitHub Actions CI for Rust formatting/tests on `push` and `pull_request`: Done
+- Canonical CI entrypoint runnable locally and reused by GitHub Actions: Done
 - README single-entrypoint contract established: Done
 - SESSION_BOOTSTRAP handoff contract established: Done
 - Core live-document surface established: Done
