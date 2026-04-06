@@ -500,6 +500,22 @@
 - benchmark whether prior memory helps on unseen PDFs without increasing cross-document fact leakage
 - treat this as a first-class architectural expansion after the current graph/temporal/arbitration work, not as a shortcut around local truthfulness
 
+### First landed `R15f` slice
+- the first implementation now exists as a typed `CorpusMemory` store in `crates/specforge/src/ir/prior_memory.rs`
+- `specforge learn-priors <intent_ir>...` is the first command that materializes that learning plane locally under `generated/prior_memory/corpus_memory.json`
+- the first trust/update policy is intentionally narrow:
+  - only validated `IntentIR` artifacts are eligible
+  - artifacts with validation error findings are skipped
+  - semantic-role priors are harvested only from decisive, non-alias-dependent canonical semantic consensus plus preserved observation text
+  - temporal-language priors are harvested from canonical `temporal_rules` plus validated canonical `signal_constraints` / `conditional_rules`
+  - the learned memory remains advisory-only and cannot directly author canonical document facts
+- the first live AMBA run is already informative:
+  - it yields `222` temporal phrase priors from AXI/APB/AHB `IntentIR` artifacts
+  - it yields `0` semantic phrase priors on that same corpus, which is honest and useful because it shows the learning plane is functioning while the real-document semantic-consensus surface is still not rich enough to promote safely
+- the next `R15f` step should not be “force more priors.” It should be:
+  - broaden the store into actor-taxonomy, table-shape, visual-motif, modality-reliability, and negative-knowledge priors
+  - then teach `EvidenceIR` / `SemanticIR` to consume those priors as bounded suggestions without weakening the local-grounding rule
+
 ## Current repository observations
 - the repository now contains a renamed `specforge` crate and CLI
 - the active Rust codebase no longer treats `spec2fsm` as the primary identity

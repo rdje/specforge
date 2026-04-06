@@ -39,6 +39,8 @@ pub enum Commands {
     ProjectValidation(ProjectValidationArgs),
     /// Run tracked KG-quality fixtures against the staged pipeline
     KgBench(KgBenchArgs),
+    /// Build a local cross-document prior store from validated IntentIR artifacts
+    LearnPriors(LearnPriorsArgs),
     /// Enrich an EvidenceIR artifact with LLM-extracted NLP Level 3 constraints
     NlpEnrich(NlpEnrichArgs),
 }
@@ -183,6 +185,19 @@ pub struct KgBenchArgs {
     pub fixtures_root: std::path::PathBuf,
     /// Optional fixture paths or fixture directories to run relative to fixtures_root
     pub fixtures: Vec<std::path::PathBuf>,
+}
+
+#[derive(Debug, Args)]
+pub struct LearnPriorsArgs {
+    /// One or more validated IntentIR artifacts to learn priors from
+    #[arg(required = true)]
+    pub artifacts: Vec<std::path::PathBuf>,
+    /// Local output path for the learned prior store
+    #[arg(long, default_value = "generated/prior_memory/corpus_memory.json")]
+    pub output: std::path::PathBuf,
+    /// Do not write the prior store; print the computed JSON instead
+    #[arg(long)]
+    pub dry_run: bool,
 }
 
 /// VLM provider selection for the `enrich` command.

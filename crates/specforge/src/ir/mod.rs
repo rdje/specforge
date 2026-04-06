@@ -1,6 +1,7 @@
 pub mod adapters;
 pub mod evidence;
 pub mod intent;
+pub mod prior_memory;
 pub mod semantic;
 pub mod source;
 

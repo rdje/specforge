@@ -27,6 +27,7 @@
   - `specforge validate <artifact>`
   - `specforge kg-bench`
   - `specforge project-validation <artifact>...`
+  - `specforge learn-priors <intent-ir>...`
   - `specforge nlp-enrich <evidence-ir>`
 - the currently implemented executable IR stages are `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR`
 - `SourceIR` now handles existing Markdown directly and performs Docling-backed structured PDF normalization for PDF inputs
@@ -244,6 +245,7 @@ cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --targ
 - `specforge adapt <intent-ir> --target <fsm|systemverilog|verilog|vhdl>` (today, only `fsm` is implemented)
 - `specforge validate <artifact>`
 - `specforge project-validation <artifact>...`
+- `specforge learn-priors <intent-ir>...`
 
 ## Expected user-visible principles
 - the tool should be staged and inspectable
@@ -262,6 +264,7 @@ cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --targ
 - the first `.fsm` adapter slices are implemented and can now emit standalone renderable `?dt:name` text for explicit canonical combinational and sequential DT cases, structured renderable `?fsm:name` text for explicit canonical state-graph cases, canonical symbol-definition/reset-role lowering, selector/test-node branches, compound-update shorthand for honest canonical cases, and first-slice renderable `?top:name` text for explicit canonical composition cases, but unsupported selector/predicate shapes still remain deferred and compatibility-level `?mod:name` / `?module:name` spellings stay outside the current canonical root-kind model
 - `specforge validate <artifact>` now backannotates the latest validation report into the artifact and writes a stage-local `validation_report.json` sidecar
 - `specforge project-validation <artifact>...` now turns those persisted reports into tracked markdown continuity docs, and broader adapter validation remains intentionally deferred until semantic truthfulness is stronger
+- `specforge learn-priors <intent-ir>...` now turns validated canonical `IntentIR` artifacts into a local `CorpusMemory` prior store under `generated/prior_memory/corpus_memory.json`, and the first slice learns reusable semantic-role and temporal-language priors without letting that memory author canonical facts directly
 
 ## Where to look next
 - `README.md`

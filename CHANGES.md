@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-04-06 (first typed cross-document prior store landed)
+
+### Added: `specforge learn-priors <intent_ir>...`
+- Added a new CLI command that builds the first local typed `CorpusMemory` prior store under `generated/prior_memory/corpus_memory.json`.
+- The command only learns from validated `IntentIR` artifacts and skips artifacts whose latest validation report carries error findings, so the new learning plane stays downstream of validation instead of becoming a shortcut around it.
+
+### Added: first typed prior families for `R15f`
+- Added `crates/specforge/src/ir/prior_memory.rs` with a typed `CorpusMemory` schema, explicit update-policy record, protocol-family scoping, and advisory query helpers.
+- The first semantic prior family learns reusable semantic-role phrases only from decisive, non-alias-dependent canonical semantic consensus plus preserved observation text.
+- The first temporal prior family learns reusable timing/constraint language from canonical `temporal_rules` plus validated canonical `signal_constraints` / `conditional_rules`, which makes the learning plane immediately useful even while real-document temporal-rule lift remains conservative.
+
+### Why this matters
+- This is the first real implementation of the separate cross-document learning plane captured in the roadmap and development notes.
+- It keeps the document plane provenance-pure while finally giving the extractor a place to accumulate reusable knowledge about how chip specifications express meaning.
+- The first live AMBA run is already informative: AXI/APB/AHB `IntentIR` artifacts currently yield `222` temporal phrase priors and `0` semantic phrase priors, which is exactly the kind of honest signal the project needs while the canonical semantic-consensus surface on real PDFs is still strengthening.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml learn_priors -- --nocapture` → passed
+- `cargo run --manifest-path Cargo.toml -- learn-priors generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json generated/intent_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/intent_ir.json generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json --output generated/prior_memory/corpus_memory.json` → passed (`222` temporal phrase priors)
+
 ## 2026-04-06 (KG fixtures now lock AHB wait-state timing recovery)
 
 ### Added: AHB-style wait-state timing gold fixture

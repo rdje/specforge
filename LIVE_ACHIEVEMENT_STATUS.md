@@ -17,6 +17,7 @@
 - `specforge enrich` command created: Done
 - `specforge validate` command created: Done
 - `specforge kg-bench` command created: Done
+- `specforge learn-priors` command created: Done
 - `specforge nlp-enrich` command created: Done
 - `specforge converge` command created: Done
 - End-to-end source-to-IntentIR pipeline implemented: Done
@@ -115,9 +116,10 @@
 - SystemVerilog/Verilog/VHDL adapter expansion: Horizon
 - Adapter validation (SystemVerilog/Verilog/VHDL targets): Horizon
 - Actor-relative direction model in `SemanticIR` / `IntentIR`: In Progress
+- Cross-document typed prior memory (`R15f`): In Progress
 
 ## Highest-priority remaining gap
-- Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then expand the new KG-quality harness from the current AMBA/APB/AHB plus richer timing gold suites into a broader AXI-focused suite plus remaining structured-constraint fixtures and the remaining spurious-timing negatives while continuing multimodal grounding plus structural/temporal arbitration
+- Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then broaden the new `R15f` prior store from its first temporal-language slice into semantic/table/visual prior families while expanding the KG-quality harness from the current AMBA/APB/AHB plus richer timing gold suites into a broader AXI-focused suite plus remaining structured-constraint fixtures and spurious-timing negatives
 
 ## Validation Projection
 

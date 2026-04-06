@@ -22,20 +22,20 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `77f111c`
-- latest_commit_brief_message: `feat(quality): benchmark apb timing semantics`
-- note: the current session adds a representative AHB wait-state timing gold fixture so AHB-family section-heading and destination-column semantics are benchmarked together with bounded next-cycle timing and waited-transfer stability instead of only direction recovery
+- latest_commit_hash: `48034e9`
+- latest_commit_brief_message: `chore(git): untrack swap files`
+- note: the current session adds the first real `R15f` implementation slice, landing a typed local `CorpusMemory` prior store plus the new `specforge learn-priors <intent_ir>...` command
 
 ## Recent commit chain (last 5)
-- `77f111c` feat(quality): benchmark apb timing semantics
-- `5af73b3` feat(quality): benchmark axi timing semantics
-- `2dc088c` feat(quality): benchmark axi width-only recovery
-- `be004c1` feat(quality): benchmark apb requester completer
-- `5935c4f` feat(quality): benchmark ahb section headings
+- `48034e9` chore(git): untrack swap files
+- `20cd24a` feat(quality): benchmark ahb timing semantics
+- `001a6dc` feat(quality): benchmark apb timing semantics
+- `234a39f` feat(quality): benchmark axi timing semantics
+- `a657305` feat(quality): benchmark axi width-only recovery
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- runnable CLI surface includes `inspect`, `converge`, `ingest`, `evidence`, `semantic`, `intent`, `adapt`, `enrich`, `validate`, `kg-bench`, `project-validation`, and `nlp-enrich`
+- runnable CLI surface includes `inspect`, `converge`, `ingest`, `evidence`, `semantic`, `intent`, `adapt`, `enrich`, `validate`, `kg-bench`, `project-validation`, `learn-priors`, and `nlp-enrich`
 - `specforge converge` now defaults to full Ollama-backed VLM image enrichment plus NLP Level 3 backannotation; use `--vlm-provider skip` and/or `--nlp-provider skip` only when intentionally narrowing the loop
 - canonical generated artifact roots are under `generated/source_ir/`, `generated/evidence_ir/`, `generated/semantic_ir/`, and `generated/intent_ir/`
 - `generated/` is git-ignored and intentionally untracked; continuity must live in docs, not versioned artifacts
@@ -44,17 +44,33 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
-- added a tracked `ahb_wait_state_timing_gold` fixture that proves AHB-style section-heading plus destination-column signal context recovers wait-state timing, bounded next-cycle latency, actor-grounded temporal predicates, and waited-transfer stability through `SemanticIR` and `IntentIR`
-- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `USER_GUIDE.md`, `DEVELOPMENT_NOTES.md`, `CHANGES.md`, and `MEMORY.md` so the richer `R15e` AHB timing benchmark coverage is captured in the live docs
+- added `crates/specforge/src/ir/prior_memory.rs`, the first typed `CorpusMemory` schema for the cross-document learning plane
+- added `crates/specforge/src/commands/learn_priors.rs` and the new `specforge learn-priors <intent_ir>...` CLI command
+- the first `R15f` trust/update policy is now explicit:
+  - only validated `IntentIR` artifacts are eligible
+  - artifacts with validation error findings are skipped
+  - the learning plane stays advisory-only and cannot directly author canonical document facts
+- the first harvested prior families are now live:
+  - semantic-role phrase priors from decisive, non-alias-dependent canonical semantic consensus plus preserved observation text
+  - temporal-language phrase priors from canonical `temporal_rules` plus validated canonical `signal_constraints` / `conditional_rules`
+- the first AMBA prior-memory run now materializes a local `generated/prior_memory/corpus_memory.json` with:
+  - `3` source artifacts
+  - `222` temporal phrase priors
+  - `0` semantic phrase priors
+- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `USER_GUIDE.md`, `DEVELOPMENT_NOTES.md`, `CHANGES.md`, and `MEMORY.md` so the new `R15f` slice is continuity-safe
 - validation ran for this task:
-  - `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality ahb_wait_state_timing_gold` passed
-  - `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` passed
   - `cargo fmt --all --check` passed
+  - `cargo test --manifest-path Cargo.toml learn_priors -- --nocapture` passed
+  - `cargo run --manifest-path Cargo.toml -- learn-priors generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json generated/intent_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/intent_ir.json generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json --output generated/prior_memory/corpus_memory.json` passed
   - `cargo test --manifest-path Cargo.toml` passed
 
 ## Current working tree before commit
 - modified tracked files currently include:
-  - `crates/specforge/test_data/kg_quality/ahb_wait_state_timing_gold/...`
+  - `crates/specforge/src/cli.rs`
+  - `crates/specforge/src/commands/learn_priors.rs`
+  - `crates/specforge/src/commands/mod.rs`
+  - `crates/specforge/src/ir/mod.rs`
+  - `crates/specforge/src/ir/prior_memory.rs`
   - `README.md`
   - `ROADMAP.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -66,9 +82,9 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the AHB wait-state timing benchmark slice with the synced live docs
-2. expand the fixture harness toward broader AXI channel/timing gold suites plus remaining structured-constraint fixtures
-3. keep the live docs aligned whenever the next truthfulness slice lands
+1. commit the first `R15f` prior-memory slice with the synced live docs
+2. broaden the prior store beyond temporal-language priors into actor-taxonomy, table-shape, visual-motif, modality-reliability, and negative-knowledge priors
+3. begin teaching `EvidenceIR` / `SemanticIR` to consume retrieved priors as bounded suggestions without weakening the local-grounding rule
 
 ## Remaining engineering gaps after this commit
 - remaining actor-relative direction modeling in `SemanticIR` / `IntentIR` (`R15`)
@@ -76,7 +92,7 @@
 - KG-guided multimodal rescans (`R15c`)
 - broader evidence arbitration / conflict handling beyond polarity, interface-shape, multi-producer ambiguity, modality-aware semantic-role grounding, consensus summaries, semantic candidates, and semantic arbitration summaries (`R15d`)
 - broader KG-quality evaluation and benchmark hardening beyond the new seed fixture pack (`R15e`)
-- cross-document extractor learning and typed prior memory remain not started (`R15f`)
+- cross-document extractor learning is now started, but the typed prior store still needs actor-taxonomy, table-shape, visual-motif, modality-reliability, negative-knowledge, and benchmarked retrieval/consumption paths (`R15f`)
 - Tier 3 relation extraction after the graph/temporal/eval surfaces are ready (`R14`)
 - some downstream compatibility and consumer paths still rely on flat `direction_hint` instead of the graph-native surface
 - meaning-based role inference now covers tables, prose, alias-grounded prose, visual captions, and VLM timing annotations, and canonical layers now preserve that provenance, but broader downstream use of preserved arbitration state is still early
@@ -92,4 +108,4 @@
 4. read `ROADMAP.md`
 5. read `RUST_CODEBASE_ANALYSIS.md`
 6. inspect `git --no-pager status --short`
-7. continue with the current semantic-truthfulness roadmap unless the user redirects, while treating the new cross-document learning plane as a documented future workstream
+7. continue with the current semantic-truthfulness roadmap unless the user redirects, now treating the cross-document learning plane as an active workstream rather than just a documented future idea

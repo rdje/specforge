@@ -476,7 +476,7 @@
   - add broader metric-oriented expectation surfaces once the current canonical+metric fixture layer stabilizes
 
 ### R15f Cross-document extraction learning plane
-- status: Not Started
+- status: In Progress
 - goals:
   - let the extraction system become stronger on PDF `N+1` because it has learned reusable analysis priors from PDFs `1..N`
   - keep the per-document four-layer IR pipeline provenance-pure while adding a separate global typed learning layer
@@ -513,11 +513,23 @@
   - `EvidenceIR` / `SemanticIR` builders can consume relevant priors as bounded suggestions without bypassing local grounding
   - only validated/promoted outcomes are allowed to update the learning plane
   - regression/benchmark coverage proves that prior memory improves extraction efficiency or recall without increasing fact leakage across documents
+- done:
+  - a first typed `CorpusMemory` store now exists in `crates/specforge/src/ir/prior_memory.rs`
+  - `specforge learn-priors <intent_ir>...` now builds a local prior store at `generated/prior_memory/corpus_memory.json`
+  - the first update policy is explicit and conservative:
+    - only validated `IntentIR` artifacts are eligible
+    - artifacts with validation error findings are skipped
+    - the learning plane remains advisory-only and cannot directly author canonical document truth
+  - the first harvested prior families are:
+    - semantic-role phrase priors from decisive, non-alias-dependent canonical semantic consensus plus preserved observation text
+    - temporal-language phrase priors from canonical `temporal_rules` plus validated canonical `signal_constraints` / `conditional_rules`
+  - the first query helpers can already filter semantic priors by protocol family, source kind, and role, and temporal priors by protocol family plus cycle-window / actor-grounding requirements
+  - the first live AMBA run across AXI/APB/AHB `IntentIR` artifacts now yields `222` temporal phrase priors while keeping semantic phrase priors at `0` until stronger observation-backed semantic consensus exists in the canonical artifacts
 - remaining:
-  - design the schema for typed prior memory and prior provenance
-  - decide how protocol-family scoping works without hardcoding brittle protocol logic
-  - define the trust/update policy for feeding validated outcomes back into memory
-  - add benchmarks that measure whether prior memory improves analysis of unseen PDFs honestly
+  - broaden the prior store beyond the first semantic/temporal phrase families into actor taxonomy, table-shape, visual-motif, modality-reliability, and negative-knowledge priors
+  - decide how protocol-family scoping should grow beyond the current AMBA family inference without hardcoding brittle protocol logic
+  - let `EvidenceIR` / `SemanticIR` consume retrieved priors as bounded suggestions without bypassing local grounding
+  - add benchmark coverage that measures whether prior memory improves analysis of unseen PDFs honestly instead of only growing the stored prior set
 
 ### R16 SystemVerilog adapter (Horizon)
 - status: Horizon

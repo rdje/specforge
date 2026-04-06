@@ -28,6 +28,7 @@ Use it first for the project objective, document navigation, and the current imp
   - `adapt <intent-ir> --target fsm`
   - `kg-bench`
   - `project-validation <artifact>...`
+  - `learn-priors <intent-ir>...`
 - `specforge ingest` now computes and materializes `SourceIR` at `generated/source_ir/<document_key>/source_ir.json`
 - `specforge evidence` now computes and materializes `EvidenceIR` at `generated/evidence_ir/<document_key>/evidence_ir.json`
 - `specforge semantic` now computes and materializes `SemanticIR` at `generated/semantic_ir/<document_key>/semantic_ir.json`
@@ -38,6 +39,11 @@ Use it first for the project objective, document navigation, and the current imp
 - `specforge validate <artifact>` now writes a deterministic stage-local `validation_report.json` sidecar and backannotates the latest report into the artifact's `validation_reports` field
 - `specforge project-validation <artifact>...` now validates the passed artifacts and refreshes the tracked validation snapshot docs from their persisted reports
 - `specforge kg-bench` now runs tracked KG-quality fixtures through the staged pipeline, so gold expectations, negative expectations, residual quality, and conflict surfacing can be checked explicitly instead of relying only on aggregate scores
+- `specforge learn-priors <intent-ir>...` now builds a local typed `CorpusMemory` prior store under `generated/prior_memory/corpus_memory.json`, harvesting only from validated `IntentIR` artifacts and keeping the learning plane advisory-only
+- the first `R15f` slice currently learns two safe prior families:
+  - semantic-role phrase priors from decisive, non-alias-dependent semantic consensus plus preserved observation text
+  - temporal-language phrase priors from canonical temporal rules and validated canonical `signal_constraints` / `conditional_rules`
+- the first live AMBA prior-memory run currently harvests `222` temporal phrase priors from the APB/AHB/AXI `IntentIR` artifacts; semantic phrase priors remain `0` on that corpus because the current canonical AMBA artifacts do not yet surface observation-backed semantic consensus strongly enough to promote
 - the KG benchmark harness can now also patch staged fixture inputs at `SourceIR` and `EvidenceIR`, which lets tracked fixtures model richer protocol-semantics cases like contested handshake-role evidence without needing an external PDF corpus for every regression
 - `specforge kg-bench` can now also assert canonical semantic candidate and arbitration state directly, so fixtures can lock whether a signal meaning is decisively grounded or still honestly contested instead of inferring that only from side effects like blocked fallbacks or validator findings
 - `specforge kg-bench` can now also patch `SourceIR` visual assets and assert persisted validation metric values directly at the evidence, semantic, and intent stages, which lets tracked fixtures lock cross-modality grounding behavior and VLM-note-derived semantics instead of only checking canonical structure or finding ids
@@ -100,7 +106,7 @@ Use it first for the project objective, document navigation, and the current imp
   - `IntentIR`
   - typed adapter lowering
 - the first real `.fsm` adapter slices now materialize typed adapter artifacts, emit explicit standalone `?dt:name` text for honest canonical DT cases, emit structured `?fsm:name` text when the canonical state graph is explicit, emit explicit `?top:name` source documents when module/top composition facts are explicit, lower canonical symbol-definition sections, structured reset-role blocks, selector/test-node branches, and compound-update shorthand from the widened semantic model when those canonical shapes map directly into `.fsm`, keep reset polarity honest through the reset signal name because emitted `.fsm` text still carries only `sreset` / `asreset` plus the signal, keep unsupported selector predicates and other unsafe broader-root cases blocked with explicit residual decisions instead of fabricating target syntax, and intentionally keep compatibility-level `?mod:name` / `?module:name` spellings outside the current canonical root-kind model until a real backend-neutral direct-module distinction exists
-- the next implementation milestone is semantic-truthfulness hardening: finish the remaining graph-first direction migration, broaden the new meaning-based role inference beyond signal-description tables plus initial prose/alias grounding into richer multimodal grounding, deepen the temporal-rule surface into richer temporal arbitration across modalities and actors, add KG-guided rescans and evidence arbitration, then add a separate cross-document learning plane so the extractor can accumulate reusable priors without contaminating per-document canonical truth; adapter expansion remains horizon work until the canonical four-layer pipeline is top-notch
+- the next implementation milestone is semantic-truthfulness hardening: finish the remaining graph-first direction migration, broaden the new meaning-based role inference beyond signal-description tables plus initial prose/alias grounding into richer multimodal grounding, deepen the temporal-rule surface into richer temporal arbitration across modalities and actors, add KG-guided rescans and evidence arbitration, and now broaden the first cross-document learning plane so the extractor can accumulate reusable priors without contaminating per-document canonical truth; adapter expansion remains horizon work until the canonical four-layer pipeline is top-notch
 - that truthfulness program now includes a tracked KG benchmark surface under `crates/specforge/test_data/kg_quality/`, with seed gold and negative fixtures for actor ports, name-only semantic noise rejection, multi-producer conflict surfacing, actor-boundary residual quality, contested handshake-name fallback blocking, alias-dependent handshake-completion caveats, both positive and negative direct VLM timing-note semantic grounding, same-asset visual semantic conflict surfacing, AMBA-style `Source`-column and `Destination`-column gold fixtures, representative APB `Requester` / `Completer` and setup/access timing gold fixtures, representative AXI width-only plus prose-direction and next-cycle timing gold fixtures, representative AHB section-heading and wait-state timing gold fixtures, a bogus-actor-attribution negative fixture for `Source`-column infrastructure rows, a field-table misclassification negative fixture, and a spurious-timing negative fixture proving low-value VLM annotation labels like `T0` and `Addr 1` do not become timing constraints
 
 ## Working naming
@@ -259,6 +265,7 @@ cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json -
 cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --target fsm --dry-run
 cargo run -p specforge -- project-validation generated/intent_ir/readme/intent_ir.json
 cargo run -p specforge -- kg-bench
+cargo run -p specforge -- learn-priors generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json generated/intent_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/intent_ir.json generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json
 ```
 - `specforge ingest <source> --dry-run` prints computed `SourceIR` JSON without writing artifacts
 - `specforge ingest <source>` materializes `generated/source_ir/<document_key>/source_ir.json`
@@ -273,6 +280,7 @@ cargo run -p specforge -- kg-bench
 - `specforge converge <source> --target fsm` materializes the loop-backed pipeline entrypoint, defaults to full Ollama VLM + NLP Level 3 enrichment, and stops when `SourceIR`/`EvidenceIR`/`SemanticIR`/`IntentIR`/adapter facts stop changing
 - `specforge project-validation <artifact>...` validates the passed artifacts, persists their latest reports, refreshes `VALIDATION_SNAPSHOT.md`, and updates the managed validation projection block in `LIVE_ACHIEVEMENT_STATUS.md`
 - `specforge kg-bench` runs the tracked fixture set under `crates/specforge/test_data/kg_quality/` and fails if any gold/negative KG expectation drifts
+- `specforge learn-priors <intent-ir>...` builds a local `CorpusMemory` JSON file from validated `IntentIR` artifacts, scoped to reusable extraction priors rather than document facts; by default it writes `generated/prior_memory/corpus_memory.json`
 - PDF execute-mode ingest expects `docling` to be importable from `python3` or `python`; when it lives elsewhere, set `SPECFORGE_DOCLING_PYTHON=/path/to/python`
 
 ## Planned product shape

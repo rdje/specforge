@@ -21,6 +21,7 @@ pub fn run(cli: Cli) -> Result<()> {
         Commands::Validate(args) => commands::validate::run(args),
         Commands::ProjectValidation(args) => commands::project_validation::run(args),
         Commands::KgBench(args) => commands::kg_bench::run(args),
+        Commands::LearnPriors(args) => commands::learn_priors::run(args),
         Commands::NlpEnrich(args) => commands::nlp_enrich::run(args),
     }
 }

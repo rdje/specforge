@@ -17,6 +17,7 @@
   - `validate`
   - `kg-bench`
   - `project-validation`
+  - `learn-priors`
   - `nlp-enrich`
 - the canonical product boundary remains `IntentIR`, not `.fsm`
 - the staged pipeline is operational through `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
@@ -26,9 +27,9 @@
 - `SemanticIR` now lifts that evidence into interfaces, explicit interface-signal conflict records for conflicting direction/width evidence, actor-relative port/connectivity records, explicit signal-connectivity conflict records for unresolved multi-producer ambiguity, system/reset/init records, control/state records, timing/register records, and filtered NLP constraints, with VLM observations merged into the semantic surface
 - `IntentIR` now carries forward the canonical signal/control/system/state/register/timing surface plus the actor-relative KG needed for honest downstream lowering
 - the current `.fsm` adapter slice is real and intentionally narrow: it can emit honest `?dt:name`, `?fsm:name`, and `?top:name` outputs when the canonical facts are explicit enough
-- the enrichment, convergence, validation, and benchmark toolchain is also real: `specforge enrich`, `specforge nlp-enrich`, `specforge converge`, `specforge validate`, and `specforge kg-bench` are wired into the CLI and exercised by the workspace tests
+- the enrichment, convergence, validation, benchmark, and first prior-learning toolchain is also real: `specforge enrich`, `specforge nlp-enrich`, `specforge converge`, `specforge validate`, `specforge kg-bench`, and `specforge learn-priors` are wired into the CLI and exercised by the workspace tests
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and eventually adding a separate cross-document prior-learning plane that can improve extraction without leaking facts across documents; adapter expansion is now horizon work
-- the workspace currently validates with `cargo test --manifest-path Cargo.toml`, with 188 passing tests
+- the workspace currently validates with `cargo test --manifest-path Cargo.toml`, with 196 passing tests
 
 
 ## Session update (2026-04-04)
@@ -73,6 +74,11 @@
 - `SemanticIR` / `IntentIR` now also persist `signal_connectivity_conflicts` when the structural KG resolves multiple producers for the same signal, and `specforge validate` reports that producer ambiguity explicitly instead of leaving it implicit in connectivity vectors
 - `specforge validate` now writes deterministic stage-local `validation_report.json` sidecars and backannotates the current report into `validation_reports` on `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR`
 - `specforge project-validation <artifact>...` now refreshes `VALIDATION_SNAPSHOT.md` and the managed validation block in `LIVE_ACHIEVEMENT_STATUS.md` from persisted IR validation reports
+- `specforge learn-priors <intent_ir>...` now builds the first local typed `CorpusMemory` prior store under `generated/prior_memory/corpus_memory.json`, harvesting only from validated `IntentIR` artifacts and keeping the learning plane advisory-only
+- the first `R15f` slice currently learns:
+  - semantic-role phrase priors from decisive, non-alias-dependent canonical semantic consensus plus preserved observation text
+  - temporal-language phrase priors from canonical `temporal_rules` plus validated canonical `signal_constraints` / `conditional_rules`
+- the first live AMBA prior-memory run across AXI/APB/AHB `IntentIR` artifacts currently yields `222` temporal phrase priors and `0` semantic phrase priors, which is a useful honest signal that the prior store is already working while the canonical semantic-consensus surface on real artifacts still needs to deepen
 - `specforge converge` now excludes downstream adapter residual work from `knowledge_fact_count`, so fewer adapter residual decisions do not falsely trip the monotone-knowledge guard
 - `generated/` is now intentionally git-ignored and untracked, so local validation snapshots must be recorded in the live docs instead of relying on versioned artifacts
 - latest local validation snapshot is now APB 95/100 EXCELLENT, AHB 95/100 EXCELLENT, AXI 94/100 EXCELLENT
