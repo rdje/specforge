@@ -451,8 +451,9 @@
     - a stage-patched caveat fixture proving alias-dependent handshake completion stays usable while preserving its canonical residual/assumption trail
     - a stage-patched cross-modality gold fixture proving a semantic role can be grounded jointly by table and visual evidence while validation reports that stronger grounding explicitly
     - a stage-patched cross-modality negative fixture proving conflicting table and visual evidence stays contested, keeps visual grounding visible, and does not overclaim resolved cross-modality support
+    - a stage-patched VLM timing-note gold fixture proving a semantic hint can come from `vlm_timing_diagram_extraction` itself rather than only from captions, tables, or prose
   - fixture expectations can now assert canonical semantic candidates plus decisive vs non-decisive semantic arbitration directly, so the benchmark harness checks the truth-model state itself rather than only downstream residual/finding side effects
-  - fixture expectations can now also assert persisted validation metric values directly, and `SourceIR` fixture patches can now inject visual assets as well as tables, so the harness can lock cross-modality grounding behavior with tracked staged fixtures
+  - fixture expectations can now also assert persisted validation metric values directly at the evidence, semantic, and intent stages, and `SourceIR` fixture patches can now inject visual assets as well as tables, so the harness can lock cross-modality grounding behavior and VLM-note semantic provenance with tracked staged fixtures
 - remaining:
   - expand from seed fixtures to representative APB/AHB/AXI gold fixtures
   - add broader negative fixtures for bogus actor attribution, spurious timing extraction, table misclassification, and multimodal arbitration drift

@@ -270,6 +270,13 @@
 - so the benchmark contract should explicitly lock this distinction:
   - `with_visual_semantic_grounding` can still be non-zero when conflicting visual evidence is present
   - `with_cross_modality_semantic_grounding` must stay zero when arbitration is still non-decisive and no resolved consensus exists
+- the next useful tightening after caption-based multimodal fixtures is direct VLM-note provenance:
+  - a tracked gold fixture should be able to prove the semantic hint came from `vlm_timing_diagram_extraction`
+  - that requires evidence-stage validation assertions, not only semantic/intent checks, because downstream `with_visual_semantic_grounding` alone does not distinguish caption meaning from timing-note meaning
+  - once that fixture exists, the benchmark surface covers all three current visual semantic paths:
+    - caption-only grounding
+    - caption-versus-table multimodal arbitration
+    - direct VLM timing-note grounding
 - this is the right shape for `R15e`:
   - start with fixtures that protect truthfulness invariants
   - then grow toward APB/AHB/AXI protocol-grade gold suites and broader negative corpora

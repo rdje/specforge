@@ -22,18 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `8c8bdf4`
-- latest_commit_brief_message: `feat(quality): benchmark cross-modality grounding`
-- note: current uncommitted work adds a tracked multimodal negative fixture so table-versus-visual disagreement stays contested, keeps visual grounding visible, and does not overclaim resolved cross-modality support
+- latest_commit_hash: `4ff4657`
+- latest_commit_brief_message: `feat(quality): benchmark multimodal semantic conflicts`
+- note: current uncommitted work adds evidence-stage `kg-bench` validation expectations plus a tracked gold fixture proving semantic hints can come directly from `vlm_timing_diagram_extraction`
 
 ## Recent commit chain (last 5)
+- `4ff4657` feat(quality): benchmark multimodal semantic conflicts
 - `8c8bdf4` feat(quality): benchmark cross-modality grounding
 - `df03118` docs(roadmap): capture cross-document learning plane
 - `442a867` feat(quality): benchmark semantic arbitration
 - `7807fa0` feat(quality): benchmark alias-dependent caveats
-- `2bed722` feat(quality): patch staged kg fixtures
-- `8eee95d` feat(ir): carry polarity conflicts downstream
-- `f3c28cd` feat(evidence): prefer direct signal grounding over aliases
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -46,8 +44,8 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
-- added a tracked `cross_modality_semantic_conflict_negative` fixture that proves table and visual-caption disagreement stays canonically contested instead of collapsing into false cross-modality consensus
-- locked the validator nuance that conflicting multimodal evidence can still count as visual grounding while correctly not counting as resolved cross-modality grounding
+- added evidence-stage validation expectations to `specforge kg-bench`, so tracked fixtures can assert where a semantic hint originated before it is merged into downstream canonical grounding
+- added a tracked `vlm_timing_semantic_grounding_gold` fixture that proves semantic meaning can come directly from `vlm_timing_diagram_extraction` rather than caption text, tables, or prose
 - synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `USER_GUIDE.md`, `DEVELOPMENT_NOTES.md`, `CHANGES.md`, and `MEMORY.md` so the richer `R15e` harness shape is captured in the live docs
 - validation ran for this task:
   - `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` passed
@@ -56,7 +54,8 @@
 
 ## Current working tree before commit
 - modified tracked files currently include:
-  - `crates/specforge/test_data/kg_quality/cross_modality_semantic_conflict_negative/...`
+  - `crates/specforge/src/commands/kg_bench.rs`
+  - `crates/specforge/test_data/kg_quality/vlm_timing_semantic_grounding_gold/...`
   - `README.md`
   - `ROADMAP.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -68,8 +67,8 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the cross-modality KG benchmark slice
-2. expand the fixture harness toward broader multimodal negative cases and protocol-grade APB/AHB/AXI gold suites
+1. commit the VLM timing-note KG benchmark slice
+2. expand the fixture harness toward broader protocol-grade APB/AHB/AXI gold suites and harder multimodal/temporal negative cases
 3. keep finishing the current graph / temporal / arbitration / evaluation workstreams without weakening local truthfulness
 
 ## Remaining engineering gaps after this commit

@@ -1,0 +1,70 @@
+{
+  "name": "vlm_timing_semantic_grounding_gold",
+  "source": "source.md",
+  "source_ir_patch": {
+    "visual_assets": [
+      {
+        "asset_id": "figure_vlm_xack",
+        "asset_kind": "diagram",
+        "page_id": "page_0001",
+        "image_path": null,
+        "caption_text": "Figure 3: Transfer timing.",
+        "caption_source_path": null,
+        "source_ref": null,
+        "placeholder_text": null,
+        "note": "vlm_timing_diagram_extraction: ```json\n{\n  \"signals\": [{\"name\": \"XACK\", \"values\": [{\"cycle\": \"T1\", \"state\": \"HIGH\"}]}],\n  \"annotations\": [\n    \"XACK indicates that the subordinate can accept the transfer.\"\n  ]\n}\n```",
+        "diagram_kind": "timing_diagram"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["XACK"],
+      "semantic_candidate_signal_names_include": ["XACK"],
+      "semantic_arbitration_signal_names_include": ["XACK"],
+      "decisive_semantic_arbitration_signal_names_include": ["XACK"],
+      "non_decisive_semantic_arbitration_signal_names_exclude": ["XACK"],
+      "resolved_semantic_role_signal_names_include": ["XACK"],
+      "semantic_consensus_signal_names_include": ["XACK"]
+    },
+    "intent": {
+      "signal_names_include": ["XACK"],
+      "semantic_candidate_signal_names_include": ["XACK"],
+      "semantic_arbitration_signal_names_include": ["XACK"],
+      "decisive_semantic_arbitration_signal_names_include": ["XACK"],
+      "non_decisive_semantic_arbitration_signal_names_exclude": ["XACK"],
+      "resolved_semantic_role_signal_names_include": ["XACK"],
+      "semantic_consensus_signal_names_include": ["XACK"]
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "signal_semantic_hints": "1",
+          "signal_semantic_hints_from_tables": "0",
+          "signal_semantic_hints_from_prose": "0",
+          "signal_semantic_hints_from_alias_grounded_prose": "0",
+          "signal_semantic_hints_from_visual_captions": "0",
+          "signal_semantic_hints_from_vlm_timing_annotations": "1"
+        }
+      },
+      "semantic": {
+        "metric_values": {
+          "with_semantic_consensus": "1",
+          "with_decisive_semantic_arbitration": "1",
+          "with_single_source_semantic_grounding": "1",
+          "with_cross_modality_semantic_grounding": "0",
+          "with_visual_semantic_grounding": "1"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "with_semantic_consensus": "1",
+          "with_decisive_semantic_arbitration": "1",
+          "with_single_source_semantic_grounding": "1",
+          "with_cross_modality_semantic_grounding": "0",
+          "with_visual_semantic_grounding": "1"
+        }
+      }
+    }
+  }
+}

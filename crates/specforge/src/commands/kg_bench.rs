@@ -128,6 +128,8 @@ struct ExpectedActorPort {
 #[derive(Debug, Default, Deserialize)]
 struct ValidationExpectations {
     #[serde(default)]
+    evidence: Option<ValidationStageExpectations>,
+    #[serde(default)]
     semantic: Option<ValidationStageExpectations>,
     #[serde(default)]
     intent: Option<ValidationStageExpectations>,
@@ -253,6 +255,25 @@ fn run_fixture(fixture_path: &Path) -> Result<FixtureOutcome> {
             .extend(patch.signal_constraints.iter().cloned());
     }
     evidence_ir.write_to_disk()?;
+    let evidence_report = if fixture
+        .expectations
+        .validation
+        .as_ref()
+        .and_then(|expectations| expectations.evidence.as_ref())
+        .is_some()
+    {
+        validate::run(ValidateArgs {
+            artifact: evidence_ir.artifact_layout.evidence_ir_path.clone(),
+        })?;
+        let reloaded = EvidenceIr::load_from_path(&evidence_ir.artifact_layout.evidence_ir_path)?;
+        Some(latest_validation_report(
+            &reloaded.validation_reports,
+            "EvidenceIR",
+            &evidence_ir.artifact_layout.evidence_ir_path,
+        )?)
+    } else {
+        None
+    };
     let semantic_ir = semantic::SemanticIr::build(
         &evidence_ir.artifact_layout.evidence_ir_path,
         &semantic_ir_root,
@@ -339,6 +360,16 @@ fn run_fixture(fixture_path: &Path) -> Result<FixtureOutcome> {
         );
     }
     if let Some(expectations) = fixture.expectations.validation.as_ref() {
+        if let Some(stage) = expectations.evidence.as_ref() {
+            evaluate_validation_expectations(
+                "evidence_validation",
+                stage,
+                evidence_report
+                    .as_ref()
+                    .expect("evidence report should exist"),
+                &mut failures,
+            );
+        }
         if let Some(stage) = expectations.semantic.as_ref() {
             evaluate_validation_expectations(
                 "semantic_validation",

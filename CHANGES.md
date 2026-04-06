@@ -145,6 +145,23 @@
 - `cargo fmt --all` → passed
 - `cargo test --manifest-path Cargo.toml` → 188/188 passed
 
+## 2026-04-06 (KG benchmark now locks direct VLM-note semantics)
+
+### Added: evidence-stage validation expectations in `specforge kg-bench`
+- `specforge kg-bench` fixtures can now assert persisted validation metrics at the `EvidenceIR` stage, not only at `SemanticIR` and `IntentIR`.
+- This lets tracked regressions prove exactly where a semantic hint came from when downstream visual-grounding metrics would be too coarse.
+
+### Added: direct VLM timing-note semantic-grounding gold fixture
+- Added `crates/specforge/test_data/kg_quality/vlm_timing_semantic_grounding_gold/`.
+- The fixture patches a timing-diagram `VisualAsset.note` with `vlm_timing_diagram_extraction` content and proves:
+  - `EvidenceIR` reports `signal_semantic_hints_from_vlm_timing_annotations = 1`
+  - `EvidenceIR` reports `signal_semantic_hints_from_visual_captions = 0`
+  - downstream `SemanticIR` / `IntentIR` still resolve the signal meaning with visual grounding
+
+### Why this matters
+- The benchmark harness now locks direct image-note-derived meaning explicitly instead of only checking downstream visual-grounding side effects.
+- This closes an important quality gap in `R15e`: tracked fixture coverage now reaches caption grounding, caption-versus-table arbitration, and direct VLM timing-note grounding.
+
 ## 2026-04-06 (tracked KG-quality benchmark harness landed)
 
 ### Added: `specforge kg-bench` command
