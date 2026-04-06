@@ -114,6 +114,16 @@
 - the current local AMBA validation baseline is APB 95/100, AHB 95/100, AXI 94/100 after full original-PDF converge runs with Ollama
 - AXI `IHI0022_L` now converges cleanly in 2 outer passes; the old false failure was caused by counting decreasing adapter residual decisions against the monotone knowledge metric
 
+## GitHub CI baseline
+- repository-hosted CI is now part of the project baseline rather than an optional afterthought
+- the GitHub Actions workflow mirrors the local Rust gate exactly:
+  - `cargo fmt --all --check`
+  - `cargo test --manifest-path Cargo.toml`
+- this keeps push-time validation honest without inventing a different hosted workflow contract from the one used during local task completion
+- future CI expansion should stay conservative and provenance-friendly:
+  - add checks only when they are already trusted locally
+  - prefer promoting existing quality gates over creating parallel shadow gates
+
 ## Roadmap reassessment: semantic truthfulness before adapters
 - the current roadmap spine is correct: `IntentIR` remains the canonical boundary, the four-layer IR split remains the right architecture, and multimodal evidence remains the right extraction strategy
 - the next phase should now be framed explicitly as semantic-truthfulness hardening, because the dominant risk is no longer "can we lower to more targets?" but "how trustworthy is the recovered knowledge?"

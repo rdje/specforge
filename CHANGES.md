@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-04-06 (GitHub Actions CI baseline established)
+
+### Added: repo-hosted Rust CI on `push` / `pull_request`
+- Added [.github/workflows/ci.yml](/Users/richarddje/Documents/github/specforge/.github/workflows/ci.yml), a GitHub Actions workflow that installs Rust `1.89.0`, caches Cargo artifacts, and runs the same baseline Rust gate used locally:
+  - `cargo fmt --all --check`
+  - `cargo test --manifest-path Cargo.toml`
+
+### Why this matters
+- The project now has a real hosted validation path instead of relying only on local discipline before commits and pushes.
+- The CI contract stays intentionally narrow and trustworthy by mirroring the commands already used as the canonical local gate.
+- This also closes a repository-bootstrap gap: the new GitHub repo now validates Rust changes automatically on every push and pull request.
+
+### Validation
+- `cargo fmt --all --check` → passed
+- `cargo test --manifest-path Cargo.toml` → passed
+
 ## 2026-04-06 (first typed cross-document prior store landed)
 
 ### Added: `specforge learn-priors <intent_ir>...`

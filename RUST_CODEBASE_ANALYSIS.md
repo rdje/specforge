@@ -28,6 +28,7 @@
 - `IntentIR` now carries forward the canonical signal/control/system/state/register/timing surface plus the actor-relative KG needed for honest downstream lowering
 - the current `.fsm` adapter slice is real and intentionally narrow: it can emit honest `?dt:name`, `?fsm:name`, and `?top:name` outputs when the canonical facts are explicit enough
 - the enrichment, convergence, validation, benchmark, and first prior-learning toolchain is also real: `specforge enrich`, `specforge nlp-enrich`, `specforge converge`, `specforge validate`, `specforge kg-bench`, and `specforge learn-priors` are wired into the CLI and exercised by the workspace tests
+- GitHub Actions CI is now part of the repo baseline and runs `cargo fmt --all --check` plus `cargo test --manifest-path Cargo.toml` on every `push` and `pull_request`, which keeps the hosted validation path aligned with the local Rust quality gate
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and eventually adding a separate cross-document prior-learning plane that can improve extraction without leaking facts across documents; adapter expansion is now horizon work
 - the workspace currently validates with `cargo test --manifest-path Cargo.toml`, with 196 passing tests
 

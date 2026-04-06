@@ -2,6 +2,7 @@
 ## Current snapshot
 - Git repository initialized: Done
 - Commit workflow document present and reviewed: Done
+- GitHub Actions CI for Rust formatting/tests on `push` and `pull_request`: Done
 - README single-entrypoint contract established: Done
 - SESSION_BOOTSTRAP handoff contract established: Done
 - Core live-document surface established: Done
@@ -107,12 +108,12 @@
 - KG benchmark harness now locks spurious VLM timing-annotation rejection: Done
 - KG benchmark harness can now assert canonical actor-signal relations directly: Done
 - KG benchmark harness can now patch `document_sections` and assert per-signal directions directly: Done
-- Test suite expanded to 192 tests; all passing: Done
+- Test suite expanded to 196 tests; all passing: Done
 - Explicit clock-tick temporal model in `SemanticIR` / `IntentIR`: In Progress
 - KG-guided multimodal rescans as a first-class convergent workstream: In Progress
 - Cross-modality evidence arbitration / conflict handling: In Progress
 - KG-quality evaluation with gold fixtures and negative fixtures: In Progress
-- Cross-document extraction learning plane with typed reusable priors: Not Started
+- Cross-document extraction learning plane with typed reusable priors: In Progress
 - SystemVerilog/Verilog/VHDL adapter expansion: Horizon
 - Adapter validation (SystemVerilog/Verilog/VHDL targets): Horizon
 - Actor-relative direction model in `SemanticIR` / `IntentIR`: In Progress

@@ -40,6 +40,7 @@ Use it first for the project objective, document navigation, and the current imp
 - `specforge project-validation <artifact>...` now validates the passed artifacts and refreshes the tracked validation snapshot docs from their persisted reports
 - `specforge kg-bench` now runs tracked KG-quality fixtures through the staged pipeline, so gold expectations, negative expectations, residual quality, and conflict surfacing can be checked explicitly instead of relying only on aggregate scores
 - `specforge learn-priors <intent-ir>...` now builds a local typed `CorpusMemory` prior store under `generated/prior_memory/corpus_memory.json`, harvesting only from validated `IntentIR` artifacts and keeping the learning plane advisory-only
+- GitHub Actions CI now runs `cargo fmt --all --check` and `cargo test --manifest-path Cargo.toml` on every `push` and `pull_request`, so the local Rust quality gate is mirrored automatically on GitHub
 - the first `R15f` slice currently learns two safe prior families:
   - semantic-role phrase priors from decisive, non-alias-dependent semantic consensus plus preserved observation text
   - temporal-language phrase priors from canonical temporal rules and validated canonical `signal_constraints` / `conditional_rules`
@@ -158,6 +159,7 @@ Use it first for the project objective, document navigation, and the current imp
 - `COMMIT.md`
   - exact commit workflow and commit-time reporting requirements
 - `.gitmodules`
+- `.github/workflows/ci.yml`
   - git submodule manifest for pinned local reference dependencies
 
 ## Project file and directory map
@@ -176,6 +178,8 @@ Use it first for the project objective, document navigation, and the current imp
 - `COMMIT.md`
 - `.gitignore`
 - `.gitmodules`
+- `.github/workflows/ci.yml`
+  - GitHub Actions CI workflow for Rust formatting and test validation on `push` and `pull_request`
 
 ### Local-only workflow paths
 - `git_message_brief.txt`
