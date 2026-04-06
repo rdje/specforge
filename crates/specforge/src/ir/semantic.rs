@@ -7036,7 +7036,7 @@ fn parse_timing_diagram_observation(
     if let Some(annotations) = value.get("annotations").and_then(|a| a.as_array()) {
         for (idx, annotation) in annotations.iter().enumerate() {
             let text = annotation.as_str().unwrap_or_default().trim();
-            if text.is_empty() {
+            if text.is_empty() || is_spurious_timing_annotation_label(text) {
                 continue;
             }
             records.push(TimingConstraintRecord {
@@ -7055,6 +7055,64 @@ fn parse_timing_diagram_observation(
 
     // Each signal cycle pair adds context but no single-value record for now.
     // Future: extract "HCLK stays HIGH for 3 cycles" patterns into TimingConstraintRecord.
+}
+
+fn is_spurious_timing_annotation_label(text: &str) -> bool {
+    let trimmed = text.trim();
+    if trimmed.is_empty() {
+        return true;
+    }
+
+    if is_timing_cycle_marker_token(trimmed) {
+        return true;
+    }
+
+    let tokens = trimmed
+        .split(|character: char| !character.is_ascii_alphanumeric())
+        .filter(|token| !token.is_empty())
+        .collect::<Vec<_>>();
+    if tokens.is_empty() {
+        return true;
+    }
+
+    tokens.len() <= 3
+        && tokens
+            .iter()
+            .all(|token| is_generic_waveform_label_token(token))
+}
+
+fn is_timing_cycle_marker_token(token: &str) -> bool {
+    let token = token.trim();
+    token.len() >= 2
+        && token
+            .strip_prefix('T')
+            .or_else(|| token.strip_prefix('t'))
+            .map(|suffix| !suffix.is_empty() && suffix.chars().all(|c| c.is_ascii_digit()))
+            .unwrap_or(false)
+}
+
+fn is_generic_waveform_label_token(token: &str) -> bool {
+    let lowered = token.trim().to_ascii_lowercase();
+    if lowered.is_empty() {
+        return false;
+    }
+
+    lowered.chars().all(|character| character.is_ascii_digit())
+        || is_timing_cycle_marker_token(&lowered)
+        || matches!(
+            lowered.as_str(),
+            "addr"
+                | "address"
+                | "data"
+                | "phase"
+                | "transfer"
+                | "beat"
+                | "cycle"
+                | "slot"
+                | "wait"
+                | "lane"
+                | "channel"
+        )
 }
 
 /// Parse a `StateMachineExtraction` JSON observation into state and transition records.
@@ -8171,6 +8229,54 @@ mod tests {
                     .unwrap_or(false)
             }),
             "expected timing constraint from fenced VLM annotation"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn vlm_timing_diagram_observation_rejects_label_only_noise() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("timing_noise_spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(&source, "# Timing\nSignal XREQ is input width 1.\n")?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.visual_assets.push(VisualAsset {
+            asset_id: "picture_0004".to_string(),
+            asset_kind: VisualAssetKind::Diagram,
+            page_id: Some("page_0001".to_string()),
+            image_path: None,
+            caption_text: Some("Figure 3-3 Transfer timing".to_string()),
+            caption_source_path: None,
+            source_ref: None,
+            placeholder_text: None,
+            note: Some(
+                "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"T0\",\"state\":\"LOW\"},{\"cycle\":\"T1\",\"state\":\"HIGH\"}]}],\"annotations\":[\"T0\",\"Addr 1\",\"Cycle 2\"]}"
+                    .to_string(),
+            ),
+            diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        assert!(
+            semantic_ir.timing_constraints.is_empty(),
+            "label-only timing annotations must not become timing constraints: {:?}",
+            semantic_ir.timing_constraints
         );
 
         Ok(())

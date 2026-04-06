@@ -457,11 +457,12 @@
     - a first representative AMBA-style gold fixture proving `Source`-column signal tables recover driver-side actor ports, table-grounded semantic request/accept roles, and typed handshake completion from a guarded constraint
     - a negative fixture proving `Clock` / `Reset` infrastructure rows in AMBA-style `Source` columns do not become bogus protocol actors while real requester/subordinate rows still recover driver-side actor ports and semantic role grounding
     - a negative fixture proving a misclassified `Bits | Name | Description` field table does not synthesize fake top-level signals or semantic roles from field names like `REQ` / `ACK`
+    - a negative fixture proving low-value VLM timing-diagram annotation labels like `T0`, `Addr 1`, and `Cycle 2` do not become timing constraints or temporal rules while the underlying timing extraction still remains visible at the evidence stage
   - fixture expectations can now assert canonical semantic candidates plus decisive vs non-decisive semantic arbitration directly, so the benchmark harness checks the truth-model state itself rather than only downstream residual/finding side effects
   - fixture expectations can now also assert persisted validation metric values directly at the evidence, semantic, and intent stages, and `SourceIR` fixture patches can now inject visual assets as well as tables, so the harness can lock cross-modality grounding behavior and VLM-note semantic provenance with tracked staged fixtures
 - remaining:
   - expand from seed fixtures to representative APB/AHB/AXI gold fixtures
-  - add broader negative fixtures for spurious timing extraction and multimodal arbitration drift
+  - add broader negative fixtures for multimodal arbitration drift and richer timing-annotation edge cases beyond the new low-value label filter
   - add broader metric-oriented expectation surfaces once the current canonical+metric fixture layer stabilizes
 
 ### R15f Cross-document extraction learning plane

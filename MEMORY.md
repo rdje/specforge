@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `7c1cfec`
-- latest_commit_brief_message: `feat(quality): benchmark amba source-column gold path`
-- note: the current session hardens table-driven top-level signal synthesis so misclassified `Bits | Name | Description` field tables do not create fake signals or semantic roles, and adds a tracked negative fixture for that path
+- latest_commit_hash: `858f4a8`
+- latest_commit_brief_message: `feat(evidence): reject misclassified field tables`
+- note: the current session hardens semantic timing lift so low-value VLM labels like `T0` and `Addr 1` do not become timing constraints, and adds a tracked negative fixture for that path
 
 ## Recent commit chain (last 5)
+- `858f4a8` feat(evidence): reject misclassified field tables
 - `cb9d7b2` feat(evidence): reject bogus source-column actors
 - `7c1cfec` feat(quality): benchmark amba source-column gold path
 - `1d198fe` feat(quality): benchmark visual semantic conflicts
 - `94f7826` feat(quality): benchmark vlm timing-note noise rejection
-- `9e39971` feat(quality): benchmark vlm timing-note grounding
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -44,21 +44,21 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
-- hardened table-driven top-level signal synthesis so field-like `Bits | Name | Description` layouts and `... signal fields` captions do not create fake top-level signals or semantic roles when a table is misclassified upstream as `signal_description`
-- added a tracked `table_misclassification_field_table_negative` fixture that proves field names like `REQ` / `ACK` stay out of the canonical signal model and semantic-role surface
-- added a direct unit regression proving a misclassified field table does not synthesize fake declarations, semantic hints, or actor relations
+- hardened semantic timing lift so low-value VLM labels like `T0`, `Addr 1`, and `Cycle 2` do not create `TimingConstraintRecord` or `TemporalRuleRecord` entries
+- added a tracked `vlm_timing_spurious_annotation_negative` fixture that proves evidence-stage timing extraction survives while semantic and intent timing stay empty
+- added a direct unit regression proving label-only VLM timing annotations are rejected as canonical timing semantics
 - synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `USER_GUIDE.md`, `DEVELOPMENT_NOTES.md`, `CHANGES.md`, and `MEMORY.md` so the richer `R15e` harness shape is captured in the live docs
 - validation ran for this task:
-  - `cargo test --manifest-path Cargo.toml misclassified_field_table_does_not_synthesize_fake_signal_semantics -- --nocapture` passed
-  - `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality table_misclassification_field_table_negative` passed
+  - `cargo test --manifest-path Cargo.toml vlm_timing_diagram_observation_rejects_label_only_noise -- --nocapture` passed
+  - `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality vlm_timing_spurious_annotation_negative` passed
   - `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` passed
   - `cargo fmt --all` passed
-  - `cargo test --manifest-path Cargo.toml` passed with `191/191`
+  - `cargo test --manifest-path Cargo.toml` passed with `192/192`
 
 ## Current working tree before commit
 - modified tracked files currently include:
-  - `crates/specforge/src/ir/evidence.rs`
-  - `crates/specforge/test_data/kg_quality/table_misclassification_field_table_negative/...`
+  - `crates/specforge/src/ir/semantic.rs`
+  - `crates/specforge/test_data/kg_quality/vlm_timing_spurious_annotation_negative/...`
   - `README.md`
   - `ROADMAP.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -70,9 +70,9 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. expand the fixture harness toward broader protocol-grade APB/AHB/AXI gold suites and the remaining spurious-timing negatives
-2. keep finishing the current graph / temporal / arbitration / evaluation workstreams without weakening local truthfulness
-3. keep the live docs aligned whenever a new truthfulness slice lands
+1. commit the semantic timing-noise rejection slice with the synced live docs
+2. expand the fixture harness toward broader protocol-grade APB/AHB/AXI gold suites and the remaining multimodal arbitration negatives
+3. keep the live docs aligned whenever the next truthfulness slice lands
 
 ## Remaining engineering gaps after this commit
 - remaining actor-relative direction modeling in `SemanticIR` / `IntentIR` (`R15`)

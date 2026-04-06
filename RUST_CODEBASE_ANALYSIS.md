@@ -97,6 +97,7 @@
   - a first representative AMBA-style gold fixture that proves `Source`-column signal-description tables can recover driver-side actor ports plus semantic handshake meaning strongly enough to derive a typed `HandshakeComplete` guard from one constraint
   - a bogus-actor-attribution negative fixture that proves `Clock` / `Reset` infrastructure rows in AMBA-style `Source` columns do not become protocol actors while the true requester/subordinate rows still survive canonically
   - a field-table misclassification negative fixture that proves a misclassified `Bits | Name | Description` table does not synthesize fake top-level signals or semantic roles from field names that merely look signal-like
+  - a spurious-timing negative fixture that proves low-value VLM timing-diagram labels like `T0`, `Addr 1`, and `Cycle 2` still count as timing-diagram extraction at the evidence stage but do not survive into `TimingConstraintRecord` or `TemporalRuleRecord`
 - the harness now also asserts canonical semantic candidates and decisive-vs-contested semantic arbitration directly, which is a better `R15e` truthfulness check than inferring arbitration quality only from blocked fallback or validation side effects
 - the harness now also asserts persisted validation metric values directly at the evidence, semantic, and intent stages and can patch `SourceIR` visual assets, which makes tracked cross-modality grounding and VLM-note provenance checks practical instead of leaving them to ad hoc unit tests
 - table-based relation extraction itself is also less lossy now:
@@ -106,6 +107,9 @@
 - table-driven top-level signal synthesis is also less lossy now:
   - field-like `Bits | Name | Description` layouts are rejected even if they were misclassified upstream as `signal_description`
   - that guard now protects fake-signal leakage across declarations, semantic hints, and related table-driven inference paths
+- timing-diagram lifting is also less noisy now:
+  - label-only VLM annotations such as `T0`, `Addr 1`, and `Cycle 2` are treated as waveform labels, not as timing semantics
+  - the semantic lift now keeps the timing extraction visible upstream while refusing to fabricate canonical timing constraints from those low-value labels alone
 - that negative multimodal fixture also locks an important nuance in the validation surface:
   - conflicting multimodal evidence should still count as visual grounding
   - but it must not count as resolved cross-modality grounding

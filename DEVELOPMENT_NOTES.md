@@ -312,6 +312,11 @@
   - if that happens, field names like `REQ` / `ACK` must not become fake top-level protocol signals or semantic roles
   - the correct fix is a table-level sanity gate that protects every table-driven top-level-signal path together, not one-off filters in just the semantic-hint extractor
   - that negative path is now important enough to stay locked in the tracked benchmark suite
+- the next timing-truthfulness step after field-table rejection is spurious annotation rejection:
+  - VLM timing-diagram output often includes low-value labels like `T0`, `Addr 1`, `Cycle 2`, lane markers, or other waveform annotations that are useful as figure markup but not meaningful timing semantics
+  - the semantic lift must keep the underlying timing-diagram extraction visible in `EvidenceIR`
+  - but it must not promote those label-only annotations into canonical `TimingConstraintRecord` or `TemporalRuleRecord`
+  - the right shape is a narrow label/noise filter at the timing-lift boundary plus a tracked negative fixture that proves the evidence-stage extraction survives while semantic/intent timing stays at zero
 - this is the right shape for `R15e`:
   - start with fixtures that protect truthfulness invariants
   - then grow toward APB/AHB/AXI protocol-grade gold suites and broader negative corpora

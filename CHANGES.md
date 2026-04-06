@@ -1,5 +1,26 @@
 # CHANGES
 
+## 2026-04-06 (KG fixtures now lock spurious timing-annotation rejection)
+
+### Added: spurious timing-annotation negative fixture
+- Added a tracked staged fixture proving that low-value VLM timing-diagram labels like `T0`, `Addr 1`, and `Cycle 2` remain visible as timing-diagram extraction at the evidence stage but do not synthesize canonical timing constraints or temporal rules downstream.
+- The fixture locks `timing_diagram_extractions = 1` together with `timing_constraints = 0` and `temporal_rules = 0`, so the pipeline keeps the observation without overclaiming semantics.
+
+### Fixed: semantic timing lift now rejects label-only waveform noise
+- Added a narrow semantic-stage filter so label-only VLM timing annotations are treated as waveform labels instead of timing semantics.
+- This keeps the `EvidenceIR` timing observation honest while preventing `SemanticIR` / `IntentIR` from fabricating timing meaning from low-value annotation fragments alone.
+
+### Why this matters
+- Chip-spec timing diagrams often contain a mix of true behavioral annotations and low-value figure labels. The KG should learn from the former without hallucinating meaning from the latter.
+- This closes a real false-positive path in the multimodal timing lift and makes that truthfulness boundary executable in the tracked benchmark suite.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml vlm_timing_diagram_observation_rejects_label_only_noise -- --nocapture` → passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality vlm_timing_spurious_annotation_negative` → passed
+- `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` → passed
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 192/192 passed
+
 ## 2026-04-06 (KG fixtures now lock field-table misclassification rejection)
 
 ### Added: field-table misclassification negative fixture

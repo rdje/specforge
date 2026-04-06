@@ -95,7 +95,8 @@
 - KG benchmark harness now includes a first representative AMBA-style gold fixture: Done
 - KG benchmark harness now locks bogus actor-attribution rejection for `Source`-column infrastructure rows: Done
 - KG benchmark harness now locks field-table misclassification rejection: Done
-- Test suite expanded to 191 tests; all passing: Done
+- KG benchmark harness now locks spurious VLM timing-annotation rejection: Done
+- Test suite expanded to 192 tests; all passing: Done
 - Explicit clock-tick temporal model in `SemanticIR` / `IntentIR`: In Progress
 - KG-guided multimodal rescans as a first-class convergent workstream: In Progress
 - Cross-modality evidence arbitration / conflict handling: In Progress
