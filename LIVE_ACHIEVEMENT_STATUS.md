@@ -100,6 +100,7 @@
 - KG benchmark harness now includes an AXI next-cycle timing gold fixture: Done
 - Width-only synthesized signal declarations now survive into canonical `SemanticIR` / `IntentIR` signal records: Done
 - KG benchmark harness now includes an AHB-style section-heading gold fixture for direction recovery: Done
+- KG benchmark harness now includes an AHB wait-state timing gold fixture: Done
 - KG benchmark harness now locks bogus actor-attribution rejection for `Source`-column infrastructure rows: Done
 - KG benchmark harness now locks field-table misclassification rejection: Done
 - KG benchmark harness now locks spurious VLM timing-annotation rejection: Done
@@ -116,7 +117,7 @@
 - Actor-relative direction model in `SemanticIR` / `IntentIR`: In Progress
 
 ## Highest-priority remaining gap
-- Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then expand the new KG-quality harness from the current AMBA/APB/AHB plus expanding AXI gold suite into a broader AXI-focused suite plus richer remaining AHB timing fixtures and the remaining spurious-timing negatives while continuing multimodal grounding plus structural/temporal arbitration
+- Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then expand the new KG-quality harness from the current AMBA/APB/AHB plus richer timing gold suites into a broader AXI-focused suite plus remaining structured-constraint fixtures and the remaining spurious-timing negatives while continuing multimodal grounding plus structural/temporal arbitration
 
 ## Validation Projection
 

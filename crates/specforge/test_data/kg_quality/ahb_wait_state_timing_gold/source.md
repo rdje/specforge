@@ -1,0 +1,21 @@
+# AHB Wait State Timing
+
+Signal HCLK is input width 1.
+
+Clock HCLK.
+
+The Manager drives HADDR.
+
+The Subordinate samples HADDR.
+
+The Manager drives HTRANS.
+
+The Subordinate samples HTRANS.
+
+The Manager drives HSEL.
+
+The Subordinate samples HSEL.
+
+The Subordinate drives HREADY.
+
+The Manager samples HREADY.

@@ -1,0 +1,219 @@
+{
+  "name": "ahb_wait_state_timing_gold",
+  "source": "source.md",
+  "source_ir_patch": {
+    "document_sections": [
+      {
+        "section_id": "sec_ahb_manager_signals",
+        "title": "Manager signals",
+        "heading_level": 2,
+        "page_id": "page_0001",
+        "source_ref": null,
+        "reading_order": 1,
+        "section_kind": "signal_description"
+      },
+      {
+        "section_id": "sec_ahb_subordinate_signals",
+        "title": "Subordinate signals",
+        "heading_level": 2,
+        "page_id": "page_0002",
+        "source_ref": null,
+        "reading_order": 10,
+        "section_kind": "signal_description"
+      }
+    ],
+    "structured_tables": [
+      {
+        "table_id": "table_ahb_manager_timing_signals",
+        "asset_id": "table_ahb_manager_timing_signals",
+        "page_id": "page_0001",
+        "caption_text": null,
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            { "text": "Name", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Destination", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Width", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Description", "row_span": 1, "col_span": 1, "is_header": true }
+          ]
+        ],
+        "body_rows": [
+          [
+            { "text": "HADDR", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Subordinate", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "32", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Address bus.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "HTRANS", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Subordinate", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "2", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Transfer type bus.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "HSEL", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Subordinate", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Select signal.", "row_span": 1, "col_span": 1, "is_header": false }
+          ]
+        ],
+        "row_count": 3,
+        "col_count": 4
+      },
+      {
+        "table_id": "table_ahb_subordinate_timing_signals",
+        "asset_id": "table_ahb_subordinate_timing_signals",
+        "page_id": "page_0002",
+        "caption_text": null,
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            { "text": "Name", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Destination", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Width", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Description", "row_span": 1, "col_span": 1, "is_header": true }
+          ]
+        ],
+        "body_rows": [
+          [
+            { "text": "HREADY", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Manager", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Completion response from the subordinate.", "row_span": 1, "col_span": 1, "is_header": false }
+          ]
+        ],
+        "row_count": 1,
+        "col_count": 4
+      }
+    ]
+  },
+  "evidence_ir_patch": {
+    "signal_constraints": [
+      {
+        "constraint_id": "sigcon_ahb_hready_next_cycle",
+        "subject_signal": "HREADY",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": "when HSEL is HIGH",
+        "negated": false,
+        "source_text": "HREADY must be asserted on the next cycle when HSEL is HIGH.",
+        "supporting_statement_ids": ["stmt_ahb_hready_next_cycle"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_ahb_htrans_wait_hold",
+        "subject_signal": "HTRANS",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when HREADY is LOW and HSEL is HIGH",
+        "negated": false,
+        "source_text": "HTRANS must not change when HREADY is LOW and HSEL is HIGH.",
+        "supporting_statement_ids": ["stmt_ahb_htrans_wait_hold"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_ahb_haddr_wait_hold",
+        "subject_signal": "HADDR",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when HREADY is LOW and HSEL is HIGH",
+        "negated": false,
+        "source_text": "HADDR must not change when HREADY is LOW and HSEL is HIGH.",
+        "supporting_statement_ids": ["stmt_ahb_haddr_wait_hold"],
+        "automation_confidence": "medium"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["HADDR", "HTRANS", "HSEL", "HREADY"],
+      "signal_directions_include": [
+        { "signal_name": "HADDR", "direction": "output" },
+        { "signal_name": "HTRANS", "direction": "output" },
+        { "signal_name": "HSEL", "direction": "output" },
+        { "signal_name": "HREADY", "direction": "input" }
+      ],
+      "actor_signal_relations_include": [
+        { "actor_name": "Manager", "signal_name": "HADDR", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "HADDR", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "HTRANS", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "HTRANS", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "HSEL", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "HSEL", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "HREADY", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "HREADY", "relation": "reads" }
+      ],
+      "actor_ports_include": [
+        { "actor_name": "Manager", "signal_name": "HADDR", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "HADDR", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "HTRANS", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "HTRANS", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "HSEL", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "HSEL", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "HREADY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "HREADY", "direction": "input" }
+      ],
+      "temporal_rule_count": 3
+    },
+    "intent": {
+      "signal_names_include": ["HADDR", "HTRANS", "HSEL", "HREADY"],
+      "signal_directions_include": [
+        { "signal_name": "HADDR", "direction": "output" },
+        { "signal_name": "HTRANS", "direction": "output" },
+        { "signal_name": "HSEL", "direction": "output" },
+        { "signal_name": "HREADY", "direction": "input" }
+      ],
+      "actor_signal_relations_include": [
+        { "actor_name": "Manager", "signal_name": "HADDR", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "HADDR", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "HTRANS", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "HTRANS", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "HSEL", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "HSEL", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "HREADY", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "HREADY", "relation": "reads" }
+      ],
+      "actor_ports_include": [
+        { "actor_name": "Manager", "signal_name": "HADDR", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "HADDR", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "HTRANS", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "HTRANS", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "HSEL", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "HSEL", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "HREADY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "HREADY", "direction": "input" }
+      ],
+      "temporal_rule_count": 3
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "actor_signal_relations": "8",
+          "signal_constraints": "3"
+        }
+      },
+      "semantic": {
+        "metric_values": {
+          "actor_ports": "8",
+          "temporal_rules": "3",
+          "temporal_rules_with_cycle_window": "1",
+          "temporal_rules_with_actor_grounding": "3",
+          "temporal_rules_with_multi_predicate_antecedents": "2",
+          "temporal_rules_with_handshake_completion": "0"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "actor_ports": "8",
+          "temporal_rules": "3",
+          "temporal_rules_with_cycle_window": "1",
+          "temporal_rules_with_actor_grounding": "3",
+          "temporal_rules_with_multi_predicate_antecedents": "2",
+          "temporal_rules_with_handshake_completion": "0"
+        }
+      }
+    }
+  }
+}

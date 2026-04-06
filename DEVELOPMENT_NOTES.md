@@ -352,6 +352,20 @@
     - all temporal rules are actor-grounded from requester/completer ownership
     - multi-predicate guards survive canonically instead of flattening
     - handshake completion still appears only in the completion-phase guard, not in the wait-state guard
+- the next AHB timing benchmark after the section-heading direction slice should lock wait-state timing on the same family-specific evidence path:
+  - keep `Manager signals` / `Subordinate signals` section-heading context
+  - keep `Destination`-column signal tables so AHB still relies on its family-specific direction cues rather than a generic source column
+  - add explicit actor relations in prose for `HADDR`, `HTRANS`, `HSEL`, and `HREADY` so temporal grounding can attach to real producers and consumers
+  - add `HREADY must be asserted on the next cycle when HSEL is HIGH`
+  - keep waited-transfer stability rules like:
+    - `HTRANS must not change when HREADY is LOW and HSEL is HIGH`
+    - `HADDR must not change when HREADY is LOW and HSEL is HIGH`
+  - the benchmark should then prove all of these together:
+    - AHB section-heading direction recovery still survives
+    - one typed temporal rule carries `cycle_window = [1,1]`
+    - all temporal rules are actor-grounded
+    - multi-predicate wait-state guards survive canonically
+    - no false handshake completion is inferred just because the timing is rich
 - the next negative truthfulness step after that first AMBA-style gold path should protect against bogus actor attribution in the same family of tables:
   - `Clock` / `Reset` / direction-placeholder rows inside `Source` / `Driver` / `Destination` columns are metadata, not protocol actors
   - the KG should keep direction and system-contract recovery for those infrastructure signals without inventing actors named `Clock`, `Reset`, or `input`

@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-04-06 (KG fixtures now lock AHB wait-state timing recovery)
+
+### Added: AHB-style wait-state timing gold fixture
+- Added a tracked staged fixture proving that AHB-style `Manager signals` / `Subordinate signals` section-heading context, `Destination`-column signal tables, and explicit actor relations can recover wait-state timing semantics in addition to the earlier section-heading direction path.
+- The fixture locks `HREADY must be asserted on the next cycle when HSEL is HIGH` together with waited-transfer hold rules on `HTRANS` and `HADDR`, and expects canonical actor-relative ports, one bounded `cycle_window`, multi-predicate temporal guards, actor-grounded temporal predicates, and no false handshake completion to survive through both `SemanticIR` and `IntentIR`.
+
+### Why this matters
+- The earlier AHB gold fixture proved that family-specific section headings can recover truthful per-signal direction. This follow-on slice proves the same AHB evidence path can also recover real wait-state timing without falling back to generic protocol heuristics.
+- It closes an important family gap between “AHB direction works” and “AHB wait-state timing works,” which is necessary if the KG benchmark suite is going to be honest about protocol behavior rather than only port orientation.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality ahb_wait_state_timing_gold` → passed
+- `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` → passed
+- `cargo fmt --all --check` → passed
+- `cargo test --manifest-path Cargo.toml` → passed
+
 ## 2026-04-06 (KG fixtures now lock APB setup/access timing recovery)
 
 ### Added: APB-style setup/access timing gold fixture
