@@ -449,11 +449,13 @@
     - a residual-quality fixture for actor-boundary ambiguity
     - a stage-patched negative fixture proving contested handshake-shaped signal names do not leak into typed `HandshakeComplete` predicates
     - a stage-patched caveat fixture proving alias-dependent handshake completion stays usable while preserving its canonical residual/assumption trail
+    - a stage-patched cross-modality gold fixture proving a semantic role can be grounded jointly by table and visual evidence while validation reports that stronger grounding explicitly
   - fixture expectations can now assert canonical semantic candidates plus decisive vs non-decisive semantic arbitration directly, so the benchmark harness checks the truth-model state itself rather than only downstream residual/finding side effects
+  - fixture expectations can now also assert persisted validation metric values directly, and `SourceIR` fixture patches can now inject visual assets as well as tables, so the harness can lock cross-modality grounding behavior with tracked staged fixtures
 - remaining:
   - expand from seed fixtures to representative APB/AHB/AXI gold fixtures
   - add broader negative fixtures for bogus actor attribution, spurious timing extraction, table misclassification, and multimodal arbitration drift
-  - add more metric-oriented expectation surfaces once the first fixture pack stabilizes
+  - add broader metric-oriented expectation surfaces once the current canonical+metric fixture layer stabilizes
 
 ### R15f Cross-document extraction learning plane
 - status: Not Started

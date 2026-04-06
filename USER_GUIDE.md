@@ -104,6 +104,7 @@ cargo run -p specforge -- kg-bench
 - this is the current user-facing truthfulness regression command for the staged KG surface
 - the harness can also patch `SourceIR` and `EvidenceIR` inputs for a fixture, which lets tracked regressions exercise richer structured/semantic cases than plain markdown text alone
 - the harness can also assert canonical semantic candidates and decisive/non-decisive semantic arbitration directly, so fixture regressions can lock contested versus settled signal meaning explicitly
+- the harness can also assert persisted validation metric values directly and patch `SourceIR` visual assets, so tracked regressions can now lock cross-modality grounding behavior as well as canonical IR shape
 - current tracked fixtures cover both blocked heuristic leakage and weaker alias-dependent semantics that must stay explicitly caveated
   - visual evidence items from `SourceIR` visual assets
   - explicit `describes` and `cites` links for caption and figure/table references

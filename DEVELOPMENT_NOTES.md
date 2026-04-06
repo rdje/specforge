@@ -255,6 +255,14 @@
   - a contested fixture should prove the signal still has multiple semantic candidates and non-decisive arbitration
   - a decisively grounded fixture should prove the signal has semantic arbitration too, but that it is decisively settled
 - that is a better quality bar because it checks the canonical truth model directly instead of backing into arbitration quality from blocked fallbacks, residuals, or validator findings alone
+- the next hardening step after that is to lock validation metrics and multimodal staged inputs directly:
+  - fixtures should be able to patch visual assets, not only tables and signal constraints
+  - fixtures should be able to assert persisted validation metrics, not only finding ids
+  - a strong tracked gold case should prove true cross-modality semantic grounding from table plus visual evidence
+- that matters because some truthfulness properties are expressed best in the validator's quantitative surface:
+  - `with_cross_modality_semantic_grounding`
+  - `with_visual_semantic_grounding`
+  - related metric families that distinguish stronger grounding from weaker single-source evidence
 - this is the right shape for `R15e`:
   - start with fixtures that protect truthfulness invariants
   - then grow toward APB/AHB/AXI protocol-grade gold suites and broader negative corpora

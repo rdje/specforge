@@ -22,17 +22,17 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `442a867`
-- latest_commit_brief_message: `feat(quality): benchmark semantic arbitration`
-- note: current uncommitted work is docs-only and captures the new cross-document learning-plane doctrine: keep per-document IR truth local, but add a separate typed prior memory so the extractor can improve across PDFs without leaking facts
+- latest_commit_hash: `df03118`
+- latest_commit_brief_message: `docs(roadmap): capture cross-document learning plane`
+- note: current uncommitted work upgrades `kg-bench` so fixtures can patch visual assets and assert validation metrics directly, then uses that stronger harness to lock a tracked cross-modality semantic-grounding gold case
 
 ## Recent commit chain (last 5)
+- `df03118` docs(roadmap): capture cross-document learning plane
 - `442a867` feat(quality): benchmark semantic arbitration
 - `7807fa0` feat(quality): benchmark alias-dependent caveats
 - `2bed722` feat(quality): patch staged kg fixtures
 - `f4258e5` feat(quality): add kg benchmark fixtures
 - `8eee95d` feat(ir): carry polarity conflicts downstream
-- `3fef735` feat(ir): carry alias-grounded handshake caveats
 - `f3c28cd` feat(evidence): prefer direct signal grounding over aliases
 
 ## Current repository state
@@ -46,13 +46,19 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
-- logged the cross-document learning architecture in `DEVELOPMENT_NOTES.md` so future work is guided by the two-plane design: document-local canonical IR plus a separate cross-document prior memory
-- added `R15f` to `ROADMAP.md` so the extractor-learning plane becomes an explicit planned workstream rather than an informal idea
-- synced `README.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, and `CHANGES.md` so future sessions can recover the doctrine cleanly after interruption
-- this was a docs-only task; the Rust test suite was not rerun
+- extended `specforge kg-bench` so validation expectations can assert metric values directly, not only finding ids
+- extended `SourceIR` fixture patching so tracked KG fixtures can inject visual assets as well as structured tables
+- added a tracked `cross_modality_semantic_grounding_gold` fixture that proves one semantic role can be grounded jointly by table and visual-caption evidence, with both canonical and validator surfaces locked
+- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `USER_GUIDE.md`, `DEVELOPMENT_NOTES.md`, `CHANGES.md`, and `MEMORY.md` so the richer `R15e` harness shape is captured in the live docs
+- validation ran for this task:
+  - `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` passed
+  - `cargo fmt --all` passed
+  - `cargo test --manifest-path Cargo.toml` passed with `188/188`
 
 ## Current working tree before commit
 - modified tracked files currently include:
+  - `crates/specforge/src/commands/kg_bench.rs`
+  - `crates/specforge/test_data/kg_quality/cross_modality_semantic_grounding_gold/...`
   - `README.md`
   - `ROADMAP.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -60,12 +66,13 @@
   - `DEVELOPMENT_NOTES.md`
   - `CHANGES.md`
   - `MEMORY.md`
+  - `USER_GUIDE.md`
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the cross-document learning-plane docs slice
-2. keep finishing the current graph / temporal / arbitration / evaluation workstreams without weakening local truthfulness
-3. design the typed schema and trust/update rules for the future cross-document prior memory when the project reaches that roadmap slice
+1. commit the cross-modality KG benchmark slice
+2. expand the fixture harness toward broader multimodal negative cases and protocol-grade APB/AHB/AXI gold suites
+3. keep finishing the current graph / temporal / arbitration / evaluation workstreams without weakening local truthfulness
 
 ## Remaining engineering gaps after this commit
 - remaining actor-relative direction modeling in `SemanticIR` / `IntentIR` (`R15`)

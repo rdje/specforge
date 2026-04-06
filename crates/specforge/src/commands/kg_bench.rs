@@ -34,6 +34,8 @@ struct KgBenchFixture {
 struct SourceIrPatch {
     #[serde(default)]
     structured_tables: Vec<crate::ir::source::StructuredTableRecord>,
+    #[serde(default)]
+    visual_assets: Vec<crate::ir::source::VisualAsset>,
 }
 
 #[derive(Debug, Default, Deserialize)]
@@ -137,6 +139,8 @@ struct ValidationStageExpectations {
     finding_ids_include: Vec<String>,
     #[serde(default)]
     finding_ids_exclude: Vec<String>,
+    #[serde(default)]
+    metric_values: BTreeMap<String, String>,
 }
 
 #[derive(Debug)]
@@ -227,6 +231,9 @@ fn run_fixture(fixture_path: &Path) -> Result<FixtureOutcome> {
         source_ir
             .structured_tables
             .extend(patch.structured_tables.iter().cloned());
+        source_ir
+            .visual_assets
+            .extend(patch.visual_assets.iter().cloned());
     }
     source_ir.write_to_disk()?;
     let mut evidence_ir =
@@ -685,6 +692,19 @@ fn evaluate_validation_expectations(
         &finding_ids,
         failures,
     );
+
+    for (metric_name, expected_value) in &expectations.metric_values {
+        let actual_value = validation_metric_value(report, metric_name);
+        match actual_value {
+            Some(actual_value) if actual_value == expected_value => {}
+            Some(actual_value) => failures.push(format!(
+                "{label}: expected metric `{metric_name}` to equal `{expected_value}`, but actual value was `{actual_value}`"
+            )),
+            None => failures.push(format!(
+                "{label}: expected metric `{metric_name}` to equal `{expected_value}`, but the metric was absent"
+            )),
+        }
+    }
 }
 
 fn load_fixture(path: &Path) -> Result<KgBenchFixture> {
@@ -792,6 +812,17 @@ fn validation_finding_ids(findings: &[ValidationFindingRecord]) -> BTreeSet<Stri
         .iter()
         .map(|finding| finding.finding_id.clone())
         .collect()
+}
+
+fn validation_metric_value<'a>(
+    report: &'a ValidationReportRecord,
+    metric_name: &str,
+) -> Option<&'a str> {
+    report
+        .metrics
+        .iter()
+        .find(|metric| metric.name == metric_name)
+        .map(|metric| metric.value.as_str())
 }
 
 fn temporal_rules_with_handshake_completion_count(temporal_rules: &[TemporalRuleRecord]) -> usize {

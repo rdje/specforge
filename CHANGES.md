@@ -1,5 +1,35 @@
 # CHANGES
 
+## 2026-04-06 (KG fixtures now lock cross-modality grounding metrics)
+
+### Added: validation-metric expectations in `specforge kg-bench`
+- KG fixtures can now assert persisted validation metric values directly, not only finding ids.
+- This lets the tracked harness lock quantitative truthfulness surfaces like:
+  - `with_cross_modality_semantic_grounding`
+  - `with_visual_semantic_grounding`
+  - decisive semantic-arbitration counts
+
+### Added: visual-asset patching in `SourceIR` fixtures
+- `specforge kg-bench` fixtures can now patch `SourceIR.visual_assets` directly in addition to structured tables.
+- That makes tracked multimodal regressions practical without needing a heavyweight external PDF for each case.
+
+### Added: cross-modality semantic-grounding gold fixture
+- Added a tracked staged fixture proving that `XREQ` can become valid-like through joint signal-description-table evidence plus visual-caption evidence.
+- The fixture locks both canonical outcomes and validator metrics, proving the resulting role is:
+  - resolved
+  - decisive
+  - cross-modally grounded
+  - visually grounded
+
+### Why this matters
+- This extends `R15e` from canonical-shape assertions into quantitative grounding checks.
+- The benchmark harness can now protect multimodal semantic-strength behavior directly instead of leaving it to crate-local unit tests or manual inspection.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` → passed
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 188/188 passed
+
 ## 2026-04-06 (cross-document learning plane captured in steering docs)
 
 ### Added: explicit roadmap target for cross-document extractor learning

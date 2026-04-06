@@ -1,0 +1,102 @@
+{
+  "name": "cross_modality_semantic_grounding_gold",
+  "source": "source.md",
+  "source_ir_patch": {
+    "structured_tables": [
+      {
+        "table_id": "table_xreq_roles",
+        "asset_id": "table_xreq_roles",
+        "page_id": null,
+        "caption_text": "Handshake signal descriptions",
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            {
+              "text": "Signal",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Description",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            }
+          ]
+        ],
+        "body_rows": [
+          [
+            {
+              "text": "XREQ",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Indicates that address and control information are valid for transfer.",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ]
+        ],
+        "row_count": 1,
+        "col_count": 2
+      }
+    ],
+    "visual_assets": [
+      {
+        "asset_id": "figure_xreq",
+        "asset_kind": "diagram",
+        "page_id": "page_0001",
+        "image_path": null,
+        "caption_text": "Figure 1: XREQ valid timing.",
+        "caption_source_path": null,
+        "source_ref": null,
+        "placeholder_text": null,
+        "note": null,
+        "diagram_kind": "timing_diagram"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["XREQ"],
+      "semantic_candidate_signal_names_include": ["XREQ"],
+      "semantic_arbitration_signal_names_include": ["XREQ"],
+      "decisive_semantic_arbitration_signal_names_include": ["XREQ"],
+      "non_decisive_semantic_arbitration_signal_names_exclude": ["XREQ"],
+      "resolved_semantic_role_signal_names_include": ["XREQ"],
+      "semantic_consensus_signal_names_include": ["XREQ"]
+    },
+    "intent": {
+      "signal_names_include": ["XREQ"],
+      "semantic_candidate_signal_names_include": ["XREQ"],
+      "semantic_arbitration_signal_names_include": ["XREQ"],
+      "decisive_semantic_arbitration_signal_names_include": ["XREQ"],
+      "non_decisive_semantic_arbitration_signal_names_exclude": ["XREQ"],
+      "resolved_semantic_role_signal_names_include": ["XREQ"],
+      "semantic_consensus_signal_names_include": ["XREQ"]
+    },
+    "validation": {
+      "semantic": {
+        "metric_values": {
+          "with_semantic_consensus": "1",
+          "with_decisive_semantic_arbitration": "1",
+          "with_cross_modality_semantic_grounding": "1",
+          "with_visual_semantic_grounding": "1"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "with_semantic_consensus": "1",
+          "with_decisive_semantic_arbitration": "1",
+          "with_cross_modality_semantic_grounding": "1",
+          "with_visual_semantic_grounding": "1"
+        }
+      }
+    }
+  }
+}
