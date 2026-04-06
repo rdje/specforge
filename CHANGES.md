@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-04-06 (KG fixtures now lock bogus source-column actor rejection)
+
+### Added: bogus actor-attribution negative fixture
+- Added a tracked staged fixture proving that AMBA-style `Source`-column infrastructure rows like `Clock` and `Reset` do not become protocol actors in the KG.
+- The fixture locks that only the true `Requester` / `Subordinate` rows survive as actor-signal relations and actor-relative ports while table-grounded semantic request/accept meaning still remains recoverable.
+
+### Fixed: table relation extraction now distinguishes source vs destination semantics
+- `Source` / `Driver` columns now yield `Drives` relations.
+- `Destination` columns now yield `Reads` relations.
+- Direction and infrastructure placeholders like `input`, `Clock`, and `Reset` are filtered instead of being promoted into fake actor names.
+
+### Why this matters
+- This closes a real KG false-positive path: chip-spec signal tables often mix protocol rows with clock/reset/infrastructure rows, and the graph should not silently invent actors from those metadata labels.
+- It also hardens a subtle semantics boundary: destination-oriented tables are receiver facts, not disguised driver facts.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` → passed
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 190/190 passed
+
 ## 2026-04-06 (KG fixtures now lock multimodal conflict behavior too)
 
 ### Added: cross-modality semantic-conflict negative fixture

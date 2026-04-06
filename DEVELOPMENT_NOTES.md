@@ -300,6 +300,13 @@
     - table-grounded semantic request/accept roles
     - typed handshake completion when a guarded constraint references both signals
   - this is a good first bridge from synthetic truthfulness fixtures toward real APB/AHB/AXI-style benchmark coverage
+- the next negative truthfulness step after that first AMBA-style gold path should protect against bogus actor attribution in the same family of tables:
+  - `Clock` / `Reset` / direction-placeholder rows inside `Source` / `Driver` / `Destination` columns are metadata, not protocol actors
+  - the KG should keep direction and system-contract recovery for those infrastructure signals without inventing actors named `Clock`, `Reset`, or `input`
+  - `Destination` columns also need different semantics from `Source` columns:
+    - `Source` / `Driver` rows imply `(actor, drives, signal)`
+    - `Destination` rows imply `(actor, reads, signal)`
+  - this is exactly the kind of false-positive control `R15e` should lock with a tracked negative fixture, not leave to comments or ad hoc tests
 - this is the right shape for `R15e`:
   - start with fixtures that protect truthfulness invariants
   - then grow toward APB/AHB/AXI protocol-grade gold suites and broader negative corpora

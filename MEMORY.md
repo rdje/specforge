@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `1d198fe`
-- latest_commit_brief_message: `feat(quality): benchmark visual semantic conflicts`
-- note: current uncommitted work adds the first representative AMBA-style gold fixture, proving `Source`-column tables can recover actor ports, semantic handshake meaning, and typed handshake completion
+- latest_commit_hash: `7c1cfec`
+- latest_commit_brief_message: `feat(quality): benchmark amba source-column gold path`
+- note: current uncommitted work hardens table-based KG relation extraction so bogus `Clock` / `Reset` source-column rows do not become actors, and adds a tracked negative fixture for that path
 
 ## Recent commit chain (last 5)
+- `7c1cfec` feat(quality): benchmark amba source-column gold path
 - `1d198fe` feat(quality): benchmark visual semantic conflicts
 - `94f7826` feat(quality): benchmark vlm timing-note noise rejection
 - `9e39971` feat(quality): benchmark vlm timing-note grounding
 - `4ff4657` feat(quality): benchmark multimodal semantic conflicts
-- `8c8bdf4` feat(quality): benchmark cross-modality grounding
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -44,16 +44,21 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
-- added a tracked `amba_source_column_handshake_gold` fixture that proves an AMBA-style `Source`-column table plus one guarded constraint recovers driver-side actor ports, semantic request/accept roles, and a typed handshake-completion temporal rule
+- hardened table-based KG relation extraction so `Source` / `Driver` columns yield `Drives`, `Destination` columns yield `Reads`, and direction/infrastructure placeholders like `input`, `Clock`, and `Reset` no longer become bogus actor names
+- added a tracked `source_column_bogus_actor_attribution_negative` fixture that proves AMBA-style infrastructure rows stay out of the protocol actor graph while true requester/subordinate rows still recover actor ports and semantic role grounding
+- added direct unit regressions for both infrastructure-label rejection and `Destination`-column `Reads` semantics
 - synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `USER_GUIDE.md`, `DEVELOPMENT_NOTES.md`, `CHANGES.md`, and `MEMORY.md` so the richer `R15e` harness shape is captured in the live docs
 - validation ran for this task:
+  - `cargo test --manifest-path Cargo.toml source_table_relations_skip_infrastructure_labels -- --nocapture` passed
+  - `cargo test --manifest-path Cargo.toml destination_table_relations_map_to_reads -- --nocapture` passed
   - `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` passed
   - `cargo fmt --all` passed
-  - `cargo test --manifest-path Cargo.toml` passed with `188/188`
+  - `cargo test --manifest-path Cargo.toml` passed with `190/190`
 
 ## Current working tree before commit
 - modified tracked files currently include:
-  - `crates/specforge/test_data/kg_quality/amba_source_column_handshake_gold/...`
+  - `crates/specforge/src/ir/evidence.rs`
+  - `crates/specforge/test_data/kg_quality/source_column_bogus_actor_attribution_negative/...`
   - `README.md`
   - `ROADMAP.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -65,8 +70,8 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the first AMBA-style gold benchmark slice
-2. expand the fixture harness toward broader protocol-grade APB/AHB/AXI gold suites and harder multimodal/temporal negative cases
+1. commit the bogus source-column actor-attribution hardening slice
+2. expand the fixture harness toward broader protocol-grade APB/AHB/AXI gold suites and the remaining spurious-timing / table-misclassification negatives
 3. keep finishing the current graph / temporal / arbitration / evaluation workstreams without weakening local truthfulness
 
 ## Remaining engineering gaps after this commit

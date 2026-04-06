@@ -1415,9 +1415,68 @@ fn collect_signal_names_from_tables(source_ir: &SourceIr) -> std::collections::H
 /// Source column directly records which actor drives each signal.
 ///
 /// Unlike prose extraction, no verb-pattern matching is needed here: the table cell
-/// value IS the actor name, and the table structure implies the Drives relation.
-/// Actor names are stored as-is ("Requester", "Completer", "Clock", etc.) without
-/// vocabulary normalisation.
+/// value names either the driving or receiving actor, and the table structure implies
+/// the relation kind.
+///
+/// Only plausible actor labels become KG relations. Direction placeholders ("input",
+/// "output"), infrastructure labels ("Clock", "Reset"), and similar non-actor values
+/// are filtered out so the canonical graph does not invent bogus actors from
+/// signal-description metadata.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum RelationTableColumnKind {
+    SourceLike,
+    DestinationLike,
+}
+
+fn normalize_table_actor_name(value: &str) -> Option<String> {
+    let actor = value.trim();
+    if actor.is_empty() {
+        return None;
+    }
+
+    let lowered = actor
+        .split_whitespace()
+        .map(|token| token.to_ascii_lowercase())
+        .collect::<Vec<_>>()
+        .join(" ");
+    if lowered.is_empty() || !lowered.chars().any(|ch| ch.is_ascii_alphabetic()) {
+        return None;
+    }
+
+    if matches!(
+        lowered.as_str(),
+        "input"
+            | "output"
+            | "inout"
+            | "bidirectional"
+            | "bidir"
+            | "reserved"
+            | "n/a"
+            | "na"
+            | "none"
+            | "tbd"
+            | "see note"
+            | "-"
+    ) {
+        return None;
+    }
+
+    if lowered.contains("clock")
+        || lowered.contains("reset")
+        || lowered.contains("global")
+        || lowered.contains("system bus")
+        || lowered.contains("power")
+        || lowered.contains("ground")
+        || lowered.contains("supply")
+        || lowered.contains("vdd")
+        || lowered.contains("vss")
+    {
+        return None;
+    }
+
+    Some(actor.to_string())
+}
+
 fn extract_relations_from_signal_tables(source_ir: &SourceIr) -> Vec<ActorSignalRelation> {
     let mut records = Vec::new();
     let mut counter = 1usize;
@@ -1427,21 +1486,24 @@ fn extract_relations_from_signal_tables(source_ir: &SourceIr) -> Vec<ActorSignal
             continue;
         }
 
-        // Find the column index for a Source/Driver/Direction column.
+        // Find the first relation-bearing column.
         let header_texts: Vec<String> = table
             .header_rows
             .first()
             .map(|row| row.iter().map(|c| c.text.to_ascii_lowercase()).collect())
             .unwrap_or_default();
-        let source_col = header_texts.iter().position(|h| {
-            h.contains("source")
-                || h.contains("driver")
-                || h.contains("direction")
-                || h.contains("destination")
+        let relation_col = header_texts.iter().enumerate().find_map(|(idx, header)| {
+            if header.contains("source") || header.contains("driver") {
+                Some((idx, RelationTableColumnKind::SourceLike))
+            } else if header.contains("destination") || header.contains("dest") {
+                Some((idx, RelationTableColumnKind::DestinationLike))
+            } else {
+                None
+            }
         });
 
-        let Some(src_col_idx) = source_col else {
-            continue; // no Source column in this table (e.g. AXI Name|Width|Default|Description)
+        let Some((relation_col_idx, relation_col_kind)) = relation_col else {
+            continue; // no actor-bearing relation column in this table
         };
 
         for row in &table.body_rows {
@@ -1461,24 +1523,16 @@ fn extract_relations_from_signal_tables(source_ir: &SourceIr) -> Vec<ActorSignal
                 continue;
             }
 
-            // Actor name from Source column
-            let Some(source_cell) = row.get(src_col_idx) else {
+            // Actor name from Source / Destination column
+            let Some(source_cell) = row.get(relation_col_idx) else {
                 continue;
             };
-            let actor = source_cell.text.trim().to_string();
-            if actor.is_empty() {
+            let Some(actor) = normalize_table_actor_name(&source_cell.text) else {
                 continue;
-            }
-
-            // Determine relation: the Source column says who drives the signal.
-            // If the cell says "input" or "output" explicitly, use that.
-            // Otherwise the Source column value is the driving actor.
-            let actor_lower = actor.to_ascii_lowercase();
-            let relation = if actor_lower == "input" {
-                // Unusual: Source column says direction directly
-                RelationKind::Reads // input = the actor READS this (but we don’t know who)
-            } else {
-                RelationKind::Drives // any other value = the named actor drives this signal
+            };
+            let relation = match relation_col_kind {
+                RelationTableColumnKind::SourceLike => RelationKind::Drives,
+                RelationTableColumnKind::DestinationLike => RelationKind::Reads,
             };
 
             records.push(ActorSignalRelation {
@@ -5714,6 +5768,138 @@ mod tests {
                 .iter()
                 .any(|s| s.text == "Signal PREADY is output."),
             "KG synthesis must NOT override an existing table declaration for PREADY"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn source_table_relations_skip_infrastructure_labels() -> Result<()> {
+        use crate::ir::source::RelationKind;
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Signals\n",
+                "Signal PCLK is input width 1.\n",
+                "Signal PRESETn is input width 1.\n",
+                "Signal XREQ is output width 1.\n",
+                "Signal XACK is input width 1.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_signal_desc".to_string(),
+            asset_id: "asset_signal_desc".to_string(),
+            page_id: None,
+            caption_text: Some("AMBA-style signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Source", true),
+                make_table_cell("Width", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("PCLK", false),
+                    make_table_cell("Clock", false),
+                    make_table_cell("1", false),
+                    make_table_cell("Clock input", false),
+                ],
+                vec![
+                    make_table_cell("PRESETn", false),
+                    make_table_cell("Reset", false),
+                    make_table_cell("1", false),
+                    make_table_cell("Reset input", false),
+                ],
+                vec![
+                    make_table_cell("XREQ", false),
+                    make_table_cell("Requester", false),
+                    make_table_cell("1", false),
+                    make_table_cell("Transfer request", false),
+                ],
+                vec![
+                    make_table_cell("XACK", false),
+                    make_table_cell("Subordinate", false),
+                    make_table_cell("1", false),
+                    make_table_cell("Transfer accept", false),
+                ],
+            ],
+            row_count: 4,
+            col_count: 4,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        assert_eq!(evidence_ir.actor_signal_relations.len(), 2);
+        assert!(
+            evidence_ir.actor_signal_relations.iter().all(|relation| {
+                !matches!(relation.actor_name.as_str(), "Clock" | "Reset")
+                    && matches!(relation.relation, RelationKind::Drives)
+            }),
+            "infrastructure labels must not become actor-signal relations: {:?}",
+            evidence_ir.actor_signal_relations
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn destination_table_relations_map_to_reads() -> Result<()> {
+        use crate::ir::source::RelationKind;
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+
+        fs::write(
+            &source,
+            concat!("# Signals\n", "Signal XRESP is input width 1.\n",),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_dest_desc".to_string(),
+            asset_id: "asset_dest_desc".to_string(),
+            page_id: None,
+            caption_text: Some("Destination-oriented signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Destination", true),
+                make_table_cell("Width", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("XRESP", false),
+                make_table_cell("Requester", false),
+                make_table_cell("1", false),
+                make_table_cell("Returned to the requester", false),
+            ]],
+            row_count: 1,
+            col_count: 4,
+        });
+
+        let relations = super::extract_relations_from_signal_tables(&source_ir);
+        assert_eq!(relations.len(), 1);
+        assert_eq!(relations[0].actor_name, "Requester");
+        assert_eq!(relations[0].signal_name, "XRESP");
+        assert!(
+            matches!(relations[0].relation, RelationKind::Reads),
+            "destination columns must produce Reads relations, got: {:?}",
+            relations
         );
 
         Ok(())
