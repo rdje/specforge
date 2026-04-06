@@ -1,0 +1,175 @@
+{
+  "name": "amba_destination_column_reads_gold",
+  "source": "source.md",
+  "source_ir_patch": {
+    "structured_tables": [
+      {
+        "table_id": "table_amba_destination_desc",
+        "asset_id": "table_amba_destination_desc",
+        "page_id": null,
+        "caption_text": "AMBA-style destination signal descriptions",
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            {
+              "text": "Signal",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Destination",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Width",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Description",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            }
+          ]
+        ],
+        "body_rows": [
+          [
+            {
+              "text": "XREQ",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Subordinate",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "1",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Request transfer issued to the subordinate.",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ],
+          [
+            {
+              "text": "XRESP",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Requester",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "1",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Response returned to the requester.",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ]
+        ],
+        "row_count": 2,
+        "col_count": 4
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["XREQ", "XRESP"],
+      "actor_signal_relations_include": [
+        {
+          "actor_name": "Subordinate",
+          "signal_name": "XREQ",
+          "relation": "reads"
+        },
+        {
+          "actor_name": "Requester",
+          "signal_name": "XRESP",
+          "relation": "reads"
+        }
+      ],
+      "actor_ports_include": [
+        {
+          "actor_name": "Subordinate",
+          "signal_name": "XREQ",
+          "direction": "input"
+        },
+        {
+          "actor_name": "Requester",
+          "signal_name": "XRESP",
+          "direction": "input"
+        }
+      ]
+    },
+    "intent": {
+      "signal_names_include": ["XREQ", "XRESP"],
+      "actor_signal_relations_include": [
+        {
+          "actor_name": "Subordinate",
+          "signal_name": "XREQ",
+          "relation": "reads"
+        },
+        {
+          "actor_name": "Requester",
+          "signal_name": "XRESP",
+          "relation": "reads"
+        }
+      ],
+      "actor_ports_include": [
+        {
+          "actor_name": "Subordinate",
+          "signal_name": "XREQ",
+          "direction": "input"
+        },
+        {
+          "actor_name": "Requester",
+          "signal_name": "XRESP",
+          "direction": "input"
+        }
+      ]
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "actor_signal_relations": "2"
+        }
+      },
+      "semantic": {
+        "metric_values": {
+          "actor_signal_relations": "2",
+          "actor_ports": "2"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "actor_signal_relations": "2",
+          "actor_ports": "2"
+        }
+      }
+    }
+  }
+}

@@ -13,7 +13,10 @@ use crate::ir::intent::{IntentAssumption, IntentIr};
 use crate::ir::semantic::{
     ActorPortRecord, ActorRelativeDirection, InterfaceRecord, SemanticIr, TemporalRuleRecord,
 };
-use crate::ir::source::{ResidualDecisionPacket, ValidationFindingRecord, ValidationReportRecord};
+use crate::ir::source::{
+    ActorSignalRelation, RelationKind, ResidualDecisionPacket, ValidationFindingRecord,
+    ValidationReportRecord,
+};
 use crate::ir::{intent, semantic, source};
 
 const FIXTURE_FILE_NAME: &str = "fixture.json";
@@ -64,6 +67,8 @@ struct CanonicalStageExpectations {
     signal_names_include: Vec<String>,
     #[serde(default)]
     actor_ports_include: Vec<ExpectedActorPort>,
+    #[serde(default)]
+    actor_signal_relations_include: Vec<ExpectedActorSignalRelation>,
     #[serde(default)]
     residual_decision_ids_include: Vec<String>,
     #[serde(default)]
@@ -123,6 +128,13 @@ struct ExpectedActorPort {
     actor_name: String,
     signal_name: String,
     direction: ActorRelativeDirection,
+}
+
+#[derive(Debug, Deserialize)]
+struct ExpectedActorSignalRelation {
+    actor_name: String,
+    signal_name: String,
+    relation: RelationKind,
 }
 
 #[derive(Debug, Default, Deserialize)]
@@ -330,6 +342,7 @@ fn run_fixture(fixture_path: &Path) -> Result<FixtureOutcome> {
             "semantic",
             expectations,
             &semantic_ir.interfaces,
+            &semantic_ir.actor_signal_relations,
             &semantic_ir.actor_ports,
             &semantic_ir.residual_decisions,
             &[],
@@ -347,6 +360,7 @@ fn run_fixture(fixture_path: &Path) -> Result<FixtureOutcome> {
             "intent",
             expectations,
             &intent_ir.interfaces,
+            &intent_ir.actor_signal_relations,
             &intent_ir.actor_ports,
             &intent_ir.residual_decisions,
             &intent_ir.assumptions,
@@ -401,6 +415,7 @@ fn evaluate_canonical_expectations(
     label: &str,
     expectations: &CanonicalStageExpectations,
     interfaces: &[InterfaceRecord],
+    actor_signal_relations: &[ActorSignalRelation],
     actor_ports: &[ActorPortRecord],
     residual_decisions: &[ResidualDecisionPacket],
     assumptions: &[IntentAssumption],
@@ -608,6 +623,22 @@ fn evaluate_canonical_expectations(
                 expected_port.actor_name,
                 expected_port.signal_name,
                 actor_relative_direction_label(expected_port.direction)
+            ));
+        }
+    }
+
+    for expected_relation in &expectations.actor_signal_relations_include {
+        let found = actor_signal_relations.iter().any(|relation| {
+            relation.actor_name == expected_relation.actor_name
+                && relation.signal_name == expected_relation.signal_name
+                && relation.relation == expected_relation.relation
+        });
+        if !found {
+            failures.push(format!(
+                "{label}: missing actor-signal relation `{}`:`{}`:`{}`",
+                expected_relation.actor_name,
+                expected_relation.signal_name,
+                relation_kind_label(expected_relation.relation)
             ));
         }
     }
@@ -965,6 +996,13 @@ fn actor_relative_direction_label(direction: ActorRelativeDirection) -> &'static
         ActorRelativeDirection::Output => "output",
         ActorRelativeDirection::InOut => "in_out",
         ActorRelativeDirection::Unknown => "unknown",
+    }
+}
+
+fn relation_kind_label(relation: RelationKind) -> &'static str {
+    match relation {
+        RelationKind::Drives => "drives",
+        RelationKind::Reads => "reads",
     }
 }
 

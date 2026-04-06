@@ -93,9 +93,11 @@
 - KG benchmark harness now locks direct VLM timing-note semantic-noise rejection behavior: Done
 - KG benchmark harness now locks caption-vs-VLM visual semantic conflict behavior: Done
 - KG benchmark harness now includes a first representative AMBA-style gold fixture: Done
+- KG benchmark harness now includes an AMBA-style `Destination`-column gold fixture for receiver semantics: Done
 - KG benchmark harness now locks bogus actor-attribution rejection for `Source`-column infrastructure rows: Done
 - KG benchmark harness now locks field-table misclassification rejection: Done
 - KG benchmark harness now locks spurious VLM timing-annotation rejection: Done
+- KG benchmark harness can now assert canonical actor-signal relations directly: Done
 - Test suite expanded to 192 tests; all passing: Done
 - Explicit clock-tick temporal model in `SemanticIR` / `IntentIR`: In Progress
 - KG-guided multimodal rescans as a first-class convergent workstream: In Progress

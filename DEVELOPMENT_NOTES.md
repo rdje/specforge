@@ -300,6 +300,10 @@
     - table-grounded semantic request/accept roles
     - typed handshake completion when a guarded constraint references both signals
   - this is a good first bridge from synthetic truthfulness fixtures toward real APB/AHB/AXI-style benchmark coverage
+- the next protocol-grade truthfulness step after that first AMBA-style `Source` path is the receiver side:
+  - a `Destination` column with values like `Requester` / `Subordinate` should survive canonically as `Reads` relations
+  - the corresponding actor-relative port surface should become `input`, not `output`
+  - this should be benchmarked end-to-end in the tracked fixture suite, not only held in local unit tests or aggregate relation counts
 - the next negative truthfulness step after that first AMBA-style gold path should protect against bogus actor attribution in the same family of tables:
   - `Clock` / `Reset` / direction-placeholder rows inside `Source` / `Driver` / `Destination` columns are metadata, not protocol actors
   - the KG should keep direction and system-contract recovery for those infrastructure signals without inventing actors named `Clock`, `Reset`, or `input`

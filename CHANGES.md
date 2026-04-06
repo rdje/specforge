@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-04-06 (KG fixtures now lock AMBA destination-column receiver semantics)
+
+### Added: AMBA-style `Destination`-column gold fixture
+- Added a tracked staged fixture proving that AMBA-style `Destination` signal-description tables recover consumer-side actor-signal relations canonically as `Reads`.
+- The fixture locks that `Subordinate` reads `XREQ` and `Requester` reads `XRESP`, and that those same relations survive downstream as actor-relative input ports in both `SemanticIR` and `IntentIR`.
+
+### Improved: `kg-bench` can now assert canonical actor-signal relations directly
+- Added canonical fixture expectations for actor-signal relations, so tracked truthfulness checks can lock `Drives` versus `Reads` semantics directly.
+- This makes protocol-grade relation benchmarks stronger than relying only on actor-port projections or relation counts.
+
+### Why this matters
+- `Destination`-oriented AMBA tables carry receiver semantics, not producer semantics. If the KG flattens those into output-side relations, downstream truthfulness quietly drifts.
+- Locking the relation itself, not just derived port shape, makes the benchmark harness more faithful to the graph-first architecture.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality amba_destination_column_reads_gold` → passed
+- `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` → passed
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 192/192 passed
+
 ## 2026-04-06 (KG fixtures now lock spurious timing-annotation rejection)
 
 ### Added: spurious timing-annotation negative fixture
