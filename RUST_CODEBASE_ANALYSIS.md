@@ -92,6 +92,7 @@
   - a stage-patched cross-modality grounding gold fixture that proves one role can be reinforced jointly by table evidence and visual-caption evidence
   - a stage-patched cross-modality conflict fixture that proves table-versus-visual disagreement stays canonically contested instead of collapsing into false cross-modality consensus
   - a stage-patched VLM timing-note gold fixture that proves a semantic hint can be grounded directly by `vlm_timing_diagram_extraction` and verified at the evidence stage instead of being inferred only from downstream visual-grounding side effects
+  - a stage-patched VLM timing-note negative fixture that proves waveform/tick descriptions around `XVALID`-style names still produce timing extraction while semantic-role inference stays at zero
 - the harness now also asserts canonical semantic candidates and decisive-vs-contested semantic arbitration directly, which is a better `R15e` truthfulness check than inferring arbitration quality only from blocked fallback or validation side effects
 - the harness now also asserts persisted validation metric values directly at the evidence, semantic, and intent stages and can patch `SourceIR` visual assets, which makes tracked cross-modality grounding and VLM-note provenance checks practical instead of leaving them to ad hoc unit tests
 - that negative multimodal fixture also locks an important nuance in the validation surface:

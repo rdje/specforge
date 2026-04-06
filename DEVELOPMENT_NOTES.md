@@ -277,6 +277,11 @@
     - caption-only grounding
     - caption-versus-table multimodal arbitration
     - direct VLM timing-note grounding
+- the matching negative case matters just as much:
+  - a VLM timing note that only says a handshake-shaped signal rises/falls at a tick must not become semantic-role evidence just because the signal spelling contains `VALID` or `READY`
+  - the honest benchmark should prove two things at once:
+    - `timing_diagram_extractions` stays non-zero, so we are not throwing away legitimate timing recovery
+    - `signal_semantic_hints_from_vlm_timing_annotations` stays zero, so waveform motion is not overpromoted into protocol meaning
 - this is the right shape for `R15e`:
   - start with fixtures that protect truthfulness invariants
   - then grow toward APB/AHB/AXI protocol-grade gold suites and broader negative corpora

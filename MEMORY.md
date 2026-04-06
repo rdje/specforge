@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `4ff4657`
-- latest_commit_brief_message: `feat(quality): benchmark multimodal semantic conflicts`
-- note: current uncommitted work adds evidence-stage `kg-bench` validation expectations plus a tracked gold fixture proving semantic hints can come directly from `vlm_timing_diagram_extraction`
+- latest_commit_hash: `9e39971`
+- latest_commit_brief_message: `feat(quality): benchmark vlm timing-note grounding`
+- note: current uncommitted work adds the negative twin of the VLM-note gold fixture, proving timing extraction can succeed while semantic-role inference stays zero for name-only waveform notes
 
 ## Recent commit chain (last 5)
+- `9e39971` feat(quality): benchmark vlm timing-note grounding
 - `4ff4657` feat(quality): benchmark multimodal semantic conflicts
 - `8c8bdf4` feat(quality): benchmark cross-modality grounding
 - `df03118` docs(roadmap): capture cross-document learning plane
 - `442a867` feat(quality): benchmark semantic arbitration
-- `7807fa0` feat(quality): benchmark alias-dependent caveats
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -44,8 +44,7 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
-- added evidence-stage validation expectations to `specforge kg-bench`, so tracked fixtures can assert where a semantic hint originated before it is merged into downstream canonical grounding
-- added a tracked `vlm_timing_semantic_grounding_gold` fixture that proves semantic meaning can come directly from `vlm_timing_diagram_extraction` rather than caption text, tables, or prose
+- added a tracked `vlm_timing_name_only_semantic_noise_negative` fixture that proves waveform/tick annotations around `XVALID` still produce timing extraction while semantic-role inference stays at zero
 - synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `USER_GUIDE.md`, `DEVELOPMENT_NOTES.md`, `CHANGES.md`, and `MEMORY.md` so the richer `R15e` harness shape is captured in the live docs
 - validation ran for this task:
   - `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` passed
@@ -54,8 +53,7 @@
 
 ## Current working tree before commit
 - modified tracked files currently include:
-  - `crates/specforge/src/commands/kg_bench.rs`
-  - `crates/specforge/test_data/kg_quality/vlm_timing_semantic_grounding_gold/...`
+  - `crates/specforge/test_data/kg_quality/vlm_timing_name_only_semantic_noise_negative/...`
   - `README.md`
   - `ROADMAP.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -67,7 +65,7 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the VLM timing-note KG benchmark slice
+1. commit the VLM timing-note semantic-noise negative slice
 2. expand the fixture harness toward broader protocol-grade APB/AHB/AXI gold suites and harder multimodal/temporal negative cases
 3. keep finishing the current graph / temporal / arbitration / evaluation workstreams without weakening local truthfulness
 

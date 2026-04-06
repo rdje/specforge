@@ -145,6 +145,21 @@
 - `cargo fmt --all` → passed
 - `cargo test --manifest-path Cargo.toml` → 188/188 passed
 
+## 2026-04-06 (KG benchmark now locks VLM-note semantic-noise rejection)
+
+### Added: direct VLM timing-note semantic-noise negative fixture
+- Added `crates/specforge/test_data/kg_quality/vlm_timing_name_only_semantic_noise_negative/`.
+- The fixture patches a timing-diagram `VisualAsset.note` with `vlm_timing_diagram_extraction` content that only describes waveform motion around `XVALID`.
+- It proves:
+  - `EvidenceIR` reports `timing_diagram_extractions = 1`
+  - `EvidenceIR` reports `signal_semantic_hints_from_vlm_timing_annotations = 0`
+  - downstream `SemanticIR` / `IntentIR` keep semantic-role candidates, arbitration, and consensus at zero
+
+### Why this matters
+- The benchmark harness now locks both sides of direct VLM-note truthfulness:
+  - real timing extraction should survive
+  - semantic-role meaning must not leak from handshake-shaped signal spelling alone
+
 ## 2026-04-06 (KG benchmark now locks direct VLM-note semantics)
 
 ### Added: evidence-stage validation expectations in `specforge kg-bench`
