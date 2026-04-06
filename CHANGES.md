@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-04-06 (bounded temporal prior consumption landed)
+
+### Added: prior-guided cycle-window recovery in `SemanticIR`
+- Extended [prior_memory.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/prior_memory.rs) with a typed temporal phrase lookup that can resolve a unique learned `CycleWindowRecord` from locally grounded timing text.
+- Extended [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so `SemanticIR` now loads advisory prior memory from the persisted upstream `prior_memory_path` and uses temporal phrase priors only as a fallback when direct cycle-window parsing cannot recover the local timing window.
+- Added a direct semantic regression proving `PREADY must be asserted one beat later` still yields no built-in cycle window on its own, but does recover a one-cycle temporal rule when a validated temporal prior is present.
+
+### Why this matters
+- The cross-document learning plane now has a third real bounded consumer, and it lives in the temporal model instead of only in evidence extraction.
+- This lets the extractor become stronger on previously unseen local timing phrase shapes without weakening the rule that canonical timing still has to be justified by the current PDF.
+- The temporal prior path is still honest: without the local timing sentence there is no rule, and without a unique learned prior there is no learned cycle-window fallback.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml derives_cycle_window_from_temporal_phrase_prior_when_builtin_parser_cannot -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml extracts_single_cycle_window_from_idiomatic_clock_tick_phrases -- --nocapture` → passed
+- `bash scripts/run_ci.sh` → passed (`204/204` tests)
+
 ## 2026-04-06 (bounded semantic prior consumption landed)
 
 ### Added: prior-guided semantic hint recovery in `EvidenceIR`

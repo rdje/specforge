@@ -11,6 +11,7 @@ use crate::ir::evidence::{
     SignalSemanticHintRecord, SignalSemanticHintSourceKind, SignalSemanticTag, StatementClass,
     VisualEvidenceRole, VisualObservationKind, parse_visual_observation_json,
 };
+use crate::ir::prior_memory::{CorpusMemory, ProtocolFamily};
 use crate::ir::source::{
     ActorSignalRelation, AutomationConfidence, CandidateInterpretation, RelationKind,
     ResidualDecisionPacket, ValidationReportRecord, WidthHint, document_key,
@@ -118,6 +119,11 @@ impl SemanticIr {
             display_name: evidence_ir.document_identity.display_name.clone(),
         };
 
+        let prior_guidance = load_semantic_prior_guidance(
+            evidence_ir.prior_memory_path.as_deref(),
+            &document_identity.document_key,
+            &document_identity.display_name,
+        )?;
         let context = SemanticContext::from_evidence_ir(&evidence_ir);
         let (interfaces, interface_signal_conflicts) = build_interfaces(&context);
         let actor_build = build_actors(&context, &interfaces);
@@ -195,6 +201,8 @@ impl SemanticIr {
                 .cloned()
                 .collect()
         };
+        let known_actor_names =
+            collect_known_actor_names(actor_build.actors.as_slice(), actor_ports.as_slice());
 
         // Merge timing constraints: table-synthesized + VLM diagram observations.
         let mut timing_constraints = evidence_ir.timing_constraints.clone();
@@ -209,6 +217,8 @@ impl SemanticIr {
             signal_constraints.as_slice(),
             conditional_rules.as_slice(),
             timing_constraints.as_slice(),
+            &known_actor_names,
+            prior_guidance.as_ref(),
         );
         let temporal_conflicts = build_temporal_conflicts(&temporal_rules);
         let residual_decisions = build_residual_decisions(
@@ -1153,6 +1163,12 @@ struct SemanticContext {
     visual_roles_by_id: HashMap<String, VisualEvidenceRole>,
     actor_signal_relations: Vec<ActorSignalRelation>,
     signal_semantic_hints: Vec<SignalSemanticHintRecord>,
+}
+
+#[derive(Debug, Clone)]
+struct SemanticPriorGuidance {
+    corpus_memory: CorpusMemory,
+    protocol_family: ProtocolFamily,
 }
 
 impl SemanticContext {
@@ -5609,6 +5625,8 @@ fn build_temporal_rules(
     signal_constraints: &[SignalConstraintRecord],
     conditional_rules: &[ConditionalRuleRecord],
     timing_constraints: &[TimingConstraintRecord],
+    actor_names: &BTreeSet<String>,
+    prior_guidance: Option<&SemanticPriorGuidance>,
 ) -> Vec<TemporalRuleRecord> {
     let known_signals = interfaces
         .iter()
@@ -5647,13 +5665,23 @@ fn build_temporal_rules(
         if consequents.is_empty() {
             continue;
         }
+        let actor_grounded = temporal_predicates_are_actor_grounded(&antecedents, &consequents);
+        let handshake_completion =
+            temporal_predicates_have_handshake_completion(&antecedents, &consequents);
         rules.push(TemporalRuleRecord {
             rule_id: format!("temporal_signal_constraint_{}", constraint.constraint_id),
             clock_signal: default_clock.clone(),
             edge: default_edge,
             antecedents,
             consequents,
-            cycle_window: extract_cycle_window_from_text(&constraint.source_text),
+            cycle_window: resolve_cycle_window_from_text(
+                &constraint.source_text,
+                &known_signals,
+                actor_names,
+                actor_grounded,
+                handshake_completion,
+                prior_guidance,
+            ),
             source_text: constraint.source_text.clone(),
             supporting_statement_ids: constraint.supporting_statement_ids.clone(),
             automation_confidence: constraint.automation_confidence,
@@ -5670,18 +5698,29 @@ fn build_temporal_rules(
         if consequents.is_empty() {
             continue;
         }
+        let antecedents = parse_temporal_condition_predicates(
+            &rule.antecedent_text,
+            &known_signals,
+            TickPhase::PreTick,
+            &handshake_role_context,
+        );
+        let actor_grounded = temporal_predicates_are_actor_grounded(&antecedents, &consequents);
+        let handshake_completion =
+            temporal_predicates_have_handshake_completion(&antecedents, &consequents);
         rules.push(TemporalRuleRecord {
             rule_id: format!("temporal_conditional_rule_{}", rule.rule_id),
             clock_signal: default_clock.clone(),
             edge: default_edge,
-            antecedents: parse_temporal_condition_predicates(
-                &rule.antecedent_text,
-                &known_signals,
-                TickPhase::PreTick,
-                &handshake_role_context,
-            ),
+            antecedents,
             consequents,
-            cycle_window: extract_cycle_window_from_text(&rule.source_text),
+            cycle_window: resolve_cycle_window_from_text(
+                &rule.source_text,
+                &known_signals,
+                actor_names,
+                actor_grounded,
+                handshake_completion,
+                prior_guidance,
+            ),
             source_text: rule.source_text.clone(),
             supporting_statement_ids: rule.supporting_statement_ids.clone(),
             automation_confidence: rule.automation_confidence,
@@ -5697,6 +5736,8 @@ fn build_temporal_rules(
             description,
             &known_signals,
             default_clock.as_deref(),
+            actor_names,
+            prior_guidance,
         ) else {
             continue;
         };
@@ -6513,11 +6554,40 @@ fn temporal_consequents_from_conditional_rule(
         })
 }
 
+fn temporal_predicates_are_actor_grounded(
+    antecedents: &[TemporalPredicateRecord],
+    consequents: &[TemporalPredicateRecord],
+) -> bool {
+    antecedents
+        .iter()
+        .chain(consequents.iter())
+        .any(|predicate| {
+            matches!(
+                predicate,
+                TemporalPredicateRecord::ActorDrivesSignal { .. }
+                    | TemporalPredicateRecord::ActorMaintainsSignalStable { .. }
+                    | TemporalPredicateRecord::ActorSamplesSignal { .. }
+            )
+        })
+}
+
+fn temporal_predicates_have_handshake_completion(
+    antecedents: &[TemporalPredicateRecord],
+    consequents: &[TemporalPredicateRecord],
+) -> bool {
+    antecedents
+        .iter()
+        .chain(consequents.iter())
+        .any(|predicate| matches!(predicate, TemporalPredicateRecord::HandshakeComplete { .. }))
+}
+
 fn temporal_rule_from_timing_constraint(
     timing: &TimingConstraintRecord,
     description: &str,
     known_signals: &BTreeSet<String>,
     default_clock: Option<&str>,
+    actor_names: &BTreeSet<String>,
+    prior_guidance: Option<&SemanticPriorGuidance>,
 ) -> Option<TemporalRuleRecord> {
     let signal_name = find_known_signal_name(description, known_signals)?;
     let description_lower = description.to_ascii_lowercase();
@@ -6543,14 +6613,25 @@ fn temporal_rule_from_timing_constraint(
             signal_name: signal_name.clone(),
             phase: TickPhase::PreTick,
         });
+    let consequents = vec![consequent];
+    let actor_grounded = temporal_predicates_are_actor_grounded(&[], &consequents);
+    let handshake_completion = temporal_predicates_have_handshake_completion(&[], &consequents);
 
     Some(TemporalRuleRecord {
         rule_id: format!("temporal_timing_{}", timing.constraint_id),
         clock_signal: default_clock.map(str::to_string),
         edge,
         antecedents: Vec::new(),
-        consequents: vec![consequent],
-        cycle_window: extract_cycle_window_from_timing_constraint(timing, description),
+        consequents,
+        cycle_window: extract_cycle_window_from_timing_constraint(
+            timing,
+            description,
+            known_signals,
+            actor_names,
+            actor_grounded,
+            handshake_completion,
+            prior_guidance,
+        ),
         source_text: description.to_string(),
         supporting_statement_ids: timing.supporting_statement_ids.clone(),
         automation_confidence: timing.automation_confidence,
@@ -6560,39 +6641,57 @@ fn temporal_rule_from_timing_constraint(
 fn extract_cycle_window_from_timing_constraint(
     timing: &TimingConstraintRecord,
     description: &str,
+    known_signals: &BTreeSet<String>,
+    actor_names: &BTreeSet<String>,
+    actor_grounded: bool,
+    handshake_completion: bool,
+    prior_guidance: Option<&SemanticPriorGuidance>,
 ) -> Option<CycleWindowRecord> {
-    extract_cycle_window_from_text(description).or_else(|| {
-        let unit_mentions_cycles = timing
-            .unit
-            .as_deref()
-            .map(|unit| unit.to_ascii_lowercase().contains("cycle"))
-            .unwrap_or(false);
-        if !unit_mentions_cycles {
-            return None;
-        }
+    extract_cycle_window_from_text(description)
+        .or_else(|| {
+            let unit_mentions_cycles = timing
+                .unit
+                .as_deref()
+                .map(|unit| unit.to_ascii_lowercase().contains("cycle"))
+                .unwrap_or(false);
+            if !unit_mentions_cycles {
+                return None;
+            }
 
-        let min_cycles = timing
-            .min_value
-            .as_deref()
-            .and_then(parse_cycle_count_value);
-        let max_cycles = timing
-            .max_value
-            .as_deref()
-            .and_then(parse_cycle_count_value);
-        let typ_cycles = timing
-            .typ_value
-            .as_deref()
-            .and_then(parse_cycle_count_value);
+            let min_cycles = timing
+                .min_value
+                .as_deref()
+                .and_then(parse_cycle_count_value);
+            let max_cycles = timing
+                .max_value
+                .as_deref()
+                .and_then(parse_cycle_count_value);
+            let typ_cycles = timing
+                .typ_value
+                .as_deref()
+                .and_then(parse_cycle_count_value);
 
-        if min_cycles.is_none() && max_cycles.is_none() && typ_cycles.is_none() {
-            return None;
-        }
+            if min_cycles.is_none() && max_cycles.is_none() && typ_cycles.is_none() {
+                return None;
+            }
 
-        Some(CycleWindowRecord {
-            min_cycles: min_cycles.or(typ_cycles),
-            max_cycles: max_cycles.or(typ_cycles),
+            Some(CycleWindowRecord {
+                min_cycles: min_cycles.or(typ_cycles),
+                max_cycles: max_cycles.or(typ_cycles),
+            })
         })
-    })
+        .or_else(|| {
+            prior_guidance.and_then(|guidance| {
+                guidance.corpus_memory.temporal_cycle_window_in_text(
+                    Some(guidance.protocol_family),
+                    description,
+                    known_signals,
+                    actor_names,
+                    actor_grounded.then_some(true),
+                    handshake_completion.then_some(true),
+                )
+            })
+        })
 }
 
 fn dedup_temporal_rules(rules: Vec<TemporalRuleRecord>) -> Vec<TemporalRuleRecord> {
@@ -6882,6 +6981,60 @@ fn extract_cycle_window_from_text(text: &str) -> Option<CycleWindowRecord> {
     }
 
     None
+}
+
+fn resolve_cycle_window_from_text(
+    text: &str,
+    signal_names: &BTreeSet<String>,
+    actor_names: &BTreeSet<String>,
+    actor_grounded: bool,
+    handshake_completion: bool,
+    prior_guidance: Option<&SemanticPriorGuidance>,
+) -> Option<CycleWindowRecord> {
+    extract_cycle_window_from_text(text).or_else(|| {
+        prior_guidance.and_then(|guidance| {
+            guidance.corpus_memory.temporal_cycle_window_in_text(
+                Some(guidance.protocol_family),
+                text,
+                signal_names,
+                actor_names,
+                actor_grounded.then_some(true),
+                handshake_completion.then_some(true),
+            )
+        })
+    })
+}
+
+fn collect_known_actor_names(
+    actors: &[ActorRecord],
+    actor_ports: &[ActorPortRecord],
+) -> BTreeSet<String> {
+    let mut actor_names = actors
+        .iter()
+        .filter_map(|actor| actor.actor_name.clone())
+        .collect::<BTreeSet<_>>();
+    actor_names.extend(actor_ports.iter().map(|port| port.actor_name.clone()));
+    actor_names
+}
+
+fn load_semantic_prior_guidance(
+    prior_memory_path: Option<&Path>,
+    document_key: &str,
+    display_name: &str,
+) -> Result<Option<SemanticPriorGuidance>> {
+    let Some(prior_memory_path) = prior_memory_path else {
+        return Ok(None);
+    };
+    if !prior_memory_path.exists() {
+        return Ok(None);
+    }
+    let prior_memory_path = canonicalize_existing_path(prior_memory_path)?;
+    let corpus_memory =
+        serde_json::from_str::<CorpusMemory>(&fs::read_to_string(prior_memory_path)?)?;
+    Ok(Some(SemanticPriorGuidance {
+        corpus_memory,
+        protocol_family: ProtocolFamily::infer(document_key, display_name),
+    }))
 }
 
 fn contains_token_phrase(tokens: &[&str], phrase: &[&str]) -> bool {
@@ -7278,6 +7431,10 @@ mod tests {
 
     use crate::error::Result;
     use crate::ir::evidence::EvidenceIr;
+    use crate::ir::prior_memory::{
+        CorpusMemory, CorpusMemoryUpdatePolicyRecord, PriorSourceArtifactRecord, ProtocolFamily,
+        TemporalPhrasePriorRecord,
+    };
     use crate::ir::source::{
         AutomationConfidence, SourceIr, StructuredTableCellRecord, StructuredTableRecord,
         TableKind, VisualAsset, VisualAssetKind, WidthHint,
@@ -7286,7 +7443,7 @@ mod tests {
     use super::{
         ActorRelativeDirection, ControlActionRecord, ControlBinaryOperator, ControlBlockRole,
         ControlCompoundUpdateOperation, ControlDualOutputKind, ControlExpressionRecord,
-        ControlReferenceKind, ControlReferenceSuffix, DecisionTreeActionRecord,
+        ControlReferenceKind, ControlReferenceSuffix, CycleWindowRecord, DecisionTreeActionRecord,
         DecisionTreeAssignmentKind, DecisionTreeComparisonOperator, DecisionTreeGuardRecord,
         DecisionTreeValueRecord, InterfaceSignalDirection, SemanticIr,
         SignalSemanticHintSourceKind, SignalSemanticTag, SymbolDefinitionKind, SystemResetKind,
@@ -7300,6 +7457,60 @@ mod tests {
             col_span: 1,
             is_header,
         }
+    }
+
+    fn write_temporal_phrase_prior_memory(
+        root: &std::path::Path,
+        normalized_phrase: &str,
+        protocol_family: ProtocolFamily,
+        cycle_window: CycleWindowRecord,
+    ) -> Result<std::path::PathBuf> {
+        let prior_memory_path = root
+            .join("generated")
+            .join("prior_memory")
+            .join("corpus_memory.json");
+        if let Some(parent) = prior_memory_path.parent() {
+            fs::create_dir_all(parent)?;
+        }
+
+        let corpus_memory = CorpusMemory {
+            schema_version: 1,
+            update_policy: CorpusMemoryUpdatePolicyRecord {
+                advisory_only: true,
+                requires_validated_intent_ir: true,
+                rejects_error_findings: true,
+                excludes_alias_dependent_semantic_consensus: true,
+                local_grounding_required_for_canonical_promotion: true,
+            },
+            source_artifacts: vec![PriorSourceArtifactRecord {
+                artifact_path: root.join("seed_intent_ir.json"),
+                document_key: "seed_doc".to_string(),
+                display_name: "Seed Doc".to_string(),
+                protocol_family,
+                overall_score: Some(100),
+                grade: Some("EXCELLENT".to_string()),
+                accepted_for_learning: true,
+                skip_reason: None,
+            }],
+            actor_taxonomy_priors: Vec::new(),
+            semantic_phrase_priors: Vec::new(),
+            temporal_phrase_priors: vec![TemporalPhrasePriorRecord {
+                prior_id: "temporal_phrase_prior_0001".to_string(),
+                normalized_phrase: normalized_phrase.to_string(),
+                protocol_family,
+                cycle_window: Some(cycle_window),
+                actor_grounded: false,
+                handshake_completion: false,
+                support_count: 1,
+                supporting_document_keys: vec!["seed_doc".to_string()],
+                strongest_automation_confidence: AutomationConfidence::High,
+            }],
+        };
+        fs::write(
+            &prior_memory_path,
+            serde_json::to_string_pretty(&corpus_memory)?,
+        )?;
+        Ok(prior_memory_path)
     }
 
     #[test]
@@ -9592,6 +9803,82 @@ mod tests {
             .expect("expected cycle window to be derived from 'next tick'");
         assert_eq!(cycle_window.min_cycles, Some(1));
         assert_eq!(cycle_window.max_cycles, Some(1));
+
+        Ok(())
+    }
+
+    #[test]
+    fn derives_cycle_window_from_temporal_phrase_prior_when_builtin_parser_cannot() -> Result<()> {
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        assert!(
+            super::extract_cycle_window_from_text("PREADY must be asserted one beat later.")
+                .is_none(),
+            "the built-in parser should not recognize the learned-only phrase"
+        );
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("apb_temporal_prior.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let prior_memory_path = write_temporal_phrase_prior_memory(
+            tempdir.path(),
+            "<signal> must be asserted one beat later",
+            ProtocolFamily::AmbaApb,
+            CycleWindowRecord {
+                min_cycles: Some(1),
+                max_cycles: Some(1),
+            },
+        )?;
+
+        fs::write(
+            &source,
+            concat!(
+                "# APB Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal PREADY is input width 1.\n\n",
+                "Clock clk.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build_with_prior_memory(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+            Some(&prior_memory_path),
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pready_one_beat".to_string(),
+            subject_signal: "PREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PREADY must be asserted one beat later.".to_string(),
+            supporting_statement_ids: vec!["stmt_prior_guided_temporal".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| rule.rule_id == "temporal_signal_constraint_sigcon_pready_one_beat")
+            .expect("expected temporal rule derived from prior-guided phrase");
+        assert_eq!(
+            rule.cycle_window,
+            Some(CycleWindowRecord {
+                min_cycles: Some(1),
+                max_cycles: Some(1),
+            })
+        );
 
         Ok(())
     }

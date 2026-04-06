@@ -43,6 +43,7 @@ Use it first for the project objective, document navigation, and the current imp
 - `specforge evidence <source-ir>` and `specforge converge <source>` now consult that local prior store by default through `--prior-memory generated/prior_memory/corpus_memory.json`, and the first bounded consumers now use:
   - actor-taxonomy priors to interpret explicit local actor terms already present in section headings and `Source` / `Destination` table columns
   - semantic phrase priors to interpret locally grounded signal-description/prose phrases that normalize to learned semantic-role evidence without weakening the name-noise protections
+- `SemanticIR` now has a third bounded prior consumer too: if the current PDF contains local timing text whose phrase shape matches a learned temporal prior and the built-in parser still cannot recover a cycle window on its own, the semantic stage can advisory-recover that cycle window without inventing a timing rule that is not already locally grounded
 - GitHub Actions CI now runs `cargo fmt --all --check` and `cargo test --manifest-path Cargo.toml` on every `push` and `pull_request`, so the local Rust quality gate is mirrored automatically on GitHub
 - the hosted CI path is now driven by `./scripts/run_ci.sh`, so the exact Rust CI suite can be run locally before push instead of only after GitHub receives the commit
 - the current `R15f` slice now learns three safe prior families:
@@ -53,7 +54,8 @@ Use it first for the project objective, document navigation, and the current imp
 - the first prior-consumption slices are now real too:
   - cross-document actor-taxonomy memory can safely recover directions for local actor labels like `Producer` / `Consumer`
   - cross-document semantic phrase memory can safely recover non-hardcoded local role phrases like `XACK can receive the transfer`
-  - both stay bounded: prior memory widens local interpretation, but it cannot invent any actor, signal, relation, or semantic fact not grounded in the current document
+  - cross-document temporal phrase memory can safely recover cycle windows for local timing phrases like `PREADY must be asserted one beat later` when the built-in parser cannot
+  - all three stay bounded: prior memory widens local interpretation, but it cannot invent any actor, signal, relation, semantic fact, or timing rule that is not grounded in the current document
 - the KG benchmark harness can now also patch staged fixture inputs at `SourceIR` and `EvidenceIR`, which lets tracked fixtures model richer protocol-semantics cases like contested handshake-role evidence without needing an external PDF corpus for every regression
 - `specforge kg-bench` can now also assert canonical semantic candidate and arbitration state directly, so fixtures can lock whether a signal meaning is decisively grounded or still honestly contested instead of inferring that only from side effects like blocked fallbacks or validator findings
 - `specforge kg-bench` can now also patch `SourceIR` visual assets and assert persisted validation metric values directly at the evidence, semantic, and intent stages, which lets tracked fixtures lock cross-modality grounding behavior and VLM-note-derived semantics instead of only checking canonical structure or finding ids

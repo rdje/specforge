@@ -176,6 +176,63 @@ impl CorpusMemory {
             .collect()
     }
 
+    pub fn temporal_cycle_window_in_text(
+        &self,
+        protocol_family: Option<ProtocolFamily>,
+        text: &str,
+        signal_names: &std::collections::BTreeSet<String>,
+        actor_names: &std::collections::BTreeSet<String>,
+        actor_grounded: Option<bool>,
+        handshake_completion: Option<bool>,
+    ) -> Option<CycleWindowRecord> {
+        let normalized_phrase = normalize_prior_phrase(text, signal_names, actor_names);
+        if !is_meaningful_prior_phrase(&normalized_phrase) {
+            return None;
+        }
+
+        for scope in actor_taxonomy_search_scopes(protocol_family) {
+            let cycle_windows = self
+                .temporal_phrase_priors
+                .iter()
+                .filter(|prior| {
+                    scope
+                        .map(|expected| prior.protocol_family == expected)
+                        .unwrap_or(true)
+                })
+                .filter(|prior| prior.cycle_window.is_some())
+                .filter(|prior| {
+                    actor_grounded
+                        .map(|expected| prior.actor_grounded == expected)
+                        .unwrap_or(true)
+                })
+                .filter(|prior| {
+                    handshake_completion
+                        .map(|expected| prior.handshake_completion == expected)
+                        .unwrap_or(true)
+                })
+                .filter(|prior| prior.normalized_phrase == normalized_phrase)
+                .filter_map(|prior| {
+                    prior
+                        .cycle_window
+                        .as_ref()
+                        .map(|window| (window.min_cycles, window.max_cycles))
+                })
+                .collect::<std::collections::BTreeSet<_>>();
+            if cycle_windows.len() == 1 {
+                let (min_cycles, max_cycles) = cycle_windows.iter().next().copied()?;
+                return Some(CycleWindowRecord {
+                    min_cycles,
+                    max_cycles,
+                });
+            }
+            if cycle_windows.len() > 1 {
+                return None;
+            }
+        }
+
+        None
+    }
+
     fn resolve_actor_taxonomy_role<F>(
         &self,
         protocol_family: Option<ProtocolFamily>,

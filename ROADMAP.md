@@ -534,10 +534,12 @@
   - that first consumer is still provenance-safe: prior memory can widen actor vocabulary, but it cannot create canonical actors, signals, or relations that are not explicitly present in the current PDF
   - `EvidenceIR` now has a second bounded prior-consumption path too: semantic phrase priors can guide local signal-role hint recovery when the current PDF contains a phrase that normalizes to the learned prior shape
   - prior-guided semantic hints stay provenance-safe as well: the prior can help interpret a local phrase like `XACK can receive the transfer`, but it cannot promote a semantic role without that local phrase actually appearing in the current document
+  - `SemanticIR` now has a third bounded prior-consumption path too: temporal phrase priors can advisory-recover a cycle window for local timing text when the built-in parser cannot recover that window directly
+  - prior-guided temporal recovery stays provenance-safe as well: the prior can help interpret a local phrase like `PREADY must be asserted one beat later`, but it cannot create a timing rule without that local timing text already appearing in the current document
 - remaining:
   - broaden the prior store beyond the first actor-taxonomy / semantic / temporal phrase families into table-shape, visual-motif, modality-reliability, and negative-knowledge priors
   - decide how protocol-family scoping should grow beyond the current AMBA family inference without hardcoding brittle protocol logic
-  - broaden prior consumption beyond the first actor-taxonomy plus semantic-role `EvidenceIR` slices into temporal-language, table-shape, visual-motif, modality-reliability, and negative-knowledge suggestions without bypassing local grounding
+  - broaden prior consumption beyond the first actor-taxonomy and semantic-role `EvidenceIR` slices plus the first temporal-language `SemanticIR` slice into table-shape, visual-motif, modality-reliability, and negative-knowledge suggestions without bypassing local grounding
   - add benchmark coverage that measures whether prior memory improves analysis of unseen PDFs honestly instead of only growing the stored prior set
 
 ### R16 SystemVerilog adapter (Horizon)

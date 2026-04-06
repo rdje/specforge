@@ -555,6 +555,18 @@
   - with prior memory, the same local phrase yields a ready-like hint
   - after writing/reloading `EvidenceIR`, `refresh_signal_semantic_hints()` preserves that prior-guided hint because the consulted prior-memory path is now part of the local artifact state
 
+### Third landed bounded prior-consumption slice
+- the third consumer is now real in `crates/specforge/src/ir/semantic.rs`
+- `SemanticIR` can now use temporal phrase priors to advisory-recover a `cycle_window` from local timing text whose phrase shape matches learned prior memory when the built-in parser still cannot recover the timing window directly
+- the bounded behavior remains strict:
+  - the current PDF still has to contain the local timing sentence or timing-note text
+  - the prior does not create a temporal rule by itself; it only helps interpret the local phrase once a local rule already exists
+  - built-in direct cycle-window parsing still runs first, so learned priors are fallback guidance rather than replacement logic
+- a direct regression now proves the new bounded behavior on an unseen phrase shape:
+  - without prior memory, `PREADY must be asserted one beat later` yields no cycle window from the built-in parser
+  - with prior memory, the same local phrase yields `CycleWindowRecord { min_cycles: Some(1), max_cycles: Some(1) }`
+  - the recovered timing still stays document-local and provenance-pure because the rule only exists when the local timing text is present
+
 ## Current repository observations
 - the repository now contains a renamed `specforge` crate and CLI
 - the active Rust codebase no longer treats `spec2fsm` as the primary identity
