@@ -1,5 +1,28 @@
 # CHANGES
 
+## 2026-04-06 (KG fixtures now lock multimodal conflict behavior too)
+
+### Added: cross-modality semantic-conflict negative fixture
+- Added a tracked staged fixture proving that table evidence and visual-caption evidence can disagree about the same signal role without collapsing into false cross-modality consensus.
+- The fixture locks that `XCTRL`:
+  - carries a semantic conflict
+  - keeps multiple candidates and non-decisive arbitration
+  - does not gain a resolved role or consensus
+
+### Added: validation-metric expectations for contested multimodal grounding
+- The new fixture also locks an important validator nuance:
+  - `with_visual_semantic_grounding` stays non-zero because visual evidence is still present
+  - `with_cross_modality_semantic_grounding` stays zero because the multimodal evidence never resolved into consensus
+
+### Why this matters
+- This protects against a subtle multimodal failure mode: “two modalities spoke” must not be mistaken for “two modalities agreed.”
+- The benchmark harness now guards both the positive and negative sides of multimodal grounding quality.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` → passed
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 188/188 passed
+
 ## 2026-04-06 (KG fixtures now lock cross-modality grounding metrics)
 
 ### Added: validation-metric expectations in `specforge kg-bench`

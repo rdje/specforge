@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `df03118`
-- latest_commit_brief_message: `docs(roadmap): capture cross-document learning plane`
-- note: current uncommitted work upgrades `kg-bench` so fixtures can patch visual assets and assert validation metrics directly, then uses that stronger harness to lock a tracked cross-modality semantic-grounding gold case
+- latest_commit_hash: `8c8bdf4`
+- latest_commit_brief_message: `feat(quality): benchmark cross-modality grounding`
+- note: current uncommitted work adds a tracked multimodal negative fixture so table-versus-visual disagreement stays contested, keeps visual grounding visible, and does not overclaim resolved cross-modality support
 
 ## Recent commit chain (last 5)
+- `8c8bdf4` feat(quality): benchmark cross-modality grounding
 - `df03118` docs(roadmap): capture cross-document learning plane
 - `442a867` feat(quality): benchmark semantic arbitration
 - `7807fa0` feat(quality): benchmark alias-dependent caveats
 - `2bed722` feat(quality): patch staged kg fixtures
-- `f4258e5` feat(quality): add kg benchmark fixtures
 - `8eee95d` feat(ir): carry polarity conflicts downstream
 - `f3c28cd` feat(evidence): prefer direct signal grounding over aliases
 
@@ -46,9 +46,8 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
-- extended `specforge kg-bench` so validation expectations can assert metric values directly, not only finding ids
-- extended `SourceIR` fixture patching so tracked KG fixtures can inject visual assets as well as structured tables
-- added a tracked `cross_modality_semantic_grounding_gold` fixture that proves one semantic role can be grounded jointly by table and visual-caption evidence, with both canonical and validator surfaces locked
+- added a tracked `cross_modality_semantic_conflict_negative` fixture that proves table and visual-caption disagreement stays canonically contested instead of collapsing into false cross-modality consensus
+- locked the validator nuance that conflicting multimodal evidence can still count as visual grounding while correctly not counting as resolved cross-modality grounding
 - synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `USER_GUIDE.md`, `DEVELOPMENT_NOTES.md`, `CHANGES.md`, and `MEMORY.md` so the richer `R15e` harness shape is captured in the live docs
 - validation ran for this task:
   - `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` passed
@@ -57,8 +56,7 @@
 
 ## Current working tree before commit
 - modified tracked files currently include:
-  - `crates/specforge/src/commands/kg_bench.rs`
-  - `crates/specforge/test_data/kg_quality/cross_modality_semantic_grounding_gold/...`
+  - `crates/specforge/test_data/kg_quality/cross_modality_semantic_conflict_negative/...`
   - `README.md`
   - `ROADMAP.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`

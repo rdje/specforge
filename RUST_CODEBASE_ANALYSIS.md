@@ -90,8 +90,12 @@
   - a stage-patched contested-handshake fixture that proves contested `XVALID`/`XACK` meaning blocks typed `HandshakeComplete` recovery
   - a stage-patched alias-dependent caveat fixture that proves typed handshake recovery can remain canonical while keeping alias-dependent residual and assumption state explicit
   - a stage-patched cross-modality grounding gold fixture that proves one role can be reinforced jointly by table evidence and visual-caption evidence
+  - a stage-patched cross-modality conflict fixture that proves table-versus-visual disagreement stays canonically contested instead of collapsing into false cross-modality consensus
 - the harness now also asserts canonical semantic candidates and decisive-vs-contested semantic arbitration directly, which is a better `R15e` truthfulness check than inferring arbitration quality only from blocked fallback or validation side effects
 - the harness now also asserts persisted validation metric values directly and can patch `SourceIR` visual assets, which makes tracked cross-modality grounding checks practical instead of leaving them to ad hoc unit tests
+- that negative multimodal fixture also locks an important nuance in the validation surface:
+  - conflicting multimodal evidence should still count as visual grounding
+  - but it must not count as resolved cross-modality grounding
 - that means benchmark hardening is no longer purely roadmap text; the repo now has a seed harness for false-positive control and residual-quality regression, even though protocol-grade APB/AHB/AXI gold fixtures are still ahead
 - the harness is also more realistic now than a pure markdown fixture runner because tracked fixtures can patch `SourceIR` and `EvidenceIR` surfaces directly, which is a practical way to benchmark richer multimodal/structured semantics without needing a heavyweight source document for every regression
 

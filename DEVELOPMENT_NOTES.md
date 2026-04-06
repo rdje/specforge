@@ -263,6 +263,13 @@
   - `with_cross_modality_semantic_grounding`
   - `with_visual_semantic_grounding`
   - related metric families that distinguish stronger grounding from weaker single-source evidence
+- the next equally important negative case is multimodal disagreement:
+  - table evidence can say valid-like while a visual caption says ready-like
+  - the correct behavior is not to erase the visual evidence
+  - the correct behavior is also not to overclaim resolved cross-modality reinforcement
+- so the benchmark contract should explicitly lock this distinction:
+  - `with_visual_semantic_grounding` can still be non-zero when conflicting visual evidence is present
+  - `with_cross_modality_semantic_grounding` must stay zero when arbitration is still non-decisive and no resolved consensus exists
 - this is the right shape for `R15e`:
   - start with fixtures that protect truthfulness invariants
   - then grow toward APB/AHB/AXI protocol-grade gold suites and broader negative corpora

@@ -105,7 +105,7 @@ cargo run -p specforge -- kg-bench
 - the harness can also patch `SourceIR` and `EvidenceIR` inputs for a fixture, which lets tracked regressions exercise richer structured/semantic cases than plain markdown text alone
 - the harness can also assert canonical semantic candidates and decisive/non-decisive semantic arbitration directly, so fixture regressions can lock contested versus settled signal meaning explicitly
 - the harness can also assert persisted validation metric values directly and patch `SourceIR` visual assets, so tracked regressions can now lock cross-modality grounding behavior as well as canonical IR shape
-- current tracked fixtures cover both blocked heuristic leakage and weaker alias-dependent semantics that must stay explicitly caveated
+- current tracked fixtures cover blocked heuristic leakage, weaker alias-dependent semantics that must stay explicitly caveated, and both positive and negative cross-modality grounding behavior
   - visual evidence items from `SourceIR` visual assets
   - explicit `describes` and `cites` links for caption and figure/table references
   - extracted statements classified into source facts, derived rules, local design decisions, or explicit abstractions

@@ -88,6 +88,7 @@
 - Tracked KG-quality benchmark harness with stage-patched gold/negative/caveat fixtures implemented: Done
 - KG benchmark harness can now assert canonical decisive vs contested semantic arbitration directly: Done
 - KG benchmark harness can now patch visual assets and assert validation metrics directly: Done
+- KG benchmark harness now locks both positive and negative cross-modality semantic grounding behavior: Done
 - Test suite expanded to 188 tests; all passing: Done
 - Explicit clock-tick temporal model in `SemanticIR` / `IntentIR`: In Progress
 - KG-guided multimodal rescans as a first-class convergent workstream: In Progress
