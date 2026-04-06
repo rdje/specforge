@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-06 (typed prior memory now learns actor taxonomy too)
+
+### Added: actor-taxonomy priors for `R15f`
+- Extended [prior_memory.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/prior_memory.rs) with a typed `actor_taxonomy_priors` family plus query helpers by protocol family and taxonomy role.
+- Extended [learn_priors.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/learn_priors.rs) so `specforge learn-priors` now harvests actor-taxonomy priors from:
+  - decisive, non-alias-dependent actor-grounded handshake-role evidence
+  - conservative self-identifying actor vocabulary such as `requester`, `completer`, `manager`, and `subordinate`
+
+### Why this matters
+- The cross-document learning plane can now accumulate reusable protocol-role vocabulary, not just timing language.
+- This is the first prior family that directly teaches the extractor how actor terminology varies across specs while still keeping canonical per-document truth local and validated.
+- The latest live AMBA prior-memory run is now materially richer: `16` actor-taxonomy priors and `222` temporal phrase priors, while semantic phrase priors remain honestly at `0`.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml learn_priors -- --nocapture` → passed
+- `cargo run --manifest-path Cargo.toml -- learn-priors generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json generated/intent_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/intent_ir.json generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json --output generated/prior_memory/corpus_memory.json` → passed (`16` actor-taxonomy priors, `222` temporal phrase priors)
+- `bash scripts/run_ci.sh` → passed (`199/199` tests)
+
 ## 2026-04-06 (local and hosted CI now share one entrypoint)
 
 ### Added: checked-in local CI runner

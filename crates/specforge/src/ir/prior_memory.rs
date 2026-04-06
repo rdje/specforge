@@ -37,6 +37,8 @@ pub struct CorpusMemory {
     #[serde(default)]
     pub source_artifacts: Vec<PriorSourceArtifactRecord>,
     #[serde(default)]
+    pub actor_taxonomy_priors: Vec<ActorTaxonomyPriorRecord>,
+    #[serde(default)]
     pub semantic_phrase_priors: Vec<SemanticPhrasePriorRecord>,
     #[serde(default)]
     pub temporal_phrase_priors: Vec<TemporalPhrasePriorRecord>,
@@ -59,6 +61,24 @@ impl CorpusMemory {
                         .map(|expected| prior.source_kind == expected)
                         .unwrap_or(true)
                     && role.map(|expected| prior.role == expected).unwrap_or(true)
+            })
+            .collect()
+    }
+
+    pub fn actor_taxonomy_priors_for(
+        &self,
+        protocol_family: Option<ProtocolFamily>,
+        role: Option<ActorTaxonomyRole>,
+    ) -> Vec<&ActorTaxonomyPriorRecord> {
+        self.actor_taxonomy_priors
+            .iter()
+            .filter(|prior| {
+                protocol_family
+                    .map(|expected| prior.protocol_family == expected)
+                    .unwrap_or(true)
+                    && role
+                        .map(|expected| prior.taxonomy_role == expected)
+                        .unwrap_or(true)
             })
             .collect()
     }
@@ -106,6 +126,35 @@ pub struct PriorSourceArtifactRecord {
     pub accepted_for_learning: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub skip_reason: Option<String>,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[serde(rename_all = "snake_case")]
+pub enum ActorTaxonomyRole {
+    RequesterLike,
+    CompleterLike,
+}
+
+impl ActorTaxonomyRole {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::RequesterLike => "requester_like",
+            Self::CompleterLike => "completer_like",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ActorTaxonomyPriorRecord {
+    pub prior_id: String,
+    pub normalized_actor_term: String,
+    pub taxonomy_role: ActorTaxonomyRole,
+    pub protocol_family: ProtocolFamily,
+    pub support_count: usize,
+    #[serde(default)]
+    pub supporting_document_keys: Vec<String>,
+    pub strongest_automation_confidence: AutomationConfidence,
+    pub strongest_grounding_strength: SemanticGroundingStrength,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]

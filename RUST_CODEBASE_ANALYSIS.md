@@ -31,7 +31,7 @@
 - GitHub Actions CI is now part of the repo baseline and runs `cargo fmt --all --check` plus `cargo test --manifest-path Cargo.toml` on every `push` and `pull_request`, which keeps the hosted validation path aligned with the local Rust quality gate
 - that CI path now has a single checked-in entrypoint at `scripts/run_ci.sh`, and the GitHub workflow calls that script directly so local and hosted Rust validation do not drift apart
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and eventually adding a separate cross-document prior-learning plane that can improve extraction without leaking facts across documents; adapter expansion is now horizon work
-- the workspace currently validates with `cargo test --manifest-path Cargo.toml`, with 196 passing tests
+- the workspace currently validates with `cargo test --manifest-path Cargo.toml`, with 199 passing tests
 
 
 ## Session update (2026-04-04)
@@ -78,9 +78,10 @@
 - `specforge project-validation <artifact>...` now refreshes `VALIDATION_SNAPSHOT.md` and the managed validation block in `LIVE_ACHIEVEMENT_STATUS.md` from persisted IR validation reports
 - `specforge learn-priors <intent_ir>...` now builds the first local typed `CorpusMemory` prior store under `generated/prior_memory/corpus_memory.json`, harvesting only from validated `IntentIR` artifacts and keeping the learning plane advisory-only
 - the first `R15f` slice currently learns:
+  - actor-taxonomy priors from decisive actor-grounded handshake-role evidence plus conservative self-identifying actor vocabulary
   - semantic-role phrase priors from decisive, non-alias-dependent canonical semantic consensus plus preserved observation text
   - temporal-language phrase priors from canonical `temporal_rules` plus validated canonical `signal_constraints` / `conditional_rules`
-- the first live AMBA prior-memory run across AXI/APB/AHB `IntentIR` artifacts currently yields `222` temporal phrase priors and `0` semantic phrase priors, which is a useful honest signal that the prior store is already working while the canonical semantic-consensus surface on real artifacts still needs to deepen
+- the latest live AMBA prior-memory run across AXI/APB/AHB `IntentIR` artifacts currently yields `16` actor-taxonomy priors, `222` temporal phrase priors, and `0` semantic phrase priors, which is a useful honest signal that the prior store is already working while the canonical semantic-consensus surface on real artifacts still needs to deepen
 - `specforge converge` now excludes downstream adapter residual work from `knowledge_fact_count`, so fewer adapter residual decisions do not falsely trip the monotone-knowledge guard
 - `generated/` is now intentionally git-ignored and untracked, so local validation snapshots must be recorded in the live docs instead of relying on versioned artifacts
 - latest local validation snapshot is now APB 95/100 EXCELLENT, AHB 95/100 EXCELLENT, AXI 94/100 EXCELLENT

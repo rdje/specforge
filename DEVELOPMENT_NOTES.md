@@ -517,14 +517,16 @@
 - the first trust/update policy is intentionally narrow:
   - only validated `IntentIR` artifacts are eligible
   - artifacts with validation error findings are skipped
+  - actor-taxonomy priors are harvested from decisive actor-grounded handshake-role evidence plus conservative self-identifying actor vocabulary
   - semantic-role priors are harvested only from decisive, non-alias-dependent canonical semantic consensus plus preserved observation text
   - temporal-language priors are harvested from canonical `temporal_rules` plus validated canonical `signal_constraints` / `conditional_rules`
   - the learned memory remains advisory-only and cannot directly author canonical document facts
 - the first live AMBA run is already informative:
+  - it now yields `16` actor-taxonomy priors from explicit actor vocabulary plus decisive actor-grounded handshake-role evidence
   - it yields `222` temporal phrase priors from AXI/APB/AHB `IntentIR` artifacts
   - it yields `0` semantic phrase priors on that same corpus, which is honest and useful because it shows the learning plane is functioning while the real-document semantic-consensus surface is still not rich enough to promote safely
 - the next `R15f` step should not be “force more priors.” It should be:
-  - broaden the store into actor-taxonomy, table-shape, visual-motif, modality-reliability, and negative-knowledge priors
+  - broaden the store beyond actor-taxonomy into table-shape, visual-motif, modality-reliability, and negative-knowledge priors
   - then teach `EvidenceIR` / `SemanticIR` to consume those priors as bounded suggestions without weakening the local-grounding rule
 
 ## Current repository observations

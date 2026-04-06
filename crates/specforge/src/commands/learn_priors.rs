@@ -8,14 +8,29 @@ use crate::ir::IrStage;
 use crate::ir::evidence::{SignalSemanticHintSourceKind, SignalSemanticTag};
 use crate::ir::intent::IntentIr;
 use crate::ir::prior_memory::{
-    CorpusMemory, CorpusMemoryUpdatePolicyRecord, PriorSourceArtifactRecord, ProtocolFamily,
-    SemanticPhrasePriorRecord, TemporalPhrasePriorRecord,
+    ActorTaxonomyPriorRecord, ActorTaxonomyRole, CorpusMemory, CorpusMemoryUpdatePolicyRecord,
+    PriorSourceArtifactRecord, ProtocolFamily, SemanticPhrasePriorRecord,
+    TemporalPhrasePriorRecord,
 };
 use crate::ir::semantic::{
-    InterfaceSignalSemanticObservationRecord, InterfaceSignalSemanticRole,
+    ActorRelativeDirection, InterfaceSignalSemanticObservationRecord, InterfaceSignalSemanticRole,
     SemanticGroundingStrength, TemporalPredicateRecord,
 };
 use crate::ir::source::{AutomationConfidence, ValidationFindingSeverity, ValidationReportRecord};
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+struct ActorTaxonomyPriorKey {
+    normalized_actor_term: String,
+    taxonomy_role: String,
+    protocol_family: String,
+}
+
+#[derive(Debug, Clone)]
+struct ActorTaxonomyPriorAccumulator {
+    supporting_document_keys: BTreeSet<String>,
+    strongest_automation_confidence: AutomationConfidence,
+    strongest_grounding_strength: SemanticGroundingStrength,
+}
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 struct SemanticPriorKey {
@@ -51,6 +66,8 @@ struct TemporalPriorAccumulator {
 pub fn run(args: LearnPriorsArgs) -> Result<()> {
     let output_path = args.output;
     let mut source_artifacts = Vec::new();
+    let mut actor_taxonomy_priors =
+        BTreeMap::<ActorTaxonomyPriorKey, ActorTaxonomyPriorAccumulator>::new();
     let mut semantic_priors = BTreeMap::<SemanticPriorKey, SemanticPriorAccumulator>::new();
     let mut temporal_priors = BTreeMap::<TemporalPriorKey, TemporalPriorAccumulator>::new();
 
@@ -85,12 +102,13 @@ pub fn run(args: LearnPriorsArgs) -> Result<()> {
             continue;
         }
 
+        harvest_actor_taxonomy_priors(&intent_ir, protocol_family, &mut actor_taxonomy_priors);
         harvest_semantic_priors(&intent_ir, protocol_family, &mut semantic_priors);
         harvest_temporal_priors(&intent_ir, protocol_family, &mut temporal_priors);
     }
 
     let corpus_memory = CorpusMemory {
-        schema_version: 1,
+        schema_version: 2,
         update_policy: CorpusMemoryUpdatePolicyRecord {
             advisory_only: true,
             requires_validated_intent_ir: true,
@@ -99,6 +117,7 @@ pub fn run(args: LearnPriorsArgs) -> Result<()> {
             local_grounding_required_for_canonical_promotion: true,
         },
         source_artifacts,
+        actor_taxonomy_priors: materialize_actor_taxonomy_priors(actor_taxonomy_priors),
         semantic_phrase_priors: materialize_semantic_priors(semantic_priors),
         temporal_phrase_priors: materialize_temporal_priors(temporal_priors),
     };
@@ -113,6 +132,10 @@ pub fn run(args: LearnPriorsArgs) -> Result<()> {
             .iter()
             .filter(|artifact| artifact.accepted_for_learning)
             .count()
+    );
+    println!(
+        "actor_taxonomy_priors: {}",
+        corpus_memory.actor_taxonomy_priors.len()
     );
     println!(
         "semantic_phrase_priors: {}",
@@ -195,6 +218,91 @@ fn assess_intent_for_learning(
         accepted: true,
         report: Some(report),
         skip_reason: None,
+    }
+}
+
+fn harvest_actor_taxonomy_priors(
+    intent_ir: &IntentIr,
+    protocol_family: ProtocolFamily,
+    actor_taxonomy_priors: &mut BTreeMap<ActorTaxonomyPriorKey, ActorTaxonomyPriorAccumulator>,
+) {
+    let signal_records_by_name = intent_ir
+        .interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+        .map(|signal| (signal.signal_name.to_ascii_lowercase(), signal))
+        .collect::<BTreeMap<_, _>>();
+    let conflicted_signals = intent_ir
+        .signal_semantic_conflicts
+        .iter()
+        .map(|conflict| conflict.signal_name.to_ascii_lowercase())
+        .collect::<BTreeSet<_>>();
+    let mut actor_names = intent_ir
+        .actor_ports
+        .iter()
+        .map(|port| port.actor_name.clone())
+        .collect::<BTreeSet<_>>();
+    for actor in &intent_ir.actors {
+        if let Some(actor_name) = actor
+            .actor_name
+            .clone()
+            .or_else(|| actor_name_from_actor_id(&actor.actor_id))
+        {
+            actor_names.insert(actor_name);
+        }
+    }
+
+    for actor_name in actor_names {
+        let inferred = infer_actor_taxonomy_role(
+            intent_ir,
+            &actor_name,
+            &signal_records_by_name,
+            &conflicted_signals,
+        )
+        .or_else(|| {
+            infer_actor_taxonomy_role_from_term(&actor_name).map(|taxonomy_role| {
+                (
+                    taxonomy_role,
+                    AutomationConfidence::Medium,
+                    SemanticGroundingStrength::SingleSource,
+                )
+            })
+        });
+        let Some((taxonomy_role, automation_confidence, grounding_strength)) = inferred else {
+            continue;
+        };
+
+        let normalized_actor_term = normalize_actor_term(&actor_name);
+        if normalized_actor_term.is_empty() {
+            continue;
+        }
+
+        let key = ActorTaxonomyPriorKey {
+            normalized_actor_term,
+            taxonomy_role: taxonomy_role.as_str().to_string(),
+            protocol_family: protocol_family.as_str().to_string(),
+        };
+        let entry =
+            actor_taxonomy_priors
+                .entry(key)
+                .or_insert_with(|| ActorTaxonomyPriorAccumulator {
+                    supporting_document_keys: BTreeSet::new(),
+                    strongest_automation_confidence: automation_confidence,
+                    strongest_grounding_strength: grounding_strength,
+                });
+        entry
+            .supporting_document_keys
+            .insert(intent_ir.document_identity.document_key.clone());
+        if automation_confidence_rank(automation_confidence)
+            > automation_confidence_rank(entry.strongest_automation_confidence)
+        {
+            entry.strongest_automation_confidence = automation_confidence;
+        }
+        if semantic_grounding_strength_rank(grounding_strength)
+            > semantic_grounding_strength_rank(entry.strongest_grounding_strength)
+        {
+            entry.strongest_grounding_strength = grounding_strength;
+        }
     }
 }
 
@@ -412,6 +520,25 @@ fn materialize_semantic_priors(
         .collect()
 }
 
+fn materialize_actor_taxonomy_priors(
+    actor_taxonomy_priors: BTreeMap<ActorTaxonomyPriorKey, ActorTaxonomyPriorAccumulator>,
+) -> Vec<ActorTaxonomyPriorRecord> {
+    actor_taxonomy_priors
+        .into_iter()
+        .enumerate()
+        .map(|(index, (key, accumulator))| ActorTaxonomyPriorRecord {
+            prior_id: format!("actor_taxonomy_prior_{:04}", index + 1),
+            normalized_actor_term: key.normalized_actor_term,
+            taxonomy_role: parse_actor_taxonomy_role(&key.taxonomy_role),
+            protocol_family: parse_protocol_family(&key.protocol_family),
+            support_count: accumulator.supporting_document_keys.len(),
+            supporting_document_keys: accumulator.supporting_document_keys.into_iter().collect(),
+            strongest_automation_confidence: accumulator.strongest_automation_confidence,
+            strongest_grounding_strength: accumulator.strongest_grounding_strength,
+        })
+        .collect()
+}
+
 fn materialize_temporal_priors(
     temporal_priors: BTreeMap<TemporalPriorKey, TemporalPriorAccumulator>,
 ) -> Vec<TemporalPhrasePriorRecord> {
@@ -490,6 +617,29 @@ fn collect_actor_names(intent_ir: &IntentIr) -> BTreeSet<String> {
         actor_names.insert(port.actor_name.clone());
     }
     actor_names
+}
+
+fn normalize_actor_term(text: &str) -> String {
+    collapse_whitespace(
+        text.to_ascii_lowercase()
+            .chars()
+            .map(|ch| {
+                if ch.is_ascii_alphanumeric() || ch == '_' {
+                    ch
+                } else {
+                    ' '
+                }
+            })
+            .collect::<String>()
+            .trim(),
+    )
+}
+
+fn actor_name_from_actor_id(actor_id: &str) -> Option<String> {
+    actor_id
+        .strip_prefix("actor_")
+        .map(|suffix| suffix.replace('_', " "))
+        .filter(|name| !name.trim().is_empty())
 }
 
 fn normalize_prior_phrase(
@@ -723,6 +873,13 @@ fn parse_protocol_family(value: &str) -> ProtocolFamily {
     }
 }
 
+fn parse_actor_taxonomy_role(value: &str) -> ActorTaxonomyRole {
+    match value {
+        "completer_like" => ActorTaxonomyRole::CompleterLike,
+        _ => ActorTaxonomyRole::RequesterLike,
+    }
+}
+
 fn parse_semantic_role(value: &str) -> InterfaceSignalSemanticRole {
     match value {
         "handshake_ready_like" => InterfaceSignalSemanticRole::HandshakeReadyLike,
@@ -739,6 +896,133 @@ fn parse_semantic_source_kind(value: &str) -> SignalSemanticHintSourceKind {
         "visual_caption" => SignalSemanticHintSourceKind::VisualCaption,
         "vlm_timing_diagram_annotation" => SignalSemanticHintSourceKind::VlmTimingDiagramAnnotation,
         _ => SignalSemanticHintSourceKind::ProseStatement,
+    }
+}
+
+fn infer_actor_taxonomy_role(
+    intent_ir: &IntentIr,
+    actor_name: &str,
+    signal_records_by_name: &BTreeMap<String, &crate::ir::semantic::InterfaceSignalRecord>,
+    conflicted_signals: &BTreeSet<String>,
+) -> Option<(
+    ActorTaxonomyRole,
+    AutomationConfidence,
+    SemanticGroundingStrength,
+)> {
+    let mut inferred_roles = BTreeSet::new();
+    let mut strongest_automation_confidence = AutomationConfidence::Low;
+    let mut strongest_grounding_strength = SemanticGroundingStrength::SingleSource;
+
+    for port in intent_ir.actor_ports.iter().filter(|port| {
+        port.actor_name.eq_ignore_ascii_case(actor_name)
+            && matches!(
+                port.direction,
+                ActorRelativeDirection::Output | ActorRelativeDirection::InOut
+            )
+            && port
+                .relation_basis
+                .iter()
+                .any(|basis| matches!(basis, crate::ir::source::RelationKind::Drives))
+    }) {
+        if conflicted_signals.contains(&port.signal_name.to_ascii_lowercase()) {
+            continue;
+        }
+
+        let Some(signal) = signal_records_by_name.get(&port.signal_name.to_ascii_lowercase())
+        else {
+            continue;
+        };
+        let Some(consensus) = &signal.semantic_consensus else {
+            continue;
+        };
+        if consensus.alias_dependent {
+            continue;
+        }
+        let Some(arbitration) = &signal.semantic_arbitration else {
+            continue;
+        };
+        if !arbitration.decisive {
+            continue;
+        }
+
+        let Some(role) = actor_taxonomy_role_from_semantic_role(consensus.role) else {
+            continue;
+        };
+        inferred_roles.insert(role);
+
+        if automation_confidence_rank(port.automation_confidence)
+            > automation_confidence_rank(strongest_automation_confidence)
+        {
+            strongest_automation_confidence = port.automation_confidence;
+        }
+        if automation_confidence_rank(consensus.automation_confidence)
+            > automation_confidence_rank(strongest_automation_confidence)
+        {
+            strongest_automation_confidence = consensus.automation_confidence;
+        }
+        if semantic_grounding_strength_rank(consensus.grounding_strength)
+            > semantic_grounding_strength_rank(strongest_grounding_strength)
+        {
+            strongest_grounding_strength = consensus.grounding_strength;
+        }
+    }
+
+    if inferred_roles.len() != 1 {
+        return None;
+    }
+
+    Some((
+        inferred_roles.into_iter().next()?,
+        strongest_automation_confidence,
+        strongest_grounding_strength,
+    ))
+}
+
+fn actor_taxonomy_role_from_semantic_role(
+    role: InterfaceSignalSemanticRole,
+) -> Option<ActorTaxonomyRole> {
+    match role {
+        InterfaceSignalSemanticRole::HandshakeValidLike => Some(ActorTaxonomyRole::RequesterLike),
+        InterfaceSignalSemanticRole::HandshakeReadyLike => Some(ActorTaxonomyRole::CompleterLike),
+    }
+}
+
+fn infer_actor_taxonomy_role_from_term(actor_name: &str) -> Option<ActorTaxonomyRole> {
+    let normalized = normalize_actor_term(actor_name);
+    let tokens = normalized.split_whitespace().collect::<BTreeSet<_>>();
+    let requester_like_tokens = [
+        "requester",
+        "requestor",
+        "initiator",
+        "manager",
+        "master",
+        "producer",
+        "source",
+        "transmitter",
+        "tx",
+    ];
+    let completer_like_tokens = [
+        "completer",
+        "subordinate",
+        "responder",
+        "receiver",
+        "consumer",
+        "target",
+        "slave",
+        "rx",
+    ];
+
+    let requester_like = requester_like_tokens
+        .iter()
+        .any(|token| tokens.contains(token));
+    let completer_like = completer_like_tokens
+        .iter()
+        .any(|token| tokens.contains(token));
+
+    match (requester_like, completer_like) {
+        (true, false) => Some(ActorTaxonomyRole::RequesterLike),
+        (false, true) => Some(ActorTaxonomyRole::CompleterLike),
+        _ => None,
     }
 }
 
@@ -959,11 +1243,12 @@ mod tests {
         IntentActor, IntentArtifactLayout, IntentDocumentIdentity, IntentIdentity,
     };
     use crate::ir::semantic::{
-        CycleWindowRecord, InterfaceRecord, InterfaceSignalDirection, InterfaceSignalRecord,
-        InterfaceSignalSemanticArbitrationRecord, InterfaceSignalSemanticConsensusRecord,
-        InterfaceSignalSemanticObservationRecord, TemporalRuleRecord,
+        ActorPortRecord, CycleWindowRecord, InterfaceRecord, InterfaceSignalDirection,
+        InterfaceSignalRecord, InterfaceSignalSemanticArbitrationRecord,
+        InterfaceSignalSemanticConsensusRecord, InterfaceSignalSemanticObservationRecord,
+        TemporalRuleRecord,
     };
-    use crate::ir::source::{ValidationFindingRecord, ValidationMetricRecord};
+    use crate::ir::source::{RelationKind, ValidationFindingRecord, ValidationMetricRecord};
 
     fn base_intent_ir(document_key: &str, display_name: &str) -> IntentIr {
         IntentIr {
@@ -1146,6 +1431,185 @@ mod tests {
     }
 
     #[test]
+    fn learn_priors_harvests_actor_taxonomy_priors() {
+        let mut intent_ir = base_intent_ir(
+            "ihi0024_d_2021_04_amba_apb_protocol_specification",
+            "IHI0024_D_2021-04_AMBA_APB_Protocol_Specification",
+        );
+        intent_ir.actors = vec![
+            IntentActor {
+                actor_id: "actor_requester".to_string(),
+                actor_name: Some("Requester".to_string()),
+                responsibilities: Vec::new(),
+                supporting_actor_ids: Vec::new(),
+            },
+            IntentActor {
+                actor_id: "actor_completer".to_string(),
+                actor_name: Some("Completer".to_string()),
+                responsibilities: Vec::new(),
+                supporting_actor_ids: Vec::new(),
+            },
+        ];
+        intent_ir.interfaces = vec![InterfaceRecord {
+            interface_id: "if_1".to_string(),
+            signals: vec!["PSEL".to_string(), "PREADY".to_string()],
+            signal_records: vec![
+                InterfaceSignalRecord {
+                    signal_name: "PSEL".to_string(),
+                    direction_hint: Some(InterfaceSignalDirection::Output),
+                    width_hint: None,
+                    semantic_tags: vec![SignalSemanticTag::HandshakeValidLike],
+                    semantic_candidates: Vec::new(),
+                    semantic_arbitration: Some(InterfaceSignalSemanticArbitrationRecord {
+                        candidate_count: 1,
+                        leading_role: InterfaceSignalSemanticRole::HandshakeValidLike,
+                        leading_evidence_weight: 3,
+                        runner_up_role: None,
+                        runner_up_evidence_weight: None,
+                        margin_over_runner_up: None,
+                        decisive: true,
+                    }),
+                    resolved_semantic_role: Some(InterfaceSignalSemanticRole::HandshakeValidLike),
+                    semantic_grounding_strength: Some(SemanticGroundingStrength::SingleSource),
+                    semantic_consensus: Some(InterfaceSignalSemanticConsensusRecord {
+                        role: InterfaceSignalSemanticRole::HandshakeValidLike,
+                        grounding_strength: SemanticGroundingStrength::SingleSource,
+                        supporting_source_kinds: vec![
+                            SignalSemanticHintSourceKind::SignalDescriptionTable,
+                        ],
+                        supporting_observation_count: 1,
+                        automation_confidence: AutomationConfidence::High,
+                        alias_dependent: false,
+                    }),
+                    semantic_observations: vec![InterfaceSignalSemanticObservationRecord {
+                        semantic_tags: vec![SignalSemanticTag::HandshakeValidLike],
+                        source_kind: SignalSemanticHintSourceKind::SignalDescriptionTable,
+                        source_text: "Initiates the transfer request.".to_string(),
+                        supporting_statement_ids: vec!["stmt_psel".to_string()],
+                        supporting_table_ids: vec!["table_1".to_string()],
+                        supporting_visual_evidence_ids: Vec::new(),
+                        automation_confidence: AutomationConfidence::High,
+                    }],
+                    supporting_statement_ids: Vec::new(),
+                    automation_confidence: AutomationConfidence::High,
+                },
+                InterfaceSignalRecord {
+                    signal_name: "PREADY".to_string(),
+                    direction_hint: Some(InterfaceSignalDirection::Input),
+                    width_hint: None,
+                    semantic_tags: vec![SignalSemanticTag::HandshakeReadyLike],
+                    semantic_candidates: Vec::new(),
+                    semantic_arbitration: Some(InterfaceSignalSemanticArbitrationRecord {
+                        candidate_count: 1,
+                        leading_role: InterfaceSignalSemanticRole::HandshakeReadyLike,
+                        leading_evidence_weight: 3,
+                        runner_up_role: None,
+                        runner_up_evidence_weight: None,
+                        margin_over_runner_up: None,
+                        decisive: true,
+                    }),
+                    resolved_semantic_role: Some(InterfaceSignalSemanticRole::HandshakeReadyLike),
+                    semantic_grounding_strength: Some(SemanticGroundingStrength::CrossModality),
+                    semantic_consensus: Some(InterfaceSignalSemanticConsensusRecord {
+                        role: InterfaceSignalSemanticRole::HandshakeReadyLike,
+                        grounding_strength: SemanticGroundingStrength::CrossModality,
+                        supporting_source_kinds: vec![
+                            SignalSemanticHintSourceKind::ProseStatement,
+                            SignalSemanticHintSourceKind::VisualCaption,
+                        ],
+                        supporting_observation_count: 2,
+                        automation_confidence: AutomationConfidence::High,
+                        alias_dependent: false,
+                    }),
+                    semantic_observations: vec![InterfaceSignalSemanticObservationRecord {
+                        semantic_tags: vec![SignalSemanticTag::HandshakeReadyLike],
+                        source_kind: SignalSemanticHintSourceKind::ProseStatement,
+                        source_text: "Signals that the completer can accept the transfer."
+                            .to_string(),
+                        supporting_statement_ids: vec!["stmt_pready".to_string()],
+                        supporting_table_ids: Vec::new(),
+                        supporting_visual_evidence_ids: Vec::new(),
+                        automation_confidence: AutomationConfidence::High,
+                    }],
+                    supporting_statement_ids: Vec::new(),
+                    automation_confidence: AutomationConfidence::High,
+                },
+            ],
+            supporting_statement_ids: Vec::new(),
+        }];
+        intent_ir.actor_ports = vec![
+            ActorPortRecord {
+                actor_id: "actor_requester".to_string(),
+                actor_name: "Requester".to_string(),
+                signal_name: "PSEL".to_string(),
+                direction: ActorRelativeDirection::Output,
+                relation_basis: vec![RelationKind::Drives],
+                width_hint: None,
+                source_statement_ids: vec!["stmt_psel".to_string()],
+                automation_confidence: AutomationConfidence::High,
+            },
+            ActorPortRecord {
+                actor_id: "actor_completer".to_string(),
+                actor_name: "Completer".to_string(),
+                signal_name: "PREADY".to_string(),
+                direction: ActorRelativeDirection::Output,
+                relation_basis: vec![RelationKind::Drives],
+                width_hint: None,
+                source_statement_ids: vec!["stmt_pready".to_string()],
+                automation_confidence: AutomationConfidence::High,
+            },
+        ];
+
+        let mut actor_taxonomy_priors = BTreeMap::new();
+        harvest_actor_taxonomy_priors(
+            &intent_ir,
+            ProtocolFamily::AmbaApb,
+            &mut actor_taxonomy_priors,
+        );
+
+        let records = materialize_actor_taxonomy_priors(actor_taxonomy_priors);
+        assert_eq!(records.len(), 2);
+        assert!(records.iter().any(|record| {
+            record.normalized_actor_term == "requester"
+                && record.taxonomy_role == ActorTaxonomyRole::RequesterLike
+        }));
+        assert!(records.iter().any(|record| {
+            record.normalized_actor_term == "completer"
+                && record.taxonomy_role == ActorTaxonomyRole::CompleterLike
+                && record.strongest_grounding_strength == SemanticGroundingStrength::CrossModality
+        }));
+    }
+
+    #[test]
+    fn learn_priors_harvests_actor_taxonomy_from_actor_identity_terms() {
+        let mut intent_ir = base_intent_ir("doc_actor_terms", "doc_actor_terms");
+        intent_ir.actors = vec![IntentActor {
+            actor_id: "actor_requester".to_string(),
+            actor_name: None,
+            responsibilities: vec![
+                "semantic role inferred around `requester` evidence".to_string(),
+            ],
+            supporting_actor_ids: vec!["actor_requester".to_string()],
+        }];
+
+        let mut actor_taxonomy_priors = BTreeMap::new();
+        harvest_actor_taxonomy_priors(
+            &intent_ir,
+            ProtocolFamily::Unknown,
+            &mut actor_taxonomy_priors,
+        );
+
+        let records = materialize_actor_taxonomy_priors(actor_taxonomy_priors);
+        assert_eq!(records.len(), 1);
+        assert_eq!(records[0].normalized_actor_term, "requester");
+        assert_eq!(records[0].taxonomy_role, ActorTaxonomyRole::RequesterLike);
+        assert_eq!(
+            records[0].strongest_grounding_strength,
+            SemanticGroundingStrength::SingleSource
+        );
+    }
+
+    #[test]
     fn learn_priors_skips_alias_dependent_consensus_and_error_reports() {
         let mut intent_ir = base_intent_ir("doc", "doc");
         intent_ir.validation_reports[0]
@@ -1214,5 +1678,111 @@ mod tests {
             &mut semantic_priors,
         );
         assert!(semantic_priors.is_empty());
+    }
+
+    #[test]
+    fn learn_priors_skips_ambiguous_actor_taxonomy_roles() {
+        let mut intent_ir = base_intent_ir("doc3", "doc3");
+        intent_ir.actors = vec![IntentActor {
+            actor_id: "actor_1".to_string(),
+            actor_name: Some("Hybrid".to_string()),
+            responsibilities: Vec::new(),
+            supporting_actor_ids: vec!["actor_1".to_string()],
+        }];
+        intent_ir.actor_ports = vec![
+            ActorPortRecord {
+                actor_id: "actor_1".to_string(),
+                actor_name: "Hybrid".to_string(),
+                signal_name: "XVALID".to_string(),
+                direction: ActorRelativeDirection::Output,
+                relation_basis: vec![RelationKind::Drives],
+                width_hint: None,
+                source_statement_ids: Vec::new(),
+                automation_confidence: AutomationConfidence::Medium,
+            },
+            ActorPortRecord {
+                actor_id: "actor_1".to_string(),
+                actor_name: "Hybrid".to_string(),
+                signal_name: "XREADY".to_string(),
+                direction: ActorRelativeDirection::Output,
+                relation_basis: vec![RelationKind::Drives],
+                width_hint: None,
+                source_statement_ids: Vec::new(),
+                automation_confidence: AutomationConfidence::Medium,
+            },
+        ];
+        intent_ir.interfaces = vec![InterfaceRecord {
+            interface_id: "if_1".to_string(),
+            signals: vec!["XVALID".to_string(), "XREADY".to_string()],
+            signal_records: vec![
+                InterfaceSignalRecord {
+                    signal_name: "XVALID".to_string(),
+                    direction_hint: Some(InterfaceSignalDirection::Output),
+                    width_hint: None,
+                    semantic_tags: vec![SignalSemanticTag::HandshakeValidLike],
+                    semantic_candidates: Vec::new(),
+                    semantic_arbitration: Some(InterfaceSignalSemanticArbitrationRecord {
+                        candidate_count: 1,
+                        leading_role: InterfaceSignalSemanticRole::HandshakeValidLike,
+                        leading_evidence_weight: 1,
+                        runner_up_role: None,
+                        runner_up_evidence_weight: None,
+                        margin_over_runner_up: None,
+                        decisive: true,
+                    }),
+                    resolved_semantic_role: Some(InterfaceSignalSemanticRole::HandshakeValidLike),
+                    semantic_grounding_strength: Some(SemanticGroundingStrength::SingleSource),
+                    semantic_consensus: Some(InterfaceSignalSemanticConsensusRecord {
+                        role: InterfaceSignalSemanticRole::HandshakeValidLike,
+                        grounding_strength: SemanticGroundingStrength::SingleSource,
+                        supporting_source_kinds: vec![SignalSemanticHintSourceKind::ProseStatement],
+                        supporting_observation_count: 1,
+                        automation_confidence: AutomationConfidence::Medium,
+                        alias_dependent: false,
+                    }),
+                    semantic_observations: Vec::new(),
+                    supporting_statement_ids: Vec::new(),
+                    automation_confidence: AutomationConfidence::Medium,
+                },
+                InterfaceSignalRecord {
+                    signal_name: "XREADY".to_string(),
+                    direction_hint: Some(InterfaceSignalDirection::Output),
+                    width_hint: None,
+                    semantic_tags: vec![SignalSemanticTag::HandshakeReadyLike],
+                    semantic_candidates: Vec::new(),
+                    semantic_arbitration: Some(InterfaceSignalSemanticArbitrationRecord {
+                        candidate_count: 1,
+                        leading_role: InterfaceSignalSemanticRole::HandshakeReadyLike,
+                        leading_evidence_weight: 1,
+                        runner_up_role: None,
+                        runner_up_evidence_weight: None,
+                        margin_over_runner_up: None,
+                        decisive: true,
+                    }),
+                    resolved_semantic_role: Some(InterfaceSignalSemanticRole::HandshakeReadyLike),
+                    semantic_grounding_strength: Some(SemanticGroundingStrength::SingleSource),
+                    semantic_consensus: Some(InterfaceSignalSemanticConsensusRecord {
+                        role: InterfaceSignalSemanticRole::HandshakeReadyLike,
+                        grounding_strength: SemanticGroundingStrength::SingleSource,
+                        supporting_source_kinds: vec![SignalSemanticHintSourceKind::ProseStatement],
+                        supporting_observation_count: 1,
+                        automation_confidence: AutomationConfidence::Medium,
+                        alias_dependent: false,
+                    }),
+                    semantic_observations: Vec::new(),
+                    supporting_statement_ids: Vec::new(),
+                    automation_confidence: AutomationConfidence::Medium,
+                },
+            ],
+            supporting_statement_ids: Vec::new(),
+        }];
+
+        let mut actor_taxonomy_priors = BTreeMap::new();
+        harvest_actor_taxonomy_priors(
+            &intent_ir,
+            ProtocolFamily::Unknown,
+            &mut actor_taxonomy_priors,
+        );
+        assert!(actor_taxonomy_priors.is_empty());
     }
 }

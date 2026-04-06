@@ -22,17 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `eecf375`
-- latest_commit_brief_message: `ci(repo): add GitHub Actions Rust checks`
-- note: the current session upgrades that baseline so local and hosted CI share one checked-in runner, making the full Rust CI path executable before push
+- latest_commit_hash: `8a9c3bd`
+- latest_commit_brief_message: `ci(repo): unify local and hosted CI`
+- note: the current session broadens the `R15f` prior store with typed actor-taxonomy priors and reruns the live AMBA prior-memory harvest
 
 ## Recent commit chain (last 5)
+- `8a9c3bd` ci(repo): unify local and hosted CI
 - `eecf375` ci(repo): add GitHub Actions Rust checks
 - `40a14ed` feat(learning): add local prior memory plane
 - `48034e9` chore(git): untrack swap files
 - `20cd24a` feat(quality): benchmark ahb timing semantics
-- `001a6dc` feat(quality): benchmark apb timing semantics
-- `234a39f` feat(quality): benchmark axi timing semantics
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -40,6 +39,7 @@
 - `specforge converge` now defaults to full Ollama-backed VLM image enrichment plus NLP Level 3 backannotation; use `--vlm-provider skip` and/or `--nlp-provider skip` only when intentionally narrowing the loop
 - GitHub Actions now mirrors the baseline Rust quality gate on every `push` / `pull_request` via `.github/workflows/ci.yml`
 - `scripts/run_ci.sh` is now the canonical Rust CI entrypoint and is reused by GitHub Actions, so the same hosted path can be exercised locally before push
+- the local `CorpusMemory` prior store now includes actor-taxonomy priors in addition to semantic and temporal phrase priors
 - canonical generated artifact roots are under `generated/source_ir/`, `generated/evidence_ir/`, `generated/semantic_ir/`, and `generated/intent_ir/`
 - `generated/` is git-ignored and intentionally untracked; continuity must live in docs, not versioned artifacts
 - `subs/fsmgen/` is a local read-only reference checkout for `.fsm` behavior
@@ -47,31 +47,36 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
-- added `scripts/run_ci.sh`, the canonical checked-in local CI runner for the Rust workspace
-- updated `.github/workflows/ci.yml` so GitHub Actions calls the same `./scripts/run_ci.sh` entrypoint instead of maintaining a separate inline command list
-- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, `CHANGES.md`, and `MEMORY.md` so the unified local/hosted CI path is continuity-safe
+- extended `crates/specforge/src/ir/prior_memory.rs` with typed `actor_taxonomy_priors` and query helpers
+- extended `crates/specforge/src/commands/learn_priors.rs` so the prior learner now harvests actor-taxonomy priors from decisive actor-grounded handshake-role evidence plus conservative self-identifying actor vocabulary
+- the latest live AMBA prior-memory run now yields:
+  - `16` actor-taxonomy priors
+  - `222` temporal phrase priors
+  - `0` semantic phrase priors
+- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, `USER_GUIDE.md`, `CHANGES.md`, and `MEMORY.md` so the broadened `R15f` slice is continuity-safe
 - validation ran for this task:
   - `./scripts/run_ci.sh` passed
-  - `cargo fmt --all --check` passed
-  - `cargo test --manifest-path Cargo.toml` passed
+  - `cargo test --manifest-path Cargo.toml learn_priors -- --nocapture` passed
+  - `cargo run --manifest-path Cargo.toml -- learn-priors generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json generated/intent_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/intent_ir.json generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json --output generated/prior_memory/corpus_memory.json` passed
 
 ## Current working tree before commit
 - modified tracked files currently include:
-  - `scripts/run_ci.sh`
-  - `.github/workflows/ci.yml`
+  - `crates/specforge/src/ir/prior_memory.rs`
+  - `crates/specforge/src/commands/learn_priors.rs`
   - `README.md`
   - `ROADMAP.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `RUST_CODEBASE_ANALYSIS.md`
   - `DEVELOPMENT_NOTES.md`
+  - `USER_GUIDE.md`
   - `CHANGES.md`
   - `MEMORY.md`
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the unified local/hosted CI runner with the synced live docs
-2. push `main` so GitHub Actions starts using `./scripts/run_ci.sh`
-3. resume `R15f` by broadening the prior store beyond temporal-language priors into actor-taxonomy, table-shape, visual-motif, modality-reliability, and negative-knowledge priors
+1. commit the actor-taxonomy prior-memory slice with the synced live docs
+2. broaden `R15f` beyond actor-taxonomy / temporal priors into table-shape, visual-motif, modality-reliability, and negative-knowledge priors
+3. start teaching `EvidenceIR` / `SemanticIR` to consume retrieved priors as bounded suggestions without weakening local grounding
 
 ## Remaining engineering gaps after this commit
 - remaining actor-relative direction modeling in `SemanticIR` / `IntentIR` (`R15`)
@@ -79,7 +84,7 @@
 - KG-guided multimodal rescans (`R15c`)
 - broader evidence arbitration / conflict handling beyond polarity, interface-shape, multi-producer ambiguity, modality-aware semantic-role grounding, consensus summaries, semantic candidates, and semantic arbitration summaries (`R15d`)
 - broader KG-quality evaluation and benchmark hardening beyond the new seed fixture pack (`R15e`)
-- cross-document extractor learning is now started, but the typed prior store still needs actor-taxonomy, table-shape, visual-motif, modality-reliability, negative-knowledge, and benchmarked retrieval/consumption paths (`R15f`)
+- cross-document extractor learning is now started, and actor-taxonomy priors are now live, but the typed prior store still needs table-shape, visual-motif, modality-reliability, negative-knowledge, and benchmarked retrieval/consumption paths (`R15f`)
 - Tier 3 relation extraction after the graph/temporal/eval surfaces are ready (`R14`)
 - some downstream compatibility and consumer paths still rely on flat `direction_hint` instead of the graph-native surface
 - meaning-based role inference now covers tables, prose, alias-grounded prose, visual captions, and VLM timing annotations, and canonical layers now preserve that provenance, but broader downstream use of preserved arbitration state is still early
