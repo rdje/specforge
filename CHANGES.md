@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-06 (bounded semantic prior consumption landed)
+
+### Added: prior-guided semantic hint recovery in `EvidenceIR`
+- Extended [prior_memory.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/prior_memory.rs) with shared semantic-phrase normalization and lookup helpers, so the same phrase-shape logic now powers both `learn-priors` and runtime prior consumption.
+- Extended [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) so `EvidenceIR` can now use semantic phrase priors to recover local signal-role hints from non-hardcoded grounded phrases.
+- `EvidenceIR` now also persists the consulted `prior_memory_path`, so later `refresh_signal_semantic_hints()` calls during NLP loopback keep the same advisory prior guidance instead of silently dropping it.
+
+### Why this matters
+- The cross-document learning plane now has a second real bounded consumer, beyond actor-taxonomy direction guidance.
+- This lets the extractor become stronger on phrases it has learned from prior validated documents without breaking the local-grounding rule.
+- The semantic prior path is still honest: without the local phrase, there is no semantic promotion; with the local phrase, the prior only helps interpret it.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml semantic_phrase_priors_guide_local_semantic_hint_recovery -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml actor_taxonomy_priors_guide_source_column_direction_inference -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml learn_priors_harvests_semantic_and_temporal_priors -- --nocapture` → passed
+- `bash scripts/run_ci.sh` → passed (`203/203` tests)
+
 ## 2026-04-06 (first bounded prior-consumption path landed)
 
 ### Added: advisory prior-guided direction recovery in `EvidenceIR`

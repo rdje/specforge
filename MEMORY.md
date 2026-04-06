@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `53da080`
-- latest_commit_brief_message: `feat(learning): learn actor taxonomy priors`
-- note: the current session lands the first bounded `R15f` consumer by teaching `EvidenceIR` / `converge` to consult the local prior store for actor-taxonomy guidance without weakening local grounding
+- latest_commit_hash: `7ebd697`
+- latest_commit_brief_message: `feat(evidence): consume actor taxonomy priors safely`
+- note: the current session lands the second bounded `R15f` consumer by teaching `EvidenceIR` to use semantic phrase priors for local signal-role hint recovery while persisting the consulted prior-memory path
 
 ## Recent commit chain (last 5)
+- `7ebd697` feat(evidence): consume actor taxonomy priors safely
 - `53da080` feat(learning): learn actor taxonomy priors
 - `8a9c3bd` ci(repo): unify local and hosted CI
 - `eecf375` ci(repo): add GitHub Actions Rust checks
 - `40a14ed` feat(learning): add local prior memory plane
-- `48034e9` chore(git): untrack swap files
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -41,6 +41,7 @@
 - `scripts/run_ci.sh` is now the canonical Rust CI entrypoint and is reused by GitHub Actions, so the same hosted path can be exercised locally before push
 - the local `CorpusMemory` prior store now includes actor-taxonomy priors in addition to semantic and temporal phrase priors
 - `specforge evidence` and `specforge converge` now consult `--prior-memory generated/prior_memory/corpus_memory.json` by default, and the first bounded consumer uses actor-taxonomy priors only to interpret explicit local actor terms in section headings and `Source` / `Destination` columns
+- `EvidenceIR` now also has a second bounded prior consumer for semantic phrase priors, and it now persists `prior_memory_path` so later semantic-hint refreshes keep the same advisory prior context
 - canonical generated artifact roots are under `generated/source_ir/`, `generated/evidence_ir/`, `generated/semantic_ir/`, and `generated/intent_ir/`
 - `generated/` is git-ignored and intentionally untracked; continuity must live in docs, not versioned artifacts
 - `subs/fsmgen/` is a local read-only reference checkout for `.fsm` behavior
@@ -48,25 +49,22 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
-- extended `crates/specforge/src/ir/prior_memory.rs` with reusable actor-taxonomy lookup helpers, normalized term matching, and protocol-family inference so the learning plane can be queried safely during extraction
-- extended `crates/specforge/src/ir/evidence.rs` with `build_with_prior_memory(...)` and the first bounded prior-consumption path:
-  - section-heading direction inference can use actor-taxonomy priors
-  - `Source` / `Destination` column direction inference can use actor-taxonomy priors
-  - prior guidance still requires explicit local actor terms in the current document
-- extended `crates/specforge/src/cli.rs`, `crates/specforge/src/commands/evidence.rs`, and `crates/specforge/src/commands/converge.rs` so `specforge evidence` and `specforge converge` now consult the local prior store by default through `--prior-memory generated/prior_memory/corpus_memory.json`
-- added regression coverage for prior-guided `Producer` / `Consumer` direction recovery from both source columns and section headings
-- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, `USER_GUIDE.md`, `CHANGES.md`, and `MEMORY.md` so the first bounded `R15f` consumer is continuity-safe
+- extended `crates/specforge/src/ir/prior_memory.rs` with shared semantic phrase normalization and lookup helpers so learning and runtime prior consumption use the same phrase-shape logic
+- extended `crates/specforge/src/ir/evidence.rs` with the second bounded prior-consumption path:
+  - semantic phrase priors can now recover local signal-role hints from non-hardcoded grounded phrases
+  - `EvidenceIR` now persists `prior_memory_path` so later `refresh_signal_semantic_hints()` calls keep the same advisory prior context
+  - the built-in name-noise protections still apply; the prior only interprets local phrases that actually appear in the current document
+- updated `crates/specforge/src/commands/learn_priors.rs` to reuse the shared prior-memory normalization helpers instead of keeping a parallel local implementation
+- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, `USER_GUIDE.md`, `CHANGES.md`, and `MEMORY.md` so the second bounded `R15f` consumer is continuity-safe
 - validation ran for this task:
+  - `cargo test --manifest-path Cargo.toml semantic_phrase_priors_guide_local_semantic_hint_recovery -- --nocapture` passed
   - `cargo test --manifest-path Cargo.toml actor_taxonomy_priors_guide_source_column_direction_inference -- --nocapture` passed
-  - `cargo test --manifest-path Cargo.toml actor_taxonomy_priors_guide_section_heading_direction_inference -- --nocapture` passed
-  - `cargo test --manifest-path Cargo.toml converge_defaults_to_ollama_for_vlm_and_nlp -- --nocapture` passed
-  - `bash scripts/run_ci.sh` passed with `202/202` tests
+  - `cargo test --manifest-path Cargo.toml learn_priors_harvests_semantic_and_temporal_priors -- --nocapture` passed
+  - `bash scripts/run_ci.sh` passed with `203/203` tests
 
 ## Current working tree before commit
 - modified tracked files currently include:
-  - `crates/specforge/src/cli.rs`
-  - `crates/specforge/src/commands/evidence.rs`
-  - `crates/specforge/src/commands/converge.rs`
+  - `crates/specforge/src/commands/learn_priors.rs`
   - `crates/specforge/src/ir/evidence.rs`
   - `crates/specforge/src/ir/prior_memory.rs`
   - `README.md`
@@ -80,9 +78,9 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the first bounded prior-consumption slice with the synced live docs
+1. commit the second bounded prior-consumption slice with the synced live docs
 2. broaden `R15f` prior families beyond actor-taxonomy / semantic / temporal into table-shape, visual-motif, modality-reliability, and negative-knowledge
-3. broaden prior consumption beyond actor-taxonomy direction guidance into semantic-role and temporal-language suggestion paths while preserving the local-grounding rule
+3. broaden prior consumption beyond actor-taxonomy plus semantic-role `EvidenceIR` guidance into temporal-language, table-shape, and visual suggestion paths while preserving the local-grounding rule
 
 ## Remaining engineering gaps after this commit
 - remaining actor-relative direction modeling in `SemanticIR` / `IntentIR` (`R15`)
@@ -90,7 +88,7 @@
 - KG-guided multimodal rescans (`R15c`)
 - broader evidence arbitration / conflict handling beyond polarity, interface-shape, multi-producer ambiguity, modality-aware semantic-role grounding, consensus summaries, semantic candidates, and semantic arbitration summaries (`R15d`)
 - broader KG-quality evaluation and benchmark hardening beyond the new seed fixture pack (`R15e`)
-- cross-document extractor learning is now started, and the first bounded `EvidenceIR` consumer is now live, but `R15f` still needs broader prior families plus benchmarked semantic/temporal/table/visual consumption paths
+- cross-document extractor learning is now started, and the first two bounded `EvidenceIR` consumers are now live, but `R15f` still needs broader prior families plus benchmarked temporal/table/visual/modality-reliability/negative-knowledge consumption paths
 - Tier 3 relation extraction after the graph/temporal/eval surfaces are ready (`R14`)
 - some downstream compatibility and consumer paths still rely on flat `direction_hint` instead of the graph-native surface
 - meaning-based role inference now covers tables, prose, alias-grounded prose, visual captions, and VLM timing annotations, and canonical layers now preserve that provenance, but broader downstream use of preserved arbitration state is still early

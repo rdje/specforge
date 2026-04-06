@@ -10,6 +10,7 @@ use crate::ir::prior_memory::{
     ActorTaxonomyRole, CorpusMemory, ProtocolFamily, normalize_actor_term,
     normalized_text_contains_term,
 };
+use crate::ir::semantic::InterfaceSignalSemanticRole;
 use crate::ir::source::{
     ActorSignalRelation, ConditionalRuleRecord, RegisterFieldRecord, RegisterRecord, RelationKind,
     SignalConstraintKind, SignalConstraintRecord, TimingConstraintRecord, ValidationReportRecord,
@@ -97,6 +98,8 @@ pub struct EvidenceIr {
     pub schema_version: u32,
     pub stage: IrStage,
     pub source_ir_path: PathBuf,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub prior_memory_path: Option<PathBuf>,
     pub artifact_layout: EvidenceArtifactLayout,
     pub document_identity: EvidenceDocumentIdentity,
     pub section_anchors: Vec<SectionAnchor>,
@@ -149,6 +152,7 @@ pub struct EvidenceIr {
 
 #[derive(Debug, Clone)]
 struct EvidencePriorGuidance {
+    prior_memory_path: PathBuf,
     corpus_memory: CorpusMemory,
     protocol_family: ProtocolFamily,
 }
@@ -491,6 +495,9 @@ impl EvidenceIr {
             schema_version: 1,
             stage: IrStage::EvidenceIr,
             source_ir_path,
+            prior_memory_path: prior_guidance
+                .as_ref()
+                .map(|guidance| guidance.prior_memory_path.clone()),
             artifact_layout,
             document_identity,
             section_anchors,
@@ -607,11 +614,15 @@ impl EvidenceIr {
 
     pub fn refresh_signal_semantic_hints(&mut self) -> Result<()> {
         let source_ir = SourceIr::load_from_path(&self.source_ir_path)?;
+        let prior_guidance =
+            load_evidence_prior_guidance(self.prior_memory_path.as_deref(), &source_ir)?;
         let (signal_semantic_hints, signal_semantic_conflicts) = synthesize_signal_semantic_hints(
             &source_ir,
             &self.extracted_statements,
+            &self.actor_signal_relations,
             &self.signal_alias_map,
             &self.visual_evidence,
+            prior_guidance.as_ref(),
         );
         self.signal_semantic_hints = signal_semantic_hints;
         self.signal_semantic_conflicts = signal_semantic_conflicts;
@@ -1441,10 +1452,12 @@ fn load_evidence_prior_guidance(
     if !prior_memory_path.exists() {
         return Ok(None);
     }
+    let prior_memory_path = canonicalize_existing_path(prior_memory_path)?;
 
     let corpus_memory =
-        serde_json::from_str::<CorpusMemory>(&fs::read_to_string(prior_memory_path)?)?;
+        serde_json::from_str::<CorpusMemory>(&fs::read_to_string(&prior_memory_path)?)?;
     Ok(Some(EvidencePriorGuidance {
+        prior_memory_path: prior_memory_path.clone(),
         protocol_family: ProtocolFamily::infer(
             &source_ir.document_identity.document_key,
             &source_ir.document_identity.display_name,
@@ -3235,21 +3248,30 @@ fn synthesize_system_contract_from_table_descriptions(
 fn synthesize_signal_semantic_hints(
     source_ir: &SourceIr,
     statements: &[ExtractedStatement],
+    actor_signal_relations: &[ActorSignalRelation],
     signal_alias_map: &BTreeMap<String, String>,
     visual_evidence: &[VisualEvidenceItem],
+    prior_guidance: Option<&EvidencePriorGuidance>,
 ) -> (
     Vec<SignalSemanticHintRecord>,
     Vec<SignalSemanticConflictRecord>,
 ) {
-    let mut hints = synthesize_signal_semantic_hints_from_tables(source_ir);
+    let known_actor_names =
+        collect_known_actor_names_for_semantic_hints(source_ir, actor_signal_relations);
+    let mut hints =
+        synthesize_signal_semantic_hints_from_tables(source_ir, &known_actor_names, prior_guidance);
     let known_signals = collect_known_signal_names_for_semantic_hints(source_ir, statements);
     let mut seen = hints
         .iter()
         .map(signal_semantic_hint_key)
         .collect::<BTreeSet<_>>();
-    for hint in
-        synthesize_signal_semantic_hints_from_prose(statements, signal_alias_map, &known_signals)
-    {
+    for hint in synthesize_signal_semantic_hints_from_prose(
+        statements,
+        signal_alias_map,
+        &known_signals,
+        &known_actor_names,
+        prior_guidance,
+    ) {
         if seen.insert(signal_semantic_hint_key(&hint)) {
             hints.push(hint);
         }
@@ -3258,6 +3280,8 @@ fn synthesize_signal_semantic_hints(
         visual_evidence,
         signal_alias_map,
         &known_signals,
+        &known_actor_names,
+        prior_guidance,
     ) {
         if seen.insert(signal_semantic_hint_key(&hint)) {
             hints.push(hint);
@@ -3302,8 +3326,77 @@ fn collect_known_signal_names_for_semantic_hints(
     known_signals
 }
 
+fn collect_known_actor_names_for_semantic_hints(
+    source_ir: &SourceIr,
+    actor_signal_relations: &[ActorSignalRelation],
+) -> BTreeSet<String> {
+    let mut actor_names = actor_signal_relations
+        .iter()
+        .map(|relation| relation.actor_name.clone())
+        .collect::<BTreeSet<_>>();
+
+    for table in &source_ir.structured_tables {
+        if !should_treat_table_as_top_level_signal_description(table) {
+            continue;
+        }
+
+        let header_texts: Vec<String> = table
+            .header_rows
+            .first()
+            .map(|row| row.iter().map(|c| c.text.to_ascii_lowercase()).collect())
+            .unwrap_or_default();
+        let relation_cols = header_texts
+            .iter()
+            .enumerate()
+            .filter_map(|(idx, header)| {
+                if header.contains("source")
+                    || header.contains("driver")
+                    || header.contains("destination")
+                    || header.contains("dest")
+                {
+                    Some(idx)
+                } else {
+                    None
+                }
+            })
+            .collect::<Vec<_>>();
+
+        for row in &table.body_rows {
+            for relation_col in &relation_cols {
+                if let Some(cell) = row.get(*relation_col)
+                    && let Some(actor_name) = normalize_table_actor_name(&cell.text)
+                {
+                    actor_names.insert(actor_name);
+                }
+            }
+        }
+    }
+
+    for section in &source_ir.document_sections {
+        let lowered = section.title.to_ascii_lowercase();
+        for suffix in [
+            " signals", " signal", " inputs", " input", " outputs", " output",
+        ] {
+            if lowered.ends_with(suffix) {
+                let trimmed = section
+                    .title
+                    .get(..section.title.len().saturating_sub(suffix.len()))
+                    .unwrap_or("")
+                    .trim();
+                if !trimmed.is_empty() {
+                    actor_names.insert(trimmed.to_string());
+                }
+            }
+        }
+    }
+
+    actor_names
+}
+
 fn synthesize_signal_semantic_hints_from_tables(
     source_ir: &SourceIr,
+    known_actor_names: &BTreeSet<String>,
+    prior_guidance: Option<&EvidencePriorGuidance>,
 ) -> Vec<SignalSemanticHintRecord> {
     let mut hints = Vec::new();
     let mut seen = BTreeSet::<String>::new();
@@ -3362,7 +3455,14 @@ fn synthesize_signal_semantic_hints_from_tables(
                 description,
                 std::iter::once(signal_name.as_str()),
             );
-            let semantic_tags = infer_signal_semantic_tags_from_description(&sanitized_description);
+            let semantic_tags = infer_signal_semantic_tags_from_description(
+                &sanitized_description,
+                description,
+                SignalSemanticHintSourceKind::SignalDescriptionTable,
+                &BTreeSet::from([signal_name.clone()]),
+                known_actor_names,
+                prior_guidance,
+            );
             if semantic_tags.is_empty() {
                 continue;
             }
@@ -3401,6 +3501,8 @@ fn synthesize_signal_semantic_hints_from_prose(
     statements: &[ExtractedStatement],
     signal_alias_map: &BTreeMap<String, String>,
     known_signals: &HashSet<String>,
+    known_actor_names: &BTreeSet<String>,
+    prior_guidance: Option<&EvidencePriorGuidance>,
 ) -> Vec<SignalSemanticHintRecord> {
     let mut hints = Vec::new();
     let mut seen = BTreeSet::<String>::new();
@@ -3415,19 +3517,26 @@ fn synthesize_signal_semantic_hints_from_prose(
             known_signals,
             signal_alias_map,
         ) {
-            let sanitized_text = strip_signal_mentions_from_semantic_hint_text(
-                &target_context.context_text,
-                known_signals.iter().map(String::as_str),
-            );
-            let semantic_tags = infer_signal_semantic_tags_from_description(&sanitized_text);
-            if semantic_tags.is_empty() {
-                continue;
-            }
             let source_kind = if target_context.alias_grounded {
                 SignalSemanticHintSourceKind::AliasGroundedProseStatement
             } else {
                 SignalSemanticHintSourceKind::ProseStatement
             };
+            let sanitized_text = strip_signal_mentions_from_semantic_hint_text(
+                &target_context.context_text,
+                known_signals.iter().map(String::as_str),
+            );
+            let semantic_tags = infer_signal_semantic_tags_from_description(
+                &sanitized_text,
+                &target_context.context_text,
+                source_kind,
+                &BTreeSet::from([target_context.signal_name.clone()]),
+                known_actor_names,
+                prior_guidance,
+            );
+            if semantic_tags.is_empty() {
+                continue;
+            }
 
             let key = format!(
                 "{}:{}:{}:{}",
@@ -3464,6 +3573,8 @@ fn synthesize_signal_semantic_hints_from_visual_evidence(
     visual_evidence: &[VisualEvidenceItem],
     signal_alias_map: &BTreeMap<String, String>,
     known_signals: &HashSet<String>,
+    known_actor_names: &BTreeSet<String>,
+    prior_guidance: Option<&EvidencePriorGuidance>,
 ) -> Vec<SignalSemanticHintRecord> {
     let mut hints = Vec::new();
     let mut seen = BTreeSet::<String>::new();
@@ -3477,8 +3588,10 @@ fn synthesize_signal_semantic_hints_from_visual_evidence(
                 SignalSemanticHintSourceKind::VisualCaption,
                 &visual_item.evidence_id,
                 known_signals,
+                known_actor_names,
                 signal_alias_map,
                 AutomationConfidence::Low,
+                prior_guidance,
             );
         }
 
@@ -3509,8 +3622,10 @@ fn synthesize_signal_semantic_hints_from_visual_evidence(
                     SignalSemanticHintSourceKind::VlmTimingDiagramAnnotation,
                     &visual_item.evidence_id,
                     known_signals,
+                    known_actor_names,
                     signal_alias_map,
                     AutomationConfidence::Low,
+                    prior_guidance,
                 );
             }
         }
@@ -3526,8 +3641,10 @@ fn push_visual_signal_semantic_hint(
     source_kind: SignalSemanticHintSourceKind,
     visual_evidence_id: &str,
     known_signals: &HashSet<String>,
+    known_actor_names: &BTreeSet<String>,
     signal_alias_map: &BTreeMap<String, String>,
     automation_confidence: AutomationConfidence,
+    prior_guidance: Option<&EvidencePriorGuidance>,
 ) {
     for target_context in
         extract_signal_semantic_target_contexts(source_text, known_signals, signal_alias_map)
@@ -3536,7 +3653,14 @@ fn push_visual_signal_semantic_hint(
             &target_context.context_text,
             known_signals.iter().map(String::as_str),
         );
-        let semantic_tags = infer_signal_semantic_tags_from_description(&sanitized_text);
+        let semantic_tags = infer_signal_semantic_tags_from_description(
+            &sanitized_text,
+            &target_context.context_text,
+            source_kind,
+            &BTreeSet::from([target_context.signal_name.clone()]),
+            known_actor_names,
+            prior_guidance,
+        );
         if semantic_tags.is_empty() {
             continue;
         }
@@ -3835,7 +3959,14 @@ fn clause_separator_offsets(text: &str) -> Vec<(usize, usize)> {
     offsets
 }
 
-fn infer_signal_semantic_tags_from_description(description: &str) -> Vec<SignalSemanticTag> {
+fn infer_signal_semantic_tags_from_description(
+    description: &str,
+    source_text_for_prior_matching: &str,
+    source_kind: SignalSemanticHintSourceKind,
+    signal_names: &BTreeSet<String>,
+    actor_names: &BTreeSet<String>,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+) -> Vec<SignalSemanticTag> {
     let lowered = description.to_ascii_lowercase();
     let mut tags = BTreeSet::new();
 
@@ -3879,7 +4010,26 @@ fn infer_signal_semantic_tags_from_description(description: &str) -> Vec<SignalS
         tags.insert(SignalSemanticTag::HandshakeReadyLike);
     }
 
+    if let Some(role) = prior_guidance.and_then(|prior_guidance| {
+        prior_guidance.corpus_memory.semantic_phrase_role_in_text(
+            Some(prior_guidance.protocol_family),
+            source_kind,
+            source_text_for_prior_matching,
+            signal_names,
+            actor_names,
+        )
+    }) {
+        tags.insert(semantic_tag_for_role(role));
+    }
+
     tags.into_iter().collect()
+}
+
+fn semantic_tag_for_role(role: InterfaceSignalSemanticRole) -> SignalSemanticTag {
+    match role {
+        InterfaceSignalSemanticRole::HandshakeValidLike => SignalSemanticTag::HandshakeValidLike,
+        InterfaceSignalSemanticRole::HandshakeReadyLike => SignalSemanticTag::HandshakeReadyLike,
+    }
 }
 
 fn strip_signal_mentions_from_semantic_hint_text<'a>(
@@ -5436,15 +5586,18 @@ mod tests {
     use crate::error::Result;
     use crate::ir::prior_memory::{
         ActorTaxonomyPriorRecord, ActorTaxonomyRole, CorpusMemory, CorpusMemoryUpdatePolicyRecord,
-        PriorSourceArtifactRecord, ProtocolFamily,
+        PriorSourceArtifactRecord, ProtocolFamily, SemanticPhrasePriorRecord,
     };
-    use crate::ir::semantic::SemanticGroundingStrength;
+    use crate::ir::semantic::{InterfaceSignalSemanticRole, SemanticGroundingStrength};
     use crate::ir::source::{
         AutomationConfidence, SectionKind, SourceIr, StructuredTableCellRecord,
         StructuredTableRecord, TableKind, VisualAsset, VisualAssetKind,
     };
 
-    use super::{EvidenceIr, EvidenceLinkKind, StatementClass, VisualObservationKind};
+    use super::{
+        EvidenceIr, EvidenceLinkKind, SignalSemanticHintSourceKind, SignalSemanticTag,
+        StatementClass, VisualObservationKind, canonicalize_existing_path,
+    };
 
     fn make_table_cell(text: &str, is_header: bool) -> StructuredTableCellRecord {
         StructuredTableCellRecord {
@@ -5456,34 +5609,8 @@ mod tests {
     }
 
     fn write_actor_taxonomy_prior_memory(root: &Path) -> Result<PathBuf> {
-        let prior_memory_path = root
-            .join("generated")
-            .join("prior_memory")
-            .join("corpus_memory.json");
-        if let Some(parent) = prior_memory_path.parent() {
-            fs::create_dir_all(parent)?;
-        }
-
-        let corpus_memory = CorpusMemory {
-            schema_version: 2,
-            update_policy: CorpusMemoryUpdatePolicyRecord {
-                advisory_only: true,
-                requires_validated_intent_ir: true,
-                rejects_error_findings: true,
-                excludes_alias_dependent_semantic_consensus: true,
-                local_grounding_required_for_canonical_promotion: true,
-            },
-            source_artifacts: vec![PriorSourceArtifactRecord {
-                artifact_path: root.join("fixture_intent_ir.json"),
-                document_key: "fixture".to_string(),
-                display_name: "Fixture".to_string(),
-                protocol_family: ProtocolFamily::AmbaGeneric,
-                overall_score: Some(100),
-                grade: Some("EXCELLENT".to_string()),
-                accepted_for_learning: true,
-                skip_reason: None,
-            }],
-            actor_taxonomy_priors: vec![
+        write_prior_memory(root, |corpus_memory| {
+            corpus_memory.actor_taxonomy_priors = vec![
                 ActorTaxonomyPriorRecord {
                     prior_id: "actor_taxonomy_prior_0001".to_string(),
                     normalized_actor_term: "producer".to_string(),
@@ -5504,10 +5631,62 @@ mod tests {
                     strongest_automation_confidence: AutomationConfidence::High,
                     strongest_grounding_strength: SemanticGroundingStrength::CrossModality,
                 },
-            ],
+            ];
+        })
+    }
+
+    fn write_semantic_phrase_prior_memory(root: &Path) -> Result<PathBuf> {
+        write_prior_memory(root, |corpus_memory| {
+            corpus_memory.semantic_phrase_priors = vec![SemanticPhrasePriorRecord {
+                prior_id: "semantic_phrase_prior_0001".to_string(),
+                normalized_phrase: "<signal> can receive the transfer".to_string(),
+                role: InterfaceSignalSemanticRole::HandshakeReadyLike,
+                protocol_family: ProtocolFamily::AmbaGeneric,
+                source_kind: SignalSemanticHintSourceKind::ProseStatement,
+                support_count: 2,
+                supporting_document_keys: vec!["fixture".to_string()],
+                strongest_automation_confidence: AutomationConfidence::High,
+                strongest_grounding_strength: SemanticGroundingStrength::SingleSource,
+            }];
+        })
+    }
+
+    fn write_prior_memory(
+        root: &Path,
+        populate: impl FnOnce(&mut CorpusMemory),
+    ) -> Result<PathBuf> {
+        let prior_memory_path = root
+            .join("generated")
+            .join("prior_memory")
+            .join("corpus_memory.json");
+        if let Some(parent) = prior_memory_path.parent() {
+            fs::create_dir_all(parent)?;
+        }
+
+        let mut corpus_memory = CorpusMemory {
+            schema_version: 2,
+            update_policy: CorpusMemoryUpdatePolicyRecord {
+                advisory_only: true,
+                requires_validated_intent_ir: true,
+                rejects_error_findings: true,
+                excludes_alias_dependent_semantic_consensus: true,
+                local_grounding_required_for_canonical_promotion: true,
+            },
+            source_artifacts: vec![PriorSourceArtifactRecord {
+                artifact_path: root.join("fixture_intent_ir.json"),
+                document_key: "fixture".to_string(),
+                display_name: "Fixture".to_string(),
+                protocol_family: ProtocolFamily::AmbaGeneric,
+                overall_score: Some(100),
+                grade: Some("EXCELLENT".to_string()),
+                accepted_for_learning: true,
+                skip_reason: None,
+            }],
+            actor_taxonomy_priors: Vec::new(),
             semantic_phrase_priors: Vec::new(),
             temporal_phrase_priors: Vec::new(),
         };
+        populate(&mut corpus_memory);
         fs::write(
             &prior_memory_path,
             serde_json::to_string_pretty(&corpus_memory)?,
@@ -6236,6 +6415,77 @@ mod tests {
                 .iter()
                 .any(|statement| statement.text == "Signal XREQ is output width 1."),
             "expected section-heading actor taxonomy prior to recover output direction"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn semantic_phrase_priors_guide_local_semantic_hint_recovery() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("amba_semantic_prior.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let prior_memory_path = write_semantic_phrase_prior_memory(tempdir.path())?;
+
+        fs::write(
+            &source,
+            concat!(
+                "# Interface\n",
+                "Signal XACK is input width 1.\n",
+                "XACK can receive the transfer.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+
+        let without_priors = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        assert!(
+            without_priors.signal_semantic_hints.is_empty(),
+            "non-hardcoded phrase should not resolve without prior guidance: {:?}",
+            without_priors.signal_semantic_hints
+        );
+
+        let evidence_ir = EvidenceIr::build_with_prior_memory(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+            Some(&prior_memory_path),
+        )?;
+        assert!(
+            evidence_ir.signal_semantic_hints.iter().any(|hint| {
+                hint.signal_name == "XACK"
+                    && matches!(
+                        hint.source_kind,
+                        SignalSemanticHintSourceKind::ProseStatement
+                    )
+                    && hint
+                        .semantic_tags
+                        .contains(&SignalSemanticTag::HandshakeReadyLike)
+            }),
+            "semantic phrase prior should recover a ready-like hint from local prose: {:?}",
+            evidence_ir.signal_semantic_hints
+        );
+        assert_eq!(
+            evidence_ir.prior_memory_path,
+            Some(canonicalize_existing_path(&prior_memory_path)?)
+        );
+
+        evidence_ir.write_to_disk()?;
+        let mut reloaded =
+            EvidenceIr::load_from_path(&evidence_ir.artifact_layout.evidence_ir_path)?;
+        reloaded.refresh_signal_semantic_hints()?;
+        assert!(
+            reloaded.signal_semantic_hints.iter().any(|hint| {
+                hint.signal_name == "XACK"
+                    && hint
+                        .semantic_tags
+                        .contains(&SignalSemanticTag::HandshakeReadyLike)
+            }),
+            "persisted prior_memory_path should preserve prior-guided semantic hints across refreshes"
         );
 
         Ok(())

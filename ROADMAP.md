@@ -532,10 +532,12 @@
   - the latest live AMBA run across AXI/APB/AHB `IntentIR` artifacts now yields `16` actor-taxonomy priors and `222` temporal phrase priors while keeping semantic phrase priors at `0` until stronger observation-backed semantic consensus exists in the canonical artifacts
   - `EvidenceIR` now has the first bounded prior-consumption path: `specforge evidence` / `specforge converge` consult the local `CorpusMemory` by default and can use actor-taxonomy priors to interpret explicit local actor terms in section headings and `Source` / `Destination` table columns
   - that first consumer is still provenance-safe: prior memory can widen actor vocabulary, but it cannot create canonical actors, signals, or relations that are not explicitly present in the current PDF
+  - `EvidenceIR` now has a second bounded prior-consumption path too: semantic phrase priors can guide local signal-role hint recovery when the current PDF contains a phrase that normalizes to the learned prior shape
+  - prior-guided semantic hints stay provenance-safe as well: the prior can help interpret a local phrase like `XACK can receive the transfer`, but it cannot promote a semantic role without that local phrase actually appearing in the current document
 - remaining:
   - broaden the prior store beyond the first actor-taxonomy / semantic / temporal phrase families into table-shape, visual-motif, modality-reliability, and negative-knowledge priors
   - decide how protocol-family scoping should grow beyond the current AMBA family inference without hardcoding brittle protocol logic
-  - broaden prior consumption beyond the first actor-taxonomy direction-guidance slice into semantic-role, temporal-language, table-shape, visual-motif, modality-reliability, and negative-knowledge suggestions without bypassing local grounding
+  - broaden prior consumption beyond the first actor-taxonomy plus semantic-role `EvidenceIR` slices into temporal-language, table-shape, visual-motif, modality-reliability, and negative-knowledge suggestions without bypassing local grounding
   - add benchmark coverage that measures whether prior memory improves analysis of unseen PDFs honestly instead of only growing the stored prior set
 
 ### R16 SystemVerilog adapter (Horizon)

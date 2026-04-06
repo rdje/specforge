@@ -542,6 +542,19 @@
   - temporal-language priors as phrase-prioritized parsing/rescan hints only
   - table-shape / visual-motif / modality-reliability / negative-knowledge priors after that
 
+### Second landed bounded prior-consumption slice
+- the second consumer is also now real in `crates/specforge/src/ir/evidence.rs`
+- `EvidenceIR` can now use semantic phrase priors to recover local signal-role hints from grounded phrases that are not part of the current hardcoded heuristic list
+- the bounded behavior is still strict:
+  - built-in name-noise protections remain in place
+  - learned semantic priors only fire when the current PDF contains a local phrase whose normalized shape matches the learned prior
+  - the prior still cannot author a semantic role without that local phrase being present in the current document
+- `EvidenceIR` now persists the `prior_memory_path` it consulted so later refreshes during NLP loopback keep the same advisory prior guidance instead of silently dropping it
+- a direct regression now proves the new bounded behavior on a non-hardcoded phrase:
+  - without prior memory, `XACK can receive the transfer` yields no semantic hint
+  - with prior memory, the same local phrase yields a ready-like hint
+  - after writing/reloading `EvidenceIR`, `refresh_signal_semantic_hints()` preserves that prior-guided hint because the consulted prior-memory path is now part of the local artifact state
+
 ## Current repository observations
 - the repository now contains a renamed `specforge` crate and CLI
 - the active Rust codebase no longer treats `spec2fsm` as the primary identity

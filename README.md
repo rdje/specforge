@@ -40,7 +40,9 @@ Use it first for the project objective, document navigation, and the current imp
 - `specforge project-validation <artifact>...` now validates the passed artifacts and refreshes the tracked validation snapshot docs from their persisted reports
 - `specforge kg-bench` now runs tracked KG-quality fixtures through the staged pipeline, so gold expectations, negative expectations, residual quality, and conflict surfacing can be checked explicitly instead of relying only on aggregate scores
 - `specforge learn-priors <intent-ir>...` now builds a local typed `CorpusMemory` prior store under `generated/prior_memory/corpus_memory.json`, harvesting only from validated `IntentIR` artifacts and keeping the learning plane advisory-only
-- `specforge evidence <source-ir>` and `specforge converge <source>` now consult that local prior store by default through `--prior-memory generated/prior_memory/corpus_memory.json`, and the first bounded consumer uses actor-taxonomy priors only to interpret explicit actor terms already present in section headings and `Source` / `Destination` table columns
+- `specforge evidence <source-ir>` and `specforge converge <source>` now consult that local prior store by default through `--prior-memory generated/prior_memory/corpus_memory.json`, and the first bounded consumers now use:
+  - actor-taxonomy priors to interpret explicit local actor terms already present in section headings and `Source` / `Destination` table columns
+  - semantic phrase priors to interpret locally grounded signal-description/prose phrases that normalize to learned semantic-role evidence without weakening the name-noise protections
 - GitHub Actions CI now runs `cargo fmt --all --check` and `cargo test --manifest-path Cargo.toml` on every `push` and `pull_request`, so the local Rust quality gate is mirrored automatically on GitHub
 - the hosted CI path is now driven by `./scripts/run_ci.sh`, so the exact Rust CI suite can be run locally before push instead of only after GitHub receives the commit
 - the current `R15f` slice now learns three safe prior families:
@@ -48,7 +50,10 @@ Use it first for the project objective, document navigation, and the current imp
   - semantic-role phrase priors from decisive, non-alias-dependent semantic consensus plus preserved observation text
   - temporal-language phrase priors from canonical temporal rules and validated canonical `signal_constraints` / `conditional_rules`
 - the latest live AMBA prior-memory run currently harvests `16` actor-taxonomy priors and `222` temporal phrase priors from the APB/AHB/AXI `IntentIR` artifacts; semantic phrase priors remain `0` on that corpus because the current canonical AMBA artifacts do not yet surface observation-backed semantic consensus strongly enough to promote
-- the first prior-consumption slice is now real too: cross-document actor-taxonomy memory can safely recover directions for local actor labels like `Producer` / `Consumer` without letting prior memory invent any actor, signal, or relation not grounded in the current document
+- the first prior-consumption slices are now real too:
+  - cross-document actor-taxonomy memory can safely recover directions for local actor labels like `Producer` / `Consumer`
+  - cross-document semantic phrase memory can safely recover non-hardcoded local role phrases like `XACK can receive the transfer`
+  - both stay bounded: prior memory widens local interpretation, but it cannot invent any actor, signal, relation, or semantic fact not grounded in the current document
 - the KG benchmark harness can now also patch staged fixture inputs at `SourceIR` and `EvidenceIR`, which lets tracked fixtures model richer protocol-semantics cases like contested handshake-role evidence without needing an external PDF corpus for every regression
 - `specforge kg-bench` can now also assert canonical semantic candidate and arbitration state directly, so fixtures can lock whether a signal meaning is decisively grounded or still honestly contested instead of inferring that only from side effects like blocked fallbacks or validator findings
 - `specforge kg-bench` can now also patch `SourceIR` visual assets and assert persisted validation metric values directly at the evidence, semantic, and intent stages, which lets tracked fixtures lock cross-modality grounding behavior and VLM-note-derived semantics instead of only checking canonical structure or finding ids

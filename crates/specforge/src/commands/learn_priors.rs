@@ -10,7 +10,8 @@ use crate::ir::intent::IntentIr;
 use crate::ir::prior_memory::{
     ActorTaxonomyPriorRecord, ActorTaxonomyRole, CorpusMemory, CorpusMemoryUpdatePolicyRecord,
     PriorSourceArtifactRecord, ProtocolFamily, SemanticPhrasePriorRecord,
-    TemporalPhrasePriorRecord, normalize_actor_term,
+    TemporalPhrasePriorRecord, is_meaningful_prior_phrase, normalize_actor_term,
+    normalize_prior_phrase,
 };
 use crate::ir::semantic::{
     ActorRelativeDirection, InterfaceSignalSemanticObservationRecord, InterfaceSignalSemanticRole,
@@ -624,134 +625,6 @@ fn actor_name_from_actor_id(actor_id: &str) -> Option<String> {
         .strip_prefix("actor_")
         .map(|suffix| suffix.replace('_', " "))
         .filter(|name| !name.trim().is_empty())
-}
-
-fn normalize_prior_phrase(
-    text: &str,
-    signal_names: &BTreeSet<String>,
-    actor_names: &BTreeSet<String>,
-) -> String {
-    let mut normalized = text.to_ascii_lowercase();
-    let mut replacements = signal_names
-        .iter()
-        .map(|signal_name| (signal_name.to_ascii_lowercase(), "<signal>"))
-        .chain(
-            actor_names
-                .iter()
-                .map(|actor_name| (actor_name.to_ascii_lowercase(), "<actor>")),
-        )
-        .collect::<Vec<_>>();
-    replacements.sort_by(|left, right| {
-        right
-            .0
-            .len()
-            .cmp(&left.0.len())
-            .then_with(|| left.0.cmp(&right.0))
-    });
-
-    let mut token_replacements = BTreeMap::new();
-    for (term, placeholder) in replacements {
-        if !term.contains(' ') {
-            token_replacements.insert(term, placeholder);
-            continue;
-        }
-        normalized = replace_term_with_placeholder(&normalized, &term, placeholder);
-    }
-
-    normalized = replace_single_token_terms(&normalized, &token_replacements);
-
-    collapse_whitespace(
-        normalized
-            .trim_matches(|ch: char| !ch.is_ascii_alphanumeric() && ch != '<' && ch != '>')
-            .replace(['\n', '\t'], " ")
-            .as_str(),
-    )
-}
-
-fn replace_term_with_placeholder(text: &str, term: &str, placeholder: &str) -> String {
-    if term.is_empty() {
-        return text.to_string();
-    }
-
-    let bytes = text.as_bytes();
-    let term_bytes = term.as_bytes();
-    let mut result = String::with_capacity(text.len());
-    let mut index = 0;
-
-    while index < bytes.len() {
-        let remaining = &bytes[index..];
-        if remaining.len() >= term_bytes.len()
-            && remaining[..term_bytes.len()].eq_ignore_ascii_case(term_bytes)
-            && is_word_boundary(text, index)
-            && is_word_boundary(text, index + term_bytes.len())
-        {
-            result.push_str(placeholder);
-            index += term_bytes.len();
-        } else {
-            result.push(bytes[index] as char);
-            index += 1;
-        }
-    }
-
-    result
-}
-
-fn replace_single_token_terms(text: &str, replacements: &BTreeMap<String, &'static str>) -> String {
-    if replacements.is_empty() {
-        return text.to_string();
-    }
-
-    let mut result = String::with_capacity(text.len());
-    let mut token = String::new();
-
-    for ch in text.chars() {
-        if ch.is_ascii_alphanumeric() || ch == '_' {
-            token.push(ch);
-            continue;
-        }
-
-        flush_normalized_token(&mut result, &mut token, replacements);
-        result.push(ch);
-    }
-
-    flush_normalized_token(&mut result, &mut token, replacements);
-    result
-}
-
-fn flush_normalized_token(
-    result: &mut String,
-    token: &mut String,
-    replacements: &BTreeMap<String, &'static str>,
-) {
-    if token.is_empty() {
-        return;
-    }
-
-    if let Some(placeholder) = replacements.get(token) {
-        result.push_str(placeholder);
-    } else {
-        result.push_str(token);
-    }
-    token.clear();
-}
-
-fn is_word_boundary(text: &str, byte_index: usize) -> bool {
-    if byte_index == 0 || byte_index >= text.len() {
-        return true;
-    }
-    !text.as_bytes()[byte_index].is_ascii_alphanumeric() && text.as_bytes()[byte_index] != b'_'
-}
-
-fn collapse_whitespace(text: &str) -> String {
-    text.split_whitespace().collect::<Vec<_>>().join(" ")
-}
-
-fn is_meaningful_prior_phrase(text: &str) -> bool {
-    let trimmed = text.trim();
-    !trimmed.is_empty()
-        && trimmed != "<signal>"
-        && trimmed != "<actor>"
-        && trimmed.chars().any(|ch| ch.is_ascii_lowercase())
 }
 
 fn temporal_rule_is_actor_grounded(rule: &crate::ir::semantic::TemporalRuleRecord) -> bool {

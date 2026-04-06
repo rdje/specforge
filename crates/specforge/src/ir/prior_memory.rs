@@ -1,3 +1,4 @@
+use std::collections::BTreeMap;
 use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};
@@ -136,6 +137,25 @@ impl CorpusMemory {
         })
     }
 
+    pub fn semantic_phrase_role_in_text(
+        &self,
+        protocol_family: Option<ProtocolFamily>,
+        source_kind: SignalSemanticHintSourceKind,
+        text: &str,
+        signal_names: &std::collections::BTreeSet<String>,
+        actor_names: &std::collections::BTreeSet<String>,
+    ) -> Option<InterfaceSignalSemanticRole> {
+        let normalized_phrase = normalize_prior_phrase(text, signal_names, actor_names);
+        if !is_meaningful_prior_phrase(&normalized_phrase) {
+            return None;
+        }
+
+        self.resolve_semantic_phrase_role(protocol_family, source_kind, |prior| {
+            prior.normalized_phrase == normalized_phrase
+                || normalized_text_contains_term(&normalized_phrase, &prior.normalized_phrase)
+        })
+    }
+
     pub fn temporal_phrase_priors_for(
         &self,
         protocol_family: Option<ProtocolFamily>,
@@ -186,6 +206,41 @@ impl CorpusMemory {
 
         None
     }
+
+    fn resolve_semantic_phrase_role<F>(
+        &self,
+        protocol_family: Option<ProtocolFamily>,
+        source_kind: SignalSemanticHintSourceKind,
+        predicate: F,
+    ) -> Option<InterfaceSignalSemanticRole>
+    where
+        F: Fn(&SemanticPhrasePriorRecord) -> bool,
+    {
+        for scope in actor_taxonomy_search_scopes(protocol_family) {
+            let mut roles = self
+                .semantic_phrase_priors
+                .iter()
+                .filter(|prior| {
+                    scope
+                        .map(|expected| prior.protocol_family == expected)
+                        .unwrap_or(true)
+                })
+                .filter(|prior| prior.source_kind == source_kind)
+                .filter(|prior| predicate(prior))
+                .map(|prior| prior.role)
+                .collect::<Vec<_>>();
+            roles.sort_by_key(|role| role.as_str());
+            roles.dedup();
+            if roles.len() == 1 {
+                return roles.first().copied();
+            }
+            if roles.len() > 1 {
+                return None;
+            }
+        }
+
+        None
+    }
 }
 
 pub fn normalize_actor_term(text: &str) -> String {
@@ -223,6 +278,56 @@ pub fn normalized_text_contains_term(text: &str, term: &str) -> bool {
         .any(|window| window == term_tokens.as_slice())
 }
 
+pub fn normalize_prior_phrase(
+    text: &str,
+    signal_names: &std::collections::BTreeSet<String>,
+    actor_names: &std::collections::BTreeSet<String>,
+) -> String {
+    let mut normalized = text.to_ascii_lowercase();
+    let mut replacements = signal_names
+        .iter()
+        .map(|signal_name| (signal_name.to_ascii_lowercase(), "<signal>"))
+        .chain(
+            actor_names
+                .iter()
+                .map(|actor_name| (actor_name.to_ascii_lowercase(), "<actor>")),
+        )
+        .collect::<Vec<_>>();
+    replacements.sort_by(|left, right| {
+        right
+            .0
+            .len()
+            .cmp(&left.0.len())
+            .then_with(|| left.0.cmp(&right.0))
+    });
+
+    let mut token_replacements = BTreeMap::new();
+    for (term, placeholder) in replacements {
+        if !term.contains(' ') {
+            token_replacements.insert(term, placeholder);
+            continue;
+        }
+        normalized = replace_term_with_placeholder(&normalized, &term, placeholder);
+    }
+
+    normalized = replace_single_token_terms(&normalized, &token_replacements);
+
+    collapse_whitespace(
+        normalized
+            .trim_matches(|ch: char| !ch.is_ascii_alphanumeric() && ch != '<' && ch != '>')
+            .replace(['\n', '\t'], " ")
+            .as_str(),
+    )
+}
+
+pub fn is_meaningful_prior_phrase(text: &str) -> bool {
+    let trimmed = text.trim();
+    !trimmed.is_empty()
+        && trimmed != "<signal>"
+        && trimmed != "<actor>"
+        && trimmed.chars().any(|ch| ch.is_ascii_lowercase())
+}
+
 fn actor_taxonomy_search_scopes(
     protocol_family: Option<ProtocolFamily>,
 ) -> Vec<Option<ProtocolFamily>> {
@@ -241,6 +346,80 @@ fn actor_taxonomy_search_scopes(
 
 fn collapse_whitespace(value: &str) -> String {
     value.split_whitespace().collect::<Vec<_>>().join(" ")
+}
+
+fn replace_term_with_placeholder(text: &str, term: &str, placeholder: &str) -> String {
+    if term.is_empty() {
+        return text.to_string();
+    }
+
+    let bytes = text.as_bytes();
+    let term_bytes = term.as_bytes();
+    let mut result = String::with_capacity(text.len());
+    let mut index = 0;
+
+    while index < bytes.len() {
+        let remaining = &bytes[index..];
+        if remaining.len() >= term_bytes.len()
+            && remaining[..term_bytes.len()].eq_ignore_ascii_case(term_bytes)
+            && is_word_boundary(text, index)
+            && is_word_boundary(text, index + term_bytes.len())
+        {
+            result.push_str(placeholder);
+            index += term_bytes.len();
+        } else {
+            result.push(bytes[index] as char);
+            index += 1;
+        }
+    }
+
+    result
+}
+
+fn replace_single_token_terms(text: &str, replacements: &BTreeMap<String, &'static str>) -> String {
+    if replacements.is_empty() {
+        return text.to_string();
+    }
+
+    let mut result = String::with_capacity(text.len());
+    let mut token = String::new();
+
+    for ch in text.chars() {
+        if ch.is_ascii_alphanumeric() || ch == '_' {
+            token.push(ch);
+            continue;
+        }
+
+        flush_normalized_token(&mut result, &mut token, replacements);
+        result.push(ch);
+    }
+
+    flush_normalized_token(&mut result, &mut token, replacements);
+    result
+}
+
+fn flush_normalized_token(
+    result: &mut String,
+    token: &mut String,
+    replacements: &BTreeMap<String, &'static str>,
+) {
+    if token.is_empty() {
+        return;
+    }
+
+    if let Some(placeholder) = replacements.get(token) {
+        result.push_str(placeholder);
+    } else {
+        result.push_str(token);
+    }
+    token.clear();
+}
+
+fn is_word_boundary(text: &str, byte_index: usize) -> bool {
+    if byte_index == 0 || byte_index >= text.len() {
+        return true;
+    }
+    !text.as_bytes()[byte_index].is_ascii_alphanumeric() && text.as_bytes()[byte_index] != b'_'
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
