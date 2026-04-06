@@ -24,14 +24,14 @@
 ## Latest committed baseline
 - latest_commit_hash: `7c1cfec`
 - latest_commit_brief_message: `feat(quality): benchmark amba source-column gold path`
-- note: current uncommitted work hardens table-based KG relation extraction so bogus `Clock` / `Reset` source-column rows do not become actors, and adds a tracked negative fixture for that path
+- note: the current session hardens table-driven top-level signal synthesis so misclassified `Bits | Name | Description` field tables do not create fake signals or semantic roles, and adds a tracked negative fixture for that path
 
 ## Recent commit chain (last 5)
+- `cb9d7b2` feat(evidence): reject bogus source-column actors
 - `7c1cfec` feat(quality): benchmark amba source-column gold path
 - `1d198fe` feat(quality): benchmark visual semantic conflicts
 - `94f7826` feat(quality): benchmark vlm timing-note noise rejection
 - `9e39971` feat(quality): benchmark vlm timing-note grounding
-- `4ff4657` feat(quality): benchmark multimodal semantic conflicts
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -44,21 +44,21 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
-- hardened table-based KG relation extraction so `Source` / `Driver` columns yield `Drives`, `Destination` columns yield `Reads`, and direction/infrastructure placeholders like `input`, `Clock`, and `Reset` no longer become bogus actor names
-- added a tracked `source_column_bogus_actor_attribution_negative` fixture that proves AMBA-style infrastructure rows stay out of the protocol actor graph while true requester/subordinate rows still recover actor ports and semantic role grounding
-- added direct unit regressions for both infrastructure-label rejection and `Destination`-column `Reads` semantics
+- hardened table-driven top-level signal synthesis so field-like `Bits | Name | Description` layouts and `... signal fields` captions do not create fake top-level signals or semantic roles when a table is misclassified upstream as `signal_description`
+- added a tracked `table_misclassification_field_table_negative` fixture that proves field names like `REQ` / `ACK` stay out of the canonical signal model and semantic-role surface
+- added a direct unit regression proving a misclassified field table does not synthesize fake declarations, semantic hints, or actor relations
 - synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `USER_GUIDE.md`, `DEVELOPMENT_NOTES.md`, `CHANGES.md`, and `MEMORY.md` so the richer `R15e` harness shape is captured in the live docs
 - validation ran for this task:
-  - `cargo test --manifest-path Cargo.toml source_table_relations_skip_infrastructure_labels -- --nocapture` passed
-  - `cargo test --manifest-path Cargo.toml destination_table_relations_map_to_reads -- --nocapture` passed
+  - `cargo test --manifest-path Cargo.toml misclassified_field_table_does_not_synthesize_fake_signal_semantics -- --nocapture` passed
+  - `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality table_misclassification_field_table_negative` passed
   - `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` passed
   - `cargo fmt --all` passed
-  - `cargo test --manifest-path Cargo.toml` passed with `190/190`
+  - `cargo test --manifest-path Cargo.toml` passed with `191/191`
 
 ## Current working tree before commit
 - modified tracked files currently include:
   - `crates/specforge/src/ir/evidence.rs`
-  - `crates/specforge/test_data/kg_quality/source_column_bogus_actor_attribution_negative/...`
+  - `crates/specforge/test_data/kg_quality/table_misclassification_field_table_negative/...`
   - `README.md`
   - `ROADMAP.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -70,9 +70,9 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the bogus source-column actor-attribution hardening slice
-2. expand the fixture harness toward broader protocol-grade APB/AHB/AXI gold suites and the remaining spurious-timing / table-misclassification negatives
-3. keep finishing the current graph / temporal / arbitration / evaluation workstreams without weakening local truthfulness
+1. expand the fixture harness toward broader protocol-grade APB/AHB/AXI gold suites and the remaining spurious-timing negatives
+2. keep finishing the current graph / temporal / arbitration / evaluation workstreams without weakening local truthfulness
+3. keep the live docs aligned whenever a new truthfulness slice lands
 
 ## Remaining engineering gaps after this commit
 - remaining actor-relative direction modeling in `SemanticIR` / `IntentIR` (`R15`)

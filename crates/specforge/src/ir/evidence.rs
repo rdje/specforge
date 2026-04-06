@@ -1386,7 +1386,7 @@ fn collect_known_signal_names(
 fn collect_signal_names_from_tables(source_ir: &SourceIr) -> std::collections::HashSet<String> {
     let mut names = std::collections::HashSet::new();
     for table in &source_ir.structured_tables {
-        if !matches!(table.table_kind, TableKind::SignalDescription) {
+        if !should_treat_table_as_top_level_signal_description(table) {
             continue;
         }
         for row in &table.body_rows {
@@ -1477,12 +1477,75 @@ fn normalize_table_actor_name(value: &str) -> Option<String> {
     Some(actor.to_string())
 }
 
+fn should_treat_table_as_top_level_signal_description(
+    table: &crate::ir::source::StructuredTableRecord,
+) -> bool {
+    if !matches!(table.table_kind, TableKind::SignalDescription) {
+        return false;
+    }
+
+    let header_texts: Vec<String> = table
+        .header_rows
+        .first()
+        .map(|row| row.iter().map(|c| c.text.to_ascii_lowercase()).collect())
+        .unwrap_or_default();
+    let first_header = header_texts.first().cloned().unwrap_or_default();
+    let caption_text = table
+        .caption_text
+        .as_deref()
+        .unwrap_or("")
+        .to_ascii_lowercase();
+    let has_relation_or_width_header = header_texts.iter().any(|header| {
+        header.contains("signal")
+            || header.contains("source")
+            || header.contains("driver")
+            || header.contains("direction")
+            || header.contains("destination")
+            || header.contains("dest")
+            || header.contains("width")
+            || header.contains("size")
+            || header.contains("port")
+            || header.contains("pin")
+    });
+    let name_col = header_texts.iter().position(|header| {
+        header.contains("name")
+            || header.contains("signal")
+            || header.contains("port")
+            || header.contains("pin")
+    });
+    let caption_looks_field_like = caption_text.contains(" field")
+        || caption_text.contains(" fields")
+        || caption_text.contains("bit assignment")
+        || caption_text.contains("bit assignments")
+        || caption_text.contains("bit definition")
+        || caption_text.contains("bit definitions")
+        || caption_text.contains("bitfield")
+        || caption_text.contains("bit field");
+    let first_header_looks_field_like = first_header.contains("bit")
+        || first_header.contains("field")
+        || first_header.contains("offset");
+
+    if first_header_looks_field_like {
+        return false;
+    }
+
+    if caption_looks_field_like && name_col.map(|index| index > 0).unwrap_or(false) {
+        return false;
+    }
+
+    if caption_looks_field_like && !has_relation_or_width_header && first_header.contains("name") {
+        return false;
+    }
+
+    true
+}
+
 fn extract_relations_from_signal_tables(source_ir: &SourceIr) -> Vec<ActorSignalRelation> {
     let mut records = Vec::new();
     let mut counter = 1usize;
 
     for table in &source_ir.structured_tables {
-        if !matches!(table.table_kind, TableKind::SignalDescription) {
+        if !should_treat_table_as_top_level_signal_description(table) {
             continue;
         }
 
@@ -1560,7 +1623,7 @@ fn collect_signal_widths_from_tables(
 ) -> std::collections::HashMap<String, WidthHint> {
     let mut widths = std::collections::HashMap::new();
     for table in &source_ir.structured_tables {
-        if !matches!(table.table_kind, TableKind::SignalDescription) {
+        if !should_treat_table_as_top_level_signal_description(table) {
             continue;
         }
         let header_texts: Vec<String> = table
@@ -2613,7 +2676,7 @@ fn extract_signal_polarity_from_signal_tables(
     let mut observations = Vec::new();
 
     for table in &source_ir.structured_tables {
-        if !matches!(table.table_kind, TableKind::SignalDescription) {
+        if !should_treat_table_as_top_level_signal_description(table) {
             continue;
         }
 
@@ -2921,7 +2984,7 @@ fn synthesize_declarations_from_tables(
             .unwrap_or((SectionKind::Unknown, String::new()));
 
         match table.table_kind {
-            TableKind::SignalDescription => {
+            TableKind::SignalDescription if should_treat_table_as_top_level_signal_description(table) => {
                 statements.extend(synthesize_signal_declarations(
                     table,
                     section_kind,
@@ -2962,7 +3025,7 @@ fn synthesize_system_contract_from_table_descriptions(
     let mut reset_found = false;
 
     'outer: for table in &source_ir.structured_tables {
-        if !matches!(table.table_kind, TableKind::SignalDescription) {
+        if !should_treat_table_as_top_level_signal_description(table) {
             continue;
         }
 
@@ -3196,7 +3259,7 @@ fn synthesize_signal_semantic_hints_from_tables(
     let mut seen = BTreeSet::<String>::new();
 
     for table in &source_ir.structured_tables {
-        if !matches!(table.table_kind, TableKind::SignalDescription) {
+        if !should_treat_table_as_top_level_signal_description(table) {
             continue;
         }
 
@@ -5900,6 +5963,81 @@ mod tests {
             matches!(relations[0].relation, RelationKind::Reads),
             "destination columns must produce Reads relations, got: {:?}",
             relations
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn misclassified_field_table_does_not_synthesize_fake_signal_semantics() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("fields.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Control\n",
+                "Signal CONTROL is input width 4.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_control_fields".to_string(),
+            asset_id: "asset_control_fields".to_string(),
+            page_id: None,
+            caption_text: Some("Control signal fields".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Bits", true),
+                make_table_cell("Name", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("3", false),
+                    make_table_cell("REQ", false),
+                    make_table_cell("Request field indicates that a transfer is valid.", false),
+                ],
+                vec![
+                    make_table_cell("2", false),
+                    make_table_cell("ACK", false),
+                    make_table_cell("Accept field indicates that the transfer can be accepted.", false),
+                ],
+            ],
+            row_count: 2,
+            col_count: 3,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        assert!(
+            evidence_ir
+                .extracted_statements
+                .iter()
+                .all(|statement| !statement.text.contains("Signal REQ") && !statement.text.contains("Signal ACK")),
+            "misclassified field tables must not synthesize fake top-level signal declarations: {:?}",
+            evidence_ir.extracted_statements
+        );
+        assert!(
+            evidence_ir
+                .signal_semantic_hints
+                .iter()
+                .all(|hint| hint.signal_name != "REQ" && hint.signal_name != "ACK"),
+            "misclassified field tables must not synthesize fake semantic hints: {:?}",
+            evidence_ir.signal_semantic_hints
+        );
+        assert!(
+            evidence_ir.actor_signal_relations.is_empty(),
+            "misclassified field tables must not synthesize actor relations: {:?}",
+            evidence_ir.actor_signal_relations
         );
 
         Ok(())

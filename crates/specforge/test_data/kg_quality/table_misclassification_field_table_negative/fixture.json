@@ -1,0 +1,120 @@
+{
+  "name": "table_misclassification_field_table_negative",
+  "source": "source.md",
+  "source_ir_patch": {
+    "structured_tables": [
+      {
+        "table_id": "table_control_fields",
+        "asset_id": "table_control_fields",
+        "page_id": null,
+        "caption_text": "Control signal fields",
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            {
+              "text": "Bits",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Name",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Description",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            }
+          ]
+        ],
+        "body_rows": [
+          [
+            {
+              "text": "3",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "REQ",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Request field indicates that a transfer is valid.",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ],
+          [
+            {
+              "text": "2",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "ACK",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Accept field indicates that the transfer can be accepted.",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ]
+        ],
+        "row_count": 2,
+        "col_count": 3
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["CONTROL"],
+      "resolved_semantic_role_signal_names_exclude": ["REQ", "ACK"],
+      "semantic_consensus_signal_names_exclude": ["REQ", "ACK"],
+      "semantic_candidate_signal_names_exclude": ["REQ", "ACK"],
+      "temporal_rule_count": 0
+    },
+    "intent": {
+      "signal_names_include": ["CONTROL"],
+      "resolved_semantic_role_signal_names_exclude": ["REQ", "ACK"],
+      "semantic_consensus_signal_names_exclude": ["REQ", "ACK"],
+      "semantic_candidate_signal_names_exclude": ["REQ", "ACK"],
+      "temporal_rule_count": 0
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "actor_signal_relations": "0",
+          "signal_semantic_hints": "0"
+        }
+      },
+      "semantic": {
+        "metric_values": {
+          "total_signal_records": "1",
+          "with_semantic_consensus": "0",
+          "semantic_candidates": "0"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "declared_signal_records": "1",
+          "with_semantic_consensus": "0",
+          "semantic_candidates": "0"
+        }
+      }
+    }
+  }
+}

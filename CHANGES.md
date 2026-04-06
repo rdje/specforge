@@ -1,5 +1,26 @@
 # CHANGES
 
+## 2026-04-06 (KG fixtures now lock field-table misclassification rejection)
+
+### Added: field-table misclassification negative fixture
+- Added a tracked staged fixture proving that a misclassified `Bits | Name | Description` table does not synthesize fake top-level signals or semantic roles from field names like `REQ` and `ACK`.
+- The fixture locks that only the real declared top-level signal survives in the canonical semantic/intent surface, while evidence-stage semantic hints stay at zero.
+
+### Fixed: table-driven top-level signal synthesis now rejects field-like layouts
+- Added a shared table-level sanity gate so field-like `Bits | Name | Description` layouts and `... signal fields` captions are filtered before they can generate fake signal declarations, semantic hints, or related top-level table-derived facts.
+- This guard now protects the table-driven name/semantic paths together instead of relying on one-off downstream cleanup.
+
+### Why this matters
+- This closes another KG false-positive path: register-field tables and bit-field tables often contain uppercase names that look like signals, but they are not top-level interface ports.
+- It also makes table misclassification a benchmarked truthfulness property instead of an implicit hope in the upstream classifier.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml misclassified_field_table_does_not_synthesize_fake_signal_semantics -- --nocapture` → passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality table_misclassification_field_table_negative` → passed
+- `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` → passed
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → 191/191 passed
+
 ## 2026-04-06 (KG fixtures now lock bogus source-column actor rejection)
 
 ### Added: bogus actor-attribution negative fixture

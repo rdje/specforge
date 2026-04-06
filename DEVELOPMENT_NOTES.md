@@ -307,6 +307,11 @@
     - `Source` / `Driver` rows imply `(actor, drives, signal)`
     - `Destination` rows imply `(actor, reads, signal)`
   - this is exactly the kind of false-positive control `R15e` should lock with a tracked negative fixture, not leave to comments or ad hoc tests
+- the next table-truthfulness step after that is field-table misclassification:
+  - a `Bits | Name | Description` register-field table can be mislabeled upstream as `signal_description`
+  - if that happens, field names like `REQ` / `ACK` must not become fake top-level protocol signals or semantic roles
+  - the correct fix is a table-level sanity gate that protects every table-driven top-level-signal path together, not one-off filters in just the semantic-hint extractor
+  - that negative path is now important enough to stay locked in the tracked benchmark suite
 - this is the right shape for `R15e`:
   - start with fixtures that protect truthfulness invariants
   - then grow toward APB/AHB/AXI protocol-grade gold suites and broader negative corpora

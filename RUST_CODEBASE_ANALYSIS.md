@@ -96,12 +96,16 @@
   - a stage-patched visual-source conflict fixture that proves caption semantics and VLM timing-note semantics can disagree while remaining visibly grounded and canonically contested
   - a first representative AMBA-style gold fixture that proves `Source`-column signal-description tables can recover driver-side actor ports plus semantic handshake meaning strongly enough to derive a typed `HandshakeComplete` guard from one constraint
   - a bogus-actor-attribution negative fixture that proves `Clock` / `Reset` infrastructure rows in AMBA-style `Source` columns do not become protocol actors while the true requester/subordinate rows still survive canonically
+  - a field-table misclassification negative fixture that proves a misclassified `Bits | Name | Description` table does not synthesize fake top-level signals or semantic roles from field names that merely look signal-like
 - the harness now also asserts canonical semantic candidates and decisive-vs-contested semantic arbitration directly, which is a better `R15e` truthfulness check than inferring arbitration quality only from blocked fallback or validation side effects
 - the harness now also asserts persisted validation metric values directly at the evidence, semantic, and intent stages and can patch `SourceIR` visual assets, which makes tracked cross-modality grounding and VLM-note provenance checks practical instead of leaving them to ad hoc unit tests
 - table-based relation extraction itself is also less lossy now:
   - `Source` / `Driver` columns become `Drives`
   - `Destination` columns become `Reads`
   - direction/infrastructure placeholders like `input`, `Clock`, and `Reset` are filtered instead of being promoted into bogus actor names
+- table-driven top-level signal synthesis is also less lossy now:
+  - field-like `Bits | Name | Description` layouts are rejected even if they were misclassified upstream as `signal_description`
+  - that guard now protects fake-signal leakage across declarations, semantic hints, and related table-driven inference paths
 - that negative multimodal fixture also locks an important nuance in the validation surface:
   - conflicting multimodal evidence should still count as visual grounding
   - but it must not count as resolved cross-modality grounding

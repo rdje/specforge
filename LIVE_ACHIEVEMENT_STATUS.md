@@ -94,7 +94,8 @@
 - KG benchmark harness now locks caption-vs-VLM visual semantic conflict behavior: Done
 - KG benchmark harness now includes a first representative AMBA-style gold fixture: Done
 - KG benchmark harness now locks bogus actor-attribution rejection for `Source`-column infrastructure rows: Done
-- Test suite expanded to 190 tests; all passing: Done
+- KG benchmark harness now locks field-table misclassification rejection: Done
+- Test suite expanded to 191 tests; all passing: Done
 - Explicit clock-tick temporal model in `SemanticIR` / `IntentIR`: In Progress
 - KG-guided multimodal rescans as a first-class convergent workstream: In Progress
 - Cross-modality evidence arbitration / conflict handling: In Progress
@@ -105,7 +106,7 @@
 - Actor-relative direction model in `SemanticIR` / `IntentIR`: In Progress
 
 ## Highest-priority remaining gap
-- Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then expand the new KG-quality harness from seed fixtures into representative APB/AHB/AXI gold suites plus the remaining spurious-timing and table-misclassification negatives while continuing richer multimodal grounding plus structural/temporal arbitration
+- Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then expand the new KG-quality harness from seed fixtures into representative APB/AHB/AXI gold suites plus the remaining spurious-timing negatives while continuing richer multimodal grounding plus structural/temporal arbitration
 
 ## Validation Projection
 
