@@ -340,6 +340,18 @@
     - one typed temporal rule carries `cycle_window = [1,1]`
     - both temporal rules are actor-grounded
     - handshake completion still appears from the guarded stability rule
+- the next APB timing benchmark after the first `Requester` / `Completer` handshake slice should lock setup/access semantics instead of only steady-state completion:
+  - keep the APB `Signal | Source | Width | Description` table shape so `Requester` / `Completer` actor roles still come from canonical APB vocabulary
+  - add `PENABLE must be asserted on the next cycle when PSEL is HIGH`
+  - keep guarded stability rules for both wait-state and completion contexts:
+    - `PADDR must not change when PSEL is HIGH and PREADY is LOW`
+    - `PADDR must not change when PSEL is HIGH and PREADY is HIGH`
+  - the benchmark should then prove all of these together:
+    - actor-relative APB ports still survive
+    - one typed temporal rule carries `cycle_window = [1,1]`
+    - all temporal rules are actor-grounded from requester/completer ownership
+    - multi-predicate guards survive canonically instead of flattening
+    - handshake completion still appears only in the completion-phase guard, not in the wait-state guard
 - the next negative truthfulness step after that first AMBA-style gold path should protect against bogus actor attribution in the same family of tables:
   - `Clock` / `Reset` / direction-placeholder rows inside `Source` / `Driver` / `Destination` columns are metadata, not protocol actors
   - the KG should keep direction and system-contract recovery for those infrastructure signals without inventing actors named `Clock`, `Reset`, or `input`

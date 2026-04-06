@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-04-06 (KG fixtures now lock APB setup/access timing recovery)
+
+### Added: APB-style setup/access timing gold fixture
+- Added a tracked staged fixture proving that APB-style `Signal | Source | Width | Description` tables plus guarded constraints can recover setup/access timing semantics in addition to the earlier requester/completer handshake path.
+- The fixture locks `PENABLE must be asserted on the next cycle when PSEL is HIGH` together with wait-state and completion hold rules on `PADDR`, and expects canonical actor-relative ports, one bounded `cycle_window`, multi-predicate temporal guards, actor-grounded temporal predicates, and typed handshake completion to survive through both `SemanticIR` and `IntentIR`.
+
+### Why this matters
+- The earlier APB gold fixture proved that requester/completer roles plus one guarded constraint can recover handshake completion. This follow-on slice proves the same APB vocabulary can also recover setup-to-access timing and wait-state stability without losing actor grounding or collapsing guarded temporal structure.
+- It closes an important protocol-family gap between “APB handshake meaning works” and “APB access timing works,” which is necessary if the KG benchmark suite is going to be honest about behavioral protocol semantics rather than just request/accept roles.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality apb_setup_access_timing_gold` → passed
+- `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` → passed
+- `cargo fmt --all --check` → passed
+- `cargo test --manifest-path Cargo.toml` → passed
+
 ## 2026-04-06 (KG fixtures now lock AXI next-cycle timing recovery)
 
 ### Added: AXI-style next-cycle timing gold fixture

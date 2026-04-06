@@ -97,6 +97,7 @@
   - a first representative AMBA-style gold fixture that proves `Source`-column signal-description tables can recover driver-side actor ports plus semantic handshake meaning strongly enough to derive a typed `HandshakeComplete` guard from one constraint
   - a representative AMBA-style `Destination`-column gold fixture that proves receiver-side table rows survive canonically as `Reads` relations and actor-relative input ports
   - a representative APB-style gold fixture that proves `Requester` / `Completer` source roles recover driver-side actor relations, actor-relative ports, request/accept semantics, and typed handshake completion end-to-end
+  - a representative APB-style timing gold fixture that proves `Requester` / `Completer` source roles can also recover setup/access timing, actor-grounded temporal predicates, multi-predicate guards, bounded next-cycle latency, and handshake completion together
   - a representative AXI-style gold fixture that proves width-only channel tables plus prose drive/sample relations recover actor-relative direction, signal inventory, request/accept semantics, and typed handshake completion without any table direction column
   - a representative AXI-style timing gold fixture that proves width-only channel tables plus prose actor relations can also recover next-cycle timing, actor-grounded temporal predicates, and handshake completion together
   - a representative AHB-style gold fixture that proves `Manager signals` / `Subordinate signals` section context recovers per-signal direction and width correctly from staged `SourceIR`
@@ -121,7 +122,7 @@
 - that negative multimodal fixture also locks an important nuance in the validation surface:
   - conflicting multimodal evidence should still count as visual grounding
   - but it must not count as resolved cross-modality grounding
-- that means benchmark hardening is no longer purely roadmap text; the repo now has a real seed harness for false-positive control and residual-quality regression across AMBA, APB, AHB, and an expanding AXI protocol-grade gold suite, even though broader AXI and deeper timing gold suites are still ahead
+- that means benchmark hardening is no longer purely roadmap text; the repo now has a real seed harness for false-positive control and residual-quality regression across AMBA, APB, AHB, and expanding APB/AXI protocol-grade gold suites, even though broader AXI and deeper AHB timing gold suites are still ahead
 - the harness is also more realistic now than a pure markdown fixture runner because tracked fixtures can patch `SourceIR` and `EvidenceIR` surfaces directly, which is a practical way to benchmark richer multimodal/structured semantics without needing a heavyweight source document for every regression
 
 ## Observed current state

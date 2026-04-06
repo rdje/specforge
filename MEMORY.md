@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `2dc088c`
-- latest_commit_brief_message: `feat(quality): benchmark axi width-only recovery`
-- note: the current session adds a representative AXI next-cycle timing gold fixture so AXI-family table-plus-prose timing recovery is benchmarked directly instead of only covering static direction and inventory
+- latest_commit_hash: `5af73b3`
+- latest_commit_brief_message: `feat(quality): benchmark axi timing semantics`
+- note: the current session adds a representative APB setup/access timing gold fixture so APB-family request/completion semantics are benchmarked together with bounded next-cycle timing and guarded stability instead of only steady-state handshake completion
 
 ## Recent commit chain (last 5)
+- `5af73b3` feat(quality): benchmark axi timing semantics
 - `2dc088c` feat(quality): benchmark axi width-only recovery
 - `be004c1` feat(quality): benchmark apb requester completer
 - `5935c4f` feat(quality): benchmark ahb section headings
 - `914985f` feat(quality): benchmark destination-column reads
-- `3b22d73` feat(semantic): reject spurious timing annotations
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -44,17 +44,17 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
-- added a tracked `axi_next_cycle_timing_gold` fixture that proves AXI-style width-only channel tables plus prose drive/sample relations recover next-cycle timing, actor-grounded temporal predicates, request/accept semantics, and typed handshake completion through `SemanticIR` and `IntentIR`
-- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `USER_GUIDE.md`, `DEVELOPMENT_NOTES.md`, `CHANGES.md`, and `MEMORY.md` so the richer `R15e` AXI timing benchmark coverage is captured in the live docs
+- added a tracked `apb_setup_access_timing_gold` fixture that proves APB-style requester/completer table roles recover setup/access timing, guarded wait-state and completion stability, actor-grounded temporal predicates, and typed handshake completion through `SemanticIR` and `IntentIR`
+- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `USER_GUIDE.md`, `DEVELOPMENT_NOTES.md`, `CHANGES.md`, and `MEMORY.md` so the richer `R15e` APB timing benchmark coverage is captured in the live docs
 - validation ran for this task:
-  - `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality axi_next_cycle_timing_gold` passed
+  - `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality apb_setup_access_timing_gold` passed
   - `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` passed
-  - `cargo fmt --all` passed
+  - `cargo fmt --all --check` passed
   - `cargo test --manifest-path Cargo.toml` passed
 
 ## Current working tree before commit
 - modified tracked files currently include:
-  - `crates/specforge/test_data/kg_quality/axi_next_cycle_timing_gold/...`
+  - `crates/specforge/test_data/kg_quality/apb_setup_access_timing_gold/...`
   - `README.md`
   - `ROADMAP.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -66,8 +66,8 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the AXI next-cycle timing benchmark slice with the synced live docs
-2. expand the fixture harness toward broader AXI channel/timing gold suites plus richer APB/AHB timing and structured-constraint fixtures
+1. commit the APB setup/access timing benchmark slice with the synced live docs
+2. expand the fixture harness toward broader AXI channel/timing gold suites plus richer remaining AHB timing and structured-constraint fixtures
 3. keep the live docs aligned whenever the next truthfulness slice lands
 
 ## Remaining engineering gaps after this commit
