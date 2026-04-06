@@ -145,6 +145,21 @@
 - `cargo fmt --all` → passed
 - `cargo test --manifest-path Cargo.toml` → 188/188 passed
 
+## 2026-04-06 (KG benchmark now locks caption-vs-VLM visual semantic conflicts)
+
+### Added: visual-source semantic-conflict negative fixture
+- Added `crates/specforge/test_data/kg_quality/visual_sources_semantic_conflict_negative/`.
+- The fixture patches one timing-diagram visual asset with:
+  - a caption that implies valid-like meaning
+  - a `vlm_timing_diagram_extraction` note that implies ready-like meaning
+- It proves:
+  - `EvidenceIR` reports one visual-caption semantic hint and one VLM timing-annotation semantic hint
+  - downstream `SemanticIR` / `IntentIR` preserve a semantic conflict, multiple candidates, and non-decisive arbitration
+  - `with_visual_semantic_grounding = 1` while `with_multi_source_semantic_grounding = 0`
+
+### Why this matters
+- The benchmark harness now locks an important same-asset arbitration nuance: two conflicting visual sub-sources must stay visibly grounded without being overpromoted into same-modality consensus.
+
 ## 2026-04-06 (KG benchmark now locks VLM-note semantic-noise rejection)
 
 ### Added: direct VLM timing-note semantic-noise negative fixture

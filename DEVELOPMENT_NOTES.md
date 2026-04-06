@@ -282,6 +282,16 @@
   - the honest benchmark should prove two things at once:
     - `timing_diagram_extractions` stays non-zero, so we are not throwing away legitimate timing recovery
     - `signal_semantic_hints_from_vlm_timing_annotations` stays zero, so waveform motion is not overpromoted into protocol meaning
+- there is one more visual-arbitration nuance worth locking directly:
+  - a caption and a VLM timing note can disagree inside the same visual asset
+  - the correct behavior is not to erase either source
+  - the correct behavior is also not to treat two conflicting visual sub-sources as same-modality consensus
+  - so the benchmark should prove:
+    - `signal_semantic_hints_from_visual_captions = 1`
+    - `signal_semantic_hints_from_vlm_timing_annotations = 1`
+    - `with_visual_semantic_grounding = 1`
+    - `with_multi_source_semantic_grounding = 0`
+    - semantic arbitration remains non-decisive
 - this is the right shape for `R15e`:
   - start with fixtures that protect truthfulness invariants
   - then grow toward APB/AHB/AXI protocol-grade gold suites and broader negative corpora

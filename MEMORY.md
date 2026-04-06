@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `9e39971`
-- latest_commit_brief_message: `feat(quality): benchmark vlm timing-note grounding`
-- note: current uncommitted work adds the negative twin of the VLM-note gold fixture, proving timing extraction can succeed while semantic-role inference stays zero for name-only waveform notes
+- latest_commit_hash: `94f7826`
+- latest_commit_brief_message: `feat(quality): benchmark vlm timing-note noise rejection`
+- note: current uncommitted work adds a visual-source conflict fixture proving caption semantics and VLM timing-note semantics can disagree while staying grounded and contested
 
 ## Recent commit chain (last 5)
+- `94f7826` feat(quality): benchmark vlm timing-note noise rejection
 - `9e39971` feat(quality): benchmark vlm timing-note grounding
 - `4ff4657` feat(quality): benchmark multimodal semantic conflicts
 - `8c8bdf4` feat(quality): benchmark cross-modality grounding
 - `df03118` docs(roadmap): capture cross-document learning plane
-- `442a867` feat(quality): benchmark semantic arbitration
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -44,7 +44,7 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
-- added a tracked `vlm_timing_name_only_semantic_noise_negative` fixture that proves waveform/tick annotations around `XVALID` still produce timing extraction while semantic-role inference stays at zero
+- added a tracked `visual_sources_semantic_conflict_negative` fixture that proves one visual asset can carry conflicting caption and VLM timing-note semantic hints without collapsing into false visual consensus
 - synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `USER_GUIDE.md`, `DEVELOPMENT_NOTES.md`, `CHANGES.md`, and `MEMORY.md` so the richer `R15e` harness shape is captured in the live docs
 - validation ran for this task:
   - `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` passed
@@ -53,7 +53,7 @@
 
 ## Current working tree before commit
 - modified tracked files currently include:
-  - `crates/specforge/test_data/kg_quality/vlm_timing_name_only_semantic_noise_negative/...`
+  - `crates/specforge/test_data/kg_quality/visual_sources_semantic_conflict_negative/...`
   - `README.md`
   - `ROADMAP.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -65,7 +65,7 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the VLM timing-note semantic-noise negative slice
+1. commit the visual-source semantic-conflict benchmark slice
 2. expand the fixture harness toward broader protocol-grade APB/AHB/AXI gold suites and harder multimodal/temporal negative cases
 3. keep finishing the current graph / temporal / arbitration / evaluation workstreams without weakening local truthfulness
 

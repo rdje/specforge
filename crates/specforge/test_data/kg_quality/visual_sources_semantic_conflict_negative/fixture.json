@@ -1,0 +1,83 @@
+{
+  "name": "visual_sources_semantic_conflict_negative",
+  "source": "source.md",
+  "source_ir_patch": {
+    "visual_assets": [
+      {
+        "asset_id": "figure_xctrl_visual_conflict",
+        "asset_kind": "diagram",
+        "page_id": "page_0001",
+        "image_path": null,
+        "caption_text": "Figure 6: XCTRL valid timing.",
+        "caption_source_path": null,
+        "source_ref": null,
+        "placeholder_text": null,
+        "note": "vlm_timing_diagram_extraction: ```json\n{\n  \"signals\": [{\"name\": \"XCTRL\", \"values\": [{\"cycle\": \"T1\", \"state\": \"HIGH\"}]}],\n  \"annotations\": [\n    \"XCTRL indicates that the subordinate can accept the transfer.\"\n  ]\n}\n```",
+        "diagram_kind": "timing_diagram"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["XCTRL"],
+      "semantic_candidate_signal_names_include": ["XCTRL"],
+      "multiple_semantic_candidate_signal_names_include": ["XCTRL"],
+      "semantic_arbitration_signal_names_include": ["XCTRL"],
+      "decisive_semantic_arbitration_signal_names_exclude": ["XCTRL"],
+      "non_decisive_semantic_arbitration_signal_names_include": ["XCTRL"],
+      "resolved_semantic_role_signal_names_exclude": ["XCTRL"],
+      "semantic_consensus_signal_names_exclude": ["XCTRL"],
+      "signal_semantic_conflicts": 1
+    },
+    "intent": {
+      "signal_names_include": ["XCTRL"],
+      "semantic_candidate_signal_names_include": ["XCTRL"],
+      "multiple_semantic_candidate_signal_names_include": ["XCTRL"],
+      "semantic_arbitration_signal_names_include": ["XCTRL"],
+      "decisive_semantic_arbitration_signal_names_exclude": ["XCTRL"],
+      "non_decisive_semantic_arbitration_signal_names_include": ["XCTRL"],
+      "resolved_semantic_role_signal_names_exclude": ["XCTRL"],
+      "semantic_consensus_signal_names_exclude": ["XCTRL"],
+      "signal_semantic_conflicts": 1
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "signal_semantic_hints": "2",
+          "signal_semantic_hints_from_tables": "0",
+          "signal_semantic_hints_from_prose": "0",
+          "signal_semantic_hints_from_alias_grounded_prose": "0",
+          "signal_semantic_hints_from_visual_captions": "1",
+          "signal_semantic_hints_from_vlm_timing_annotations": "1",
+          "timing_diagram_extractions": "1"
+        }
+      },
+      "semantic": {
+        "finding_ids_include": [
+          "semantic_signal_semantic_conflicts_present",
+          "semantic_non_decisive_semantic_arbitration_present"
+        ],
+        "metric_values": {
+          "signal_semantic_conflicts": "1",
+          "with_non_decisive_semantic_arbitration": "1",
+          "with_multi_source_semantic_grounding": "0",
+          "with_cross_modality_semantic_grounding": "0",
+          "with_visual_semantic_grounding": "1"
+        }
+      },
+      "intent": {
+        "finding_ids_include": [
+          "intent_signal_semantic_conflicts_present",
+          "intent_non_decisive_semantic_arbitration_present"
+        ],
+        "metric_values": {
+          "signal_semantic_conflicts": "1",
+          "with_non_decisive_semantic_arbitration": "1",
+          "with_multi_source_semantic_grounding": "0",
+          "with_cross_modality_semantic_grounding": "0",
+          "with_visual_semantic_grounding": "1"
+        }
+      }
+    }
+  }
+}
