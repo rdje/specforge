@@ -96,6 +96,7 @@
 - KG benchmark harness now includes an AMBA-style `Destination`-column gold fixture for receiver semantics: Done
 - KG benchmark harness now includes an APB-style `Requester` / `Completer` gold fixture: Done
 - KG benchmark harness now includes an AXI width-only plus prose-direction gold fixture: Done
+- KG benchmark harness now includes an AXI next-cycle timing gold fixture: Done
 - Width-only synthesized signal declarations now survive into canonical `SemanticIR` / `IntentIR` signal records: Done
 - KG benchmark harness now includes an AHB-style section-heading gold fixture for direction recovery: Done
 - KG benchmark harness now locks bogus actor-attribution rejection for `Source`-column infrastructure rows: Done

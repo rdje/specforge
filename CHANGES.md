@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-04-06 (KG fixtures now lock AXI next-cycle timing recovery)
+
+### Added: AXI-style next-cycle timing gold fixture
+- Added a tracked staged fixture proving that AXI-style width-only channel tables plus prose `Manager` / `Subordinate` drive-sample relations can recover next-cycle timing semantics in addition to direction and signal inventory.
+- The fixture locks `AWREADY must be asserted on the next cycle` together with `AWADDR must not change when AWVALID is HIGH and AWREADY is HIGH`, and expects canonical actor-relative ports, one bounded `cycle_window`, actor-grounded temporal predicates, and typed handshake completion to survive through both `SemanticIR` and `IntentIR`.
+
+### Why this matters
+- The first AXI gold fixture proved that width-only tables plus prose can recover truthful actor-relative direction. This follow-on slice proves the same family of evidence can also recover temporal meaning instead of stopping at static ports.
+- It closes an important roadmap gap between “AXI direction works” and “AXI timing works,” which is necessary if the KG benchmark suite is going to be honest about protocol semantics rather than only signal inventory.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality axi_next_cycle_timing_gold` → passed
+- `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` → passed
+- `cargo fmt --all` → passed
+- `cargo test --manifest-path Cargo.toml` → passed
+
 ## 2026-04-06 (KG fixtures now lock AXI width-only prose-direction recovery)
 
 ### Added: AXI-style width-only plus prose-direction gold fixture

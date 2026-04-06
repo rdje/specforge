@@ -329,6 +329,17 @@
   - this is the right first AXI benchmark because it locks exactly the path that was historically brittle: no table direction column, but still enough structured evidence to recover truthful actor-relative ports
   - the benchmark also exposed a real downstream gap: `EvidenceIR` already synthesized width-only declarations like `Signal AWVALID is width 1.`, but `SemanticIR` previously rejected them because its explicit-signal parser required `input` or `output`
   - that parser is now widened so width-only synthesized declarations survive as canonical signal records with `direction_hint = None` until graph evidence resolves direction later
+- the next AXI benchmark step after that first width-only direction slice is timing recovery on the same family of channels:
+  - keep the width-only `Name | Width | Description` table shape
+  - keep prose drive/sample relations for `Manager` / `Subordinate`
+  - add a next-cycle timing assertion such as `AWREADY must be asserted on the next cycle`
+  - keep a guarded stability rule like `AWADDR must not change when AWVALID is HIGH and AWREADY is HIGH`
+  - the benchmark should then prove all of these at once:
+    - canonical AXI signal inventory still survives
+    - actor-relative ports still survive
+    - one typed temporal rule carries `cycle_window = [1,1]`
+    - both temporal rules are actor-grounded
+    - handshake completion still appears from the guarded stability rule
 - the next negative truthfulness step after that first AMBA-style gold path should protect against bogus actor attribution in the same family of tables:
   - `Clock` / `Reset` / direction-placeholder rows inside `Source` / `Driver` / `Destination` columns are metadata, not protocol actors
   - the KG should keep direction and system-contract recovery for those infrastructure signals without inventing actors named `Clock`, `Reset`, or `input`

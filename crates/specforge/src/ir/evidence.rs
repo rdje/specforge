@@ -2984,7 +2984,9 @@ fn synthesize_declarations_from_tables(
             .unwrap_or((SectionKind::Unknown, String::new()));
 
         match table.table_kind {
-            TableKind::SignalDescription if should_treat_table_as_top_level_signal_description(table) => {
+            TableKind::SignalDescription
+                if should_treat_table_as_top_level_signal_description(table) =>
+            {
                 statements.extend(synthesize_signal_declarations(
                     table,
                     section_kind,
@@ -5977,10 +5979,7 @@ mod tests {
 
         fs::write(
             &source,
-            concat!(
-                "# Control\n",
-                "Signal CONTROL is input width 4.\n",
-            ),
+            concat!("# Control\n", "Signal CONTROL is input width 4.\n",),
         )?;
 
         let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
@@ -6005,7 +6004,10 @@ mod tests {
                 vec![
                     make_table_cell("2", false),
                     make_table_cell("ACK", false),
-                    make_table_cell("Accept field indicates that the transfer can be accepted.", false),
+                    make_table_cell(
+                        "Accept field indicates that the transfer can be accepted.",
+                        false,
+                    ),
                 ],
             ],
             row_count: 2,
@@ -6022,7 +6024,8 @@ mod tests {
             evidence_ir
                 .extracted_statements
                 .iter()
-                .all(|statement| !statement.text.contains("Signal REQ") && !statement.text.contains("Signal ACK")),
+                .all(|statement| !statement.text.contains("Signal REQ")
+                    && !statement.text.contains("Signal ACK")),
             "misclassified field tables must not synthesize fake top-level signal declarations: {:?}",
             evidence_ir.extracted_statements
         );

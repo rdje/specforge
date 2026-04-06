@@ -1,0 +1,128 @@
+{
+  "name": "axi_next_cycle_timing_gold",
+  "source": "source.md",
+  "source_ir_patch": {
+    "structured_tables": [
+      {
+        "table_id": "table_axi_aw_timing_channel",
+        "asset_id": "table_axi_aw_timing_channel",
+        "page_id": null,
+        "caption_text": "AXI write address timing signals",
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            { "text": "Name", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Width", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Description", "row_span": 1, "col_span": 1, "is_header": true }
+          ]
+        ],
+        "body_rows": [
+          [
+            { "text": "AWVALID", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Indicates that address and control information are valid for transfer.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "AWREADY", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Indicates that the subordinate can accept the transfer.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "AWADDR", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "32", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Write address bus.", "row_span": 1, "col_span": 1, "is_header": false }
+          ]
+        ],
+        "row_count": 3,
+        "col_count": 3
+      }
+    ]
+  },
+  "evidence_ir_patch": {
+    "signal_constraints": [
+      {
+        "constraint_id": "sigcon_axi_awready_next_cycle",
+        "subject_signal": "AWREADY",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "AWREADY must be asserted on the next cycle.",
+        "supporting_statement_ids": ["stmt_axi_awready_next_cycle"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_axi_awaddr_handshake_hold",
+        "subject_signal": "AWADDR",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when AWVALID is HIGH and AWREADY is HIGH",
+        "negated": false,
+        "source_text": "AWADDR must not change when AWVALID is HIGH and AWREADY is HIGH.",
+        "supporting_statement_ids": ["stmt_axi_awaddr_handshake_hold"],
+        "automation_confidence": "medium"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["AWVALID", "AWREADY", "AWADDR"],
+      "actor_ports_include": [
+        { "actor_name": "Manager", "signal_name": "AWVALID", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "AWVALID", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "AWADDR", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "AWADDR", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "AWREADY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "AWREADY", "direction": "input" }
+      ],
+      "resolved_semantic_role_signal_names_include": ["AWVALID", "AWREADY"],
+      "semantic_consensus_signal_names_include": ["AWVALID", "AWREADY"],
+      "temporal_rule_count": 2,
+      "temporal_rules_with_handshake_completion": 1
+    },
+    "intent": {
+      "signal_names_include": ["AWVALID", "AWREADY", "AWADDR"],
+      "actor_ports_include": [
+        { "actor_name": "Manager", "signal_name": "AWVALID", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "AWVALID", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "AWADDR", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "AWADDR", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "AWREADY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "AWREADY", "direction": "input" }
+      ],
+      "resolved_semantic_role_signal_names_include": ["AWVALID", "AWREADY"],
+      "semantic_consensus_signal_names_include": ["AWVALID", "AWREADY"],
+      "temporal_rule_count": 2,
+      "temporal_rules_with_handshake_completion": 1
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "actor_signal_relations": "6",
+          "signal_constraints": "2",
+          "signal_semantic_hints": "2",
+          "signal_semantic_hints_from_tables": "2"
+        }
+      },
+      "semantic": {
+        "metric_values": {
+          "actor_ports": "6",
+          "temporal_rules": "2",
+          "temporal_rules_with_handshake_completion": "1",
+          "temporal_rules_with_cycle_window": "1",
+          "temporal_rules_with_actor_grounding": "2"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "actor_ports": "6",
+          "temporal_rules": "2",
+          "temporal_rules_with_handshake_completion": "1",
+          "temporal_rules_with_cycle_window": "1",
+          "temporal_rules_with_actor_grounding": "2"
+        }
+      }
+    }
+  }
+}
