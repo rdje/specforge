@@ -1,0 +1,66 @@
+{
+  "name": "temporal_prior_guided_cycle_window_gold",
+  "source": "apb_temporal_prior_guided.md",
+  "prior_memory_patch": {
+    "temporal_phrase_priors": [
+      {
+        "prior_id": "temporal_phrase_prior_0001",
+        "normalized_phrase": "<signal> must be asserted one beat later",
+        "protocol_family": "amba_apb",
+        "cycle_window": {
+          "min_cycles": 1,
+          "max_cycles": 1
+        },
+        "actor_grounded": false,
+        "handshake_completion": false,
+        "support_count": 2,
+        "supporting_document_keys": ["seed_apb_1", "seed_apb_2"],
+        "strongest_automation_confidence": "high"
+      }
+    ]
+  },
+  "evidence_ir_patch": {
+    "signal_constraints": [
+      {
+        "constraint_id": "sigcon_pready_one_beat_later",
+        "subject_signal": "PREADY",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "PREADY must be asserted one beat later.",
+        "supporting_statement_ids": ["stmt_pready_one_beat_later"],
+        "automation_confidence": "medium"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["PREADY"],
+      "temporal_rule_count": 1
+    },
+    "intent": {
+      "signal_names_include": ["PREADY"],
+      "temporal_rule_count": 1
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "signal_constraints": "1"
+        }
+      },
+      "semantic": {
+        "metric_values": {
+          "temporal_rules": "1",
+          "temporal_rules_with_cycle_window": "1"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "temporal_rules": "1",
+          "temporal_rules_with_cycle_window": "1"
+        }
+      }
+    }
+  }
+}

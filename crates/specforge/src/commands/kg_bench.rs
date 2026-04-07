@@ -10,6 +10,10 @@ use crate::commands::validate;
 use crate::error::{AppError, Result};
 use crate::ir::evidence::EvidenceIr;
 use crate::ir::intent::{IntentAssumption, IntentIr};
+use crate::ir::prior_memory::{
+    ActorTaxonomyPriorRecord, CorpusMemory, CorpusMemoryUpdatePolicyRecord,
+    PriorSourceArtifactRecord, SemanticPhrasePriorRecord, TemporalPhrasePriorRecord,
+};
 use crate::ir::semantic::{
     ActorPortRecord, ActorRelativeDirection, InterfaceRecord, InterfaceSignalDirection, SemanticIr,
     TemporalRuleRecord,
@@ -30,6 +34,8 @@ struct KgBenchFixture {
     source_ir_patch: Option<SourceIrPatch>,
     #[serde(default)]
     evidence_ir_patch: Option<EvidenceIrPatch>,
+    #[serde(default)]
+    prior_memory_patch: Option<PriorMemoryPatch>,
     #[serde(default)]
     expectations: FixtureExpectations,
 }
@@ -52,6 +58,16 @@ struct EvidenceIrPatch {
     refresh_signal_semantic_hints: bool,
     #[serde(default)]
     signal_constraints: Vec<crate::ir::source::SignalConstraintRecord>,
+}
+
+#[derive(Debug, Default, Deserialize)]
+struct PriorMemoryPatch {
+    #[serde(default)]
+    actor_taxonomy_priors: Vec<ActorTaxonomyPriorRecord>,
+    #[serde(default)]
+    semantic_phrase_priors: Vec<SemanticPhrasePriorRecord>,
+    #[serde(default)]
+    temporal_phrase_priors: Vec<TemporalPhrasePriorRecord>,
 }
 
 #[derive(Debug, Default, Deserialize)]
@@ -249,6 +265,11 @@ fn run_fixture(fixture_path: &Path) -> Result<FixtureOutcome> {
     let evidence_ir_root = generated_root.join("evidence_ir");
     let semantic_ir_root = generated_root.join("semantic_ir");
     let intent_ir_root = generated_root.join("intent_ir");
+    let prior_memory_path = fixture
+        .prior_memory_patch
+        .as_ref()
+        .map(|patch| write_fixture_prior_memory(&generated_root, patch))
+        .transpose()?;
 
     let mut source_ir = source::SourceIr::build(&source_path, &source_ir_root)?;
     source_ir.materialize()?;
@@ -264,8 +285,11 @@ fn run_fixture(fixture_path: &Path) -> Result<FixtureOutcome> {
             .extend(patch.document_sections.iter().cloned());
     }
     source_ir.write_to_disk()?;
-    let mut evidence_ir =
-        EvidenceIr::build(&source_ir.artifact_layout.source_ir_path, &evidence_ir_root)?;
+    let mut evidence_ir = EvidenceIr::build_with_prior_memory(
+        &source_ir.artifact_layout.source_ir_path,
+        &evidence_ir_root,
+        prior_memory_path.as_deref(),
+    )?;
     if let Some(patch) = fixture.evidence_ir_patch.as_ref() {
         evidence_ir.signal_alias_map.extend(
             patch
@@ -1066,6 +1090,44 @@ fn normalize_input_path(path: &Path, base_root: &Path) -> PathBuf {
     } else {
         base_root.join(path)
     }
+}
+
+fn write_fixture_prior_memory(generated_root: &Path, patch: &PriorMemoryPatch) -> Result<PathBuf> {
+    let prior_memory_path = generated_root
+        .join("prior_memory")
+        .join("corpus_memory.json");
+    if let Some(parent) = prior_memory_path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+
+    let corpus_memory = CorpusMemory {
+        schema_version: 1,
+        update_policy: CorpusMemoryUpdatePolicyRecord {
+            advisory_only: true,
+            requires_validated_intent_ir: true,
+            rejects_error_findings: true,
+            excludes_alias_dependent_semantic_consensus: true,
+            local_grounding_required_for_canonical_promotion: true,
+        },
+        source_artifacts: vec![PriorSourceArtifactRecord {
+            artifact_path: generated_root.join("fixture_seed_intent_ir.json"),
+            document_key: "fixture_seed".to_string(),
+            display_name: "fixture_seed".to_string(),
+            protocol_family: crate::ir::prior_memory::ProtocolFamily::Unknown,
+            overall_score: Some(100),
+            grade: Some("EXCELLENT".to_string()),
+            accepted_for_learning: true,
+            skip_reason: None,
+        }],
+        actor_taxonomy_priors: patch.actor_taxonomy_priors.clone(),
+        semantic_phrase_priors: patch.semantic_phrase_priors.clone(),
+        temporal_phrase_priors: patch.temporal_phrase_priors.clone(),
+    };
+    fs::write(
+        &prior_memory_path,
+        serde_json::to_string_pretty(&corpus_memory)?,
+    )?;
+    Ok(prior_memory_path)
 }
 
 fn canonicalize_existing_path(path: &Path) -> Result<PathBuf> {

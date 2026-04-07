@@ -566,6 +566,10 @@
   - without prior memory, `PREADY must be asserted one beat later` yields no cycle window from the built-in parser
   - with prior memory, the same local phrase yields `CycleWindowRecord { min_cycles: Some(1), max_cycles: Some(1) }`
   - the recovered timing still stays document-local and provenance-pure because the rule only exists when the local timing text is present
+- the KG benchmark harness now also locks this behavior at the cross-document-learning boundary:
+  - fixtures can stage a local `CorpusMemory`
+  - the unseen local phrase stays unbounded without prior memory
+  - the same local phrase gains only the bounded `cycle_window` when the matching temporal prior is present
 
 ## Current repository observations
 - the repository now contains a renamed `specforge` crate and CLI

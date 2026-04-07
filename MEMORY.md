@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `a756010`
-- latest_commit_brief_message: `feat(evidence): consume semantic phrase priors safely`
-- note: the current session lands the third bounded `R15f` consumer by teaching `SemanticIR` to use temporal phrase priors for local cycle-window recovery when the built-in parser cannot recover the window directly
+- latest_commit_hash: `60e76b5`
+- latest_commit_brief_message: `feat(semantic): consume temporal phrase priors safely`
+- note: the current session lands the first tracked benchmark pair that proves prior-guided temporal recovery improves an unseen local phrase honestly
 
 ## Recent commit chain (last 5)
+- `60e76b5` feat(semantic): consume temporal phrase priors safely
 - `a756010` feat(evidence): consume semantic phrase priors safely
 - `7ebd697` feat(evidence): consume actor taxonomy priors safely
 - `53da080` feat(learning): learn actor taxonomy priors
 - `8a9c3bd` ci(repo): unify local and hosted CI
-- `eecf375` ci(repo): add GitHub Actions Rust checks
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -43,6 +43,7 @@
 - `specforge evidence` and `specforge converge` now consult `--prior-memory generated/prior_memory/corpus_memory.json` by default, and the first bounded consumer uses actor-taxonomy priors only to interpret explicit local actor terms in section headings and `Source` / `Destination` columns
 - `EvidenceIR` now also has a second bounded prior consumer for semantic phrase priors, and it now persists `prior_memory_path` so later semantic-hint refreshes keep the same advisory prior context
 - `SemanticIR` now also has a third bounded prior consumer for temporal phrase priors, using them only as a fallback for local timing text when direct cycle-window parsing fails
+- `specforge kg-bench` can now also stage a fixture-local `CorpusMemory`, and the first tracked gold/negative pair proves prior-guided temporal recovery on an unseen local phrase without leaking cross-document facts
 - canonical generated artifact roots are under `generated/source_ir/`, `generated/evidence_ir/`, `generated/semantic_ir/`, and `generated/intent_ir/`
 - `generated/` is git-ignored and intentionally untracked; continuity must live in docs, not versioned artifacts
 - `subs/fsmgen/` is a local read-only reference checkout for `.fsm` behavior
@@ -50,22 +51,23 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
-- extended `crates/specforge/src/ir/prior_memory.rs` with shared semantic phrase normalization and lookup helpers so learning and runtime prior consumption use the same phrase-shape logic
-- extended `crates/specforge/src/ir/prior_memory.rs` with unique temporal phrase lookup so learned cycle windows can be resolved safely from locally grounded timing text
-- extended `crates/specforge/src/ir/semantic.rs` with the third bounded prior-consumption path:
-  - temporal phrase priors can now recover local cycle windows when the current document contains a learned phrase shape like `PREADY must be asserted one beat later`
-  - built-in direct cycle-window parsing still runs first; the prior is fallback-only
-  - the prior still cannot create a timing rule without the local timing sentence already appearing in the current document
-- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, `USER_GUIDE.md`, `CHANGES.md`, and `MEMORY.md` so the third bounded `R15f` consumer is continuity-safe
+- extended `crates/specforge/src/commands/kg_bench.rs` so fixtures can now stage a local `CorpusMemory` before building `EvidenceIR`
+- added the first prior-guided unseen-phrase benchmark pair under `crates/specforge/test_data/kg_quality/`:
+  - `temporal_prior_guided_cycle_window_gold`
+  - `temporal_prior_guided_cycle_window_without_prior_negative`
+- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, `USER_GUIDE.md`, `CHANGES.md`, and `MEMORY.md` so the benchmarked `R15f` slice is continuity-safe
 - validation ran for this task:
-  - `cargo test --manifest-path Cargo.toml derives_cycle_window_from_temporal_phrase_prior_when_builtin_parser_cannot -- --nocapture` passed
-  - `cargo test --manifest-path Cargo.toml extracts_single_cycle_window_from_idiomatic_clock_tick_phrases -- --nocapture` passed
+  - `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality temporal_prior_guided_cycle_window_gold` passed
+  - `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality temporal_prior_guided_cycle_window_without_prior_negative` passed
   - `bash scripts/run_ci.sh` passed with `204/204` tests
 
 ## Current working tree before commit
 - modified tracked files currently include:
-  - `crates/specforge/src/ir/prior_memory.rs`
-  - `crates/specforge/src/ir/semantic.rs`
+  - `crates/specforge/src/commands/kg_bench.rs`
+  - `crates/specforge/test_data/kg_quality/temporal_prior_guided_cycle_window_gold/apb_temporal_prior_guided.md`
+  - `crates/specforge/test_data/kg_quality/temporal_prior_guided_cycle_window_gold/fixture.json`
+  - `crates/specforge/test_data/kg_quality/temporal_prior_guided_cycle_window_without_prior_negative/apb_temporal_without_prior.md`
+  - `crates/specforge/test_data/kg_quality/temporal_prior_guided_cycle_window_without_prior_negative/fixture.json`
   - `README.md`
   - `ROADMAP.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`

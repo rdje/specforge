@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-07 (KG fixtures now lock prior-guided temporal recovery)
+
+### Added: fixture-owned prior-memory patching in `specforge kg-bench`
+- Extended [kg_bench.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/kg_bench.rs) so tracked fixtures can now stage a local `CorpusMemory` before `EvidenceIR` is built.
+- The new patch surface is generic across actor-taxonomy, semantic, and temporal priors, so later `R15f` benchmark slices can exercise more prior families without depending on a shared mutable prior file.
+
+### Added: prior-guided unseen-phrase temporal gold/negative pair
+- Added [temporal_prior_guided_cycle_window_gold](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/temporal_prior_guided_cycle_window_gold/fixture.json), which proves the unseen local phrase `PREADY must be asserted one beat later` gains a one-cycle `cycle_window` only when a matching temporal prior is staged into the fixture.
+- Added [temporal_prior_guided_cycle_window_without_prior_negative](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/temporal_prior_guided_cycle_window_without_prior_negative/fixture.json), which locks the honest fallback behavior that the same local phrase still yields a temporal rule but no bounded `cycle_window` without prior memory.
+
+### Why this matters
+- This is the first tracked benchmark evidence that the cross-document learning plane can improve analysis of an unseen local phrase without leaking canonical facts across documents.
+- It upgrades `R15f` from “consumers exist” to “consumers are benchmarked against honest before/after behavior.”
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality temporal_prior_guided_cycle_window_gold` → passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality temporal_prior_guided_cycle_window_without_prior_negative` → passed
+- `bash scripts/run_ci.sh` → passed (`204/204` tests)
+
 ## 2026-04-06 (bounded temporal prior consumption landed)
 
 ### Added: prior-guided cycle-window recovery in `SemanticIR`

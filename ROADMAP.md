@@ -536,11 +536,12 @@
   - prior-guided semantic hints stay provenance-safe as well: the prior can help interpret a local phrase like `XACK can receive the transfer`, but it cannot promote a semantic role without that local phrase actually appearing in the current document
   - `SemanticIR` now has a third bounded prior-consumption path too: temporal phrase priors can advisory-recover a cycle window for local timing text when the built-in parser cannot recover that window directly
   - prior-guided temporal recovery stays provenance-safe as well: the prior can help interpret a local phrase like `PREADY must be asserted one beat later`, but it cannot create a timing rule without that local timing text already appearing in the current document
+  - `specforge kg-bench` can now stage a fixture-owned local `CorpusMemory`, and the first tracked gold/negative pair proves prior-guided temporal recovery improves an unseen local phrase honestly instead of leaking canonical facts across documents
 - remaining:
   - broaden the prior store beyond the first actor-taxonomy / semantic / temporal phrase families into table-shape, visual-motif, modality-reliability, and negative-knowledge priors
   - decide how protocol-family scoping should grow beyond the current AMBA family inference without hardcoding brittle protocol logic
   - broaden prior consumption beyond the first actor-taxonomy and semantic-role `EvidenceIR` slices plus the first temporal-language `SemanticIR` slice into table-shape, visual-motif, modality-reliability, and negative-knowledge suggestions without bypassing local grounding
-  - add benchmark coverage that measures whether prior memory improves analysis of unseen PDFs honestly instead of only growing the stored prior set
+  - broaden the first benchmark coverage for prior-guided unseen-document improvement beyond the new temporal gold/negative pair into semantic, actor-taxonomy, visual, and negative-knowledge prior families
 
 ### R16 SystemVerilog adapter (Horizon)
 - status: Horizon
