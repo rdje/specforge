@@ -270,6 +270,9 @@ cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --targ
   - actor-taxonomy priors to interpret explicit local actor terms already present in section headings and `Source` / `Destination` table columns, including structural KG recovery from width-only section-guided signal tables
   - semantic phrase priors to interpret locally grounded non-hardcoded role phrases that normalize to learned semantic evidence
 - `EvidenceIR` now also uses table-shape priors in a bounded way: if a current structured table is still `unknown`, a matching learned header signature can advisory-recover the table kind locally, but explicit local `SourceIR` table kinds are never overridden
+- the tracked benchmark harness now proves that bounded behavior on more than one table kind:
+  - an `unknown` `Name | Direction | Width` table only becomes a signal-description table when the matching prior is staged
+  - an `unknown` `Parameter | Min | Max | Unit` table only becomes a timing-parameter table when the matching prior is staged
 - `SemanticIR` now also consults the persisted prior-memory path indirectly through the upstream `EvidenceIR`, and the first bounded temporal consumer uses temporal phrase priors only as a fallback for local timing text when the built-in cycle-window parser cannot recover the timing window directly
 
 ## Where to look next

@@ -1,5 +1,14 @@
 # CHANGES
 
+## 2026-04-07 (table-shape timing-table benchmark added)
+
+### Added: second table-shape gold/negative pair
+- Added [table_shape_prior_guided_timing_table_gold](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/table_shape_prior_guided_timing_table_gold/fixture.json) and [table_shape_prior_guided_timing_table_without_prior_negative](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/table_shape_prior_guided_timing_table_without_prior_negative/fixture.json).
+- The pair proves a locally `unknown` `Parameter | Min | Max | Unit` table stays inert without prior memory and yields `timing_constraints = 1` across `EvidenceIR`, `SemanticIR`, and `IntentIR` only when a matching table-shape prior is staged.
+
+### Why this matters
+- It broadens the first table-shape prior family beyond signal-description recovery and shows that the same bounded consumer already generalizes to timing-table interpretation.
+
 ## 2026-04-07 (table-shape priors landed as the fourth bounded learning slice)
 
 ### Added: first table-shape prior family in `CorpusMemory`

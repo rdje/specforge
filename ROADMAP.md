@@ -543,7 +543,9 @@
   - `specforge kg-bench` now also has the first tracked semantic gold/negative pair proving prior-guided role recovery on an unseen local phrase, with no recovery when the matching prior is absent
   - `specforge kg-bench` now also has the first tracked actor-taxonomy gold/negative pair proving width-only `Issuer signals` / `Acceptor signals` section headings stay directionless and graph-empty without prior memory and gain structural KG edges plus canonical signal directions only when matching actor-taxonomy priors are staged into the fixture
   - `specforge kg-bench` now also has the first tracked visual semantic gold/negative pair proving an unseen local caption phrase like `XACK can sink the transfer` stays unresolved without prior memory and gains visual-caption semantic recovery only when the matching prior is staged into the fixture
-  - `specforge kg-bench` now also has the first table-shape gold/negative pair proving a locally `unknown` `Name | Direction | Width` table stays inert without prior memory and gains signal-description recovery only when a matching learned table-shape prior is staged into the fixture
+  - `specforge kg-bench` now also has the first table-shape gold/negative benchmark set proving:
+    - a locally `unknown` `Name | Direction | Width` table stays inert without prior memory and gains signal-description recovery only when a matching learned table-shape prior is staged into the fixture
+    - a locally `unknown` `Parameter | Min | Max | Unit` table stays inert without prior memory and gains timing-parameter recovery only when a matching learned table-shape prior is staged into the fixture
 - remaining:
   - broaden the prior store beyond the first actor-taxonomy / semantic / temporal / table-shape families into visual-motif, modality-reliability, and negative-knowledge priors
   - decide how protocol-family scoping should grow beyond the current AMBA family inference without hardcoding brittle protocol logic

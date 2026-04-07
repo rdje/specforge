@@ -1,0 +1,96 @@
+{
+  "name": "table_shape_prior_guided_timing_table_without_prior_negative",
+  "source": "source.md",
+  "source_ir_patch": {
+    "structured_tables": [
+      {
+        "table_id": "table_0001",
+        "asset_id": "table_0001",
+        "page_id": "page_0001",
+        "caption_text": null,
+        "source_ref": null,
+        "table_kind": "unknown",
+        "header_rows": [
+          [
+            {
+              "text": "Parameter",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Min",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Max",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Unit",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            }
+          ]
+        ],
+        "body_rows": [
+          [
+            {
+              "text": "tSU",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "2",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "5",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "ns",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ]
+        ],
+        "row_count": 1,
+        "col_count": 4
+      }
+    ]
+  },
+  "expectations": {
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "timing_constraints": "0",
+          "register_records": "0"
+        }
+      },
+      "semantic": {
+        "metric_values": {
+          "timing_constraints": "0",
+          "register_records": "0"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "timing_constraints": "0",
+          "register_records": "0"
+        }
+      }
+    }
+  }
+}

@@ -566,6 +566,9 @@
 - the first benchmark pair for this family now locks the before/after contract:
   - without prior memory, a locally `unknown` `Name | Direction | Width` table stays inert
   - with a matching table-shape prior, the same local table recovers signal-description semantics through `EvidenceIR`, `SemanticIR`, and `IntentIR`
+- the benchmark surface now covers a second table-kind shape too:
+  - without prior memory, a locally `unknown` `Parameter | Min | Max | Unit` table stays inert
+  - with a matching table-shape prior, the same local table recovers `timing_constraints` through `EvidenceIR`, `SemanticIR`, and `IntentIR`
 - this matters because it is the first cross-document learning slice that improves table interpretation directly while still preserving the doctrine that priors guide extraction and never silently override explicit local truth
 
 ### First landed bounded prior-consumption slice
