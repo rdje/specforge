@@ -1,0 +1,100 @@
+{
+  "name": "table_shape_prior_guided_signal_table_without_prior_negative",
+  "source": "source.md",
+  "source_ir_patch": {
+    "structured_tables": [
+      {
+        "table_id": "table_0001",
+        "asset_id": "table_0001",
+        "page_id": "page_0001",
+        "caption_text": null,
+        "source_ref": null,
+        "table_kind": "unknown",
+        "header_rows": [
+          [
+            {
+              "text": "Name",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Direction",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Width",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            }
+          ]
+        ],
+        "body_rows": [
+          [
+            {
+              "text": "XREQ",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "output",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "1",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ],
+          [
+            {
+              "text": "XACK",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "input",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "1",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ]
+        ],
+        "row_count": 2,
+        "col_count": 3
+      }
+    ]
+  },
+  "expectations": {
+    "validation": {
+      "semantic": {
+        "metric_values": {
+          "with_resolved_direction": "0",
+          "with_graph_direction": "0",
+          "with_compat_direction_hint": "0"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "with_resolved_direction": "0",
+          "with_graph_direction": "0",
+          "with_compat_direction_hint": "0"
+        }
+      }
+    }
+  }
+}

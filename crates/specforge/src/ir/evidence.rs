@@ -467,12 +467,15 @@ impl EvidenceIr {
         );
 
         // Extract system contract (clock + reset) from signal-description prose in tables.
-        let contract_stmts =
-            synthesize_system_contract_from_table_descriptions(&source_ir, &mut statement_counter);
+        let contract_stmts = synthesize_system_contract_from_table_descriptions(
+            &source_ir,
+            &mut statement_counter,
+            prior_guidance.as_ref(),
+        );
 
         // Synthesize typed register and timing records from structured tables.
-        let register_records = synthesize_register_records(&source_ir);
-        let timing_constraints = synthesize_timing_constraints(&source_ir);
+        let register_records = synthesize_register_records(&source_ir, prior_guidance.as_ref());
+        let timing_constraints = synthesize_timing_constraints(&source_ir, prior_guidance.as_ref());
 
         // Replace the previous one-shot extraction with a monotone convergent loop:
         // discovered signals unlock anchored encoding tables, which unlock new value atoms,
@@ -1419,10 +1422,13 @@ fn collect_known_signal_names(
 /// regardless of whether direction could be determined.  This covers specs like APB and AXI
 /// where the Source/Direction column uses non-standard values ("Requester", "Completer")
 /// or is absent entirely.
-fn collect_signal_names_from_tables(source_ir: &SourceIr) -> std::collections::HashSet<String> {
+fn collect_signal_names_from_tables(
+    source_ir: &SourceIr,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+) -> std::collections::HashSet<String> {
     let mut names = std::collections::HashSet::new();
     for table in &source_ir.structured_tables {
-        if !should_treat_table_as_top_level_signal_description(table) {
+        if !should_treat_table_as_top_level_signal_description(table, prior_guidance) {
             continue;
         }
         for row in &table.body_rows {
@@ -1537,10 +1543,31 @@ fn normalize_table_actor_name(value: &str) -> Option<String> {
     Some(actor.to_string())
 }
 
+fn effective_table_kind(
+    table: &crate::ir::source::StructuredTableRecord,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+) -> TableKind {
+    if !matches!(table.table_kind, TableKind::Unknown) {
+        return table.table_kind;
+    }
+
+    prior_guidance
+        .and_then(|prior_guidance| {
+            prior_guidance
+                .corpus_memory
+                .table_kind_for_structured_table(Some(prior_guidance.protocol_family), table)
+        })
+        .unwrap_or(TableKind::Unknown)
+}
+
 fn should_treat_table_as_top_level_signal_description(
     table: &crate::ir::source::StructuredTableRecord,
+    prior_guidance: Option<&EvidencePriorGuidance>,
 ) -> bool {
-    if !matches!(table.table_kind, TableKind::SignalDescription) {
+    if !matches!(
+        effective_table_kind(table, prior_guidance),
+        TableKind::SignalDescription
+    ) {
         return false;
     }
 
@@ -1646,7 +1673,7 @@ fn extract_relations_from_signal_tables_with_prior_guidance(
     }
 
     for table in &source_ir.structured_tables {
-        if !should_treat_table_as_top_level_signal_description(table) {
+        if !should_treat_table_as_top_level_signal_description(table, prior_guidance) {
             continue;
         }
 
@@ -1742,10 +1769,11 @@ fn extract_relations_from_signal_tables_with_prior_guidance(
 /// must come from prose rather than the table.
 fn collect_signal_widths_from_tables(
     source_ir: &SourceIr,
+    prior_guidance: Option<&EvidencePriorGuidance>,
 ) -> std::collections::HashMap<String, WidthHint> {
     let mut widths = std::collections::HashMap::new();
     for table in &source_ir.structured_tables {
-        if !should_treat_table_as_top_level_signal_description(table) {
+        if !should_treat_table_as_top_level_signal_description(table, prior_guidance) {
             continue;
         }
         let header_texts: Vec<String> = table
@@ -2606,8 +2634,12 @@ fn looks_like_encoding_literal(text: &str) -> bool {
 fn table_looks_like_encoding(
     table: &crate::ir::source::StructuredTableRecord,
     anchor_signal: &str,
+    prior_guidance: Option<&EvidencePriorGuidance>,
 ) -> bool {
-    if matches!(table.table_kind, TableKind::Encoding) {
+    if matches!(
+        effective_table_kind(table, prior_guidance),
+        TableKind::Encoding
+    ) {
         return true;
     }
 
@@ -2664,6 +2696,7 @@ fn scan_encoding_tables_by_signal_anchor(
     source_ir: &SourceIr,
     known_signals: &HashSet<String>,
     statement_counter: &mut usize,
+    prior_guidance: Option<&EvidencePriorGuidance>,
 ) -> Vec<ExtractedStatement> {
     if known_signals.is_empty() || source_ir.structured_tables.is_empty() {
         return Vec::new();
@@ -2683,7 +2716,7 @@ fn scan_encoding_tables_by_signal_anchor(
     let mut statements = Vec::new();
     for table in &source_ir.structured_tables {
         if matches!(
-            table.table_kind,
+            effective_table_kind(table, prior_guidance),
             TableKind::SignalDescription | TableKind::RegisterMap | TableKind::TimingParameter
         ) {
             continue;
@@ -2705,7 +2738,7 @@ fn scan_encoding_tables_by_signal_anchor(
         else {
             continue;
         };
-        if !table_looks_like_encoding(table, &anchor_signal) {
+        if !table_looks_like_encoding(table, &anchor_signal, prior_guidance) {
             continue;
         }
 
@@ -2794,11 +2827,12 @@ fn extract_signal_polarity_from_prose(
 fn extract_signal_polarity_from_signal_tables(
     source_ir: &SourceIr,
     known_signals: &HashSet<String>,
+    prior_guidance: Option<&EvidencePriorGuidance>,
 ) -> Vec<SignalPolarityObservationCandidate> {
     let mut observations = Vec::new();
 
     for table in &source_ir.structured_tables {
-        if !should_treat_table_as_top_level_signal_description(table) {
+        if !should_treat_table_as_top_level_signal_description(table, prior_guidance) {
             continue;
         }
 
@@ -2838,6 +2872,7 @@ fn collect_signal_polarity_facts(
     source_ir: &SourceIr,
     statements: &[ExtractedStatement],
     known_signals: &HashSet<String>,
+    prior_guidance: Option<&EvidencePriorGuidance>,
 ) -> SignalPolarityFactCollection {
     let mut observations_by_signal =
         BTreeMap::<String, Vec<SignalPolarityObservationRecord>>::new();
@@ -2845,7 +2880,9 @@ fn collect_signal_polarity_facts(
     for observation in extract_signal_polarity_from_prose(statements, known_signals) {
         record_signal_polarity_observation(&mut observations_by_signal, observation);
     }
-    for observation in extract_signal_polarity_from_signal_tables(source_ir, known_signals) {
+    for observation in
+        extract_signal_polarity_from_signal_tables(source_ir, known_signals, prior_guidance)
+    {
         record_signal_polarity_observation(&mut observations_by_signal, observation);
     }
 
@@ -3106,9 +3143,9 @@ fn synthesize_declarations_from_tables(
             .map(|(_, v)| v.clone())
             .unwrap_or((SectionKind::Unknown, String::new()));
 
-        match table.table_kind {
+        match effective_table_kind(table, prior_guidance) {
             TableKind::SignalDescription
-                if should_treat_table_as_top_level_signal_description(table) =>
+                if should_treat_table_as_top_level_signal_description(table, prior_guidance) =>
             {
                 statements.extend(synthesize_signal_declarations(
                     table,
@@ -3145,13 +3182,14 @@ fn synthesize_declarations_from_tables(
 fn synthesize_system_contract_from_table_descriptions(
     source_ir: &SourceIr,
     statement_counter: &mut usize,
+    prior_guidance: Option<&EvidencePriorGuidance>,
 ) -> Vec<ExtractedStatement> {
     let mut statements = Vec::new();
     let mut clock_found = false;
     let mut reset_found = false;
 
     'outer: for table in &source_ir.structured_tables {
-        if !should_treat_table_as_top_level_signal_description(table) {
+        if !should_treat_table_as_top_level_signal_description(table, prior_guidance) {
             continue;
         }
 
@@ -3319,11 +3357,15 @@ fn synthesize_signal_semantic_hints(
     Vec<SignalSemanticHintRecord>,
     Vec<SignalSemanticConflictRecord>,
 ) {
-    let known_actor_names =
-        collect_known_actor_names_for_semantic_hints(source_ir, actor_signal_relations);
+    let known_actor_names = collect_known_actor_names_for_semantic_hints(
+        source_ir,
+        actor_signal_relations,
+        prior_guidance,
+    );
     let mut hints =
         synthesize_signal_semantic_hints_from_tables(source_ir, &known_actor_names, prior_guidance);
-    let known_signals = collect_known_signal_names_for_semantic_hints(source_ir, statements);
+    let known_signals =
+        collect_known_signal_names_for_semantic_hints(source_ir, statements, prior_guidance);
     let mut seen = hints
         .iter()
         .map(signal_semantic_hint_key)
@@ -3383,15 +3425,17 @@ fn signal_semantic_hint_key(hint: &SignalSemanticHintRecord) -> String {
 fn collect_known_signal_names_for_semantic_hints(
     source_ir: &SourceIr,
     statements: &[ExtractedStatement],
+    prior_guidance: Option<&EvidencePriorGuidance>,
 ) -> HashSet<String> {
     let mut known_signals = collect_known_signal_names(statements);
-    known_signals.extend(collect_signal_names_from_tables(source_ir));
+    known_signals.extend(collect_signal_names_from_tables(source_ir, prior_guidance));
     known_signals
 }
 
 fn collect_known_actor_names_for_semantic_hints(
     source_ir: &SourceIr,
     actor_signal_relations: &[ActorSignalRelation],
+    prior_guidance: Option<&EvidencePriorGuidance>,
 ) -> BTreeSet<String> {
     let mut actor_names = actor_signal_relations
         .iter()
@@ -3399,7 +3443,7 @@ fn collect_known_actor_names_for_semantic_hints(
         .collect::<BTreeSet<_>>();
 
     for table in &source_ir.structured_tables {
-        if !should_treat_table_as_top_level_signal_description(table) {
+        if !should_treat_table_as_top_level_signal_description(table, prior_guidance) {
             continue;
         }
 
@@ -3465,7 +3509,7 @@ fn synthesize_signal_semantic_hints_from_tables(
     let mut seen = BTreeSet::<String>::new();
 
     for table in &source_ir.structured_tables {
-        if !should_treat_table_as_top_level_signal_description(table) {
+        if !should_treat_table_as_top_level_signal_description(table, prior_guidance) {
             continue;
         }
 
@@ -5140,12 +5184,20 @@ fn synthesize_encoding_declarations_for_enum(
 /// Synthesize `RegisterRecord` entries from `register_map` tables captured in `SourceIR`.
 /// Each table row becomes either a register-level record or, if the table has bit-field
 /// columns, a field within the preceding register.
-fn synthesize_register_records(source_ir: &SourceIr) -> Vec<RegisterRecord> {
+fn synthesize_register_records(
+    source_ir: &SourceIr,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+) -> Vec<RegisterRecord> {
     let mut records: Vec<RegisterRecord> = Vec::new();
     let register_tables: Vec<_> = source_ir
         .structured_tables
         .iter()
-        .filter(|t| matches!(t.table_kind, TableKind::RegisterMap))
+        .filter(|t| {
+            matches!(
+                effective_table_kind(t, prior_guidance),
+                TableKind::RegisterMap
+            )
+        })
         .collect();
 
     for table in register_tables {
@@ -5260,12 +5312,20 @@ fn parse_bit_range(text: &str) -> (Option<u32>, Option<u32>) {
 }
 
 /// Synthesize `TimingConstraintRecord` entries from `timing_parameter` tables in `SourceIR`.
-fn synthesize_timing_constraints(source_ir: &SourceIr) -> Vec<TimingConstraintRecord> {
+fn synthesize_timing_constraints(
+    source_ir: &SourceIr,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+) -> Vec<TimingConstraintRecord> {
     let mut records: Vec<TimingConstraintRecord> = Vec::new();
     let timing_tables: Vec<_> = source_ir
         .structured_tables
         .iter()
-        .filter(|t| matches!(t.table_kind, TableKind::TimingParameter))
+        .filter(|t| {
+            matches!(
+                effective_table_kind(t, prior_guidance),
+                TableKind::TimingParameter
+            )
+        })
         .collect();
 
     for table in timing_tables {
@@ -5356,8 +5416,8 @@ fn converge_evidence_extractions(
     Vec<SignalPolarityConflictRecord>,
     Vec<ActorSignalRelation>,
 ) {
-    let signal_names_from_tables = collect_signal_names_from_tables(source_ir);
-    let signal_widths_from_tables = collect_signal_widths_from_tables(source_ir);
+    let signal_names_from_tables = collect_signal_names_from_tables(source_ir, prior_guidance);
+    let signal_widths_from_tables = collect_signal_widths_from_tables(source_ir, prior_guidance);
     let table_relations =
         extract_relations_from_signal_tables_with_prior_guidance(source_ir, prior_guidance);
     let mut dynamic_synthesized_statements = Vec::new();
@@ -5377,8 +5437,12 @@ fn converge_evidence_extractions(
         let mut known_signals = signal_names_from_tables.clone();
         known_signals.extend(collect_known_signal_names(&extracted_statements));
         let discovered_values = collect_discovered_enum_values(&[extracted_statements.as_slice()]);
-        let signal_polarity =
-            collect_signal_polarity_facts(source_ir, &extracted_statements, &known_signals);
+        let signal_polarity = collect_signal_polarity_facts(
+            source_ir,
+            &extracted_statements,
+            &known_signals,
+            prior_guidance,
+        );
 
         let mut constraint_counter = 1usize;
         let mut signal_constraints =
@@ -5398,8 +5462,12 @@ fn converge_evidence_extractions(
         let actor_signal_relations = dedup_actor_signal_relations(actor_signal_relations);
 
         let already_declared = collect_known_signal_names(&extracted_statements);
-        let mut candidate_statements =
-            scan_encoding_tables_by_signal_anchor(source_ir, &known_signals, statement_counter);
+        let mut candidate_statements = scan_encoding_tables_by_signal_anchor(
+            source_ir,
+            &known_signals,
+            statement_counter,
+            prior_guidance,
+        );
         candidate_statements.extend(synthesize_directions_from_relations(
             &actor_signal_relations,
             &already_declared,
@@ -5730,7 +5798,7 @@ mod tests {
         }
 
         let mut corpus_memory = CorpusMemory {
-            schema_version: 2,
+            schema_version: 3,
             update_policy: CorpusMemoryUpdatePolicyRecord {
                 advisory_only: true,
                 requires_validated_intent_ir: true,
@@ -5751,6 +5819,7 @@ mod tests {
             actor_taxonomy_priors: Vec::new(),
             semantic_phrase_priors: Vec::new(),
             temporal_phrase_priors: Vec::new(),
+            table_shape_priors: Vec::new(),
         };
         populate(&mut corpus_memory);
         fs::write(

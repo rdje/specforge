@@ -129,7 +129,7 @@
 - Cross-document typed prior memory (`R15f`): In Progress
 
 ## Highest-priority remaining gap
-- Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then broaden `R15f` beyond its first actor-taxonomy store plus the first three bounded prior consumers in `EvidenceIR` / `SemanticIR` into table-shape, visual, modality-reliability, and negative-knowledge prior families while expanding the first honest prior-guided benchmark slice beyond the new graph-backed actor-taxonomy, temporal, semantic, and visual pairs into negative-knowledge prior-consumption fixtures
+- Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then broaden `R15f` beyond its first actor-taxonomy / semantic / temporal / table-shape prior families into visual-motif, modality-reliability, and negative-knowledge priors while expanding the honest prior-guided benchmark surface beyond the new graph-backed actor-taxonomy, temporal, semantic, visual, and table-shape pairs into negative-knowledge prior-consumption fixtures
 
 ## Validation Projection
 

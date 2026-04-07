@@ -551,6 +551,23 @@
   - broaden the store beyond actor-taxonomy into table-shape, visual-motif, modality-reliability, and negative-knowledge priors
   - then teach `EvidenceIR` / `SemanticIR` to consume those priors as bounded suggestions without weakening the local-grounding rule
 
+### Fourth landed bounded prior-consumption slice
+- the fourth consumer is now real in `crates/specforge/src/ir/evidence.rs`
+- `EvidenceIR` can now advisory-recover a local table kind from learned table-shape prior memory, but only when the current table is still `unknown`
+- the bounded behavior is intentionally strict:
+  - explicit local `SourceIR.table_kind` values always win
+  - prior-guided table-shape recovery widens local interpretation, but it does not rewrite `SourceIR`
+  - only the current table’s own normalized header signature is consulted, so the prior cannot invent a table that is not already present in the current document
+- the first live AMBA prior-memory run now shows this family is materially real, not speculative:
+  - `16` actor-taxonomy priors
+  - `222` temporal phrase priors
+  - `94` table-shape priors
+  - `0` semantic phrase priors on the same real corpus
+- the first benchmark pair for this family now locks the before/after contract:
+  - without prior memory, a locally `unknown` `Name | Direction | Width` table stays inert
+  - with a matching table-shape prior, the same local table recovers signal-description semantics through `EvidenceIR`, `SemanticIR`, and `IntentIR`
+- this matters because it is the first cross-document learning slice that improves table interpretation directly while still preserving the doctrine that priors guide extraction and never silently override explicit local truth
+
 ### First landed bounded prior-consumption slice
 - the first consumer is now real in `crates/specforge/src/ir/evidence.rs`
 - `specforge evidence <source_ir>` and `specforge converge <source>` now consult the local `CorpusMemory` by default through `--prior-memory generated/prior_memory/corpus_memory.json`

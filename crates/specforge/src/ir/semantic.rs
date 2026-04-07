@@ -7474,7 +7474,7 @@ mod tests {
         }
 
         let corpus_memory = CorpusMemory {
-            schema_version: 1,
+            schema_version: 3,
             update_policy: CorpusMemoryUpdatePolicyRecord {
                 advisory_only: true,
                 requires_validated_intent_ir: true,
@@ -7505,6 +7505,7 @@ mod tests {
                 supporting_document_keys: vec!["seed_doc".to_string()],
                 strongest_automation_confidence: AutomationConfidence::High,
             }],
+            table_shape_priors: Vec::new(),
         };
         fs::write(
             &prior_memory_path,

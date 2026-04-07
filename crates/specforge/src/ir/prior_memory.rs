@@ -7,7 +7,7 @@ use crate::ir::evidence::SignalSemanticHintSourceKind;
 use crate::ir::semantic::{
     CycleWindowRecord, InterfaceSignalSemanticRole, SemanticGroundingStrength,
 };
-use crate::ir::source::AutomationConfidence;
+use crate::ir::source::{AutomationConfidence, StructuredTableRecord, TableKind};
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "snake_case")]
@@ -62,6 +62,8 @@ pub struct CorpusMemory {
     pub semantic_phrase_priors: Vec<SemanticPhrasePriorRecord>,
     #[serde(default)]
     pub temporal_phrase_priors: Vec<TemporalPhrasePriorRecord>,
+    #[serde(default)]
+    pub table_shape_priors: Vec<TableShapePriorRecord>,
 }
 
 impl CorpusMemory {
@@ -233,6 +235,56 @@ impl CorpusMemory {
         None
     }
 
+    pub fn table_shape_priors_for(
+        &self,
+        protocol_family: Option<ProtocolFamily>,
+        table_kind: Option<TableKind>,
+    ) -> Vec<&TableShapePriorRecord> {
+        self.table_shape_priors
+            .iter()
+            .filter(|prior| {
+                protocol_family
+                    .map(|expected| prior.protocol_family == expected)
+                    .unwrap_or(true)
+                    && table_kind
+                        .map(|expected| prior.table_kind == expected)
+                        .unwrap_or(true)
+            })
+            .collect()
+    }
+
+    pub fn table_kind_for_structured_table(
+        &self,
+        protocol_family: Option<ProtocolFamily>,
+        table: &StructuredTableRecord,
+    ) -> Option<TableKind> {
+        let normalized_header_signature = normalize_table_header_signature(table)?;
+
+        for scope in actor_taxonomy_search_scopes(protocol_family) {
+            let mut table_kinds = self
+                .table_shape_priors
+                .iter()
+                .filter(|prior| {
+                    scope
+                        .map(|expected| prior.protocol_family == expected)
+                        .unwrap_or(true)
+                })
+                .filter(|prior| prior.normalized_header_signature == normalized_header_signature)
+                .map(|prior| prior.table_kind)
+                .collect::<Vec<_>>();
+            table_kinds.sort_by_key(|table_kind| table_kind_key(*table_kind));
+            table_kinds.dedup_by_key(|table_kind| table_kind_key(*table_kind));
+            if table_kinds.len() == 1 {
+                return table_kinds.first().copied();
+            }
+            if table_kinds.len() > 1 {
+                return None;
+            }
+        }
+
+        None
+    }
+
     fn resolve_actor_taxonomy_role<F>(
         &self,
         protocol_family: Option<ProtocolFamily>,
@@ -377,6 +429,23 @@ pub fn normalize_prior_phrase(
     )
 }
 
+pub fn normalize_table_header_signature(table: &StructuredTableRecord) -> Option<String> {
+    let row_signatures = table
+        .header_rows
+        .iter()
+        .map(|row| {
+            row.iter()
+                .map(|cell| normalize_table_header_cell(&cell.text))
+                .filter(|cell| !cell.is_empty())
+                .collect::<Vec<_>>()
+                .join(" | ")
+        })
+        .filter(|row| !row.is_empty())
+        .collect::<Vec<_>>();
+
+    (!row_signatures.is_empty()).then_some(row_signatures.join(" || "))
+}
+
 pub fn is_meaningful_prior_phrase(text: &str) -> bool {
     let trimmed = text.trim();
     !trimmed.is_empty()
@@ -403,6 +472,33 @@ fn actor_taxonomy_search_scopes(
 
 fn collapse_whitespace(value: &str) -> String {
     value.split_whitespace().collect::<Vec<_>>().join(" ")
+}
+
+fn normalize_table_header_cell(text: &str) -> String {
+    collapse_whitespace(
+        text.to_ascii_lowercase()
+            .chars()
+            .map(|ch| {
+                if ch.is_ascii_alphanumeric() || ch == '_' {
+                    ch
+                } else {
+                    ' '
+                }
+            })
+            .collect::<String>()
+            .trim(),
+    )
+}
+
+fn table_kind_key(table_kind: TableKind) -> &'static str {
+    match table_kind {
+        TableKind::SignalDescription => "signal_description",
+        TableKind::Encoding => "encoding",
+        TableKind::RegisterMap => "register_map",
+        TableKind::TimingParameter => "timing_parameter",
+        TableKind::FeatureMatrix => "feature_matrix",
+        TableKind::Unknown => "unknown",
+    }
 }
 
 fn replace_term_with_placeholder(text: &str, term: &str, placeholder: &str) -> String {
@@ -555,6 +651,18 @@ pub struct TemporalPhrasePriorRecord {
     pub cycle_window: Option<CycleWindowRecord>,
     pub actor_grounded: bool,
     pub handshake_completion: bool,
+    pub support_count: usize,
+    #[serde(default)]
+    pub supporting_document_keys: Vec<String>,
+    pub strongest_automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct TableShapePriorRecord {
+    pub prior_id: String,
+    pub normalized_header_signature: String,
+    pub table_kind: TableKind,
+    pub protocol_family: ProtocolFamily,
     pub support_count: usize,
     #[serde(default)]
     pub supporting_document_keys: Vec<String>,

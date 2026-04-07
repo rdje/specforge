@@ -5,19 +5,22 @@ use std::path::{Path, PathBuf};
 use crate::cli::LearnPriorsArgs;
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
+use crate::ir::evidence::EvidenceIr;
 use crate::ir::evidence::{SignalSemanticHintSourceKind, SignalSemanticTag};
 use crate::ir::intent::IntentIr;
 use crate::ir::prior_memory::{
     ActorTaxonomyPriorRecord, ActorTaxonomyRole, CorpusMemory, CorpusMemoryUpdatePolicyRecord,
-    PriorSourceArtifactRecord, ProtocolFamily, SemanticPhrasePriorRecord,
+    PriorSourceArtifactRecord, ProtocolFamily, SemanticPhrasePriorRecord, TableShapePriorRecord,
     TemporalPhrasePriorRecord, is_meaningful_prior_phrase, normalize_actor_term,
-    normalize_prior_phrase,
+    normalize_prior_phrase, normalize_table_header_signature,
 };
+use crate::ir::semantic::SemanticIr;
 use crate::ir::semantic::{
     ActorRelativeDirection, InterfaceSignalSemanticObservationRecord, InterfaceSignalSemanticRole,
     SemanticGroundingStrength, TemporalPredicateRecord,
 };
 use crate::ir::source::{AutomationConfidence, ValidationFindingSeverity, ValidationReportRecord};
+use crate::ir::source::{SourceIr, StructuredTableRecord, TableKind};
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 struct ActorTaxonomyPriorKey {
@@ -64,6 +67,19 @@ struct TemporalPriorAccumulator {
     strongest_automation_confidence: AutomationConfidence,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+struct TableShapePriorKey {
+    normalized_header_signature: String,
+    table_kind: String,
+    protocol_family: String,
+}
+
+#[derive(Debug, Clone)]
+struct TableShapePriorAccumulator {
+    supporting_document_keys: BTreeSet<String>,
+    strongest_automation_confidence: AutomationConfidence,
+}
+
 pub fn run(args: LearnPriorsArgs) -> Result<()> {
     let output_path = args.output;
     let mut source_artifacts = Vec::new();
@@ -71,6 +87,7 @@ pub fn run(args: LearnPriorsArgs) -> Result<()> {
         BTreeMap::<ActorTaxonomyPriorKey, ActorTaxonomyPriorAccumulator>::new();
     let mut semantic_priors = BTreeMap::<SemanticPriorKey, SemanticPriorAccumulator>::new();
     let mut temporal_priors = BTreeMap::<TemporalPriorKey, TemporalPriorAccumulator>::new();
+    let mut table_shape_priors = BTreeMap::<TableShapePriorKey, TableShapePriorAccumulator>::new();
 
     for artifact in &args.artifacts {
         let artifact_path = canonicalize_existing_path(artifact)?;
@@ -106,10 +123,11 @@ pub fn run(args: LearnPriorsArgs) -> Result<()> {
         harvest_actor_taxonomy_priors(&intent_ir, protocol_family, &mut actor_taxonomy_priors);
         harvest_semantic_priors(&intent_ir, protocol_family, &mut semantic_priors);
         harvest_temporal_priors(&intent_ir, protocol_family, &mut temporal_priors);
+        harvest_table_shape_priors(&intent_ir, protocol_family, &mut table_shape_priors);
     }
 
     let corpus_memory = CorpusMemory {
-        schema_version: 2,
+        schema_version: 3,
         update_policy: CorpusMemoryUpdatePolicyRecord {
             advisory_only: true,
             requires_validated_intent_ir: true,
@@ -121,6 +139,7 @@ pub fn run(args: LearnPriorsArgs) -> Result<()> {
         actor_taxonomy_priors: materialize_actor_taxonomy_priors(actor_taxonomy_priors),
         semantic_phrase_priors: materialize_semantic_priors(semantic_priors),
         temporal_phrase_priors: materialize_temporal_priors(temporal_priors),
+        table_shape_priors: materialize_table_shape_priors(table_shape_priors),
     };
 
     let pretty_json = serde_json::to_string_pretty(&corpus_memory)?;
@@ -145,6 +164,10 @@ pub fn run(args: LearnPriorsArgs) -> Result<()> {
     println!(
         "temporal_phrase_priors: {}",
         corpus_memory.temporal_phrase_priors.len()
+    );
+    println!(
+        "table_shape_priors: {}",
+        corpus_memory.table_shape_priors.len()
     );
 
     for artifact in corpus_memory
@@ -501,6 +524,75 @@ fn harvest_temporal_priors(
     }
 }
 
+fn harvest_table_shape_priors(
+    intent_ir: &IntentIr,
+    protocol_family: ProtocolFamily,
+    table_shape_priors: &mut BTreeMap<TableShapePriorKey, TableShapePriorAccumulator>,
+) {
+    let Some(source_ir) = load_source_ir_for_learning(intent_ir) else {
+        return;
+    };
+    harvest_table_shape_priors_from_source_ir(
+        &source_ir,
+        &intent_ir.document_identity.document_key,
+        protocol_family,
+        table_shape_priors,
+    );
+}
+
+fn load_source_ir_for_learning(intent_ir: &IntentIr) -> Option<SourceIr> {
+    let semantic_ir = SemanticIr::load_from_path(&intent_ir.semantic_ir_path).ok()?;
+    if !matches!(semantic_ir.stage, IrStage::SemanticIr) {
+        return None;
+    }
+    let evidence_ir = EvidenceIr::load_from_path(&semantic_ir.evidence_ir_path).ok()?;
+    if !matches!(evidence_ir.stage, IrStage::EvidenceIr) {
+        return None;
+    }
+    let source_ir = SourceIr::load_from_path(&evidence_ir.source_ir_path).ok()?;
+    if !matches!(source_ir.stage, IrStage::SourceIr) {
+        return None;
+    }
+    Some(source_ir)
+}
+
+fn harvest_table_shape_priors_from_source_ir(
+    source_ir: &SourceIr,
+    document_key: &str,
+    protocol_family: ProtocolFamily,
+    table_shape_priors: &mut BTreeMap<TableShapePriorKey, TableShapePriorAccumulator>,
+) {
+    for table in &source_ir.structured_tables {
+        if matches!(table.table_kind, TableKind::Unknown) {
+            continue;
+        }
+        let Some(normalized_header_signature) = normalize_table_header_signature(table) else {
+            continue;
+        };
+
+        let key = TableShapePriorKey {
+            normalized_header_signature,
+            table_kind: table_kind_key(table.table_kind).to_string(),
+            protocol_family: protocol_family.as_str().to_string(),
+        };
+        let entry = table_shape_priors
+            .entry(key)
+            .or_insert_with(|| TableShapePriorAccumulator {
+                supporting_document_keys: BTreeSet::new(),
+                strongest_automation_confidence: infer_table_shape_prior_confidence(table),
+            });
+        entry
+            .supporting_document_keys
+            .insert(document_key.to_string());
+        let confidence = infer_table_shape_prior_confidence(table);
+        if automation_confidence_rank(confidence)
+            > automation_confidence_rank(entry.strongest_automation_confidence)
+        {
+            entry.strongest_automation_confidence = confidence;
+        }
+    }
+}
+
 fn materialize_semantic_priors(
     semantic_priors: BTreeMap<SemanticPriorKey, SemanticPriorAccumulator>,
 ) -> Vec<SemanticPhrasePriorRecord> {
@@ -560,6 +652,24 @@ fn materialize_temporal_priors(
             },
             actor_grounded: key.actor_grounded,
             handshake_completion: key.handshake_completion,
+            support_count: accumulator.supporting_document_keys.len(),
+            supporting_document_keys: accumulator.supporting_document_keys.into_iter().collect(),
+            strongest_automation_confidence: accumulator.strongest_automation_confidence,
+        })
+        .collect()
+}
+
+fn materialize_table_shape_priors(
+    table_shape_priors: BTreeMap<TableShapePriorKey, TableShapePriorAccumulator>,
+) -> Vec<TableShapePriorRecord> {
+    table_shape_priors
+        .into_iter()
+        .enumerate()
+        .map(|(index, (key, accumulator))| TableShapePriorRecord {
+            prior_id: format!("table_shape_prior_{:04}", index + 1),
+            normalized_header_signature: key.normalized_header_signature,
+            table_kind: parse_table_kind(&key.table_kind),
+            protocol_family: parse_protocol_family(&key.protocol_family),
             support_count: accumulator.supporting_document_keys.len(),
             supporting_document_keys: accumulator.supporting_document_keys.into_iter().collect(),
             strongest_automation_confidence: accumulator.strongest_automation_confidence,
@@ -734,6 +844,43 @@ fn parse_semantic_source_kind(value: &str) -> SignalSemanticHintSourceKind {
         "visual_caption" => SignalSemanticHintSourceKind::VisualCaption,
         "vlm_timing_diagram_annotation" => SignalSemanticHintSourceKind::VlmTimingDiagramAnnotation,
         _ => SignalSemanticHintSourceKind::ProseStatement,
+    }
+}
+
+fn parse_table_kind(value: &str) -> TableKind {
+    match value {
+        "signal_description" => TableKind::SignalDescription,
+        "encoding" => TableKind::Encoding,
+        "register_map" => TableKind::RegisterMap,
+        "timing_parameter" => TableKind::TimingParameter,
+        "feature_matrix" => TableKind::FeatureMatrix,
+        _ => TableKind::Unknown,
+    }
+}
+
+fn table_kind_key(table_kind: TableKind) -> &'static str {
+    match table_kind {
+        TableKind::SignalDescription => "signal_description",
+        TableKind::Encoding => "encoding",
+        TableKind::RegisterMap => "register_map",
+        TableKind::TimingParameter => "timing_parameter",
+        TableKind::FeatureMatrix => "feature_matrix",
+        TableKind::Unknown => "unknown",
+    }
+}
+
+fn infer_table_shape_prior_confidence(table: &StructuredTableRecord) -> AutomationConfidence {
+    if table
+        .caption_text
+        .as_deref()
+        .map(|caption| !caption.trim().is_empty())
+        .unwrap_or(false)
+    {
+        AutomationConfidence::High
+    } else if !table.header_rows.is_empty() {
+        AutomationConfidence::Medium
+    } else {
+        AutomationConfidence::Low
     }
 }
 
@@ -1077,6 +1224,10 @@ fn canonicalize_existing_path(path: &Path) -> Result<PathBuf> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::fs;
+
+    use tempfile::tempdir;
+
     use crate::ir::intent::{
         IntentActor, IntentArtifactLayout, IntentDocumentIdentity, IntentIdentity,
     };
@@ -1086,7 +1237,10 @@ mod tests {
         InterfaceSignalSemanticConsensusRecord, InterfaceSignalSemanticObservationRecord,
         TemporalRuleRecord,
     };
-    use crate::ir::source::{RelationKind, ValidationFindingRecord, ValidationMetricRecord};
+    use crate::ir::source::{
+        RelationKind, SourceIr, StructuredTableCellRecord, StructuredTableRecord, TableKind,
+        ValidationFindingRecord, ValidationMetricRecord,
+    };
 
     fn base_intent_ir(document_key: &str, display_name: &str) -> IntentIr {
         IntentIr {
@@ -1445,6 +1599,69 @@ mod tests {
             records[0].strongest_grounding_strength,
             SemanticGroundingStrength::SingleSource
         );
+    }
+
+    #[test]
+    fn learn_priors_harvests_table_shape_priors_from_source_ir() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source_path = tempdir.path().join("table_shape_fixture.md");
+        fs::write(&source_path, "# Table Shape Fixture\n")?;
+
+        let mut source_ir = SourceIr::build(&source_path, &tempdir.path().join("generated"))?;
+        source_ir.structured_tables = vec![StructuredTableRecord {
+            table_id: "table_0001".to_string(),
+            asset_id: "table_0001".to_string(),
+            page_id: Some("page_0001".to_string()),
+            caption_text: Some("Table 1 Interface signals".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                StructuredTableCellRecord {
+                    text: "Name".to_string(),
+                    row_span: 1,
+                    col_span: 1,
+                    is_header: true,
+                },
+                StructuredTableCellRecord {
+                    text: "Direction".to_string(),
+                    row_span: 1,
+                    col_span: 1,
+                    is_header: true,
+                },
+                StructuredTableCellRecord {
+                    text: "Width".to_string(),
+                    row_span: 1,
+                    col_span: 1,
+                    is_header: true,
+                },
+            ]],
+            body_rows: Vec::new(),
+            row_count: 0,
+            col_count: 3,
+        }];
+
+        let mut table_shape_priors = BTreeMap::new();
+        harvest_table_shape_priors_from_source_ir(
+            &source_ir,
+            "fixture_doc",
+            ProtocolFamily::Unknown,
+            &mut table_shape_priors,
+        );
+
+        let records = materialize_table_shape_priors(table_shape_priors);
+        assert_eq!(records.len(), 1);
+        assert_eq!(
+            records[0].normalized_header_signature,
+            "name | direction | width"
+        );
+        assert_eq!(records[0].table_kind, TableKind::SignalDescription);
+        assert_eq!(records[0].support_count, 1);
+        assert_eq!(
+            records[0].strongest_automation_confidence,
+            AutomationConfidence::High
+        );
+
+        Ok(())
     }
 
     #[test]

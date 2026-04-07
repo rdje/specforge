@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-04-07 (table-shape priors landed as the fourth bounded learning slice)
+
+### Added: first table-shape prior family in `CorpusMemory`
+- Extended [prior_memory.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/prior_memory.rs) with typed `table_shape_priors`, normalized structured-table header signatures, and advisory lookup helpers that can resolve a local table kind only when the signature matches uniquely.
+- Extended [learn_priors.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/learn_priors.rs) so `specforge learn-priors` now harvests table-shape priors from validated document chains by walking `IntentIR -> SemanticIR -> EvidenceIR -> SourceIR`.
+- The latest local AMBA run over APB/AHB/AXI now yields `94` table-shape priors in addition to the existing actor-taxonomy and temporal families.
+
+### Added: bounded table-shape prior consumption and benchmark coverage
+- Extended [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) so `EvidenceIR` can advisory-recover a local table kind from prior memory, but only when the current table is still `unknown`; explicit local `SourceIR.table_kind` values remain authoritative.
+- Added the tracked gold/negative fixture pair [table_shape_prior_guided_signal_table_gold](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/table_shape_prior_guided_signal_table_gold/fixture.json) and [table_shape_prior_guided_signal_table_without_prior_negative](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/table_shape_prior_guided_signal_table_without_prior_negative/fixture.json), which prove a locally `unknown` `Name | Direction | Width` table stays inert without prior memory and gains signal-description recovery only when a matching learned prior is staged.
+
+### Why this matters
+- This is the first cross-document learning slice that improves table interpretation directly, not just actor vocabulary or phrase interpretation.
+- It stays fully within the project doctrine: prior memory widens local interpretation, but it does not rewrite `SourceIR` or override explicit local classifications.
+
 ## 2026-04-07 (Learning-plane growth model clarified)
 
 ### Added: explicit note on what grows to materialize learning

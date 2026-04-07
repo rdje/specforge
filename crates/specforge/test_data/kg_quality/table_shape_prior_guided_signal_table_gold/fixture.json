@@ -1,0 +1,139 @@
+{
+  "name": "table_shape_prior_guided_signal_table_gold",
+  "source": "source.md",
+  "prior_memory_patch": {
+    "table_shape_priors": [
+      {
+        "prior_id": "table_shape_prior_0001",
+        "normalized_header_signature": "name | direction | width",
+        "table_kind": "signal_description",
+        "protocol_family": "unknown",
+        "support_count": 2,
+        "supporting_document_keys": ["seed_doc_1", "seed_doc_2"],
+        "strongest_automation_confidence": "high"
+      }
+    ]
+  },
+  "source_ir_patch": {
+    "structured_tables": [
+      {
+        "table_id": "table_0001",
+        "asset_id": "table_0001",
+        "page_id": "page_0001",
+        "caption_text": null,
+        "source_ref": null,
+        "table_kind": "unknown",
+        "header_rows": [
+          [
+            {
+              "text": "Name",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Direction",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Width",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            }
+          ]
+        ],
+        "body_rows": [
+          [
+            {
+              "text": "XREQ",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "output",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "1",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ],
+          [
+            {
+              "text": "XACK",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "input",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "1",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ]
+        ],
+        "row_count": 2,
+        "col_count": 3
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["XREQ", "XACK"],
+      "signal_directions_include": [
+        {
+          "signal_name": "XREQ",
+          "direction": "output"
+        },
+        {
+          "signal_name": "XACK",
+          "direction": "input"
+        }
+      ]
+    },
+    "intent": {
+      "signal_names_include": ["XREQ", "XACK"],
+      "signal_directions_include": [
+        {
+          "signal_name": "XREQ",
+          "direction": "output"
+        },
+        {
+          "signal_name": "XACK",
+          "direction": "input"
+        }
+      ]
+    },
+    "validation": {
+      "semantic": {
+        "metric_values": {
+          "with_resolved_direction": "2",
+          "with_graph_direction": "0",
+          "with_compat_direction_hint": "2"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "with_resolved_direction": "2",
+          "with_graph_direction": "0",
+          "with_compat_direction_hint": "2"
+        }
+      }
+    }
+  }
+}

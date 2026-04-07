@@ -39,15 +39,17 @@
 - `specforge converge` now defaults to full Ollama-backed VLM image enrichment plus NLP Level 3 backannotation; use `--vlm-provider skip` and/or `--nlp-provider skip` only when intentionally narrowing the loop
 - GitHub Actions now mirrors the baseline Rust quality gate on every `push` / `pull_request` via `.github/workflows/ci.yml`
 - `scripts/run_ci.sh` is now the canonical Rust CI entrypoint and is reused by GitHub Actions, so the same hosted path can be exercised locally before push
-- the local `CorpusMemory` prior store now includes actor-taxonomy priors in addition to semantic and temporal phrase priors
+- the local `CorpusMemory` prior store now includes actor-taxonomy, semantic, temporal, and table-shape priors
 - the thing that materially grows to capture learning is the typed prior store itself, usually `generated/prior_memory/corpus_memory.json`; code defines the learning rules, but the accumulated experience lives in that symbolic memory artifact
 - `specforge evidence` and `specforge converge` now consult `--prior-memory generated/prior_memory/corpus_memory.json` by default, and the first bounded consumer uses actor-taxonomy priors to interpret explicit local actor terms in section headings and `Source` / `Destination` columns; width-only section-guided signal tables can now also recover structural `ActorSignalRelation::Drives` edges from that same prior-guided actor vocabulary
 - `EvidenceIR` now also has a second bounded prior consumer for semantic phrase priors, and it now persists `prior_memory_path` so later semantic-hint refreshes keep the same advisory prior context
 - `SemanticIR` now also has a third bounded prior consumer for temporal phrase priors, using them only as a fallback for local timing text when direct cycle-window parsing fails
+- `EvidenceIR` now also has a fourth bounded prior consumer for table-shape priors, using them only when a current structured table is still `unknown`; explicit local `SourceIR.table_kind` values still win outright
 - `specforge kg-bench` can now also stage a fixture-local `CorpusMemory`, and the first tracked gold/negative pair proves prior-guided temporal recovery on an unseen local phrase without leaking cross-document facts
 - `specforge kg-bench` now also locks the same before/after truthfulness pattern for semantic priors on an unseen local phrase
 - `specforge kg-bench` now also locks the same before/after truthfulness pattern for actor-taxonomy priors on unseen local section-heading vocabulary
 - `specforge kg-bench` now also locks the same before/after truthfulness pattern for semantic priors on unseen local visual-caption phrasing
+- `specforge kg-bench` now also locks the same before/after truthfulness pattern for table-shape priors on a locally `unknown` `Name | Direction | Width` table
 - canonical generated artifact roots are under `generated/source_ir/`, `generated/evidence_ir/`, `generated/semantic_ir/`, and `generated/intent_ir/`
 - `generated/` is git-ignored and intentionally untracked; continuity must live in docs, not versioned artifacts
 - `subs/fsmgen/` is a local read-only reference checkout for `.fsm` behavior
@@ -70,9 +72,9 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the docs-only learning-plane growth clarification
-2. broaden `R15f` prior families beyond actor-taxonomy / semantic / temporal into table-shape, visual-motif, modality-reliability, and negative-knowledge
-3. broaden prior-guided benchmark coverage beyond actor-taxonomy / semantic / temporal / visual into negative-knowledge prior families while preserving the local-grounding rule
+1. commit the table-shape prior family plus bounded `EvidenceIR` consumer
+2. continue replacing remaining direct `direction_hint` consumers with graph-first semantics
+3. broaden `R15f` beyond actor-taxonomy / semantic / temporal / table-shape into visual-motif, modality-reliability, and negative-knowledge prior families
 
 ## Remaining engineering gaps after this commit
 - remaining actor-relative direction modeling in `SemanticIR` / `IntentIR` (`R15`)
@@ -80,7 +82,7 @@
 - KG-guided multimodal rescans (`R15c`)
 - broader evidence arbitration / conflict handling beyond polarity, interface-shape, multi-producer ambiguity, modality-aware semantic-role grounding, consensus summaries, semantic candidates, and semantic arbitration summaries (`R15d`)
 - broader KG-quality evaluation and benchmark hardening beyond the new seed fixture pack (`R15e`)
-- cross-document extractor learning is now started, and the first two bounded `EvidenceIR` consumers are now live, but `R15f` still needs broader prior families plus benchmarked temporal/table/visual/modality-reliability/negative-knowledge consumption paths
+- cross-document extractor learning is now started, and the first three bounded `EvidenceIR` consumers plus the first `SemanticIR` consumer are now live, but `R15f` still needs broader prior families plus benchmarked visual-motif/modality-reliability/negative-knowledge consumption paths
 - Tier 3 relation extraction after the graph/temporal/eval surfaces are ready (`R14`)
 - some downstream compatibility and consumer paths still rely on flat `direction_hint` instead of the graph-native surface
 - meaning-based role inference now covers tables, prose, alias-grounded prose, visual captions, and VLM timing annotations, and canonical layers now preserve that provenance, but broader downstream use of preserved arbitration state is still early
