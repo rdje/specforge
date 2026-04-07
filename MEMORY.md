@@ -40,6 +40,7 @@
 - GitHub Actions now mirrors the baseline Rust quality gate on every `push` / `pull_request` via `.github/workflows/ci.yml`
 - `scripts/run_ci.sh` is now the canonical Rust CI entrypoint and is reused by GitHub Actions, so the same hosted path can be exercised locally before push
 - the local `CorpusMemory` prior store now includes actor-taxonomy priors in addition to semantic and temporal phrase priors
+- the thing that materially grows to capture learning is the typed prior store itself, usually `generated/prior_memory/corpus_memory.json`; code defines the learning rules, but the accumulated experience lives in that symbolic memory artifact
 - `specforge evidence` and `specforge converge` now consult `--prior-memory generated/prior_memory/corpus_memory.json` by default, and the first bounded consumer uses actor-taxonomy priors to interpret explicit local actor terms in section headings and `Source` / `Destination` columns; width-only section-guided signal tables can now also recover structural `ActorSignalRelation::Drives` edges from that same prior-guided actor vocabulary
 - `EvidenceIR` now also has a second bounded prior consumer for semantic phrase priors, and it now persists `prior_memory_path` so later semantic-hint refreshes keep the same advisory prior context
 - `SemanticIR` now also has a third bounded prior consumer for temporal phrase priors, using them only as a fallback for local timing text when direct cycle-window parsing fails
@@ -54,33 +55,22 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
-- strengthened the first actor-taxonomy prior consumer in `EvidenceIR` so width-only section-guided signal tables now recover structural `ActorSignalRelation::Drives` edges, not just flat direction hints
-- strengthened the tracked actor-taxonomy gold fixture so it now requires graph-backed recovery:
-  - `actor_signal_relations = 3`
-  - `actor_ports = 3`
-  - `with_graph_direction = 3`
-- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, `USER_GUIDE.md`, `CHANGES.md`, and `MEMORY.md` so the graph-strengthening `R15f` slice is continuity-safe
-- validation ran for this task:
-  - `cargo test --manifest-path Cargo.toml actor_taxonomy_priors_guide_section_heading_direction_inference -- --nocapture` passed
-  - `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality actor_taxonomy_prior_guided_section_direction_gold actor_taxonomy_prior_guided_section_direction_without_prior_negative` passed
-  - `bash scripts/run_ci.sh` passed with `204/204` tests
+- logged the learning-plane growth model explicitly:
+  - code defines how `R15f` learns
+  - the typed prior store captures what has been learned so far
+  - the main growing artifact is `generated/prior_memory/corpus_memory.json`
+- synced `README.md`, `DEVELOPMENT_NOTES.md`, `CHANGES.md`, and `MEMORY.md` so future sessions can quickly recover that distinction after a crash or handoff
 
 ## Current working tree before commit
 - modified tracked files currently include:
-  - `crates/specforge/src/ir/evidence.rs`
-  - `crates/specforge/test_data/kg_quality/actor_taxonomy_prior_guided_section_direction_gold/fixture.json`
   - `README.md`
-  - `ROADMAP.md`
-  - `LIVE_ACHIEVEMENT_STATUS.md`
-  - `RUST_CODEBASE_ANALYSIS.md`
   - `DEVELOPMENT_NOTES.md`
-  - `USER_GUIDE.md`
   - `CHANGES.md`
   - `MEMORY.md`
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the graph-strengthening actor-taxonomy prior slice with the synced live docs
+1. commit the docs-only learning-plane growth clarification
 2. broaden `R15f` prior families beyond actor-taxonomy / semantic / temporal into table-shape, visual-motif, modality-reliability, and negative-knowledge
 3. broaden prior-guided benchmark coverage beyond actor-taxonomy / semantic / temporal / visual into negative-knowledge prior families while preserving the local-grounding rule
 

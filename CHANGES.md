@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-04-07 (Learning-plane growth model clarified)
+
+### Added: explicit note on what grows to materialize learning
+- Logged in [DEVELOPMENT_NOTES.md](/Users/richarddje/Documents/github/specforge/DEVELOPMENT_NOTES.md) that the learning capability is defined in code, while the thing that actually grows over time is the typed prior store, typically [corpus_memory.json](/Users/richarddje/Documents/github/specforge/generated/prior_memory/corpus_memory.json).
+- Added the matching short entry-point note in [README.md](/Users/richarddje/Documents/github/specforge/README.md), so future sessions do not confuse `R15f` with neural-network-style hidden-weight learning.
+
+### Why this matters
+- This makes the learning model explicit: `specforge` uses symbolic, inspectable, typed memory rather than opaque learned weights.
+- It also clarifies the safety boundary between:
+  - code that defines how learning works
+  - data that stores what has been learned
+  - canonical per-document IR that remains provenance-pure
+
 ## 2026-04-07 (Actor-taxonomy priors now recover structural KG from section headings)
 
 ### Added: prior-guided structural KG recovery for width-only section-guided signal tables

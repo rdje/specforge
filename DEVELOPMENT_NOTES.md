@@ -503,6 +503,28 @@
 - it should not learn directly from raw guesses, weak one-off hypotheses, or unvalidated AI output
 - the right feedback source is validated/promoted knowledge, not transient extraction noise
 
+### What actually grows over time
+- the ability to learn is frozen in code:
+  - `crates/specforge/src/commands/learn_priors.rs` defines how reusable priors are harvested
+  - `crates/specforge/src/ir/prior_memory.rs` defines the typed memory schema and lookup behavior
+  - `crates/specforge/src/ir/evidence.rs` and `crates/specforge/src/ir/semantic.rs` define when learned priors are allowed to influence extraction
+- the thing that actually grows with more validated PDFs is the typed prior store, not the code and not any neural-network-style hidden weights
+- today that growing memory is the local `CorpusMemory`, typically materialized at `generated/prior_memory/corpus_memory.json`
+- as more validated documents are fed through `specforge learn-priors`, the prior store can accumulate:
+  - more `actor_taxonomy_priors`
+  - more `semantic_phrase_priors`
+  - more `temporal_phrase_priors`
+  - higher `support_count`
+  - more `supporting_document_keys`
+  - eventually more prior families such as table-shape, visual-motif, modality-reliability, and negative-knowledge priors
+- this is explicit symbolic learning, not neural learning:
+  - code defines what may be learned and how it may be used
+  - the prior store records what has been learned so far
+  - canonical per-document IR artifacts remain separate and provenance-pure
+- if the code stays the same but `corpus_memory.json` grows, the extractor becomes stronger because its reusable prior memory becomes richer
+- if the prior store is deleted, the extractor still knows how to learn, but it loses the accumulated experience
+- this separation is a major architectural strength because the learned knowledge stays inspectable, diffable, and debuggable rather than being buried inside opaque weights
+
 ### Implementation direction
 - define a typed schema for cross-document prior memory
 - keep that schema versioned separately from per-document IR artifacts
