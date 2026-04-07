@@ -45,6 +45,7 @@
 - `SemanticIR` now also has a third bounded prior consumer for temporal phrase priors, using them only as a fallback for local timing text when direct cycle-window parsing fails
 - `specforge kg-bench` can now also stage a fixture-local `CorpusMemory`, and the first tracked gold/negative pair proves prior-guided temporal recovery on an unseen local phrase without leaking cross-document facts
 - `specforge kg-bench` now also locks the same before/after truthfulness pattern for semantic priors on an unseen local phrase
+- `specforge kg-bench` now also locks the same before/after truthfulness pattern for actor-taxonomy priors on unseen local section-heading vocabulary
 - canonical generated artifact roots are under `generated/source_ir/`, `generated/evidence_ir/`, `generated/semantic_ir/`, and `generated/intent_ir/`
 - `generated/` is git-ignored and intentionally untracked; continuity must live in docs, not versioned artifacts
 - `subs/fsmgen/` is a local read-only reference checkout for `.fsm` behavior
@@ -52,21 +53,21 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
-- added the first prior-guided unseen-phrase semantic benchmark pair under `crates/specforge/test_data/kg_quality/`:
-  - `semantic_prior_guided_phrase_gold`
-  - `semantic_prior_guided_phrase_without_prior_negative`
-- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, `USER_GUIDE.md`, `CHANGES.md`, and `MEMORY.md` so the benchmarked semantic `R15f` slice is continuity-safe
+- added the first prior-guided unseen-section actor-taxonomy benchmark pair under `crates/specforge/test_data/kg_quality/`:
+  - `actor_taxonomy_prior_guided_section_direction_gold`
+  - `actor_taxonomy_prior_guided_section_direction_without_prior_negative`
+- synced `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `DEVELOPMENT_NOTES.md`, `USER_GUIDE.md`, `CHANGES.md`, and `MEMORY.md` so the benchmarked actor-taxonomy `R15f` slice is continuity-safe
 - validation ran for this task:
-  - `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality semantic_prior_guided_phrase_gold` passed
-  - `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality semantic_prior_guided_phrase_without_prior_negative` passed
+  - `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality actor_taxonomy_prior_guided_section_direction_gold` passed
+  - `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality actor_taxonomy_prior_guided_section_direction_without_prior_negative` passed
   - `bash scripts/run_ci.sh` passed with `204/204` tests
 
 ## Current working tree before commit
 - modified tracked files currently include:
-  - `crates/specforge/test_data/kg_quality/semantic_prior_guided_phrase_gold/amba_semantic_prior_guided.md`
-  - `crates/specforge/test_data/kg_quality/semantic_prior_guided_phrase_gold/fixture.json`
-  - `crates/specforge/test_data/kg_quality/semantic_prior_guided_phrase_without_prior_negative/amba_semantic_without_prior.md`
-  - `crates/specforge/test_data/kg_quality/semantic_prior_guided_phrase_without_prior_negative/fixture.json`
+  - `crates/specforge/test_data/kg_quality/actor_taxonomy_prior_guided_section_direction_gold/amba_actor_taxonomy_prior_guided.md`
+  - `crates/specforge/test_data/kg_quality/actor_taxonomy_prior_guided_section_direction_gold/fixture.json`
+  - `crates/specforge/test_data/kg_quality/actor_taxonomy_prior_guided_section_direction_without_prior_negative/amba_actor_taxonomy_without_prior.md`
+  - `crates/specforge/test_data/kg_quality/actor_taxonomy_prior_guided_section_direction_without_prior_negative/fixture.json`
   - `README.md`
   - `ROADMAP.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -78,9 +79,9 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the second bounded prior-consumption slice with the synced live docs
+1. commit the actor-taxonomy prior benchmark slice with the synced live docs
 2. broaden `R15f` prior families beyond actor-taxonomy / semantic / temporal into table-shape, visual-motif, modality-reliability, and negative-knowledge
-3. broaden prior consumption beyond actor-taxonomy plus semantic-role `EvidenceIR` guidance into temporal-language, table-shape, and visual suggestion paths while preserving the local-grounding rule
+3. broaden prior-guided benchmark coverage beyond actor-taxonomy / semantic / temporal into visual and negative-knowledge prior families while preserving the local-grounding rule
 
 ## Remaining engineering gaps after this commit
 - remaining actor-relative direction modeling in `SemanticIR` / `IntentIR` (`R15`)

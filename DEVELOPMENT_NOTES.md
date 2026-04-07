@@ -558,6 +558,11 @@
 ### Third landed bounded prior-consumption slice
 - the third consumer is now real in `crates/specforge/src/ir/semantic.rs`
 - `SemanticIR` can now use temporal phrase priors to advisory-recover a `cycle_window` from local timing text whose phrase shape matches learned prior memory when the built-in parser still cannot recover the timing window directly
+- the first bounded prior families are now benchmarked as a set, not just implemented in isolation:
+  - actor-taxonomy prior benchmark: width-only `Issuer signals` / `Acceptor signals` headings recover canonical directions only when matching actor-taxonomy priors are present
+  - semantic prior benchmark: `XACK can receive the transfer` recovers a role only when a matching semantic prior is present
+  - temporal prior benchmark: `PREADY must be asserted one beat later` recovers a `cycle_window` only when a matching temporal prior is present
+- that benchmark shape matters because it proves the same doctrine across all three families: prior memory widens interpretation of local evidence, but it does not author facts when the matching local evidence is absent or when the prior is not staged
 - the bounded behavior remains strict:
   - the current PDF still has to contain the local timing sentence or timing-note text
   - the prior does not create a temporal rule by itself; it only helps interpret the local phrase once a local rule already exists

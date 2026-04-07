@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-04-07 (KG fixtures now lock prior-guided actor-taxonomy recovery)
+
+### Added: prior-guided actor-taxonomy gold/negative pair
+- Added [actor_taxonomy_prior_guided_section_direction_gold](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/actor_taxonomy_prior_guided_section_direction_gold/fixture.json), which proves width-only `Issuer signals` / `Acceptor signals` sections gain canonical signal directions only when matching actor-taxonomy priors are staged into the fixture.
+- Added [actor_taxonomy_prior_guided_section_direction_without_prior_negative](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/actor_taxonomy_prior_guided_section_direction_without_prior_negative/fixture.json), which locks the honest fallback behavior that the same local section headings stay directionless when prior memory is absent.
+
+### Why this matters
+- This completes the first benchmark triangle for the three initial bounded prior families: actor-taxonomy, semantic-role phrases, and temporal-language phrases.
+- It proves the local-grounding doctrine for actor vocabulary too: prior memory can widen how the extractor interprets explicit local actor terms, but it cannot manufacture direction when the matching prior is absent.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality actor_taxonomy_prior_guided_section_direction_gold` → passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality actor_taxonomy_prior_guided_section_direction_without_prior_negative` → passed
+- `bash scripts/run_ci.sh` → passed (`204/204` tests)
+
 ## 2026-04-07 (KG fixtures now lock prior-guided semantic recovery)
 
 ### Added: prior-guided unseen-phrase semantic gold/negative pair

@@ -1,0 +1,150 @@
+{
+  "name": "actor_taxonomy_prior_guided_section_direction_without_prior_negative",
+  "source": "amba_actor_taxonomy_without_prior.md",
+  "source_ir_patch": {
+    "document_sections": [
+      {
+        "section_id": "sec_0001_issuer_signals",
+        "title": "Issuer signals",
+        "heading_level": 2,
+        "page_id": "page_0001",
+        "source_ref": null,
+        "reading_order": 1,
+        "section_kind": "signal_description"
+      },
+      {
+        "section_id": "sec_0002_acceptor_signals",
+        "title": "Acceptor signals",
+        "heading_level": 2,
+        "page_id": "page_0002",
+        "source_ref": null,
+        "reading_order": 10,
+        "section_kind": "signal_description"
+      }
+    ],
+    "structured_tables": [
+      {
+        "table_id": "table_0001",
+        "asset_id": "table_0001",
+        "page_id": "page_0001",
+        "caption_text": null,
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            {
+              "text": "Name",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Width",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            }
+          ]
+        ],
+        "body_rows": [
+          [
+            {
+              "text": "XADDR",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "32",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ],
+          [
+            {
+              "text": "XCMD",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "3",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ]
+        ],
+        "row_count": 2,
+        "col_count": 2
+      },
+      {
+        "table_id": "table_0002",
+        "asset_id": "table_0002",
+        "page_id": "page_0002",
+        "caption_text": null,
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            {
+              "text": "Name",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Width",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            }
+          ]
+        ],
+        "body_rows": [
+          [
+            {
+              "text": "XRESP",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "2",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ]
+        ],
+        "row_count": 1,
+        "col_count": 2
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["XADDR", "XCMD", "XRESP"]
+    },
+    "intent": {
+      "signal_names_include": ["XADDR", "XCMD", "XRESP"]
+    },
+    "validation": {
+      "semantic": {
+        "metric_values": {
+          "with_resolved_direction": "0",
+          "with_graph_direction": "0",
+          "with_compat_direction_hint": "0"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "with_resolved_direction": "0",
+          "with_graph_direction": "0",
+          "with_compat_direction_hint": "0"
+        }
+      }
+    }
+  }
+}
