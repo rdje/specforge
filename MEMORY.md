@@ -22,9 +22,9 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `df9c94f`
-- latest_commit_brief_message: `feat(learning): add modality reliability priors`
-- note: the current session has now moved beyond prior-family plumbing and used AXI-Stream as the first unseen protocol run to materially populate semantic priors in `CorpusMemory`
+- latest_commit_hash: `23eb7d1`
+- latest_commit_brief_message: `feat(learning): reject bogus actor priors`
+- note: the current session is now focused on AXI-Stream structural truthfulness after the first unseen-protocol run materially populated semantic priors in `CorpusMemory`
 
 ## Recent commit chain (last 5)
 - `df9c94f` feat(learning): add modality reliability priors
@@ -48,7 +48,7 @@
 - `SemanticIR` now also has a fifth bounded prior consumer overall and a second semantic-stage one for semantic modality-reliability priors, using them only to advisory-adjust arbitration between already-present locally grounded semantic candidates while preserving the underlying conflict surface
 - the latest live four-document prior-memory run over AXI/APB/AHB/AXI-Stream now yields `16` actor-taxonomy priors, `5` semantic phrase priors, `4` semantic modality-reliability priors, `266` temporal phrase priors, and `99` table-shape priors
 - AXI-Stream is now the first unseen protocol run carried all the way through the full loopbacked path: it converged in `2` pipeline iterations with Ollama VLM + NLP Level 3, validates at `80/100 GOOD`, and its artifact is now included in the tracked validation snapshot
-- AXI-Stream prose KG extraction is now hardened against bogus payload/event actors: `control information` no longer survives as a producer for `TVALID`, AXI-Stream `signal_connectivity_conflicts` is now `0`, and the remaining structural gap is unresolved consumers plus graph-direction coverage
+- AXI-Stream prose KG extraction is now hardened against bogus payload/event actors: `control information` no longer survives as a producer for `TVALID`, AXI-Stream `signal_connectivity_conflicts` is now `0`, and the latest source-table fix also closes the missing consumer-side connectivity gap; graph-direction coverage is now the main remaining structural weakness
 - the learning plane now applies the same bogus-actor hygiene rule at harvest and lookup time, and the stale `control information -> requester_like` actor-taxonomy prior has been removed from local `CorpusMemory`
 - `specforge kg-bench` can now also stage a fixture-local `CorpusMemory`, and the first tracked gold/negative pair proves prior-guided temporal recovery on an unseen local phrase without leaking cross-document facts
 - `specforge kg-bench` now also locks the same before/after truthfulness pattern for semantic priors on an unseen local phrase

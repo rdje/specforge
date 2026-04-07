@@ -1,5 +1,30 @@
 # CHANGES
 
+## 2026-04-08 (AXI-Stream consumer-side connectivity now survives from source tables)
+
+### Fixed: source-column signal tables can now recover the opposite-side reader when it is uniquely grounded
+- Extended [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) so a `Source` / `Driver` column no longer stops at `(actor, Drives, signal)` when the current document already exposes exactly one opposite actor role locally.
+- The new helper path builds a small local actor-role inventory from signal-description tables and section headings, then adds the complementary `Reads` edge only when the opposite requester-like/completer-like actor is unique.
+- Added focused regressions for both the positive case and the ambiguity guard:
+  - `source_table_relations_infer_unique_complementary_reads`
+  - `source_table_relations_skip_complementary_reads_when_opposite_actor_is_ambiguous`
+- Updated the tracked KG fixtures whose expected graph shape now honestly includes these complementary consumer edges.
+
+### Changed: AXI-Stream now keeps consumer-side structural connectivity without changing its score
+- Re-ran full `specforge converge` with Ollama VLM + NLP Level 3 on [IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf](/Users/richarddje/Documents/livework/chipdoc/arm/amba/supporting/axi-stream/current/IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf).
+- The run still converged in `2` pipeline iterations and still validates at `80/100 GOOD`, but `IntentIR` now carries the missing consumer-side structural KG edges:
+  - `Receiver reads TVALID`
+  - `Transmitter reads TREADY`
+  - `Receiver reads TDATA/TSTRB/TKEEP/TLAST/TID/TDEST/TUSER/TWAKEUP`
+- The AXI-Stream validation finding for missing consumer actors is now gone; the remaining dominant gap is graph-derived direction coverage, not missing connectivity.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml source_table_relations_infer_unique_complementary_reads -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml source_table_relations_skip_complementary_reads_when_opposite_actor_is_ambiguous -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml actor_taxonomy_priors_guide_source_column_direction_inference -- --nocapture` → passed
+- full `specforge converge` on AXI-Stream with Ollama VLM + NLP Level 3 → converged in `2` iterations
+- `cargo run --manifest-path Cargo.toml -- validate generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json` → passed (`80/100 GOOD`, consumer-gap finding removed)
+
 ## 2026-04-08 (learning plane now rejects bogus actor vocabulary)
 
 ### Fixed: actor-taxonomy learning no longer harvests payload nouns as actors

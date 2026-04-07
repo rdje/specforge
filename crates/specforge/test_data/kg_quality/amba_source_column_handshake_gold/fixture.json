@@ -156,7 +156,7 @@
     "validation": {
       "evidence": {
         "metric_values": {
-          "actor_signal_relations": "2",
+          "actor_signal_relations": "4",
           "signal_constraints": "1",
           "signal_semantic_hints": "2",
           "signal_semantic_hints_from_tables": "2"
@@ -164,7 +164,7 @@
       },
       "semantic": {
         "metric_values": {
-          "actor_ports": "2",
+          "actor_ports": "4",
           "with_semantic_consensus": "4",
           "with_decisive_semantic_arbitration": "4",
           "temporal_rules_with_handshake_completion": "1"
@@ -172,7 +172,7 @@
       },
       "intent": {
         "metric_values": {
-          "actor_ports": "2",
+          "actor_ports": "4",
           "with_semantic_consensus": "4",
           "with_decisive_semantic_arbitration": "4",
           "temporal_rules_with_handshake_completion": "1"

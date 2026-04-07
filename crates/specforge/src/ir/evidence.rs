@@ -1658,6 +1658,98 @@ fn actor_name_and_role_from_section_heading(
     None
 }
 
+fn opposite_actor_taxonomy_role(role: ActorTaxonomyRole) -> ActorTaxonomyRole {
+    match role {
+        ActorTaxonomyRole::RequesterLike => ActorTaxonomyRole::CompleterLike,
+        ActorTaxonomyRole::CompleterLike => ActorTaxonomyRole::RequesterLike,
+    }
+}
+
+fn collect_local_actor_names_by_taxonomy_role(
+    source_ir: &SourceIr,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+) -> BTreeMap<ActorTaxonomyRole, BTreeSet<String>> {
+    let mut actor_names_by_role = BTreeMap::<ActorTaxonomyRole, BTreeSet<String>>::new();
+
+    for table in &source_ir.structured_tables {
+        if !should_treat_table_as_top_level_signal_description(table, prior_guidance) {
+            continue;
+        }
+
+        let header_texts: Vec<String> = table
+            .header_rows
+            .first()
+            .map(|row| {
+                row.iter()
+                    .map(|cell| cell.text.to_ascii_lowercase())
+                    .collect()
+            })
+            .unwrap_or_default();
+        let relation_cols = header_texts
+            .iter()
+            .enumerate()
+            .filter_map(|(idx, header)| {
+                if header.contains("source")
+                    || header.contains("driver")
+                    || header.contains("destination")
+                    || header.contains("dest")
+                {
+                    Some(idx)
+                } else {
+                    None
+                }
+            })
+            .collect::<Vec<_>>();
+
+        for row in &table.body_rows {
+            for relation_col in &relation_cols {
+                if let Some(cell) = row.get(*relation_col)
+                    && let Some(actor_name) = normalize_relation_actor_name(&cell.text)
+                    && let Some(role) = actor_taxonomy_role_in_text(&actor_name, prior_guidance)
+                {
+                    actor_names_by_role
+                        .entry(role)
+                        .or_default()
+                        .insert(actor_name);
+                }
+            }
+        }
+    }
+
+    for section in &source_ir.document_sections {
+        if let Some((actor_name, role)) =
+            actor_name_and_role_from_section_heading(&section.title, prior_guidance)
+            && let Some(actor_name) = normalize_relation_actor_name(&actor_name)
+        {
+            actor_names_by_role
+                .entry(role)
+                .or_default()
+                .insert(actor_name);
+        }
+    }
+
+    actor_names_by_role
+}
+
+fn unique_complementary_reader_actor_name(
+    actor_name: &str,
+    actor_role: ActorTaxonomyRole,
+    local_actor_names_by_role: &BTreeMap<ActorTaxonomyRole, BTreeSet<String>>,
+) -> Option<String> {
+    let opposite_role = opposite_actor_taxonomy_role(actor_role);
+    let candidates = local_actor_names_by_role.get(&opposite_role)?;
+    if candidates.len() != 1 {
+        return None;
+    }
+
+    let candidate = candidates.iter().next()?.clone();
+    if normalize_actor_term(&candidate) == normalize_actor_term(actor_name) {
+        return None;
+    }
+
+    Some(candidate)
+}
+
 #[cfg(test)]
 fn extract_relations_from_signal_tables(source_ir: &SourceIr) -> Vec<ActorSignalRelation> {
     extract_relations_from_signal_tables_with_prior_guidance(source_ir, None)
@@ -1670,6 +1762,8 @@ fn extract_relations_from_signal_tables_with_prior_guidance(
     let mut records = Vec::new();
     let mut counter = 1usize;
     let mut page_to_section: BTreeMap<u32, (SectionKind, String)> = BTreeMap::new();
+    let local_actor_names_by_role =
+        collect_local_actor_names_by_taxonomy_role(source_ir, prior_guidance);
 
     for section in &source_ir.document_sections {
         if let Some(page_num) = section
@@ -1756,15 +1850,39 @@ fn extract_relations_from_signal_tables_with_prior_guidance(
                 continue;
             };
 
+            let complementary_reader = if matches!(relation, RelationKind::Drives) {
+                actor_taxonomy_role_in_text(&actor, prior_guidance).and_then(|actor_role| {
+                    unique_complementary_reader_actor_name(
+                        &actor,
+                        actor_role,
+                        &local_actor_names_by_role,
+                    )
+                })
+            } else {
+                None
+            };
+
             records.push(ActorSignalRelation {
                 relation_id: format!("tbl_asr_{counter:04}"),
-                actor_name: actor,
-                signal_name: signal_token,
+                actor_name: actor.clone(),
+                signal_name: signal_token.clone(),
                 relation,
                 source_statement_ids: vec![table.table_id.clone()],
                 automation_confidence: AutomationConfidence::Medium,
             });
             counter += 1;
+
+            if let Some(reader_actor) = complementary_reader {
+                records.push(ActorSignalRelation {
+                    relation_id: format!("tbl_asr_{counter:04}"),
+                    actor_name: reader_actor,
+                    signal_name: signal_token.clone(),
+                    relation: RelationKind::Reads,
+                    source_statement_ids: vec![table.table_id.clone()],
+                    automation_confidence: AutomationConfidence::Medium,
+                });
+                counter += 1;
+            }
         }
     }
 
@@ -6530,15 +6648,35 @@ mod tests {
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
         )?;
-        assert_eq!(evidence_ir.actor_signal_relations.len(), 2);
+        assert_eq!(evidence_ir.actor_signal_relations.len(), 4);
         assert!(
-            evidence_ir.actor_signal_relations.iter().all(|relation| {
-                !matches!(relation.actor_name.as_str(), "Clock" | "Reset")
-                    && matches!(relation.relation, RelationKind::Drives)
-            }),
+            evidence_ir
+                .actor_signal_relations
+                .iter()
+                .all(|relation| { !matches!(relation.actor_name.as_str(), "Clock" | "Reset") }),
             "infrastructure labels must not become actor-signal relations: {:?}",
             evidence_ir.actor_signal_relations
         );
+        assert!(evidence_ir.actor_signal_relations.iter().any(|relation| {
+            relation.actor_name == "Requester"
+                && relation.signal_name == "XREQ"
+                && matches!(relation.relation, RelationKind::Drives)
+        }));
+        assert!(evidence_ir.actor_signal_relations.iter().any(|relation| {
+            relation.actor_name == "Subordinate"
+                && relation.signal_name == "XREQ"
+                && matches!(relation.relation, RelationKind::Reads)
+        }));
+        assert!(evidence_ir.actor_signal_relations.iter().any(|relation| {
+            relation.actor_name == "Subordinate"
+                && relation.signal_name == "XACK"
+                && matches!(relation.relation, RelationKind::Drives)
+        }));
+        assert!(evidence_ir.actor_signal_relations.iter().any(|relation| {
+            relation.actor_name == "Requester"
+                && relation.signal_name == "XACK"
+                && matches!(relation.relation, RelationKind::Reads)
+        }));
 
         Ok(())
     }
@@ -6587,6 +6725,136 @@ mod tests {
         assert!(
             matches!(relations[0].relation, RelationKind::Reads),
             "destination columns must produce Reads relations, got: {:?}",
+            relations
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn source_table_relations_infer_unique_complementary_reads() -> Result<()> {
+        use crate::ir::source::RelationKind;
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+
+        fs::write(&source, "# Signals\n")?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_source_desc".to_string(),
+            asset_id: "asset_source_desc".to_string(),
+            page_id: None,
+            caption_text: Some("Source-oriented signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Source", true),
+                make_table_cell("Width", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("XREQ", false),
+                    make_table_cell("Requester", false),
+                    make_table_cell("1", false),
+                    make_table_cell("Transfer request", false),
+                ],
+                vec![
+                    make_table_cell("XACK", false),
+                    make_table_cell("Completer", false),
+                    make_table_cell("1", false),
+                    make_table_cell("Transfer response", false),
+                ],
+            ],
+            row_count: 2,
+            col_count: 4,
+        });
+
+        let relations = super::extract_relations_from_signal_tables(&source_ir);
+        assert_eq!(relations.len(), 4, "expected paired drive/read relations");
+        assert!(relations.iter().any(|relation| {
+            relation.actor_name == "Requester"
+                && relation.signal_name == "XREQ"
+                && matches!(relation.relation, RelationKind::Drives)
+        }));
+        assert!(relations.iter().any(|relation| {
+            relation.actor_name == "Completer"
+                && relation.signal_name == "XREQ"
+                && matches!(relation.relation, RelationKind::Reads)
+        }));
+        assert!(relations.iter().any(|relation| {
+            relation.actor_name == "Completer"
+                && relation.signal_name == "XACK"
+                && matches!(relation.relation, RelationKind::Drives)
+        }));
+        assert!(relations.iter().any(|relation| {
+            relation.actor_name == "Requester"
+                && relation.signal_name == "XACK"
+                && matches!(relation.relation, RelationKind::Reads)
+        }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn source_table_relations_skip_complementary_reads_when_opposite_actor_is_ambiguous()
+    -> Result<()> {
+        use crate::ir::source::RelationKind;
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+
+        fs::write(&source, "# Signals\n")?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_source_desc".to_string(),
+            asset_id: "asset_source_desc".to_string(),
+            page_id: None,
+            caption_text: Some("Ambiguous source-oriented signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Source", true),
+                make_table_cell("Width", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("XREQ", false),
+                    make_table_cell("Requester", false),
+                    make_table_cell("1", false),
+                    make_table_cell("Transfer request", false),
+                ],
+                vec![
+                    make_table_cell("XACK0", false),
+                    make_table_cell("Completer A", false),
+                    make_table_cell("1", false),
+                    make_table_cell("Transfer response", false),
+                ],
+                vec![
+                    make_table_cell("XACK1", false),
+                    make_table_cell("Completer B", false),
+                    make_table_cell("1", false),
+                    make_table_cell("Transfer response", false),
+                ],
+            ],
+            row_count: 3,
+            col_count: 4,
+        });
+
+        let relations = super::extract_relations_from_signal_tables(&source_ir);
+        assert!(
+            relations.iter().all(|relation| {
+                !(relation.signal_name == "XREQ"
+                    && matches!(relation.relation, RelationKind::Reads))
+            }),
+            "ambiguous opposite actors must block complementary read inference: {:?}",
             relations
         );
 
@@ -6656,6 +6924,26 @@ mod tests {
                 .any(|statement| statement.text == "Signal XACK is input width 1."),
             "expected completer-like prior to recover input direction for Consumer source column"
         );
+        assert!(evidence_ir.actor_signal_relations.iter().any(|relation| {
+            relation.actor_name == "Producer"
+                && relation.signal_name == "XREQ"
+                && matches!(relation.relation, RelationKind::Drives)
+        }));
+        assert!(evidence_ir.actor_signal_relations.iter().any(|relation| {
+            relation.actor_name == "Consumer"
+                && relation.signal_name == "XREQ"
+                && matches!(relation.relation, RelationKind::Reads)
+        }));
+        assert!(evidence_ir.actor_signal_relations.iter().any(|relation| {
+            relation.actor_name == "Consumer"
+                && relation.signal_name == "XACK"
+                && matches!(relation.relation, RelationKind::Drives)
+        }));
+        assert!(evidence_ir.actor_signal_relations.iter().any(|relation| {
+            relation.actor_name == "Producer"
+                && relation.signal_name == "XACK"
+                && matches!(relation.relation, RelationKind::Reads)
+        }));
 
         Ok(())
     }

@@ -246,8 +246,8 @@
           "with_resolved_direction": "3",
           "with_graph_direction": "3",
           "with_compat_direction_hint": "3",
-          "actor_signal_relations": "3",
-          "actor_ports": "3"
+          "actor_signal_relations": "6",
+          "actor_ports": "6"
         }
       },
       "intent": {
@@ -255,8 +255,8 @@
           "with_resolved_direction": "3",
           "with_graph_direction": "3",
           "with_compat_direction_hint": "3",
-          "actor_signal_relations": "3",
-          "actor_ports": "3"
+          "actor_signal_relations": "6",
+          "actor_ports": "6"
         }
       }
     }
