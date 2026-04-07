@@ -22,9 +22,9 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `60e76b5`
-- latest_commit_brief_message: `feat(semantic): consume temporal phrase priors safely`
-- note: the current session lands the first tracked semantic gold/negative pair that proves prior-guided role recovery improves an unseen local phrase honestly
+- latest_commit_hash: `97ed69b`
+- latest_commit_brief_message: `feat(quality): benchmark timing table-shape priors`
+- note: the current session is now logging the architectural doctrine that the learning plane is really an epistemology layer and that its structure is critical to keeping priors from poisoning canonical truth
 
 ## Recent commit chain (last 5)
 - `60e76b5` feat(semantic): consume temporal phrase priors safely
@@ -62,11 +62,14 @@
   - code defines how `R15f` learns
   - the typed prior store captures what has been learned so far
   - the main growing artifact is `generated/prior_memory/corpus_memory.json`
+- logged the complementary architectural doctrine for "how to learn":
+  - `R15f` should borrow the useful structural properties of human learning without trying to mimic humans completely
+  - the learning plane must keep strict separation, typed memory, bounded influence, validation-gated feedback, negative learning, and provenance
+  - the learning plane should be treated as a first-class epistemology layer, not as a side feature
 - synced `README.md`, `DEVELOPMENT_NOTES.md`, `CHANGES.md`, and `MEMORY.md` so future sessions can quickly recover that distinction after a crash or handoff
 
 ## Current working tree before commit
 - modified tracked files currently include:
-  - `README.md`
   - `DEVELOPMENT_NOTES.md`
   - `CHANGES.md`
   - `MEMORY.md`

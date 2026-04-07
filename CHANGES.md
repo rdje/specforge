@@ -1,5 +1,27 @@
 # CHANGES
 
+## 2026-04-07 (learning-plane structure documented as first-class architecture)
+
+### Added: explicit doctrine for how `R15f` should learn
+- Logged in [DEVELOPMENT_NOTES.md](/Users/richarddje/Documents/github/specforge/DEVELOPMENT_NOTES.md) that the cross-document learning plane should not try to "mimic humans completely," but should instead borrow the useful structural properties of human learning:
+  - accumulate experience across many documents
+  - abstract patterns from repeated successful cases
+  - keep confidence graded
+  - remember failures and false positives
+  - use prior experience to guide attention
+  - still require local evidence before promoting a fact
+- Logged the non-negotiable architectural properties for the learning plane:
+  - separation between document truth and learned priors
+  - typed, inspectable memory
+  - bounded influence
+  - validation-gated feedback
+  - negative learning
+  - provenance on learned priors
+
+### Why this matters
+- This frames `R15f` as an epistemology layer, not just a bigger cache.
+- It makes explicit that the design risk is not "too little learning," but poorly structured learning that can poison canonical truth.
+
 ## 2026-04-07 (table-shape timing-table benchmark added)
 
 ### Added: second table-shape gold/negative pair

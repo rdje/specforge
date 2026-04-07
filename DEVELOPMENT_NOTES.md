@@ -525,6 +525,48 @@
 - if the prior store is deleted, the extractor still knows how to learn, but it loses the accumulated experience
 - this separation is a major architectural strength because the learned knowledge stays inspectable, diffable, and debuggable rather than being buried inside opaque weights
 
+### Why the "how to learn" structure is critical
+- yes, this part loosely echoes how humans learn, but the right target is not "mimic humans completely"
+- the safer goal is:
+  - borrow the parts of human learning that are structurally useful for extraction quality
+  - reject the parts that would turn priors into hidden hallucination channels
+- the useful human-like properties are:
+  - accumulate experience across many documents
+  - abstract patterns from repeated successful cases
+  - keep confidence graded rather than binary
+  - remember failures and false positives
+  - use prior experience to guide attention
+  - still require local evidence before believing a new fact
+- that is why the learning-plane structure is so important:
+  - if it is shaped badly, it can poison the pipeline by letting priors silently override document truth
+  - if it is shaped well, it becomes a disciplined experience layer that improves extraction while preserving provenance purity
+
+### Non-negotiable properties for the learning plane
+- separation:
+  - document truth and learned priors must remain distinct artifacts and distinct authority levels
+- typed memory:
+  - what is learned must stay explicit, inspectable, queryable, and diffable
+- bounded influence:
+  - priors may guide interpretation, ranking, and rescans, but must never directly author canonical facts
+- validation-gated feedback:
+  - only outcomes that survive arbitration and validation are allowed to feed back into learned memory
+- negative learning:
+  - the system must learn not only what works, but also what misleads, overfires, and creates false positives
+- provenance:
+  - every learned prior should retain what evidence family created it and from which documents it was harvested
+
+### The learning plane is really an epistemology layer
+- the real goal is not "more memory"; it is a better epistemology for extraction
+- the learning plane should tell the system:
+  - what kinds of prior knowledge are acceptable
+  - how strongly that prior knowledge may influence extraction
+  - when local evidence is still insufficient
+  - when a pattern is known to be dangerous and should require stronger corroboration
+- this is why the design should be treated as first-class architecture, not as a side feature:
+  - extraction quality depends on the typed semantic world model
+  - long-term scaling depends on the learning-plane design
+  - therefore the structure of "how to learn" is one of the most important architectural problems in the project
+
 ### Implementation direction
 - define a typed schema for cross-document prior memory
 - keep that schema versioned separately from per-document IR artifacts
