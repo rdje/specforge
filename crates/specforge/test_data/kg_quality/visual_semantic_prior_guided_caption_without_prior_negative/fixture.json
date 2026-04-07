@@ -1,0 +1,56 @@
+{
+  "name": "visual_semantic_prior_guided_caption_without_prior_negative",
+  "source": "source.md",
+  "source_ir_patch": {
+    "visual_assets": [
+      {
+        "asset_id": "figure_0001",
+        "asset_kind": "diagram",
+        "page_id": "page_0001",
+        "image_path": null,
+        "caption_text": "Figure 1: XACK can sink the transfer.",
+        "caption_source_path": null,
+        "source_ref": null,
+        "placeholder_text": null,
+        "note": null,
+        "diagram_kind": "timing_diagram"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["XACK"],
+      "resolved_semantic_role_signal_names_exclude": ["XACK"],
+      "semantic_consensus_signal_names_exclude": ["XACK"],
+      "semantic_candidate_signal_names_exclude": ["XACK"]
+    },
+    "intent": {
+      "signal_names_include": ["XACK"],
+      "resolved_semantic_role_signal_names_exclude": ["XACK"],
+      "semantic_consensus_signal_names_exclude": ["XACK"],
+      "semantic_candidate_signal_names_exclude": ["XACK"]
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "signal_semantic_hints": "0",
+          "signal_semantic_hints_from_visual_captions": "0"
+        }
+      },
+      "semantic": {
+        "metric_values": {
+          "with_resolved_semantic_role": "0",
+          "with_semantic_consensus": "0",
+          "with_visual_semantic_grounding": "0"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "with_resolved_semantic_role": "0",
+          "with_semantic_consensus": "0",
+          "with_visual_semantic_grounding": "0"
+        }
+      }
+    }
+  }
+}

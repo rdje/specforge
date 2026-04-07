@@ -539,11 +539,12 @@
   - `specforge kg-bench` can now stage a fixture-owned local `CorpusMemory`, and the first tracked gold/negative pair proves prior-guided temporal recovery improves an unseen local phrase honestly instead of leaking canonical facts across documents
   - `specforge kg-bench` now also has the first tracked semantic gold/negative pair proving prior-guided role recovery on an unseen local phrase, with no recovery when the matching prior is absent
   - `specforge kg-bench` now also has the first tracked actor-taxonomy gold/negative pair proving width-only `Issuer signals` / `Acceptor signals` section headings stay directionless without prior memory and gain canonical signal directions only when matching actor-taxonomy priors are staged into the fixture
+  - `specforge kg-bench` now also has the first tracked visual semantic gold/negative pair proving an unseen local caption phrase like `XACK can sink the transfer` stays unresolved without prior memory and gains visual-caption semantic recovery only when the matching prior is staged into the fixture
 - remaining:
   - broaden the prior store beyond the first actor-taxonomy / semantic / temporal phrase families into table-shape, visual-motif, modality-reliability, and negative-knowledge priors
   - decide how protocol-family scoping should grow beyond the current AMBA family inference without hardcoding brittle protocol logic
   - broaden prior consumption beyond the first actor-taxonomy and semantic-role `EvidenceIR` slices plus the first temporal-language `SemanticIR` slice into table-shape, visual-motif, modality-reliability, and negative-knowledge suggestions without bypassing local grounding
-  - broaden the first benchmark coverage for prior-guided unseen-document improvement beyond the new actor-taxonomy, temporal, and semantic gold/negative pairs into visual and negative-knowledge prior families
+  - broaden the first benchmark coverage for prior-guided unseen-document improvement beyond the new actor-taxonomy, temporal, semantic, and visual gold/negative pairs into negative-knowledge prior families
 
 ### R16 SystemVerilog adapter (Horizon)
 - status: Horizon

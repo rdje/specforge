@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-04-07 (KG fixtures now lock prior-guided visual semantic recovery)
+
+### Added: prior-guided visual semantic gold/negative pair
+- Added [visual_semantic_prior_guided_caption_gold](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/visual_semantic_prior_guided_caption_gold/fixture.json), which proves the unseen local visual-caption phrase `XACK can sink the transfer` gains ready-like semantic recovery only when a matching `visual_caption` semantic prior is staged into the fixture.
+- Added [visual_semantic_prior_guided_caption_without_prior_negative](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/visual_semantic_prior_guided_caption_without_prior_negative/fixture.json), which locks the honest fallback behavior that the same local caption stays semantically unresolved when prior memory is absent.
+
+### Why this matters
+- This broadens the first benchmark surface into a second modality without inventing a new unsafe prior family prematurely.
+- It proves the bounded semantic-prior doctrine is not prose-only: prior memory can widen interpretation of local visual-caption phrasing, but it still cannot manufacture a role when the matching prior is absent.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality visual_semantic_prior_guided_caption_gold` → passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality visual_semantic_prior_guided_caption_without_prior_negative` → passed
+- `bash scripts/run_ci.sh` → passed (`204/204` tests)
+
 ## 2026-04-07 (KG fixtures now lock prior-guided actor-taxonomy recovery)
 
 ### Added: prior-guided actor-taxonomy gold/negative pair
