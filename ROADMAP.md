@@ -527,10 +527,11 @@
   - the first harvested prior families are:
     - actor-taxonomy priors from decisive actor-grounded handshake-role evidence plus conservative self-identifying actor vocabulary
     - semantic-role phrase priors from decisive, non-alias-dependent canonical semantic consensus plus preserved observation text
+    - semantic modality-reliability priors from decisive, non-alias-dependent canonical semantic consensus plus supporting source kinds
     - temporal-language phrase priors from canonical `temporal_rules` plus validated canonical `signal_constraints` / `conditional_rules`
     - table-shape priors from validated structured-table header signatures chained through validated artifacts
-  - the first query helpers can already filter actor-taxonomy priors by protocol family and taxonomy role, semantic priors by protocol family / source kind / role, and temporal priors by protocol family plus cycle-window / actor-grounding requirements
-  - the latest live AMBA run across AXI/APB/AHB `IntentIR` artifacts now yields `16` actor-taxonomy priors, `222` temporal phrase priors, and `94` table-shape priors while keeping semantic phrase priors at `0` until stronger observation-backed semantic consensus exists in the canonical artifacts
+  - the first query helpers can already filter actor-taxonomy priors by protocol family and taxonomy role, semantic priors by protocol family / source kind / role, semantic modality-reliability priors by protocol family / source kind / role, and temporal priors by protocol family plus cycle-window / actor-grounding requirements
+  - the latest live AMBA run across AXI/APB/AHB `IntentIR` artifacts now yields `16` actor-taxonomy priors, `222` temporal phrase priors, and `94` table-shape priors while keeping semantic phrase priors and semantic modality-reliability priors at `0` until stronger observation-backed semantic consensus exists in the canonical artifacts
   - `EvidenceIR` now has the first bounded prior-consumption path: `specforge evidence` / `specforge converge` consult the local `CorpusMemory` by default and can use actor-taxonomy priors to interpret explicit local actor terms in section headings and `Source` / `Destination` table columns
   - that first consumer is now stronger too: width-only section-guided signal tables can recover structural `ActorSignalRelation::Drives` edges and graph-backed directions when the section heading carries a locally grounded actor term plus a matching learned taxonomy prior
   - the actor-taxonomy consumer is still provenance-safe: prior memory can widen actor vocabulary, but it cannot create canonical actors, signals, or relations that are not explicitly present in the current PDF
@@ -539,6 +540,7 @@
   - `SemanticIR` now has a third bounded prior-consumption path too: temporal phrase priors can advisory-recover a cycle window for local timing text when the built-in parser cannot recover that window directly
   - prior-guided temporal recovery stays provenance-safe as well: the prior can help interpret a local phrase like `PREADY must be asserted one beat later`, but it cannot create a timing rule without that local timing text already appearing in the current document
   - `EvidenceIR` now has a fourth bounded prior-consumption path too: table-shape priors can advisory-recover a local table kind only when the current table is still `unknown`; explicit local `SourceIR.table_kind` values remain authoritative
+  - `SemanticIR` now has a second semantic-stage bounded prior-consumption path too: semantic modality-reliability priors can advisory-adjust local semantic arbitration only when the current PDF already contains multiple competing locally grounded semantic candidates, and the conflict/arbitration surface still stays explicit
   - `specforge kg-bench` can now stage a fixture-owned local `CorpusMemory`, and the first tracked gold/negative pair proves prior-guided temporal recovery improves an unseen local phrase honestly instead of leaking canonical facts across documents
   - `specforge kg-bench` now also has the first tracked semantic gold/negative pair proving prior-guided role recovery on an unseen local phrase, with no recovery when the matching prior is absent
   - `specforge kg-bench` now also has the first tracked actor-taxonomy gold/negative pair proving width-only `Issuer signals` / `Acceptor signals` section headings stay directionless and graph-empty without prior memory and gain structural KG edges plus canonical signal directions only when matching actor-taxonomy priors are staged into the fixture
@@ -546,11 +548,12 @@
   - `specforge kg-bench` now also has the first table-shape gold/negative benchmark set proving:
     - a locally `unknown` `Name | Direction | Width` table stays inert without prior memory and gains signal-description recovery only when a matching learned table-shape prior is staged into the fixture
     - a locally `unknown` `Parameter | Min | Max | Unit` table stays inert without prior memory and gains timing-parameter recovery only when a matching learned table-shape prior is staged into the fixture
+  - `specforge kg-bench` now also has the first semantic modality-reliability gold/negative pair proving a locally conflicted role like `XCTRL` stays honestly contested without prior memory and becomes decisively resolved only when a matching modality-reliability prior is staged, while preserving the original conflict record
 - remaining:
-  - broaden the prior store beyond the first actor-taxonomy / semantic / temporal / table-shape families into visual-motif, modality-reliability, and negative-knowledge priors
+  - broaden the prior store beyond the first actor-taxonomy / semantic / semantic-modality-reliability / temporal / table-shape families into visual-motif and negative-knowledge priors
   - decide how protocol-family scoping should grow beyond the current AMBA family inference without hardcoding brittle protocol logic
-  - broaden prior consumption beyond the first actor-taxonomy / semantic-role / table-shape `EvidenceIR` slices plus the first temporal-language `SemanticIR` slice into visual-motif, modality-reliability, and negative-knowledge suggestions without bypassing local grounding
-  - broaden the first benchmark coverage for prior-guided unseen-document improvement beyond the new actor-taxonomy, temporal, semantic, visual, and table-shape gold/negative pairs into negative-knowledge prior families
+  - broaden prior consumption beyond the first actor-taxonomy / semantic-role / table-shape `EvidenceIR` slices plus the first temporal-language and semantic-modality-reliability `SemanticIR` slices into visual-motif and negative-knowledge suggestions without bypassing local grounding
+  - broaden the first benchmark coverage for prior-guided unseen-document improvement beyond the new actor-taxonomy, temporal, semantic, visual, table-shape, and semantic-modality-reliability gold/negative pairs into negative-knowledge prior families
 
 ### R16 SystemVerilog adapter (Horizon)
 - status: Horizon

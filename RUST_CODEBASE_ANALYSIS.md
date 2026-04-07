@@ -80,17 +80,20 @@
 - the first `R15f` slice currently learns:
   - actor-taxonomy priors from decisive actor-grounded handshake-role evidence plus conservative self-identifying actor vocabulary
   - semantic-role phrase priors from decisive, non-alias-dependent canonical semantic consensus plus preserved observation text
+  - semantic modality-reliability priors from decisive, non-alias-dependent canonical semantic consensus plus supporting source kinds
   - temporal-language phrase priors from canonical `temporal_rules` plus validated canonical `signal_constraints` / `conditional_rules`
   - table-shape priors from validated structured-table header signatures chained through validated artifacts
-- the latest live AMBA prior-memory run across AXI/APB/AHB `IntentIR` artifacts currently yields `16` actor-taxonomy priors, `222` temporal phrase priors, `94` table-shape priors, and `0` semantic phrase priors, which is a useful honest signal that the prior store is already working while the canonical semantic-consensus surface on real artifacts still needs to deepen
+- the latest live AMBA prior-memory run across AXI/APB/AHB `IntentIR` artifacts currently yields `16` actor-taxonomy priors, `222` temporal phrase priors, `94` table-shape priors, and `0` both for semantic phrase priors and semantic modality-reliability priors, which is a useful honest signal that the prior store is already working while the canonical semantic-consensus surface on real artifacts still needs to deepen
 - the first bounded prior-consumption path is now landed too: `EvidenceIR` can consult the local `CorpusMemory` during `evidence` / `converge` and use actor-taxonomy priors to interpret explicit local actor labels in section headings and `Source` / `Destination` columns, and width-only section-guided signal tables can now recover structural `ActorSignalRelation::Drives` edges instead of only flat compatibility directions
 - that matters because it replaces another brittle hardcoded-vocabulary heuristic with a typed reusable prior while still keeping canonical truth local; the prior can widen the meaning of a seen actor term like `Producer`, but it cannot invent a new actor, signal, or relation
 - the second bounded prior-consumption path is now landed too: `EvidenceIR` can use semantic phrase priors to recover local signal-role hints from non-hardcoded grounded phrases, and that guidance now survives later `refresh_signal_semantic_hints()` calls because the consulted `prior_memory_path` is persisted into `EvidenceIR`
 - the third bounded prior-consumption path is now landed too: `SemanticIR` can use temporal phrase priors to advisory-recover cycle windows from local timing text when the built-in parser cannot recover that timing window directly
-- the benchmark surface now locks all three first bounded prior families:
+- the fourth bounded prior-consumption path is now landed too: `SemanticIR` can use semantic modality-reliability priors to advisory-adjust local semantic arbitration when the current PDF already contains multiple competing locally grounded role candidates, while keeping the underlying semantic conflict explicit
+- the benchmark surface now locks all four first bounded prior families:
   - actor-taxonomy priors: width-only `Issuer signals` / `Acceptor signals` sections stay directionless and graph-empty without prior memory and gain structural KG edges, actor ports, and canonical directions only when the matching actor-taxonomy priors are staged into the fixture
   - semantic phrase priors: `XACK can receive the transfer` stays semantically unresolved without prior memory and gains ready-like recovery only with a matching semantic prior
   - temporal phrase priors: `PREADY must be asserted one beat later` stays temporally unbounded without prior memory and gains a one-cycle `cycle_window` only with a matching temporal prior
+  - semantic modality-reliability priors: locally conflicted role evidence like `XCTRL` stays contested without prior memory and becomes decisively resolved only when the matching modality-reliability prior is staged into the fixture
 - the same semantic prior family is now benchmarked across another modality too: the unseen local visual-caption phrase `XACK can sink the transfer` stays unresolved without prior memory and gains ready-like recovery only when a matching `visual_caption` semantic prior is staged into the fixture
 - the fourth bounded prior-consumption path is now landed too: `EvidenceIR` can advisory-recover a local table kind from a learned table-shape prior, but only when the current table is still `unknown`; explicit local `SourceIR` table kinds still win outright
 - the benchmark surface now locks the first table-shape before/after truthfulness pairs too:
@@ -99,7 +102,7 @@
 - that matters because the learning plane can now strengthen local temporal understanding on unseen phrase shapes without letting prior memory create timing rules that are not already grounded in the current PDF
 - the KG benchmark harness can now also stage a fixture-owned `CorpusMemory`, and the first tracked gold/negative pair proves that unseen local timing language only gains a `cycle_window` when a matching learned temporal prior is present
 - the KG benchmark harness now also locks the same before/after truthfulness pattern for semantic priors: unseen local role language only gains canonical semantic recovery when a matching learned semantic prior is present
-- the local test suite is now at `205/205` passing after the first table-shape prior slice landed
+- the local test suite is now at `206/206` passing after the current semantic modality-reliability slice landed
 - `specforge converge` now excludes downstream adapter residual work from `knowledge_fact_count`, so fewer adapter residual decisions do not falsely trip the monotone-knowledge guard
 - `generated/` is now intentionally git-ignored and untracked, so local validation snapshots must be recorded in the live docs instead of relying on versioned artifacts
 - latest local validation snapshot is now APB 95/100 EXCELLENT, AHB 95/100 EXCELLENT, AXI 94/100 EXCELLENT

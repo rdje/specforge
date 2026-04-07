@@ -61,6 +61,8 @@ pub struct CorpusMemory {
     #[serde(default)]
     pub semantic_phrase_priors: Vec<SemanticPhrasePriorRecord>,
     #[serde(default)]
+    pub semantic_modality_reliability_priors: Vec<SemanticModalityReliabilityPriorRecord>,
+    #[serde(default)]
     pub temporal_phrase_priors: Vec<TemporalPhrasePriorRecord>,
     #[serde(default)]
     pub table_shape_priors: Vec<TableShapePriorRecord>,
@@ -233,6 +235,33 @@ impl CorpusMemory {
         }
 
         None
+    }
+
+    pub fn semantic_modality_reliability_bonus(
+        &self,
+        protocol_family: Option<ProtocolFamily>,
+        role: InterfaceSignalSemanticRole,
+        source_kind: SignalSemanticHintSourceKind,
+    ) -> u32 {
+        for scope in actor_taxonomy_search_scopes(protocol_family) {
+            let bonus = self
+                .semantic_modality_reliability_priors
+                .iter()
+                .filter(|prior| {
+                    scope
+                        .map(|expected| prior.protocol_family == expected)
+                        .unwrap_or(true)
+                })
+                .filter(|prior| prior.role == role)
+                .filter(|prior| prior.source_kind == source_kind)
+                .map(semantic_modality_reliability_prior_bonus)
+                .max();
+            if let Some(bonus) = bonus.filter(|bonus| *bonus > 0) {
+                return bonus;
+            }
+        }
+
+        0
     }
 
     pub fn table_shape_priors_for(
@@ -501,6 +530,28 @@ fn table_kind_key(table_kind: TableKind) -> &'static str {
     }
 }
 
+fn semantic_modality_reliability_prior_bonus(
+    prior: &SemanticModalityReliabilityPriorRecord,
+) -> u32 {
+    if prior.support_count >= 3
+        && matches!(
+            prior.strongest_grounding_strength,
+            SemanticGroundingStrength::CrossModality
+        )
+    {
+        2
+    } else if prior.support_count >= 2
+        && !matches!(
+            prior.strongest_grounding_strength,
+            SemanticGroundingStrength::SingleSource
+        )
+    {
+        1
+    } else {
+        0
+    }
+}
+
 fn replace_term_with_placeholder(text: &str, term: &str, placeholder: &str) -> String {
     if term.is_empty() {
         return text.to_string();
@@ -632,6 +683,19 @@ pub struct ActorTaxonomyPriorRecord {
 pub struct SemanticPhrasePriorRecord {
     pub prior_id: String,
     pub normalized_phrase: String,
+    pub role: InterfaceSignalSemanticRole,
+    pub protocol_family: ProtocolFamily,
+    pub source_kind: SignalSemanticHintSourceKind,
+    pub support_count: usize,
+    #[serde(default)]
+    pub supporting_document_keys: Vec<String>,
+    pub strongest_automation_confidence: AutomationConfidence,
+    pub strongest_grounding_strength: SemanticGroundingStrength,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct SemanticModalityReliabilityPriorRecord {
+    pub prior_id: String,
     pub role: InterfaceSignalSemanticRole,
     pub protocol_family: ProtocolFamily,
     pub source_kind: SignalSemanticHintSourceKind,

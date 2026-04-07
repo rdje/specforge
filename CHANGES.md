@@ -31,6 +31,27 @@
 ### Why this matters
 - It broadens the first table-shape prior family beyond signal-description recovery and shows that the same bounded consumer already generalizes to timing-table interpretation.
 
+## 2026-04-07 (semantic modality-reliability priors landed as the fifth bounded learning slice)
+
+### Added: first semantic modality-reliability prior family in `CorpusMemory`
+- Extended [prior_memory.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/prior_memory.rs) with typed `semantic_modality_reliability_priors` plus advisory lookup helpers that score how reliable a given semantic source kind has been for a given role and protocol family.
+- Extended [learn_priors.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/learn_priors.rs) so `specforge learn-priors` now harvests those priors from decisive, non-alias-dependent semantic consensus records rather than from raw guesses.
+- The latest local AMBA run over APB/AHB/AXI still yields `0` semantic modality-reliability priors, which is the honest current state: the family is landed, but the real canonical artifacts are not yet surfacing enough promoted semantic consensus to populate it automatically.
+
+### Added: bounded semantic arbitration consumption and benchmark coverage
+- Extended [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so `SemanticIR` can advisory-adjust local semantic arbitration using modality-reliability priors, but only when the current PDF already contains multiple locally grounded semantic candidates; the original conflict remains visible either way.
+- Extended [validate.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/validate.rs) so semantic and intent validation now report prior-guided semantic arbitration and prior-guided semantic consensus explicitly instead of hiding that path inside the canonical result.
+- Added the tracked gold/negative fixture pair [semantic_modality_reliability_prior_guided_conflict_gold](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/semantic_modality_reliability_prior_guided_conflict_gold/fixture.json) and [semantic_modality_reliability_prior_guided_conflict_without_prior_negative](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/semantic_modality_reliability_prior_guided_conflict_without_prior_negative/fixture.json), which prove locally conflicted role evidence stays contested without the staged prior and becomes decisively resolved only when the matching modality-reliability prior is present.
+
+### Why this matters
+- This is the first learning slice that improves semantic arbitration itself instead of only widening local phrase, actor-vocabulary, timing, or table-shape interpretation.
+- It stays within the project doctrine: the learning plane can guide which locally grounded evidence should carry more weight, but it still cannot author canonical facts that the current document did not expose.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml modality_reliability_priors_can_resolve_local_semantic_conflicts -- --nocapture` → passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality semantic_modality_reliability_prior_guided_conflict_gold semantic_modality_reliability_prior_guided_conflict_without_prior_negative` → passed
+- `bash scripts/run_ci.sh` → passed (`206/206` tests)
+
 ## 2026-04-07 (table-shape priors landed as the fourth bounded learning slice)
 
 ### Added: first table-shape prior family in `CorpusMemory`

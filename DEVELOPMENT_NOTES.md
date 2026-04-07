@@ -590,8 +590,27 @@
   - it yields `222` temporal phrase priors from AXI/APB/AHB `IntentIR` artifacts
   - it yields `0` semantic phrase priors on that same corpus, which is honest and useful because it shows the learning plane is functioning while the real-document semantic-consensus surface is still not rich enough to promote safely
 - the next `R15f` step should not be “force more priors.” It should be:
-  - broaden the store beyond actor-taxonomy into table-shape, visual-motif, modality-reliability, and negative-knowledge priors
+  - broaden the store beyond the current actor-taxonomy / semantic / semantic-modality-reliability / temporal / table-shape families into visual-motif and negative-knowledge priors
   - then teach `EvidenceIR` / `SemanticIR` to consume those priors as bounded suggestions without weakening the local-grounding rule
+
+### Fifth landed bounded prior family and semantic-stage arbitration slice
+- the fifth bounded learning family is now real in `crates/specforge/src/ir/prior_memory.rs` and `crates/specforge/src/commands/learn_priors.rs`
+- `specforge learn-priors` now harvests semantic modality-reliability priors from decisive, non-alias-dependent semantic consensus plus the supporting source kinds that carried that consensus
+- the bounded behavior is intentionally strict:
+  - only locally grounded semantic candidates can enter arbitration in the first place
+  - the learned modality prior can only advisory-adjust the arbitration margin between already-present local candidates
+  - the prior cannot create a semantic role when the current PDF has no local candidate for that role
+  - the original semantic conflict record remains preserved even when prior-guided arbitration becomes decisive
+- the first live AMBA prior-memory run shows this family is architecturally landed but still honestly sparse on real artifacts:
+  - `16` actor-taxonomy priors
+  - `222` temporal phrase priors
+  - `94` table-shape priors
+  - `0` semantic phrase priors
+  - `0` semantic modality-reliability priors on the same real corpus
+- the first benchmark pair for this family now locks the before/after contract:
+  - without prior memory, a locally conflicted role like `XCTRL` stays honestly contested
+  - with a matching modality-reliability prior, the same local evidence can become decisively resolved through `SemanticIR` and `IntentIR`
+- this matters because it is the first learning slice that improves semantic arbitration itself rather than only local phrase/table interpretation, while still keeping the arbitration process inspectable and provenance-safe
 
 ### Fourth landed bounded prior-consumption slice
 - the fourth consumer is now real in `crates/specforge/src/ir/evidence.rs`
@@ -625,7 +644,7 @@
 - the next `R15f` consumer steps should still stay bounded:
   - semantic-role priors as suggestion/ranking only
   - temporal-language priors as phrase-prioritized parsing/rescan hints only
-  - table-shape / visual-motif / modality-reliability / negative-knowledge priors after that
+  - table-shape / visual-motif / negative-knowledge priors after that
 
 ### Second landed bounded prior-consumption slice
 - the second consumer is also now real in `crates/specforge/src/ir/evidence.rs`

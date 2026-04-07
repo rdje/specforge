@@ -12,8 +12,8 @@ use crate::ir::evidence::EvidenceIr;
 use crate::ir::intent::{IntentAssumption, IntentIr};
 use crate::ir::prior_memory::{
     ActorTaxonomyPriorRecord, CorpusMemory, CorpusMemoryUpdatePolicyRecord,
-    PriorSourceArtifactRecord, SemanticPhrasePriorRecord, TableShapePriorRecord,
-    TemporalPhrasePriorRecord,
+    PriorSourceArtifactRecord, SemanticModalityReliabilityPriorRecord, SemanticPhrasePriorRecord,
+    TableShapePriorRecord, TemporalPhrasePriorRecord,
 };
 use crate::ir::semantic::{
     ActorPortRecord, ActorRelativeDirection, InterfaceRecord, InterfaceSignalDirection, SemanticIr,
@@ -67,6 +67,8 @@ struct PriorMemoryPatch {
     actor_taxonomy_priors: Vec<ActorTaxonomyPriorRecord>,
     #[serde(default)]
     semantic_phrase_priors: Vec<SemanticPhrasePriorRecord>,
+    #[serde(default)]
+    semantic_modality_reliability_priors: Vec<SemanticModalityReliabilityPriorRecord>,
     #[serde(default)]
     temporal_phrase_priors: Vec<TemporalPhrasePriorRecord>,
     #[serde(default)]
@@ -1104,7 +1106,7 @@ fn write_fixture_prior_memory(generated_root: &Path, patch: &PriorMemoryPatch) -
     }
 
     let corpus_memory = CorpusMemory {
-        schema_version: 3,
+        schema_version: 4,
         update_policy: CorpusMemoryUpdatePolicyRecord {
             advisory_only: true,
             requires_validated_intent_ir: true,
@@ -1124,6 +1126,7 @@ fn write_fixture_prior_memory(generated_root: &Path, patch: &PriorMemoryPatch) -
         }],
         actor_taxonomy_priors: patch.actor_taxonomy_priors.clone(),
         semantic_phrase_priors: patch.semantic_phrase_priors.clone(),
+        semantic_modality_reliability_priors: patch.semantic_modality_reliability_priors.clone(),
         temporal_phrase_priors: patch.temporal_phrase_priors.clone(),
         table_shape_priors: patch.table_shape_priors.clone(),
     };

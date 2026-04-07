@@ -10,9 +10,10 @@ use crate::ir::evidence::{SignalSemanticHintSourceKind, SignalSemanticTag};
 use crate::ir::intent::IntentIr;
 use crate::ir::prior_memory::{
     ActorTaxonomyPriorRecord, ActorTaxonomyRole, CorpusMemory, CorpusMemoryUpdatePolicyRecord,
-    PriorSourceArtifactRecord, ProtocolFamily, SemanticPhrasePriorRecord, TableShapePriorRecord,
-    TemporalPhrasePriorRecord, is_meaningful_prior_phrase, normalize_actor_term,
-    normalize_prior_phrase, normalize_table_header_signature,
+    PriorSourceArtifactRecord, ProtocolFamily, SemanticModalityReliabilityPriorRecord,
+    SemanticPhrasePriorRecord, TableShapePriorRecord, TemporalPhrasePriorRecord,
+    is_meaningful_prior_phrase, normalize_actor_term, normalize_prior_phrase,
+    normalize_table_header_signature,
 };
 use crate::ir::semantic::SemanticIr;
 use crate::ir::semantic::{
@@ -46,6 +47,20 @@ struct SemanticPriorKey {
 
 #[derive(Debug, Clone)]
 struct SemanticPriorAccumulator {
+    supporting_document_keys: BTreeSet<String>,
+    strongest_automation_confidence: AutomationConfidence,
+    strongest_grounding_strength: SemanticGroundingStrength,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+struct SemanticModalityReliabilityPriorKey {
+    role: String,
+    protocol_family: String,
+    source_kind: String,
+}
+
+#[derive(Debug, Clone)]
+struct SemanticModalityReliabilityPriorAccumulator {
     supporting_document_keys: BTreeSet<String>,
     strongest_automation_confidence: AutomationConfidence,
     strongest_grounding_strength: SemanticGroundingStrength,
@@ -86,6 +101,10 @@ pub fn run(args: LearnPriorsArgs) -> Result<()> {
     let mut actor_taxonomy_priors =
         BTreeMap::<ActorTaxonomyPriorKey, ActorTaxonomyPriorAccumulator>::new();
     let mut semantic_priors = BTreeMap::<SemanticPriorKey, SemanticPriorAccumulator>::new();
+    let mut semantic_modality_reliability_priors = BTreeMap::<
+        SemanticModalityReliabilityPriorKey,
+        SemanticModalityReliabilityPriorAccumulator,
+    >::new();
     let mut temporal_priors = BTreeMap::<TemporalPriorKey, TemporalPriorAccumulator>::new();
     let mut table_shape_priors = BTreeMap::<TableShapePriorKey, TableShapePriorAccumulator>::new();
 
@@ -122,12 +141,17 @@ pub fn run(args: LearnPriorsArgs) -> Result<()> {
 
         harvest_actor_taxonomy_priors(&intent_ir, protocol_family, &mut actor_taxonomy_priors);
         harvest_semantic_priors(&intent_ir, protocol_family, &mut semantic_priors);
+        harvest_semantic_modality_reliability_priors(
+            &intent_ir,
+            protocol_family,
+            &mut semantic_modality_reliability_priors,
+        );
         harvest_temporal_priors(&intent_ir, protocol_family, &mut temporal_priors);
         harvest_table_shape_priors(&intent_ir, protocol_family, &mut table_shape_priors);
     }
 
     let corpus_memory = CorpusMemory {
-        schema_version: 3,
+        schema_version: 4,
         update_policy: CorpusMemoryUpdatePolicyRecord {
             advisory_only: true,
             requires_validated_intent_ir: true,
@@ -138,6 +162,9 @@ pub fn run(args: LearnPriorsArgs) -> Result<()> {
         source_artifacts,
         actor_taxonomy_priors: materialize_actor_taxonomy_priors(actor_taxonomy_priors),
         semantic_phrase_priors: materialize_semantic_priors(semantic_priors),
+        semantic_modality_reliability_priors: materialize_semantic_modality_reliability_priors(
+            semantic_modality_reliability_priors,
+        ),
         temporal_phrase_priors: materialize_temporal_priors(temporal_priors),
         table_shape_priors: materialize_table_shape_priors(table_shape_priors),
     };
@@ -160,6 +187,10 @@ pub fn run(args: LearnPriorsArgs) -> Result<()> {
     println!(
         "semantic_phrase_priors: {}",
         corpus_memory.semantic_phrase_priors.len()
+    );
+    println!(
+        "semantic_modality_reliability_priors: {}",
+        corpus_memory.semantic_modality_reliability_priors.len()
     );
     println!(
         "temporal_phrase_priors: {}",
@@ -402,6 +433,84 @@ fn harvest_semantic_priors(
                 > automation_confidence_rank(entry.strongest_automation_confidence)
             {
                 entry.strongest_automation_confidence = observation.automation_confidence;
+            }
+            if semantic_grounding_strength_rank(consensus.grounding_strength)
+                > semantic_grounding_strength_rank(entry.strongest_grounding_strength)
+            {
+                entry.strongest_grounding_strength = consensus.grounding_strength;
+            }
+        }
+    }
+}
+
+fn harvest_semantic_modality_reliability_priors(
+    intent_ir: &IntentIr,
+    protocol_family: ProtocolFamily,
+    semantic_modality_reliability_priors: &mut BTreeMap<
+        SemanticModalityReliabilityPriorKey,
+        SemanticModalityReliabilityPriorAccumulator,
+    >,
+) {
+    let conflicted_signals = intent_ir
+        .signal_semantic_conflicts
+        .iter()
+        .map(|conflict| conflict.signal_name.to_ascii_lowercase())
+        .collect::<BTreeSet<_>>();
+
+    for signal in intent_ir
+        .interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+    {
+        if conflicted_signals.contains(&signal.signal_name.to_ascii_lowercase()) {
+            continue;
+        }
+
+        let Some(consensus) = &signal.semantic_consensus else {
+            continue;
+        };
+        if consensus.alias_dependent {
+            continue;
+        }
+        let Some(arbitration) = &signal.semantic_arbitration else {
+            continue;
+        };
+        if !arbitration.decisive {
+            continue;
+        }
+
+        for source_kind in signal
+            .semantic_observations
+            .iter()
+            .filter(|observation| observation_matches_role(observation, consensus.role))
+            .filter(|observation| {
+                !matches!(
+                    observation.source_kind,
+                    SignalSemanticHintSourceKind::AliasGroundedProseStatement
+                )
+            })
+            .map(|observation| observation.source_kind)
+            .collect::<BTreeSet<_>>()
+        {
+            let key = SemanticModalityReliabilityPriorKey {
+                role: consensus.role.as_str().to_string(),
+                protocol_family: protocol_family.as_str().to_string(),
+                source_kind: source_kind.as_str().to_string(),
+            };
+            let entry = semantic_modality_reliability_priors
+                .entry(key)
+                .or_insert_with(|| SemanticModalityReliabilityPriorAccumulator {
+                    supporting_document_keys: BTreeSet::new(),
+                    strongest_automation_confidence: consensus.automation_confidence,
+                    strongest_grounding_strength: consensus.grounding_strength,
+                });
+            entry
+                .supporting_document_keys
+                .insert(intent_ir.document_identity.document_key.clone());
+            if automation_confidence_rank(consensus.automation_confidence)
+                > automation_confidence_rank(entry.strongest_automation_confidence)
+            {
+                entry.strongest_automation_confidence = consensus.automation_confidence;
             }
             if semantic_grounding_strength_rank(consensus.grounding_strength)
                 > semantic_grounding_strength_rank(entry.strongest_grounding_strength)
@@ -674,6 +783,33 @@ fn materialize_table_shape_priors(
             supporting_document_keys: accumulator.supporting_document_keys.into_iter().collect(),
             strongest_automation_confidence: accumulator.strongest_automation_confidence,
         })
+        .collect()
+}
+
+fn materialize_semantic_modality_reliability_priors(
+    semantic_modality_reliability_priors: BTreeMap<
+        SemanticModalityReliabilityPriorKey,
+        SemanticModalityReliabilityPriorAccumulator,
+    >,
+) -> Vec<SemanticModalityReliabilityPriorRecord> {
+    semantic_modality_reliability_priors
+        .into_iter()
+        .enumerate()
+        .map(
+            |(index, (key, accumulator))| SemanticModalityReliabilityPriorRecord {
+                prior_id: format!("semantic_modality_reliability_prior_{:04}", index + 1),
+                role: parse_semantic_role(&key.role),
+                protocol_family: parse_protocol_family(&key.protocol_family),
+                source_kind: parse_semantic_source_kind(&key.source_kind),
+                support_count: accumulator.supporting_document_keys.len(),
+                supporting_document_keys: accumulator
+                    .supporting_document_keys
+                    .into_iter()
+                    .collect(),
+                strongest_automation_confidence: accumulator.strongest_automation_confidence,
+                strongest_grounding_strength: accumulator.strongest_grounding_strength,
+            },
+        )
         .collect()
 }
 
@@ -1235,7 +1371,7 @@ mod tests {
         ActorPortRecord, CycleWindowRecord, InterfaceRecord, InterfaceSignalDirection,
         InterfaceSignalRecord, InterfaceSignalSemanticArbitrationRecord,
         InterfaceSignalSemanticConsensusRecord, InterfaceSignalSemanticObservationRecord,
-        TemporalRuleRecord,
+        SemanticArbitrationDecisionBasis, TemporalRuleRecord,
     };
     use crate::ir::source::{
         RelationKind, SourceIr, StructuredTableCellRecord, StructuredTableRecord, TableKind,
@@ -1343,10 +1479,15 @@ mod tests {
                     candidate_count: 1,
                     leading_role: InterfaceSignalSemanticRole::HandshakeReadyLike,
                     leading_evidence_weight: 3,
+                    leading_prior_reliability_adjustment: 0,
+                    leading_arbitration_weight: 3,
                     runner_up_role: None,
                     runner_up_evidence_weight: None,
+                    runner_up_prior_reliability_adjustment: None,
+                    runner_up_arbitration_weight: None,
                     margin_over_runner_up: None,
                     decisive: true,
+                    decision_basis: SemanticArbitrationDecisionBasis::SingleCandidate,
                 }),
                 resolved_semantic_role: Some(InterfaceSignalSemanticRole::HandshakeReadyLike),
                 semantic_grounding_strength: Some(SemanticGroundingStrength::CrossModality),
@@ -1356,6 +1497,8 @@ mod tests {
                     supporting_source_kinds: vec![SignalSemanticHintSourceKind::ProseStatement],
                     supporting_observation_count: 2,
                     automation_confidence: AutomationConfidence::High,
+                    prior_reliability_adjustment: 0,
+                    prior_guided: false,
                     alias_dependent: false,
                 }),
                 semantic_observations: vec![InterfaceSignalSemanticObservationRecord {
@@ -1392,11 +1535,19 @@ mod tests {
         }];
 
         let mut semantic_priors = BTreeMap::new();
+        let mut semantic_modality_reliability_priors = BTreeMap::new();
         let mut temporal_priors = BTreeMap::new();
         harvest_semantic_priors(&intent_ir, ProtocolFamily::AmbaAxi, &mut semantic_priors);
+        harvest_semantic_modality_reliability_priors(
+            &intent_ir,
+            ProtocolFamily::AmbaAxi,
+            &mut semantic_modality_reliability_priors,
+        );
         harvest_temporal_priors(&intent_ir, ProtocolFamily::AmbaAxi, &mut temporal_priors);
 
         let semantic_records = materialize_semantic_priors(semantic_priors);
+        let semantic_modality_reliability_records =
+            materialize_semantic_modality_reliability_priors(semantic_modality_reliability_priors);
         let temporal_records = materialize_temporal_priors(temporal_priors);
 
         assert_eq!(semantic_records.len(), 1);
@@ -1406,6 +1557,19 @@ mod tests {
         );
         assert_eq!(semantic_records[0].protocol_family, ProtocolFamily::AmbaAxi);
         assert_eq!(semantic_records[0].support_count, 1);
+        assert_eq!(semantic_modality_reliability_records.len(), 1);
+        assert_eq!(
+            semantic_modality_reliability_records[0].role,
+            InterfaceSignalSemanticRole::HandshakeReadyLike
+        );
+        assert_eq!(
+            semantic_modality_reliability_records[0].source_kind,
+            SignalSemanticHintSourceKind::ProseStatement
+        );
+        assert_eq!(
+            semantic_modality_reliability_records[0].strongest_grounding_strength,
+            SemanticGroundingStrength::CrossModality
+        );
 
         assert_eq!(temporal_records.len(), 1);
         assert_eq!(
@@ -1456,10 +1620,15 @@ mod tests {
                         candidate_count: 1,
                         leading_role: InterfaceSignalSemanticRole::HandshakeValidLike,
                         leading_evidence_weight: 3,
+                        leading_prior_reliability_adjustment: 0,
+                        leading_arbitration_weight: 3,
                         runner_up_role: None,
                         runner_up_evidence_weight: None,
+                        runner_up_prior_reliability_adjustment: None,
+                        runner_up_arbitration_weight: None,
                         margin_over_runner_up: None,
                         decisive: true,
+                        decision_basis: SemanticArbitrationDecisionBasis::SingleCandidate,
                     }),
                     resolved_semantic_role: Some(InterfaceSignalSemanticRole::HandshakeValidLike),
                     semantic_grounding_strength: Some(SemanticGroundingStrength::SingleSource),
@@ -1471,6 +1640,8 @@ mod tests {
                         ],
                         supporting_observation_count: 1,
                         automation_confidence: AutomationConfidence::High,
+                        prior_reliability_adjustment: 0,
+                        prior_guided: false,
                         alias_dependent: false,
                     }),
                     semantic_observations: vec![InterfaceSignalSemanticObservationRecord {
@@ -1495,10 +1666,15 @@ mod tests {
                         candidate_count: 1,
                         leading_role: InterfaceSignalSemanticRole::HandshakeReadyLike,
                         leading_evidence_weight: 3,
+                        leading_prior_reliability_adjustment: 0,
+                        leading_arbitration_weight: 3,
                         runner_up_role: None,
                         runner_up_evidence_weight: None,
+                        runner_up_prior_reliability_adjustment: None,
+                        runner_up_arbitration_weight: None,
                         margin_over_runner_up: None,
                         decisive: true,
+                        decision_basis: SemanticArbitrationDecisionBasis::SingleCandidate,
                     }),
                     resolved_semantic_role: Some(InterfaceSignalSemanticRole::HandshakeReadyLike),
                     semantic_grounding_strength: Some(SemanticGroundingStrength::CrossModality),
@@ -1511,6 +1687,8 @@ mod tests {
                         ],
                         supporting_observation_count: 2,
                         automation_confidence: AutomationConfidence::High,
+                        prior_reliability_adjustment: 0,
+                        prior_guided: false,
                         alias_dependent: false,
                     }),
                     semantic_observations: vec![InterfaceSignalSemanticObservationRecord {
@@ -1694,10 +1872,15 @@ mod tests {
                     candidate_count: 1,
                     leading_role: InterfaceSignalSemanticRole::HandshakeValidLike,
                     leading_evidence_weight: 1,
+                    leading_prior_reliability_adjustment: 0,
+                    leading_arbitration_weight: 1,
                     runner_up_role: None,
                     runner_up_evidence_weight: None,
+                    runner_up_prior_reliability_adjustment: None,
+                    runner_up_arbitration_weight: None,
                     margin_over_runner_up: None,
                     decisive: true,
+                    decision_basis: SemanticArbitrationDecisionBasis::SingleCandidate,
                 }),
                 resolved_semantic_role: Some(InterfaceSignalSemanticRole::HandshakeValidLike),
                 semantic_grounding_strength: Some(SemanticGroundingStrength::SingleSource),
@@ -1709,6 +1892,8 @@ mod tests {
                     ],
                     supporting_observation_count: 1,
                     automation_confidence: AutomationConfidence::Medium,
+                    prior_reliability_adjustment: 0,
+                    prior_guided: false,
                     alias_dependent: true,
                 }),
                 semantic_observations: vec![InterfaceSignalSemanticObservationRecord {
@@ -1780,10 +1965,15 @@ mod tests {
                         candidate_count: 1,
                         leading_role: InterfaceSignalSemanticRole::HandshakeValidLike,
                         leading_evidence_weight: 1,
+                        leading_prior_reliability_adjustment: 0,
+                        leading_arbitration_weight: 1,
                         runner_up_role: None,
                         runner_up_evidence_weight: None,
+                        runner_up_prior_reliability_adjustment: None,
+                        runner_up_arbitration_weight: None,
                         margin_over_runner_up: None,
                         decisive: true,
+                        decision_basis: SemanticArbitrationDecisionBasis::SingleCandidate,
                     }),
                     resolved_semantic_role: Some(InterfaceSignalSemanticRole::HandshakeValidLike),
                     semantic_grounding_strength: Some(SemanticGroundingStrength::SingleSource),
@@ -1793,6 +1983,8 @@ mod tests {
                         supporting_source_kinds: vec![SignalSemanticHintSourceKind::ProseStatement],
                         supporting_observation_count: 1,
                         automation_confidence: AutomationConfidence::Medium,
+                        prior_reliability_adjustment: 0,
+                        prior_guided: false,
                         alias_dependent: false,
                     }),
                     semantic_observations: Vec::new(),
@@ -1809,10 +2001,15 @@ mod tests {
                         candidate_count: 1,
                         leading_role: InterfaceSignalSemanticRole::HandshakeReadyLike,
                         leading_evidence_weight: 1,
+                        leading_prior_reliability_adjustment: 0,
+                        leading_arbitration_weight: 1,
                         runner_up_role: None,
                         runner_up_evidence_weight: None,
+                        runner_up_prior_reliability_adjustment: None,
+                        runner_up_arbitration_weight: None,
                         margin_over_runner_up: None,
                         decisive: true,
+                        decision_basis: SemanticArbitrationDecisionBasis::SingleCandidate,
                     }),
                     resolved_semantic_role: Some(InterfaceSignalSemanticRole::HandshakeReadyLike),
                     semantic_grounding_strength: Some(SemanticGroundingStrength::SingleSource),
@@ -1822,6 +2019,8 @@ mod tests {
                         supporting_source_kinds: vec![SignalSemanticHintSourceKind::ProseStatement],
                         supporting_observation_count: 1,
                         automation_confidence: AutomationConfidence::Medium,
+                        prior_reliability_adjustment: 0,
+                        prior_guided: false,
                         alias_dependent: false,
                     }),
                     semantic_observations: Vec::new(),

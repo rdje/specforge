@@ -370,6 +370,27 @@ fn interface_signals_with_non_decisive_semantic_arbitration_count(
         .count()
 }
 
+fn interface_signals_with_prior_guided_semantic_arbitration_count(
+    interfaces: &[crate::ir::semantic::InterfaceRecord],
+) -> usize {
+    interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+        .filter(|signal| {
+            signal
+                .semantic_arbitration
+                .as_ref()
+                .is_some_and(|arbitration| {
+                    arbitration.decisive
+                        && matches!(
+                        arbitration.decision_basis,
+                        crate::ir::semantic::SemanticArbitrationDecisionBasis::PriorGuidedMargin
+                    )
+                })
+        })
+        .count()
+}
+
 fn interface_signals_with_blocked_handshake_name_fallback(
     interfaces: &[crate::ir::semantic::InterfaceRecord],
 ) -> Vec<String> {
@@ -448,6 +469,21 @@ fn interface_signals_with_alias_dependent_semantic_consensus_count(
                 .semantic_consensus
                 .as_ref()
                 .is_some_and(|consensus| consensus.alias_dependent)
+        })
+        .count()
+}
+
+fn interface_signals_with_prior_guided_semantic_consensus_count(
+    interfaces: &[crate::ir::semantic::InterfaceRecord],
+) -> usize {
+    interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+        .filter(|signal| {
+            signal
+                .semantic_consensus
+                .as_ref()
+                .is_some_and(|consensus| consensus.prior_guided)
         })
         .count()
 }
@@ -1262,6 +1298,8 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         interface_signals_with_decisive_semantic_arbitration_count(&ir.interfaces);
     let with_non_decisive_semantic_arbitration =
         interface_signals_with_non_decisive_semantic_arbitration_count(&ir.interfaces);
+    let with_prior_guided_semantic_arbitration =
+        interface_signals_with_prior_guided_semantic_arbitration_count(&ir.interfaces);
     let blocked_handshake_name_fallback =
         interface_signals_with_blocked_handshake_name_fallback(&ir.interfaces);
     let with_resolved_semantic_role =
@@ -1271,6 +1309,8 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         interface_signals_with_high_confidence_semantic_consensus_count(&ir.interfaces);
     let with_alias_dependent_semantic_consensus =
         interface_signals_with_alias_dependent_semantic_consensus_count(&ir.interfaces);
+    let with_prior_guided_semantic_consensus =
+        interface_signals_with_prior_guided_semantic_consensus_count(&ir.interfaces);
     let alias_dependent_semantic_candidates =
         interface_signal_alias_dependent_semantic_candidates_count(&ir.interfaces);
     let resolved_semantic_roles_without_consensus =
@@ -1338,6 +1378,7 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     println!("  with_semantic_arbitration: {with_semantic_arbitration}");
     println!("  with_decisive_semantic_arbitration: {with_decisive_semantic_arbitration}");
     println!("  with_non_decisive_semantic_arbitration: {with_non_decisive_semantic_arbitration}");
+    println!("  with_prior_guided_semantic_arbitration: {with_prior_guided_semantic_arbitration}");
     println!(
         "  with_blocked_handshake_name_fallback: {}",
         blocked_handshake_name_fallback.len()
@@ -1350,6 +1391,7 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     println!(
         "  with_alias_dependent_semantic_consensus: {with_alias_dependent_semantic_consensus}"
     );
+    println!("  with_prior_guided_semantic_consensus: {with_prior_guided_semantic_consensus}");
     println!("  alias_dependent_semantic_candidates: {alias_dependent_semantic_candidates}");
     println!(
         "  resolved_semantic_roles_without_consensus: {resolved_semantic_roles_without_consensus}"
@@ -1643,6 +1685,17 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             Vec::new(),
         ));
     }
+    if with_prior_guided_semantic_arbitration > 0 {
+        findings.push(finding(
+            "semantic_prior_guided_semantic_arbitration_present",
+            ValidationFindingSeverity::Info,
+            "semantic_role_arbitration",
+            format!(
+                "{with_prior_guided_semantic_arbitration} interface signal(s) use learned modality-reliability priors to resolve otherwise competing local semantic-role evidence"
+            ),
+            Vec::new(),
+        ));
+    }
     if !blocked_handshake_name_fallback.is_empty() {
         findings.push(finding(
             "semantic_handshake_name_fallback_blocked_present",
@@ -1673,6 +1726,17 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             "semantic_role_consensus",
             format!(
                 "{with_alias_dependent_semantic_consensus} resolved semantic role(s) currently depend only on alias-grounded evidence rather than direct signal mentions or corroborating non-alias modalities"
+            ),
+            Vec::new(),
+        ));
+    }
+    if with_prior_guided_semantic_consensus > 0 {
+        findings.push(finding(
+            "semantic_prior_guided_semantic_consensus_present",
+            ValidationFindingSeverity::Info,
+            "semantic_role_consensus",
+            format!(
+                "{with_prior_guided_semantic_consensus} resolved semantic role(s) now carry explicit consensus that was strengthened by learned modality-reliability priors"
             ),
             Vec::new(),
         ));
@@ -1832,6 +1896,10 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 with_non_decisive_semantic_arbitration.to_string(),
             ),
             metric(
+                "with_prior_guided_semantic_arbitration",
+                with_prior_guided_semantic_arbitration.to_string(),
+            ),
+            metric(
                 "with_blocked_handshake_name_fallback",
                 blocked_handshake_name_fallback.len().to_string(),
             ),
@@ -1850,6 +1918,10 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             metric(
                 "with_alias_dependent_semantic_consensus",
                 with_alias_dependent_semantic_consensus.to_string(),
+            ),
+            metric(
+                "with_prior_guided_semantic_consensus",
+                with_prior_guided_semantic_consensus.to_string(),
             ),
             metric(
                 "alias_dependent_semantic_candidates",
@@ -2012,6 +2084,8 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         interface_signals_with_decisive_semantic_arbitration_count(&ir.interfaces);
     let with_non_decisive_semantic_arbitration =
         interface_signals_with_non_decisive_semantic_arbitration_count(&ir.interfaces);
+    let with_prior_guided_semantic_arbitration =
+        interface_signals_with_prior_guided_semantic_arbitration_count(&ir.interfaces);
     let blocked_handshake_name_fallback =
         interface_signals_with_blocked_handshake_name_fallback(&ir.interfaces);
     let with_resolved_semantic_role =
@@ -2021,6 +2095,8 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         interface_signals_with_high_confidence_semantic_consensus_count(&ir.interfaces);
     let with_alias_dependent_semantic_consensus =
         interface_signals_with_alias_dependent_semantic_consensus_count(&ir.interfaces);
+    let with_prior_guided_semantic_consensus =
+        interface_signals_with_prior_guided_semantic_consensus_count(&ir.interfaces);
     let alias_dependent_semantic_candidates =
         interface_signal_alias_dependent_semantic_candidates_count(&ir.interfaces);
     let resolved_semantic_roles_without_consensus =
@@ -2077,6 +2153,7 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     println!("  with_semantic_arbitration: {with_semantic_arbitration}");
     println!("  with_decisive_semantic_arbitration: {with_decisive_semantic_arbitration}");
     println!("  with_non_decisive_semantic_arbitration: {with_non_decisive_semantic_arbitration}");
+    println!("  with_prior_guided_semantic_arbitration: {with_prior_guided_semantic_arbitration}");
     println!(
         "  with_blocked_handshake_name_fallback: {}",
         blocked_handshake_name_fallback.len()
@@ -2089,6 +2166,7 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     println!(
         "  with_alias_dependent_semantic_consensus: {with_alias_dependent_semantic_consensus}"
     );
+    println!("  with_prior_guided_semantic_consensus: {with_prior_guided_semantic_consensus}");
     println!("  alias_dependent_semantic_candidates: {alias_dependent_semantic_candidates}");
     println!(
         "  resolved_semantic_roles_without_consensus: {resolved_semantic_roles_without_consensus}"
@@ -2436,6 +2514,17 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             Vec::new(),
         ));
     }
+    if with_prior_guided_semantic_arbitration > 0 {
+        findings.push(finding(
+            "intent_prior_guided_semantic_arbitration_present",
+            ValidationFindingSeverity::Info,
+            "semantic_role_arbitration",
+            format!(
+                "{with_prior_guided_semantic_arbitration} declared signal(s) use learned modality-reliability priors to resolve otherwise competing local semantic-role evidence"
+            ),
+            Vec::new(),
+        ));
+    }
     if !blocked_handshake_name_fallback.is_empty() {
         findings.push(finding(
             "intent_handshake_name_fallback_blocked_present",
@@ -2466,6 +2555,17 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             "semantic_role_consensus",
             format!(
                 "{with_alias_dependent_semantic_consensus} resolved semantic role(s) currently depend only on alias-grounded evidence rather than direct signal mentions or corroborating non-alias modalities"
+            ),
+            Vec::new(),
+        ));
+    }
+    if with_prior_guided_semantic_consensus > 0 {
+        findings.push(finding(
+            "intent_prior_guided_semantic_consensus_present",
+            ValidationFindingSeverity::Info,
+            "semantic_role_consensus",
+            format!(
+                "{with_prior_guided_semantic_consensus} resolved semantic role(s) now carry explicit consensus that was strengthened by learned modality-reliability priors"
             ),
             Vec::new(),
         ));
@@ -2636,6 +2736,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 with_non_decisive_semantic_arbitration.to_string(),
             ),
             metric(
+                "with_prior_guided_semantic_arbitration",
+                with_prior_guided_semantic_arbitration.to_string(),
+            ),
+            metric(
                 "with_blocked_handshake_name_fallback",
                 blocked_handshake_name_fallback.len().to_string(),
             ),
@@ -2654,6 +2758,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             metric(
                 "with_alias_dependent_semantic_consensus",
                 with_alias_dependent_semantic_consensus.to_string(),
+            ),
+            metric(
+                "with_prior_guided_semantic_consensus",
+                with_prior_guided_semantic_consensus.to_string(),
             ),
             metric(
                 "alias_dependent_semantic_candidates",

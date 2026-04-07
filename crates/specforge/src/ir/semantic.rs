@@ -125,7 +125,8 @@ impl SemanticIr {
             &document_identity.display_name,
         )?;
         let context = SemanticContext::from_evidence_ir(&evidence_ir);
-        let (interfaces, interface_signal_conflicts) = build_interfaces(&context);
+        let (interfaces, interface_signal_conflicts) =
+            build_interfaces(&context, prior_guidance.as_ref());
         let actor_build = build_actors(&context, &interfaces);
         let actor_ports = build_actor_ports(&context, &interfaces);
         let signal_connectivity = build_signal_connectivity(&actor_ports);
@@ -319,6 +320,10 @@ fn min_automation_confidence(
 
 fn is_false(value: &bool) -> bool {
     !*value
+}
+
+fn is_zero(value: &u32) -> bool {
+    *value == 0
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -541,8 +546,20 @@ pub struct InterfaceSignalSemanticCandidateRecord {
     pub supporting_observation_count: usize,
     pub automation_confidence: AutomationConfidence,
     pub evidence_weight: u32,
+    #[serde(default, skip_serializing_if = "is_zero")]
+    pub prior_reliability_adjustment: u32,
+    #[serde(default, skip_serializing_if = "is_zero")]
+    pub arbitration_weight: u32,
     #[serde(default, skip_serializing_if = "is_false")]
     pub alias_dependent: bool,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum SemanticArbitrationDecisionBasis {
+    SingleCandidate,
+    PriorGuidedMargin,
+    Contested,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -550,13 +567,22 @@ pub struct InterfaceSignalSemanticArbitrationRecord {
     pub candidate_count: usize,
     pub leading_role: InterfaceSignalSemanticRole,
     pub leading_evidence_weight: u32,
+    #[serde(default, skip_serializing_if = "is_zero")]
+    pub leading_prior_reliability_adjustment: u32,
+    #[serde(default, skip_serializing_if = "is_zero")]
+    pub leading_arbitration_weight: u32,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub runner_up_role: Option<InterfaceSignalSemanticRole>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub runner_up_evidence_weight: Option<u32>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub runner_up_prior_reliability_adjustment: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub runner_up_arbitration_weight: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub margin_over_runner_up: Option<u32>,
     pub decisive: bool,
+    pub decision_basis: SemanticArbitrationDecisionBasis,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -567,6 +593,10 @@ pub struct InterfaceSignalSemanticConsensusRecord {
     pub supporting_source_kinds: Vec<SignalSemanticHintSourceKind>,
     pub supporting_observation_count: usize,
     pub automation_confidence: AutomationConfidence,
+    #[serde(default, skip_serializing_if = "is_zero")]
+    pub prior_reliability_adjustment: u32,
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub prior_guided: bool,
     #[serde(default, skip_serializing_if = "is_false")]
     pub alias_dependent: bool,
 }
@@ -1525,6 +1555,7 @@ struct ExplicitTopAccumulator {
 
 fn build_interfaces(
     context: &SemanticContext,
+    prior_guidance: Option<&SemanticPriorGuidance>,
 ) -> (Vec<InterfaceRecord>, Vec<InterfaceSignalConflictRecord>) {
     let mut accumulators: BTreeMap<String, InterfaceAccumulator> = BTreeMap::new();
     let empty_regular_state_names = BTreeSet::<String>::new();
@@ -1682,6 +1713,7 @@ fn build_interfaces(
                         ) = resolve_interface_signal_semantic_role(
                             &semantic_tags,
                             &semantic_observations,
+                            prior_guidance,
                         );
                         InterfaceSignalRecord {
                             signal_name,
@@ -2268,7 +2300,7 @@ fn build_explicit_module_record(accumulator: ExplicitModuleAccumulator) -> Expli
         actor_signal_relations: Vec::new(),
         signal_semantic_hints: Vec::new(),
     };
-    let (interfaces, _interface_signal_conflicts) = build_interfaces(&scoped_context);
+    let (interfaces, _interface_signal_conflicts) = build_interfaces(&scoped_context, None);
     let system_contract = build_system_contract(&scoped_context);
     let init_assignments = build_init_assignments(&scoped_context);
     let regular_states = build_regular_states(&scoped_context);
@@ -5949,6 +5981,7 @@ enum SemanticObservationModality {
 fn resolve_interface_signal_semantic_role(
     semantic_tags: &[SignalSemanticTag],
     semantic_observations: &[InterfaceSignalSemanticObservationRecord],
+    prior_guidance: Option<&SemanticPriorGuidance>,
 ) -> (
     Vec<InterfaceSignalSemanticCandidateRecord>,
     Option<InterfaceSignalSemanticArbitrationRecord>,
@@ -5956,7 +5989,7 @@ fn resolve_interface_signal_semantic_role(
     Option<SemanticGroundingStrength>,
     Option<InterfaceSignalSemanticConsensusRecord>,
 ) {
-    let semantic_candidates = build_semantic_candidates(semantic_observations);
+    let semantic_candidates = build_semantic_candidates(semantic_observations, prior_guidance);
     let semantic_arbitration = build_semantic_arbitration(&semantic_candidates);
 
     match semantic_candidates.as_slice() {
@@ -5967,7 +6000,26 @@ fn resolve_interface_signal_semantic_role(
             Some(candidate.grounding_strength),
             Some(build_semantic_consensus(candidate)),
         ),
-        [_, ..] => (semantic_candidates, semantic_arbitration, None, None, None),
+        [_, ..] => {
+            if semantic_arbitration
+                .as_ref()
+                .is_some_and(|arbitration| arbitration.decisive)
+            {
+                let leading_candidate = semantic_candidates.first().expect("checked non-empty");
+                let leading_role = leading_candidate.role;
+                let leading_grounding_strength = leading_candidate.grounding_strength;
+                let consensus = build_semantic_consensus(leading_candidate);
+                (
+                    semantic_candidates,
+                    semantic_arbitration,
+                    Some(leading_role),
+                    Some(leading_grounding_strength),
+                    Some(consensus),
+                )
+            } else {
+                (semantic_candidates, semantic_arbitration, None, None, None)
+            }
+        }
         [] => {
             let has_valid_tag = semantic_tags_support_semantic_role(
                 semantic_tags,
@@ -6000,6 +6052,7 @@ fn resolve_interface_signal_semantic_role(
 
 fn build_semantic_candidates(
     semantic_observations: &[InterfaceSignalSemanticObservationRecord],
+    prior_guidance: Option<&SemanticPriorGuidance>,
 ) -> Vec<InterfaceSignalSemanticCandidateRecord> {
     let mut candidates: Vec<InterfaceSignalSemanticCandidateRecord> = [
         InterfaceSignalSemanticRole::HandshakeValidLike,
@@ -6015,14 +6068,24 @@ fn build_semantic_candidates(
         if supporting_observations.is_empty() {
             None
         } else {
-            Some(build_semantic_candidate(role, &supporting_observations))
+            Some(build_semantic_candidate(
+                role,
+                &supporting_observations,
+                prior_guidance,
+            ))
         }
     })
     .collect();
     candidates.sort_by(|left, right| {
         right
-            .evidence_weight
-            .cmp(&left.evidence_weight)
+            .arbitration_weight
+            .cmp(&left.arbitration_weight)
+            .then_with(|| {
+                right
+                    .prior_reliability_adjustment
+                    .cmp(&left.prior_reliability_adjustment)
+            })
+            .then_with(|| right.evidence_weight.cmp(&left.evidence_weight))
             .then_with(|| {
                 right
                     .supporting_observation_count
@@ -6079,6 +6142,7 @@ fn grounding_strength_for_supporting_observations(
 fn build_semantic_candidate(
     role: InterfaceSignalSemanticRole,
     observations: &[&InterfaceSignalSemanticObservationRecord],
+    prior_guidance: Option<&SemanticPriorGuidance>,
 ) -> InterfaceSignalSemanticCandidateRecord {
     let grounding_strength = grounding_strength_for_supporting_observations(observations);
     let supporting_source_kinds = observations
@@ -6093,10 +6157,13 @@ fn build_semantic_candidate(
             .fold(AutomationConfidence::Low, |current, observation| {
                 max_automation_confidence(current, observation.automation_confidence)
             });
-    let evidence_weight = observations
+    let evidence_weight: u32 = observations
         .iter()
         .map(|observation| semantic_observation_weight(observation))
         .sum();
+    let prior_reliability_adjustment =
+        semantic_prior_reliability_adjustment(role, observations, prior_guidance);
+    let arbitration_weight = evidence_weight.saturating_add(prior_reliability_adjustment);
     InterfaceSignalSemanticCandidateRecord {
         role,
         grounding_strength,
@@ -6104,8 +6171,33 @@ fn build_semantic_candidate(
         supporting_observation_count: observations.len(),
         automation_confidence,
         evidence_weight,
+        prior_reliability_adjustment,
+        arbitration_weight,
         alias_dependent: semantic_observations_are_alias_dependent(observations),
     }
+}
+
+fn semantic_prior_reliability_adjustment(
+    role: InterfaceSignalSemanticRole,
+    observations: &[&InterfaceSignalSemanticObservationRecord],
+    prior_guidance: Option<&SemanticPriorGuidance>,
+) -> u32 {
+    let Some(prior_guidance) = prior_guidance else {
+        return 0;
+    };
+
+    observations
+        .iter()
+        .map(|observation| {
+            prior_guidance
+                .corpus_memory
+                .semantic_modality_reliability_bonus(
+                    Some(prior_guidance.protocol_family),
+                    role,
+                    observation.source_kind,
+                )
+        })
+        .sum()
 }
 
 fn build_semantic_consensus(
@@ -6117,6 +6209,8 @@ fn build_semantic_consensus(
         supporting_source_kinds: candidate.supporting_source_kinds.clone(),
         supporting_observation_count: candidate.supporting_observation_count,
         automation_confidence: candidate.automation_confidence,
+        prior_reliability_adjustment: candidate.prior_reliability_adjustment,
+        prior_guided: candidate.prior_reliability_adjustment > 0,
         alias_dependent: candidate.alias_dependent,
     }
 }
@@ -6126,18 +6220,42 @@ fn build_semantic_arbitration(
 ) -> Option<InterfaceSignalSemanticArbitrationRecord> {
     let leading_candidate = candidates.first()?;
     let runner_up_candidate = candidates.get(1);
+    let margin_over_runner_up = runner_up_candidate.map(|candidate| {
+        leading_candidate
+            .arbitration_weight
+            .saturating_sub(candidate.arbitration_weight)
+    });
+    let prior_guided_margin = runner_up_candidate.is_some_and(|runner_up| {
+        leading_candidate.prior_reliability_adjustment > runner_up.prior_reliability_adjustment
+            && margin_over_runner_up.unwrap_or_default() >= 2
+            && !leading_candidate.alias_dependent
+            && !matches!(
+                leading_candidate.automation_confidence,
+                AutomationConfidence::Low
+            )
+    });
+    let (decisive, decision_basis) = if candidates.len() == 1 {
+        (true, SemanticArbitrationDecisionBasis::SingleCandidate)
+    } else if prior_guided_margin {
+        (true, SemanticArbitrationDecisionBasis::PriorGuidedMargin)
+    } else {
+        (false, SemanticArbitrationDecisionBasis::Contested)
+    };
     Some(InterfaceSignalSemanticArbitrationRecord {
         candidate_count: candidates.len(),
         leading_role: leading_candidate.role,
         leading_evidence_weight: leading_candidate.evidence_weight,
+        leading_prior_reliability_adjustment: leading_candidate.prior_reliability_adjustment,
+        leading_arbitration_weight: leading_candidate.arbitration_weight,
         runner_up_role: runner_up_candidate.map(|candidate| candidate.role),
         runner_up_evidence_weight: runner_up_candidate.map(|candidate| candidate.evidence_weight),
-        margin_over_runner_up: runner_up_candidate.map(|candidate| {
-            leading_candidate
-                .evidence_weight
-                .saturating_sub(candidate.evidence_weight)
-        }),
-        decisive: candidates.len() == 1,
+        runner_up_prior_reliability_adjustment: runner_up_candidate
+            .map(|candidate| candidate.prior_reliability_adjustment),
+        runner_up_arbitration_weight: runner_up_candidate
+            .map(|candidate| candidate.arbitration_weight),
+        margin_over_runner_up,
+        decisive,
+        decision_basis,
     })
 }
 
@@ -7433,7 +7551,7 @@ mod tests {
     use crate::ir::evidence::EvidenceIr;
     use crate::ir::prior_memory::{
         CorpusMemory, CorpusMemoryUpdatePolicyRecord, PriorSourceArtifactRecord, ProtocolFamily,
-        TemporalPhrasePriorRecord,
+        SemanticModalityReliabilityPriorRecord, TemporalPhrasePriorRecord,
     };
     use crate::ir::source::{
         AutomationConfidence, SourceIr, StructuredTableCellRecord, StructuredTableRecord,
@@ -7445,7 +7563,8 @@ mod tests {
         ControlCompoundUpdateOperation, ControlDualOutputKind, ControlExpressionRecord,
         ControlReferenceKind, ControlReferenceSuffix, CycleWindowRecord, DecisionTreeActionRecord,
         DecisionTreeAssignmentKind, DecisionTreeComparisonOperator, DecisionTreeGuardRecord,
-        DecisionTreeValueRecord, InterfaceSignalDirection, SemanticIr,
+        DecisionTreeValueRecord, InterfaceSignalDirection, InterfaceSignalSemanticRole,
+        SemanticArbitrationDecisionBasis, SemanticGroundingStrength, SemanticIr,
         SignalSemanticHintSourceKind, SignalSemanticTag, SymbolDefinitionKind, SystemResetKind,
         SystemResetPolarity, SystemResetTargetKind, SystemResetTimingRelation,
     };
@@ -7474,7 +7593,7 @@ mod tests {
         }
 
         let corpus_memory = CorpusMemory {
-            schema_version: 3,
+            schema_version: 4,
             update_policy: CorpusMemoryUpdatePolicyRecord {
                 advisory_only: true,
                 requires_validated_intent_ir: true,
@@ -7494,6 +7613,7 @@ mod tests {
             }],
             actor_taxonomy_priors: Vec::new(),
             semantic_phrase_priors: Vec::new(),
+            semantic_modality_reliability_priors: Vec::new(),
             temporal_phrase_priors: vec![TemporalPhrasePriorRecord {
                 prior_id: "temporal_phrase_prior_0001".to_string(),
                 normalized_phrase: normalized_phrase.to_string(),
@@ -7505,6 +7625,63 @@ mod tests {
                 supporting_document_keys: vec!["seed_doc".to_string()],
                 strongest_automation_confidence: AutomationConfidence::High,
             }],
+            table_shape_priors: Vec::new(),
+        };
+        fs::write(
+            &prior_memory_path,
+            serde_json::to_string_pretty(&corpus_memory)?,
+        )?;
+        Ok(prior_memory_path)
+    }
+
+    fn write_semantic_modality_reliability_prior_memory(
+        root: &std::path::Path,
+        protocol_family: ProtocolFamily,
+        role: InterfaceSignalSemanticRole,
+        source_kind: SignalSemanticHintSourceKind,
+        support_count: usize,
+        strongest_grounding_strength: SemanticGroundingStrength,
+    ) -> Result<std::path::PathBuf> {
+        let prior_memory_path = root
+            .join("generated")
+            .join("prior_memory")
+            .join("corpus_memory.json");
+        if let Some(parent) = prior_memory_path.parent() {
+            fs::create_dir_all(parent)?;
+        }
+
+        let corpus_memory = CorpusMemory {
+            schema_version: 4,
+            update_policy: CorpusMemoryUpdatePolicyRecord {
+                advisory_only: true,
+                requires_validated_intent_ir: true,
+                rejects_error_findings: true,
+                excludes_alias_dependent_semantic_consensus: true,
+                local_grounding_required_for_canonical_promotion: true,
+            },
+            source_artifacts: vec![PriorSourceArtifactRecord {
+                artifact_path: root.join("seed_intent_ir.json"),
+                document_key: "seed_doc".to_string(),
+                display_name: "Seed Doc".to_string(),
+                protocol_family,
+                overall_score: Some(100),
+                grade: Some("EXCELLENT".to_string()),
+                accepted_for_learning: true,
+                skip_reason: None,
+            }],
+            actor_taxonomy_priors: Vec::new(),
+            semantic_phrase_priors: Vec::new(),
+            semantic_modality_reliability_priors: vec![SemanticModalityReliabilityPriorRecord {
+                prior_id: "semantic_modality_reliability_prior_0001".to_string(),
+                role,
+                protocol_family,
+                source_kind,
+                support_count,
+                supporting_document_keys: vec!["seed_doc".to_string()],
+                strongest_automation_confidence: AutomationConfidence::High,
+                strongest_grounding_strength,
+            }],
+            temporal_phrase_priors: Vec::new(),
             table_shape_priors: Vec::new(),
         };
         fs::write(
@@ -9053,6 +9230,110 @@ mod tests {
         assert!(xctrl.semantic_candidates.iter().any(|candidate| {
             candidate.role == super::InterfaceSignalSemanticRole::HandshakeReadyLike
                 && candidate.evidence_weight == 3
+        }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn modality_reliability_priors_can_resolve_local_semantic_conflicts() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("semantic_role_conflict_with_prior.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal XCTRL is input width 1.\n\n",
+                "XCTRL indicates that the subordinate can accept the transfer.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_semantic_conflict".to_string(),
+            asset_id: "asset_semantic_conflict".to_string(),
+            page_id: None,
+            caption_text: Some("Control signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("XCTRL", false),
+                make_table_cell(
+                    "Indicates that address and control information are valid for transfer.",
+                    false,
+                ),
+            ]],
+            row_count: 1,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let prior_memory_path = write_semantic_modality_reliability_prior_memory(
+            tempdir.path(),
+            ProtocolFamily::Unknown,
+            InterfaceSignalSemanticRole::HandshakeValidLike,
+            SignalSemanticHintSourceKind::SignalDescriptionTable,
+            3,
+            SemanticGroundingStrength::CrossModality,
+        )?;
+
+        let evidence_ir = EvidenceIr::build_with_prior_memory(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+            Some(&prior_memory_path),
+        )?;
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        assert_eq!(semantic_ir.signal_semantic_conflicts.len(), 1);
+        let xctrl = semantic_ir
+            .interfaces
+            .iter()
+            .flat_map(|interface| interface.signal_records.iter())
+            .find(|signal| signal.signal_name == "XCTRL")
+            .expect("expected XCTRL interface signal");
+        assert_eq!(
+            xctrl.resolved_semantic_role,
+            Some(InterfaceSignalSemanticRole::HandshakeValidLike)
+        );
+        let consensus = xctrl
+            .semantic_consensus
+            .as_ref()
+            .expect("expected prior-guided semantic consensus");
+        assert!(consensus.prior_guided);
+        assert_eq!(consensus.prior_reliability_adjustment, 2);
+        let arbitration = xctrl
+            .semantic_arbitration
+            .as_ref()
+            .expect("expected XCTRL semantic arbitration");
+        assert!(arbitration.decisive);
+        assert!(matches!(
+            arbitration.decision_basis,
+            SemanticArbitrationDecisionBasis::PriorGuidedMargin
+        ));
+        assert_eq!(arbitration.leading_evidence_weight, 6);
+        assert_eq!(arbitration.leading_prior_reliability_adjustment, 2);
+        assert_eq!(arbitration.leading_arbitration_weight, 8);
+        assert_eq!(arbitration.runner_up_evidence_weight, Some(3));
+        assert_eq!(arbitration.runner_up_prior_reliability_adjustment, Some(0));
+        assert_eq!(arbitration.runner_up_arbitration_weight, Some(3));
+        assert_eq!(arbitration.margin_over_runner_up, Some(5));
+        assert!(xctrl.semantic_candidates.iter().any(|candidate| {
+            candidate.role == InterfaceSignalSemanticRole::HandshakeValidLike
+                && candidate.prior_reliability_adjustment == 2
+                && candidate.arbitration_weight == 8
         }));
 
         Ok(())

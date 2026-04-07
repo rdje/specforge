@@ -5798,7 +5798,7 @@ mod tests {
         }
 
         let mut corpus_memory = CorpusMemory {
-            schema_version: 3,
+            schema_version: 4,
             update_policy: CorpusMemoryUpdatePolicyRecord {
                 advisory_only: true,
                 requires_validated_intent_ir: true,
@@ -5818,6 +5818,7 @@ mod tests {
             }],
             actor_taxonomy_priors: Vec::new(),
             semantic_phrase_priors: Vec::new(),
+            semantic_modality_reliability_priors: Vec::new(),
             temporal_phrase_priors: Vec::new(),
             table_shape_priors: Vec::new(),
         };

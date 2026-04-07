@@ -48,17 +48,19 @@ Use it first for the project objective, document navigation, and the current imp
 - `EvidenceIR` now has a fourth bounded prior consumer too: if ingest left a current table as `unknown` but the local header shape matches a learned table-shape prior, evidence extraction can advisory-recover that table kind locally without rewriting `SourceIR` or overriding explicit local table classifications
 - GitHub Actions CI now runs `cargo fmt --all --check` and `cargo test --manifest-path Cargo.toml` on every `push` and `pull_request`, so the local Rust quality gate is mirrored automatically on GitHub
 - the hosted CI path is now driven by `./scripts/run_ci.sh`, so the exact Rust CI suite can be run locally before push instead of only after GitHub receives the commit
-- the current `R15f` slice now learns four safe prior families:
+- the current `R15f` slice now learns five safe prior families:
   - actor-taxonomy priors from decisive actor-grounded handshake-role evidence plus conservative self-identifying actor vocabulary (`requester`, `completer`, `manager`, `subordinate`, and similar explicit role terms)
   - semantic-role phrase priors from decisive, non-alias-dependent semantic consensus plus preserved observation text
+  - semantic modality-reliability priors from decisive, non-alias-dependent semantic consensus plus the supporting source kinds that carried that consensus
   - temporal-language phrase priors from canonical temporal rules and validated canonical `signal_constraints` / `conditional_rules`
   - table-shape priors from validated `SourceIR` table header signatures chained through validated `IntentIR`
-- the latest live AMBA prior-memory run currently harvests `16` actor-taxonomy priors, `222` temporal phrase priors, and `94` table-shape priors from the APB/AHB/AXI `IntentIR` artifacts; semantic phrase priors remain `0` on that corpus because the current canonical AMBA artifacts do not yet surface observation-backed semantic consensus strongly enough to promote
+- the latest live AMBA prior-memory run currently harvests `16` actor-taxonomy priors, `222` temporal phrase priors, and `94` table-shape priors from the APB/AHB/AXI `IntentIR` artifacts; semantic phrase priors and semantic modality-reliability priors both remain `0` on that corpus because the current canonical AMBA artifacts do not yet surface observation-backed semantic consensus strongly enough to promote safely
 - the first prior-consumption slices are now real too:
   - cross-document actor-taxonomy memory can safely recover directions for local actor labels like `Producer` / `Consumer`, and it can now also recover structural KG edges from width-only section-guided headings like `Issuer signals`
   - cross-document semantic phrase memory can safely recover non-hardcoded local role phrases like `XACK can receive the transfer`
   - cross-document temporal phrase memory can safely recover cycle windows for local timing phrases like `PREADY must be asserted one beat later` when the built-in parser cannot
-  - all three stay bounded: prior memory widens local interpretation, but it cannot invent any actor, signal, relation, semantic fact, or timing rule that is not grounded in the current document
+  - cross-document semantic modality-reliability memory can now advisory-adjust local semantic arbitration when the current PDF already contains competing locally grounded role candidates, but it still cannot create a role without those local candidates and it leaves conflict/arbitration state explicit
+  - all four stay bounded: prior memory widens local interpretation, but it cannot invent any actor, signal, relation, semantic fact, or timing rule that is not grounded in the current document
 - the KG benchmark harness can now also patch staged fixture inputs at `SourceIR` and `EvidenceIR`, which lets tracked fixtures model richer protocol-semantics cases like contested handshake-role evidence without needing an external PDF corpus for every regression
 - the KG benchmark harness can now also patch a local fixture-owned `CorpusMemory`, so tracked regressions can prove prior-guided extraction improvements on unseen local phrases without depending on a shared mutable prior file
 - `specforge kg-bench` can now also assert canonical semantic candidate and arbitration state directly, so fixtures can lock whether a signal meaning is decisively grounded or still honestly contested instead of inferring that only from side effects like blocked fallbacks or validator findings
