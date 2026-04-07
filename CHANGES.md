@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-04-08 (AXI-Stream bogus prose actor extraction fixed)
+
+### Fixed: prose KG extraction no longer promotes payload nouns into actors
+- Hardened [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) so prose actor extraction now normalizes candidate actor phrases through the same non-actor guard used by table extraction and rejects generic payload/event nouns like `control information`, `data`, and `transfer`.
+- Tightened active-clause subject recovery so coordinated prose like `the Transmitter presents ... and asserts TVALID` keeps the real actor subject instead of capturing trailing payload phrases or clause verbs.
+- Added the regression `coordinated_active_drive_extracts_real_actor_not_payload_phrase`, which locks the AXI-Stream-style sentence shape that previously leaked `control information` into the structural KG.
+
+### Changed: AXI-Stream structural truthfulness improved without score inflation
+- Re-ran full `specforge converge` with Ollama VLM + NLP Level 3 on [IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf](/Users/richarddje/Documents/livework/chipdoc/arm/amba/supporting/axi-stream/current/IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf).
+- The artifact still converges in `2` pipeline iterations and still validates at `80/100 GOOD`, but the carried multi-producer conflict on `TVALID` is now gone: `control information` no longer appears as an actor in `EvidenceIR`, `SemanticIR`, or `IntentIR`, and `signal_connectivity_conflicts` for AXI-Stream dropped from `1` to `0`.
+- The remaining honest AXI-Stream gap is now clearer: unresolved consumer actors and graph-direction coverage, not bogus producer attribution.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml coordinated_active_drive_extracts_real_actor_not_payload_phrase -- --nocapture` → passed
+- `cargo run --manifest-path Cargo.toml -- project-validation generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json generated/intent_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/intent_ir.json generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json` → passed
+- `bash scripts/run_ci.sh` → passed (`208/208` tests)
+
 ## 2026-04-07 (AXI-Stream unseen-protocol run populates semantic priors)
 
 ### Added: first unseen-protocol full converge + learning refresh

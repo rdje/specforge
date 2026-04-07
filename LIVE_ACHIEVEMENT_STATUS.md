@@ -131,7 +131,7 @@
 ## Highest-priority remaining gap
 - Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then broaden `R15f` beyond its first actor-taxonomy / semantic / semantic-modality-reliability / temporal / table-shape prior families into visual-motif and negative-knowledge priors while expanding the honest prior-guided benchmark surface beyond the new graph-backed actor-taxonomy, temporal, semantic, visual, table-shape, and semantic-modality-reliability pairs into negative-knowledge prior-consumption fixtures
 - Latest unseen-protocol live run:
-  - `IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf` converged in `2` pipeline iterations and currently validates at `80/100 GOOD`; the semantic-role leak on `TVALID` is fixed, but graph-direction coverage and unresolved connectivity are still the main structural gaps
+  - `IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf` converged in `2` pipeline iterations and currently validates at `80/100 GOOD`; the semantic-role leak on `TVALID` and the bogus `control information` producer are both fixed, but graph-direction coverage and unresolved consumers are still the main structural gaps
 
 ## Validation Projection
 

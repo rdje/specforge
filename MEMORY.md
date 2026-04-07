@@ -48,6 +48,7 @@
 - `SemanticIR` now also has a fifth bounded prior consumer overall and a second semantic-stage one for semantic modality-reliability priors, using them only to advisory-adjust arbitration between already-present locally grounded semantic candidates while preserving the underlying conflict surface
 - the latest live four-document prior-memory run over AXI/APB/AHB/AXI-Stream now yields `17` actor-taxonomy priors, `5` semantic phrase priors, `4` semantic modality-reliability priors, `266` temporal phrase priors, and `99` table-shape priors
 - AXI-Stream is now the first unseen protocol run carried all the way through the full loopbacked path: it converged in `2` pipeline iterations with Ollama VLM + NLP Level 3, validates at `80/100 GOOD`, and its artifact is now included in the tracked validation snapshot
+- AXI-Stream prose KG extraction is now hardened against bogus payload/event actors: `control information` no longer survives as a producer for `TVALID`, AXI-Stream `signal_connectivity_conflicts` is now `0`, and the remaining structural gap is unresolved consumers plus graph-direction coverage
 - `specforge kg-bench` can now also stage a fixture-local `CorpusMemory`, and the first tracked gold/negative pair proves prior-guided temporal recovery on an unseen local phrase without leaking cross-document facts
 - `specforge kg-bench` now also locks the same before/after truthfulness pattern for semantic priors on an unseen local phrase
 - `specforge kg-bench` now also locks the same before/after truthfulness pattern for actor-taxonomy priors on unseen local section-heading vocabulary
@@ -72,25 +73,25 @@
   - the learning plane should be treated as a first-class epistemology layer, not as a side feature
 - synced `README.md`, `DEVELOPMENT_NOTES.md`, `CHANGES.md`, and `MEMORY.md` so future sessions can quickly recover that distinction after a crash or handoff
 - fixed the AXI-Stream table-row semantic leak where secondary signal mentions in one signal-description row could assign the wrong handshake role back to the row subject
+- fixed the AXI-Stream prose relation-extraction leak where coordinated clauses like `Transmitter presents ... and asserts TVALID` could promote payload nouns like `control information` into canonical actors
 - ran full `converge` on `IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf` with Ollama VLM + NLP Level 3 enabled, validated the resulting `IntentIR`, and refreshed the tracked validation snapshot to include the new artifact
+- re-ran full `converge` on AXI-Stream after the prose actor fix, confirmed convergence still takes `2` iterations, and refreshed the tracked validation snapshot so the carried producer conflict is now gone from the projected artifact state
 - refreshed `generated/prior_memory/corpus_memory.json` across AXI/APB/AHB/AXI-Stream, producing the first nonzero semantic phrase and semantic modality-reliability priors on a real corpus
 
 ## Current working tree before commit
 - modified tracked files currently include:
   - `crates/specforge/src/ir/evidence.rs`
-  - `LIVE_ACHIEVEMENT_STATUS.md`
-  - `VALIDATION_SNAPSHOT.md`
-  - `README.md`
-  - `ROADMAP.md`
-  - `RUST_CODEBASE_ANALYSIS.md`
-  - `DEVELOPMENT_NOTES.md`
   - `CHANGES.md`
+  - `LIVE_ACHIEVEMENT_STATUS.md`
   - `MEMORY.md`
+  - `README.md`
+  - `RUST_CODEBASE_ANALYSIS.md`
+  - `VALIDATION_SNAPSHOT.md`
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the AXI-Stream unseen-protocol run plus the table-row semantic leak fix
-2. continue replacing remaining direct `direction_hint` consumers with graph-first semantics
+1. commit the AXI-Stream prose-actor extraction fix plus the refreshed validation projection
+2. improve consumer-side structural KG recovery for AXI-Stream so graph-direction coverage rises beyond the current 50%
 3. broaden `R15f` beyond actor-taxonomy / semantic / semantic-modality-reliability / temporal / table-shape into visual-motif and negative-knowledge prior families
 
 ## Remaining engineering gaps after this commit

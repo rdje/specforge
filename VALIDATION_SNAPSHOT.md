@@ -48,14 +48,13 @@ It summarizes the latest persisted validation reports projected from IR artifact
 ### IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf (intent_ir)
 - document_key: `ihi0051_b_2021_04_amba_axi_stream_protocol_specification`
 - artifact_path: `generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json`
-- artifact_fingerprint: `8b4c08a2c143c1d9`
+- artifact_fingerprint: `9de985d1f7c445dc`
 - score: `80/100 GOOD`
-- summary: IntentIR validation for IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf with 8 finding(s)
+- summary: IntentIR validation for IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf with 7 finding(s)
 - findings:
   - [warning:quality_score] IntentIR quality score is 80/100 (GOOD)
   - [warning:residual_decisions] IntentIR still carries 1 residual decision packet(s)
   - [warning:signal_connectivity] 10 signal(s) in IntentIR connectivity have no resolved consumer actor
-  - [warning:signal_connectivity] 1 signal connectivity conflict(s) detected; the carried structural KG still has unresolved producer ambiguity
   - [warning:temporal_conflicts] 2 typed temporal conflict(s) detected across contradictory value obligations
   - [info:compatibility_surface] 8 declared signal record(s) still lack flat compatibility direction hints even though actor-relative ports exist
   - [info:knowledge_graph] 10 declared signal record(s) still lack graph-derived direction coverage

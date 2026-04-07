@@ -1543,6 +1543,29 @@ fn normalize_table_actor_name(value: &str) -> Option<String> {
     Some(actor.to_string())
 }
 
+fn normalize_relation_actor_name(value: &str) -> Option<String> {
+    let actor = normalize_table_actor_name(value)?;
+    let lowered = normalize_actor_term(&actor);
+
+    if matches!(
+        lowered.as_str(),
+        "information"
+            | "control information"
+            | "status information"
+            | "data"
+            | "payload"
+            | "data bytes"
+            | "control bytes"
+            | "byte lanes"
+            | "transfer"
+            | "transaction"
+    ) {
+        return None;
+    }
+
+    Some(actor)
+}
+
 fn effective_table_kind(
     table: &crate::ir::source::StructuredTableRecord,
     prior_guidance: Option<&EvidencePriorGuidance>,
@@ -2130,7 +2153,8 @@ fn extract_actor_phrase(text: &str) -> Option<String> {
     const STOP_DELIMITERS: &[char] = &['.', ',', ';', '(', ')'];
     const STOP_WORDS: &[&str] = &[
         "to", "for", "and", "or", "in", "at", "on", "with", "when", "if", "by", "from", "that",
-        "which", "where", "as", "is", "are", "has", "have", "will", "shall",
+        "which", "where", "as", "is", "are", "has", "have", "will", "shall", "can", "may", "might",
+        "must", "should", "could", "would",
     ];
     let mut words: Vec<&str> = Vec::new();
     for word in stripped.split_whitespace() {
@@ -2156,7 +2180,7 @@ fn extract_actor_phrase(text: &str) -> Option<String> {
     if actor.len() < 2 {
         return None;
     }
-    Some(actor)
+    normalize_relation_actor_name(&actor)
 }
 
 /// Extract the actor name from the text BEFORE an active verb phrase like
@@ -2165,13 +2189,116 @@ fn extract_actor_phrase(text: &str) -> Option<String> {
 ///
 /// Examples:
 ///   `"The Manager"` → `Some("Manager")`
-///   `"The Completer device"` → `Some("Completer device")`
-///   `"AMBA AHB The Manager"` → `Some("Manager")`
 fn extract_subject_phrase(text: &str) -> Option<String> {
     const SKIP_WORDS: &[&str] = &[
         "the", "a", "an", "this", "that", "and", "or", "when", "if", ".", ",", ";", "(", ")", ":",
+        "can", "may", "might", "must", "should", "could", "would", "will", "shall", "once",
+        "before", "after", "while",
+    ];
+    const DETERMINERS: &[&str] = &[
+        "the", "a", "an", "this", "that", "these", "those", "each", "every", "any",
+    ];
+    const SUBJECT_FOLLOWER_VERBS: &[&str] = &[
+        "accept",
+        "accepts",
+        "activate",
+        "activates",
+        "apply",
+        "applies",
+        "assert",
+        "asserts",
+        "capture",
+        "captures",
+        "check",
+        "checks",
+        "control",
+        "controls",
+        "detect",
+        "detects",
+        "drive",
+        "drives",
+        "generate",
+        "generates",
+        "indicate",
+        "indicates",
+        "issue",
+        "issues",
+        "latch",
+        "latches",
+        "monitor",
+        "monitors",
+        "observe",
+        "observes",
+        "output",
+        "outputs",
+        "place",
+        "places",
+        "present",
+        "presents",
+        "produce",
+        "produces",
+        "provide",
+        "provides",
+        "read",
+        "reads",
+        "receive",
+        "receives",
+        "return",
+        "returns",
+        "sample",
+        "samples",
+        "send",
+        "sends",
+        "set",
+        "sets",
+        "source",
+        "sources",
+        "specify",
+        "specifies",
+        "supply",
+        "supplies",
+        "take",
+        "takes",
+        "transfer",
+        "transfers",
+        "transmit",
+        "transmits",
     ];
     let words: Vec<&str> = text.split_whitespace().collect();
+
+    for idx in (0..words.len()).rev() {
+        let determiner = words[idx].trim_matches(|c: char| !c.is_ascii_alphabetic());
+        let lower = determiner.to_ascii_lowercase();
+        if !DETERMINERS.contains(&lower.as_str()) {
+            continue;
+        }
+
+        let mut actor_words: Vec<&str> = Vec::new();
+        for word in &words[idx + 1..] {
+            let clean = word.trim_matches(|c: char| !c.is_ascii_alphabetic());
+            if clean.is_empty() {
+                break;
+            }
+            let lower = clean.to_ascii_lowercase();
+            if SKIP_WORDS.contains(&lower.as_str()) {
+                break;
+            }
+            if !actor_words.is_empty() && SUBJECT_FOLLOWER_VERBS.contains(&lower.as_str()) {
+                break;
+            }
+            actor_words.push(clean);
+            if actor_words.len() >= 2 {
+                break;
+            }
+        }
+
+        if !actor_words.is_empty() {
+            if let Some(actor) = normalize_relation_actor_name(&actor_words.join(" ")) {
+                return Some(actor);
+            }
+        }
+    }
+
     // Work backwards from the end to find the last meaningful word(s)
     let mut actor_words: Vec<&str> = Vec::new();
     for word in words.iter().rev() {
@@ -2186,6 +2313,9 @@ fn extract_subject_phrase(text: &str) -> Option<String> {
             }
             continue; // skip leading articles at the front of our backward scan
         }
+        if actor_words.is_empty() && SUBJECT_FOLLOWER_VERBS.contains(&lower.as_str()) {
+            continue;
+        }
         actor_words.push(clean);
         if actor_words.len() >= 2 {
             break;
@@ -2199,7 +2329,7 @@ fn extract_subject_phrase(text: &str) -> Option<String> {
     if actor.len() < 2 {
         return None;
     }
-    Some(actor)
+    normalize_relation_actor_name(&actor)
 }
 
 /// Returns `true` if the section title indicates boilerplate content
@@ -6202,6 +6332,50 @@ mod tests {
                 && matches!(r.relation, RelationKind::Drives)
                 && r.actor_name == "Requester"),
             "'must drive SIGNAL' must extract (Requester, Drives, PSEL), got: {:?}",
+            relations
+        );
+    }
+
+    #[test]
+    fn coordinated_active_drive_extracts_real_actor_not_payload_phrase() {
+        use super::{
+            EvidenceModality, ExtractedStatement, RelationKind, StatementClass,
+            extract_actor_signal_relations,
+        };
+
+        let signals = ["TVALID".to_string(), "TREADY".to_string()]
+            .into_iter()
+            .collect::<std::collections::HashSet<_>>();
+        let stmts = vec![ExtractedStatement {
+            statement_id: "s5".to_string(),
+            text: "In Figure 2-1, the Transmitter presents the data and control information and asserts TVALID as HIGH. The transfer takes place once the Receiver asserts TREADY HIGH.".to_string(),
+            class: StatementClass::SignalValueConstraint,
+            modality: EvidenceModality::Mixed,
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }];
+
+        let relations = extract_actor_signal_relations(&stmts, &signals);
+
+        assert!(
+            relations.iter().any(|r| r.signal_name == "TVALID"
+                && matches!(r.relation, RelationKind::Drives)
+                && r.actor_name == "Transmitter"),
+            "coordinated active clause must keep the real subject actor for TVALID, got: {:?}",
+            relations
+        );
+        assert!(
+            relations.iter().any(|r| r.signal_name == "TREADY"
+                && matches!(r.relation, RelationKind::Drives)
+                && r.actor_name == "Receiver"),
+            "explicit receiver assertion must still recover (Receiver, Drives, TREADY), got: {:?}",
+            relations
+        );
+        assert!(
+            !relations
+                .iter()
+                .any(|r| r.actor_name == "control information"),
+            "payload phrases must not be promoted into actors, got: {:?}",
             relations
         );
     }
