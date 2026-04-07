@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-04-07 (KG fixtures now lock prior-guided semantic recovery)
+
+### Added: prior-guided unseen-phrase semantic gold/negative pair
+- Added [semantic_prior_guided_phrase_gold](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/semantic_prior_guided_phrase_gold/fixture.json), which proves the unseen local phrase `XACK can receive the transfer` gains ready-like semantic recovery only when a matching semantic prior is staged into the fixture.
+- Added [semantic_prior_guided_phrase_without_prior_negative](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/semantic_prior_guided_phrase_without_prior_negative/fixture.json), which locks the honest fallback behavior that the same local phrase stays semantically unresolved when prior memory is absent.
+
+### Why this matters
+- This is the second tracked benchmark proof that the cross-document learning plane can strengthen analysis of an unseen local phrase without leaking canonical facts across documents.
+- It shows the same “local text required, prior only widens interpretation” contract now holds for both temporal-language priors and semantic-role priors.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality semantic_prior_guided_phrase_gold` → passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality semantic_prior_guided_phrase_without_prior_negative` → passed
+- `bash scripts/run_ci.sh` → passed (`204/204` tests)
+
 ## 2026-04-07 (KG fixtures now lock prior-guided temporal recovery)
 
 ### Added: fixture-owned prior-memory patching in `specforge kg-bench`

@@ -1,0 +1,40 @@
+{
+  "name": "semantic_prior_guided_phrase_without_prior_negative",
+  "source": "amba_semantic_without_prior.md",
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["XACK"],
+      "resolved_semantic_role_signal_names_exclude": ["XACK"],
+      "semantic_consensus_signal_names_exclude": ["XACK"],
+      "semantic_candidate_signal_names_exclude": ["XACK"]
+    },
+    "intent": {
+      "signal_names_include": ["XACK"],
+      "resolved_semantic_role_signal_names_exclude": ["XACK"],
+      "semantic_consensus_signal_names_exclude": ["XACK"],
+      "semantic_candidate_signal_names_exclude": ["XACK"]
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "signal_semantic_hints": "0",
+          "signal_semantic_hints_from_prose": "0"
+        }
+      },
+      "semantic": {
+        "metric_values": {
+          "with_resolved_semantic_role": "0",
+          "with_semantic_consensus": "0",
+          "with_single_source_semantic_grounding": "0"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "with_resolved_semantic_role": "0",
+          "with_semantic_consensus": "0",
+          "with_single_source_semantic_grounding": "0"
+        }
+      }
+    }
+  }
+}

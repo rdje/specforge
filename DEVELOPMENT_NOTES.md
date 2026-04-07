@@ -570,6 +570,10 @@
   - fixtures can stage a local `CorpusMemory`
   - the unseen local phrase stays unbounded without prior memory
   - the same local phrase gains only the bounded `cycle_window` when the matching temporal prior is present
+- the same benchmark doctrine now also covers semantic-role priors:
+  - fixtures can stage a local semantic prior for `XACK can receive the transfer`
+  - the unseen local phrase stays semantically unresolved without prior memory
+  - the same local phrase gains only a locally grounded ready-like recovery when the matching semantic prior is present
 
 ## Current repository observations
 - the repository now contains a renamed `specforge` crate and CLI

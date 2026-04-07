@@ -114,6 +114,7 @@
 - Prior-guided semantic phrase consumption in `EvidenceIR`: Done
 - Prior-guided temporal phrase consumption in `SemanticIR`: Done
 - KG benchmark harness now locks prior-guided unseen-phrase temporal recovery: Done
+- KG benchmark harness now locks prior-guided unseen-phrase semantic recovery: Done
 - Test suite expanded to 204 tests; all passing: Done
 - Explicit clock-tick temporal model in `SemanticIR` / `IntentIR`: In Progress
 - KG-guided multimodal rescans as a first-class convergent workstream: In Progress
@@ -126,7 +127,7 @@
 - Cross-document typed prior memory (`R15f`): In Progress
 
 ## Highest-priority remaining gap
-- Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then broaden `R15f` beyond its first actor-taxonomy store plus the first three bounded prior consumers in `EvidenceIR` / `SemanticIR` into table-shape, visual, modality-reliability, and negative-knowledge prior families while expanding the first honest prior-guided benchmark slice beyond the new temporal unseen-phrase gold/negative pair into richer semantic and multimodal prior-consumption fixtures
+- Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then broaden `R15f` beyond its first actor-taxonomy store plus the first three bounded prior consumers in `EvidenceIR` / `SemanticIR` into table-shape, visual, modality-reliability, and negative-knowledge prior families while expanding the first honest prior-guided benchmark slice beyond the new temporal and semantic unseen-phrase pairs into actor-taxonomy and multimodal prior-consumption fixtures
 
 ## Validation Projection
 
