@@ -113,7 +113,7 @@ impl CorpusMemory {
         actor_term: &str,
     ) -> Option<ActorTaxonomyRole> {
         let normalized_term = normalize_actor_term(actor_term);
-        if normalized_term.is_empty() {
+        if !is_meaningful_actor_term(&normalized_term) {
             return None;
         }
 
@@ -331,6 +331,7 @@ impl CorpusMemory {
                         .map(|expected| prior.protocol_family == expected)
                         .unwrap_or(true)
                 })
+                .filter(|prior| is_meaningful_actor_term(&prior.normalized_actor_term))
                 .filter(|prior| predicate(prior))
                 .map(|prior| prior.taxonomy_role)
                 .collect::<std::collections::BTreeSet<_>>();
@@ -395,6 +396,55 @@ pub fn normalize_actor_term(text: &str) -> String {
             .collect::<String>()
             .trim(),
     )
+}
+
+pub fn is_meaningful_actor_term(text: &str) -> bool {
+    let normalized = normalize_actor_term(text);
+    if normalized.is_empty() {
+        return false;
+    }
+
+    if matches!(
+        normalized.as_str(),
+        "input"
+            | "output"
+            | "inout"
+            | "bidirectional"
+            | "bidir"
+            | "reserved"
+            | "n a"
+            | "na"
+            | "none"
+            | "tbd"
+            | "see note"
+            | "information"
+            | "control information"
+            | "status information"
+            | "data"
+            | "payload"
+            | "data bytes"
+            | "control bytes"
+            | "byte lanes"
+            | "transfer"
+            | "transaction"
+    ) {
+        return false;
+    }
+
+    if normalized.contains("clock")
+        || normalized.contains("reset")
+        || normalized.contains("global")
+        || normalized.contains("system bus")
+        || normalized.contains("power")
+        || normalized.contains("ground")
+        || normalized.contains("supply")
+        || normalized.contains("vdd")
+        || normalized.contains("vss")
+    {
+        return false;
+    }
+
+    true
 }
 
 pub fn normalized_text_contains_term(text: &str, term: &str) -> bool {

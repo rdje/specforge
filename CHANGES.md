@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-04-08 (learning plane now rejects bogus actor vocabulary)
+
+### Fixed: actor-taxonomy learning no longer harvests payload nouns as actors
+- Hardened [learn_priors.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/learn_priors.rs) so actor-taxonomy priors now skip non-actor payload/event terms like `control information`, even if an earlier document-local bug let that text survive into `IntentIR`.
+- Added a shared actor-term hygiene guard in [prior_memory.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/prior_memory.rs) so actor-taxonomy prior lookup also ignores those bogus terms if an older local `CorpusMemory` still contains stale entries.
+- Reused the same guard in [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs), so live relation extraction and cross-document learning now reject the same class of bogus actor terms instead of drifting apart.
+
+### Changed: local `CorpusMemory` is now cleaned of the stale AXI-Stream actor prior
+- Re-ran `specforge learn-priors` across AXI/APB/AHB/AXI-Stream `IntentIR` artifacts.
+- The local prior store now yields `16` actor-taxonomy priors, `5` semantic phrase priors, `4` semantic modality-reliability priors, `266` temporal phrase priors, and `99` table-shape priors.
+- The stale `control information -> requester_like` actor-taxonomy prior is now gone from local `generated/prior_memory/corpus_memory.json`.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml learn_priors_skips_payload_like_actor_terms -- --nocapture` → passed
+- `cargo run --manifest-path Cargo.toml -- learn-priors generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json generated/intent_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/intent_ir.json generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json` → passed (`16 / 5 / 4 / 266 / 99`)
+- `bash scripts/run_ci.sh` → passed (`209/209` tests)
+
 ## 2026-04-08 (AXI-Stream bogus prose actor extraction fixed)
 
 ### Fixed: prose KG extraction no longer promotes payload nouns into actors
@@ -22,7 +39,7 @@
 ### Added: first unseen-protocol full converge + learning refresh
 - Ran full `specforge converge` with Ollama VLM + NLP Level 3 on [IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf](/Users/richarddje/Documents/livework/chipdoc/arm/amba/supporting/axi-stream/current/IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf).
 - The AXI-Stream artifact converged in `2` pipeline iterations and validates at `80/100 GOOD`; it is now included in the tracked [VALIDATION_SNAPSHOT.md](/Users/richarddje/Documents/github/specforge/VALIDATION_SNAPSHOT.md) projection and the managed validation block in [LIVE_ACHIEVEMENT_STATUS.md](/Users/richarddje/Documents/github/specforge/LIVE_ACHIEVEMENT_STATUS.md).
-- Refreshing `specforge learn-priors` across AXI/APB/AHB/AXI-Stream now yields `17` actor-taxonomy priors, `5` semantic phrase priors, `4` semantic modality-reliability priors, `266` temporal phrase priors, and `99` table-shape priors in local `CorpusMemory`.
+- Refreshing `specforge learn-priors` across AXI/APB/AHB/AXI-Stream now yields `16` actor-taxonomy priors, `5` semantic phrase priors, `4` semantic modality-reliability priors, `266` temporal phrase priors, and `99` table-shape priors in local `CorpusMemory`.
 
 ### Fixed: multi-signal table-row semantic-role leakage
 - Extended [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) so signal-description table rows now sanitize against the full local known-signal set before semantic-role inference, preventing a secondary signal mention like `TREADY` from leaking a ready-like role onto a row subject like `TVALID`.

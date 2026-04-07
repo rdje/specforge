@@ -586,7 +586,7 @@
   - temporal-language priors are harvested from canonical `temporal_rules` plus validated canonical `signal_constraints` / `conditional_rules`
   - the learned memory remains advisory-only and cannot directly author canonical document facts
 - the first live AMBA run is already informative:
-  - it now yields `17` actor-taxonomy priors from explicit actor vocabulary plus decisive actor-grounded handshake-role evidence
+  - it now yields `16` actor-taxonomy priors from explicit actor vocabulary plus decisive actor-grounded handshake-role evidence
   - it yields `5` semantic phrase priors
   - it yields `4` semantic modality-reliability priors
   - it yields `266` temporal phrase priors
@@ -604,7 +604,7 @@
   - the prior cannot create a semantic role when the current PDF has no local candidate for that role
   - the original semantic conflict record remains preserved even when prior-guided arbitration becomes decisive
 - the first live AMBA prior-memory run shows this family is architecturally landed but still honestly sparse on real artifacts:
-  - `17` actor-taxonomy priors
+  - `16` actor-taxonomy priors
   - `5` semantic phrase priors
   - `4` semantic modality-reliability priors
   - `266` temporal phrase priors
@@ -622,11 +622,14 @@
   - prior-guided table-shape recovery widens local interpretation, but it does not rewrite `SourceIR`
   - only the current table’s own normalized header signature is consulted, so the prior cannot invent a table that is not already present in the current document
 - the first live AMBA prior-memory run now shows this family is materially real, not speculative:
-  - `17` actor-taxonomy priors
+  - `16` actor-taxonomy priors
   - `5` semantic phrase priors
   - `4` semantic modality-reliability priors
   - `266` temporal phrase priors
   - `99` table-shape priors on the current four-document AMBA corpus
+- actor-taxonomy learning now also has an explicit epistemic hygiene guard:
+  - payload/event nouns like `control information`, `data`, and `transfer` are rejected at both harvest time and lookup time
+  - that matters because a repaired extraction bug should be removable from `CorpusMemory`, not allowed to survive as stale actor vocabulary that quietly biases later runs
 - the first benchmark pair for this family now locks the before/after contract:
   - without prior memory, a locally `unknown` `Name | Direction | Width` table stays inert
   - with a matching table-shape prior, the same local table recovers signal-description semantics through `EvidenceIR`, `SemanticIR`, and `IntentIR`

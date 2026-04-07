@@ -7,8 +7,8 @@ use serde::{Deserialize, Serialize};
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::prior_memory::{
-    ActorTaxonomyRole, CorpusMemory, ProtocolFamily, normalize_actor_term,
-    normalized_text_contains_term,
+    ActorTaxonomyRole, CorpusMemory, ProtocolFamily, is_meaningful_actor_term,
+    normalize_actor_term, normalized_text_contains_term,
 };
 use crate::ir::semantic::InterfaceSignalSemanticRole;
 use crate::ir::source::{
@@ -1545,21 +1545,7 @@ fn normalize_table_actor_name(value: &str) -> Option<String> {
 
 fn normalize_relation_actor_name(value: &str) -> Option<String> {
     let actor = normalize_table_actor_name(value)?;
-    let lowered = normalize_actor_term(&actor);
-
-    if matches!(
-        lowered.as_str(),
-        "information"
-            | "control information"
-            | "status information"
-            | "data"
-            | "payload"
-            | "data bytes"
-            | "control bytes"
-            | "byte lanes"
-            | "transfer"
-            | "transaction"
-    ) {
+    if !is_meaningful_actor_term(&actor) {
         return None;
     }
 

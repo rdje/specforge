@@ -12,8 +12,8 @@ use crate::ir::prior_memory::{
     ActorTaxonomyPriorRecord, ActorTaxonomyRole, CorpusMemory, CorpusMemoryUpdatePolicyRecord,
     PriorSourceArtifactRecord, ProtocolFamily, SemanticModalityReliabilityPriorRecord,
     SemanticPhrasePriorRecord, TableShapePriorRecord, TemporalPhrasePriorRecord,
-    is_meaningful_prior_phrase, normalize_actor_term, normalize_prior_phrase,
-    normalize_table_header_signature,
+    is_meaningful_actor_term, is_meaningful_prior_phrase, normalize_actor_term,
+    normalize_prior_phrase, normalize_table_header_signature,
 };
 use crate::ir::semantic::SemanticIr;
 use crate::ir::semantic::{
@@ -328,7 +328,7 @@ fn harvest_actor_taxonomy_priors(
         };
 
         let normalized_actor_term = normalize_actor_term(&actor_name);
-        if normalized_actor_term.is_empty() {
+        if !is_meaningful_actor_term(&normalized_actor_term) {
             continue;
         }
 
@@ -1776,6 +1776,90 @@ mod tests {
         assert_eq!(
             records[0].strongest_grounding_strength,
             SemanticGroundingStrength::SingleSource
+        );
+    }
+
+    #[test]
+    fn learn_priors_skips_payload_like_actor_terms() {
+        let mut intent_ir = base_intent_ir("doc_payload_actor", "doc_payload_actor");
+        intent_ir.actors = vec![IntentActor {
+            actor_id: "actor_payload".to_string(),
+            actor_name: Some("control information".to_string()),
+            responsibilities: Vec::new(),
+            supporting_actor_ids: Vec::new(),
+        }];
+        intent_ir.interfaces = vec![InterfaceRecord {
+            interface_id: "if_payload".to_string(),
+            signals: vec!["TVALID".to_string()],
+            signal_records: vec![InterfaceSignalRecord {
+                signal_name: "TVALID".to_string(),
+                direction_hint: Some(InterfaceSignalDirection::Output),
+                width_hint: None,
+                semantic_tags: vec![SignalSemanticTag::HandshakeValidLike],
+                semantic_candidates: Vec::new(),
+                semantic_arbitration: Some(InterfaceSignalSemanticArbitrationRecord {
+                    candidate_count: 1,
+                    leading_role: InterfaceSignalSemanticRole::HandshakeValidLike,
+                    leading_evidence_weight: 3,
+                    leading_prior_reliability_adjustment: 0,
+                    leading_arbitration_weight: 3,
+                    runner_up_role: None,
+                    runner_up_evidence_weight: None,
+                    runner_up_prior_reliability_adjustment: None,
+                    runner_up_arbitration_weight: None,
+                    margin_over_runner_up: None,
+                    decisive: true,
+                    decision_basis: SemanticArbitrationDecisionBasis::SingleCandidate,
+                }),
+                resolved_semantic_role: Some(InterfaceSignalSemanticRole::HandshakeValidLike),
+                semantic_grounding_strength: Some(SemanticGroundingStrength::SingleSource),
+                semantic_consensus: Some(InterfaceSignalSemanticConsensusRecord {
+                    role: InterfaceSignalSemanticRole::HandshakeValidLike,
+                    grounding_strength: SemanticGroundingStrength::SingleSource,
+                    supporting_source_kinds: vec![SignalSemanticHintSourceKind::ProseStatement],
+                    supporting_observation_count: 1,
+                    automation_confidence: AutomationConfidence::Medium,
+                    prior_reliability_adjustment: 0,
+                    prior_guided: false,
+                    alias_dependent: false,
+                }),
+                semantic_observations: vec![InterfaceSignalSemanticObservationRecord {
+                    semantic_tags: vec![SignalSemanticTag::HandshakeValidLike],
+                    source_kind: SignalSemanticHintSourceKind::ProseStatement,
+                    source_text: "Control information indicates a transfer request.".to_string(),
+                    supporting_statement_ids: vec!["stmt_payload".to_string()],
+                    supporting_table_ids: Vec::new(),
+                    supporting_visual_evidence_ids: Vec::new(),
+                    automation_confidence: AutomationConfidence::Medium,
+                }],
+                supporting_statement_ids: Vec::new(),
+                automation_confidence: AutomationConfidence::Medium,
+            }],
+            supporting_statement_ids: Vec::new(),
+        }];
+        intent_ir.actor_ports = vec![ActorPortRecord {
+            actor_id: "actor_payload".to_string(),
+            actor_name: "control information".to_string(),
+            signal_name: "TVALID".to_string(),
+            direction: ActorRelativeDirection::Output,
+            relation_basis: vec![RelationKind::Drives],
+            width_hint: None,
+            source_statement_ids: vec!["stmt_payload".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        }];
+
+        let mut actor_taxonomy_priors = BTreeMap::new();
+        harvest_actor_taxonomy_priors(
+            &intent_ir,
+            ProtocolFamily::AmbaAxi,
+            &mut actor_taxonomy_priors,
+        );
+
+        let records = materialize_actor_taxonomy_priors(actor_taxonomy_priors);
+        assert!(
+            records.is_empty(),
+            "payload-like actor terms must not be harvested into actor-taxonomy priors, got: {:?}",
+            records
         );
     }
 
