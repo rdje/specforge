@@ -54,7 +54,8 @@ Use it first for the project objective, document navigation, and the current imp
   - semantic modality-reliability priors from decisive, non-alias-dependent semantic consensus plus the supporting source kinds that carried that consensus
   - temporal-language phrase priors from canonical temporal rules and validated canonical `signal_constraints` / `conditional_rules`
   - table-shape priors from validated `SourceIR` table header signatures chained through validated `IntentIR`
-- the latest live AMBA prior-memory run currently harvests `16` actor-taxonomy priors, `222` temporal phrase priors, and `94` table-shape priors from the APB/AHB/AXI `IntentIR` artifacts; semantic phrase priors and semantic modality-reliability priors both remain `0` on that corpus because the current canonical AMBA artifacts do not yet surface observation-backed semantic consensus strongly enough to promote safely
+- the latest live four-document AMBA prior-memory run currently harvests `17` actor-taxonomy priors, `5` semantic phrase priors, `4` semantic modality-reliability priors, `266` temporal phrase priors, and `99` table-shape priors from the AXI/APB/AHB/AXI-Stream `IntentIR` artifacts
+- that change came from the first unseen-protocol stress run too: AXI-Stream now converges in `2` pipeline iterations with full Ollama VLM + NLP Level 3 enabled, validates at `80/100 GOOD`, and is strong enough to contribute real semantic priors even though its remaining graph-direction and connectivity gaps still keep it below the APB/AHB/AXI baselines
 - the first prior-consumption slices are now real too:
   - cross-document actor-taxonomy memory can safely recover directions for local actor labels like `Producer` / `Consumer`, and it can now also recover structural KG edges from width-only section-guided headings like `Issuer signals`
   - cross-document semantic phrase memory can safely recover non-hardcoded local role phrases like `XACK can receive the transfer`

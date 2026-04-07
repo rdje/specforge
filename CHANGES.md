@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-04-07 (AXI-Stream unseen-protocol run populates semantic priors)
+
+### Added: first unseen-protocol full converge + learning refresh
+- Ran full `specforge converge` with Ollama VLM + NLP Level 3 on [IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf](/Users/richarddje/Documents/livework/chipdoc/arm/amba/supporting/axi-stream/current/IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf).
+- The AXI-Stream artifact converged in `2` pipeline iterations and validates at `80/100 GOOD`; it is now included in the tracked [VALIDATION_SNAPSHOT.md](/Users/richarddje/Documents/github/specforge/VALIDATION_SNAPSHOT.md) projection and the managed validation block in [LIVE_ACHIEVEMENT_STATUS.md](/Users/richarddje/Documents/github/specforge/LIVE_ACHIEVEMENT_STATUS.md).
+- Refreshing `specforge learn-priors` across AXI/APB/AHB/AXI-Stream now yields `17` actor-taxonomy priors, `5` semantic phrase priors, `4` semantic modality-reliability priors, `266` temporal phrase priors, and `99` table-shape priors in local `CorpusMemory`.
+
+### Fixed: multi-signal table-row semantic-role leakage
+- Extended [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) so signal-description table rows now sanitize against the full local known-signal set before semantic-role inference, preventing a secondary signal mention like `TREADY` from leaking a ready-like role onto a row subject like `TVALID`.
+- Added the regression `signal_table_descriptions_ignore_other_handshake_signal_mentions`, which locks the AXI-Stream-style case where `TVALID` should stay valid-like even when its row also describes the handshake condition involving `TREADY`.
+
+### Why this matters
+- This is the first concrete proof that a new unseen protocol document can both expose an extraction flaw and then materially strengthen the learning plane once the artifact is repaired enough to be harvested.
+- It also marks the first real-corpus point where semantic phrase priors and semantic modality-reliability priors become nonzero instead of remaining only architecturally possible.
+
 ## 2026-04-07 (learning-plane structure documented as first-class architecture)
 
 ### Added: explicit doctrine for how `R15f` should learn
@@ -50,7 +65,7 @@
 ### Validation
 - `cargo test --manifest-path Cargo.toml modality_reliability_priors_can_resolve_local_semantic_conflicts -- --nocapture` → passed
 - `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality semantic_modality_reliability_prior_guided_conflict_gold semantic_modality_reliability_prior_guided_conflict_without_prior_negative` → passed
-- `bash scripts/run_ci.sh` → passed (`206/206` tests)
+- `bash scripts/run_ci.sh` → passed (`207/207` tests)
 
 ## 2026-04-07 (table-shape priors landed as the fourth bounded learning slice)
 

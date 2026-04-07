@@ -3362,10 +3362,14 @@ fn synthesize_signal_semantic_hints(
         actor_signal_relations,
         prior_guidance,
     );
-    let mut hints =
-        synthesize_signal_semantic_hints_from_tables(source_ir, &known_actor_names, prior_guidance);
     let known_signals =
         collect_known_signal_names_for_semantic_hints(source_ir, statements, prior_guidance);
+    let mut hints = synthesize_signal_semantic_hints_from_tables(
+        source_ir,
+        &known_signals,
+        &known_actor_names,
+        prior_guidance,
+    );
     let mut seen = hints
         .iter()
         .map(signal_semantic_hint_key)
@@ -3502,6 +3506,7 @@ fn collect_known_actor_names_for_semantic_hints(
 
 fn synthesize_signal_semantic_hints_from_tables(
     source_ir: &SourceIr,
+    known_signals: &HashSet<String>,
     known_actor_names: &BTreeSet<String>,
     prior_guidance: Option<&EvidencePriorGuidance>,
 ) -> Vec<SignalSemanticHintRecord> {
@@ -3560,7 +3565,7 @@ fn synthesize_signal_semantic_hints_from_tables(
 
             let sanitized_description = strip_signal_mentions_from_semantic_hint_text(
                 description,
-                std::iter::once(signal_name.as_str()),
+                known_signals.iter().map(String::as_str),
             );
             let semantic_tags = infer_signal_semantic_tags_from_description(
                 &sanitized_description,
@@ -7029,6 +7034,85 @@ mod tests {
         }));
         assert!(evidence_ir.signal_semantic_hints.iter().any(|hint| {
             hint.signal_name == "XACK"
+                && hint
+                    .semantic_tags
+                    .contains(&super::SignalSemanticTag::HandshakeReadyLike)
+        }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn signal_table_descriptions_ignore_other_handshake_signal_mentions() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("multi_signal_handshake_table_hints.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Stream\n",
+                "Signal TVALID is input width 1.\n",
+                "Signal TREADY is input width 1.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_axi_stream_signals".to_string(),
+            asset_id: "asset_axi_stream_signals".to_string(),
+            page_id: None,
+            caption_text: Some("Handshake signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("TVALID", false),
+                    make_table_cell(
+                        "TVALID indicates the Transmitter is driving a valid transfer. A transfer takes place when both TVALID and TREADY are asserted.",
+                        false,
+                    ),
+                ],
+                vec![
+                    make_table_cell("TREADY", false),
+                    make_table_cell(
+                        "TREADY indicates that the Receiver can accept a transfer.",
+                        false,
+                    ),
+                ],
+            ],
+            row_count: 2,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        let tvalid_hints: Vec<_> = evidence_ir
+            .signal_semantic_hints
+            .iter()
+            .filter(|hint| hint.signal_name == "TVALID")
+            .collect();
+        assert!(!tvalid_hints.is_empty());
+        assert!(tvalid_hints.iter().any(|hint| {
+            hint.semantic_tags
+                .contains(&super::SignalSemanticTag::HandshakeValidLike)
+        }));
+        assert!(!tvalid_hints.iter().any(|hint| {
+            hint.semantic_tags
+                .contains(&super::SignalSemanticTag::HandshakeReadyLike)
+        }));
+
+        assert!(evidence_ir.signal_semantic_hints.iter().any(|hint| {
+            hint.signal_name == "TREADY"
                 && hint
                     .semantic_tags
                     .contains(&super::SignalSemanticTag::HandshakeReadyLike)

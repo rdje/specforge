@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `b41b882`
-- latest_commit_brief_message: `docs(learning): capture learning-plane epistemology`
-- note: the current session has now moved beyond doctrine-only logging and landed the first semantic modality-reliability prior family plus the first prior-guided semantic arbitration slice
+- latest_commit_hash: `df9c94f`
+- latest_commit_brief_message: `feat(learning): add modality reliability priors`
+- note: the current session has now moved beyond prior-family plumbing and used AXI-Stream as the first unseen protocol run to materially populate semantic priors in `CorpusMemory`
 
 ## Recent commit chain (last 5)
+- `df9c94f` feat(learning): add modality reliability priors
 - `60e76b5` feat(semantic): consume temporal phrase priors safely
 - `a756010` feat(evidence): consume semantic phrase priors safely
 - `7ebd697` feat(evidence): consume actor taxonomy priors safely
 - `53da080` feat(learning): learn actor taxonomy priors
-- `8a9c3bd` ci(repo): unify local and hosted CI
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -46,6 +46,8 @@
 - `SemanticIR` now also has a third bounded prior consumer for temporal phrase priors, using them only as a fallback for local timing text when direct cycle-window parsing fails
 - `EvidenceIR` now also has a fourth bounded prior consumer for table-shape priors, using them only when a current structured table is still `unknown`; explicit local `SourceIR.table_kind` values still win outright
 - `SemanticIR` now also has a fifth bounded prior consumer overall and a second semantic-stage one for semantic modality-reliability priors, using them only to advisory-adjust arbitration between already-present locally grounded semantic candidates while preserving the underlying conflict surface
+- the latest live four-document prior-memory run over AXI/APB/AHB/AXI-Stream now yields `17` actor-taxonomy priors, `5` semantic phrase priors, `4` semantic modality-reliability priors, `266` temporal phrase priors, and `99` table-shape priors
+- AXI-Stream is now the first unseen protocol run carried all the way through the full loopbacked path: it converged in `2` pipeline iterations with Ollama VLM + NLP Level 3, validates at `80/100 GOOD`, and its artifact is now included in the tracked validation snapshot
 - `specforge kg-bench` can now also stage a fixture-local `CorpusMemory`, and the first tracked gold/negative pair proves prior-guided temporal recovery on an unseen local phrase without leaking cross-document facts
 - `specforge kg-bench` now also locks the same before/after truthfulness pattern for semantic priors on an unseen local phrase
 - `specforge kg-bench` now also locks the same before/after truthfulness pattern for actor-taxonomy priors on unseen local section-heading vocabulary
@@ -69,16 +71,25 @@
   - the learning plane must keep strict separation, typed memory, bounded influence, validation-gated feedback, negative learning, and provenance
   - the learning plane should be treated as a first-class epistemology layer, not as a side feature
 - synced `README.md`, `DEVELOPMENT_NOTES.md`, `CHANGES.md`, and `MEMORY.md` so future sessions can quickly recover that distinction after a crash or handoff
+- fixed the AXI-Stream table-row semantic leak where secondary signal mentions in one signal-description row could assign the wrong handshake role back to the row subject
+- ran full `converge` on `IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf` with Ollama VLM + NLP Level 3 enabled, validated the resulting `IntentIR`, and refreshed the tracked validation snapshot to include the new artifact
+- refreshed `generated/prior_memory/corpus_memory.json` across AXI/APB/AHB/AXI-Stream, producing the first nonzero semantic phrase and semantic modality-reliability priors on a real corpus
 
 ## Current working tree before commit
 - modified tracked files currently include:
+  - `crates/specforge/src/ir/evidence.rs`
+  - `LIVE_ACHIEVEMENT_STATUS.md`
+  - `VALIDATION_SNAPSHOT.md`
+  - `README.md`
+  - `ROADMAP.md`
+  - `RUST_CODEBASE_ANALYSIS.md`
   - `DEVELOPMENT_NOTES.md`
   - `CHANGES.md`
   - `MEMORY.md`
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the semantic modality-reliability prior family plus bounded `SemanticIR` arbitration consumer
+1. commit the AXI-Stream unseen-protocol run plus the table-row semantic leak fix
 2. continue replacing remaining direct `direction_hint` consumers with graph-first semantics
 3. broaden `R15f` beyond actor-taxonomy / semantic / semantic-modality-reliability / temporal / table-shape into visual-motif and negative-knowledge prior families
 

@@ -586,9 +586,11 @@
   - temporal-language priors are harvested from canonical `temporal_rules` plus validated canonical `signal_constraints` / `conditional_rules`
   - the learned memory remains advisory-only and cannot directly author canonical document facts
 - the first live AMBA run is already informative:
-  - it now yields `16` actor-taxonomy priors from explicit actor vocabulary plus decisive actor-grounded handshake-role evidence
-  - it yields `222` temporal phrase priors from AXI/APB/AHB `IntentIR` artifacts
-  - it yields `0` semantic phrase priors on that same corpus, which is honest and useful because it shows the learning plane is functioning while the real-document semantic-consensus surface is still not rich enough to promote safely
+  - it now yields `17` actor-taxonomy priors from explicit actor vocabulary plus decisive actor-grounded handshake-role evidence
+  - it yields `5` semantic phrase priors
+  - it yields `4` semantic modality-reliability priors
+  - it yields `266` temporal phrase priors
+  - it yields `99` table-shape priors from AXI/APB/AHB/AXI-Stream `IntentIR` artifacts
 - the next `R15f` step should not be “force more priors.” It should be:
   - broaden the store beyond the current actor-taxonomy / semantic / semantic-modality-reliability / temporal / table-shape families into visual-motif and negative-knowledge priors
   - then teach `EvidenceIR` / `SemanticIR` to consume those priors as bounded suggestions without weakening the local-grounding rule
@@ -602,11 +604,11 @@
   - the prior cannot create a semantic role when the current PDF has no local candidate for that role
   - the original semantic conflict record remains preserved even when prior-guided arbitration becomes decisive
 - the first live AMBA prior-memory run shows this family is architecturally landed but still honestly sparse on real artifacts:
-  - `16` actor-taxonomy priors
-  - `222` temporal phrase priors
-  - `94` table-shape priors
-  - `0` semantic phrase priors
-  - `0` semantic modality-reliability priors on the same real corpus
+  - `17` actor-taxonomy priors
+  - `5` semantic phrase priors
+  - `4` semantic modality-reliability priors
+  - `266` temporal phrase priors
+  - `99` table-shape priors on the current four-document AMBA corpus
 - the first benchmark pair for this family now locks the before/after contract:
   - without prior memory, a locally conflicted role like `XCTRL` stays honestly contested
   - with a matching modality-reliability prior, the same local evidence can become decisively resolved through `SemanticIR` and `IntentIR`
@@ -620,10 +622,11 @@
   - prior-guided table-shape recovery widens local interpretation, but it does not rewrite `SourceIR`
   - only the current table’s own normalized header signature is consulted, so the prior cannot invent a table that is not already present in the current document
 - the first live AMBA prior-memory run now shows this family is materially real, not speculative:
-  - `16` actor-taxonomy priors
-  - `222` temporal phrase priors
-  - `94` table-shape priors
-  - `0` semantic phrase priors on the same real corpus
+  - `17` actor-taxonomy priors
+  - `5` semantic phrase priors
+  - `4` semantic modality-reliability priors
+  - `266` temporal phrase priors
+  - `99` table-shape priors on the current four-document AMBA corpus
 - the first benchmark pair for this family now locks the before/after contract:
   - without prior memory, a locally `unknown` `Name | Direction | Width` table stays inert
   - with a matching table-shape prior, the same local table recovers signal-description semantics through `EvidenceIR`, `SemanticIR`, and `IntentIR`
