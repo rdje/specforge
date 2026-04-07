@@ -534,6 +534,7 @@
 - `specforge evidence <source_ir>` and `specforge converge <source>` now consult the local `CorpusMemory` by default through `--prior-memory generated/prior_memory/corpus_memory.json`
 - the first bounded use is intentionally narrow:
   - actor-taxonomy priors can widen how `EvidenceIR` interprets explicit local actor labels in section headings and `Source` / `Destination` columns
+  - width-only section-guided signal tables can now also emit structural `ActorSignalRelation::Drives` edges when the heading carries a locally grounded actor term plus a matching learned taxonomy prior
   - the prior can help classify `Producer` / `Consumer` as requester-like / completer-like when those terms are already present in the current PDF
   - the prior cannot create a signal, actor, direction, or relation that is not explicitly grounded in the current document
 - this is the right first consumer because it replaces a brittle hardcoded vocabulary list with reusable typed memory without violating the “priors guide extraction, they do not author truth” rule
@@ -559,7 +560,7 @@
 - the third consumer is now real in `crates/specforge/src/ir/semantic.rs`
 - `SemanticIR` can now use temporal phrase priors to advisory-recover a `cycle_window` from local timing text whose phrase shape matches learned prior memory when the built-in parser still cannot recover the timing window directly
 - the first bounded prior families are now benchmarked as a set, not just implemented in isolation:
-  - actor-taxonomy prior benchmark: width-only `Issuer signals` / `Acceptor signals` headings recover canonical directions only when matching actor-taxonomy priors are present
+  - actor-taxonomy prior benchmark: width-only `Issuer signals` / `Acceptor signals` headings recover structural KG edges, actor ports, and canonical directions only when matching actor-taxonomy priors are present
   - semantic prior benchmark: `XACK can receive the transfer` recovers a role only when a matching semantic prior is present
   - temporal prior benchmark: `PREADY must be asserted one beat later` recovers a `cycle_window` only when a matching temporal prior is present
 - the bounded semantic-prior path is now also benchmarked on a second modality: a visual-caption phrase like `XACK can sink the transfer` now proves the same before/after contract for `SignalSemanticHintSourceKind::VisualCaption`

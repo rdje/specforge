@@ -267,7 +267,7 @@ cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --targ
 - `specforge project-validation <artifact>...` now turns those persisted reports into tracked markdown continuity docs, and broader adapter validation remains intentionally deferred until semantic truthfulness is stronger
 - `specforge learn-priors <intent-ir>...` now turns validated canonical `IntentIR` artifacts into a local `CorpusMemory` prior store under `generated/prior_memory/corpus_memory.json`, and the current slice learns reusable actor-taxonomy, semantic-role, and temporal-language priors without letting that memory author canonical facts directly
 - `specforge evidence <source-ir>` and `specforge converge <source>` now consult that same local prior store by default through `--prior-memory generated/prior_memory/corpus_memory.json`; missing prior files are treated as a no-op, and the first bounded consumers now use:
-  - actor-taxonomy priors to interpret explicit local actor terms already present in section headings and `Source` / `Destination` table columns
+  - actor-taxonomy priors to interpret explicit local actor terms already present in section headings and `Source` / `Destination` table columns, including structural KG recovery from width-only section-guided signal tables
   - semantic phrase priors to interpret locally grounded non-hardcoded role phrases that normalize to learned semantic evidence
 - `SemanticIR` now also consults the persisted prior-memory path indirectly through the upstream `EvidenceIR`, and the first bounded temporal consumer uses temporal phrase priors only as a fallback for local timing text when the built-in cycle-window parser cannot recover the timing window directly
 

@@ -489,6 +489,7 @@ impl EvidenceIr {
             synthesized,
             contract_stmts,
             &mut statement_counter,
+            prior_guidance.as_ref(),
         );
 
         let mut evidence_ir = Self {
@@ -1599,9 +1600,50 @@ fn should_treat_table_as_top_level_signal_description(
     true
 }
 
+fn actor_name_and_role_from_section_heading(
+    title: &str,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+) -> Option<(String, ActorTaxonomyRole)> {
+    let lowered = title.to_ascii_lowercase();
+    for suffix in [
+        " signals", " signal", " inputs", " input", " outputs", " output",
+    ] {
+        if lowered.ends_with(suffix) {
+            let trimmed = title
+                .get(..title.len().saturating_sub(suffix.len()))
+                .unwrap_or("")
+                .trim();
+            let actor_name = normalize_table_actor_name(trimmed)?;
+            let role = actor_taxonomy_role_in_text(trimmed, prior_guidance)?;
+            return Some((actor_name, role));
+        }
+    }
+
+    None
+}
+
+#[cfg(test)]
 fn extract_relations_from_signal_tables(source_ir: &SourceIr) -> Vec<ActorSignalRelation> {
+    extract_relations_from_signal_tables_with_prior_guidance(source_ir, None)
+}
+
+fn extract_relations_from_signal_tables_with_prior_guidance(
+    source_ir: &SourceIr,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+) -> Vec<ActorSignalRelation> {
     let mut records = Vec::new();
     let mut counter = 1usize;
+    let mut page_to_section: BTreeMap<u32, (SectionKind, String)> = BTreeMap::new();
+
+    for section in &source_ir.document_sections {
+        if let Some(page_num) = section
+            .page_id
+            .as_deref()
+            .and_then(page_number_from_page_id)
+        {
+            page_to_section.insert(page_num, (section.section_kind, section.title.clone()));
+        }
+    }
 
     for table in &source_ir.structured_tables {
         if !should_treat_table_as_top_level_signal_description(table) {
@@ -1624,9 +1666,15 @@ fn extract_relations_from_signal_tables(source_ir: &SourceIr) -> Vec<ActorSignal
             }
         });
 
-        let Some((relation_col_idx, relation_col_kind)) = relation_col else {
-            continue; // no actor-bearing relation column in this table
-        };
+        let table_page = table
+            .page_id
+            .as_deref()
+            .and_then(page_number_from_page_id)
+            .unwrap_or(0);
+        let section_context = page_to_section
+            .range(..=table_page)
+            .next_back()
+            .map(|(_, context)| context.clone());
 
         for row in &table.body_rows {
             // Signal name from first column
@@ -1645,16 +1693,31 @@ fn extract_relations_from_signal_tables(source_ir: &SourceIr) -> Vec<ActorSignal
                 continue;
             }
 
-            // Actor name from Source / Destination column
-            let Some(source_cell) = row.get(relation_col_idx) else {
+            let Some((actor, relation)) = relation_col
+                .and_then(|(relation_col_idx, relation_col_kind)| {
+                    row.get(relation_col_idx).and_then(|source_cell| {
+                        normalize_table_actor_name(&source_cell.text).map(|actor| {
+                            let relation = match relation_col_kind {
+                                RelationTableColumnKind::SourceLike => RelationKind::Drives,
+                                RelationTableColumnKind::DestinationLike => RelationKind::Reads,
+                            };
+                            (actor, relation)
+                        })
+                    })
+                })
+                .or_else(|| {
+                    section_context
+                        .as_ref()
+                        .and_then(|(section_kind, section_title)| {
+                            if !matches!(section_kind, SectionKind::SignalDescription) {
+                                return None;
+                            }
+                            actor_name_and_role_from_section_heading(section_title, prior_guidance)
+                                .map(|(actor_name, _role)| (actor_name, RelationKind::Drives))
+                        })
+                })
+            else {
                 continue;
-            };
-            let Some(actor) = normalize_table_actor_name(&source_cell.text) else {
-                continue;
-            };
-            let relation = match relation_col_kind {
-                RelationTableColumnKind::SourceLike => RelationKind::Drives,
-                RelationTableColumnKind::DestinationLike => RelationKind::Reads,
             };
 
             records.push(ActorSignalRelation {
@@ -4175,8 +4238,9 @@ fn infer_signal_direction_from_section(
         return Some("input");
     }
 
-    actor_taxonomy_role_in_text(title, prior_guidance)
-        .map(|role| direction_for_actor_taxonomy_role(role, RelationTableColumnKind::SourceLike))
+    actor_name_and_role_from_section_heading(title, prior_guidance).map(|(_actor_name, role)| {
+        direction_for_actor_taxonomy_role(role, RelationTableColumnKind::SourceLike)
+    })
 }
 
 /// Returns true if the token looks like a hardware signal name:
@@ -5284,6 +5348,7 @@ fn converge_evidence_extractions(
     seed_synthesized_statements: Vec<ExtractedStatement>,
     contract_statements: Vec<ExtractedStatement>,
     statement_counter: &mut usize,
+    prior_guidance: Option<&EvidencePriorGuidance>,
 ) -> (
     Vec<ExtractedStatement>,
     Vec<SignalConstraintRecord>,
@@ -5293,7 +5358,8 @@ fn converge_evidence_extractions(
 ) {
     let signal_names_from_tables = collect_signal_names_from_tables(source_ir);
     let signal_widths_from_tables = collect_signal_widths_from_tables(source_ir);
-    let table_relations = extract_relations_from_signal_tables(source_ir);
+    let table_relations =
+        extract_relations_from_signal_tables_with_prior_guidance(source_ir, prior_guidance);
     let mut dynamic_synthesized_statements = Vec::new();
     let mut final_extracted_statements = Vec::new();
     let mut final_signal_constraints = Vec::new();
@@ -5590,7 +5656,7 @@ mod tests {
     };
     use crate::ir::semantic::{InterfaceSignalSemanticRole, SemanticGroundingStrength};
     use crate::ir::source::{
-        AutomationConfidence, SectionKind, SourceIr, StructuredTableCellRecord,
+        AutomationConfidence, RelationKind, SectionKind, SourceIr, StructuredTableCellRecord,
         StructuredTableRecord, TableKind, VisualAsset, VisualAssetKind,
     };
 
@@ -6415,6 +6481,14 @@ mod tests {
                 .iter()
                 .any(|statement| statement.text == "Signal XREQ is output width 1."),
             "expected section-heading actor taxonomy prior to recover output direction"
+        );
+        assert!(
+            evidence_ir.actor_signal_relations.iter().any(|relation| {
+                relation.actor_name == "Producer"
+                    && relation.signal_name == "XREQ"
+                    && matches!(relation.relation, RelationKind::Drives)
+            }),
+            "expected section-heading actor taxonomy prior to recover a structural Drives relation"
         );
 
         Ok(())

@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-04-07 (Actor-taxonomy priors now recover structural KG from section headings)
+
+### Added: prior-guided structural KG recovery for width-only section-guided signal tables
+- Extended [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) so actor-taxonomy priors can now lift width-only `Signal | Width` tables under headings like `Issuer signals` or `Acceptor signals` into structural `ActorSignalRelation::Drives` edges, not just flat compatibility directions.
+- Strengthened the tracked gold fixture [actor_taxonomy_prior_guided_section_direction_gold](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/actor_taxonomy_prior_guided_section_direction_gold/fixture.json) so it now requires graph-backed recovery too: `actor_signal_relations = 3`, `actor_ports = 3`, and `with_graph_direction = 3`.
+
+### Why this matters
+- This closes an important quality gap in the first learning-plane consumer: prior-guided section headings now improve the canonical structural KG, not just the compatibility hint surface.
+- It directly supports the graph-first roadmap because learned actor vocabulary can now produce actor-relative port structure from locally grounded width-only tables.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml actor_taxonomy_priors_guide_section_heading_direction_inference -- --nocapture` → passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality actor_taxonomy_prior_guided_section_direction_gold actor_taxonomy_prior_guided_section_direction_without_prior_negative` → passed
+- `bash scripts/run_ci.sh` → passed (`204/204` tests)
+
 ## 2026-04-07 (KG fixtures now lock prior-guided visual semantic recovery)
 
 ### Added: prior-guided visual semantic gold/negative pair

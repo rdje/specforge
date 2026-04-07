@@ -115,7 +115,7 @@
 - Prior-guided temporal phrase consumption in `SemanticIR`: Done
 - KG benchmark harness now locks prior-guided unseen-phrase temporal recovery: Done
 - KG benchmark harness now locks prior-guided unseen-phrase semantic recovery: Done
-- KG benchmark harness now locks prior-guided actor-taxonomy direction recovery: Done
+- KG benchmark harness now locks prior-guided actor-taxonomy graph recovery: Done
 - KG benchmark harness now locks prior-guided visual semantic recovery: Done
 - Test suite expanded to 204 tests; all passing: Done
 - Explicit clock-tick temporal model in `SemanticIR` / `IntentIR`: In Progress
@@ -129,7 +129,7 @@
 - Cross-document typed prior memory (`R15f`): In Progress
 
 ## Highest-priority remaining gap
-- Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then broaden `R15f` beyond its first actor-taxonomy store plus the first three bounded prior consumers in `EvidenceIR` / `SemanticIR` into table-shape, visual, modality-reliability, and negative-knowledge prior families while expanding the first honest prior-guided benchmark slice beyond the new actor-taxonomy, temporal, semantic, and visual pairs into negative-knowledge prior-consumption fixtures
+- Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then broaden `R15f` beyond its first actor-taxonomy store plus the first three bounded prior consumers in `EvidenceIR` / `SemanticIR` into table-shape, visual, modality-reliability, and negative-knowledge prior families while expanding the first honest prior-guided benchmark slice beyond the new graph-backed actor-taxonomy, temporal, semantic, and visual pairs into negative-knowledge prior-consumption fixtures
 
 ## Validation Projection
 

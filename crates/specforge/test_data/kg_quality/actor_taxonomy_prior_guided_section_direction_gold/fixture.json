@@ -150,6 +150,35 @@
   "expectations": {
     "semantic": {
       "signal_names_include": ["XADDR", "XCMD", "XRESP"],
+      "actor_signal_relations_include": [
+        {
+          "actor_name": "Issuer",
+          "signal_name": "XADDR",
+          "relation": "drives"
+        },
+        {
+          "actor_name": "Issuer",
+          "signal_name": "XCMD",
+          "relation": "drives"
+        },
+        {
+          "actor_name": "Acceptor",
+          "signal_name": "XRESP",
+          "relation": "drives"
+        }
+      ],
+      "actor_ports_include": [
+        {
+          "actor_name": "Issuer",
+          "signal_name": "XADDR",
+          "direction": "output"
+        },
+        {
+          "actor_name": "Acceptor",
+          "signal_name": "XRESP",
+          "direction": "output"
+        }
+      ],
       "signal_directions_include": [
         {
           "signal_name": "XADDR",
@@ -167,6 +196,35 @@
     },
     "intent": {
       "signal_names_include": ["XADDR", "XCMD", "XRESP"],
+      "actor_signal_relations_include": [
+        {
+          "actor_name": "Issuer",
+          "signal_name": "XADDR",
+          "relation": "drives"
+        },
+        {
+          "actor_name": "Issuer",
+          "signal_name": "XCMD",
+          "relation": "drives"
+        },
+        {
+          "actor_name": "Acceptor",
+          "signal_name": "XRESP",
+          "relation": "drives"
+        }
+      ],
+      "actor_ports_include": [
+        {
+          "actor_name": "Issuer",
+          "signal_name": "XADDR",
+          "direction": "output"
+        },
+        {
+          "actor_name": "Acceptor",
+          "signal_name": "XRESP",
+          "direction": "output"
+        }
+      ],
       "signal_directions_include": [
         {
           "signal_name": "XADDR",
@@ -186,15 +244,19 @@
       "semantic": {
         "metric_values": {
           "with_resolved_direction": "3",
-          "with_graph_direction": "0",
-          "with_compat_direction_hint": "3"
+          "with_graph_direction": "3",
+          "with_compat_direction_hint": "3",
+          "actor_signal_relations": "3",
+          "actor_ports": "3"
         }
       },
       "intent": {
         "metric_values": {
           "with_resolved_direction": "3",
-          "with_graph_direction": "0",
-          "with_compat_direction_hint": "3"
+          "with_graph_direction": "3",
+          "with_compat_direction_hint": "3",
+          "actor_signal_relations": "3",
+          "actor_ports": "3"
         }
       }
     }
