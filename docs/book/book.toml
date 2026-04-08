@@ -1,0 +1,16 @@
+[book]
+title = "SpecForge Book"
+authors = ["Richard DJE"]
+language = "en"
+src = "src"
+description = "User-facing documentation for the SpecForge staged IR pipeline."
+
+[build]
+build-dir = "../../generated/mdbook/specforge"
+create-missing = false
+
+[output.html]
+git-repository-url = "https://github.com/rdje/specforge"
+edit-url-template = "https://github.com/rdje/specforge/edit/main/docs/book/{path}"
+preferred-dark-theme = "navy"
+default-theme = "light"

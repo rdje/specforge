@@ -10,6 +10,20 @@ Use it first for the project objective, document navigation, and the current imp
 - preserve crash-safe continuity through live documentation so a new AI or LLM session can resume work quickly and correctly
 - implement protocol semantics as a typed domain model plus evidence aggregation, using AI only as a bounded hypothesis generator rather than as an end-to-end black-box reader
 
+## Canonical user-facing docs
+- the canonical user-facing documentation surface now lives in the mdBook under `docs/book/`
+- source entry point: `docs/book/src/introduction.md`
+- local build:
+  - `mdbook build docs/book`
+  - or the repo CI wrapper: `bash scripts/run_docs_ci.sh`
+- the mdBook is structured in increasing depth:
+  - getting started
+  - runtime and `doctor`
+  - command workflow
+  - IR pipeline semantics
+  - validation, learning, and troubleshooting
+- root markdown docs still exist, but they now serve continuity, roadmap, and developer-state purposes rather than being the primary user-doc surface
+
 ## Current repository state
 - the live-document surface has been pivoted around `IntentIR` as the canonical endpoint
 - the Rust workspace and active CLI/crate identity are now `specforge`
@@ -54,7 +68,7 @@ Use it first for the project objective, document navigation, and the current imp
 - `SemanticIR` now has a third bounded prior consumer too: if the current PDF contains local timing text whose phrase shape matches a learned temporal prior and the built-in parser still cannot recover a cycle window on its own, the semantic stage can advisory-recover that cycle window without inventing a timing rule that is not already locally grounded
 - `EvidenceIR` now has a fourth bounded prior consumer too: if ingest left a current table as `unknown` but the local header shape matches a learned table-shape prior, evidence extraction can advisory-recover that table kind locally without rewriting `SourceIR` or overriding explicit local table classifications
 - GitHub Actions CI now runs `cargo fmt --all --check` and `cargo test --manifest-path Cargo.toml` on every `push` and `pull_request`, so the local Rust quality gate is mirrored automatically on GitHub
-- the hosted CI path is now driven by `./scripts/run_ci.sh`, so the exact Rust CI suite can be run locally before push instead of only after GitHub receives the commit
+- the hosted CI path is now driven by `./scripts/run_ci.sh`, so the exact Rust + docs CI suite can be run locally before push instead of only after GitHub receives the commit
 - the current `R15f` slice now learns five safe prior families:
   - actor-taxonomy priors from decisive actor-grounded handshake-role evidence plus conservative self-identifying actor vocabulary (`requester`, `completer`, `manager`, `subordinate`, and similar explicit role terms)
   - semantic-role phrase priors from decisive, non-alias-dependent semantic consensus plus preserved observation text
@@ -170,6 +184,10 @@ Use it first for the project objective, document navigation, and the current imp
 ## Documentation index
 - `README.md`
   - single project entry point and navigation hub
+- `docs/book/book.toml`
+  - canonical mdBook configuration for user-facing documentation
+- `docs/book/src/SUMMARY.md`
+  - canonical book table of contents
 - `SESSION_BOOTSTRAP.md`
   - exact fresh-session instruction for a new AI or LLM instance
 - `INTENTIR_SPEC.md`
@@ -199,6 +217,8 @@ Use it first for the project objective, document navigation, and the current imp
 ## Project file and directory map
 ### Current workflow and documentation paths
 - `README.md`
+- `docs/book/book.toml`
+- `docs/book/src/SUMMARY.md`
 - `SESSION_BOOTSTRAP.md`
 - `INTENTIR_SPEC.md`
 - `ROADMAP.md`
@@ -215,7 +235,9 @@ Use it first for the project objective, document navigation, and the current imp
 - `.github/workflows/ci.yml`
   - GitHub Actions CI workflow for Rust formatting and test validation on `push` and `pull_request`
 - `scripts/run_ci.sh`
-  - canonical local/hosted Rust CI runner used both on developer machines and inside GitHub Actions
+  - canonical local/hosted Rust + docs CI runner used both on developer machines and inside GitHub Actions
+- `scripts/run_docs_ci.sh`
+  - canonical local mdBook build runner used by the main CI script
 
 ### Local-only workflow paths
 - `git_message_brief.txt`

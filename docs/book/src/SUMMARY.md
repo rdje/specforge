@@ -1,0 +1,17 @@
+# Summary
+
+- [Introduction](introduction.md)
+- [Getting Started](getting-started.md)
+- [Runtime And Doctor](runtime-and-doctor.md)
+- [Commands](commands/overview.md)
+  - [Pipeline Commands](commands/pipeline.md)
+  - [Quality, Validation, And Learning](commands/quality-and-learning.md)
+- [Pipeline Model](pipeline/overview.md)
+  - [SourceIR](pipeline/sourceir.md)
+  - [EvidenceIR](pipeline/evidenceir.md)
+  - [SemanticIR](pipeline/semanticir.md)
+  - [IntentIR](pipeline/intentir.md)
+- [Reference](reference/generated-artifacts.md)
+  - [Live Docs And Continuity](reference/live-docs.md)
+  - [Troubleshooting](reference/troubleshooting.md)
+

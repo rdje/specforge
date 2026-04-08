@@ -22,23 +22,26 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `ceacaf9`
-- latest_commit_brief_message: `feat(evidence): reject field-like message tables`
-- note: the current session is now focused on stripping abstract transport teaching tables out of AXI’s canonical top-level signal surface without breaking legitimate standalone `VALID` / `READY` docs
+- latest_commit_hash: `2879046`
+- latest_commit_brief_message: `feat(evidence): ignore abstract transport tables`
+- note: the current session is now focused on moving the primary user-facing documentation surface onto mdBook while keeping the live continuity docs intact
 
 ## Recent commit chain (last 5)
-- `4ad5530` feat(semantic): anchor interface grouping to declared signals
-- `0160f64` docs(validation): refresh live amba baseline
+- `2879046` feat(evidence): ignore abstract transport tables
 - `ceacaf9` feat(evidence): reject field-like message tables
+- `0160f64` docs(validation): refresh live amba baseline
 - `cdf2bc7` feat(semantic): ignore passive ambiguous figure links
-- `5ba5d73` feat(semantic): resolve subsumed interface grouping
+- `4ad5530` feat(semantic): anchor interface grouping to declared signals
 
 ## Current repository state
 - active workspace member: `crates/specforge`
+- the canonical user-facing documentation surface is now the mdBook under `docs/book/`
+- root docs remain important, but they now serve continuity, roadmap, validation, and developer-state roles more than primary end-user onboarding
 - runnable CLI surface includes `inspect`, `doctor`, `converge`, `ingest`, `evidence`, `semantic`, `intent`, `adapt`, `enrich`, `validate`, `kg-bench`, `project-validation`, `learn-priors`, and `nlp-enrich`
 - `specforge converge` now defaults to full Ollama-backed VLM image enrichment plus NLP Level 3 backannotation; use `--vlm-provider skip` and/or `--nlp-provider skip` only when intentionally narrowing the loop
 - GitHub Actions now mirrors the baseline Rust quality gate on every `push` / `pull_request` via `.github/workflows/ci.yml`
-- `scripts/run_ci.sh` is now the canonical Rust CI entrypoint and is reused by GitHub Actions, so the same hosted path can be exercised locally before push
+- `scripts/run_ci.sh` is now the canonical Rust + docs CI entrypoint and is reused by GitHub Actions, so the same hosted path can be exercised locally before push
+- `scripts/run_docs_ci.sh` is the dedicated mdBook build entrypoint, and the current local/hosted docs toolchain target is `mdbook v0.5.2`
 - the Docling runtime boundary is now stronger too:
   - `specforge doctor [--strict]` reports the selected Docling Python candidate plus all probe outcomes
   - runtime discovery now prefers `SPECFORGE_DOCLING_PYTHON`, then repo-local `.venv-docling`, then versioned Python candidates such as `python3.11`, before falling back to generic `python3` / `python`
@@ -66,6 +69,11 @@
   - structural producer ambiguity drops from `2` connectivity conflicts to `1`
   - the old fake bare-transport `VALID` residual/conflict is gone
   - the remaining honest AXI outliers are now `CRVALID`, `AWAKEUP`, `ARCHUNKEN`, and the infrastructure direction disagreement on `ACLK` / `ARESETN`
+- the docs architecture has now shifted too:
+  - `docs/book/` is the canonical user-doc surface
+  - [README.md](/Users/richarddje/Documents/github/specforge/README.md) points users to the book
+  - [USER_GUIDE.md](/Users/richarddje/Documents/github/specforge/USER_GUIDE.md) is now a compatibility pointer instead of a second competing long-form guide
+  - local and hosted CI now both build the mdBook, so docs drift is caught the same way code drift is
 - the local `CorpusMemory` prior store now includes actor-taxonomy, semantic phrase, semantic modality-reliability, temporal, and table-shape prior families
 - the thing that materially grows to capture learning is the typed prior store itself, usually `generated/prior_memory/corpus_memory.json`; code defines the learning rules, but the accumulated experience lives in that symbolic memory artifact
 - `specforge evidence` and `specforge converge` now consult `--prior-memory generated/prior_memory/corpus_memory.json` by default, and the first bounded consumer uses actor-taxonomy priors to interpret explicit local actor terms in section headings and `Source` / `Destination` columns; width-only section-guided signal tables can now also recover structural `ActorSignalRelation::Drives` edges from that same prior-guided actor vocabulary

@@ -1,5 +1,30 @@
 # CHANGES
 
+## 2026-04-09 (mdBook is now the canonical user-facing docs surface)
+
+### Added: a real `mdBook` for layered user-facing documentation
+- Added the canonical book scaffold under [docs/book/book.toml](/Users/richarddje/Documents/github/specforge/docs/book/book.toml) and [docs/book/src/SUMMARY.md](/Users/richarddje/Documents/github/specforge/docs/book/src/SUMMARY.md).
+- Seeded the first layered chapter set for:
+  - introduction
+  - getting started
+  - runtime and `doctor`
+  - command workflow
+  - pipeline model (`SourceIR`, `EvidenceIR`, `SemanticIR`, `IntentIR`)
+  - reference material for generated artifacts, live docs, and troubleshooting
+
+### Changed: root docs now point to the book instead of trying to be the full user-doc surface themselves
+- [README.md](/Users/richarddje/Documents/github/specforge/README.md) now marks the `mdBook` as the canonical user-facing documentation path and explains how to build it locally.
+- [USER_GUIDE.md](/Users/richarddje/Documents/github/specforge/USER_GUIDE.md) is now a compatibility pointer to the book instead of a second large parallel user-doc surface.
+
+### Changed: CI now treats docs as first-class project quality, not an optional side task
+- Added [scripts/run_docs_ci.sh](/Users/richarddje/Documents/github/specforge/scripts/run_docs_ci.sh) as the canonical local docs build entrypoint.
+- [scripts/run_ci.sh](/Users/richarddje/Documents/github/specforge/scripts/run_ci.sh) now runs the mdBook build after Rust formatting and tests.
+- [.github/workflows/ci.yml](/Users/richarddje/Documents/github/specforge/.github/workflows/ci.yml) now installs `mdbook v0.5.2` before running the shared CI script, so GitHub checks the same Rust + docs path that local CI runs.
+
+### Validation
+- `bash scripts/run_docs_ci.sh` → passed
+- `bash scripts/run_ci.sh` → passed (`245/245` tests, then mdBook build)
+
 ## 2026-04-09 (abstract transport tables no longer leak into canonical AXI interfaces)
 
 ### Fixed: generic `Tx` / `Rx` transport-primitives no longer masquerade as top-level interface signals

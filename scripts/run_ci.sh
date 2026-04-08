@@ -11,3 +11,6 @@ cargo fmt --all --check
 
 echo "[specforge-ci] running test suite"
 cargo test --manifest-path Cargo.toml
+
+echo "[specforge-ci] building docs"
+./scripts/run_docs_ci.sh

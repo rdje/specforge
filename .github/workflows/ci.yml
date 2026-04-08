@@ -32,5 +32,8 @@ jobs:
       - name: Cache Rust build artifacts
         uses: Swatinem/rust-cache@v2
 
+      - name: Install mdBook
+        run: cargo install --locked mdbook --version 0.5.2
+
       - name: Run CI suite
         run: ./scripts/run_ci.sh
