@@ -1730,7 +1730,86 @@ fn should_treat_table_as_top_level_signal_description(
         return false;
     }
 
+    if table_looks_like_abstract_transport_signal_table(table) {
+        return false;
+    }
+
     true
+}
+
+fn table_looks_like_abstract_transport_signal_table(
+    table: &crate::ir::source::StructuredTableRecord,
+) -> bool {
+    let header_texts: Vec<String> = table
+        .header_rows
+        .first()
+        .map(|row| {
+            row.iter()
+                .map(|cell| cell.text.to_ascii_lowercase())
+                .collect()
+        })
+        .unwrap_or_default();
+    let relation_col = header_texts.iter().position(|header| {
+        header.contains("source")
+            || header.contains("driver")
+            || header.contains("destination")
+            || header.contains("dest")
+    });
+    let Some(relation_col) = relation_col else {
+        return false;
+    };
+
+    let mut signal_tokens = Vec::new();
+    let mut actor_terms = BTreeSet::new();
+    for row in &table.body_rows {
+        let Some(name_cell) = row.first() else {
+            continue;
+        };
+        let signal_token = name_cell
+            .text
+            .split_whitespace()
+            .next()
+            .unwrap_or("")
+            .to_ascii_uppercase();
+        if !is_hardware_signal_token(&signal_token) || is_signal_synthesis_non_signal(&signal_token)
+        {
+            continue;
+        }
+
+        let Some(actor_cell) = row.get(relation_col) else {
+            continue;
+        };
+        let actor_term = actor_cell.text.trim();
+        if actor_term.is_empty() {
+            continue;
+        }
+
+        signal_tokens.push(signal_token);
+        actor_terms.insert(actor_term.to_string());
+    }
+
+    signal_tokens.len() >= 2
+        && signal_tokens
+            .iter()
+            .all(|token| is_abstract_transport_signal_token(token))
+        && !actor_terms.is_empty()
+        && actor_terms
+            .iter()
+            .all(|term| is_abstract_transport_actor_term(term))
+}
+
+fn is_abstract_transport_signal_token(token: &str) -> bool {
+    matches!(
+        token,
+        "VALID" | "READY" | "PENDING" | "CRDT" | "CRDTSH" | "SHAREDCRD" | "RP"
+    )
+}
+
+fn is_abstract_transport_actor_term(term: &str) -> bool {
+    matches!(
+        normalize_actor_term(term).as_str(),
+        "tx" | "rx" | "transmitter" | "receiver"
+    )
 }
 
 fn actor_name_and_role_from_section_heading(
@@ -7809,6 +7888,96 @@ mod tests {
                     && hint.signal_name != "COMPLETION"
             }),
             "field-like width tables must not synthesize fake semantic hints: {:?}",
+            evidence_ir.signal_semantic_hints
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn abstract_transport_signal_tables_do_not_become_top_level_interfaces() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("transport.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Transport\n",
+                "When using credited transport, transfers use abstract Tx/Rx channel signaling.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_transport_signals".to_string(),
+            asset_id: "asset_transport_signals".to_string(),
+            page_id: None,
+            caption_text: Some("Credited channel signals".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Name", true),
+                make_table_cell("Width", true),
+                make_table_cell("Source", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("VALID", false),
+                    make_table_cell("1", false),
+                    make_table_cell("Tx", false),
+                    make_table_cell("One transfer from Tx to Rx.", false),
+                ],
+                vec![
+                    make_table_cell("PENDING", false),
+                    make_table_cell("1", false),
+                    make_table_cell("Tx", false),
+                    make_table_cell("Transfer might occur next cycle.", false),
+                ],
+                vec![
+                    make_table_cell("CRDT", false),
+                    make_table_cell("1", false),
+                    make_table_cell("Rx", false),
+                    make_table_cell("Credit returned by Rx.", false),
+                ],
+            ],
+            row_count: 3,
+            col_count: 4,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        assert!(
+            evidence_ir.extracted_statements.iter().all(|statement| {
+                !statement.text.contains("Signal VALID is")
+                    && !statement.text.contains("Signal PENDING is")
+                    && !statement.text.contains("Signal CRDT is")
+            }),
+            "abstract transport tables must not synthesize top-level signal declarations: {:?}",
+            evidence_ir.extracted_statements
+        );
+        assert!(
+            evidence_ir.actor_signal_relations.iter().all(|relation| {
+                relation.signal_name != "VALID"
+                    && relation.signal_name != "PENDING"
+                    && relation.signal_name != "CRDT"
+            }),
+            "abstract transport tables must not synthesize actor-signal relations: {:?}",
+            evidence_ir.actor_signal_relations
+        );
+        assert!(
+            evidence_ir.signal_semantic_hints.iter().all(|hint| {
+                hint.signal_name != "VALID"
+                    && hint.signal_name != "PENDING"
+                    && hint.signal_name != "CRDT"
+            }),
+            "abstract transport tables must not synthesize top-level semantic hints: {:?}",
             evidence_ir.signal_semantic_hints
         );
 

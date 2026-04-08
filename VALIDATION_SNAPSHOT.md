@@ -15,21 +15,21 @@ It summarizes the latest persisted validation reports projected from IR artifact
 ### IHI0022_L_2025-08_AMBA_AXI_Protocol_Specification.pdf (intent_ir)
 - document_key: `ihi0022_l_2025_08_amba_axi_protocol_specification`
 - artifact_path: `generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json`
-- artifact_fingerprint: `14a280c3a7225374`
+- artifact_fingerprint: `9d0aab6de3fb89ea`
 - score: `85/100 GOOD`
 - summary: IntentIR validation for IHI0022_L_2025-08_AMBA_AXI_Protocol_Specification.pdf with 12 finding(s)
 - findings:
   - [warning:interface_signal_conflicts] 2 interface signal conflict(s) detected; conflicting direction/width evidence is still unresolved in the carried interface surface
   - [warning:quality_score] IntentIR quality score is 85/100 (GOOD)
   - [warning:residual_decisions] IntentIR still carries 1 residual decision packet(s)
-  - [warning:semantic_role_conflicts] 1 semantic-role conflict(s) remain unresolved in the carried canonical intent surface
-  - [warning:signal_connectivity] 178 signal(s) in IntentIR connectivity have no resolved consumer actor
-  - [warning:signal_connectivity] 2 signal connectivity conflict(s) detected; the carried structural KG still has unresolved producer ambiguity
+  - [warning:semantic_role_conflicts] 2 semantic-role conflict(s) remain unresolved in the carried canonical intent surface
+  - [warning:signal_connectivity] 6 signal(s) in IntentIR connectivity have no resolved consumer actor
+  - [warning:signal_connectivity] 1 signal connectivity conflict(s) detected; the carried structural KG still has unresolved producer ambiguity
   - [warning:temporal_conflicts] 15 typed temporal conflict(s) detected across contradictory value obligations
   - [info:compatibility_surface] 118 declared signal record(s) still lack flat compatibility direction hints even though actor-relative ports exist
   - [info:knowledge_graph] 118 declared signal record(s) still lack graph-derived direction coverage
   - [info:semantic_role_arbitration] 1 handshake-shaped signal(s) intentionally block literal VALID/READY fallback because their preserved semantic role state is still contested or only provisional
-  - [info:semantic_role_arbitration] 6 declared signal(s) still have competing semantic role candidates; the canonical surface preserves the current lead, runner-up, and evidence margin without forcing an unsafe winner
+  - [info:semantic_role_arbitration] 16 declared signal(s) still have competing semantic role candidates; the canonical surface preserves the current lead, runner-up, and evidence margin without forcing an unsafe winner
   - [info:temporal_grounding] typed temporal rules exist, but none currently carry explicit cycle-window bounds
 
 ### IHI0024_D_2021-04_AMBA_APB_Protocol_Specification.pdf (intent_ir)

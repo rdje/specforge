@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `2db4ff5`
-- latest_commit_brief_message: `feat(semantic): surface system contract polarity in interfaces`
-- note: the current session is now focused on hardening the Docling runtime boundary so fresh original-PDF ingest no longer depends on ambient `python3` luck
+- latest_commit_hash: `ceacaf9`
+- latest_commit_brief_message: `feat(evidence): reject field-like message tables`
+- note: the current session is now focused on stripping abstract transport teaching tables out of AXI’s canonical top-level signal surface without breaking legitimate standalone `VALID` / `READY` docs
 
 ## Recent commit chain (last 5)
-- `d469bf3` feat(ir): carry resolved signal polarity per interface
-- `8a0e477` feat(semantic): make temporal conflicts polarity-aware
-- `3ca0c5a` feat(semantic): normalize equivalent temporal values
-- `efcdb71` feat(semantic): recover same-cycle temporal windows
-- `1fa9699` feat(validate): classify clock/reset connectivity as infrastructure
+- `4ad5530` feat(semantic): anchor interface grouping to declared signals
+- `0160f64` docs(validation): refresh live amba baseline
+- `ceacaf9` feat(evidence): reject field-like message tables
+- `cdf2bc7` feat(semantic): ignore passive ambiguous figure links
+- `5ba5d73` feat(semantic): resolve subsumed interface grouping
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -59,6 +59,13 @@
 - after rebuilding the live APB/AHB/AXI artifacts, `semantic_interface_grouping` was gone across the live AMBA baseline, and the next honest shared residual was only `semantic_ambiguous_visual_grounding`
 - that residual is now tightened too: `semantic_ambiguous_visual_grounding` only survives when ambiguous or unknown visual evidence actually contributes carried semantic observations, so passive figure links no longer keep APB/AHB/AXI artificially unresolved
 - the refreshed live baseline is now AXI `85/100 GOOD`, APB `94/100 EXCELLENT`, AHB `94/100 EXCELLENT`, and AXI-Stream `90/100 EXCELLENT`; a fresh rebuild from current `SourceIR` / `EvidenceIR` restored APB and AHB to the excellent lane, and the latest AXI field-table truthfulness fix removed pseudo-signals like `IS`, `PA`, and `COMPLETION` while leaving one honest blocked-handshake residual
+- the latest AXI truthfulness slice goes one level deeper: abstract appendix transport tables that only describe `Tx` / `Rx` primitives like `VALID`, `PENDING`, `CRDT`, `CRDTSH`, `SHAREDCRD`, and `RP` are no longer allowed to author top-level canonical signals
+- after rebuilding AXI from the updated `EvidenceIR`, the score stays `85/100 GOOD`, but the artifact is materially cleaner:
+  - actor count drops from `19` to `17`
+  - unresolved consumer-less connectivity collapses from `178` signals to `6`
+  - structural producer ambiguity drops from `2` connectivity conflicts to `1`
+  - the old fake bare-transport `VALID` residual/conflict is gone
+  - the remaining honest AXI outliers are now `CRVALID`, `AWAKEUP`, `ARCHUNKEN`, and the infrastructure direction disagreement on `ACLK` / `ARESETN`
 - the local `CorpusMemory` prior store now includes actor-taxonomy, semantic phrase, semantic modality-reliability, temporal, and table-shape prior families
 - the thing that materially grows to capture learning is the typed prior store itself, usually `generated/prior_memory/corpus_memory.json`; code defines the learning rules, but the accumulated experience lives in that symbolic memory artifact
 - `specforge evidence` and `specforge converge` now consult `--prior-memory generated/prior_memory/corpus_memory.json` by default, and the first bounded consumer uses actor-taxonomy priors to interpret explicit local actor terms in section headings and `Source` / `Destination` columns; width-only section-guided signal tables can now also recover structural `ActorSignalRelation::Drives` edges from that same prior-guided actor vocabulary

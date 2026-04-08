@@ -1,5 +1,33 @@
 # CHANGES
 
+## 2026-04-09 (abstract transport tables no longer leak into canonical AXI interfaces)
+
+### Fixed: generic `Tx` / `Rx` transport-primitives no longer masquerade as top-level interface signals
+- Tightened [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) so `signal_description` tables are rejected from the top-level signal surface when they are really abstract transport exemplars: bare transport primitive names such as `VALID`, `PENDING`, `CRDT`, `CRDTSH`, `SHAREDCRD`, and `RP` combined with only `Tx` / `Rx` actor terms.
+- This keeps real prefixed interface tables like `AWVALID`, `ARCRDT`, or `AWSHAREDCRD` intact, while preventing appendix-level transport teaching tables from authoring canonical declarations, actor relations, and semantic hints.
+
+### Added: regression coverage for abstract transport-table leakage
+- Added a focused evidence regression proving that a `Credited channel signals` table containing only abstract `Tx` / `Rx` transport primitives does not synthesize top-level signal declarations, actor relations, or semantic hints.
+- Kept the existing standalone `VALID` / `READY` semantic regression green, so the fix stays narrow instead of globally banning simple protocols that really do use those signal names.
+
+### Changed: AXI still scores `85/100 GOOD`, but the artifact is much cleaner and more honest
+- Rebuilt AXI from `EvidenceIR -> SemanticIR -> IntentIR -> validate` and refreshed the four-artifact validation projection.
+- The fake bare-transport `VALID` surface is gone from canonical AXI. Actor count dropped from `19` to `17`, unresolved consumer-less connectivity collapsed from `178` signals to `6`, and structural producer ambiguity dropped from `2` signal-connectivity conflicts to `1`.
+- The remaining AXI residual/finding surface is now narrower and more truthful:
+  - blocked handshake fallback moved from contested bare `VALID` to contested `CRVALID`
+  - semantic conflicts are now specific to `AWAKEUP` and `CRVALID`
+  - the remaining structural producer ambiguity is `ARCHUNKEN`
+  - interface conflicts remain the infrastructure direction disagreement on `ACLK` / `ARESETN`
+
+### Validation
+- `cargo test --manifest-path Cargo.toml abstract_transport_signal_tables_do_not_become_top_level_interfaces -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml builds_semantic_ir_from_handshake_evidence -- --nocapture` → passed
+- `cargo run --manifest-path Cargo.toml -- evidence generated/source_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/source_ir.json` → passed
+- `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/evidence_ir.json` → passed (`actor_count: 17`, `residual_decision_count: 1`)
+- `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/semantic_ir.json` → passed (`behavior_count: 1202`, `constraint_count: 1244`)
+- `cargo run --manifest-path Cargo.toml -- validate generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json` → passed (`85/100 GOOD`)
+- `cargo run --manifest-path Cargo.toml -- project-validation generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json generated/intent_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/intent_ir.json generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json` → passed
+
 ## 2026-04-09 (axi field-like message tables no longer leak pseudo-signals)
 
 ### Fixed: field-like `Name | Width | Description` tables no longer masquerade as interface signal tables
