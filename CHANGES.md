@@ -1,22 +1,31 @@
 # CHANGES
 
-## 2026-04-08 (semantic interface grouping no longer treats hex-ish values as signals)
+## 2026-04-08 (AXI-Stream interface grouping residual removed cleanly)
 
-### Fixed: semantic signal-token extraction now rejects leading-digit hex-like values
-- Tightened [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so `extract_signal_tokens()` only accepts identifier-like tokens that start with an ASCII letter or underscore.
-- That means values like `0A`, `0B`, `0E`, and `0F` no longer masquerade as signals during heuristic interface extraction.
+### Fixed: heuristic interface grouping now ignores width/table metadata noise
+- Tightened [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so heuristic interface grouping filters out metadata-only symbols like `*_WIDTH`, `_WIDTH`, `MIN`, and `MAX` before building statement-derived interface fragments.
+- This complements the earlier signal-token gate that already rejected leading-digit hex-like values such as `0A`, `0B`, `0E`, and `0F`.
 
-### Added: regression coverage for identifier-shaped signal extraction
-- Added a focused semantic regression proving `0A`, `0B`, `0E`, and `0F` are rejected while real names like `TVALID`, `TREADY`, and `rst_n` still survive signal extraction.
+### Fixed: explicit interfaces now subsume smaller grouped fragments for overlap review
+- `semantic_interface_grouping` residual generation now ignores heuristic fragments that are fully subsumed by an explicit interface, so carried overlap is only reported when there is still a real unresolved grouping question.
+- In AXI-Stream, that resolves the last carried residual decision instead of preserving a bookkeeping artifact caused by one explicit interface plus many smaller statement fragments.
 
-### Changed: the remaining AXI-Stream semantic interface-grouping residual is cleaner
-- Rebuilt the AXI-Stream `SemanticIR` path locally after the token-gate fix.
-- The remaining `semantic_interface_grouping` residual still exists, but its semantic-stage explanation no longer includes bogus hex-like pseudo-signals; the unresolved overlap is now a truer description of real interface coupling rather than tokenization noise.
+### Added: regression coverage for metadata filtering and explicit-subsumption overlap handling
+- Added focused semantic regressions proving width/table metadata is filtered from heuristic interface candidates.
+- Added focused semantic regressions proving explicit interfaces suppress already-subsumed overlap while genuinely unsubsumed heuristic overlap still remains visible.
+
+### Changed: AXI-Stream now carries zero residual decisions without score inflation
+- Rebuilt AXI-Stream `SemanticIR` and `IntentIR`, then refreshed the tracked four-artifact validation projection.
+- AXI-Stream remains at `90/100 EXCELLENT`, but interface count drops from `46` to `29`, `SemanticIR` / `IntentIR` residual decisions both drop to `0`, and the only remaining projected finding is the infrastructure `system_contract` note for `ACLK` / `ARESETN`.
 
 ### Validation
-- `cargo test --manifest-path Cargo.toml extract_signal_tokens_rejects_leading_digit_hex_like_values -- --nocapture` → passed
-- `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/evidence_ir.json` → passed
-- `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/semantic_ir.json` → passed
+- `cargo test --manifest-path Cargo.toml filtered_interface_candidate_signals_drop_width_and_table_metadata_noise -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml overlapping_interface_signals_ignore_fragments_subsumed_by_explicit_interfaces -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml overlapping_interface_signals_keep_unsubsumed_heuristic_overlap_visible -- --nocapture` → passed
+- `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/evidence_ir.json` → passed (`interface_count: 29`, `residual_decision_count: 0`)
+- `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/semantic_ir.json` → passed (`residual_decision_count: 0`)
+- `cargo run --manifest-path Cargo.toml -- validate generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json` → passed (`90/100 EXCELLENT`, `residual_decisions: 0`)
+- `cargo run --manifest-path Cargo.toml -- project-validation generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json generated/intent_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/intent_ir.json generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json` → passed
 
 ## 2026-04-08 (doctor now checks LM Studio fallback readiness too)
 

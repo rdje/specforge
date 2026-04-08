@@ -1692,19 +1692,20 @@ fn build_interfaces(
         {
             continue;
         }
-        if !should_emit_interface_candidate(statement.signals.as_slice()) {
+        let candidate_signals = filtered_interface_candidate_signals(statement.signals.as_slice());
+        if !should_emit_interface_candidate(candidate_signals.as_slice()) {
             continue;
         }
 
-        let key = statement.signals.join("__");
+        let key = candidate_signals.join("__");
         let entry = accumulators
             .entry(key)
             .or_insert_with(|| InterfaceAccumulator {
-                signals: statement.signals.iter().cloned().collect(),
+                signals: candidate_signals.iter().cloned().collect(),
                 signal_records: BTreeMap::new(),
                 supporting_statement_ids: BTreeSet::new(),
             });
-        for signal_name in &statement.signals {
+        for signal_name in &candidate_signals {
             register_interface_signal_record(
                 entry,
                 signal_name,
@@ -3403,6 +3404,31 @@ fn interface_signal_declaration_looks_like_width_symbol(
     declaration.direction_hint.is_none()
         && declaration.width_hint.is_some()
         && declaration.signal_name.ends_with("_WIDTH")
+}
+
+fn heuristic_interface_signal_looks_like_metadata(signal_name: &str) -> bool {
+    let normalized = signal_name.trim().to_ascii_uppercase();
+
+    normalized == "MIN"
+        || normalized == "MAX"
+        || normalized == "_WIDTH"
+        || normalized.ends_with("_WIDTH")
+}
+
+fn filtered_interface_candidate_signals(signals: &[String]) -> Vec<String> {
+    let mut filtered = Vec::new();
+    let mut seen = BTreeSet::new();
+
+    for signal in signals {
+        if heuristic_interface_signal_looks_like_metadata(signal) {
+            continue;
+        }
+        if seen.insert(signal.clone()) {
+            filtered.push(signal.clone());
+        }
+    }
+
+    filtered
 }
 
 fn parse_explicit_system_clock(text: &str) -> Option<String> {
@@ -5776,9 +5802,25 @@ fn actor_ids_for_text(
 }
 
 fn overlapping_interface_signals(interfaces: &[InterfaceRecord]) -> Vec<String> {
+    let explicit_signal_sets: Vec<BTreeSet<String>> = interfaces
+        .iter()
+        .filter(|interface| interface.interface_id.starts_with("interface_explicit_"))
+        .map(|interface| interface.signals.iter().cloned().collect())
+        .collect();
+
     let mut counts: HashMap<String, usize> = HashMap::new();
 
     for interface in interfaces {
+        if !interface.interface_id.starts_with("interface_explicit_")
+            && explicit_signal_sets.iter().any(|explicit_signals| {
+                interface
+                    .signals
+                    .iter()
+                    .all(|signal| explicit_signals.contains(signal))
+            })
+        {
+            continue;
+        }
         for signal in &interface.signals {
             *counts.entry(signal.clone()).or_insert(0) += 1;
         }
@@ -11860,6 +11902,73 @@ mod tests {
                 "TREADY".to_string(),
                 "TVALID".to_string()
             ]
+        );
+    }
+
+    #[test]
+    fn filtered_interface_candidate_signals_drop_width_and_table_metadata_noise() {
+        let filtered = super::filtered_interface_candidate_signals(&[
+            "TDATA_WIDTH".to_string(),
+            "TKEEP".to_string(),
+            "MIN".to_string(),
+            "MAX".to_string(),
+            "_WIDTH".to_string(),
+            "TVALID".to_string(),
+        ]);
+
+        assert_eq!(filtered, vec!["TKEEP".to_string(), "TVALID".to_string()]);
+    }
+
+    #[test]
+    fn overlapping_interface_signals_ignore_fragments_subsumed_by_explicit_interfaces() {
+        let interfaces = vec![
+            super::InterfaceRecord {
+                interface_id: "interface_explicit_document_interface".to_string(),
+                signals: vec![
+                    "ACLK".to_string(),
+                    "TREADY".to_string(),
+                    "TVALID".to_string(),
+                ],
+                signal_records: Vec::new(),
+                supporting_statement_ids: Vec::new(),
+            },
+            super::InterfaceRecord {
+                interface_id: "interface_aclk_tvalid".to_string(),
+                signals: vec!["ACLK".to_string(), "TVALID".to_string()],
+                signal_records: Vec::new(),
+                supporting_statement_ids: Vec::new(),
+            },
+            super::InterfaceRecord {
+                interface_id: "interface_tready_tvalid".to_string(),
+                signals: vec!["TREADY".to_string(), "TVALID".to_string()],
+                signal_records: Vec::new(),
+                supporting_statement_ids: Vec::new(),
+            },
+        ];
+
+        assert!(super::overlapping_interface_signals(&interfaces).is_empty());
+    }
+
+    #[test]
+    fn overlapping_interface_signals_keep_unsubsumed_heuristic_overlap_visible() {
+        let interfaces = vec![
+            super::InterfaceRecord {
+                interface_id: "interface_a_b".to_string(),
+                signals: vec!["XA".to_string(), "XB".to_string()],
+                signal_records: Vec::new(),
+                supporting_statement_ids: Vec::new(),
+            },
+            super::InterfaceRecord {
+                interface_id: "interface_a_c".to_string(),
+                signals: vec!["XA".to_string(), "XC".to_string()],
+                signal_records: Vec::new(),
+                supporting_statement_ids: Vec::new(),
+            },
+        ];
+
+        assert_eq!(
+            super::overlapping_interface_signals(&interfaces),
+            vec!["XA".to_string()]
         );
     }
 
