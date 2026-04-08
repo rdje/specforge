@@ -6,7 +6,7 @@ It summarizes the latest persisted validation reports projected from IR artifact
 - Artifacts projected: 4
 - Highest severity observed: warning
 - Score-bearing artifacts:
-  - `IHI0022_L_2025-08_AMBA_AXI_Protocol_Specification.pdf` (`intent_ir`): `84/100 GOOD`
+  - `IHI0022_L_2025-08_AMBA_AXI_Protocol_Specification.pdf` (`intent_ir`): `85/100 GOOD`
   - `IHI0024_D_2021-04_AMBA_APB_Protocol_Specification.pdf` (`intent_ir`): `94/100 EXCELLENT`
   - `IHI0033_C_2021-09_AMBA_5_AHB_Protocol_Specification.pdf` (`intent_ir`): `94/100 EXCELLENT`
   - `IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf` (`intent_ir`): `90/100 EXCELLENT`
@@ -15,21 +15,21 @@ It summarizes the latest persisted validation reports projected from IR artifact
 ### IHI0022_L_2025-08_AMBA_AXI_Protocol_Specification.pdf (intent_ir)
 - document_key: `ihi0022_l_2025_08_amba_axi_protocol_specification`
 - artifact_path: `generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json`
-- artifact_fingerprint: `a2233debcf3e09d7`
-- score: `84/100 GOOD`
+- artifact_fingerprint: `14a280c3a7225374`
+- score: `85/100 GOOD`
 - summary: IntentIR validation for IHI0022_L_2025-08_AMBA_AXI_Protocol_Specification.pdf with 12 finding(s)
 - findings:
   - [warning:interface_signal_conflicts] 2 interface signal conflict(s) detected; conflicting direction/width evidence is still unresolved in the carried interface surface
-  - [warning:polarity_conflicts] 1 signal polarity conflict(s) remain unresolved in the carried canonical intent surface
-  - [warning:quality_score] IntentIR quality score is 84/100 (GOOD)
+  - [warning:quality_score] IntentIR quality score is 85/100 (GOOD)
+  - [warning:residual_decisions] IntentIR still carries 1 residual decision packet(s)
   - [warning:semantic_role_conflicts] 1 semantic-role conflict(s) remain unresolved in the carried canonical intent surface
-  - [warning:signal_connectivity] 180 signal(s) in IntentIR connectivity have no resolved consumer actor
-  - [warning:signal_connectivity] 2 signal(s) in IntentIR connectivity have no resolved producer actor
-  - [warning:signal_connectivity] 3 signal connectivity conflict(s) detected; the carried structural KG still has unresolved producer ambiguity
+  - [warning:signal_connectivity] 178 signal(s) in IntentIR connectivity have no resolved consumer actor
+  - [warning:signal_connectivity] 2 signal connectivity conflict(s) detected; the carried structural KG still has unresolved producer ambiguity
   - [warning:temporal_conflicts] 15 typed temporal conflict(s) detected across contradictory value obligations
-  - [info:compatibility_surface] 134 declared signal record(s) still lack flat compatibility direction hints even though actor-relative ports exist
-  - [info:knowledge_graph] 133 declared signal record(s) still lack graph-derived direction coverage
-  - [info:semantic_role_arbitration] 1 declared signal(s) still have competing semantic role candidates; the canonical surface preserves the current lead, runner-up, and evidence margin without forcing an unsafe winner
+  - [info:compatibility_surface] 118 declared signal record(s) still lack flat compatibility direction hints even though actor-relative ports exist
+  - [info:knowledge_graph] 118 declared signal record(s) still lack graph-derived direction coverage
+  - [info:semantic_role_arbitration] 1 handshake-shaped signal(s) intentionally block literal VALID/READY fallback because their preserved semantic role state is still contested or only provisional
+  - [info:semantic_role_arbitration] 6 declared signal(s) still have competing semantic role candidates; the canonical surface preserves the current lead, runner-up, and evidence margin without forcing an unsafe winner
   - [info:temporal_grounding] typed temporal rules exist, but none currently carry explicit cycle-window bounds
 
 ### IHI0024_D_2021-04_AMBA_APB_Protocol_Specification.pdf (intent_ir)

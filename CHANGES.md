@@ -1,5 +1,28 @@
 # CHANGES
 
+## 2026-04-09 (axi field-like message tables no longer leak pseudo-signals)
+
+### Fixed: field-like `Name | Width | Description` tables no longer masquerade as interface signal tables
+- Tightened [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) so top-level signal-table recovery now considers the nearest section title as well as the local caption and headers.
+- Continued-page DVM message-field tables now stay classified as field-like context instead of leaking pseudo-signals such as `IS`, `PA`, and `COMPLETION` into `EvidenceIR`.
+
+### Added: regression coverage for continued-page field-table leakage
+- Added a focused evidence regression proving that a misclassified field-like `Name | Width | Description` continuation table does not synthesize fake signal declarations, polarity facts, or semantic hints.
+
+### Changed: AXI live quality improved and its remaining gaps are more honest
+- Rebuilt AXI from `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> validate` and refreshed the four-artifact validation projection.
+- AXI improved from `84/100 GOOD` to `85/100 GOOD`.
+- The fake `PA` / `COMPLETION` missing-producer warning is gone, the fake `IS` polarity conflict is gone, the canonical signal denominator dropped from `312` to `294`, graph-derived direction coverage improved from `57%` to `59%`, and the remaining AXI residual surface is now the single blocked handshake-name fallback on contested `VALID`.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml misclassified_field_table_does_not_synthesize_fake_signal_semantics -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml field_like_width_table_does_not_leak_message_fields_as_signals -- --nocapture` → passed
+- `cargo run --manifest-path Cargo.toml -- evidence generated/source_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/source_ir.json` → passed
+- `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/evidence_ir.json` → passed (`actor_count: 19`, `residual_decision_count: 1`)
+- `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/semantic_ir.json` → passed (`behavior_count: 1202`, `constraint_count: 1272`)
+- `cargo run --manifest-path Cargo.toml -- validate generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json` → passed (`85/100 GOOD`)
+- `cargo run --manifest-path Cargo.toml -- project-validation generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json generated/intent_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/intent_ir.json generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json` → passed
+
 ## 2026-04-08 (passive visual links no longer force semantic residuals)
 
 ### Fixed: ambiguous-visual residuals now require live semantic lift
@@ -13,7 +36,7 @@
 ### Changed: APB, AHB, and AXI now carry zero residual decisions
 - Rebuilt `SemanticIR` / `IntentIR` / validation for the live APB, AHB, and AXI artifacts and refreshed the tracked four-artifact projection.
 - APB, AHB, and AXI now all carry `0` residual decisions end to end; the old common `semantic_ambiguous_visual_grounding` residual is gone because those live artifacts were only carrying passive figure links, not active visual semantic lift.
-- The refreshed live projection is now AXI `84/100 GOOD`, APB `94/100 EXCELLENT`, AHB `94/100 EXCELLENT`, and AXI-Stream `90/100 EXCELLENT`; a follow-on rebuild from current `SourceIR` / `EvidenceIR` restored APB and AHB to the excellent lane while leaving AXI as the main live quality outlier.
+- The refreshed live projection is now AXI `85/100 GOOD`, APB `94/100 EXCELLENT`, AHB `94/100 EXCELLENT`, and AXI-Stream `90/100 EXCELLENT`; a follow-on rebuild from current `SourceIR` / `EvidenceIR` restored APB and AHB to the excellent lane while leaving AXI as the main live quality outlier.
 
 ### Validation
 - `cargo test --manifest-path Cargo.toml passive_ambiguous_visual_links_do_not_emit_residual_decision -- --nocapture` → passed
@@ -198,7 +221,7 @@
 ### Changed: the live corpus now shows the gap honestly
 - Rebuilt the live AMBA `SemanticIR` / `IntentIR` artifacts, re-validated the four-document projection, and refreshed the tracked snapshot docs.
 - The canonical polarity surface is now present in the live corpus too: AXI, APB, AHB, and AXI-Stream each currently report `with_resolved_polarity: 1`, so the remaining polarity work is broader non-reset control coverage rather than carry-through plumbing.
-- That refresh also replaced a stale optimistic validation snapshot; after the later current-`SourceIR` / current-`EvidenceIR` rebuild, the tracked live baseline now stands at AXI `84/100 GOOD`, APB `94/100 EXCELLENT`, AHB `94/100 EXCELLENT`, and AXI-Stream `90/100 EXCELLENT`.
+- That refresh also replaced a stale optimistic validation snapshot; after the later current-`SourceIR` / current-`EvidenceIR` rebuild and the follow-on AXI field-table truthfulness fix, the tracked live baseline now stands at AXI `85/100 GOOD`, APB `94/100 EXCELLENT`, AHB `94/100 EXCELLENT`, and AXI-Stream `90/100 EXCELLENT`.
 
 ### Validation
 - `cargo test --manifest-path Cargo.toml carries_resolved_signal_polarity_into_interface_records -- --nocapture` → passed

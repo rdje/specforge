@@ -1489,7 +1489,7 @@ fn collect_signal_names_from_tables(
 ) -> std::collections::HashSet<String> {
     let mut names = std::collections::HashSet::new();
     for table in &source_ir.structured_tables {
-        if !should_treat_table_as_top_level_signal_description(table, prior_guidance) {
+        if !should_treat_table_as_top_level_signal_description(source_ir, table, prior_guidance) {
             continue;
         }
         for row in &table.body_rows {
@@ -1630,7 +1630,30 @@ fn effective_table_kind(
         .unwrap_or(TableKind::Unknown)
 }
 
+fn nearest_section_title_for_table(
+    source_ir: &SourceIr,
+    table: &crate::ir::source::StructuredTableRecord,
+) -> Option<String> {
+    let table_page = table
+        .page_id
+        .as_deref()
+        .and_then(page_number_from_page_id)?;
+    source_ir
+        .document_sections
+        .iter()
+        .filter_map(|section| {
+            let section_page = section
+                .page_id
+                .as_deref()
+                .and_then(page_number_from_page_id)?;
+            (section_page <= table_page).then_some((section_page, section.title.as_str()))
+        })
+        .max_by_key(|(section_page, _)| *section_page)
+        .map(|(_, title)| title.to_ascii_lowercase())
+}
+
 fn should_treat_table_as_top_level_signal_description(
+    source_ir: &SourceIr,
     table: &crate::ir::source::StructuredTableRecord,
     prior_guidance: Option<&EvidencePriorGuidance>,
 ) -> bool {
@@ -1652,17 +1675,16 @@ fn should_treat_table_as_top_level_signal_description(
         .as_deref()
         .unwrap_or("")
         .to_ascii_lowercase();
-    let has_relation_or_width_header = header_texts.iter().any(|header| {
-        header.contains("signal")
-            || header.contains("source")
+    let section_title = nearest_section_title_for_table(source_ir, table).unwrap_or_default();
+    let has_explicit_signal_header = header_texts.iter().any(|header| {
+        header.contains("signal") || header.contains("port") || header.contains("pin")
+    });
+    let has_direction_or_relation_header = header_texts.iter().any(|header| {
+        header.contains("source")
             || header.contains("driver")
             || header.contains("direction")
             || header.contains("destination")
             || header.contains("dest")
-            || header.contains("width")
-            || header.contains("size")
-            || header.contains("port")
-            || header.contains("pin")
     });
     let name_col = header_texts.iter().position(|header| {
         header.contains("name")
@@ -1678,6 +1700,14 @@ fn should_treat_table_as_top_level_signal_description(
         || caption_text.contains("bit definitions")
         || caption_text.contains("bitfield")
         || caption_text.contains("bit field");
+    let section_looks_field_like = section_title.contains(" field")
+        || section_title.contains(" fields")
+        || section_title.contains("bit assignment")
+        || section_title.contains("bit assignments")
+        || section_title.contains("bit definition")
+        || section_title.contains("bit definitions")
+        || section_title.contains("bitfield")
+        || section_title.contains("bit field");
     let first_header_looks_field_like = first_header.contains("bit")
         || first_header.contains("field")
         || first_header.contains("offset");
@@ -1686,11 +1716,17 @@ fn should_treat_table_as_top_level_signal_description(
         return false;
     }
 
-    if caption_looks_field_like && name_col.map(|index| index > 0).unwrap_or(false) {
+    if (caption_looks_field_like || section_looks_field_like)
+        && name_col.map(|index| index > 0).unwrap_or(false)
+    {
         return false;
     }
 
-    if caption_looks_field_like && !has_relation_or_width_header && first_header.contains("name") {
+    if (caption_looks_field_like || section_looks_field_like)
+        && !has_direction_or_relation_header
+        && !has_explicit_signal_header
+        && first_header.contains("name")
+    {
         return false;
     }
 
@@ -1733,7 +1769,7 @@ fn collect_local_actor_names_by_taxonomy_role(
     let mut actor_names_by_role = BTreeMap::<ActorTaxonomyRole, BTreeSet<String>>::new();
 
     for table in &source_ir.structured_tables {
-        if !should_treat_table_as_top_level_signal_description(table, prior_guidance) {
+        if !should_treat_table_as_top_level_signal_description(source_ir, table, prior_guidance) {
             continue;
         }
 
@@ -1837,7 +1873,7 @@ fn extract_relations_from_signal_tables_with_prior_guidance(
     }
 
     for table in &source_ir.structured_tables {
-        if !should_treat_table_as_top_level_signal_description(table, prior_guidance) {
+        if !should_treat_table_as_top_level_signal_description(source_ir, table, prior_guidance) {
             continue;
         }
 
@@ -1977,7 +2013,7 @@ fn augment_check_signal_relations_from_tables(
 
     let mut counter = 1usize;
     for table in &source_ir.structured_tables {
-        if !should_treat_table_as_top_level_signal_description(table, prior_guidance) {
+        if !should_treat_table_as_top_level_signal_description(source_ir, table, prior_guidance) {
             continue;
         }
 
@@ -2089,7 +2125,7 @@ fn collect_signal_widths_from_tables(
 ) -> std::collections::HashMap<String, WidthHint> {
     let mut widths = std::collections::HashMap::new();
     for table in &source_ir.structured_tables {
-        if !should_treat_table_as_top_level_signal_description(table, prior_guidance) {
+        if !should_treat_table_as_top_level_signal_description(source_ir, table, prior_guidance) {
             continue;
         }
         let header_texts: Vec<String> = table
@@ -3319,7 +3355,7 @@ fn extract_signal_polarity_from_signal_tables(
     let mut observations = Vec::new();
 
     for table in &source_ir.structured_tables {
-        if !should_treat_table_as_top_level_signal_description(table, prior_guidance) {
+        if !should_treat_table_as_top_level_signal_description(source_ir, table, prior_guidance) {
             continue;
         }
 
@@ -3654,7 +3690,11 @@ fn synthesize_declarations_from_tables(
 
         match effective_table_kind(table, prior_guidance) {
             TableKind::SignalDescription
-                if should_treat_table_as_top_level_signal_description(table, prior_guidance) =>
+                if should_treat_table_as_top_level_signal_description(
+                    source_ir,
+                    table,
+                    prior_guidance,
+                ) =>
             {
                 statements.extend(synthesize_signal_declarations(
                     table,
@@ -3698,7 +3738,7 @@ fn synthesize_system_contract_from_table_descriptions(
     let mut reset_found = false;
 
     'outer: for table in &source_ir.structured_tables {
-        if !should_treat_table_as_top_level_signal_description(table, prior_guidance) {
+        if !should_treat_table_as_top_level_signal_description(source_ir, table, prior_guidance) {
             continue;
         }
 
@@ -3956,7 +3996,7 @@ fn collect_known_actor_names_for_semantic_hints(
         .collect::<BTreeSet<_>>();
 
     for table in &source_ir.structured_tables {
-        if !should_treat_table_as_top_level_signal_description(table, prior_guidance) {
+        if !should_treat_table_as_top_level_signal_description(source_ir, table, prior_guidance) {
             continue;
         }
 
@@ -4023,7 +4063,7 @@ fn synthesize_signal_semantic_hints_from_tables(
     let mut seen = BTreeSet::<String>::new();
 
     for table in &source_ir.structured_tables {
-        if !should_treat_table_as_top_level_signal_description(table, prior_guidance) {
+        if !should_treat_table_as_top_level_signal_description(source_ir, table, prior_guidance) {
             continue;
         }
 
@@ -7676,6 +7716,100 @@ mod tests {
             evidence_ir.actor_signal_relations.is_empty(),
             "misclassified field tables must not synthesize actor relations: {:?}",
             evidence_ir.actor_signal_relations
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn field_like_width_table_does_not_leak_message_fields_as_signals() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("message_fields.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Messages\n",
+                "Signal ACLK is input width 1.\n",
+                "Signal ACTIVATEACK is output width 1.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_message_fields".to_string(),
+            asset_id: "asset_message_fields".to_string(),
+            page_id: None,
+            caption_text: Some("DVM message fields".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Name", true),
+                make_table_cell("Width", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("PA", false),
+                    make_table_cell("32-52", false),
+                    make_table_cell("Physical Address", false),
+                ],
+                vec![
+                    make_table_cell("IS", false),
+                    make_table_cell("4", false),
+                    make_table_cell(
+                        "Invalidation Size encoding for GPT TLBI by PA operations.",
+                        false,
+                    ),
+                ],
+                vec![
+                    make_table_cell("Completion", false),
+                    make_table_cell("1", false),
+                    make_table_cell(
+                        "Asserted HIGH to indicate that a Completion message is required.",
+                        false,
+                    ),
+                ],
+            ],
+            row_count: 3,
+            col_count: 3,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        assert!(
+            evidence_ir
+                .extracted_statements
+                .iter()
+                .all(|statement| !statement.text.contains("Signal PA is")
+                    && !statement.text.contains("Signal IS is")
+                    && !statement.text.contains("Signal COMPLETION is")),
+            "field-like width tables must not synthesize fake top-level signal declarations: {:?}",
+            evidence_ir.extracted_statements
+        );
+        assert!(
+            evidence_ir.signal_polarities.iter().all(|record| {
+                record.signal_name != "PA"
+                    && record.signal_name != "IS"
+                    && record.signal_name != "COMPLETION"
+            }),
+            "field-like width tables must not synthesize fake polarity facts: {:?}",
+            evidence_ir.signal_polarities
+        );
+        assert!(
+            evidence_ir.signal_semantic_hints.iter().all(|hint| {
+                hint.signal_name != "PA"
+                    && hint.signal_name != "IS"
+                    && hint.signal_name != "COMPLETION"
+            }),
+            "field-like width tables must not synthesize fake semantic hints: {:?}",
+            evidence_ir.signal_semantic_hints
         );
 
         Ok(())

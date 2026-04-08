@@ -272,7 +272,7 @@
   - representative local APB/AHB/AXI validation snapshots were refreshed from the current semantic/intent stack:
     - APB 94/100 EXCELLENT
     - AHB 94/100 EXCELLENT
-    - AXI 84/100 GOOD
+    - AXI 85/100 GOOD
 
 ### R13 Actor-signal relation extraction: Tier 2 prose patterns
 - status: Done
@@ -290,7 +290,7 @@
   - regression tests added for relation extraction and direction synthesis
   - relation-derived declarations now feed the convergent `EvidenceIR` loop, so discovered signal anchors can unlock additional encoding enums and value constraints
   - downstream `SemanticIR` / `IntentIR` now carry the extracted graph directly via `actor_signal_relations`, `actor_ports`, and `signal_connectivity` instead of forcing later stages to rediscover relation evidence from prose
-  - refreshed baselines now keep the current live AXI graph-direction and consumer-recovery gaps visible instead of hiding them behind stale artifacts, while APB and AHB sit back in the excellent lane after fresh `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR` rebuilds: APB 94/100, AHB 94/100, AXI 84/100
+  - refreshed baselines now keep the current live AXI graph-direction and consumer-recovery gaps visible instead of hiding them behind stale artifacts, while APB and AHB sit back in the excellent lane after fresh `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR` rebuilds; the latest AXI field-table truthfulness fix nudged AXI to 85/100 by preventing DVM message-field rows from leaking pseudo-signals into the canonical surface: APB 94/100, AHB 94/100, AXI 85/100
 - completion criteria:
   - APB direction coverage reaches a stable honest baseline from relation extraction
   - AXI large-signal coverage improves without relying on misleading single-signal metrics
