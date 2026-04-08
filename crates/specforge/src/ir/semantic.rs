@@ -130,7 +130,7 @@ impl SemanticIr {
         let actor_build = build_actors(&context, &interfaces);
         let system_contract = build_system_contract(&context);
         let actor_ports = build_actor_ports(&context, &interfaces, system_contract.as_ref());
-        let signal_connectivity = build_signal_connectivity(&actor_ports);
+        let signal_connectivity = build_signal_connectivity(&actor_ports, system_contract.as_ref());
         let signal_connectivity_conflicts =
             build_signal_connectivity_conflicts(signal_connectivity.as_slice());
         let signal_polarity_conflicts = evidence_ir.signal_polarity_conflicts.clone();
@@ -372,9 +372,20 @@ pub struct ActorPortRecord {
     pub automation_confidence: AutomationConfidence,
 }
 
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Default)]
+#[serde(rename_all = "snake_case")]
+pub enum SignalConnectivityClass {
+    #[default]
+    Protocol,
+    SystemClock,
+    SystemReset,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct SignalConnectivityRecord {
     pub signal_name: String,
+    #[serde(default)]
+    pub connectivity_class: SignalConnectivityClass,
     #[serde(default)]
     pub producer_actor_ids: Vec<String>,
     #[serde(default)]
@@ -2690,14 +2701,19 @@ fn supporting_statement_ids_for_system_contract(
     statement_ids
 }
 
-fn build_signal_connectivity(actor_ports: &[ActorPortRecord]) -> Vec<SignalConnectivityRecord> {
+fn build_signal_connectivity(
+    actor_ports: &[ActorPortRecord],
+    system_contract: Option<&SystemContractRecord>,
+) -> Vec<SignalConnectivityRecord> {
     let mut accumulators: BTreeMap<String, SignalConnectivityRecord> = BTreeMap::new();
 
     for port in actor_ports {
+        let connectivity_class = classify_signal_connectivity(&port.signal_name, system_contract);
         let entry = accumulators
             .entry(port.signal_name.clone())
             .or_insert_with(|| SignalConnectivityRecord {
                 signal_name: port.signal_name.clone(),
+                connectivity_class,
                 producer_actor_ids: Vec::new(),
                 producer_actor_names: Vec::new(),
                 consumer_actor_ids: Vec::new(),
@@ -2706,6 +2722,7 @@ fn build_signal_connectivity(actor_ports: &[ActorPortRecord]) -> Vec<SignalConne
                 source_statement_ids: Vec::new(),
                 automation_confidence: port.automation_confidence,
             });
+        entry.connectivity_class = connectivity_class;
 
         merge_signal_hint(&mut entry.width_hint, port.width_hint.clone());
         entry.automation_confidence =
@@ -2743,6 +2760,24 @@ fn build_signal_connectivity(actor_ports: &[ActorPortRecord]) -> Vec<SignalConne
     }
 
     accumulators.into_values().collect()
+}
+
+fn classify_signal_connectivity(
+    signal_name: &str,
+    system_contract: Option<&SystemContractRecord>,
+) -> SignalConnectivityClass {
+    let Some(system_contract) = system_contract else {
+        return SignalConnectivityClass::Protocol;
+    };
+
+    if signal_name == system_contract.clock_signal {
+        return SignalConnectivityClass::SystemClock;
+    }
+    if signal_name == system_contract.reset_signal {
+        return SignalConnectivityClass::SystemReset;
+    }
+
+    SignalConnectivityClass::Protocol
 }
 
 fn build_signal_connectivity_conflicts(
@@ -11356,6 +11391,18 @@ mod tests {
                 );
             }
         }
+        assert!(semantic_ir.signal_connectivity.iter().any(|record| {
+            record.signal_name == "ACLK"
+                && record.connectivity_class
+                    == crate::ir::semantic::SignalConnectivityClass::SystemClock
+                && record.producer_actor_ids.is_empty()
+        }));
+        assert!(semantic_ir.signal_connectivity.iter().any(|record| {
+            record.signal_name == "ARESETN"
+                && record.connectivity_class
+                    == crate::ir::semantic::SignalConnectivityClass::SystemReset
+                && record.producer_actor_ids.is_empty()
+        }));
 
         Ok(())
     }

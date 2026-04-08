@@ -1,5 +1,29 @@
 # CHANGES
 
+## 2026-04-08 (clock/reset connectivity now validates as infrastructure)
+
+### Changed: clock/reset connectivity is now classified as infrastructure in canonical IR
+- Extended [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so `SignalConnectivityRecord` now carries an explicit `connectivity_class`, with `SystemClock` and `SystemReset` derived from the local system contract instead of flattening those signals into ordinary protocol connectivity.
+- Extended [intent.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/intent.rs) so that infrastructure classification survives into `IntentIR` unchanged.
+- Extended [validate.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/validate.rs) so missing producers on infrastructure connectivity no longer emit the generic `[warning:signal_connectivity]` finding; they now surface as a dedicated `[info:system_contract]` note that keeps canonical sourcing on the system-contract side of the model.
+
+### Changed: AXI-Stream still validates at `90/100 EXCELLENT`, but the remaining gap is now represented more honestly
+- Re-ran full `specforge converge` with Ollama VLM + NLP Level 3 on [IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf](/Users/richarddje/Documents/livework/chipdoc/arm/amba/supporting/axi-stream/current/IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf).
+- Re-validated the rebuilt artifact and refreshed the tracked four-document projection.
+- The score stayed at `90/100 EXCELLENT`, with declared graph-direction and width coverage still at `22/22`, but `ACLK` and `ARESETN` now surface under `infrastructure_signal_connectivity: 2` with an `[info:system_contract]` finding instead of a generic missing-producer warning.
+- The dominant remaining honest gaps are now:
+  - typed temporal rules that still have no explicit cycle-window bounds
+  - the two carried temporal conflicts
+  - the remaining interface-grouping residual decision
+
+### Validation
+- `cargo test --manifest-path Cargo.toml clock_and_reset_gain_input_actor_ports_for_relation_actors -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml carries_infrastructure_signal_connectivity_class_into_intent_ir -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml validate_intent_ir_treats_clock_and_reset_as_infrastructure_connectivity -- --nocapture` → passed
+- full `specforge converge` on AXI-Stream with Ollama VLM + NLP Level 3 → converged in `2` iterations
+- `cargo run --manifest-path Cargo.toml -- validate generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json` → passed (`90/100 EXCELLENT`, `infrastructure_signal_connectivity: 2`)
+- `cargo run --manifest-path Cargo.toml -- project-validation generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json generated/intent_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/intent_ir.json generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json` → passed
+
 ## 2026-04-08 (corpus knowledge base plane added to roadmap)
 
 ### Added: explicit `R15g` workstream for a corpus knowledge base layer

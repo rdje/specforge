@@ -52,6 +52,8 @@
 - AXI-Stream prose KG extraction is now hardened against bogus payload/event actors: `control information` no longer survives as a producer for `TVALID`, AXI-Stream `signal_connectivity_conflicts` is now `0`, and the latest source-table fix also closes the missing consumer-side connectivity gap
 - AXI-Stream interface coverage is now more honest too: bogus width-only `_WIDTH` symbols no longer count as declared interface signals, relation-grounded actors carry graph-backed `ACLK` / `ARESETN` input ports, and parity-check tables now recover both local structural ownership and carried width hints for the `*CHK` surface so declared graph-direction and width coverage are both `22/22`
 - clock/reset handling now has an explicit steering rule in the live docs: those signals are infrastructure semantics, not ordinary protocol edges, so future canonical modeling should prefer dedicated infrastructure records and conservative ownership over false graph completeness
+- `SignalConnectivityRecord` now carries an explicit infrastructure class, so `ACLK` / `ARESETN` surface as `SystemClock` / `SystemReset` connectivity in `SemanticIR` and `IntentIR` instead of blending into ordinary protocol-only connectivity
+- validator handling now matches that boundary too: infrastructure signals with no resolved producer actor emit a dedicated `[info:system_contract]` finding instead of a generic signal-connectivity warning, and the latest AXI-Stream projection now reports `infrastructure_signal_connectivity: 2`
 - the learning plane now applies the same bogus-actor hygiene rule at harvest and lookup time, and the stale `control information -> requester_like` actor-taxonomy prior has been removed from local `CorpusMemory`
 - `specforge kg-bench` can now also stage a fixture-local `CorpusMemory`, and the first tracked gold/negative pair proves prior-guided temporal recovery on an unseen local phrase without leaking cross-document facts
 - `specforge kg-bench` now also locks the same before/after truthfulness pattern for semantic priors on an unseen local phrase
@@ -89,13 +91,14 @@
 - extended parity-check row recovery so the same local table semantics now also restore missing `*CHK` width hints and no longer let width-only statements block stronger graph-derived declarations; re-ran AXI-Stream through the full loopbacked path and the artifact now projects at `90/100 EXCELLENT` with declared graph-direction and width coverage both at `22/22`
 - logged the next architectural layer after `CorpusMemory`: a tracked corpus knowledge base that can accumulate recurring protocol motifs, extraction failure archetypes, contradiction summaries, table/figure families, and infrastructure notes without directly authoring canonical IR truth
 - logged the clock/reset infrastructure-semantics doctrine so future work does not confuse graph carry-through with ordinary producer/consumer semantics for those signals
+- classified clock/reset connectivity as infrastructure in canonical `SemanticIR` / `IntentIR`, re-ran full AXI-Stream `converge`, and refreshed the four-artifact validation projection so `ACLK` / `ARESETN` now surface under `infrastructure_signal_connectivity: 2` with a system-contract note instead of an ordinary missing-producer warning
 
 ## Current repo hygiene expectations
 - completed tasks should end in a clean working tree after the commit workflow runs
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. decide the canonical producer-attribution policy for shared infrastructure signals like `ACLK` and `ARESETN`
+1. make shared infrastructure sourcing/distribution first-class beyond the current info-note boundary for signals like `ACLK` and `ARESETN`
 2. recover explicit cycle-window bounds for the remaining typed temporal rules in AXI-Stream and similar timing-rich unseen protocols
 3. broaden `R15f` beyond actor-taxonomy / semantic / semantic-modality-reliability / temporal / table-shape into visual-motif and negative-knowledge prior families
 

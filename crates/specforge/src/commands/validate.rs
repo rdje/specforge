@@ -10,7 +10,9 @@ use crate::ir::evidence::{
     VisualObservationKind,
 };
 use crate::ir::intent::IntentIr;
-use crate::ir::semantic::{ActorPortRecord, ActorRelativeDirection, ClockEdge, SemanticIr};
+use crate::ir::semantic::{
+    ActorPortRecord, ActorRelativeDirection, ClockEdge, SemanticIr, SignalConnectivityClass,
+};
 use crate::ir::source::{
     AutomationConfidence, DiagramKind, SourceIr, ValidationFindingRecord,
     ValidationFindingSeverity, ValidationMetricRecord, ValidationReportRecord, WidthHint,
@@ -134,6 +136,45 @@ fn graph_direction_signal_names(actor_ports: &[ActorPortRecord]) -> BTreeSet<Str
         .filter(|port| !matches!(port.direction, ActorRelativeDirection::Unknown))
         .map(|port| port.signal_name.clone())
         .collect()
+}
+
+fn is_infrastructure_connectivity_class(class: SignalConnectivityClass) -> bool {
+    !matches!(class, SignalConnectivityClass::Protocol)
+}
+
+fn protocol_missing_producer_signal_names(
+    connectivity: &[crate::ir::semantic::SignalConnectivityRecord],
+) -> Vec<String> {
+    connectivity
+        .iter()
+        .filter(|record| {
+            record.producer_actor_ids.is_empty()
+                && !is_infrastructure_connectivity_class(record.connectivity_class)
+        })
+        .map(|record| record.signal_name.clone())
+        .collect()
+}
+
+fn infrastructure_missing_producer_signal_names(
+    connectivity: &[crate::ir::semantic::SignalConnectivityRecord],
+) -> Vec<String> {
+    connectivity
+        .iter()
+        .filter(|record| {
+            record.producer_actor_ids.is_empty()
+                && is_infrastructure_connectivity_class(record.connectivity_class)
+        })
+        .map(|record| record.signal_name.clone())
+        .collect()
+}
+
+fn infrastructure_signal_connectivity_count(
+    connectivity: &[crate::ir::semantic::SignalConnectivityRecord],
+) -> usize {
+    connectivity
+        .iter()
+        .filter(|record| is_infrastructure_connectivity_class(record.connectivity_class))
+        .count()
 }
 
 fn resolved_direction_counts<'a>(
@@ -1332,6 +1373,8 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         );
     let with_visual_semantic_grounding =
         interface_signals_with_visual_semantic_grounding_count(&ir.interfaces);
+    let infrastructure_signal_connectivity =
+        infrastructure_signal_connectivity_count(&ir.signal_connectivity);
     let fully_typed = ir
         .interfaces
         .iter()
@@ -1412,6 +1455,7 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     );
     println!("  actor_ports: {}", ir.actor_ports.len());
     println!("  signal_connectivity: {}", ir.signal_connectivity.len());
+    println!("  infrastructure_signal_connectivity: {infrastructure_signal_connectivity}");
     println!(
         "  interface_signal_conflicts: {}",
         ir.interface_signal_conflicts.len()
@@ -1550,12 +1594,11 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         }
     }
 
-    let missing_producer_signals: Vec<String> = ir
-        .signal_connectivity
-        .iter()
-        .filter(|record| record.producer_actor_ids.is_empty())
-        .map(|record| record.signal_name.clone())
-        .collect();
+    let missing_producer_signals = protocol_missing_producer_signal_names(&ir.signal_connectivity);
+    let infrastructure_missing_producer_signals =
+        infrastructure_missing_producer_signal_names(&ir.signal_connectivity);
+    let infrastructure_signal_connectivity =
+        infrastructure_signal_connectivity_count(&ir.signal_connectivity);
     let missing_consumer_signals: Vec<String> = ir
         .signal_connectivity
         .iter()
@@ -1600,6 +1643,22 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 missing_producer_signals.len()
             ),
             missing_producer_signals.iter().take(8).cloned().collect(),
+        ));
+    }
+    if !infrastructure_missing_producer_signals.is_empty() {
+        findings.push(finding(
+            "semantic_infrastructure_connectivity_missing_producer",
+            ValidationFindingSeverity::Info,
+            "system_contract",
+            format!(
+                "{} infrastructure signal(s) have no resolved producer actor in SemanticIR connectivity; canonical sourcing remains in the system-contract surface",
+                infrastructure_missing_producer_signals.len()
+            ),
+            infrastructure_missing_producer_signals
+                .iter()
+                .take(8)
+                .cloned()
+                .collect(),
         ));
     }
     if !missing_consumer_signals.is_empty() {
@@ -1960,6 +2019,14 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 ir.signal_connectivity.len().to_string(),
             ),
             metric(
+                "infrastructure_signal_connectivity",
+                infrastructure_signal_connectivity.to_string(),
+            ),
+            metric(
+                "infrastructure_signals_missing_producer",
+                infrastructure_missing_producer_signals.len().to_string(),
+            ),
+            metric(
                 "interface_signal_conflicts",
                 ir.interface_signal_conflicts.len().to_string(),
             ),
@@ -2118,6 +2185,8 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         );
     let with_visual_semantic_grounding =
         interface_signals_with_visual_semantic_grounding_count(&ir.interfaces);
+    let infrastructure_signal_connectivity =
+        infrastructure_signal_connectivity_count(&ir.signal_connectivity);
     let dir_pct = if declared_count > 0 {
         with_direction * 100 / declared_count
     } else {
@@ -2186,6 +2255,7 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     );
     println!("  actor_ports: {}", ir.actor_ports.len());
     println!("  signal_connectivity: {}", ir.signal_connectivity.len());
+    println!("  infrastructure_signal_connectivity: {infrastructure_signal_connectivity}");
     println!(
         "  interface_signal_conflicts: {}",
         ir.interface_signal_conflicts.len()
@@ -2380,12 +2450,11 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         }
     }
 
-    let missing_producer_signals: Vec<String> = ir
-        .signal_connectivity
-        .iter()
-        .filter(|record| record.producer_actor_ids.is_empty())
-        .map(|record| record.signal_name.clone())
-        .collect();
+    let missing_producer_signals = protocol_missing_producer_signal_names(&ir.signal_connectivity);
+    let infrastructure_missing_producer_signals =
+        infrastructure_missing_producer_signal_names(&ir.signal_connectivity);
+    let infrastructure_signal_connectivity =
+        infrastructure_signal_connectivity_count(&ir.signal_connectivity);
     let missing_consumer_signals: Vec<String> = ir
         .signal_connectivity
         .iter()
@@ -2429,6 +2498,22 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 missing_producer_signals.len()
             ),
             missing_producer_signals.iter().take(8).cloned().collect(),
+        ));
+    }
+    if !infrastructure_missing_producer_signals.is_empty() {
+        findings.push(finding(
+            "intent_infrastructure_connectivity_missing_producer",
+            ValidationFindingSeverity::Info,
+            "system_contract",
+            format!(
+                "{} infrastructure signal(s) have no resolved producer actor in IntentIR connectivity; canonical sourcing remains in the system-contract surface",
+                infrastructure_missing_producer_signals.len()
+            ),
+            infrastructure_missing_producer_signals
+                .iter()
+                .take(8)
+                .cloned()
+                .collect(),
         ));
     }
     if !missing_consumer_signals.is_empty() {
@@ -2797,6 +2882,14 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             metric(
                 "signal_connectivity",
                 ir.signal_connectivity.len().to_string(),
+            ),
+            metric(
+                "infrastructure_signal_connectivity",
+                infrastructure_signal_connectivity.to_string(),
+            ),
+            metric(
+                "infrastructure_signals_missing_producer",
+                infrastructure_missing_producer_signals.len().to_string(),
             ),
             metric(
                 "interface_signal_conflicts",
@@ -3569,6 +3662,84 @@ mod tests {
         run(ValidateArgs {
             artifact: intent_ir.artifact_layout.intent_ir_path,
         })
+    }
+
+    #[test]
+    fn validate_intent_ir_treats_clock_and_reset_as_infrastructure_connectivity() -> Result<()> {
+        use crate::ir::evidence::{EvidenceModality, ExtractedStatement, StatementClass};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("infra_connectivity.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Spec\n",
+                "Signal ACLK is input width 1.\n",
+                "Signal ARESETN is input width 1.\n",
+                "Signal XREQ is output width 1.\n\n",
+                "Clock ACLK.\n",
+                "Reset ARESETN is asynchronous active low.\n",
+                "The Requester drives XREQ.\n",
+                "The Completer reads XREQ.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.extracted_statements.push(ExtractedStatement {
+            statement_id: "statement_clock".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: "Clock ACLK.".to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+        });
+        evidence_ir.extracted_statements.push(ExtractedStatement {
+            statement_id: "statement_reset".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: "Reset ARESETN is asynchronous active low.".to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+        });
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let report = validate_intent_ir(&intent_ir, "infra_connectivity".to_string());
+        assert_eq!(
+            metric_value(&report, "infrastructure_signal_connectivity"),
+            Some("2")
+        );
+        assert_eq!(
+            metric_value(&report, "infrastructure_signals_missing_producer"),
+            Some("2")
+        );
+        assert!(!has_finding(
+            &report,
+            "intent_connectivity_missing_producer"
+        ));
+        assert!(has_finding(
+            &report,
+            "intent_infrastructure_connectivity_missing_producer"
+        ));
+
+        Ok(())
     }
 
     #[test]

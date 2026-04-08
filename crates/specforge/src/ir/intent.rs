@@ -1688,6 +1688,80 @@ mod tests {
     }
 
     #[test]
+    fn carries_infrastructure_signal_connectivity_class_into_intent_ir() -> Result<()> {
+        use crate::ir::evidence::{EvidenceModality, ExtractedStatement, StatementClass};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("intent_infra_connectivity.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal ACLK is input width 1.\n",
+                "Signal ARESETN is input width 1.\n",
+                "Signal XREQ is output width 1.\n\n",
+                "Clock ACLK.\n",
+                "Reset ARESETN is asynchronous active low.\n",
+                "The Requester drives XREQ.\n",
+                "The Completer reads XREQ.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.extracted_statements.push(ExtractedStatement {
+            statement_id: "statement_clock".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: "Clock ACLK.".to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+        });
+        evidence_ir.extracted_statements.push(ExtractedStatement {
+            statement_id: "statement_reset".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: "Reset ARESETN is asynchronous active low.".to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+        });
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        assert!(intent_ir.signal_connectivity.iter().any(|record| {
+            record.signal_name == "ACLK"
+                && record.connectivity_class
+                    == crate::ir::semantic::SignalConnectivityClass::SystemClock
+                && record.producer_actor_ids.is_empty()
+        }));
+        assert!(intent_ir.signal_connectivity.iter().any(|record| {
+            record.signal_name == "ARESETN"
+                && record.connectivity_class
+                    == crate::ir::semantic::SignalConnectivityClass::SystemReset
+                && record.producer_actor_ids.is_empty()
+        }));
+
+        Ok(())
+    }
+
+    #[test]
     fn carries_interface_signal_conflicts_into_intent_ir() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("intent_signal_conflict.md");
