@@ -1,5 +1,34 @@
 # CHANGES
 
+## 2026-04-08 (doctor now checks Ollama loopback readiness too)
+
+### Added: doctor now verifies the default local Ollama runtime, not just Docling
+- Extended [doctor.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/doctor.rs) so `specforge doctor [--strict]` now checks:
+  - Docling ingest readiness
+  - Ollama `/api/tags`
+  - default-model presence for `qwen2.5vl:7b`
+  - Ollama OpenAI-compatible `/v1/chat/completions`
+- This catches the exact failure mode discovered during the fresh AXI rerun: a long `converge` can otherwise get all the way through fresh ingest before discovering that the local chat-completions path is not actually usable in the current execution environment.
+
+### Added: typed parsing and reporting for the default Ollama loopback path
+- `doctor.rs` now parses visible Ollama models from `/api/tags`, validates OpenAI-compatible chat responses from `/v1/chat/completions`, and reports both readiness and resolution text explicitly.
+- Added focused unit coverage for Ollama tags parsing and chat-response parsing.
+
+### Changed: the local runtime preflight now covers the full default local-first pipeline
+- Verified outside the sandbox that `cargo run --manifest-path Cargo.toml -- doctor --strict` now reports:
+  - Docling ready via `python3.11` + `docling 2.84.0`
+  - Ollama tags reachable
+  - Ollama chat-completions reachable
+  - default model `qwen2.5vl:7b` present
+- That means the default `specforge converge` runtime can now be preflighted honestly before a large PDF run instead of discovering the Ollama-side failure deep into the loop.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml doctor_defaults_to_non_strict -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml parse_ollama_tags_response_detects_default_model -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml parse_ollama_chat_response_accepts_openai_compatible_string_content -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml parse_ollama_chat_response_accepts_array_content -- --nocapture` → passed
+- `cargo run --manifest-path Cargo.toml -- doctor --strict` → passed (outside sandbox; Docling + Ollama loopback both ready)
+
 ## 2026-04-08 (Docling runtime discovery, doctor command, and bootstrap path)
 
 ### Added: a first-class Docling runtime doctor command

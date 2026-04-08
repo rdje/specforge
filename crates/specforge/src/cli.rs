@@ -19,7 +19,7 @@ pub struct Cli {
 pub enum Commands {
     /// Inspect a source path and report the detected source kind
     Inspect(InspectArgs),
-    /// Inspect local runtime readiness for Docling-backed PDF ingest
+    /// Inspect local runtime readiness for the default local-first PDF-to-IntentIR pipeline
     Doctor(DoctorArgs),
     /// Iterate the staged pipeline until the materialized knowledge snapshot stops growing
     Converge(ConvergeArgs),

@@ -86,8 +86,9 @@ cargo run -p specforge -- ingest README.md
 cargo run -p specforge -- doctor --strict
 ```
 - prints the selected Docling Python candidate, version information, and all probe results
+- also checks the default local Ollama loopback path (`/api/tags`, `/v1/chat/completions`, and the default `qwen2.5vl:7b` model)
 - exits non-zero with `--strict` when fresh PDF ingest is not actually executable
-- this is the supported local preflight before relying on `specforge ingest <pdf>` or `specforge converge <pdf>`
+- this is the supported local preflight before relying on `specforge ingest <pdf>` or `specforge converge <pdf>` with the default local-first runtime stack
 
 ### Preview an EvidenceIR artifact
 ```bash

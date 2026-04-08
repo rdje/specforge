@@ -43,6 +43,11 @@
   - `specforge doctor [--strict]` reports the selected Docling Python candidate plus all probe outcomes
   - runtime discovery now prefers `SPECFORGE_DOCLING_PYTHON`, then repo-local `.venv-docling`, then versioned Python candidates such as `python3.11`, before falling back to generic `python3` / `python`
   - `scripts/bootstrap_docling.sh` is the supported repo-local bootstrap path, and `.venv-docling/` must stay local/untracked
+- `specforge doctor [--strict]` now also checks the default Ollama loopback path end to end:
+  - `/api/tags`
+  - default-model presence for `qwen2.5vl:7b`
+  - `/v1/chat/completions`
+- this was added immediately after a fresh AXI rerun showed that Docling was fixed but a local Ollama chat-endpoint failure could still stay hidden until deep inside `converge`
 - the local `CorpusMemory` prior store now includes actor-taxonomy, semantic phrase, semantic modality-reliability, temporal, and table-shape prior families
 - the thing that materially grows to capture learning is the typed prior store itself, usually `generated/prior_memory/corpus_memory.json`; code defines the learning rules, but the accumulated experience lives in that symbolic memory artifact
 - `specforge evidence` and `specforge converge` now consult `--prior-memory generated/prior_memory/corpus_memory.json` by default, and the first bounded consumer uses actor-taxonomy priors to interpret explicit local actor terms in section headings and `Source` / `Destination` columns; width-only section-guided signal tables can now also recover structural `ActorSignalRelation::Drives` edges from that same prior-guided actor vocabulary
