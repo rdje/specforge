@@ -128,7 +128,8 @@ impl SemanticIr {
         let (interfaces, interface_signal_conflicts) =
             build_interfaces(&context, prior_guidance.as_ref());
         let actor_build = build_actors(&context, &interfaces);
-        let actor_ports = build_actor_ports(&context, &interfaces);
+        let system_contract = build_system_contract(&context);
+        let actor_ports = build_actor_ports(&context, &interfaces, system_contract.as_ref());
         let signal_connectivity = build_signal_connectivity(&actor_ports);
         let signal_connectivity_conflicts =
             build_signal_connectivity_conflicts(signal_connectivity.as_slice());
@@ -142,7 +143,6 @@ impl SemanticIr {
         let assertions = build_assertions(&context);
         let abstractions = build_abstractions(&context);
         let decomposition_candidates = build_decomposition_candidates(&context);
-        let system_contract = build_system_contract(&context);
         let init_assignments = build_init_assignments(&context);
         let regular_states = build_regular_states(&context);
         let state_transitions = build_state_transitions(&context);
@@ -1564,6 +1564,9 @@ fn build_interfaces(
 
     for statement in &context.statements {
         if let Some(signal_declaration) = parse_explicit_signal_declaration(&statement.text) {
+            if interface_signal_declaration_looks_like_width_symbol(&signal_declaration) {
+                continue;
+            }
             // Signal declarations arrive from EvidenceIR via two paths:
             //   1. Formal `Signal X is input/output width N.` in source text
             //   2. Synthesized by EvidenceIR from structured table cell grids in SourceIR
@@ -2575,6 +2578,7 @@ fn build_actors(context: &SemanticContext, interfaces: &[InterfaceRecord]) -> Ac
 fn build_actor_ports(
     context: &SemanticContext,
     interfaces: &[InterfaceRecord],
+    system_contract: Option<&SystemContractRecord>,
 ) -> Vec<ActorPortRecord> {
     let mut accumulators: BTreeMap<(String, String), ActorPortAccumulator> = BTreeMap::new();
     let signal_widths = signal_width_hints_by_name(interfaces);
@@ -2606,6 +2610,43 @@ fn build_actor_ports(
             max_automation_confidence(entry.automation_confidence, relation.automation_confidence);
     }
 
+    if let Some(system_contract) = system_contract {
+        let actor_names_with_relations = accumulators
+            .values()
+            .map(|entry| entry.actor_name.clone())
+            .collect::<BTreeSet<_>>();
+        let supporting_statement_ids =
+            supporting_statement_ids_for_system_contract(context, system_contract);
+
+        for actor_name in actor_names_with_relations {
+            for signal_name in [&system_contract.clock_signal, &system_contract.reset_signal] {
+                let key = (actor_name.clone(), signal_name.clone());
+                let entry = accumulators
+                    .entry(key)
+                    .or_insert_with(|| ActorPortAccumulator {
+                        actor_id: actor_id_for_name(&actor_name),
+                        actor_name: actor_name.clone(),
+                        drives: false,
+                        reads: false,
+                        width_hint: signal_widths.get(signal_name).cloned().flatten(),
+                        source_statement_ids: BTreeSet::new(),
+                        automation_confidence: system_contract.automation_confidence,
+                    });
+                entry.reads = true;
+                if entry.width_hint.is_none() {
+                    entry.width_hint = signal_widths.get(signal_name).cloned().flatten();
+                }
+                entry
+                    .source_statement_ids
+                    .extend(supporting_statement_ids.iter().cloned());
+                entry.automation_confidence = max_automation_confidence(
+                    entry.automation_confidence,
+                    system_contract.automation_confidence,
+                );
+            }
+        }
+    }
+
     accumulators
         .into_iter()
         .map(|((_actor_name, signal_name), entry)| {
@@ -2623,6 +2664,30 @@ fn build_actor_ports(
             }
         })
         .collect()
+}
+
+fn supporting_statement_ids_for_system_contract(
+    context: &SemanticContext,
+    system_contract: &SystemContractRecord,
+) -> BTreeSet<String> {
+    let mut statement_ids = BTreeSet::new();
+
+    for statement in &context.statements {
+        if parse_explicit_system_clock(&statement.text)
+            .as_deref()
+            .is_some_and(|signal_name| signal_name == system_contract.clock_signal)
+        {
+            statement_ids.insert(statement.statement_id.clone());
+        }
+        if parse_explicit_system_reset(&statement.text)
+            .as_ref()
+            .is_some_and(|reset| reset.signal_name == system_contract.reset_signal)
+        {
+            statement_ids.insert(statement.statement_id.clone());
+        }
+    }
+
+    statement_ids
 }
 
 fn build_signal_connectivity(actor_ports: &[ActorPortRecord]) -> Vec<SignalConnectivityRecord> {
@@ -3192,6 +3257,14 @@ fn parse_explicit_signal_declaration(text: &str) -> Option<ParsedInterfaceSignal
         direction_hint,
         width_hint,
     })
+}
+
+fn interface_signal_declaration_looks_like_width_symbol(
+    declaration: &ParsedInterfaceSignalDeclaration,
+) -> bool {
+    declaration.direction_hint.is_none()
+        && declaration.width_hint.is_some()
+        && declaration.signal_name.ends_with("_WIDTH")
 }
 
 fn parse_explicit_system_clock(text: &str) -> Option<String> {
@@ -4407,7 +4480,9 @@ fn known_explicit_signal_names(context: &SemanticContext) -> BTreeSet<String> {
 
     for statement in &context.statements {
         if let Some(signal_declaration) = parse_explicit_signal_declaration(&statement.text) {
-            signal_names.insert(signal_declaration.signal_name);
+            if !interface_signal_declaration_looks_like_width_symbol(&signal_declaration) {
+                signal_names.insert(signal_declaration.signal_name);
+            }
         }
         if let Some(clock_signal) = parse_explicit_system_clock(&statement.text) {
             signal_names.insert(clock_signal);
@@ -7548,7 +7623,7 @@ mod tests {
     use tempfile::tempdir;
 
     use crate::error::Result;
-    use crate::ir::evidence::EvidenceIr;
+    use crate::ir::evidence::{EvidenceIr, EvidenceModality, ExtractedStatement, StatementClass};
     use crate::ir::prior_memory::{
         CorpusMemory, CorpusMemoryUpdatePolicyRecord, PriorSourceArtifactRecord, ProtocolFamily,
         SemanticModalityReliabilityPriorRecord, TemporalPhrasePriorRecord,
@@ -11138,6 +11213,149 @@ mod tests {
             .expect("expected width-only AWVALID declaration to survive");
         assert_eq!(awvalid.width_hint, Some(WidthHint::Numeric(1)));
         assert_eq!(awvalid.direction_hint, None);
+
+        Ok(())
+    }
+
+    #[test]
+    fn width_only_width_parameter_declarations_do_not_become_interface_signal_records() -> Result<()>
+    {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("width_param_only.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            "# Protocol\nSignal DATA_WIDTH is width 32.\n\nSignal AWVALID is width DATA_WIDTH.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        assert!(
+            semantic_ir
+                .interfaces
+                .iter()
+                .flat_map(|interface| interface.signal_records.iter())
+                .all(|signal| signal.signal_name != "DATA_WIDTH"),
+            "width-parameter declarations should not survive as interface signals"
+        );
+        assert!(
+            semantic_ir
+                .interfaces
+                .iter()
+                .flat_map(|interface| interface.signal_records.iter())
+                .any(|signal| signal.signal_name == "AWVALID"),
+            "ordinary width-only signals must still survive"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn clock_and_reset_gain_input_actor_ports_for_relation_actors() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("clock_reset_ports.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Signals\n",
+                "Signal ACLK is input width 1.\n",
+                "Signal ARESETN is input width 1.\n",
+                "\n",
+                "# Contract\n",
+                "Clock ACLK.\n",
+                "Reset ARESETN is asynchronous active low.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_signal_desc".to_string(),
+            asset_id: "asset_signal_desc".to_string(),
+            page_id: None,
+            caption_text: Some("Role-grounded signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Source", true),
+                make_table_cell("Width", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("XREQ", false),
+                    make_table_cell("Requester", false),
+                    make_table_cell("1", false),
+                    make_table_cell("Transfer request", false),
+                ],
+                vec![
+                    make_table_cell("XACK", false),
+                    make_table_cell("Completer", false),
+                    make_table_cell("1", false),
+                    make_table_cell("Transfer accept", false),
+                ],
+            ],
+            row_count: 2,
+            col_count: 4,
+        });
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.extracted_statements.push(ExtractedStatement {
+            statement_id: "statement_clock".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: "Clock ACLK.".to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+        });
+        evidence_ir.extracted_statements.push(ExtractedStatement {
+            statement_id: "statement_reset".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: "Reset ARESETN is asynchronous active low.".to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        for actor_name in ["Requester", "Completer"] {
+            for signal_name in ["ACLK", "ARESETN"] {
+                assert!(
+                    semantic_ir.actor_ports.iter().any(|port| {
+                        port.actor_name == actor_name
+                            && port.signal_name == signal_name
+                            && port.direction == ActorRelativeDirection::Input
+                    }),
+                    "expected {actor_name} to receive {signal_name} as an input actor port"
+                );
+            }
+        }
 
         Ok(())
     }

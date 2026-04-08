@@ -1,5 +1,30 @@
 # CHANGES
 
+## 2026-04-08 (AXI-Stream graph-direction coverage rises after width-symbol cleanup)
+
+### Fixed: width-only `_WIDTH` declarations no longer masquerade as interface signals
+- Hardened [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so synthesized declarations like `Signal TDATA_WIDTH is width LOW.` no longer become canonical interface-signal records when they carry width metadata but no real port direction.
+- Added focused regressions for both sides of the boundary:
+  - `width_only_width_parameter_declarations_do_not_become_interface_signal_records`
+  - `width_only_signal_declarations_become_interface_signal_records`
+
+### Fixed: relation-grounded actors now inherit clock/reset input ports from explicit system contracts
+- Extended [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so actors already grounded by structural KG evidence now receive `input` actor ports for the explicit clock and reset signals instead of leaving `ACLK` / `ARESETN` outside the graph-backed port surface.
+- Added the regression `clock_and_reset_gain_input_actor_ports_for_relation_actors`, which locks that actor-relative clock/reset carry-through path.
+
+### Changed: AXI-Stream now validates at `84/100 GOOD`
+- Re-ran full `specforge converge` with Ollama VLM + NLP Level 3 on [IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf](/Users/richarddje/Documents/livework/chipdoc/arm/amba/supporting/axi-stream/current/IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf).
+- The run still converged in `2` pipeline iterations, but the canonical denominator is now more honest: declared interface signals dropped from `20` to `16`, graph-direction coverage rose from `10/20` to `12/16`, and the projected score improved from `80/100 GOOD` to `84/100 GOOD`.
+- The remaining dominant gaps are now narrower and clearer:
+  - the four `*CHK` signals still lack graph-derived direction coverage
+  - `ACLK` and `ARESETN` still lack resolved producer actors even though they now have graph-backed consumer ports
+
+### Validation
+- `cargo test --manifest-path Cargo.toml width_only_width_parameter_declarations_do_not_become_interface_signal_records -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml clock_and_reset_gain_input_actor_ports_for_relation_actors -- --nocapture` → passed
+- full `specforge converge` on AXI-Stream with Ollama VLM + NLP Level 3 → converged in `2` iterations
+- `cargo run --manifest-path Cargo.toml -- validate generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json` → passed (`84/100 GOOD`, graph-direction coverage `12/16`)
+
 ## 2026-04-08 (AXI-Stream consumer-side connectivity now survives from source tables)
 
 ### Fixed: source-column signal tables can now recover the opposite-side reader when it is uniquely grounded

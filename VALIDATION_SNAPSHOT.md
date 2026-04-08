@@ -9,7 +9,7 @@ It summarizes the latest persisted validation reports projected from IR artifact
   - `IHI0022_L_2025-08_AMBA_AXI_Protocol_Specification.pdf` (`intent_ir`): `94/100 EXCELLENT`
   - `IHI0024_D_2021-04_AMBA_APB_Protocol_Specification.pdf` (`intent_ir`): `95/100 EXCELLENT`
   - `IHI0033_C_2021-09_AMBA_5_AHB_Protocol_Specification.pdf` (`intent_ir`): `95/100 EXCELLENT`
-  - `IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf` (`intent_ir`): `80/100 GOOD`
+  - `IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf` (`intent_ir`): `84/100 GOOD`
 
 ## Projected Artifacts
 ### IHI0022_L_2025-08_AMBA_AXI_Protocol_Specification.pdf (intent_ir)
@@ -48,14 +48,14 @@ It summarizes the latest persisted validation reports projected from IR artifact
 ### IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf (intent_ir)
 - document_key: `ihi0051_b_2021_04_amba_axi_stream_protocol_specification`
 - artifact_path: `generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json`
-- artifact_fingerprint: `9de985d1f7c445dc`
-- score: `80/100 GOOD`
+- artifact_fingerprint: `7a55aeacbc2a15f8`
+- score: `84/100 GOOD`
 - summary: IntentIR validation for IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf with 7 finding(s)
 - findings:
-  - [warning:quality_score] IntentIR quality score is 80/100 (GOOD)
+  - [warning:quality_score] IntentIR quality score is 84/100 (GOOD)
   - [warning:residual_decisions] IntentIR still carries 1 residual decision packet(s)
-  - [warning:signal_connectivity] 10 signal(s) in IntentIR connectivity have no resolved consumer actor
+  - [warning:signal_connectivity] 2 signal(s) in IntentIR connectivity have no resolved producer actor
   - [warning:temporal_conflicts] 2 typed temporal conflict(s) detected across contradictory value obligations
-  - [info:compatibility_surface] 8 declared signal record(s) still lack flat compatibility direction hints even though actor-relative ports exist
-  - [info:knowledge_graph] 10 declared signal record(s) still lack graph-derived direction coverage
+  - [info:compatibility_surface] 4 declared signal record(s) still lack flat compatibility direction hints even though actor-relative ports exist
+  - [info:knowledge_graph] 4 declared signal record(s) still lack graph-derived direction coverage
   - [info:temporal_grounding] typed temporal rules exist, but none currently carry explicit cycle-window bounds

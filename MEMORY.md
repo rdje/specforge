@@ -47,8 +47,9 @@
 - `EvidenceIR` now also has a fourth bounded prior consumer for table-shape priors, using them only when a current structured table is still `unknown`; explicit local `SourceIR.table_kind` values still win outright
 - `SemanticIR` now also has a fifth bounded prior consumer overall and a second semantic-stage one for semantic modality-reliability priors, using them only to advisory-adjust arbitration between already-present locally grounded semantic candidates while preserving the underlying conflict surface
 - the latest live four-document prior-memory run over AXI/APB/AHB/AXI-Stream now yields `16` actor-taxonomy priors, `5` semantic phrase priors, `4` semantic modality-reliability priors, `266` temporal phrase priors, and `99` table-shape priors
-- AXI-Stream is now the first unseen protocol run carried all the way through the full loopbacked path: it converged in `2` pipeline iterations with Ollama VLM + NLP Level 3, validates at `80/100 GOOD`, and its artifact is now included in the tracked validation snapshot
-- AXI-Stream prose KG extraction is now hardened against bogus payload/event actors: `control information` no longer survives as a producer for `TVALID`, AXI-Stream `signal_connectivity_conflicts` is now `0`, and the latest source-table fix also closes the missing consumer-side connectivity gap; graph-direction coverage is now the main remaining structural weakness
+- AXI-Stream is now the first unseen protocol run carried all the way through the full loopbacked path: it converged in `2` pipeline iterations with Ollama VLM + NLP Level 3, validates at `84/100 GOOD`, and its artifact is now included in the tracked validation snapshot
+- AXI-Stream prose KG extraction is now hardened against bogus payload/event actors: `control information` no longer survives as a producer for `TVALID`, AXI-Stream `signal_connectivity_conflicts` is now `0`, and the latest source-table fix also closes the missing consumer-side connectivity gap
+- AXI-Stream interface coverage is now more honest too: bogus width-only `_WIDTH` symbols no longer count as declared interface signals, relation-grounded actors now carry graph-backed `ACLK` / `ARESETN` input ports, and graph-direction coverage has improved to `12/16`
 - the learning plane now applies the same bogus-actor hygiene rule at harvest and lookup time, and the stale `control information -> requester_like` actor-taxonomy prior has been removed from local `CorpusMemory`
 - `specforge kg-bench` can now also stage a fixture-local `CorpusMemory`, and the first tracked gold/negative pair proves prior-guided temporal recovery on an unseen local phrase without leaking cross-document facts
 - `specforge kg-bench` now also locks the same before/after truthfulness pattern for semantic priors on an unseen local phrase
@@ -80,23 +81,16 @@
 - re-ran full `converge` on AXI-Stream after the prose actor fix, confirmed convergence still takes `2` iterations, and refreshed the tracked validation snapshot so the carried producer conflict is now gone from the projected artifact state
 - re-ran `specforge learn-priors` across AXI/APB/AHB/AXI-Stream after the learning-plane hygiene fix and confirmed the stale `control information` actor prior is now gone from local `CorpusMemory`
 - refreshed `generated/prior_memory/corpus_memory.json` across AXI/APB/AHB/AXI-Stream, producing the first nonzero semantic phrase and semantic modality-reliability priors on a real corpus
+- removed bogus width-only `_WIDTH` pseudo-signals from canonical interface coverage and added graph-backed clock/reset input ports for relation-grounded actors
+- re-ran full `converge` on AXI-Stream after the semantic graph-coverage fix, confirmed convergence still takes `2` iterations, and refreshed the tracked validation snapshot so AXI-Stream now projects at `84/100 GOOD` with `12/16` graph-direction coverage
 
-## Current working tree before commit
-- modified tracked files currently include:
-  - `crates/specforge/src/commands/learn_priors.rs`
-  - `crates/specforge/src/ir/evidence.rs`
-  - `crates/specforge/src/ir/prior_memory.rs`
-  - `CHANGES.md`
-  - `MEMORY.md`
-  - `README.md`
-  - `ROADMAP.md`
-  - `RUST_CODEBASE_ANALYSIS.md`
-  - `DEVELOPMENT_NOTES.md`
+## Current repo hygiene expectations
+- completed tasks should end in a clean working tree after the commit workflow runs
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. commit the learning-plane bogus-actor hygiene fix plus the refreshed prior-count continuity docs
-2. improve consumer-side structural KG recovery for AXI-Stream so graph-direction coverage rises beyond the current 50%
+1. decide whether the remaining AXI-Stream `*CHK` signals should become graph-backed actor ports or be excluded from canonical interface-direction coverage
+2. decide the canonical producer-attribution policy for shared infrastructure signals like `ACLK` and `ARESETN`
 3. broaden `R15f` beyond actor-taxonomy / semantic / semantic-modality-reliability / temporal / table-shape into visual-motif and negative-knowledge prior families
 
 ## Remaining engineering gaps after this commit

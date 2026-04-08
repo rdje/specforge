@@ -194,14 +194,14 @@
       },
       "semantic": {
         "metric_values": {
-          "actor_ports": "4",
+          "actor_ports": "8",
           "with_semantic_consensus": "4",
           "with_decisive_semantic_arbitration": "4"
         }
       },
       "intent": {
         "metric_values": {
-          "actor_ports": "4",
+          "actor_ports": "8",
           "with_semantic_consensus": "4",
           "with_decisive_semantic_arbitration": "4"
         }
