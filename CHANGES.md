@@ -1,5 +1,27 @@
 # CHANGES
 
+## 2026-04-08 (temporal conflict synonyms now normalize away safely)
+
+### Fixed: boolean-equivalent temporal values no longer create fake conflicts
+- Extended [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so temporal-conflict detection now canonicalizes boolean-like value synonyms before conflict grouping.
+- `ASSERTED`, `HIGH`, `1`, and `TRUE` now collapse into the same positive temporal value class, and `DEASSERTED`, `LOW`, `0`, and `FALSE` collapse into the same negative class.
+- This keeps original rule text and predicate values intact for provenance while preventing fake contradictions like `TLAST must be ASSERTED` versus `TLAST must be HIGH`.
+
+### Changed: AXI-Stream timing semantics are now cleaner again without changing the score
+- Rebuilt `SemanticIR` and `IntentIR` for AXI-Stream from the current `EvidenceIR`, re-validated the artifact, and refreshed the tracked four-document projection.
+- The score stayed at `90/100 EXCELLENT`, but AXI-Stream now carries `0` typed temporal conflicts instead of `1`.
+- The remaining dominant honest gaps are now:
+  - the infrastructure-sourcing/system-contract note for `ACLK` and `ARESETN`
+  - the carried `semantic_interface_grouping` residual decision
+
+### Validation
+- `cargo test --manifest-path Cargo.toml derives_typed_temporal_conflicts_from_conflicting_value_rules -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml asserted_and_high_do_not_form_temporal_conflicts -- --nocapture` → passed
+- `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/evidence_ir.json` → passed
+- `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/semantic_ir.json` → passed
+- `cargo run --manifest-path Cargo.toml -- validate generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json` → passed (`90/100 EXCELLENT`, `temporal_conflicts: 0`)
+- `cargo run --manifest-path Cargo.toml -- project-validation generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json generated/intent_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/intent_ir.json generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json` → passed
+
 ## 2026-04-08 (same-cycle timing language now lands as bounded temporal semantics)
 
 ### Fixed: same-cycle timing phrases now recover explicit `0`-cycle windows

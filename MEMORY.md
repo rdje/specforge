@@ -55,6 +55,7 @@
 - `SignalConnectivityRecord` now carries an explicit infrastructure class, so `ACLK` / `ARESETN` surface as `SystemClock` / `SystemReset` connectivity in `SemanticIR` and `IntentIR` instead of blending into ordinary protocol-only connectivity
 - validator handling now matches that boundary too: infrastructure signals with no resolved producer actor emit a dedicated `[info:system_contract]` finding instead of a generic signal-connectivity warning, and the latest AXI-Stream projection now reports `infrastructure_signal_connectivity: 2`
 - same-cycle timing language now lands as bounded temporal semantics too: AXI-Stream currently carries `6` explicit `0`-cycle windows from phrases like `in the same ACLK cycle`, and the old `no cycle-window grounding` warning is gone from the live validation projection
+- temporal-conflict detection now also canonicalizes boolean-equivalent values before grouping, so fake contradictions like `ASSERTED` versus `HIGH` no longer survive into canonical `SemanticIR` / `IntentIR`
 - the learning plane now applies the same bogus-actor hygiene rule at harvest and lookup time, and the stale `control information -> requester_like` actor-taxonomy prior has been removed from local `CorpusMemory`
 - `specforge kg-bench` can now also stage a fixture-local `CorpusMemory`, and the first tracked gold/negative pair proves prior-guided temporal recovery on an unseen local phrase without leaking cross-document facts
 - `specforge kg-bench` now also locks the same before/after truthfulness pattern for semantic priors on an unseen local phrase
@@ -94,6 +95,7 @@
 - logged the clock/reset infrastructure-semantics doctrine so future work does not confuse graph carry-through with ordinary producer/consumer semantics for those signals
 - classified clock/reset connectivity as infrastructure in canonical `SemanticIR` / `IntentIR`, re-ran full AXI-Stream `converge`, and refreshed the four-artifact validation projection so `ACLK` / `ARESETN` now surface under `infrastructure_signal_connectivity: 2` with a system-contract note instead of an ordinary missing-producer warning
 - taught the temporal parser to recover bounded `0`-cycle windows from same-cycle timing language, re-ran full AXI-Stream `converge`, and refreshed the four-artifact validation projection so AXI-Stream now carries `6` explicit cycle windows and only `1` remaining typed temporal conflict
+- normalized boolean-equivalent temporal values in conflict detection, rebuilt AXI-Stream `SemanticIR` / `IntentIR`, and refreshed the four-artifact validation projection so AXI-Stream now carries `0` typed temporal conflicts
 
 ## Current repo hygiene expectations
 - completed tasks should end in a clean working tree after the commit workflow runs
@@ -101,7 +103,7 @@
 
 ## Exact next steps
 1. make shared infrastructure sourcing/distribution first-class beyond the current info-note boundary for signals like `ACLK` and `ARESETN`
-2. investigate and reduce the single remaining AXI-Stream typed temporal conflict without flattening away honest disagreement
+2. decide whether the remaining `semantic_interface_grouping` residual should become a stronger canonical interface model or stay as explicit unresolved coupling
 3. broaden `R15f` beyond actor-taxonomy / semantic / semantic-modality-reliability / temporal / table-shape into visual-motif and negative-knowledge prior families
 
 ## Remaining engineering gaps after this commit

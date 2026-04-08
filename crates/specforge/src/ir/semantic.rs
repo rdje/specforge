@@ -6971,7 +6971,9 @@ fn build_temporal_conflicts(temporal_rules: &[TemporalRuleRecord]) -> Vec<Tempor
                     supporting_statement_ids: BTreeSet::new(),
                     automation_confidence: rule.automation_confidence,
                 });
-            entry.conflicting_values.insert(value.clone());
+            entry
+                .conflicting_values
+                .insert(canonicalize_temporal_conflict_value(value));
             entry.supporting_rule_ids.insert(rule.rule_id.clone());
             entry
                 .supporting_statement_ids
@@ -7027,6 +7029,14 @@ fn temporal_conflict_group_key(
             rule.clock_signal, rule.edge
         )
     })
+}
+
+fn canonicalize_temporal_conflict_value(value: &str) -> String {
+    match value.trim().to_ascii_uppercase().as_str() {
+        "ASSERTED" | "HIGH" | "1" | "TRUE" => "HIGH".to_string(),
+        "DEASSERTED" | "LOW" | "0" | "FALSE" => "LOW".to_string(),
+        other => other.to_string(),
+    }
 }
 
 fn unique_producer_by_signal(
@@ -11218,6 +11228,71 @@ mod tests {
         );
         assert_eq!(conflict.supporting_rule_ids.len(), 2);
         assert_eq!(conflict.antecedents.len(), 1);
+
+        Ok(())
+    }
+
+    #[test]
+    fn asserted_and_high_do_not_form_temporal_conflicts() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("temporal_equivalent_values.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal TLAST is output width 1.\n\n",
+                "Clock clk.\n\n",
+                "The Transmitter drives TLAST.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_tlast_asserted".to_string(),
+            subject_signal: "TLAST".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "TLAST must be asserted.".to_string(),
+            supporting_statement_ids: vec!["stmt_tlast_asserted".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_tlast_high".to_string(),
+            subject_signal: "TLAST".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeHigh,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "TLAST must be HIGH.".to_string(),
+            supporting_statement_ids: vec!["stmt_tlast_high".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        assert!(
+            semantic_ir.temporal_conflicts.is_empty(),
+            "ASSERTED/HIGH should be treated as equivalent temporal values"
+        );
 
         Ok(())
     }
