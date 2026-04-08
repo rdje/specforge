@@ -29,6 +29,7 @@
 - Structured PDF normalization orchestration implemented: Done
 - Repo-local Docling bootstrap path and runtime doctor for fresh ingest: Done
 - `specforge doctor` now checks default Ollama loopback readiness too: Done
+- `specforge doctor` now checks LM Studio fallback readiness too: Done
 - SourceIR SOTA capture: structured table cell grids, typed content elements, section hierarchy with `SectionKind`, document profile, table kind classification: Done
 - EvidenceIR extraction implemented: Done
 - EvidenceIR typed table synthesis for signals, enums, registers, and timing records implemented: Done

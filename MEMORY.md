@@ -47,6 +47,10 @@
   - `/api/tags`
   - default-model presence for `qwen2.5vl:7b`
   - `/v1/chat/completions`
+- `specforge doctor [--strict]` now reports LM Studio fallback readiness too:
+  - `/v1/models`
+  - default-model presence for `qwen2.5vl:7b`
+  - `/v1/chat/completions`
 - this was added immediately after a fresh AXI rerun showed that Docling was fixed but a local Ollama chat-endpoint failure could still stay hidden until deep inside `converge`
 - the local `CorpusMemory` prior store now includes actor-taxonomy, semantic phrase, semantic modality-reliability, temporal, and table-shape prior families
 - the thing that materially grows to capture learning is the typed prior store itself, usually `generated/prior_memory/corpus_memory.json`; code defines the learning rules, but the accumulated experience lives in that symbolic memory artifact

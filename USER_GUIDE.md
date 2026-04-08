@@ -81,12 +81,13 @@ cargo run -p specforge -- ingest README.md
   - generic `python3` / `python`
 - when you want the stable repo-local path, run `bash scripts/bootstrap_docling.sh` from the repository root
 
-### Check Docling runtime readiness
+### Check local runtime readiness
 ```bash
 cargo run -p specforge -- doctor --strict
 ```
 - prints the selected Docling Python candidate, version information, and all probe results
 - also checks the default local Ollama loopback path (`/api/tags`, `/v1/chat/completions`, and the default `qwen2.5vl:7b` model)
+- and reports LM Studio fallback readiness too (`/v1/models`, `/v1/chat/completions`, and the same default local model)
 - exits non-zero with `--strict` when fresh PDF ingest is not actually executable
 - this is the supported local preflight before relying on `specforge ingest <pdf>` or `specforge converge <pdf>` with the default local-first runtime stack
 

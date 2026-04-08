@@ -1,5 +1,31 @@
 # CHANGES
 
+## 2026-04-08 (doctor now checks LM Studio fallback readiness too)
+
+### Added: doctor now verifies the LM Studio fallback path as well as the default Ollama path
+- Extended [doctor.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/doctor.rs) so `specforge doctor [--strict]` now checks and reports:
+  - LM Studio `/v1/models`
+  - default-model presence for `qwen2.5vl:7b`
+  - LM Studio OpenAI-compatible `/v1/chat/completions`
+- The strict gate still reflects the default local-first pipeline (`Docling` + `Ollama`), but the CLI now surfaces whether the `lmstudio` fallback is actually usable before a long rerun depends on it.
+
+### Added: shared OpenAI-compatible parsing for local provider preflight
+- `doctor.rs` now parses OpenAI-compatible `/v1/models` payloads and reuses the same chat-response parser for both Ollama and LM Studio, instead of keeping the loopback preflight logic Ollama-specific.
+- Added focused unit coverage for `/v1/models` parsing and kept the OpenAI-compatible chat parsing under test.
+
+### Changed: the live runtime picture is now more honest
+- Verified outside the sandbox that `cargo run --manifest-path Cargo.toml -- doctor --strict` now reports:
+  - Docling ready via `python3.11` + `docling 2.84.0`
+  - Ollama loopback fully ready for `qwen2.5vl:7b`
+  - LM Studio fallback not currently reachable at `http://localhost:1234`, even though LM Studio is installed locally
+- That distinction matters: “installed” is not the same as “serving a model,” and `doctor` now makes that operational difference explicit.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml parse_openai_models_response_detects_default_model -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml parse_openai_chat_response_accepts_openai_compatible_string_content -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml doctor_defaults_to_non_strict -- --nocapture` → passed
+- `cargo run --manifest-path Cargo.toml -- doctor --strict` → passed (outside sandbox; Docling + Ollama ready, LM Studio fallback reported unavailable)
+
 ## 2026-04-08 (doctor now checks Ollama loopback readiness too)
 
 ### Added: doctor now verifies the default local Ollama runtime, not just Docling
