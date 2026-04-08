@@ -1,5 +1,12 @@
 # CHANGES
 
+## 2026-04-08 (clock/reset semantics logged as infrastructure-first steering)
+
+### Changed: design steering now treats clocks and resets as infrastructure semantics, not ordinary protocol edges
+- Logged the implementation doctrine in [DEVELOPMENT_NOTES.md](/Users/richarddje/Documents/github/specforge/DEVELOPMENT_NOTES.md): clocks and resets should remain first-class infrastructure semantics with conservative sourcing/distribution modeling, not flattened into ordinary protocol producer/consumer behavior.
+- Updated [ROADMAP.md](/Users/richarddje/Documents/github/specforge/ROADMAP.md) so `R15b` now explicitly carries that requirement forward into the clock-tick temporal-model workstream.
+- This locks an important architectural boundary for future work on `ACLK`, `ARESETN`, and similar infrastructure signals: graph carry-through is allowed as a local aid, but long-term canonical truth should prefer dedicated infrastructure semantics over false graph completeness.
+
 ## 2026-04-08 (AXI-Stream graph-direction coverage rises after width-symbol cleanup)
 
 ### Fixed: width-only `_WIDTH` declarations no longer masquerade as interface signals

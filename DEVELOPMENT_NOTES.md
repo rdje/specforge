@@ -804,6 +804,25 @@
 - explicit reset phrasing accepts both `Reset rst_n is asynchronous active low.` and `Reset rst is synchronous active high.`
 - when explicit polarity wording is omitted, the current parser infers active-low from `_n` / `_b` reset naming and otherwise falls back to active-high with lower automation confidence
 
+### Clock/reset are infrastructure semantics, not ordinary protocol edges
+- clocks and resets should not be modeled long-term as ordinary protocol payload/control signals
+- they are special system infrastructure with stricter design rules and should be preserved as such in the canonical model
+- clock generation and distribution require dedicated handling because glitch-free behavior, tree quality, and timing discipline matter more than ordinary signal connectivity
+- reset handling also needs a dedicated semantic model:
+  - assertion can be asynchronous to the destination clock
+  - release should be synchronous to the destination clock when the spec or design discipline indicates that behavior
+  - reset trees should avoid arbitrary glue logic and should be modeled conservatively
+- this means graph carry-through for signals like `ACLK` / `ARESETN` is useful, but only as an intermediate structural aid
+- the stronger target model is:
+  - infrastructure-class signals distinct from ordinary protocol signals
+  - conservative producer attribution for clocks/resets
+  - first-class sourcing/distribution semantics
+  - explicit reset discipline rather than flattening resets into generic control edges
+- implementation consequence:
+  - do not let clock/reset graph edges silently imply "ordinary producer/consumer semantics"
+  - preserve them through `SystemContractRecord` and future infrastructure-specific canonical records instead
+  - prefer truthfulness over apparent graph completeness when clock/reset ownership is not explicit in the current PDF
+
 ## Knowledge graph extraction — design decisions (2026-04-03)
 
 ### Why direction_hint is architecturally incomplete

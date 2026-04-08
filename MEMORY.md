@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `23eb7d1`
-- latest_commit_brief_message: `feat(learning): reject bogus actor priors`
-- note: the current session is now focused on AXI-Stream structural truthfulness after the first unseen-protocol run materially populated semantic priors in `CorpusMemory`
+- latest_commit_hash: `9907fe8`
+- latest_commit_brief_message: `feat(semantic): tighten graph-backed interface coverage`
+- note: the current session is now focused on clock/reset infrastructure semantics as a steering constraint after the AXI-Stream graph-coverage slice
 
 ## Recent commit chain (last 5)
-- `df9c94f` feat(learning): add modality reliability priors
-- `60e76b5` feat(semantic): consume temporal phrase priors safely
-- `a756010` feat(evidence): consume semantic phrase priors safely
-- `7ebd697` feat(evidence): consume actor taxonomy priors safely
-- `53da080` feat(learning): learn actor taxonomy priors
+- `9907fe8` feat(semantic): tighten graph-backed interface coverage
+- `bd2b553` feat(evidence): recover complementary consumer edges
+- `23eb7d1` feat(learning): reject bogus actor priors
+- `f8932dc` feat(evidence): reject bogus prose actors
+- `d490611` feat(evidence): fix multi-signal table role leakage
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -50,6 +50,7 @@
 - AXI-Stream is now the first unseen protocol run carried all the way through the full loopbacked path: it converged in `2` pipeline iterations with Ollama VLM + NLP Level 3, validates at `84/100 GOOD`, and its artifact is now included in the tracked validation snapshot
 - AXI-Stream prose KG extraction is now hardened against bogus payload/event actors: `control information` no longer survives as a producer for `TVALID`, AXI-Stream `signal_connectivity_conflicts` is now `0`, and the latest source-table fix also closes the missing consumer-side connectivity gap
 - AXI-Stream interface coverage is now more honest too: bogus width-only `_WIDTH` symbols no longer count as declared interface signals, relation-grounded actors now carry graph-backed `ACLK` / `ARESETN` input ports, and graph-direction coverage has improved to `12/16`
+- clock/reset handling now has an explicit steering rule in the live docs: those signals are infrastructure semantics, not ordinary protocol edges, so future canonical modeling should prefer dedicated infrastructure records and conservative ownership over false graph completeness
 - the learning plane now applies the same bogus-actor hygiene rule at harvest and lookup time, and the stale `control information -> requester_like` actor-taxonomy prior has been removed from local `CorpusMemory`
 - `specforge kg-bench` can now also stage a fixture-local `CorpusMemory`, and the first tracked gold/negative pair proves prior-guided temporal recovery on an unseen local phrase without leaking cross-document facts
 - `specforge kg-bench` now also locks the same before/after truthfulness pattern for semantic priors on an unseen local phrase
@@ -83,6 +84,7 @@
 - refreshed `generated/prior_memory/corpus_memory.json` across AXI/APB/AHB/AXI-Stream, producing the first nonzero semantic phrase and semantic modality-reliability priors on a real corpus
 - removed bogus width-only `_WIDTH` pseudo-signals from canonical interface coverage and added graph-backed clock/reset input ports for relation-grounded actors
 - re-ran full `converge` on AXI-Stream after the semantic graph-coverage fix, confirmed convergence still takes `2` iterations, and refreshed the tracked validation snapshot so AXI-Stream now projects at `84/100 GOOD` with `12/16` graph-direction coverage
+- logged the clock/reset infrastructure-semantics doctrine so future work does not confuse graph carry-through with ordinary producer/consumer semantics for those signals
 
 ## Current repo hygiene expectations
 - completed tasks should end in a clean working tree after the commit workflow runs

@@ -336,6 +336,7 @@
   - make the clock-tick mental model explicit in the typed IR, not only implicit in prose-derived timing strings
   - represent synchronous behavior in terms of pre/post tick phases, clock edges, and cycle windows
   - unify prose timing, table timing, and VLM timing observations under one canonical temporal-rule surface
+  - keep clocks and resets as first-class infrastructure semantics rather than flattening them into ordinary protocol edges
 - done:
   - `SemanticIR` now carries `temporal_rules: Vec<TemporalRuleRecord>`
   - `IntentIR` now carries the same `temporal_rules` forward as canonical output
@@ -356,6 +357,7 @@
   - a typed temporal-rule representation exists in `SemanticIR` and carries forward into `IntentIR`
   - APB/AHB/AXI timing behavior can be represented in actor-relative, tick-relative form rather than only as free-form timing text
   - validation can flag unresolved or contradictory temporal grounding explicitly
+  - clock/reset behavior is modeled conservatively enough that infrastructure semantics do not get mistaken for ordinary protocol producer/consumer semantics
 
 ### R15c KG-guided multimodal rescans
 - status: In Progress
