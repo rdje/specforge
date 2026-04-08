@@ -1,5 +1,31 @@
 # CHANGES
 
+## 2026-04-08 (passive visual links no longer force semantic residuals)
+
+### Fixed: ambiguous-visual residuals now require live semantic lift
+- Tightened [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so `semantic_ambiguous_visual_grounding` is emitted only when ambiguous or unknown visual evidence actually survives into carried semantic observations.
+- Passive figure references that are merely linked from prose no longer keep a semantic-stage residual alive by themselves.
+
+### Added: regression coverage for passive-vs-live visual grounding
+- Added a focused semantic regression proving that a passive ambiguous figure link does not emit a residual packet.
+- Added a paired regression proving that an actually lifted visual-backed semantic observation still keeps the residual visible when the visual role remains ambiguous.
+
+### Changed: APB, AHB, and AXI now carry zero residual decisions
+- Rebuilt `SemanticIR` / `IntentIR` / validation for the live APB, AHB, and AXI artifacts and refreshed the tracked four-artifact projection.
+- APB, AHB, and AXI now all carry `0` residual decisions end to end; the old common `semantic_ambiguous_visual_grounding` residual is gone because those live artifacts were only carrying passive figure links, not active visual semantic lift.
+- The refreshed live projection is now AXI `84/100 GOOD`, APB `84/100 GOOD`, AHB `85/100 GOOD`, and AXI-Stream `90/100 EXCELLENT`.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml passive_ambiguous_visual_links_do_not_emit_residual_decision -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml emits_residual_decision_for_ambiguous_visual_semantic_grounding -- --nocapture` → passed
+- `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/evidence_ir.json` → passed (`residual_decision_count: 0`)
+- `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/evidence_ir.json` → passed (`residual_decision_count: 0`)
+- `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/evidence_ir.json` → passed (`residual_decision_count: 0`)
+- `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/semantic_ir.json` → passed (`residual_decision_count: 0`)
+- `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/semantic_ir.json` → passed (`residual_decision_count: 0`)
+- `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/semantic_ir.json` → passed (`residual_decision_count: 0`)
+- `cargo run --manifest-path Cargo.toml -- project-validation generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json generated/intent_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/intent_ir.json generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json` → passed
+
 ## 2026-04-08 (authoritative signal surface now anchors interface grouping)
 
 ### Fixed: heuristic interface grouping now respects declared signal vocabularies
@@ -11,8 +37,8 @@
 
 ### Changed: APB, AHB, and AXI all lost the carried interface-grouping residual
 - Rebuilt `SemanticIR` / `IntentIR` / validation for the live APB, AHB, and AXI artifacts and refreshed the tracked four-artifact projection.
-- All three now carry only `semantic_ambiguous_visual_grounding` as the remaining residual decision; `semantic_interface_grouping` is gone.
-- AXI improved from the stale projected `79/100 GOOD` back to `84/100 GOOD`; APB remains `84/100 GOOD`, AHB is now `84/100 GOOD`, and AXI-Stream stays `90/100 EXCELLENT`.
+- `semantic_interface_grouping` is gone across all three; a later follow-up also removed the remaining passive visual residuals, so the current live baseline no longer carries any residual decisions on APB/AHB/AXI.
+- AXI improved from the stale projected `79/100 GOOD` back to `84/100 GOOD`; APB remains `84/100 GOOD`, AHB later moved to `85/100 GOOD`, and AXI-Stream stays `90/100 EXCELLENT`.
 
 ### Validation
 - `cargo test --manifest-path Cargo.toml retain_authoritative_interface_candidate_signals_prefers_declared_surface -- --nocapture` → passed

@@ -3172,20 +3172,27 @@ fn build_residual_decisions(
         });
     }
 
+    let semantically_grounded_visual_ids: BTreeSet<String> = interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+        .flat_map(|signal| signal.semantic_observations.iter())
+        .flat_map(|observation| observation.supporting_visual_evidence_ids.iter().cloned())
+        .collect();
     let ambiguous_visual_ids: Vec<String> = context
         .statements
         .iter()
         .flat_map(|statement| statement.related_visual_evidence_ids.iter())
         .filter(|visual_id| {
-            context
-                .visual_roles_by_id
-                .get(*visual_id)
-                .is_some_and(|role| {
-                    matches!(
-                        role,
-                        VisualEvidenceRole::Ambiguous | VisualEvidenceRole::Unknown
-                    )
-                })
+            semantically_grounded_visual_ids.contains(*visual_id)
+                && context
+                    .visual_roles_by_id
+                    .get(*visual_id)
+                    .is_some_and(|role| {
+                        matches!(
+                            role,
+                            VisualEvidenceRole::Ambiguous | VisualEvidenceRole::Unknown
+                        )
+                    })
         })
         .cloned()
         .collect::<BTreeSet<_>>()
@@ -7967,6 +7974,7 @@ mod tests {
     use crate::error::Result;
     use crate::ir::evidence::{
         EvidenceIr, EvidenceModality, ExtractedStatement, SignalPolarity, StatementClass,
+        VisualEvidenceRole,
     };
     use crate::ir::prior_memory::{
         CorpusMemory, CorpusMemoryUpdatePolicyRecord, PriorSourceArtifactRecord, ProtocolFamily,
@@ -8165,7 +8173,7 @@ mod tests {
     }
 
     #[test]
-    fn emits_residual_decision_for_ambiguous_visual_grounding() -> Result<()> {
+    fn passive_ambiguous_visual_links_do_not_emit_residual_decision() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("control.md");
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
@@ -8213,7 +8221,7 @@ mod tests {
                 .any(|actor| actor.actor_id == "actor_controller")
         );
         assert!(
-            semantic_ir
+            !semantic_ir
                 .residual_decisions
                 .iter()
                 .any(|packet| { packet.packet_id == "semantic_ambiguous_visual_grounding" })
@@ -8226,6 +8234,64 @@ mod tests {
         );
 
         Ok(())
+    }
+
+    #[test]
+    fn emits_residual_decision_for_ambiguous_visual_semantic_grounding() {
+        let context = super::SemanticContext {
+            statements: vec![super::StatementContext {
+                statement_id: "stmt_visual".to_string(),
+                class: StatementClass::NormativeStatement,
+                text: "Figure 1 shows the transfer acceptance behavior.".to_string(),
+                related_visual_evidence_ids: vec!["visual_0001".to_string()],
+                section_ids: Vec::new(),
+                signals: vec!["XACK".to_string()],
+            }],
+            section_anchors: Vec::new(),
+            visual_roles_by_id: HashMap::from([(
+                "visual_0001".to_string(),
+                VisualEvidenceRole::Ambiguous,
+            )]),
+            actor_signal_relations: Vec::new(),
+            signal_semantic_hints: Vec::new(),
+        };
+        let interfaces = vec![super::InterfaceRecord {
+            interface_id: "if_req".to_string(),
+            signals: vec!["XACK".to_string()],
+            signal_records: vec![super::InterfaceSignalRecord {
+                signal_name: "XACK".to_string(),
+                direction_hint: None,
+                width_hint: None,
+                resolved_polarity: None,
+                semantic_tags: vec![SignalSemanticTag::HandshakeReadyLike],
+                semantic_candidates: Vec::new(),
+                semantic_arbitration: None,
+                resolved_semantic_role: Some(
+                    super::InterfaceSignalSemanticRole::HandshakeReadyLike,
+                ),
+                semantic_grounding_strength: Some(super::SemanticGroundingStrength::SingleSource),
+                semantic_consensus: None,
+                semantic_observations: vec![super::InterfaceSignalSemanticObservationRecord {
+                    semantic_tags: vec![SignalSemanticTag::HandshakeReadyLike],
+                    source_kind: SignalSemanticHintSourceKind::VisualCaption,
+                    source_text: "XACK can sink the transfer".to_string(),
+                    supporting_statement_ids: vec!["stmt_visual".to_string()],
+                    supporting_table_ids: Vec::new(),
+                    supporting_visual_evidence_ids: vec!["visual_0001".to_string()],
+                    automation_confidence: AutomationConfidence::Low,
+                }],
+                supporting_statement_ids: vec!["stmt_visual".to_string()],
+                automation_confidence: AutomationConfidence::Low,
+            }],
+            supporting_statement_ids: vec!["stmt_visual".to_string()],
+        }];
+
+        let packets = super::build_residual_decisions(&context, &interfaces, 1, &[]);
+        assert!(
+            packets
+                .iter()
+                .any(|packet| { packet.packet_id == "semantic_ambiguous_visual_grounding" })
+        );
     }
 
     #[test]

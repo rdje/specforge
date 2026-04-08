@@ -802,7 +802,7 @@ mod tests {
     };
     use crate::ir::source::{
         AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket, SourceIr,
-        StructuredTableCellRecord, StructuredTableRecord, TableKind, VisualAsset, VisualAssetKind,
+        StructuredTableCellRecord, StructuredTableRecord, TableKind,
     };
 
     use super::IntentIr;
@@ -877,70 +877,65 @@ mod tests {
     }
 
     #[test]
-    fn preserves_semantic_residual_decisions_in_intent_ir() -> Result<()> {
-        let tempdir = tempdir()?;
-        let source = tempdir.path().join("control.md");
-        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
-        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
-        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
-        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
-        let asset_path = tempdir.path().join("assets").join("figure-0001.png");
+    fn preserves_semantic_residual_decisions_in_intent_ir() {
+        let context = super::IntentContext {
+            semantic_actors: Vec::new(),
+            phases: Vec::new(),
+            invariants: Vec::new(),
+            assertions: Vec::new(),
+            contracts: Vec::new(),
+            gates: Vec::new(),
+            abstractions: Vec::new(),
+            residual_decisions: vec![ResidualDecisionPacket {
+                packet_id: "semantic_ambiguous_visual_grounding".to_string(),
+                question: "Do the ambiguous visual artifacts carry normative semantics that must be lifted into SemanticIR?".to_string(),
+                why_unresolved: "EvidenceIR links the current semantic slice to ambiguous visual evidence items (visual_0001) whose role is not safely classifiable as purely illustrative.".to_string(),
+                automation_confidence: AutomationConfidence::Low,
+                candidate_interpretations: vec![
+                    CandidateInterpretation {
+                        interpretation_id: "normative_visual".to_string(),
+                        description: "Treat the ambiguous visual evidence as normatively relevant and lift additional semantic structure from it.".to_string(),
+                        downstream_impact: "Later stages may need richer figure parsing, OCR, or visual-sequence extraction before IntentIR is complete.".to_string(),
+                    },
+                    CandidateInterpretation {
+                        interpretation_id: "illustrative_visual".to_string(),
+                        description: "Treat the ambiguous visual evidence as explanatory context only and rely on the current text-derived semantics.".to_string(),
+                        downstream_impact: "The pipeline remains deterministic now, but there is a risk of missing figure-only constraints or sequencing information.".to_string(),
+                    },
+                ],
+            }],
+        };
+        let actors = vec![super::IntentActor {
+            actor_id: "actor_controller".to_string(),
+            actor_name: Some("Controller".to_string()),
+            responsibilities: vec!["controls protocol sequencing".to_string()],
+            supporting_actor_ids: vec!["actor_controller".to_string()],
+        }];
+        let behaviors = vec![super::BehaviorIntent {
+            behavior_id: "behavior_controller".to_string(),
+            statement: "Controller governs transfer behavior.".to_string(),
+            actor_ids: vec!["actor_controller".to_string()],
+            supporting_semantic_ids: vec!["contract_controller".to_string()],
+        }];
+        let constraints = vec![super::IntentConstraint {
+            constraint_id: "constraint_controller".to_string(),
+            statement: "XREQ must remain stable.".to_string(),
+            related_interface_ids: vec!["if_controller".to_string()],
+            supporting_semantic_ids: vec!["invariant_controller".to_string()],
+        }];
 
-        fs::create_dir_all(asset_path.parent().expect("asset parent should exist"))?;
-        fs::write(&asset_path, b"png")?;
-        fs::write(
-            &source,
-            "# Control Path\nFigure 1: Controller block diagram.\n\n![Image](assets/figure-0001.png)\n\nThe controller behavior is shown in Figure 1.\n",
-        )?;
-
-        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.visual_assets.push(VisualAsset {
-            asset_id: "figure_0001".to_string(),
-            asset_kind: VisualAssetKind::Diagram,
-            page_id: Some("page_0001".to_string()),
-            image_path: Some(asset_path),
-            caption_text: Some("Figure 1: Controller block diagram.".to_string()),
-            caption_source_path: None,
-            source_ref: Some("#/pictures/0".to_string()),
-            placeholder_text: None,
-            note: None,
-            diagram_kind: crate::ir::source::DiagramKind::BlockDiagram,
-        });
-        source_ir.write_to_disk()?;
-
-        let evidence_ir = EvidenceIr::build(
-            &source_ir.artifact_layout.source_ir_path,
-            &evidence_artifact_base,
-        )?;
-        evidence_ir.write_to_disk()?;
-        let semantic_ir = SemanticIr::build(
-            &evidence_ir.artifact_layout.evidence_ir_path,
-            &semantic_artifact_base,
-        )?;
-        semantic_ir.write_to_disk()?;
-        let intent_ir = IntentIr::build(
-            &semantic_ir.artifact_layout.semantic_ir_path,
-            &intent_artifact_base,
-        )?;
-        intent_ir.write_to_disk()?;
-
+        let residual_decisions =
+            super::build_residual_decisions(&context, &actors, &behaviors, &constraints);
         assert!(
-            intent_ir
-                .residual_decisions
+            residual_decisions
                 .iter()
                 .any(|packet| { packet.packet_id == "semantic_ambiguous_visual_grounding" })
         );
-        assert!(intent_ir.assumptions.iter().any(|assumption| {
+
+        let assumptions = super::build_assumptions(&context, &actors);
+        assert!(assumptions.iter().any(|assumption| {
             assumption.assumption_id == "assumption_ambiguous_visual_grounding"
         }));
-        assert!(
-            intent_ir
-                .artifact_layout
-                .intent_ir_path
-                .ends_with("generated/intent_ir/control/intent_ir.json")
-        );
-
-        Ok(())
     }
 
     #[test]

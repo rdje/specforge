@@ -56,7 +56,9 @@
 - heuristic interface grouping is now cleaner too: metadata-only symbols like `*_WIDTH`, `_WIDTH`, `MIN`, and `MAX` are filtered before statement-derived interface fragments are built, and overlap review now ignores heuristic fragments already fully subsumed by an explicit interface
 - that removed the last carried AXI-Stream `semantic_interface_grouping` residual entirely: the rebuilt artifact still validates at `90/100 EXCELLENT`, but interface count dropped from `46` to `29` and the only remaining projected finding is the infrastructure `system_contract` note for `ACLK` / `ARESETN`
 - heuristic interface grouping now also honors document-grounded explicit signal vocabularies whenever they exist, so APB/AHB/AXI statement-derived interface fragments can no longer keep enum labels, phase names, width symbols, and similar undeclared metadata alive just because they were co-mentioned with real signals
-- after rebuilding the live APB/AHB/AXI artifacts, all three now carry only `semantic_ambiguous_visual_grounding` as their remaining residual decision; `semantic_interface_grouping` is gone across the live AMBA baseline
+- after rebuilding the live APB/AHB/AXI artifacts, `semantic_interface_grouping` was gone across the live AMBA baseline, and the next honest shared residual was only `semantic_ambiguous_visual_grounding`
+- that residual is now tightened too: `semantic_ambiguous_visual_grounding` only survives when ambiguous or unknown visual evidence actually contributes carried semantic observations, so passive figure links no longer keep APB/AHB/AXI artificially unresolved
+- the refreshed live baseline is now AXI `84/100 GOOD`, APB `84/100 GOOD`, AHB `85/100 GOOD`, and AXI-Stream `90/100 EXCELLENT`, with `0` residual decisions across all four tracked live artifacts
 - the local `CorpusMemory` prior store now includes actor-taxonomy, semantic phrase, semantic modality-reliability, temporal, and table-shape prior families
 - the thing that materially grows to capture learning is the typed prior store itself, usually `generated/prior_memory/corpus_memory.json`; code defines the learning rules, but the accumulated experience lives in that symbolic memory artifact
 - `specforge evidence` and `specforge converge` now consult `--prior-memory generated/prior_memory/corpus_memory.json` by default, and the first bounded consumer uses actor-taxonomy priors to interpret explicit local actor terms in section headings and `Source` / `Destination` columns; width-only section-guided signal tables can now also recover structural `ActorSignalRelation::Drives` edges from that same prior-guided actor vocabulary
@@ -75,7 +77,7 @@
 - same-cycle timing language now lands as bounded temporal semantics too: AXI-Stream currently carries `6` explicit `0`-cycle windows from phrases like `in the same ACLK cycle`, and the old `no cycle-window grounding` warning is gone from the live validation projection
 - temporal-conflict detection is now polarity-aware: `ASSERTED` / `DEASSERTED` only collapse to `HIGH` / `LOW` when the current document grounds the signal polarity, so active-low controls like `ARESETN` stay semantically correct and unknown-polarity assertions stay abstract
 - resolved signal polarity now also lives directly on canonical `InterfaceSignalRecord`s and is reported by validation as `with_resolved_polarity`; after the latest infrastructure-interface fix, AXI/APB/AHB/AXI-Stream now all report `1`, so the next polarity step is broader non-reset control polarity recovery
-- the tracked live validation baseline has now been refreshed against the current semantic/intent stack and is lower but more honest than the old stale snapshot: AXI 84/100 GOOD, APB 84/100 GOOD, AHB 84/100 GOOD, AXI-Stream 90/100 EXCELLENT
+- the tracked live validation baseline has now been refreshed against the current semantic/intent stack and is lower but more honest than the old stale snapshot: AXI 84/100 GOOD, APB 84/100 GOOD, AHB 85/100 GOOD, AXI-Stream 90/100 EXCELLENT
 - full original-PDF `converge` reruns are currently blocked locally because `docling` is not importable from the active `python3`; use `SPECFORGE_DOCLING_PYTHON=/path/to/python` or install `docling` into a discoverable interpreter before relying on fresh ingest reruns
 - the learning plane now applies the same bogus-actor hygiene rule at harvest and lookup time, and the stale `control information -> requester_like` actor-taxonomy prior has been removed from local `CorpusMemory`
 - `specforge kg-bench` can now also stage a fixture-local `CorpusMemory`, and the first tracked gold/negative pair proves prior-guided temporal recovery on an unseen local phrase without leaking cross-document facts
@@ -125,7 +127,7 @@
 
 ## Exact next steps
 1. make shared infrastructure sourcing/distribution first-class beyond the current info-note boundary for signals like `ACLK` and `ARESETN`
-2. turn the remaining `semantic_ambiguous_visual_grounding` residual into a stronger visual-grounding model instead of leaving figure semantics deferred
+2. turn the remaining figure semantics gap into a stronger visual-grounding model, but now from real carried visual semantic lift rather than passive figure links
 3. broaden `R15f` beyond actor-taxonomy / semantic / semantic-modality-reliability / temporal / table-shape into visual-motif and negative-knowledge prior families
 
 ## Remaining engineering gaps after this commit

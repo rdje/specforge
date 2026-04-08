@@ -139,7 +139,7 @@
 - `IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf` converged in `2` pipeline iterations and currently validates at `90/100 EXCELLENT`; parity-check table semantics now recover both structural KG ownership and carried width hints for the `*CHK` surface, declared graph-direction and width coverage are both `22/22`, `ACLK` / `ARESETN` now surface as infrastructure connectivity with a dedicated system-contract note instead of an ordinary missing-producer warning, six same-cycle temporal rules now carry explicit `0`-cycle windows, there are now no remaining typed temporal conflicts because assertion-vs-level comparison is polarity-aware rather than flattened, and the last carried interface-grouping residual is now gone
 - Canonical per-signal polarity surface: Done
 - Live projected polarity coverage across AXI/APB/AHB/AXI-Stream is now `1 / 1 / 1 / 1`; carry-through is real, and the next polarity gap is broader non-reset control polarity recovery
-- The refreshed live AMBA baseline is now AXI `84/100 GOOD`, APB `84/100 GOOD`, AHB `84/100 GOOD`, and AXI-Stream `90/100 EXCELLENT`; the old `94/95/95/90` snapshot was stale relative to the current semantic/intent stack
+- The refreshed live AMBA baseline is now AXI `84/100 GOOD`, APB `84/100 GOOD`, AHB `85/100 GOOD`, and AXI-Stream `90/100 EXCELLENT`; the old `94/95/95/90` snapshot was stale relative to the current semantic/intent stack, and all four tracked live artifacts now carry `0` residual decisions
 
 ## Validation Projection
 
