@@ -1,5 +1,30 @@
 # CHANGES
 
+## 2026-04-08 (same-cycle timing language now lands as bounded temporal semantics)
+
+### Fixed: same-cycle timing phrases now recover explicit `0`-cycle windows
+- Extended [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so `extract_cycle_window_from_text()` now recognizes bounded same-cycle language such as `in the same ACLK cycle`, `in the same tick`, and `on the current rising edge`.
+- Added focused semantic regressions that lock both layers of the behavior:
+  - direct phrase recovery from same-cycle timing language
+  - end-to-end temporal-rule derivation from a same-cycle signal constraint
+
+### Changed: AXI-Stream timing semantics are now more explicit without changing the score
+- Re-ran full `specforge converge` with Ollama VLM + NLP Level 3 on [IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf](/Users/richarddje/Documents/livework/chipdoc/arm/amba/supporting/axi-stream/current/IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf).
+- Re-validated the rebuilt artifact and refreshed the tracked four-document projection.
+- The score stayed at `90/100 EXCELLENT`, but six AXI-Stream temporal rules now carry explicit `0`-cycle windows for same-cycle handshake/timing language, so the old `intent_temporal_rules_missing_cycle_windows` warning is gone.
+- The timing surface also got cleaner as a side effect: AXI-Stream now carries `1` typed temporal conflict instead of `2`.
+- The remaining dominant honest gaps are now:
+  - the dedicated infrastructure-sourcing note for `ACLK` / `ARESETN`
+  - the single remaining typed temporal conflict
+  - the carried `semantic_interface_grouping` residual decision
+
+### Validation
+- `cargo test --manifest-path Cargo.toml extracts_zero_cycle_window_from_same_cycle_phrases -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml derives_zero_cycle_window_from_same_cycle_constraint_text -- --nocapture` → passed
+- full `specforge converge` on AXI-Stream with Ollama VLM + NLP Level 3 → converged in `2` iterations
+- `cargo run --manifest-path Cargo.toml -- validate generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json` → passed (`90/100 EXCELLENT`, `temporal_rules_with_cycle_window: 6`, `temporal_conflicts: 1`)
+- `cargo run --manifest-path Cargo.toml -- project-validation generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json generated/intent_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/intent_ir.json generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json` → passed
+
 ## 2026-04-08 (clock/reset connectivity now validates as infrastructure)
 
 ### Changed: clock/reset connectivity is now classified as infrastructure in canonical IR

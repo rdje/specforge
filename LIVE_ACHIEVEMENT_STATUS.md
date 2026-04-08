@@ -132,7 +132,7 @@
 ## Highest-priority remaining gap
 - Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then broaden `R15f` beyond its first actor-taxonomy / semantic / semantic-modality-reliability / temporal / table-shape prior families into visual-motif and negative-knowledge priors, and then add `R15g` so compiled cross-document synthesis has a persistent corpus knowledge base plane beside the KG and typed priors
 - Latest unseen-protocol live run:
-- `IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf` converged in `2` pipeline iterations and currently validates at `90/100 EXCELLENT`; parity-check table semantics now recover both structural KG ownership and carried width hints for the `*CHK` surface, declared graph-direction and width coverage are both `22/22`, and `ACLK` / `ARESETN` now surface as infrastructure connectivity with a dedicated system-contract note instead of an ordinary missing-producer warning; the remaining main gaps are unbounded typed temporal rules and two carried temporal conflicts
+- `IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf` converged in `2` pipeline iterations and currently validates at `90/100 EXCELLENT`; parity-check table semantics now recover both structural KG ownership and carried width hints for the `*CHK` surface, declared graph-direction and width coverage are both `22/22`, `ACLK` / `ARESETN` now surface as infrastructure connectivity with a dedicated system-contract note instead of an ordinary missing-producer warning, and six same-cycle temporal rules now carry explicit `0`-cycle windows; the remaining main gaps are the single carried temporal conflict and the residual interface-grouping decision
 
 ## Validation Projection
 

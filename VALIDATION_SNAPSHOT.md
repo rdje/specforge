@@ -48,11 +48,10 @@ It summarizes the latest persisted validation reports projected from IR artifact
 ### IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf (intent_ir)
 - document_key: `ihi0051_b_2021_04_amba_axi_stream_protocol_specification`
 - artifact_path: `generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json`
-- artifact_fingerprint: `77de230e66ac8633`
+- artifact_fingerprint: `ad4ab8a654cd7842`
 - score: `90/100 EXCELLENT`
-- summary: IntentIR validation for IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf with 4 finding(s)
+- summary: IntentIR validation for IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf with 3 finding(s)
 - findings:
   - [warning:residual_decisions] IntentIR still carries 1 residual decision packet(s)
-  - [warning:temporal_conflicts] 2 typed temporal conflict(s) detected across contradictory value obligations
+  - [warning:temporal_conflicts] 1 typed temporal conflict(s) detected across contradictory value obligations
   - [info:system_contract] 2 infrastructure signal(s) have no resolved producer actor in IntentIR connectivity; canonical sourcing remains in the system-contract surface
-  - [info:temporal_grounding] typed temporal rules exist, but none currently carry explicit cycle-window bounds

@@ -7186,6 +7186,24 @@ fn extract_cycle_window_from_text(text: &str) -> Option<CycleWindowRecord> {
         }
     }
 
+    for index in 0..tokens.len() {
+        if !matches!(tokens[index], "same" | "this" | "current") {
+            continue;
+        }
+
+        let lookahead = &tokens[index + 1..tokens.len().min(index + 4)];
+        if lookahead
+            .iter()
+            .any(|token| matches!(*token, "cycle" | "cycles" | "tick" | "ticks"))
+            || contains_token_phrase(lookahead, &["rising", "edge"])
+        {
+            return Some(CycleWindowRecord {
+                min_cycles: Some(0),
+                max_cycles: Some(0),
+            });
+        }
+    }
+
     let single_cycle_phrases = [
         ["next", "cycle"].as_slice(),
         ["next", "clock", "cycle"].as_slice(),
@@ -10140,6 +10158,28 @@ mod tests {
     }
 
     #[test]
+    fn extracts_zero_cycle_window_from_same_cycle_phrases() {
+        let same_cycle = super::extract_cycle_window_from_text(
+            "Both TVALID and TREADY can be asserted in the same ACLK cycle.",
+        )
+        .expect("expected cycle window from 'same ACLK cycle'");
+        assert_eq!(same_cycle.min_cycles, Some(0));
+        assert_eq!(same_cycle.max_cycles, Some(0));
+
+        let same_tick =
+            super::extract_cycle_window_from_text("The receiver samples DATA in the same tick.")
+                .expect("expected cycle window from 'same tick'");
+        assert_eq!(same_tick.min_cycles, Some(0));
+        assert_eq!(same_tick.max_cycles, Some(0));
+
+        let current_edge =
+            super::extract_cycle_window_from_text("VALID is sampled on the current rising edge.")
+                .expect("expected cycle window from 'current rising edge'");
+        assert_eq!(current_edge.min_cycles, Some(0));
+        assert_eq!(current_edge.max_cycles, Some(0));
+    }
+
+    #[test]
     fn derives_single_cycle_window_from_next_tick_constraint_text() -> Result<()> {
         use crate::ir::evidence::EvidenceIr;
         use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
@@ -10195,6 +10235,66 @@ mod tests {
             .expect("expected cycle window to be derived from 'next tick'");
         assert_eq!(cycle_window.min_cycles, Some(1));
         assert_eq!(cycle_window.max_cycles, Some(1));
+
+        Ok(())
+    }
+
+    #[test]
+    fn derives_zero_cycle_window_from_same_cycle_constraint_text() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("temporal_same_cycle.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal TVALID is input width 1.\n\n",
+                "Clock clk.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_tvalid_same_cycle".to_string(),
+            subject_signal: "TVALID".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "TVALID must be asserted in the same ACLK cycle.".to_string(),
+            supporting_statement_ids: vec!["stmt_same_cycle".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| rule.rule_id == "temporal_signal_constraint_sigcon_tvalid_same_cycle")
+            .expect("expected temporal rule derived from same-cycle constraint");
+        let cycle_window = rule
+            .cycle_window
+            .as_ref()
+            .expect("expected cycle window to be derived from 'same ACLK cycle'");
+        assert_eq!(cycle_window.min_cycles, Some(0));
+        assert_eq!(cycle_window.max_cycles, Some(0));
 
         Ok(())
     }
