@@ -1,5 +1,30 @@
 # CHANGES
 
+## 2026-04-08 (authoritative signal surface now anchors interface grouping)
+
+### Fixed: heuristic interface grouping now respects declared signal vocabularies
+- Tightened [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so statement-derived interface fragments are filtered against document-grounded explicit signal declarations whenever that authoritative signal surface exists.
+- This means phase words, enum labels, width symbols, and similar metadata no longer survive into heuristic interface grouping just because they were co-mentioned next to real signals in prose.
+
+### Added: regression coverage for authoritative grouping filters
+- Added a focused semantic regression proving authoritative signal vocabularies suppress undeclared metadata like `SETUP` / `ACCESS` while retaining real declared signals.
+
+### Changed: APB, AHB, and AXI all lost the carried interface-grouping residual
+- Rebuilt `SemanticIR` / `IntentIR` / validation for the live APB, AHB, and AXI artifacts and refreshed the tracked four-artifact projection.
+- All three now carry only `semantic_ambiguous_visual_grounding` as the remaining residual decision; `semantic_interface_grouping` is gone.
+- AXI improved from the stale projected `79/100 GOOD` back to `84/100 GOOD`; APB remains `84/100 GOOD`, AHB is now `84/100 GOOD`, and AXI-Stream stays `90/100 EXCELLENT`.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml retain_authoritative_interface_candidate_signals_prefers_declared_surface -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml overlapping_interface_signals_ignore_fragments_subsumed_by_explicit_interfaces -- --nocapture` → passed
+- `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/evidence_ir.json` → passed (`residual_decision_count: 1`)
+- `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/evidence_ir.json` → passed (`residual_decision_count: 1`)
+- `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/evidence_ir.json` → passed (`residual_decision_count: 1`)
+- `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/semantic_ir.json` → passed (`residual_decision_count: 1`)
+- `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/semantic_ir.json` → passed (`residual_decision_count: 1`)
+- `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/semantic_ir.json` → passed (`residual_decision_count: 1`)
+- `cargo run --manifest-path Cargo.toml -- project-validation generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json generated/intent_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/intent_ir.json generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json` → passed
+- `bash scripts/run_ci.sh` → passed
 ## 2026-04-08 (AXI-Stream interface grouping residual removed cleanly)
 
 ### Fixed: heuristic interface grouping now ignores width/table metadata noise

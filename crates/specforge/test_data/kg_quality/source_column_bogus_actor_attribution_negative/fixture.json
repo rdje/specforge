@@ -151,7 +151,7 @@
   },
   "expectations": {
     "semantic": {
-      "signal_names_include": ["PCLK", "PRESETN", "XREQ", "XACK", "PAYLOAD"],
+      "signal_names_include": ["PCLK", "PRESETN", "XREQ", "XACK"],
       "actor_ports_include": [
         {
           "actor_name": "Requester",
@@ -168,7 +168,7 @@
       "semantic_consensus_signal_names_include": ["XREQ", "XACK"]
     },
     "intent": {
-      "signal_names_include": ["PCLK", "PRESETN", "XREQ", "XACK", "PAYLOAD"],
+      "signal_names_include": ["PCLK", "PRESETN", "XREQ", "XACK"],
       "actor_ports_include": [
         {
           "actor_name": "Requester",

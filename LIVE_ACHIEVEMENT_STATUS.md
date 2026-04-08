@@ -139,13 +139,13 @@
 - `IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf` converged in `2` pipeline iterations and currently validates at `90/100 EXCELLENT`; parity-check table semantics now recover both structural KG ownership and carried width hints for the `*CHK` surface, declared graph-direction and width coverage are both `22/22`, `ACLK` / `ARESETN` now surface as infrastructure connectivity with a dedicated system-contract note instead of an ordinary missing-producer warning, six same-cycle temporal rules now carry explicit `0`-cycle windows, there are now no remaining typed temporal conflicts because assertion-vs-level comparison is polarity-aware rather than flattened, and the last carried interface-grouping residual is now gone
 - Canonical per-signal polarity surface: Done
 - Live projected polarity coverage across AXI/APB/AHB/AXI-Stream is now `1 / 1 / 1 / 1`; carry-through is real, and the next polarity gap is broader non-reset control polarity recovery
-- The refreshed live AMBA baseline is now AXI `79/100 GOOD`, APB `84/100 GOOD`, AHB `85/100 GOOD`, and AXI-Stream `90/100 EXCELLENT`; the old `94/95/95/90` snapshot was stale relative to the current semantic/intent stack
+- The refreshed live AMBA baseline is now AXI `84/100 GOOD`, APB `84/100 GOOD`, AHB `84/100 GOOD`, and AXI-Stream `90/100 EXCELLENT`; the old `94/95/95/90` snapshot was stale relative to the current semantic/intent stack
 
 ## Validation Projection
 
 <!-- validation_projection:start -->
 - Latest projected validation snapshot:
-  - `IHI0022_L_2025-08_AMBA_AXI_Protocol_Specification.pdf` (`intent_ir`): `79/100 GOOD` from `generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json`
+  - `IHI0022_L_2025-08_AMBA_AXI_Protocol_Specification.pdf` (`intent_ir`): `84/100 GOOD` from `generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json`
   - `IHI0024_D_2021-04_AMBA_APB_Protocol_Specification.pdf` (`intent_ir`): `84/100 GOOD` from `generated/intent_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/intent_ir.json`
   - `IHI0033_C_2021-09_AMBA_5_AHB_Protocol_Specification.pdf` (`intent_ir`): `85/100 GOOD` from `generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json`
   - `IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf` (`intent_ir`): `90/100 EXCELLENT` from `generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json`

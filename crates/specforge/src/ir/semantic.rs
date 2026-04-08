@@ -1634,11 +1634,24 @@ fn build_interfaces(
     system_contract: Option<&SystemContractRecord>,
 ) -> (Vec<InterfaceRecord>, Vec<InterfaceSignalConflictRecord>) {
     let mut accumulators: BTreeMap<String, InterfaceAccumulator> = BTreeMap::new();
+    let mut authoritative_signal_names = BTreeSet::new();
     let empty_regular_state_names = BTreeSet::<String>::new();
     let empty_known_signal_names = BTreeSet::<String>::new();
     let empty_known_symbol_names = BTreeSet::<String>::new();
     let signal_polarity_by_signal =
         build_signal_polarity_lookup(signal_polarities, system_contract);
+
+    for statement in &context.statements {
+        if let Some(signal_declaration) = parse_explicit_signal_declaration(&statement.text) {
+            if !interface_signal_declaration_looks_like_width_symbol(&signal_declaration) {
+                authoritative_signal_names.insert(signal_declaration.signal_name);
+            }
+        }
+    }
+    if let Some(system_contract) = system_contract {
+        authoritative_signal_names.insert(system_contract.clock_signal.clone());
+        authoritative_signal_names.insert(system_contract.reset_signal.clone());
+    }
 
     for statement in &context.statements {
         if let Some(signal_declaration) = parse_explicit_signal_declaration(&statement.text) {
@@ -1692,7 +1705,10 @@ fn build_interfaces(
         {
             continue;
         }
-        let candidate_signals = filtered_interface_candidate_signals(statement.signals.as_slice());
+        let candidate_signals = retain_authoritative_interface_candidate_signals(
+            filtered_interface_candidate_signals(statement.signals.as_slice()).as_slice(),
+            &authoritative_signal_names,
+        );
         if !should_emit_interface_candidate(candidate_signals.as_slice()) {
             continue;
         }
@@ -3429,6 +3445,21 @@ fn filtered_interface_candidate_signals(signals: &[String]) -> Vec<String> {
     }
 
     filtered
+}
+
+fn retain_authoritative_interface_candidate_signals(
+    signals: &[String],
+    authoritative_signal_names: &BTreeSet<String>,
+) -> Vec<String> {
+    if authoritative_signal_names.is_empty() {
+        return signals.to_vec();
+    }
+
+    signals
+        .iter()
+        .filter(|signal| authoritative_signal_names.contains(*signal))
+        .cloned()
+        .collect()
 }
 
 fn parse_explicit_system_clock(text: &str) -> Option<String> {
@@ -11917,6 +11948,27 @@ mod tests {
         ]);
 
         assert_eq!(filtered, vec!["TKEEP".to_string(), "TVALID".to_string()]);
+    }
+
+    #[test]
+    fn retain_authoritative_interface_candidate_signals_prefers_declared_surface() {
+        let authoritative = std::collections::BTreeSet::from([
+            "PADDR".to_string(),
+            "PENABLE".to_string(),
+            "PREADY".to_string(),
+        ]);
+
+        let filtered = super::retain_authoritative_interface_candidate_signals(
+            &[
+                "SETUP".to_string(),
+                "PADDR".to_string(),
+                "ACCESS".to_string(),
+                "PREADY".to_string(),
+            ],
+            &authoritative,
+        );
+
+        assert_eq!(filtered, vec!["PADDR".to_string(), "PREADY".to_string()]);
     }
 
     #[test]
