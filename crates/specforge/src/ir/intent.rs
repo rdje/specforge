@@ -2058,6 +2058,56 @@ mod tests {
     }
 
     #[test]
+    fn carries_resolved_signal_polarity_into_intent_ir() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("intent_resolved_polarity.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Reset\n",
+                "Signal PRESETN is input width 1.\n\n",
+                "PRESETN is an active low reset signal.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let presetn = intent_ir
+            .interfaces
+            .iter()
+            .flat_map(|interface| interface.signal_records.iter())
+            .find(|signal| signal.signal_name == "PRESETN")
+            .expect("expected PRESETN interface signal");
+        assert_eq!(
+            presetn.resolved_polarity,
+            Some(crate::ir::evidence::SignalPolarity::ActiveLow)
+        );
+
+        Ok(())
+    }
+
+    #[test]
     fn carries_temporal_rules_into_intent_ir() -> Result<()> {
         use crate::ir::evidence::EvidenceIr;
         use crate::ir::semantic::{TemporalPredicateRecord, TickPhase};

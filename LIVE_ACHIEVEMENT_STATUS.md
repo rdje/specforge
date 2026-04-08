@@ -133,6 +133,8 @@
 - Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then broaden `R15f` beyond its first actor-taxonomy / semantic / semantic-modality-reliability / temporal / table-shape prior families into visual-motif and negative-knowledge priors, and then add `R15g` so compiled cross-document synthesis has a persistent corpus knowledge base plane beside the KG and typed priors
 - Latest unseen-protocol live run:
 - `IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf` converged in `2` pipeline iterations and currently validates at `90/100 EXCELLENT`; parity-check table semantics now recover both structural KG ownership and carried width hints for the `*CHK` surface, declared graph-direction and width coverage are both `22/22`, `ACLK` / `ARESETN` now surface as infrastructure connectivity with a dedicated system-contract note instead of an ordinary missing-producer warning, six same-cycle temporal rules now carry explicit `0`-cycle windows, and there are now no remaining typed temporal conflicts because assertion-vs-level comparison is polarity-aware rather than flattened; the remaining main gap is the residual interface-grouping decision
+- Canonical per-signal polarity surface: Done
+- Live projected polarity coverage across AXI/APB/AHB/AXI-Stream: still `with_resolved_polarity: 0`, so the remaining work is extraction coverage, not schema carry-through
 
 ## Validation Projection
 

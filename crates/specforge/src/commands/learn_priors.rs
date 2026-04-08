@@ -1474,6 +1474,7 @@ mod tests {
                 signal_name: "AWREADY".to_string(),
                 direction_hint: Some(InterfaceSignalDirection::Input),
                 width_hint: None,
+                resolved_polarity: None,
                 semantic_tags: vec![SignalSemanticTag::HandshakeReadyLike],
                 semantic_candidates: Vec::new(),
                 semantic_arbitration: Some(InterfaceSignalSemanticArbitrationRecord {
@@ -1615,6 +1616,7 @@ mod tests {
                     signal_name: "PSEL".to_string(),
                     direction_hint: Some(InterfaceSignalDirection::Output),
                     width_hint: None,
+                    resolved_polarity: None,
                     semantic_tags: vec![SignalSemanticTag::HandshakeValidLike],
                     semantic_candidates: Vec::new(),
                     semantic_arbitration: Some(InterfaceSignalSemanticArbitrationRecord {
@@ -1661,6 +1663,7 @@ mod tests {
                     signal_name: "PREADY".to_string(),
                     direction_hint: Some(InterfaceSignalDirection::Input),
                     width_hint: None,
+                    resolved_polarity: None,
                     semantic_tags: vec![SignalSemanticTag::HandshakeReadyLike],
                     semantic_candidates: Vec::new(),
                     semantic_arbitration: Some(InterfaceSignalSemanticArbitrationRecord {
@@ -1796,6 +1799,7 @@ mod tests {
                 signal_name: "TVALID".to_string(),
                 direction_hint: Some(InterfaceSignalDirection::Output),
                 width_hint: None,
+                resolved_polarity: None,
                 semantic_tags: vec![SignalSemanticTag::HandshakeValidLike],
                 semantic_candidates: Vec::new(),
                 semantic_arbitration: Some(InterfaceSignalSemanticArbitrationRecord {
@@ -1951,6 +1955,7 @@ mod tests {
                 signal_name: "XREQ".to_string(),
                 direction_hint: None,
                 width_hint: None,
+                resolved_polarity: None,
                 semantic_tags: vec![SignalSemanticTag::HandshakeValidLike],
                 semantic_candidates: Vec::new(),
                 semantic_arbitration: Some(InterfaceSignalSemanticArbitrationRecord {
@@ -2044,6 +2049,7 @@ mod tests {
                     signal_name: "XVALID".to_string(),
                     direction_hint: Some(InterfaceSignalDirection::Output),
                     width_hint: None,
+                    resolved_polarity: None,
                     semantic_tags: vec![SignalSemanticTag::HandshakeValidLike],
                     semantic_candidates: Vec::new(),
                     semantic_arbitration: Some(InterfaceSignalSemanticArbitrationRecord {
@@ -2080,6 +2086,7 @@ mod tests {
                     signal_name: "XREADY".to_string(),
                     direction_hint: Some(InterfaceSignalDirection::Output),
                     width_hint: None,
+                    resolved_polarity: None,
                     semantic_tags: vec![SignalSemanticTag::HandshakeReadyLike],
                     semantic_candidates: Vec::new(),
                     semantic_arbitration: Some(InterfaceSignalSemanticArbitrationRecord {

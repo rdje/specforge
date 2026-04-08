@@ -1,5 +1,26 @@
 # CHANGES
 
+## 2026-04-08 (resolved signal polarity now lives on canonical interface records)
+
+### Added: canonical interface records now carry resolved polarity directly
+- Extended [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so each `InterfaceSignalRecord` can now carry `resolved_polarity` directly instead of forcing downstream consumers to reconstruct polarity only from the carried top-level side list.
+- [intent.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/intent.rs) now preserves that same per-signal polarity surface into `IntentIR`.
+- [validate.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/validate.rs) now reports `with_resolved_polarity` for both `SemanticIR` and `IntentIR`.
+
+### Changed: the live corpus now shows the gap honestly
+- Rebuilt AXI-Stream `SemanticIR` / `IntentIR`, re-validated the artifact, and refreshed the tracked four-document projection.
+- The canonical polarity surface is now present end to end, but the current projected AMBA artifacts still report `with_resolved_polarity: 0`, which is useful and honest: the typed world model is stronger, and the remaining work is now to improve real polarity extraction coverage rather than pretend the corpus already contains those resolved values.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml carries_resolved_signal_polarity_into_interface_records -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml carries_resolved_signal_polarity_into_intent_ir -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml validate_semantic_ir_counts_resolved_signal_polarity -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml validate_intent_ir_counts_resolved_signal_polarity -- --nocapture` → passed
+- `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/evidence_ir.json` → passed
+- `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/semantic_ir.json` → passed
+- `cargo run --manifest-path Cargo.toml -- validate generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json` → passed (`90/100 EXCELLENT`, `with_resolved_polarity: 0`)
+- `cargo run --manifest-path Cargo.toml -- project-validation generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json generated/intent_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/intent_ir.json generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json` → passed
+
 ## 2026-04-08 (temporal conflict comparison is now polarity-aware)
 
 ### Fixed: asserted/deasserted temporal semantics now respect signal polarity

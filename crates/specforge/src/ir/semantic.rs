@@ -7,9 +7,10 @@ use serde::{Deserialize, Serialize};
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::evidence::{
-    EvidenceIr, SignalPolarityConflictRecord, SignalPolarityRecord, SignalSemanticConflictRecord,
-    SignalSemanticHintRecord, SignalSemanticHintSourceKind, SignalSemanticTag, StatementClass,
-    VisualEvidenceRole, VisualObservationKind, parse_visual_observation_json,
+    EvidenceIr, SignalPolarity, SignalPolarityConflictRecord, SignalPolarityRecord,
+    SignalSemanticConflictRecord, SignalSemanticHintRecord, SignalSemanticHintSourceKind,
+    SignalSemanticTag, StatementClass, VisualEvidenceRole, VisualObservationKind,
+    parse_visual_observation_json,
 };
 use crate::ir::prior_memory::{CorpusMemory, ProtocolFamily};
 use crate::ir::source::{
@@ -127,10 +128,14 @@ impl SemanticIr {
             &document_identity.display_name,
         )?;
         let context = SemanticContext::from_evidence_ir(&evidence_ir);
-        let (interfaces, interface_signal_conflicts) =
-            build_interfaces(&context, prior_guidance.as_ref());
-        let actor_build = build_actors(&context, &interfaces);
         let system_contract = build_system_contract(&context);
+        let (interfaces, interface_signal_conflicts) = build_interfaces(
+            &context,
+            prior_guidance.as_ref(),
+            evidence_ir.signal_polarities.as_slice(),
+            system_contract.as_ref(),
+        );
+        let actor_build = build_actors(&context, &interfaces);
         let actor_ports = build_actor_ports(&context, &interfaces, system_contract.as_ref());
         let signal_connectivity = build_signal_connectivity(&actor_ports, system_contract.as_ref());
         let signal_connectivity_conflicts =
@@ -504,6 +509,8 @@ pub struct InterfaceSignalRecord {
     pub direction_hint: Option<InterfaceSignalDirection>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub width_hint: Option<WidthHint>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub resolved_polarity: Option<SignalPolarity>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub semantic_tags: Vec<SignalSemanticTag>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -1623,11 +1630,15 @@ struct ExplicitTopAccumulator {
 fn build_interfaces(
     context: &SemanticContext,
     prior_guidance: Option<&SemanticPriorGuidance>,
+    signal_polarities: &[SignalPolarityRecord],
+    system_contract: Option<&SystemContractRecord>,
 ) -> (Vec<InterfaceRecord>, Vec<InterfaceSignalConflictRecord>) {
     let mut accumulators: BTreeMap<String, InterfaceAccumulator> = BTreeMap::new();
     let empty_regular_state_names = BTreeSet::<String>::new();
     let empty_known_signal_names = BTreeSet::<String>::new();
     let empty_known_symbol_names = BTreeSet::<String>::new();
+    let signal_polarity_by_signal =
+        build_signal_polarity_lookup(signal_polarities, system_contract);
 
     for statement in &context.statements {
         if let Some(signal_declaration) = parse_explicit_signal_declaration(&statement.text) {
@@ -1785,10 +1796,13 @@ fn build_interfaces(
                             &semantic_observations,
                             prior_guidance,
                         );
+                        let resolved_polarity =
+                            signal_polarity_by_signal.get(&signal_name).copied();
                         InterfaceSignalRecord {
                             signal_name,
                             direction_hint: signal.direction_hint,
                             width_hint: signal.width_hint,
+                            resolved_polarity,
                             semantic_tags,
                             semantic_candidates,
                             semantic_arbitration,
@@ -2370,8 +2384,9 @@ fn build_explicit_module_record(accumulator: ExplicitModuleAccumulator) -> Expli
         actor_signal_relations: Vec::new(),
         signal_semantic_hints: Vec::new(),
     };
-    let (interfaces, _interface_signal_conflicts) = build_interfaces(&scoped_context, None);
     let system_contract = build_system_contract(&scoped_context);
+    let (interfaces, _interface_signal_conflicts) =
+        build_interfaces(&scoped_context, None, &[], system_contract.as_ref());
     let init_assignments = build_init_assignments(&scoped_context);
     let regular_states = build_regular_states(&scoped_context);
     let state_transitions = build_state_transitions(&scoped_context);
@@ -7094,7 +7109,7 @@ fn temporal_conflict_group_key(
 fn build_signal_polarity_lookup(
     signal_polarities: &[SignalPolarityRecord],
     system_contract: Option<&SystemContractRecord>,
-) -> HashMap<String, crate::ir::evidence::SignalPolarity> {
+) -> HashMap<String, SignalPolarity> {
     let mut polarity_by_signal = signal_polarities
         .iter()
         .map(|record| (record.signal_name.clone(), record.polarity))
@@ -7104,8 +7119,8 @@ fn build_signal_polarity_lookup(
         polarity_by_signal
             .entry(system_contract.reset_signal.clone())
             .or_insert_with(|| match system_contract.reset_polarity {
-                SystemResetPolarity::ActiveHigh => crate::ir::evidence::SignalPolarity::ActiveHigh,
-                SystemResetPolarity::ActiveLow => crate::ir::evidence::SignalPolarity::ActiveLow,
+                SystemResetPolarity::ActiveHigh => SignalPolarity::ActiveHigh,
+                SystemResetPolarity::ActiveLow => SignalPolarity::ActiveLow,
             });
     }
 
@@ -7115,25 +7130,25 @@ fn build_signal_polarity_lookup(
 fn normalize_temporal_conflict_value(
     value: &str,
     signal_name: &str,
-    signal_polarity_by_signal: &HashMap<String, crate::ir::evidence::SignalPolarity>,
+    signal_polarity_by_signal: &HashMap<String, SignalPolarity>,
 ) -> TemporalConflictComparableValue {
     match value.trim().to_ascii_uppercase().as_str() {
         "HIGH" | "1" | "TRUE" => TemporalConflictComparableValue::Level("HIGH".to_string()),
         "LOW" | "0" | "FALSE" => TemporalConflictComparableValue::Level("LOW".to_string()),
         "ASSERTED" => match signal_polarity_by_signal.get(signal_name) {
-            Some(crate::ir::evidence::SignalPolarity::ActiveHigh) => {
+            Some(SignalPolarity::ActiveHigh) => {
                 TemporalConflictComparableValue::Level("HIGH".to_string())
             }
-            Some(crate::ir::evidence::SignalPolarity::ActiveLow) => {
+            Some(SignalPolarity::ActiveLow) => {
                 TemporalConflictComparableValue::Level("LOW".to_string())
             }
             None => TemporalConflictComparableValue::Assertion("ASSERTED".to_string()),
         },
         "DEASSERTED" => match signal_polarity_by_signal.get(signal_name) {
-            Some(crate::ir::evidence::SignalPolarity::ActiveHigh) => {
+            Some(SignalPolarity::ActiveHigh) => {
                 TemporalConflictComparableValue::Level("LOW".to_string())
             }
-            Some(crate::ir::evidence::SignalPolarity::ActiveLow) => {
+            Some(SignalPolarity::ActiveLow) => {
                 TemporalConflictComparableValue::Level("HIGH".to_string())
             }
             None => TemporalConflictComparableValue::Assertion("DEASSERTED".to_string()),
@@ -8114,6 +8129,7 @@ mod tests {
                 signal_name: "XREQ".to_string(),
                 direction_hint: None,
                 width_hint: None,
+                resolved_polarity: None,
                 semantic_tags: vec![SignalSemanticTag::HandshakeValidLike],
                 semantic_candidates: Vec::new(),
                 semantic_arbitration: None,
@@ -8146,6 +8162,7 @@ mod tests {
                 signal_name: "XVALID".to_string(),
                 direction_hint: None,
                 width_hint: None,
+                resolved_polarity: None,
                 semantic_tags: vec![SignalSemanticTag::HandshakeValidLike],
                 semantic_candidates: Vec::new(),
                 semantic_arbitration: None,
@@ -9693,6 +9710,50 @@ mod tests {
                 crate::ir::evidence::SignalPolarity::ActiveLow
             )
         }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn carries_resolved_signal_polarity_into_interface_records() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("semantic_resolved_polarity.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Reset\n",
+                "Signal PRESETN is input width 1.\n\n",
+                "PRESETN is an active low reset signal.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let presetn = semantic_ir
+            .interfaces
+            .iter()
+            .flat_map(|interface| interface.signal_records.iter())
+            .find(|signal| signal.signal_name == "PRESETN")
+            .expect("expected PRESETN interface signal");
+        assert_eq!(
+            presetn.resolved_polarity,
+            Some(crate::ir::evidence::SignalPolarity::ActiveLow)
+        );
 
         Ok(())
     }

@@ -331,6 +331,16 @@ fn interface_signal_semantic_observations_count(
         .sum()
 }
 
+fn interface_signals_with_resolved_polarity_count(
+    interfaces: &[crate::ir::semantic::InterfaceRecord],
+) -> usize {
+    interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+        .filter(|signal| signal.resolved_polarity.is_some())
+        .count()
+}
+
 fn interface_signals_with_resolved_semantic_role_count(
     interfaces: &[crate::ir::semantic::InterfaceRecord],
 ) -> usize {
@@ -1327,6 +1337,7 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         .flat_map(|i| &i.signal_records)
         .filter(|s| s.width_hint.is_some())
         .count();
+    let with_resolved_polarity = interface_signals_with_resolved_polarity_count(&ir.interfaces);
     let with_semantic_tags = interface_signals_with_semantic_tags_count(&ir.interfaces);
     let semantic_observations = interface_signal_semantic_observations_count(&ir.interfaces);
     let semantic_candidates = interface_signal_semantic_candidates_count(&ir.interfaces);
@@ -1414,6 +1425,7 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     println!("  with_graph_direction: {with_graph_direction} ({graph_dir_pct}%)");
     println!("  with_compat_direction_hint: {with_compat_direction_hint} ({compat_dir_pct}%)");
     println!("  with_width: {with_width} ({w_pct}%)");
+    println!("  with_resolved_polarity: {with_resolved_polarity}");
     println!("  with_semantic_tags: {with_semantic_tags}");
     println!("  semantic_candidates: {semantic_candidates}");
     println!("  with_semantic_candidates: {with_semantic_candidates}");
@@ -1932,6 +1944,7 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 with_compat_direction_hint.to_string(),
             ),
             metric("with_width", with_width.to_string()),
+            metric("with_resolved_polarity", with_resolved_polarity.to_string()),
             metric("with_semantic_tags", with_semantic_tags.to_string()),
             metric("semantic_candidates", semantic_candidates.to_string()),
             metric(
@@ -2139,6 +2152,7 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         .filter(|s| matches!(s.width_hint, Some(WidthHint::Parametric(_))))
         .count();
     let with_width = with_numeric_width + with_parametric_width;
+    let with_resolved_polarity = interface_signals_with_resolved_polarity_count(&ir.interfaces);
     let with_semantic_tags = interface_signals_with_semantic_tags_count(&ir.interfaces);
     let semantic_observations = interface_signal_semantic_observations_count(&ir.interfaces);
     let semantic_candidates = interface_signal_semantic_candidates_count(&ir.interfaces);
@@ -2215,6 +2229,7 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     println!(
         "  with_width: {with_width} ({w_pct}%) [{with_numeric_width} numeric, {with_parametric_width} parametric]"
     );
+    println!("  with_resolved_polarity: {with_resolved_polarity}");
     println!("  with_semantic_tags: {with_semantic_tags}");
     println!("  semantic_candidates: {semantic_candidates}");
     println!("  with_semantic_candidates: {with_semantic_candidates}");
@@ -2798,6 +2813,7 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 with_compat_direction_hint.to_string(),
             ),
             metric("with_width", with_width.to_string()),
+            metric("with_resolved_polarity", with_resolved_polarity.to_string()),
             metric("with_semantic_tags", with_semantic_tags.to_string()),
             metric("semantic_candidates", semantic_candidates.to_string()),
             metric(
@@ -3493,6 +3509,40 @@ mod tests {
             &report,
             "semantic_signal_polarity_conflicts_present"
         ));
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_semantic_ir_counts_resolved_signal_polarity() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("semantic_resolved_polarity.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Reset\n",
+                "Signal PRESETN is input width 1.\n\n",
+                "PRESETN is an active low reset signal.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let report = validate_semantic_ir(&semantic_ir, "resolved_signal_polarity".to_string());
+        assert_eq!(metric_value(&report, "with_resolved_polarity"), Some("2"));
 
         Ok(())
     }
@@ -5356,6 +5406,46 @@ mod tests {
             &report,
             "intent_signal_polarity_conflicts_present"
         ));
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_intent_ir_counts_resolved_signal_polarity() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("intent_resolved_polarity.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Reset\n",
+                "Signal PRESETN is input width 1.\n\n",
+                "PRESETN is an active low reset signal.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let report = validate_intent_ir(&intent_ir, "resolved_signal_polarity".to_string());
+        assert_eq!(metric_value(&report, "with_resolved_polarity"), Some("2"));
 
         Ok(())
     }
