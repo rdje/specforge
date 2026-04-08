@@ -267,10 +267,10 @@
   - direction/source/destination column handling widened for AMBA 5 terminology and infrastructure signals
   - width-only and parametric-width declarations landed so coverage reporting is more honest
   - `extract_alias_phrase()` now rejects alias subjects beginning with markdown/table markers `-`, `|`, or `#`
-  - representative local APB/AHB/AXI validation snapshots were refreshed from the current extraction stack:
-    - APB 95/100 EXCELLENT
-    - AHB 95/100 EXCELLENT
-    - AXI 94/100 EXCELLENT
+  - representative local APB/AHB/AXI validation snapshots were refreshed from the current semantic/intent stack:
+    - APB 84/100 GOOD
+    - AHB 84/100 GOOD
+    - AXI 84/100 GOOD
 
 ### R13 Actor-signal relation extraction: Tier 2 prose patterns
 - status: Done
@@ -288,7 +288,7 @@
   - regression tests added for relation extraction and direction synthesis
   - relation-derived declarations now feed the convergent `EvidenceIR` loop, so discovered signal anchors can unlock additional encoding enums and value constraints
   - downstream `SemanticIR` / `IntentIR` now carry the extracted graph directly via `actor_signal_relations`, `actor_ports`, and `signal_connectivity` instead of forcing later stages to rediscover relation evidence from prose
-  - refreshed baselines now show stable honest coverage improvements: APB 95/100, AHB 95/100, AXI 94/100
+  - refreshed baselines now keep the current graph-direction and consumer-recovery gaps visible instead of hiding them behind stale artifacts: APB 84/100, AHB 84/100, AXI 84/100
 - completion criteria:
   - APB direction coverage reaches a stable honest baseline from relation extraction
   - AXI large-signal coverage improves without relying on misleading single-signal metrics

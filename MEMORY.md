@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `9907fe8`
-- latest_commit_brief_message: `feat(semantic): tighten graph-backed interface coverage`
-- note: the current session is now focused on clock/reset infrastructure semantics as a steering constraint after the AXI-Stream graph-coverage slice
+- latest_commit_hash: `d469bf3`
+- latest_commit_brief_message: `feat(ir): carry resolved signal polarity per interface`
+- note: the current session is now focused on refreshing the live AMBA validation baseline against the current polarity-aware semantic/intent stack and recording the honest post-refresh snapshot
 
 ## Recent commit chain (last 5)
-- `9907fe8` feat(semantic): tighten graph-backed interface coverage
-- `bd2b553` feat(evidence): recover complementary consumer edges
-- `23eb7d1` feat(learning): reject bogus actor priors
-- `f8932dc` feat(evidence): reject bogus prose actors
-- `d490611` feat(evidence): fix multi-signal table role leakage
+- `d469bf3` feat(ir): carry resolved signal polarity per interface
+- `8a0e477` feat(semantic): make temporal conflicts polarity-aware
+- `3ca0c5a` feat(semantic): normalize equivalent temporal values
+- `efcdb71` feat(semantic): recover same-cycle temporal windows
+- `1fa9699` feat(validate): classify clock/reset connectivity as infrastructure
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -56,7 +56,8 @@
 - validator handling now matches that boundary too: infrastructure signals with no resolved producer actor emit a dedicated `[info:system_contract]` finding instead of a generic signal-connectivity warning, and the latest AXI-Stream projection now reports `infrastructure_signal_connectivity: 2`
 - same-cycle timing language now lands as bounded temporal semantics too: AXI-Stream currently carries `6` explicit `0`-cycle windows from phrases like `in the same ACLK cycle`, and the old `no cycle-window grounding` warning is gone from the live validation projection
 - temporal-conflict detection is now polarity-aware: `ASSERTED` / `DEASSERTED` only collapse to `HIGH` / `LOW` when the current document grounds the signal polarity, so active-low controls like `ARESETN` stay semantically correct and unknown-polarity assertions stay abstract
-- resolved signal polarity now also lives directly on canonical `InterfaceSignalRecord`s and is reported by validation as `with_resolved_polarity`; the current four-artifact AMBA projection still shows `0`, so the next polarity step is extraction coverage, not more carry-through plumbing
+- resolved signal polarity now also lives directly on canonical `InterfaceSignalRecord`s and is reported by validation as `with_resolved_polarity`; after the refreshed live AMBA rebuild, AXI/APB/AXI-Stream now each report `1` while AHB still reports `0`, so the next polarity step is targeted AHB extraction plus broader non-reset control polarity recovery
+- the tracked live validation baseline has now been refreshed against the current semantic/intent stack and is lower but more honest than the old stale snapshot: AXI 84/100 GOOD, APB 84/100 GOOD, AHB 84/100 GOOD, AXI-Stream 90/100 EXCELLENT
 - the learning plane now applies the same bogus-actor hygiene rule at harvest and lookup time, and the stale `control information -> requester_like` actor-taxonomy prior has been removed from local `CorpusMemory`
 - `specforge kg-bench` can now also stage a fixture-local `CorpusMemory`, and the first tracked gold/negative pair proves prior-guided temporal recovery on an unseen local phrase without leaking cross-document facts
 - `specforge kg-bench` now also locks the same before/after truthfulness pattern for semantic priors on an unseen local phrase
