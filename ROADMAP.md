@@ -559,10 +559,56 @@
   - broaden prior consumption beyond the first actor-taxonomy / semantic-role / table-shape `EvidenceIR` slices plus the first temporal-language and semantic-modality-reliability `SemanticIR` slices into visual-motif and negative-knowledge suggestions without bypassing local grounding
   - broaden the first benchmark coverage for prior-guided unseen-document improvement beyond the new actor-taxonomy, temporal, semantic, visual, table-shape, and semantic-modality-reliability gold/negative pairs into negative-knowledge prior families
 
+### R15g Corpus knowledge base plane
+- status: Planned
+- objective:
+  - add a persistent corpus-level knowledge base beside the per-document IR pipeline and the typed prior store, so the extractor can accumulate reviewable cross-document synthesis instead of rediscovering higher-level extraction knowledge from scratch
+- motivation:
+  - the KG is the right machine-readable surface for typed facts, provenance, relations, conflicts, and canonical per-document truth
+  - the typed prior store is the right machine-usable surface for bounded reusable extraction priors
+  - neither is the ideal surface for durable corpus-level synthesis such as recurring protocol motifs, extraction failure archetypes, contradiction summaries, table/figure families, or protocol-family notes
+  - the project therefore wants three explicit planes:
+    - per-document canonical truth
+    - typed reusable prior memory
+    - persistent corpus knowledge base
+- target artifact shape:
+  - a tracked, inspectable corpus-knowledge root such as `knowledge_base/` or `corpus_kb/`
+  - topic pages organized by protocol family, extraction pattern, timing motif, table family, visual family, infrastructure semantics, and known failure class
+  - each page must preserve explicit provenance back to source documents, IR artifacts, benchmark fixtures, validation findings, or approved implementation notes
+  - likely page families:
+    - `protocols/`
+    - `patterns/`
+    - `tables/`
+    - `visuals/`
+    - `timing/`
+    - `infra/`
+    - `failures/`
+- intended uses:
+  - synthesize recurring extraction motifs across documents
+  - capture negative knowledge and misleading patterns that should remain visible to future extractors and humans
+  - summarize contradiction patterns and unresolved protocol-family nuances
+  - generate new prior candidates for `R15f`
+  - support future KG-guided rescans and debugging by giving the LLM a persistent compiled corpus artifact instead of forcing it to reconstruct corpus understanding ad hoc
+- non-goals:
+  - the corpus knowledge base must not directly author canonical `IntentIR` truth
+  - freeform wiki text must not replace typed KG facts or validation-gated priors
+  - unvalidated extraction output must not be promoted into the corpus knowledge base as if it were trusted doctrine
+- update policy:
+  - admit only source-grounded, reviewable, or validation-backed content
+  - keep corpus pages explicitly linked to document keys, artifact paths, validation reports, benchmark fixtures, or approved engineering notes
+  - allow the corpus knowledge base to propose new prior candidates, benchmark ideas, and rescan targets, but route any machine-usable promotion back through typed schemas plus validation
+- completion criteria:
+  - a tracked corpus knowledge base root exists with an explicit schema/organization policy
+  - at least one page family is auto-refreshable from validation/benchmark results without overwriting human-authored synthesis
+  - pages can cite document keys, artifact paths, and benchmark fixtures directly
+  - the interaction boundary is explicit:
+    - corpus KB may inform humans, LLM summarization, benchmark design, and prior-candidate generation
+    - canonical IR and typed priors still require their own validation-gated promotion paths
+
 ### R16 SystemVerilog adapter (Horizon)
 - status: Horizon
 - prerequisites:
-  - `R15`, `R15b`, `R15c`, `R15d`, `R15e`, `R15f`, and `R14` are materially complete
+  - `R15`, `R15b`, `R15c`, `R15d`, `R15e`, `R15f`, `R15g`, and `R14` are materially complete
 - goals:
   - generate a correct SystemVerilog interface from `IntentIR`
   - generate a correct SystemVerilog module template for each actor
@@ -576,11 +622,13 @@
 5. Add typed evidence arbitration and conflict resolution across modalities (`R15d`)
 6. Harden evaluation with gold fixtures, negative fixtures, and false-positive control (`R15e`)
 7. Add a separate cross-document learning plane for typed extraction priors while keeping canonical document truth local (`R15f`)
-8. Extend relation extraction for harder prose with Tier 3 support only after the graph/temporal/eval surfaces are ready (`R14`)
-9. Treat new adapter families and adapter validation as horizon work until the semantic pipeline is materially harder to fool (`R16`)
+8. Add a corpus knowledge base plane beside the KG and prior memory so compiled cross-document synthesis becomes persistent and reviewable (`R15g`)
+9. Extend relation extraction for harder prose with Tier 3 support only after the graph/temporal/eval/corpus-memory surfaces are ready (`R14`)
+10. Treat new adapter families and adapter validation as horizon work until the semantic pipeline is materially harder to fool (`R16`)
 
 ## Immediate next milestone
 - `R15`: finish the transition from compatibility `direction_hint` fields to actor-relative graph-first downstream semantics
 - `R15b`: introduce the explicit clock-tick temporal model so behavioral truth is first-class in `SemanticIR` / `IntentIR`
 - `R15c`: make KG-guided multimodal rescans a named workstream in the convergent pipeline
 - `R15f`: design the cross-document learning plane so the extractor can accumulate reusable priors without contaminating per-document canonical truth
+- `R15g`: design the corpus knowledge base plane so the extractor and future operators can accumulate persistent compiled corpus synthesis without bypassing typed KG truth or validation-gated priors

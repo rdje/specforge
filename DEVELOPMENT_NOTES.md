@@ -575,6 +575,48 @@
 - benchmark whether prior memory helps on unseen PDFs without increasing cross-document fact leakage
 - treat this as a first-class architectural expansion after the current graph/temporal/arbitration work, not as a shortcut around local truthfulness
 
+### Corpus knowledge base layer
+- there is a second cross-document layer the project should add after the typed prior plane matures: a persistent corpus knowledge base
+- this should not be confused with `CorpusMemory`
+  - `CorpusMemory` is the bounded machine-usable prior layer
+  - the corpus knowledge base is the human+LLM synthesis layer
+- the distinction matters:
+  - the KG is best for typed facts, relations, provenance, residuals, and canonical truth
+  - the prior store is best for machine-usable reusable extraction hints
+  - the corpus knowledge base is best for durable synthesis across documents:
+    - recurring protocol motifs
+    - extraction failure archetypes
+    - contradiction summaries
+    - table and figure families
+    - protocol-family notes
+    - infrastructure-semantics notes
+- the right three-plane model is:
+  - per-document canonical IR: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR`
+  - cross-document typed priors: `CorpusMemory`
+  - cross-document compiled synthesis: corpus knowledge base
+- the safety boundary must stay explicit:
+  - the corpus knowledge base must not directly author canonical IR truth
+  - freeform synthesis must not replace typed KG facts
+  - unvalidated output must not be promoted as trusted doctrine
+  - any machine-usable promotion from the corpus knowledge base must flow back through typed schemas plus validation-gated promotion
+- good uses of the corpus knowledge base:
+  - explain recurring extraction wins and failures
+  - capture negative knowledge that should remain visible even when it is not yet encoded as a typed prior
+  - summarize protocol-family differences in how semantics are expressed
+  - propose new prior candidates, benchmark fixtures, and KG-guided rescan strategies
+  - give future LLM-assisted analysis a persistent compiled corpus artifact so it does not have to reconstruct the same higher-level synthesis from scratch every session
+- candidate organization:
+  - `protocols/`
+  - `patterns/`
+  - `tables/`
+  - `visuals/`
+  - `timing/`
+  - `infra/`
+  - `failures/`
+- this is worth doing because the project should not stop at `document pipeline + priors`
+- the stronger long-term architecture is:
+  - document pipeline + priors + corpus knowledge base
+
 ### First landed `R15f` slice
 - the first implementation now exists as a typed `CorpusMemory` store in `crates/specforge/src/ir/prior_memory.rs`
 - `specforge learn-priors <intent_ir>...` is the first command that materializes that learning plane locally under `generated/prior_memory/corpus_memory.json`

@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-04-08 (corpus knowledge base plane added to roadmap)
+
+### Added: explicit `R15g` workstream for a corpus knowledge base layer
+- Logged a new roadmap slice in [ROADMAP.md](/Users/richarddje/Documents/github/specforge/ROADMAP.md) for a persistent corpus knowledge base that sits beside the per-document IR pipeline and the typed `CorpusMemory` prior store.
+- The design boundary is explicit:
+  - per-document canonical truth stays in `SourceIR` / `EvidenceIR` / `SemanticIR` / `IntentIR`
+  - typed machine-usable reuse stays in `CorpusMemory`
+  - the new corpus knowledge base becomes the human+LLM synthesis layer for recurring motifs, failures, contradiction summaries, table/figure families, and protocol-family notes
+
+### Changed: live architecture guidance now targets three cross-document planes, not one
+- Updated [DEVELOPMENT_NOTES.md](/Users/richarddje/Documents/github/specforge/DEVELOPMENT_NOTES.md), [README.md](/Users/richarddje/Documents/github/specforge/README.md), and [LIVE_ACHIEVEMENT_STATUS.md](/Users/richarddje/Documents/github/specforge/LIVE_ACHIEVEMENT_STATUS.md) so future work treats the long-term shape as:
+  - document-local canonical IR
+  - typed cross-document priors
+  - corpus-level compiled knowledge base
+- The docs also now make the safety boundary explicit: the corpus knowledge base may guide humans, LLM synthesis, benchmark design, and prior-candidate generation, but it must not directly author canonical IR truth.
+
 ## 2026-04-08 (AXI-Stream parity-check width semantics now survive end to end)
 
 ### Fixed: parity-check rows now recover bounded width hints from their local table semantics

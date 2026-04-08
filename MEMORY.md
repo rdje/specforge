@@ -46,6 +46,7 @@
 - `SemanticIR` now also has a third bounded prior consumer for temporal phrase priors, using them only as a fallback for local timing text when direct cycle-window parsing fails
 - `EvidenceIR` now also has a fourth bounded prior consumer for table-shape priors, using them only when a current structured table is still `unknown`; explicit local `SourceIR.table_kind` values still win outright
 - `SemanticIR` now also has a fifth bounded prior consumer overall and a second semantic-stage one for semantic modality-reliability priors, using them only to advisory-adjust arbitration between already-present locally grounded semantic candidates while preserving the underlying conflict surface
+- the roadmap now also carries a new `R15g` workstream for a corpus knowledge base plane beside the KG and typed priors, so persistent cross-document synthesis has an explicit home instead of being forced into either canonical IR or `CorpusMemory`
 - the latest live four-document prior-memory run over AXI/APB/AHB/AXI-Stream now yields `16` actor-taxonomy priors, `5` semantic phrase priors, `4` semantic modality-reliability priors, `266` temporal phrase priors, and `99` table-shape priors
 - AXI-Stream is now the first unseen protocol run carried all the way through the full loopbacked path: it converged in `2` pipeline iterations with Ollama VLM + NLP Level 3, now validates at `90/100 EXCELLENT`, and its artifact is included in the tracked validation snapshot
 - AXI-Stream prose KG extraction is now hardened against bogus payload/event actors: `control information` no longer survives as a producer for `TVALID`, AXI-Stream `signal_connectivity_conflicts` is now `0`, and the latest source-table fix also closes the missing consumer-side connectivity gap
@@ -86,6 +87,7 @@
 - re-ran full `converge` on AXI-Stream after the semantic graph-coverage fix, confirmed convergence still takes `2` iterations, and refreshed the tracked validation snapshot so AXI-Stream now projects at `84/100 GOOD` with `12/16` graph-direction coverage
 - added bounded parity-check relation recovery from `Check Signal / Signals Covered` tables and re-ran AXI-Stream through the full loopbacked path; the artifact still converges in `2` iterations and now projects at `88/100 GOOD` with `21/21` graph-direction coverage
 - extended parity-check row recovery so the same local table semantics now also restore missing `*CHK` width hints and no longer let width-only statements block stronger graph-derived declarations; re-ran AXI-Stream through the full loopbacked path and the artifact now projects at `90/100 EXCELLENT` with declared graph-direction and width coverage both at `22/22`
+- logged the next architectural layer after `CorpusMemory`: a tracked corpus knowledge base that can accumulate recurring protocol motifs, extraction failure archetypes, contradiction summaries, table/figure families, and infrastructure notes without directly authoring canonical IR truth
 - logged the clock/reset infrastructure-semantics doctrine so future work does not confuse graph carry-through with ordinary producer/consumer semantics for those signals
 
 ## Current repo hygiene expectations
