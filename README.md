@@ -12,6 +12,7 @@ Use it first for the project objective, document navigation, and the current imp
 
 ## Canonical user-facing docs
 - the canonical user-facing documentation surface now lives in the mdBook under `docs/book/`
+- the mdBook should be treated as a live book that evolves alongside user-facing project changes, not as a static scaffold
 - source entry point: `docs/book/src/introduction.md`
 - local build:
   - `mdbook build docs/book`

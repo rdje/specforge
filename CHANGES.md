@@ -1,5 +1,12 @@
 # CHANGES
 
+## 2026-04-09 (mdBook is explicitly a live project book, not a static scaffold)
+
+### Changed: the documentation contract now treats the book as a living project surface
+- Updated [README.md](/Users/richarddje/Documents/github/specforge/README.md) so the entry-point docs now say the `mdBook` should be treated as a live book that evolves with user-facing project changes.
+- Updated [ROADMAP.md](/Users/richarddje/Documents/github/specforge/ROADMAP.md) so the cross-cutting doctrine now says the `mdBook` under `docs/book/` must evolve alongside user-facing commands, runtime behavior, IR semantics, validation surfaces, and cross-document learning behavior.
+- Updated [DEVELOPMENT_NOTES.md](/Users/richarddje/Documents/github/specforge/DEVELOPMENT_NOTES.md) so the book is explicitly part of the continuity contract: it is the canonical user-facing documentation surface, it should be treated as a live book, and meaningful user-facing changes should refresh it in the same task instead of being left to drift.
+
 ## 2026-04-09 (mdBook is now the canonical user-facing docs surface)
 
 ### Added: a real `mdBook` for layered user-facing documentation

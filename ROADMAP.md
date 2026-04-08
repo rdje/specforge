@@ -40,6 +40,10 @@
   - keep alternatives when the evidence is not yet decisive
   - surface contradictions and residual decisions
   - do not fabricate semantic certainty
+- treat the mdBook under `docs/book/` as a live user-facing product surface:
+  - it is not a one-time scaffold or release-time afterthought
+  - it should evolve alongside user-facing commands, runtime behavior, IR semantics, validation surfaces, and cross-document learning behavior
+  - meaningful user-facing changes should update the book in the same task whenever the exposed contract or workflow has changed
 - keep canonical document truth local and provenance-pure:
   - each `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR` pipeline run should remain grounded only in the current document
   - any future cross-document learning layer must learn reusable extraction priors rather than smuggling facts from earlier PDFs into later canonical artifacts

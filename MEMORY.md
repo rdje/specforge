@@ -22,20 +22,21 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `2879046`
-- latest_commit_brief_message: `feat(evidence): ignore abstract transport tables`
-- note: the current session is now focused on moving the primary user-facing documentation surface onto mdBook while keeping the live continuity docs intact
+- latest_commit_hash: `5d215c2`
+- latest_commit_brief_message: `docs(book): move user docs to mdbook`
+- note: the current session is now focused on explicitly recording that the mdBook is a live documentation surface that must evolve alongside the project, rather than a one-time scaffold
 
 ## Recent commit chain (last 5)
+- `5d215c2` docs(book): move user docs to mdbook
 - `2879046` feat(evidence): ignore abstract transport tables
 - `ceacaf9` feat(evidence): reject field-like message tables
 - `0160f64` docs(validation): refresh live amba baseline
 - `cdf2bc7` feat(semantic): ignore passive ambiguous figure links
-- `4ad5530` feat(semantic): anchor interface grouping to declared signals
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - the canonical user-facing documentation surface is now the mdBook under `docs/book/`
+- that mdBook should now be treated as a live book that evolves alongside user-facing project changes, not as a static scaffold
 - root docs remain important, but they now serve continuity, roadmap, validation, and developer-state roles more than primary end-user onboarding
 - runnable CLI surface includes `inspect`, `doctor`, `converge`, `ingest`, `evidence`, `semantic`, `intent`, `adapt`, `enrich`, `validate`, `kg-bench`, `project-validation`, `learn-priors`, and `nlp-enrich`
 - `specforge converge` now defaults to full Ollama-backed VLM image enrichment plus NLP Level 3 backannotation; use `--vlm-provider skip` and/or `--nlp-provider skip` only when intentionally narrowing the loop

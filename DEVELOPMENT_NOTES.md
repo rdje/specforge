@@ -107,6 +107,13 @@
 - live documentation is not optional process overhead
 - `README.md`, `INTENTIR_SPEC.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `USER_GUIDE.md`, `DEVELOPMENT_NOTES.md`, `CHANGES.md`, and `MEMORY.md` are part of the engineering system
 - they must be updated when work completes and at meaningful intermediate checkpoints during long-running tasks
+- the mdBook under `docs/book/` is now part of that same continuity and product contract:
+  - it is the canonical user-facing documentation surface
+  - it should be treated as a live book that evolves with the project, not as a static scaffold
+  - meaningful changes to commands, runtime setup, stage semantics, validation surfaces, and learning-plane behavior should update the book in the same task when they change the user-facing contract
+- the root markdown docs still matter, but their roles are now more specialized:
+  - the book is the primary layered user-facing reference
+  - root docs continue to carry roadmap, architecture, validation projection, crash continuity, and engineering rationale
 
 ## Current execution defaults and convergence accounting
 - `specforge converge` is now the default full loop-backed pipeline entrypoint: it uses Ollama-backed VLM image enrichment and NLP Level 3 unless the caller explicitly opts out with `--vlm-provider skip` and/or `--nlp-provider skip`
