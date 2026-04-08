@@ -13,7 +13,7 @@
 ### Changed: APB, AHB, and AXI now carry zero residual decisions
 - Rebuilt `SemanticIR` / `IntentIR` / validation for the live APB, AHB, and AXI artifacts and refreshed the tracked four-artifact projection.
 - APB, AHB, and AXI now all carry `0` residual decisions end to end; the old common `semantic_ambiguous_visual_grounding` residual is gone because those live artifacts were only carrying passive figure links, not active visual semantic lift.
-- The refreshed live projection is now AXI `84/100 GOOD`, APB `84/100 GOOD`, AHB `85/100 GOOD`, and AXI-Stream `90/100 EXCELLENT`.
+- The refreshed live projection is now AXI `84/100 GOOD`, APB `94/100 EXCELLENT`, AHB `94/100 EXCELLENT`, and AXI-Stream `90/100 EXCELLENT`; a follow-on rebuild from current `SourceIR` / `EvidenceIR` restored APB and AHB to the excellent lane while leaving AXI as the main live quality outlier.
 
 ### Validation
 - `cargo test --manifest-path Cargo.toml passive_ambiguous_visual_links_do_not_emit_residual_decision -- --nocapture` → passed
@@ -198,7 +198,7 @@
 ### Changed: the live corpus now shows the gap honestly
 - Rebuilt the live AMBA `SemanticIR` / `IntentIR` artifacts, re-validated the four-document projection, and refreshed the tracked snapshot docs.
 - The canonical polarity surface is now present in the live corpus too: AXI, APB, AHB, and AXI-Stream each currently report `with_resolved_polarity: 1`, so the remaining polarity work is broader non-reset control coverage rather than carry-through plumbing.
-- That refresh also replaced a stale optimistic validation snapshot: the current tracked baseline is now AXI `84/100 GOOD`, APB `84/100 GOOD`, AHB `84/100 GOOD`, and AXI-Stream `90/100 EXCELLENT`.
+- That refresh also replaced a stale optimistic validation snapshot; after the later current-`SourceIR` / current-`EvidenceIR` rebuild, the tracked live baseline now stands at AXI `84/100 GOOD`, APB `94/100 EXCELLENT`, AHB `94/100 EXCELLENT`, and AXI-Stream `90/100 EXCELLENT`.
 
 ### Validation
 - `cargo test --manifest-path Cargo.toml carries_resolved_signal_polarity_into_interface_records -- --nocapture` → passed

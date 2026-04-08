@@ -111,7 +111,7 @@
 ## Current execution defaults and convergence accounting
 - `specforge converge` is now the default full loop-backed pipeline entrypoint: it uses Ollama-backed VLM image enrichment and NLP Level 3 unless the caller explicitly opts out with `--vlm-provider skip` and/or `--nlp-provider skip`
 - the converge command's `knowledge_fact_count` now tracks persisted IR knowledge rather than downstream adapter residual work, so fewer residual decisions on later passes do not falsely look like knowledge loss
-- the current local AMBA validation baseline is AXI 84/100, APB 84/100, AHB 84/100, and AXI-Stream 90/100 after the latest semantic/intent refresh against the current extraction stack; this replaced a stale optimistic snapshot and is the honest starting point for the next quality-improvement slices
+- the current local AMBA validation baseline is AXI 84/100, APB 94/100, AHB 94/100, and AXI-Stream 90/100 after the latest refresh against the current extraction stack; the old optimistic snapshot is gone, fresh `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR` rebuilds restored APB/AHB to the excellent lane, and AXI is now the main live protocol-quality outlier
 - AXI `IHI0022_L` now converges cleanly in 2 outer passes; the old false failure was caused by counting decreasing adapter residual decisions against the monotone knowledge metric
 
 ## GitHub CI baseline
