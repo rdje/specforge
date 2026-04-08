@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-04-08 (AXI-Stream parity-check table now restores structural ownership)
+
+### Fixed: parity-check tables now recover actor-signal relations from covered base signals
+- Extended [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) with a bounded second-pass relation recovery path for `Check Signal / Signals Covered` tables.
+- When a local parity-check row explicitly ties a check signal to a covered base signal that already has grounded actor relations, the check signal now inherits those local `drives` / `reads` edges instead of remaining structurally orphaned.
+- Added the focused regression `check_signal_tables_inherit_relations_from_covered_signals`.
+
+### Changed: AXI-Stream now validates at `88/100 GOOD`
+- Re-ran full `specforge converge` with Ollama VLM + NLP Level 3 on [IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf](/Users/richarddje/Documents/livework/chipdoc/arm/amba/supporting/axi-stream/current/IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf).
+- The run still converged in `2` pipeline iterations, but parity-check ownership now survives end to end: declared signal records rose from `16` to `21`, graph-direction coverage rose from `12/16` to `21/21`, actor ports rose from `24` to `42`, signal connectivity rose from `12` to `21`, and the projected score improved from `84/100 GOOD` to `88/100 GOOD`.
+- The remaining dominant gaps are now:
+  - missing widths on `TDESTCHK`, `TIDCHK`, `TSTRBCHK`, `TUSERCHK`, and `TWAKEUPCHK`
+  - unresolved producer attribution for infrastructure signals `ACLK` and `ARESETN`
+
+### Validation
+- `cargo test --manifest-path Cargo.toml check_signal_tables_inherit_relations_from_covered_signals -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml source_table_relations_infer_unique_complementary_reads -- --nocapture` → passed
+- full `specforge converge` on AXI-Stream with Ollama VLM + NLP Level 3 → converged in `2` iterations
+- `cargo run --manifest-path Cargo.toml -- validate generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json` → passed (`88/100 GOOD`, graph-direction coverage `21/21`)
+
 ## 2026-04-08 (clock/reset semantics logged as infrastructure-first steering)
 
 ### Changed: design steering now treats clocks and resets as infrastructure semantics, not ordinary protocol edges

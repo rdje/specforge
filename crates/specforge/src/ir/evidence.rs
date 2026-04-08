@@ -1889,6 +1889,125 @@ fn extract_relations_from_signal_tables_with_prior_guidance(
     records
 }
 
+fn augment_check_signal_relations_from_tables(
+    source_ir: &SourceIr,
+    actor_signal_relations: &[ActorSignalRelation],
+    prior_guidance: Option<&EvidencePriorGuidance>,
+) -> Vec<ActorSignalRelation> {
+    let mut augmented = actor_signal_relations.to_vec();
+    let mut existing_keys = actor_signal_relations
+        .iter()
+        .map(|relation| {
+            (
+                relation.actor_name.clone(),
+                relation.signal_name.clone(),
+                matches!(relation.relation, RelationKind::Drives) as u8,
+            )
+        })
+        .collect::<HashSet<_>>();
+
+    let mut relations_by_signal = HashMap::<String, Vec<(String, RelationKind)>>::new();
+    for relation in actor_signal_relations {
+        relations_by_signal
+            .entry(relation.signal_name.clone())
+            .or_default()
+            .push((relation.actor_name.clone(), relation.relation));
+    }
+
+    let mut counter = 1usize;
+    for table in &source_ir.structured_tables {
+        if !should_treat_table_as_top_level_signal_description(table, prior_guidance) {
+            continue;
+        }
+
+        let header_texts: Vec<String> = table
+            .header_rows
+            .first()
+            .map(|row| row.iter().map(|c| c.text.to_ascii_lowercase()).collect())
+            .unwrap_or_default();
+        let check_signal_col = header_texts
+            .iter()
+            .position(|header| header.contains("check signal"));
+        let covered_signal_col = header_texts.iter().position(|header| {
+            header.contains("signals covered")
+                || (header.contains("covered") && header.contains("signal"))
+        });
+        let (Some(check_signal_col), Some(covered_signal_col)) =
+            (check_signal_col, covered_signal_col)
+        else {
+            continue;
+        };
+
+        for row in &table.body_rows {
+            let Some(check_signal_cell) = row.get(check_signal_col) else {
+                continue;
+            };
+            let check_signal = check_signal_cell
+                .text
+                .split_whitespace()
+                .next()
+                .unwrap_or("")
+                .to_ascii_uppercase();
+            if !is_hardware_signal_token(&check_signal)
+                || is_signal_synthesis_non_signal(&check_signal)
+                || relations_by_signal.contains_key(&check_signal)
+            {
+                continue;
+            }
+
+            let Some(covered_signal_cell) = row.get(covered_signal_col) else {
+                continue;
+            };
+            let covered_signals = collect_hardware_signal_tokens(&covered_signal_cell.text)
+                .into_iter()
+                .filter(|signal_name| relations_by_signal.contains_key(signal_name))
+                .collect::<Vec<_>>();
+            if covered_signals.is_empty() {
+                continue;
+            }
+
+            let mut inherited_pairs = covered_signals
+                .iter()
+                .flat_map(|signal_name| relations_by_signal.get(signal_name).into_iter().flatten())
+                .cloned()
+                .collect::<Vec<_>>();
+            inherited_pairs.sort_by(|left, right| {
+                let left_relation_rank = matches!(left.1, RelationKind::Reads) as u8;
+                let right_relation_rank = matches!(right.1, RelationKind::Reads) as u8;
+                left.0
+                    .cmp(&right.0)
+                    .then_with(|| left_relation_rank.cmp(&right_relation_rank))
+            });
+            inherited_pairs.dedup();
+            if inherited_pairs.is_empty() {
+                continue;
+            }
+
+            for (actor_name, relation) in inherited_pairs {
+                let key = (
+                    actor_name.clone(),
+                    check_signal.clone(),
+                    matches!(relation, RelationKind::Drives) as u8,
+                );
+                if !existing_keys.insert(key) {
+                    continue;
+                }
+                augmented.push(ActorSignalRelation {
+                    relation_id: format!("chk_asr_{counter:04}"),
+                    actor_name,
+                    signal_name: check_signal.clone(),
+                    relation,
+                    source_statement_ids: vec![table.table_id.clone()],
+                    automation_confidence: AutomationConfidence::Medium,
+                });
+                counter += 1;
+            }
+        }
+    }
+
+    augmented
+}
+
 /// Collect hardware signal widths from signal-description table Width columns.
 /// Returns a map of signal_name → WidthHint.
 /// Used to enrich KG-synthesized direction declarations with width information
@@ -4419,6 +4538,36 @@ fn strip_signal_mentions_from_semantic_hint_text<'a>(
     output
 }
 
+fn collect_hardware_signal_tokens(text: &str) -> Vec<String> {
+    let mut tokens = Vec::new();
+    let mut current = String::new();
+
+    let flush_token = |current: &mut String, tokens: &mut Vec<String>| {
+        if current.is_empty() {
+            return;
+        }
+        let token = current.to_ascii_uppercase();
+        if is_hardware_signal_token(&token)
+            && !is_signal_synthesis_non_signal(&token)
+            && !tokens.contains(&token)
+        {
+            tokens.push(token);
+        }
+        current.clear();
+    };
+
+    for ch in text.chars() {
+        if ch.is_ascii_alphanumeric() || ch == '_' {
+            current.push(ch);
+        } else {
+            flush_token(&mut current, &mut tokens);
+        }
+    }
+    flush_token(&mut current, &mut tokens);
+
+    tokens
+}
+
 /// Infer signal direction from a section kind + title for signal description tables.
 fn direction_for_actor_taxonomy_role(
     role: ActorTaxonomyRole,
@@ -5698,6 +5847,11 @@ fn converge_evidence_extractions(
         let mut actor_signal_relations =
             extract_actor_signal_relations(&extracted_statements, &known_signals);
         actor_signal_relations.extend(table_relations.iter().cloned());
+        let actor_signal_relations = augment_check_signal_relations_from_tables(
+            source_ir,
+            &actor_signal_relations,
+            prior_guidance,
+        );
         let actor_signal_relations = dedup_actor_signal_relations(actor_signal_relations);
 
         let already_declared = collect_known_signal_names(&extracted_statements);
@@ -6857,6 +7011,121 @@ mod tests {
             "ambiguous opposite actors must block complementary read inference: {:?}",
             relations
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn check_signal_tables_inherit_relations_from_covered_signals() -> Result<()> {
+        use crate::ir::source::RelationKind;
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Signals\n",
+                "Signal XREQ is output width 1.\n",
+                "Signal XACK is input width 1.\n",
+                "Signal XREQCHK is output width 1.\n",
+                "Signal XACKCHK is input width 1.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_signal_desc".to_string(),
+            asset_id: "asset_signal_desc".to_string(),
+            page_id: None,
+            caption_text: Some("Source-oriented signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Source", true),
+                make_table_cell("Width", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("XREQ", false),
+                    make_table_cell("Requester", false),
+                    make_table_cell("1", false),
+                    make_table_cell("Transfer request", false),
+                ],
+                vec![
+                    make_table_cell("XACK", false),
+                    make_table_cell("Completer", false),
+                    make_table_cell("1", false),
+                    make_table_cell("Transfer response", false),
+                ],
+            ],
+            row_count: 2,
+            col_count: 4,
+        });
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_check_desc".to_string(),
+            asset_id: "asset_check_desc".to_string(),
+            page_id: None,
+            caption_text: Some("Parity check signals".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Check Signal", true),
+                make_table_cell("Signals Covered", true),
+                make_table_cell("Width", true),
+                make_table_cell("Granularity", true),
+                make_table_cell("Check Enable", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("XREQCHK", false),
+                    make_table_cell("XREQ 1", false),
+                    make_table_cell("1", false),
+                    make_table_cell("XREQ", false),
+                    make_table_cell("", false),
+                ],
+                vec![
+                    make_table_cell("XACKCHK", false),
+                    make_table_cell("XACK 1", false),
+                    make_table_cell("1", false),
+                    make_table_cell("", false),
+                    make_table_cell("XACK", false),
+                ],
+            ],
+            row_count: 2,
+            col_count: 5,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        assert!(evidence_ir.actor_signal_relations.iter().any(|relation| {
+            relation.actor_name == "Requester"
+                && relation.signal_name == "XREQCHK"
+                && matches!(relation.relation, RelationKind::Drives)
+        }));
+        assert!(evidence_ir.actor_signal_relations.iter().any(|relation| {
+            relation.actor_name == "Completer"
+                && relation.signal_name == "XREQCHK"
+                && matches!(relation.relation, RelationKind::Reads)
+        }));
+        assert!(evidence_ir.actor_signal_relations.iter().any(|relation| {
+            relation.actor_name == "Completer"
+                && relation.signal_name == "XACKCHK"
+                && matches!(relation.relation, RelationKind::Drives)
+        }));
+        assert!(evidence_ir.actor_signal_relations.iter().any(|relation| {
+            relation.actor_name == "Requester"
+                && relation.signal_name == "XACKCHK"
+                && matches!(relation.relation, RelationKind::Reads)
+        }));
 
         Ok(())
     }
