@@ -1406,6 +1406,7 @@ mod tests {
             signal_connectivity: Vec::new(),
             interface_signal_conflicts: Vec::new(),
             signal_connectivity_conflicts: Vec::new(),
+            signal_polarities: Vec::new(),
             signal_polarity_conflicts: Vec::new(),
             signal_semantic_conflicts: Vec::new(),
             interfaces: Vec::new(),

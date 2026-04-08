@@ -1,11 +1,14 @@
 # CHANGES
 
-## 2026-04-08 (temporal conflict synonyms now normalize away safely)
+## 2026-04-08 (temporal conflict comparison is now polarity-aware)
 
-### Fixed: boolean-equivalent temporal values no longer create fake conflicts
-- Extended [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so temporal-conflict detection now canonicalizes boolean-like value synonyms before conflict grouping.
-- `ASSERTED`, `HIGH`, `1`, and `TRUE` now collapse into the same positive temporal value class, and `DEASSERTED`, `LOW`, `0`, and `FALSE` collapse into the same negative class.
-- This keeps original rule text and predicate values intact for provenance while preventing fake contradictions like `TLAST must be ASSERTED` versus `TLAST must be HIGH`.
+### Fixed: asserted/deasserted temporal semantics now respect signal polarity
+- Extended [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs), [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs), and [intent.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/intent.rs) so resolved signal polarity now survives into canonical IR and can guide temporal-conflict comparison.
+- `ASSERTED` and `DEASSERTED` are now treated as polarity-relative assertion semantics, not as fixed synonyms for `HIGH` and `LOW`.
+- When the current document grounds polarity, conflict detection now maps assertion semantics through that local polarity:
+  - active-high: `ASSERTED -> HIGH`, `DEASSERTED -> LOW`
+  - active-low: `ASSERTED -> LOW`, `DEASSERTED -> HIGH`
+- When polarity is still unknown, `ASSERTED` stays abstract instead of manufacturing or suppressing a level conflict.
 
 ### Changed: AXI-Stream timing semantics are now cleaner again without changing the score
 - Rebuilt `SemanticIR` and `IntentIR` for AXI-Stream from the current `EvidenceIR`, re-validated the artifact, and refreshed the tracked four-document projection.
@@ -16,7 +19,8 @@
 
 ### Validation
 - `cargo test --manifest-path Cargo.toml derives_typed_temporal_conflicts_from_conflicting_value_rules -- --nocapture` → passed
-- `cargo test --manifest-path Cargo.toml asserted_and_high_do_not_form_temporal_conflicts -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml asserted_and_high_do_not_form_temporal_conflicts_without_known_polarity -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml asserted_and_high_form_temporal_conflict_for_active_low_signal -- --nocapture` → passed
 - `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/evidence_ir.json` → passed
 - `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/semantic_ir.json` → passed
 - `cargo run --manifest-path Cargo.toml -- validate generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json` → passed (`90/100 EXCELLENT`, `temporal_conflicts: 0`)

@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::evidence::{
-    EvidenceIr, SignalPolarityConflictRecord, SignalSemanticConflictRecord,
+    EvidenceIr, SignalPolarityConflictRecord, SignalPolarityRecord, SignalSemanticConflictRecord,
     SignalSemanticHintRecord, SignalSemanticHintSourceKind, SignalSemanticTag, StatementClass,
     VisualEvidenceRole, VisualObservationKind, parse_visual_observation_json,
 };
@@ -35,6 +35,8 @@ pub struct SemanticIr {
     pub interface_signal_conflicts: Vec<InterfaceSignalConflictRecord>,
     #[serde(default)]
     pub signal_connectivity_conflicts: Vec<SignalConnectivityConflictRecord>,
+    #[serde(default)]
+    pub signal_polarities: Vec<SignalPolarityRecord>,
     #[serde(default)]
     pub signal_polarity_conflicts: Vec<SignalPolarityConflictRecord>,
     #[serde(default)]
@@ -133,6 +135,7 @@ impl SemanticIr {
         let signal_connectivity = build_signal_connectivity(&actor_ports, system_contract.as_ref());
         let signal_connectivity_conflicts =
             build_signal_connectivity_conflicts(signal_connectivity.as_slice());
+        let signal_polarities = evidence_ir.signal_polarities.clone();
         let signal_polarity_conflicts = evidence_ir.signal_polarity_conflicts.clone();
         let signal_semantic_conflicts = evidence_ir.signal_semantic_conflicts.clone();
         let phases = build_phases(&context);
@@ -221,7 +224,11 @@ impl SemanticIr {
             &known_actor_names,
             prior_guidance.as_ref(),
         );
-        let temporal_conflicts = build_temporal_conflicts(&temporal_rules);
+        let temporal_conflicts = build_temporal_conflicts(
+            &temporal_rules,
+            signal_polarities.as_slice(),
+            system_contract.as_ref(),
+        );
         let residual_decisions = build_residual_decisions(
             &context,
             &interfaces,
@@ -263,6 +270,7 @@ impl SemanticIr {
             signal_connectivity,
             interface_signal_conflicts,
             signal_connectivity_conflicts,
+            signal_polarities,
             signal_polarity_conflicts,
             signal_semantic_conflicts,
             interfaces,
@@ -1437,10 +1445,58 @@ struct TemporalConflictAccumulator {
     cycle_window: Option<CycleWindowRecord>,
     signal_name: String,
     phase: TickPhase,
+    observed_values: BTreeMap<TemporalConflictComparableValue, TemporalConflictValueSupport>,
+    automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone)]
+struct TemporalConflictEmission {
+    clock_signal: Option<String>,
+    edge: ClockEdge,
+    antecedents: Vec<TemporalPredicateRecord>,
+    cycle_window: Option<CycleWindowRecord>,
+    signal_name: String,
+    phase: TickPhase,
     conflicting_values: BTreeSet<String>,
     supporting_rule_ids: BTreeSet<String>,
     supporting_statement_ids: BTreeSet<String>,
     automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+enum TemporalConflictComparableValue {
+    Level(String),
+    Assertion(String),
+    Symbolic(String),
+}
+
+impl TemporalConflictComparableValue {
+    fn domain(&self) -> TemporalConflictValueDomain {
+        match self {
+            Self::Level(_) => TemporalConflictValueDomain::Level,
+            Self::Assertion(_) => TemporalConflictValueDomain::Assertion,
+            Self::Symbolic(_) => TemporalConflictValueDomain::Symbolic,
+        }
+    }
+
+    fn display_value(&self) -> String {
+        match self {
+            Self::Level(value) | Self::Assertion(value) | Self::Symbolic(value) => value.clone(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum TemporalConflictValueDomain {
+    Level,
+    Assertion,
+    Symbolic,
+}
+
+#[derive(Debug, Clone, Default)]
+struct TemporalConflictValueSupport {
+    supporting_rule_ids: BTreeSet<String>,
+    supporting_statement_ids: BTreeSet<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -6942,8 +6998,14 @@ fn dedup_temporal_rules(rules: Vec<TemporalRuleRecord>) -> Vec<TemporalRuleRecor
     deduped
 }
 
-fn build_temporal_conflicts(temporal_rules: &[TemporalRuleRecord]) -> Vec<TemporalConflictRecord> {
+fn build_temporal_conflicts(
+    temporal_rules: &[TemporalRuleRecord],
+    signal_polarities: &[SignalPolarityRecord],
+    system_contract: Option<&SystemContractRecord>,
+) -> Vec<TemporalConflictRecord> {
     let mut accumulators = BTreeMap::<String, TemporalConflictAccumulator>::new();
+    let signal_polarity_by_signal =
+        build_signal_polarity_lookup(signal_polarities, system_contract);
 
     for rule in temporal_rules {
         for predicate in &rule.consequents {
@@ -6966,16 +7028,14 @@ fn build_temporal_conflicts(temporal_rules: &[TemporalRuleRecord]) -> Vec<Tempor
                     cycle_window: rule.cycle_window.clone(),
                     signal_name: signal_name.clone(),
                     phase: *phase,
-                    conflicting_values: BTreeSet::new(),
-                    supporting_rule_ids: BTreeSet::new(),
-                    supporting_statement_ids: BTreeSet::new(),
+                    observed_values: BTreeMap::new(),
                     automation_confidence: rule.automation_confidence,
                 });
-            entry
-                .conflicting_values
-                .insert(canonicalize_temporal_conflict_value(value));
-            entry.supporting_rule_ids.insert(rule.rule_id.clone());
-            entry
+            let normalized_value =
+                normalize_temporal_conflict_value(value, signal_name, &signal_polarity_by_signal);
+            let support = entry.observed_values.entry(normalized_value).or_default();
+            support.supporting_rule_ids.insert(rule.rule_id.clone());
+            support
                 .supporting_statement_ids
                 .extend(rule.supporting_statement_ids.iter().cloned());
             entry.automation_confidence =
@@ -6985,20 +7045,20 @@ fn build_temporal_conflicts(temporal_rules: &[TemporalRuleRecord]) -> Vec<Tempor
 
     accumulators
         .into_iter()
-        .filter_map(|(_, entry)| (entry.conflicting_values.len() > 1).then_some(entry))
+        .flat_map(|(_, entry)| temporal_conflict_records_from_accumulator(entry))
         .enumerate()
-        .map(|(index, entry)| TemporalConflictRecord {
+        .map(|(index, emission)| TemporalConflictRecord {
             conflict_id: format!("temporal_conflict_{:04}", index + 1),
-            clock_signal: entry.clock_signal,
-            edge: entry.edge,
-            antecedents: entry.antecedents,
-            cycle_window: entry.cycle_window,
-            signal_name: entry.signal_name,
-            phase: entry.phase,
-            conflicting_values: entry.conflicting_values.into_iter().collect(),
-            supporting_rule_ids: entry.supporting_rule_ids.into_iter().collect(),
-            supporting_statement_ids: entry.supporting_statement_ids.into_iter().collect(),
-            automation_confidence: entry.automation_confidence,
+            clock_signal: emission.clock_signal,
+            edge: emission.edge,
+            antecedents: emission.antecedents,
+            cycle_window: emission.cycle_window,
+            signal_name: emission.signal_name,
+            phase: emission.phase,
+            conflicting_values: emission.conflicting_values.into_iter().collect(),
+            supporting_rule_ids: emission.supporting_rule_ids.into_iter().collect(),
+            supporting_statement_ids: emission.supporting_statement_ids.into_iter().collect(),
+            automation_confidence: emission.automation_confidence,
         })
         .collect()
 }
@@ -7031,12 +7091,103 @@ fn temporal_conflict_group_key(
     })
 }
 
-fn canonicalize_temporal_conflict_value(value: &str) -> String {
-    match value.trim().to_ascii_uppercase().as_str() {
-        "ASSERTED" | "HIGH" | "1" | "TRUE" => "HIGH".to_string(),
-        "DEASSERTED" | "LOW" | "0" | "FALSE" => "LOW".to_string(),
-        other => other.to_string(),
+fn build_signal_polarity_lookup(
+    signal_polarities: &[SignalPolarityRecord],
+    system_contract: Option<&SystemContractRecord>,
+) -> HashMap<String, crate::ir::evidence::SignalPolarity> {
+    let mut polarity_by_signal = signal_polarities
+        .iter()
+        .map(|record| (record.signal_name.clone(), record.polarity))
+        .collect::<HashMap<_, _>>();
+
+    if let Some(system_contract) = system_contract {
+        polarity_by_signal
+            .entry(system_contract.reset_signal.clone())
+            .or_insert_with(|| match system_contract.reset_polarity {
+                SystemResetPolarity::ActiveHigh => crate::ir::evidence::SignalPolarity::ActiveHigh,
+                SystemResetPolarity::ActiveLow => crate::ir::evidence::SignalPolarity::ActiveLow,
+            });
     }
+
+    polarity_by_signal
+}
+
+fn normalize_temporal_conflict_value(
+    value: &str,
+    signal_name: &str,
+    signal_polarity_by_signal: &HashMap<String, crate::ir::evidence::SignalPolarity>,
+) -> TemporalConflictComparableValue {
+    match value.trim().to_ascii_uppercase().as_str() {
+        "HIGH" | "1" | "TRUE" => TemporalConflictComparableValue::Level("HIGH".to_string()),
+        "LOW" | "0" | "FALSE" => TemporalConflictComparableValue::Level("LOW".to_string()),
+        "ASSERTED" => match signal_polarity_by_signal.get(signal_name) {
+            Some(crate::ir::evidence::SignalPolarity::ActiveHigh) => {
+                TemporalConflictComparableValue::Level("HIGH".to_string())
+            }
+            Some(crate::ir::evidence::SignalPolarity::ActiveLow) => {
+                TemporalConflictComparableValue::Level("LOW".to_string())
+            }
+            None => TemporalConflictComparableValue::Assertion("ASSERTED".to_string()),
+        },
+        "DEASSERTED" => match signal_polarity_by_signal.get(signal_name) {
+            Some(crate::ir::evidence::SignalPolarity::ActiveHigh) => {
+                TemporalConflictComparableValue::Level("LOW".to_string())
+            }
+            Some(crate::ir::evidence::SignalPolarity::ActiveLow) => {
+                TemporalConflictComparableValue::Level("HIGH".to_string())
+            }
+            None => TemporalConflictComparableValue::Assertion("DEASSERTED".to_string()),
+        },
+        other => TemporalConflictComparableValue::Symbolic(other.to_string()),
+    }
+}
+
+fn temporal_conflict_records_from_accumulator(
+    entry: TemporalConflictAccumulator,
+) -> Vec<TemporalConflictEmission> {
+    let mut emitted = Vec::new();
+    for domain in [
+        TemporalConflictValueDomain::Level,
+        TemporalConflictValueDomain::Assertion,
+        TemporalConflictValueDomain::Symbolic,
+    ] {
+        let matching_values = entry
+            .observed_values
+            .iter()
+            .filter(|(value, _)| value.domain() == domain)
+            .collect::<Vec<_>>();
+        if matching_values.len() <= 1 {
+            continue;
+        }
+
+        let conflicting_values = matching_values
+            .iter()
+            .map(|(value, _)| value.display_value())
+            .collect::<BTreeSet<_>>();
+        let supporting_rule_ids = matching_values
+            .iter()
+            .flat_map(|(_, support)| support.supporting_rule_ids.iter().cloned())
+            .collect::<BTreeSet<_>>();
+        let supporting_statement_ids = matching_values
+            .iter()
+            .flat_map(|(_, support)| support.supporting_statement_ids.iter().cloned())
+            .collect::<BTreeSet<_>>();
+
+        emitted.push(TemporalConflictEmission {
+            clock_signal: entry.clock_signal.clone(),
+            edge: entry.edge,
+            antecedents: entry.antecedents.clone(),
+            cycle_window: entry.cycle_window.clone(),
+            signal_name: entry.signal_name.clone(),
+            phase: entry.phase,
+            conflicting_values,
+            supporting_rule_ids,
+            supporting_statement_ids,
+            automation_confidence: entry.automation_confidence,
+        });
+    }
+
+    emitted
 }
 
 fn unique_producer_by_signal(
@@ -11233,7 +11384,7 @@ mod tests {
     }
 
     #[test]
-    fn asserted_and_high_do_not_form_temporal_conflicts() -> Result<()> {
+    fn asserted_and_high_do_not_form_temporal_conflicts_without_known_polarity() -> Result<()> {
         use crate::ir::evidence::EvidenceIr;
         use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
 
@@ -11291,7 +11442,75 @@ mod tests {
 
         assert!(
             semantic_ir.temporal_conflicts.is_empty(),
-            "ASSERTED/HIGH should be treated as equivalent temporal values"
+            "ASSERTED must stay polarity-relative when the signal polarity is unknown"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn asserted_and_high_form_temporal_conflict_for_active_low_signal() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("temporal_active_low_values.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal ARESETN is input width 1.\n\n",
+                "Clock clk.\n\n",
+                "ARESETN is an active low reset signal.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_aresetn_asserted".to_string(),
+            subject_signal: "ARESETN".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "ARESETN must be asserted.".to_string(),
+            supporting_statement_ids: vec!["stmt_aresetn_asserted".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_aresetn_high".to_string(),
+            subject_signal: "ARESETN".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeHigh,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "ARESETN must be HIGH.".to_string(),
+            supporting_statement_ids: vec!["stmt_aresetn_high".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        assert_eq!(semantic_ir.temporal_conflicts.len(), 1);
+        let conflict = &semantic_ir.temporal_conflicts[0];
+        assert_eq!(conflict.signal_name, "ARESETN");
+        assert_eq!(
+            conflict.conflicting_values,
+            vec!["HIGH".to_string(), "LOW".to_string()]
         );
 
         Ok(())

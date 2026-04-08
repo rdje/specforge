@@ -1246,6 +1246,27 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 - this is still only the first contradiction slice; it does not yet arbitrate between prose/table/figure evidence or handle richer predicate clashes like stability-vs-transition or actor-vs-actor disagreements
 - broader temporal arbitration remains a follow-on task, not something this slice pretends to solve
 
+## Polarity-aware assertion semantics in temporal conflicts (2026-04-08)
+
+### Why this matters
+- `ASSERTED` and `DEASSERTED` are not fixed level semantics on their own
+- for any single-bit control signal, assertion semantics are defined by the signal polarity
+- active-low controls like `ARESETN` and `rst_n` are asserted when `LOW`, not when `HIGH`
+
+### Steering rule
+- temporal conflict detection must never treat `ASSERTED == HIGH` or `DEASSERTED == LOW` as universal truths
+- instead, assertion semantics should only collapse into level semantics when the current document grounds the signal polarity
+- when polarity is unknown, assertion semantics should stay abstract so the pipeline does not fabricate or hide contradictions
+
+### Current implementation shape
+- `EvidenceIR` now persists resolved `signal_polarities`, not just `signal_polarity_conflicts`
+- `SemanticIR` and `IntentIR` now carry that polarity surface downstream
+- temporal conflict grouping now compares values in a polarity-aware way:
+  - active-high: `ASSERTED -> HIGH`, `DEASSERTED -> LOW`
+  - active-low: `ASSERTED -> LOW`, `DEASSERTED -> HIGH`
+  - unknown polarity: `ASSERTED` / `DEASSERTED` remain assertion-domain values
+- this keeps `ARESETN`-style active-low semantics correct without flattening unknown-polarity control signals into unsafe level assumptions
+
 ## Signal-table polarity refinement in convergent EvidenceIR (2026-04-04)
 
 ### Why this slice landed now

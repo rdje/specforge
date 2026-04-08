@@ -119,6 +119,11 @@ pub struct EvidenceIr {
     /// Level 2 NLP: structured records extracted from `ConditionalRule` sentences.
     #[serde(default)]
     pub conditional_rules: Vec<ConditionalRuleRecord>,
+    /// Resolved signal polarity facts recovered from prose/table evidence.
+    /// These remain explicit so downstream layers can interpret asserted/deasserted
+    /// semantics without blindly collapsing them to HIGH/LOW.
+    #[serde(default)]
+    pub signal_polarities: Vec<SignalPolarityRecord>,
     /// Explicit conflicts where polarity evidence disagrees across prose/table sources.
     /// These conflicts stay visible instead of silently collapsing into a neutral fallback.
     #[serde(default)]
@@ -484,6 +489,7 @@ impl EvidenceIr {
             extracted_statements,
             signal_constraints,
             conditional_rules,
+            signal_polarities,
             signal_polarity_conflicts,
             actor_signal_relations,
         ) = converge_evidence_extractions(
@@ -513,6 +519,7 @@ impl EvidenceIr {
             timing_constraints,
             signal_constraints,
             conditional_rules,
+            signal_polarities,
             signal_polarity_conflicts,
             signal_semantic_hints: Vec::new(),
             signal_semantic_conflicts: Vec::new(),
@@ -728,6 +735,17 @@ pub struct SignalPolarityObservationRecord {
     pub supporting_statement_ids: Vec<String>,
     #[serde(default)]
     pub supporting_table_ids: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct SignalPolarityRecord {
+    pub signal_name: String,
+    pub polarity: SignalPolarity,
+    #[serde(default)]
+    pub supporting_statement_ids: Vec<String>,
+    #[serde(default)]
+    pub supporting_table_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -2916,6 +2934,7 @@ fn contains_reference_token(text: &str, token: &str) -> bool {
 #[derive(Debug, Clone, Default)]
 struct SignalPolarityFactCollection {
     resolved: HashMap<String, SignalPolarity>,
+    resolved_records: Vec<SignalPolarityRecord>,
     conflicts: Vec<SignalPolarityConflictRecord>,
 }
 
@@ -3355,6 +3374,7 @@ fn collect_signal_polarity_facts(
     }
 
     let mut resolved = HashMap::new();
+    let mut resolved_records = Vec::new();
     let mut conflicts = Vec::new();
     let mut conflict_counter = 1usize;
 
@@ -3365,7 +3385,27 @@ fn collect_signal_polarity_facts(
             .collect::<BTreeSet<_>>();
         if polarities.len() == 1 {
             if let Some(polarity) = polarities.iter().next().copied() {
-                resolved.insert(signal_name, polarity);
+                let mut supporting_statement_ids = observations
+                    .iter()
+                    .flat_map(|observation| observation.supporting_statement_ids.iter().cloned())
+                    .collect::<Vec<_>>();
+                let mut supporting_table_ids = observations
+                    .iter()
+                    .flat_map(|observation| observation.supporting_table_ids.iter().cloned())
+                    .collect::<Vec<_>>();
+                supporting_statement_ids.sort();
+                supporting_statement_ids.dedup();
+                supporting_table_ids.sort();
+                supporting_table_ids.dedup();
+
+                resolved.insert(signal_name.clone(), polarity);
+                resolved_records.push(SignalPolarityRecord {
+                    signal_name,
+                    polarity,
+                    supporting_statement_ids,
+                    supporting_table_ids,
+                    automation_confidence: AutomationConfidence::Medium,
+                });
             }
             continue;
         }
@@ -3381,6 +3421,7 @@ fn collect_signal_polarity_facts(
 
     SignalPolarityFactCollection {
         resolved,
+        resolved_records,
         conflicts,
     }
 }
@@ -5927,6 +5968,7 @@ fn converge_evidence_extractions(
     Vec<ExtractedStatement>,
     Vec<SignalConstraintRecord>,
     Vec<ConditionalRuleRecord>,
+    Vec<SignalPolarityRecord>,
     Vec<SignalPolarityConflictRecord>,
     Vec<ActorSignalRelation>,
 ) {
@@ -5938,6 +5980,7 @@ fn converge_evidence_extractions(
     let mut final_extracted_statements = Vec::new();
     let mut final_signal_constraints = Vec::new();
     let mut final_conditional_rules = Vec::new();
+    let mut final_signal_polarities = Vec::new();
     let mut final_signal_polarity_conflicts = Vec::new();
     let mut final_actor_signal_relations = Vec::new();
     let max_passes = source_ir.structured_tables.len().max(1) + 4;
@@ -6009,6 +6052,7 @@ fn converge_evidence_extractions(
         final_extracted_statements = extracted_statements;
         final_signal_constraints = signal_constraints;
         final_conditional_rules = conditional_rules;
+        final_signal_polarities = signal_polarity.resolved_records;
         final_signal_polarity_conflicts = signal_polarity.conflicts;
         final_actor_signal_relations = actor_signal_relations;
 
@@ -6022,6 +6066,7 @@ fn converge_evidence_extractions(
         final_extracted_statements,
         final_signal_constraints,
         final_conditional_rules,
+        final_signal_polarities,
         final_signal_polarity_conflicts,
         final_actor_signal_relations,
     )

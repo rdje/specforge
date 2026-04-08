@@ -36,6 +36,7 @@ Use it first for the project objective, document navigation, and the current imp
 - `specforge adapt --target fsm` now computes and materializes typed adapter artifacts at `generated/adapters/fsm/<document_key>/adapter.json`
 - `specforge converge <source> --target fsm` now ingests once, runs Ollama-backed VLM figure enrichment and NLP Level 3 by default, rebuilds the downstream IR stages, and stops when the persisted knowledge snapshot is stable across passes; use `--vlm-provider skip` and/or `--nlp-provider skip` only when you explicitly want a narrower run
 - the intended architecture is not "teach code to understand unrestricted English"; it is "teach the pipeline to recover typed protocol facts from multimodal evidence and validate them aggressively"
+- temporal arbitration is now polarity-aware too: `ASSERTED` / `DEASSERTED` only collapse to `HIGH` / `LOW` when the current document actually grounds signal polarity
 - `specforge validate <artifact>` now writes a deterministic stage-local `validation_report.json` sidecar and backannotates the latest report into the artifact's `validation_reports` field
 - `specforge project-validation <artifact>...` now validates the passed artifacts and refreshes the tracked validation snapshot docs from their persisted reports
 - `specforge kg-bench` now runs tracked KG-quality fixtures through the staged pipeline, so gold expectations, negative expectations, residual quality, and conflict surfacing can be checked explicitly instead of relying only on aggregate scores

@@ -6,7 +6,9 @@ use serde::{Deserialize, Serialize};
 
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
-use crate::ir::evidence::{SignalPolarityConflictRecord, SignalSemanticConflictRecord};
+use crate::ir::evidence::{
+    SignalPolarityConflictRecord, SignalPolarityRecord, SignalSemanticConflictRecord,
+};
 use crate::ir::semantic::{
     ActorPortRecord, ConditionalRuleRecord, ControlBlockRecord, DecisionTreeFragmentRecord,
     ExplicitModuleRecord, ExplicitTopRecord, InitAssignmentRecord, InterfaceRecord,
@@ -39,6 +41,8 @@ pub struct IntentIr {
     pub interface_signal_conflicts: Vec<InterfaceSignalConflictRecord>,
     #[serde(default)]
     pub signal_connectivity_conflicts: Vec<SignalConnectivityConflictRecord>,
+    #[serde(default)]
+    pub signal_polarities: Vec<SignalPolarityRecord>,
     #[serde(default)]
     pub signal_polarity_conflicts: Vec<SignalPolarityConflictRecord>,
     #[serde(default)]
@@ -126,6 +130,7 @@ impl IntentIr {
         let signal_connectivity = semantic_ir.signal_connectivity.clone();
         let interface_signal_conflicts = semantic_ir.interface_signal_conflicts.clone();
         let signal_connectivity_conflicts = semantic_ir.signal_connectivity_conflicts.clone();
+        let signal_polarities = semantic_ir.signal_polarities.clone();
         let signal_polarity_conflicts = semantic_ir.signal_polarity_conflicts.clone();
         let signal_semantic_conflicts = semantic_ir.signal_semantic_conflicts.clone();
         let interfaces = semantic_ir.interfaces.clone();
@@ -181,6 +186,7 @@ impl IntentIr {
             signal_connectivity,
             interface_signal_conflicts,
             signal_connectivity_conflicts,
+            signal_polarities,
             signal_polarity_conflicts,
             signal_semantic_conflicts,
             interfaces,
