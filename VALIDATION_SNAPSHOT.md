@@ -9,7 +9,7 @@ It summarizes the latest persisted validation reports projected from IR artifact
   - `IHI0022_L_2025-08_AMBA_AXI_Protocol_Specification.pdf` (`intent_ir`): `94/100 EXCELLENT`
   - `IHI0024_D_2021-04_AMBA_APB_Protocol_Specification.pdf` (`intent_ir`): `95/100 EXCELLENT`
   - `IHI0033_C_2021-09_AMBA_5_AHB_Protocol_Specification.pdf` (`intent_ir`): `95/100 EXCELLENT`
-  - `IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf` (`intent_ir`): `88/100 GOOD`
+  - `IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf` (`intent_ir`): `90/100 EXCELLENT`
 
 ## Projected Artifacts
 ### IHI0022_L_2025-08_AMBA_AXI_Protocol_Specification.pdf (intent_ir)
@@ -48,13 +48,11 @@ It summarizes the latest persisted validation reports projected from IR artifact
 ### IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf (intent_ir)
 - document_key: `ihi0051_b_2021_04_amba_axi_stream_protocol_specification`
 - artifact_path: `generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json`
-- artifact_fingerprint: `cdbd07ec01bd1155`
-- score: `88/100 GOOD`
-- summary: IntentIR validation for IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf with 6 finding(s)
+- artifact_fingerprint: `3c08e9ca18f302ae`
+- score: `90/100 EXCELLENT`
+- summary: IntentIR validation for IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf with 4 finding(s)
 - findings:
-  - [warning:quality_score] IntentIR quality score is 88/100 (GOOD)
   - [warning:residual_decisions] IntentIR still carries 1 residual decision packet(s)
   - [warning:signal_connectivity] 2 signal(s) in IntentIR connectivity have no resolved producer actor
   - [warning:temporal_conflicts] 2 typed temporal conflict(s) detected across contradictory value obligations
-  - [info:compatibility_surface] 4 declared signal record(s) still lack flat compatibility direction hints even though actor-relative ports exist
   - [info:temporal_grounding] typed temporal rules exist, but none currently carry explicit cycle-window bounds

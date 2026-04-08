@@ -13,8 +13,8 @@ use crate::ir::prior_memory::{
 use crate::ir::semantic::InterfaceSignalSemanticRole;
 use crate::ir::source::{
     ActorSignalRelation, ConditionalRuleRecord, RegisterFieldRecord, RegisterRecord, RelationKind,
-    SignalConstraintKind, SignalConstraintRecord, TimingConstraintRecord, ValidationReportRecord,
-    WidthHint,
+    SignalConstraintKind, SignalConstraintRecord, StructuredTableCellRecord,
+    TimingConstraintRecord, ValidationReportRecord, WidthHint,
 };
 use crate::ir::source::{
     AutomationConfidence, NormalizationStatus, SectionKind, SourceIr, TableKind, VisualAsset,
@@ -1418,6 +1418,49 @@ fn collect_known_signal_names(
     names
 }
 
+fn collect_signals_with_explicit_direction_declarations(
+    statements: &[ExtractedStatement],
+) -> std::collections::HashSet<String> {
+    let mut names = std::collections::HashSet::new();
+    for stmt in statements {
+        let text = &stmt.text;
+        let lowered = text.to_ascii_lowercase();
+        for (idx, _) in lowered.match_indices("signal ") {
+            let is_declaration_start = idx == 0 || (idx >= 2 && &lowered[idx - 2..idx] == ". ");
+            if !is_declaration_start {
+                continue;
+            }
+            let tail = &lowered[idx..];
+            let sentence = tail.find('.').map(|end| &tail[..end]).unwrap_or(tail);
+            if !(sentence.contains(" is input")
+                || sentence.contains(" is output")
+                || sentence.contains(" is internal")
+                || sentence.contains(" is local"))
+            {
+                continue;
+            }
+            let name_start = idx + 7;
+            if name_start > text.len() {
+                continue;
+            }
+            let name: String = text[name_start..]
+                .split(|c: char| !c.is_ascii_alphanumeric() && c != '_')
+                .next()
+                .unwrap_or("")
+                .to_ascii_uppercase();
+            if name.len() >= 2
+                && name.len() <= 30
+                && name
+                    .chars()
+                    .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_')
+            {
+                names.insert(name);
+            }
+        }
+    }
+    names
+}
+
 /// Collect hardware signal names from ALL signal-description table rows (first column),
 /// regardless of whether direction could be determined.  This covers specs like APB and AXI
 /// where the Source/Direction column uses non-standard values ("Requester", "Completer")
@@ -1932,6 +1975,13 @@ fn augment_check_signal_relations_from_tables(
             header.contains("signals covered")
                 || (header.contains("covered") && header.contains("signal"))
         });
+        let check_enable_col = header_texts.iter().position(|header| {
+            header.contains("check enable")
+                || (header.contains("enable") && header.contains("check"))
+        });
+        let granularity_col = header_texts
+            .iter()
+            .position(|header| header.contains("granularity"));
         let (Some(check_signal_col), Some(covered_signal_col)) =
             (check_signal_col, covered_signal_col)
         else {
@@ -1958,10 +2008,12 @@ fn augment_check_signal_relations_from_tables(
             let Some(covered_signal_cell) = row.get(covered_signal_col) else {
                 continue;
             };
-            let covered_signals = collect_hardware_signal_tokens(&covered_signal_cell.text)
-                .into_iter()
-                .filter(|signal_name| relations_by_signal.contains_key(signal_name))
-                .collect::<Vec<_>>();
+            let covered_signals = collect_related_check_table_signal_tokens(
+                &covered_signal_cell.text,
+                check_enable_col.and_then(|col| row.get(col).map(|cell| cell.text.as_str())),
+                granularity_col.and_then(|col| row.get(col).map(|cell| cell.text.as_str())),
+                &relations_by_signal,
+            );
             if covered_signals.is_empty() {
                 continue;
             }
@@ -2046,22 +2098,85 @@ fn collect_signal_widths_from_tables(
             if !is_hardware_signal_token(&signal) || is_signal_synthesis_non_signal(&signal) {
                 continue;
             }
-            if let Some(width_cell) = row.get(w_col) {
-                let t = width_cell.text.trim();
-                if t.is_empty() || t == "-" || t == "N/A" {
-                    continue;
-                }
-                if let Ok(n) = t.parse::<u32>() {
-                    if n > 0 {
-                        widths.insert(signal, WidthHint::Numeric(n));
-                    }
-                } else if t.chars().any(|c| c.is_ascii_alphabetic()) {
-                    widths.insert(signal, WidthHint::Parametric(t.to_string()));
-                }
+            if let Some(width_hint) =
+                infer_signal_table_row_width_hint(row, &header_texts, Some(w_col))
+            {
+                widths.insert(signal, width_hint);
             }
         }
     }
     widths
+}
+
+fn infer_signal_table_row_width_hint(
+    row: &[StructuredTableCellRecord],
+    header_texts: &[String],
+    width_col: Option<usize>,
+) -> Option<WidthHint> {
+    if let Some(width_hint) = width_col
+        .and_then(|col| row.get(col))
+        .and_then(|cell| parse_table_width_hint_text(&cell.text))
+    {
+        return Some(width_hint);
+    }
+
+    let check_signal_col = header_texts
+        .iter()
+        .position(|header| header.contains("check signal"));
+    let covered_signal_col = header_texts.iter().position(|header| {
+        header.contains("signals covered")
+            || (header.contains("covered") && header.contains("signal"))
+    });
+    if check_signal_col.is_some() {
+        if let Some(width_hint) = covered_signal_col
+            .and_then(|col| row.get(col))
+            .and_then(|cell| parse_width_hint_from_covered_signal_cell(&cell.text))
+        {
+            return Some(width_hint);
+        }
+    }
+
+    None
+}
+
+fn parse_width_hint_from_covered_signal_cell(text: &str) -> Option<WidthHint> {
+    let trimmed = text.trim();
+    if trimmed.is_empty() {
+        return None;
+    }
+
+    let tokens = trimmed.split_whitespace().collect::<Vec<_>>();
+    if let Some(first) = tokens.first() {
+        let first_token = first.to_ascii_uppercase();
+        if is_hardware_signal_token(&first_token) && tokens.len() > 1 {
+            let remainder = tokens[1..].join(" ");
+            if let Some(width_hint) = parse_table_width_hint_text(&remainder) {
+                return Some(width_hint);
+            }
+        }
+    }
+
+    parse_table_width_hint_text(trimmed)
+}
+
+fn parse_table_width_hint_text(text: &str) -> Option<WidthHint> {
+    let trimmed = text.trim();
+    if trimmed.is_empty()
+        || matches!(trimmed, "-" | "N/A" | "n/a")
+        || trimmed.chars().all(|ch| ch == '.')
+    {
+        return None;
+    }
+
+    if let Ok(bits) = trimmed.parse::<u32>() {
+        return (bits > 0).then_some(WidthHint::Numeric(bits));
+    }
+
+    if trimmed.chars().any(|ch| ch.is_ascii_alphabetic()) {
+        return Some(WidthHint::Parametric(trimmed.to_string()));
+    }
+
+    None
 }
 
 /// Tier 2: Extract actor–signal relation triples from prose sentences using
@@ -4568,6 +4683,33 @@ fn collect_hardware_signal_tokens(text: &str) -> Vec<String> {
     tokens
 }
 
+fn collect_related_check_table_signal_tokens(
+    covered_signal_text: &str,
+    check_enable_text: Option<&str>,
+    granularity_text: Option<&str>,
+    relations_by_signal: &HashMap<String, Vec<(String, RelationKind)>>,
+) -> Vec<String> {
+    let covered_signals = collect_hardware_signal_tokens(covered_signal_text)
+        .into_iter()
+        .filter(|signal_name| relations_by_signal.contains_key(signal_name))
+        .collect::<Vec<_>>();
+    if !covered_signals.is_empty() {
+        return covered_signals;
+    }
+
+    [check_enable_text, granularity_text]
+        .into_iter()
+        .flatten()
+        .flat_map(collect_hardware_signal_tokens)
+        .filter(|signal_name| relations_by_signal.contains_key(signal_name))
+        .fold(Vec::new(), |mut signals, signal_name| {
+            if !signals.contains(&signal_name) {
+                signals.push(signal_name);
+            }
+            signals
+        })
+}
+
 /// Infer signal direction from a section kind + title for signal description tables.
 fn direction_for_actor_taxonomy_role(
     role: ActorTaxonomyRole,
@@ -5449,24 +5591,8 @@ fn synthesize_signal_declarations(
 
         // Extract width: numeric (e.g. 32) or parametric (e.g. ADDR_WIDTH, DATA_WIDTH/8).
         // Both are valid RTL port widths; parametric means the integrator sets the value.
-        let width: Option<WidthHint> = width_col.and_then(|col| {
-            row.get(col).and_then(|cell| {
-                let t = cell.text.trim();
-                // Skip empty or placeholder cells
-                if t.is_empty() || t == "-" || t == "N/A" || t == "n/a" {
-                    return None;
-                }
-                // Try numeric first (positive; no artificial upper bound — bus widths can be large)
-                if let Ok(n) = t.parse::<u32>() {
-                    return (n > 0).then_some(WidthHint::Numeric(n));
-                }
-                // Non-numeric but contains alphabetic chars → parametric expression
-                if t.chars().any(|c| c.is_ascii_alphabetic()) {
-                    return Some(WidthHint::Parametric(t.to_string()));
-                }
-                None
-            })
-        });
+        let width: Option<WidthHint> =
+            infer_signal_table_row_width_hint(row, &header_texts, width_col);
 
         let text = match (direction, &width) {
             (Some(dir), Some(WidthHint::Numeric(bits))) => {
@@ -5854,7 +5980,8 @@ fn converge_evidence_extractions(
         );
         let actor_signal_relations = dedup_actor_signal_relations(actor_signal_relations);
 
-        let already_declared = collect_known_signal_names(&extracted_statements);
+        let already_declared =
+            collect_signals_with_explicit_direction_declarations(&extracted_statements);
         let mut candidate_statements = scan_encoding_tables_by_signal_anchor(
             source_ir,
             &known_signals,
@@ -7030,8 +7157,12 @@ mod tests {
                 "# Signals\n",
                 "Signal XREQ is output width 1.\n",
                 "Signal XACK is input width 1.\n",
+                "Signal XDATA is output width DATA_WIDTH.\n",
+                "Signal XKEEP is output width DATA_WIDTH/8.\n",
                 "Signal XREQCHK is output width 1.\n",
                 "Signal XACKCHK is input width 1.\n",
+                "Signal XDATACHK is output width DATA_WIDTH/8.\n",
+                "Signal XKEEPCHK is output width DATA_WIDTH/8.\n",
             ),
         )?;
 
@@ -7062,8 +7193,20 @@ mod tests {
                     make_table_cell("1", false),
                     make_table_cell("Transfer response", false),
                 ],
+                vec![
+                    make_table_cell("XDATA", false),
+                    make_table_cell("Requester", false),
+                    make_table_cell("DATA_WIDTH", false),
+                    make_table_cell("Transfer payload", false),
+                ],
+                vec![
+                    make_table_cell("XKEEP", false),
+                    make_table_cell("Requester", false),
+                    make_table_cell("DATA_WIDTH/8", false),
+                    make_table_cell("Byte qualifier", false),
+                ],
             ],
-            row_count: 2,
+            row_count: 4,
             col_count: 4,
         });
         source_ir.structured_tables.push(StructuredTableRecord {
@@ -7095,8 +7238,22 @@ mod tests {
                     make_table_cell("", false),
                     make_table_cell("XACK", false),
                 ],
+                vec![
+                    make_table_cell("XDATACHK", false),
+                    make_table_cell("XDATA DATA_WIDTH/8", false),
+                    make_table_cell("1-8", false),
+                    make_table_cell("XREQ", false),
+                    make_table_cell("", false),
+                ],
+                vec![
+                    make_table_cell("XKEEPCHK", false),
+                    make_table_cell("DATA_WIDTH/8", false),
+                    make_table_cell("1-8", false),
+                    make_table_cell("XREQ", false),
+                    make_table_cell("XKEEP", false),
+                ],
             ],
-            row_count: 2,
+            row_count: 4,
             col_count: 5,
         });
         source_ir.write_to_disk()?;
@@ -7126,6 +7283,52 @@ mod tests {
                 && relation.signal_name == "XACKCHK"
                 && matches!(relation.relation, RelationKind::Reads)
         }));
+        assert!(evidence_ir.actor_signal_relations.iter().any(|relation| {
+            relation.actor_name == "Requester"
+                && relation.signal_name == "XDATACHK"
+                && matches!(relation.relation, RelationKind::Drives)
+        }));
+        assert!(evidence_ir.actor_signal_relations.iter().any(|relation| {
+            relation.actor_name == "Completer"
+                && relation.signal_name == "XDATACHK"
+                && matches!(relation.relation, RelationKind::Reads)
+        }));
+        assert!(evidence_ir.actor_signal_relations.iter().any(|relation| {
+            relation.actor_name == "Requester"
+                && relation.signal_name == "XKEEPCHK"
+                && matches!(relation.relation, RelationKind::Drives)
+        }));
+        assert!(evidence_ir.actor_signal_relations.iter().any(|relation| {
+            relation.actor_name == "Completer"
+                && relation.signal_name == "XKEEPCHK"
+                && matches!(relation.relation, RelationKind::Reads)
+        }));
+        let check_signal_statements = evidence_ir
+            .extracted_statements
+            .iter()
+            .filter(|statement| {
+                statement.text.contains("XDATACHK") || statement.text.contains("XKEEPCHK")
+            })
+            .map(|statement| statement.text.clone())
+            .collect::<Vec<_>>();
+        assert!(
+            evidence_ir.extracted_statements.iter().any(|statement| {
+                statement
+                    .text
+                    .contains("Signal XDATACHK is output width DATA_WIDTH/8.")
+            }),
+            "expected XDATACHK directional width statement, saw: {:?}",
+            check_signal_statements
+        );
+        assert!(
+            evidence_ir.extracted_statements.iter().any(|statement| {
+                statement
+                    .text
+                    .contains("Signal XKEEPCHK is output width DATA_WIDTH/8.")
+            }),
+            "expected XKEEPCHK directional width statement, saw: {:?}",
+            check_signal_statements
+        );
 
         Ok(())
     }

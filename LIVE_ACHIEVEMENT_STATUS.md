@@ -131,7 +131,7 @@
 ## Highest-priority remaining gap
 - Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then broaden `R15f` beyond its first actor-taxonomy / semantic / semantic-modality-reliability / temporal / table-shape prior families into visual-motif and negative-knowledge priors while expanding the honest prior-guided benchmark surface beyond the new graph-backed actor-taxonomy, temporal, semantic, visual, table-shape, and semantic-modality-reliability pairs into negative-knowledge prior-consumption fixtures
 - Latest unseen-protocol live run:
-- `IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf` converged in `2` pipeline iterations and currently validates at `88/100 GOOD`; parity-check tables now inherit structural KG ownership from their covered base signals, graph-direction coverage is now `21/21`, and the remaining main gaps are missing widths on `TDESTCHK` / `TIDCHK` / `TSTRBCHK` / `TUSERCHK` / `TWAKEUPCHK` plus missing resolved producers for `ACLK` / `ARESETN`
+- `IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf` converged in `2` pipeline iterations and currently validates at `90/100 EXCELLENT`; parity-check table semantics now recover both structural KG ownership and carried width hints for the `*CHK` surface, so declared graph-direction and width coverage are both `22/22`, and the remaining main gaps are missing resolved producers for infrastructure signals `ACLK` / `ARESETN` plus unbounded typed temporal rules and two carried temporal conflicts
 
 ## Validation Projection
 
@@ -140,10 +140,10 @@
   - `IHI0022_L_2025-08_AMBA_AXI_Protocol_Specification.pdf` (`intent_ir`): `94/100 EXCELLENT` from `generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json`
   - `IHI0024_D_2021-04_AMBA_APB_Protocol_Specification.pdf` (`intent_ir`): `95/100 EXCELLENT` from `generated/intent_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/intent_ir.json`
   - `IHI0033_C_2021-09_AMBA_5_AHB_Protocol_Specification.pdf` (`intent_ir`): `95/100 EXCELLENT` from `generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json`
-  - `IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf` (`intent_ir`): `88/100 GOOD` from `generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json`
+  - `IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf` (`intent_ir`): `90/100 EXCELLENT` from `generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json`
 - Highest-signal projected findings:
   - `IHI0022_L_2025-08_AMBA_AXI_Protocol_Specification.pdf`: [warning:residual_decisions] IntentIR still carries 2 residual decision packet(s)
   - `IHI0024_D_2021-04_AMBA_APB_Protocol_Specification.pdf`: [warning:residual_decisions] IntentIR still carries 2 residual decision packet(s)
   - `IHI0033_C_2021-09_AMBA_5_AHB_Protocol_Specification.pdf`: [warning:residual_decisions] IntentIR still carries 2 residual decision packet(s)
-  - `IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf`: [warning:quality_score] IntentIR quality score is 88/100 (GOOD)
+  - `IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf`: [warning:residual_decisions] IntentIR still carries 1 residual decision packet(s)
 <!-- validation_projection:end -->

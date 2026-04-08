@@ -1,5 +1,27 @@
 # CHANGES
 
+## 2026-04-08 (AXI-Stream parity-check width semantics now survive end to end)
+
+### Fixed: parity-check rows now recover bounded width hints from their local table semantics
+- Extended [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) so `Check Signal / Signals Covered / Width / Granularity / Check Enable` rows can recover width hints from the `Signals Covered` cell when the literal `Width` cell is only a range placeholder like `1-8`.
+- Added a bounded fallback from `Check Enable` / `Granularity` to the grounded base signal when `Signals Covered` only carries a width expression, so the structural and width semantics stay tied to local evidence instead of remaining partially orphaned.
+- Tightened graph-derived declaration synthesis so width-only statements no longer block stronger relation-grounded `Signal X is output width ...` declarations for the same signal.
+
+### Changed: AXI-Stream now validates at `90/100 EXCELLENT`
+- Re-ran full `specforge converge` with Ollama VLM + NLP Level 3 on [IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf](/Users/richarddje/Documents/livework/chipdoc/arm/amba/supporting/axi-stream/current/IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf).
+- The run still converged in `2` pipeline iterations, but the carried `*CHK` surface is now complete enough to count honestly: declared signal records rose from `21` to `22`, actor-signal relations rose from `38` to `40`, actor ports rose from `42` to `44`, signal connectivity rose from `21` to `22`, compatibility direction hints reached `22/22`, width coverage reached `22/22`, and the projected score improved from `88/100 GOOD` to `90/100 EXCELLENT`.
+- The remaining dominant gaps are now:
+  - unresolved producer attribution for infrastructure signals `ACLK` and `ARESETN`
+  - typed temporal rules that still have no explicit cycle-window bounds
+  - the two carried temporal conflicts
+
+### Validation
+- `cargo test --manifest-path Cargo.toml check_signal_tables_inherit_relations_from_covered_signals -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml source_table_relations_infer_unique_complementary_reads -- --nocapture` → passed
+- full `specforge converge` on AXI-Stream with Ollama VLM + NLP Level 3 → converged in `2` iterations
+- `cargo run --manifest-path Cargo.toml -- validate generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json` → passed (`90/100 EXCELLENT`, declared graph-direction and width coverage `22/22`)
+- `cargo run --manifest-path Cargo.toml -- project-validation generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json generated/intent_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/intent_ir.json generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json` → passed
+
 ## 2026-04-08 (AXI-Stream parity-check table now restores structural ownership)
 
 ### Fixed: parity-check tables now recover actor-signal relations from covered base signals

@@ -47,9 +47,9 @@
 - `EvidenceIR` now also has a fourth bounded prior consumer for table-shape priors, using them only when a current structured table is still `unknown`; explicit local `SourceIR.table_kind` values still win outright
 - `SemanticIR` now also has a fifth bounded prior consumer overall and a second semantic-stage one for semantic modality-reliability priors, using them only to advisory-adjust arbitration between already-present locally grounded semantic candidates while preserving the underlying conflict surface
 - the latest live four-document prior-memory run over AXI/APB/AHB/AXI-Stream now yields `16` actor-taxonomy priors, `5` semantic phrase priors, `4` semantic modality-reliability priors, `266` temporal phrase priors, and `99` table-shape priors
-- AXI-Stream is now the first unseen protocol run carried all the way through the full loopbacked path: it converged in `2` pipeline iterations with Ollama VLM + NLP Level 3, validates at `88/100 GOOD`, and its artifact is now included in the tracked validation snapshot
+- AXI-Stream is now the first unseen protocol run carried all the way through the full loopbacked path: it converged in `2` pipeline iterations with Ollama VLM + NLP Level 3, now validates at `90/100 EXCELLENT`, and its artifact is included in the tracked validation snapshot
 - AXI-Stream prose KG extraction is now hardened against bogus payload/event actors: `control information` no longer survives as a producer for `TVALID`, AXI-Stream `signal_connectivity_conflicts` is now `0`, and the latest source-table fix also closes the missing consumer-side connectivity gap
-- AXI-Stream interface coverage is now more honest too: bogus width-only `_WIDTH` symbols no longer count as declared interface signals, relation-grounded actors carry graph-backed `ACLK` / `ARESETN` input ports, and parity-check tables now recover local structural ownership for the `*CHK` surface so graph-direction coverage is `21/21`
+- AXI-Stream interface coverage is now more honest too: bogus width-only `_WIDTH` symbols no longer count as declared interface signals, relation-grounded actors carry graph-backed `ACLK` / `ARESETN` input ports, and parity-check tables now recover both local structural ownership and carried width hints for the `*CHK` surface so declared graph-direction and width coverage are both `22/22`
 - clock/reset handling now has an explicit steering rule in the live docs: those signals are infrastructure semantics, not ordinary protocol edges, so future canonical modeling should prefer dedicated infrastructure records and conservative ownership over false graph completeness
 - the learning plane now applies the same bogus-actor hygiene rule at harvest and lookup time, and the stale `control information -> requester_like` actor-taxonomy prior has been removed from local `CorpusMemory`
 - `specforge kg-bench` can now also stage a fixture-local `CorpusMemory`, and the first tracked gold/negative pair proves prior-guided temporal recovery on an unseen local phrase without leaking cross-document facts
@@ -85,6 +85,7 @@
 - removed bogus width-only `_WIDTH` pseudo-signals from canonical interface coverage and added graph-backed clock/reset input ports for relation-grounded actors
 - re-ran full `converge` on AXI-Stream after the semantic graph-coverage fix, confirmed convergence still takes `2` iterations, and refreshed the tracked validation snapshot so AXI-Stream now projects at `84/100 GOOD` with `12/16` graph-direction coverage
 - added bounded parity-check relation recovery from `Check Signal / Signals Covered` tables and re-ran AXI-Stream through the full loopbacked path; the artifact still converges in `2` iterations and now projects at `88/100 GOOD` with `21/21` graph-direction coverage
+- extended parity-check row recovery so the same local table semantics now also restore missing `*CHK` width hints and no longer let width-only statements block stronger graph-derived declarations; re-ran AXI-Stream through the full loopbacked path and the artifact now projects at `90/100 EXCELLENT` with declared graph-direction and width coverage both at `22/22`
 - logged the clock/reset infrastructure-semantics doctrine so future work does not confuse graph carry-through with ordinary producer/consumer semantics for those signals
 
 ## Current repo hygiene expectations
@@ -92,8 +93,8 @@
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
 
 ## Exact next steps
-1. recover or normalize missing widths on `TDESTCHK`, `TIDCHK`, `TSTRBCHK`, `TUSERCHK`, and `TWAKEUPCHK` so the richer AXI-Stream `*CHK` surface does not depress width coverage
-2. decide the canonical producer-attribution policy for shared infrastructure signals like `ACLK` and `ARESETN`
+1. decide the canonical producer-attribution policy for shared infrastructure signals like `ACLK` and `ARESETN`
+2. recover explicit cycle-window bounds for the remaining typed temporal rules in AXI-Stream and similar timing-rich unseen protocols
 3. broaden `R15f` beyond actor-taxonomy / semantic / semantic-modality-reliability / temporal / table-shape into visual-motif and negative-knowledge prior families
 
 ## Remaining engineering gaps after this commit
