@@ -1,5 +1,26 @@
 # CHANGES
 
+## 2026-04-08 (system-contract infrastructure signals now populate canonical interfaces)
+
+### Fixed: clock/reset signals from the system contract now reach the canonical interface surface
+- Extended [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so grounded `system_contract` clock/reset signals are synthesized into the top-level explicit interface when ordinary signal declarations do not already carry them.
+- This lets infrastructure signals like `HCLK` and `HRESETN` contribute honest canonical interface direction/width coverage, and it allows reset polarity grounded only through system-contract text to surface as `resolved_polarity` in both `SemanticIR` and `IntentIR`.
+- Added focused regressions in [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) and [validate.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/validate.rs) covering the exact system-contract-only clock/reset case at semantic and intent validation time.
+
+### Changed: AHB now reports resolved polarity in the live baseline
+- Rebuilt AHB `SemanticIR` and `IntentIR` sequentially from the current `EvidenceIR`, re-validated the artifact, and refreshed the tracked four-document projection.
+- AHB now reports `with_resolved_polarity: 1` and the live AMBA polarity line is now `1 / 1 / 1 / 1`; the overall AHB score stays `84/100 GOOD`, but the infrastructure reset polarity is now represented honestly in the canonical interface surface.
+- A full original-PDF `converge` rerun was attempted first, but the local environment currently lacks an importable `docling` runtime for `python3`, so authoritative fresh-ingest reruns remain blocked until `docling` is installed or `SPECFORGE_DOCLING_PYTHON` points at a working interpreter.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml system_contract_signals_become_explicit_interface_records -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml validate_semantic_ir_counts_system_contract_resolved_polarity -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml validate_intent_ir_counts_system_contract_resolved_polarity -- --nocapture` → passed
+- `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/evidence_ir.json` → passed
+- `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/semantic_ir.json` → passed
+- `cargo run --manifest-path Cargo.toml -- validate generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json` → passed (`84/100 GOOD`, `with_resolved_polarity: 1`)
+- `cargo run --manifest-path Cargo.toml -- project-validation generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json generated/intent_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/intent_ir.json generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json` → passed
+
 ## 2026-04-08 (resolved signal polarity now lives on canonical interface records)
 
 ### Added: canonical interface records now carry resolved polarity directly
@@ -9,7 +30,7 @@
 
 ### Changed: the live corpus now shows the gap honestly
 - Rebuilt the live AMBA `SemanticIR` / `IntentIR` artifacts, re-validated the four-document projection, and refreshed the tracked snapshot docs.
-- The canonical polarity surface is now present in the live corpus too: AXI, APB, and AXI-Stream each currently report `with_resolved_polarity: 1`, while AHB still reports `0`, so the remaining polarity work is targeted extraction coverage rather than carry-through plumbing.
+- The canonical polarity surface is now present in the live corpus too: AXI, APB, AHB, and AXI-Stream each currently report `with_resolved_polarity: 1`, so the remaining polarity work is broader non-reset control coverage rather than carry-through plumbing.
 - That refresh also replaced a stale optimistic validation snapshot: the current tracked baseline is now AXI `84/100 GOOD`, APB `84/100 GOOD`, AHB `84/100 GOOD`, and AXI-Stream `90/100 EXCELLENT`.
 
 ### Validation

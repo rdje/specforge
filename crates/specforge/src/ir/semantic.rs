@@ -1716,6 +1716,38 @@ fn build_interfaces(
         }
     }
 
+    if let Some(system_contract) = system_contract {
+        let supporting_statement_ids =
+            supporting_statement_ids_for_system_contract(context, system_contract);
+        if !supporting_statement_ids.is_empty() {
+            let entry = accumulators
+                .entry("explicit_document_interface".to_string())
+                .or_insert_with(|| InterfaceAccumulator {
+                    signals: BTreeSet::new(),
+                    signal_records: BTreeMap::new(),
+                    supporting_statement_ids: BTreeSet::new(),
+                });
+            for supporting_statement_id in &supporting_statement_ids {
+                register_interface_signal_record(
+                    entry,
+                    &system_contract.clock_signal,
+                    Some(InterfaceSignalDirection::Input),
+                    Some(WidthHint::Numeric(1)),
+                    supporting_statement_id,
+                    system_contract.automation_confidence,
+                );
+                register_interface_signal_record(
+                    entry,
+                    &system_contract.reset_signal,
+                    Some(InterfaceSignalDirection::Input),
+                    Some(WidthHint::Numeric(1)),
+                    supporting_statement_id,
+                    system_contract.automation_confidence,
+                );
+            }
+        }
+    }
+
     for hint in &context.signal_semantic_hints {
         for accumulator in accumulators.values_mut() {
             if accumulator.signal_records.contains_key(&hint.signal_name) {
@@ -7852,7 +7884,9 @@ mod tests {
     use tempfile::tempdir;
 
     use crate::error::Result;
-    use crate::ir::evidence::{EvidenceIr, EvidenceModality, ExtractedStatement, StatementClass};
+    use crate::ir::evidence::{
+        EvidenceIr, EvidenceModality, ExtractedStatement, SignalPolarity, StatementClass,
+    };
     use crate::ir::prior_memory::{
         CorpusMemory, CorpusMemoryUpdatePolicyRecord, PriorSourceArtifactRecord, ProtocolFamily,
         SemanticModalityReliabilityPriorRecord, TemporalPhrasePriorRecord,
@@ -8332,6 +8366,59 @@ mod tests {
                     }) if target_signal == "ACC" && signal_name == "DATA_IN"
                 )
         }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn system_contract_signals_become_explicit_interface_records() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("system_contract_interface.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            "# Contract\nClock HCLK.\n\nReset HRESETN is asynchronous active low.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let interface = semantic_ir
+            .interfaces
+            .iter()
+            .find(|interface| interface.interface_id == "interface_explicit_document_interface")
+            .expect("expected explicit document interface");
+        let hclk = interface
+            .signal_records
+            .iter()
+            .find(|signal| signal.signal_name == "HCLK")
+            .expect("expected HCLK interface record");
+        assert_eq!(hclk.direction_hint, Some(InterfaceSignalDirection::Input));
+        assert_eq!(hclk.width_hint, Some(WidthHint::Numeric(1)));
+        let hresetn = interface
+            .signal_records
+            .iter()
+            .find(|signal| signal.signal_name == "HRESETN")
+            .expect("expected HRESETN interface record");
+        assert_eq!(
+            hresetn.direction_hint,
+            Some(InterfaceSignalDirection::Input)
+        );
+        assert_eq!(hresetn.width_hint, Some(WidthHint::Numeric(1)));
+        assert_eq!(hresetn.resolved_polarity, Some(SignalPolarity::ActiveLow));
 
         Ok(())
     }

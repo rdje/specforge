@@ -3548,6 +3548,43 @@ mod tests {
     }
 
     #[test]
+    fn validate_semantic_ir_counts_system_contract_resolved_polarity() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("semantic_system_contract_polarity.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Reset\n",
+                "Clock HCLK.\n\n",
+                "Reset HRESETN is asynchronous active low.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let report = validate_semantic_ir(
+            &semantic_ir,
+            "system_contract_resolved_polarity".to_string(),
+        );
+        assert_eq!(metric_value(&report, "with_resolved_polarity"), Some("1"));
+
+        Ok(())
+    }
+
+    #[test]
     fn validate_semantic_ir_reports_blocked_handshake_name_fallback() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir
@@ -5446,6 +5483,47 @@ mod tests {
 
         let report = validate_intent_ir(&intent_ir, "resolved_signal_polarity".to_string());
         assert_eq!(metric_value(&report, "with_resolved_polarity"), Some("2"));
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_intent_ir_counts_system_contract_resolved_polarity() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("intent_system_contract_polarity.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Reset\n",
+                "Clock HCLK.\n\n",
+                "Reset HRESETN is asynchronous active low.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let report =
+            validate_intent_ir(&intent_ir, "system_contract_resolved_polarity".to_string());
+        assert_eq!(metric_value(&report, "with_resolved_polarity"), Some("1"));
 
         Ok(())
     }

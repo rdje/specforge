@@ -8,7 +8,7 @@ It summarizes the latest persisted validation reports projected from IR artifact
 - Score-bearing artifacts:
   - `IHI0022_L_2025-08_AMBA_AXI_Protocol_Specification.pdf` (`intent_ir`): `84/100 GOOD`
   - `IHI0024_D_2021-04_AMBA_APB_Protocol_Specification.pdf` (`intent_ir`): `84/100 GOOD`
-  - `IHI0033_C_2021-09_AMBA_5_AHB_Protocol_Specification.pdf` (`intent_ir`): `84/100 GOOD`
+  - `IHI0033_C_2021-09_AMBA_5_AHB_Protocol_Specification.pdf` (`intent_ir`): `85/100 GOOD`
   - `IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf` (`intent_ir`): `90/100 EXCELLENT`
 
 ## Projected Artifacts
@@ -45,8 +45,8 @@ It summarizes the latest persisted validation reports projected from IR artifact
 ### IHI0033_C_2021-09_AMBA_5_AHB_Protocol_Specification.pdf (intent_ir)
 - document_key: `ihi0033_c_2021_09_amba_5_ahb_protocol_specification`
 - artifact_path: `generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json`
-- artifact_fingerprint: `95add03c5110adf0`
-- score: `84/100 GOOD`
+- artifact_fingerprint: `f8146bdcf78052dd`
+- score: `85/100 GOOD`
 - summary: IntentIR validation for IHI0033_C_2021-09_AMBA_5_AHB_Protocol_Specification.pdf with 7 finding(s)
 - findings:
   - [warning:quality_score] IntentIR quality score is 84/100 (GOOD)
