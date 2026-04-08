@@ -52,6 +52,7 @@
   - default-model presence for `qwen2.5vl:7b`
   - `/v1/chat/completions`
 - this was added immediately after a fresh AXI rerun showed that Docling was fixed but a local Ollama chat-endpoint failure could still stay hidden until deep inside `converge`
+- semantic signal-token extraction is now stricter too: leading-digit hex-ish values like `0A`, `0B`, `0E`, and `0F` no longer count as signal names during heuristic interface grouping, which removes that bogus noise from the AXI-Stream semantic-stage grouping residual while preserving real names like `TVALID`, `TREADY`, and `rst_n`
 - the local `CorpusMemory` prior store now includes actor-taxonomy, semantic phrase, semantic modality-reliability, temporal, and table-shape prior families
 - the thing that materially grows to capture learning is the typed prior store itself, usually `generated/prior_memory/corpus_memory.json`; code defines the learning rules, but the accumulated experience lives in that symbolic memory artifact
 - `specforge evidence` and `specforge converge` now consult `--prior-memory generated/prior_memory/corpus_memory.json` by default, and the first bounded consumer uses actor-taxonomy priors to interpret explicit local actor terms in section headings and `Source` / `Destination` columns; width-only section-guided signal tables can now also recover structural `ActorSignalRelation::Drives` edges from that same prior-guided actor vocabulary

@@ -5107,6 +5107,14 @@ fn looks_like_signal_token(token: &str) -> bool {
         return false;
     }
 
+    let mut chars = token.chars();
+    let Some(first) = chars.next() else {
+        return false;
+    };
+    if !(first.is_ascii_alphabetic() || first == '_') {
+        return false;
+    }
+
     let has_alpha = token
         .chars()
         .any(|character| character.is_ascii_alphabetic());
@@ -11839,6 +11847,20 @@ mod tests {
         );
 
         Ok(())
+    }
+
+    #[test]
+    fn extract_signal_tokens_rejects_leading_digit_hex_like_values() {
+        let signals = super::extract_signal_tokens("0A, 0B, 0E, 0F, TVALID, TREADY, rst_n");
+
+        assert_eq!(
+            signals,
+            vec![
+                "RST_N".to_string(),
+                "TREADY".to_string(),
+                "TVALID".to_string()
+            ]
+        );
     }
 
     #[test]

@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-08 (semantic interface grouping no longer treats hex-ish values as signals)
+
+### Fixed: semantic signal-token extraction now rejects leading-digit hex-like values
+- Tightened [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so `extract_signal_tokens()` only accepts identifier-like tokens that start with an ASCII letter or underscore.
+- That means values like `0A`, `0B`, `0E`, and `0F` no longer masquerade as signals during heuristic interface extraction.
+
+### Added: regression coverage for identifier-shaped signal extraction
+- Added a focused semantic regression proving `0A`, `0B`, `0E`, and `0F` are rejected while real names like `TVALID`, `TREADY`, and `rst_n` still survive signal extraction.
+
+### Changed: the remaining AXI-Stream semantic interface-grouping residual is cleaner
+- Rebuilt the AXI-Stream `SemanticIR` path locally after the token-gate fix.
+- The remaining `semantic_interface_grouping` residual still exists, but its semantic-stage explanation no longer includes bogus hex-like pseudo-signals; the unresolved overlap is now a truer description of real interface coupling rather than tokenization noise.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml extract_signal_tokens_rejects_leading_digit_hex_like_values -- --nocapture` → passed
+- `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/evidence_ir.json` → passed
+- `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/semantic_ir.json` → passed
+
 ## 2026-04-08 (doctor now checks LM Studio fallback readiness too)
 
 ### Added: doctor now verifies the LM Studio fallback path as well as the default Ollama path
