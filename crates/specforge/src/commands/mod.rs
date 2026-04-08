@@ -1,5 +1,6 @@
 pub mod adapt;
 pub mod converge;
+pub mod doctor;
 pub mod enrich;
 pub mod evidence;
 pub mod ingest;

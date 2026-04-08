@@ -11,6 +11,7 @@ use error::Result;
 pub fn run(cli: Cli) -> Result<()> {
     match cli.command {
         Commands::Inspect(args) => commands::inspect::run(args),
+        Commands::Doctor(args) => commands::doctor::run(args),
         Commands::Converge(args) => commands::converge::run(args),
         Commands::Ingest(args) => commands::ingest::run(args),
         Commands::Evidence(args) => commands::evidence::run(args),

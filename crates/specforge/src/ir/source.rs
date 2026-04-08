@@ -7,6 +7,12 @@ use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::adapters::AdapterTarget;
 
+pub use docling_backend::{
+    DEFAULT_DOCLING_BOOTSTRAP_SCRIPT, DEFAULT_DOCLING_VENV_DIR, DOCLING_PYTHON_ENV,
+    DoclingRuntimeCandidate, DoclingRuntimeCandidateStatus, DoclingRuntimeDiagnosis,
+    DoclingRuntimeSource,
+};
+
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum SourceKind {
@@ -37,6 +43,10 @@ impl SourceKind {
             Self::Unknown => "unknown",
         }
     }
+}
+
+pub fn inspect_docling_runtime() -> Result<DoclingRuntimeDiagnosis> {
+    docling_backend::inspect_docling_runtime()
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]

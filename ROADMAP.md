@@ -81,6 +81,7 @@
   - record source identity and canonical paths
   - plan normalization into promoted artifacts
   - record parser backend identity for structured document conversion
+  - provide a stable operational Docling runtime path for fresh original-PDF ingest
   - reserve page-artifact and visual-asset manifests
   - emit a typed `SourceIR` JSON artifact
   - emit source-side residual decisions when automation is not yet safe
@@ -88,6 +89,7 @@
   - `specforge ingest` materializes `SourceIR`
   - markdown inputs are represented cleanly
   - PDF inputs materialize promoted markdown, page-artifact manifests, page metadata sidecars, metadata JSON, backend raw JSON, and visual-asset manifests
+  - Docling-backed ingest has a first-class local readiness check and repo-local bootstrap path instead of depending only on ambient `python3`
   - directory and unknown inputs produce residual decisions instead of implicit failure
 
 ### R3 EvidenceIR

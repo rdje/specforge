@@ -15,8 +15,16 @@ use super::{
 };
 
 const DOCLING_HELPER_ENV: &str = "SPECFORGE_DOCLING_HELPER";
-const DOCLING_PYTHON_ENV: &str = "SPECFORGE_DOCLING_PYTHON";
-const PYTHON_CANDIDATES: &[&str] = &["python3", "python"];
+pub const DOCLING_PYTHON_ENV: &str = "SPECFORGE_DOCLING_PYTHON";
+pub const DEFAULT_DOCLING_BOOTSTRAP_SCRIPT: &str = "scripts/bootstrap_docling.sh";
+pub const DEFAULT_DOCLING_VENV_DIR: &str = ".venv-docling";
+const PATH_PYTHON_CANDIDATES: &[&str] = &[
+    "python3.11",
+    "python3.12",
+    "python3.10",
+    "python3",
+    "python",
+];
 const DOCLING_HELPER_SCRIPT: &str = r###"
 import argparse
 import json
@@ -676,10 +684,134 @@ struct BackendCommand {
     command: Command,
 }
 
-enum PythonProbe {
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum DoclingRuntimeSource {
+    EnvironmentOverride,
+    RepoLocalVenv,
+    PathProbe,
+}
+
+impl DoclingRuntimeSource {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::EnvironmentOverride => "environment_override",
+            Self::RepoLocalVenv => "repo_local_venv",
+            Self::PathProbe => "path_probe",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum DoclingRuntimeCandidateStatus {
     Ready,
     MissingCommand,
-    ImportFailed(String),
+    ImportFailed,
+}
+
+impl DoclingRuntimeCandidateStatus {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Ready => "ready",
+            Self::MissingCommand => "missing_command",
+            Self::ImportFailed => "import_failed",
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct DoclingRuntimeCandidate {
+    pub label: String,
+    pub path: PathBuf,
+    pub source: DoclingRuntimeSource,
+    pub status: DoclingRuntimeCandidateStatus,
+    pub detail: Option<String>,
+    pub python_version: Option<String>,
+    pub docling_version: Option<String>,
+    pub selected: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct DoclingRuntimeDiagnosis {
+    pub selected_python: Option<PathBuf>,
+    pub selected_source: Option<DoclingRuntimeSource>,
+    pub selected_label: Option<String>,
+    pub selected_python_version: Option<String>,
+    pub selected_docling_version: Option<String>,
+    pub candidates: Vec<DoclingRuntimeCandidate>,
+}
+
+impl DoclingRuntimeDiagnosis {
+    pub fn is_ready(&self) -> bool {
+        self.selected_python.is_some()
+    }
+
+    pub fn resolution(&self) -> String {
+        if let Some(candidate) = self
+            .candidates
+            .iter()
+            .find(|candidate| candidate.source == DoclingRuntimeSource::EnvironmentOverride)
+        {
+            return match candidate.status {
+                DoclingRuntimeCandidateStatus::MissingCommand => format!(
+                    "`{DOCLING_PYTHON_ENV}` points at `{}` but that command is not available; set it to a working Python interpreter or unset `{DOCLING_PYTHON_ENV}`",
+                    candidate.path.display()
+                ),
+                DoclingRuntimeCandidateStatus::ImportFailed => format!(
+                    "`{DOCLING_PYTHON_ENV}` points at `{}` but `import docling` failed there: {}; install `docling` into that interpreter or unset `{DOCLING_PYTHON_ENV}`",
+                    candidate.path.display(),
+                    candidate
+                        .detail
+                        .as_deref()
+                        .unwrap_or("no error details captured")
+                ),
+                DoclingRuntimeCandidateStatus::Ready => "docling runtime is ready".to_string(),
+            };
+        }
+
+        if let Some(candidate) = self
+            .candidates
+            .iter()
+            .find(|candidate| candidate.source == DoclingRuntimeSource::RepoLocalVenv)
+        {
+            return match candidate.status {
+                DoclingRuntimeCandidateStatus::Ready => "docling runtime is ready".to_string(),
+                DoclingRuntimeCandidateStatus::MissingCommand => format!(
+                    "the repo-local Docling runtime at `{}` is missing; run `bash {DEFAULT_DOCLING_BOOTSTRAP_SCRIPT}` from the repository root to recreate `{DEFAULT_DOCLING_VENV_DIR}`, or set `{DOCLING_PYTHON_ENV}` to a working interpreter",
+                    candidate.path.display()
+                ),
+                DoclingRuntimeCandidateStatus::ImportFailed => format!(
+                    "the repo-local Docling runtime at `{}` exists but `import docling` failed there: {}; run `bash {DEFAULT_DOCLING_BOOTSTRAP_SCRIPT}` from the repository root to recreate `{DEFAULT_DOCLING_VENV_DIR}`, or set `{DOCLING_PYTHON_ENV}` to a working interpreter",
+                    candidate.path.display(),
+                    candidate
+                        .detail
+                        .as_deref()
+                        .unwrap_or("no error details captured")
+                ),
+            };
+        }
+
+        format!(
+            "run `bash {DEFAULT_DOCLING_BOOTSTRAP_SCRIPT}` from the repository root to create `{DEFAULT_DOCLING_VENV_DIR}`, or set `{DOCLING_PYTHON_ENV}` to an interpreter where `import docling` succeeds"
+        )
+    }
+}
+
+struct PythonProbe {
+    status: DoclingRuntimeCandidateStatus,
+    detail: Option<String>,
+    python_version: Option<String>,
+    docling_version: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
+struct PythonProbePayload {
+    ready: bool,
+    #[serde(default)]
+    python_version: Option<String>,
+    #[serde(default)]
+    docling_version: Option<String>,
+    #[serde(default)]
+    error: Option<String>,
 }
 
 pub fn materialize_pdf(
@@ -763,52 +895,192 @@ fn build_backend_command(tempdir: &Path) -> Result<BackendCommand> {
     })
 }
 
-fn resolve_docling_python() -> Result<PathBuf> {
+pub fn inspect_docling_runtime() -> Result<DoclingRuntimeDiagnosis> {
+    let mut candidates = Vec::new();
+
     if let Some(runtime_override) = env::var_os(DOCLING_PYTHON_ENV) {
         let candidate = PathBuf::from(runtime_override);
-        return match probe_docling_python(&candidate)? {
-            PythonProbe::Ready => Ok(candidate),
-            PythonProbe::MissingCommand => Err(AppError::MissingRuntimeDependency {
-                dependency: "docling python runtime",
-                resolution: format!(
-                    "`{DOCLING_PYTHON_ENV}` points at `{}` but that command is not available; set it to a working Python interpreter or unset it",
-                    candidate.display()
-                ),
-            }),
-            PythonProbe::ImportFailed(detail) => Err(AppError::MissingRuntimeDependency {
-                dependency: "docling",
-                resolution: format!(
-                    "`{DOCLING_PYTHON_ENV}` points at `{}` but `import docling` failed there: {}; install `docling` into that interpreter or unset `{DOCLING_PYTHON_ENV}`",
-                    candidate.display(),
-                    detail
-                ),
-            }),
-        };
+        push_runtime_candidate(
+            &mut candidates,
+            "env_override".to_string(),
+            candidate,
+            DoclingRuntimeSource::EnvironmentOverride,
+        )?;
+        return Ok(finalize_docling_runtime_diagnosis(candidates));
     }
 
-    for candidate in PYTHON_CANDIDATES {
-        let candidate_path = Path::new(candidate);
-        if matches!(probe_docling_python(candidate_path)?, PythonProbe::Ready) {
-            return Ok(candidate_path.to_path_buf());
+    let repo_local_candidates = discover_repo_local_docling_candidates()?;
+    for candidate in repo_local_candidates {
+        let label = format!("repo_local:{}", candidate.display());
+        push_runtime_candidate(
+            &mut candidates,
+            label,
+            candidate,
+            DoclingRuntimeSource::RepoLocalVenv,
+        )?;
+    }
+
+    if candidates
+        .iter()
+        .any(|candidate| candidate.source == DoclingRuntimeSource::RepoLocalVenv)
+    {
+        return Ok(finalize_docling_runtime_diagnosis(candidates));
+    }
+
+    for candidate in PATH_PYTHON_CANDIDATES {
+        let candidate_path = PathBuf::from(candidate);
+        push_runtime_candidate(
+            &mut candidates,
+            candidate.to_string(),
+            candidate_path,
+            DoclingRuntimeSource::PathProbe,
+        )?;
+    }
+
+    Ok(finalize_docling_runtime_diagnosis(candidates))
+}
+
+fn resolve_docling_python() -> Result<PathBuf> {
+    let diagnosis = inspect_docling_runtime()?;
+    let resolution = diagnosis.resolution();
+    diagnosis
+        .selected_python
+        .clone()
+        .ok_or_else(|| AppError::MissingRuntimeDependency {
+            dependency: "docling",
+            resolution,
+        })
+}
+
+fn push_runtime_candidate(
+    candidates: &mut Vec<DoclingRuntimeCandidate>,
+    label: String,
+    path: PathBuf,
+    source: DoclingRuntimeSource,
+) -> Result<()> {
+    let probe = probe_docling_python(&path)?;
+    candidates.push(DoclingRuntimeCandidate {
+        label,
+        path,
+        source,
+        status: probe.status,
+        detail: probe.detail,
+        python_version: probe.python_version,
+        docling_version: probe.docling_version,
+        selected: false,
+    });
+    Ok(())
+}
+
+fn finalize_docling_runtime_diagnosis(
+    mut candidates: Vec<DoclingRuntimeCandidate>,
+) -> DoclingRuntimeDiagnosis {
+    let selected_index = candidates
+        .iter()
+        .position(|candidate| candidate.status == DoclingRuntimeCandidateStatus::Ready);
+
+    let (
+        selected_python,
+        selected_source,
+        selected_label,
+        selected_python_version,
+        selected_docling_version,
+    ) = if let Some(index) = selected_index {
+        candidates[index].selected = true;
+        (
+            Some(candidates[index].path.clone()),
+            Some(candidates[index].source),
+            Some(candidates[index].label.clone()),
+            candidates[index].python_version.clone(),
+            candidates[index].docling_version.clone(),
+        )
+    } else {
+        (None, None, None, None, None)
+    };
+
+    DoclingRuntimeDiagnosis {
+        selected_python,
+        selected_source,
+        selected_label,
+        selected_python_version,
+        selected_docling_version,
+        candidates,
+    }
+}
+
+fn discover_repo_local_docling_candidates() -> Result<Vec<PathBuf>> {
+    let cwd = env::current_dir()?;
+    let mut candidates = Vec::new();
+
+    for ancestor in cwd.ancestors() {
+        for suffix in ["bin/python", "bin/python3", "Scripts/python.exe"] {
+            let candidate = ancestor.join(DEFAULT_DOCLING_VENV_DIR).join(suffix);
+            if candidate.exists() && !candidates.contains(&candidate) {
+                candidates.push(candidate);
+            }
         }
     }
 
-    Err(AppError::MissingRuntimeDependency {
-        dependency: "docling",
-        resolution: format!(
-            "install `docling` into a Python interpreter available as `python3` or `python`, or set `{DOCLING_PYTHON_ENV}` to an interpreter where `import docling` succeeds"
-        ),
-    })
+    Ok(candidates)
 }
 
 fn probe_docling_python(candidate: &Path) -> Result<PythonProbe> {
     match Command::new(candidate)
-        .args(["-c", "import docling"])
+        .args([
+            "-c",
+            r#"import json
+import platform
+from importlib import metadata
+
+payload = {"ready": False, "python_version": platform.python_version()}
+try:
+    import docling
+    payload["ready"] = True
+    payload["docling_version"] = metadata.version("docling")
+except Exception as exc:
+    payload["error"] = f"{type(exc).__name__}: {exc}"
+
+print(json.dumps(payload))"#,
+        ])
         .output()
     {
-        Ok(output) if output.status.success() => Ok(PythonProbe::Ready),
-        Ok(output) => Ok(PythonProbe::ImportFailed(render_command_output(&output))),
-        Err(error) if error.kind() == ErrorKind::NotFound => Ok(PythonProbe::MissingCommand),
+        Ok(output) if output.status.success() => {
+            let stdout = String::from_utf8_lossy(&output.stdout);
+            let payload =
+                serde_json::from_str::<PythonProbePayload>(&stdout).unwrap_or(PythonProbePayload {
+                    ready: false,
+                    python_version: None,
+                    docling_version: None,
+                    error: Some(format!(
+                        "invalid probe output from `{}`: {}",
+                        candidate.display(),
+                        stdout.trim()
+                    )),
+                });
+
+            Ok(PythonProbe {
+                status: if payload.ready {
+                    DoclingRuntimeCandidateStatus::Ready
+                } else {
+                    DoclingRuntimeCandidateStatus::ImportFailed
+                },
+                detail: payload.error,
+                python_version: payload.python_version,
+                docling_version: payload.docling_version,
+            })
+        }
+        Ok(output) => Ok(PythonProbe {
+            status: DoclingRuntimeCandidateStatus::ImportFailed,
+            detail: Some(render_command_output(&output)),
+            python_version: None,
+            docling_version: None,
+        }),
+        Err(error) if error.kind() == ErrorKind::NotFound => Ok(PythonProbe {
+            status: DoclingRuntimeCandidateStatus::MissingCommand,
+            detail: None,
+            python_version: None,
+            docling_version: None,
+        }),
         Err(error) => Err(error.into()),
     }
 }
@@ -822,5 +1094,186 @@ fn render_command_output(output: &Output) -> String {
         (false, true) => format!("stdout: {stdout}"),
         (true, false) => format!("stderr: {stderr}"),
         (true, true) => "no stdout or stderr captured".to_string(),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::fs;
+    use std::path::{Path, PathBuf};
+
+    use tempfile::tempdir;
+
+    use super::{
+        DOCLING_PYTHON_ENV, DoclingRuntimeCandidateStatus, DoclingRuntimeSource,
+        inspect_docling_runtime,
+    };
+    use crate::error::Result;
+    use crate::test_support::env_var_lock;
+
+    struct EnvVarGuard {
+        key: &'static str,
+        original: Option<std::ffi::OsString>,
+    }
+
+    impl EnvVarGuard {
+        fn set_path(key: &'static str, value: &Path) -> Self {
+            let original = std::env::var_os(key);
+            // SAFETY: tests serialize environment mutation with env_var_lock().
+            unsafe { std::env::set_var(key, value) };
+            Self { key, original }
+        }
+
+        fn unset(key: &'static str) -> Self {
+            let original = std::env::var_os(key);
+            // SAFETY: tests serialize environment mutation with env_var_lock().
+            unsafe { std::env::remove_var(key) };
+            Self { key, original }
+        }
+    }
+
+    impl Drop for EnvVarGuard {
+        fn drop(&mut self) {
+            match self.original.take() {
+                Some(value) => {
+                    // SAFETY: tests serialize environment mutation with env_var_lock().
+                    unsafe { std::env::set_var(self.key, value) };
+                }
+                None => {
+                    // SAFETY: tests serialize environment mutation with env_var_lock().
+                    unsafe { std::env::remove_var(self.key) };
+                }
+            }
+        }
+    }
+
+    struct CurrentDirGuard {
+        original: PathBuf,
+    }
+
+    impl CurrentDirGuard {
+        fn set(path: &Path) -> Result<Self> {
+            let original = std::env::current_dir()?;
+            std::env::set_current_dir(path)?;
+            Ok(Self { original })
+        }
+    }
+
+    impl Drop for CurrentDirGuard {
+        fn drop(&mut self) {
+            let _ = std::env::set_current_dir(&self.original);
+        }
+    }
+
+    #[test]
+    fn inspect_docling_runtime_prefers_repo_local_venv() -> Result<()> {
+        let _env_lock = env_var_lock();
+        let tempdir = tempdir()?;
+        let repo_python = tempdir
+            .path()
+            .join(".venv-docling")
+            .join("bin")
+            .join("python");
+        fs::create_dir_all(repo_python.parent().expect("python parent"))?;
+        fs::write(
+            &repo_python,
+            r##"#!/bin/sh
+printf '{"ready": true, "python_version": "3.11.9", "docling_version": "2.84.0"}\n'
+"##,
+        )?;
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+
+            fs::set_permissions(&repo_python, fs::Permissions::from_mode(0o755))?;
+        }
+
+        let _docling_python_env = EnvVarGuard::unset(DOCLING_PYTHON_ENV);
+        let _path_env = EnvVarGuard::set_path("PATH", Path::new(""));
+        let _cwd_guard = CurrentDirGuard::set(tempdir.path())?;
+
+        let diagnosis = inspect_docling_runtime()?;
+
+        assert!(diagnosis.is_ready());
+        assert_eq!(
+            diagnosis.selected_source,
+            Some(DoclingRuntimeSource::RepoLocalVenv)
+        );
+        assert_eq!(
+            diagnosis
+                .selected_python
+                .as_ref()
+                .and_then(|path| path.file_name())
+                .and_then(|name| name.to_str()),
+            Some("python")
+        );
+        assert_eq!(
+            diagnosis
+                .selected_python
+                .as_ref()
+                .map(|path| path.ends_with(".venv-docling/bin/python")),
+            Some(true)
+        );
+        assert_eq!(
+            diagnosis.selected_docling_version.as_deref(),
+            Some("2.84.0")
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn inspect_docling_runtime_prefers_python311_path_probe_over_generic_python3() -> Result<()> {
+        let _env_lock = env_var_lock();
+        let tempdir = tempdir()?;
+        let python311 = tempdir.path().join("python3.11");
+        let python3 = tempdir.path().join("python3");
+        fs::write(
+            &python311,
+            r##"#!/bin/sh
+printf '{"ready": true, "python_version": "3.11.9", "docling_version": "2.84.0"}\n'
+"##,
+        )?;
+        fs::write(
+            &python3,
+            r##"#!/bin/sh
+printf '{"ready": false, "python_version": "3.14.0", "error": "ModuleNotFoundError: No module named docling"}\n'
+"##,
+        )?;
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+
+            fs::set_permissions(&python311, fs::Permissions::from_mode(0o755))?;
+            fs::set_permissions(&python3, fs::Permissions::from_mode(0o755))?;
+        }
+
+        let _docling_python_env = EnvVarGuard::unset(DOCLING_PYTHON_ENV);
+        let _path_env = EnvVarGuard::set_path("PATH", tempdir.path());
+        let _cwd_guard = CurrentDirGuard::set(tempdir.path())?;
+
+        let diagnosis = inspect_docling_runtime()?;
+
+        assert!(diagnosis.is_ready());
+        assert_eq!(
+            diagnosis.selected_source,
+            Some(DoclingRuntimeSource::PathProbe)
+        );
+        assert_eq!(diagnosis.selected_label.as_deref(), Some("python3.11"));
+        assert_eq!(
+            diagnosis.selected_docling_version.as_deref(),
+            Some("2.84.0")
+        );
+        let python3_probe = diagnosis
+            .candidates
+            .iter()
+            .find(|candidate| candidate.label == "python3")
+            .expect("python3 candidate");
+        assert_eq!(
+            python3_probe.status,
+            DoclingRuntimeCandidateStatus::ImportFailed
+        );
+
+        Ok(())
     }
 }

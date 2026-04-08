@@ -12,6 +12,7 @@
 - the repository contains workflow and continuity documentation plus a runnable Rust CLI named `specforge`
 - the current CLI already supports:
   - `specforge inspect <path>`
+  - `specforge doctor [--strict]`
   - `specforge converge <source> --target fsm`
   - `specforge ingest <source> --dry-run`
   - `specforge ingest <source>`
@@ -73,7 +74,20 @@ cargo run -p specforge -- ingest README.md
   - visual asset crops for pictures and tables
   - metadata JSON and backend raw JSON
   - `page_artifacts.json` and `visual_assets.json`
-- PDF execute mode expects `docling` to be importable from `python3` or `python`; when needed, point `SPECFORGE_DOCLING_PYTHON` at the correct interpreter
+- PDF execute mode now resolves Docling in this order:
+  - `SPECFORGE_DOCLING_PYTHON`
+  - repo-local `.venv-docling`
+  - versioned Python candidates such as `python3.11`
+  - generic `python3` / `python`
+- when you want the stable repo-local path, run `bash scripts/bootstrap_docling.sh` from the repository root
+
+### Check Docling runtime readiness
+```bash
+cargo run -p specforge -- doctor --strict
+```
+- prints the selected Docling Python candidate, version information, and all probe results
+- exits non-zero with `--strict` when fresh PDF ingest is not actually executable
+- this is the supported local preflight before relying on `specforge ingest <pdf>` or `specforge converge <pdf>`
 
 ### Preview an EvidenceIR artifact
 ```bash

@@ -120,6 +120,17 @@
 - the current canonical Rust CI runner executes:
   - `cargo fmt --all --check`
   - `cargo test --manifest-path Cargo.toml`
+
+## Docling runtime hardening
+- the Docling runtime should not depend on whichever `python3` happens to be first on `PATH`
+- the supported operational shape is now:
+  - explicit override with `SPECFORGE_DOCLING_PYTHON`
+  - otherwise auto-discover a repo-local `.venv-docling`
+  - otherwise probe versioned Python candidates such as `python3.11` before generic `python3` / `python`
+- `specforge doctor [--strict]` is now the first-class readiness check for that runtime boundary
+- `scripts/bootstrap_docling.sh` is now the supported repo-local bootstrap path and targets the known-good `docling==2.84.0` runtime family
+- `.venv-docling/` must stay local and untracked, just like `generated/`
+- this matters because fresh original-PDF reruns should fail for genuine ingest/extraction reasons, not because the CLI silently picked an unusable Python interpreter
 - this keeps push-time validation honest without inventing a different hosted workflow contract from the one used during local task completion
 - future CI expansion should stay conservative and provenance-friendly:
   - add checks only when they are already trusted locally

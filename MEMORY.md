@@ -22,9 +22,9 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `d469bf3`
-- latest_commit_brief_message: `feat(ir): carry resolved signal polarity per interface`
-- note: the current session is now focused on refreshing the live AMBA validation baseline against the current polarity-aware semantic/intent stack and recording the honest post-refresh snapshot
+- latest_commit_hash: `2db4ff5`
+- latest_commit_brief_message: `feat(semantic): surface system contract polarity in interfaces`
+- note: the current session is now focused on hardening the Docling runtime boundary so fresh original-PDF ingest no longer depends on ambient `python3` luck
 
 ## Recent commit chain (last 5)
 - `d469bf3` feat(ir): carry resolved signal polarity per interface
@@ -35,10 +35,14 @@
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- runnable CLI surface includes `inspect`, `converge`, `ingest`, `evidence`, `semantic`, `intent`, `adapt`, `enrich`, `validate`, `kg-bench`, `project-validation`, `learn-priors`, and `nlp-enrich`
+- runnable CLI surface includes `inspect`, `doctor`, `converge`, `ingest`, `evidence`, `semantic`, `intent`, `adapt`, `enrich`, `validate`, `kg-bench`, `project-validation`, `learn-priors`, and `nlp-enrich`
 - `specforge converge` now defaults to full Ollama-backed VLM image enrichment plus NLP Level 3 backannotation; use `--vlm-provider skip` and/or `--nlp-provider skip` only when intentionally narrowing the loop
 - GitHub Actions now mirrors the baseline Rust quality gate on every `push` / `pull_request` via `.github/workflows/ci.yml`
 - `scripts/run_ci.sh` is now the canonical Rust CI entrypoint and is reused by GitHub Actions, so the same hosted path can be exercised locally before push
+- the Docling runtime boundary is now stronger too:
+  - `specforge doctor [--strict]` reports the selected Docling Python candidate plus all probe outcomes
+  - runtime discovery now prefers `SPECFORGE_DOCLING_PYTHON`, then repo-local `.venv-docling`, then versioned Python candidates such as `python3.11`, before falling back to generic `python3` / `python`
+  - `scripts/bootstrap_docling.sh` is the supported repo-local bootstrap path, and `.venv-docling/` must stay local/untracked
 - the local `CorpusMemory` prior store now includes actor-taxonomy, semantic phrase, semantic modality-reliability, temporal, and table-shape prior families
 - the thing that materially grows to capture learning is the typed prior store itself, usually `generated/prior_memory/corpus_memory.json`; code defines the learning rules, but the accumulated experience lives in that symbolic memory artifact
 - `specforge evidence` and `specforge converge` now consult `--prior-memory generated/prior_memory/corpus_memory.json` by default, and the first bounded consumer uses actor-taxonomy priors to interpret explicit local actor terms in section headings and `Source` / `Destination` columns; width-only section-guided signal tables can now also recover structural `ActorSignalRelation::Drives` edges from that same prior-guided actor vocabulary
@@ -103,6 +107,7 @@
 ## Current repo hygiene expectations
 - completed tasks should end in a clean working tree after the commit workflow runs
 - generated artifacts remain local-only and should stay untracked unless the user explicitly asks otherwise
+- `.venv-docling/` is also local-only runtime state and should stay untracked
 
 ## Exact next steps
 1. make shared infrastructure sourcing/distribution first-class beyond the current info-note boundary for signals like `ACLK` and `ARESETN`

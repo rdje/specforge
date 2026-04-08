@@ -11,6 +11,7 @@
 - SpecForge CLI/crate rename completed: Done
 - Explicit `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters` architecture defined: Done
 - `specforge inspect` command created: Done
+- `specforge doctor` command created: Done
 - `specforge ingest` SourceIR command created: Done
 - `specforge evidence` EvidenceIR command created: Done
 - `specforge semantic` SemanticIR command created: Done
@@ -26,6 +27,7 @@
 - Whole-pipeline fixed-point knowledge-snapshot loop implemented: Done
 - SourceIR type system implemented: Done
 - Structured PDF normalization orchestration implemented: Done
+- Repo-local Docling bootstrap path and runtime doctor for fresh ingest: Done
 - SourceIR SOTA capture: structured table cell grids, typed content elements, section hierarchy with `SectionKind`, document profile, table kind classification: Done
 - EvidenceIR extraction implemented: Done
 - EvidenceIR typed table synthesis for signals, enums, registers, and timing records implemented: Done

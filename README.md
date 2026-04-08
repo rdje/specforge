@@ -15,6 +15,7 @@ Use it first for the project objective, document navigation, and the current imp
 - the Rust workspace and active CLI/crate identity are now `specforge`
 - the current `specforge` CLI surface supports:
   - `inspect <path>`
+  - `doctor [--strict]`
   - `converge <source> --target fsm`
   - `ingest <source> --dry-run`
   - `ingest <source>`
@@ -42,6 +43,9 @@ Use it first for the project objective, document navigation, and the current imp
 - `specforge project-validation <artifact>...` now validates the passed artifacts and refreshes the tracked validation snapshot docs from their persisted reports
 - `specforge kg-bench` now runs tracked KG-quality fixtures through the staged pipeline, so gold expectations, negative expectations, residual quality, and conflict surfacing can be checked explicitly instead of relying only on aggregate scores
 - `specforge learn-priors <intent-ir>...` now builds a local typed `CorpusMemory` prior store under `generated/prior_memory/corpus_memory.json`, harvesting only from validated `IntentIR` artifacts and keeping the learning plane advisory-only
+- `specforge doctor [--strict]` now inspects Docling runtime readiness locally, reports the selected Python candidate plus all probe results, and can fail fast when fresh PDF ingest is not actually executable
+- Docling runtime discovery is now more robust too: `specforge` first honors `SPECFORGE_DOCLING_PYTHON`, then auto-discovers a repo-local `.venv-docling`, then probes versioned Python candidates such as `python3.11` before falling back to generic `python3` / `python`
+- `scripts/bootstrap_docling.sh` now provides the supported repo-local bootstrap path for Docling-backed PDF ingest, with `.venv-docling/` kept local and untracked
 - the thing that grows to materialize learning is that typed prior store, not the code and not hidden neural weights: the code defines how priors are harvested/consumed, while `generated/prior_memory/corpus_memory.json` accumulates the learned reusable extraction knowledge over time
 - the next cross-document layer after that prior store should be a tracked corpus knowledge base: a persistent compiled synthesis plane beside the KG and `CorpusMemory`, where recurring protocol motifs, extraction failures, contradiction summaries, table/figure families, and infrastructure-semantics notes can accumulate without contaminating per-document canonical IR truth
 - `specforge evidence <source-ir>` and `specforge converge <source>` now consult that local prior store by default through `--prior-memory generated/prior_memory/corpus_memory.json`, and the first bounded consumers now use:
@@ -318,7 +322,7 @@ cargo run -p specforge -- learn-priors generated/intent_ir/ihi0022_l_2025_08_amb
 - `specforge project-validation <artifact>...` validates the passed artifacts, persists their latest reports, refreshes `VALIDATION_SNAPSHOT.md`, and updates the managed validation projection block in `LIVE_ACHIEVEMENT_STATUS.md`
 - `specforge kg-bench` runs the tracked fixture set under `crates/specforge/test_data/kg_quality/` and fails if any gold/negative KG expectation drifts
 - `specforge learn-priors <intent-ir>...` builds a local `CorpusMemory` JSON file from validated `IntentIR` artifacts, scoped to reusable extraction priors rather than document facts; by default it writes `generated/prior_memory/corpus_memory.json`
-- PDF execute-mode ingest expects `docling` to be importable from `python3` or `python`; when it lives elsewhere, set `SPECFORGE_DOCLING_PYTHON=/path/to/python`
+- PDF execute-mode ingest now prefers `SPECFORGE_DOCLING_PYTHON`, then repo-local `.venv-docling`, then versioned Python probes such as `python3.11`; run `bash scripts/bootstrap_docling.sh` from the repository root when you want the stable repo-local path
 
 ## Planned product shape
 - stage 0: build `SourceIR` from raw sources, normalized text views, structured page artifacts, and extracted visual assets

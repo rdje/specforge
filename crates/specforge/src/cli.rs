@@ -19,6 +19,8 @@ pub struct Cli {
 pub enum Commands {
     /// Inspect a source path and report the detected source kind
     Inspect(InspectArgs),
+    /// Inspect local runtime readiness for Docling-backed PDF ingest
+    Doctor(DoctorArgs),
     /// Iterate the staged pipeline until the materialized knowledge snapshot stops growing
     Converge(ConvergeArgs),
     /// Build or materialize a SourceIR artifact for a source
@@ -49,6 +51,13 @@ pub enum Commands {
 pub struct InspectArgs {
     /// Path to inspect
     pub path: PathBuf,
+}
+
+#[derive(Debug, Args)]
+pub struct DoctorArgs {
+    /// Return a non-zero exit code when a required runtime is missing
+    #[arg(long)]
+    pub strict: bool,
 }
 
 #[derive(Debug, Args)]
@@ -288,5 +297,15 @@ mod tests {
             args.prior_memory,
             PathBuf::from("generated/prior_memory/corpus_memory.json")
         );
+    }
+
+    #[test]
+    fn doctor_defaults_to_non_strict() {
+        let cli = Cli::parse_from(["specforge", "doctor"]);
+        let Commands::Doctor(args) = cli.command else {
+            panic!("expected doctor command");
+        };
+
+        assert!(!args.strict);
     }
 }

@@ -1,5 +1,39 @@
 # CHANGES
 
+## 2026-04-08 (Docling runtime discovery, doctor command, and bootstrap path)
+
+### Added: a first-class Docling runtime doctor command
+- Added [doctor.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/doctor.rs) and wired `specforge doctor [--strict]` into the CLI in [cli.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/cli.rs), [commands/mod.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/mod.rs), and [lib.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/lib.rs).
+- The new command reports Docling readiness, the selected Python candidate, version information, all probe results, the repo-local bootstrap script path, and the exact missing-runtime resolution when `--strict` is used.
+
+### Changed: Docling runtime discovery is now operationally stronger
+- Extended [docling_backend.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/source/docling_backend.rs) so the backend no longer depends only on ambient `python3` / `python`.
+- Runtime resolution now proceeds in this order:
+  - `SPECFORGE_DOCLING_PYTHON`
+  - repo-local `.venv-docling`
+  - versioned Python probes such as `python3.11`, `python3.12`, and `python3.10`
+  - generic `python3` / `python`
+- The resolver now keeps a typed diagnosis surface instead of a one-bit import probe, which is shared by both `specforge doctor` and the actual ingest backend.
+
+### Added: supported repo-local Docling bootstrap path
+- Added [bootstrap_docling.sh](/Users/richarddje/Documents/github/specforge/scripts/bootstrap_docling.sh) as the supported repository-local Docling runtime bootstrap entrypoint.
+- The script creates `.venv-docling`, installs the known-good `docling==2.84.0` runtime family by default, and prints the resulting interpreter/version state.
+- Added `/.venv-docling/` to [.gitignore](/Users/richarddje/Documents/github/specforge/.gitignore) so that runtime stays local and untracked.
+
+### Changed: the local runtime issue is now concretely verified, not just documented
+- `cargo run --manifest-path Cargo.toml -- doctor --strict` now succeeds locally and selects `python3.11` with `docling 2.84.0`, while explicitly reporting that the ambient `python3` probe is still broken because it resolves to Python `3.14.3` without `docling`.
+- A fresh original-PDF ingest rerun on the AHB spec now succeeds again:
+  - `cargo run --manifest-path Cargo.toml -- ingest /Users/richarddje/Documents/livework/chipdoc/arm/amba/core/ahb/current/IHI0033_C_2021-09_AMBA_5_AHB_Protocol_Specification.pdf`
+  - result: `normalization_status: ready`, `page_artifact_count: 104`, `visual_asset_count: 70`
+
+### Validation
+- `cargo test --manifest-path Cargo.toml doctor_defaults_to_non_strict -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml inspect_docling_runtime_prefers_repo_local_venv -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml inspect_docling_runtime_prefers_python311_path_probe_over_generic_python3 -- --nocapture` → passed
+- `cargo run --manifest-path Cargo.toml -- doctor --strict` → passed
+- `cargo run --manifest-path Cargo.toml -- ingest /Users/richarddje/Documents/livework/chipdoc/arm/amba/core/ahb/current/IHI0033_C_2021-09_AMBA_5_AHB_Protocol_Specification.pdf` → passed
+
+
 ## 2026-04-08 (system-contract infrastructure signals now populate canonical interfaces)
 
 ### Fixed: clock/reset signals from the system contract now reach the canonical interface surface
