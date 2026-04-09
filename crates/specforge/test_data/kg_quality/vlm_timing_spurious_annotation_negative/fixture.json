@@ -20,11 +20,13 @@
   "expectations": {
     "semantic": {
       "signal_names_include": ["XREQ"],
-      "temporal_rule_count": 0
+      "temporal_rule_count": 2,
+      "temporal_conflicts": 0
     },
     "intent": {
       "signal_names_include": ["XREQ"],
-      "temporal_rule_count": 0
+      "temporal_rule_count": 2,
+      "temporal_conflicts": 0
     },
     "validation": {
       "evidence": {
@@ -36,13 +38,17 @@
       "semantic": {
         "metric_values": {
           "timing_constraints": "0",
-          "temporal_rules": "0"
+          "temporal_rules": "2",
+          "temporal_conflicts": "0",
+          "signal_constraints": "2"
         }
       },
       "intent": {
         "metric_values": {
           "timing_constraints": "0",
-          "temporal_rules": "0"
+          "temporal_rules": "2",
+          "temporal_conflicts": "0",
+          "signal_constraints": "2"
         }
       }
     }

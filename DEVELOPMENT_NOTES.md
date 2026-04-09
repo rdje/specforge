@@ -54,6 +54,11 @@
   - keep the IR boundaries clean
   - prefer reusable evidence-to-knowledge lifting patterns over one-off protocol patches
 - the downstream adapters should consume truth, not beautified guesses; when in doubt, the right move is to enrich the KG and temporal model, not to make the adapters more speculative
+- VLM timing-diagram signal/value tuples are allowed to become typed temporal evidence only through the same bounded path:
+  - document-grounded signal names can become `SignalConstraintRecord` entries
+  - values like `HIGH`, `LOW`, `ASSERTED`, `DEASSERTED`, `0`, and `1` should normalize into typed signal-constraint kinds
+  - generic visual words like `transfer` must remain rejected as fake signal names
+  - unknown/don't-care values should stay unpromoted instead of creating false temporal facts
 - VLM state-machine guard text is still a bounded hypothesis, not an authority:
   - simple comparisons like `PREADY = 1` should be converted into typed guards
   - generic visual prose like `transfer` must not become a fake signal unless it is document-grounded as a signal

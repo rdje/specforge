@@ -183,7 +183,7 @@ impl SemanticIr {
             .map(|r| r.signal_name.clone())
             .collect();
 
-        let signal_constraints = if declared_signal_names.is_empty() {
+        let mut signal_constraints = if declared_signal_names.is_empty() {
             evidence_ir.signal_constraints.clone()
         } else {
             evidence_ir
@@ -226,9 +226,10 @@ impl SemanticIr {
 
         // Merge timing constraints: table-synthesized + VLM diagram observations.
         let mut timing_constraints = evidence_ir.timing_constraints.clone();
-        let (vlm_timing, vlm_states, vlm_transitions) =
+        let (vlm_timing, vlm_signal_constraints, vlm_states, vlm_transitions) =
             extract_records_from_vlm_observations(&evidence_ir, &vlm_known_signal_names);
         timing_constraints.extend(vlm_timing);
+        signal_constraints.extend(vlm_signal_constraints);
         let temporal_rules = build_temporal_rules(
             &context,
             interfaces.as_slice(),
@@ -7366,6 +7367,34 @@ fn extract_cycle_window_from_text(text: &str) -> Option<CycleWindowRecord> {
     }
 
     for index in 0..tokens.len() {
+        if tokens[index] == "cycle" {
+            if let Some(count) = tokens
+                .get(index + 1)
+                .copied()
+                .and_then(parse_diagram_cycle_count_value)
+            {
+                return Some(CycleWindowRecord {
+                    min_cycles: Some(count),
+                    max_cycles: Some(count),
+                });
+            }
+        }
+
+        if matches!(tokens[index], "at" | "during" | "on") {
+            if let Some(count) = tokens
+                .get(index + 1)
+                .copied()
+                .and_then(parse_diagram_cycle_count_value)
+            {
+                return Some(CycleWindowRecord {
+                    min_cycles: Some(count),
+                    max_cycles: Some(count),
+                });
+            }
+        }
+    }
+
+    for index in 0..tokens.len() {
         if tokens[index] != "between" {
             continue;
         }
@@ -7618,6 +7647,15 @@ fn parse_cycle_count_value(token: &str) -> Option<u32> {
     })
 }
 
+fn parse_diagram_cycle_count_value(token: &str) -> Option<u32> {
+    parse_cycle_count_value(token).or_else(|| {
+        token
+            .strip_prefix('t')
+            .filter(|suffix| !suffix.is_empty())
+            .and_then(parse_cycle_count_value)
+    })
+}
+
 fn find_known_signal_name(text: &str, known_signals: &BTreeSet<String>) -> Option<String> {
     let mut best_match = None::<String>;
     for signal_name in known_signals {
@@ -7711,10 +7749,12 @@ fn extract_records_from_vlm_observations(
     known_signal_names: &HashSet<String>,
 ) -> (
     Vec<TimingConstraintRecord>,
+    Vec<SignalConstraintRecord>,
     Vec<RegularStateRecord>,
     Vec<StateTransitionRecord>,
 ) {
     let mut timing_records = Vec::new();
+    let mut signal_constraint_records = Vec::new();
     let mut state_records = Vec::new();
     let mut transition_records = Vec::new();
 
@@ -7725,7 +7765,9 @@ fn extract_records_from_vlm_observations(
                     parse_timing_diagram_observation(
                         &obs.text,
                         &visual_item.evidence_id,
+                        known_signal_names,
                         &mut timing_records,
+                        &mut signal_constraint_records,
                     );
                 }
                 VisualObservationKind::StateMachineExtraction => {
@@ -7742,7 +7784,12 @@ fn extract_records_from_vlm_observations(
         }
     }
 
-    (timing_records, state_records, transition_records)
+    (
+        timing_records,
+        signal_constraint_records,
+        state_records,
+        transition_records,
+    )
 }
 
 /// Parse a `TimingDiagramExtraction` JSON observation into `TimingConstraintRecord` entries.
@@ -7751,7 +7798,9 @@ fn extract_records_from_vlm_observations(
 fn parse_timing_diagram_observation(
     json_text: &str,
     evidence_id: &str,
+    known_signal_names: &HashSet<String>,
     records: &mut Vec<TimingConstraintRecord>,
+    signal_constraints: &mut Vec<SignalConstraintRecord>,
 ) {
     let Some(value) = parse_visual_observation_json(json_text) else {
         return;
@@ -7778,8 +7827,125 @@ fn parse_timing_diagram_observation(
         }
     }
 
-    // Each signal cycle pair adds context but no single-value record for now.
-    // Future: extract "HCLK stays HIGH for 3 cycles" patterns into TimingConstraintRecord.
+    push_signal_constraints_from_timing_diagram_observation(
+        &value,
+        evidence_id,
+        known_signal_names,
+        signal_constraints,
+    );
+}
+
+fn push_signal_constraints_from_timing_diagram_observation(
+    value: &serde_json::Value,
+    evidence_id: &str,
+    known_signal_names: &HashSet<String>,
+    records: &mut Vec<SignalConstraintRecord>,
+) {
+    let Some(signals) = value.get("signals").and_then(|signals| signals.as_array()) else {
+        return;
+    };
+
+    for (signal_index, signal_value) in signals.iter().enumerate() {
+        let Some(signal_name) = signal_value
+            .get("name")
+            .and_then(|name| name.as_str())
+            .and_then(|name| parse_allowed_vlm_observation_signal(name, known_signal_names))
+        else {
+            continue;
+        };
+        let Some(values) = signal_value
+            .get("values")
+            .and_then(|values| values.as_array())
+        else {
+            continue;
+        };
+
+        for (value_index, value) in values.iter().enumerate() {
+            let Some(raw_state) = value.get("state").and_then(|state| state.as_str()) else {
+                continue;
+            };
+            let Some((constraint_kind, target_value)) =
+                signal_constraint_kind_from_vlm_state(raw_state)
+            else {
+                continue;
+            };
+            let cycle = value
+                .get("cycle")
+                .and_then(|cycle| cycle.as_str())
+                .map(str::trim)
+                .filter(|cycle| !cycle.is_empty());
+            let source_text = if let Some(cycle) = cycle {
+                format!(
+                    "VLM timing diagram observation: {signal_name} is {} at cycle {cycle}.",
+                    raw_state.trim()
+                )
+            } else {
+                format!(
+                    "VLM timing diagram observation: {signal_name} is {}.",
+                    raw_state.trim()
+                )
+            };
+
+            records.push(SignalConstraintRecord {
+                constraint_id: format!(
+                    "vlm_signal_value_{}_{}_{signal_index:03}_{value_index:03}",
+                    document_key(evidence_id),
+                    document_key(&signal_name)
+                ),
+                subject_signal: signal_name.clone(),
+                constraint_kind,
+                target_value,
+                condition_text: None,
+                negated: false,
+                source_text,
+                supporting_statement_ids: vec![evidence_id.to_string()],
+                automation_confidence: AutomationConfidence::Medium,
+            });
+        }
+    }
+}
+
+fn parse_allowed_vlm_observation_signal(
+    signal_text: &str,
+    known_signal_names: &HashSet<String>,
+) -> Option<String> {
+    let signal_name = parse_identifier(trim_vlm_guard_clause(signal_text))?;
+    if known_signal_names.contains(&signal_name)
+        || (known_signal_names.is_empty() && !is_generic_vlm_signal_term(&signal_name))
+    {
+        Some(signal_name)
+    } else {
+        None
+    }
+}
+
+fn signal_constraint_kind_from_vlm_state(
+    raw_state: &str,
+) -> Option<(SignalConstraintKind, Option<String>)> {
+    let state = raw_state
+        .trim()
+        .trim_matches(|character| matches!(character, '"' | '`'));
+    if state.is_empty() {
+        return None;
+    }
+
+    let normalized = state.to_ascii_lowercase();
+    match normalized.as_str() {
+        "1" | "1'b1" | "high" | "hi" | "true" => Some((SignalConstraintKind::MustBeHigh, None)),
+        "0" | "1'b0" | "low" | "lo" | "false" => Some((SignalConstraintKind::MustBeLow, None)),
+        "asserted" | "assert" => Some((SignalConstraintKind::MustBeAsserted, None)),
+        "deasserted" | "deassert" => Some((SignalConstraintKind::MustBeDeasserted, None)),
+        "x" | "z" | "unknown" | "don't care" | "dont care" => None,
+        _ => {
+            let symbolic_value = parse_identifier(state)?;
+            Some((
+                SignalConstraintKind::MustBeValue {
+                    value: symbolic_value.clone(),
+                },
+                Some(symbolic_value),
+            ))
+        }
+    }
 }
 
 fn is_spurious_timing_annotation_label(text: &str) -> bool {
@@ -8053,7 +8219,7 @@ fn parse_allowed_vlm_guard_signal(
 ) -> Option<String> {
     let signal_name = parse_identifier(trim_vlm_guard_clause(signal_text))?;
     if known_signal_names.contains(&signal_name)
-        || (known_signal_names.is_empty() && !is_generic_vlm_guard_term(&signal_name))
+        || (known_signal_names.is_empty() && !is_generic_vlm_signal_term(&signal_name))
     {
         Some(signal_name)
     } else {
@@ -8061,7 +8227,7 @@ fn parse_allowed_vlm_guard_signal(
     }
 }
 
-fn is_generic_vlm_guard_term(signal_name: &str) -> bool {
+fn is_generic_vlm_signal_term(signal_name: &str) -> bool {
     matches!(
         signal_name.to_ascii_lowercase().as_str(),
         "transfer"
@@ -8182,8 +8348,8 @@ mod tests {
         SemanticModalityReliabilityPriorRecord, TemporalPhrasePriorRecord,
     };
     use crate::ir::source::{
-        AutomationConfidence, SourceIr, StructuredTableCellRecord, StructuredTableRecord,
-        TableKind, VisualAsset, VisualAssetKind, WidthHint,
+        AutomationConfidence, SignalConstraintKind, SourceIr, StructuredTableCellRecord,
+        StructuredTableRecord, TableKind, VisualAsset, VisualAssetKind, WidthHint,
     };
 
     use super::{
@@ -9196,7 +9362,15 @@ mod tests {
         let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
         let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
 
-        fs::write(&source, "# Timing\n")?;
+        fs::write(
+            &source,
+            concat!(
+                "# Timing\n",
+                "Signal XREQ is input width 1.\n\n",
+                "Signal clk is input width 1.\n\n",
+                "Clock clk.\n",
+            ),
+        )?;
 
         let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
         source_ir.visual_assets.push(VisualAsset {
@@ -9209,7 +9383,7 @@ mod tests {
             source_ref: None,
             placeholder_text: None,
             note: Some(
-                "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"HCLK\",\"values\":[{\"cycle\":\"T1\",\"state\":\"HIGH\"}]}],\"annotations\":[\"tSU = 2 ns\",\"tHD = 1 ns\"]}"
+                "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"T1\",\"state\":\"HIGH\"}]},{\"name\":\"transfer\",\"values\":[{\"cycle\":\"T1\",\"state\":\"HIGH\"}]}],\"annotations\":[\"tSU = 2 ns\",\"tHD = 1 ns\"]}"
                     .to_string(),
             ),
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
@@ -9245,6 +9419,67 @@ mod tests {
                     .unwrap_or(false)
             }),
             "expected timing constraint from VLM annotation 'tHD = 1 ns'"
+        );
+        assert!(
+            semantic_ir.signal_constraints.iter().any(|constraint| {
+                constraint.constraint_id.starts_with("vlm_signal_value_")
+                    && constraint.subject_signal == "XREQ"
+                    && matches!(constraint.constraint_kind, SignalConstraintKind::MustBeHigh)
+                    && constraint.source_text.contains("cycle T1")
+            }),
+            "expected VLM timing signal/value tuple to become a grounded signal constraint"
+        );
+        assert!(
+            !semantic_ir
+                .signal_constraints
+                .iter()
+                .any(|constraint| constraint.subject_signal == "transfer"),
+            "generic timing-diagram words must not become VLM-authored signal constraints"
+        );
+        assert!(
+            semantic_ir.temporal_rules.iter().any(|rule| {
+                rule.supporting_statement_ids
+                    .iter()
+                    .any(|support| support == "visual_0001")
+                    && rule.consequents.iter().any(|predicate| {
+                        matches!(
+                            predicate,
+                            super::TemporalPredicateRecord::SignalValue {
+                                signal_name,
+                                value,
+                                phase: super::TickPhase::PostTick,
+                            } if signal_name == "XREQ" && value == "HIGH"
+                        )
+                    })
+            }),
+            "expected VLM timing signal/value tuple to feed a temporal SignalValue predicate"
+        );
+        let vlm_signal_value_rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| {
+                rule.supporting_statement_ids
+                    .iter()
+                    .any(|support| support == "visual_0001")
+                    && rule.consequents.iter().any(|predicate| {
+                        matches!(
+                            predicate,
+                            super::TemporalPredicateRecord::SignalValue {
+                                signal_name,
+                                value,
+                                ..
+                            } if signal_name == "XREQ" && value == "HIGH"
+                        )
+                    })
+            })
+            .expect("expected VLM timing tuple temporal rule");
+        assert_eq!(
+            vlm_signal_value_rule.cycle_window,
+            Some(CycleWindowRecord {
+                min_cycles: Some(1),
+                max_cycles: Some(1),
+            }),
+            "diagram cycle label T1 should survive as a bounded cycle window"
         );
 
         Ok(())

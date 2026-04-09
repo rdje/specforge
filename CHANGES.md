@@ -1,5 +1,28 @@
 # CHANGES
 
+## 2026-04-10 (VLM timing tuples now lift into temporal signal values)
+
+### Added: typed signal-value lift from timing-diagram VLM observations
+- Updated [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so `TimingDiagramExtraction` observations now read `signals[].values[]` tuples, not only free-text `annotations`.
+- Signal/value tuples such as `XREQ` at `T1` with state `HIGH` now become VLM-backed `SignalConstraintRecord` entries and feed the existing temporal-rule builder as `SignalValue` predicates.
+- VLM timing signal names are gated against the document-grounded signal universe when possible, using interface signal records plus locally extracted statement signal tokens.
+- Diagram cycle labels such as `T0` and `T1` are preserved as explicit cycle windows, so distinct timing-diagram states do not collapse into false same-cycle conflicts.
+- Generic visual words such as `transfer` are still rejected as signal names, so timing-diagram lift does not turn diagram prose into fake hardware signals.
+- VLM states such as `HIGH`, `LOW`, `ASSERTED`, `DEASSERTED`, `0`, and `1` are normalized into typed signal-constraint kinds, while unknown/don't-care values remain unpromoted.
+
+### Added: regression coverage for timing tuple lift
+- Strengthened `vlm_timing_diagram_observation_produces_timing_constraint_records` so it proves:
+  - VLM timing annotations still become timing constraint records
+  - VLM `signals[].values[]` tuples now become grounded signal constraints
+  - those signal constraints feed temporal `SignalValue` predicates
+  - generic timing-diagram words do not become VLM-authored signal constraints
+
+### Validation
+- `cargo test --manifest-path Cargo.toml vlm_timing -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml kg_bench_runs_tracked_fixtures -- --nocapture` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-10 (VLM state-machine guards no longer become raw fake signals)
 
 ### Fixed: bounded guard parsing for visual state-machine observations
