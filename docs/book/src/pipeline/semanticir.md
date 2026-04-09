@@ -52,6 +52,12 @@ The dedicated [Handshake And Semantic Roles](../domain/handshake-semantics.md) c
 Competing semantic candidates should stay visible.
 Unsafe forced winners are worse than honest contestation.
 
+### Negative-knowledge cautions
+
+If a carried conflict or residual packet shape matches learned negative knowledge, `SemanticIR` validation may report `negative_knowledge_prior_matches`.
+That is a caution surface only.
+It does not remove the current conflict, remove the residual, change arbitration, or promote a fact from memory.
+
 ### Infrastructure is special
 
 Clocks and resets are treated as infrastructure semantics, not ordinary protocol edges.

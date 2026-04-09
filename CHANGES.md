@@ -1,5 +1,32 @@
 # CHANGES
 
+## 2026-04-10 (Negative-knowledge cautions now reach carried semantic/intent surfaces)
+
+### Added: deep-layer validation-only caution matching
+- Updated [prior_memory.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/prior_memory.rs) with shared normalized pattern builders for temporal value conflicts, interface-signal conflicts, signal-connectivity conflicts, and residual decision packets.
+- Updated [learn_priors.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/learn_priors.rs) so negative-knowledge harvesting and validation consumption now use the same shared pattern builders for every harvested negative-knowledge kind.
+- Updated [validate.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/validate.rs) so `SemanticIR` and `IntentIR` validation can recover the linked `EvidenceIR.prior_memory_path` and surface exact-match `negative_knowledge_prior_matches`.
+- `SemanticIR` validation now emits `semantic_negative_knowledge_prior_matches` when a current carried conflict or residual packet class matches prior negative knowledge.
+- `IntentIR` validation now emits `intent_negative_knowledge_prior_matches` for the same carried caution surface.
+
+### Preserved: caution is not correction
+- The new deep-layer consumer does not mutate `SemanticIR` or `IntentIR`.
+- It does not suppress temporal, interface, connectivity, semantic-role, or residual findings.
+- It does not change arbitration, scoring, or canonical promotion.
+- It only makes repeated conflict/residual shapes visible as prior-memory caution.
+
+### Added: unit and KG proof for deeper caution surfaces
+- Added focused validation regressions for temporal-conflict and residual-decision negative-knowledge matches across `SemanticIR` and `IntentIR`.
+- Strengthened the existing semantic-conflict caution fixtures so prior-guided and no-prior cases now also lock `SemanticIR` / `IntentIR` negative-knowledge validation behavior.
+- Added [negative_knowledge_prior_guided_temporal_conflict_caution_gold](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_temporal_conflict_caution_gold/fixture.json), proving a repeated high/low temporal contradiction is flagged as caution while the conflict remains present.
+- Added [negative_knowledge_prior_guided_residual_caution_gold](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_residual_caution_gold/fixture.json), proving a repeated residual packet class is flagged as caution without removing the residual.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml negative_knowledge -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml kg_bench_runs_tracked_fixtures -- --nocapture` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-10 (EvidenceIR validation now consumes negative-knowledge priors)
 
 ### Added: bounded negative-knowledge caution surfacing

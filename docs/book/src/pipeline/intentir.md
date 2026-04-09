@@ -82,6 +82,10 @@ An `IntentIR` artifact can still contain:
 That is not a bug by itself.
 For `specforge`, honest incompleteness is better than fabricated certainty.
 
+Validation may also attach negative-knowledge caution to this surface.
+If a carried conflict or residual packet class matches a learned corpus-memory failure pattern, `IntentIR` validation can report `negative_knowledge_prior_matches`.
+That is not a canonical correction; it is a diagnostic reminder that the current artifact is showing a known failure shape.
+
 ## Why users should care about this stage
 
 If you want to understand what `specforge` currently believes about a specification, `IntentIR` is the place to look.

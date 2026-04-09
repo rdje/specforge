@@ -12,9 +12,13 @@ use crate::ir::prior_memory::{
     ActorTaxonomyPriorRecord, ActorTaxonomyRole, CorpusMemory, CorpusMemoryUpdatePolicyRecord,
     NegativeKnowledgeKind, NegativeKnowledgePriorRecord, PriorSourceArtifactRecord, ProtocolFamily,
     SemanticModalityReliabilityPriorRecord, SemanticPhrasePriorRecord, TableShapePriorRecord,
-    TemporalPhrasePriorRecord, VisualMotifPriorRecord, is_meaningful_actor_term,
+    TemporalPhrasePriorRecord, VisualMotifPriorRecord,
+    interface_signal_conflict_negative_knowledge_pattern, is_meaningful_actor_term,
     is_meaningful_prior_phrase, normalize_actor_term, normalize_prior_phrase,
-    normalize_table_header_signature, signal_semantic_conflict_negative_knowledge_pattern,
+    normalize_table_header_signature, residual_decision_negative_knowledge_pattern,
+    signal_connectivity_conflict_negative_knowledge_pattern,
+    signal_semantic_conflict_negative_knowledge_pattern,
+    temporal_value_conflict_negative_knowledge_pattern,
 };
 use crate::ir::semantic::SemanticIr;
 use crate::ir::semantic::{
@@ -847,24 +851,13 @@ fn harvest_negative_knowledge_priors(
     }
 
     for conflict in &intent_ir.temporal_conflicts {
-        let mut values = conflict
-            .conflicting_values
-            .iter()
-            .map(|value| value.trim().to_ascii_lowercase())
-            .filter(|value| !value.is_empty())
-            .collect::<Vec<_>>();
-        values.sort();
-        values.dedup();
-        if values.len() < 2 {
+        let Some(normalized_pattern) = temporal_value_conflict_negative_knowledge_pattern(conflict)
+        else {
             continue;
-        }
+        };
         harvest_negative_knowledge_pattern(
             NegativeKnowledgeKind::TemporalValueConflict,
-            format!(
-                "temporal_value_conflict:phase={};values={}",
-                tick_phase_key(conflict.phase),
-                values.join("|")
-            ),
+            normalized_pattern,
             conflict.automation_confidence,
             &intent_ir.document_identity.document_key,
             protocol_family,
@@ -873,12 +866,14 @@ fn harvest_negative_knowledge_priors(
     }
 
     for conflict in &intent_ir.interface_signal_conflicts {
+        let Some(normalized_pattern) =
+            interface_signal_conflict_negative_knowledge_pattern(conflict)
+        else {
+            continue;
+        };
         harvest_negative_knowledge_pattern(
             NegativeKnowledgeKind::InterfaceSignalConflict,
-            format!(
-                "interface_signal_conflict:{}",
-                conflict.conflict_kind.as_str()
-            ),
+            normalized_pattern,
             conflict.automation_confidence,
             &intent_ir.document_identity.document_key,
             protocol_family,
@@ -887,12 +882,14 @@ fn harvest_negative_knowledge_priors(
     }
 
     for conflict in &intent_ir.signal_connectivity_conflicts {
+        let Some(normalized_pattern) =
+            signal_connectivity_conflict_negative_knowledge_pattern(conflict)
+        else {
+            continue;
+        };
         harvest_negative_knowledge_pattern(
             NegativeKnowledgeKind::SignalConnectivityConflict,
-            format!(
-                "signal_connectivity_conflict:{}",
-                conflict.conflict_kind.as_str()
-            ),
+            normalized_pattern,
             conflict.automation_confidence,
             &intent_ir.document_identity.document_key,
             protocol_family,
@@ -901,9 +898,13 @@ fn harvest_negative_knowledge_priors(
     }
 
     for residual in &intent_ir.residual_decisions {
+        let Some(normalized_pattern) = residual_decision_negative_knowledge_pattern(residual)
+        else {
+            continue;
+        };
         harvest_negative_knowledge_pattern(
             NegativeKnowledgeKind::ResidualDecision,
-            format!("residual_decision:{}", residual.packet_id),
+            normalized_pattern,
             residual.automation_confidence,
             &intent_ir.document_identity.document_key,
             protocol_family,
@@ -1347,13 +1348,6 @@ fn visual_asset_kind_key(asset_kind: VisualAssetKind) -> &'static str {
         VisualAssetKind::FormulaRegion => "formula_region",
         VisualAssetKind::Screenshot => "screenshot",
         VisualAssetKind::Unknown => "unknown",
-    }
-}
-
-fn tick_phase_key(phase: crate::ir::semantic::TickPhase) -> &'static str {
-    match phase {
-        crate::ir::semantic::TickPhase::PreTick => "pre_tick",
-        crate::ir::semantic::TickPhase::PostTick => "post_tick",
     }
 }
 

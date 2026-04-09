@@ -5,10 +5,12 @@ use serde::{Deserialize, Serialize};
 
 use crate::ir::evidence::{SignalSemanticConflictRecord, SignalSemanticHintSourceKind};
 use crate::ir::semantic::{
-    CycleWindowRecord, InterfaceSignalSemanticRole, SemanticGroundingStrength,
+    CycleWindowRecord, InterfaceSignalConflictRecord, InterfaceSignalSemanticRole,
+    SemanticGroundingStrength, SignalConnectivityConflictRecord, TemporalConflictRecord, TickPhase,
 };
 use crate::ir::source::{
-    AutomationConfidence, DiagramKind, StructuredTableRecord, TableKind, VisualAssetKind,
+    AutomationConfidence, DiagramKind, ResidualDecisionPacket, StructuredTableRecord, TableKind,
+    VisualAssetKind,
 };
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
@@ -510,6 +512,58 @@ pub fn signal_semantic_conflict_negative_knowledge_pattern(
     signatures.sort();
     signatures.dedup();
     (signatures.len() >= 2).then(|| format!("signal_semantic_conflict:{}", signatures.join("|")))
+}
+
+pub fn temporal_value_conflict_negative_knowledge_pattern(
+    conflict: &TemporalConflictRecord,
+) -> Option<String> {
+    let mut values = conflict
+        .conflicting_values
+        .iter()
+        .map(|value| value.trim().to_ascii_lowercase())
+        .filter(|value| !value.is_empty())
+        .collect::<Vec<_>>();
+    values.sort();
+    values.dedup();
+    (values.len() >= 2).then(|| {
+        format!(
+            "temporal_value_conflict:phase={};values={}",
+            tick_phase_key(conflict.phase),
+            values.join("|")
+        )
+    })
+}
+
+pub fn interface_signal_conflict_negative_knowledge_pattern(
+    conflict: &InterfaceSignalConflictRecord,
+) -> Option<String> {
+    Some(format!(
+        "interface_signal_conflict:{}",
+        conflict.conflict_kind.as_str()
+    ))
+}
+
+pub fn signal_connectivity_conflict_negative_knowledge_pattern(
+    conflict: &SignalConnectivityConflictRecord,
+) -> Option<String> {
+    Some(format!(
+        "signal_connectivity_conflict:{}",
+        conflict.conflict_kind.as_str()
+    ))
+}
+
+pub fn residual_decision_negative_knowledge_pattern(
+    residual: &ResidualDecisionPacket,
+) -> Option<String> {
+    let packet_id = residual.packet_id.trim();
+    (!packet_id.is_empty()).then(|| format!("residual_decision:{packet_id}"))
+}
+
+fn tick_phase_key(phase: TickPhase) -> &'static str {
+    match phase {
+        TickPhase::PreTick => "pre_tick",
+        TickPhase::PostTick => "post_tick",
+    }
 }
 
 pub fn normalize_actor_term(text: &str) -> String {

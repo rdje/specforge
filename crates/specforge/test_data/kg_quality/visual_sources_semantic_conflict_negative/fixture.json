@@ -61,12 +61,16 @@
           "semantic_signal_semantic_conflicts_present",
           "semantic_non_decisive_semantic_arbitration_present"
         ],
+        "finding_ids_exclude": [
+          "semantic_negative_knowledge_prior_matches"
+        ],
         "metric_values": {
           "signal_semantic_conflicts": "1",
           "with_non_decisive_semantic_arbitration": "1",
           "with_multi_source_semantic_grounding": "0",
           "with_cross_modality_semantic_grounding": "0",
-          "with_visual_semantic_grounding": "1"
+          "with_visual_semantic_grounding": "1",
+          "negative_knowledge_prior_matches": "0"
         }
       },
       "intent": {
@@ -74,12 +78,16 @@
           "intent_signal_semantic_conflicts_present",
           "intent_non_decisive_semantic_arbitration_present"
         ],
+        "finding_ids_exclude": [
+          "intent_negative_knowledge_prior_matches"
+        ],
         "metric_values": {
           "signal_semantic_conflicts": "1",
           "with_non_decisive_semantic_arbitration": "1",
           "with_multi_source_semantic_grounding": "0",
           "with_cross_modality_semantic_grounding": "0",
-          "with_visual_semantic_grounding": "1"
+          "with_visual_semantic_grounding": "1",
+          "negative_knowledge_prior_matches": "0"
         }
       }
     }

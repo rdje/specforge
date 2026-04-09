@@ -1,0 +1,83 @@
+{
+  "name": "negative_knowledge_prior_guided_temporal_conflict_caution_gold",
+  "source": "source.md",
+  "prior_memory_patch": {
+    "negative_knowledge_priors": [
+      {
+        "prior_id": "negative_knowledge_prior_0001",
+        "knowledge_kind": "temporal_value_conflict",
+        "normalized_pattern": "temporal_value_conflict:phase=post_tick;values=high|low",
+        "protocol_family": "unknown",
+        "support_count": 2,
+        "supporting_document_keys": ["seed_doc_1", "seed_doc_2"],
+        "strongest_automation_confidence": "medium"
+      }
+    ]
+  },
+  "evidence_ir_patch": {
+    "signal_constraints": [
+      {
+        "constraint_id": "sigcon_pready_high",
+        "subject_signal": "PREADY",
+        "constraint_kind": {
+          "kind": "must_be_high"
+        },
+        "target_value": null,
+        "condition_text": "when HREADY is LOW",
+        "negated": false,
+        "source_text": "PREADY must be HIGH when HREADY is LOW.",
+        "supporting_statement_ids": [
+          "stmt_pready_high"
+        ],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_pready_low",
+        "subject_signal": "PREADY",
+        "constraint_kind": {
+          "kind": "must_be_low"
+        },
+        "target_value": null,
+        "condition_text": "when HREADY is LOW",
+        "negated": false,
+        "source_text": "PREADY must be LOW when HREADY is LOW.",
+        "supporting_statement_ids": [
+          "stmt_pready_low"
+        ],
+        "automation_confidence": "medium"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["PREADY", "HREADY"],
+      "temporal_conflicts": 1
+    },
+    "intent": {
+      "signal_names_include": ["PREADY", "HREADY"],
+      "temporal_conflicts": 1
+    },
+    "validation": {
+      "semantic": {
+        "finding_ids_include": [
+          "semantic_temporal_conflicts_present",
+          "semantic_negative_knowledge_prior_matches"
+        ],
+        "metric_values": {
+          "temporal_conflicts": "1",
+          "negative_knowledge_prior_matches": "1"
+        }
+      },
+      "intent": {
+        "finding_ids_include": [
+          "intent_temporal_conflicts_present",
+          "intent_negative_knowledge_prior_matches"
+        ],
+        "metric_values": {
+          "temporal_conflicts": "1",
+          "negative_knowledge_prior_matches": "1"
+        }
+      }
+    }
+  }
+}

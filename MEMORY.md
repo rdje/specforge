@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `344a126`
-- latest_commit_brief_message: `feat(evidence): consume visual motif priors`
-- note: the current session is now implementing the first bounded validation-only consumer for negative-knowledge priors
+- latest_commit_hash: `f37e19f`
+- latest_commit_brief_message: `feat(validation): surface negative knowledge priors`
+- note: the current session is now broadening negative-knowledge validation cautions into `SemanticIR` / `IntentIR` carried conflict and residual surfaces
 
 ## Recent commit chain (last 5)
+- `f37e19f` feat(validation): surface negative knowledge priors
 - `344a126` feat(evidence): consume visual motif priors
 - `f94796a` feat(learning): add visual motif memory
 - `4dd9cfc` feat(semantic): lift VLM timing tuples
 - `d792f18` fix(semantic): bound VLM state machine guards
-- `7617173` docs(book): add multimodal evidence chapter
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -55,6 +55,7 @@
 - `CorpusMemory` schema version `5` now has two advisory-only typed memory families: `visual_motif_priors` for reusable source-side visual patterns and `negative_knowledge_priors` for conflict/residual archetypes that should guide future caution without authoring canonical facts
 - `EvidenceIR` now has the first bounded visual-motif prior consumer too: when a current visual asset is still `DiagramKind::Unknown`, its local caption can match a unique learned visual-motif prior and gain an explicit `Classification` observation plus an effective normative visual role, without mutating `SourceIR` or synthesizing canonical semantic facts
 - `EvidenceIR` validation now has the first bounded negative-knowledge prior consumer too: if a current local signal-semantic conflict pattern exactly matches learned negative knowledge, validation reports `negative_knowledge_prior_matches` plus an info-level caution finding, without suppressing the conflict or changing semantic arbitration
+- `SemanticIR` / `IntentIR` validation now broaden that negative-knowledge consumer across carried signal-semantic conflicts, temporal value conflicts, interface-signal conflicts, signal-connectivity conflicts, and residual decision packet classes by recovering the linked `EvidenceIR.prior_memory_path`
 - root docs remain important, but they now serve continuity, roadmap, validation, and developer-state roles more than primary end-user onboarding
 - runnable CLI surface includes `inspect`, `doctor`, `converge`, `ingest`, `evidence`, `semantic`, `intent`, `adapt`, `enrich`, `validate`, `kg-bench`, `project-validation`, `learn-priors`, and `nlp-enrich`
 - `specforge converge` now defaults to full Ollama-backed VLM image enrichment plus NLP Level 3 backannotation; use `--vlm-provider skip` and/or `--nlp-provider skip` only when intentionally narrowing the loop
@@ -104,7 +105,7 @@
 - `EvidenceIR` now also has a fourth bounded prior consumer for table-shape priors, using them only when a current structured table is still `unknown`; explicit local `SourceIR.table_kind` values still win outright
 - `SemanticIR` now also has a fifth bounded prior consumer overall and a second semantic-stage one for semantic modality-reliability priors, using them only to advisory-adjust arbitration between already-present locally grounded semantic candidates while preserving the underlying conflict surface
 - `EvidenceIR` now also has a sixth bounded prior consumer overall for visual-motif priors, using them only when a current visual asset is locally captioned and still diagram-kind `unknown`; the output is an evidence-stage `Classification` observation and role adjustment, not a canonical semantic fact
-- `EvidenceIR` validation now also has a seventh bounded prior consumer overall for negative-knowledge priors, using them only as exact-match caution signals for already-present current-document signal-semantic conflicts
+- validation now also has a seventh bounded prior consumer overall for negative-knowledge priors: it started with `EvidenceIR` signal-semantic conflicts and now also covers `SemanticIR` / `IntentIR` carried temporal conflicts, interface/connectivity conflicts, semantic conflicts, and residual packet classes as exact-match caution only
 - the roadmap now also carries a new `R15g` workstream for a corpus knowledge base plane beside the KG and typed priors, so persistent cross-document synthesis has an explicit home instead of being forced into either canonical IR or `CorpusMemory`
 - the latest live four-document prior-memory run over AXI/APB/AHB/AXI-Stream now yields `16` actor-taxonomy priors, `5` semantic phrase priors, `4` semantic modality-reliability priors, `266` temporal phrase priors, and `99` table-shape priors
 - AXI-Stream is now the first unseen protocol run carried all the way through the full loopbacked path: it converged in `2` pipeline iterations with Ollama VLM + NLP Level 3, now validates at `90/100 EXCELLENT`, and its artifact is included in the tracked validation snapshot
@@ -128,6 +129,7 @@
 - `specforge kg-bench` now also locks the same before/after truthfulness pattern for semantic modality-reliability priors on locally conflicted semantic-role evidence, proving the conflict stays contested without the staged prior and becomes decisively resolved only when that prior is present
 - `specforge kg-bench` now also locks the same local-grounding truthfulness pattern for visual-motif priors on a locally unknown but captioned visual asset, proving prior memory can classify the diagram kind without leaking semantic facts across documents
 - `specforge kg-bench` now also locks the first negative-knowledge consumer: a repeated visual-caption/VLM semantic conflict can surface a prior-memory caution in `EvidenceIR` validation without removing the conflict or forcing downstream consensus
+- `specforge kg-bench` now also locks deep-layer negative-knowledge cautions: repeated temporal contradiction and residual packet shapes surface in `SemanticIR` / `IntentIR` validation without removing the current conflict or residual
 - canonical generated artifact roots are under `generated/source_ir/`, `generated/evidence_ir/`, `generated/semantic_ir/`, and `generated/intent_ir/`
 - `generated/` is git-ignored and intentionally untracked; continuity must live in docs, not versioned artifacts
 - `subs/fsmgen/` is a local read-only reference checkout for `.fsm` behavior
@@ -135,6 +137,7 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
+- broadened negative-knowledge prior consumption into `SemanticIR` / `IntentIR` validation: current carried conflicts and residual packet classes can now exact-match prior memory and surface caution findings only
 - added the first bounded negative-knowledge prior consumer: `EvidenceIR` validation can now surface exact-match signal-semantic conflict patterns from prior memory as caution findings only
 - added the first bounded visual-motif prior consumer: `EvidenceIR` can now attach a prior-memory `Classification` observation to a current unknown captioned visual asset and use that recovered diagram kind for visual role only
 - started the next learning-plane family expansion: `CorpusMemory` can now represent and `learn-priors` can harvest typed visual-motif and negative-knowledge priors, while keeping them advisory and separate from canonical fact authorship
@@ -174,7 +177,7 @@
 
 ## Exact next steps
 1. make shared infrastructure sourcing/distribution first-class beyond the current info-note boundary for signals like `ACLK` and `ARESETN`
-2. broaden negative-knowledge prior consumption beyond the first `EvidenceIR` signal-semantic conflict caution, especially temporal conflict and residual-decision caution surfaces
+2. use negative-knowledge priors beyond reporting, but still safely: guide rescans, extractor selection, or stronger-corroboration thresholds without suppressing local evidence
 3. broaden visual-motif prior benchmarking beyond the first diagram-classification consumer, especially around rescan selection and multimodal corroboration
 
 ## Remaining engineering gaps after this commit
@@ -183,7 +186,7 @@
 - KG-guided multimodal rescans (`R15c`)
 - broader evidence arbitration / conflict handling beyond polarity, interface-shape, multi-producer ambiguity, modality-aware semantic-role grounding, consensus summaries, semantic candidates, and semantic arbitration summaries (`R15d`)
 - broader KG-quality evaluation and benchmark hardening beyond the new seed fixture pack (`R15e`)
-- cross-document extractor learning is now started, and the first seven bounded prior-consumer paths are now live; negative-knowledge priors have their first validation-only consumer, but broader caution surfaces still need to grow
+- cross-document extractor learning is now started, and the first seven bounded prior-consumer paths are now live; negative-knowledge priors now have validation-only caution coverage across the main carried conflict/residual surfaces, but rescans and corroboration-threshold uses still need to grow
 - Tier 3 relation extraction after the graph/temporal/eval surfaces are ready (`R14`)
 - some downstream compatibility and consumer paths still rely on flat `direction_hint` instead of the graph-native surface
 - meaning-based role inference now covers tables, prose, alias-grounded prose, visual captions, and VLM timing annotations, and canonical layers now preserve that provenance, but broader downstream use of preserved arbitration state is still early

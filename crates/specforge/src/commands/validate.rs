@@ -6,19 +6,24 @@ use crate::cli::ValidateArgs;
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::evidence::{
-    EvidenceIr, SignalSemanticHintRecord, SignalSemanticHintSourceKind, StatementClass,
-    VisualObservationKind,
+    EvidenceIr, SignalSemanticConflictRecord, SignalSemanticHintRecord,
+    SignalSemanticHintSourceKind, StatementClass, VisualObservationKind,
 };
 use crate::ir::intent::IntentIr;
 use crate::ir::prior_memory::{
     CorpusMemory, NegativeKnowledgeKind, ProtocolFamily,
+    interface_signal_conflict_negative_knowledge_pattern,
+    residual_decision_negative_knowledge_pattern,
+    signal_connectivity_conflict_negative_knowledge_pattern,
     signal_semantic_conflict_negative_knowledge_pattern,
+    temporal_value_conflict_negative_knowledge_pattern,
 };
 use crate::ir::semantic::{
-    ActorPortRecord, ActorRelativeDirection, ClockEdge, SemanticIr, SignalConnectivityClass,
+    ActorPortRecord, ActorRelativeDirection, ClockEdge, InterfaceSignalConflictRecord, SemanticIr,
+    SignalConnectivityClass, SignalConnectivityConflictRecord, TemporalConflictRecord,
 };
 use crate::ir::source::{
-    AutomationConfidence, DiagramKind, SourceIr, ValidationFindingRecord,
+    AutomationConfidence, DiagramKind, ResidualDecisionPacket, SourceIr, ValidationFindingRecord,
     ValidationFindingSeverity, ValidationMetricRecord, ValidationReportRecord, WidthHint,
 };
 
@@ -166,6 +171,142 @@ fn evidence_negative_knowledge_prior_matches(ir: &EvidenceIr) -> Vec<String> {
                 .then(|| conflict.conflict_id.clone())
         })
         .collect()
+}
+
+fn push_negative_knowledge_match(
+    matches: &mut Vec<String>,
+    corpus_memory: &CorpusMemory,
+    protocol_family: ProtocolFamily,
+    knowledge_kind: NegativeKnowledgeKind,
+    normalized_pattern: Option<String>,
+    related_id: &str,
+) {
+    let Some(normalized_pattern) = normalized_pattern else {
+        return;
+    };
+    if corpus_memory.negative_knowledge_pattern_is_known(
+        Some(protocol_family),
+        knowledge_kind,
+        &normalized_pattern,
+    ) {
+        matches.push(related_id.to_string());
+    }
+}
+
+fn negative_knowledge_prior_matches_for_carried_surfaces(
+    corpus_memory: &CorpusMemory,
+    protocol_family: ProtocolFamily,
+    signal_semantic_conflicts: &[SignalSemanticConflictRecord],
+    temporal_conflicts: &[TemporalConflictRecord],
+    interface_signal_conflicts: &[InterfaceSignalConflictRecord],
+    signal_connectivity_conflicts: &[SignalConnectivityConflictRecord],
+    residual_decisions: &[ResidualDecisionPacket],
+) -> Vec<String> {
+    let mut matches = Vec::new();
+    for conflict in signal_semantic_conflicts {
+        push_negative_knowledge_match(
+            &mut matches,
+            corpus_memory,
+            protocol_family,
+            NegativeKnowledgeKind::SignalSemanticConflict,
+            signal_semantic_conflict_negative_knowledge_pattern(conflict),
+            &conflict.conflict_id,
+        );
+    }
+    for conflict in temporal_conflicts {
+        push_negative_knowledge_match(
+            &mut matches,
+            corpus_memory,
+            protocol_family,
+            NegativeKnowledgeKind::TemporalValueConflict,
+            temporal_value_conflict_negative_knowledge_pattern(conflict),
+            &conflict.conflict_id,
+        );
+    }
+    for conflict in interface_signal_conflicts {
+        push_negative_knowledge_match(
+            &mut matches,
+            corpus_memory,
+            protocol_family,
+            NegativeKnowledgeKind::InterfaceSignalConflict,
+            interface_signal_conflict_negative_knowledge_pattern(conflict),
+            &conflict.conflict_id,
+        );
+    }
+    for conflict in signal_connectivity_conflicts {
+        push_negative_knowledge_match(
+            &mut matches,
+            corpus_memory,
+            protocol_family,
+            NegativeKnowledgeKind::SignalConnectivityConflict,
+            signal_connectivity_conflict_negative_knowledge_pattern(conflict),
+            &conflict.conflict_id,
+        );
+    }
+    for residual in residual_decisions {
+        push_negative_knowledge_match(
+            &mut matches,
+            corpus_memory,
+            protocol_family,
+            NegativeKnowledgeKind::ResidualDecision,
+            residual_decision_negative_knowledge_pattern(residual),
+            &residual.packet_id,
+        );
+    }
+    matches
+}
+
+fn semantic_negative_knowledge_prior_matches(ir: &SemanticIr) -> Vec<String> {
+    let Some(evidence_ir) = EvidenceIr::load_from_path(&ir.evidence_ir_path).ok() else {
+        return Vec::new();
+    };
+    let Some(corpus_memory) =
+        load_prior_memory_for_validation(evidence_ir.prior_memory_path.as_deref())
+    else {
+        return Vec::new();
+    };
+    let protocol_family = ProtocolFamily::infer(
+        &ir.document_identity.document_key,
+        &ir.document_identity.display_name,
+    );
+
+    negative_knowledge_prior_matches_for_carried_surfaces(
+        &corpus_memory,
+        protocol_family,
+        &ir.signal_semantic_conflicts,
+        &ir.temporal_conflicts,
+        &ir.interface_signal_conflicts,
+        &ir.signal_connectivity_conflicts,
+        &ir.residual_decisions,
+    )
+}
+
+fn intent_negative_knowledge_prior_matches(ir: &IntentIr) -> Vec<String> {
+    let Some(semantic_ir) = SemanticIr::load_from_path(&ir.semantic_ir_path).ok() else {
+        return Vec::new();
+    };
+    let Some(evidence_ir) = EvidenceIr::load_from_path(&semantic_ir.evidence_ir_path).ok() else {
+        return Vec::new();
+    };
+    let Some(corpus_memory) =
+        load_prior_memory_for_validation(evidence_ir.prior_memory_path.as_deref())
+    else {
+        return Vec::new();
+    };
+    let protocol_family = ProtocolFamily::infer(
+        &ir.document_identity.document_key,
+        &ir.document_identity.display_name,
+    );
+
+    negative_knowledge_prior_matches_for_carried_surfaces(
+        &corpus_memory,
+        protocol_family,
+        &ir.signal_semantic_conflicts,
+        &ir.temporal_conflicts,
+        &ir.interface_signal_conflicts,
+        &ir.signal_connectivity_conflicts,
+        &ir.residual_decisions,
+    )
 }
 
 fn graph_direction_signal_names(actor_ports: &[ActorPortRecord]) -> BTreeSet<String> {
@@ -1675,6 +1816,14 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         }
     }
 
+    let negative_knowledge_prior_matches = semantic_negative_knowledge_prior_matches(ir);
+    println!();
+    println!("=== Negative Knowledge Priors ===");
+    println!(
+        "  matched_carried_conflict_or_residual_patterns: {}",
+        negative_knowledge_prior_matches.len()
+    );
+
     let missing_producer_signals = protocol_missing_producer_signal_names(&ir.signal_connectivity);
     let infrastructure_missing_producer_signals =
         infrastructure_missing_producer_signal_names(&ir.signal_connectivity);
@@ -1992,6 +2141,18 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 .collect(),
         ));
     }
+    if !negative_knowledge_prior_matches.is_empty() {
+        findings.push(finding(
+            "semantic_negative_knowledge_prior_matches",
+            ValidationFindingSeverity::Info,
+            "negative_knowledge",
+            format!(
+                "{} carried conflict/residual pattern(s) match prior negative knowledge; this is a caution signal only, not an override of current semantic evidence",
+                negative_knowledge_prior_matches.len()
+            ),
+            negative_knowledge_prior_matches.clone(),
+        ));
+    }
 
     let report = ValidationReportRecord {
         report_id: format!("validation_semantic_ir_{artifact_fingerprint}"),
@@ -2174,6 +2335,10 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             metric(
                 "residual_decisions",
                 ir.residual_decisions.len().to_string(),
+            ),
+            metric(
+                "negative_knowledge_prior_matches",
+                negative_knowledge_prior_matches.len().to_string(),
             ),
         ],
         findings,
@@ -2534,6 +2699,14 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         }
     }
 
+    let negative_knowledge_prior_matches = intent_negative_knowledge_prior_matches(ir);
+    println!();
+    println!("=== Negative Knowledge Priors ===");
+    println!(
+        "  matched_carried_conflict_or_residual_patterns: {}",
+        negative_knowledge_prior_matches.len()
+    );
+
     let missing_producer_signals = protocol_missing_producer_signal_names(&ir.signal_connectivity);
     let infrastructure_missing_producer_signals =
         infrastructure_missing_producer_signal_names(&ir.signal_connectivity);
@@ -2860,6 +3033,18 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 .collect(),
         ));
     }
+    if !negative_knowledge_prior_matches.is_empty() {
+        findings.push(finding(
+            "intent_negative_knowledge_prior_matches",
+            ValidationFindingSeverity::Info,
+            "negative_knowledge",
+            format!(
+                "{} carried conflict/residual pattern(s) match prior negative knowledge; this is a caution signal only, not an override of current intent evidence",
+                negative_knowledge_prior_matches.len()
+            ),
+            negative_knowledge_prior_matches.clone(),
+        ));
+    }
 
     let report = ValidationReportRecord {
         report_id: format!("validation_intent_ir_{artifact_fingerprint}"),
@@ -3044,6 +3229,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 "residual_decisions",
                 ir.residual_decisions.len().to_string(),
             ),
+            metric(
+                "negative_knowledge_prior_matches",
+                negative_knowledge_prior_matches.len().to_string(),
+            ),
             metric("overall_score", format!("{score:.0}")),
             metric("grade", grade.to_string()),
         ],
@@ -3084,6 +3273,39 @@ mod tests {
             row_span: 1,
             col_span: 1,
             is_header,
+        }
+    }
+
+    fn corpus_memory_with_negative_knowledge(
+        negative_knowledge_priors: Vec<NegativeKnowledgePriorRecord>,
+        artifact_path: PathBuf,
+    ) -> CorpusMemory {
+        CorpusMemory {
+            schema_version: 5,
+            update_policy: CorpusMemoryUpdatePolicyRecord {
+                advisory_only: true,
+                requires_validated_intent_ir: true,
+                rejects_error_findings: true,
+                excludes_alias_dependent_semantic_consensus: true,
+                local_grounding_required_for_canonical_promotion: true,
+            },
+            source_artifacts: vec![PriorSourceArtifactRecord {
+                artifact_path,
+                document_key: "seed_doc".to_string(),
+                display_name: "seed_doc".to_string(),
+                protocol_family: ProtocolFamily::Unknown,
+                overall_score: Some(90),
+                grade: Some("EXCELLENT".to_string()),
+                accepted_for_learning: true,
+                skip_reason: None,
+            }],
+            actor_taxonomy_priors: Vec::new(),
+            semantic_phrase_priors: Vec::new(),
+            semantic_modality_reliability_priors: Vec::new(),
+            temporal_phrase_priors: Vec::new(),
+            table_shape_priors: Vec::new(),
+            visual_motif_priors: Vec::new(),
+            negative_knowledge_priors,
         }
     }
 
@@ -5448,6 +5670,224 @@ mod tests {
         assert_eq!(metric_value(&report, "temporal_rules"), Some("2"));
         assert_eq!(metric_value(&report, "temporal_conflicts"), Some("1"));
         assert!(has_finding(&report, "intent_temporal_conflicts_present"));
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_semantic_and_intent_ir_surface_negative_knowledge_temporal_conflict_matches()
+    -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        let prior_memory_path = tempdir.path().join("corpus_memory.json");
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal HREADY is input width 1.\n\n",
+                "Signal PREADY is output width 1.\n\n",
+                "Clock clk.\n\n",
+                "The Completer drives PREADY.\n\n",
+                "The Requester reads PREADY.\n",
+            ),
+        )?;
+        let corpus_memory = corpus_memory_with_negative_knowledge(
+            vec![NegativeKnowledgePriorRecord {
+                prior_id: "negative_knowledge_prior_0001".to_string(),
+                knowledge_kind: NegativeKnowledgeKind::TemporalValueConflict,
+                normalized_pattern: "temporal_value_conflict:phase=post_tick;values=high|low"
+                    .to_string(),
+                protocol_family: ProtocolFamily::Unknown,
+                support_count: 2,
+                supporting_document_keys: vec!["seed_doc".to_string()],
+                strongest_automation_confidence: AutomationConfidence::Medium,
+            }],
+            tempdir.path().join("seed_intent_ir.json"),
+        );
+        fs::write(
+            &prior_memory_path,
+            serde_json::to_string_pretty(&corpus_memory)?,
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build_with_prior_memory(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+            Some(&prior_memory_path),
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pready_high".to_string(),
+            subject_signal: "PREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeHigh,
+            target_value: None,
+            condition_text: Some("when HREADY is LOW".to_string()),
+            negated: false,
+            source_text: "PREADY must be HIGH when HREADY is LOW.".to_string(),
+            supporting_statement_ids: vec!["stmt_pready_high".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pready_low".to_string(),
+            subject_signal: "PREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeLow,
+            target_value: None,
+            condition_text: Some("when HREADY is LOW".to_string()),
+            negated: false,
+            source_text: "PREADY must be LOW when HREADY is LOW.".to_string(),
+            supporting_statement_ids: vec!["stmt_pready_low".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let semantic_report = validate_semantic_ir(
+            &semantic_ir,
+            "semantic_negative_knowledge_prior_matches".to_string(),
+        );
+        assert_eq!(
+            metric_value(&semantic_report, "temporal_conflicts"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&semantic_report, "negative_knowledge_prior_matches"),
+            Some("1")
+        );
+        assert!(has_finding(
+            &semantic_report,
+            "semantic_temporal_conflicts_present"
+        ));
+        assert!(has_finding(
+            &semantic_report,
+            "semantic_negative_knowledge_prior_matches"
+        ));
+
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+        let intent_report = validate_intent_ir(
+            &intent_ir,
+            "intent_negative_knowledge_prior_matches".to_string(),
+        );
+        assert_eq!(
+            metric_value(&intent_report, "temporal_conflicts"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&intent_report, "negative_knowledge_prior_matches"),
+            Some("1")
+        );
+        assert!(has_finding(
+            &intent_report,
+            "intent_temporal_conflicts_present"
+        ));
+        assert!(has_finding(
+            &intent_report,
+            "intent_negative_knowledge_prior_matches"
+        ));
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_semantic_and_intent_ir_surface_negative_knowledge_residual_matches() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        let prior_memory_path = tempdir.path().join("corpus_memory.json");
+        fs::write(&source, "# Protocol\n\nSignal PREADY is output width 1.\n")?;
+        let corpus_memory = corpus_memory_with_negative_knowledge(
+            vec![NegativeKnowledgePriorRecord {
+                prior_id: "negative_knowledge_prior_0001".to_string(),
+                knowledge_kind: NegativeKnowledgeKind::ResidualDecision,
+                normalized_pattern: "residual_decision:semantic_actor_boundary_inference"
+                    .to_string(),
+                protocol_family: ProtocolFamily::Unknown,
+                support_count: 2,
+                supporting_document_keys: vec!["seed_doc".to_string()],
+                strongest_automation_confidence: AutomationConfidence::Medium,
+            }],
+            tempdir.path().join("seed_intent_ir.json"),
+        );
+        fs::write(
+            &prior_memory_path,
+            serde_json::to_string_pretty(&corpus_memory)?,
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build_with_prior_memory(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+            Some(&prior_memory_path),
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let semantic_report = validate_semantic_ir(
+            &semantic_ir,
+            "semantic_negative_knowledge_residual_matches".to_string(),
+        );
+        assert_eq!(
+            metric_value(&semantic_report, "residual_decisions"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&semantic_report, "negative_knowledge_prior_matches"),
+            Some("1")
+        );
+        assert!(has_finding(
+            &semantic_report,
+            "semantic_residual_decisions_present"
+        ));
+        assert!(has_finding(
+            &semantic_report,
+            "semantic_negative_knowledge_prior_matches"
+        ));
+
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+        let intent_report = validate_intent_ir(
+            &intent_ir,
+            "intent_negative_knowledge_residual_matches".to_string(),
+        );
+        assert!(
+            metric_value(&intent_report, "residual_decisions")
+                .and_then(|value| value.parse::<usize>().ok())
+                .is_some_and(|value| value >= 1)
+        );
+        assert_eq!(
+            metric_value(&intent_report, "negative_knowledge_prior_matches"),
+            Some("1")
+        );
+        assert!(has_finding(
+            &intent_report,
+            "intent_residual_decisions_present"
+        ));
+        assert!(has_finding(
+            &intent_report,
+            "intent_negative_knowledge_prior_matches"
+        ));
 
         Ok(())
     }

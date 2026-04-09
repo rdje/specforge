@@ -59,8 +59,9 @@ Visual-motif priors already have a first bounded consumer: if a current visual a
 That does not rewrite `SourceIR` and does not create semantic facts by itself.
 
 Negative-knowledge priors are cautionary memory.
-They also have a first bounded consumer: if current `EvidenceIR` already contains a local signal-semantic conflict whose pattern matches learned negative knowledge, validation may report a caution finding and increment `negative_knowledge_prior_matches`.
-That does not suppress the conflict, change arbitration, or create canonical facts.
+They also have bounded validation consumers: if current `EvidenceIR` already contains a local signal-semantic conflict whose pattern matches learned negative knowledge, validation may report a caution finding and increment `negative_knowledge_prior_matches`.
+The same caution surface now extends into `SemanticIR` and `IntentIR` validation for carried signal-semantic conflicts, temporal value conflicts, interface-signal conflicts, signal-connectivity conflicts, and residual decision packet classes.
+That does not suppress conflicts, change arbitration, remove residuals, or create canonical facts.
 It only tells users that the current failure shape is one the corpus memory has seen before.
 
 That is why `specforge` can get smarter over time without collapsing into cross-document contamination.

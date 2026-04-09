@@ -716,6 +716,26 @@
   - it does not create canonical `SemanticIR` or `IntentIR` facts
 - the tracked `negative_knowledge_prior_guided_semantic_conflict_caution_gold` fixture locks that behavior, while the existing `visual_sources_semantic_conflict_negative` fixture now proves the same local conflict stays unmatched when no prior is staged
 
+### Deep-layer negative-knowledge prior caution surfaces
+- `SemanticIR` and `IntentIR` validation now broaden the same validation-only negative-knowledge consumer
+- the deep-layer consumer recovers the linked prior memory through artifact provenance:
+  - `SemanticIR.evidence_ir_path` -> `EvidenceIR.prior_memory_path`
+  - `IntentIR.semantic_ir_path` -> `SemanticIR.evidence_ir_path` -> `EvidenceIR.prior_memory_path`
+- the normalized pattern builders now live in `prior_memory.rs`, so `learn-priors` harvesting and validation consumption share one signature shape for:
+  - signal-semantic conflicts
+  - temporal value conflicts
+  - interface-signal conflicts
+  - signal-connectivity conflicts
+  - residual decision packet classes
+- `SemanticIR` validation now emits `semantic_negative_knowledge_prior_matches` plus the shared `negative_knowledge_prior_matches` metric when a carried current-document conflict/residual pattern exact-matches prior memory
+- `IntentIR` validation now emits `intent_negative_knowledge_prior_matches` plus the same metric for its carried canonical surface
+- the output deliberately remains caution-only:
+  - it does not mutate `SemanticIR` or `IntentIR`
+  - it does not suppress the carried conflict or residual finding
+  - it does not change scoring, arbitration, or canonical promotion
+  - it does not create facts from prior memory
+- the tracked `negative_knowledge_prior_guided_temporal_conflict_caution_gold` fixture locks repeated temporal contradiction caution behavior, and `negative_knowledge_prior_guided_residual_caution_gold` locks repeated residual packet caution behavior
+
 ### Fifth landed bounded prior family and semantic-stage arbitration slice
 - the fifth bounded learning family is now real in `crates/specforge/src/ir/prior_memory.rs` and `crates/specforge/src/commands/learn_priors.rs`
 - `specforge learn-priors` now harvests semantic modality-reliability priors from decisive, non-alias-dependent semantic consensus plus the supporting source kinds that carried that consensus

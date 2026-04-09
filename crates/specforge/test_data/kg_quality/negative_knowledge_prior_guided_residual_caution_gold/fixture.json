@@ -1,0 +1,47 @@
+{
+  "name": "negative_knowledge_prior_guided_residual_caution_gold",
+  "source": "source.md",
+  "prior_memory_patch": {
+    "negative_knowledge_priors": [
+      {
+        "prior_id": "negative_knowledge_prior_0001",
+        "knowledge_kind": "residual_decision",
+        "normalized_pattern": "residual_decision:semantic_actor_boundary_inference",
+        "protocol_family": "unknown",
+        "support_count": 2,
+        "supporting_document_keys": ["seed_doc_1", "seed_doc_2"],
+        "strongest_automation_confidence": "medium"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["PREADY"],
+      "residual_decision_ids_include": ["semantic_actor_boundary_inference"]
+    },
+    "intent": {
+      "signal_names_include": ["PREADY"],
+      "residual_decision_ids_include": ["semantic_actor_boundary_inference"]
+    },
+    "validation": {
+      "semantic": {
+        "finding_ids_include": [
+          "semantic_residual_decisions_present",
+          "semantic_negative_knowledge_prior_matches"
+        ],
+        "metric_values": {
+          "negative_knowledge_prior_matches": "1"
+        }
+      },
+      "intent": {
+        "finding_ids_include": [
+          "intent_residual_decisions_present",
+          "intent_negative_knowledge_prior_matches"
+        ],
+        "metric_values": {
+          "negative_knowledge_prior_matches": "1"
+        }
+      }
+    }
+  }
+}
