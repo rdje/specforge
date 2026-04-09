@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-04-09 (book now explains graph-first actor connectivity)
+
+### Added: dedicated public chapter for actor connectivity
+- Added [actor-connectivity.md](/Users/richarddje/Documents/github/specforge/docs/book/src/domain/actor-connectivity.md) under the mdBook Domain Model section.
+- Updated [SUMMARY.md](/Users/richarddje/Documents/github/specforge/docs/book/src/SUMMARY.md), [domain/overview.md](/Users/richarddje/Documents/github/specforge/docs/book/src/domain/overview.md), [introduction.md](/Users/richarddje/Documents/github/specforge/docs/book/src/introduction.md), [architecture-rationale.md](/Users/richarddje/Documents/github/specforge/docs/book/src/architecture-rationale.md), and [semanticir.md](/Users/richarddje/Documents/github/specforge/docs/book/src/pipeline/semanticir.md) so the new graph-direction domain chapter is visible from the public docs path.
+
+### Clarified: direction is a structural KG problem first
+- The new chapter explains:
+  - `Drives` / `Reads` as actor-signal graph relation types
+  - how graph relations become actor-relative ports
+  - how actor ports group into signal connectivity records
+  - why graph-derived direction is stronger than flat compatibility direction hints
+  - where graph facts come from today, including source/destination tables, drive/sample prose, prior-guided section headings, and local complementary actor recovery
+  - why bogus labels such as `Clock`, `Reset`, `External`, `Tie-off`, `input`, and payload/event nouns must not become fake protocol actors
+  - how multiple-producer ambiguity remains visible as connectivity conflict state
+  - how graph facts support actor-grounded temporal predicates
+
 ## 2026-04-09 (book now explains handshake semantic-role arbitration)
 
 ### Added: dedicated public chapter for handshake and semantic roles

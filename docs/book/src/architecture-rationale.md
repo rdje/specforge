@@ -138,6 +138,19 @@ That is why semantic-role recovery is modeled through:
 
 The dedicated chapter [Handshake And Semantic Roles](domain/handshake-semantics.md) explains how that role surface works.
 
+## Why connectivity is graph-first
+
+Flat `input` / `output` labels are useful, but they lose actor perspective.
+
+`specforge` prefers to recover structural facts such as:
+
+- `(Requester, Drives, PSEL)`
+- `(Completer, Reads, PSEL)`
+
+Those facts explain who produces and consumes a signal, and they can later support actor-relative ports, signal connectivity, and actor-grounded temporal predicates.
+
+The dedicated chapter [Actor Connectivity And Graph Direction](domain/actor-connectivity.md) explains that graph-first direction model.
+
 ## Why learning is symbolic and explicit
 
 `specforge` can get stronger across many documents, but the thing that grows is not hidden neural state.

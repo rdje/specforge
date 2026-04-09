@@ -17,3 +17,5 @@ The section begins with clock and reset infrastructure because that boundary is 
 Clocks and resets can appear syntactically like ordinary signals, but they should not be modeled as ordinary payload or handshake edges.
 
 The next chapter covers handshake and semantic-role recovery, because ready/valid-like transfer progress is one of the most important protocol motifs `specforge` needs to recover without over-trusting signal names.
+
+Actor connectivity is the next boundary after that: `specforge` should prefer graph facts like `(Requester, Drives, PSEL)` and `(Completer, Reads, PSEL)` over flat direction hints whenever the document supports them.

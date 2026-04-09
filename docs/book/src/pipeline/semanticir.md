@@ -39,6 +39,8 @@ It is where multiple evidence fragments are combined into a typed world model.
 
 Direction should come from structural actor-signal relations when possible, not from flat heuristics alone.
 
+The dedicated [Actor Connectivity And Graph Direction](../domain/actor-connectivity.md) chapter explains how `Drives` / `Reads` relations become actor-relative ports and signal connectivity.
+
 ### Meaning before spelling
 
 Handshake recovery should prefer grounded role evidence over raw `*VALID*` / `*READY*` name shape.
