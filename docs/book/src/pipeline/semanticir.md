@@ -82,6 +82,8 @@ Residual packets exist because the project would rather preserve unresolved ambi
 
 These are the kinds of questions that are too semantic for `EvidenceIR` but still too provisional to be flattened straight into final intent.
 
+The dedicated [Temporal Semantics And Timing](../domain/temporal-semantics.md) chapter explains the typed temporal-rule surface in more detail.
+
 ## Why arbitration lives here
 
 Meaning recovery is often not binary.

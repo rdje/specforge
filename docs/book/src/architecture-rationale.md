@@ -151,6 +151,21 @@ Those facts explain who produces and consumes a signal, and they can later suppo
 
 The dedicated chapter [Actor Connectivity And Graph Direction](domain/actor-connectivity.md) explains that graph-first direction model.
 
+## Why timing is typed
+
+Timing prose is too important to remain only as text.
+
+`specforge` turns recoverable timing obligations into typed temporal rules with:
+
+- clock edge
+- tick phase
+- predicates
+- cycle windows
+- actor grounding
+- explicit conflict records
+
+The dedicated chapter [Temporal Semantics And Timing](domain/temporal-semantics.md) explains that temporal model.
+
 ## Why learning is symbolic and explicit
 
 `specforge` can get stronger across many documents, but the thing that grows is not hidden neural state.

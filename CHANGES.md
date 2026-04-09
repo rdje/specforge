@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-04-10 (book now explains temporal semantics and timing rules)
+
+### Added: dedicated public chapter for typed timing
+- Added [temporal-semantics.md](/Users/richarddje/Documents/github/specforge/docs/book/src/domain/temporal-semantics.md) under the mdBook Domain Model section.
+- Updated [SUMMARY.md](/Users/richarddje/Documents/github/specforge/docs/book/src/SUMMARY.md), [domain/overview.md](/Users/richarddje/Documents/github/specforge/docs/book/src/domain/overview.md), [architecture-rationale.md](/Users/richarddje/Documents/github/specforge/docs/book/src/architecture-rationale.md), [semanticir.md](/Users/richarddje/Documents/github/specforge/docs/book/src/pipeline/semanticir.md), and [validation.md](/Users/richarddje/Documents/github/specforge/docs/book/src/quality/validation.md) so the public docs now expose the temporal-rule model directly.
+
+### Clarified: timing prose becomes typed obligations when grounded
+- The new chapter explains:
+  - `TemporalRuleRecord` structure at a public level
+  - clock edges and tick phases
+  - `SignalValue`, actor-grounded predicates, `SignalStable`, `SignalSampled`, and `HandshakeComplete`
+  - cycle windows for same-cycle, next-cycle, and bounded timing language
+  - temporal conflicts and the conflict evidence they preserve
+  - polarity-aware comparison for `ASSERTED` / `DEASSERTED`
+  - prior-guided timing phrase recovery, with the same local-grounding safety rule used elsewhere
+  - validation metrics such as `temporal_rules_with_cycle_window`, `temporal_rules_with_actor_grounding`, and `temporal_rules_with_handshake_completion`
+
 ## 2026-04-09 (book now explains graph-first actor connectivity)
 
 ### Added: dedicated public chapter for actor connectivity

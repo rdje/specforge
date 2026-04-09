@@ -19,3 +19,5 @@ Clocks and resets can appear syntactically like ordinary signals, but they shoul
 The next chapter covers handshake and semantic-role recovery, because ready/valid-like transfer progress is one of the most important protocol motifs `specforge` needs to recover without over-trusting signal names.
 
 Actor connectivity is the next boundary after that: `specforge` should prefer graph facts like `(Requester, Drives, PSEL)` and `(Completer, Reads, PSEL)` over flat direction hints whenever the document supports them.
+
+Temporal semantics then explain how signal values, actor responsibilities, handshakes, cycle windows, and conflicts become typed timing rules instead of remaining free-form prose.

@@ -1,0 +1,155 @@
+# Temporal Semantics And Timing
+
+Chip specifications often describe not just what signals exist, but when obligations must hold.
+
+`specforge` models that timing surface with typed temporal rules instead of leaving all timing language as prose.
+
+## What a temporal rule is
+
+A temporal rule records:
+
+- rule id
+- optional clock signal
+- clock edge
+- antecedent predicates
+- consequent predicates
+- optional cycle window
+- source text
+- supporting statement ids
+- automation confidence
+
+This keeps timing facts inspectable.
+The source prose remains visible, but the rule can also be checked and consumed as typed structure.
+
+## Clock edge and tick phase
+
+Temporal rules carry a clock edge:
+
+- `rising`
+- `falling`
+- `unknown`
+
+Temporal predicates carry a tick phase:
+
+- `pre_tick`
+- `post_tick`
+
+This lets the IR say not only which condition holds, but where it sits relative to the modeled clock tick.
+
+## Predicates
+
+Current temporal predicates include:
+
+- `SignalValue`
+- `ActorDrivesSignal`
+- `ActorMaintainsSignalStable`
+- `SignalStable`
+- `ActorSamplesSignal`
+- `SignalSampled`
+- `HandshakeComplete`
+
+The actor-grounded predicates are important because they connect timing obligations back to structural responsibility.
+
+For example, if the graph says `Requester` drives `PSEL`, a temporal rule can express that actor responsibility instead of only saying `PSEL` changes.
+
+## Cycle windows
+
+A cycle window bounds timing.
+
+Examples:
+
+- same-cycle language can become `min_cycles = 0`, `max_cycles = 0`
+- next-cycle language can become `min_cycles = 1`, `max_cycles = 1`
+- bounded language such as `within 2 cycles` can become `max_cycles = 2`
+
+Cycle windows are useful because an unbounded temporal statement is weaker than one with explicit timing.
+
+Validation can report temporal rules that still lack cycle-window grounding.
+That is not always fatal, but it is an honest quality signal.
+
+## Handshake completion as timing
+
+Handshake recovery is not only a semantic-role problem.
+It can also become temporal structure.
+
+When a guard contains a valid-like signal and a ready-like signal, the rule can carry:
+
+- `HandshakeComplete`
+
+That predicate should prefer grounded semantic roles over raw signal spelling.
+If role evidence is contested or alias-dependent, the temporal rule should preserve that caveat instead of pretending the handshake was directly grounded.
+
+## Actor-grounded timing
+
+Graph connectivity can strengthen temporal rules.
+
+For example:
+
+- `ActorDrivesSignal(Requester, PSEL)`
+- `ActorSamplesSignal(Completer, PSEL)`
+- `ActorMaintainsSignalStable(Requester, PADDR)`
+
+These predicates are stronger than signal-only statements because they keep actor responsibility visible.
+
+## Temporal conflicts
+
+If two rules assert incompatible values for the same signal under the same relevant context, `specforge` should surface a temporal conflict.
+
+Temporal conflicts preserve:
+
+- conflict id
+- clock signal
+- edge
+- antecedents
+- cycle window
+- signal name
+- phase
+- conflicting values
+- supporting rule ids
+- supporting statement ids
+- automation confidence
+
+The goal is not to hide contradictions.
+The goal is to make them precise enough that the user can inspect them.
+
+## Polarity-aware values
+
+Temporal value comparison is polarity-aware.
+
+`ASSERTED` and `DEASSERTED` are not universal aliases for `HIGH` and `LOW`.
+
+For example:
+
+- if polarity is unknown, `ASSERTED` remains assertion-level meaning
+- if a signal is active-high, `ASSERTED` can compare as `HIGH`
+- if a signal is active-low, `ASSERTED` can compare as `LOW`
+
+This is especially important for resets such as `ARESETN` or `rst_n`.
+
+## Prior-guided timing
+
+The cross-document prior store can help with timing phrase recovery.
+
+For example, if validated documents taught that a phrase like `one beat later` indicates a one-cycle window, a new document can use that prior when the same phrase appears locally.
+
+The safety rule is still strict:
+
+- the timing phrase must appear in the current document
+- the prior can recover a cycle window
+- the prior cannot invent a timing rule that has no local grounding
+
+## What users should inspect
+
+When debugging timing, inspect:
+
+- `temporal_rules`
+- `temporal_conflicts`
+- `cycle_window`
+- clock signal and edge
+- antecedent and consequent predicates
+- actor-grounded predicates
+- `HandshakeComplete` predicates
+- validation metrics such as `temporal_rules_with_cycle_window`, `temporal_rules_with_actor_grounding`, and `temporal_rules_with_handshake_completion`
+
+The aim is to turn timing prose into typed, inspectable obligations without fabricating precision the source document does not justify.
+

@@ -20,6 +20,9 @@ It measures things like:
 - declared-signal direction coverage
 - graph-derived direction coverage
 - width coverage
+- temporal rule cycle-window grounding
+- temporal rule actor grounding
+- handshake-completion temporal predicates
 - semantic conflicts
 - connectivity conflicts
 - temporal conflicts
