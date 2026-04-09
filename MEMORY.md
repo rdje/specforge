@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `d1906ed`
-- latest_commit_brief_message: `feat(evidence): harden semantic hint hygiene`
-- note: the current session is now focused on AXI infrastructure-row hygiene: rejecting `External` as a protocol actor so `ACLK` / `ARESETN` stop synthesizing false `output` declarations and interface-direction conflicts
+- latest_commit_hash: `49a4422`
+- latest_commit_brief_message: `feat(evidence): reject external infrastructure actors`
+- note: the current session is now focused on AXI tie-off hygiene: appendix `Tie-off` rows should remain input-side declarations, not fake producer actors
 
 ## Recent commit chain (last 5)
+- `49a4422` feat(evidence): reject external infrastructure actors
 - `d1906ed` feat(evidence): harden semantic hint hygiene
 - `1832689` docs(book): capture live book contract
 - `5d215c2` docs(book): move user docs to mdbook
 - `2879046` feat(evidence): ignore abstract transport tables
-- `ceacaf9` feat(evidence): reject field-like message tables
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -62,8 +62,9 @@
 - heuristic interface grouping now also honors document-grounded explicit signal vocabularies whenever they exist, so APB/AHB/AXI statement-derived interface fragments can no longer keep enum labels, phase names, width symbols, and similar undeclared metadata alive just because they were co-mentioned with real signals
 - after rebuilding the live APB/AHB/AXI artifacts, `semantic_interface_grouping` was gone across the live AMBA baseline, and the next honest shared residual was only `semantic_ambiguous_visual_grounding`
 - that residual is now tightened too: `semantic_ambiguous_visual_grounding` only survives when ambiguous or unknown visual evidence actually contributes carried semantic observations, so passive figure links no longer keep APB/AHB/AXI artificially unresolved
-- the refreshed live baseline is now AXI `85/100 GOOD`, APB `94/100 EXCELLENT`, AHB `94/100 EXCELLENT`, and AXI-Stream `90/100 EXCELLENT`; a fresh rebuild from current `SourceIR` / `EvidenceIR` restored APB and AHB to the excellent lane, and the latest AXI semantic-hint hygiene fix removed the last blocked-handshake residual plus the false `AWAKEUP` / `CRVALID` semantic-role conflicts
+- the refreshed live baseline is now AXI `85/100 GOOD`, APB `90/100 EXCELLENT`, AHB `94/100 EXCELLENT`, and AXI-Stream `90/100 EXCELLENT`; the current tracked four-artifact projection uses APB `IHI0024_E`, AHB remains in the excellent lane, and the latest AXI semantic-hint hygiene fix removed the last blocked-handshake residual plus the false `AWAKEUP` / `CRVALID` semantic-role conflicts
 - the next AXI truthfulness slice tightened infrastructure-row handling too: `External` is no longer treated as a protocol actor during source-column relation recovery, so `ACLK` / `ARESETN` no longer synthesize false `output` declarations or carried interface-direction conflicts
+- the latest AXI truthfulness slice tightened appendix control-row handling too: `Tie-off` is no longer treated as a protocol actor, so `BROADCAST*` control inputs no longer synthesize fake producer edges or the old six-signal missing-consumer warning; those rows now stay as honest `input` declarations instead
 - the latest AXI truthfulness slice goes one level deeper: abstract appendix transport tables that only describe `Tx` / `Rx` primitives like `VALID`, `PENDING`, `CRDT`, `CRDTSH`, `SHAREDCRD`, and `RP` are no longer allowed to author top-level canonical signals
 - after rebuilding AXI from the updated `EvidenceIR`, the score stays `85/100 GOOD`, but the artifact is materially cleaner:
   - actor count drops from `19` to `17`
@@ -95,7 +96,7 @@
 - same-cycle timing language now lands as bounded temporal semantics too: AXI-Stream currently carries `6` explicit `0`-cycle windows from phrases like `in the same ACLK cycle`, and the old `no cycle-window grounding` warning is gone from the live validation projection
 - temporal-conflict detection is now polarity-aware: `ASSERTED` / `DEASSERTED` only collapse to `HIGH` / `LOW` when the current document grounds the signal polarity, so active-low controls like `ARESETN` stay semantically correct and unknown-polarity assertions stay abstract
 - resolved signal polarity now also lives directly on canonical `InterfaceSignalRecord`s and is reported by validation as `with_resolved_polarity`; after the latest infrastructure-interface fix, AXI/APB/AHB/AXI-Stream now all report `1`, so the next polarity step is broader non-reset control polarity recovery
-- the tracked live validation baseline has now been refreshed against the current semantic/intent stack and is more honest than the old stale snapshot: AXI 85/100 GOOD, APB 94/100 EXCELLENT, AHB 94/100 EXCELLENT, AXI-Stream 90/100 EXCELLENT
+- the tracked live validation baseline has now been refreshed against the current semantic/intent stack and is more honest than the old stale snapshot: AXI 85/100 GOOD, APB 90/100 EXCELLENT, AHB 94/100 EXCELLENT, AXI-Stream 90/100 EXCELLENT
 - full original-PDF `converge` reruns are currently blocked locally because `docling` is not importable from the active `python3`; use `SPECFORGE_DOCLING_PYTHON=/path/to/python` or install `docling` into a discoverable interpreter before relying on fresh ingest reruns
 - the learning plane now applies the same bogus-actor hygiene rule at harvest and lookup time, and the stale `control information -> requester_like` actor-taxonomy prior has been removed from local `CorpusMemory`
 - `specforge kg-bench` can now also stage a fixture-local `CorpusMemory`, and the first tracked gold/negative pair proves prior-guided temporal recovery on an unseen local phrase without leaking cross-document facts

@@ -1,5 +1,42 @@
 # CHANGES
 
+## 2026-04-09 (tie-off appendix rows no longer create fake AXI producers)
+
+### Fixed: `Tie-off` is no longer treated as a real protocol actor
+- Tightened [prior_memory.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/prior_memory.rs) so shared actor-term hygiene now rejects `Tie-off` / `tie off` the same way it already rejects infrastructure placeholders like `External`.
+- Tightened [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) so `Source = Tie-off` rows no longer author `ActorSignalRelation::Drives` edges through table relation recovery.
+
+### Fixed: tie-off source rows now synthesize honest input declarations
+- Updated [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) so `Tie-off` source labels still contribute local direction information, but as `input` declarations instead of fake `output` declarations.
+- This keeps appendix control pins like `BROADCASTATOMIC`, `BROADCASTSHAREABLE`, `BROADCASTCACHEMAINT`, `BROADCASTCMOPOPA`, `BROADCASTPERSIST`, and `BROADCASTSTORAGE` in the declared signal surface without pretending there is a real driving actor named `Tie-off`.
+
+### Added: regression coverage for tie-off input rows
+- Added `tie_off_source_rows_become_input_declarations_without_fake_actor`, which proves `Tie-off` rows synthesize `Signal ... is input width 1.` declarations while keeping `Tie-off` out of the structural KG.
+- Kept `external_source_rows_do_not_synthesize_infrastructure_outputs` green, so the broader infrastructure-label hygiene remains intact.
+
+### Changed: AXI stays at `85/100 GOOD`, but the structural surface is more truthful
+- Rebuilt AXI from `EvidenceIR -> SemanticIR -> IntentIR -> validate` and refreshed the tracked four-artifact projection.
+- The fake `Tie-off` actor is gone.
+- The old AXI warning about `6` consumer-less `BROADCAST*` connectivity records is gone.
+- AXI now carries `7` findings instead of `8`, even though the overall score stays `85/100 GOOD`.
+- The score stayed flat because graph-direction coverage became more honest after removing the fake producer path:
+  - `with_graph_direction` dropped from `170` to `164`
+  - graph-derived direction lag rose from `118` to `124`
+- The remaining honest AXI outliers are now:
+  - `ARCHUNKEN` producer ambiguity
+  - graph-direction coverage lag
+  - `15` typed temporal conflicts
+  - the dedicated infrastructure sourcing note for `ACLK` / `ARESETN`
+
+### Validation
+- `cargo test --manifest-path Cargo.toml tie_off_source_rows_become_input_declarations_without_fake_actor -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml external_source_rows_do_not_synthesize_infrastructure_outputs -- --nocapture` → passed
+- `cargo run --manifest-path Cargo.toml -- evidence generated/source_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/source_ir.json` → passed (`extracted_statement_count: 6974`)
+- `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/evidence_ir.json` → passed (`actor_count: 15`, `residual_decision_count: 0`)
+- `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/semantic_ir.json` → passed (`actor_count: 15`, `residual_decision_count: 0`)
+- `cargo run --manifest-path Cargo.toml -- validate generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json` → passed (`85/100 GOOD`, `finding_count: 7`)
+- `cargo run --manifest-path Cargo.toml -- project-validation generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json generated/intent_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/intent_ir.json generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json` → passed
+
 ## 2026-04-09 (external infrastructure rows no longer synthesize false AXI outputs)
 
 ### Fixed: `External` is no longer treated as a protocol actor in source-column relation recovery

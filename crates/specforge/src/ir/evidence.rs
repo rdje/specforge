@@ -1613,6 +1613,10 @@ fn normalize_relation_actor_name(value: &str) -> Option<String> {
     Some(actor)
 }
 
+fn is_tie_off_actor_text(value: &str) -> bool {
+    matches!(normalize_actor_term(value).as_str(), "tie off" | "tieoff")
+}
+
 fn effective_table_kind(
     table: &crate::ir::source::StructuredTableRecord,
     prior_guidance: Option<&EvidencePriorGuidance>,
@@ -4969,6 +4973,9 @@ fn infer_signal_direction_from_actor_text(
     prior_guidance: Option<&EvidencePriorGuidance>,
 ) -> Option<&'static str> {
     let lowered = actor_text.to_ascii_lowercase();
+    if is_tie_off_actor_text(actor_text) {
+        return Some("input");
+    }
     if lowered.contains("output") {
         return Some("output");
     }
@@ -7309,6 +7316,93 @@ mod tests {
                     )
                 }),
             "no protocol actor relations should be synthesized from external infrastructure rows"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn tie_off_source_rows_become_input_declarations_without_fake_actor() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("tie_off_interface_controls.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(&source, "# Appendix\n")?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_tie_off_signal_desc".to_string(),
+            asset_id: "asset_tie_off_signal_desc".to_string(),
+            page_id: Some("page_0001".to_string()),
+            caption_text: Some("Table B1.13: Interface control signals".to_string()),
+            source_ref: Some("#/tables/0".to_string()),
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Name", true),
+                make_table_cell("Width", true),
+                make_table_cell("Source", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("BROADCASTATOMIC", false),
+                    make_table_cell("1", false),
+                    make_table_cell("Tie-off", false),
+                    make_table_cell("Control input for Atomic transactions", false),
+                ],
+                vec![
+                    make_table_cell("BROADCASTSHAREABLE", false),
+                    make_table_cell("1", false),
+                    make_table_cell("Tie-off", false),
+                    make_table_cell("Control input for Shareable transactions", false),
+                ],
+            ],
+            row_count: 2,
+            col_count: 4,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        assert!(
+            evidence_ir
+                .actor_signal_relations
+                .iter()
+                .all(|relation| relation.actor_name != "Tie-off"),
+            "`Tie-off` must not become a protocol actor relation: {:?}",
+            evidence_ir.actor_signal_relations
+        );
+        assert!(
+            evidence_ir
+                .extracted_statements
+                .iter()
+                .any(|statement| statement.text == "Signal BROADCASTATOMIC is input width 1."),
+            "tie-off rows should synthesize input declarations"
+        );
+        assert!(
+            evidence_ir
+                .extracted_statements
+                .iter()
+                .any(|statement| statement.text == "Signal BROADCASTSHAREABLE is input width 1."),
+            "tie-off rows should synthesize input declarations"
+        );
+        assert!(
+            !evidence_ir
+                .extracted_statements
+                .iter()
+                .any(|statement| statement.text == "Signal BROADCASTATOMIC is output width 1."),
+            "tie-off rows must not synthesize output declarations"
+        );
+        assert!(
+            !evidence_ir
+                .extracted_statements
+                .iter()
+                .any(|statement| statement.text == "Signal BROADCASTSHAREABLE is output width 1."),
+            "tie-off rows must not synthesize output declarations"
         );
 
         Ok(())
