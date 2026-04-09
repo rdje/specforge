@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `2caf4b3`
-- latest_commit_brief_message: `docs(book): add actor connectivity domain model`
-- note: the current session is now extending the public book's Domain Model section with typed temporal semantics and timing-rule documentation
+- latest_commit_hash: `a59af85`
+- latest_commit_brief_message: `docs(book): add temporal semantics domain model`
+- note: the current session is now extending the public book's Pipeline Model section with multimodal evidence and visual-grounding documentation
 
 ## Recent commit chain (last 5)
+- `a59af85` docs(book): add temporal semantics domain model
 - `2caf4b3` docs(book): add actor connectivity domain model
 - `c491c55` docs(book): add handshake semantics domain model
 - `e344f63` docs(book): add clock reset domain model
 - `38975bc` docs(book): expand reference artifact docs
-- `22cb57c` docs(book): deepen pipeline stage chapters
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -49,6 +49,7 @@
 - the book's Domain Model section is now also gaining a dedicated handshake semantic-role chapter under `docs/book/src/domain/handshake-semantics.md`, so role observations, candidates, arbitration, consensus, alias dependence, prior guidance, and blocked name fallback are public concepts
 - the book's Domain Model section is now also gaining a dedicated graph-first connectivity chapter under `docs/book/src/domain/actor-connectivity.md`, so actor-signal `Drives` / `Reads` relations, actor-relative ports, signal connectivity, graph-direction coverage, bogus actor filtering, connectivity conflicts, and actor-grounded temporal predicates are public concepts too
 - the book's Domain Model section is now also gaining a dedicated temporal semantics chapter under `docs/book/src/domain/temporal-semantics.md`, so temporal rules, predicates, cycle windows, actor grounding, handshake completion, temporal conflicts, polarity-aware `ASSERTED` / `DEASSERTED` comparison, and prior-guided timing phrase recovery are public concepts too
+- the book's Pipeline Model section is now also gaining a dedicated multimodal evidence and visual-grounding chapter under `docs/book/src/pipeline/multimodal-evidence.md`, so `SourceIR.visual_assets`, `EvidenceIR.visual_evidence`, VLM notes, visual observations, caption-derived semantic evidence, cross-modality grounding, and ambiguous visual-grounding rules are public concepts too
 - root docs remain important, but they now serve continuity, roadmap, validation, and developer-state roles more than primary end-user onboarding
 - runnable CLI surface includes `inspect`, `doctor`, `converge`, `ingest`, `evidence`, `semantic`, `intent`, `adapt`, `enrich`, `validate`, `kg-bench`, `project-validation`, `learn-priors`, and `nlp-enrich`
 - `specforge converge` now defaults to full Ollama-backed VLM image enrichment plus NLP Level 3 backannotation; use `--vlm-provider skip` and/or `--nlp-provider skip` only when intentionally narrowing the loop
@@ -125,6 +126,7 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
+- expanded the public mdBook with a dedicated multimodal evidence and visual-grounding chapter so future implementation has a stable public reference for figure preservation, VLM observation boundaries, semantic visual grounding, cross-modality grounding, and passive-figure ambiguity rules
 - logged the learning-plane growth model explicitly:
   - code defines how `R15f` learns
   - the typed prior store captures what has been learned so far
@@ -158,7 +160,7 @@
 
 ## Exact next steps
 1. make shared infrastructure sourcing/distribution first-class beyond the current info-note boundary for signals like `ACLK` and `ARESETN`
-2. turn the remaining figure semantics gap into a stronger visual-grounding model, but now from real carried visual semantic lift rather than passive figure links
+2. implement the next stronger visual-grounding model from real carried visual semantic lift, not passive figure links, using the new book chapter as the public contract
 3. broaden `R15f` beyond actor-taxonomy / semantic / semantic-modality-reliability / temporal / table-shape into visual-motif and negative-knowledge prior families
 
 ## Remaining engineering gaps after this commit

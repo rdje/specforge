@@ -56,6 +56,7 @@ That means:
 
 - `SourceIR` should preserve document structure
 - `EvidenceIR` should preserve grounded extracted evidence
+- multimodal evidence should preserve figure, caption, and VLM observation grounding without bypassing the staged pipeline
 - `SemanticIR` should preserve typed meaning plus honest conflict surfaces
 - `IntentIR` should preserve the best stable canonical result without erasing uncertainty
 

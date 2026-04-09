@@ -52,6 +52,8 @@ A strong `SourceIR` should let later stages ask grounded questions like:
 
 That is a much better foundation than forcing later stages to work from flattened text alone.
 
+The dedicated [Multimodal Evidence And Visual Grounding](multimodal-evidence.md) chapter explains how preserved visual assets flow into visual evidence, VLM observations, and semantic grounding.
+
 ## What `SourceIR` is not
 
 It is not the place where protocol semantics should be invented.

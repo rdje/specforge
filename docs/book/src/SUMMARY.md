@@ -10,6 +10,7 @@
 - [Pipeline Model](pipeline/overview.md)
   - [SourceIR](pipeline/sourceir.md)
   - [EvidenceIR](pipeline/evidenceir.md)
+  - [Multimodal Evidence And Visual Grounding](pipeline/multimodal-evidence.md)
   - [SemanticIR](pipeline/semanticir.md)
   - [IntentIR](pipeline/intentir.md)
 - [Domain Model](domain/overview.md)

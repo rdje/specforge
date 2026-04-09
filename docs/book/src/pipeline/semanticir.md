@@ -115,6 +115,8 @@ A good semantic artifact should have:
 - temporal rules that keep guards, phases, and conflicts explicit
 - ambiguity preserved honestly instead of hidden behind forced simplification
 
+When those observations come from captions or VLM-enriched diagrams, the dedicated [Multimodal Evidence And Visual Grounding](multimodal-evidence.md) chapter explains how that visual provenance is preserved.
+
 ## Why this stage matters so much
 
 If `SourceIR` is where structure is preserved and `EvidenceIR` is where grounded hints are harvested, `SemanticIR` is where the project either becomes trustworthy or starts to hallucinate.

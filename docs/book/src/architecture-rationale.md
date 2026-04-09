@@ -79,6 +79,8 @@ So the guiding rule is:
 - models can propose
 - validation and arbitration decide
 
+The dedicated chapter [Multimodal Evidence And Visual Grounding](pipeline/multimodal-evidence.md) explains how visual assets, captions, and VLM observations enter that bounded flow.
+
 ## Why provenance matters so much
 
 Every promoted fact should stay tied to the evidence that justified it.

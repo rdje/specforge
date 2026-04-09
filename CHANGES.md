@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-10 (book now explains multimodal evidence and visual grounding)
+
+### Added: dedicated public chapter for visual evidence
+- Added [multimodal-evidence.md](/Users/richarddje/Documents/github/specforge/docs/book/src/pipeline/multimodal-evidence.md) under the mdBook Pipeline Model section.
+- Updated [SUMMARY.md](/Users/richarddje/Documents/github/specforge/docs/book/src/SUMMARY.md), [pipeline/overview.md](/Users/richarddje/Documents/github/specforge/docs/book/src/pipeline/overview.md), [sourceir.md](/Users/richarddje/Documents/github/specforge/docs/book/src/pipeline/sourceir.md), [evidenceir.md](/Users/richarddje/Documents/github/specforge/docs/book/src/pipeline/evidenceir.md), [semanticir.md](/Users/richarddje/Documents/github/specforge/docs/book/src/pipeline/semanticir.md), [architecture-rationale.md](/Users/richarddje/Documents/github/specforge/docs/book/src/architecture-rationale.md), and [validation.md](/Users/richarddje/Documents/github/specforge/docs/book/src/quality/validation.md) so the visual path is discoverable from the public docs.
+
+### Clarified: VLM output is bounded evidence, not canonical truth
+- The new chapter explains:
+  - how `SourceIR.visual_assets` preserves figures, captions, placeholders, notes, and diagram classifications
+  - how `EvidenceIR.visual_evidence` carries asset ids, roles, page/source grounding, captions, figure references, observations, and confidence
+  - how `specforge enrich` can add bounded VLM notes such as `vlm_timing_diagram_extraction:` and `vlm_state_machine_extraction:`
+  - how those notes become `TimingDiagramExtraction` and `StateMachineExtraction` observations
+  - how `SemanticIR` can parse timing-diagram observations into timing constraints and state-machine observations into state / transition records
+  - why captions can contribute semantic evidence only through the same observation, candidate, arbitration, and consensus machinery as prose and tables
+  - why cross-modality agreement is stronger than repeated same-modality evidence, but still not automatic truth
+  - why passive figure references should not create residuals by themselves
+  - which visual and multimodal validation metrics users should inspect when debugging visual behavior
+
 ## 2026-04-10 (book now explains temporal semantics and timing rules)
 
 ### Added: dedicated public chapter for typed timing

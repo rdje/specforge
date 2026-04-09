@@ -53,6 +53,8 @@ These wins are valuable because they give later stages something much stronger t
 - visual-evidence references
 - early KG edges
 
+The dedicated [Multimodal Evidence And Visual Grounding](multimodal-evidence.md) chapter explains the visual part of that evidence flow in more detail.
+
 ## What this stage is allowed to do
 
 `EvidenceIR` is allowed to extract and classify.
