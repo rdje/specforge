@@ -411,6 +411,7 @@ pub fn is_meaningful_actor_term(text: &str) -> bool {
             | "inout"
             | "bidirectional"
             | "bidir"
+            | "external"
             | "reserved"
             | "n a"
             | "na"

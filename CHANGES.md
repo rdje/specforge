@@ -1,5 +1,37 @@
 # CHANGES
 
+## 2026-04-09 (external infrastructure rows no longer synthesize false AXI outputs)
+
+### Fixed: `External` is no longer treated as a protocol actor in source-column relation recovery
+- Tightened [prior_memory.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/prior_memory.rs) so the shared actor-term hygiene now rejects generic environment labels like `External`.
+- Tightened [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) so source-column signal-table relation extraction now uses the stricter relation-actor normalizer instead of the weaker raw table-label normalizer.
+
+### Added: regression coverage for external infrastructure rows
+- Added `external_source_rows_do_not_synthesize_infrastructure_outputs`, which proves `ACLK` / `ARESETN` rows with `Source = External` still recover clock/reset semantics locally but no longer synthesize fake protocol actors or false `output` declarations.
+- Kept `source_table_relations_skip_infrastructure_labels` green, so the broader infrastructure-row rejection path remains intact.
+
+### Changed: AXI still scores `85/100 GOOD`, but the interface-conflict surface is cleaner again
+- Rebuilt AXI from `EvidenceIR -> SemanticIR -> IntentIR -> validate` and refreshed the four-artifact validation projection.
+- AXI now carries:
+  - `0` interface signal conflicts
+  - `0` residual decisions
+  - `0` semantic-role conflicts
+  - `0` blocked handshake-name fallbacks
+- The score stays `85/100 GOOD`, so the remaining drag is now clearly elsewhere:
+  - `ARCHUNKEN` producer ambiguity
+  - graph-direction coverage lag
+  - `15` typed temporal conflicts
+  - infrastructure sourcing still intentionally lives under the dedicated `[info:system_contract]` note for `ACLK` / `ARESETN`
+
+### Validation
+- `cargo test --manifest-path Cargo.toml external_source_rows_do_not_synthesize_infrastructure_outputs -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml source_table_relations_skip_infrastructure_labels -- --nocapture` → passed
+- `cargo run --manifest-path Cargo.toml -- evidence generated/source_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/source_ir.json` → passed
+- `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/evidence_ir.json` → passed (`actor_count: 16`, `residual_decision_count: 0`)
+- `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/semantic_ir.json` → passed (`actor_count: 16`, `residual_decision_count: 0`)
+- `cargo run --manifest-path Cargo.toml -- validate generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json` → passed (`85/100 GOOD`, `interface_signal_conflicts: 0`)
+- `cargo run --manifest-path Cargo.toml -- project-validation generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json generated/intent_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/intent_ir.json generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json` → passed
+
 ## 2026-04-09 (AXI semantic-hint hygiene removed false handshake conflict paths)
 
 ### Fixed: generic acknowledged-event prose no longer masquerades as ready-like semantics

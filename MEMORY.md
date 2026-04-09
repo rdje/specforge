@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `1832689`
-- latest_commit_brief_message: `docs(book): capture live book contract`
-- note: the current session is now focused on AXI semantic-hint hygiene: removing false ready-like semantics from generic acknowledged-event prose and suppressing dot-leader contents lines as semantic evidence
+- latest_commit_hash: `d1906ed`
+- latest_commit_brief_message: `feat(evidence): harden semantic hint hygiene`
+- note: the current session is now focused on AXI infrastructure-row hygiene: rejecting `External` as a protocol actor so `ACLK` / `ARESETN` stop synthesizing false `output` declarations and interface-direction conflicts
 
 ## Recent commit chain (last 5)
+- `d1906ed` feat(evidence): harden semantic hint hygiene
 - `1832689` docs(book): capture live book contract
 - `5d215c2` docs(book): move user docs to mdbook
 - `2879046` feat(evidence): ignore abstract transport tables
 - `ceacaf9` feat(evidence): reject field-like message tables
-- `0160f64` docs(validation): refresh live amba baseline
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -63,6 +63,7 @@
 - after rebuilding the live APB/AHB/AXI artifacts, `semantic_interface_grouping` was gone across the live AMBA baseline, and the next honest shared residual was only `semantic_ambiguous_visual_grounding`
 - that residual is now tightened too: `semantic_ambiguous_visual_grounding` only survives when ambiguous or unknown visual evidence actually contributes carried semantic observations, so passive figure links no longer keep APB/AHB/AXI artificially unresolved
 - the refreshed live baseline is now AXI `85/100 GOOD`, APB `94/100 EXCELLENT`, AHB `94/100 EXCELLENT`, and AXI-Stream `90/100 EXCELLENT`; a fresh rebuild from current `SourceIR` / `EvidenceIR` restored APB and AHB to the excellent lane, and the latest AXI semantic-hint hygiene fix removed the last blocked-handshake residual plus the false `AWAKEUP` / `CRVALID` semantic-role conflicts
+- the next AXI truthfulness slice tightened infrastructure-row handling too: `External` is no longer treated as a protocol actor during source-column relation recovery, so `ACLK` / `ARESETN` no longer synthesize false `output` declarations or carried interface-direction conflicts
 - the latest AXI truthfulness slice goes one level deeper: abstract appendix transport tables that only describe `Tx` / `Rx` primitives like `VALID`, `PENDING`, `CRDT`, `CRDTSH`, `SHAREDCRD`, and `RP` are no longer allowed to author top-level canonical signals
 - after rebuilding AXI from the updated `EvidenceIR`, the score stays `85/100 GOOD`, but the artifact is materially cleaner:
   - actor count drops from `19` to `17`
@@ -70,7 +71,7 @@
   - structural producer ambiguity drops from `2` connectivity conflicts to `1`
   - the old fake bare-transport `VALID` residual/conflict is gone
   - the newer semantic-hint hygiene pass also removes the false `AWAKEUP` / `CRVALID` semantic-role conflicts and the last blocked handshake fallback
-  - the remaining honest AXI outliers are now `ARCHUNKEN`, the infrastructure direction disagreement on `ACLK` / `ARESETN`, graph-direction coverage lag, and the remaining typed temporal conflicts
+  - the remaining honest AXI outliers are now `ARCHUNKEN`, graph-direction coverage lag, and the remaining typed temporal conflicts; `ACLK` / `ARESETN` now stay only under the dedicated infrastructure sourcing note instead of also carrying interface conflicts
 - the docs architecture has now shifted too:
   - `docs/book/` is the canonical user-doc surface
   - [README.md](/Users/richarddje/Documents/github/specforge/README.md) points users to the book

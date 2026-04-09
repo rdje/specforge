@@ -2002,7 +2002,7 @@ fn extract_relations_from_signal_tables_with_prior_guidance(
             let Some((actor, relation)) = relation_col
                 .and_then(|(relation_col_idx, relation_col_kind)| {
                     row.get(relation_col_idx).and_then(|source_cell| {
-                        normalize_table_actor_name(&source_cell.text).map(|actor| {
+                        normalize_relation_actor_name(&source_cell.text).map(|actor| {
                             let relation = match relation_col_kind {
                                 RelationTableColumnKind::SourceLike => RelationKind::Drives,
                                 RelationTableColumnKind::DestinationLike => RelationKind::Reads,
@@ -7211,6 +7211,104 @@ mod tests {
             matches!(relations[0].relation, RelationKind::Reads),
             "destination columns must produce Reads relations, got: {:?}",
             relations
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn external_source_rows_do_not_synthesize_infrastructure_outputs() -> Result<()> {
+        use crate::ir::source::RelationKind;
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("external_infrastructure_rows.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(&source, "# Global Signals\n")?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_global_signal_desc".to_string(),
+            asset_id: "asset_global_signal_desc".to_string(),
+            page_id: None,
+            caption_text: Some("Global signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Source", true),
+                make_table_cell("Width", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("ACLK", false),
+                    make_table_cell("External", false),
+                    make_table_cell("1", false),
+                    make_table_cell("Global clock signal", false),
+                ],
+                vec![
+                    make_table_cell("ARESETn", false),
+                    make_table_cell("External", false),
+                    make_table_cell("1", false),
+                    make_table_cell("Active low reset signal", false),
+                ],
+            ],
+            row_count: 2,
+            col_count: 4,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        assert!(
+            evidence_ir
+                .actor_signal_relations
+                .iter()
+                .all(|relation| relation.actor_name != "External"),
+            "`External` must not become a protocol actor relation: {:?}",
+            evidence_ir.actor_signal_relations
+        );
+        assert!(
+            !evidence_ir
+                .extracted_statements
+                .iter()
+                .any(|statement| statement.text == "Signal ACLK is output width 1."),
+            "external clock source rows must not synthesize output declarations"
+        );
+        assert!(
+            !evidence_ir
+                .extracted_statements
+                .iter()
+                .any(|statement| statement.text == "Signal ARESETN is output width 1."),
+            "external reset source rows must not synthesize output declarations"
+        );
+        assert!(
+            evidence_ir
+                .extracted_statements
+                .iter()
+                .any(|statement| statement.text == "Clock ACLK."),
+            "clock semantics should still be recovered from the local table description"
+        );
+        assert!(
+            evidence_ir
+                .extracted_statements
+                .iter()
+                .any(|statement| { statement.text == "Reset ARESETN is asynchronous active low." })
+        );
+        assert!(
+            evidence_ir.actor_signal_relations.is_empty()
+                || evidence_ir.actor_signal_relations.iter().all(|relation| {
+                    !matches!(
+                        relation.relation,
+                        RelationKind::Drives | RelationKind::Reads
+                    )
+                }),
+            "no protocol actor relations should be synthesized from external infrastructure rows"
         );
 
         Ok(())
