@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-04-09 (book reference section now explains generated artifacts and continuity boundaries)
+
+### Added: dedicated mdBook reference landing page
+- Added [overview.md](/Users/richarddje/Documents/github/specforge/docs/book/src/reference/overview.md) so the book now has a stable reference entry point instead of making the generated-artifacts page double as the whole reference section.
+- Updated [SUMMARY.md](/Users/richarddje/Documents/github/specforge/docs/book/src/SUMMARY.md) so [Generated Artifacts](/Users/richarddje/Documents/github/specforge/docs/book/src/reference/generated-artifacts.md) is now an explicit reference chapter.
+
+### Expanded: generated artifact documentation
+- Expanded [generated-artifacts.md](/Users/richarddje/Documents/github/specforge/docs/book/src/reference/generated-artifacts.md) so it now explains:
+  - why `generated/` is local execution state rather than source code
+  - how the stage artifact roots map to `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR`
+  - what source-side sidecars, validation reports, adapter artifacts, and `CorpusMemory` are for
+  - why arbitrary live generated artifacts stay untracked while curated fixtures can still be tracked
+  - how to inspect artifacts by tracing problems backward through the staged pipeline
+
+### Expanded: live-docs versus book contract
+- Expanded [live-docs.md](/Users/richarddje/Documents/github/specforge/docs/book/src/reference/live-docs.md) so the public book now spells out the distinction between:
+  - the book as the world-facing documentation product
+  - root markdown docs as the operational continuity plane for scores, roadmap state, handoff notes, and crash recovery
+- Added practical guidance for when to update the book, the live docs, or both.
+
 ## 2026-04-09 (book IR stage chapters now explain their real boundaries)
 
 ### Expanded: the mdBook pipeline chapters are no longer only thin stage summaries
