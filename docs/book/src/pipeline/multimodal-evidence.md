@@ -119,6 +119,9 @@ The expected extraction shape is conceptually:
 
 This lets state diagrams contribute structured behavior without forcing the entire diagram into untyped prose.
 
+Guard text extracted from state-machine diagrams is treated as a bounded hypothesis.
+Simple comparisons such as `PREADY = 1` can become typed guards, but generic visual prose such as `transfer` should not become a fake signal unless it is grounded as a signal elsewhere in the document.
+
 ## Captions as semantic evidence
 
 Captions can also ground semantic roles.
@@ -197,4 +200,3 @@ When debugging visual behavior, inspect:
 
 The goal is not to let images bypass the typed pipeline.
 The goal is to give figures and diagrams a grounded, inspectable path into the same truthfulness machinery as tables and prose.
-

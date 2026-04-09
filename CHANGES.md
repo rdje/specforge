@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-10 (VLM state-machine guards no longer become raw fake signals)
+
+### Fixed: bounded guard parsing for visual state-machine observations
+- Updated [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so `StateMachineExtraction` VLM transition guards are parsed conservatively before entering `SemanticIR`.
+- `SemanticIR` now builds a document-grounded signal universe for VLM guard parsing from interface signal records plus extracted local statement signal tokens.
+- VLM guard strings now prefer simple typed comparisons such as `PREADY = 1`, `PREADY == 1`, and `PREADY != 0` instead of turning the entire guard text into a `SignalIsHigh` record.
+- Generic VLM words such as `transfer`, `transaction`, `request`, `response`, `beat`, `cycle`, and `phase` no longer become fake signal names unless they are explicitly grounded as document signal names.
+- VLM guard values such as `0`, `1`, `HIGH`, `LOW`, `true`, `false`, `ASSERTED`, and `DEASSERTED` stay as literal guard values instead of being misread as signal references.
+
+### Added: regression coverage for visual guard normalization
+- Strengthened `vlm_state_machine_observation_accepts_fenced_json_with_trailing_prose` so it proves:
+  - generic guard prose like `Transfer` is dropped when it is not document-grounded as a signal
+  - compound guard prose like `PREADY = 1 and transfer` preserves the declared signal comparison `PREADY == 1`
+
+### Validation
+- `cargo test --manifest-path Cargo.toml vlm_state_machine -- --nocapture` -> passed
+- `bash scripts/run_ci.sh` -> passed
+
 ## 2026-04-10 (book now explains multimodal evidence and visual grounding)
 
 ### Added: dedicated public chapter for visual evidence

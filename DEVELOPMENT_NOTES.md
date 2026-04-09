@@ -54,6 +54,11 @@
   - keep the IR boundaries clean
   - prefer reusable evidence-to-knowledge lifting patterns over one-off protocol patches
 - the downstream adapters should consume truth, not beautified guesses; when in doubt, the right move is to enrich the KG and temporal model, not to make the adapters more speculative
+- VLM state-machine guard text is still a bounded hypothesis, not an authority:
+  - simple comparisons like `PREADY = 1` should be converted into typed guards
+  - generic visual prose like `transfer` must not become a fake signal unless it is document-grounded as a signal
+  - literal guard values such as `0`, `1`, `HIGH`, `LOW`, `ASSERTED`, and `DEASSERTED` should stay literal instead of being promoted into signal references
+  - compound guard text should preserve the strongest grounded atomic clause rather than storing the whole VLM phrase as a signal name
 
 ### Staged IR pipeline
 - `SourceIR` captures normalized source identity, parser backend choice, page artifacts, visual assets, and ingest intent

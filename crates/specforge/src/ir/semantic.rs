@@ -1,4 +1,4 @@
-use std::collections::{BTreeMap, BTreeSet, HashMap};
+use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -212,11 +212,22 @@ impl SemanticIr {
         };
         let known_actor_names =
             collect_known_actor_names(actor_build.actors.as_slice(), actor_ports.as_slice());
+        let mut vlm_known_signal_names: HashSet<String> = interfaces
+            .iter()
+            .flat_map(|iface| &iface.signal_records)
+            .map(|record| record.signal_name.clone())
+            .collect();
+        vlm_known_signal_names.extend(
+            context
+                .statements
+                .iter()
+                .flat_map(|statement| statement.signals.iter().cloned()),
+        );
 
         // Merge timing constraints: table-synthesized + VLM diagram observations.
         let mut timing_constraints = evidence_ir.timing_constraints.clone();
         let (vlm_timing, vlm_states, vlm_transitions) =
-            extract_records_from_vlm_observations(&evidence_ir);
+            extract_records_from_vlm_observations(&evidence_ir, &vlm_known_signal_names);
         timing_constraints.extend(vlm_timing);
         let temporal_rules = build_temporal_rules(
             &context,
@@ -7697,6 +7708,7 @@ fn extract_actor_after_by(text: &str) -> Option<String> {
 /// - `VisualObservationKind::StateMachineExtraction` → states/transitions → typed records
 fn extract_records_from_vlm_observations(
     evidence_ir: &EvidenceIr,
+    known_signal_names: &HashSet<String>,
 ) -> (
     Vec<TimingConstraintRecord>,
     Vec<RegularStateRecord>,
@@ -7720,6 +7732,7 @@ fn extract_records_from_vlm_observations(
                     parse_state_machine_observation(
                         &obs.text,
                         &visual_item.evidence_id,
+                        known_signal_names,
                         &mut state_records,
                         &mut transition_records,
                     );
@@ -7833,6 +7846,7 @@ fn is_generic_waveform_label_token(token: &str) -> bool {
 fn parse_state_machine_observation(
     json_text: &str,
     evidence_id: &str,
+    known_signal_names: &HashSet<String>,
     state_records: &mut Vec<RegularStateRecord>,
     transition_records: &mut Vec<StateTransitionRecord>,
 ) {
@@ -7893,13 +7907,10 @@ fn parse_state_machine_observation(
                 .and_then(|g| g.as_str())
                 .unwrap_or_default()
                 .trim();
-            // Convert guard string to DecisionTreeGuardRecord heuristically.
             let guard = if guard_text.is_empty() {
                 None
             } else {
-                Some(DecisionTreeGuardRecord::SignalIsHigh {
-                    signal_name: guard_text.to_string(),
-                })
+                parse_vlm_state_machine_guard(guard_text, known_signal_names)
             };
             transition_records.push(StateTransitionRecord {
                 transition_id: format!(
@@ -7916,6 +7927,196 @@ fn parse_state_machine_observation(
             });
         }
     }
+}
+
+fn parse_vlm_state_machine_guard(
+    guard_text: &str,
+    known_signal_names: &HashSet<String>,
+) -> Option<DecisionTreeGuardRecord> {
+    let clauses = split_vlm_guard_clauses(guard_text);
+    if clauses.is_empty() {
+        return None;
+    }
+
+    for clause in clauses
+        .iter()
+        .filter(|clause| vlm_guard_clause_has_comparison(clause))
+    {
+        if let Some(guard) = parse_vlm_state_machine_guard_clause(clause, known_signal_names) {
+            return Some(guard);
+        }
+    }
+
+    clauses
+        .iter()
+        .find_map(|clause| parse_vlm_state_machine_guard_clause(clause, known_signal_names))
+}
+
+fn split_vlm_guard_clauses(guard_text: &str) -> Vec<&str> {
+    let mut clauses = Vec::new();
+    let mut remainder = guard_text.trim();
+    while !remainder.is_empty() {
+        let Some((delimiter_index, delimiter_len)) = find_vlm_guard_clause_delimiter(remainder)
+        else {
+            clauses.push(remainder.trim());
+            break;
+        };
+
+        let clause = remainder[..delimiter_index].trim();
+        if !clause.is_empty() {
+            clauses.push(clause);
+        }
+        remainder = remainder[delimiter_index + delimiter_len..].trim();
+    }
+
+    clauses
+}
+
+fn find_vlm_guard_clause_delimiter(text: &str) -> Option<(usize, usize)> {
+    let lowered = text.to_ascii_lowercase();
+    ["&&", " and ", ",", ";", "\n"]
+        .iter()
+        .filter_map(|delimiter| {
+            lowered
+                .find(delimiter)
+                .map(|index| (index, delimiter.len()))
+        })
+        .min_by_key(|(index, _)| *index)
+}
+
+fn vlm_guard_clause_has_comparison(clause: &str) -> bool {
+    clause.contains("==")
+        || clause.contains("!=")
+        || clause.contains('=')
+        || find_ascii_case_insensitive(clause, " is ").is_some()
+}
+
+fn parse_vlm_state_machine_guard_clause(
+    clause: &str,
+    known_signal_names: &HashSet<String>,
+) -> Option<DecisionTreeGuardRecord> {
+    let clause = trim_vlm_guard_clause(clause);
+    if clause.is_empty() {
+        return None;
+    }
+
+    if let Some((left_signal, right_text)) = clause.split_once("==") {
+        return Some(DecisionTreeGuardRecord::Comparison {
+            left_signal: parse_allowed_vlm_guard_signal(left_signal, known_signal_names)?,
+            operator: DecisionTreeComparisonOperator::Eq,
+            right: parse_vlm_decision_tree_value(right_text, known_signal_names)?,
+        });
+    }
+    if let Some((left_signal, right_text)) = clause.split_once("!=") {
+        return Some(DecisionTreeGuardRecord::Comparison {
+            left_signal: parse_allowed_vlm_guard_signal(left_signal, known_signal_names)?,
+            operator: DecisionTreeComparisonOperator::NotEq,
+            right: parse_vlm_decision_tree_value(right_text, known_signal_names)?,
+        });
+    }
+    if let Some((left_signal, right_text)) = clause.split_once('=') {
+        if left_signal.trim_end().ends_with(['!', '<', '>']) {
+            return None;
+        }
+        return Some(DecisionTreeGuardRecord::Comparison {
+            left_signal: parse_allowed_vlm_guard_signal(left_signal, known_signal_names)?,
+            operator: DecisionTreeComparisonOperator::Eq,
+            right: parse_vlm_decision_tree_value(right_text, known_signal_names)?,
+        });
+    }
+    if let Some(index) = find_ascii_case_insensitive(clause, " is ") {
+        let (left_signal, right_text_with_is) = clause.split_at(index);
+        let right_text =
+            right_text_with_is.trim_start_matches(|c: char| c.is_ascii_whitespace())[2..].trim();
+        return Some(DecisionTreeGuardRecord::Comparison {
+            left_signal: parse_allowed_vlm_guard_signal(left_signal, known_signal_names)?,
+            operator: DecisionTreeComparisonOperator::Eq,
+            right: parse_vlm_decision_tree_value(right_text, known_signal_names)?,
+        });
+    }
+
+    Some(DecisionTreeGuardRecord::SignalIsHigh {
+        signal_name: parse_allowed_vlm_guard_signal(clause, known_signal_names)?,
+    })
+}
+
+fn trim_vlm_guard_clause(clause: &str) -> &str {
+    clause
+        .trim()
+        .trim_matches(|character| matches!(character, '(' | ')' | '[' | ']'))
+        .trim()
+}
+
+fn parse_allowed_vlm_guard_signal(
+    signal_text: &str,
+    known_signal_names: &HashSet<String>,
+) -> Option<String> {
+    let signal_name = parse_identifier(trim_vlm_guard_clause(signal_text))?;
+    if known_signal_names.contains(&signal_name)
+        || (known_signal_names.is_empty() && !is_generic_vlm_guard_term(&signal_name))
+    {
+        Some(signal_name)
+    } else {
+        None
+    }
+}
+
+fn is_generic_vlm_guard_term(signal_name: &str) -> bool {
+    matches!(
+        signal_name.to_ascii_lowercase().as_str(),
+        "transfer"
+            | "transaction"
+            | "request"
+            | "response"
+            | "beat"
+            | "cycle"
+            | "phase"
+            | "state"
+            | "condition"
+            | "event"
+    )
+}
+
+fn parse_vlm_decision_tree_value(
+    value_text: &str,
+    known_signal_names: &HashSet<String>,
+) -> Option<DecisionTreeValueRecord> {
+    let value_text = trim_vlm_guard_clause(
+        value_text
+            .trim()
+            .trim_end_matches('.')
+            .trim_end_matches(','),
+    )
+    .trim_matches(|character| matches!(character, '"' | '`'));
+    if value_text.is_empty() {
+        return None;
+    }
+
+    let lowered = value_text.to_ascii_lowercase();
+    if matches!(
+        lowered.as_str(),
+        "0" | "1" | "1'b0" | "1'b1" | "low" | "high" | "false" | "true" | "asserted" | "deasserted"
+    ) {
+        return Some(DecisionTreeValueRecord::Literal {
+            literal: value_text.to_string(),
+        });
+    }
+
+    if let Some(signal_name) = parse_identifier(value_text) {
+        if known_signal_names.is_empty() || known_signal_names.contains(&signal_name) {
+            return Some(DecisionTreeValueRecord::SignalRef { signal_name });
+        }
+    }
+
+    Some(DecisionTreeValueRecord::Literal {
+        literal: value_text.to_string(),
+    })
+}
+
+fn find_ascii_case_insensitive(haystack: &str, needle: &str) -> Option<usize> {
+    haystack
+        .to_ascii_lowercase()
+        .find(&needle.to_ascii_lowercase())
 }
 
 fn is_boilerplate_section_title(title: &str) -> bool {
@@ -9061,7 +9262,10 @@ mod tests {
         let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
         let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
 
-        fs::write(&source, "# State Machine\n")?;
+        fs::write(
+            &source,
+            "# State Machine\nSignal PREADY is input width 1.\n",
+        )?;
 
         let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
         source_ir.visual_assets.push(VisualAsset {
@@ -9279,6 +9483,35 @@ mod tests {
                 transition.source_state == "SETUP" && transition.target_state == "ACCESS"
             }),
             "expected SETUP→ACCESS transition from fenced VLM extraction"
+        );
+        let idle_setup = semantic_ir
+            .state_transitions
+            .iter()
+            .find(|transition| {
+                transition.source_state == "IDLE" && transition.target_state == "SETUP"
+            })
+            .expect("expected IDLE to SETUP transition from fenced VLM extraction");
+        assert_eq!(
+            idle_setup.guard, None,
+            "generic VLM guard prose must not become a fake signal when declared signals are known"
+        );
+        let setup_access = semantic_ir
+            .state_transitions
+            .iter()
+            .find(|transition| {
+                transition.source_state == "SETUP" && transition.target_state == "ACCESS"
+            })
+            .expect("expected SETUP to ACCESS transition from fenced VLM extraction");
+        assert_eq!(
+            setup_access.guard,
+            Some(DecisionTreeGuardRecord::Comparison {
+                left_signal: "PREADY".to_string(),
+                operator: DecisionTreeComparisonOperator::Eq,
+                right: DecisionTreeValueRecord::Literal {
+                    literal: "1".to_string(),
+                },
+            }),
+            "VLM compound guard should keep the declared signal comparison instead of the whole prose fragment"
         );
 
         Ok(())
