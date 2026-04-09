@@ -15,14 +15,15 @@ The canonical user-facing documentation for `specforge` has moved to the mdBook 
 ## Read the book in this order
 
 1. `docs/book/src/introduction.md`
-2. `docs/book/src/getting-started.md`
-3. `docs/book/src/runtime-and-doctor.md`
-4. `docs/book/src/commands/overview.md`
-5. `docs/book/src/pipeline/overview.md`
-6. `docs/book/src/quality/validation.md`
-7. `docs/book/src/quality/kg-bench.md`
-8. `docs/book/src/quality/corpus-memory.md`
-9. `docs/book/src/reference/troubleshooting.md`
+2. `docs/book/src/architecture-rationale.md`
+3. `docs/book/src/getting-started.md`
+4. `docs/book/src/runtime-and-doctor.md`
+5. `docs/book/src/commands/overview.md`
+6. `docs/book/src/pipeline/overview.md`
+7. `docs/book/src/quality/validation.md`
+8. `docs/book/src/quality/kg-bench.md`
+9. `docs/book/src/quality/corpus-memory.md`
+10. `docs/book/src/reference/troubleshooting.md`
 
 ## What stays in the repo root
 

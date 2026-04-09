@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-04-09 (book now has a first-class architecture rationale chapter)
+
+### Added: dedicated mdBook chapter for why `specforge` is built this way
+- Added [architecture-rationale.md](/Users/richarddje/Documents/github/specforge/docs/book/src/architecture-rationale.md).
+- It explains the core public-facing design logic:
+  - why the tool is staged
+  - why it is provenance-first
+  - why it uses bounded AI instead of a black-box "read the whole PDF" approach
+  - why residuals and conflicts are first-class
+  - why the learning plane is symbolic and separate from canonical per-document truth
+
+### Changed: the book entry path now exposes rationale earlier
+- Updated [SUMMARY.md](/Users/richarddje/Documents/github/specforge/docs/book/src/SUMMARY.md), [introduction.md](/Users/richarddje/Documents/github/specforge/docs/book/src/introduction.md), [README.md](/Users/richarddje/Documents/github/specforge/README.md), and [USER_GUIDE.md](/Users/richarddje/Documents/github/specforge/USER_GUIDE.md) so readers encounter the architecture explanation before diving straight into usage details.
+
 ## 2026-04-09 (book now covers validation and learning as first-class topics)
 
 ### Added: dedicated mdBook chapters for validation and the learning plane

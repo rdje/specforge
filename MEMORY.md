@@ -24,7 +24,7 @@
 ## Latest committed baseline
 - latest_commit_hash: `50dd73a`
 - latest_commit_brief_message: `feat(evidence): treat tie-off rows as inputs`
-- note: the current session is now focused on expanding the public book itself: validation, benchmarking, and cross-document learning now need first-class mdBook coverage rather than only command summaries
+- note: the current session is now focused on expanding the public book itself: the next missing gap is a first-class explanation of why `specforge` is architected as a staged, provenance-first, bounded-AI system
 
 ## Recent commit chain (last 5)
 - `50dd73a` feat(evidence): treat tie-off rows as inputs
@@ -42,6 +42,7 @@
   - every meaningful user-facing aspect of the project should ultimately land in the book with its own section or chapter
   - the root markdown docs are a separate continuity plane for crash recovery, session handoff, roadmap steering, validation projection, and engineering-state tracking
 - the book now goes one step further too: validation, fixture truthfulness, and cross-document learning are no longer only summarized inside command pages; they now have dedicated mdBook chapters of their own under `docs/book/src/quality/`
+- the book now also has a dedicated architecture-rationale chapter under `docs/book/src/architecture-rationale.md`, so the public docs no longer jump straight from introduction into operation without explaining the central design choices first
 - root docs remain important, but they now serve continuity, roadmap, validation, and developer-state roles more than primary end-user onboarding
 - runnable CLI surface includes `inspect`, `doctor`, `converge`, `ingest`, `evidence`, `semantic`, `intent`, `adapt`, `enrich`, `validate`, `kg-bench`, `project-validation`, `learn-priors`, and `nlp-enrich`
 - `specforge converge` now defaults to full Ollama-backed VLM image enrichment plus NLP Level 3 backannotation; use `--vlm-provider skip` and/or `--nlp-provider skip` only when intentionally narrowing the loop

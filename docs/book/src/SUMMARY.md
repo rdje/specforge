@@ -1,6 +1,7 @@
 # Summary
 
 - [Introduction](introduction.md)
+- [Architecture Rationale](architecture-rationale.md)
 - [Getting Started](getting-started.md)
 - [Runtime And Doctor](runtime-and-doctor.md)
 - [Commands](commands/overview.md)

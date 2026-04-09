@@ -27,6 +27,7 @@ It should keep growing until every meaningful user-facing aspect of `specforge` 
 That includes:
 
 - what `specforge` does
+- why it is architected this way
 - how each user-visible surface works
 - why major architectural choices were made
 - where current limits and truthfulness boundaries still are

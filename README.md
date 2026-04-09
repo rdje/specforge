@@ -20,6 +20,7 @@ Use it first for the project objective, document navigation, and the current imp
   - `mdbook build docs/book`
   - or the repo CI wrapper: `bash scripts/run_docs_ci.sh`
 - the mdBook is structured in increasing depth:
+  - architecture rationale
   - getting started
   - runtime and `doctor`
   - command workflow
