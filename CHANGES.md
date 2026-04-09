@@ -1,5 +1,32 @@
 # CHANGES
 
+## 2026-04-10 (EvidenceIR validation now consumes negative-knowledge priors)
+
+### Added: bounded negative-knowledge caution surfacing
+- Updated [prior_memory.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/prior_memory.rs) with exact-pattern lookup support for `negative_knowledge_priors`.
+- Moved the signal-semantic conflict pattern builder into the prior-memory module so harvesting and validation consumption use the same signature shape.
+- Updated [learn_priors.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/learn_priors.rs) to reuse that shared pattern builder for `SignalSemanticConflict` negative-knowledge harvesting.
+- Updated [validate.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/validate.rs) so `EvidenceIR` validation can load the persisted `prior_memory_path`, match current signal-semantic conflict patterns against prior negative knowledge, and report `negative_knowledge_prior_matches`.
+- When a match exists, validation emits `evidence_negative_knowledge_prior_matches` as an info-level caution finding.
+
+### Preserved: negative knowledge cannot suppress evidence
+- The consumer is validation-only in this slice.
+- It requires a current local `EvidenceIR.signal_semantic_conflicts` record before any prior can match.
+- It does not mutate `EvidenceIR`.
+- It does not change semantic arbitration.
+- It does not delete conflicts, weaken findings, or synthesize canonical `SemanticIR` / `IntentIR` facts.
+
+### Added: KG-quality proof for caution-only behavior
+- Strengthened [visual_sources_semantic_conflict_negative](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/visual_sources_semantic_conflict_negative/fixture.json) so the same local conflict reports `negative_knowledge_prior_matches = 0` when no prior memory is staged.
+- Added [negative_knowledge_prior_guided_semantic_conflict_caution_gold](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_semantic_conflict_caution_gold/fixture.json), which proves a staged negative-knowledge prior surfaces a validation caution while the current semantic conflict remains contested downstream.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml negative_knowledge -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml validate_evidence_ir_surfaces_negative_knowledge_prior_matches -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml kg_bench_runs_tracked_fixtures -- --nocapture` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-10 (EvidenceIR now consumes visual-motif priors)
 
 ### Added: bounded visual-motif prior classification in `EvidenceIR`

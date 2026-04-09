@@ -3,7 +3,7 @@ use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};
 
-use crate::ir::evidence::SignalSemanticHintSourceKind;
+use crate::ir::evidence::{SignalSemanticConflictRecord, SignalSemanticHintSourceKind};
 use crate::ir::semantic::{
     CycleWindowRecord, InterfaceSignalSemanticRole, SemanticGroundingStrength,
 };
@@ -324,6 +324,31 @@ impl CorpusMemory {
             .collect()
     }
 
+    pub fn negative_knowledge_pattern_is_known(
+        &self,
+        protocol_family: Option<ProtocolFamily>,
+        knowledge_kind: NegativeKnowledgeKind,
+        normalized_pattern: &str,
+    ) -> bool {
+        if normalized_pattern.trim().is_empty() {
+            return false;
+        }
+
+        for scope in actor_taxonomy_search_scopes(protocol_family) {
+            if self.negative_knowledge_priors.iter().any(|prior| {
+                scope
+                    .map(|expected| prior.protocol_family == expected)
+                    .unwrap_or(true)
+                    && prior.knowledge_kind == knowledge_kind
+                    && prior.normalized_pattern == normalized_pattern
+            }) {
+                return true;
+            }
+        }
+
+        false
+    }
+
     pub fn diagram_kind_for_visual_caption(
         &self,
         protocol_family: Option<ProtocolFamily>,
@@ -462,6 +487,29 @@ impl CorpusMemory {
 
         None
     }
+}
+
+pub fn signal_semantic_conflict_negative_knowledge_pattern(
+    conflict: &SignalSemanticConflictRecord,
+) -> Option<String> {
+    let mut signatures = conflict
+        .observations
+        .iter()
+        .map(|observation| {
+            let mut tags = observation
+                .semantic_tags
+                .iter()
+                .map(|tag| tag.as_str())
+                .collect::<Vec<_>>();
+            tags.sort();
+            tags.dedup();
+            format!("{}:{}", observation.source_kind.as_str(), tags.join("+"))
+        })
+        .filter(|signature| !signature.ends_with(':'))
+        .collect::<Vec<_>>();
+    signatures.sort();
+    signatures.dedup();
+    (signatures.len() >= 2).then(|| format!("signal_semantic_conflict:{}", signatures.join("|")))
 }
 
 pub fn normalize_actor_term(text: &str) -> String {

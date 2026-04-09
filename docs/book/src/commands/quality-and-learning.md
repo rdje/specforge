@@ -23,6 +23,7 @@ It reports things like:
 - graph direction coverage
 - width coverage
 - visual classification observations
+- negative-knowledge prior matches
 - temporal conflicts
 - semantic conflicts
 - residual decisions
@@ -88,7 +89,8 @@ The safety rule is critical:
 
 Visual-motif priors remember recurring visual patterns, while negative-knowledge priors remember conflict and residual archetypes that should make future extraction more careful.
 Visual-motif priors now have a first bounded consumer: `EvidenceIR` may add a prior-memory classification observation for a current unknown visual asset when its local caption matches a unique learned motif.
-Negative-knowledge priors remain cautionary memory until a bounded consumption path is benchmarked.
+Negative-knowledge priors now have a first bounded consumer too: `EvidenceIR` validation may surface a caution finding when a current local signal-semantic conflict matches a learned conflict pattern.
+That caution does not suppress evidence or decide semantic truth.
 
 ## `enrich` and `nlp-enrich`
 

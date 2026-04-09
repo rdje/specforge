@@ -1,6 +1,19 @@
 {
-  "name": "visual_sources_semantic_conflict_negative",
+  "name": "negative_knowledge_prior_guided_semantic_conflict_caution_gold",
   "source": "source.md",
+  "prior_memory_patch": {
+    "negative_knowledge_priors": [
+      {
+        "prior_id": "negative_knowledge_prior_0001",
+        "knowledge_kind": "signal_semantic_conflict",
+        "normalized_pattern": "signal_semantic_conflict:visual_caption:handshake_valid_like|vlm_timing_diagram_annotation:handshake_ready_like",
+        "protocol_family": "unknown",
+        "support_count": 2,
+        "supporting_document_keys": ["seed_doc_1", "seed_doc_2"],
+        "strongest_automation_confidence": "medium"
+      }
+    ]
+  },
   "source_ir_patch": {
     "visual_assets": [
       {
@@ -42,17 +55,15 @@
     },
     "validation": {
       "evidence": {
-        "finding_ids_exclude": [
+        "finding_ids_include": [
           "evidence_negative_knowledge_prior_matches"
         ],
         "metric_values": {
           "signal_semantic_hints": "2",
-          "signal_semantic_hints_from_tables": "0",
-          "signal_semantic_hints_from_prose": "0",
-          "signal_semantic_hints_from_alias_grounded_prose": "0",
           "signal_semantic_hints_from_visual_captions": "1",
           "signal_semantic_hints_from_vlm_timing_annotations": "1",
-          "negative_knowledge_prior_matches": "0",
+          "signal_semantic_conflicts": "1",
+          "negative_knowledge_prior_matches": "1",
           "timing_diagram_extractions": "1"
         }
       },
@@ -64,7 +75,6 @@
         "metric_values": {
           "signal_semantic_conflicts": "1",
           "with_non_decisive_semantic_arbitration": "1",
-          "with_multi_source_semantic_grounding": "0",
           "with_cross_modality_semantic_grounding": "0",
           "with_visual_semantic_grounding": "1"
         }
@@ -77,7 +87,6 @@
         "metric_values": {
           "signal_semantic_conflicts": "1",
           "with_non_decisive_semantic_arbitration": "1",
-          "with_multi_source_semantic_grounding": "0",
           "with_cross_modality_semantic_grounding": "0",
           "with_visual_semantic_grounding": "1"
         }

@@ -44,6 +44,7 @@ It is supposed to be disciplined in the sense of preserving recoverable evidence
 - visual-caption semantic hints
 - VLM timing-note observations
 - polarity extraction
+- negative-knowledge caution surfacing during validation
 
 These wins are valuable because they give later stages something much stronger than free-form text:
 
@@ -52,6 +53,7 @@ These wins are valuable because they give later stages something much stronger t
 - table-linked facts
 - visual-evidence references
 - early KG edges
+- explicit caution signals
 
 The dedicated [Multimodal Evidence And Visual Grounding](multimodal-evidence.md) chapter explains the visual part of that evidence flow in more detail.
 
@@ -67,6 +69,7 @@ It is allowed to say:
 - this table suggests a width, polarity, or source/destination relation
 
 It is not supposed to decide the final canonical meaning of the whole interface.
+Likewise, negative-knowledge priors may make validation more alert to a repeated conflict pattern, but they do not suppress the current evidence or decide the conflict.
 
 ## Typical evidence-level failure modes
 

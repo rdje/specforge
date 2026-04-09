@@ -14,7 +14,7 @@ use crate::ir::prior_memory::{
     SemanticModalityReliabilityPriorRecord, SemanticPhrasePriorRecord, TableShapePriorRecord,
     TemporalPhrasePriorRecord, VisualMotifPriorRecord, is_meaningful_actor_term,
     is_meaningful_prior_phrase, normalize_actor_term, normalize_prior_phrase,
-    normalize_table_header_signature,
+    normalize_table_header_signature, signal_semantic_conflict_negative_knowledge_pattern,
 };
 use crate::ir::semantic::SemanticIr;
 use crate::ir::semantic::{
@@ -831,29 +831,14 @@ fn harvest_negative_knowledge_priors(
     >,
 ) {
     for conflict in &intent_ir.signal_semantic_conflicts {
-        let mut signatures = conflict
-            .observations
-            .iter()
-            .map(|observation| {
-                let mut tags = observation
-                    .semantic_tags
-                    .iter()
-                    .map(|tag| tag.as_str())
-                    .collect::<Vec<_>>();
-                tags.sort();
-                tags.dedup();
-                format!("{}:{}", observation.source_kind.as_str(), tags.join("+"))
-            })
-            .filter(|signature| !signature.ends_with(':'))
-            .collect::<Vec<_>>();
-        signatures.sort();
-        signatures.dedup();
-        if signatures.len() < 2 {
+        let Some(normalized_pattern) =
+            signal_semantic_conflict_negative_knowledge_pattern(conflict)
+        else {
             continue;
-        }
+        };
         harvest_negative_knowledge_pattern(
             NegativeKnowledgeKind::SignalSemanticConflict,
-            format!("signal_semantic_conflict:{}", signatures.join("|")),
+            normalized_pattern,
             conflict.automation_confidence,
             &intent_ir.document_identity.document_key,
             protocol_family,

@@ -701,6 +701,21 @@
   - ambiguous prior memory stays silent instead of forcing a classification
 - `validate evidence_ir` now reports `visual_classification_observations`, and the tracked `visual_motif_prior_guided_diagram_classification_gold` fixture locks the local-grounded behavior
 
+### First negative-knowledge prior consumer
+- `EvidenceIR` validation now has the first bounded runtime consumer for `negative_knowledge_priors`
+- this first consumer is intentionally validation-only:
+  - it loads the persisted `EvidenceIR.prior_memory_path`
+  - it builds the same normalized signal-semantic conflict pattern used by `learn-priors`
+  - it only matches when the current document already has a local `SignalSemanticConflictRecord`
+  - it only reports an exact prior-memory match for the current conflict pattern
+- the output is an info-level `evidence_negative_knowledge_prior_matches` validation finding plus a `negative_knowledge_prior_matches` metric
+- the output deliberately stops at caution:
+  - it does not mutate `EvidenceIR`
+  - it does not suppress the current conflict finding
+  - it does not change semantic arbitration
+  - it does not create canonical `SemanticIR` or `IntentIR` facts
+- the tracked `negative_knowledge_prior_guided_semantic_conflict_caution_gold` fixture locks that behavior, while the existing `visual_sources_semantic_conflict_negative` fixture now proves the same local conflict stays unmatched when no prior is staged
+
 ### Fifth landed bounded prior family and semantic-stage arbitration slice
 - the fifth bounded learning family is now real in `crates/specforge/src/ir/prior_memory.rs` and `crates/specforge/src/commands/learn_priors.rs`
 - `specforge learn-priors` now harvests semantic modality-reliability priors from decisive, non-alias-dependent semantic consensus plus the supporting source kinds that carried that consensus

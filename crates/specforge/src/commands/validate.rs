@@ -10,6 +10,10 @@ use crate::ir::evidence::{
     VisualObservationKind,
 };
 use crate::ir::intent::IntentIr;
+use crate::ir::prior_memory::{
+    CorpusMemory, NegativeKnowledgeKind, ProtocolFamily,
+    signal_semantic_conflict_negative_knowledge_pattern,
+};
 use crate::ir::semantic::{
     ActorPortRecord, ActorRelativeDirection, ClockEdge, SemanticIr, SignalConnectivityClass,
 };
@@ -128,6 +132,40 @@ fn finding(
         summary: summary.into(),
         related_ids,
     }
+}
+
+fn load_prior_memory_for_validation(prior_memory_path: Option<&Path>) -> Option<CorpusMemory> {
+    let prior_memory_path = prior_memory_path?;
+    if !prior_memory_path.exists() {
+        return None;
+    }
+
+    serde_json::from_str::<CorpusMemory>(&fs::read_to_string(prior_memory_path).ok()?).ok()
+}
+
+fn evidence_negative_knowledge_prior_matches(ir: &EvidenceIr) -> Vec<String> {
+    let Some(corpus_memory) = load_prior_memory_for_validation(ir.prior_memory_path.as_deref())
+    else {
+        return Vec::new();
+    };
+    let protocol_family = ProtocolFamily::infer(
+        &ir.document_identity.document_key,
+        &ir.document_identity.display_name,
+    );
+
+    ir.signal_semantic_conflicts
+        .iter()
+        .filter_map(|conflict| {
+            let pattern = signal_semantic_conflict_negative_knowledge_pattern(conflict)?;
+            corpus_memory
+                .negative_knowledge_pattern_is_known(
+                    Some(protocol_family),
+                    NegativeKnowledgeKind::SignalSemanticConflict,
+                    &pattern,
+                )
+                .then(|| conflict.conflict_id.clone())
+        })
+        .collect()
 }
 
 fn graph_direction_signal_names(actor_ports: &[ActorPortRecord]) -> BTreeSet<String> {
@@ -1152,6 +1190,14 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         }
     }
 
+    let negative_knowledge_prior_matches = evidence_negative_knowledge_prior_matches(ir);
+    println!();
+    println!("=== Negative Knowledge Priors ===");
+    println!(
+        "  matched_signal_semantic_conflict_patterns: {}",
+        negative_knowledge_prior_matches.len()
+    );
+
     let normative_count = classes.get("normative_statement").copied().unwrap_or(0);
     let mut findings = Vec::new();
     if total == 0 {
@@ -1228,6 +1274,18 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
                 .collect(),
         ));
     }
+    if !negative_knowledge_prior_matches.is_empty() {
+        findings.push(finding(
+            "evidence_negative_knowledge_prior_matches",
+            ValidationFindingSeverity::Info,
+            "negative_knowledge",
+            format!(
+                "{} signal semantic conflict pattern(s) match prior negative knowledge; this is a caution signal only, not an override of current-document evidence",
+                negative_knowledge_prior_matches.len()
+            ),
+            negative_knowledge_prior_matches.clone(),
+        ));
+    }
 
     let report = ValidationReportRecord {
         report_id: format!("validation_evidence_ir_{artifact_fingerprint}"),
@@ -1285,6 +1343,10 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             metric(
                 "signal_semantic_conflicts",
                 ir.signal_semantic_conflicts.len().to_string(),
+            ),
+            metric(
+                "negative_knowledge_prior_matches",
+                negative_knowledge_prior_matches.len().to_string(),
             ),
             metric(
                 "signal_semantic_hints_from_tables",
@@ -3007,6 +3069,9 @@ mod tests {
     use crate::error::Result;
     use crate::ir::evidence::EvidenceIr;
     use crate::ir::intent::IntentIr;
+    use crate::ir::prior_memory::{
+        CorpusMemoryUpdatePolicyRecord, NegativeKnowledgePriorRecord, PriorSourceArtifactRecord,
+    };
     use crate::ir::semantic::SemanticIr;
     use crate::ir::source::{
         SignalConstraintKind, SignalConstraintRecord, SourceIr, StructuredTableCellRecord,
@@ -3375,6 +3440,122 @@ mod tests {
         assert!(has_finding(
             &report,
             "evidence_signal_semantic_conflicts_present"
+        ));
+        assert_eq!(
+            metric_value(&report, "negative_knowledge_prior_matches"),
+            Some("0")
+        );
+        assert!(!has_finding(
+            &report,
+            "evidence_negative_knowledge_prior_matches"
+        ));
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_evidence_ir_surfaces_negative_knowledge_prior_matches() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("semantic_hint_conflict_with_prior.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let prior_memory_path = tempdir.path().join("corpus_memory.json");
+        fs::write(
+            &source,
+            concat!(
+                "# Channel\n",
+                "Signal XCTRL is input width 1.\n\n",
+                "XCTRL indicates that the subordinate can accept the transfer.\n",
+            ),
+        )?;
+
+        let corpus_memory = CorpusMemory {
+            schema_version: 5,
+            update_policy: CorpusMemoryUpdatePolicyRecord {
+                advisory_only: true,
+                requires_validated_intent_ir: true,
+                rejects_error_findings: true,
+                excludes_alias_dependent_semantic_consensus: true,
+                local_grounding_required_for_canonical_promotion: true,
+            },
+            source_artifacts: vec![PriorSourceArtifactRecord {
+                artifact_path: tempdir.path().join("seed_intent_ir.json"),
+                document_key: "seed_doc".to_string(),
+                display_name: "seed_doc".to_string(),
+                protocol_family: ProtocolFamily::Unknown,
+                overall_score: Some(90),
+                grade: Some("EXCELLENT".to_string()),
+                accepted_for_learning: true,
+                skip_reason: None,
+            }],
+            actor_taxonomy_priors: Vec::new(),
+            semantic_phrase_priors: Vec::new(),
+            semantic_modality_reliability_priors: Vec::new(),
+            temporal_phrase_priors: Vec::new(),
+            table_shape_priors: Vec::new(),
+            visual_motif_priors: Vec::new(),
+            negative_knowledge_priors: vec![NegativeKnowledgePriorRecord {
+                prior_id: "negative_knowledge_prior_0001".to_string(),
+                knowledge_kind: NegativeKnowledgeKind::SignalSemanticConflict,
+                normalized_pattern: "signal_semantic_conflict:prose_statement:handshake_ready_like|signal_description_table:handshake_valid_like".to_string(),
+                protocol_family: ProtocolFamily::Unknown,
+                support_count: 2,
+                supporting_document_keys: vec!["seed_doc".to_string()],
+                strongest_automation_confidence: AutomationConfidence::Medium,
+            }],
+        };
+        fs::write(
+            &prior_memory_path,
+            serde_json::to_string_pretty(&corpus_memory)?,
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_semantic_conflict".to_string(),
+            asset_id: "asset_semantic_conflict".to_string(),
+            page_id: None,
+            caption_text: Some("Control signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("XCTRL", false),
+                make_table_cell(
+                    "Indicates that address and control information are valid for transfer.",
+                    false,
+                ),
+            ]],
+            row_count: 1,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build_with_prior_memory(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+            Some(&prior_memory_path),
+        )?;
+        let report =
+            validate_evidence_ir(&evidence_ir, "negative_knowledge_prior_matches".to_string());
+
+        assert_eq!(
+            metric_value(&report, "signal_semantic_conflicts"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&report, "negative_knowledge_prior_matches"),
+            Some("1")
+        );
+        assert!(has_finding(
+            &report,
+            "evidence_signal_semantic_conflicts_present"
+        ));
+        assert!(has_finding(
+            &report,
+            "evidence_negative_knowledge_prior_matches"
         ));
 
         Ok(())
