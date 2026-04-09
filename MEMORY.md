@@ -24,7 +24,7 @@
 ## Latest committed baseline
 - latest_commit_hash: `50dd73a`
 - latest_commit_brief_message: `feat(evidence): treat tie-off rows as inputs`
-- note: the current session is now focused on making the documentation split explicit: the mdBook is the public product surface, while root markdown docs are continuity / crash-recovery infrastructure
+- note: the current session is now focused on expanding the public book itself: validation, benchmarking, and cross-document learning now need first-class mdBook coverage rather than only command summaries
 
 ## Recent commit chain (last 5)
 - `50dd73a` feat(evidence): treat tie-off rows as inputs
@@ -41,6 +41,7 @@
   - the mdBook is the world-facing product documentation surface and should explain what `specforge` does, how it works, and why it is structured that way
   - every meaningful user-facing aspect of the project should ultimately land in the book with its own section or chapter
   - the root markdown docs are a separate continuity plane for crash recovery, session handoff, roadmap steering, validation projection, and engineering-state tracking
+- the book now goes one step further too: validation, fixture truthfulness, and cross-document learning are no longer only summarized inside command pages; they now have dedicated mdBook chapters of their own under `docs/book/src/quality/`
 - root docs remain important, but they now serve continuity, roadmap, validation, and developer-state roles more than primary end-user onboarding
 - runnable CLI surface includes `inspect`, `doctor`, `converge`, `ingest`, `evidence`, `semantic`, `intent`, `adapt`, `enrich`, `validate`, `kg-bench`, `project-validation`, `learn-priors`, and `nlp-enrich`
 - `specforge converge` now defaults to full Ollama-backed VLM image enrichment plus NLP Level 3 backannotation; use `--vlm-provider skip` and/or `--nlp-provider skip` only when intentionally narrowing the loop

@@ -1,6 +1,13 @@
-# Quality, Validation, And Learning
+# Quality, Validation, And Learning Commands
 
 These commands are what make `specforge` more than a one-shot extractor.
+
+This page is the operational command map.
+For the deeper rationale behind validation, fixture truthfulness, and cross-document learning, continue with:
+
+- [Validation And Learning](../quality/validation.md)
+- [KG Bench And Fixtures](../quality/kg-bench.md)
+- [Corpus Memory And Priors](../quality/corpus-memory.md)
 
 ## `validate`
 
@@ -81,4 +88,3 @@ The safety rule is critical:
 These are narrower enrichment entrypoints used when you want to operate on the staged pipeline more manually.
 
 They are still valuable, but `converge` is the preferred user-facing path when you want the full loop.
-

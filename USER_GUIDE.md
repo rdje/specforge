@@ -19,7 +19,10 @@ The canonical user-facing documentation for `specforge` has moved to the mdBook 
 3. `docs/book/src/runtime-and-doctor.md`
 4. `docs/book/src/commands/overview.md`
 5. `docs/book/src/pipeline/overview.md`
-6. `docs/book/src/reference/troubleshooting.md`
+6. `docs/book/src/quality/validation.md`
+7. `docs/book/src/quality/kg-bench.md`
+8. `docs/book/src/quality/corpus-memory.md`
+9. `docs/book/src/reference/troubleshooting.md`
 
 ## What stays in the repo root
 

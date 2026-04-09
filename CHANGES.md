@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-04-09 (book now covers validation and learning as first-class topics)
+
+### Added: dedicated mdBook chapters for validation and the learning plane
+- Added [validation.md](/Users/richarddje/Documents/github/specforge/docs/book/src/quality/validation.md) to explain how `specforge` judges artifact quality, why scores are secondary to findings, and how validation gates the learning plane.
+- Added [kg-bench.md](/Users/richarddje/Documents/github/specforge/docs/book/src/quality/kg-bench.md) to explain the fixture harness as a truthfulness regression system rather than just another CLI command.
+- Added [corpus-memory.md](/Users/richarddje/Documents/github/specforge/docs/book/src/quality/corpus-memory.md) to explain what actually grows over time, what the prior store learns, and why it is explicit symbolic memory rather than hidden model weights.
+
+### Changed: command docs now point readers toward deeper rationale chapters
+- Updated [quality-and-learning.md](/Users/richarddje/Documents/github/specforge/docs/book/src/commands/quality-and-learning.md) so it stays the operational CLI page while linking to the deeper validation and learning chapters.
+- Updated [introduction.md](/Users/richarddje/Documents/github/specforge/docs/book/src/introduction.md), [SUMMARY.md](/Users/richarddje/Documents/github/specforge/docs/book/src/SUMMARY.md), [README.md](/Users/richarddje/Documents/github/specforge/README.md), and [USER_GUIDE.md](/Users/richarddje/Documents/github/specforge/USER_GUIDE.md) so the new book coverage is visible from the entry path.
+
 ## 2026-04-09 (book and continuity docs now have an explicit split contract)
 
 ### Changed: the mdBook is now explicitly the public documentation product
