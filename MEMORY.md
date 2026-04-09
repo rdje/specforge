@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `22cb57c`
-- latest_commit_brief_message: `docs(book): deepen pipeline stage chapters`
-- note: the current session is now focused on strengthening the mdBook reference surface, especially the generated-artifacts and continuity-boundary pages
+- latest_commit_hash: `38975bc`
+- latest_commit_brief_message: `docs(book): expand reference artifact docs`
+- note: the current session is now focused on adding explicit domain-model coverage to the public book, starting with clock/reset infrastructure semantics
 
 ## Recent commit chain (last 5)
+- `38975bc` docs(book): expand reference artifact docs
 - `22cb57c` docs(book): deepen pipeline stage chapters
 - `20c025f` docs(book): add architecture rationale
 - `03c6536` docs(book): add validation and learning chapters
 - `3258efb` docs(book): separate public docs from continuity
-- `50dd73a` feat(evidence): treat tie-off rows as inputs
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -45,6 +45,7 @@
 - the book now also has a dedicated architecture-rationale chapter under `docs/book/src/architecture-rationale.md`, so the public docs no longer jump straight from introduction into operation without explaining the central design choices first
 - the public book’s IR stage chapters are now deeper too: `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR` no longer read like short labels only, but now explain the intended stage boundary, the type of truth each stage should preserve, and the kinds of failure each stage is meant to contain
 - the book reference surface is being strengthened now too: `docs/book/src/reference/overview.md` is the reference landing page, `generated-artifacts.md` explains local generated artifact roots and inspection flow, and `live-docs.md` explains the public-book versus continuity-doc boundary in more detail
+- the book now has a dedicated `Domain Model` section too, starting with `docs/book/src/domain/clock-reset.md`, so the clock/reset infrastructure doctrine is public instead of buried inside continuity notes or a short `SemanticIR` paragraph
 - root docs remain important, but they now serve continuity, roadmap, validation, and developer-state roles more than primary end-user onboarding
 - runnable CLI surface includes `inspect`, `doctor`, `converge`, `ingest`, `evidence`, `semantic`, `intent`, `adapt`, `enrich`, `validate`, `kg-bench`, `project-validation`, `learn-priors`, and `nlp-enrich`
 - `specforge converge` now defaults to full Ollama-backed VLM image enrichment plus NLP Level 3 backannotation; use `--vlm-provider skip` and/or `--nlp-provider skip` only when intentionally narrowing the loop

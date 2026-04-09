@@ -1,0 +1,128 @@
+# Clock And Reset Infrastructure
+
+Clocks and resets are special in digital systems.
+
+They are not ordinary protocol payload signals, and `specforge` should not flatten them into the same category as request, ready, valid, data, or response lines.
+
+## Why they are special
+
+Clock and reset signals usually have system-level responsibilities:
+
+- clocks define the timing reference for sequential behavior
+- clock generation and distribution require careful implementation
+- clock trees should avoid unsafe glitchy logic
+- resets define initialization and recovery behavior
+- reset trees should be treated carefully because they can affect many registers at once
+- reset assertion and release timing often matter as much as the signal name
+
+For example, an active-low reset such as `ARESETN` or `rst_n` is asserted when the signal is low, not high.
+That is why `ASSERTED` must not be blindly treated as `HIGH`.
+It is polarity-relative.
+
+## What `specforge` models today
+
+The current canonical surface models this through a `system_contract`.
+
+That contract records:
+
+- clock signal
+- reset signal
+- reset kind
+- reset polarity
+- reset assertion timing
+- reset release timing
+- reset target kind
+- supporting statements
+- automation confidence
+
+In the Rust IR, this is represented by the system-contract records carried through `SemanticIR` and `IntentIR`.
+
+The connectivity surface also distinguishes:
+
+- `protocol`
+- `system_clock`
+- `system_reset`
+
+That distinction lets validation treat `ACLK` and `ARESETN`-style signals as infrastructure connectivity instead of ordinary protocol missing-producer cases.
+
+## Reset polarity
+
+Single-bit control signals have polarity.
+The usual case is active-high, but active-low signals are common enough that the model must treat polarity explicitly.
+
+For resets:
+
+- `active high` means asserted at logical high
+- `active low` means asserted at logical low
+- names like `rst_n` and `ARESETN` are useful cues, but explicit document evidence is stronger
+
+This matters for temporal rules and conflict detection.
+
+For example:
+
+- if polarity is unknown, `ASSERTED` remains abstract
+- if a signal is active-high, `ASSERTED` can refine to `HIGH`
+- if a signal is active-low, `ASSERTED` can refine to `LOW`
+
+That is why the temporal conflict model is polarity-aware rather than treating `ASSERTED` and `HIGH` as universal synonyms.
+
+## Reset timing discipline
+
+When a reset is modeled as asynchronous, `specforge` treats the expected discipline as:
+
+- assertion is asynchronous to the clock
+- release is synchronous to the clock
+- the reset target is a dedicated reset pin
+
+When a reset is modeled as synchronous, the expected discipline is:
+
+- assertion is synchronous to the clock
+- release is synchronous to the clock
+- the reset target is the data input path
+
+That is not a complete physical reset-tree model.
+It is the current canonical intent-level contract that keeps reset semantics from being erased.
+
+## What `specforge` refuses to do
+
+The project should avoid unsafe shortcuts such as:
+
+- treating `External` as a real protocol actor for clocks or resets
+- treating `Tie-off` as a producer actor
+- turning clock/reset infrastructure rows into ordinary producer/consumer graph facts
+- assuming `ASSERTED` means `HIGH` without polarity
+- hiding reset polarity conflicts behind a clean-looking artifact
+
+This is part of the same truthfulness doctrine used elsewhere in the project:
+
+- preserve evidence
+- keep uncertainty visible
+- do not fabricate a cleaner semantic model than the document supports
+
+## Validation surface
+
+Validation can expose clock/reset handling through:
+
+- `has_system_contract`
+- `with_resolved_polarity`
+- infrastructure connectivity metrics and notes
+- signal polarity conflicts
+- temporal conflicts that account for resolved polarity
+
+When a clock or reset is intentionally classified as infrastructure, it may appear as an informational system-contract finding rather than a protocol connectivity failure.
+
+## Current limits
+
+The current model is not yet a full physical clock-tree or reset-tree analysis.
+
+It does not yet fully model:
+
+- clock generation cells
+- clock gating topology
+- reset synchronizer structure
+- reset fanout and distribution quality
+- physical implementation constraints
+
+Those are future directions.
+The important current boundary is that clock and reset semantics are first-class infrastructure intent, not ordinary protocol edges.
+

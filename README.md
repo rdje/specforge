@@ -25,6 +25,7 @@ Use it first for the project objective, document navigation, and the current imp
   - runtime and `doctor`
   - command workflow
   - IR pipeline semantics
+  - domain model semantics
   - validation and learning semantics
   - validation, learning, and troubleshooting
 - root markdown docs still exist, but they now serve continuity, roadmap, validation projection, and developer-state purposes rather than being the primary user-doc surface

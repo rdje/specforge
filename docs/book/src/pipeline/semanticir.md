@@ -60,6 +60,8 @@ That matters because a clean semantic model should not flatten:
 
 into the same category as ordinary payload or handshake signals.
 
+The dedicated [Clock And Reset Infrastructure](../domain/clock-reset.md) chapter explains that domain boundary in more detail.
+
 ## Residual decisions
 
 Residual packets exist because the project would rather preserve unresolved ambiguity than fabricate a clean but wrong canonical answer.

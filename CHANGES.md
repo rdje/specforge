@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-09 (book now has a domain-model section for clock/reset infrastructure)
+
+### Added: dedicated public domain-model chapter
+- Added [domain/overview.md](/Users/richarddje/Documents/github/specforge/docs/book/src/domain/overview.md) as the first mdBook domain-model landing page.
+- Added [domain/clock-reset.md](/Users/richarddje/Documents/github/specforge/docs/book/src/domain/clock-reset.md) to explain why clocks and resets are infrastructure semantics, not ordinary protocol edges.
+
+### Clarified: clock/reset truthfulness doctrine is now public
+- The new chapter explains:
+  - why clock and reset trees are sensitive digital-system infrastructure
+  - why `ASSERTED` / `DEASSERTED` must remain polarity-relative
+  - how `system_contract` records clock/reset signal, reset kind, reset polarity, assertion timing, release timing, and target kind
+  - why `system_clock` / `system_reset` connectivity classes are distinct from `protocol`
+  - why labels like `External` and `Tie-off` should not become ordinary protocol actors
+  - what validation surfaces can show today
+  - what the current model still does not attempt to cover physically, such as full clock-tree or reset-tree topology
+
+### Changed: book navigation now exposes domain semantics explicitly
+- Updated [SUMMARY.md](/Users/richarddje/Documents/github/specforge/docs/book/src/SUMMARY.md), [introduction.md](/Users/richarddje/Documents/github/specforge/docs/book/src/introduction.md), [architecture-rationale.md](/Users/richarddje/Documents/github/specforge/docs/book/src/architecture-rationale.md), [semanticir.md](/Users/richarddje/Documents/github/specforge/docs/book/src/pipeline/semanticir.md), and [README.md](/Users/richarddje/Documents/github/specforge/README.md) so domain-model semantics are no longer buried inside the IR-stage discussion.
+
 ## 2026-04-09 (book reference section now explains generated artifacts and continuity boundaries)
 
 ### Added: dedicated mdBook reference landing page

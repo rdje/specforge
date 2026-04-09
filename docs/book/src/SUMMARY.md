@@ -12,6 +12,8 @@
   - [EvidenceIR](pipeline/evidenceir.md)
   - [SemanticIR](pipeline/semanticir.md)
   - [IntentIR](pipeline/intentir.md)
+- [Domain Model](domain/overview.md)
+  - [Clock And Reset Infrastructure](domain/clock-reset.md)
 - [Validation And Learning](quality/validation.md)
   - [KG Bench And Fixtures](quality/kg-bench.md)
   - [Corpus Memory And Priors](quality/corpus-memory.md)

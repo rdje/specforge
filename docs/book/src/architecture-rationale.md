@@ -106,6 +106,22 @@ That is why the project preserves things like:
 This is not only a validator feature.
 It is part of the core architecture.
 
+## Why infrastructure semantics are separated
+
+Some hardware signals are not ordinary protocol edges.
+
+Clocks and resets are the clearest example.
+They can appear in the same tables as other signals, but they carry system-level meaning:
+
+- clocks define the sequential timing reference
+- resets define initialization and recovery discipline
+- reset assertion and release timing are polarity-sensitive
+- sourcing and distribution are infrastructure concerns, not ordinary producer/consumer protocol relations
+
+That is why `specforge` treats clock and reset handling as system-contract infrastructure instead of flattening it into the same category as payload or handshake connectivity.
+
+The dedicated chapter [Clock And Reset Infrastructure](domain/clock-reset.md) explains that boundary in more detail.
+
 ## Why learning is symbolic and explicit
 
 `specforge` can get stronger across many documents, but the thing that grows is not hidden neural state.
