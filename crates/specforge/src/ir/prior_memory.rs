@@ -7,7 +7,9 @@ use crate::ir::evidence::SignalSemanticHintSourceKind;
 use crate::ir::semantic::{
     CycleWindowRecord, InterfaceSignalSemanticRole, SemanticGroundingStrength,
 };
-use crate::ir::source::{AutomationConfidence, StructuredTableRecord, TableKind};
+use crate::ir::source::{
+    AutomationConfidence, DiagramKind, StructuredTableRecord, TableKind, VisualAssetKind,
+};
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "snake_case")]
@@ -66,6 +68,10 @@ pub struct CorpusMemory {
     pub temporal_phrase_priors: Vec<TemporalPhrasePriorRecord>,
     #[serde(default)]
     pub table_shape_priors: Vec<TableShapePriorRecord>,
+    #[serde(default)]
+    pub visual_motif_priors: Vec<VisualMotifPriorRecord>,
+    #[serde(default)]
+    pub negative_knowledge_priors: Vec<NegativeKnowledgePriorRecord>,
 }
 
 impl CorpusMemory {
@@ -277,6 +283,42 @@ impl CorpusMemory {
                     .unwrap_or(true)
                     && table_kind
                         .map(|expected| prior.table_kind == expected)
+                        .unwrap_or(true)
+            })
+            .collect()
+    }
+
+    pub fn visual_motif_priors_for(
+        &self,
+        protocol_family: Option<ProtocolFamily>,
+        diagram_kind: Option<DiagramKind>,
+    ) -> Vec<&VisualMotifPriorRecord> {
+        self.visual_motif_priors
+            .iter()
+            .filter(|prior| {
+                protocol_family
+                    .map(|expected| prior.protocol_family == expected)
+                    .unwrap_or(true)
+                    && diagram_kind
+                        .map(|expected| prior.diagram_kind == expected)
+                        .unwrap_or(true)
+            })
+            .collect()
+    }
+
+    pub fn negative_knowledge_priors_for(
+        &self,
+        protocol_family: Option<ProtocolFamily>,
+        knowledge_kind: Option<NegativeKnowledgeKind>,
+    ) -> Vec<&NegativeKnowledgePriorRecord> {
+        self.negative_knowledge_priors
+            .iter()
+            .filter(|prior| {
+                protocol_family
+                    .map(|expected| prior.protocol_family == expected)
+                    .unwrap_or(true)
+                    && knowledge_kind
+                        .map(|expected| prior.knowledge_kind == expected)
                         .unwrap_or(true)
             })
             .collect()
@@ -779,6 +821,54 @@ pub struct TableShapePriorRecord {
     pub prior_id: String,
     pub normalized_header_signature: String,
     pub table_kind: TableKind,
+    pub protocol_family: ProtocolFamily,
+    pub support_count: usize,
+    #[serde(default)]
+    pub supporting_document_keys: Vec<String>,
+    pub strongest_automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct VisualMotifPriorRecord {
+    pub prior_id: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub normalized_caption_phrase: Option<String>,
+    pub diagram_kind: DiagramKind,
+    pub asset_kind: VisualAssetKind,
+    pub protocol_family: ProtocolFamily,
+    pub support_count: usize,
+    #[serde(default)]
+    pub supporting_document_keys: Vec<String>,
+    pub strongest_automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[serde(rename_all = "snake_case")]
+pub enum NegativeKnowledgeKind {
+    SignalSemanticConflict,
+    TemporalValueConflict,
+    InterfaceSignalConflict,
+    SignalConnectivityConflict,
+    ResidualDecision,
+}
+
+impl NegativeKnowledgeKind {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::SignalSemanticConflict => "signal_semantic_conflict",
+            Self::TemporalValueConflict => "temporal_value_conflict",
+            Self::InterfaceSignalConflict => "interface_signal_conflict",
+            Self::SignalConnectivityConflict => "signal_connectivity_conflict",
+            Self::ResidualDecision => "residual_decision",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct NegativeKnowledgePriorRecord {
+    pub prior_id: String,
+    pub knowledge_kind: NegativeKnowledgeKind,
+    pub normalized_pattern: String,
     pub protocol_family: ProtocolFamily,
     pub support_count: usize,
     #[serde(default)]

@@ -6529,7 +6529,7 @@ mod tests {
         }
 
         let mut corpus_memory = CorpusMemory {
-            schema_version: 4,
+            schema_version: 5,
             update_policy: CorpusMemoryUpdatePolicyRecord {
                 advisory_only: true,
                 requires_validated_intent_ir: true,
@@ -6552,6 +6552,8 @@ mod tests {
             semantic_modality_reliability_priors: Vec::new(),
             temporal_phrase_priors: Vec::new(),
             table_shape_priors: Vec::new(),
+            visual_motif_priors: Vec::new(),
+            negative_knowledge_priors: Vec::new(),
         };
         populate(&mut corpus_memory);
         fs::write(

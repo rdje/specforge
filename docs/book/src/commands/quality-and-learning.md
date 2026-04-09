@@ -77,11 +77,16 @@ What it learns today:
 - semantic modality-reliability priors
 - temporal phrase priors
 - table-shape priors
+- visual-motif priors
+- negative-knowledge priors
 
 The safety rule is critical:
 
 - priors widen interpretation of the current document
 - priors do not directly author canonical truth
+
+The newest families are deliberately advisory at this stage.
+Visual-motif priors remember recurring visual patterns, while negative-knowledge priors remember conflict and residual archetypes that should make future extraction more careful.
 
 ## `enrich` and `nlp-enrich`
 

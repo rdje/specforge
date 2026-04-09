@@ -82,7 +82,7 @@ The cross-document learning plane writes:
 - `generated/prior_memory/corpus_memory.json`
 
 That file is the symbolic memory that grows over time as validated artifacts teach `specforge` reusable extraction priors.
-It can contain actor-taxonomy, semantic-phrase, semantic-modality-reliability, temporal-phrase, and table-shape priors.
+It can contain actor-taxonomy, semantic-phrase, semantic-modality-reliability, temporal-phrase, table-shape, visual-motif, and negative-knowledge priors.
 
 It is still local generated state.
 The code defines how learning works; `corpus_memory.json` stores what the local workspace has learned so far.

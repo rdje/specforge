@@ -10,10 +10,11 @@ use crate::ir::evidence::{SignalSemanticHintSourceKind, SignalSemanticTag};
 use crate::ir::intent::IntentIr;
 use crate::ir::prior_memory::{
     ActorTaxonomyPriorRecord, ActorTaxonomyRole, CorpusMemory, CorpusMemoryUpdatePolicyRecord,
-    PriorSourceArtifactRecord, ProtocolFamily, SemanticModalityReliabilityPriorRecord,
-    SemanticPhrasePriorRecord, TableShapePriorRecord, TemporalPhrasePriorRecord,
-    is_meaningful_actor_term, is_meaningful_prior_phrase, normalize_actor_term,
-    normalize_prior_phrase, normalize_table_header_signature,
+    NegativeKnowledgeKind, NegativeKnowledgePriorRecord, PriorSourceArtifactRecord, ProtocolFamily,
+    SemanticModalityReliabilityPriorRecord, SemanticPhrasePriorRecord, TableShapePriorRecord,
+    TemporalPhrasePriorRecord, VisualMotifPriorRecord, is_meaningful_actor_term,
+    is_meaningful_prior_phrase, normalize_actor_term, normalize_prior_phrase,
+    normalize_table_header_signature,
 };
 use crate::ir::semantic::SemanticIr;
 use crate::ir::semantic::{
@@ -21,7 +22,7 @@ use crate::ir::semantic::{
     SemanticGroundingStrength, TemporalPredicateRecord,
 };
 use crate::ir::source::{AutomationConfidence, ValidationFindingSeverity, ValidationReportRecord};
-use crate::ir::source::{SourceIr, StructuredTableRecord, TableKind};
+use crate::ir::source::{DiagramKind, SourceIr, StructuredTableRecord, TableKind, VisualAssetKind};
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 struct ActorTaxonomyPriorKey {
@@ -95,6 +96,33 @@ struct TableShapePriorAccumulator {
     strongest_automation_confidence: AutomationConfidence,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+struct VisualMotifPriorKey {
+    normalized_caption_phrase: Option<String>,
+    diagram_kind: String,
+    asset_kind: String,
+    protocol_family: String,
+}
+
+#[derive(Debug, Clone)]
+struct VisualMotifPriorAccumulator {
+    supporting_document_keys: BTreeSet<String>,
+    strongest_automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+struct NegativeKnowledgePriorKey {
+    knowledge_kind: String,
+    normalized_pattern: String,
+    protocol_family: String,
+}
+
+#[derive(Debug, Clone)]
+struct NegativeKnowledgePriorAccumulator {
+    supporting_document_keys: BTreeSet<String>,
+    strongest_automation_confidence: AutomationConfidence,
+}
+
 pub fn run(args: LearnPriorsArgs) -> Result<()> {
     let output_path = args.output;
     let mut source_artifacts = Vec::new();
@@ -107,6 +135,10 @@ pub fn run(args: LearnPriorsArgs) -> Result<()> {
     >::new();
     let mut temporal_priors = BTreeMap::<TemporalPriorKey, TemporalPriorAccumulator>::new();
     let mut table_shape_priors = BTreeMap::<TableShapePriorKey, TableShapePriorAccumulator>::new();
+    let mut visual_motif_priors =
+        BTreeMap::<VisualMotifPriorKey, VisualMotifPriorAccumulator>::new();
+    let mut negative_knowledge_priors =
+        BTreeMap::<NegativeKnowledgePriorKey, NegativeKnowledgePriorAccumulator>::new();
 
     for artifact in &args.artifacts {
         let artifact_path = canonicalize_existing_path(artifact)?;
@@ -148,10 +180,16 @@ pub fn run(args: LearnPriorsArgs) -> Result<()> {
         );
         harvest_temporal_priors(&intent_ir, protocol_family, &mut temporal_priors);
         harvest_table_shape_priors(&intent_ir, protocol_family, &mut table_shape_priors);
+        harvest_visual_motif_priors(&intent_ir, protocol_family, &mut visual_motif_priors);
+        harvest_negative_knowledge_priors(
+            &intent_ir,
+            protocol_family,
+            &mut negative_knowledge_priors,
+        );
     }
 
     let corpus_memory = CorpusMemory {
-        schema_version: 4,
+        schema_version: 5,
         update_policy: CorpusMemoryUpdatePolicyRecord {
             advisory_only: true,
             requires_validated_intent_ir: true,
@@ -167,6 +205,8 @@ pub fn run(args: LearnPriorsArgs) -> Result<()> {
         ),
         temporal_phrase_priors: materialize_temporal_priors(temporal_priors),
         table_shape_priors: materialize_table_shape_priors(table_shape_priors),
+        visual_motif_priors: materialize_visual_motif_priors(visual_motif_priors),
+        negative_knowledge_priors: materialize_negative_knowledge_priors(negative_knowledge_priors),
     };
 
     let pretty_json = serde_json::to_string_pretty(&corpus_memory)?;
@@ -199,6 +239,14 @@ pub fn run(args: LearnPriorsArgs) -> Result<()> {
     println!(
         "table_shape_priors: {}",
         corpus_memory.table_shape_priors.len()
+    );
+    println!(
+        "visual_motif_priors: {}",
+        corpus_memory.visual_motif_priors.len()
+    );
+    println!(
+        "negative_knowledge_priors: {}",
+        corpus_memory.negative_knowledge_priors.len()
     );
 
     for artifact in corpus_memory
@@ -702,6 +750,220 @@ fn harvest_table_shape_priors_from_source_ir(
     }
 }
 
+fn harvest_visual_motif_priors(
+    intent_ir: &IntentIr,
+    protocol_family: ProtocolFamily,
+    visual_motif_priors: &mut BTreeMap<VisualMotifPriorKey, VisualMotifPriorAccumulator>,
+) {
+    let Some(source_ir) = load_source_ir_for_learning(intent_ir) else {
+        return;
+    };
+    let signal_names = collect_signal_names(intent_ir);
+    let actor_names = collect_actor_names(intent_ir);
+    harvest_visual_motif_priors_from_source_ir(
+        &source_ir,
+        &intent_ir.document_identity.document_key,
+        protocol_family,
+        &signal_names,
+        &actor_names,
+        visual_motif_priors,
+    );
+}
+
+fn harvest_visual_motif_priors_from_source_ir(
+    source_ir: &SourceIr,
+    document_key: &str,
+    protocol_family: ProtocolFamily,
+    signal_names: &BTreeSet<String>,
+    actor_names: &BTreeSet<String>,
+    visual_motif_priors: &mut BTreeMap<VisualMotifPriorKey, VisualMotifPriorAccumulator>,
+) {
+    for visual_asset in &source_ir.visual_assets {
+        if matches!(visual_asset.diagram_kind, DiagramKind::Unknown)
+            && matches!(visual_asset.asset_kind, VisualAssetKind::Unknown)
+        {
+            continue;
+        }
+
+        let normalized_caption_phrase = visual_asset.caption_text.as_deref().and_then(|caption| {
+            let normalized = normalize_prior_phrase(caption, signal_names, actor_names);
+            is_meaningful_prior_phrase(&normalized).then_some(normalized)
+        });
+        if normalized_caption_phrase.is_none()
+            && matches!(visual_asset.diagram_kind, DiagramKind::Unknown)
+        {
+            continue;
+        }
+
+        let confidence = infer_visual_motif_prior_confidence(
+            visual_asset.diagram_kind,
+            normalized_caption_phrase.is_some(),
+        );
+        let key = VisualMotifPriorKey {
+            normalized_caption_phrase,
+            diagram_kind: diagram_kind_key(visual_asset.diagram_kind).to_string(),
+            asset_kind: visual_asset_kind_key(visual_asset.asset_kind).to_string(),
+            protocol_family: protocol_family.as_str().to_string(),
+        };
+        let entry = visual_motif_priors
+            .entry(key)
+            .or_insert_with(|| VisualMotifPriorAccumulator {
+                supporting_document_keys: BTreeSet::new(),
+                strongest_automation_confidence: confidence,
+            });
+        entry
+            .supporting_document_keys
+            .insert(document_key.to_string());
+        if automation_confidence_rank(confidence)
+            > automation_confidence_rank(entry.strongest_automation_confidence)
+        {
+            entry.strongest_automation_confidence = confidence;
+        }
+    }
+}
+
+fn harvest_negative_knowledge_priors(
+    intent_ir: &IntentIr,
+    protocol_family: ProtocolFamily,
+    negative_knowledge_priors: &mut BTreeMap<
+        NegativeKnowledgePriorKey,
+        NegativeKnowledgePriorAccumulator,
+    >,
+) {
+    for conflict in &intent_ir.signal_semantic_conflicts {
+        let mut signatures = conflict
+            .observations
+            .iter()
+            .map(|observation| {
+                let mut tags = observation
+                    .semantic_tags
+                    .iter()
+                    .map(|tag| tag.as_str())
+                    .collect::<Vec<_>>();
+                tags.sort();
+                tags.dedup();
+                format!("{}:{}", observation.source_kind.as_str(), tags.join("+"))
+            })
+            .filter(|signature| !signature.ends_with(':'))
+            .collect::<Vec<_>>();
+        signatures.sort();
+        signatures.dedup();
+        if signatures.len() < 2 {
+            continue;
+        }
+        harvest_negative_knowledge_pattern(
+            NegativeKnowledgeKind::SignalSemanticConflict,
+            format!("signal_semantic_conflict:{}", signatures.join("|")),
+            conflict.automation_confidence,
+            &intent_ir.document_identity.document_key,
+            protocol_family,
+            negative_knowledge_priors,
+        );
+    }
+
+    for conflict in &intent_ir.temporal_conflicts {
+        let mut values = conflict
+            .conflicting_values
+            .iter()
+            .map(|value| value.trim().to_ascii_lowercase())
+            .filter(|value| !value.is_empty())
+            .collect::<Vec<_>>();
+        values.sort();
+        values.dedup();
+        if values.len() < 2 {
+            continue;
+        }
+        harvest_negative_knowledge_pattern(
+            NegativeKnowledgeKind::TemporalValueConflict,
+            format!(
+                "temporal_value_conflict:phase={};values={}",
+                tick_phase_key(conflict.phase),
+                values.join("|")
+            ),
+            conflict.automation_confidence,
+            &intent_ir.document_identity.document_key,
+            protocol_family,
+            negative_knowledge_priors,
+        );
+    }
+
+    for conflict in &intent_ir.interface_signal_conflicts {
+        harvest_negative_knowledge_pattern(
+            NegativeKnowledgeKind::InterfaceSignalConflict,
+            format!(
+                "interface_signal_conflict:{}",
+                conflict.conflict_kind.as_str()
+            ),
+            conflict.automation_confidence,
+            &intent_ir.document_identity.document_key,
+            protocol_family,
+            negative_knowledge_priors,
+        );
+    }
+
+    for conflict in &intent_ir.signal_connectivity_conflicts {
+        harvest_negative_knowledge_pattern(
+            NegativeKnowledgeKind::SignalConnectivityConflict,
+            format!(
+                "signal_connectivity_conflict:{}",
+                conflict.conflict_kind.as_str()
+            ),
+            conflict.automation_confidence,
+            &intent_ir.document_identity.document_key,
+            protocol_family,
+            negative_knowledge_priors,
+        );
+    }
+
+    for residual in &intent_ir.residual_decisions {
+        harvest_negative_knowledge_pattern(
+            NegativeKnowledgeKind::ResidualDecision,
+            format!("residual_decision:{}", residual.packet_id),
+            residual.automation_confidence,
+            &intent_ir.document_identity.document_key,
+            protocol_family,
+            negative_knowledge_priors,
+        );
+    }
+}
+
+fn harvest_negative_knowledge_pattern(
+    knowledge_kind: NegativeKnowledgeKind,
+    normalized_pattern: String,
+    automation_confidence: AutomationConfidence,
+    document_key: &str,
+    protocol_family: ProtocolFamily,
+    negative_knowledge_priors: &mut BTreeMap<
+        NegativeKnowledgePriorKey,
+        NegativeKnowledgePriorAccumulator,
+    >,
+) {
+    if normalized_pattern.trim().is_empty() {
+        return;
+    }
+
+    let key = NegativeKnowledgePriorKey {
+        knowledge_kind: knowledge_kind.as_str().to_string(),
+        normalized_pattern,
+        protocol_family: protocol_family.as_str().to_string(),
+    };
+    let entry =
+        negative_knowledge_priors
+            .entry(key)
+            .or_insert_with(|| NegativeKnowledgePriorAccumulator {
+                supporting_document_keys: BTreeSet::new(),
+                strongest_automation_confidence: automation_confidence,
+            });
+    entry
+        .supporting_document_keys
+        .insert(document_key.to_string());
+    if automation_confidence_rank(automation_confidence)
+        > automation_confidence_rank(entry.strongest_automation_confidence)
+    {
+        entry.strongest_automation_confidence = automation_confidence;
+    }
+}
+
 fn materialize_semantic_priors(
     semantic_priors: BTreeMap<SemanticPriorKey, SemanticPriorAccumulator>,
 ) -> Vec<SemanticPhrasePriorRecord> {
@@ -810,6 +1072,46 @@ fn materialize_semantic_modality_reliability_priors(
                 strongest_grounding_strength: accumulator.strongest_grounding_strength,
             },
         )
+        .collect()
+}
+
+fn materialize_visual_motif_priors(
+    visual_motif_priors: BTreeMap<VisualMotifPriorKey, VisualMotifPriorAccumulator>,
+) -> Vec<VisualMotifPriorRecord> {
+    visual_motif_priors
+        .into_iter()
+        .enumerate()
+        .map(|(index, (key, accumulator))| VisualMotifPriorRecord {
+            prior_id: format!("visual_motif_prior_{:04}", index + 1),
+            normalized_caption_phrase: key.normalized_caption_phrase,
+            diagram_kind: parse_diagram_kind(&key.diagram_kind),
+            asset_kind: parse_visual_asset_kind(&key.asset_kind),
+            protocol_family: parse_protocol_family(&key.protocol_family),
+            support_count: accumulator.supporting_document_keys.len(),
+            supporting_document_keys: accumulator.supporting_document_keys.into_iter().collect(),
+            strongest_automation_confidence: accumulator.strongest_automation_confidence,
+        })
+        .collect()
+}
+
+fn materialize_negative_knowledge_priors(
+    negative_knowledge_priors: BTreeMap<
+        NegativeKnowledgePriorKey,
+        NegativeKnowledgePriorAccumulator,
+    >,
+) -> Vec<NegativeKnowledgePriorRecord> {
+    negative_knowledge_priors
+        .into_iter()
+        .enumerate()
+        .map(|(index, (key, accumulator))| NegativeKnowledgePriorRecord {
+            prior_id: format!("negative_knowledge_prior_{:04}", index + 1),
+            knowledge_kind: parse_negative_knowledge_kind(&key.knowledge_kind),
+            normalized_pattern: key.normalized_pattern,
+            protocol_family: parse_protocol_family(&key.protocol_family),
+            support_count: accumulator.supporting_document_keys.len(),
+            supporting_document_keys: accumulator.supporting_document_keys.into_iter().collect(),
+            strongest_automation_confidence: accumulator.strongest_automation_confidence,
+        })
         .collect()
 }
 
@@ -994,6 +1296,40 @@ fn parse_table_kind(value: &str) -> TableKind {
     }
 }
 
+fn parse_diagram_kind(value: &str) -> DiagramKind {
+    match value {
+        "timing_diagram" => DiagramKind::TimingDiagram,
+        "state_machine_diagram" => DiagramKind::StateMachineDiagram,
+        "block_diagram" => DiagramKind::BlockDiagram,
+        "register_bitfield" => DiagramKind::RegisterBitfield,
+        "truth_table" => DiagramKind::TruthTable,
+        "flow_chart" => DiagramKind::FlowChart,
+        _ => DiagramKind::Unknown,
+    }
+}
+
+fn parse_visual_asset_kind(value: &str) -> VisualAssetKind {
+    match value {
+        "figure" => VisualAssetKind::Figure,
+        "diagram" => VisualAssetKind::Diagram,
+        "chart" => VisualAssetKind::Chart,
+        "table_region" => VisualAssetKind::TableRegion,
+        "formula_region" => VisualAssetKind::FormulaRegion,
+        "screenshot" => VisualAssetKind::Screenshot,
+        _ => VisualAssetKind::Unknown,
+    }
+}
+
+fn parse_negative_knowledge_kind(value: &str) -> NegativeKnowledgeKind {
+    match value {
+        "temporal_value_conflict" => NegativeKnowledgeKind::TemporalValueConflict,
+        "interface_signal_conflict" => NegativeKnowledgeKind::InterfaceSignalConflict,
+        "signal_connectivity_conflict" => NegativeKnowledgeKind::SignalConnectivityConflict,
+        "residual_decision" => NegativeKnowledgeKind::ResidualDecision,
+        _ => NegativeKnowledgeKind::SignalSemanticConflict,
+    }
+}
+
 fn table_kind_key(table_kind: TableKind) -> &'static str {
     match table_kind {
         TableKind::SignalDescription => "signal_description",
@@ -1002,6 +1338,37 @@ fn table_kind_key(table_kind: TableKind) -> &'static str {
         TableKind::TimingParameter => "timing_parameter",
         TableKind::FeatureMatrix => "feature_matrix",
         TableKind::Unknown => "unknown",
+    }
+}
+
+fn diagram_kind_key(diagram_kind: DiagramKind) -> &'static str {
+    match diagram_kind {
+        DiagramKind::TimingDiagram => "timing_diagram",
+        DiagramKind::StateMachineDiagram => "state_machine_diagram",
+        DiagramKind::BlockDiagram => "block_diagram",
+        DiagramKind::RegisterBitfield => "register_bitfield",
+        DiagramKind::TruthTable => "truth_table",
+        DiagramKind::FlowChart => "flow_chart",
+        DiagramKind::Unknown => "unknown",
+    }
+}
+
+fn visual_asset_kind_key(asset_kind: VisualAssetKind) -> &'static str {
+    match asset_kind {
+        VisualAssetKind::Figure => "figure",
+        VisualAssetKind::Diagram => "diagram",
+        VisualAssetKind::Chart => "chart",
+        VisualAssetKind::TableRegion => "table_region",
+        VisualAssetKind::FormulaRegion => "formula_region",
+        VisualAssetKind::Screenshot => "screenshot",
+        VisualAssetKind::Unknown => "unknown",
+    }
+}
+
+fn tick_phase_key(phase: crate::ir::semantic::TickPhase) -> &'static str {
+    match phase {
+        crate::ir::semantic::TickPhase::PreTick => "pre_tick",
+        crate::ir::semantic::TickPhase::PostTick => "post_tick",
     }
 }
 
@@ -1014,6 +1381,19 @@ fn infer_table_shape_prior_confidence(table: &StructuredTableRecord) -> Automati
     {
         AutomationConfidence::High
     } else if !table.header_rows.is_empty() {
+        AutomationConfidence::Medium
+    } else {
+        AutomationConfidence::Low
+    }
+}
+
+fn infer_visual_motif_prior_confidence(
+    diagram_kind: DiagramKind,
+    has_caption_phrase: bool,
+) -> AutomationConfidence {
+    if !matches!(diagram_kind, DiagramKind::Unknown) && has_caption_phrase {
+        AutomationConfidence::High
+    } else if !matches!(diagram_kind, DiagramKind::Unknown) {
         AutomationConfidence::Medium
     } else {
         AutomationConfidence::Low
@@ -1374,8 +1754,8 @@ mod tests {
         SemanticArbitrationDecisionBasis, TemporalRuleRecord,
     };
     use crate::ir::source::{
-        RelationKind, SourceIr, StructuredTableCellRecord, StructuredTableRecord, TableKind,
-        ValidationFindingRecord, ValidationMetricRecord,
+        DiagramKind, RelationKind, SourceIr, StructuredTableCellRecord, StructuredTableRecord,
+        TableKind, ValidationFindingRecord, ValidationMetricRecord, VisualAsset, VisualAssetKind,
     };
 
     fn base_intent_ir(document_key: &str, display_name: &str) -> IntentIr {
@@ -1927,6 +2307,106 @@ mod tests {
             records[0].strongest_automation_confidence,
             AutomationConfidence::High
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn learn_priors_harvests_visual_motif_and_negative_knowledge_priors() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source_path = tempdir.path().join("visual_motif_fixture.md");
+        fs::write(&source_path, "# Visual Motif Fixture\n")?;
+
+        let mut source_ir = SourceIr::build(&source_path, &tempdir.path().join("generated"))?;
+        source_ir.visual_assets = vec![VisualAsset {
+            asset_id: "asset_timing".to_string(),
+            asset_kind: VisualAssetKind::Diagram,
+            page_id: Some("page_0001".to_string()),
+            image_path: None,
+            caption_text: Some("XREQ timing diagram".to_string()),
+            caption_source_path: None,
+            source_ref: None,
+            placeholder_text: None,
+            note: None,
+            diagram_kind: DiagramKind::TimingDiagram,
+        }];
+
+        let mut intent_ir = base_intent_ir("visual_negative_doc", "visual_negative_doc");
+        intent_ir.interfaces = vec![InterfaceRecord {
+            interface_id: "if_visual".to_string(),
+            signals: vec!["XREQ".to_string()],
+            signal_records: Vec::new(),
+            supporting_statement_ids: Vec::new(),
+        }];
+        intent_ir.signal_semantic_conflicts =
+            vec![crate::ir::evidence::SignalSemanticConflictRecord {
+                conflict_id: "semantic_conflict_0001".to_string(),
+                signal_name: "XREQ".to_string(),
+                observations: vec![
+                    crate::ir::evidence::SignalSemanticConflictObservationRecord {
+                        semantic_tags: vec![SignalSemanticTag::HandshakeValidLike],
+                        source_kind: SignalSemanticHintSourceKind::SignalDescriptionTable,
+                        source_text: "XREQ launches a request.".to_string(),
+                        supporting_statement_ids: vec!["stmt_table".to_string()],
+                        supporting_table_ids: vec!["table_0001".to_string()],
+                        supporting_visual_evidence_ids: Vec::new(),
+                    },
+                    crate::ir::evidence::SignalSemanticConflictObservationRecord {
+                        semantic_tags: vec![SignalSemanticTag::HandshakeReadyLike],
+                        source_kind: SignalSemanticHintSourceKind::VisualCaption,
+                        source_text: "XREQ can accept the transfer.".to_string(),
+                        supporting_statement_ids: Vec::new(),
+                        supporting_table_ids: Vec::new(),
+                        supporting_visual_evidence_ids: vec!["visual_0001".to_string()],
+                    },
+                ],
+                automation_confidence: AutomationConfidence::Medium,
+            }];
+
+        let signal_names = collect_signal_names(&intent_ir);
+        let actor_names = collect_actor_names(&intent_ir);
+        let mut visual_motif_priors = BTreeMap::new();
+        harvest_visual_motif_priors_from_source_ir(
+            &source_ir,
+            &intent_ir.document_identity.document_key,
+            ProtocolFamily::Unknown,
+            &signal_names,
+            &actor_names,
+            &mut visual_motif_priors,
+        );
+
+        let mut negative_knowledge_priors = BTreeMap::new();
+        harvest_negative_knowledge_priors(
+            &intent_ir,
+            ProtocolFamily::Unknown,
+            &mut negative_knowledge_priors,
+        );
+
+        let visual_records = materialize_visual_motif_priors(visual_motif_priors);
+        let negative_records = materialize_negative_knowledge_priors(negative_knowledge_priors);
+
+        assert_eq!(visual_records.len(), 1);
+        assert_eq!(visual_records[0].diagram_kind, DiagramKind::TimingDiagram);
+        assert_eq!(visual_records[0].asset_kind, VisualAssetKind::Diagram);
+        assert_eq!(
+            visual_records[0].normalized_caption_phrase.as_deref(),
+            Some("<signal> timing diagram")
+        );
+        assert_eq!(
+            visual_records[0].strongest_automation_confidence,
+            AutomationConfidence::High
+        );
+
+        assert_eq!(negative_records.len(), 1);
+        assert_eq!(
+            negative_records[0].knowledge_kind,
+            NegativeKnowledgeKind::SignalSemanticConflict
+        );
+        assert_eq!(
+            negative_records[0].normalized_pattern,
+            "signal_semantic_conflict:signal_description_table:handshake_valid_like|visual_caption:handshake_ready_like"
+        );
+        assert_eq!(negative_records[0].support_count, 1);
 
         Ok(())
     }

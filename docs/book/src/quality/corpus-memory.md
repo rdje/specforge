@@ -30,6 +30,8 @@ Today the prior store can contain families such as:
 - semantic modality-reliability priors
 - temporal phrase priors
 - table-shape priors
+- visual-motif priors
+- negative-knowledge priors
 
 These are not copied document facts.
 They are reusable interpretation patterns.
@@ -40,6 +42,8 @@ Examples:
 - a phrase shape is ready-like
 - a timing phrase implies a one-cycle window
 - a header signature often means a signal-description table
+- a captioned visual asset is a timing-diagram motif
+- a repeated conflict or residual class should make future extraction more cautious
 
 ## What the system does not learn
 
@@ -49,6 +53,9 @@ So the safe rule is:
 
 - priors widen interpretation of the current document
 - priors do not directly author canonical truth
+
+That is especially important for visual-motif and negative-knowledge priors.
+They can later guide rescans, ranking, or caution thresholds, but they still need current-document evidence before anything becomes canonical.
 
 That is why `specforge` can get smarter over time without collapsing into cross-document contamination.
 

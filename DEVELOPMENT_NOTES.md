@@ -667,6 +667,24 @@
   - broaden the store beyond the current actor-taxonomy / semantic / semantic-modality-reliability / temporal / table-shape families into visual-motif and negative-knowledge priors
   - then teach `EvidenceIR` / `SemanticIR` to consume those priors as bounded suggestions without weakening the local-grounding rule
 
+### Sixth typed prior family expansion: visual motifs and negative knowledge
+- `CorpusMemory` schema version `5` now has explicit `visual_motif_priors` and `negative_knowledge_priors`
+- `visual_motif_priors` are harvested from validated artifacts through the linked `SourceIR.visual_assets` surface:
+  - normalized caption phrases use the same signal/actor placeholder discipline as semantic and temporal phrase priors
+  - diagram kind and asset kind stay typed, so the memory can distinguish timing diagrams, state-machine diagrams, figures, diagrams, and unknown assets
+  - confidence is derived from whether a caption and typed diagram classification are both present
+- `negative_knowledge_priors` are harvested from already-carried canonical caution surfaces:
+  - signal-semantic conflicts
+  - temporal value conflicts
+  - interface-signal conflicts
+  - signal-connectivity conflicts
+  - residual decision packet classes
+- this slice intentionally does not consume the new families yet:
+  - visual-motif and negative-knowledge priors are inspectable memory, not a new authority channel
+  - they should later guide rescans, extractor selection, arbitration caution, and stronger-corroboration requirements
+  - they must not directly author `EvidenceIR`, `SemanticIR`, or `IntentIR` facts without current-document grounding
+- the first unit regression now proves that a source-side timing-diagram caption can become a visual-motif prior and that a carried semantic-role conflict becomes a negative-knowledge signature without declaring either conflicting phrase false
+
 ### Fifth landed bounded prior family and semantic-stage arbitration slice
 - the fifth bounded learning family is now real in `crates/specforge/src/ir/prior_memory.rs` and `crates/specforge/src/commands/learn_priors.rs`
 - `specforge learn-priors` now harvests semantic modality-reliability priors from decisive, non-alias-dependent semantic consensus plus the supporting source kinds that carried that consensus

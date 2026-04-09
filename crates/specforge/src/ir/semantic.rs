@@ -8387,7 +8387,7 @@ mod tests {
         }
 
         let corpus_memory = CorpusMemory {
-            schema_version: 4,
+            schema_version: 5,
             update_policy: CorpusMemoryUpdatePolicyRecord {
                 advisory_only: true,
                 requires_validated_intent_ir: true,
@@ -8420,6 +8420,8 @@ mod tests {
                 strongest_automation_confidence: AutomationConfidence::High,
             }],
             table_shape_priors: Vec::new(),
+            visual_motif_priors: Vec::new(),
+            negative_knowledge_priors: Vec::new(),
         };
         fs::write(
             &prior_memory_path,
@@ -8445,7 +8447,7 @@ mod tests {
         }
 
         let corpus_memory = CorpusMemory {
-            schema_version: 4,
+            schema_version: 5,
             update_policy: CorpusMemoryUpdatePolicyRecord {
                 advisory_only: true,
                 requires_validated_intent_ir: true,
@@ -8477,6 +8479,8 @@ mod tests {
             }],
             temporal_phrase_priors: Vec::new(),
             table_shape_priors: Vec::new(),
+            visual_motif_priors: Vec::new(),
+            negative_knowledge_priors: Vec::new(),
         };
         fs::write(
             &prior_memory_path,

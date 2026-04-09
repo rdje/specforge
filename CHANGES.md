@@ -1,5 +1,26 @@
 # CHANGES
 
+## 2026-04-10 (CorpusMemory now has visual-motif and negative-knowledge prior families)
+
+### Added: typed learning memory families for visual motifs and negative knowledge
+- Updated [prior_memory.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/prior_memory.rs) so `CorpusMemory` schema version `5` can carry `visual_motif_priors` and `negative_knowledge_priors`.
+- Visual-motif priors remember reusable source-side visual patterns such as diagram kind, asset kind, normalized caption phrase, protocol family, support count, source documents, and strongest confidence.
+- Negative-knowledge priors remember cautionary extraction archetypes such as semantic conflicts, temporal value conflicts, interface-signal conflicts, connectivity conflicts, and unresolved residual-decision classes.
+- Added query helpers for retrieving visual-motif and negative-knowledge priors by protocol family and prior kind.
+- The new families are typed, inspectable, and advisory-only; this slice does not let visual-motif or negative-knowledge priors directly author canonical `EvidenceIR`, `SemanticIR`, or `IntentIR` truth.
+
+### Added: `learn-priors` harvesting for the new families
+- Updated [learn_priors.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/learn_priors.rs) so validated `IntentIR` artifacts can harvest visual motifs from their linked `SourceIR.visual_assets`.
+- `learn-priors` now harvests negative-knowledge signatures from carried conflicts and residual decisions without declaring any individual conflicting phrase false.
+- `learn-priors` now reports `visual_motif_priors` and `negative_knowledge_priors` counts in its CLI output.
+- Updated the fixture-local prior-memory patch path in [kg_bench.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/kg_bench.rs) so future KG-quality fixtures can seed those two prior families explicitly.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml learn_priors_harvests_visual_motif_and_negative_knowledge_priors -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml learn_priors -- --nocapture` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-10 (VLM timing tuples now lift into temporal signal values)
 
 ### Added: typed signal-value lift from timing-diagram VLM observations
