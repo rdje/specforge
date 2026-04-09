@@ -14,6 +14,13 @@
 - semantic hints
 - polarity evidence
 
+This is the first stage where the system begins to say:
+
+- "this table row looks like a signal declaration"
+- "this prose sentence looks like a constraint"
+- "this caption appears to ground a semantic role"
+- "this visual observation may support a timing fact"
+
 ## The mindset of this stage
 
 This is still an evidence layer, not the final semantic truth.
@@ -25,6 +32,10 @@ So the right behavior is:
 - keep conflicting evidence visible
 - avoid over-promoting generic examples into canonical interface truth
 
+That last point matters a lot.
+`EvidenceIR` is not supposed to be clever in the sense of inventing final meaning.
+It is supposed to be disciplined in the sense of preserving recoverable evidence without silently flattening ambiguity.
+
 ## Typical evidence-level wins
 
 - source/destination table recovery
@@ -33,6 +44,27 @@ So the right behavior is:
 - visual-caption semantic hints
 - VLM timing-note observations
 - polarity extraction
+
+These wins are valuable because they give later stages something much stronger than free-form text:
+
+- typed hints
+- grounded spans
+- table-linked facts
+- visual-evidence references
+- early KG edges
+
+## What this stage is allowed to do
+
+`EvidenceIR` is allowed to extract and classify.
+
+It is allowed to say:
+
+- this sentence is a constraint-like statement
+- this signal appears in a relation-like table row
+- this caption text supports a semantic-role hint
+- this table suggests a width, polarity, or source/destination relation
+
+It is not supposed to decide the final canonical meaning of the whole interface.
 
 ## Typical evidence-level failure modes
 
@@ -43,3 +75,28 @@ So the right behavior is:
 
 Many of the project’s recent truthfulness slices have been about tightening exactly those boundaries.
 
+## Why provenance is critical here
+
+`EvidenceIR` is where the project first needs to defend itself against "plausible but wrong" extraction.
+
+That is why evidence records carry things like:
+
+- supporting statement ids
+- supporting table ids
+- supporting visual evidence ids
+- automation confidence
+
+Without that provenance, later semantic arbitration would not have enough context to judge which evidence is strong, weak, conflicting, or merely suggestive.
+
+## What a good `EvidenceIR` artifact looks like
+
+A good evidence artifact is not one that looks clean at all costs.
+
+It is one that:
+
+- extracts a lot of grounded candidate knowledge
+- preserves where that knowledge came from
+- keeps disagreement visible
+- avoids creating false structure from generic or noisy inputs
+
+That makes `EvidenceIR` the main staging area for truthfulness before canonical semantics begin.

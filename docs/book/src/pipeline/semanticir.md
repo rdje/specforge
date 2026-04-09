@@ -17,6 +17,8 @@
 - semantic arbitration
 - residual decisions
 
+This is the stage where the pipeline begins to act like a protocol compiler rather than a document extractor.
+
 ## Why this stage exists
 
 `EvidenceIR` can tell you what the document said and where it came from.
@@ -27,6 +29,9 @@
 - what role does it play?
 - what timing behavior is being asserted?
 - is the meaning decisive or contested?
+
+That means `SemanticIR` is the bridge between raw evidence and canonical intent.
+It is where multiple evidence fragments are combined into a typed world model.
 
 ## Important semantic principles
 
@@ -47,7 +52,71 @@ Unsafe forced winners are worse than honest contestation.
 
 Clocks and resets are treated as infrastructure semantics, not ordinary protocol edges.
 
+That matters because a clean semantic model should not flatten:
+
+- clock distribution
+- reset discipline
+- system-contract infrastructure
+
+into the same category as ordinary payload or handshake signals.
+
 ## Residual decisions
 
 Residual packets exist because the project would rather preserve unresolved ambiguity than fabricate a clean but wrong canonical answer.
 
+## What this stage is trying to resolve
+
+`SemanticIR` is where the pipeline tries to answer questions such as:
+
+- which actor really drives this signal?
+- which actor reads it?
+- is this signal request-like, accept-like, data-like, or still ambiguous?
+- which constraints become typed temporal rules?
+- which conflicts are genuine and which are only apparent?
+
+These are the kinds of questions that are too semantic for `EvidenceIR` but still too provisional to be flattened straight into final intent.
+
+## Why arbitration lives here
+
+Meaning recovery is often not binary.
+
+The same signal may accumulate:
+
+- multiple semantic-role candidates
+- multiple source modalities
+- conflicting prose and table evidence
+- alias-dependent or fallback-only interpretations
+
+`SemanticIR` keeps that competition visible through:
+
+- candidates
+- consensus
+- arbitration
+- grounding strength
+- residual decisions
+
+That is much safer than pretending every signal already has one obvious final role.
+
+## What a good `SemanticIR` artifact looks like
+
+A good semantic artifact should have:
+
+- graph-backed direction wherever the evidence supports it
+- typed semantic roles grounded in observations rather than spelling alone
+- actor-relative ports and connectivity that stay inspectable
+- temporal rules that keep guards, phases, and conflicts explicit
+- ambiguity preserved honestly instead of hidden behind forced simplification
+
+## Why this stage matters so much
+
+If `SourceIR` is where structure is preserved and `EvidenceIR` is where grounded hints are harvested, `SemanticIR` is where the project either becomes trustworthy or starts to hallucinate.
+
+That is why so many truthfulness-hardening slices land here:
+
+- handshake-role arbitration
+- polarity-aware temporal comparison
+- infrastructure handling
+- conflict surfacing
+- graph-first direction recovery
+
+This is the main semantic safety boundary before canonical intent.

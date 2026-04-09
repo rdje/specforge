@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-04-09 (book IR stage chapters now explain their real boundaries)
+
+### Expanded: the mdBook pipeline chapters are no longer only thin stage summaries
+- Expanded [pipeline/overview.md](/Users/richarddje/Documents/github/specforge/docs/book/src/pipeline/overview.md) so it now explains stage boundaries and the different truthfulness contracts each IR stage is supposed to uphold.
+- Expanded [pipeline/sourceir.md](/Users/richarddje/Documents/github/specforge/docs/book/src/pipeline/sourceir.md) so it now explains what `SourceIR` practically preserves, why early investment there mattered, and what structural failure modes still belong to Tier 1.
+- Expanded [pipeline/evidenceir.md](/Users/richarddje/Documents/github/specforge/docs/book/src/pipeline/evidenceir.md) so it now explains what `EvidenceIR` is allowed to extract, why provenance matters there, and what kinds of false promotion the stage is supposed to avoid.
+- Expanded [pipeline/semanticir.md](/Users/richarddje/Documents/github/specforge/docs/book/src/pipeline/semanticir.md) so it now explains semantic arbitration, graph-first direction, infrastructure handling, and why `SemanticIR` is the main semantic safety boundary before canonical intent.
+- Expanded [pipeline/intentir.md](/Users/richarddje/Documents/github/specforge/docs/book/src/pipeline/intentir.md) so it now explains what canonical means in this project, why adapters come later, and why honest incompleteness is still acceptable there.
+
+### Changed: the public book now explains not just the stages, but the allowed decisions at each stage
+- This moves the book closer to the intended public role: not only listing the pipeline, but explaining what each layer is for, what it should and should not decide, and why the staged separation exists.
+
 ## 2026-04-09 (book now has a first-class architecture rationale chapter)
 
 ### Added: dedicated mdBook chapter for why `specforge` is built this way

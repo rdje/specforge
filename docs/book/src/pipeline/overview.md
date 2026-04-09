@@ -8,6 +8,9 @@ This chapter explains the four canonical IR stages in increasing semantic depth.
 
 The design goal is not to "parse English" directly. The design goal is to build a typed protocol-world model and feed it with grounded multimodal evidence.
 
+The chapters that follow should be read as stage boundaries, not just stage names.
+Each stage has a different job, a different truthfulness contract, and a different kind of allowed decision-making.
+
 ## What changes from stage to stage
 
 ### `SourceIR`
@@ -45,5 +48,17 @@ Flattening those into one pass would make the tool less inspectable, less debugg
 - canonical typed records
 - backend independence
 
-The book chapters that follow explain each stage separately.
+## The most important boundary
 
+The pipeline is intentionally arranged so that later stages do not need to guess what earlier stages should have preserved.
+
+That means:
+
+- `SourceIR` should preserve document structure
+- `EvidenceIR` should preserve grounded extracted evidence
+- `SemanticIR` should preserve typed meaning plus honest conflict surfaces
+- `IntentIR` should preserve the best stable canonical result without erasing uncertainty
+
+That staged discipline is one of the core reasons `specforge` exists in this form at all.
+
+The book chapters that follow explain each stage separately.
