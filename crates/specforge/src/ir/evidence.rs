@@ -4707,6 +4707,14 @@ fn infer_signal_semantic_tags_from_description(
     actor_names: &BTreeSet<String>,
     prior_guidance: Option<&EvidencePriorGuidance>,
 ) -> Vec<SignalSemanticTag> {
+    if !matches!(
+        source_kind,
+        SignalSemanticHintSourceKind::SignalDescriptionTable
+    ) && looks_like_structural_contents_entry_for_semantic_hint(source_text_for_prior_matching)
+    {
+        return Vec::new();
+    }
+
     let lowered = description.to_ascii_lowercase();
     let mut tags = BTreeSet::new();
 
@@ -4740,13 +4748,11 @@ fn infer_signal_semantic_tags_from_description(
             "accept transfer",
             "accept data",
             "accept address",
-            "acknowledge",
-            "acknowledges",
-            "acknowledged",
             "complete the transfer",
             "transfer can complete",
         ],
-    ) {
+    ) || contains_ready_like_acknowledgment_phrase(&lowered)
+    {
         tags.insert(SignalSemanticTag::HandshakeReadyLike);
     }
 
@@ -4763,6 +4769,40 @@ fn infer_signal_semantic_tags_from_description(
     }
 
     tags.into_iter().collect()
+}
+
+fn looks_like_structural_contents_entry_for_semantic_hint(text: &str) -> bool {
+    let lowered = text.to_ascii_lowercase();
+    lowered.contains(". . .")
+        || lowered.contains("table of contents")
+        || lowered.contains("| |")
+            && text.matches('|').count() >= 4
+            && text.chars().any(|character| character.is_ascii_digit())
+}
+
+fn contains_ready_like_acknowledgment_phrase(lowered: &str) -> bool {
+    contains_any(
+        lowered,
+        &[
+            "acknowledge the request",
+            "acknowledges the request",
+            "acknowledged the request",
+            "acknowledge request",
+            "acknowledges request",
+            "acknowledged request",
+            "acknowledge the transfer",
+            "acknowledges the transfer",
+            "acknowledged the transfer",
+            "acknowledge transfer",
+            "acknowledges transfer",
+            "acknowledged transfer",
+            "acknowledge receipt",
+            "acknowledges receipt",
+            "acknowledged receipt",
+            "request acknowledged",
+            "transfer acknowledged",
+        ],
+    )
 }
 
 fn semantic_tag_for_role(role: InterfaceSignalSemanticRole) -> SignalSemanticTag {
@@ -8466,6 +8506,102 @@ mod tests {
                     .semantic_tags
                     .contains(&super::SignalSemanticTag::HandshakeReadyLike)
         }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn acknowledged_event_prose_does_not_create_ready_like_hint() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("acknowledged_event_not_ready.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# DVM Channel\n",
+                "Signal CRVALID is input width 1.\n\n",
+                "CRVALID is asserted to indicate that the Manager has acknowledged the DVM message.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_crvalid_desc".to_string(),
+            asset_id: "asset_crvalid_desc".to_string(),
+            page_id: None,
+            caption_text: Some("DVM response handshake".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("CRVALID", false),
+                make_table_cell("DVMmessage response valid indicator.", false),
+            ]],
+            row_count: 1,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        let crvalid_hints: Vec<_> = evidence_ir
+            .signal_semantic_hints
+            .iter()
+            .filter(|hint| hint.signal_name == "CRVALID")
+            .collect();
+        assert!(!crvalid_hints.is_empty());
+        assert!(crvalid_hints.iter().any(|hint| {
+            hint.semantic_tags
+                .contains(&super::SignalSemanticTag::HandshakeValidLike)
+        }));
+        assert!(!crvalid_hints.iter().any(|hint| {
+            hint.semantic_tags
+                .contains(&super::SignalSemanticTag::HandshakeReadyLike)
+        }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn dot_leader_contents_lines_do_not_create_semantic_hints() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("contents_line_not_semantic.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Channel\n",
+                "Signal AWAKEUP is input width 1.\n\n",
+                "| | A14.1 | Interface A14.1.1 | gating with Valid-Ready transport . . . . . . AWAKEUP rules and recommendations . . . . | 223 223 |\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        assert!(
+            evidence_ir
+                .signal_semantic_hints
+                .iter()
+                .all(|hint| hint.signal_name != "AWAKEUP"),
+            "table-of-contents style dot-leader lines must not create semantic hints: {:?}",
+            evidence_ir.signal_semantic_hints
+        );
 
         Ok(())
     }

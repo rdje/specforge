@@ -1,5 +1,36 @@
 # CHANGES
 
+## 2026-04-09 (AXI semantic-hint hygiene removed false handshake conflict paths)
+
+### Fixed: generic acknowledged-event prose no longer masquerades as ready-like semantics
+- Tightened [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) so generic acknowledgment wording no longer becomes `handshake_ready_like` by default.
+- Ready-like acknowledgment recovery now requires more specific request/transfer/receipt phrasing instead of treating any `acknowledged` sentence as handshake acceptance semantics.
+
+### Fixed: table-of-contents dot-leader lines no longer produce semantic-role hints
+- Added a structural-noise guard in [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) so dot-leader contents rows and similar non-semantic structural lines stop contributing prose semantic hints outside real signal-description tables.
+- This closes the exact false-positive path that had been turning the AXI contents line for `A14.1.1 AWAKEUP rules and recommendations` into a bogus `valid_like` + `ready_like` conflict.
+
+### Added: focused regressions for both false-positive paths
+- Added `acknowledged_event_prose_does_not_create_ready_like_hint`.
+- Added `dot_leader_contents_lines_do_not_create_semantic_hints`.
+
+### Changed: AXI stays at `85/100 GOOD`, but the artifact is cleaner again
+- Rebuilt AXI from `EvidenceIR -> SemanticIR -> IntentIR -> validate` and refreshed the four-artifact validation projection.
+- AXI now carries:
+  - `0` residual decisions
+  - `0` semantic-role conflicts
+  - `0` blocked handshake-name fallbacks
+- The score stays `85/100 GOOD`, so the remaining drag is no longer semantic-role noise; the main live AXI gaps are now the `ARCHUNKEN` producer ambiguity, the `ACLK` / `ARESETN` interface direction disagreement, graph-direction coverage lag, and `15` temporal conflicts.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml acknowledged_event_prose_does_not_create_ready_like_hint -- --nocapture` → passed
+- `cargo test --manifest-path Cargo.toml dot_leader_contents_lines_do_not_create_semantic_hints -- --nocapture` → passed
+- `cargo run --manifest-path Cargo.toml -- evidence generated/source_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/source_ir.json` → passed
+- `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/evidence_ir.json` → passed (`residual_decision_count: 0`)
+- `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/semantic_ir.json` → passed (`residual_decision_count: 0`)
+- `cargo run --manifest-path Cargo.toml -- validate generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json` → passed (`85/100 GOOD`, `signal_semantic_conflicts: 0`)
+- `cargo run --manifest-path Cargo.toml -- project-validation generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json generated/intent_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/intent_ir.json generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json` → passed
+
 ## 2026-04-09 (mdBook is explicitly a live project book, not a static scaffold)
 
 ### Changed: the documentation contract now treats the book as a living project surface
