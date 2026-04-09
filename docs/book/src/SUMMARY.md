@@ -12,6 +12,6 @@
   - [SemanticIR](pipeline/semanticir.md)
   - [IntentIR](pipeline/intentir.md)
 - [Reference](reference/generated-artifacts.md)
+  - [Documentation Scope And Continuity](reference/documentation-scope.md)
   - [Live Docs And Continuity](reference/live-docs.md)
   - [Troubleshooting](reference/troubleshooting.md)
-

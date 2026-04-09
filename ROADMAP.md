@@ -42,8 +42,13 @@
   - do not fabricate semantic certainty
 - treat the mdBook under `docs/book/` as a live user-facing product surface:
   - it is not a one-time scaffold or release-time afterthought
+  - it is the public-facing documentation product for `specforge`, so it should openly explain what the tool does, how it works, and why it is designed that way
+  - every meaningful user-facing aspect of the project should ultimately land in the book with its own section or chapter as coverage deepens
   - it should evolve alongside user-facing commands, runtime behavior, IR semantics, validation surfaces, and cross-document learning behavior
   - meaningful user-facing changes should update the book in the same task whenever the exposed contract or workflow has changed
+- keep the book and the live root docs as separate planes:
+  - the book is for the world-facing, transparent explanation of the product
+  - the root markdown docs are for continuity, crash recovery, live validation projection, steering, and handoff between sessions
 - keep canonical document truth local and provenance-pure:
   - each `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR` pipeline run should remain grounded only in the current document
   - any future cross-document learning layer must learn reusable extraction priors rather than smuggling facts from earlier PDFs into later canonical artifacts

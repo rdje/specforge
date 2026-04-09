@@ -13,6 +13,8 @@ Use it first for the project objective, document navigation, and the current imp
 ## Canonical user-facing docs
 - the canonical user-facing documentation surface now lives in the mdBook under `docs/book/`
 - the mdBook should be treated as a live book that evolves alongside user-facing project changes, not as a static scaffold
+- the mdBook is the public-facing documentation product for `specforge`: it should openly explain what the tool does, how it works, and why it is designed that way
+- every meaningful user-facing aspect of the project should land in the book with its own section or chapter as the coverage grows
 - source entry point: `docs/book/src/introduction.md`
 - local build:
   - `mdbook build docs/book`
@@ -23,7 +25,7 @@ Use it first for the project objective, document navigation, and the current imp
   - command workflow
   - IR pipeline semantics
   - validation, learning, and troubleshooting
-- root markdown docs still exist, but they now serve continuity, roadmap, and developer-state purposes rather than being the primary user-doc surface
+- root markdown docs still exist, but they now serve continuity, roadmap, validation projection, and developer-state purposes rather than being the primary user-doc surface
 
 ## Current repository state
 - the live-document surface has been pivoted around `IntentIR` as the canonical endpoint

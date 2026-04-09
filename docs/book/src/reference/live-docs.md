@@ -1,7 +1,7 @@
 # Live Docs And Continuity
 
 The book is the canonical user-facing documentation surface.
-The repo root still contains the live operational and continuity documentation needed to run the project safely over long sessions.
+The repo root still contains the live operational and continuity documentation needed to keep work recoverable across long sessions, crashes, and handoffs.
 
 ## Root docs and what they are for
 
@@ -24,12 +24,12 @@ The repo root still contains the live operational and continuity documentation n
 
 ## Why the split exists
 
-The book should stay readable and stable for users.
+The book is what the world should see.
+It should explain the product clearly and transparently.
 
-The root docs need to stay live, operational, and sometimes noisy, because they are also part of the project’s continuity system for long-running development.
+The root docs need to stay live, operational, and sometimes noisy, because they are part of the project’s continuity system for active development and session recovery.
 
 ## Practical rule
 
-Use the book to understand and use `specforge`.
-Use the root docs to understand the repo’s live state.
-
+Use the book to understand and evaluate `specforge`.
+Use the root docs to understand the repo’s live state and recover work safely.

@@ -110,10 +110,12 @@
 - the mdBook under `docs/book/` is now part of that same continuity and product contract:
   - it is the canonical user-facing documentation surface
   - it should be treated as a live book that evolves with the project, not as a static scaffold
+  - it is the world-facing documentation product for `specforge`, so it should openly explain what the tool does, how it works, and why it is designed that way
+  - every meaningful user-facing aspect of the project should land in the book with its own section or chapter as the coverage grows
   - meaningful changes to commands, runtime setup, stage semantics, validation surfaces, and learning-plane behavior should update the book in the same task when they change the user-facing contract
 - the root markdown docs still matter, but their roles are now more specialized:
-  - the book is the primary layered user-facing reference
-  - root docs continue to carry roadmap, architecture, validation projection, crash continuity, and engineering rationale
+  - the book is the primary layered public reference
+  - root docs continue to carry roadmap, architecture, validation projection, crash continuity, engineering rationale, and handoff state after session loss or crash
 
 ## Current execution defaults and convergence accounting
 - `specforge converge` is now the default full loop-backed pipeline entrypoint: it uses Ollama-backed VLM image enrichment and NLP Level 3 unless the caller explicitly opts out with `--vlm-provider skip` and/or `--nlp-provider skip`

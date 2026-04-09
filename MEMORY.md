@@ -22,21 +22,25 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `49a4422`
-- latest_commit_brief_message: `feat(evidence): reject external infrastructure actors`
-- note: the current session is now focused on AXI tie-off hygiene: appendix `Tie-off` rows should remain input-side declarations, not fake producer actors
+- latest_commit_hash: `50dd73a`
+- latest_commit_brief_message: `feat(evidence): treat tie-off rows as inputs`
+- note: the current session is now focused on making the documentation split explicit: the mdBook is the public product surface, while root markdown docs are continuity / crash-recovery infrastructure
 
 ## Recent commit chain (last 5)
+- `50dd73a` feat(evidence): treat tie-off rows as inputs
 - `49a4422` feat(evidence): reject external infrastructure actors
 - `d1906ed` feat(evidence): harden semantic hint hygiene
 - `1832689` docs(book): capture live book contract
 - `5d215c2` docs(book): move user docs to mdbook
-- `2879046` feat(evidence): ignore abstract transport tables
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - the canonical user-facing documentation surface is now the mdBook under `docs/book/`
 - that mdBook should now be treated as a live book that evolves alongside user-facing project changes, not as a static scaffold
+- the split is now explicit too:
+  - the mdBook is the world-facing product documentation surface and should explain what `specforge` does, how it works, and why it is structured that way
+  - every meaningful user-facing aspect of the project should ultimately land in the book with its own section or chapter
+  - the root markdown docs are a separate continuity plane for crash recovery, session handoff, roadmap steering, validation projection, and engineering-state tracking
 - root docs remain important, but they now serve continuity, roadmap, validation, and developer-state roles more than primary end-user onboarding
 - runnable CLI surface includes `inspect`, `doctor`, `converge`, `ingest`, `evidence`, `semantic`, `intent`, `adapt`, `enrich`, `validate`, `kg-bench`, `project-validation`, `learn-priors`, and `nlp-enrich`
 - `specforge converge` now defaults to full Ollama-backed VLM image enrichment plus NLP Level 3 backannotation; use `--vlm-provider skip` and/or `--nlp-provider skip` only when intentionally narrowing the loop

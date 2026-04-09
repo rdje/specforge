@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-04-09 (book and continuity docs now have an explicit split contract)
+
+### Changed: the mdBook is now explicitly the public documentation product
+- Updated [README.md](/Users/richarddje/Documents/github/specforge/README.md), [ROADMAP.md](/Users/richarddje/Documents/github/specforge/ROADMAP.md), and [DEVELOPMENT_NOTES.md](/Users/richarddje/Documents/github/specforge/DEVELOPMENT_NOTES.md) so the repo now states this plainly:
+  - the mdBook is what the outside world should read
+  - it should openly explain what `specforge` does, how it works, and why it is designed that way
+  - every meaningful user-facing aspect of the project should ultimately land in the book with its own section or chapter
+
+### Added: a dedicated book page for documentation scope
+- Added [documentation-scope.md](/Users/richarddje/Documents/github/specforge/docs/book/src/reference/documentation-scope.md) and linked it from [SUMMARY.md](/Users/richarddje/Documents/github/specforge/docs/book/src/SUMMARY.md).
+- Updated [introduction.md](/Users/richarddje/Documents/github/specforge/docs/book/src/introduction.md) and [live-docs.md](/Users/richarddje/Documents/github/specforge/docs/book/src/reference/live-docs.md) so the book now explains the split directly instead of only implying it.
+
+### Clarified: root markdown docs are a separate continuity plane
+- The root docs are now described consistently as continuity / steering infrastructure for:
+  - crash recovery
+  - session handoff
+  - roadmap and validation projection
+  - engineering-state tracking
+- They are no longer described as a second competing public documentation surface.
+
 ## 2026-04-09 (tie-off appendix rows no longer create fake AXI producers)
 
 ### Fixed: `Tie-off` is no longer treated as a real protocol actor

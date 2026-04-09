@@ -21,6 +21,15 @@ This book is the canonical user-facing documentation surface for `specforge`. It
 - move to `Pipeline Model` if you want to understand what each IR stage means
 - use `Reference` when you need artifact paths, troubleshooting, or continuity guidance
 
+This book is also the public-facing explanation of the project.
+It should keep growing until every meaningful user-facing aspect of `specforge` is covered here with a clear section or chapter.
+That includes:
+
+- what `specforge` does
+- how each user-visible surface works
+- why major architectural choices were made
+- where current limits and truthfulness boundaries still are
+
 Two important project principles shape everything in this book:
 
 - `specforge` is provenance-first: the current document must justify the facts that enter canonical IR
@@ -38,5 +47,5 @@ What this book does not replace:
 - live continuity docs such as `ROADMAP.md`, `CHANGES.md`, and `MEMORY.md`
 - internal architecture deep dives intended for active development sessions
 
-Those remain in the repo root and are described later in [Live Docs And Continuity](reference/live-docs.md).
-
+Those remain in the repo root because they serve a different purpose: continuity, live validation projection, steering, and recovery after session loss or crash.
+That split is described later in [Documentation Scope And Continuity](reference/documentation-scope.md).
