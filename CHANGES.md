@@ -1,5 +1,32 @@
 # CHANGES
 
+## 2026-04-10 (EvidenceIR now consumes visual-motif priors)
+
+### Added: bounded visual-motif prior classification in `EvidenceIR`
+- Updated [prior_memory.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/prior_memory.rs) with a visual-caption lookup that resolves a unique learned `DiagramKind` only after normalizing a current caption against locally grounded signal and actor vocabulary.
+- Updated [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) so `EvidenceIR` can use that lookup for a current `SourceIR.visual_assets` entry when:
+  - the current visual asset has `diagram_kind = unknown`
+  - the current visual asset has local caption text
+  - the normalized caption matches exactly one learned visual-motif prior in the applicable protocol scope
+- The result is an explicit `VisualObservationKind::Classification` observation created by `specforge_prior_memory` with medium confidence.
+- The prior-guided diagram kind is allowed to influence the visual evidence role, so a recovered timing diagram can be treated as normative visual evidence.
+
+### Preserved: local-grounding safety boundary
+- This path does not mutate `SourceIR`.
+- This path does not synthesize semantic-role, temporal, or canonical `IntentIR` facts.
+- Explicit local `SourceIR.diagram_kind` values still win outright; prior memory only helps when the current source asset is still unknown.
+- Ambiguous visual-motif memory stays silent rather than picking a diagram kind.
+
+### Added: validation metric and KG-quality fixture
+- Updated [validate.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/validate.rs) so EvidenceIR validation now reports `visual_classification_observations`.
+- Added [visual_motif_prior_guided_diagram_classification_gold](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/visual_motif_prior_guided_diagram_classification_gold/fixture.json), which proves a locally unknown `XREQ cycle trace` visual asset gains a prior-backed timing-diagram classification only through staged prior memory.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml visual_motif -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml kg_bench_runs_tracked_fixtures -- --nocapture` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-10 (CorpusMemory now has visual-motif and negative-knowledge prior families)
 
 ### Added: typed learning memory families for visual motifs and negative knowledge

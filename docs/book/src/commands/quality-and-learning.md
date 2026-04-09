@@ -22,6 +22,7 @@ It reports things like:
 - direction coverage
 - graph direction coverage
 - width coverage
+- visual classification observations
 - temporal conflicts
 - semantic conflicts
 - residual decisions
@@ -85,8 +86,9 @@ The safety rule is critical:
 - priors widen interpretation of the current document
 - priors do not directly author canonical truth
 
-The newest families are deliberately advisory at this stage.
 Visual-motif priors remember recurring visual patterns, while negative-knowledge priors remember conflict and residual archetypes that should make future extraction more careful.
+Visual-motif priors now have a first bounded consumer: `EvidenceIR` may add a prior-memory classification observation for a current unknown visual asset when its local caption matches a unique learned motif.
+Negative-knowledge priors remain cautionary memory until a bounded consumption path is benchmarked.
 
 ## `enrich` and `nlp-enrich`
 

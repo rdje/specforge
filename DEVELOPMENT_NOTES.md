@@ -679,11 +679,27 @@
   - interface-signal conflicts
   - signal-connectivity conflicts
   - residual decision packet classes
-- this slice intentionally does not consume the new families yet:
-  - visual-motif and negative-knowledge priors are inspectable memory, not a new authority channel
-  - they should later guide rescans, extractor selection, arbitration caution, and stronger-corroboration requirements
-  - they must not directly author `EvidenceIR`, `SemanticIR`, or `IntentIR` facts without current-document grounding
+- this family expansion keeps the new priors inspectable and bounded:
+  - visual-motif and negative-knowledge priors are memory, not a new authority channel
+  - they may guide rescans, extractor selection, arbitration caution, role adjustment, and stronger-corroboration requirements
+  - they must not directly author `SemanticIR` or `IntentIR` facts without current-document grounding
 - the first unit regression now proves that a source-side timing-diagram caption can become a visual-motif prior and that a carried semantic-role conflict becomes a negative-knowledge signature without declaring either conflicting phrase false
+
+### First visual-motif prior consumer
+- `EvidenceIR` now has the first bounded runtime consumer for `visual_motif_priors`
+- the consumer is intentionally narrow:
+  - it only runs for a current `SourceIR.visual_assets` entry whose `diagram_kind` is still `Unknown`
+  - it requires local caption text in the current document
+  - it normalizes that caption with locally grounded signal and actor vocabulary before lookup
+  - it only returns a diagram kind when the applicable prior scope has exactly one non-unknown match
+- the output is an explicit `VisualObservationKind::Classification` observation created by `specforge_prior_memory`
+- that prior-guided diagram kind may upgrade the visual evidence role, for example making a recovered timing diagram normative visual evidence
+- the output deliberately stops at the evidence boundary:
+  - it does not mutate `SourceIR`
+  - it does not synthesize semantic-role hints
+  - it does not create timing constraints, temporal rules, or canonical `IntentIR` facts
+  - ambiguous prior memory stays silent instead of forcing a classification
+- `validate evidence_ir` now reports `visual_classification_observations`, and the tracked `visual_motif_prior_guided_diagram_classification_gold` fixture locks the local-grounded behavior
 
 ### Fifth landed bounded prior family and semantic-stage arbitration slice
 - the fifth bounded learning family is now real in `crates/specforge/src/ir/prior_memory.rs` and `crates/specforge/src/commands/learn_priors.rs`

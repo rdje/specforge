@@ -1085,18 +1085,21 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
     );
     println!();
 
-    println!("=== VLM Observations ===");
+    println!("=== Visual Observations ===");
+    let mut classification_obs = 0usize;
     let mut timing_obs = 0usize;
     let mut state_obs = 0usize;
     for item in &ir.visual_evidence {
         for obs in &item.observations {
             match obs.kind {
+                VisualObservationKind::Classification => classification_obs += 1,
                 VisualObservationKind::TimingDiagramExtraction => timing_obs += 1,
                 VisualObservationKind::StateMachineExtraction => state_obs += 1,
                 _ => {}
             }
         }
     }
+    println!("  classification_observations: {classification_obs}");
     println!("  timing_diagram_extractions: {timing_obs}");
     println!("  state_machine_extractions: {state_obs}");
     if timing_obs == 0 && state_obs == 0 {
@@ -1302,6 +1305,10 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             metric(
                 "signal_semantic_hints_from_vlm_timing_annotations",
                 signal_semantic_hints_from_vlm_timing_annotations.to_string(),
+            ),
+            metric(
+                "visual_classification_observations",
+                classification_obs.to_string(),
             ),
             metric("timing_diagram_extractions", timing_obs.to_string()),
             metric("state_machine_extractions", state_obs.to_string()),

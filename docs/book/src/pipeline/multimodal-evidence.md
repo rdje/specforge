@@ -56,6 +56,10 @@ It also records links between text spans and visual evidence, such as caption li
 
 That gives later stages a grounded trail from semantic facts back to a figure, caption, or diagram.
 
+`EvidenceIR` can also attach a prior-memory `Classification` observation for a locally captioned visual asset whose `diagram_kind` is still `unknown`.
+That path uses visual-motif priors from `CorpusMemory`, but only when the current caption normalizes to a unique learned motif.
+It can adjust the visual evidence role, for example treating a recovered timing diagram as normative visual evidence, but it does not rewrite `SourceIR` or synthesize semantic facts.
+
 ## VLM observations
 
 `specforge enrich` can write structured VLM extraction into `SourceIR.visual_assets[*].note`.
@@ -174,6 +178,7 @@ Validation exposes several visual and multimodal surfaces, including:
 - figures already enriched
 - visual evidence counts
 - visual evidence with captions
+- prior-memory visual classification observations
 - timing diagram extractions
 - semantic hints from visual captions
 - visual semantic grounding
@@ -197,6 +202,7 @@ When debugging visual behavior, inspect:
 - `EvidenceIR.visual_evidence`
 - `EvidenceIR.evidence_links`
 - visual observations
+- `visual_classification_observations`
 - semantic observations with supporting visual evidence ids
 - validation metrics for VLM readiness and visual semantic grounding
 

@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};
@@ -324,6 +324,46 @@ impl CorpusMemory {
             .collect()
     }
 
+    pub fn diagram_kind_for_visual_caption(
+        &self,
+        protocol_family: Option<ProtocolFamily>,
+        caption_text: &str,
+        signal_names: &BTreeSet<String>,
+        actor_names: &BTreeSet<String>,
+    ) -> Option<DiagramKind> {
+        let normalized_caption = normalize_prior_phrase(caption_text, signal_names, actor_names);
+        if !is_meaningful_prior_phrase(&normalized_caption) {
+            return None;
+        }
+
+        for scope in actor_taxonomy_search_scopes(protocol_family) {
+            let mut diagram_kinds = self
+                .visual_motif_priors
+                .iter()
+                .filter(|prior| {
+                    scope
+                        .map(|expected| prior.protocol_family == expected)
+                        .unwrap_or(true)
+                })
+                .filter(|prior| {
+                    prior.normalized_caption_phrase.as_deref() == Some(&normalized_caption)
+                })
+                .filter(|prior| !matches!(prior.diagram_kind, DiagramKind::Unknown))
+                .map(|prior| prior.diagram_kind)
+                .collect::<Vec<_>>();
+            diagram_kinds.sort_by_key(|diagram_kind| diagram_kind_key(*diagram_kind));
+            diagram_kinds.dedup_by_key(|diagram_kind| diagram_kind_key(*diagram_kind));
+            if diagram_kinds.len() == 1 {
+                return diagram_kinds.first().copied();
+            }
+            if diagram_kinds.len() > 1 {
+                return None;
+            }
+        }
+
+        None
+    }
+
     pub fn table_kind_for_structured_table(
         &self,
         protocol_family: Option<ProtocolFamily>,
@@ -622,6 +662,18 @@ fn table_kind_key(table_kind: TableKind) -> &'static str {
         TableKind::TimingParameter => "timing_parameter",
         TableKind::FeatureMatrix => "feature_matrix",
         TableKind::Unknown => "unknown",
+    }
+}
+
+fn diagram_kind_key(diagram_kind: DiagramKind) -> &'static str {
+    match diagram_kind {
+        DiagramKind::TimingDiagram => "timing_diagram",
+        DiagramKind::StateMachineDiagram => "state_machine_diagram",
+        DiagramKind::BlockDiagram => "block_diagram",
+        DiagramKind::RegisterBitfield => "register_bitfield",
+        DiagramKind::TruthTable => "truth_table",
+        DiagramKind::FlowChart => "flow_chart",
+        DiagramKind::Unknown => "unknown",
     }
 }
 

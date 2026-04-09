@@ -17,8 +17,8 @@ use crate::ir::source::{
     TimingConstraintRecord, ValidationReportRecord, WidthHint,
 };
 use crate::ir::source::{
-    AutomationConfidence, NormalizationStatus, SectionKind, SourceIr, TableKind, VisualAsset,
-    VisualAssetKind, document_key,
+    AutomationConfidence, DiagramKind, NormalizationStatus, SectionKind, SourceIr, TableKind,
+    VisualAsset, VisualAssetKind, document_key,
 };
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
@@ -228,7 +228,18 @@ impl EvidenceIr {
         }
         let mut section_pages: Vec<Vec<u32>> = vec![Vec::new(); section_anchors.len()];
 
-        let mut visual_evidence = build_visual_evidence_items(&source_ir.visual_assets);
+        let visual_motif_signal_names =
+            collect_signal_names_from_tables(&source_ir, prior_guidance.as_ref())
+                .into_iter()
+                .collect::<BTreeSet<_>>();
+        let visual_motif_actor_names =
+            collect_known_actor_names_for_semantic_hints(&source_ir, &[], prior_guidance.as_ref());
+        let mut visual_evidence = build_visual_evidence_items(
+            &source_ir.visual_assets,
+            prior_guidance.as_ref(),
+            &visual_motif_signal_names,
+            &visual_motif_actor_names,
+        );
         let asset_id_to_visual_index: HashMap<String, usize> = visual_evidence
             .iter()
             .enumerate()
@@ -1036,30 +1047,89 @@ struct ReferenceSupport {
     display_reference_text: String,
 }
 
-fn build_visual_evidence_items(visual_assets: &[VisualAsset]) -> Vec<VisualEvidenceItem> {
+fn build_visual_evidence_items(
+    visual_assets: &[VisualAsset],
+    prior_guidance: Option<&EvidencePriorGuidance>,
+    signal_names: &BTreeSet<String>,
+    actor_names: &BTreeSet<String>,
+) -> Vec<VisualEvidenceItem> {
     visual_assets
         .iter()
         .enumerate()
-        .map(|(index, asset)| VisualEvidenceItem {
-            evidence_id: format!("visual_{:04}", index + 1),
-            asset_id: asset.asset_id.clone(),
-            asset_kind: asset.asset_kind,
-            role: infer_visual_role(asset.asset_kind, asset.caption_text.as_deref()),
-            source_path: asset
-                .image_path
-                .clone()
-                .or_else(|| asset.caption_source_path.clone()),
-            source_page: asset.page_id.as_deref().and_then(page_number_from_page_id),
-            caption_text: asset.caption_text.clone(),
-            figure_reference_text: None,
-            observations: Vec::new(),
-            automation_confidence: if asset.caption_text.is_some() {
-                AutomationConfidence::High
-            } else {
-                AutomationConfidence::Medium
-            },
+        .map(|(index, asset)| {
+            let prior_guided_diagram_kind =
+                prior_guided_visual_diagram_kind(asset, prior_guidance, signal_names, actor_names);
+            let effective_diagram_kind = prior_guided_diagram_kind.unwrap_or(asset.diagram_kind);
+            let observations = prior_guided_diagram_kind
+                .map(|diagram_kind| VisualObservation {
+                    observation_id: format!("obs_prior_visual_motif_{}", asset.asset_id),
+                    kind: VisualObservationKind::Classification,
+                    created_by: "specforge_prior_memory".to_string(),
+                    text: format!("diagram_kind={}", diagram_kind_key(diagram_kind)),
+                    supporting_span_ids: Vec::new(),
+                    automation_confidence: AutomationConfidence::Medium,
+                })
+                .into_iter()
+                .collect();
+
+            VisualEvidenceItem {
+                evidence_id: format!("visual_{:04}", index + 1),
+                asset_id: asset.asset_id.clone(),
+                asset_kind: asset.asset_kind,
+                role: infer_visual_role(
+                    asset.asset_kind,
+                    asset.caption_text.as_deref(),
+                    effective_diagram_kind,
+                ),
+                source_path: asset
+                    .image_path
+                    .clone()
+                    .or_else(|| asset.caption_source_path.clone()),
+                source_page: asset.page_id.as_deref().and_then(page_number_from_page_id),
+                caption_text: asset.caption_text.clone(),
+                figure_reference_text: None,
+                observations,
+                automation_confidence: if asset.caption_text.is_some() {
+                    AutomationConfidence::High
+                } else {
+                    AutomationConfidence::Medium
+                },
+            }
         })
         .collect()
+}
+
+fn prior_guided_visual_diagram_kind(
+    asset: &VisualAsset,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+    signal_names: &BTreeSet<String>,
+    actor_names: &BTreeSet<String>,
+) -> Option<DiagramKind> {
+    if !matches!(asset.diagram_kind, DiagramKind::Unknown) {
+        return None;
+    }
+    let caption_text = asset.caption_text.as_deref()?;
+    let prior_guidance = prior_guidance?;
+    prior_guidance
+        .corpus_memory
+        .diagram_kind_for_visual_caption(
+            Some(prior_guidance.protocol_family),
+            caption_text,
+            signal_names,
+            actor_names,
+        )
+}
+
+fn diagram_kind_key(diagram_kind: DiagramKind) -> &'static str {
+    match diagram_kind {
+        DiagramKind::TimingDiagram => "timing_diagram",
+        DiagramKind::StateMachineDiagram => "state_machine_diagram",
+        DiagramKind::BlockDiagram => "block_diagram",
+        DiagramKind::RegisterBitfield => "register_bitfield",
+        DiagramKind::TruthTable => "truth_table",
+        DiagramKind::FlowChart => "flow_chart",
+        DiagramKind::Unknown => "unknown",
+    }
 }
 
 fn build_caption_key_index(visual_assets: &[VisualAsset]) -> HashMap<String, String> {
@@ -1354,8 +1424,16 @@ fn numbered_list_prefix(trimmed_line: &str) -> bool {
 fn infer_visual_role(
     asset_kind: VisualAssetKind,
     caption_text: Option<&str>,
+    diagram_kind: DiagramKind,
 ) -> VisualEvidenceRole {
     let lowered_caption = caption_text.map(|text| text.to_ascii_lowercase());
+
+    if matches!(
+        diagram_kind,
+        DiagramKind::TimingDiagram | DiagramKind::StateMachineDiagram | DiagramKind::TruthTable
+    ) {
+        return VisualEvidenceRole::Normative;
+    }
 
     if let Some(lowered_caption) = lowered_caption.as_deref() {
         if contains_any(
@@ -6452,11 +6530,12 @@ mod tests {
     use crate::ir::prior_memory::{
         ActorTaxonomyPriorRecord, ActorTaxonomyRole, CorpusMemory, CorpusMemoryUpdatePolicyRecord,
         PriorSourceArtifactRecord, ProtocolFamily, SemanticPhrasePriorRecord,
+        VisualMotifPriorRecord,
     };
     use crate::ir::semantic::{InterfaceSignalSemanticRole, SemanticGroundingStrength};
     use crate::ir::source::{
-        AutomationConfidence, RelationKind, SectionKind, SourceIr, StructuredTableCellRecord,
-        StructuredTableRecord, TableKind, VisualAsset, VisualAssetKind,
+        AutomationConfidence, DiagramKind, RelationKind, SectionKind, SourceIr,
+        StructuredTableCellRecord, StructuredTableRecord, TableKind, VisualAsset, VisualAssetKind,
     };
 
     use super::{
@@ -6512,6 +6591,21 @@ mod tests {
                 supporting_document_keys: vec!["fixture".to_string()],
                 strongest_automation_confidence: AutomationConfidence::High,
                 strongest_grounding_strength: SemanticGroundingStrength::SingleSource,
+            }];
+        })
+    }
+
+    fn write_visual_motif_prior_memory(root: &Path) -> Result<PathBuf> {
+        write_prior_memory(root, |corpus_memory| {
+            corpus_memory.visual_motif_priors = vec![VisualMotifPriorRecord {
+                prior_id: "visual_motif_prior_0001".to_string(),
+                normalized_caption_phrase: Some("<signal> cycle trace".to_string()),
+                diagram_kind: DiagramKind::TimingDiagram,
+                asset_kind: VisualAssetKind::Diagram,
+                protocol_family: ProtocolFamily::AmbaGeneric,
+                support_count: 2,
+                supporting_document_keys: vec!["fixture".to_string()],
+                strongest_automation_confidence: AutomationConfidence::High,
             }];
         })
     }
@@ -7953,6 +8047,98 @@ mod tests {
                         .contains(&SignalSemanticTag::HandshakeReadyLike)
             }),
             "persisted prior_memory_path should preserve prior-guided semantic hints across refreshes"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn visual_motif_priors_classify_unknown_captioned_visual_assets() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("visual_motif_prior.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let prior_memory_path = write_visual_motif_prior_memory(tempdir.path())?;
+
+        fs::write(&source, "# Interface\n")?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_signal_desc".to_string(),
+            asset_id: "asset_signal_desc".to_string(),
+            page_id: None,
+            caption_text: Some("Interface signals".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Direction", true),
+                make_table_cell("Width", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("XREQ", false),
+                make_table_cell("Output", false),
+                make_table_cell("1", false),
+                make_table_cell("Transfer request", false),
+            ]],
+            row_count: 1,
+            col_count: 4,
+        });
+        source_ir.visual_assets.push(VisualAsset {
+            asset_id: "asset_cycle_trace".to_string(),
+            asset_kind: VisualAssetKind::Diagram,
+            page_id: Some("page_0001".to_string()),
+            image_path: None,
+            caption_text: Some("XREQ cycle trace".to_string()),
+            caption_source_path: None,
+            source_ref: None,
+            placeholder_text: None,
+            note: None,
+            diagram_kind: DiagramKind::Unknown,
+        });
+        source_ir.write_to_disk()?;
+
+        let without_priors = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        assert!(
+            !without_priors.visual_evidence[0]
+                .observations
+                .iter()
+                .any(|observation| matches!(
+                    observation.kind,
+                    VisualObservationKind::Classification
+                )),
+            "unknown diagram should not gain prior-guided classification without prior memory"
+        );
+        assert_eq!(
+            without_priors.visual_evidence[0].role,
+            super::VisualEvidenceRole::Ambiguous
+        );
+
+        let evidence_ir = EvidenceIr::build_with_prior_memory(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+            Some(&prior_memory_path),
+        )?;
+        assert!(
+            evidence_ir.visual_evidence[0]
+                .observations
+                .iter()
+                .any(|observation| matches!(
+                    observation.kind,
+                    VisualObservationKind::Classification
+                ) && observation.created_by == "specforge_prior_memory"
+                    && observation.text == "diagram_kind=timing_diagram"),
+            "visual motif prior should add an explicit Classification observation: {:?}",
+            evidence_ir.visual_evidence[0].observations
+        );
+        assert_eq!(
+            evidence_ir.visual_evidence[0].role,
+            super::VisualEvidenceRole::Normative,
+            "prior-guided timing classification should only upgrade the visual evidence role, not synthesize semantic facts"
         );
 
         Ok(())

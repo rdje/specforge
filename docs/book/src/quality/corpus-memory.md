@@ -55,7 +55,11 @@ So the safe rule is:
 - priors do not directly author canonical truth
 
 That is especially important for visual-motif and negative-knowledge priors.
-They can later guide rescans, ranking, or caution thresholds, but they still need current-document evidence before anything becomes canonical.
+Visual-motif priors already have a first bounded consumer: if a current visual asset is still classified as `unknown` but has a local caption matching one unique learned motif, `EvidenceIR` may add a prior-memory `Classification` observation and use the recovered diagram kind for the visual evidence role.
+That does not rewrite `SourceIR` and does not create semantic facts by itself.
+
+Negative-knowledge priors remain cautionary memory.
+They are intended to guide rescans, ranking, or stronger-corroboration thresholds, but they still need current-document evidence before anything becomes canonical.
 
 That is why `specforge` can get smarter over time without collapsing into cross-document contamination.
 

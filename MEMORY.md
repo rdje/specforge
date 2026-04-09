@@ -22,16 +22,16 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `4dd9cfc`
-- latest_commit_brief_message: `feat(semantic): lift VLM timing tuples`
-- note: the current session is now implementing the next learning-plane slice by adding typed visual-motif and negative-knowledge prior families to `CorpusMemory`
+- latest_commit_hash: `f94796a`
+- latest_commit_brief_message: `feat(learning): add visual motif memory`
+- note: the current session is now implementing the first bounded `EvidenceIR` consumer for visual-motif priors
 
 ## Recent commit chain (last 5)
+- `f94796a` feat(learning): add visual motif memory
 - `4dd9cfc` feat(semantic): lift VLM timing tuples
 - `d792f18` fix(semantic): bound VLM state machine guards
 - `7617173` docs(book): add multimodal evidence chapter
 - `a59af85` docs(book): add temporal semantics domain model
-- `2caf4b3` docs(book): add actor connectivity domain model
 
 ## Current repository state
 - active workspace member: `crates/specforge`
@@ -52,7 +52,8 @@
 - the book's Pipeline Model section is now also gaining a dedicated multimodal evidence and visual-grounding chapter under `docs/book/src/pipeline/multimodal-evidence.md`, so `SourceIR.visual_assets`, `EvidenceIR.visual_evidence`, VLM notes, visual observations, caption-derived semantic evidence, cross-modality grounding, and ambiguous visual-grounding rules are public concepts too
 - the implementation is now following that visual-grounding contract too: VLM state-machine transition guard text is parsed through a bounded signal/comparison normalizer so generic words such as `transfer` do not become fake signals and compound guards such as `PREADY = 1 and transfer` keep the grounded `PREADY == 1` comparison
 - the visual-grounding implementation is now also using timing-diagram `signals[].values[]` tuples: grounded VLM signal/value observations such as `XREQ` being `HIGH` at `T1` become `SignalConstraintRecord`s and feed temporal `SignalValue` predicates, while generic visual words like `transfer` remain blocked as fake signals
-- `CorpusMemory` is now being expanded to schema version `5` with two advisory-only typed memory families: `visual_motif_priors` for reusable source-side visual patterns and `negative_knowledge_priors` for conflict/residual archetypes that should guide future caution without authoring canonical facts
+- `CorpusMemory` schema version `5` now has two advisory-only typed memory families: `visual_motif_priors` for reusable source-side visual patterns and `negative_knowledge_priors` for conflict/residual archetypes that should guide future caution without authoring canonical facts
+- `EvidenceIR` now has the first bounded visual-motif prior consumer too: when a current visual asset is still `DiagramKind::Unknown`, its local caption can match a unique learned visual-motif prior and gain an explicit `Classification` observation plus an effective normative visual role, without mutating `SourceIR` or synthesizing canonical semantic facts
 - root docs remain important, but they now serve continuity, roadmap, validation, and developer-state roles more than primary end-user onboarding
 - runnable CLI surface includes `inspect`, `doctor`, `converge`, `ingest`, `evidence`, `semantic`, `intent`, `adapt`, `enrich`, `validate`, `kg-bench`, `project-validation`, `learn-priors`, and `nlp-enrich`
 - `specforge converge` now defaults to full Ollama-backed VLM image enrichment plus NLP Level 3 backannotation; use `--vlm-provider skip` and/or `--nlp-provider skip` only when intentionally narrowing the loop
@@ -94,13 +95,14 @@
   - [README.md](/Users/richarddje/Documents/github/specforge/README.md) points users to the book
   - [USER_GUIDE.md](/Users/richarddje/Documents/github/specforge/USER_GUIDE.md) is now a compatibility pointer instead of a second competing long-form guide
   - local and hosted CI now both build the mdBook, so docs drift is caught the same way code drift is
-- the local `CorpusMemory` prior store now includes actor-taxonomy, semantic phrase, semantic modality-reliability, temporal, and table-shape prior families
+- the local `CorpusMemory` prior schema now includes actor-taxonomy, semantic phrase, semantic modality-reliability, temporal, table-shape, visual-motif, and negative-knowledge prior families
 - the thing that materially grows to capture learning is the typed prior store itself, usually `generated/prior_memory/corpus_memory.json`; code defines the learning rules, but the accumulated experience lives in that symbolic memory artifact
 - `specforge evidence` and `specforge converge` now consult `--prior-memory generated/prior_memory/corpus_memory.json` by default, and the first bounded consumer uses actor-taxonomy priors to interpret explicit local actor terms in section headings and `Source` / `Destination` columns; width-only section-guided signal tables can now also recover structural `ActorSignalRelation::Drives` edges from that same prior-guided actor vocabulary
 - `EvidenceIR` now also has a second bounded prior consumer for semantic phrase priors, and it now persists `prior_memory_path` so later semantic-hint refreshes keep the same advisory prior context
 - `SemanticIR` now also has a third bounded prior consumer for temporal phrase priors, using them only as a fallback for local timing text when direct cycle-window parsing fails
 - `EvidenceIR` now also has a fourth bounded prior consumer for table-shape priors, using them only when a current structured table is still `unknown`; explicit local `SourceIR.table_kind` values still win outright
 - `SemanticIR` now also has a fifth bounded prior consumer overall and a second semantic-stage one for semantic modality-reliability priors, using them only to advisory-adjust arbitration between already-present locally grounded semantic candidates while preserving the underlying conflict surface
+- `EvidenceIR` now also has a sixth bounded prior consumer overall for visual-motif priors, using them only when a current visual asset is locally captioned and still diagram-kind `unknown`; the output is an evidence-stage `Classification` observation and role adjustment, not a canonical semantic fact
 - the roadmap now also carries a new `R15g` workstream for a corpus knowledge base plane beside the KG and typed priors, so persistent cross-document synthesis has an explicit home instead of being forced into either canonical IR or `CorpusMemory`
 - the latest live four-document prior-memory run over AXI/APB/AHB/AXI-Stream now yields `16` actor-taxonomy priors, `5` semantic phrase priors, `4` semantic modality-reliability priors, `266` temporal phrase priors, and `99` table-shape priors
 - AXI-Stream is now the first unseen protocol run carried all the way through the full loopbacked path: it converged in `2` pipeline iterations with Ollama VLM + NLP Level 3, now validates at `90/100 EXCELLENT`, and its artifact is included in the tracked validation snapshot
@@ -122,6 +124,7 @@
 - `specforge kg-bench` now also locks the same before/after truthfulness pattern for table-shape priors on a locally `unknown` `Name | Direction | Width` table
 - `specforge kg-bench` now also locks the same before/after truthfulness pattern for table-shape priors on a locally `unknown` `Parameter | Min | Max | Unit` timing table
 - `specforge kg-bench` now also locks the same before/after truthfulness pattern for semantic modality-reliability priors on locally conflicted semantic-role evidence, proving the conflict stays contested without the staged prior and becomes decisively resolved only when that prior is present
+- `specforge kg-bench` now also locks the same local-grounding truthfulness pattern for visual-motif priors on a locally unknown but captioned visual asset, proving prior memory can classify the diagram kind without leaking semantic facts across documents
 - canonical generated artifact roots are under `generated/source_ir/`, `generated/evidence_ir/`, `generated/semantic_ir/`, and `generated/intent_ir/`
 - `generated/` is git-ignored and intentionally untracked; continuity must live in docs, not versioned artifacts
 - `subs/fsmgen/` is a local read-only reference checkout for `.fsm` behavior
@@ -129,7 +132,8 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
-- started the next learning-plane family expansion: `CorpusMemory` can now represent and `learn-priors` can harvest typed visual-motif and negative-knowledge priors, while keeping them advisory and currently unconsumed by canonical IR builders
+- added the first bounded visual-motif prior consumer: `EvidenceIR` can now attach a prior-memory `Classification` observation to a current unknown captioned visual asset and use that recovered diagram kind for visual role only
+- started the next learning-plane family expansion: `CorpusMemory` can now represent and `learn-priors` can harvest typed visual-motif and negative-knowledge priors, while keeping them advisory and separate from canonical fact authorship
 - extended the visual-grounding follow-through for VLM timing diagrams: `signals[].values[]` tuples now lift into grounded `SignalConstraintRecord`s and temporal `SignalValue` predicates, while unknown/don't-care values and generic words remain unpromoted
 - started the implementation follow-through from the multimodal evidence chapter by tightening VLM state-machine guard parsing in `SemanticIR`: visual transition guards now prefer grounded signal comparisons, reject generic VLM prose as signal names, and keep boolean/high-low/asserted/deasserted guard values as literals
 - expanded the public mdBook with a dedicated multimodal evidence and visual-grounding chapter so future implementation has a stable public reference for figure preservation, VLM observation boundaries, semantic visual grounding, cross-modality grounding, and passive-figure ambiguity rules
@@ -166,8 +170,8 @@
 
 ## Exact next steps
 1. make shared infrastructure sourcing/distribution first-class beyond the current info-note boundary for signals like `ACLK` and `ARESETN`
-2. teach `EvidenceIR` / `SemanticIR` to consume visual-motif and negative-knowledge priors as bounded suggestions only, with KG-quality fixtures proving they improve recovery without cross-document fact leakage
-3. continue the stronger visual-grounding model beyond VLM timing tuple lift and state-machine guard normalization, especially visual-motif / negative-knowledge benchmarking and consumption
+2. teach `EvidenceIR` / `SemanticIR` to consume negative-knowledge priors as bounded caution signals only, with KG-quality fixtures proving they improve truthfulness without suppressing local evidence
+3. broaden visual-motif prior benchmarking beyond the first diagram-classification consumer, especially around rescan selection and multimodal corroboration
 
 ## Remaining engineering gaps after this commit
 - remaining actor-relative direction modeling in `SemanticIR` / `IntentIR` (`R15`)
@@ -175,7 +179,7 @@
 - KG-guided multimodal rescans (`R15c`)
 - broader evidence arbitration / conflict handling beyond polarity, interface-shape, multi-producer ambiguity, modality-aware semantic-role grounding, consensus summaries, semantic candidates, and semantic arbitration summaries (`R15d`)
 - broader KG-quality evaluation and benchmark hardening beyond the new seed fixture pack (`R15e`)
-- cross-document extractor learning is now started, and the first five bounded prior-consumer families are now live; visual-motif and negative-knowledge families are now represented and harvested, but `R15f` still needs benchmarked consumption paths for them
+- cross-document extractor learning is now started, and the first six bounded prior-consumer families are now live; visual-motif priors have their first benchmarked consumer, while negative-knowledge priors still need a bounded consumption path
 - Tier 3 relation extraction after the graph/temporal/eval surfaces are ready (`R14`)
 - some downstream compatibility and consumer paths still rely on flat `direction_hint` instead of the graph-native surface
 - meaning-based role inference now covers tables, prose, alias-grounded prose, visual captions, and VLM timing annotations, and canonical layers now preserve that provenance, but broader downstream use of preserved arbitration state is still early
