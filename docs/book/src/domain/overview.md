@@ -16,3 +16,4 @@ Start here when you want to understand concepts such as:
 The section begins with clock and reset infrastructure because that boundary is especially important.
 Clocks and resets can appear syntactically like ordinary signals, but they should not be modeled as ordinary payload or handshake edges.
 
+The next chapter covers handshake and semantic-role recovery, because ready/valid-like transfer progress is one of the most important protocol motifs `specforge` needs to recover without over-trusting signal names.

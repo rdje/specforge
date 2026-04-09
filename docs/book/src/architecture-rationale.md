@@ -122,6 +122,22 @@ That is why `specforge` treats clock and reset handling as system-contract infra
 
 The dedicated chapter [Clock And Reset Infrastructure](domain/clock-reset.md) explains that boundary in more detail.
 
+## Why signal roles are evidence-based
+
+Protocol signal names are useful, but they are not enough.
+
+A signal named `XVALID` may look valid-like, but `specforge` should still prefer grounded role evidence from tables, prose, captions, and timing annotations.
+
+That is why semantic-role recovery is modeled through:
+
+- observations
+- candidates
+- arbitration
+- consensus
+- explicit blocked fallbacks when name shape is unsafe
+
+The dedicated chapter [Handshake And Semantic Roles](domain/handshake-semantics.md) explains how that role surface works.
+
 ## Why learning is symbolic and explicit
 
 `specforge` can get stronger across many documents, but the thing that grows is not hidden neural state.

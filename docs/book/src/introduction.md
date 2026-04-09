@@ -19,7 +19,7 @@ This book is the canonical user-facing documentation surface for `specforge`. It
 - start with `Getting Started` if you want to run the tool
 - move to `Commands` if you want the operational workflow
 - move to `Pipeline Model` if you want to understand what each IR stage means
-- move to `Domain Model` if you want to understand hardware semantics such as clock/reset infrastructure
+- move to `Domain Model` if you want to understand hardware semantics such as clock/reset infrastructure and handshake roles
 - move to `Validation And Learning` if you want to understand how `specforge` judges truthfulness and accumulates reusable extraction experience
 - use `Reference` when you need artifact paths, troubleshooting, or continuity guidance
 

@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-04-09 (book now explains handshake semantic-role arbitration)
+
+### Added: dedicated public chapter for handshake and semantic roles
+- Added [handshake-semantics.md](/Users/richarddje/Documents/github/specforge/docs/book/src/domain/handshake-semantics.md) under the mdBook Domain Model section.
+- Updated [SUMMARY.md](/Users/richarddje/Documents/github/specforge/docs/book/src/SUMMARY.md), [domain/overview.md](/Users/richarddje/Documents/github/specforge/docs/book/src/domain/overview.md), [introduction.md](/Users/richarddje/Documents/github/specforge/docs/book/src/introduction.md), [architecture-rationale.md](/Users/richarddje/Documents/github/specforge/docs/book/src/architecture-rationale.md), and [semanticir.md](/Users/richarddje/Documents/github/specforge/docs/book/src/pipeline/semanticir.md) so the new domain chapter is discoverable from the public docs path.
+
+### Clarified: semantic-role truthfulness is now documented as a domain model
+- The new chapter explains the current role surface:
+  - `handshake_valid_like`
+  - `handshake_ready_like`
+  - semantic observations before winners
+  - candidates, grounding strength, arbitration, and consensus
+  - alias-dependent and prior-guided meaning
+  - `HandshakeComplete` temporal predicates
+  - blocked name fallback when signal spelling is unsafe
+- This makes the earlier semantic-arbitration doctrine public, instead of requiring readers to infer it from `SemanticIR` fields or validation findings.
+
 ## 2026-04-09 (book now has a domain-model section for clock/reset infrastructure)
 
 ### Added: dedicated public domain-model chapter

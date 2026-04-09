@@ -43,6 +43,8 @@ Direction should come from structural actor-signal relations when possible, not 
 
 Handshake recovery should prefer grounded role evidence over raw `*VALID*` / `*READY*` name shape.
 
+The dedicated [Handshake And Semantic Roles](../domain/handshake-semantics.md) chapter explains the observation, candidate, arbitration, and consensus surfaces behind that rule.
+
 ### Explicit conflict surface
 
 Competing semantic candidates should stay visible.
