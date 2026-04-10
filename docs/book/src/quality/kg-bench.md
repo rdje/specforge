@@ -46,6 +46,11 @@ That matters because the learning plane must be tested with the same discipline 
 - without the prior, the unseen local phrase or table should stay unresolved
 - with the matching prior, the current document should recover the meaning locally
 - the prior must widen interpretation, not author facts on its own
+- caution priors must not suppress local conflicts or residuals
+
+Negative-knowledge fixtures make that last rule executable.
+The suite now has prior-guided caution fixtures for signal-semantic conflicts, temporal conflicts, residual packets, signal-connectivity conflicts, and interface-signal conflicts.
+Those fixtures require the matched local conflict or residual to remain present while validation only adds `negative_knowledge_prior_matches`, rescan recommendations, corroboration requirements, and stage-specific rescan-guidance findings.
 
 ## Practical role in the project
 

@@ -1,0 +1,64 @@
+{
+  "name": "negative_knowledge_prior_guided_interface_conflict_caution_gold",
+  "source": "source.md",
+  "prior_memory_patch": {
+    "negative_knowledge_priors": [
+      {
+        "prior_id": "negative_knowledge_prior_0001",
+        "knowledge_kind": "interface_signal_conflict",
+        "normalized_pattern": "interface_signal_conflict:direction_mismatch",
+        "protocol_family": "unknown",
+        "support_count": 2,
+        "supporting_document_keys": ["seed_doc_1", "seed_doc_2"],
+        "strongest_automation_confidence": "medium"
+      },
+      {
+        "prior_id": "negative_knowledge_prior_0002",
+        "knowledge_kind": "interface_signal_conflict",
+        "normalized_pattern": "interface_signal_conflict:width_mismatch",
+        "protocol_family": "unknown",
+        "support_count": 2,
+        "supporting_document_keys": ["seed_doc_1", "seed_doc_2"],
+        "strongest_automation_confidence": "medium"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["DATA"],
+      "interface_signal_conflicts": 2
+    },
+    "intent": {
+      "signal_names_include": ["DATA"],
+      "interface_signal_conflicts": 2
+    },
+    "validation": {
+      "semantic": {
+        "finding_ids_include": [
+          "semantic_interface_signal_conflicts_present",
+          "semantic_negative_knowledge_prior_matches",
+          "semantic_negative_knowledge_rescan_guidance"
+        ],
+        "metric_values": {
+          "interface_signal_conflicts": "2",
+          "negative_knowledge_prior_matches": "2",
+          "negative_knowledge_rescan_recommendations": "2",
+          "negative_knowledge_corroboration_requirements": "2"
+        }
+      },
+      "intent": {
+        "finding_ids_include": [
+          "intent_interface_signal_conflicts_present",
+          "intent_negative_knowledge_prior_matches",
+          "intent_negative_knowledge_rescan_guidance"
+        ],
+        "metric_values": {
+          "interface_signal_conflicts": "2",
+          "negative_knowledge_prior_matches": "2",
+          "negative_knowledge_rescan_recommendations": "2",
+          "negative_knowledge_corroboration_requirements": "2"
+        }
+      }
+    }
+  }
+}

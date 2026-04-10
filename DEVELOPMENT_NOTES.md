@@ -742,6 +742,8 @@
   - it does not change scoring, arbitration, or canonical promotion
   - it does not create facts from prior memory
 - the tracked `negative_knowledge_prior_guided_temporal_conflict_caution_gold` fixture locks repeated temporal contradiction caution behavior, and `negative_knowledge_prior_guided_residual_caution_gold` locks repeated residual packet caution behavior
+- the tracked `negative_knowledge_prior_guided_connectivity_conflict_caution_gold` and `negative_knowledge_prior_guided_interface_conflict_caution_gold` fixtures now lock the remaining carried conflict families too: signal-connectivity multiple-producer caution plus interface direction/width mismatch caution
+- those fixtures explicitly assert that the local conflicts remain present while prior memory only adds caution, rescan, and corroboration guidance
 
 ### Negative-knowledge now emits rescan/corroboration guidance
 - validation now has the first bounded "beyond reporting" hook for negative-knowledge priors

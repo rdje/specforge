@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-04-11 (Negative-knowledge benchmark coverage now spans connectivity and interface conflicts)
+
+### Added: prior-guided caution fixtures
+- Added tracked KG-quality fixture `negative_knowledge_prior_guided_connectivity_conflict_caution_gold` for `signal_connectivity_conflict:multiple_producers`.
+- Added tracked KG-quality fixture `negative_knowledge_prior_guided_interface_conflict_caution_gold` for `interface_signal_conflict:direction_mismatch` and `interface_signal_conflict:width_mismatch`.
+- Both fixtures assert that the current local conflict remains present in `SemanticIR` and `IntentIR`; prior memory only adds `negative_knowledge_prior_matches`, rescan recommendations, corroboration requirements, and stage-specific rescan-guidance findings.
+
+### Documentation
+- Updated the README, roadmap, memory, development notes, and mdBook quality chapters so the public and continuity docs say the negative-knowledge benchmark suite now covers carried interface and connectivity conflict families too.
+
+### Validation
+- `cargo run -p specforge -- kg-bench negative_knowledge_prior_guided_connectivity_conflict_caution_gold negative_knowledge_prior_guided_interface_conflict_caution_gold` -> passed
+- `cargo test --manifest-path Cargo.toml kg_bench_runs_tracked_fixtures -- --nocapture` -> passed
+- `bash scripts/run_ci.sh` -> passed
+
 ## 2026-04-10 (Explicit clock/reset topology hints are typed)
 
 ### Added: bounded infrastructure topology records

@@ -61,6 +61,7 @@
   - `negative_knowledge_corroboration_requirements`
   - stage-specific `*_negative_knowledge_rescan_guidance` findings with the matched current-surface ids
 - this guidance is routing metadata only; it still does not suppress local evidence, change scoring/arbitration, remove conflicts/residuals, or create canonical facts from prior memory
+- negative-knowledge KG-bench coverage now spans all current validation-consumed families: semantic conflict, temporal conflict, residual packet, signal-connectivity conflict, and interface-signal conflict fixtures all prove prior memory is caution/rescan guidance only and does not suppress the local surface
 - `specforge project-validation` now consumes that guidance into the first deterministic rescan/extractor-selection target list:
   - local generated `generated/validation/rescan_plan.json`
   - `Targeted Rescan Recommendations` in `VALIDATION_SNAPSHOT.md`
@@ -213,9 +214,9 @@
 - `.venv-docling/` is also local-only runtime state and should stay untracked
 
 ## Exact next steps
-1. broaden negative-knowledge prior-family benchmark coverage without letting caution memory suppress local conflicts or residuals
-2. decide whether a future approval artifact should remain generated-only or become tracked review evidence before any canonical IR mutation path exists
-3. extend explicit infrastructure topology only when the current document provides richer physical evidence such as named clock muxes, generated-clock derivation, reset bridge cells, or domain-crossing constraints
+1. decide whether a future approval artifact should remain generated-only or become tracked review evidence before any canonical IR mutation path exists
+2. extend explicit infrastructure topology only when the current document provides richer physical evidence such as named clock muxes, generated-clock derivation, reset bridge cells, or domain-crossing constraints
+3. expand KG-quality coverage beyond the current negative-knowledge families toward broader multimodal arbitration drift and richer timing-annotation edge cases
 
 ## Remaining engineering gaps after this commit
 - remaining actor-relative direction modeling in `SemanticIR` / `IntentIR` (`R15`)
