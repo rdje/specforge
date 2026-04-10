@@ -40,6 +40,13 @@ This command validates the passed artifacts and refreshes the tracked crash-safe
 - `VALIDATION_SNAPSHOT.md`
 - the managed validation block in `LIVE_ACHIEVEMENT_STATUS.md`
 
+It also consumes validation-level negative-knowledge rescan guidance and writes a local generated extractor-selection target list:
+
+`generated/validation/rescan_plan.json`
+
+That plan is deliberately advisory.
+It tells downstream loops which current conflict or residual ids deserve targeted rechecking and stronger local corroboration, but it does not mutate IR, suppress findings, or promote facts from prior memory.
+
 Use it when the live baseline should be updated, not just an individual artifact.
 
 ## `kg-bench`

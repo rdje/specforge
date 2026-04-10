@@ -749,6 +749,18 @@
 - this is the first safe bridge from "the KG remembers a known failure shape" to "the next pass can choose where to spend extraction effort"
 - the remaining follow-up is to make an actual rescan/extractor-selection consumer read these validation findings instead of only surfacing them in validation output
 
+### Project validation now consumes negative-knowledge rescan guidance
+- `specforge project-validation` now reads stage-specific `*_negative_knowledge_rescan_guidance` findings from persisted validation reports
+- it materializes the first deterministic downstream consumer for that guidance:
+  - a local generated `generated/validation/rescan_plan.json` file
+  - a `Targeted Rescan Recommendations` section in `VALIDATION_SNAPSHOT.md`
+  - a `Targeted rescan queue` block inside the managed live-status validation projection
+- the rescan plan is an extractor-selection target list, not a canonical correction:
+  - it carries document key, stage, artifact path, finding id, related current-surface ids, extractor lane, corroboration policy, and recommended action
+  - it routes effort to known dangerous conflict/residual shapes
+  - it still does not mutate IR, change score, remove findings, decide arbitration, or promote facts from prior memory
+- the remaining follow-up is to make a future convergent rescan loop execute those targets automatically when a suitable extractor lane exists
+
 ### Fifth landed bounded prior family and semantic-stage arbitration slice
 - the fifth bounded learning family is now real in `crates/specforge/src/ir/prior_memory.rs` and `crates/specforge/src/commands/learn_priors.rs`
 - `specforge learn-priors` now harvests semantic modality-reliability priors from decisive, non-alias-dependent semantic consensus plus the supporting source kinds that carried that consensus

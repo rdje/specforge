@@ -153,5 +153,7 @@
   - `IHI0022_L_2025-08_AMBA_AXI_Protocol_Specification.pdf`: [warning:quality_score] IntentIR quality score is 85/100 (GOOD)
   - `IHI0024_E_2023-02_AMBA_5_APB_Protocol_Specification.pdf`: [warning:residual_decisions] IntentIR still carries 2 residual decision packet(s)
   - `IHI0033_C_2021-09_AMBA_5_AHB_Protocol_Specification.pdf`: [warning:semantic_role_conflicts] 1 semantic-role conflict(s) remain unresolved in the carried canonical intent surface
-  - `IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf`: [info:system_contract] 2 infrastructure signal(s) have no resolved producer actor in IntentIR connectivity; canonical sourcing remains in the system-contract surface
+  - `IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf`: [info:system_contract] 2 infrastructure signal(s) have no resolved producer actor in IntentIR connectivity; canonical sourcing status remains explicit in the infrastructure/system-contract surface
+- Targeted rescan queue:
+  - none
 <!-- validation_projection:end -->

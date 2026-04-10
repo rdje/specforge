@@ -64,6 +64,7 @@ The same caution surface now extends into `SemanticIR` and `IntentIR` validation
 Validation also emits machine-readable rescan/corroboration hooks for those exact matches through `negative_knowledge_rescan_recommendations`, `negative_knowledge_corroboration_requirements`, and stage-specific `*_negative_knowledge_rescan_guidance` findings.
 That does not suppress conflicts, change arbitration, remove residuals, or create canonical facts.
 It only tells users and downstream tooling that the current failure shape is one the corpus memory has seen before and should be targeted for stronger local corroboration before canonical promotion.
+`project-validation` consumes that routing metadata into the generated validation rescan plan, keeping the learned caution inspectable instead of hidden inside scoring.
 
 That is why `specforge` can get smarter over time without collapsing into cross-document contamination.
 

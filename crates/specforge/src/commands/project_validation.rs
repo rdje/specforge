@@ -2,7 +2,7 @@ use std::cmp::Reverse;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use crate::cli::{ProjectValidationArgs, ValidateArgs};
 use crate::commands::validate;
@@ -17,6 +17,7 @@ use crate::ir::source::{
 
 const VALIDATION_SNAPSHOT_DOC: &str = "VALIDATION_SNAPSHOT.md";
 const LIVE_STATUS_DOC: &str = "LIVE_ACHIEVEMENT_STATUS.md";
+const VALIDATION_RESCAN_PLAN_PATH: &str = "generated/validation/rescan_plan.json";
 const VALIDATION_PROJECTION_START: &str = "<!-- validation_projection:start -->";
 const VALIDATION_PROJECTION_END: &str = "<!-- validation_projection:end -->";
 
@@ -27,6 +28,27 @@ struct ProjectedArtifactSnapshot {
     stage: IrStage,
     artifact_path: PathBuf,
     report: ValidationReportRecord,
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+struct ProjectRescanRecommendation {
+    document_key: String,
+    display_name: String,
+    stage: String,
+    artifact_path: String,
+    finding_id: String,
+    related_ids: Vec<String>,
+    extractor_lane: String,
+    corroboration_policy: String,
+    recommended_action: String,
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+struct ProjectRescanPlanRecord {
+    schema_version: u32,
+    generated_by: String,
+    recommendation_count: usize,
+    recommendations: Vec<ProjectRescanRecommendation>,
 }
 
 pub fn run(args: ProjectValidationArgs) -> Result<()> {
@@ -46,17 +68,27 @@ pub fn run(args: ProjectValidationArgs) -> Result<()> {
             .then_with(|| left.stage.as_str().cmp(right.stage.as_str()))
     });
 
+    let rescan_recommendations = collect_rescan_recommendations(&snapshots, &repo_root);
+    let rescan_plan_path =
+        write_validation_rescan_plan(&repo_root, rescan_recommendations.clone())?;
     let snapshot_doc_path = repo_root.join(VALIDATION_SNAPSHOT_DOC);
     fs::write(
         &snapshot_doc_path,
-        render_validation_snapshot_doc(&snapshots, &repo_root),
+        render_validation_snapshot_doc(&snapshots, &repo_root, &rescan_recommendations),
     )?;
-    upsert_live_status_projection(&live_status_path, &snapshots, &repo_root)?;
+    upsert_live_status_projection(
+        &live_status_path,
+        &snapshots,
+        &repo_root,
+        &rescan_recommendations,
+    )?;
 
     println!("command: project-validation");
     println!("repo_root: {}", repo_root.display());
     println!("projected_artifacts: {}", snapshots.len());
+    println!("rescan_recommendations: {}", rescan_recommendations.len());
     println!("validation_snapshot_path: {}", snapshot_doc_path.display());
+    println!("rescan_plan_path: {}", rescan_plan_path.display());
     println!("live_status_path: {}", live_status_path.display());
 
     Ok(())
@@ -151,6 +183,7 @@ fn projected_snapshot(
 fn render_validation_snapshot_doc(
     snapshots: &[ProjectedArtifactSnapshot],
     repo_root: &Path,
+    rescan_recommendations: &[ProjectRescanRecommendation],
 ) -> String {
     let mut lines = vec![
         "# VALIDATION_SNAPSHOT".to_string(),
@@ -162,6 +195,10 @@ fn render_validation_snapshot_doc(
         format!(
             "- Highest severity observed: {}",
             highest_severity_label(snapshots)
+        ),
+        format!(
+            "- Targeted rescan recommendations: {}",
+            rescan_recommendations.len()
         ),
     ];
 
@@ -176,6 +213,41 @@ fn render_validation_snapshot_doc(
                 snapshot.stage.as_str(),
                 score_summary(&snapshot.report)
             ));
+        }
+    }
+
+    lines.push(String::new());
+    lines.push("## Targeted Rescan Recommendations".to_string());
+    if rescan_recommendations.is_empty() {
+        lines.push("- none".to_string());
+    } else {
+        for recommendation in rescan_recommendations {
+            lines.push(format!(
+                "### {} ({})",
+                recommendation.display_name, recommendation.stage
+            ));
+            lines.push(format!(
+                "- artifact_path: `{}`",
+                recommendation.artifact_path
+            ));
+            lines.push(format!("- finding_id: `{}`", recommendation.finding_id));
+            lines.push(format!(
+                "- extractor_lane: `{}`",
+                recommendation.extractor_lane
+            ));
+            lines.push(format!(
+                "- corroboration_policy: `{}`",
+                recommendation.corroboration_policy
+            ));
+            lines.push(format!(
+                "- recommended_action: {}",
+                recommendation.recommended_action
+            ));
+            lines.push(format!(
+                "- related_ids: {}",
+                render_inline_code_list(&recommendation.related_ids)
+            ));
+            lines.push(String::new());
         }
     }
 
@@ -221,6 +293,7 @@ fn render_validation_snapshot_doc(
 fn render_live_status_projection(
     snapshots: &[ProjectedArtifactSnapshot],
     repo_root: &Path,
+    rescan_recommendations: &[ProjectRescanRecommendation],
 ) -> String {
     let mut lines = vec!["- Latest projected validation snapshot:".to_string()];
     for snapshot in snapshots {
@@ -240,6 +313,26 @@ fn render_live_status_projection(
             snapshot.display_name, finding_summary
         ));
     }
+    lines.push("- Targeted rescan queue:".to_string());
+    if rescan_recommendations.is_empty() {
+        lines.push("  - none".to_string());
+    } else {
+        for recommendation in rescan_recommendations.iter().take(8) {
+            lines.push(format!(
+                "  - `{}` (`{}`): `{}` for {}",
+                recommendation.display_name,
+                recommendation.stage,
+                recommendation.extractor_lane,
+                render_inline_code_list(&recommendation.related_ids)
+            ));
+        }
+        if rescan_recommendations.len() > 8 {
+            lines.push(format!(
+                "  - ... and {} more targeted rescan recommendation(s)",
+                rescan_recommendations.len() - 8
+            ));
+        }
+    }
     lines.join("\n")
 }
 
@@ -247,11 +340,12 @@ fn upsert_live_status_projection(
     live_status_path: &Path,
     snapshots: &[ProjectedArtifactSnapshot],
     repo_root: &Path,
+    rescan_recommendations: &[ProjectRescanRecommendation],
 ) -> Result<()> {
     let current = fs::read_to_string(live_status_path)?;
     let managed_block = format!(
         "{VALIDATION_PROJECTION_START}\n{}\n{VALIDATION_PROJECTION_END}",
-        render_live_status_projection(snapshots, repo_root)
+        render_live_status_projection(snapshots, repo_root, rescan_recommendations)
     );
     let updated = replace_or_append_managed_section(
         &current,
@@ -261,6 +355,108 @@ fn upsert_live_status_projection(
     )?;
     fs::write(live_status_path, updated)?;
     Ok(())
+}
+
+fn write_validation_rescan_plan(
+    repo_root: &Path,
+    recommendations: Vec<ProjectRescanRecommendation>,
+) -> Result<PathBuf> {
+    let plan_path = repo_root.join(VALIDATION_RESCAN_PLAN_PATH);
+    if let Some(parent) = plan_path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+
+    let plan = ProjectRescanPlanRecord {
+        schema_version: 1,
+        generated_by: "specforge project-validation".to_string(),
+        recommendation_count: recommendations.len(),
+        recommendations,
+    };
+    fs::write(&plan_path, serde_json::to_string_pretty(&plan)?)?;
+    Ok(plan_path)
+}
+
+fn collect_rescan_recommendations(
+    snapshots: &[ProjectedArtifactSnapshot],
+    repo_root: &Path,
+) -> Vec<ProjectRescanRecommendation> {
+    let mut recommendations = Vec::new();
+    for snapshot in snapshots {
+        for finding in &snapshot.report.findings {
+            if !is_negative_knowledge_rescan_guidance(finding) {
+                continue;
+            }
+
+            let mut related_ids = finding.related_ids.clone();
+            related_ids.sort();
+            related_ids.dedup();
+            recommendations.push(ProjectRescanRecommendation {
+                document_key: snapshot.document_key.clone(),
+                display_name: snapshot.display_name.clone(),
+                stage: snapshot.stage.as_str().to_string(),
+                artifact_path: repo_relative_display(&snapshot.artifact_path, repo_root),
+                finding_id: finding.finding_id.clone(),
+                related_ids,
+                extractor_lane: extractor_lane_for_rescan(snapshot.stage).to_string(),
+                corroboration_policy:
+                    "stronger_local_corroboration_required_before_canonical_promotion".to_string(),
+                recommended_action: recommended_rescan_action(snapshot.stage).to_string(),
+            });
+        }
+    }
+    recommendations.sort_by(|left, right| {
+        left.document_key
+            .cmp(&right.document_key)
+            .then_with(|| left.stage.cmp(&right.stage))
+            .then_with(|| left.finding_id.cmp(&right.finding_id))
+    });
+    recommendations
+}
+
+fn is_negative_knowledge_rescan_guidance(finding: &ValidationFindingRecord) -> bool {
+    finding.category == "rescan_guidance"
+        && finding
+            .finding_id
+            .ends_with("_negative_knowledge_rescan_guidance")
+        && !finding.related_ids.is_empty()
+}
+
+fn extractor_lane_for_rescan(stage: IrStage) -> &'static str {
+    match stage {
+        IrStage::SourceIr => "source_ir_normalization_rescan",
+        IrStage::EvidenceIr => "evidence_ir_multimodal_semantic_corroboration",
+        IrStage::SemanticIr => "semantic_ir_conflict_corroboration",
+        IrStage::IntentIr => "intent_ir_canonical_surface_corroboration",
+    }
+}
+
+fn recommended_rescan_action(stage: IrStage) -> &'static str {
+    match stage {
+        IrStage::SourceIr => {
+            "reinspect source normalization around the related ids before downstream promotion"
+        }
+        IrStage::EvidenceIr => {
+            "rescan supporting statements, tables, and visual evidence for the related evidence-stage conflict ids"
+        }
+        IrStage::SemanticIr => {
+            "rebuild SemanticIR after targeted evidence rescans and require independent local support before resolving the related conflict or residual ids"
+        }
+        IrStage::IntentIr => {
+            "rebuild IntentIR after targeted semantic/evidence rescans and keep the related canonical ids explicit until corroborated"
+        }
+    }
+}
+
+fn render_inline_code_list(values: &[String]) -> String {
+    if values.is_empty() {
+        "none".to_string()
+    } else {
+        values
+            .iter()
+            .map(|value| format!("`{value}`"))
+            .collect::<Vec<_>>()
+            .join(", ")
+    }
 }
 
 fn replace_or_append_managed_section(
@@ -442,14 +638,84 @@ mod tests {
         assert!(snapshot_doc.contains("spec.md"));
         assert!(snapshot_doc.contains("intent_ir"));
         assert!(snapshot_doc.contains("35/100 NEEDS IMPROVEMENT"));
+        assert!(snapshot_doc.contains("- Targeted rescan recommendations: 0"));
 
         let live_status = fs::read_to_string(repo_root.join(LIVE_STATUS_DOC))?;
         assert!(live_status.contains("## Validation Projection"));
         assert!(live_status.contains(VALIDATION_PROJECTION_START));
         assert!(live_status.contains("35/100 NEEDS IMPROVEMENT"));
+        assert!(live_status.contains("- Targeted rescan queue:\n  - none"));
+
+        let rescan_plan = fs::read_to_string(repo_root.join(VALIDATION_RESCAN_PLAN_PATH))?;
+        assert!(rescan_plan.contains("\"recommendation_count\": 0"));
 
         let reloaded = IntentIr::load_from_path(&intent_ir.artifact_layout.intent_ir_path)?;
         assert_eq!(reloaded.validation_reports.len(), 1);
+
+        Ok(())
+    }
+
+    #[test]
+    fn project_validation_collects_negative_knowledge_rescan_guidance() -> Result<()> {
+        let tempdir = tempdir()?;
+        let repo_root = tempdir.path();
+        let artifact_path = repo_root.join("generated/intent_ir/doc/intent_ir.json");
+        let snapshot = ProjectedArtifactSnapshot {
+            document_key: "doc".to_string(),
+            display_name: "Spec.pdf".to_string(),
+            stage: IrStage::IntentIr,
+            artifact_path: artifact_path.clone(),
+            report: ValidationReportRecord {
+                report_id: "validation_intent_ir_test".to_string(),
+                validated_stage: IrStage::IntentIr,
+                artifact_fingerprint: "fingerprint".to_string(),
+                summary: "IntentIR validation with rescan guidance".to_string(),
+                overall_score: Some(85),
+                grade: Some("GOOD".to_string()),
+                metrics: Vec::new(),
+                findings: vec![ValidationFindingRecord {
+                    finding_id: "intent_negative_knowledge_rescan_guidance".to_string(),
+                    severity: ValidationFindingSeverity::Info,
+                    category: "rescan_guidance".to_string(),
+                    summary: "known failure shape needs rescan".to_string(),
+                    related_ids: vec![
+                        "temporal_conflict_0002".to_string(),
+                        "temporal_conflict_0001".to_string(),
+                        "temporal_conflict_0001".to_string(),
+                    ],
+                }],
+            },
+        };
+        let snapshots = vec![snapshot];
+
+        let recommendations = collect_rescan_recommendations(&snapshots, repo_root);
+        assert_eq!(recommendations.len(), 1);
+        assert_eq!(
+            recommendations[0].related_ids,
+            vec![
+                "temporal_conflict_0001".to_string(),
+                "temporal_conflict_0002".to_string()
+            ]
+        );
+        assert_eq!(
+            recommendations[0].extractor_lane,
+            "intent_ir_canonical_surface_corroboration"
+        );
+
+        let snapshot_doc = render_validation_snapshot_doc(&snapshots, repo_root, &recommendations);
+        assert!(snapshot_doc.contains("## Targeted Rescan Recommendations"));
+        assert!(snapshot_doc.contains("intent_ir_canonical_surface_corroboration"));
+        assert!(snapshot_doc.contains("temporal_conflict_0001"));
+
+        let live_projection =
+            render_live_status_projection(&snapshots, repo_root, &recommendations);
+        assert!(live_projection.contains("- Targeted rescan queue:"));
+        assert!(live_projection.contains("intent_ir_canonical_surface_corroboration"));
+
+        let plan_path = write_validation_rescan_plan(repo_root, recommendations)?;
+        let plan = fs::read_to_string(plan_path)?;
+        assert!(plan.contains("\"recommendation_count\": 1"));
+        assert!(plan.contains("\"corroboration_policy\""));
 
         Ok(())
     }

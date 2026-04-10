@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-04-10 (Project validation now consumes rescan guidance)
+
+### Added: generated rescan/extractor-selection plan
+- Updated [project_validation.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/project_validation.rs) so `specforge project-validation` now consumes `*_negative_knowledge_rescan_guidance` findings from validation reports.
+- The command now writes a local generated `generated/validation/rescan_plan.json` plan with document key, stage, artifact path, finding id, related current-surface ids, extractor lane, corroboration policy, and recommended action.
+- `VALIDATION_SNAPSHOT.md` now renders a `Targeted Rescan Recommendations` section from the same plan.
+- The managed `LIVE_ACHIEVEMENT_STATUS.md` validation projection now includes a concise `Targeted rescan queue`.
+
+### Preserved: the plan routes work, not truth
+- The consumer does not mutate IR artifacts.
+- It does not suppress findings.
+- It does not change scoring, arbitration, or canonical promotion.
+- It keeps prior memory advisory by routing extraction effort toward dangerous current-document conflict/residual shapes.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml project_validation -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -- project-validation generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json generated/intent_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/intent_ir.json generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json` -> passed (`rescan_recommendations: 0`)
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-10 (Negative-knowledge now routes rescan/corroboration guidance)
 
 ### Added: machine-readable guidance from known failure shapes

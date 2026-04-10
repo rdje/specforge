@@ -5,17 +5,21 @@ It summarizes the latest persisted validation reports projected from IR artifact
 ## Snapshot Summary
 - Artifacts projected: 4
 - Highest severity observed: warning
+- Targeted rescan recommendations: 0
 - Score-bearing artifacts:
   - `IHI0022_L_2025-08_AMBA_AXI_Protocol_Specification.pdf` (`intent_ir`): `85/100 GOOD`
   - `IHI0024_E_2023-02_AMBA_5_APB_Protocol_Specification.pdf` (`intent_ir`): `90/100 EXCELLENT`
   - `IHI0033_C_2021-09_AMBA_5_AHB_Protocol_Specification.pdf` (`intent_ir`): `94/100 EXCELLENT`
   - `IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf` (`intent_ir`): `90/100 EXCELLENT`
 
+## Targeted Rescan Recommendations
+- none
+
 ## Projected Artifacts
 ### IHI0022_L_2025-08_AMBA_AXI_Protocol_Specification.pdf (intent_ir)
 - document_key: `ihi0022_l_2025_08_amba_axi_protocol_specification`
 - artifact_path: `generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json`
-- artifact_fingerprint: `51ff25441921fa7b`
+- artifact_fingerprint: `e7c46a81c53c55aa`
 - score: `85/100 GOOD`
 - summary: IntentIR validation for IHI0022_L_2025-08_AMBA_AXI_Protocol_Specification.pdf with 7 finding(s)
 - findings:
@@ -24,13 +28,13 @@ It summarizes the latest persisted validation reports projected from IR artifact
   - [warning:temporal_conflicts] 15 typed temporal conflict(s) detected across contradictory value obligations
   - [info:compatibility_surface] 118 declared signal record(s) still lack flat compatibility direction hints even though actor-relative ports exist
   - [info:knowledge_graph] 124 declared signal record(s) still lack graph-derived direction coverage
-  - [info:system_contract] 2 infrastructure signal(s) have no resolved producer actor in IntentIR connectivity; canonical sourcing remains in the system-contract surface
+  - [info:system_contract] 2 infrastructure signal(s) have no resolved producer actor in IntentIR connectivity; canonical sourcing status remains explicit in the infrastructure/system-contract surface
   - [info:temporal_grounding] typed temporal rules exist, but none currently carry explicit cycle-window bounds
 
 ### IHI0024_E_2023-02_AMBA_5_APB_Protocol_Specification.pdf (intent_ir)
 - document_key: `ihi0024_e_2023_02_amba_5_apb_protocol_specification`
 - artifact_path: `generated/intent_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/intent_ir.json`
-- artifact_fingerprint: `3dce7e0d613c9b2c`
+- artifact_fingerprint: `59890c4af5c8ebc9`
 - score: `90/100 EXCELLENT`
 - summary: IntentIR validation for IHI0024_E_2023-02_AMBA_5_APB_Protocol_Specification.pdf with 2 finding(s)
 - findings:
@@ -40,7 +44,7 @@ It summarizes the latest persisted validation reports projected from IR artifact
 ### IHI0033_C_2021-09_AMBA_5_AHB_Protocol_Specification.pdf (intent_ir)
 - document_key: `ihi0033_c_2021_09_amba_5_ahb_protocol_specification`
 - artifact_path: `generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json`
-- artifact_fingerprint: `674ae0823b38a6c2`
+- artifact_fingerprint: `d3eb361d5eab0ea3`
 - score: `94/100 EXCELLENT`
 - summary: IntentIR validation for IHI0033_C_2021-09_AMBA_5_AHB_Protocol_Specification.pdf with 8 finding(s)
 - findings:
@@ -51,13 +55,13 @@ It summarizes the latest persisted validation reports projected from IR artifact
   - [info:compatibility_surface] 9 declared signal record(s) still lack flat compatibility direction hints even though actor-relative ports exist
   - [info:knowledge_graph] 1 declared signal record(s) still lack graph-derived direction coverage
   - [info:semantic_role_arbitration] 7 declared signal(s) still have competing semantic role candidates; the canonical surface preserves the current lead, runner-up, and evidence margin without forcing an unsafe winner
-  - [info:system_contract] 2 infrastructure signal(s) have no resolved producer actor in IntentIR connectivity; canonical sourcing remains in the system-contract surface
+  - [info:system_contract] 2 infrastructure signal(s) have no resolved producer actor in IntentIR connectivity; canonical sourcing status remains explicit in the infrastructure/system-contract surface
 
 ### IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf (intent_ir)
 - document_key: `ihi0051_b_2021_04_amba_axi_stream_protocol_specification`
 - artifact_path: `generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json`
-- artifact_fingerprint: `43e63fc2e564398d`
+- artifact_fingerprint: `26dc733965c17b02`
 - score: `90/100 EXCELLENT`
 - summary: IntentIR validation for IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf with 1 finding(s)
 - findings:
-  - [info:system_contract] 2 infrastructure signal(s) have no resolved producer actor in IntentIR connectivity; canonical sourcing remains in the system-contract surface
+  - [info:system_contract] 2 infrastructure signal(s) have no resolved producer actor in IntentIR connectivity; canonical sourcing status remains explicit in the infrastructure/system-contract surface

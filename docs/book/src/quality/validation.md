@@ -84,6 +84,7 @@ For example, `EvidenceIR` validation can report `negative_knowledge_prior_matche
 `SemanticIR` and `IntentIR` validation can report the same metric when carried conflict or residual packet patterns match learned negative knowledge.
 Those exact matches also surface `negative_knowledge_rescan_recommendations`, `negative_knowledge_corroboration_requirements`, and stage-specific `*_negative_knowledge_rescan_guidance` findings.
 That is guidance for targeted rescans and stronger local corroboration, not a correction: the current conflict or residual remains present and still has to be resolved by local evidence and arbitration.
+`project-validation` is the first consumer for this guidance: it projects those findings into the validation snapshot and writes a generated `generated/validation/rescan_plan.json` target list for later rescan/extractor-selection loops.
 
 ## Learning depends on validation gates
 
