@@ -59,6 +59,15 @@ Use a narrower run only when you mean to:
 cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target fsm --vlm-provider skip --nlp-provider skip
 ```
 
+If you already generated a validation rescan queue, `converge` can inspect it after the fixed-point loop stabilizes:
+
+```bash
+cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target fsm --rescan-plan generated/validation/rescan_plan.json
+```
+
+Execution stays explicitly gated with `--execute-rescan-plan`.
+Even then, changed validation deltas are reported for review and are not treated as automatic truth promotion.
+
 ## Local verification
 
 The canonical local CI entrypoint is:
@@ -85,4 +94,3 @@ Generated artifacts are written under `generated/`:
 - `generated/prior_memory/corpus_memory.json`
 
 The `generated/` tree stays local and untracked.
-

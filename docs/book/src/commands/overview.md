@@ -6,7 +6,7 @@ Current surface:
 
 - `inspect <path>`
 - `doctor [--strict]`
-- `converge <source> --target fsm`
+- `converge <source> --target fsm [--rescan-plan <plan>]`
 - `ingest <source>`
 - `evidence <source-ir>`
 - `semantic <evidence-ir>`
@@ -60,6 +60,12 @@ If you want to inspect the targeted rescan queue:
 
 ```bash
 cargo run --manifest-path Cargo.toml -- rescan-plan
+```
+
+If you want the stabilized convergence loop to inspect that same queue:
+
+```bash
+cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target fsm --rescan-plan generated/validation/rescan_plan.json
 ```
 
 If you want to update the cross-document prior store:

@@ -179,11 +179,11 @@
   - `specforge validate <artifact>` now backannotates a deterministic `validation_report.json` sidecar next to the validated IR artifact and writes the latest report back into the artifact's `validation_reports` field
   - validation findings are now graph-aware for the four IR stages, including producer/consumer gaps and compatibility-surface lag on the actor-relative KG
   - `specforge project-validation <artifact>...` now validates the passed artifacts and projects their persisted reports into tracked live docs via `VALIDATION_SNAPSHOT.md` plus a managed validation block in `LIVE_ACHIEVEMENT_STATUS.md`
-  - `project-validation` now writes schema-v2 replay-oriented rescan recommendations with typed replay inputs, structured command hints, and `planned_not_executed` automation status for a future convergent rescan executor
+  - `project-validation` now writes schema-v2 replay-oriented rescan recommendations with typed replay inputs, structured command hints, and `planned_not_executed` automation status for explicit rescan consumers
   - `specforge rescan-plan [--execute]` now consumes that schema-v2 plan through a dry-run-by-default, whitelisted in-process executor surface with before/after validation changed/no-change status
 - remaining:
   - extend validation into the upcoming semantic-truthfulness surfaces (temporal rules, arbitration/conflict records, and KG-quality benchmarks)
-  - wire targeted rescan execution into `converge` with arbitration gates for `executed_validated_changed` outcomes
+  - deepen the `converge --rescan-plan <plan>` arbitration gate so `executed_validated_changed` outcomes can be reviewed, scored, and promoted only through validation-backed evidence policy
   - keep adapter validation (SystemVerilog/Verilog/VHDL targets) as horizon work until the semantic pipeline is materially harder to fool
 
 ### R8 SourceIR SOTA capture (Tier 1 of EXTRACTION_ARCHITECTURE.md)

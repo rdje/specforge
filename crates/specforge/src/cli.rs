@@ -92,6 +92,15 @@ pub struct ConvergeArgs {
     /// Advisory local prior-memory store to consult during extraction when present
     #[arg(long, default_value = "generated/prior_memory/corpus_memory.json")]
     pub prior_memory: PathBuf,
+    /// Optional schema-v2 validation rescan plan to inspect after convergence stabilizes
+    #[arg(long)]
+    pub rescan_plan: Option<PathBuf>,
+    /// Execute whitelisted recommendations from --rescan-plan after convergence stabilizes
+    #[arg(long)]
+    pub execute_rescan_plan: bool,
+    /// Maximum pending rescan-plan recommendation(s) to process; 0 means all
+    #[arg(long, default_value = "0")]
+    pub rescan_plan_limit: usize,
 }
 
 #[derive(Debug, Args)]
@@ -206,6 +215,9 @@ pub struct RescanPlanArgs {
     /// Maximum pending recommendation(s) to process; 0 means all
     #[arg(long, default_value = "0")]
     pub limit: usize,
+    /// Optional document_key filter for multi-document rescan plans
+    #[arg(long)]
+    pub document_key: Option<String>,
     /// Advisory local prior-memory store to use when executing EvidenceIR rebuild hints
     #[arg(long, default_value = "generated/prior_memory/corpus_memory.json")]
     pub prior_memory: std::path::PathBuf,
@@ -296,6 +308,9 @@ mod tests {
             args.prior_memory,
             PathBuf::from("generated/prior_memory/corpus_memory.json")
         );
+        assert!(args.rescan_plan.is_none());
+        assert!(!args.execute_rescan_plan);
+        assert_eq!(args.rescan_plan_limit, 0);
     }
 
     use std::path::PathBuf;
@@ -334,6 +349,7 @@ mod tests {
         );
         assert!(!args.execute);
         assert_eq!(args.limit, 0);
+        assert!(args.document_key.is_none());
     }
 
     #[test]

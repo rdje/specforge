@@ -17,40 +17,77 @@ const EXECUTED_VALIDATED_CHANGED: &str = "executed_validated_changed";
 const EXECUTED_VALIDATED_NO_CHANGE: &str = "executed_validated_no_change";
 
 pub fn run(args: RescanPlanArgs) -> Result<()> {
+    run_plan(args).map(|_| ())
+}
+
+pub fn run_plan(args: RescanPlanArgs) -> Result<RescanPlanRunReport> {
     let plan_path = args.plan;
     let mut plan = load_rescan_plan(&plan_path)?;
-    let selected_indices = selected_pending_indices(&plan, args.limit);
+    let selected_indices =
+        selected_pending_indices(&plan, args.limit, args.document_key.as_deref());
+    let pending_recommendations =
+        selected_pending_indices(&plan, 0, args.document_key.as_deref()).len();
+    let mut report = RescanPlanRunReport {
+        plan_path: plan_path.clone(),
+        execute: args.execute,
+        document_key_filter: args.document_key.clone(),
+        schema_version: plan.schema_version,
+        recommendation_count: plan.recommendation_count,
+        pending_recommendations,
+        selected_recommendations: selected_indices.len(),
+        executed_validated_changed: 0,
+        executed_validated_no_change: 0,
+    };
 
     println!("command: rescan-plan");
     println!("mode: {}", if args.execute { "execute" } else { "dry-run" });
     println!("plan_path: {}", plan_path.display());
+    println!(
+        "document_key_filter: {}",
+        args.document_key.as_deref().unwrap_or("all")
+    );
     println!("schema_version: {}", plan.schema_version);
     println!("recommendation_count: {}", plan.recommendation_count);
-    println!(
-        "pending_recommendations: {}",
-        selected_pending_indices(&plan, 0).len()
-    );
+    println!("pending_recommendations: {pending_recommendations}");
     println!("selected_recommendations: {}", selected_indices.len());
 
     if selected_indices.is_empty() {
         println!("rescan_queue: empty");
-        return Ok(());
+        return Ok(report);
     }
 
     if !args.execute {
         print_dry_run_plan(&plan, &selected_indices);
-        return Ok(());
+        return Ok(report);
     }
 
     for index in selected_indices {
         let recommendation = plan.recommendations[index].clone();
         let outcome = execute_recommendation(&recommendation, &args.prior_memory)?;
+        match outcome.automation_status {
+            EXECUTED_VALIDATED_CHANGED => report.executed_validated_changed += 1,
+            EXECUTED_VALIDATED_NO_CHANGE => report.executed_validated_no_change += 1,
+            _ => {}
+        }
         plan.recommendations[index].automation_status = outcome.automation_status.to_string();
     }
 
     fs::write(&plan_path, serde_json::to_string_pretty(&plan)?)?;
     println!("status_update_path: {}", plan_path.display());
-    Ok(())
+    Ok(report)
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct RescanPlanRunReport {
+    pub plan_path: PathBuf,
+    pub execute: bool,
+    pub document_key_filter: Option<String>,
+    pub schema_version: u32,
+    pub recommendation_count: usize,
+    pub pending_recommendations: usize,
+    pub selected_recommendations: usize,
+    pub executed_validated_changed: usize,
+    pub executed_validated_no_change: usize,
 }
 
 fn load_rescan_plan(plan_path: &Path) -> Result<ProjectRescanPlanRecord> {
@@ -78,13 +115,21 @@ fn load_rescan_plan(plan_path: &Path) -> Result<ProjectRescanPlanRecord> {
     Ok(plan)
 }
 
-fn selected_pending_indices(plan: &ProjectRescanPlanRecord, limit: usize) -> Vec<usize> {
+fn selected_pending_indices(
+    plan: &ProjectRescanPlanRecord,
+    limit: usize,
+    document_key: Option<&str>,
+) -> Vec<usize> {
     let pending = plan
         .recommendations
         .iter()
         .enumerate()
         .filter_map(|(index, recommendation)| {
-            (recommendation.automation_status == PLANNED_NOT_EXECUTED).then_some(index)
+            let document_matches = document_key.map_or(true, |document_key| {
+                recommendation.document_key == document_key
+            });
+            (document_matches && recommendation.automation_status == PLANNED_NOT_EXECUTED)
+                .then_some(index)
         });
 
     if limit == 0 {
@@ -335,6 +380,7 @@ mod tests {
             plan: plan_path,
             execute: false,
             limit: 0,
+            document_key: None,
             prior_memory: PathBuf::from("generated/prior_memory/corpus_memory.json"),
         })?;
 
@@ -398,6 +444,7 @@ mod tests {
             plan: plan_path.clone(),
             execute: true,
             limit: 1,
+            document_key: None,
             prior_memory: PathBuf::from("generated/prior_memory/corpus_memory.json"),
         })?;
 
@@ -439,8 +486,9 @@ mod tests {
             ],
         };
 
-        assert_eq!(selected_pending_indices(&plan, 1), vec![0]);
-        assert_eq!(selected_pending_indices(&plan, 0), vec![0, 2]);
+        assert_eq!(selected_pending_indices(&plan, 1, None), vec![0]);
+        assert_eq!(selected_pending_indices(&plan, 0, None), vec![0, 2]);
+        assert_eq!(selected_pending_indices(&plan, 0, Some("doc_c")), vec![2]);
     }
 
     #[test]

@@ -2,8 +2,8 @@ use std::path::PathBuf;
 
 use serde::Serialize;
 
-use crate::cli::{ConvergeArgs, EnrichArgs, NlpEnrichArgs, VlmProviderArg};
-use crate::commands::{enrich, nlp_enrich};
+use crate::cli::{ConvergeArgs, EnrichArgs, NlpEnrichArgs, RescanPlanArgs, VlmProviderArg};
+use crate::commands::{enrich, nlp_enrich, rescan_plan};
 use crate::error::{AppError, Result};
 use crate::ir::adapters::{AdapterArtifact, AdapterLoweringStatus, AdapterTarget};
 use crate::ir::evidence::{EvidenceIr, StatementClass, VisualObservationKind};
@@ -56,6 +56,37 @@ pub fn run(args: ConvergeArgs) -> Result<()> {
         "adapter_artifact_path: {}",
         report.paths.adapter_artifact_path.display()
     );
+    if let Some(rescan_plan) = report.rescan_plan.as_ref() {
+        println!("rescan_plan_path: {}", rescan_plan.plan_path.display());
+        println!(
+            "rescan_plan_mode: {}",
+            if rescan_plan.executed {
+                "execute"
+            } else {
+                "dry-run"
+            }
+        );
+        println!(
+            "rescan_plan_selected_recommendations: {}",
+            rescan_plan.selected_recommendations
+        );
+        println!(
+            "rescan_plan_validated_changed: {}",
+            rescan_plan.executed_validated_changed
+        );
+        println!(
+            "rescan_plan_validated_no_change: {}",
+            rescan_plan.executed_validated_no_change
+        );
+        println!(
+            "rescan_plan_snapshot_changed: {}",
+            rescan_plan.snapshot_changed
+        );
+        println!(
+            "rescan_plan_arbitration_status: {}",
+            rescan_plan.arbitration_status()
+        );
+    }
     println!(
         "next_step_hint: run `specforge validate {}` for a stage-aware report",
         report.paths.intent_ir_path.display()
@@ -65,6 +96,12 @@ pub fn run(args: ConvergeArgs) -> Result<()> {
 }
 
 fn run_convergence(args: ConvergeArgs) -> Result<ConvergenceReport> {
+    if args.execute_rescan_plan && args.rescan_plan.is_none() {
+        return Err(AppError::InvalidStageArtifact(
+            "--execute-rescan-plan requires --rescan-plan <path>".to_string(),
+        ));
+    }
+
     if args.max_iterations == 0 {
         return Err(AppError::InvalidStageArtifact(
             "converge requires --max-iterations >= 1".to_string(),
@@ -86,6 +123,15 @@ fn run_convergence(args: ConvergeArgs) -> Result<ConvergenceReport> {
     println!("vlm_provider: {}", provider_name(args.vlm_provider));
     println!("nlp_provider: {}", provider_name(args.nlp_provider));
     println!("prior_memory: {}", args.prior_memory.display());
+    println!(
+        "rescan_plan: {}",
+        args.rescan_plan
+            .as_ref()
+            .map(|path| path.display().to_string())
+            .unwrap_or_else(|| "disabled".to_string())
+    );
+    println!("execute_rescan_plan: {}", args.execute_rescan_plan);
+    println!("rescan_plan_limit: {}", args.rescan_plan_limit);
 
     let mut previous_snapshot: Option<KnowledgeSnapshot> = None;
 
@@ -155,11 +201,13 @@ fn run_convergence(args: ConvergeArgs) -> Result<ConvergenceReport> {
 
             if snapshot == *previous {
                 println!("convergence: stable after pass {pass}");
+                let rescan_plan = maybe_run_rescan_plan(&args, &paths, &snapshot)?;
                 return Ok(ConvergenceReport {
                     converged: true,
                     passes_run: pass,
                     final_snapshot: snapshot,
                     paths,
+                    rescan_plan,
                 });
             }
         }
@@ -171,6 +219,45 @@ fn run_convergence(args: ConvergeArgs) -> Result<ConvergenceReport> {
         "pipeline did not converge within {} pass(es)",
         args.max_iterations
     )))
+}
+
+fn maybe_run_rescan_plan(
+    args: &ConvergeArgs,
+    paths: &PipelineArtifactPaths,
+    stable_snapshot: &KnowledgeSnapshot,
+) -> Result<Option<ConvergenceRescanPlanReport>> {
+    let Some(plan_path) = args.rescan_plan.clone() else {
+        return Ok(None);
+    };
+
+    println!("--- convergence rescan plan ---");
+    let plan_report = rescan_plan::run_plan(RescanPlanArgs {
+        plan: plan_path,
+        execute: args.execute_rescan_plan,
+        limit: args.rescan_plan_limit,
+        document_key: Some(paths.document_key.clone()),
+        prior_memory: args.prior_memory.clone(),
+    })?;
+    let post_rescan_snapshot = KnowledgeSnapshot::collect(paths)?;
+    let snapshot_changed = post_rescan_snapshot != *stable_snapshot;
+    println!("rescan_plan_snapshot_changed: {snapshot_changed}");
+    println!(
+        "rescan_plan_arbitration_status: {}",
+        ConvergenceRescanPlanReport::arbitration_status_for(
+            plan_report.execute,
+            plan_report.executed_validated_changed,
+            snapshot_changed,
+        )
+    );
+
+    Ok(Some(ConvergenceRescanPlanReport {
+        plan_path: plan_report.plan_path,
+        executed: plan_report.execute,
+        selected_recommendations: plan_report.selected_recommendations,
+        executed_validated_changed: plan_report.executed_validated_changed,
+        executed_validated_no_change: plan_report.executed_validated_no_change,
+        snapshot_changed,
+    }))
 }
 
 fn provider_name(provider: VlmProviderArg) -> &'static str {
@@ -250,6 +337,41 @@ struct ConvergenceReport {
     passes_run: usize,
     final_snapshot: KnowledgeSnapshot,
     paths: PipelineArtifactPaths,
+    rescan_plan: Option<ConvergenceRescanPlanReport>,
+}
+
+#[derive(Debug, Clone)]
+struct ConvergenceRescanPlanReport {
+    plan_path: PathBuf,
+    executed: bool,
+    selected_recommendations: usize,
+    executed_validated_changed: usize,
+    executed_validated_no_change: usize,
+    snapshot_changed: bool,
+}
+
+impl ConvergenceRescanPlanReport {
+    fn arbitration_status(&self) -> &'static str {
+        Self::arbitration_status_for(
+            self.executed,
+            self.executed_validated_changed,
+            self.snapshot_changed,
+        )
+    }
+
+    fn arbitration_status_for(
+        executed: bool,
+        executed_validated_changed: usize,
+        snapshot_changed: bool,
+    ) -> &'static str {
+        if !executed {
+            "dry_run_not_promoted"
+        } else if executed_validated_changed > 0 || snapshot_changed {
+            "changed_requires_validation_review"
+        } else {
+            "executed_validated_no_change"
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
@@ -667,6 +789,7 @@ mod tests {
 
     use super::*;
     use crate::cli::AdapterTargetArg;
+    use crate::commands::project_validation::ProjectRescanPlanRecord;
     use crate::test_support::env_var_lock;
 
     fn write_mock_helper(dir: &std::path::Path, responses: &[(&str, &str)]) -> PathBuf {
@@ -715,6 +838,17 @@ mod tests {
         );
         unsafe { std::env::set_var("SPECFORGE_VLM_HELPER", &helper) };
 
+        let rescan_plan_path = tempdir.path().join("rescan_plan.json");
+        fs::write(
+            &rescan_plan_path,
+            serde_json::to_string_pretty(&ProjectRescanPlanRecord {
+                schema_version: 2,
+                generated_by: "test".to_string(),
+                recommendation_count: 0,
+                recommendations: Vec::new(),
+            })?,
+        )?;
+
         let cwd_before = std::env::current_dir()?;
         std::env::set_current_dir(tempdir.path())?;
 
@@ -732,6 +866,9 @@ mod tests {
                 .join("generated")
                 .join("prior_memory")
                 .join("corpus_memory.json"),
+            rescan_plan: Some(rescan_plan_path.clone()),
+            execute_rescan_plan: false,
+            rescan_plan_limit: 0,
         });
 
         std::env::set_current_dir(cwd_before)?;
@@ -740,6 +877,12 @@ mod tests {
         let report = result?;
         assert!(report.converged);
         assert_eq!(report.passes_run, 2);
+        let rescan_report = report.rescan_plan.as_ref().expect("rescan plan report");
+        assert_eq!(rescan_report.plan_path, rescan_plan_path);
+        assert!(!rescan_report.executed);
+        assert_eq!(rescan_report.selected_recommendations, 0);
+        assert!(!rescan_report.snapshot_changed);
+        assert_eq!(rescan_report.arbitration_status(), "dry_run_not_promoted");
 
         let evidence = EvidenceIr::load_from_path(&report.paths.evidence_ir_path)?;
         assert_eq!(
@@ -763,5 +906,29 @@ mod tests {
         assert_eq!(semantic.signal_constraints.len(), 1);
 
         Ok(())
+    }
+
+    #[test]
+    fn converge_rejects_execute_rescan_plan_without_plan() {
+        let err = run_convergence(ConvergeArgs {
+            source: PathBuf::from("missing.md"),
+            target: AdapterTargetArg::Fsm,
+            max_iterations: 1,
+            vlm_provider: VlmProviderArg::Skip,
+            vlm_model: None,
+            nlp_provider: VlmProviderArg::Skip,
+            nlp_model: None,
+            nlp_max_sentences: 0,
+            prior_memory: PathBuf::from("generated/prior_memory/corpus_memory.json"),
+            rescan_plan: None,
+            execute_rescan_plan: true,
+            rescan_plan_limit: 0,
+        })
+        .unwrap_err();
+
+        assert!(
+            err.to_string()
+                .contains("--execute-rescan-plan requires --rescan-plan <path>")
+        );
     }
 }

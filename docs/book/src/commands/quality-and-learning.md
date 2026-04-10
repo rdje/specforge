@@ -46,7 +46,7 @@ It also consumes validation-level negative-knowledge rescan guidance and writes 
 
 That plan is deliberately advisory, but it is now replay-oriented rather than only descriptive.
 Each target carries the current artifact path, typed replay inputs such as `semantic_ir` or `evidence_ir`, a structured command-hint sequence, and an explicit `planned_not_executed` status.
-The command hints are there so a future convergent rescan loop can rebuild the right stage safely from machine-readable args instead of scraping a prose note.
+The command hints are there so `rescan-plan` and opt-in `converge --rescan-plan <plan>` runs can rebuild the right stage safely from machine-readable args instead of scraping a prose note.
 
 The plan still does not mutate IR, suppress findings, run rescans automatically, or promote facts from prior memory.
 It only tells downstream loops which current conflict or residual ids deserve targeted rechecking and stronger local corroboration.
@@ -61,6 +61,7 @@ cargo run --manifest-path Cargo.toml -- rescan-plan
 
 `rescan-plan` reads `generated/validation/rescan_plan.json`.
 By default it is a dry-run inspector: it reports pending `planned_not_executed` recommendations and prints the structured command hints that would be used.
+Use `--document-key <key>` to scope a multi-document plan to one document.
 
 To execute the current pending hints explicitly:
 
@@ -86,6 +87,17 @@ After a recommendation executes successfully, `rescan-plan` validates the target
 That is still not a canonical truth decision.
 It means the relevant stage was rebuilt and validated, and that the validation fingerprint/score/finding-count surface either changed or did not.
 Any fact promotion still has to survive current-document evidence, validation, and arbitration.
+
+The convergent loop can consume the same plan after stability:
+
+```bash
+cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target fsm --rescan-plan generated/validation/rescan_plan.json
+```
+
+Add `--execute-rescan-plan` only when you want those whitelisted hints to run.
+Unlike standalone `rescan-plan`, the convergence hook automatically filters the queue to the current source document key.
+The convergence summary reports whether the post-rescan artifact snapshot changed and emits an arbitration status such as `dry_run_not_promoted` or `changed_requires_validation_review`.
+That keeps rescans visible without pretending that a changed validation surface is already an improvement.
 
 ## `kg-bench`
 

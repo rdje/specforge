@@ -759,7 +759,7 @@
   - it carries document key, stage, artifact path, finding id, related current-surface ids, extractor lane, corroboration policy, and recommended action
   - it routes effort to known dangerous conflict/residual shapes
   - it still does not mutate IR, change score, remove findings, decide arbitration, or promote facts from prior memory
-- the remaining follow-up is to make a future convergent rescan loop execute those targets automatically when a suitable extractor lane exists
+- `converge --rescan-plan <plan>` now makes those targets available to the fixed-point loop after stability; the remaining follow-up is richer arbitration over changed outcomes, not automatic truth promotion
 
 ### Project validation rescan plan is now replay-oriented
 - `generated/validation/rescan_plan.json` is now schema version 2
@@ -767,7 +767,7 @@
   - typed `replay_inputs` such as `source_document`, `source_ir`, `evidence_ir`, or `semantic_ir`
   - structured `recommended_commands` with executable, args, working directory, display string, and command intent
   - an explicit `automation_status: planned_not_executed`
-- this keeps the plan useful for a future executor without requiring that executor to parse prose or shell strings
+- this keeps the plan useful for explicit executors without requiring them to parse prose or shell strings
 - the command still does not run the rescans itself; it only writes replayable metadata and projects the queue into the continuity docs
 
 ### Rescan plan now has a bounded executor surface
@@ -788,7 +788,18 @@
   - it can rebuild and validate stages
   - a changed validation surface is not automatically classified as improved
   - it cannot let prior memory decide canonical facts
-  - the remaining follow-up is convergence-integrated before/after validation and arbitration before treating a rebuilt artifact as improved
+  - the remaining follow-up is richer changed-outcome arbitration before treating a rebuilt artifact as improved
+
+### Converge can now consume rescan plans after stability
+- `specforge converge <source> --rescan-plan <plan>` now runs the same schema-v2 rescan-plan consumer after the persisted pipeline snapshot stabilizes
+- the convergence hook filters multi-document plans to the current source document key; standalone `rescan-plan` also exposes `--document-key <key>` for the same scoped inspection/execution behavior
+- the hook is opt-in:
+  - without `--rescan-plan`, `converge` behaves as before
+  - with `--rescan-plan`, it dry-runs the queue after stability
+  - with `--rescan-plan` plus `--execute-rescan-plan`, it executes only the same whitelisted in-process rebuild/validate hints accepted by `rescan-plan --execute`
+- `--execute-rescan-plan` without `--rescan-plan <plan>` is rejected so execution cannot be implied by defaults
+- the convergence result remains the stable pre-rescan snapshot; any post-rescan artifact change is reported as `snapshot_changed` and summarized through an arbitration status
+- `changed_requires_validation_review` means the local plan or artifact surface changed and must be inspected by validation/evidence policy before any improvement claim or canonical promotion
 
 ### Fifth landed bounded prior family and semantic-stage arbitration slice
 - the fifth bounded learning family is now real in `crates/specforge/src/ir/prior_memory.rs` and `crates/specforge/src/commands/learn_priors.rs`

@@ -117,3 +117,20 @@ It:
 
 This is the main command when you want a serious local run on a real spec.
 
+After convergence stabilizes, the command can optionally inspect a schema-v2 validation rescan queue:
+
+```bash
+cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target fsm --rescan-plan generated/validation/rescan_plan.json
+```
+
+That is dry-run by default.
+The plan is automatically filtered to the current source document key, so a multi-document validation queue will not execute unrelated document targets from a single `converge` run.
+To execute the same guarded replay hints used by `rescan-plan --execute`, add `--execute-rescan-plan`:
+
+```bash
+cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target fsm --rescan-plan generated/validation/rescan_plan.json --execute-rescan-plan
+```
+
+This remains an arbitration surface, not an auto-fix path.
+The stable convergence snapshot is the convergence result.
+Post-rescan validation changes are reported as `changed_requires_validation_review` until validation and evidence arbitration say they are safe to promote.

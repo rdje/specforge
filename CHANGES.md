@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-04-10 (Converge can consume rescan plans after stability)
+
+### Added: opt-in rescan hook for the fixed-point loop
+- Updated [converge.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/converge.rs) so `specforge converge <source> --rescan-plan <plan>` consumes a schema-v2 validation rescan plan after the persisted pipeline snapshot stabilizes.
+- Added `--execute-rescan-plan` and `--rescan-plan-limit` to keep execution explicit and bounded.
+- Added a `--document-key` filter to standalone `rescan-plan`; the `converge` hook automatically filters multi-document plans to the current source document key.
+- `--execute-rescan-plan` without `--rescan-plan <plan>` is rejected.
+
+### Preserved: convergence is not auto-promotion
+- Updated [rescan_plan.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/rescan_plan.rs) to expose a structured run report reused by `converge`.
+- The convergence summary now reports selected recommendations, changed/no-change validation outcomes, post-rescan snapshot drift, and an arbitration status.
+- The convergence result remains the stable pre-rescan snapshot; `changed_requires_validation_review` is a review signal, not an improvement claim.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml converge_defaults_to_ollama_for_vlm_and_nlp -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml converge -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml rescan_plan -- --nocapture` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-10 (Rescan execution records validation deltas)
 
 ### Added: before/after validation accounting
@@ -12,7 +32,7 @@
 ### Preserved: changed does not mean improved
 - The executor still does not classify a rebuild as improved.
 - It only records whether the validation fingerprint, score, grade, or finding count changed.
-- Convergence-integrated before/after arbitration remains the next step before treating rebuilt artifacts as better canonical truth.
+- The deeper remaining step is promotion-grade arbitration over changed outcomes before treating rebuilt artifacts as better canonical truth.
 
 ### Validation
 - `cargo test --manifest-path Cargo.toml rescan_plan -- --nocapture` -> passed
@@ -30,7 +50,7 @@
 ### Preserved: execution is not truth promotion
 - The executor refuses non-`cargo` executables, non-repository working directories, malformed cargo prefixes, and unsupported command intents.
 - It does not shell out through command display strings.
-- It does not let prior memory decide canonical facts; execution only rebuilds and validates stages, and future convergence-integrated before/after validation still needs to decide whether anything improved.
+- It does not let prior memory decide canonical facts; execution only rebuilds and validates stages, while changed outcomes still need promotion-grade evidence policy before they can count as improved.
 
 ### Documentation
 - Updated the public mdBook command and validation pages with the `rescan-plan` behavior.
@@ -54,7 +74,7 @@
 - `project-validation` still does not execute the command hints.
 - It does not mutate IR beyond the existing validation backannotation behavior.
 - It does not suppress findings, change scoring, decide arbitration, or promote facts from prior memory.
-- The new metadata is meant to let a future convergent rescan loop execute safe args instead of scraping prose or shell strings.
+- The new metadata is what lets explicit rescan consumers execute safe args instead of scraping prose or shell strings.
 
 ### Documentation
 - Updated the public mdBook validation and command pages to describe the replay-oriented plan contract.

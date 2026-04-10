@@ -85,9 +85,12 @@ For example, `EvidenceIR` validation can report `negative_knowledge_prior_matche
 Those exact matches also surface `negative_knowledge_rescan_recommendations`, `negative_knowledge_corroboration_requirements`, and stage-specific `*_negative_knowledge_rescan_guidance` findings.
 That is guidance for targeted rescans and stronger local corroboration, not a correction: the current conflict or residual remains present and still has to be resolved by local evidence and arbitration.
 `project-validation` is the first consumer for this guidance: it projects those findings into the validation snapshot and writes a generated `generated/validation/rescan_plan.json` target list for later rescan/extractor-selection loops.
-That target list is versioned and replay-oriented: each recommendation carries typed replay inputs plus structured command hints for the stage rebuild and follow-up validation, while remaining `planned_not_executed` until a future convergent loop chooses to execute it.
+That target list is versioned and replay-oriented: each recommendation carries typed replay inputs plus structured command hints for the stage rebuild and follow-up validation, while remaining `planned_not_executed` until an explicit rescan consumer chooses to execute it.
 `rescan-plan` is the first explicit consumer for that schema: it dry-runs by default, and `--execute` dispatches only whitelisted stage rebuild/validate commands from the structured args rather than trusting shell text.
+It can also scope a multi-document queue with `--document-key <key>`.
 Execution validates before and after the rebuild and records only neutral changed/no-change status, not an improvement claim.
+`converge --rescan-plan <plan>` now reuses that same consumer after the fixed-point loop stabilizes.
+It filters the queue to the current source document key, can dry-run the queue, or execute it only when `--execute-rescan-plan` is present, and reports changed outcomes as review-required arbitration state rather than promoting facts.
 
 ## Learning depends on validation gates
 
