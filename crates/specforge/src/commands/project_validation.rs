@@ -1,4 +1,5 @@
 use std::cmp::Reverse;
+use std::collections::HashMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -67,9 +68,11 @@ pub(crate) struct ProjectRescanValidationSnapshot {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub(crate) struct ProjectRescanValidationDelta {
     pub(crate) fingerprint_changed: bool,
+    #[serde(default)]
     pub(crate) score_changed: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(crate) score_delta: Option<i32>,
+    #[serde(default)]
     pub(crate) grade_changed: bool,
     pub(crate) finding_count_delta: i64,
     #[serde(default)]
@@ -130,7 +133,12 @@ pub fn run(args: ProjectValidationArgs) -> Result<()> {
             .then_with(|| left.stage.as_str().cmp(right.stage.as_str()))
     });
 
-    let rescan_recommendations = collect_rescan_recommendations(&snapshots, &repo_root);
+    let previous_rescan_plan = read_existing_validation_rescan_plan(&repo_root)?;
+    let mut rescan_recommendations = collect_rescan_recommendations(&snapshots, &repo_root);
+    merge_previous_rescan_execution_state(
+        &mut rescan_recommendations,
+        previous_rescan_plan.as_ref(),
+    );
     let rescan_plan_path =
         write_validation_rescan_plan(&repo_root, rescan_recommendations.clone())?;
     let snapshot_doc_path = repo_root.join(VALIDATION_SNAPSHOT_DOC);
@@ -265,6 +273,7 @@ fn render_validation_snapshot_doc(
     repo_root: &Path,
     rescan_recommendations: &[ProjectRescanRecommendation],
 ) -> String {
+    let rescan_execution_counts = rescan_execution_counts(rescan_recommendations);
     let mut lines = vec![
         "# VALIDATION_SNAPSHOT".to_string(),
         "This file is auto-refreshed by `specforge project-validation <artifact>...`.".to_string(),
@@ -279,6 +288,10 @@ fn render_validation_snapshot_doc(
         format!(
             "- Targeted rescan recommendations: {}",
             rescan_recommendations.len()
+        ),
+        format!(
+            "- Rescan execution summaries: {}",
+            render_rescan_execution_counts(&rescan_execution_counts)
         ),
     ];
 
@@ -335,6 +348,24 @@ fn render_validation_snapshot_doc(
                 "- automation_status: `{}`",
                 recommendation.automation_status
             ));
+            if let Some(summary) = recommendation.execution_summary.as_ref() {
+                lines.push(format!(
+                    "- execution_summary: `{}` (`{}`)",
+                    summary.arbitration_verdict, summary.automation_status
+                ));
+                lines.push(format!(
+                    "- validation_delta: fingerprint_changed `{}`, score_delta `{}`, grade_changed `{}`, finding_count_delta `{}`",
+                    summary.validation_delta.fingerprint_changed,
+                    render_signed_option_i32(summary.validation_delta.score_delta),
+                    summary.validation_delta.grade_changed,
+                    render_signed_i64(summary.validation_delta.finding_count_delta)
+                ));
+                lines.push(format!(
+                    "- finding_delta: added {}; removed {}",
+                    render_inline_code_list(&summary.validation_delta.added_findings),
+                    render_inline_code_list(&summary.validation_delta.removed_findings)
+                ));
+            }
             if recommendation.recommended_commands.is_empty() {
                 lines.push("- recommended_commands: none".to_string());
             } else {
@@ -391,6 +422,7 @@ fn render_live_status_projection(
     repo_root: &Path,
     rescan_recommendations: &[ProjectRescanRecommendation],
 ) -> String {
+    let rescan_execution_counts = rescan_execution_counts(rescan_recommendations);
     let mut lines = vec!["- Latest projected validation snapshot:".to_string()];
     for snapshot in snapshots {
         lines.push(format!(
@@ -409,19 +441,24 @@ fn render_live_status_projection(
             snapshot.display_name, finding_summary
         ));
     }
+    lines.push(format!(
+        "- Rescan execution summaries: {}",
+        render_rescan_execution_counts(&rescan_execution_counts)
+    ));
     lines.push("- Targeted rescan queue:".to_string());
     if rescan_recommendations.is_empty() {
         lines.push("  - none".to_string());
     } else {
         for recommendation in rescan_recommendations.iter().take(8) {
             lines.push(format!(
-                "  - `{}` (`{}`): `{}` for {} ({} command hint(s), `{}`)",
+                "  - `{}` (`{}`): `{}` for {} ({} command hint(s), `{}`{})",
                 recommendation.display_name,
                 recommendation.stage,
                 recommendation.extractor_lane,
                 render_inline_code_list(&recommendation.related_ids),
                 recommendation.recommended_commands.len(),
-                recommendation.automation_status
+                recommendation.automation_status,
+                render_execution_summary_inline(recommendation.execution_summary.as_ref())
             ));
         }
         if rescan_recommendations.len() > 8 {
@@ -453,6 +490,62 @@ fn upsert_live_status_projection(
     )?;
     fs::write(live_status_path, updated)?;
     Ok(())
+}
+
+fn read_existing_validation_rescan_plan(
+    repo_root: &Path,
+) -> Result<Option<ProjectRescanPlanRecord>> {
+    let plan_path = repo_root.join(VALIDATION_RESCAN_PLAN_PATH);
+    if !plan_path.exists() {
+        return Ok(None);
+    }
+
+    let plan: ProjectRescanPlanRecord = serde_json::from_str(&fs::read_to_string(&plan_path)?)?;
+    if plan.schema_version != 2 {
+        return Ok(None);
+    }
+
+    Ok(Some(plan))
+}
+
+fn merge_previous_rescan_execution_state(
+    recommendations: &mut [ProjectRescanRecommendation],
+    previous_plan: Option<&ProjectRescanPlanRecord>,
+) {
+    let Some(previous_plan) = previous_plan else {
+        return;
+    };
+    let previous_by_key = previous_plan
+        .recommendations
+        .iter()
+        .filter(|recommendation| {
+            recommendation.automation_status != "planned_not_executed"
+                || recommendation.execution_summary.is_some()
+        })
+        .map(|recommendation| (rescan_recommendation_key(recommendation), recommendation))
+        .collect::<HashMap<_, _>>();
+
+    for recommendation in recommendations {
+        if let Some(previous) = previous_by_key.get(&rescan_recommendation_key(recommendation)) {
+            recommendation.automation_status = previous.automation_status.clone();
+            recommendation.execution_summary = previous.execution_summary.clone();
+        }
+    }
+}
+
+fn rescan_recommendation_key(recommendation: &ProjectRescanRecommendation) -> String {
+    let mut related_ids = recommendation.related_ids.clone();
+    related_ids.sort();
+    related_ids.dedup();
+    [
+        recommendation.document_key.as_str(),
+        recommendation.stage.as_str(),
+        recommendation.artifact_path.as_str(),
+        recommendation.finding_id.as_str(),
+        recommendation.extractor_lane.as_str(),
+        &related_ids.join("\u{1f}"),
+    ]
+    .join("\u{1e}")
 }
 
 fn write_validation_rescan_plan(
@@ -659,6 +752,89 @@ fn render_replay_input_list(values: &[ProjectRescanReplayInput]) -> String {
             .map(|value| format!("`{}:{}`", value.input_kind, value.path))
             .collect::<Vec<_>>()
             .join(", ")
+    }
+}
+
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+struct RescanExecutionCounts {
+    total: usize,
+    review_required: usize,
+    possible_improvement: usize,
+    regression: usize,
+    neutral_change: usize,
+    no_change: usize,
+}
+
+fn rescan_execution_counts(
+    recommendations: &[ProjectRescanRecommendation],
+) -> RescanExecutionCounts {
+    let mut counts = RescanExecutionCounts::default();
+    for summary in recommendations
+        .iter()
+        .filter_map(|recommendation| recommendation.execution_summary.as_ref())
+    {
+        counts.total += 1;
+        if summary.arbitration_verdict.ends_with("_review_required") {
+            counts.review_required += 1;
+        }
+        match summary.arbitration_verdict.as_str() {
+            "possible_improvement_review_required" => counts.possible_improvement += 1,
+            "regression_review_required" => counts.regression += 1,
+            "neutral_change_review_required" => counts.neutral_change += 1,
+            "validated_no_change" => counts.no_change += 1,
+            _ => {}
+        }
+    }
+    counts
+}
+
+fn render_rescan_execution_counts(counts: &RescanExecutionCounts) -> String {
+    if counts.total == 0 {
+        "0".to_string()
+    } else {
+        format!(
+            "{} total; {} review required (possible improvement: {}, regression: {}, neutral change: {}); {} no-change",
+            counts.total,
+            counts.review_required,
+            counts.possible_improvement,
+            counts.regression,
+            counts.neutral_change,
+            counts.no_change
+        )
+    }
+}
+
+fn render_execution_summary_inline(summary: Option<&ProjectRescanExecutionSummary>) -> String {
+    let Some(summary) = summary else {
+        return String::new();
+    };
+    format!(
+        ", verdict `{}`, score_delta `{}`, finding_count_delta `{}`",
+        summary.arbitration_verdict,
+        render_signed_option_i32(summary.validation_delta.score_delta),
+        render_signed_i64(summary.validation_delta.finding_count_delta)
+    )
+}
+
+fn render_signed_option_i32(value: Option<i32>) -> String {
+    value
+        .map(render_signed_i32)
+        .unwrap_or_else(|| "n/a".to_string())
+}
+
+fn render_signed_i32(value: i32) -> String {
+    if value > 0 {
+        format!("+{value}")
+    } else {
+        value.to_string()
+    }
+}
+
+fn render_signed_i64(value: i64) -> String {
+    if value > 0 {
+        format!("+{value}")
+    } else {
+        value.to_string()
     }
 }
 
@@ -897,7 +1073,7 @@ mod tests {
         };
         let snapshots = vec![snapshot];
 
-        let recommendations = collect_rescan_recommendations(&snapshots, repo_root);
+        let mut recommendations = collect_rescan_recommendations(&snapshots, repo_root);
         assert_eq!(recommendations.len(), 1);
         assert_eq!(
             recommendations[0].related_ids,
@@ -938,6 +1114,12 @@ mod tests {
             "validate_current_artifact"
         );
         assert_eq!(recommendations[0].automation_status, "planned_not_executed");
+        recommendations[0].automation_status = "executed_validated_changed".to_string();
+        recommendations[0].execution_summary = Some(execution_summary(
+            "possible_improvement_review_required",
+            Some(5),
+            -1,
+        ));
 
         let snapshot_doc = render_validation_snapshot_doc(&snapshots, repo_root, &recommendations);
         assert!(snapshot_doc.contains("## Targeted Rescan Recommendations"));
@@ -945,12 +1127,28 @@ mod tests {
         assert!(snapshot_doc.contains("temporal_conflict_0001"));
         assert!(snapshot_doc.contains("recommended_commands"));
         assert!(snapshot_doc.contains("generated/semantic_ir/doc/semantic_ir.json"));
+        assert!(snapshot_doc.contains(
+            "- Rescan execution summaries: 1 total; 1 review required (possible improvement: 1, regression: 0, neutral change: 0); 0 no-change"
+        ));
+        assert!(snapshot_doc.contains(
+            "- execution_summary: `possible_improvement_review_required` (`executed_validated_changed`)"
+        ));
+        assert!(snapshot_doc.contains(
+            "- validation_delta: fingerprint_changed `true`, score_delta `+5`, grade_changed `true`, finding_count_delta `-1`"
+        ));
+        assert!(snapshot_doc.contains("- finding_delta: added none; removed `finding_b`"));
 
         let live_projection =
             render_live_status_projection(&snapshots, repo_root, &recommendations);
         assert!(live_projection.contains("- Targeted rescan queue:"));
         assert!(live_projection.contains("intent_ir_canonical_surface_corroboration"));
         assert!(live_projection.contains("2 command hint(s)"));
+        assert!(live_projection.contains(
+            "- Rescan execution summaries: 1 total; 1 review required (possible improvement: 1, regression: 0, neutral change: 0); 0 no-change"
+        ));
+        assert!(live_projection.contains(
+            "verdict `possible_improvement_review_required`, score_delta `+5`, finding_count_delta `-1`"
+        ));
 
         let plan_path = write_validation_rescan_plan(repo_root, recommendations)?;
         let plan = fs::read_to_string(plan_path)?;
@@ -962,5 +1160,120 @@ mod tests {
         assert!(plan.contains("\"rebuild_intent_ir\""));
 
         Ok(())
+    }
+
+    #[test]
+    fn project_validation_preserves_matching_rescan_execution_summary() -> Result<()> {
+        let tempdir = tempdir()?;
+        let repo_root = tempdir.path();
+        let artifact_path = repo_root.join("generated/intent_ir/doc/intent_ir.json");
+        let semantic_ir_path = repo_root.join("generated/semantic_ir/doc/semantic_ir.json");
+        let snapshot = ProjectedArtifactSnapshot {
+            document_key: "doc".to_string(),
+            display_name: "Spec.pdf".to_string(),
+            stage: IrStage::IntentIr,
+            artifact_path,
+            replay_inputs: vec![ProjectedReplayInput {
+                input_kind: "semantic_ir",
+                path: semantic_ir_path,
+            }],
+            report: ValidationReportRecord {
+                report_id: "validation_intent_ir_test".to_string(),
+                validated_stage: IrStage::IntentIr,
+                artifact_fingerprint: "fingerprint".to_string(),
+                summary: "IntentIR validation with rescan guidance".to_string(),
+                overall_score: Some(85),
+                grade: Some("GOOD".to_string()),
+                metrics: Vec::new(),
+                findings: vec![ValidationFindingRecord {
+                    finding_id: "intent_negative_knowledge_rescan_guidance".to_string(),
+                    severity: ValidationFindingSeverity::Info,
+                    category: "rescan_guidance".to_string(),
+                    summary: "known failure shape needs rescan".to_string(),
+                    related_ids: vec!["temporal_conflict_0001".to_string()],
+                }],
+            },
+        };
+        let snapshots = vec![snapshot];
+        let mut previous_recommendations = collect_rescan_recommendations(&snapshots, repo_root);
+        previous_recommendations[0].automation_status = "executed_validated_changed".to_string();
+        previous_recommendations[0].execution_summary = Some(execution_summary(
+            "regression_review_required",
+            Some(-10),
+            1,
+        ));
+        write_validation_rescan_plan(repo_root, previous_recommendations)?;
+
+        let previous_plan = read_existing_validation_rescan_plan(repo_root)?;
+        let mut refreshed_recommendations = collect_rescan_recommendations(&snapshots, repo_root);
+        merge_previous_rescan_execution_state(
+            &mut refreshed_recommendations,
+            previous_plan.as_ref(),
+        );
+
+        assert_eq!(
+            refreshed_recommendations[0].automation_status,
+            "executed_validated_changed"
+        );
+        assert_eq!(
+            refreshed_recommendations[0]
+                .execution_summary
+                .as_ref()
+                .expect("execution summary")
+                .arbitration_verdict,
+            "regression_review_required"
+        );
+
+        Ok(())
+    }
+
+    fn execution_summary(
+        arbitration_verdict: &str,
+        score_delta: Option<i32>,
+        finding_count_delta: i64,
+    ) -> ProjectRescanExecutionSummary {
+        ProjectRescanExecutionSummary {
+            automation_status: "executed_validated_changed".to_string(),
+            arbitration_verdict: arbitration_verdict.to_string(),
+            before_validation: ProjectRescanValidationSnapshot {
+                artifact_fingerprint: "before".to_string(),
+                overall_score: Some(80),
+                grade: Some("GOOD".to_string()),
+                finding_count: 2,
+                finding_ids: vec!["finding_a".to_string(), "finding_b".to_string()],
+            },
+            after_validation: ProjectRescanValidationSnapshot {
+                artifact_fingerprint: "after".to_string(),
+                overall_score: score_delta.map(|delta| (80 + delta) as u32),
+                grade: Some("EXCELLENT".to_string()),
+                finding_count: (2 + finding_count_delta) as usize,
+                finding_ids: if finding_count_delta < 0 {
+                    vec!["finding_a".to_string()]
+                } else {
+                    vec![
+                        "finding_a".to_string(),
+                        "finding_b".to_string(),
+                        "finding_c".to_string(),
+                    ]
+                },
+            },
+            validation_delta: ProjectRescanValidationDelta {
+                fingerprint_changed: true,
+                score_changed: score_delta != Some(0),
+                score_delta,
+                grade_changed: true,
+                finding_count_delta,
+                added_findings: if finding_count_delta > 0 {
+                    vec!["finding_c".to_string()]
+                } else {
+                    Vec::new()
+                },
+                removed_findings: if finding_count_delta < 0 {
+                    vec!["finding_b".to_string()]
+                } else {
+                    Vec::new()
+                },
+            },
+        }
     }
 }

@@ -183,7 +183,7 @@
   - `specforge rescan-plan [--execute]` now consumes that schema-v2 plan through a dry-run-by-default, whitelisted in-process executor surface with before/after validation changed/no-change status and persisted execution summaries
 - remaining:
   - extend validation into the upcoming semantic-truthfulness surfaces (temporal rules, arbitration/conflict records, and KG-quality benchmarks)
-  - project rescan execution-summary verdicts into the review-facing validation snapshot and harden promotion policy around current-document evidence gates
+  - harden promotion policy around rescan execution-summary verdicts and current-document evidence gates
   - keep adapter validation (SystemVerilog/Verilog/VHDL targets) as horizon work until the semantic pipeline is materially harder to fool
 
 ### R8 SourceIR SOTA capture (Tier 1 of EXTRACTION_ARCHITECTURE.md)

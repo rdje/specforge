@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-04-10 (Project validation projects rescan execution summaries)
+
+### Added: review-facing rescan execution projection
+- Updated [project_validation.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/project_validation.rs) so `project-validation` preserves matching executed rescan summaries from the existing local schema-v2 plan before refreshing `generated/validation/rescan_plan.json`.
+- `VALIDATION_SNAPSHOT.md` now projects rescan execution-summary counts and per-recommendation verdict/delta details when they exist.
+- The managed live-status validation block now includes the same review-required counts and inline verdict/delta summary for queued recommendations.
+
+### Preserved: refreshes do not erase review state
+- Matching is keyed on document, stage, artifact path, finding id, extractor lane, and related ids.
+- The refresh carries forward `automation_status` plus `execution_summary` only for matching recommendations, so stale unrelated execution state does not leak into fresh rescan targets.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml project_validation -- --nocapture` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-10 (Rescan execution persists arbitration summaries)
 
 ### Added: validation-backed execution summaries

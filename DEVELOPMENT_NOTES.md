@@ -810,6 +810,13 @@
 - `converge --rescan-plan <plan>` now rolls those verdicts into review-required counters so the summary distinguishes possible improvement from regression or neutral artifact drift
 - this is still not promotion: even favorable validation deltas need current-document evidence review before they can become canonical truth
 
+### Project validation now projects rescan execution summaries
+- `project-validation` now reads the existing local schema-v2 rescan plan before refreshing it and preserves matching `automation_status` / `execution_summary` entries
+- matching uses document key, stage, artifact path, finding id, extractor lane, and related ids so stale execution state does not attach to unrelated fresh recommendations
+- `VALIDATION_SNAPSHOT.md` now shows rescan execution-summary counts plus per-recommendation verdict, automation status, validation delta, and added/removed finding ids when execution summaries exist
+- the managed live-status validation block now carries the same review-required count summary and inline verdict/delta detail for the targeted rescan queue
+- this makes changed-outcome review possible from tracked docs without requiring a human or future agent to open raw generated JSON first
+
 ### Fifth landed bounded prior family and semantic-stage arbitration slice
 - the fifth bounded learning family is now real in `crates/specforge/src/ir/prior_memory.rs` and `crates/specforge/src/commands/learn_priors.rs`
 - `specforge learn-priors` now harvests semantic modality-reliability priors from decisive, non-alias-dependent semantic consensus plus the supporting source kinds that carried that consensus

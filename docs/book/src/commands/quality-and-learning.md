@@ -52,6 +52,7 @@ The plan still does not mutate IR, suppress findings, run rescans automatically,
 It only tells downstream loops which current conflict or residual ids deserve targeted rechecking and stronger local corroboration.
 
 Use it when the live baseline should be updated, not just an individual artifact.
+If the existing local rescan plan already contains executed recommendation summaries, the refresh preserves matching entries and projects their verdict/delta summary into the validation snapshot and live-status projection.
 
 ## `rescan-plan`
 
