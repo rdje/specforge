@@ -61,8 +61,9 @@ That does not rewrite `SourceIR` and does not create semantic facts by itself.
 Negative-knowledge priors are cautionary memory.
 They also have bounded validation consumers: if current `EvidenceIR` already contains a local signal-semantic conflict whose pattern matches learned negative knowledge, validation may report a caution finding and increment `negative_knowledge_prior_matches`.
 The same caution surface now extends into `SemanticIR` and `IntentIR` validation for carried signal-semantic conflicts, temporal value conflicts, interface-signal conflicts, signal-connectivity conflicts, and residual decision packet classes.
+Validation also emits machine-readable rescan/corroboration hooks for those exact matches through `negative_knowledge_rescan_recommendations`, `negative_knowledge_corroboration_requirements`, and stage-specific `*_negative_knowledge_rescan_guidance` findings.
 That does not suppress conflicts, change arbitration, remove residuals, or create canonical facts.
-It only tells users that the current failure shape is one the corpus memory has seen before.
+It only tells users and downstream tooling that the current failure shape is one the corpus memory has seen before and should be targeted for stronger local corroboration before canonical promotion.
 
 That is why `specforge` can get smarter over time without collapsing into cross-document contamination.
 

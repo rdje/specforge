@@ -56,6 +56,7 @@ Unsafe forced winners are worse than honest contestation.
 
 If a carried conflict or residual packet shape matches learned negative knowledge, `SemanticIR` validation may report `negative_knowledge_prior_matches`.
 That is a caution surface only.
+It can also emit `semantic_negative_knowledge_rescan_guidance` plus rescan/corroboration metrics so later tooling knows which current surfaces deserve targeted re-extraction.
 It does not remove the current conflict, remove the residual, change arbitration, or promote a fact from memory.
 
 ### Infrastructure is special

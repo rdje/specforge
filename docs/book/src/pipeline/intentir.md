@@ -86,7 +86,8 @@ For `specforge`, honest incompleteness is better than fabricated certainty.
 
 Validation may also attach negative-knowledge caution to this surface.
 If a carried conflict or residual packet class matches a learned corpus-memory failure pattern, `IntentIR` validation can report `negative_knowledge_prior_matches`.
-That is not a canonical correction; it is a diagnostic reminder that the current artifact is showing a known failure shape.
+It can also report `intent_negative_knowledge_rescan_guidance` plus rescan/corroboration metrics, giving downstream loops a deterministic target list for stronger local rechecking.
+That is not a canonical correction; it is a diagnostic and routing reminder that the current artifact is showing a known failure shape.
 
 ## Why users should care about this stage
 

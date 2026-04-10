@@ -82,7 +82,8 @@ It is part of the product philosophy.
 Prior memory can make some of those conflict surfaces more informative, but it must not erase them.
 For example, `EvidenceIR` validation can report `negative_knowledge_prior_matches` when a current signal-semantic conflict matches a learned caution pattern.
 `SemanticIR` and `IntentIR` validation can report the same metric when carried conflict or residual packet patterns match learned negative knowledge.
-That is a diagnostic signal only: the current conflict or residual remains present and still has to be resolved by local evidence and arbitration.
+Those exact matches also surface `negative_knowledge_rescan_recommendations`, `negative_knowledge_corroboration_requirements`, and stage-specific `*_negative_knowledge_rescan_guidance` findings.
+That is guidance for targeted rescans and stronger local corroboration, not a correction: the current conflict or residual remains present and still has to be resolved by local evidence and arbitration.
 
 ## Learning depends on validation gates
 

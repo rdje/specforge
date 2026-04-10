@@ -141,6 +141,28 @@ fn finding(
     }
 }
 
+fn push_negative_knowledge_rescan_guidance(
+    findings: &mut Vec<ValidationFindingRecord>,
+    finding_id: &str,
+    stage_label: &str,
+    related_ids: &[String],
+) {
+    if related_ids.is_empty() {
+        return;
+    }
+
+    findings.push(finding(
+        finding_id,
+        ValidationFindingSeverity::Info,
+        "rescan_guidance",
+        format!(
+            "{} negative-knowledge prior match(es) in {stage_label} should be routed to targeted rescans and require stronger local corroboration before canonical promotion; prior memory did not suppress or rewrite current evidence",
+            related_ids.len()
+        ),
+        related_ids.to_vec(),
+    ));
+}
+
 fn load_prior_memory_for_validation(prior_memory_path: Option<&Path>) -> Option<CorpusMemory> {
     let prior_memory_path = prior_memory_path?;
     if !prior_memory_path.exists() {
@@ -1391,6 +1413,14 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         "  matched_signal_semantic_conflict_patterns: {}",
         negative_knowledge_prior_matches.len()
     );
+    println!(
+        "  rescan_recommendations: {}",
+        negative_knowledge_prior_matches.len()
+    );
+    println!(
+        "  stronger_corroboration_requirements: {}",
+        negative_knowledge_prior_matches.len()
+    );
 
     let normative_count = classes.get("normative_statement").copied().unwrap_or(0);
     let mut findings = Vec::new();
@@ -1480,6 +1510,12 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             negative_knowledge_prior_matches.clone(),
         ));
     }
+    push_negative_knowledge_rescan_guidance(
+        &mut findings,
+        "evidence_negative_knowledge_rescan_guidance",
+        "EvidenceIR",
+        &negative_knowledge_prior_matches,
+    );
 
     let report = ValidationReportRecord {
         report_id: format!("validation_evidence_ir_{artifact_fingerprint}"),
@@ -1540,6 +1576,14 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             ),
             metric(
                 "negative_knowledge_prior_matches",
+                negative_knowledge_prior_matches.len().to_string(),
+            ),
+            metric(
+                "negative_knowledge_rescan_recommendations",
+                negative_knowledge_prior_matches.len().to_string(),
+            ),
+            metric(
+                "negative_knowledge_corroboration_requirements",
                 negative_knowledge_prior_matches.len().to_string(),
             ),
             metric(
@@ -1940,6 +1984,14 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         "  matched_carried_conflict_or_residual_patterns: {}",
         negative_knowledge_prior_matches.len()
     );
+    println!(
+        "  rescan_recommendations: {}",
+        negative_knowledge_prior_matches.len()
+    );
+    println!(
+        "  stronger_corroboration_requirements: {}",
+        negative_knowledge_prior_matches.len()
+    );
 
     let missing_producer_signals = protocol_missing_producer_signal_names(&ir.signal_connectivity);
     let infrastructure_missing_producer_signals =
@@ -2270,6 +2322,12 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             negative_knowledge_prior_matches.clone(),
         ));
     }
+    push_negative_knowledge_rescan_guidance(
+        &mut findings,
+        "semantic_negative_knowledge_rescan_guidance",
+        "SemanticIR",
+        &negative_knowledge_prior_matches,
+    );
 
     let report = ValidationReportRecord {
         report_id: format!("validation_semantic_ir_{artifact_fingerprint}"),
@@ -2483,6 +2541,14 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             ),
             metric(
                 "negative_knowledge_prior_matches",
+                negative_knowledge_prior_matches.len().to_string(),
+            ),
+            metric(
+                "negative_knowledge_rescan_recommendations",
+                negative_knowledge_prior_matches.len().to_string(),
+            ),
+            metric(
+                "negative_knowledge_corroboration_requirements",
                 negative_knowledge_prior_matches.len().to_string(),
             ),
         ],
@@ -2915,6 +2981,14 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         "  matched_carried_conflict_or_residual_patterns: {}",
         negative_knowledge_prior_matches.len()
     );
+    println!(
+        "  rescan_recommendations: {}",
+        negative_knowledge_prior_matches.len()
+    );
+    println!(
+        "  stronger_corroboration_requirements: {}",
+        negative_knowledge_prior_matches.len()
+    );
 
     let missing_producer_signals = protocol_missing_producer_signal_names(&ir.signal_connectivity);
     let infrastructure_missing_producer_signals =
@@ -3254,6 +3328,12 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             negative_knowledge_prior_matches.clone(),
         ));
     }
+    push_negative_knowledge_rescan_guidance(
+        &mut findings,
+        "intent_negative_knowledge_rescan_guidance",
+        "IntentIR",
+        &negative_knowledge_prior_matches,
+    );
 
     let report = ValidationReportRecord {
         report_id: format!("validation_intent_ir_{artifact_fingerprint}"),
@@ -3468,6 +3548,14 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             ),
             metric(
                 "negative_knowledge_prior_matches",
+                negative_knowledge_prior_matches.len().to_string(),
+            ),
+            metric(
+                "negative_knowledge_rescan_recommendations",
+                negative_knowledge_prior_matches.len().to_string(),
+            ),
+            metric(
+                "negative_knowledge_corroboration_requirements",
                 negative_knowledge_prior_matches.len().to_string(),
             ),
             metric("overall_score", format!("{score:.0}")),
@@ -3904,9 +3992,21 @@ mod tests {
             metric_value(&report, "negative_knowledge_prior_matches"),
             Some("0")
         );
+        assert_eq!(
+            metric_value(&report, "negative_knowledge_rescan_recommendations"),
+            Some("0")
+        );
+        assert_eq!(
+            metric_value(&report, "negative_knowledge_corroboration_requirements"),
+            Some("0")
+        );
         assert!(!has_finding(
             &report,
             "evidence_negative_knowledge_prior_matches"
+        ));
+        assert!(!has_finding(
+            &report,
+            "evidence_negative_knowledge_rescan_guidance"
         ));
 
         Ok(())
@@ -4008,6 +4108,14 @@ mod tests {
             metric_value(&report, "negative_knowledge_prior_matches"),
             Some("1")
         );
+        assert_eq!(
+            metric_value(&report, "negative_knowledge_rescan_recommendations"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&report, "negative_knowledge_corroboration_requirements"),
+            Some("1")
+        );
         assert!(has_finding(
             &report,
             "evidence_signal_semantic_conflicts_present"
@@ -4015,6 +4123,10 @@ mod tests {
         assert!(has_finding(
             &report,
             "evidence_negative_knowledge_prior_matches"
+        ));
+        assert!(has_finding(
+            &report,
+            "evidence_negative_knowledge_rescan_guidance"
         ));
 
         Ok(())
@@ -6166,6 +6278,20 @@ mod tests {
             metric_value(&semantic_report, "negative_knowledge_prior_matches"),
             Some("1")
         );
+        assert_eq!(
+            metric_value(
+                &semantic_report,
+                "negative_knowledge_rescan_recommendations"
+            ),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(
+                &semantic_report,
+                "negative_knowledge_corroboration_requirements"
+            ),
+            Some("1")
+        );
         assert!(has_finding(
             &semantic_report,
             "semantic_temporal_conflicts_present"
@@ -6173,6 +6299,10 @@ mod tests {
         assert!(has_finding(
             &semantic_report,
             "semantic_negative_knowledge_prior_matches"
+        ));
+        assert!(has_finding(
+            &semantic_report,
+            "semantic_negative_knowledge_rescan_guidance"
         ));
 
         let intent_ir = IntentIr::build(
@@ -6191,6 +6321,17 @@ mod tests {
             metric_value(&intent_report, "negative_knowledge_prior_matches"),
             Some("1")
         );
+        assert_eq!(
+            metric_value(&intent_report, "negative_knowledge_rescan_recommendations"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(
+                &intent_report,
+                "negative_knowledge_corroboration_requirements"
+            ),
+            Some("1")
+        );
         assert!(has_finding(
             &intent_report,
             "intent_temporal_conflicts_present"
@@ -6198,6 +6339,10 @@ mod tests {
         assert!(has_finding(
             &intent_report,
             "intent_negative_knowledge_prior_matches"
+        ));
+        assert!(has_finding(
+            &intent_report,
+            "intent_negative_knowledge_rescan_guidance"
         ));
 
         Ok(())
@@ -6256,6 +6401,20 @@ mod tests {
             metric_value(&semantic_report, "negative_knowledge_prior_matches"),
             Some("1")
         );
+        assert_eq!(
+            metric_value(
+                &semantic_report,
+                "negative_knowledge_rescan_recommendations"
+            ),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(
+                &semantic_report,
+                "negative_knowledge_corroboration_requirements"
+            ),
+            Some("1")
+        );
         assert!(has_finding(
             &semantic_report,
             "semantic_residual_decisions_present"
@@ -6263,6 +6422,10 @@ mod tests {
         assert!(has_finding(
             &semantic_report,
             "semantic_negative_knowledge_prior_matches"
+        ));
+        assert!(has_finding(
+            &semantic_report,
+            "semantic_negative_knowledge_rescan_guidance"
         ));
 
         let intent_ir = IntentIr::build(
@@ -6282,6 +6445,17 @@ mod tests {
             metric_value(&intent_report, "negative_knowledge_prior_matches"),
             Some("1")
         );
+        assert_eq!(
+            metric_value(&intent_report, "negative_knowledge_rescan_recommendations"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(
+                &intent_report,
+                "negative_knowledge_corroboration_requirements"
+            ),
+            Some("1")
+        );
         assert!(has_finding(
             &intent_report,
             "intent_residual_decisions_present"
@@ -6289,6 +6463,10 @@ mod tests {
         assert!(has_finding(
             &intent_report,
             "intent_negative_knowledge_prior_matches"
+        ));
+        assert!(has_finding(
+            &intent_report,
+            "intent_negative_knowledge_rescan_guidance"
         ));
 
         Ok(())

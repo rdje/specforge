@@ -70,6 +70,7 @@ It is allowed to say:
 
 It is not supposed to decide the final canonical meaning of the whole interface.
 Likewise, negative-knowledge priors may make validation more alert to a repeated evidence-stage conflict pattern, but they do not suppress the current evidence or decide the conflict.
+When that happens, validation can also mark the matched current conflict as rescan/corroboration guidance through `evidence_negative_knowledge_rescan_guidance`.
 Later `SemanticIR` and `IntentIR` validation carry the same caution idea forward for repeated conflict and residual shapes.
 
 ## Typical evidence-level failure modes

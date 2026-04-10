@@ -43,7 +43,8 @@
     "validation": {
       "evidence": {
         "finding_ids_exclude": [
-          "evidence_negative_knowledge_prior_matches"
+          "evidence_negative_knowledge_prior_matches",
+          "evidence_negative_knowledge_rescan_guidance"
         ],
         "metric_values": {
           "signal_semantic_hints": "2",
@@ -53,6 +54,8 @@
           "signal_semantic_hints_from_visual_captions": "1",
           "signal_semantic_hints_from_vlm_timing_annotations": "1",
           "negative_knowledge_prior_matches": "0",
+          "negative_knowledge_rescan_recommendations": "0",
+          "negative_knowledge_corroboration_requirements": "0",
           "timing_diagram_extractions": "1"
         }
       },
@@ -62,7 +65,8 @@
           "semantic_non_decisive_semantic_arbitration_present"
         ],
         "finding_ids_exclude": [
-          "semantic_negative_knowledge_prior_matches"
+          "semantic_negative_knowledge_prior_matches",
+          "semantic_negative_knowledge_rescan_guidance"
         ],
         "metric_values": {
           "signal_semantic_conflicts": "1",
@@ -70,7 +74,9 @@
           "with_multi_source_semantic_grounding": "0",
           "with_cross_modality_semantic_grounding": "0",
           "with_visual_semantic_grounding": "1",
-          "negative_knowledge_prior_matches": "0"
+          "negative_knowledge_prior_matches": "0",
+          "negative_knowledge_rescan_recommendations": "0",
+          "negative_knowledge_corroboration_requirements": "0"
         }
       },
       "intent": {
@@ -79,7 +85,8 @@
           "intent_non_decisive_semantic_arbitration_present"
         ],
         "finding_ids_exclude": [
-          "intent_negative_knowledge_prior_matches"
+          "intent_negative_knowledge_prior_matches",
+          "intent_negative_knowledge_rescan_guidance"
         ],
         "metric_values": {
           "signal_semantic_conflicts": "1",
@@ -87,7 +94,9 @@
           "with_multi_source_semantic_grounding": "0",
           "with_cross_modality_semantic_grounding": "0",
           "with_visual_semantic_grounding": "1",
-          "negative_knowledge_prior_matches": "0"
+          "negative_knowledge_prior_matches": "0",
+          "negative_knowledge_rescan_recommendations": "0",
+          "negative_knowledge_corroboration_requirements": "0"
         }
       }
     }

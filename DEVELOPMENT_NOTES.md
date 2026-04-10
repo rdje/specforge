@@ -736,6 +736,19 @@
   - it does not create facts from prior memory
 - the tracked `negative_knowledge_prior_guided_temporal_conflict_caution_gold` fixture locks repeated temporal contradiction caution behavior, and `negative_knowledge_prior_guided_residual_caution_gold` locks repeated residual packet caution behavior
 
+### Negative-knowledge now emits rescan/corroboration guidance
+- validation now has the first bounded "beyond reporting" hook for negative-knowledge priors
+- exact current-document prior matches still produce the existing `negative_knowledge_prior_matches` caution metric, but they also now emit:
+  - `negative_knowledge_rescan_recommendations`
+  - `negative_knowledge_corroboration_requirements`
+  - stage-specific `*_negative_knowledge_rescan_guidance` findings
+- the guidance is intentionally routing metadata, not an authority channel:
+  - it gives downstream rescan/extractor-selection loops a deterministic related-id list
+  - it says the current surface should be rechecked with stronger local corroboration before any canonical promotion
+  - it still does not mutate artifacts, change score, rewrite arbitration, remove conflicts, remove residuals, or create facts from prior memory
+- this is the first safe bridge from "the KG remembers a known failure shape" to "the next pass can choose where to spend extraction effort"
+- the remaining follow-up is to make an actual rescan/extractor-selection consumer read these validation findings instead of only surfacing them in validation output
+
 ### Fifth landed bounded prior family and semantic-stage arbitration slice
 - the fifth bounded learning family is now real in `crates/specforge/src/ir/prior_memory.rs` and `crates/specforge/src/commands/learn_priors.rs`
 - `specforge learn-priors` now harvests semantic modality-reliability priors from decisive, non-alias-dependent semantic consensus plus the supporting source kinds that carried that consensus

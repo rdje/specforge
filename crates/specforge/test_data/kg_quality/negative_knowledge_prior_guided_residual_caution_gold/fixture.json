@@ -27,19 +27,25 @@
       "semantic": {
         "finding_ids_include": [
           "semantic_residual_decisions_present",
-          "semantic_negative_knowledge_prior_matches"
+          "semantic_negative_knowledge_prior_matches",
+          "semantic_negative_knowledge_rescan_guidance"
         ],
         "metric_values": {
-          "negative_knowledge_prior_matches": "1"
+          "negative_knowledge_prior_matches": "1",
+          "negative_knowledge_rescan_recommendations": "1",
+          "negative_knowledge_corroboration_requirements": "1"
         }
       },
       "intent": {
         "finding_ids_include": [
           "intent_residual_decisions_present",
-          "intent_negative_knowledge_prior_matches"
+          "intent_negative_knowledge_prior_matches",
+          "intent_negative_knowledge_rescan_guidance"
         ],
         "metric_values": {
-          "negative_knowledge_prior_matches": "1"
+          "negative_knowledge_prior_matches": "1",
+          "negative_knowledge_rescan_recommendations": "1",
+          "negative_knowledge_corroboration_requirements": "1"
         }
       }
     }

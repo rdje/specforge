@@ -1,5 +1,30 @@
 # CHANGES
 
+## 2026-04-10 (Negative-knowledge now routes rescan/corroboration guidance)
+
+### Added: machine-readable guidance from known failure shapes
+- Updated [validate.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/validate.rs) so exact negative-knowledge prior matches now emit `negative_knowledge_rescan_recommendations` and `negative_knowledge_corroboration_requirements`.
+- Validation now also emits stage-specific `*_negative_knowledge_rescan_guidance` findings for `EvidenceIR`, `SemanticIR`, and `IntentIR`, with the matched current conflict/residual ids preserved as `related_ids`.
+- This gives future rescan/extractor-selection loops a deterministic routing hook instead of only a human-readable caution.
+
+### Preserved: guidance is not correction
+- The new guidance still requires a current-document conflict or residual before any prior can match.
+- It does not mutate artifacts.
+- It does not suppress conflict/residual findings.
+- It does not change scoring, arbitration, or canonical promotion.
+- It does not create canonical facts from prior memory.
+
+### Added: unit, fixture, and docs coverage
+- Extended negative-knowledge validation regressions so rescan/corroboration metrics and findings are locked for evidence, semantic, intent, temporal-conflict, and residual-decision matches.
+- Updated KG-quality fixtures so prior-guided cases require the new guidance while the no-prior semantic-conflict fixture excludes it and expects zero guidance metrics.
+- Updated the public mdBook corpus-memory, validation, and pipeline chapters so this routing hook is documented as end-user-visible behavior.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml negative_knowledge -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml kg_bench_runs_tracked_fixtures -- --nocapture` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-10 (Explicit infrastructure distribution recovery stays bounded)
 
 ### Added: locally grounded clock/reset distribution evidence

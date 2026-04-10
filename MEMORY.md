@@ -56,6 +56,11 @@
 - `EvidenceIR` now has the first bounded visual-motif prior consumer too: when a current visual asset is still `DiagramKind::Unknown`, its local caption can match a unique learned visual-motif prior and gain an explicit `Classification` observation plus an effective normative visual role, without mutating `SourceIR` or synthesizing canonical semantic facts
 - `EvidenceIR` validation now has the first bounded negative-knowledge prior consumer too: if a current local signal-semantic conflict pattern exactly matches learned negative knowledge, validation reports `negative_knowledge_prior_matches` plus an info-level caution finding, without suppressing the conflict or changing semantic arbitration
 - `SemanticIR` / `IntentIR` validation now broaden that negative-knowledge consumer across carried signal-semantic conflicts, temporal value conflicts, interface-signal conflicts, signal-connectivity conflicts, and residual decision packet classes by recovering the linked `EvidenceIR.prior_memory_path`
+- negative-knowledge validation now also emits the first safe rescan/corroboration hook:
+  - `negative_knowledge_rescan_recommendations`
+  - `negative_knowledge_corroboration_requirements`
+  - stage-specific `*_negative_knowledge_rescan_guidance` findings with the matched current-surface ids
+- this guidance is routing metadata only; it still does not suppress local evidence, change scoring/arbitration, remove conflicts/residuals, or create canonical facts from prior memory
 - root docs remain important, but they now serve continuity, roadmap, validation, and developer-state roles more than primary end-user onboarding
 - runnable CLI surface includes `inspect`, `doctor`, `converge`, `ingest`, `evidence`, `semantic`, `intent`, `adapt`, `enrich`, `validate`, `kg-bench`, `project-validation`, `learn-priors`, and `nlp-enrich`
 - `specforge converge` now defaults to full Ollama-backed VLM image enrichment plus NLP Level 3 backannotation; use `--vlm-provider skip` and/or `--nlp-provider skip` only when intentionally narrowing the loop
@@ -183,7 +188,7 @@
 - `.venv-docling/` is also local-only runtime state and should stay untracked
 
 ## Exact next steps
-1. use negative-knowledge priors beyond reporting, but still safely: guide rescans, extractor selection, or stronger-corroboration thresholds without suppressing local evidence
+1. turn the new negative-knowledge rescan/corroboration validation guidance into an actual rescan or extractor-selection consumer without suppressing local evidence
 2. broaden visual-motif prior benchmarking beyond the first diagram-classification consumer, especially around rescan selection and multimodal corroboration
 3. deepen clock/reset topology only when the current document explicitly names gated branches, synchronizer stages, or reset-tree target structure
 
@@ -193,7 +198,7 @@
 - KG-guided multimodal rescans (`R15c`)
 - broader evidence arbitration / conflict handling beyond polarity, interface-shape, multi-producer ambiguity, modality-aware semantic-role grounding, consensus summaries, semantic candidates, and semantic arbitration summaries (`R15d`)
 - broader KG-quality evaluation and benchmark hardening beyond the new seed fixture pack (`R15e`)
-- cross-document extractor learning is now started, and the first seven bounded prior-consumer paths are now live; negative-knowledge priors now have validation-only caution coverage across the main carried conflict/residual surfaces, but rescans and corroboration-threshold uses still need to grow
+- cross-document extractor learning is now started, and the first seven bounded prior-consumer paths are now live; negative-knowledge priors now have validation-only caution coverage plus machine-readable rescan/corroboration guidance across the main carried conflict/residual surfaces, but an actual rescan/extractor-selection consumer still needs to grow
 - Tier 3 relation extraction after the graph/temporal/eval surfaces are ready (`R14`)
 - some downstream compatibility and consumer paths still rely on flat `direction_hint` instead of the graph-native surface
 - meaning-based role inference now covers tables, prose, alias-grounded prose, visual captions, and VLM timing annotations, and canonical layers now preserve that provenance, but broader downstream use of preserved arbitration state is still early
