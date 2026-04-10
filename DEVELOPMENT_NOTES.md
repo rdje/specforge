@@ -1069,6 +1069,9 @@
   - explicit local phrases such as `clock generator drives ACLK` or `PLL generates ACLK` can recover infrastructure source status, but this does not relax the ordinary actor filters for generic `Clock`, `Reset`, or `External` labels
   - implicit clock/reset read-port fanout applies only to actors with non-infrastructure protocol relations, so a recovered clock/reset source is not automatically treated as consuming its own signal
   - explicit local distribution/fanout phrases such as `ACLK is distributed to the Requester and Completer` or `reset synchronizer feeds ARESETN to the Requester` can recover infrastructure distribution targets without creating ordinary protocol actor ports
+  - `InfrastructureSignalRecord.infrastructure_topology` now preserves only explicit current-document topology hints for `clock_gated_branch`, `reset_synchronizer_stages`, and `reset_tree_targets`
+  - examples include `The ACLK clock gate CGATE0 feeds the Requester branch`, `The two-stage reset synchronizer RSTSYNC0 feeds ARESETN to the Requester`, and `The ARESETN reset tree targets the Requester registers and Completer registers`
+  - vague implementation advice such as "may use a synchronizer" must not create topology records, and the topology surface still is not a full physical clock-tree/reset-tree proof
 
 ## Knowledge graph extraction — design decisions (2026-04-03)
 

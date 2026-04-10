@@ -21,7 +21,7 @@ use crate::ir::prior_memory::{
 use crate::ir::semantic::{
     ActorPortRecord, ActorRelativeDirection, ClockEdge, InfrastructureSignalDistributionStatus,
     InfrastructureSignalKind, InfrastructureSignalRecord, InfrastructureSignalSourceStatus,
-    InterfaceSignalConflictRecord, SemanticIr, SignalConnectivityClass,
+    InfrastructureTopologyKind, InterfaceSignalConflictRecord, SemanticIr, SignalConnectivityClass,
     SignalConnectivityConflictRecord, TemporalConflictRecord,
 };
 use crate::ir::source::{
@@ -400,10 +400,32 @@ fn infrastructure_signals_with_distribution_status_count(
         .count()
 }
 
+fn infrastructure_topology_count(
+    infrastructure_signals: &[InfrastructureSignalRecord],
+    kind: Option<InfrastructureTopologyKind>,
+) -> usize {
+    infrastructure_signals
+        .iter()
+        .flat_map(|record| &record.infrastructure_topology)
+        .filter(|topology| {
+            kind.map(|expected| topology.topology_kind == expected)
+                .unwrap_or(true)
+        })
+        .count()
+}
+
 fn describe_infrastructure_signal_kind(kind: InfrastructureSignalKind) -> &'static str {
     match kind {
         InfrastructureSignalKind::SystemClock => "system_clock",
         InfrastructureSignalKind::SystemReset => "system_reset",
+    }
+}
+
+fn describe_infrastructure_topology_kind(kind: InfrastructureTopologyKind) -> &'static str {
+    match kind {
+        InfrastructureTopologyKind::ClockGatedBranch => "clock_gated_branch",
+        InfrastructureTopologyKind::ResetSynchronizerStages => "reset_synchronizer_stages",
+        InfrastructureTopologyKind::ResetTreeTargets => "reset_tree_targets",
     }
 }
 
@@ -1799,6 +1821,20 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             &ir.infrastructure_signals,
             InfrastructureSignalDistributionStatus::SharedRecoveredConsumers,
         );
+    let infrastructure_topology_records =
+        infrastructure_topology_count(&ir.infrastructure_signals, None);
+    let infrastructure_clock_gated_branches = infrastructure_topology_count(
+        &ir.infrastructure_signals,
+        Some(InfrastructureTopologyKind::ClockGatedBranch),
+    );
+    let infrastructure_reset_synchronizer_stages = infrastructure_topology_count(
+        &ir.infrastructure_signals,
+        Some(InfrastructureTopologyKind::ResetSynchronizerStages),
+    );
+    let infrastructure_reset_tree_targets = infrastructure_topology_count(
+        &ir.infrastructure_signals,
+        Some(InfrastructureTopologyKind::ResetTreeTargets),
+    );
     let fully_typed = ir
         .interfaces
         .iter()
@@ -1901,6 +1937,12 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     println!(
         "  infrastructure_signals_shared_recovered_distribution: {infrastructure_signals_shared_recovered_distribution}"
     );
+    println!("  infrastructure_topology_records: {infrastructure_topology_records}");
+    println!("  infrastructure_clock_gated_branches: {infrastructure_clock_gated_branches}");
+    println!(
+        "  infrastructure_reset_synchronizer_stages: {infrastructure_reset_synchronizer_stages}"
+    );
+    println!("  infrastructure_reset_tree_targets: {infrastructure_reset_tree_targets}");
     println!(
         "  interface_signal_conflicts: {}",
         ir.interface_signal_conflicts.len()
@@ -1971,13 +2013,26 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     } else {
         for signal in &ir.infrastructure_signals {
             println!(
-                "  - {} ({}): source={}, distribution={}, distributed_to={}",
+                "  - {} ({}): source={}, distribution={}, distributed_to={}, topology={}",
                 signal.signal_name,
                 describe_infrastructure_signal_kind(signal.kind),
                 describe_infrastructure_source_status(signal.source_status),
                 describe_infrastructure_distribution_status(signal.distribution_status),
-                signal.distributed_to_actor_names.len()
+                signal.distributed_to_actor_names.len(),
+                signal.infrastructure_topology.len()
             );
+            for topology in &signal.infrastructure_topology {
+                println!(
+                    "    - {}: component={}, stages={}, targets={}",
+                    describe_infrastructure_topology_kind(topology.topology_kind),
+                    topology.component_name.as_deref().unwrap_or("n/a"),
+                    topology
+                        .stage_count
+                        .map(|count| count.to_string())
+                        .unwrap_or_else(|| "n/a".to_string()),
+                    topology.target_actor_names.len()
+                );
+            }
         }
     }
     println!();
@@ -2548,6 +2603,22 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 infrastructure_signals_shared_recovered_distribution.to_string(),
             ),
             metric(
+                "infrastructure_topology_records",
+                infrastructure_topology_records.to_string(),
+            ),
+            metric(
+                "infrastructure_clock_gated_branches",
+                infrastructure_clock_gated_branches.to_string(),
+            ),
+            metric(
+                "infrastructure_reset_synchronizer_stages",
+                infrastructure_reset_synchronizer_stages.to_string(),
+            ),
+            metric(
+                "infrastructure_reset_tree_targets",
+                infrastructure_reset_tree_targets.to_string(),
+            ),
+            metric(
                 "infrastructure_signals_missing_producer",
                 infrastructure_missing_producer_signals.len().to_string(),
             ),
@@ -2752,6 +2823,20 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             &ir.infrastructure_signals,
             InfrastructureSignalDistributionStatus::SharedRecoveredConsumers,
         );
+    let infrastructure_topology_records =
+        infrastructure_topology_count(&ir.infrastructure_signals, None);
+    let infrastructure_clock_gated_branches = infrastructure_topology_count(
+        &ir.infrastructure_signals,
+        Some(InfrastructureTopologyKind::ClockGatedBranch),
+    );
+    let infrastructure_reset_synchronizer_stages = infrastructure_topology_count(
+        &ir.infrastructure_signals,
+        Some(InfrastructureTopologyKind::ResetSynchronizerStages),
+    );
+    let infrastructure_reset_tree_targets = infrastructure_topology_count(
+        &ir.infrastructure_signals,
+        Some(InfrastructureTopologyKind::ResetTreeTargets),
+    );
     let dir_pct = if declared_count > 0 {
         with_direction * 100 / declared_count
     } else {
@@ -2842,6 +2927,12 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     println!(
         "  infrastructure_signals_shared_recovered_distribution: {infrastructure_signals_shared_recovered_distribution}"
     );
+    println!("  infrastructure_topology_records: {infrastructure_topology_records}");
+    println!("  infrastructure_clock_gated_branches: {infrastructure_clock_gated_branches}");
+    println!(
+        "  infrastructure_reset_synchronizer_stages: {infrastructure_reset_synchronizer_stages}"
+    );
+    println!("  infrastructure_reset_tree_targets: {infrastructure_reset_tree_targets}");
     println!(
         "  interface_signal_conflicts: {}",
         ir.interface_signal_conflicts.len()
@@ -2968,13 +3059,26 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     } else {
         for signal in &ir.infrastructure_signals {
             println!(
-                "  - {} ({}): source={}, distribution={}, distributed_to={}",
+                "  - {} ({}): source={}, distribution={}, distributed_to={}, topology={}",
                 signal.signal_name,
                 describe_infrastructure_signal_kind(signal.kind),
                 describe_infrastructure_source_status(signal.source_status),
                 describe_infrastructure_distribution_status(signal.distribution_status),
-                signal.distributed_to_actor_names.len()
+                signal.distributed_to_actor_names.len(),
+                signal.infrastructure_topology.len()
             );
+            for topology in &signal.infrastructure_topology {
+                println!(
+                    "    - {}: component={}, stages={}, targets={}",
+                    describe_infrastructure_topology_kind(topology.topology_kind),
+                    topology.component_name.as_deref().unwrap_or("n/a"),
+                    topology
+                        .stage_count
+                        .map(|count| count.to_string())
+                        .unwrap_or_else(|| "n/a".to_string()),
+                    topology.target_actor_names.len()
+                );
+            }
         }
     }
     println!();
@@ -3552,6 +3656,22 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             metric(
                 "infrastructure_signals_shared_recovered_distribution",
                 infrastructure_signals_shared_recovered_distribution.to_string(),
+            ),
+            metric(
+                "infrastructure_topology_records",
+                infrastructure_topology_records.to_string(),
+            ),
+            metric(
+                "infrastructure_clock_gated_branches",
+                infrastructure_clock_gated_branches.to_string(),
+            ),
+            metric(
+                "infrastructure_reset_synchronizer_stages",
+                infrastructure_reset_synchronizer_stages.to_string(),
+            ),
+            metric(
+                "infrastructure_reset_tree_targets",
+                infrastructure_reset_tree_targets.to_string(),
             ),
             metric(
                 "infrastructure_signals_missing_producer",
@@ -4826,6 +4946,94 @@ mod tests {
         );
         assert_eq!(
             metric_value(&report, "infrastructure_signals_no_recovered_distribution"),
+            Some("1")
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_intent_ir_counts_explicit_infrastructure_topology() -> Result<()> {
+        use crate::ir::evidence::{EvidenceModality, ExtractedStatement, StatementClass};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("infra_topology.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Spec\n",
+                "Clock ACLK.\n",
+                "Reset ARESETN is asynchronous active low.\n",
+                "The ACLK clock gate CGATE0 feeds the Requester branch.\n",
+                "The two-stage reset synchronizer RSTSYNC0 feeds ARESETN to the Requester.\n",
+                "The ARESETN reset tree targets the Requester registers and Completer registers.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        for (statement_id, text) in [
+            ("statement_clock", "Clock ACLK."),
+            (
+                "statement_reset",
+                "Reset ARESETN is asynchronous active low.",
+            ),
+            (
+                "statement_clock_gate",
+                "The ACLK clock gate CGATE0 feeds the Requester branch.",
+            ),
+            (
+                "statement_reset_sync",
+                "The two-stage reset synchronizer RSTSYNC0 feeds ARESETN to the Requester.",
+            ),
+            (
+                "statement_reset_tree",
+                "The ARESETN reset tree targets the Requester registers and Completer registers.",
+            ),
+        ] {
+            evidence_ir.extracted_statements.push(ExtractedStatement {
+                statement_id: statement_id.to_string(),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text: text.to_string(),
+                evidence_span_ids: Vec::new(),
+                related_visual_evidence_ids: Vec::new(),
+            });
+        }
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let report = validate_intent_ir(&intent_ir, "infra_topology".to_string());
+        assert_eq!(
+            metric_value(&report, "infrastructure_topology_records"),
+            Some("3")
+        );
+        assert_eq!(
+            metric_value(&report, "infrastructure_clock_gated_branches"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&report, "infrastructure_reset_synchronizer_stages"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&report, "infrastructure_reset_tree_targets"),
             Some("1")
         );
 

@@ -146,6 +146,7 @@
 - explicit local infrastructure-source phrases such as `clock generator drives ACLK` can now recover a bounded source into `InfrastructureSignalRecord`, while generic labels like `Clock`, `Reset`, and `External` remain blocked from ordinary producer attribution
 - system-contract fanout now avoids marking infrastructure-only source actors as consumers of their own clock/reset signal; implicit clock/reset read ports are reserved for actors with non-infrastructure protocol relations
 - explicit local infrastructure-distribution phrases such as `ACLK is distributed to the Requester and Completer` and `reset synchronizer feeds ARESETN to the Requester` can now recover `distributed_to_*` targets into `InfrastructureSignalRecord` without creating ordinary protocol actor ports
+- explicit clock/reset topology hints now have a bounded home inside `InfrastructureSignalRecord.infrastructure_topology`; current-document phrases can recover `clock_gated_branch`, `reset_synchronizer_stages`, and `reset_tree_targets`, while vague "may use a synchronizer" advice remains ignored and the surface still does not claim full physical tree proof
 - validator handling now matches that boundary too: infrastructure signals with no resolved producer actor emit a dedicated `[info:system_contract]` finding instead of a generic signal-connectivity warning, and validation now reports `infrastructure_signals` plus source/distribution status metrics alongside `infrastructure_signal_connectivity`
 - same-cycle timing language now lands as bounded temporal semantics too: AXI-Stream currently carries `6` explicit `0`-cycle windows from phrases like `in the same ACLK cycle`, and the old `no cycle-window grounding` warning is gone from the live validation projection
 - temporal-conflict detection is now polarity-aware: `ASSERTED` / `DEASSERTED` only collapse to `HIGH` / `LOW` when the current document grounds the signal polarity, so active-low controls like `ARESETN` stay semantically correct and unknown-polarity assertions stay abstract
@@ -212,9 +213,9 @@
 - `.venv-docling/` is also local-only runtime state and should stay untracked
 
 ## Exact next steps
-1. deepen clock/reset topology only when the current document explicitly names gated branches, synchronizer stages, or reset-tree target structure
-2. broaden negative-knowledge prior-family benchmark coverage without letting caution memory suppress local conflicts or residuals
-3. decide whether a future approval artifact should remain generated-only or become tracked review evidence before any canonical IR mutation path exists
+1. broaden negative-knowledge prior-family benchmark coverage without letting caution memory suppress local conflicts or residuals
+2. decide whether a future approval artifact should remain generated-only or become tracked review evidence before any canonical IR mutation path exists
+3. extend explicit infrastructure topology only when the current document provides richer physical evidence such as named clock muxes, generated-clock derivation, reset bridge cells, or domain-crossing constraints
 
 ## Remaining engineering gaps after this commit
 - remaining actor-relative direction modeling in `SemanticIR` / `IntentIR` (`R15`)

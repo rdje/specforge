@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-10 (Explicit clock/reset topology hints are typed)
+
+### Added: bounded infrastructure topology records
+- Updated [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so `InfrastructureSignalRecord` now carries `infrastructure_topology` records for explicit current-document clock/reset topology hints.
+- The first topology kinds are `clock_gated_branch`, `reset_synchronizer_stages`, and `reset_tree_targets`.
+- The extractor records component names, reset synchronizer stage counts, target actor names, supporting statement IDs, and automation confidence when the source text is explicit enough.
+- Vague wording such as a reset that "may use a synchronizer" remains ignored; the new surface preserves evidence but does not claim full physical clock-tree/reset-tree proof.
+
+### Added: validation visibility
+- Updated [validate.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/validate.rs) so `SemanticIR` and `IntentIR` validation report `infrastructure_topology_records`, `infrastructure_clock_gated_branches`, `infrastructure_reset_synchronizer_stages`, and `infrastructure_reset_tree_targets`.
+- Validation console output now shows per-signal topology counts and record summaries under `Infrastructure Signals`.
+- Updated the mdBook clock/reset, SemanticIR, and IntentIR chapters plus live continuity docs to document the new boundary.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml explicit_clock_reset_topology_recovers_only_current_document_evidence -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml validate_intent_ir_counts_explicit_infrastructure_topology -- --nocapture` -> passed
+- `bash scripts/run_ci.sh` -> passed
+
 ## 2026-04-10 (Rescan promotion review path is explicit)
 
 ### Added: promotion-review policy record

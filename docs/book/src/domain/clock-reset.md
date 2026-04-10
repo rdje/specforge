@@ -55,6 +55,7 @@ Each infrastructure signal record captures:
 - recovered source actor IDs and names, if grounded
 - distribution status
 - recovered destination actor IDs and names, if grounded
+- explicit infrastructure topology records, if grounded
 - supporting statements
 - automation confidence
 
@@ -73,6 +74,20 @@ That is useful for semantic inspection, but it is still not a physical clock-tre
 If the current document explicitly says `ACLK is distributed to the Requester and Completer`, the infrastructure record can recover those distribution targets.
 Likewise, a phrase such as `reset synchronizer feeds ARESETN to the Requester` can recover both the reset infrastructure source and a recovered distribution target.
 Those targets remain part of the infrastructure surface; they do not automatically become ordinary protocol actor ports.
+
+The topology surface is narrower and more explicit.
+`infrastructure_topology` can preserve bounded hints such as:
+
+- `clock_gated_branch`
+- `reset_synchronizer_stages`
+- `reset_tree_targets`
+
+For example, a current-document sentence such as `The ACLK clock gate CGATE0 feeds the Requester branch` can record a gated clock branch with component `CGATE0`.
+A sentence such as `The two-stage reset synchronizer RSTSYNC0 feeds ARESETN to the Requester` can record a reset synchronizer stage count.
+A sentence such as `The ARESETN reset tree targets the Requester registers and Completer registers` can record reset-tree targets.
+
+This is intentionally not learned from generic clock/reset doctrine or prior memory.
+If the current document only says that a synchronizer might exist, or gives generic advice about clock gating, the topology record should stay absent.
 
 ## Reset polarity
 
@@ -138,6 +153,10 @@ Validation can expose clock/reset handling through:
 - `infrastructure_signals`
 - `infrastructure_signals_unresolved_source`
 - `infrastructure_signals_shared_recovered_distribution`
+- `infrastructure_topology_records`
+- `infrastructure_clock_gated_branches`
+- `infrastructure_reset_synchronizer_stages`
+- `infrastructure_reset_tree_targets`
 - signal polarity conflicts
 - temporal conflicts that account for resolved polarity
 
@@ -146,12 +165,13 @@ When a clock or reset is intentionally classified as infrastructure, it may appe
 ## Current limits
 
 The current model is not yet a full physical clock-tree or reset-tree analysis.
+It preserves selected current-document topology hints, but it does not prove implementation quality.
 
-It does not yet fully model:
+It still does not fully model:
 
 - clock generation cells
-- clock gating topology
-- reset synchronizer structure
+- complete clock gating topology
+- complete reset synchronizer structure
 - reset fanout and distribution quality
 - physical implementation constraints
 

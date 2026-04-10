@@ -368,6 +368,7 @@
   - `SemanticIR` / `IntentIR` now also carry `temporal_conflicts: Vec<TemporalConflictRecord>` for contradictory value obligations that target the same signal/phase under the same grounded context
   - temporal derivation now uses an explicit clock declaration even when a full reset-bearing `SystemContractRecord` is not yet available
   - `specforge validate` now reports temporal-rule counts plus missing clock/edge grounding, actor-grounding diagnostics, handshake-predicate coverage, multi-predicate antecedent coverage, and typed temporal conflict counts
+  - infrastructure signals now carry a bounded explicit topology surface for current-document `clock_gated_branch`, `reset_synchronizer_stages`, and `reset_tree_targets` evidence without claiming full physical tree signoff
 - completion criteria:
   - a typed temporal-rule representation exists in `SemanticIR` and carries forward into `IntentIR`
   - APB/AHB/AXI timing behavior can be represented in actor-relative, tick-relative form rather than only as free-form timing text

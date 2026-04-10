@@ -456,6 +456,40 @@ pub enum InfrastructureSignalDistributionStatus {
     SharedRecoveredConsumers,
 }
 
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum InfrastructureTopologyKind {
+    ClockGatedBranch,
+    ResetSynchronizerStages,
+    ResetTreeTargets,
+}
+
+impl InfrastructureTopologyKind {
+    fn as_str(self) -> &'static str {
+        match self {
+            Self::ClockGatedBranch => "clock_gated_branch",
+            Self::ResetSynchronizerStages => "reset_synchronizer_stages",
+            Self::ResetTreeTargets => "reset_tree_targets",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct InfrastructureTopologyRecord {
+    pub topology_id: String,
+    pub topology_kind: InfrastructureTopologyKind,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub component_name: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub stage_count: Option<u32>,
+    #[serde(default)]
+    pub target_actor_ids: Vec<String>,
+    #[serde(default)]
+    pub target_actor_names: Vec<String>,
+    pub supporting_statement_id: String,
+    pub automation_confidence: AutomationConfidence,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct InfrastructureSignalRecord {
     pub signal_name: String,
@@ -470,6 +504,8 @@ pub struct InfrastructureSignalRecord {
     pub distributed_to_actor_ids: Vec<String>,
     #[serde(default)]
     pub distributed_to_actor_names: Vec<String>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub infrastructure_topology: Vec<InfrastructureTopologyRecord>,
     #[serde(default)]
     pub supporting_statement_ids: Vec<String>,
     pub automation_confidence: AutomationConfidence,
@@ -1446,6 +1482,24 @@ struct InfrastructureDistributionEvidence {
     actor_name: String,
     supporting_statement_id: String,
     automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone)]
+struct InfrastructureTopologyEvidence {
+    topology_kind: InfrastructureTopologyKind,
+    component_name: Option<String>,
+    stage_count: Option<u32>,
+    target_actor_names: Vec<String>,
+    supporting_statement_id: String,
+    automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone)]
+struct ParsedInfrastructureTopology {
+    topology_kind: InfrastructureTopologyKind,
+    component_name: Option<String>,
+    stage_count: Option<u32>,
+    target_actor_names: Vec<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -3010,6 +3064,8 @@ fn build_infrastructure_signals(
         let explicit_sources = explicit_infrastructure_source_evidence(context, signal_name);
         let explicit_distribution =
             explicit_infrastructure_distribution_evidence(context, signal_name);
+        let explicit_topology =
+            explicit_infrastructure_topology_evidence(context, signal_name, kind);
 
         let mut recovered_source_actor_ids = recovered_source_actor_ids;
         let mut recovered_source_actor_names = recovered_source_actor_names;
@@ -3017,6 +3073,7 @@ fn build_infrastructure_signals(
         let mut distributed_to_actor_names = distributed_to_actor_names;
         let mut supporting_statement_ids = supporting_statement_ids;
         let mut automation_confidence = automation_confidence;
+        let mut infrastructure_topology = Vec::new();
         for source in explicit_sources {
             if !recovered_source_actor_ids.contains(&source.actor_id) {
                 recovered_source_actor_ids.push(source.actor_id);
@@ -3045,6 +3102,33 @@ fn build_infrastructure_signals(
                 distribution.automation_confidence,
             );
         }
+        for topology in explicit_topology {
+            let target_actor_ids = topology
+                .target_actor_names
+                .iter()
+                .map(|actor_name| actor_id_for_name(actor_name))
+                .collect::<Vec<_>>();
+            if !supporting_statement_ids.contains(&topology.supporting_statement_id) {
+                supporting_statement_ids.push(topology.supporting_statement_id.clone());
+            }
+            automation_confidence =
+                min_automation_confidence(automation_confidence, topology.automation_confidence);
+            infrastructure_topology.push(InfrastructureTopologyRecord {
+                topology_id: infrastructure_topology_id(
+                    signal_name,
+                    topology.topology_kind,
+                    &topology.supporting_statement_id,
+                    infrastructure_topology.len(),
+                ),
+                topology_kind: topology.topology_kind,
+                component_name: topology.component_name,
+                stage_count: topology.stage_count,
+                target_actor_ids,
+                target_actor_names: topology.target_actor_names,
+                supporting_statement_id: topology.supporting_statement_id,
+                automation_confidence: topology.automation_confidence,
+            });
+        }
 
         InfrastructureSignalRecord {
             signal_name: signal_name.to_string(),
@@ -3055,6 +3139,7 @@ fn build_infrastructure_signals(
             distribution_status: infrastructure_distribution_status(distributed_to_actor_ids.len()),
             distributed_to_actor_ids,
             distributed_to_actor_names,
+            infrastructure_topology,
             supporting_statement_ids,
             automation_confidence,
         }
@@ -3177,6 +3262,65 @@ fn explicit_infrastructure_distribution_evidence(
     distribution
 }
 
+fn explicit_infrastructure_topology_evidence(
+    context: &SemanticContext,
+    signal_name: &str,
+    kind: InfrastructureSignalKind,
+) -> Vec<InfrastructureTopologyEvidence> {
+    let mut topology = Vec::new();
+    let mut seen = BTreeSet::<String>::new();
+
+    for statement in &context.statements {
+        for parsed in parse_explicit_infrastructure_topology(&statement.text, signal_name, kind) {
+            let seen_key = format!(
+                "{}:{:?}:{:?}:{}",
+                parsed.topology_kind.as_str(),
+                parsed.component_name,
+                parsed.stage_count,
+                parsed.target_actor_names.join(",")
+            );
+            if !seen.insert(seen_key) {
+                continue;
+            }
+            topology.push(InfrastructureTopologyEvidence {
+                topology_kind: parsed.topology_kind,
+                component_name: parsed.component_name,
+                stage_count: parsed.stage_count,
+                target_actor_names: parsed.target_actor_names,
+                supporting_statement_id: statement.statement_id.clone(),
+                automation_confidence: AutomationConfidence::Medium,
+            });
+        }
+    }
+
+    topology
+}
+
+fn parse_explicit_infrastructure_topology(
+    text: &str,
+    signal_name: &str,
+    kind: InfrastructureSignalKind,
+) -> Vec<ParsedInfrastructureTopology> {
+    let mut topology = Vec::new();
+    match kind {
+        InfrastructureSignalKind::SystemClock => {
+            if let Some(parsed) = parse_explicit_clock_gated_branch(text, signal_name) {
+                topology.push(parsed);
+            }
+        }
+        InfrastructureSignalKind::SystemReset => {
+            if let Some(parsed) = parse_explicit_reset_synchronizer_stages(text, signal_name) {
+                topology.push(parsed);
+            }
+            if let Some(parsed) = parse_explicit_reset_tree_targets(text, signal_name) {
+                topology.push(parsed);
+            }
+        }
+    }
+
+    topology
+}
+
 fn parse_explicit_infrastructure_distribution_actors(text: &str, signal_name: &str) -> Vec<String> {
     let lowered = text.to_ascii_lowercase();
     let signal_lower = signal_name.to_ascii_lowercase();
@@ -3251,6 +3395,204 @@ fn parse_explicit_infrastructure_distribution_actors(text: &str, signal_name: &s
     actors
 }
 
+fn parse_explicit_clock_gated_branch(
+    text: &str,
+    signal_name: &str,
+) -> Option<ParsedInfrastructureTopology> {
+    let lowered = text.to_ascii_lowercase();
+    let signal_lower = signal_name.to_ascii_lowercase();
+    if !lowered.contains(&signal_lower)
+        || !(lowered.contains("clock gate")
+            || lowered.contains("clock-gated")
+            || lowered.contains("clock gated")
+            || lowered.contains("gated branch")
+            || lowered.contains("gated by"))
+    {
+        return None;
+    }
+
+    let component_name = extract_infrastructure_component_after_markers(
+        text,
+        &[
+            "clock gate ",
+            "clock-gated by ",
+            "clock gated by ",
+            "gated by ",
+        ],
+    );
+    let target_actor_names = extract_infrastructure_targets_after_markers(
+        text,
+        &[
+            " before reaching ",
+            " reaching ",
+            " feeds ",
+            " drives ",
+            " clocks ",
+            " routes to ",
+            " distributed to ",
+            " to ",
+            " for ",
+        ],
+    );
+
+    if target_actor_names.is_empty() {
+        return None;
+    }
+
+    Some(ParsedInfrastructureTopology {
+        topology_kind: InfrastructureTopologyKind::ClockGatedBranch,
+        component_name,
+        stage_count: None,
+        target_actor_names,
+    })
+}
+
+fn parse_explicit_reset_synchronizer_stages(
+    text: &str,
+    signal_name: &str,
+) -> Option<ParsedInfrastructureTopology> {
+    let lowered = text.to_ascii_lowercase();
+    let signal_lower = signal_name.to_ascii_lowercase();
+    if !lowered.contains(&signal_lower)
+        || !(lowered.contains("synchronizer") || lowered.contains("synchroniser"))
+    {
+        return None;
+    }
+
+    let stage_count = parse_infrastructure_stage_count(&lowered)?;
+    let component_name = extract_infrastructure_component_after_markers(
+        text,
+        &[
+            "reset synchronizer ",
+            "reset synchroniser ",
+            "synchronizer ",
+            "synchroniser ",
+        ],
+    )
+    .or_else(|| Some("reset synchronizer".to_string()));
+    let mut target_actor_names =
+        parse_explicit_infrastructure_distribution_actors(text, signal_name);
+    dedup_actor_names(&mut target_actor_names);
+
+    Some(ParsedInfrastructureTopology {
+        topology_kind: InfrastructureTopologyKind::ResetSynchronizerStages,
+        component_name,
+        stage_count: Some(stage_count),
+        target_actor_names,
+    })
+}
+
+fn parse_explicit_reset_tree_targets(
+    text: &str,
+    signal_name: &str,
+) -> Option<ParsedInfrastructureTopology> {
+    let lowered = text.to_ascii_lowercase();
+    let signal_lower = signal_name.to_ascii_lowercase();
+    if !lowered.contains(&signal_lower)
+        || !(lowered.contains("reset tree") || lowered.contains("reset-tree"))
+    {
+        return None;
+    }
+
+    let target_actor_names = extract_infrastructure_targets_after_markers(
+        text,
+        &[
+            " targets ",
+            " target ",
+            " fans out to ",
+            " fanout to ",
+            " fan-out to ",
+            " routes to ",
+            " distributes to ",
+            " is distributed to ",
+            " reaches ",
+            " resets ",
+            " serves ",
+            " to ",
+        ],
+    );
+    if target_actor_names.is_empty() {
+        return None;
+    }
+
+    Some(ParsedInfrastructureTopology {
+        topology_kind: InfrastructureTopologyKind::ResetTreeTargets,
+        component_name: Some("reset tree".to_string()),
+        stage_count: None,
+        target_actor_names,
+    })
+}
+
+fn extract_infrastructure_component_after_markers(text: &str, markers: &[&str]) -> Option<String> {
+    let lowered = text.to_ascii_lowercase();
+    for marker in markers {
+        if let Some(marker_pos) = lowered.find(marker) {
+            let start = marker_pos + marker.len();
+            if start <= text.len()
+                && let Some(component_name) =
+                    extract_infrastructure_component_phrase(&text[start..])
+            {
+                return Some(component_name);
+            }
+        }
+    }
+
+    None
+}
+
+fn extract_infrastructure_targets_after_markers(text: &str, markers: &[&str]) -> Vec<String> {
+    let lowered = text.to_ascii_lowercase();
+    let mut actors = Vec::new();
+    for marker in markers {
+        if let Some(marker_pos) = lowered.find(marker) {
+            let start = marker_pos + marker.len();
+            if start <= text.len() {
+                append_unique_infrastructure_actors(
+                    &mut actors,
+                    extract_infrastructure_target_phrases(&text[start..]),
+                );
+            }
+        }
+    }
+
+    actors
+}
+
+fn parse_infrastructure_stage_count(lowered: &str) -> Option<u32> {
+    const STAGE_WORDS: &[(u32, &str)] = &[
+        (1, "one"),
+        (2, "two"),
+        (3, "three"),
+        (4, "four"),
+        (5, "five"),
+        (6, "six"),
+        (7, "seven"),
+        (8, "eight"),
+    ];
+
+    for (count, word) in STAGE_WORDS {
+        let numeric = count.to_string();
+        for token in [numeric.as_str(), *word] {
+            for pattern in [
+                format!("{token}-stage"),
+                format!("{token} stage"),
+                format!("{token} stages"),
+            ] {
+                if lowered.contains(&pattern) {
+                    return Some(*count);
+                }
+            }
+        }
+    }
+
+    None
+}
+
+fn dedup_actor_names(actor_names: &mut Vec<String>) {
+    let mut seen = BTreeSet::new();
+    actor_names.retain(|actor_name| seen.insert(actor_name.clone()));
+}
+
 fn append_unique_infrastructure_actors(target: &mut Vec<String>, candidates: Vec<String>) {
     for candidate in candidates {
         if !target.contains(&candidate) {
@@ -3300,6 +3642,7 @@ fn extract_infrastructure_target_phrases(text: &str) -> Vec<String> {
         .filter_map(|candidate| {
             let candidate = candidate.trim();
             let candidate = strip_leading_infrastructure_target_prefix(candidate);
+            let candidate = strip_trailing_infrastructure_target_suffix(candidate);
             let candidate = candidate
                 .split_whitespace()
                 .take(4)
@@ -3317,6 +3660,30 @@ fn strip_leading_infrastructure_target_prefix(candidate: &str) -> &str {
     ] {
         if lowered.starts_with(prefix) {
             return &candidate[prefix.len()..];
+        }
+    }
+
+    candidate
+}
+
+fn strip_trailing_infrastructure_target_suffix(candidate: &str) -> &str {
+    let lowered = candidate.to_ascii_lowercase();
+    for suffix in [
+        " clock branch",
+        " reset branch",
+        " branch",
+        " clock domain",
+        " reset domain",
+        " domain",
+        " register bank",
+        " registers",
+        " register",
+        " flip flops",
+        " flops",
+        " flop",
+    ] {
+        if lowered.ends_with(suffix) {
+            return candidate[..candidate.len() - suffix.len()].trim_end();
         }
     }
 
@@ -3343,7 +3710,8 @@ fn extract_infrastructure_component_phrase(text: &str) -> Option<String> {
     const STOP_WORDS: &[&str] = &[
         "to", "for", "and", "or", "in", "at", "on", "with", "when", "if", "by", "from", "that",
         "which", "where", "as", "is", "are", "has", "have", "will", "shall", "can", "may", "might",
-        "must", "should", "could", "would",
+        "must", "should", "could", "would", "feeds", "feed", "drives", "drive", "routes", "route",
+        "clocks", "clock", "resets", "reset", "gates", "gate", "reaches", "reach",
     ];
 
     let mut words = Vec::new();
@@ -5351,6 +5719,21 @@ fn explicit_interface_key(section_ids: &[String]) -> String {
 
 fn actor_id_for_name(actor_name: &str) -> String {
     format!("actor_{}", document_key(actor_name))
+}
+
+fn infrastructure_topology_id(
+    signal_name: &str,
+    topology_kind: InfrastructureTopologyKind,
+    statement_id: &str,
+    ordinal: usize,
+) -> String {
+    format!(
+        "infrastructure_topology_{}_{}_{}_{}",
+        document_key(signal_name),
+        topology_kind.as_str(),
+        document_key(statement_id),
+        ordinal
+    )
 }
 
 fn actor_relative_direction_and_basis(
@@ -8970,10 +9353,10 @@ mod tests {
         ControlCompoundUpdateOperation, ControlDualOutputKind, ControlExpressionRecord,
         ControlReferenceKind, ControlReferenceSuffix, CycleWindowRecord, DecisionTreeActionRecord,
         DecisionTreeAssignmentKind, DecisionTreeComparisonOperator, DecisionTreeGuardRecord,
-        DecisionTreeValueRecord, InterfaceSignalDirection, InterfaceSignalSemanticRole,
-        SemanticArbitrationDecisionBasis, SemanticGroundingStrength, SemanticIr,
-        SignalSemanticHintSourceKind, SignalSemanticTag, SymbolDefinitionKind, SystemResetKind,
-        SystemResetPolarity, SystemResetTargetKind, SystemResetTimingRelation,
+        DecisionTreeValueRecord, InfrastructureTopologyKind, InterfaceSignalDirection,
+        InterfaceSignalSemanticRole, SemanticArbitrationDecisionBasis, SemanticGroundingStrength,
+        SemanticIr, SignalSemanticHintSourceKind, SignalSemanticTag, SymbolDefinitionKind,
+        SystemResetKind, SystemResetPolarity, SystemResetTargetKind, SystemResetTimingRelation,
     };
 
     fn make_table_cell(text: &str, is_header: bool) -> StructuredTableCellRecord {
@@ -13481,6 +13864,152 @@ mod tests {
         assert!(
             semantic_ir.actor_ports.is_empty(),
             "explicit reset fanout evidence should stay in the infrastructure surface"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn explicit_clock_reset_topology_recovers_only_current_document_evidence() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("clock_reset_topology.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Contract\n",
+                "Clock ACLK.\n",
+                "Reset ARESETN is asynchronous active low.\n",
+                "The ACLK clock gate CGATE0 feeds the Requester branch.\n",
+                "The two-stage reset synchronizer RSTSYNC0 feeds ARESETN to the Requester.\n",
+                "The ARESETN reset tree targets the Requester registers and Completer registers.\n",
+                "The ACLK clock gate policy should avoid glitches.\n",
+                "ARESETN may use a synchronizer in some implementations.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        for (statement_id, text) in [
+            ("statement_clock", "Clock ACLK."),
+            (
+                "statement_reset",
+                "Reset ARESETN is asynchronous active low.",
+            ),
+            (
+                "statement_clock_gate",
+                "The ACLK clock gate CGATE0 feeds the Requester branch.",
+            ),
+            (
+                "statement_reset_sync",
+                "The two-stage reset synchronizer RSTSYNC0 feeds ARESETN to the Requester.",
+            ),
+            (
+                "statement_reset_tree",
+                "The ARESETN reset tree targets the Requester registers and Completer registers.",
+            ),
+            (
+                "statement_vague_clock_gate",
+                "The ACLK clock gate policy should avoid glitches.",
+            ),
+            (
+                "statement_vague_sync",
+                "ARESETN may use a synchronizer in some implementations.",
+            ),
+        ] {
+            evidence_ir.extracted_statements.push(ExtractedStatement {
+                statement_id: statement_id.to_string(),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text: text.to_string(),
+                evidence_span_ids: Vec::new(),
+                related_visual_evidence_ids: Vec::new(),
+            });
+        }
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        let clock_infrastructure = semantic_ir
+            .infrastructure_signals
+            .iter()
+            .find(|record| record.signal_name == "ACLK")
+            .expect("expected ACLK infrastructure record");
+        assert_eq!(clock_infrastructure.infrastructure_topology.len(), 1);
+        let clock_gate = &clock_infrastructure.infrastructure_topology[0];
+        assert_eq!(
+            clock_gate.topology_kind,
+            InfrastructureTopologyKind::ClockGatedBranch
+        );
+        assert_eq!(clock_gate.component_name.as_deref(), Some("CGATE0"));
+        assert_eq!(clock_gate.stage_count, None);
+        assert_eq!(clock_gate.target_actor_names, vec!["Requester".to_string()]);
+        assert!(!clock_gate.supporting_statement_id.is_empty());
+        assert_ne!(
+            clock_gate.supporting_statement_id,
+            "statement_vague_clock_gate"
+        );
+        assert_ne!(clock_gate.supporting_statement_id, "statement_vague_sync");
+
+        let reset_infrastructure = semantic_ir
+            .infrastructure_signals
+            .iter()
+            .find(|record| record.signal_name == "ARESETN")
+            .expect("expected ARESETN infrastructure record");
+        assert_eq!(
+            reset_infrastructure
+                .infrastructure_topology
+                .iter()
+                .filter(|record| record.topology_kind
+                    == InfrastructureTopologyKind::ResetSynchronizerStages)
+                .count(),
+            1,
+            "only the explicit two-stage synchronizer sentence should create a stage record"
+        );
+        assert_eq!(
+            reset_infrastructure
+                .infrastructure_topology
+                .iter()
+                .filter(
+                    |record| record.topology_kind == InfrastructureTopologyKind::ResetTreeTargets
+                )
+                .count(),
+            1
+        );
+        let synchronizer = reset_infrastructure
+            .infrastructure_topology
+            .iter()
+            .find(|record| {
+                record.topology_kind == InfrastructureTopologyKind::ResetSynchronizerStages
+            })
+            .expect("expected reset synchronizer topology");
+        assert_eq!(synchronizer.component_name.as_deref(), Some("RSTSYNC0"));
+        assert_eq!(synchronizer.stage_count, Some(2));
+        assert_eq!(
+            synchronizer.target_actor_names,
+            vec!["Requester".to_string()]
+        );
+        let reset_tree = reset_infrastructure
+            .infrastructure_topology
+            .iter()
+            .find(|record| record.topology_kind == InfrastructureTopologyKind::ResetTreeTargets)
+            .expect("expected reset tree topology");
+        assert_eq!(
+            reset_tree.target_actor_names,
+            vec!["Requester".to_string(), "Completer".to_string()]
+        );
+        assert!(
+            semantic_ir.actor_ports.is_empty(),
+            "topology-only evidence should stay in the infrastructure surface"
         );
 
         Ok(())

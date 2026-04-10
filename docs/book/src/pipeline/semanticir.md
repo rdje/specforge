@@ -76,7 +76,10 @@ The dedicated [Clock And Reset Infrastructure](../domain/clock-reset.md) chapter
 Current `SemanticIR` therefore has two related surfaces:
 
 - `signal_connectivity`, where infrastructure signals carry `system_clock` or `system_reset` connectivity class
-- `infrastructure_signals`, where source status and recovered distribution status are recorded without inventing ordinary protocol producers
+- `infrastructure_signals`, where source status, recovered distribution status, and explicit topology hints are recorded without inventing ordinary protocol producers
+
+Topology hints are intentionally bounded.
+They can preserve current-document evidence for gated clock branches, reset synchronizer stage counts, or reset-tree targets, but they do not claim a complete physical tree proof.
 
 ## Residual decisions
 
