@@ -1,5 +1,29 @@
 # CHANGES
 
+## 2026-04-10 (Rescan plan now carries replayable command hints)
+
+### Added: schema-v2 replay metadata for targeted rescans
+- Updated [project_validation.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/project_validation.rs) so `generated/validation/rescan_plan.json` now uses schema version 2.
+- Each recommendation now carries typed `replay_inputs` such as `source_document`, `source_ir`, `evidence_ir`, or `semantic_ir`.
+- Each recommendation now carries structured `recommended_commands` with executable, args, working directory, display string, and command intent.
+- Recommendations now carry `automation_status: planned_not_executed` so future loops can distinguish planned targets from executed rescans.
+
+### Preserved: replay hints are not auto-rescans
+- `project-validation` still does not execute the command hints.
+- It does not mutate IR beyond the existing validation backannotation behavior.
+- It does not suppress findings, change scoring, decide arbitration, or promote facts from prior memory.
+- The new metadata is meant to let a future convergent rescan loop execute safe args instead of scraping prose or shell strings.
+
+### Documentation
+- Updated the public mdBook validation and command pages to describe the replay-oriented plan contract.
+- Updated [README.md](/Users/richarddje/Documents/github/specforge/README.md), [DEVELOPMENT_NOTES.md](/Users/richarddje/Documents/github/specforge/DEVELOPMENT_NOTES.md), and [MEMORY.md](/Users/richarddje/Documents/github/specforge/MEMORY.md) with the schema-v2 behavior and remaining executor follow-up.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml project_validation -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -- project-validation generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json generated/intent_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/intent_ir.json generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json` -> passed (`rescan_recommendations: 0`, schema-v2 local plan refreshed)
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-10 (Project validation now consumes rescan guidance)
 
 ### Added: generated rescan/extractor-selection plan

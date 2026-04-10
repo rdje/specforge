@@ -761,6 +761,15 @@
   - it still does not mutate IR, change score, remove findings, decide arbitration, or promote facts from prior memory
 - the remaining follow-up is to make a future convergent rescan loop execute those targets automatically when a suitable extractor lane exists
 
+### Project validation rescan plan is now replay-oriented
+- `generated/validation/rescan_plan.json` is now schema version 2
+- each recommendation now carries:
+  - typed `replay_inputs` such as `source_document`, `source_ir`, `evidence_ir`, or `semantic_ir`
+  - structured `recommended_commands` with executable, args, working directory, display string, and command intent
+  - an explicit `automation_status: planned_not_executed`
+- this keeps the plan useful for a future executor without requiring that executor to parse prose or shell strings
+- the command still does not run the rescans itself; it only writes replayable metadata and projects the queue into the continuity docs
+
 ### Fifth landed bounded prior family and semantic-stage arbitration slice
 - the fifth bounded learning family is now real in `crates/specforge/src/ir/prior_memory.rs` and `crates/specforge/src/commands/learn_priors.rs`
 - `specforge learn-priors` now harvests semantic modality-reliability priors from decisive, non-alias-dependent semantic consensus plus the supporting source kinds that carried that consensus

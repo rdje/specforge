@@ -179,6 +179,7 @@
   - `specforge validate <artifact>` now backannotates a deterministic `validation_report.json` sidecar next to the validated IR artifact and writes the latest report back into the artifact's `validation_reports` field
   - validation findings are now graph-aware for the four IR stages, including producer/consumer gaps and compatibility-surface lag on the actor-relative KG
   - `specforge project-validation <artifact>...` now validates the passed artifacts and projects their persisted reports into tracked live docs via `VALIDATION_SNAPSHOT.md` plus a managed validation block in `LIVE_ACHIEVEMENT_STATUS.md`
+  - `project-validation` now writes schema-v2 replay-oriented rescan recommendations with typed replay inputs, structured command hints, and `planned_not_executed` automation status for a future convergent rescan executor
 - remaining:
   - extend validation into the upcoming semantic-truthfulness surfaces (temporal rules, arbitration/conflict records, and KG-quality benchmarks)
   - keep adapter validation (SystemVerilog/Verilog/VHDL targets) as horizon work until the semantic pipeline is materially harder to fool

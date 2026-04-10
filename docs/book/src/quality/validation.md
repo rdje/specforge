@@ -85,6 +85,7 @@ For example, `EvidenceIR` validation can report `negative_knowledge_prior_matche
 Those exact matches also surface `negative_knowledge_rescan_recommendations`, `negative_knowledge_corroboration_requirements`, and stage-specific `*_negative_knowledge_rescan_guidance` findings.
 That is guidance for targeted rescans and stronger local corroboration, not a correction: the current conflict or residual remains present and still has to be resolved by local evidence and arbitration.
 `project-validation` is the first consumer for this guidance: it projects those findings into the validation snapshot and writes a generated `generated/validation/rescan_plan.json` target list for later rescan/extractor-selection loops.
+That target list is versioned and replay-oriented: each recommendation carries typed replay inputs plus structured command hints for the stage rebuild and follow-up validation, while remaining `planned_not_executed` until a future convergent loop chooses to execute it.
 
 ## Learning depends on validation gates
 

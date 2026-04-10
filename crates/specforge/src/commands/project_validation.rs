@@ -27,7 +27,29 @@ struct ProjectedArtifactSnapshot {
     display_name: String,
     stage: IrStage,
     artifact_path: PathBuf,
+    replay_inputs: Vec<ProjectedReplayInput>,
     report: ValidationReportRecord,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct ProjectedReplayInput {
+    input_kind: &'static str,
+    path: PathBuf,
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+struct ProjectRescanReplayInput {
+    input_kind: String,
+    path: String,
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+struct ProjectRescanCommandHint {
+    intent: String,
+    executable: String,
+    args: Vec<String>,
+    working_directory: String,
+    display: String,
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
@@ -36,11 +58,14 @@ struct ProjectRescanRecommendation {
     display_name: String,
     stage: String,
     artifact_path: String,
+    replay_inputs: Vec<ProjectRescanReplayInput>,
     finding_id: String,
     related_ids: Vec<String>,
     extractor_lane: String,
     corroboration_policy: String,
     recommended_action: String,
+    recommended_commands: Vec<ProjectRescanCommandHint>,
+    automation_status: String,
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
@@ -121,6 +146,10 @@ fn project_artifact(artifact: &Path, repo_root: &Path) -> Result<ProjectedArtifa
                 ir.document_identity.display_name,
                 probe.stage,
                 artifact_path,
+                vec![ProjectedReplayInput {
+                    input_kind: "source_document",
+                    path: ir.source.canonical_path,
+                }],
                 ir.validation_reports,
             )
         }
@@ -131,6 +160,10 @@ fn project_artifact(artifact: &Path, repo_root: &Path) -> Result<ProjectedArtifa
                 ir.document_identity.display_name,
                 probe.stage,
                 artifact_path,
+                vec![ProjectedReplayInput {
+                    input_kind: "source_ir",
+                    path: ir.source_ir_path,
+                }],
                 ir.validation_reports,
             )
         }
@@ -141,6 +174,10 @@ fn project_artifact(artifact: &Path, repo_root: &Path) -> Result<ProjectedArtifa
                 ir.document_identity.display_name,
                 probe.stage,
                 artifact_path,
+                vec![ProjectedReplayInput {
+                    input_kind: "evidence_ir",
+                    path: ir.evidence_ir_path,
+                }],
                 ir.validation_reports,
             )
         }
@@ -151,6 +188,10 @@ fn project_artifact(artifact: &Path, repo_root: &Path) -> Result<ProjectedArtifa
                 ir.document_identity.display_name,
                 probe.stage,
                 artifact_path,
+                vec![ProjectedReplayInput {
+                    input_kind: "semantic_ir",
+                    path: ir.semantic_ir_path,
+                }],
                 ir.validation_reports,
             )
         }
@@ -162,6 +203,7 @@ fn projected_snapshot(
     display_name: String,
     stage: IrStage,
     artifact_path: PathBuf,
+    replay_inputs: Vec<ProjectedReplayInput>,
     validation_reports: Vec<ValidationReportRecord>,
 ) -> Result<ProjectedArtifactSnapshot> {
     let Some(report) = validation_reports.into_iter().next() else {
@@ -176,6 +218,7 @@ fn projected_snapshot(
         display_name,
         stage,
         artifact_path,
+        replay_inputs,
         report,
     })
 }
@@ -230,6 +273,10 @@ fn render_validation_snapshot_doc(
                 "- artifact_path: `{}`",
                 recommendation.artifact_path
             ));
+            lines.push(format!(
+                "- replay_inputs: {}",
+                render_replay_input_list(&recommendation.replay_inputs)
+            ));
             lines.push(format!("- finding_id: `{}`", recommendation.finding_id));
             lines.push(format!(
                 "- extractor_lane: `{}`",
@@ -247,6 +294,18 @@ fn render_validation_snapshot_doc(
                 "- related_ids: {}",
                 render_inline_code_list(&recommendation.related_ids)
             ));
+            lines.push(format!(
+                "- automation_status: `{}`",
+                recommendation.automation_status
+            ));
+            if recommendation.recommended_commands.is_empty() {
+                lines.push("- recommended_commands: none".to_string());
+            } else {
+                lines.push("- recommended_commands:".to_string());
+                for command in &recommendation.recommended_commands {
+                    lines.push(format!("  - `{}`: `{}`", command.intent, command.display));
+                }
+            }
             lines.push(String::new());
         }
     }
@@ -319,11 +378,13 @@ fn render_live_status_projection(
     } else {
         for recommendation in rescan_recommendations.iter().take(8) {
             lines.push(format!(
-                "  - `{}` (`{}`): `{}` for {}",
+                "  - `{}` (`{}`): `{}` for {} ({} command hint(s), `{}`)",
                 recommendation.display_name,
                 recommendation.stage,
                 recommendation.extractor_lane,
-                render_inline_code_list(&recommendation.related_ids)
+                render_inline_code_list(&recommendation.related_ids),
+                recommendation.recommended_commands.len(),
+                recommendation.automation_status
             ));
         }
         if rescan_recommendations.len() > 8 {
@@ -367,7 +428,7 @@ fn write_validation_rescan_plan(
     }
 
     let plan = ProjectRescanPlanRecord {
-        schema_version: 1,
+        schema_version: 2,
         generated_by: "specforge project-validation".to_string(),
         recommendation_count: recommendations.len(),
         recommendations,
@@ -390,17 +451,27 @@ fn collect_rescan_recommendations(
             let mut related_ids = finding.related_ids.clone();
             related_ids.sort();
             related_ids.dedup();
+            let replay_inputs = recommendation_replay_inputs(snapshot, repo_root);
+            let recommended_commands = recommended_rescan_commands(
+                snapshot.stage,
+                &snapshot.artifact_path,
+                snapshot,
+                repo_root,
+            );
             recommendations.push(ProjectRescanRecommendation {
                 document_key: snapshot.document_key.clone(),
                 display_name: snapshot.display_name.clone(),
                 stage: snapshot.stage.as_str().to_string(),
                 artifact_path: repo_relative_display(&snapshot.artifact_path, repo_root),
+                replay_inputs,
                 finding_id: finding.finding_id.clone(),
                 related_ids,
                 extractor_lane: extractor_lane_for_rescan(snapshot.stage).to_string(),
                 corroboration_policy:
                     "stronger_local_corroboration_required_before_canonical_promotion".to_string(),
                 recommended_action: recommended_rescan_action(snapshot.stage).to_string(),
+                recommended_commands,
+                automation_status: "planned_not_executed".to_string(),
             });
         }
     }
@@ -411,6 +482,88 @@ fn collect_rescan_recommendations(
             .then_with(|| left.finding_id.cmp(&right.finding_id))
     });
     recommendations
+}
+
+fn recommendation_replay_inputs(
+    snapshot: &ProjectedArtifactSnapshot,
+    repo_root: &Path,
+) -> Vec<ProjectRescanReplayInput> {
+    snapshot
+        .replay_inputs
+        .iter()
+        .map(|input| ProjectRescanReplayInput {
+            input_kind: input.input_kind.to_string(),
+            path: repo_relative_display(&input.path, repo_root),
+        })
+        .collect()
+}
+
+fn recommended_rescan_commands(
+    stage: IrStage,
+    artifact_path: &Path,
+    snapshot: &ProjectedArtifactSnapshot,
+    repo_root: &Path,
+) -> Vec<ProjectRescanCommandHint> {
+    let mut commands = Vec::new();
+    if let Some(input) = snapshot.replay_inputs.first() {
+        let input_path = repo_relative_display(&input.path, repo_root);
+        let rebuild_intent = match stage {
+            IrStage::SourceIr => "rebuild_source_ir",
+            IrStage::EvidenceIr => "rebuild_evidence_ir",
+            IrStage::SemanticIr => "rebuild_semantic_ir",
+            IrStage::IntentIr => "rebuild_intent_ir",
+        };
+        let rebuild_command = match stage {
+            IrStage::SourceIr => Some(vec!["ingest".to_string(), input_path]),
+            IrStage::EvidenceIr => Some(vec!["evidence".to_string(), input_path]),
+            IrStage::SemanticIr => Some(vec!["semantic".to_string(), input_path]),
+            IrStage::IntentIr => Some(vec!["intent".to_string(), input_path]),
+        };
+        if let Some(args) = rebuild_command {
+            commands.push(specforge_command_hint(rebuild_intent, args));
+        }
+    }
+
+    commands.push(specforge_command_hint(
+        "validate_current_artifact",
+        vec![
+            "validate".to_string(),
+            repo_relative_display(artifact_path, repo_root),
+        ],
+    ));
+    commands
+}
+
+fn specforge_command_hint(intent: &str, specforge_args: Vec<String>) -> ProjectRescanCommandHint {
+    let mut args = vec![
+        "run".to_string(),
+        "--manifest-path".to_string(),
+        "Cargo.toml".to_string(),
+        "--".to_string(),
+    ];
+    args.extend(specforge_args);
+    let display = std::iter::once(shell_quote("cargo"))
+        .chain(args.iter().map(|arg| shell_quote(arg)))
+        .collect::<Vec<_>>()
+        .join(" ");
+
+    ProjectRescanCommandHint {
+        intent: intent.to_string(),
+        executable: "cargo".to_string(),
+        args,
+        working_directory: ".".to_string(),
+        display,
+    }
+}
+
+fn shell_quote(value: &str) -> String {
+    if value.chars().all(|character| {
+        character.is_ascii_alphanumeric() || matches!(character, '_' | '-' | '.' | '/' | ':' | '=')
+    }) {
+        return value.to_string();
+    }
+
+    format!("'{}'", value.replace('\'', "'\"'\"'"))
 }
 
 fn is_negative_knowledge_rescan_guidance(finding: &ValidationFindingRecord) -> bool {
@@ -454,6 +607,18 @@ fn render_inline_code_list(values: &[String]) -> String {
         values
             .iter()
             .map(|value| format!("`{value}`"))
+            .collect::<Vec<_>>()
+            .join(", ")
+    }
+}
+
+fn render_replay_input_list(values: &[ProjectRescanReplayInput]) -> String {
+    if values.is_empty() {
+        "none".to_string()
+    } else {
+        values
+            .iter()
+            .map(|value| format!("`{}:{}`", value.input_kind, value.path))
             .collect::<Vec<_>>()
             .join(", ")
     }
@@ -647,6 +812,7 @@ mod tests {
         assert!(live_status.contains("- Targeted rescan queue:\n  - none"));
 
         let rescan_plan = fs::read_to_string(repo_root.join(VALIDATION_RESCAN_PLAN_PATH))?;
+        assert!(rescan_plan.contains("\"schema_version\": 2"));
         assert!(rescan_plan.contains("\"recommendation_count\": 0"));
 
         let reloaded = IntentIr::load_from_path(&intent_ir.artifact_layout.intent_ir_path)?;
@@ -660,11 +826,16 @@ mod tests {
         let tempdir = tempdir()?;
         let repo_root = tempdir.path();
         let artifact_path = repo_root.join("generated/intent_ir/doc/intent_ir.json");
+        let semantic_ir_path = repo_root.join("generated/semantic_ir/doc/semantic_ir.json");
         let snapshot = ProjectedArtifactSnapshot {
             document_key: "doc".to_string(),
             display_name: "Spec.pdf".to_string(),
             stage: IrStage::IntentIr,
             artifact_path: artifact_path.clone(),
+            replay_inputs: vec![ProjectedReplayInput {
+                input_kind: "semantic_ir",
+                path: semantic_ir_path,
+            }],
             report: ValidationReportRecord {
                 report_id: "validation_intent_ir_test".to_string(),
                 validated_stage: IrStage::IntentIr,
@@ -701,21 +872,56 @@ mod tests {
             recommendations[0].extractor_lane,
             "intent_ir_canonical_surface_corroboration"
         );
+        assert_eq!(
+            recommendations[0].replay_inputs,
+            vec![ProjectRescanReplayInput {
+                input_kind: "semantic_ir".to_string(),
+                path: "generated/semantic_ir/doc/semantic_ir.json".to_string(),
+            }]
+        );
+        assert_eq!(recommendations[0].recommended_commands.len(), 2);
+        assert_eq!(
+            recommendations[0].recommended_commands[0].intent,
+            "rebuild_intent_ir"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[0].args,
+            vec![
+                "run".to_string(),
+                "--manifest-path".to_string(),
+                "Cargo.toml".to_string(),
+                "--".to_string(),
+                "intent".to_string(),
+                "generated/semantic_ir/doc/semantic_ir.json".to_string(),
+            ]
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[1].intent,
+            "validate_current_artifact"
+        );
+        assert_eq!(recommendations[0].automation_status, "planned_not_executed");
 
         let snapshot_doc = render_validation_snapshot_doc(&snapshots, repo_root, &recommendations);
         assert!(snapshot_doc.contains("## Targeted Rescan Recommendations"));
         assert!(snapshot_doc.contains("intent_ir_canonical_surface_corroboration"));
         assert!(snapshot_doc.contains("temporal_conflict_0001"));
+        assert!(snapshot_doc.contains("recommended_commands"));
+        assert!(snapshot_doc.contains("generated/semantic_ir/doc/semantic_ir.json"));
 
         let live_projection =
             render_live_status_projection(&snapshots, repo_root, &recommendations);
         assert!(live_projection.contains("- Targeted rescan queue:"));
         assert!(live_projection.contains("intent_ir_canonical_surface_corroboration"));
+        assert!(live_projection.contains("2 command hint(s)"));
 
         let plan_path = write_validation_rescan_plan(repo_root, recommendations)?;
         let plan = fs::read_to_string(plan_path)?;
+        assert!(plan.contains("\"schema_version\": 2"));
         assert!(plan.contains("\"recommendation_count\": 1"));
         assert!(plan.contains("\"corroboration_policy\""));
+        assert!(plan.contains("\"replay_inputs\""));
+        assert!(plan.contains("\"recommended_commands\""));
+        assert!(plan.contains("\"rebuild_intent_ir\""));
 
         Ok(())
     }

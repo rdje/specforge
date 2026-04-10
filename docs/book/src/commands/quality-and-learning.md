@@ -44,8 +44,12 @@ It also consumes validation-level negative-knowledge rescan guidance and writes 
 
 `generated/validation/rescan_plan.json`
 
-That plan is deliberately advisory.
-It tells downstream loops which current conflict or residual ids deserve targeted rechecking and stronger local corroboration, but it does not mutate IR, suppress findings, or promote facts from prior memory.
+That plan is deliberately advisory, but it is now replay-oriented rather than only descriptive.
+Each target carries the current artifact path, typed replay inputs such as `semantic_ir` or `evidence_ir`, a structured command-hint sequence, and an explicit `planned_not_executed` status.
+The command hints are there so a future convergent rescan loop can rebuild the right stage safely from machine-readable args instead of scraping a prose note.
+
+The plan still does not mutate IR, suppress findings, run rescans automatically, or promote facts from prior memory.
+It only tells downstream loops which current conflict or residual ids deserve targeted rechecking and stronger local corroboration.
 
 Use it when the live baseline should be updated, not just an individual artifact.
 
