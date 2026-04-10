@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-10 (Rescan execution persists arbitration summaries)
+
+### Added: validation-backed execution summaries
+- Updated [project_validation.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/project_validation.rs) so schema-v2 rescan recommendations can carry an optional `execution_summary` after execution.
+- Updated [rescan_plan.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/rescan_plan.rs) so executed recommendations persist before/after validation snapshots, score deltas, finding-count deltas, added/removed finding ids, and an arbitration verdict.
+- Verdicts are deliberately conservative: `validated_no_change`, `possible_improvement_review_required`, `regression_review_required`, or `neutral_change_review_required`.
+
+### Preserved: review before promotion
+- Updated [converge.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/converge.rs) so convergence summaries count review-required verdicts and split them across possible-improvement, regression, and neutral artifact-change buckets.
+- A possible improvement is still not a canonical truth promotion; it only means validation deltas moved in a favorable direction and need current-document evidence review.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml rescan_plan -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml converge -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml project_validation_collects_negative_knowledge_rescan_guidance -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml project_validation_writes_snapshot_doc_and_updates_live_status -- --nocapture` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-10 (Converge can consume rescan plans after stability)
 
 ### Added: opt-in rescan hook for the fixed-point loop

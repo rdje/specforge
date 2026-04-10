@@ -53,6 +53,41 @@ pub(crate) struct ProjectRescanCommandHint {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub(crate) struct ProjectRescanValidationSnapshot {
+    pub(crate) artifact_fingerprint: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) overall_score: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) grade: Option<String>,
+    pub(crate) finding_count: usize,
+    #[serde(default)]
+    pub(crate) finding_ids: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub(crate) struct ProjectRescanValidationDelta {
+    pub(crate) fingerprint_changed: bool,
+    pub(crate) score_changed: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) score_delta: Option<i32>,
+    pub(crate) grade_changed: bool,
+    pub(crate) finding_count_delta: i64,
+    #[serde(default)]
+    pub(crate) added_findings: Vec<String>,
+    #[serde(default)]
+    pub(crate) removed_findings: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub(crate) struct ProjectRescanExecutionSummary {
+    pub(crate) automation_status: String,
+    pub(crate) arbitration_verdict: String,
+    pub(crate) before_validation: ProjectRescanValidationSnapshot,
+    pub(crate) after_validation: ProjectRescanValidationSnapshot,
+    pub(crate) validation_delta: ProjectRescanValidationDelta,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub(crate) struct ProjectRescanRecommendation {
     pub(crate) document_key: String,
     pub(crate) display_name: String,
@@ -66,6 +101,8 @@ pub(crate) struct ProjectRescanRecommendation {
     pub(crate) recommended_action: String,
     pub(crate) recommended_commands: Vec<ProjectRescanCommandHint>,
     pub(crate) automation_status: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) execution_summary: Option<ProjectRescanExecutionSummary>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -472,6 +509,7 @@ fn collect_rescan_recommendations(
                 recommended_action: recommended_rescan_action(snapshot.stage).to_string(),
                 recommended_commands,
                 automation_status: "planned_not_executed".to_string(),
+                execution_summary: None,
             });
         }
     }

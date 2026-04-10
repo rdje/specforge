@@ -75,13 +75,14 @@
   - `--execute` dispatches only whitelisted in-process `ingest` / `evidence` / `semantic` / `intent` / `validate` hints from structured args
   - it refuses untrusted executables, non-repository working directories, and unsupported command shapes instead of shelling out through display strings
   - successful execution validates the target artifact before and after the whitelisted commands, then marks the local plan recommendation as `executed_validated_no_change` or `executed_validated_changed`
+  - executed recommendations now persist an optional `execution_summary` with before/after validation snapshots, score and finding-count deltas, added/removed finding ids, and a conservative verdict (`validated_no_change`, `possible_improvement_review_required`, `regression_review_required`, or `neutral_change_review_required`)
   - the changed/no-change status is still not a canonical truth promotion or improvement claim
 - `specforge converge --rescan-plan <plan>` now consumes the same schema-v2 rescan plan only after the fixed-point pipeline snapshot stabilizes:
   - the hook is opt-in and dry-run by default
   - the queue is automatically filtered to the converged source document key
   - `--execute-rescan-plan` is required before whitelisted replay hints execute
   - the convergence result remains the stable pre-rescan snapshot
-  - post-rescan changes are summarized as arbitration state such as `changed_requires_validation_review`, not as automatic improvement
+  - post-rescan changes are summarized as arbitration state such as `changed_requires_validation_review`, with review-required counters split by possible improvement, regression, and neutral artifact drift, not as automatic improvement
 - root docs remain important, but they now serve continuity, roadmap, validation, and developer-state roles more than primary end-user onboarding
 - runnable CLI surface includes `inspect`, `doctor`, `converge`, `ingest`, `evidence`, `semantic`, `intent`, `adapt`, `enrich`, `validate`, `kg-bench`, `project-validation`, `rescan-plan`, `learn-priors`, and `nlp-enrich`
 - `specforge converge` now defaults to full Ollama-backed VLM image enrichment plus NLP Level 3 backannotation; use `--vlm-provider skip` and/or `--nlp-provider skip` only when intentionally narrowing the loop
@@ -209,7 +210,7 @@
 - `.venv-docling/` is also local-only runtime state and should stay untracked
 
 ## Exact next steps
-1. deepen the post-rescan arbitration policy so `changed_requires_validation_review` outcomes can be inspected, scored, and promoted only through validation-backed current-document evidence
+1. project persisted rescan `execution_summary` verdicts into the validation snapshot/book-facing review surface so humans and future agents can inspect changed outcomes without opening raw JSON
 2. broaden visual-motif prior benchmarking beyond the first diagram-classification consumer, especially around rescan selection and multimodal corroboration
 3. deepen clock/reset topology only when the current document explicitly names gated branches, synchronizer stages, or reset-tree target structure
 
@@ -219,7 +220,7 @@
 - KG-guided multimodal rescans (`R15c`)
 - broader evidence arbitration / conflict handling beyond polarity, interface-shape, multi-producer ambiguity, modality-aware semantic-role grounding, consensus summaries, semantic candidates, and semantic arbitration summaries (`R15d`)
 - broader KG-quality evaluation and benchmark hardening beyond the new seed fixture pack (`R15e`)
-- cross-document extractor learning is now started, and the first seven bounded prior-consumer paths are now live; negative-knowledge priors now have validation-only caution coverage, machine-readable rescan/corroboration guidance, a `project-validation` consumer that writes a schema-v2 replay-oriented rescan/extractor-selection target list, a first explicit `rescan-plan` consumer, and an opt-in `converge --rescan-plan <plan>` hook; richer changed-outcome arbitration still needs to grow
+- cross-document extractor learning is now started, and the first seven bounded prior-consumer paths are now live; negative-knowledge priors now have validation-only caution coverage, machine-readable rescan/corroboration guidance, a `project-validation` consumer that writes a schema-v2 replay-oriented rescan/extractor-selection target list, a first explicit `rescan-plan` consumer, an opt-in `converge --rescan-plan <plan>` hook, and persisted execution summaries for changed-outcome review; the remaining gap is projecting those summaries into review-facing docs and policy gates
 - Tier 3 relation extraction after the graph/temporal/eval surfaces are ready (`R14`)
 - some downstream compatibility and consumer paths still rely on flat `direction_hint` instead of the graph-native surface
 - meaning-based role inference now covers tables, prose, alias-grounded prose, visual captions, and VLM timing annotations, and canonical layers now preserve that provenance, but broader downstream use of preserved arbitration state is still early

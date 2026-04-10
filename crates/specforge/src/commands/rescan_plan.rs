@@ -8,19 +8,26 @@ use crate::commands::{evidence, ingest, intent, semantic, validate};
 use crate::error::{AppError, Result};
 
 use super::project_validation::{
-    ProjectRescanCommandHint, ProjectRescanPlanRecord, ProjectRescanRecommendation,
+    ProjectRescanCommandHint, ProjectRescanExecutionSummary, ProjectRescanPlanRecord,
+    ProjectRescanRecommendation, ProjectRescanValidationDelta, ProjectRescanValidationSnapshot,
 };
 
 const SUPPORTED_RESCAN_PLAN_SCHEMA_VERSION: u32 = 2;
 const PLANNED_NOT_EXECUTED: &str = "planned_not_executed";
 const EXECUTED_VALIDATED_CHANGED: &str = "executed_validated_changed";
 const EXECUTED_VALIDATED_NO_CHANGE: &str = "executed_validated_no_change";
+const ARBITRATION_VALIDATED_NO_CHANGE: &str = "validated_no_change";
+pub(crate) const ARBITRATION_POSSIBLE_IMPROVEMENT_REVIEW_REQUIRED: &str =
+    "possible_improvement_review_required";
+pub(crate) const ARBITRATION_REGRESSION_REVIEW_REQUIRED: &str = "regression_review_required";
+pub(crate) const ARBITRATION_NEUTRAL_CHANGE_REVIEW_REQUIRED: &str =
+    "neutral_change_review_required";
 
 pub fn run(args: RescanPlanArgs) -> Result<()> {
     run_plan(args).map(|_| ())
 }
 
-pub fn run_plan(args: RescanPlanArgs) -> Result<RescanPlanRunReport> {
+pub(crate) fn run_plan(args: RescanPlanArgs) -> Result<RescanPlanRunReport> {
     let plan_path = args.plan;
     let mut plan = load_rescan_plan(&plan_path)?;
     let selected_indices =
@@ -37,6 +44,7 @@ pub fn run_plan(args: RescanPlanArgs) -> Result<RescanPlanRunReport> {
         selected_recommendations: selected_indices.len(),
         executed_validated_changed: 0,
         executed_validated_no_change: 0,
+        execution_summaries: Vec::new(),
     };
 
     println!("command: rescan-plan");
@@ -70,6 +78,8 @@ pub fn run_plan(args: RescanPlanArgs) -> Result<RescanPlanRunReport> {
             _ => {}
         }
         plan.recommendations[index].automation_status = outcome.automation_status.to_string();
+        plan.recommendations[index].execution_summary = Some(outcome.execution_summary.clone());
+        report.execution_summaries.push(outcome.execution_summary);
     }
 
     fs::write(&plan_path, serde_json::to_string_pretty(&plan)?)?;
@@ -78,16 +88,33 @@ pub fn run_plan(args: RescanPlanArgs) -> Result<RescanPlanRunReport> {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct RescanPlanRunReport {
-    pub plan_path: PathBuf,
-    pub execute: bool,
-    pub document_key_filter: Option<String>,
-    pub schema_version: u32,
-    pub recommendation_count: usize,
-    pub pending_recommendations: usize,
-    pub selected_recommendations: usize,
-    pub executed_validated_changed: usize,
-    pub executed_validated_no_change: usize,
+pub(crate) struct RescanPlanRunReport {
+    pub(crate) plan_path: PathBuf,
+    pub(crate) execute: bool,
+    pub(crate) document_key_filter: Option<String>,
+    pub(crate) schema_version: u32,
+    pub(crate) recommendation_count: usize,
+    pub(crate) pending_recommendations: usize,
+    pub(crate) selected_recommendations: usize,
+    pub(crate) executed_validated_changed: usize,
+    pub(crate) executed_validated_no_change: usize,
+    pub(crate) execution_summaries: Vec<ProjectRescanExecutionSummary>,
+}
+
+impl RescanPlanRunReport {
+    pub(crate) fn review_required_count(&self) -> usize {
+        self.execution_summaries
+            .iter()
+            .filter(|summary| summary.arbitration_verdict.ends_with("_review_required"))
+            .count()
+    }
+
+    pub(crate) fn arbitration_verdict_count(&self, verdict: &str) -> usize {
+        self.execution_summaries
+            .iter()
+            .filter(|summary| summary.arbitration_verdict == verdict)
+            .count()
+    }
 }
 
 fn load_rescan_plan(plan_path: &Path) -> Result<ProjectRescanPlanRecord> {
@@ -189,9 +216,21 @@ fn execute_recommendation(
     );
 
     let automation_status = execution_status(&before, &after);
+    let validation_delta = validation_delta(&before, &after);
+    let arbitration_verdict = arbitration_verdict(&validation_delta);
     println!("execution_status: {automation_status}");
+    println!("arbitration_verdict: {arbitration_verdict}");
 
-    Ok(RescanExecutionOutcome { automation_status })
+    Ok(RescanExecutionOutcome {
+        automation_status,
+        execution_summary: ProjectRescanExecutionSummary {
+            automation_status: automation_status.to_string(),
+            arbitration_verdict: arbitration_verdict.to_string(),
+            before_validation: before,
+            after_validation: after,
+            validation_delta,
+        },
+    })
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -204,28 +243,29 @@ enum RescanInvocation {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-struct RescanValidationSnapshot {
-    artifact_fingerprint: String,
-    overall_score: Option<u32>,
-    grade: Option<String>,
-    finding_count: usize,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
 struct RescanExecutionOutcome {
     automation_status: &'static str,
+    execution_summary: ProjectRescanExecutionSummary,
 }
 
-fn validate_and_snapshot(artifact_path: &Path) -> Result<RescanValidationSnapshot> {
+fn validate_and_snapshot(artifact_path: &Path) -> Result<ProjectRescanValidationSnapshot> {
     validate::run(ValidateArgs {
         artifact: artifact_path.to_path_buf(),
     })?;
     let report = read_validation_report(artifact_path)?;
-    Ok(RescanValidationSnapshot {
+    let mut finding_ids = report
+        .findings
+        .iter()
+        .map(|finding| finding.finding_id.clone())
+        .collect::<Vec<_>>();
+    finding_ids.sort();
+    finding_ids.dedup();
+    Ok(ProjectRescanValidationSnapshot {
         artifact_fingerprint: report.artifact_fingerprint,
         overall_score: report.overall_score,
         grade: report.grade,
         finding_count: report.findings.len(),
+        finding_ids,
     })
 }
 
@@ -251,14 +291,79 @@ fn validation_report_path_for(artifact_path: &Path) -> Result<PathBuf> {
 }
 
 fn execution_status(
-    before: &RescanValidationSnapshot,
-    after: &RescanValidationSnapshot,
+    before: &ProjectRescanValidationSnapshot,
+    after: &ProjectRescanValidationSnapshot,
 ) -> &'static str {
     if before == after {
         EXECUTED_VALIDATED_NO_CHANGE
     } else {
         EXECUTED_VALIDATED_CHANGED
     }
+}
+
+fn validation_delta(
+    before: &ProjectRescanValidationSnapshot,
+    after: &ProjectRescanValidationSnapshot,
+) -> ProjectRescanValidationDelta {
+    let mut before_ids = before.finding_ids.clone();
+    before_ids.sort();
+    before_ids.dedup();
+    let mut after_ids = after.finding_ids.clone();
+    after_ids.sort();
+    after_ids.dedup();
+
+    let added_findings = after_ids
+        .iter()
+        .filter(|finding_id| !before_ids.contains(finding_id))
+        .cloned()
+        .collect();
+    let removed_findings = before_ids
+        .iter()
+        .filter(|finding_id| !after_ids.contains(finding_id))
+        .cloned()
+        .collect();
+
+    ProjectRescanValidationDelta {
+        fingerprint_changed: before.artifact_fingerprint != after.artifact_fingerprint,
+        score_changed: before.overall_score != after.overall_score,
+        score_delta: match (before.overall_score, after.overall_score) {
+            (Some(before), Some(after)) => Some(after as i32 - before as i32),
+            _ => None,
+        },
+        grade_changed: before.grade != after.grade,
+        finding_count_delta: after.finding_count as i64 - before.finding_count as i64,
+        added_findings,
+        removed_findings,
+    }
+}
+
+fn arbitration_verdict(delta: &ProjectRescanValidationDelta) -> &'static str {
+    if !delta.fingerprint_changed
+        && !delta.score_changed
+        && delta.score_delta.unwrap_or(0) == 0
+        && !delta.grade_changed
+        && delta.finding_count_delta == 0
+        && delta.added_findings.is_empty()
+        && delta.removed_findings.is_empty()
+    {
+        return ARBITRATION_VALIDATED_NO_CHANGE;
+    }
+
+    if delta.score_delta.is_some_and(|score_delta| score_delta < 0)
+        || delta.finding_count_delta > 0
+        || !delta.added_findings.is_empty()
+    {
+        return ARBITRATION_REGRESSION_REVIEW_REQUIRED;
+    }
+
+    if delta.score_delta.is_some_and(|score_delta| score_delta > 0)
+        || delta.finding_count_delta < 0
+        || !delta.removed_findings.is_empty()
+    {
+        return ARBITRATION_POSSIBLE_IMPROVEMENT_REVIEW_REQUIRED;
+    }
+
+    ARBITRATION_NEUTRAL_CHANGE_REVIEW_REQUIRED
 }
 
 fn score_label(score: Option<u32>, grade: Option<&str>) -> String {
@@ -454,6 +559,16 @@ mod tests {
             updated.recommendations[0].automation_status,
             EXECUTED_VALIDATED_NO_CHANGE
         );
+        let execution_summary = updated.recommendations[0]
+            .execution_summary
+            .as_ref()
+            .expect("execution summary");
+        assert_eq!(
+            execution_summary.arbitration_verdict,
+            ARBITRATION_VALIDATED_NO_CHANGE
+        );
+        assert_eq!(execution_summary.before_validation.finding_count, 0);
+        assert_eq!(execution_summary.after_validation.finding_count, 0);
 
         Ok(())
     }
@@ -493,18 +608,20 @@ mod tests {
 
     #[test]
     fn rescan_plan_execution_status_tracks_validation_deltas() {
-        let before = RescanValidationSnapshot {
+        let before = ProjectRescanValidationSnapshot {
             artifact_fingerprint: "aaa".to_string(),
             overall_score: Some(80),
             grade: Some("GOOD".to_string()),
             finding_count: 1,
+            finding_ids: vec!["finding_a".to_string()],
         };
         let after_same = before.clone();
-        let after_changed = RescanValidationSnapshot {
+        let after_changed = ProjectRescanValidationSnapshot {
             artifact_fingerprint: "bbb".to_string(),
             overall_score: Some(85),
             grade: Some("GOOD".to_string()),
             finding_count: 1,
+            finding_ids: vec!["finding_a".to_string()],
         };
 
         assert_eq!(
@@ -514,6 +631,61 @@ mod tests {
         assert_eq!(
             execution_status(&before, &after_changed),
             EXECUTED_VALIDATED_CHANGED
+        );
+    }
+
+    #[test]
+    fn rescan_plan_arbitration_verdict_tracks_validation_direction() {
+        let before = ProjectRescanValidationSnapshot {
+            artifact_fingerprint: "aaa".to_string(),
+            overall_score: Some(80),
+            grade: Some("GOOD".to_string()),
+            finding_count: 2,
+            finding_ids: vec!["finding_a".to_string(), "finding_b".to_string()],
+        };
+        let possible_improvement = ProjectRescanValidationSnapshot {
+            artifact_fingerprint: "bbb".to_string(),
+            overall_score: Some(85),
+            grade: Some("GOOD".to_string()),
+            finding_count: 1,
+            finding_ids: vec!["finding_a".to_string()],
+        };
+        let regression = ProjectRescanValidationSnapshot {
+            artifact_fingerprint: "ccc".to_string(),
+            overall_score: Some(70),
+            grade: Some("NEEDS IMPROVEMENT".to_string()),
+            finding_count: 3,
+            finding_ids: vec![
+                "finding_a".to_string(),
+                "finding_b".to_string(),
+                "finding_c".to_string(),
+            ],
+        };
+        let neutral_change = ProjectRescanValidationSnapshot {
+            artifact_fingerprint: "ddd".to_string(),
+            ..before.clone()
+        };
+
+        let possible_improvement_delta = validation_delta(&before, &possible_improvement);
+        assert_eq!(possible_improvement_delta.score_delta, Some(5));
+        assert_eq!(possible_improvement_delta.finding_count_delta, -1);
+        assert_eq!(
+            arbitration_verdict(&possible_improvement_delta),
+            ARBITRATION_POSSIBLE_IMPROVEMENT_REVIEW_REQUIRED
+        );
+
+        let regression_delta = validation_delta(&before, &regression);
+        assert_eq!(regression_delta.score_delta, Some(-10));
+        assert_eq!(regression_delta.finding_count_delta, 1);
+        assert_eq!(
+            arbitration_verdict(&regression_delta),
+            ARBITRATION_REGRESSION_REVIEW_REQUIRED
+        );
+
+        let neutral_change_delta = validation_delta(&before, &neutral_change);
+        assert_eq!(
+            arbitration_verdict(&neutral_change_delta),
+            ARBITRATION_NEUTRAL_CHANGE_REVIEW_REQUIRED
         );
     }
 
@@ -554,6 +726,7 @@ mod tests {
                 vec!["validate", "generated/intent_ir/doc/intent_ir.json"],
             )],
             automation_status: automation_status.to_string(),
+            execution_summary: None,
         }
     }
 }

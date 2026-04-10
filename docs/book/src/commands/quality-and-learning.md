@@ -87,6 +87,13 @@ After a recommendation executes successfully, `rescan-plan` validates the target
 That is still not a canonical truth decision.
 It means the relevant stage was rebuilt and validated, and that the validation fingerprint/score/finding-count surface either changed or did not.
 Any fact promotion still has to survive current-document evidence, validation, and arbitration.
+Executed recommendations also carry an optional `execution_summary`.
+That summary preserves before/after validation snapshots, score and finding-count deltas, added/removed finding ids, and a conservative arbitration verdict:
+
+- `validated_no_change`
+- `possible_improvement_review_required`
+- `regression_review_required`
+- `neutral_change_review_required`
 
 The convergent loop can consume the same plan after stability:
 

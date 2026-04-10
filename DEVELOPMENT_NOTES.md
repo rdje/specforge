@@ -801,6 +801,15 @@
 - the convergence result remains the stable pre-rescan snapshot; any post-rescan artifact change is reported as `snapshot_changed` and summarized through an arbitration status
 - `changed_requires_validation_review` means the local plan or artifact surface changed and must be inspected by validation/evidence policy before any improvement claim or canonical promotion
 
+### Rescan execution summaries now persist validation-backed arbitration hints
+- executed schema-v2 rescan recommendations can now carry an optional `execution_summary`
+- the summary records:
+  - before/after validation fingerprints, scores, grades, finding counts, and finding ids
+  - score delta, finding-count delta, added findings, removed findings, and whether the artifact fingerprint changed
+  - a conservative verdict: `validated_no_change`, `possible_improvement_review_required`, `regression_review_required`, or `neutral_change_review_required`
+- `converge --rescan-plan <plan>` now rolls those verdicts into review-required counters so the summary distinguishes possible improvement from regression or neutral artifact drift
+- this is still not promotion: even favorable validation deltas need current-document evidence review before they can become canonical truth
+
 ### Fifth landed bounded prior family and semantic-stage arbitration slice
 - the fifth bounded learning family is now real in `crates/specforge/src/ir/prior_memory.rs` and `crates/specforge/src/commands/learn_priors.rs`
 - `specforge learn-priors` now harvests semantic modality-reliability priors from decisive, non-alias-dependent semantic consensus plus the supporting source kinds that carried that consensus

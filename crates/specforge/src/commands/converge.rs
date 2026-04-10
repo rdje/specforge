@@ -83,6 +83,22 @@ pub fn run(args: ConvergeArgs) -> Result<()> {
             rescan_plan.snapshot_changed
         );
         println!(
+            "rescan_plan_review_required: {}",
+            rescan_plan.review_required
+        );
+        println!(
+            "rescan_plan_possible_improvement_review_required: {}",
+            rescan_plan.possible_improvement_review_required
+        );
+        println!(
+            "rescan_plan_regression_review_required: {}",
+            rescan_plan.regression_review_required
+        );
+        println!(
+            "rescan_plan_neutral_change_review_required: {}",
+            rescan_plan.neutral_change_review_required
+        );
+        println!(
             "rescan_plan_arbitration_status: {}",
             rescan_plan.arbitration_status()
         );
@@ -240,6 +256,13 @@ fn maybe_run_rescan_plan(
     })?;
     let post_rescan_snapshot = KnowledgeSnapshot::collect(paths)?;
     let snapshot_changed = post_rescan_snapshot != *stable_snapshot;
+    let review_required = plan_report.review_required_count();
+    let possible_improvement_review_required = plan_report
+        .arbitration_verdict_count(rescan_plan::ARBITRATION_POSSIBLE_IMPROVEMENT_REVIEW_REQUIRED);
+    let regression_review_required =
+        plan_report.arbitration_verdict_count(rescan_plan::ARBITRATION_REGRESSION_REVIEW_REQUIRED);
+    let neutral_change_review_required = plan_report
+        .arbitration_verdict_count(rescan_plan::ARBITRATION_NEUTRAL_CHANGE_REVIEW_REQUIRED);
     println!("rescan_plan_snapshot_changed: {snapshot_changed}");
     println!(
         "rescan_plan_arbitration_status: {}",
@@ -247,6 +270,7 @@ fn maybe_run_rescan_plan(
             plan_report.execute,
             plan_report.executed_validated_changed,
             snapshot_changed,
+            review_required,
         )
     );
 
@@ -257,6 +281,10 @@ fn maybe_run_rescan_plan(
         executed_validated_changed: plan_report.executed_validated_changed,
         executed_validated_no_change: plan_report.executed_validated_no_change,
         snapshot_changed,
+        review_required,
+        possible_improvement_review_required,
+        regression_review_required,
+        neutral_change_review_required,
     }))
 }
 
@@ -348,6 +376,10 @@ struct ConvergenceRescanPlanReport {
     executed_validated_changed: usize,
     executed_validated_no_change: usize,
     snapshot_changed: bool,
+    review_required: usize,
+    possible_improvement_review_required: usize,
+    regression_review_required: usize,
+    neutral_change_review_required: usize,
 }
 
 impl ConvergenceRescanPlanReport {
@@ -356,6 +388,7 @@ impl ConvergenceRescanPlanReport {
             self.executed,
             self.executed_validated_changed,
             self.snapshot_changed,
+            self.review_required,
         )
     }
 
@@ -363,10 +396,11 @@ impl ConvergenceRescanPlanReport {
         executed: bool,
         executed_validated_changed: usize,
         snapshot_changed: bool,
+        review_required: usize,
     ) -> &'static str {
         if !executed {
             "dry_run_not_promoted"
-        } else if executed_validated_changed > 0 || snapshot_changed {
+        } else if review_required > 0 || executed_validated_changed > 0 || snapshot_changed {
             "changed_requires_validation_review"
         } else {
             "executed_validated_no_change"
@@ -882,6 +916,10 @@ mod tests {
         assert!(!rescan_report.executed);
         assert_eq!(rescan_report.selected_recommendations, 0);
         assert!(!rescan_report.snapshot_changed);
+        assert_eq!(rescan_report.review_required, 0);
+        assert_eq!(rescan_report.possible_improvement_review_required, 0);
+        assert_eq!(rescan_report.regression_review_required, 0);
+        assert_eq!(rescan_report.neutral_change_review_required, 0);
         assert_eq!(rescan_report.arbitration_status(), "dry_run_not_promoted");
 
         let evidence = EvidenceIr::load_from_path(&report.paths.evidence_ir_path)?;

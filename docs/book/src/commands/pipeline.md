@@ -134,3 +134,4 @@ cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target fsm 
 This remains an arbitration surface, not an auto-fix path.
 The stable convergence snapshot is the convergence result.
 Post-rescan validation changes are reported as `changed_requires_validation_review` until validation and evidence arbitration say they are safe to promote.
+The convergence summary also exposes review-required counters split across possible-improvement, regression, and neutral artifact-change verdicts from the persisted recommendation execution summaries.
