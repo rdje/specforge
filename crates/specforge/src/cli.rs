@@ -39,6 +39,8 @@ pub enum Commands {
     Validate(ValidateArgs),
     /// Validate artifacts and project their latest reports into tracked live docs
     ProjectValidation(ProjectValidationArgs),
+    /// Inspect or execute a schema-v2 validation rescan plan
+    RescanPlan(RescanPlanArgs),
     /// Run tracked KG-quality fixtures against the staged pipeline
     KgBench(KgBenchArgs),
     /// Build a local cross-document prior store from validated IntentIR artifacts
@@ -194,6 +196,22 @@ pub struct ProjectValidationArgs {
 }
 
 #[derive(Debug, Args)]
+pub struct RescanPlanArgs {
+    /// Local schema-v2 validation rescan plan to inspect or execute
+    #[arg(long, default_value = "generated/validation/rescan_plan.json")]
+    pub plan: std::path::PathBuf,
+    /// Execute whitelisted command hints instead of printing a dry-run plan
+    #[arg(long)]
+    pub execute: bool,
+    /// Maximum pending recommendation(s) to process; 0 means all
+    #[arg(long, default_value = "0")]
+    pub limit: usize,
+    /// Advisory local prior-memory store to use when executing EvidenceIR rebuild hints
+    #[arg(long, default_value = "generated/prior_memory/corpus_memory.json")]
+    pub prior_memory: std::path::PathBuf,
+}
+
+#[derive(Debug, Args)]
 pub struct KgBenchArgs {
     /// Directory containing tracked KG-quality fixture directories
     #[arg(long, default_value = "crates/specforge/test_data/kg_quality")]
@@ -297,6 +315,25 @@ mod tests {
             args.prior_memory,
             PathBuf::from("generated/prior_memory/corpus_memory.json")
         );
+    }
+
+    #[test]
+    fn rescan_plan_defaults_to_dry_run_local_plan() {
+        let cli = Cli::parse_from(["specforge", "rescan-plan"]);
+        let Commands::RescanPlan(args) = cli.command else {
+            panic!("expected rescan-plan command");
+        };
+
+        assert_eq!(
+            args.plan,
+            PathBuf::from("generated/validation/rescan_plan.json")
+        );
+        assert_eq!(
+            args.prior_memory,
+            PathBuf::from("generated/prior_memory/corpus_memory.json")
+        );
+        assert!(!args.execute);
+        assert_eq!(args.limit, 0);
     }
 
     #[test]

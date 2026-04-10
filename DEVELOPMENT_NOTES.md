@@ -770,6 +770,22 @@
 - this keeps the plan useful for a future executor without requiring that executor to parse prose or shell strings
 - the command still does not run the rescans itself; it only writes replayable metadata and projects the queue into the continuity docs
 
+### Rescan plan now has a bounded executor surface
+- `specforge rescan-plan` now reads schema-v2 `generated/validation/rescan_plan.json`
+- without `--execute`, it dry-runs the pending `planned_not_executed` recommendations and prints their command hints
+- with `--execute`, it dispatches only whitelisted stage commands in-process:
+  - `ingest`
+  - `evidence`
+  - `semantic`
+  - `intent`
+  - `validate`
+- the executor refuses non-`cargo` executables, non-repository working directories, malformed cargo prefixes, and unsupported command intents
+- successful execution marks the local plan recommendation as `executed`
+- this is still not a truth-promotion channel:
+  - it can rebuild and validate stages
+  - it cannot let prior memory decide canonical facts
+  - the remaining follow-up is convergence-integrated before/after validation and arbitration before treating a rebuilt artifact as improved
+
 ### Fifth landed bounded prior family and semantic-stage arbitration slice
 - the fifth bounded learning family is now real in `crates/specforge/src/ir/prior_memory.rs` and `crates/specforge/src/commands/learn_priors.rs`
 - `specforge learn-priors` now harvests semantic modality-reliability priors from decisive, non-alias-dependent semantic consensus plus the supporting source kinds that carried that consensus

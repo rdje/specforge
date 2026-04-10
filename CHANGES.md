@@ -1,5 +1,28 @@
 # CHANGES
 
+## 2026-04-10 (Rescan plan now has a bounded executor)
+
+### Added: dry-run-first rescan-plan command
+- Added [rescan_plan.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/rescan_plan.rs) with the new `specforge rescan-plan` command.
+- The command reads schema-v2 `generated/validation/rescan_plan.json`, reports pending `planned_not_executed` targets by default, and supports `--limit` plus `--plan`.
+- Added `--execute` to dispatch only whitelisted in-process `ingest`, `evidence`, `semantic`, `intent`, and `validate` hints from the structured command args.
+- Successful `--execute` runs mark local recommendations as `executed` in the generated plan.
+
+### Preserved: execution is not truth promotion
+- The executor refuses non-`cargo` executables, non-repository working directories, malformed cargo prefixes, and unsupported command intents.
+- It does not shell out through command display strings.
+- It does not let prior memory decide canonical facts; execution only rebuilds and validates stages, and future convergence-integrated before/after validation still needs to decide whether anything improved.
+
+### Documentation
+- Updated the public mdBook command and validation pages with the `rescan-plan` behavior.
+- Updated [README.md](/Users/richarddje/Documents/github/specforge/README.md), [ROADMAP.md](/Users/richarddje/Documents/github/specforge/ROADMAP.md), [DEVELOPMENT_NOTES.md](/Users/richarddje/Documents/github/specforge/DEVELOPMENT_NOTES.md), and [MEMORY.md](/Users/richarddje/Documents/github/specforge/MEMORY.md).
+
+### Validation
+- `cargo test --manifest-path Cargo.toml rescan_plan -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -- rescan-plan` -> passed (`rescan_queue: empty`)
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-10 (Rescan plan now carries replayable command hints)
 
 ### Added: schema-v2 replay metadata for targeted rescans

@@ -17,6 +17,7 @@ Current surface:
 - `validate <artifact>`
 - `kg-bench`
 - `project-validation <artifact>...`
+- `rescan-plan [--execute]`
 - `learn-priors <intent-ir>...`
 
 The commands fall into three groups:
@@ -55,6 +56,12 @@ If you want to refresh the tracked validation snapshot:
 cargo run --manifest-path Cargo.toml -- project-validation generated/intent_ir/.../intent_ir.json
 ```
 
+If you want to inspect the targeted rescan queue:
+
+```bash
+cargo run --manifest-path Cargo.toml -- rescan-plan
+```
+
 If you want to update the cross-document prior store:
 
 ```bash
@@ -62,4 +69,3 @@ cargo run --manifest-path Cargo.toml -- learn-priors generated/intent_ir/.../int
 ```
 
 The next two chapters break those paths down in more detail.
-

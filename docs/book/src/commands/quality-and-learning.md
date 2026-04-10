@@ -53,6 +53,35 @@ It only tells downstream loops which current conflict or residual ids deserve ta
 
 Use it when the live baseline should be updated, not just an individual artifact.
 
+## `rescan-plan`
+
+```bash
+cargo run --manifest-path Cargo.toml -- rescan-plan
+```
+
+`rescan-plan` reads `generated/validation/rescan_plan.json`.
+By default it is a dry-run inspector: it reports pending `planned_not_executed` recommendations and prints the structured command hints that would be used.
+
+To execute the current pending hints explicitly:
+
+```bash
+cargo run --manifest-path Cargo.toml -- rescan-plan --execute
+```
+
+Execution is deliberately narrow.
+The command does not shell out through the display strings.
+It parses the structured `executable` and `args`, accepts only the repository-local `cargo run --manifest-path Cargo.toml -- ...` shape, and dispatches only whitelisted stage commands in-process:
+
+- `ingest`
+- `evidence`
+- `semantic`
+- `intent`
+- `validate`
+
+After a recommendation executes successfully, the local plan entry is marked `executed`.
+That is still not a canonical truth decision.
+It means the relevant stage was rebuilt and validated; any fact promotion still has to survive current-document evidence, validation, and arbitration.
+
 ## `kg-bench`
 
 ```bash

@@ -10,5 +10,6 @@ pub mod kg_bench;
 pub mod learn_priors;
 pub mod nlp_enrich;
 pub mod project_validation;
+pub mod rescan_plan;
 pub mod semantic;
 pub mod validate;

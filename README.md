@@ -49,6 +49,7 @@ Use it first for the project objective, document navigation, and the current imp
   - `adapt <intent-ir> --target fsm`
   - `kg-bench`
   - `project-validation <artifact>...`
+  - `rescan-plan [--execute]`
   - `learn-priors <intent-ir>...`
 - `specforge ingest` now computes and materializes `SourceIR` at `generated/source_ir/<document_key>/source_ir.json`
 - `specforge evidence` now computes and materializes `EvidenceIR` at `generated/evidence_ir/<document_key>/evidence_ir.json`
@@ -62,6 +63,7 @@ Use it first for the project objective, document navigation, and the current imp
 - `specforge validate <artifact>` now writes a deterministic stage-local `validation_report.json` sidecar and backannotates the latest report into the artifact's `validation_reports` field
 - `specforge project-validation <artifact>...` now validates the passed artifacts and refreshes the tracked validation snapshot docs from their persisted reports
 - `specforge project-validation` also writes local `generated/validation/rescan_plan.json` schema v2 recommendations with typed replay inputs, structured command hints, and `planned_not_executed` status for future targeted rescan loops
+- `specforge rescan-plan` now reads that local schema-v2 plan, dry-runs pending targets by default, and executes only whitelisted in-process stage rebuild/validate hints when explicitly passed `--execute`
 - `specforge kg-bench` now runs tracked KG-quality fixtures through the staged pipeline, so gold expectations, negative expectations, residual quality, and conflict surfacing can be checked explicitly instead of relying only on aggregate scores
 - `specforge learn-priors <intent-ir>...` now builds a local typed `CorpusMemory` prior store under `generated/prior_memory/corpus_memory.json`, harvesting only from validated `IntentIR` artifacts and keeping the learning plane advisory-only
 - `specforge doctor [--strict]` now inspects Docling ingest readiness, the default Ollama loopback path, and the LM Studio fallback loopback path, reporting the selected Python candidate plus endpoint/model status for both local providers so the local-first pipeline can be preflighted before a long converge run
@@ -334,6 +336,7 @@ cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json
 cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json --dry-run
 cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --target fsm --dry-run
 cargo run -p specforge -- project-validation generated/intent_ir/readme/intent_ir.json
+cargo run -p specforge -- rescan-plan
 cargo run -p specforge -- kg-bench
 cargo run -p specforge -- learn-priors generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json generated/intent_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/intent_ir.json generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json
 ```
@@ -350,6 +353,7 @@ cargo run -p specforge -- learn-priors generated/intent_ir/ihi0022_l_2025_08_amb
 - `specforge converge <source> --target fsm` materializes the loop-backed pipeline entrypoint, defaults to full Ollama VLM + NLP Level 3 enrichment, and stops when `SourceIR`/`EvidenceIR`/`SemanticIR`/`IntentIR`/adapter facts stop changing
 - `specforge project-validation <artifact>...` validates the passed artifacts, persists their latest reports, refreshes `VALIDATION_SNAPSHOT.md`, and updates the managed validation projection block in `LIVE_ACHIEVEMENT_STATUS.md`
 - `specforge project-validation` also materializes `generated/validation/rescan_plan.json`, a local-only replay-oriented target list with typed inputs and structured command hints; it does not execute rescans automatically yet
+- `specforge rescan-plan [--execute]` consumes that local plan; without `--execute` it only prints pending work, and with `--execute` it dispatches only whitelisted stage rebuild/validate hints from structured args rather than shell text
 - `specforge kg-bench` runs the tracked fixture set under `crates/specforge/test_data/kg_quality/` and fails if any gold/negative KG expectation drifts
 - `specforge learn-priors <intent-ir>...` builds a local `CorpusMemory` JSON file from validated `IntentIR` artifacts, scoped to reusable extraction priors rather than document facts; by default it writes `generated/prior_memory/corpus_memory.json`
 - PDF execute-mode ingest now prefers `SPECFORGE_DOCLING_PYTHON`, then repo-local `.venv-docling`, then versioned Python probes such as `python3.11`; run `bash scripts/bootstrap_docling.sh` from the repository root when you want the stable repo-local path

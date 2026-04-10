@@ -17,7 +17,7 @@ use crate::ir::source::{
 
 const VALIDATION_SNAPSHOT_DOC: &str = "VALIDATION_SNAPSHOT.md";
 const LIVE_STATUS_DOC: &str = "LIVE_ACHIEVEMENT_STATUS.md";
-const VALIDATION_RESCAN_PLAN_PATH: &str = "generated/validation/rescan_plan.json";
+pub(crate) const VALIDATION_RESCAN_PLAN_PATH: &str = "generated/validation/rescan_plan.json";
 const VALIDATION_PROJECTION_START: &str = "<!-- validation_projection:start -->";
 const VALIDATION_PROJECTION_END: &str = "<!-- validation_projection:end -->";
 
@@ -37,43 +37,43 @@ struct ProjectedReplayInput {
     path: PathBuf,
 }
 
-#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
-struct ProjectRescanReplayInput {
-    input_kind: String,
-    path: String,
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub(crate) struct ProjectRescanReplayInput {
+    pub(crate) input_kind: String,
+    pub(crate) path: String,
 }
 
-#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
-struct ProjectRescanCommandHint {
-    intent: String,
-    executable: String,
-    args: Vec<String>,
-    working_directory: String,
-    display: String,
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub(crate) struct ProjectRescanCommandHint {
+    pub(crate) intent: String,
+    pub(crate) executable: String,
+    pub(crate) args: Vec<String>,
+    pub(crate) working_directory: String,
+    pub(crate) display: String,
 }
 
-#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
-struct ProjectRescanRecommendation {
-    document_key: String,
-    display_name: String,
-    stage: String,
-    artifact_path: String,
-    replay_inputs: Vec<ProjectRescanReplayInput>,
-    finding_id: String,
-    related_ids: Vec<String>,
-    extractor_lane: String,
-    corroboration_policy: String,
-    recommended_action: String,
-    recommended_commands: Vec<ProjectRescanCommandHint>,
-    automation_status: String,
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub(crate) struct ProjectRescanRecommendation {
+    pub(crate) document_key: String,
+    pub(crate) display_name: String,
+    pub(crate) stage: String,
+    pub(crate) artifact_path: String,
+    pub(crate) replay_inputs: Vec<ProjectRescanReplayInput>,
+    pub(crate) finding_id: String,
+    pub(crate) related_ids: Vec<String>,
+    pub(crate) extractor_lane: String,
+    pub(crate) corroboration_policy: String,
+    pub(crate) recommended_action: String,
+    pub(crate) recommended_commands: Vec<ProjectRescanCommandHint>,
+    pub(crate) automation_status: String,
 }
 
-#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
-struct ProjectRescanPlanRecord {
-    schema_version: u32,
-    generated_by: String,
-    recommendation_count: usize,
-    recommendations: Vec<ProjectRescanRecommendation>,
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub(crate) struct ProjectRescanPlanRecord {
+    pub(crate) schema_version: u32,
+    pub(crate) generated_by: String,
+    pub(crate) recommendation_count: usize,
+    pub(crate) recommendations: Vec<ProjectRescanRecommendation>,
 }
 
 pub fn run(args: ProjectValidationArgs) -> Result<()> {

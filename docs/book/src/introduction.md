@@ -40,7 +40,7 @@ Two important project principles shape everything in this book:
 
 What is already real today:
 
-- staged CLI commands for `ingest`, `evidence`, `semantic`, `intent`, `adapt`, `converge`, `validate`, `kg-bench`, `project-validation`, and `learn-priors`
+- staged CLI commands for `ingest`, `evidence`, `semantic`, `intent`, `adapt`, `converge`, `validate`, `kg-bench`, `project-validation`, `rescan-plan`, and `learn-priors`
 - tracked IR artifacts under `generated/`
 - a local-first runtime with Docling plus Ollama or LM Studio preflighted through `doctor`
 - a cross-document learning plane that stores typed priors in `generated/prior_memory/corpus_memory.json`
