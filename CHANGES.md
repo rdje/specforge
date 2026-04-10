@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-10 (Explicit infrastructure distribution recovery stays bounded)
+
+### Added: locally grounded clock/reset distribution evidence
+- Updated [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so explicit current-document phrases such as `ACLK is distributed to the Requester and Completer` can recover `distributed_to_*` targets directly into `InfrastructureSignalRecord`.
+- Added active fanout parsing for bounded phrases such as `reset synchronizer feeds ARESETN to the Requester`, allowing the same local sentence to recover a reset infrastructure source and a distribution target.
+- Updated [validate.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/validate.rs) with a regression proving recovered distribution updates the existing infrastructure distribution metrics.
+
+### Preserved: distribution is not ordinary protocol connectivity
+- Distribution-only evidence does not create ordinary `ActorPortRecord`s.
+- It does not fabricate source actors.
+- It still rejects generic labels through the existing infrastructure component / meaningful actor filters.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml explicit_clock_distribution_recovers_infrastructure_targets -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml explicit_reset_synchronizer_fanout_recovers_source_and_target -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml validate_intent_ir_counts_recovered_infrastructure_distribution -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml validate_intent_ir_counts_recovered_infrastructure_source -- --nocapture` -> passed
+- `bash scripts/run_ci.sh` -> passed
+
 ## 2026-04-10 (Explicit infrastructure source recovery stays bounded)
 
 ### Added: locally grounded infrastructure source evidence

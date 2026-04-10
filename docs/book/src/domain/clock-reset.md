@@ -70,6 +70,10 @@ The distribution status is similarly bounded.
 It can say whether the clock or reset is distributed to zero, one, or multiple recovered actors.
 That is useful for semantic inspection, but it is still not a physical clock-tree or reset-tree proof.
 
+If the current document explicitly says `ACLK is distributed to the Requester and Completer`, the infrastructure record can recover those distribution targets.
+Likewise, a phrase such as `reset synchronizer feeds ARESETN to the Requester` can recover both the reset infrastructure source and a recovered distribution target.
+Those targets remain part of the infrastructure surface; they do not automatically become ordinary protocol actor ports.
+
 ## Reset polarity
 
 Single-bit control signals have polarity.

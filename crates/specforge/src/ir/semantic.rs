@@ -1441,6 +1441,14 @@ struct InfrastructureSourceEvidence {
 }
 
 #[derive(Debug, Clone)]
+struct InfrastructureDistributionEvidence {
+    actor_id: String,
+    actor_name: String,
+    supporting_statement_id: String,
+    automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone)]
 struct InterfaceAccumulator {
     signals: BTreeSet<String>,
     signal_records: BTreeMap<String, InterfaceSignalAccumulator>,
@@ -3000,9 +3008,13 @@ fn build_infrastructure_signals(
             .map(|record| record.automation_confidence)
             .unwrap_or(system_contract.automation_confidence);
         let explicit_sources = explicit_infrastructure_source_evidence(context, signal_name);
+        let explicit_distribution =
+            explicit_infrastructure_distribution_evidence(context, signal_name);
 
         let mut recovered_source_actor_ids = recovered_source_actor_ids;
         let mut recovered_source_actor_names = recovered_source_actor_names;
+        let mut distributed_to_actor_ids = distributed_to_actor_ids;
+        let mut distributed_to_actor_names = distributed_to_actor_names;
         let mut supporting_statement_ids = supporting_statement_ids;
         let mut automation_confidence = automation_confidence;
         for source in explicit_sources {
@@ -3017,6 +3029,21 @@ fn build_infrastructure_signals(
             }
             automation_confidence =
                 min_automation_confidence(automation_confidence, source.automation_confidence);
+        }
+        for distribution in explicit_distribution {
+            if !distributed_to_actor_ids.contains(&distribution.actor_id) {
+                distributed_to_actor_ids.push(distribution.actor_id);
+            }
+            if !distributed_to_actor_names.contains(&distribution.actor_name) {
+                distributed_to_actor_names.push(distribution.actor_name);
+            }
+            if !supporting_statement_ids.contains(&distribution.supporting_statement_id) {
+                supporting_statement_ids.push(distribution.supporting_statement_id);
+            }
+            automation_confidence = min_automation_confidence(
+                automation_confidence,
+                distribution.automation_confidence,
+            );
         }
 
         InfrastructureSignalRecord {
@@ -3121,6 +3148,179 @@ fn parse_explicit_infrastructure_source_actor(text: &str, signal_name: &str) -> 
     }
 
     None
+}
+
+fn explicit_infrastructure_distribution_evidence(
+    context: &SemanticContext,
+    signal_name: &str,
+) -> Vec<InfrastructureDistributionEvidence> {
+    let mut distribution = Vec::new();
+    let mut seen = BTreeSet::<String>::new();
+
+    for statement in &context.statements {
+        for actor_name in
+            parse_explicit_infrastructure_distribution_actors(&statement.text, signal_name)
+        {
+            let actor_id = actor_id_for_name(&actor_name);
+            if !seen.insert(format!("{}:{}", actor_id, statement.statement_id.as_str())) {
+                continue;
+            }
+            distribution.push(InfrastructureDistributionEvidence {
+                actor_id,
+                actor_name,
+                supporting_statement_id: statement.statement_id.clone(),
+                automation_confidence: AutomationConfidence::Medium,
+            });
+        }
+    }
+
+    distribution
+}
+
+fn parse_explicit_infrastructure_distribution_actors(text: &str, signal_name: &str) -> Vec<String> {
+    let lowered = text.to_ascii_lowercase();
+    let signal_lower = signal_name.to_ascii_lowercase();
+    let mut actors = Vec::new();
+
+    const ACTIVE_DISTRIBUTION_VERBS: &[&str] = &[
+        "feeds",
+        "routes",
+        "distributes",
+        "delivers",
+        "provides",
+        "drives",
+        "sends",
+        "propagates",
+    ];
+    const PASSIVE_DISTRIBUTION_VERBS: &[&str] = &[
+        "distributed",
+        "routed",
+        "delivered",
+        "fed",
+        "sent",
+        "propagated",
+        "provided",
+        "driven",
+    ];
+    const SIGNAL_SUBJECT_VERBS: &[&str] =
+        &["feeds", "drives", "clocks", "resets", "reaches", "serves"];
+
+    for verb in ACTIVE_DISTRIBUTION_VERBS {
+        for object in [
+            format!(" {verb} {signal_lower} to "),
+            format!(" {verb} the {signal_lower} to "),
+        ] {
+            if let Some(pattern_pos) = lowered.find(&object) {
+                let target_start = pattern_pos + object.len();
+                if target_start <= text.len() {
+                    append_unique_infrastructure_actors(
+                        &mut actors,
+                        extract_infrastructure_target_phrases(&text[target_start..]),
+                    );
+                }
+            }
+        }
+    }
+
+    for verb in PASSIVE_DISTRIBUTION_VERBS {
+        let passive_pat = format!("{signal_lower} is {verb} to ");
+        if let Some(pattern_pos) = lowered.find(&passive_pat) {
+            let target_start = pattern_pos + passive_pat.len();
+            if target_start <= text.len() {
+                append_unique_infrastructure_actors(
+                    &mut actors,
+                    extract_infrastructure_target_phrases(&text[target_start..]),
+                );
+            }
+        }
+    }
+
+    for verb in SIGNAL_SUBJECT_VERBS {
+        let active_pat = format!("{signal_lower} {verb} ");
+        if let Some(pattern_pos) = lowered.find(&active_pat) {
+            let target_start = pattern_pos + active_pat.len();
+            if target_start <= text.len() {
+                append_unique_infrastructure_actors(
+                    &mut actors,
+                    extract_infrastructure_target_phrases(&text[target_start..]),
+                );
+            }
+        }
+    }
+
+    actors
+}
+
+fn append_unique_infrastructure_actors(target: &mut Vec<String>, candidates: Vec<String>) {
+    for candidate in candidates {
+        if !target.contains(&candidate) {
+            target.push(candidate);
+        }
+    }
+}
+
+fn extract_infrastructure_target_phrases(text: &str) -> Vec<String> {
+    let mut segment = text.trim_start();
+    for prefix in [
+        "the ", "a ", "an ", "this ", "that ", "its ", "each ", "all ", "every ", "any ",
+    ] {
+        if segment.to_ascii_lowercase().starts_with(prefix) {
+            segment = &segment[prefix.len()..];
+            break;
+        }
+    }
+
+    const STOP_CHARS: &[char] = &['.', ';', '(', ')', ':'];
+    let mut end = segment
+        .char_indices()
+        .find_map(|(idx, character)| STOP_CHARS.contains(&character).then_some(idx))
+        .unwrap_or(segment.len());
+    let lowered = segment.to_ascii_lowercase();
+    for boundary in [
+        " when ", " if ", " while ", " during ", " after ", " before ", " with ", " using ",
+        " on ", " at ", " for ",
+    ] {
+        if let Some(idx) = lowered.find(boundary) {
+            end = end.min(idx);
+        }
+    }
+    let segment = segment[..end].trim();
+    if segment.is_empty() {
+        return Vec::new();
+    }
+
+    let normalized_delimiters = segment
+        .replace(", and ", ",")
+        .replace(", or ", ",")
+        .replace(" and ", ",")
+        .replace(" or ", ",");
+
+    normalized_delimiters
+        .split(',')
+        .filter_map(|candidate| {
+            let candidate = candidate.trim();
+            let candidate = strip_leading_infrastructure_target_prefix(candidate);
+            let candidate = candidate
+                .split_whitespace()
+                .take(4)
+                .collect::<Vec<_>>()
+                .join(" ");
+            normalize_infrastructure_component_name(&candidate)
+        })
+        .collect()
+}
+
+fn strip_leading_infrastructure_target_prefix(candidate: &str) -> &str {
+    let lowered = candidate.to_ascii_lowercase();
+    for prefix in [
+        "the ", "a ", "an ", "this ", "that ", "its ", "each ", "all ", "every ", "any ",
+    ] {
+        if lowered.starts_with(prefix) {
+            return &candidate[prefix.len()..];
+        }
+    }
+
+    candidate
 }
 
 fn extract_infrastructure_component_phrase(text: &str) -> Option<String> {
@@ -13113,6 +13313,174 @@ mod tests {
                 .iter()
                 .all(|port| port.actor_name != "clock generator"),
             "clock generator evidence should not have to become an ordinary protocol actor port"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn explicit_clock_distribution_recovers_infrastructure_targets() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("clock_distribution.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Contract\n",
+                "Clock ACLK.\n",
+                "Reset ARESETN is asynchronous active low.\n",
+                "ACLK is distributed to the Requester and Completer.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.extracted_statements.push(ExtractedStatement {
+            statement_id: "statement_clock".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: "Clock ACLK.".to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+        });
+        evidence_ir.extracted_statements.push(ExtractedStatement {
+            statement_id: "statement_reset".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: "Reset ARESETN is asynchronous active low.".to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+        });
+        evidence_ir.extracted_statements.push(ExtractedStatement {
+            statement_id: "statement_clock_distribution".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: "ACLK is distributed to the Requester and Completer.".to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        let clock_infrastructure = semantic_ir
+            .infrastructure_signals
+            .iter()
+            .find(|record| record.signal_name == "ACLK")
+            .expect("expected ACLK infrastructure record");
+
+        assert_eq!(
+            clock_infrastructure.distribution_status,
+            crate::ir::semantic::InfrastructureSignalDistributionStatus::SharedRecoveredConsumers
+        );
+        assert!(
+            clock_infrastructure
+                .distributed_to_actor_names
+                .contains(&"Requester".to_string())
+        );
+        assert!(
+            clock_infrastructure
+                .distributed_to_actor_names
+                .contains(&"Completer".to_string())
+        );
+        assert!(
+            semantic_ir.actor_ports.is_empty(),
+            "distribution-only evidence should not create ordinary protocol actor ports"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn explicit_reset_synchronizer_fanout_recovers_source_and_target() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("reset_synchronizer_fanout.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Contract\n",
+                "Clock ACLK.\n",
+                "Reset ARESETN is asynchronous active low.\n",
+                "The reset synchronizer feeds ARESETN to the Requester.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.extracted_statements.push(ExtractedStatement {
+            statement_id: "statement_clock".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: "Clock ACLK.".to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+        });
+        evidence_ir.extracted_statements.push(ExtractedStatement {
+            statement_id: "statement_reset".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: "Reset ARESETN is asynchronous active low.".to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+        });
+        evidence_ir.extracted_statements.push(ExtractedStatement {
+            statement_id: "statement_reset_synchronizer".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: "The reset synchronizer feeds ARESETN to the Requester.".to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        let reset_infrastructure = semantic_ir
+            .infrastructure_signals
+            .iter()
+            .find(|record| record.signal_name == "ARESETN")
+            .expect("expected ARESETN infrastructure record");
+
+        assert_eq!(
+            reset_infrastructure.source_status,
+            crate::ir::semantic::InfrastructureSignalSourceStatus::RecoveredProducer
+        );
+        assert_eq!(
+            reset_infrastructure.distribution_status,
+            crate::ir::semantic::InfrastructureSignalDistributionStatus::SingleRecoveredConsumer
+        );
+        assert!(
+            reset_infrastructure
+                .recovered_source_actor_names
+                .contains(&"reset synchronizer".to_string())
+        );
+        assert!(
+            reset_infrastructure
+                .distributed_to_actor_names
+                .contains(&"Requester".to_string())
+        );
+        assert!(
+            semantic_ir.actor_ports.is_empty(),
+            "explicit reset fanout evidence should stay in the infrastructure surface"
         );
 
         Ok(())

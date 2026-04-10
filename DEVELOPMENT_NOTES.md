@@ -969,6 +969,7 @@
   - unresolved sourcing is modeled as `unresolved_source`, not as a fabricated `Clock`, `External`, or `input` producer actor
   - explicit local phrases such as `clock generator drives ACLK` or `PLL generates ACLK` can recover infrastructure source status, but this does not relax the ordinary actor filters for generic `Clock`, `Reset`, or `External` labels
   - implicit clock/reset read-port fanout applies only to actors with non-infrastructure protocol relations, so a recovered clock/reset source is not automatically treated as consuming its own signal
+  - explicit local distribution/fanout phrases such as `ACLK is distributed to the Requester and Completer` or `reset synchronizer feeds ARESETN to the Requester` can recover infrastructure distribution targets without creating ordinary protocol actor ports
 
 ## Knowledge graph extraction — design decisions (2026-04-03)
 
