@@ -702,7 +702,8 @@
 - `validate evidence_ir` now reports `visual_classification_observations` plus visual-role metrics such as `visual_evidence_normative` and `visual_evidence_ambiguous`
 - when a prior-classified visual becomes normative but still lacks VLM timing/state extraction observations, validation now emits `evidence_visual_motif_corroboration_guidance` and increments `visual_motif_corroboration_targets`
 - `project-validation` consumes that finding as generic `rescan_guidance`, so visual-motif priors can route attention to targeted VLM/multimodal corroboration without becoming a truth-promotion channel
-- visual-motif corroboration recommendations now carry an explicit replay sequence: local VLM `enrich_source_ir` using Ollama, then `rebuild_evidence_ir`, then `validate_current_artifact`
+- visual-motif corroboration recommendations now carry an explicit replay sequence: local VLM `enrich_source_ir`, then `rebuild_evidence_ir`, then `validate_current_artifact`
+- their provider hint is no longer hardcoded to Ollama: `project-validation --rescan-vlm-provider auto-local` prefers ready local Ollama, falls back to ready local LM Studio, and still allows explicit `ollama`, `lmstudio`, `skip`, and `--rescan-vlm-model <model>` overrides
 - the tracked visual-motif fixture set now has the before/after shape:
   - `visual_motif_prior_guided_diagram_classification_gold` proves a staged prior creates a classification observation, normative role, corroboration target, and zero semantic hints
   - `visual_motif_prior_guided_diagram_classification_without_prior_negative` proves the same current caption stays ambiguous and unclassified when the prior is absent

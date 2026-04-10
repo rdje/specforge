@@ -48,6 +48,8 @@ That currently includes negative-knowledge corroboration findings plus visual-mo
 That plan is deliberately advisory, but it is now replay-oriented rather than only descriptive.
 Each target carries the current artifact path, typed replay inputs such as `source_ir`, `semantic_ir`, or `evidence_ir`, a structured command-hint sequence, and an explicit `planned_not_executed` status.
 For visual-motif corroboration, that sequence now starts with a local VLM `enrich_source_ir` hint, then rebuilds `EvidenceIR`, then validates the current artifact.
+By default, `--rescan-vlm-provider auto-local` prefers a ready local Ollama `qwen2.5vl:7b` model and falls back to a ready local LM Studio `qwen2.5vl:7b` model before emitting the install-guiding Ollama hint.
+Use `--rescan-vlm-provider ollama`, `--rescan-vlm-provider lmstudio`, or `--rescan-vlm-provider skip` to force the generated hint, and `--rescan-vlm-model <model>` to bake a model override into the plan.
 The command hints are there so `rescan-plan` and opt-in `converge --rescan-plan <plan>` runs can rebuild the right stage safely from machine-readable args instead of scraping a prose note.
 
 The plan still does not mutate IR, suppress findings, run rescans automatically, or promote facts from prior memory.

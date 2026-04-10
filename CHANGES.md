@@ -4,6 +4,8 @@
 
 ### Added: explicit visual corroboration replay command
 - Updated [project_validation.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/project_validation.rs) so `evidence_visual_motif_corroboration_guidance` recommendations now emit `enrich_source_ir` before the downstream `rebuild_evidence_ir` and `validate_current_artifact` hints.
+- Added `project-validation --rescan-vlm-provider auto-local|ollama|lmstudio|skip` and optional `--rescan-vlm-model <model>` so generated visual-motif enrichment hints can prefer ready local Ollama, fall back to ready local LM Studio, or be forced by policy instead of always emitting Ollama.
+- Updated [doctor.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/doctor.rs) with a reusable local default-model presence helper and bounded curl timeouts for readiness probes.
 - Updated [rescan_plan.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/rescan_plan.rs) so `rescan-plan --execute` can parse and run whitelisted local `enrich` hints in-process.
 - The enrich replay parser accepts local Ollama, local LM Studio, or `skip`, supports an optional model and `--classify-only`, and intentionally rejects OpenAI replay hints so generated rescans stay local-first.
 - Updated [cli.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/cli.rs) so VLM provider args can participate in typed rescan invocation equality tests.
@@ -13,8 +15,16 @@
 
 ### Validation
 - `cargo test --manifest-path Cargo.toml project_validation_collects_visual_motif_rescan_guidance -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml project_validation_rescan_vlm_policy_can_emit_lmstudio_hint -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml project_validation_auto_rescan_vlm_policy_prefers_ready_lmstudio_when_ollama_absent -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml project_validation_defaults_to_auto_local_rescan_vlm_provider -- --nocapture` -> passed
 - `cargo test --manifest-path Cargo.toml rescan_plan_parses_whitelisted_local_enrich_hint -- --nocapture` -> passed
 - `cargo test --manifest-path Cargo.toml rescan_plan_rejects_openai_enrich_hints -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml project_validation -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml doctor -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml rescan_plan -- --nocapture` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
 
 ## 2026-04-10 (Visual-motif priors now emit corroboration targets)
 

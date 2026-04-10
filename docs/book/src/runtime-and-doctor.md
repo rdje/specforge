@@ -52,6 +52,9 @@ Today the practical provider policy is:
 - use LM Studio as the supported local fallback
 - keep stronger models as explicit fallback lanes, not silent defaults
 
+`project-validation` follows that policy for generated visual-motif rescan hints too.
+Its default `--rescan-vlm-provider auto-local` checks local default-model presence, prefers Ollama when ready, falls back to LM Studio when Ollama is not ready, and otherwise emits the Ollama hint so the missing default path remains obvious.
+
 On the current local hardware, `qwen2.5vl:7b` is the practical everyday model. Stronger local VL models are possible in principle, but they should be treated as selective fallback lanes rather than the default operating path unless hardware margins clearly support them.
 
 ## When to run `doctor`
@@ -63,4 +66,3 @@ Run `doctor --strict`:
 - after changing Python runtimes
 - after changing local model providers
 - before deciding a pipeline failure is really an IR bug
-

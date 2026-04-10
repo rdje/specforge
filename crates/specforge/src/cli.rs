@@ -202,6 +202,24 @@ pub struct ProjectValidationArgs {
     /// Repository root containing the tracked live docs to update
     #[arg(long, default_value = ".")]
     pub repo_root: std::path::PathBuf,
+    /// Local VLM provider policy for generated visual-motif rescan enrichment hints
+    #[arg(long, value_enum, default_value = "auto-local")]
+    pub rescan_vlm_provider: RescanVlmProviderArg,
+    /// Optional local VLM model override to bake into generated visual rescan hints
+    #[arg(long)]
+    pub rescan_vlm_model: Option<String>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum)]
+pub enum RescanVlmProviderArg {
+    /// Prefer ready local Ollama, then ready local LM Studio, falling back to Ollama.
+    AutoLocal,
+    /// Always emit local Ollama enrichment hints.
+    Ollama,
+    /// Always emit local LM Studio enrichment hints.
+    LmStudio,
+    /// Emit a no-VLM enrichment hint for explicitly offline rescan planning.
+    Skip,
 }
 
 #[derive(Debug, Args)]
@@ -293,7 +311,7 @@ pub struct AdaptArgs {
 mod tests {
     use clap::Parser;
 
-    use super::{Cli, Commands, VlmProviderArg};
+    use super::{Cli, Commands, RescanVlmProviderArg, VlmProviderArg};
 
     #[test]
     fn converge_defaults_to_ollama_for_vlm_and_nlp() {
@@ -350,6 +368,24 @@ mod tests {
         assert!(!args.execute);
         assert_eq!(args.limit, 0);
         assert!(args.document_key.is_none());
+    }
+
+    #[test]
+    fn project_validation_defaults_to_auto_local_rescan_vlm_provider() {
+        let cli = Cli::parse_from([
+            "specforge",
+            "project-validation",
+            "generated/evidence_ir/doc/evidence_ir.json",
+        ]);
+        let Commands::ProjectValidation(args) = cli.command else {
+            panic!("expected project-validation command");
+        };
+
+        assert!(matches!(
+            args.rescan_vlm_provider,
+            RescanVlmProviderArg::AutoLocal
+        ));
+        assert!(args.rescan_vlm_model.is_none());
     }
 
     #[test]

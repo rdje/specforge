@@ -89,6 +89,7 @@ The same rescan-guidance channel also covers prior-classified visual-motif evide
 When a matching existing plan already carries executed recommendation summaries, `project-validation` preserves them and projects the review-relevant verdict/delta summary into the tracked validation docs.
 That target list is versioned and replay-oriented: each recommendation carries typed replay inputs plus structured command hints for targeted local enrichment, stage rebuild, and follow-up validation, while remaining `planned_not_executed` until an explicit rescan consumer chooses to execute it.
 For visual-motif corroboration, the replay sequence is `enrich_source_ir`, rebuild `EvidenceIR`, then validate the current artifact.
+The generated enrichment hint now uses a local provider policy: `auto-local` prefers ready Ollama and falls back to ready LM Studio, while explicit `ollama`, `lmstudio`, `skip`, and model overrides remain available on `project-validation`.
 `rescan-plan` is the first explicit consumer for that schema: it dry-runs by default, and `--execute` dispatches only whitelisted local enrichment/stage rebuild/validate commands from the structured args rather than trusting shell text.
 It can also scope a multi-document queue with `--document-key <key>`.
 Execution validates before and after the rebuild and records only neutral changed/no-change status, not an improvement claim.

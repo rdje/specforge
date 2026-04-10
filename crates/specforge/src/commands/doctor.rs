@@ -4,14 +4,14 @@ use std::process::Command;
 use serde::Deserialize;
 use tempfile::tempdir;
 
-use crate::cli::DoctorArgs;
+use crate::cli::{DoctorArgs, VlmProviderArg};
 use crate::error::{AppError, Result};
 use crate::ir::source::{
     DEFAULT_DOCLING_BOOTSTRAP_SCRIPT, DEFAULT_DOCLING_VENV_DIR, DOCLING_PYTHON_ENV,
     inspect_docling_runtime,
 };
 
-const DEFAULT_LOCAL_MODEL: &str = "qwen2.5vl:7b";
+pub(crate) const DEFAULT_LOCAL_MODEL: &str = "qwen2.5vl:7b";
 const OLLAMA_TAGS_URL: &str = "http://localhost:11434/api/tags";
 const OLLAMA_CHAT_URL: &str = "http://localhost:11434/v1/chat/completions";
 const LMSTUDIO_MODELS_URL: &str = "http://localhost:1234/v1/models";
@@ -338,12 +338,31 @@ fn inspect_lmstudio_runtime() -> Result<LmStudioRuntimeDiagnosis> {
     })
 }
 
+pub(crate) fn local_vlm_default_model_present(provider: VlmProviderArg) -> bool {
+    match provider {
+        VlmProviderArg::Ollama => run_ollama_tags_probe()
+            .ok()
+            .and_then(|response| parse_ollama_tags_response(&response).ok())
+            .is_some_and(|summary| summary.default_model_present),
+        VlmProviderArg::LmStudio => run_get_probe(LMSTUDIO_MODELS_URL)
+            .ok()
+            .and_then(|response| parse_openai_models_response(&response, DEFAULT_LOCAL_MODEL).ok())
+            .is_some_and(|summary| summary.default_model_present),
+        VlmProviderArg::OpenAi | VlmProviderArg::Skip => false,
+    }
+}
+
 fn run_ollama_tags_probe() -> Result<String> {
     run_get_probe(OLLAMA_TAGS_URL)
 }
 
 fn run_get_probe(url: &str) -> Result<String> {
-    let output = Command::new("curl").arg("-s").arg(url).output()?;
+    let output = Command::new("curl")
+        .arg("-s")
+        .arg("--max-time")
+        .arg("2")
+        .arg(url)
+        .output()?;
     if !output.status.success() {
         return Ok(String::new());
     }
@@ -369,6 +388,8 @@ fn run_openai_chat_probe(
 
     let output = Command::new("curl")
         .arg("-s")
+        .arg("--max-time")
+        .arg("5")
         .arg("-o")
         .arg(&response_path)
         .arg("-w")

@@ -62,6 +62,7 @@ It can adjust the visual evidence role, for example treating a recovered timing 
 Validation reports that boundary explicitly with role metrics such as `visual_evidence_normative` / `visual_evidence_ambiguous`.
 If the normative role came only from a visual-motif prior and no VLM timing/state extraction is present yet, validation emits `evidence_visual_motif_corroboration_guidance` so downstream rescan planning can route the visual to targeted multimodal corroboration before any promotion.
 `project-validation` turns that finding into an explicit replay sequence: local VLM `enrich_source_ir`, rebuild `EvidenceIR`, then validate the current artifact.
+The generated local provider hint defaults to `auto-local`: prefer ready Ollama, then ready LM Studio, with explicit overrides available when a run should force one provider.
 
 ## VLM observations
 

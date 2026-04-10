@@ -5,8 +5,8 @@ use std::path::{Path, PathBuf};
 
 use serde::{Deserialize, Serialize};
 
-use crate::cli::{ProjectValidationArgs, ValidateArgs};
-use crate::commands::validate;
+use crate::cli::{ProjectValidationArgs, RescanVlmProviderArg, ValidateArgs, VlmProviderArg};
+use crate::commands::{doctor, validate};
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::evidence::EvidenceIr;
@@ -38,6 +38,21 @@ struct ProjectedArtifactSnapshot {
 struct ProjectedReplayInput {
     input_kind: &'static str,
     path: PathBuf,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct RescanVlmHintPolicy {
+    provider: RescanVlmProviderArg,
+    model: Option<String>,
+}
+
+impl RescanVlmHintPolicy {
+    fn from_args(args: &ProjectValidationArgs) -> Self {
+        Self {
+            provider: args.rescan_vlm_provider,
+            model: args.rescan_vlm_model.clone(),
+        }
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -183,7 +198,9 @@ pub fn run(args: ProjectValidationArgs) -> Result<()> {
     });
 
     let previous_rescan_plan = read_existing_validation_rescan_plan(&repo_root)?;
-    let mut rescan_recommendations = collect_rescan_recommendations(&snapshots, &repo_root);
+    let rescan_vlm_policy = RescanVlmHintPolicy::from_args(&args);
+    let mut rescan_recommendations =
+        collect_rescan_recommendations(&snapshots, &repo_root, &rescan_vlm_policy);
     merge_previous_rescan_execution_state(
         &mut rescan_recommendations,
         previous_rescan_plan.as_ref(),
@@ -627,6 +644,7 @@ fn write_validation_rescan_plan(
 fn collect_rescan_recommendations(
     snapshots: &[ProjectedArtifactSnapshot],
     repo_root: &Path,
+    rescan_vlm_policy: &RescanVlmHintPolicy,
 ) -> Vec<ProjectRescanRecommendation> {
     let mut recommendations = Vec::new();
     for snapshot in snapshots {
@@ -644,6 +662,7 @@ fn collect_rescan_recommendations(
                 &snapshot.artifact_path,
                 snapshot,
                 finding,
+                rescan_vlm_policy,
                 repo_root,
             );
             recommendations.push(ProjectRescanRecommendation {
@@ -692,6 +711,7 @@ fn recommended_rescan_commands(
     artifact_path: &Path,
     snapshot: &ProjectedArtifactSnapshot,
     finding: &ValidationFindingRecord,
+    rescan_vlm_policy: &RescanVlmHintPolicy,
     repo_root: &Path,
 ) -> Vec<ProjectRescanCommandHint> {
     let mut commands = Vec::new();
@@ -701,15 +721,21 @@ fn recommended_rescan_commands(
             .iter()
             .find(|input| input.input_kind == "source_ir")
         {
-            commands.push(specforge_command_hint(
-                "enrich_source_ir",
-                vec![
-                    "enrich".to_string(),
-                    repo_relative_display(&input.path, repo_root),
-                    "--vlm-provider".to_string(),
-                    "ollama".to_string(),
-                ],
-            ));
+            let mut enrich_args = vec![
+                "enrich".to_string(),
+                repo_relative_display(&input.path, repo_root),
+                "--vlm-provider".to_string(),
+                rescan_vlm_provider_name(select_rescan_vlm_provider(
+                    rescan_vlm_policy.provider,
+                    doctor::local_vlm_default_model_present,
+                ))
+                .to_string(),
+            ];
+            if let Some(model) = rescan_vlm_policy.model.as_ref() {
+                enrich_args.push("--vlm-model".to_string());
+                enrich_args.push(model.clone());
+            }
+            commands.push(specforge_command_hint("enrich_source_ir", enrich_args));
         }
     }
 
@@ -745,6 +771,35 @@ fn recommended_rescan_commands(
 fn is_visual_motif_corroboration_rescan(stage: IrStage, finding: &ValidationFindingRecord) -> bool {
     stage == IrStage::EvidenceIr
         && finding.finding_id == EVIDENCE_VISUAL_MOTIF_CORROBORATION_GUIDANCE
+}
+
+fn select_rescan_vlm_provider(
+    policy: RescanVlmProviderArg,
+    mut default_model_present: impl FnMut(VlmProviderArg) -> bool,
+) -> VlmProviderArg {
+    match policy {
+        RescanVlmProviderArg::AutoLocal => {
+            if default_model_present(VlmProviderArg::Ollama) {
+                VlmProviderArg::Ollama
+            } else if default_model_present(VlmProviderArg::LmStudio) {
+                VlmProviderArg::LmStudio
+            } else {
+                VlmProviderArg::Ollama
+            }
+        }
+        RescanVlmProviderArg::Ollama => VlmProviderArg::Ollama,
+        RescanVlmProviderArg::LmStudio => VlmProviderArg::LmStudio,
+        RescanVlmProviderArg::Skip => VlmProviderArg::Skip,
+    }
+}
+
+fn rescan_vlm_provider_name(provider: VlmProviderArg) -> &'static str {
+    match provider {
+        VlmProviderArg::Ollama => "ollama",
+        VlmProviderArg::LmStudio => "lmstudio",
+        VlmProviderArg::Skip => "skip",
+        VlmProviderArg::OpenAi => unreachable!("rescan VLM hints are local-only"),
+    }
 }
 
 fn specforge_command_hint(intent: &str, specforge_args: Vec<String>) -> ProjectRescanCommandHint {
@@ -1109,6 +1164,8 @@ mod tests {
         run(ProjectValidationArgs {
             artifacts: vec![intent_ir.artifact_layout.intent_ir_path.clone()],
             repo_root: repo_root.to_path_buf(),
+            rescan_vlm_provider: RescanVlmProviderArg::Ollama,
+            rescan_vlm_model: None,
         })?;
 
         let snapshot_doc = fs::read_to_string(repo_root.join(VALIDATION_SNAPSHOT_DOC))?;
@@ -1171,7 +1228,8 @@ mod tests {
         };
         let snapshots = vec![snapshot];
 
-        let mut recommendations = collect_rescan_recommendations(&snapshots, repo_root);
+        let mut recommendations =
+            collect_rescan_recommendations(&snapshots, repo_root, &test_rescan_vlm_policy());
         assert_eq!(recommendations.len(), 1);
         assert_eq!(
             recommendations[0].related_ids,
@@ -1267,36 +1325,10 @@ mod tests {
     fn project_validation_collects_visual_motif_rescan_guidance() {
         let tempdir = tempdir().expect("tempdir");
         let repo_root = tempdir.path();
-        let artifact_path = repo_root.join("generated/evidence_ir/doc/evidence_ir.json");
-        let source_ir_path = repo_root.join("generated/source_ir/doc/source_ir.json");
-        let snapshot = ProjectedArtifactSnapshot {
-            document_key: "doc".to_string(),
-            display_name: "Spec.pdf".to_string(),
-            stage: IrStage::EvidenceIr,
-            artifact_path,
-            replay_inputs: vec![ProjectedReplayInput {
-                input_kind: "source_ir",
-                path: source_ir_path,
-            }],
-            report: ValidationReportRecord {
-                report_id: "validation_evidence_ir_test".to_string(),
-                validated_stage: IrStage::EvidenceIr,
-                artifact_fingerprint: "fingerprint".to_string(),
-                summary: "EvidenceIR validation with visual corroboration guidance".to_string(),
-                overall_score: None,
-                grade: None,
-                metrics: Vec::new(),
-                findings: vec![ValidationFindingRecord {
-                    finding_id: "evidence_visual_motif_corroboration_guidance".to_string(),
-                    severity: ValidationFindingSeverity::Info,
-                    category: "rescan_guidance".to_string(),
-                    summary: "prior classified visual needs multimodal corroboration".to_string(),
-                    related_ids: vec!["visual_0001".to_string()],
-                }],
-            },
-        };
+        let snapshot = visual_motif_snapshot(repo_root);
 
-        let recommendations = collect_rescan_recommendations(&[snapshot], repo_root);
+        let recommendations =
+            collect_rescan_recommendations(&[snapshot], repo_root, &test_rescan_vlm_policy());
 
         assert_eq!(recommendations.len(), 1);
         assert_eq!(
@@ -1340,6 +1372,44 @@ mod tests {
     }
 
     #[test]
+    fn project_validation_rescan_vlm_policy_can_emit_lmstudio_hint() {
+        let tempdir = tempdir().expect("tempdir");
+        let repo_root = tempdir.path();
+        let policy = RescanVlmHintPolicy {
+            provider: RescanVlmProviderArg::LmStudio,
+            model: Some("qwen2.5vl:7b".to_string()),
+        };
+
+        let recommendations =
+            collect_rescan_recommendations(&[visual_motif_snapshot(repo_root)], repo_root, &policy);
+
+        assert_eq!(
+            recommendations[0].recommended_commands[0].args,
+            vec![
+                "run".to_string(),
+                "--manifest-path".to_string(),
+                "Cargo.toml".to_string(),
+                "--".to_string(),
+                "enrich".to_string(),
+                "generated/source_ir/doc/source_ir.json".to_string(),
+                "--vlm-provider".to_string(),
+                "lmstudio".to_string(),
+                "--vlm-model".to_string(),
+                "qwen2.5vl:7b".to_string(),
+            ]
+        );
+    }
+
+    #[test]
+    fn project_validation_auto_rescan_vlm_policy_prefers_ready_lmstudio_when_ollama_absent() {
+        let provider = select_rescan_vlm_provider(RescanVlmProviderArg::AutoLocal, |provider| {
+            matches!(provider, VlmProviderArg::LmStudio)
+        });
+
+        assert_eq!(provider, VlmProviderArg::LmStudio);
+    }
+
+    #[test]
     fn project_validation_preserves_matching_rescan_execution_summary() -> Result<()> {
         let tempdir = tempdir()?;
         let repo_root = tempdir.path();
@@ -1372,7 +1442,8 @@ mod tests {
             },
         };
         let snapshots = vec![snapshot];
-        let mut previous_recommendations = collect_rescan_recommendations(&snapshots, repo_root);
+        let mut previous_recommendations =
+            collect_rescan_recommendations(&snapshots, repo_root, &test_rescan_vlm_policy());
         previous_recommendations[0].automation_status = "executed_validated_changed".to_string();
         previous_recommendations[0].execution_summary = Some(execution_summary(
             "regression_review_required",
@@ -1382,7 +1453,8 @@ mod tests {
         write_validation_rescan_plan(repo_root, previous_recommendations)?;
 
         let previous_plan = read_existing_validation_rescan_plan(repo_root)?;
-        let mut refreshed_recommendations = collect_rescan_recommendations(&snapshots, repo_root);
+        let mut refreshed_recommendations =
+            collect_rescan_recommendations(&snapshots, repo_root, &test_rescan_vlm_policy());
         merge_previous_rescan_execution_state(
             &mut refreshed_recommendations,
             previous_plan.as_ref(),
@@ -1524,6 +1596,42 @@ mod tests {
                 } else {
                     Vec::new()
                 },
+            },
+        }
+    }
+
+    fn test_rescan_vlm_policy() -> RescanVlmHintPolicy {
+        RescanVlmHintPolicy {
+            provider: RescanVlmProviderArg::Ollama,
+            model: None,
+        }
+    }
+
+    fn visual_motif_snapshot(repo_root: &Path) -> ProjectedArtifactSnapshot {
+        ProjectedArtifactSnapshot {
+            document_key: "doc".to_string(),
+            display_name: "Spec.pdf".to_string(),
+            stage: IrStage::EvidenceIr,
+            artifact_path: repo_root.join("generated/evidence_ir/doc/evidence_ir.json"),
+            replay_inputs: vec![ProjectedReplayInput {
+                input_kind: "source_ir",
+                path: repo_root.join("generated/source_ir/doc/source_ir.json"),
+            }],
+            report: ValidationReportRecord {
+                report_id: "validation_evidence_ir_test".to_string(),
+                validated_stage: IrStage::EvidenceIr,
+                artifact_fingerprint: "fingerprint".to_string(),
+                summary: "EvidenceIR validation with visual corroboration guidance".to_string(),
+                overall_score: None,
+                grade: None,
+                metrics: Vec::new(),
+                findings: vec![ValidationFindingRecord {
+                    finding_id: "evidence_visual_motif_corroboration_guidance".to_string(),
+                    severity: ValidationFindingSeverity::Info,
+                    category: "rescan_guidance".to_string(),
+                    summary: "prior classified visual needs multimodal corroboration".to_string(),
+                    related_ids: vec!["visual_0001".to_string()],
+                }],
             },
         }
     }
