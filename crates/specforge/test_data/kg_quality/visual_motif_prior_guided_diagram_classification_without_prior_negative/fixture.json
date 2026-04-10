@@ -1,20 +1,6 @@
 {
-  "name": "visual_motif_prior_guided_diagram_classification_gold",
+  "name": "visual_motif_prior_guided_diagram_classification_without_prior_negative",
   "source": "source.md",
-  "prior_memory_patch": {
-    "visual_motif_priors": [
-      {
-        "prior_id": "visual_motif_prior_0001",
-        "normalized_caption_phrase": "<signal> cycle trace",
-        "diagram_kind": "timing_diagram",
-        "asset_kind": "diagram",
-        "protocol_family": "unknown",
-        "support_count": 2,
-        "supporting_document_keys": ["seed_doc_1", "seed_doc_2"],
-        "strongest_automation_confidence": "high"
-      }
-    ]
-  },
   "source_ir_patch": {
     "structured_tables": [
       {
@@ -100,13 +86,13 @@
     },
     "validation": {
       "evidence": {
-        "finding_ids_include": ["evidence_visual_motif_corroboration_guidance"],
+        "finding_ids_exclude": ["evidence_visual_motif_corroboration_guidance"],
         "metric_values": {
           "visual_evidence_total": "1",
-          "visual_classification_observations": "1",
-          "visual_evidence_normative": "1",
-          "visual_evidence_ambiguous": "0",
-          "visual_motif_corroboration_targets": "1",
+          "visual_classification_observations": "0",
+          "visual_evidence_normative": "0",
+          "visual_evidence_ambiguous": "1",
+          "visual_motif_corroboration_targets": "0",
           "signal_semantic_hints": "0",
           "signal_semantic_hints_from_visual_captions": "0"
         }

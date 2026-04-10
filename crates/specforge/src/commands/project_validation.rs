@@ -629,7 +629,7 @@ fn collect_rescan_recommendations(
     let mut recommendations = Vec::new();
     for snapshot in snapshots {
         for finding in &snapshot.report.findings {
-            if !is_negative_knowledge_rescan_guidance(finding) {
+            if !is_rescan_guidance(finding) {
                 continue;
             }
 
@@ -752,12 +752,8 @@ fn shell_quote(value: &str) -> String {
     format!("'{}'", value.replace('\'', "'\"'\"'"))
 }
 
-fn is_negative_knowledge_rescan_guidance(finding: &ValidationFindingRecord) -> bool {
-    finding.category == "rescan_guidance"
-        && finding
-            .finding_id
-            .ends_with("_negative_knowledge_rescan_guidance")
-        && !finding.related_ids.is_empty()
+fn is_rescan_guidance(finding: &ValidationFindingRecord) -> bool {
+    finding.category == "rescan_guidance" && !finding.related_ids.is_empty()
 }
 
 fn extractor_lane_for_rescan(stage: IrStage) -> &'static str {
@@ -1238,6 +1234,60 @@ mod tests {
         assert!(plan.contains("\"rebuild_intent_ir\""));
 
         Ok(())
+    }
+
+    #[test]
+    fn project_validation_collects_visual_motif_rescan_guidance() {
+        let tempdir = tempdir().expect("tempdir");
+        let repo_root = tempdir.path();
+        let artifact_path = repo_root.join("generated/evidence_ir/doc/evidence_ir.json");
+        let source_ir_path = repo_root.join("generated/source_ir/doc/source_ir.json");
+        let snapshot = ProjectedArtifactSnapshot {
+            document_key: "doc".to_string(),
+            display_name: "Spec.pdf".to_string(),
+            stage: IrStage::EvidenceIr,
+            artifact_path,
+            replay_inputs: vec![ProjectedReplayInput {
+                input_kind: "source_ir",
+                path: source_ir_path,
+            }],
+            report: ValidationReportRecord {
+                report_id: "validation_evidence_ir_test".to_string(),
+                validated_stage: IrStage::EvidenceIr,
+                artifact_fingerprint: "fingerprint".to_string(),
+                summary: "EvidenceIR validation with visual corroboration guidance".to_string(),
+                overall_score: None,
+                grade: None,
+                metrics: Vec::new(),
+                findings: vec![ValidationFindingRecord {
+                    finding_id: "evidence_visual_motif_corroboration_guidance".to_string(),
+                    severity: ValidationFindingSeverity::Info,
+                    category: "rescan_guidance".to_string(),
+                    summary: "prior classified visual needs multimodal corroboration".to_string(),
+                    related_ids: vec!["visual_0001".to_string()],
+                }],
+            },
+        };
+
+        let recommendations = collect_rescan_recommendations(&[snapshot], repo_root);
+
+        assert_eq!(recommendations.len(), 1);
+        assert_eq!(
+            recommendations[0].extractor_lane,
+            "evidence_ir_multimodal_semantic_corroboration"
+        );
+        assert_eq!(
+            recommendations[0].corroboration_policy,
+            "stronger_local_corroboration_required_before_canonical_promotion"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[0].intent,
+            "rebuild_evidence_ir"
+        );
+        assert_eq!(
+            recommendations[0].related_ids,
+            vec!["visual_0001".to_string()]
+        );
     }
 
     #[test]

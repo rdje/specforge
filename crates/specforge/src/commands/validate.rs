@@ -7,7 +7,7 @@ use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::evidence::{
     EvidenceIr, SignalSemanticConflictRecord, SignalSemanticHintRecord,
-    SignalSemanticHintSourceKind, StatementClass, VisualObservationKind,
+    SignalSemanticHintSourceKind, StatementClass, VisualEvidenceRole, VisualObservationKind,
 };
 use crate::ir::intent::IntentIr;
 use crate::ir::prior_memory::{
@@ -1370,7 +1370,20 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         .iter()
         .filter(|e| e.caption_text.is_some())
         .count();
+    let visual_evidence_normative = visual_evidence_role_count(ir, VisualEvidenceRole::Normative);
+    let visual_evidence_explanatory =
+        visual_evidence_role_count(ir, VisualEvidenceRole::Explanatory);
+    let visual_evidence_illustrative =
+        visual_evidence_role_count(ir, VisualEvidenceRole::Illustrative);
+    let visual_evidence_ambiguous = visual_evidence_role_count(ir, VisualEvidenceRole::Ambiguous);
+    let visual_evidence_unknown = visual_evidence_role_count(ir, VisualEvidenceRole::Unknown);
+    let visual_motif_corroboration_targets = visual_motif_corroboration_targets(ir);
     println!("  with_caption: {with_caption}");
+    println!("  normative: {visual_evidence_normative}");
+    println!("  explanatory: {visual_evidence_explanatory}");
+    println!("  illustrative: {visual_evidence_illustrative}");
+    println!("  ambiguous: {visual_evidence_ambiguous}");
+    println!("  unknown: {visual_evidence_unknown}");
     if !ir.signal_polarity_conflicts.is_empty() {
         println!();
         println!("=== Signal Polarity Conflicts ===");
@@ -1516,6 +1529,18 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         "EvidenceIR",
         &negative_knowledge_prior_matches,
     );
+    if !visual_motif_corroboration_targets.is_empty() {
+        findings.push(finding(
+            "evidence_visual_motif_corroboration_guidance",
+            ValidationFindingSeverity::Info,
+            "rescan_guidance",
+            format!(
+                "{} prior-classified normative visual evidence item(s) should be routed to targeted VLM/multimodal corroboration before downstream promotion; prior memory did not rewrite SourceIR or create semantic facts",
+                visual_motif_corroboration_targets.len()
+            ),
+            visual_motif_corroboration_targets.clone(),
+        ));
+    }
 
     let report = ValidationReportRecord {
         report_id: format!("validation_evidence_ir_{artifact_fingerprint}"),
@@ -1617,11 +1642,65 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
                 ir.visual_evidence.len().to_string(),
             ),
             metric("visual_evidence_with_caption", with_caption.to_string()),
+            metric(
+                "visual_evidence_normative",
+                visual_evidence_normative.to_string(),
+            ),
+            metric(
+                "visual_evidence_explanatory",
+                visual_evidence_explanatory.to_string(),
+            ),
+            metric(
+                "visual_evidence_illustrative",
+                visual_evidence_illustrative.to_string(),
+            ),
+            metric(
+                "visual_evidence_ambiguous",
+                visual_evidence_ambiguous.to_string(),
+            ),
+            metric(
+                "visual_evidence_unknown",
+                visual_evidence_unknown.to_string(),
+            ),
+            metric(
+                "visual_motif_corroboration_targets",
+                visual_motif_corroboration_targets.len().to_string(),
+            ),
         ],
         findings,
     };
     print_validation_findings(&report);
     report
+}
+
+fn visual_evidence_role_count(ir: &EvidenceIr, role: VisualEvidenceRole) -> usize {
+    ir.visual_evidence
+        .iter()
+        .filter(|item| item.role == role)
+        .count()
+}
+
+fn visual_motif_corroboration_targets(ir: &EvidenceIr) -> Vec<String> {
+    ir.visual_evidence
+        .iter()
+        .filter(|item| item.role == VisualEvidenceRole::Normative)
+        .filter(|item| {
+            item.observations.iter().any(|observation| {
+                observation.kind == VisualObservationKind::Classification
+                    && observation.created_by == "specforge_prior_memory"
+            })
+        })
+        .filter(|item| {
+            !item.observations.iter().any(|observation| {
+                matches!(
+                    observation.kind,
+                    VisualObservationKind::TimingDiagramExtraction
+                        | VisualObservationKind::StateMachineExtraction
+                )
+            })
+        })
+        .map(|item| item.evidence_id.clone())
+        .collect()
 }
 
 fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> ValidationReportRecord {

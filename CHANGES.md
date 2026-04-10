@@ -1,5 +1,27 @@
 # CHANGES
 
+## 2026-04-10 (Visual-motif priors now emit corroboration targets)
+
+### Added: validation-visible visual corroboration targets
+- Updated [validate.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/validate.rs) so `EvidenceIR` validation now reports role-level visual evidence metrics: `visual_evidence_normative`, `visual_evidence_explanatory`, `visual_evidence_illustrative`, `visual_evidence_ambiguous`, and `visual_evidence_unknown`.
+- Prior-classified normative visual evidence now also reports `visual_motif_corroboration_targets` and emits `evidence_visual_motif_corroboration_guidance` when it still lacks VLM timing/state extraction observations.
+- The guidance is explicitly review/rescan routing only: it asks for targeted VLM/multimodal corroboration and still does not rewrite `SourceIR`, synthesize semantic facts, or promote canonical truth from prior memory.
+
+### Added: gold/negative benchmark pair
+- Strengthened [visual_motif_prior_guided_diagram_classification_gold](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/visual_motif_prior_guided_diagram_classification_gold/fixture.json) so it now proves the prior-backed classification produces one normative visual evidence item, one corroboration target, and zero semantic hints.
+- Added [visual_motif_prior_guided_diagram_classification_without_prior_negative](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/visual_motif_prior_guided_diagram_classification_without_prior_negative/fixture.json), proving the same local `XREQ cycle trace` visual stays ambiguous and unclassified without staged visual-motif memory.
+- Updated [project_validation.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/project_validation.rs) so generic `rescan_guidance` findings with related ids can enter the schema-v2 rescan target list, including the new visual-motif corroboration finding.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml visual_motif -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml project_validation_collects_visual_motif_rescan_guidance -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml validate_evidence_ir -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml kg_bench_runs_tracked_fixtures -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality visual_motif_prior_guided_diagram_classification_gold` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality visual_motif_prior_guided_diagram_classification_without_prior_negative` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-10 (Rescan execution summaries now gate promotion explicitly)
 
 ### Added: machine-readable not-promoted gate

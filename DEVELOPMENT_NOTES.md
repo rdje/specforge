@@ -699,7 +699,12 @@
   - it does not synthesize semantic-role hints
   - it does not create timing constraints, temporal rules, or canonical `IntentIR` facts
   - ambiguous prior memory stays silent instead of forcing a classification
-- `validate evidence_ir` now reports `visual_classification_observations`, and the tracked `visual_motif_prior_guided_diagram_classification_gold` fixture locks the local-grounded behavior
+- `validate evidence_ir` now reports `visual_classification_observations` plus visual-role metrics such as `visual_evidence_normative` and `visual_evidence_ambiguous`
+- when a prior-classified visual becomes normative but still lacks VLM timing/state extraction observations, validation now emits `evidence_visual_motif_corroboration_guidance` and increments `visual_motif_corroboration_targets`
+- `project-validation` consumes that finding as generic `rescan_guidance`, so visual-motif priors can route attention to targeted VLM/multimodal corroboration without becoming a truth-promotion channel
+- the tracked visual-motif fixture set now has the before/after shape:
+  - `visual_motif_prior_guided_diagram_classification_gold` proves a staged prior creates a classification observation, normative role, corroboration target, and zero semantic hints
+  - `visual_motif_prior_guided_diagram_classification_without_prior_negative` proves the same current caption stays ambiguous and unclassified when the prior is absent
 
 ### First negative-knowledge prior consumer
 - `EvidenceIR` validation now has the first bounded runtime consumer for `negative_knowledge_priors`

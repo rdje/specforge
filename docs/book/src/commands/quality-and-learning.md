@@ -40,7 +40,8 @@ This command validates the passed artifacts and refreshes the tracked crash-safe
 - `VALIDATION_SNAPSHOT.md`
 - the managed validation block in `LIVE_ACHIEVEMENT_STATUS.md`
 
-It also consumes validation-level negative-knowledge rescan guidance and writes a local generated extractor-selection target list:
+It also consumes validation-level rescan guidance and writes a local generated extractor-selection target list.
+That currently includes negative-knowledge corroboration findings plus visual-motif corroboration findings for prior-classified normative visuals that still need VLM/multimodal confirmation:
 
 `generated/validation/rescan_plan.json`
 

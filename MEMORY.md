@@ -53,7 +53,7 @@
 - the implementation is now following that visual-grounding contract too: VLM state-machine transition guard text is parsed through a bounded signal/comparison normalizer so generic words such as `transfer` do not become fake signals and compound guards such as `PREADY = 1 and transfer` keep the grounded `PREADY == 1` comparison
 - the visual-grounding implementation is now also using timing-diagram `signals[].values[]` tuples: grounded VLM signal/value observations such as `XREQ` being `HIGH` at `T1` become `SignalConstraintRecord`s and feed temporal `SignalValue` predicates, while generic visual words like `transfer` remain blocked as fake signals
 - `CorpusMemory` schema version `5` now has two advisory-only typed memory families: `visual_motif_priors` for reusable source-side visual patterns and `negative_knowledge_priors` for conflict/residual archetypes that should guide future caution without authoring canonical facts
-- `EvidenceIR` now has the first bounded visual-motif prior consumer too: when a current visual asset is still `DiagramKind::Unknown`, its local caption can match a unique learned visual-motif prior and gain an explicit `Classification` observation plus an effective normative visual role, without mutating `SourceIR` or synthesizing canonical semantic facts
+- `EvidenceIR` now has the first bounded visual-motif prior consumer too: when a current visual asset is still `DiagramKind::Unknown`, its local caption can match a unique learned visual-motif prior and gain an explicit `Classification` observation plus an effective normative visual role, without mutating `SourceIR` or synthesizing canonical semantic facts; validation now reports that role and emits `evidence_visual_motif_corroboration_guidance` when the prior-classified normative visual still needs VLM/multimodal corroboration
 - `EvidenceIR` validation now has the first bounded negative-knowledge prior consumer too: if a current local signal-semantic conflict pattern exactly matches learned negative knowledge, validation reports `negative_knowledge_prior_matches` plus an info-level caution finding, without suppressing the conflict or changing semantic arbitration
 - `SemanticIR` / `IntentIR` validation now broaden that negative-knowledge consumer across carried signal-semantic conflicts, temporal value conflicts, interface-signal conflicts, signal-connectivity conflicts, and residual decision packet classes by recovering the linked `EvidenceIR.prior_memory_path`
 - negative-knowledge validation now also emits the first safe rescan/corroboration hook:
@@ -160,7 +160,7 @@
 - `specforge kg-bench` now also locks the same before/after truthfulness pattern for table-shape priors on a locally `unknown` `Name | Direction | Width` table
 - `specforge kg-bench` now also locks the same before/after truthfulness pattern for table-shape priors on a locally `unknown` `Parameter | Min | Max | Unit` timing table
 - `specforge kg-bench` now also locks the same before/after truthfulness pattern for semantic modality-reliability priors on locally conflicted semantic-role evidence, proving the conflict stays contested without the staged prior and becomes decisively resolved only when that prior is present
-- `specforge kg-bench` now also locks the same local-grounding truthfulness pattern for visual-motif priors on a locally unknown but captioned visual asset, proving prior memory can classify the diagram kind without leaking semantic facts across documents
+- `specforge kg-bench` now also locks the same local-grounding truthfulness pattern for visual-motif priors on a locally unknown but captioned visual asset, proving prior memory can classify the diagram kind, upgrade only the visual role, emit a corroboration target, and still avoid semantic fact leakage; the no-prior twin proves the same caption stays ambiguous without staged memory
 - `specforge kg-bench` now also locks the first negative-knowledge consumer: a repeated visual-caption/VLM semantic conflict can surface a prior-memory caution in `EvidenceIR` validation without removing the conflict or forcing downstream consensus
 - `specforge kg-bench` now also locks deep-layer negative-knowledge cautions: repeated temporal contradiction and residual packet shapes surface in `SemanticIR` / `IntentIR` validation without removing the current conflict or residual
 - canonical generated artifact roots are under `generated/source_ir/`, `generated/evidence_ir/`, `generated/semantic_ir/`, and `generated/intent_ir/`
@@ -212,7 +212,7 @@
 - `.venv-docling/` is also local-only runtime state and should stay untracked
 
 ## Exact next steps
-1. broaden visual-motif prior benchmarking beyond the first diagram-classification consumer, especially around rescan selection and multimodal corroboration
+1. connect visual-motif corroboration guidance to future explicit VLM enrichment/rescan command hints instead of only rebuilding/validating `EvidenceIR`
 2. connect the explicit rescan promotion gate to a future human/policy approval path if the project starts mutating canonical artifacts from rescan outcomes
 3. deepen clock/reset topology only when the current document explicitly names gated branches, synchronizer stages, or reset-tree target structure
 
