@@ -73,7 +73,8 @@
   - dry-run by default, reading `generated/validation/rescan_plan.json`
   - `--execute` dispatches only whitelisted in-process `ingest` / `evidence` / `semantic` / `intent` / `validate` hints from structured args
   - it refuses untrusted executables, non-repository working directories, and unsupported command shapes instead of shelling out through display strings
-  - successful execution marks the local plan recommendation as `executed`, but this is still not a canonical truth promotion
+  - successful execution validates the target artifact before and after the whitelisted commands, then marks the local plan recommendation as `executed_validated_no_change` or `executed_validated_changed`
+  - the changed/no-change status is still not a canonical truth promotion or improvement claim
 - root docs remain important, but they now serve continuity, roadmap, validation, and developer-state roles more than primary end-user onboarding
 - runnable CLI surface includes `inspect`, `doctor`, `converge`, `ingest`, `evidence`, `semantic`, `intent`, `adapt`, `enrich`, `validate`, `kg-bench`, `project-validation`, `rescan-plan`, `learn-priors`, and `nlp-enrich`
 - `specforge converge` now defaults to full Ollama-backed VLM image enrichment plus NLP Level 3 backannotation; use `--vlm-provider skip` and/or `--nlp-provider skip` only when intentionally narrowing the loop
@@ -201,7 +202,7 @@
 - `.venv-docling/` is also local-only runtime state and should stay untracked
 
 ## Exact next steps
-1. wire the convergent loop to optionally consume schema-v2 `generated/validation/rescan_plan.json`, run the same whitelisted rescan execution path, and compare before/after validation before treating any rebuilt artifact as improved
+1. wire the convergent loop to optionally consume schema-v2 `generated/validation/rescan_plan.json`, run the same whitelisted rescan execution path, and arbitrate `executed_validated_changed` outcomes before treating any rebuilt artifact as improved
 2. broaden visual-motif prior benchmarking beyond the first diagram-classification consumer, especially around rescan selection and multimodal corroboration
 3. deepen clock/reset topology only when the current document explicitly names gated branches, synchronizer stages, or reset-tree target structure
 

@@ -78,9 +78,14 @@ It parses the structured `executable` and `args`, accepts only the repository-lo
 - `intent`
 - `validate`
 
-After a recommendation executes successfully, the local plan entry is marked `executed`.
+After a recommendation executes successfully, `rescan-plan` validates the target artifact again and records a neutral outcome in the local plan:
+
+- `executed_validated_no_change`
+- `executed_validated_changed`
+
 That is still not a canonical truth decision.
-It means the relevant stage was rebuilt and validated; any fact promotion still has to survive current-document evidence, validation, and arbitration.
+It means the relevant stage was rebuilt and validated, and that the validation fingerprint/score/finding-count surface either changed or did not.
+Any fact promotion still has to survive current-document evidence, validation, and arbitration.
 
 ## `kg-bench`
 

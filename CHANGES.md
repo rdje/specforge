@@ -1,12 +1,31 @@
 # CHANGES
 
+## 2026-04-10 (Rescan execution records validation deltas)
+
+### Added: before/after validation accounting
+- Updated [rescan_plan.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/rescan_plan.rs) so `specforge rescan-plan --execute` validates the recommendation artifact before and after whitelisted command execution.
+- The local generated plan now records neutral execution outcome statuses:
+  - `executed_validated_no_change`
+  - `executed_validated_changed`
+- Added an execution-path regression that builds a real temporary `SourceIR`, executes a validate-only rescan recommendation, and verifies the plan is marked `executed_validated_no_change`.
+
+### Preserved: changed does not mean improved
+- The executor still does not classify a rebuild as improved.
+- It only records whether the validation fingerprint, score, grade, or finding count changed.
+- Convergence-integrated before/after arbitration remains the next step before treating rebuilt artifacts as better canonical truth.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml rescan_plan -- --nocapture` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-10 (Rescan plan now has a bounded executor)
 
 ### Added: dry-run-first rescan-plan command
 - Added [rescan_plan.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/rescan_plan.rs) with the new `specforge rescan-plan` command.
 - The command reads schema-v2 `generated/validation/rescan_plan.json`, reports pending `planned_not_executed` targets by default, and supports `--limit` plus `--plan`.
 - Added `--execute` to dispatch only whitelisted in-process `ingest`, `evidence`, `semantic`, `intent`, and `validate` hints from the structured command args.
-- Successful `--execute` runs mark local recommendations as `executed` in the generated plan.
+- Successful `--execute` runs update local recommendation status in the generated plan.
 
 ### Preserved: execution is not truth promotion
 - The executor refuses non-`cargo` executables, non-repository working directories, malformed cargo prefixes, and unsupported command intents.

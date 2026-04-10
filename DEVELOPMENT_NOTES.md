@@ -780,9 +780,13 @@
   - `intent`
   - `validate`
 - the executor refuses non-`cargo` executables, non-repository working directories, malformed cargo prefixes, and unsupported command intents
-- successful execution marks the local plan recommendation as `executed`
+- execution validates the target artifact before and after the whitelisted command hints
+- successful execution marks the local plan recommendation as:
+  - `executed_validated_no_change`
+  - `executed_validated_changed`
 - this is still not a truth-promotion channel:
   - it can rebuild and validate stages
+  - a changed validation surface is not automatically classified as improved
   - it cannot let prior memory decide canonical facts
   - the remaining follow-up is convergence-integrated before/after validation and arbitration before treating a rebuilt artifact as improved
 

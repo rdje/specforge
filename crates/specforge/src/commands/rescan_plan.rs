@@ -13,7 +13,8 @@ use super::project_validation::{
 
 const SUPPORTED_RESCAN_PLAN_SCHEMA_VERSION: u32 = 2;
 const PLANNED_NOT_EXECUTED: &str = "planned_not_executed";
-const EXECUTED: &str = "executed";
+const EXECUTED_VALIDATED_CHANGED: &str = "executed_validated_changed";
+const EXECUTED_VALIDATED_NO_CHANGE: &str = "executed_validated_no_change";
 
 pub fn run(args: RescanPlanArgs) -> Result<()> {
     let plan_path = args.plan;
@@ -43,8 +44,8 @@ pub fn run(args: RescanPlanArgs) -> Result<()> {
 
     for index in selected_indices {
         let recommendation = plan.recommendations[index].clone();
-        execute_recommendation(&recommendation, &args.prior_memory)?;
-        plan.recommendations[index].automation_status = EXECUTED.to_string();
+        let outcome = execute_recommendation(&recommendation, &args.prior_memory)?;
+        plan.recommendations[index].automation_status = outcome.automation_status.to_string();
     }
 
     fs::write(&plan_path, serde_json::to_string_pretty(&plan)?)?;
@@ -114,10 +115,18 @@ fn print_dry_run_plan(plan: &ProjectRescanPlanRecord, selected_indices: &[usize]
 fn execute_recommendation(
     recommendation: &ProjectRescanRecommendation,
     prior_memory: &Path,
-) -> Result<()> {
+) -> Result<RescanExecutionOutcome> {
     println!(
         "executing_recommendation: {} {} {}",
         recommendation.document_key, recommendation.stage, recommendation.finding_id
+    );
+    let artifact_path = PathBuf::from(&recommendation.artifact_path);
+    let before = validate_and_snapshot(&artifact_path)?;
+    println!(
+        "before_validation: fingerprint={} score={} findings={}",
+        before.artifact_fingerprint,
+        score_label(before.overall_score, before.grade.as_deref()),
+        before.finding_count
     );
 
     for command in &recommendation.recommended_commands {
@@ -126,7 +135,18 @@ fn execute_recommendation(
         execute_invocation(invocation, prior_memory)?;
     }
 
-    Ok(())
+    let after = validate_and_snapshot(&artifact_path)?;
+    println!(
+        "after_validation: fingerprint={} score={} findings={}",
+        after.artifact_fingerprint,
+        score_label(after.overall_score, after.grade.as_deref()),
+        after.finding_count
+    );
+
+    let automation_status = execution_status(&before, &after);
+    println!("execution_status: {automation_status}");
+
+    Ok(RescanExecutionOutcome { automation_status })
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -136,6 +156,73 @@ enum RescanInvocation {
     Semantic(PathBuf),
     Intent(PathBuf),
     Validate(PathBuf),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct RescanValidationSnapshot {
+    artifact_fingerprint: String,
+    overall_score: Option<u32>,
+    grade: Option<String>,
+    finding_count: usize,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct RescanExecutionOutcome {
+    automation_status: &'static str,
+}
+
+fn validate_and_snapshot(artifact_path: &Path) -> Result<RescanValidationSnapshot> {
+    validate::run(ValidateArgs {
+        artifact: artifact_path.to_path_buf(),
+    })?;
+    let report = read_validation_report(artifact_path)?;
+    Ok(RescanValidationSnapshot {
+        artifact_fingerprint: report.artifact_fingerprint,
+        overall_score: report.overall_score,
+        grade: report.grade,
+        finding_count: report.findings.len(),
+    })
+}
+
+fn read_validation_report(
+    artifact_path: &Path,
+) -> Result<crate::ir::source::ValidationReportRecord> {
+    let report_path = validation_report_path_for(artifact_path)?;
+    if !report_path.exists() {
+        return Err(AppError::MissingPath(report_path));
+    }
+
+    Ok(serde_json::from_str(&fs::read_to_string(report_path)?)?)
+}
+
+fn validation_report_path_for(artifact_path: &Path) -> Result<PathBuf> {
+    let artifact_dir = artifact_path.parent().ok_or_else(|| {
+        AppError::InvalidStageArtifact(format!(
+            "cannot derive validation report path for {}",
+            artifact_path.display()
+        ))
+    })?;
+    Ok(artifact_dir.join("validation_report.json"))
+}
+
+fn execution_status(
+    before: &RescanValidationSnapshot,
+    after: &RescanValidationSnapshot,
+) -> &'static str {
+    if before == after {
+        EXECUTED_VALIDATED_NO_CHANGE
+    } else {
+        EXECUTED_VALIDATED_CHANGED
+    }
+}
+
+fn score_label(score: Option<u32>, grade: Option<&str>) -> String {
+    match (score, grade) {
+        (Some(score), Some(grade)) => format!("{score}/100 {grade}"),
+        (Some(score), None) => format!("{score}/100"),
+        (None, Some(grade)) => grade.to_string(),
+        (None, None) => "n/a".to_string(),
+    }
 }
 
 fn parse_command_hint(command: &ProjectRescanCommandHint) -> Result<RescanInvocation> {
@@ -230,6 +317,7 @@ mod tests {
     use crate::commands::project_validation::{
         ProjectRescanCommandHint, ProjectRescanPlanRecord, ProjectRescanRecommendation,
     };
+    use crate::ir::source::SourceIr;
 
     #[test]
     fn rescan_plan_cli_dry_run_accepts_empty_schema_v2_plan() -> Result<()> {
@@ -283,6 +371,47 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_execute_marks_validated_no_change() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source_path = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source_path, "# Spec\nSignal READY is input width 1.\n")?;
+        let source_ir = SourceIr::build(&source_path, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+
+        let artifact_path = source_ir.artifact_layout.source_ir_path.clone();
+        let plan_path = tempdir.path().join("rescan_plan.json");
+        let mut plan = ProjectRescanPlanRecord {
+            schema_version: 2,
+            generated_by: "test".to_string(),
+            recommendation_count: 1,
+            recommendations: vec![recommendation("doc", PLANNED_NOT_EXECUTED)],
+        };
+        plan.recommendations[0].artifact_path = artifact_path.display().to_string();
+        plan.recommendations[0].recommended_commands = vec![command_hint(
+            "validate_current_artifact",
+            vec!["validate", artifact_path.to_str().unwrap()],
+        )];
+        fs::write(&plan_path, serde_json::to_string_pretty(&plan)?)?;
+
+        run(RescanPlanArgs {
+            plan: plan_path.clone(),
+            execute: true,
+            limit: 1,
+            prior_memory: PathBuf::from("generated/prior_memory/corpus_memory.json"),
+        })?;
+
+        let updated: ProjectRescanPlanRecord =
+            serde_json::from_str(&fs::read_to_string(plan_path)?)?;
+        assert_eq!(
+            updated.recommendations[0].automation_status,
+            EXECUTED_VALIDATED_NO_CHANGE
+        );
+
+        Ok(())
+    }
+
+    #[test]
     fn rescan_plan_parses_whitelisted_intent_rebuild_hint() -> Result<()> {
         let command = command_hint(
             "rebuild_intent_ir",
@@ -305,13 +434,39 @@ mod tests {
             recommendation_count: 3,
             recommendations: vec![
                 recommendation("doc_a", PLANNED_NOT_EXECUTED),
-                recommendation("doc_b", EXECUTED),
+                recommendation("doc_b", EXECUTED_VALIDATED_NO_CHANGE),
                 recommendation("doc_c", PLANNED_NOT_EXECUTED),
             ],
         };
 
         assert_eq!(selected_pending_indices(&plan, 1), vec![0]);
         assert_eq!(selected_pending_indices(&plan, 0), vec![0, 2]);
+    }
+
+    #[test]
+    fn rescan_plan_execution_status_tracks_validation_deltas() {
+        let before = RescanValidationSnapshot {
+            artifact_fingerprint: "aaa".to_string(),
+            overall_score: Some(80),
+            grade: Some("GOOD".to_string()),
+            finding_count: 1,
+        };
+        let after_same = before.clone();
+        let after_changed = RescanValidationSnapshot {
+            artifact_fingerprint: "bbb".to_string(),
+            overall_score: Some(85),
+            grade: Some("GOOD".to_string()),
+            finding_count: 1,
+        };
+
+        assert_eq!(
+            execution_status(&before, &after_same),
+            EXECUTED_VALIDATED_NO_CHANGE
+        );
+        assert_eq!(
+            execution_status(&before, &after_changed),
+            EXECUTED_VALIDATED_CHANGED
+        );
     }
 
     fn command_hint(intent: &str, specforge_args: Vec<&str>) -> ProjectRescanCommandHint {

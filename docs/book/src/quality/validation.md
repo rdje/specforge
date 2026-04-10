@@ -87,6 +87,7 @@ That is guidance for targeted rescans and stronger local corroboration, not a co
 `project-validation` is the first consumer for this guidance: it projects those findings into the validation snapshot and writes a generated `generated/validation/rescan_plan.json` target list for later rescan/extractor-selection loops.
 That target list is versioned and replay-oriented: each recommendation carries typed replay inputs plus structured command hints for the stage rebuild and follow-up validation, while remaining `planned_not_executed` until a future convergent loop chooses to execute it.
 `rescan-plan` is the first explicit consumer for that schema: it dry-runs by default, and `--execute` dispatches only whitelisted stage rebuild/validate commands from the structured args rather than trusting shell text.
+Execution validates before and after the rebuild and records only neutral changed/no-change status, not an improvement claim.
 
 ## Learning depends on validation gates
 
