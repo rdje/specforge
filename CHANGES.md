@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-04-10 (Rescan promotion review path is explicit)
+
+### Added: promotion-review policy record
+- Updated [project_validation.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/project_validation.rs) so `ProjectRescanExecutionSummary` now carries a structured `promotion_review` record beside `promotion_status` and `promotion_blockers`.
+- The review record captures `review_status`, `approval_policy`, `required_decisions`, `approval_record_required`, and `canonical_mutation_allowed`.
+- Changed rescan outcomes now require `human_review_required`, an approval record, current-document evidence support, validation-delta review, explicit canonical mutation scope approval, and a check that prior memory was not used as truth authority.
+- No-change outcomes are marked `not_reviewable_no_change`, and every path keeps `canonical_mutation_allowed: false`.
+
+### Preserved: no canonical mutation path yet
+- Updated [rescan_plan.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/rescan_plan.rs) so executed recommendations persist the new review record.
+- Legacy execution summaries without `promotion_review` still deserialize and are normalized by `project-validation`.
+- The validation snapshot and live-status projection now show the review status in addition to the not-promoted gate.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml project_validation_normalizes_legacy_rescan_execution_summary_gate -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml project_validation_collects_negative_knowledge_rescan_guidance -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml rescan_plan_execute_marks_validated_no_change -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml rescan_plan_arbitration_verdict_tracks_validation_direction -- --nocapture` -> passed
+- `bash scripts/run_ci.sh` -> passed
+
 ## 2026-04-10 (Visual-motif rescans now replay local enrichment)
 
 ### Added: explicit visual corroboration replay command

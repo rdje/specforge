@@ -230,6 +230,9 @@ fn execute_recommendation(
             arbitration_verdict: arbitration_verdict.to_string(),
             promotion_status: rescan_promotion_status_for(arbitration_verdict).to_string(),
             promotion_blockers: rescan_promotion_blockers_for(arbitration_verdict),
+            promotion_review: super::project_validation::rescan_promotion_review_for(
+                arbitration_verdict,
+            ),
             before_validation: before,
             after_validation: after,
             validation_delta,
@@ -688,6 +691,16 @@ mod tests {
             execution_summary
                 .promotion_blockers
                 .contains(&"canonical_ir_not_mutated_by_rescan_plan".to_string())
+        );
+        assert_eq!(
+            execution_summary.promotion_review.review_status,
+            crate::commands::project_validation::RESCAN_PROMOTION_REVIEW_NOT_REVIEWABLE_NO_CHANGE
+        );
+        assert!(!execution_summary.promotion_review.approval_record_required);
+        assert!(
+            !execution_summary
+                .promotion_review
+                .canonical_mutation_allowed
         );
         assert_eq!(execution_summary.before_validation.finding_count, 0);
         assert_eq!(execution_summary.after_validation.finding_count, 0);

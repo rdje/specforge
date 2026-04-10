@@ -106,14 +106,33 @@ pub(crate) struct ProjectRescanExecutionSummary {
     pub(crate) promotion_status: String,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub(crate) promotion_blockers: Vec<String>,
+    #[serde(default)]
+    pub(crate) promotion_review: ProjectRescanPromotionReview,
     pub(crate) before_validation: ProjectRescanValidationSnapshot,
     pub(crate) after_validation: ProjectRescanValidationSnapshot,
     pub(crate) validation_delta: ProjectRescanValidationDelta,
 }
 
+#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
+pub(crate) struct ProjectRescanPromotionReview {
+    #[serde(default)]
+    pub(crate) review_status: String,
+    #[serde(default)]
+    pub(crate) approval_policy: String,
+    #[serde(default)]
+    pub(crate) required_decisions: Vec<String>,
+    #[serde(default)]
+    pub(crate) approval_record_required: bool,
+    #[serde(default)]
+    pub(crate) canonical_mutation_allowed: bool,
+}
+
 pub(crate) const RESCAN_PROMOTION_NOT_PROMOTED_NO_CHANGE: &str = "not_promoted_no_change";
 pub(crate) const RESCAN_PROMOTION_NOT_PROMOTED_REVIEW_REQUIRED: &str =
     "not_promoted_review_required";
+pub(crate) const RESCAN_PROMOTION_REVIEW_NOT_REVIEWABLE_NO_CHANGE: &str =
+    "not_reviewable_no_change";
+pub(crate) const RESCAN_PROMOTION_REVIEW_HUMAN_REVIEW_REQUIRED: &str = "human_review_required";
 const RESCAN_PROMOTION_BLOCKER_CANONICAL_IR_NOT_MUTATED: &str =
     "canonical_ir_not_mutated_by_rescan_plan";
 const RESCAN_PROMOTION_BLOCKER_VALIDATION_DELTA_NOT_TRUTH: &str =
@@ -121,6 +140,9 @@ const RESCAN_PROMOTION_BLOCKER_VALIDATION_DELTA_NOT_TRUTH: &str =
 const RESCAN_PROMOTION_BLOCKER_CURRENT_EVIDENCE_REVIEW: &str =
     "current_document_evidence_review_required";
 const RESCAN_PROMOTION_BLOCKER_NO_DELTA: &str = "no_validation_delta_to_promote";
+const RESCAN_PROMOTION_APPROVAL_POLICY_NO_DELTA: &str = "no_promotion_without_validation_delta";
+const RESCAN_PROMOTION_APPROVAL_POLICY_HUMAN_REVIEW: &str =
+    "current_document_evidence_review_before_canonical_mutation";
 
 pub(crate) fn rescan_promotion_status_for(arbitration_verdict: &str) -> &'static str {
     if arbitration_verdict == "validated_no_change" {
@@ -141,6 +163,33 @@ pub(crate) fn rescan_promotion_blockers_for(arbitration_verdict: &str) -> Vec<St
     blockers
 }
 
+pub(crate) fn rescan_promotion_review_for(
+    arbitration_verdict: &str,
+) -> ProjectRescanPromotionReview {
+    if arbitration_verdict == "validated_no_change" {
+        ProjectRescanPromotionReview {
+            review_status: RESCAN_PROMOTION_REVIEW_NOT_REVIEWABLE_NO_CHANGE.to_string(),
+            approval_policy: RESCAN_PROMOTION_APPROVAL_POLICY_NO_DELTA.to_string(),
+            required_decisions: vec!["no_validation_delta_to_review".to_string()],
+            approval_record_required: false,
+            canonical_mutation_allowed: false,
+        }
+    } else {
+        ProjectRescanPromotionReview {
+            review_status: RESCAN_PROMOTION_REVIEW_HUMAN_REVIEW_REQUIRED.to_string(),
+            approval_policy: RESCAN_PROMOTION_APPROVAL_POLICY_HUMAN_REVIEW.to_string(),
+            required_decisions: vec![
+                "current_document_evidence_supports_delta".to_string(),
+                "validation_delta_reviewed_for_regression_or_improvement".to_string(),
+                "canonical_ir_mutation_scope_is_explicitly_approved".to_string(),
+                "prior_memory_not_used_as_truth_authority".to_string(),
+            ],
+            approval_record_required: true,
+            canonical_mutation_allowed: false,
+        }
+    }
+}
+
 pub(crate) fn normalize_rescan_execution_summary(summary: &mut ProjectRescanExecutionSummary) {
     let expected_status = rescan_promotion_status_for(&summary.arbitration_verdict);
     if summary.promotion_status != expected_status {
@@ -151,6 +200,11 @@ pub(crate) fn normalize_rescan_execution_summary(summary: &mut ProjectRescanExec
         if !summary.promotion_blockers.contains(&blocker) {
             summary.promotion_blockers.push(blocker);
         }
+    }
+
+    let expected_review = rescan_promotion_review_for(&summary.arbitration_verdict);
+    if summary.promotion_review != expected_review {
+        summary.promotion_review = expected_review;
     }
 }
 
@@ -423,6 +477,15 @@ fn render_validation_snapshot_doc(
                     "- promotion_gate: `{}` (blockers: {})",
                     summary_promotion_status(summary),
                     render_inline_code_list(&summary_promotion_blockers(summary))
+                ));
+                let promotion_review = summary_promotion_review(summary);
+                lines.push(format!(
+                    "- promotion_review: `{}` (policy `{}`, approval_record_required `{}`, canonical_mutation_allowed `{}`, required_decisions: {})",
+                    promotion_review.review_status,
+                    promotion_review.approval_policy,
+                    promotion_review.approval_record_required,
+                    promotion_review.canonical_mutation_allowed,
+                    render_inline_code_list(&promotion_review.required_decisions)
                 ));
                 lines.push(format!(
                     "- validation_delta: fingerprint_changed `{}`, score_delta `{}`, grade_changed `{}`, finding_count_delta `{}`",
@@ -942,9 +1005,10 @@ fn render_execution_summary_inline(summary: Option<&ProjectRescanExecutionSummar
         return String::new();
     };
     format!(
-        ", verdict `{}`, promotion `{}`, score_delta `{}`, finding_count_delta `{}`",
+        ", verdict `{}`, promotion `{}`, review `{}`, score_delta `{}`, finding_count_delta `{}`",
         summary.arbitration_verdict,
         summary_promotion_status(summary),
+        summary_promotion_review(summary).review_status,
         render_signed_option_i32(summary.validation_delta.score_delta),
         render_signed_i64(summary.validation_delta.finding_count_delta)
     )
@@ -967,6 +1031,25 @@ fn summary_promotion_blockers(summary: &ProjectRescanExecutionSummary) -> Vec<St
         }
     }
     blockers
+}
+
+fn summary_promotion_review(
+    summary: &ProjectRescanExecutionSummary,
+) -> ProjectRescanPromotionReview {
+    let mut review = summary.promotion_review.clone();
+    let expected = rescan_promotion_review_for(&summary.arbitration_verdict);
+    if review.review_status.is_empty() {
+        review.review_status = expected.review_status;
+    }
+    if review.approval_policy.is_empty() {
+        review.approval_policy = expected.approval_policy;
+    }
+    if review.required_decisions.is_empty() {
+        review.required_decisions = expected.required_decisions;
+    }
+    review.approval_record_required = expected.approval_record_required;
+    review.canonical_mutation_allowed = false;
+    review
 }
 
 fn render_signed_option_i32(value: Option<i32>) -> String {
@@ -1293,6 +1376,9 @@ mod tests {
             "- promotion_gate: `not_promoted_review_required` (blockers: `canonical_ir_not_mutated_by_rescan_plan`, `validation_delta_is_not_truth_promotion`, `current_document_evidence_review_required`)"
         ));
         assert!(snapshot_doc.contains(
+            "- promotion_review: `human_review_required` (policy `current_document_evidence_review_before_canonical_mutation`, approval_record_required `true`, canonical_mutation_allowed `false`"
+        ));
+        assert!(snapshot_doc.contains(
             "- validation_delta: fingerprint_changed `true`, score_delta `+5`, grade_changed `true`, finding_count_delta `-1`"
         ));
         assert!(snapshot_doc.contains("- finding_delta: added none; removed `finding_b`"));
@@ -1306,7 +1392,7 @@ mod tests {
             "- Rescan execution summaries: 1 total; 1 review required (possible improvement: 1, regression: 0, neutral change: 0); 0 no-change"
         ));
         assert!(live_projection.contains(
-            "verdict `possible_improvement_review_required`, promotion `not_promoted_review_required`, score_delta `+5`, finding_count_delta `-1`"
+            "verdict `possible_improvement_review_required`, promotion `not_promoted_review_required`, review `human_review_required`, score_delta `+5`, finding_count_delta `-1`"
         ));
 
         let plan_path = write_validation_rescan_plan(repo_root, recommendations)?;
@@ -1518,6 +1604,7 @@ mod tests {
 
         assert!(summary.promotion_status.is_empty());
         assert!(summary.promotion_blockers.is_empty());
+        assert!(summary.promotion_review.review_status.is_empty());
 
         normalize_rescan_execution_summary(&mut summary);
 
@@ -1530,9 +1617,16 @@ mod tests {
                 .promotion_blockers
                 .contains(&"validation_delta_is_not_truth_promotion".to_string())
         );
+        assert_eq!(
+            summary.promotion_review.review_status,
+            RESCAN_PROMOTION_REVIEW_HUMAN_REVIEW_REQUIRED
+        );
+        assert!(summary.promotion_review.approval_record_required);
+        assert!(!summary.promotion_review.canonical_mutation_allowed);
 
         summary.promotion_status = "promoted_without_review".to_string();
         summary.promotion_blockers.clear();
+        summary.promotion_review = ProjectRescanPromotionReview::default();
         normalize_rescan_execution_summary(&mut summary);
 
         assert_eq!(
@@ -1543,6 +1637,10 @@ mod tests {
             summary
                 .promotion_blockers
                 .contains(&"current_document_evidence_review_required".to_string())
+        );
+        assert_eq!(
+            summary.promotion_review.approval_policy,
+            RESCAN_PROMOTION_APPROVAL_POLICY_HUMAN_REVIEW
         );
 
         Ok(())
@@ -1558,6 +1656,7 @@ mod tests {
             arbitration_verdict: arbitration_verdict.to_string(),
             promotion_status: rescan_promotion_status_for(arbitration_verdict).to_string(),
             promotion_blockers: rescan_promotion_blockers_for(arbitration_verdict),
+            promotion_review: rescan_promotion_review_for(arbitration_verdict),
             before_validation: ProjectRescanValidationSnapshot {
                 artifact_fingerprint: "before".to_string(),
                 overall_score: Some(80),

@@ -105,6 +105,9 @@ That summary preserves before/after validation snapshots, score and finding-coun
 
 Promotion is recorded separately from validation movement.
 A no-change run stays `not_promoted_no_change`, and any changed run stays `not_promoted_review_required` with blockers such as `validation_delta_is_not_truth_promotion` and `current_document_evidence_review_required`.
+The same summary also carries a structured `promotion_review` record.
+Changed outcomes are `human_review_required`, require an approval record, and keep `canonical_mutation_allowed` false until current-document evidence, validation-delta direction, explicit mutation scope, and prior-memory non-authority have all been reviewed.
+No-change outcomes are `not_reviewable_no_change`.
 That makes the machine-readable plan say the same thing as the product policy: a favorable validation delta is a review signal, not canonical truth.
 
 The convergent loop can consume the same plan after stability:

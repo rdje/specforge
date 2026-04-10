@@ -181,10 +181,10 @@
   - `specforge project-validation <artifact>...` now validates the passed artifacts and projects their persisted reports into tracked live docs via `VALIDATION_SNAPSHOT.md` plus a managed validation block in `LIVE_ACHIEVEMENT_STATUS.md`
   - `project-validation` now writes schema-v2 replay-oriented rescan recommendations with typed replay inputs, structured command hints, and `planned_not_executed` automation status for explicit rescan consumers
   - `specforge rescan-plan [--execute]` now consumes that schema-v2 plan through a dry-run-by-default, whitelisted in-process executor surface with before/after validation changed/no-change status and persisted execution summaries
-  - those execution summaries now include explicit not-promoted gates and blockers, so possible-improvement validation deltas stay review signals instead of canonical truth mutations
+  - those execution summaries now include explicit not-promoted gates, blockers, and structured `promotion_review` requirements, so possible-improvement validation deltas stay review signals instead of canonical truth mutations
 - remaining:
   - extend validation into the upcoming semantic-truthfulness surfaces (temporal rules, arbitration/conflict records, and KG-quality benchmarks)
-  - wire a deliberate approval/promotion path only if future rescan loops are allowed to mutate canonical artifacts after current-document evidence review
+  - decide whether a future approval artifact should remain generated-only or become tracked review evidence before any canonical IR mutation path exists
   - keep adapter validation (SystemVerilog/Verilog/VHDL targets) as horizon work until the semantic pipeline is materially harder to fool
 
 ### R8 SourceIR SOTA capture (Tier 1 of EXTRACTION_ARCHITECTURE.md)
