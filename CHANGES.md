@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-04-10 (Visual-motif rescans now replay local enrichment)
+
+### Added: explicit visual corroboration replay command
+- Updated [project_validation.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/project_validation.rs) so `evidence_visual_motif_corroboration_guidance` recommendations now emit `enrich_source_ir` before the downstream `rebuild_evidence_ir` and `validate_current_artifact` hints.
+- Updated [rescan_plan.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/rescan_plan.rs) so `rescan-plan --execute` can parse and run whitelisted local `enrich` hints in-process.
+- The enrich replay parser accepts local Ollama, local LM Studio, or `skip`, supports an optional model and `--classify-only`, and intentionally rejects OpenAI replay hints so generated rescans stay local-first.
+- Updated [cli.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/cli.rs) so VLM provider args can participate in typed rescan invocation equality tests.
+
+### Documentation
+- Updated the README, live notes, roadmap, memory, and mdBook validation/quality/multimodal/corpus-memory chapters so the public contract is clear: visual-motif prior memory may route a local enrichment rescan, but it still does not promote truth.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml project_validation_collects_visual_motif_rescan_guidance -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml rescan_plan_parses_whitelisted_local_enrich_hint -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml rescan_plan_rejects_openai_enrich_hints -- --nocapture` -> passed
+
 ## 2026-04-10 (Visual-motif priors now emit corroboration targets)
 
 ### Added: validation-visible visual corroboration targets

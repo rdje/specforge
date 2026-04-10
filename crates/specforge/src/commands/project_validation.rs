@@ -21,6 +21,8 @@ const LIVE_STATUS_DOC: &str = "LIVE_ACHIEVEMENT_STATUS.md";
 pub(crate) const VALIDATION_RESCAN_PLAN_PATH: &str = "generated/validation/rescan_plan.json";
 const VALIDATION_PROJECTION_START: &str = "<!-- validation_projection:start -->";
 const VALIDATION_PROJECTION_END: &str = "<!-- validation_projection:end -->";
+const EVIDENCE_VISUAL_MOTIF_CORROBORATION_GUIDANCE: &str =
+    "evidence_visual_motif_corroboration_guidance";
 
 #[derive(Debug, Clone)]
 struct ProjectedArtifactSnapshot {
@@ -641,6 +643,7 @@ fn collect_rescan_recommendations(
                 snapshot.stage,
                 &snapshot.artifact_path,
                 snapshot,
+                finding,
                 repo_root,
             );
             recommendations.push(ProjectRescanRecommendation {
@@ -688,9 +691,28 @@ fn recommended_rescan_commands(
     stage: IrStage,
     artifact_path: &Path,
     snapshot: &ProjectedArtifactSnapshot,
+    finding: &ValidationFindingRecord,
     repo_root: &Path,
 ) -> Vec<ProjectRescanCommandHint> {
     let mut commands = Vec::new();
+    if is_visual_motif_corroboration_rescan(stage, finding) {
+        if let Some(input) = snapshot
+            .replay_inputs
+            .iter()
+            .find(|input| input.input_kind == "source_ir")
+        {
+            commands.push(specforge_command_hint(
+                "enrich_source_ir",
+                vec![
+                    "enrich".to_string(),
+                    repo_relative_display(&input.path, repo_root),
+                    "--vlm-provider".to_string(),
+                    "ollama".to_string(),
+                ],
+            ));
+        }
+    }
+
     if let Some(input) = snapshot.replay_inputs.first() {
         let input_path = repo_relative_display(&input.path, repo_root);
         let rebuild_intent = match stage {
@@ -718,6 +740,11 @@ fn recommended_rescan_commands(
         ],
     ));
     commands
+}
+
+fn is_visual_motif_corroboration_rescan(stage: IrStage, finding: &ValidationFindingRecord) -> bool {
+    stage == IrStage::EvidenceIr
+        && finding.finding_id == EVIDENCE_VISUAL_MOTIF_CORROBORATION_GUIDANCE
 }
 
 fn specforge_command_hint(intent: &str, specforge_args: Vec<String>) -> ProjectRescanCommandHint {
@@ -1280,9 +1307,31 @@ mod tests {
             recommendations[0].corroboration_policy,
             "stronger_local_corroboration_required_before_canonical_promotion"
         );
+        assert_eq!(recommendations[0].recommended_commands.len(), 3);
         assert_eq!(
             recommendations[0].recommended_commands[0].intent,
+            "enrich_source_ir"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[0].args,
+            vec![
+                "run".to_string(),
+                "--manifest-path".to_string(),
+                "Cargo.toml".to_string(),
+                "--".to_string(),
+                "enrich".to_string(),
+                "generated/source_ir/doc/source_ir.json".to_string(),
+                "--vlm-provider".to_string(),
+                "ollama".to_string(),
+            ]
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[1].intent,
             "rebuild_evidence_ir"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[2].intent,
+            "validate_current_artifact"
         );
         assert_eq!(
             recommendations[0].related_ids,

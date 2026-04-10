@@ -702,6 +702,7 @@
 - `validate evidence_ir` now reports `visual_classification_observations` plus visual-role metrics such as `visual_evidence_normative` and `visual_evidence_ambiguous`
 - when a prior-classified visual becomes normative but still lacks VLM timing/state extraction observations, validation now emits `evidence_visual_motif_corroboration_guidance` and increments `visual_motif_corroboration_targets`
 - `project-validation` consumes that finding as generic `rescan_guidance`, so visual-motif priors can route attention to targeted VLM/multimodal corroboration without becoming a truth-promotion channel
+- visual-motif corroboration recommendations now carry an explicit replay sequence: local VLM `enrich_source_ir` using Ollama, then `rebuild_evidence_ir`, then `validate_current_artifact`
 - the tracked visual-motif fixture set now has the before/after shape:
   - `visual_motif_prior_guided_diagram_classification_gold` proves a staged prior creates a classification observation, normative role, corroboration target, and zero semantic hints
   - `visual_motif_prior_guided_diagram_classification_without_prior_negative` proves the same current caption stays ambiguous and unclassified when the prior is absent
@@ -780,11 +781,12 @@
 - without `--execute`, it dry-runs the pending `planned_not_executed` recommendations and prints their command hints
 - with `--execute`, it dispatches only whitelisted stage commands in-process:
   - `ingest`
+  - `enrich` for local Ollama / LM Studio / skip-only replay, used by visual-motif corroboration hints
   - `evidence`
   - `semantic`
   - `intent`
   - `validate`
-- the executor refuses non-`cargo` executables, non-repository working directories, malformed cargo prefixes, and unsupported command intents
+- the executor refuses non-`cargo` executables, non-repository working directories, malformed cargo prefixes, unsupported command intents, and OpenAI enrichment replay hints
 - execution validates the target artifact before and after the whitelisted command hints
 - successful execution marks the local plan recommendation as:
   - `executed_validated_no_change`

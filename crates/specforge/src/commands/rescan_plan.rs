@@ -2,9 +2,10 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use crate::cli::{
-    EvidenceArgs, IngestArgs, IntentArgs, RescanPlanArgs, SemanticArgs, ValidateArgs,
+    EnrichArgs, EvidenceArgs, IngestArgs, IntentArgs, RescanPlanArgs, SemanticArgs, ValidateArgs,
+    VlmProviderArg,
 };
-use crate::commands::{evidence, ingest, intent, semantic, validate};
+use crate::commands::{enrich, evidence, ingest, intent, semantic, validate};
 use crate::error::{AppError, Result};
 
 use super::project_validation::{
@@ -239,6 +240,12 @@ fn execute_recommendation(
 #[derive(Debug, Clone, PartialEq, Eq)]
 enum RescanInvocation {
     Ingest(PathBuf),
+    Enrich {
+        source_ir: PathBuf,
+        vlm_provider: VlmProviderArg,
+        vlm_model: Option<String>,
+        classify_only: bool,
+    },
     Evidence(PathBuf),
     Semantic(PathBuf),
     Intent(PathBuf),
@@ -397,6 +404,7 @@ fn parse_command_hint(command: &ProjectRescanCommandHint) -> Result<RescanInvoca
         ("rebuild_source_ir", [subcommand, source]) if subcommand == "ingest" => {
             Ok(RescanInvocation::Ingest(PathBuf::from(source)))
         }
+        ("enrich_source_ir", args) => parse_enrich_command_hint_args(args),
         ("rebuild_evidence_ir", [subcommand, source_ir]) if subcommand == "evidence" => {
             Ok(RescanInvocation::Evidence(PathBuf::from(source_ir)))
         }
@@ -437,10 +445,111 @@ fn specforge_args_from_cargo_hint(command: &ProjectRescanCommandHint) -> Result<
     Ok(&command.args[expected_prefix.len()..])
 }
 
+fn parse_enrich_command_hint_args(args: &[String]) -> Result<RescanInvocation> {
+    if args.len() < 2 || args[0] != "enrich" {
+        return Err(AppError::InvalidStageArtifact(format!(
+            "rescan-plan refuses malformed enrich command hint args {args:?}"
+        )));
+    }
+
+    let source_ir = PathBuf::from(&args[1]);
+    let mut vlm_provider = None;
+    let mut vlm_model = None;
+    let mut classify_only = false;
+    let mut index = 2;
+    while index < args.len() {
+        match args[index].as_str() {
+            "--vlm-provider" => {
+                let Some(value) = args.get(index + 1) else {
+                    return Err(AppError::InvalidStageArtifact(
+                        "rescan-plan enrich hint is missing --vlm-provider value".to_string(),
+                    ));
+                };
+                if vlm_provider
+                    .replace(parse_local_rescan_vlm_provider(value)?)
+                    .is_some()
+                {
+                    return Err(AppError::InvalidStageArtifact(
+                        "rescan-plan enrich hint repeats --vlm-provider".to_string(),
+                    ));
+                }
+                index += 2;
+            }
+            "--vlm-model" => {
+                let Some(value) = args.get(index + 1) else {
+                    return Err(AppError::InvalidStageArtifact(
+                        "rescan-plan enrich hint is missing --vlm-model value".to_string(),
+                    ));
+                };
+                if vlm_model.replace(value.clone()).is_some() {
+                    return Err(AppError::InvalidStageArtifact(
+                        "rescan-plan enrich hint repeats --vlm-model".to_string(),
+                    ));
+                }
+                index += 2;
+            }
+            "--classify-only" => {
+                if classify_only {
+                    return Err(AppError::InvalidStageArtifact(
+                        "rescan-plan enrich hint repeats --classify-only".to_string(),
+                    ));
+                }
+                classify_only = true;
+                index += 1;
+            }
+            other => {
+                return Err(AppError::InvalidStageArtifact(format!(
+                    "rescan-plan refuses unsupported enrich hint arg `{other}` in {args:?}"
+                )));
+            }
+        }
+    }
+
+    let vlm_provider = vlm_provider.ok_or_else(|| {
+        AppError::InvalidStageArtifact(
+            "rescan-plan enrich hint requires explicit --vlm-provider".to_string(),
+        )
+    })?;
+
+    Ok(RescanInvocation::Enrich {
+        source_ir,
+        vlm_provider,
+        vlm_model,
+        classify_only,
+    })
+}
+
+fn parse_local_rescan_vlm_provider(value: &str) -> Result<VlmProviderArg> {
+    match value {
+        "ollama" => Ok(VlmProviderArg::Ollama),
+        "lmstudio" | "lm-studio" => Ok(VlmProviderArg::LmStudio),
+        "skip" => Ok(VlmProviderArg::Skip),
+        "openai" | "open-ai" => Err(AppError::InvalidStageArtifact(
+            "rescan-plan enrich hints intentionally reject OpenAI provider; use local ollama/lmstudio/skip for replay"
+                .to_string(),
+        )),
+        other => Err(AppError::InvalidStageArtifact(format!(
+            "rescan-plan refuses unsupported VLM provider `{other}` in enrich hint"
+        ))),
+    }
+}
+
 fn execute_invocation(invocation: RescanInvocation, prior_memory: &Path) -> Result<()> {
     match invocation {
         RescanInvocation::Ingest(source) => ingest::run(IngestArgs {
             source,
+            dry_run: false,
+        }),
+        RescanInvocation::Enrich {
+            source_ir,
+            vlm_provider,
+            vlm_model,
+            classify_only,
+        } => enrich::run(EnrichArgs {
+            source_ir,
+            vlm_provider,
+            vlm_model,
+            classify_only,
             dry_run: false,
         }),
         RescanInvocation::Evidence(source_ir) => evidence::run(EvidenceArgs {
@@ -599,6 +708,48 @@ mod tests {
         );
 
         Ok(())
+    }
+
+    #[test]
+    fn rescan_plan_parses_whitelisted_local_enrich_hint() -> Result<()> {
+        let command = command_hint(
+            "enrich_source_ir",
+            vec![
+                "enrich",
+                "generated/source_ir/doc/source_ir.json",
+                "--vlm-provider",
+                "ollama",
+                "--vlm-model",
+                "qwen2.5vl:7b",
+            ],
+        );
+
+        assert_eq!(
+            parse_command_hint(&command)?,
+            RescanInvocation::Enrich {
+                source_ir: PathBuf::from("generated/source_ir/doc/source_ir.json"),
+                vlm_provider: VlmProviderArg::Ollama,
+                vlm_model: Some("qwen2.5vl:7b".to_string()),
+                classify_only: false,
+            }
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn rescan_plan_rejects_openai_enrich_hints() {
+        let command = command_hint(
+            "enrich_source_ir",
+            vec![
+                "enrich",
+                "generated/source_ir/doc/source_ir.json",
+                "--vlm-provider",
+                "openai",
+            ],
+        );
+
+        assert!(parse_command_hint(&command).is_err());
     }
 
     #[test]

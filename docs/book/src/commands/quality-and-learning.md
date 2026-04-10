@@ -46,7 +46,8 @@ That currently includes negative-knowledge corroboration findings plus visual-mo
 `generated/validation/rescan_plan.json`
 
 That plan is deliberately advisory, but it is now replay-oriented rather than only descriptive.
-Each target carries the current artifact path, typed replay inputs such as `semantic_ir` or `evidence_ir`, a structured command-hint sequence, and an explicit `planned_not_executed` status.
+Each target carries the current artifact path, typed replay inputs such as `source_ir`, `semantic_ir`, or `evidence_ir`, a structured command-hint sequence, and an explicit `planned_not_executed` status.
+For visual-motif corroboration, that sequence now starts with a local VLM `enrich_source_ir` hint, then rebuilds `EvidenceIR`, then validates the current artifact.
 The command hints are there so `rescan-plan` and opt-in `converge --rescan-plan <plan>` runs can rebuild the right stage safely from machine-readable args instead of scraping a prose note.
 
 The plan still does not mutate IR, suppress findings, run rescans automatically, or promote facts from prior memory.
@@ -76,10 +77,13 @@ The command does not shell out through the display strings.
 It parses the structured `executable` and `args`, accepts only the repository-local `cargo run --manifest-path Cargo.toml -- ...` shape, and dispatches only whitelisted stage commands in-process:
 
 - `ingest`
+- `enrich` with local `ollama`, local `lmstudio`, or `skip`
 - `evidence`
 - `semantic`
 - `intent`
 - `validate`
+
+The rescan executor intentionally rejects OpenAI enrichment hints for now, so replayable visual corroboration stays local-first unless that policy is deliberately changed later.
 
 After a recommendation executes successfully, `rescan-plan` validates the target artifact again and records a neutral outcome in the local plan:
 

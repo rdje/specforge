@@ -246,7 +246,7 @@ pub struct LearnPriorsArgs {
 }
 
 /// VLM provider selection for the `enrich` command.
-#[derive(Debug, Clone, Copy, ValueEnum)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum)]
 pub enum VlmProviderArg {
     /// Local Ollama server at http://localhost:11434. Common model: `qwen2.5vl:7b`.
     Ollama,

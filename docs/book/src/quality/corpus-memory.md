@@ -67,7 +67,7 @@ Validation also emits machine-readable rescan/corroboration hooks for those exac
 That does not suppress conflicts, change arbitration, remove residuals, or create canonical facts.
 It only tells users and downstream tooling that the current failure shape is one the corpus memory has seen before and should be targeted for stronger local corroboration before canonical promotion.
 `project-validation` consumes that routing metadata into the generated validation rescan plan, keeping the learned caution inspectable instead of hidden inside scoring.
-`rescan-plan` can then inspect that generated plan and, with explicit `--execute`, rerun only whitelisted stage rebuild/validate hints.
+`rescan-plan` can then inspect that generated plan and, with explicit `--execute`, rerun only whitelisted local enrichment/stage rebuild/validate hints.
 Even then, it records only validated changed/no-change status; the prior still only routes attention and does not decide canonical truth.
 
 That is why `specforge` can get smarter over time without collapsing into cross-document contamination.
