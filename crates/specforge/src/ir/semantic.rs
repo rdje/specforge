@@ -12,7 +12,9 @@ use crate::ir::evidence::{
     SignalSemanticTag, StatementClass, VisualEvidenceRole, VisualObservationKind,
     parse_visual_observation_json,
 };
-use crate::ir::prior_memory::{CorpusMemory, ProtocolFamily};
+use crate::ir::prior_memory::{
+    CorpusMemory, ProtocolFamily, is_meaningful_actor_term, normalize_actor_term,
+};
 use crate::ir::source::{
     ActorSignalRelation, AutomationConfidence, CandidateInterpretation, RelationKind,
     ResidualDecisionPacket, ValidationReportRecord, WidthHint, document_key,
@@ -141,7 +143,7 @@ impl SemanticIr {
         let actor_ports = build_actor_ports(&context, &interfaces, system_contract.as_ref());
         let signal_connectivity = build_signal_connectivity(&actor_ports, system_contract.as_ref());
         let infrastructure_signals =
-            build_infrastructure_signals(&signal_connectivity, system_contract.as_ref());
+            build_infrastructure_signals(&context, &signal_connectivity, system_contract.as_ref());
         let signal_connectivity_conflicts =
             build_signal_connectivity_conflicts(signal_connectivity.as_slice());
         let signal_polarities = evidence_ir.signal_polarities.clone();
@@ -1427,6 +1429,14 @@ struct ActorPortAccumulator {
     reads: bool,
     width_hint: Option<WidthHint>,
     source_statement_ids: BTreeSet<String>,
+    automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone)]
+struct InfrastructureSourceEvidence {
+    actor_id: String,
+    actor_name: String,
+    supporting_statement_id: String,
     automation_confidence: AutomationConfidence,
 }
 
@@ -2801,14 +2811,19 @@ fn build_actor_ports(
     }
 
     if let Some(system_contract) = system_contract {
-        let actor_names_with_relations = accumulators
-            .values()
-            .map(|entry| entry.actor_name.clone())
+        let actor_names_with_protocol_relations = context
+            .actor_signal_relations
+            .iter()
+            .filter(|relation| {
+                relation.signal_name != system_contract.clock_signal
+                    && relation.signal_name != system_contract.reset_signal
+            })
+            .map(|relation| relation.actor_name.clone())
             .collect::<BTreeSet<_>>();
         let supporting_statement_ids =
             supporting_statement_ids_for_system_contract(context, system_contract);
 
-        for actor_name in actor_names_with_relations {
+        for actor_name in actor_names_with_protocol_relations {
             for signal_name in [&system_contract.clock_signal, &system_contract.reset_signal] {
                 let key = (actor_name.clone(), signal_name.clone());
                 let entry = accumulators
@@ -2942,6 +2957,7 @@ fn build_signal_connectivity(
 }
 
 fn build_infrastructure_signals(
+    context: &SemanticContext,
     signal_connectivity: &[SignalConnectivityRecord],
     system_contract: Option<&SystemContractRecord>,
 ) -> Vec<InfrastructureSignalRecord> {
@@ -2983,6 +2999,25 @@ fn build_infrastructure_signals(
         let automation_confidence = connectivity
             .map(|record| record.automation_confidence)
             .unwrap_or(system_contract.automation_confidence);
+        let explicit_sources = explicit_infrastructure_source_evidence(context, signal_name);
+
+        let mut recovered_source_actor_ids = recovered_source_actor_ids;
+        let mut recovered_source_actor_names = recovered_source_actor_names;
+        let mut supporting_statement_ids = supporting_statement_ids;
+        let mut automation_confidence = automation_confidence;
+        for source in explicit_sources {
+            if !recovered_source_actor_ids.contains(&source.actor_id) {
+                recovered_source_actor_ids.push(source.actor_id);
+            }
+            if !recovered_source_actor_names.contains(&source.actor_name) {
+                recovered_source_actor_names.push(source.actor_name);
+            }
+            if !supporting_statement_ids.contains(&source.supporting_statement_id) {
+                supporting_statement_ids.push(source.supporting_statement_id);
+            }
+            automation_confidence =
+                min_automation_confidence(automation_confidence, source.automation_confidence);
+        }
 
         InfrastructureSignalRecord {
             signal_name: signal_name.to_string(),
@@ -2998,6 +3033,260 @@ fn build_infrastructure_signals(
         }
     })
     .collect()
+}
+
+fn explicit_infrastructure_source_evidence(
+    context: &SemanticContext,
+    signal_name: &str,
+) -> Vec<InfrastructureSourceEvidence> {
+    let mut sources = Vec::new();
+    let mut seen = BTreeSet::<String>::new();
+
+    for statement in &context.statements {
+        let Some(actor_name) =
+            parse_explicit_infrastructure_source_actor(&statement.text, signal_name)
+        else {
+            continue;
+        };
+        let actor_id = actor_id_for_name(&actor_name);
+        if !seen.insert(format!("{}:{}", actor_id, statement.statement_id.as_str())) {
+            continue;
+        }
+        sources.push(InfrastructureSourceEvidence {
+            actor_id,
+            actor_name,
+            supporting_statement_id: statement.statement_id.clone(),
+            automation_confidence: AutomationConfidence::Medium,
+        });
+    }
+
+    sources
+}
+
+fn parse_explicit_infrastructure_source_actor(text: &str, signal_name: &str) -> Option<String> {
+    let lowered = text.to_ascii_lowercase();
+    let signal_lower = signal_name.to_ascii_lowercase();
+
+    const ACTIVE_SOURCE_VERBS: &[&str] = &[
+        "drives",
+        "generates",
+        "provides",
+        "sources",
+        "supplies",
+        "outputs",
+        "produces",
+        "feeds",
+        "drives the",
+        "generates the",
+        "provides the",
+        "sources the",
+        "supplies the",
+        "outputs the",
+        "produces the",
+        "feeds the",
+    ];
+    const PASSIVE_SOURCE_VERBS: &[&str] = &[
+        "driven",
+        "generated",
+        "provided",
+        "sourced",
+        "supplied",
+        "output",
+        "produced",
+        "fed",
+    ];
+
+    for verb in ACTIVE_SOURCE_VERBS {
+        let active_pat = format!(" {verb} {signal_lower}");
+        if let Some(verb_pos) = lowered.find(&active_pat)
+            && let Some(actor) = extract_infrastructure_subject_phrase(&text[..verb_pos])
+        {
+            return Some(actor);
+        }
+    }
+
+    for verb in PASSIVE_SOURCE_VERBS {
+        for prep in ["by", "from"] {
+            let passive_pat = format!("{signal_lower} is {verb} {prep} ");
+            if let Some(pattern_pos) = lowered.find(&passive_pat) {
+                let actor_start = pattern_pos + passive_pat.len();
+                if actor_start <= text.len()
+                    && let Some(actor) =
+                        extract_infrastructure_component_phrase(&text[actor_start..])
+                {
+                    return Some(actor);
+                }
+            }
+        }
+    }
+
+    None
+}
+
+fn extract_infrastructure_component_phrase(text: &str) -> Option<String> {
+    let trimmed = text.trim_start();
+    let stripped = {
+        let lowered = trimmed.to_ascii_lowercase();
+        let mut result = trimmed;
+        for prefix in [
+            "the ", "a ", "an ", "this ", "that ", "its ", "each ", "all ", "every ", "any ",
+        ] {
+            if lowered.starts_with(prefix) {
+                result = &trimmed[prefix.len()..];
+                break;
+            }
+        }
+        result
+    };
+
+    const STOP_DELIMITERS: &[char] = &['.', ',', ';', '(', ')', ':'];
+    const STOP_WORDS: &[&str] = &[
+        "to", "for", "and", "or", "in", "at", "on", "with", "when", "if", "by", "from", "that",
+        "which", "where", "as", "is", "are", "has", "have", "will", "shall", "can", "may", "might",
+        "must", "should", "could", "would",
+    ];
+
+    let mut words = Vec::new();
+    for word in stripped.split_whitespace() {
+        let clean = word.trim_matches(|character: char| {
+            !character.is_ascii_alphanumeric() && character != '_' && character != '-'
+        });
+        if clean.is_empty() {
+            break;
+        }
+        let lowered = clean.to_ascii_lowercase();
+        if !words.is_empty() && STOP_WORDS.contains(&lowered.as_str()) {
+            break;
+        }
+        if clean
+            .chars()
+            .any(|character| STOP_DELIMITERS.contains(&character))
+        {
+            let clean = clean.trim_end_matches(STOP_DELIMITERS);
+            if !clean.is_empty() {
+                words.push(clean);
+            }
+            break;
+        }
+        words.push(clean);
+        if words.len() >= 4 {
+            break;
+        }
+    }
+
+    normalize_infrastructure_component_name(&words.join(" "))
+}
+
+fn extract_infrastructure_subject_phrase(text: &str) -> Option<String> {
+    const DETERMINERS: &[&str] = &[
+        "the", "a", "an", "this", "that", "these", "those", "each", "every", "any",
+    ];
+    const SKIP_WORDS: &[&str] = &[
+        "the", "a", "an", "this", "that", "and", "or", "when", "if", "can", "may", "might", "must",
+        "should", "could", "would", "will", "shall", "once", "before", "after", "while",
+    ];
+
+    let words = text.split_whitespace().collect::<Vec<_>>();
+    for index in (0..words.len()).rev() {
+        let determiner =
+            words[index].trim_matches(|character: char| !character.is_ascii_alphabetic());
+        if !DETERMINERS.contains(&determiner.to_ascii_lowercase().as_str()) {
+            continue;
+        }
+
+        let mut actor_words = Vec::new();
+        for word in &words[index + 1..] {
+            let clean = word.trim_matches(|character: char| {
+                !character.is_ascii_alphanumeric() && character != '_' && character != '-'
+            });
+            if clean.is_empty() {
+                break;
+            }
+            if SKIP_WORDS.contains(&clean.to_ascii_lowercase().as_str()) {
+                break;
+            }
+            actor_words.push(clean);
+            if actor_words.len() >= 4 {
+                break;
+            }
+        }
+
+        if let Some(actor) = normalize_infrastructure_component_name(&actor_words.join(" ")) {
+            return Some(actor);
+        }
+    }
+
+    let mut actor_words = Vec::new();
+    for word in words.iter().rev() {
+        let clean = word.trim_matches(|character: char| {
+            !character.is_ascii_alphanumeric() && character != '_' && character != '-'
+        });
+        if clean.is_empty() {
+            break;
+        }
+        let lowered = clean.to_ascii_lowercase();
+        if SKIP_WORDS.contains(&lowered.as_str()) {
+            if !actor_words.is_empty() {
+                break;
+            }
+            continue;
+        }
+        actor_words.push(clean);
+        if actor_words.len() >= 4 {
+            break;
+        }
+    }
+    actor_words.reverse();
+
+    normalize_infrastructure_component_name(&actor_words.join(" "))
+}
+
+fn normalize_infrastructure_component_name(text: &str) -> Option<String> {
+    let trimmed = text.trim();
+    if trimmed.len() < 2 {
+        return None;
+    }
+    let normalized = normalize_actor_term(trimmed);
+    if normalized.is_empty() {
+        return None;
+    }
+    if matches!(
+        normalized.as_str(),
+        "clock"
+            | "reset"
+            | "global"
+            | "external"
+            | "external clock"
+            | "external reset"
+            | "input"
+            | "output"
+            | "source"
+            | "driver"
+            | "signal"
+    ) {
+        return None;
+    }
+    if is_meaningful_actor_term(trimmed) || is_explicit_infrastructure_component_term(&normalized) {
+        return Some(trimmed.to_string());
+    }
+
+    None
+}
+
+fn is_explicit_infrastructure_component_term(normalized: &str) -> bool {
+    matches!(
+        normalized,
+        "pll" | "dll" | "oscillator" | "clkgen" | "rstgen"
+    ) || normalized.contains("generator")
+        || normalized.contains("controller")
+        || normalized.contains("synchronizer")
+        || normalized.contains("synchroniser")
+        || normalized.contains("oscillator")
+        || normalized.contains("divider")
+        || normalized.contains("clock gate")
+        || normalized.contains("clock mux")
+        || normalized.contains("reset mux")
+        || normalized.contains("reset bridge")
 }
 
 fn infrastructure_source_status(source_count: usize) -> InfrastructureSignalSourceStatus {
@@ -12743,6 +13032,179 @@ mod tests {
                 && record.recovered_source_actor_ids.is_empty()
                 && record.distributed_to_actor_ids.is_empty()
         }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn explicit_clock_generator_recovers_infrastructure_source_status() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("clock_generator_source.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Contract\n",
+                "Clock ACLK.\n",
+                "Reset ARESETN is asynchronous active low.\n",
+                "The clock generator drives ACLK.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.extracted_statements.push(ExtractedStatement {
+            statement_id: "statement_clock".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: "Clock ACLK.".to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+        });
+        evidence_ir.extracted_statements.push(ExtractedStatement {
+            statement_id: "statement_reset".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: "Reset ARESETN is asynchronous active low.".to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+        });
+        evidence_ir.extracted_statements.push(ExtractedStatement {
+            statement_id: "statement_clock_generator".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: "The clock generator drives ACLK.".to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        let clock_infrastructure = semantic_ir
+            .infrastructure_signals
+            .iter()
+            .find(|record| record.signal_name == "ACLK")
+            .expect("expected ACLK infrastructure record");
+
+        assert_eq!(
+            clock_infrastructure.source_status,
+            crate::ir::semantic::InfrastructureSignalSourceStatus::RecoveredProducer
+        );
+        assert!(
+            clock_infrastructure
+                .recovered_source_actor_names
+                .contains(&"clock generator".to_string()),
+            "expected explicit source actor in infrastructure record: {:?}",
+            clock_infrastructure
+        );
+        assert!(
+            semantic_ir
+                .actor_ports
+                .iter()
+                .all(|port| port.actor_name != "clock generator"),
+            "clock generator evidence should not have to become an ordinary protocol actor port"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn infrastructure_source_actor_is_not_marked_as_own_consumer() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("pll_clock_source.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Signals\n",
+                "Signal ACLK is input width 1.\n",
+                "Signal ARESETN is input width 1.\n",
+                "Signal XREQ is output width 1.\n\n",
+                "# Contract\n",
+                "Clock ACLK.\n",
+                "Reset ARESETN is asynchronous active low.\n",
+                "The PLL generates ACLK.\n",
+                "The Requester drives XREQ.\n",
+                "The Completer reads XREQ.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.extracted_statements.push(ExtractedStatement {
+            statement_id: "statement_clock".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: "Clock ACLK.".to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+        });
+        evidence_ir.extracted_statements.push(ExtractedStatement {
+            statement_id: "statement_reset".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: "Reset ARESETN is asynchronous active low.".to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        let pll_clock_port = semantic_ir
+            .actor_ports
+            .iter()
+            .find(|port| port.actor_name == "PLL" && port.signal_name == "ACLK")
+            .expect("expected PLL to remain the recovered ACLK source");
+        assert_eq!(pll_clock_port.direction, ActorRelativeDirection::Output);
+        assert!(
+            semantic_ir.actor_ports.iter().all(|port| {
+                !(port.actor_name == "PLL"
+                    && port.signal_name == "ACLK"
+                    && port.direction == ActorRelativeDirection::Input)
+            }),
+            "PLL should not be added as its own ACLK consumer"
+        );
+
+        let clock_infrastructure = semantic_ir
+            .infrastructure_signals
+            .iter()
+            .find(|record| record.signal_name == "ACLK")
+            .expect("expected ACLK infrastructure record");
+        assert_eq!(
+            clock_infrastructure.source_status,
+            crate::ir::semantic::InfrastructureSignalSourceStatus::RecoveredProducer
+        );
+        assert!(
+            clock_infrastructure
+                .recovered_source_actor_names
+                .contains(&"PLL".to_string())
+        );
+        assert!(
+            !clock_infrastructure
+                .distributed_to_actor_names
+                .contains(&"PLL".to_string()),
+            "PLL source should not be counted as a recovered ACLK distribution target"
+        );
 
         Ok(())
     }

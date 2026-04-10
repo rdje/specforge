@@ -114,6 +114,8 @@
 - clock/reset handling now has an explicit steering rule in the live docs: those signals are infrastructure semantics, not ordinary protocol edges, so future canonical modeling should prefer dedicated infrastructure records and conservative ownership over false graph completeness
 - `SignalConnectivityRecord` now carries an explicit infrastructure class, so `ACLK` / `ARESETN` surface as `SystemClock` / `SystemReset` connectivity in `SemanticIR` and `IntentIR` instead of blending into ordinary protocol-only connectivity
 - `InfrastructureSignalRecord` now makes clock/reset source status and recovered distribution status first-class in `SemanticIR` and `IntentIR`; unresolved ownership is represented as `unresolved_source` instead of inventing ordinary producer actors
+- explicit local infrastructure-source phrases such as `clock generator drives ACLK` can now recover a bounded source into `InfrastructureSignalRecord`, while generic labels like `Clock`, `Reset`, and `External` remain blocked from ordinary producer attribution
+- system-contract fanout now avoids marking infrastructure-only source actors as consumers of their own clock/reset signal; implicit clock/reset read ports are reserved for actors with non-infrastructure protocol relations
 - validator handling now matches that boundary too: infrastructure signals with no resolved producer actor emit a dedicated `[info:system_contract]` finding instead of a generic signal-connectivity warning, and validation now reports `infrastructure_signals` plus source/distribution status metrics alongside `infrastructure_signal_connectivity`
 - same-cycle timing language now lands as bounded temporal semantics too: AXI-Stream currently carries `6` explicit `0`-cycle windows from phrases like `in the same ACLK cycle`, and the old `no cycle-window grounding` warning is gone from the live validation projection
 - temporal-conflict detection is now polarity-aware: `ASSERTED` / `DEASSERTED` only collapse to `HIGH` / `LOW` when the current document grounds the signal polarity, so active-low controls like `ARESETN` stay semantically correct and unknown-polarity assertions stay abstract
@@ -155,6 +157,7 @@
   - the learning plane should be treated as a first-class epistemology layer, not as a side feature
 - synced `README.md`, `DEVELOPMENT_NOTES.md`, `CHANGES.md`, and `MEMORY.md` so future sessions can quickly recover that distinction after a crash or handoff
 - made infrastructure sourcing/distribution first-class beyond the old info-note boundary: `SemanticIR` builds `InfrastructureSignalRecord`s from the system contract plus recovered connectivity, `IntentIR` carries them forward, and validation reports unresolved-source/shared-distribution metrics without fabricating clock/reset producers
+- extended that infrastructure source surface so explicit current-document generator/PLL/controller/synchronizer-style source phrases can recover a source actor into `InfrastructureSignalRecord` without relaxing the ordinary protocol actor filters or making that source consume its own clock/reset
 - fixed the AXI-Stream table-row semantic leak where secondary signal mentions in one signal-description row could assign the wrong handshake role back to the row subject
 - fixed the AXI-Stream prose relation-extraction leak where coordinated clauses like `Transmitter presents ... and asserts TVALID` could promote payload nouns like `control information` into canonical actors
 - fixed the learning-plane follow-on bug where `learn-priors` could still harvest those same payload nouns into actor-taxonomy memory after the document-local extraction bug had been repaired
@@ -178,7 +181,7 @@
 - `.venv-docling/` is also local-only runtime state and should stay untracked
 
 ## Exact next steps
-1. recover richer clock/reset source and distribution details only when local evidence explicitly grounds generator, gating, synchronizer, or reset-tree structure
+1. broaden infrastructure distribution recovery only for explicit local evidence such as clock-gate fanout, reset-synchronizer fanout, or reset-tree target structure
 2. use negative-knowledge priors beyond reporting, but still safely: guide rescans, extractor selection, or stronger-corroboration thresholds without suppressing local evidence
 3. broaden visual-motif prior benchmarking beyond the first diagram-classification consumer, especially around rescan selection and multimodal corroboration
 

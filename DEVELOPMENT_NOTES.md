@@ -967,6 +967,8 @@
   - `SignalConnectivityRecord.connectivity_class` keeps clocks/resets separate from ordinary `protocol` connectivity
   - `InfrastructureSignalRecord` now makes clock/reset source status and recovered distribution status first-class in `SemanticIR` and `IntentIR`
   - unresolved sourcing is modeled as `unresolved_source`, not as a fabricated `Clock`, `External`, or `input` producer actor
+  - explicit local phrases such as `clock generator drives ACLK` or `PLL generates ACLK` can recover infrastructure source status, but this does not relax the ordinary actor filters for generic `Clock`, `Reset`, or `External` labels
+  - implicit clock/reset read-port fanout applies only to actors with non-infrastructure protocol relations, so a recovered clock/reset source is not automatically treated as consuming its own signal
 
 ## Knowledge graph extraction — design decisions (2026-04-03)
 

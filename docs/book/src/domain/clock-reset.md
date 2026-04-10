@@ -62,6 +62,10 @@ The source status is intentionally conservative.
 If the current document grounds `ACLK` as a clock but does not ground a clock generator, PLL, or other source actor, the record says `unresolved_source`.
 It does not invent a producer named `Clock`, `External`, or `input`.
 
+If the current document does explicitly ground an infrastructure source, that evidence may be recovered.
+For example, phrases like `clock generator drives ACLK` or `PLL generates ACLK` can make the `ACLK` infrastructure record report a recovered producer.
+That is still different from treating the bare table value `Clock` as a producer actor.
+
 The distribution status is similarly bounded.
 It can say whether the clock or reset is distributed to zero, one, or multiple recovered actors.
 That is useful for semantic inspection, but it is still not a physical clock-tree or reset-tree proof.

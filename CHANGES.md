@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-10 (Explicit infrastructure source recovery stays bounded)
+
+### Added: locally grounded infrastructure source evidence
+- Updated [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so explicit current-document phrases such as `clock generator drives ACLK` can recover a source actor directly into `InfrastructureSignalRecord`.
+- The parser accepts bounded infrastructure component terms such as `clock generator`, `reset controller`, `PLL`, `DLL`, `oscillator`, and synchronizer/gating-style component names without relaxing the ordinary protocol-actor filters.
+- Existing graph-derived sources still contribute when the local KG already recovered a real source such as `PLL generates ACLK`.
+
+### Preserved: infrastructure sources are not automatic consumers
+- Tightened the system-contract fanout pass so implicit clock/reset read ports are added only to actors with non-infrastructure protocol relations.
+- A recovered source actor for `ACLK` is no longer also marked as an `ACLK` consumer solely because a system contract exists.
+- Generic labels such as `Clock`, `Reset`, `External`, `input`, and `output` remain blocked from becoming ordinary producer actors.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml explicit_clock_generator_recovers_infrastructure_source_status -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml infrastructure_source_actor_is_not_marked_as_own_consumer -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml clock_and_reset_gain_input_actor_ports_for_relation_actors -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml validate_intent_ir_counts_recovered_infrastructure_source -- --nocapture` -> passed
+- `bash scripts/run_ci.sh` -> passed
+
 ## 2026-04-10 (Infrastructure source/distribution status is first-class)
 
 ### Added: canonical infrastructure signal status

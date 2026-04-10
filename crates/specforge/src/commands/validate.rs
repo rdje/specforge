@@ -4489,6 +4489,81 @@ mod tests {
     }
 
     #[test]
+    fn validate_intent_ir_counts_recovered_infrastructure_source() -> Result<()> {
+        use crate::ir::evidence::{EvidenceModality, ExtractedStatement, StatementClass};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("infra_source.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Spec\n",
+                "Clock ACLK.\n",
+                "Reset ARESETN is asynchronous active low.\n",
+                "The clock generator drives ACLK.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.extracted_statements.push(ExtractedStatement {
+            statement_id: "statement_clock".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: "Clock ACLK.".to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+        });
+        evidence_ir.extracted_statements.push(ExtractedStatement {
+            statement_id: "statement_reset".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: "Reset ARESETN is asynchronous active low.".to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+        });
+        evidence_ir.extracted_statements.push(ExtractedStatement {
+            statement_id: "statement_clock_generator".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: "The clock generator drives ACLK.".to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+        });
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let report = validate_intent_ir(&intent_ir, "infra_source".to_string());
+        assert_eq!(metric_value(&report, "infrastructure_signals"), Some("2"));
+        assert_eq!(
+            metric_value(&report, "infrastructure_signals_recovered_source"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&report, "infrastructure_signals_unresolved_source"),
+            Some("1")
+        );
+
+        Ok(())
+    }
+
+    #[test]
     fn validate_intent_ir_backannotates_current_score_into_artifact() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("spec.md");
