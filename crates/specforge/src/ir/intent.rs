@@ -11,8 +11,8 @@ use crate::ir::evidence::{
 };
 use crate::ir::semantic::{
     ActorPortRecord, ConditionalRuleRecord, ControlBlockRecord, DecisionTreeFragmentRecord,
-    ExplicitModuleRecord, ExplicitTopRecord, InitAssignmentRecord, InterfaceRecord,
-    InterfaceSignalConflictRecord, RegisterRecord, RegularStateRecord, SemanticIr,
+    ExplicitModuleRecord, ExplicitTopRecord, InfrastructureSignalRecord, InitAssignmentRecord,
+    InterfaceRecord, InterfaceSignalConflictRecord, RegisterRecord, RegularStateRecord, SemanticIr,
     SignalConnectivityConflictRecord, SignalConnectivityRecord, SignalConstraintRecord,
     StateTransitionRecord, SymbolDefinitionRecord, SystemContractRecord, TemporalConflictRecord,
     TemporalRuleRecord, TimingConstraintRecord,
@@ -37,6 +37,8 @@ pub struct IntentIr {
     pub actor_ports: Vec<ActorPortRecord>,
     #[serde(default)]
     pub signal_connectivity: Vec<SignalConnectivityRecord>,
+    #[serde(default)]
+    pub infrastructure_signals: Vec<InfrastructureSignalRecord>,
     #[serde(default)]
     pub interface_signal_conflicts: Vec<InterfaceSignalConflictRecord>,
     #[serde(default)]
@@ -128,6 +130,7 @@ impl IntentIr {
         let actor_signal_relations = semantic_ir.actor_signal_relations.clone();
         let actor_ports = semantic_ir.actor_ports.clone();
         let signal_connectivity = semantic_ir.signal_connectivity.clone();
+        let infrastructure_signals = semantic_ir.infrastructure_signals.clone();
         let interface_signal_conflicts = semantic_ir.interface_signal_conflicts.clone();
         let signal_connectivity_conflicts = semantic_ir.signal_connectivity_conflicts.clone();
         let signal_polarities = semantic_ir.signal_polarities.clone();
@@ -184,6 +187,7 @@ impl IntentIr {
             actor_signal_relations,
             actor_ports,
             signal_connectivity,
+            infrastructure_signals,
             interface_signal_conflicts,
             signal_connectivity_conflicts,
             signal_polarities,
@@ -1757,6 +1761,22 @@ mod tests {
                 && record.connectivity_class
                     == crate::ir::semantic::SignalConnectivityClass::SystemReset
                 && record.producer_actor_ids.is_empty()
+        }));
+        assert!(intent_ir.infrastructure_signals.iter().any(|record| {
+            record.signal_name == "ACLK"
+                && record.kind == crate::ir::semantic::InfrastructureSignalKind::SystemClock
+                && record.source_status
+                    == crate::ir::semantic::InfrastructureSignalSourceStatus::UnresolvedSource
+                && record.distribution_status
+                    == crate::ir::semantic::InfrastructureSignalDistributionStatus::SharedRecoveredConsumers
+        }));
+        assert!(intent_ir.infrastructure_signals.iter().any(|record| {
+            record.signal_name == "ARESETN"
+                && record.kind == crate::ir::semantic::InfrastructureSignalKind::SystemReset
+                && record.source_status
+                    == crate::ir::semantic::InfrastructureSignalSourceStatus::UnresolvedSource
+                && record.distribution_status
+                    == crate::ir::semantic::InfrastructureSignalDistributionStatus::SharedRecoveredConsumers
         }));
 
         Ok(())

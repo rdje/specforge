@@ -23,6 +23,7 @@ It measures things like:
 - temporal rule cycle-window grounding
 - temporal rule actor grounding
 - handshake-completion temporal predicates
+- infrastructure-signal source and distribution status
 - VLM readiness and visual enrichment coverage
 - visual semantic grounding
 - cross-modality semantic grounding

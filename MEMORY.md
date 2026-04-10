@@ -113,7 +113,8 @@
 - AXI-Stream interface coverage is now more honest too: bogus width-only `_WIDTH` symbols no longer count as declared interface signals, relation-grounded actors carry graph-backed `ACLK` / `ARESETN` input ports, and parity-check tables now recover both local structural ownership and carried width hints for the `*CHK` surface so declared graph-direction and width coverage are both `22/22`
 - clock/reset handling now has an explicit steering rule in the live docs: those signals are infrastructure semantics, not ordinary protocol edges, so future canonical modeling should prefer dedicated infrastructure records and conservative ownership over false graph completeness
 - `SignalConnectivityRecord` now carries an explicit infrastructure class, so `ACLK` / `ARESETN` surface as `SystemClock` / `SystemReset` connectivity in `SemanticIR` and `IntentIR` instead of blending into ordinary protocol-only connectivity
-- validator handling now matches that boundary too: infrastructure signals with no resolved producer actor emit a dedicated `[info:system_contract]` finding instead of a generic signal-connectivity warning, and the latest AXI-Stream projection now reports `infrastructure_signal_connectivity: 2`
+- `InfrastructureSignalRecord` now makes clock/reset source status and recovered distribution status first-class in `SemanticIR` and `IntentIR`; unresolved ownership is represented as `unresolved_source` instead of inventing ordinary producer actors
+- validator handling now matches that boundary too: infrastructure signals with no resolved producer actor emit a dedicated `[info:system_contract]` finding instead of a generic signal-connectivity warning, and validation now reports `infrastructure_signals` plus source/distribution status metrics alongside `infrastructure_signal_connectivity`
 - same-cycle timing language now lands as bounded temporal semantics too: AXI-Stream currently carries `6` explicit `0`-cycle windows from phrases like `in the same ACLK cycle`, and the old `no cycle-window grounding` warning is gone from the live validation projection
 - temporal-conflict detection is now polarity-aware: `ASSERTED` / `DEASSERTED` only collapse to `HIGH` / `LOW` when the current document grounds the signal polarity, so active-low controls like `ARESETN` stay semantically correct and unknown-polarity assertions stay abstract
 - resolved signal polarity now also lives directly on canonical `InterfaceSignalRecord`s and is reported by validation as `with_resolved_polarity`; after the latest infrastructure-interface fix, AXI/APB/AHB/AXI-Stream now all report `1`, so the next polarity step is broader non-reset control polarity recovery
@@ -153,6 +154,7 @@
   - the learning plane must keep strict separation, typed memory, bounded influence, validation-gated feedback, negative learning, and provenance
   - the learning plane should be treated as a first-class epistemology layer, not as a side feature
 - synced `README.md`, `DEVELOPMENT_NOTES.md`, `CHANGES.md`, and `MEMORY.md` so future sessions can quickly recover that distinction after a crash or handoff
+- made infrastructure sourcing/distribution first-class beyond the old info-note boundary: `SemanticIR` builds `InfrastructureSignalRecord`s from the system contract plus recovered connectivity, `IntentIR` carries them forward, and validation reports unresolved-source/shared-distribution metrics without fabricating clock/reset producers
 - fixed the AXI-Stream table-row semantic leak where secondary signal mentions in one signal-description row could assign the wrong handshake role back to the row subject
 - fixed the AXI-Stream prose relation-extraction leak where coordinated clauses like `Transmitter presents ... and asserts TVALID` could promote payload nouns like `control information` into canonical actors
 - fixed the learning-plane follow-on bug where `learn-priors` could still harvest those same payload nouns into actor-taxonomy memory after the document-local extraction bug had been repaired
@@ -176,7 +178,7 @@
 - `.venv-docling/` is also local-only runtime state and should stay untracked
 
 ## Exact next steps
-1. make shared infrastructure sourcing/distribution first-class beyond the current info-note boundary for signals like `ACLK` and `ARESETN`
+1. recover richer clock/reset source and distribution details only when local evidence explicitly grounds generator, gating, synchronizer, or reset-tree structure
 2. use negative-knowledge priors beyond reporting, but still safely: guide rescans, extractor selection, or stronger-corroboration thresholds without suppressing local evidence
 3. broaden visual-motif prior benchmarking beyond the first diagram-classification consumer, especially around rescan selection and multimodal corroboration
 

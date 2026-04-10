@@ -33,6 +33,8 @@ pub struct SemanticIr {
     #[serde(default)]
     pub signal_connectivity: Vec<SignalConnectivityRecord>,
     #[serde(default)]
+    pub infrastructure_signals: Vec<InfrastructureSignalRecord>,
+    #[serde(default)]
     pub interface_signal_conflicts: Vec<InterfaceSignalConflictRecord>,
     #[serde(default)]
     pub signal_connectivity_conflicts: Vec<SignalConnectivityConflictRecord>,
@@ -138,6 +140,8 @@ impl SemanticIr {
         let actor_build = build_actors(&context, &interfaces);
         let actor_ports = build_actor_ports(&context, &interfaces, system_contract.as_ref());
         let signal_connectivity = build_signal_connectivity(&actor_ports, system_contract.as_ref());
+        let infrastructure_signals =
+            build_infrastructure_signals(&signal_connectivity, system_contract.as_ref());
         let signal_connectivity_conflicts =
             build_signal_connectivity_conflicts(signal_connectivity.as_slice());
         let signal_polarities = evidence_ir.signal_polarities.clone();
@@ -285,6 +289,7 @@ impl SemanticIr {
             actor_signal_relations: context.actor_signal_relations.clone(),
             actor_ports,
             signal_connectivity,
+            infrastructure_signals,
             interface_signal_conflicts,
             signal_connectivity_conflicts,
             signal_polarities,
@@ -423,6 +428,48 @@ pub struct SignalConnectivityRecord {
     pub width_hint: Option<WidthHint>,
     #[serde(default)]
     pub source_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum InfrastructureSignalKind {
+    SystemClock,
+    SystemReset,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum InfrastructureSignalSourceStatus {
+    UnresolvedSource,
+    RecoveredProducer,
+    MultipleRecoveredProducers,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum InfrastructureSignalDistributionStatus {
+    NoRecoveredConsumers,
+    SingleRecoveredConsumer,
+    SharedRecoveredConsumers,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct InfrastructureSignalRecord {
+    pub signal_name: String,
+    pub kind: InfrastructureSignalKind,
+    pub source_status: InfrastructureSignalSourceStatus,
+    #[serde(default)]
+    pub recovered_source_actor_ids: Vec<String>,
+    #[serde(default)]
+    pub recovered_source_actor_names: Vec<String>,
+    pub distribution_status: InfrastructureSignalDistributionStatus,
+    #[serde(default)]
+    pub distributed_to_actor_ids: Vec<String>,
+    #[serde(default)]
+    pub distributed_to_actor_names: Vec<String>,
+    #[serde(default)]
+    pub supporting_statement_ids: Vec<String>,
     pub automation_confidence: AutomationConfidence,
 }
 
@@ -2892,6 +2939,83 @@ fn build_signal_connectivity(
     }
 
     accumulators.into_values().collect()
+}
+
+fn build_infrastructure_signals(
+    signal_connectivity: &[SignalConnectivityRecord],
+    system_contract: Option<&SystemContractRecord>,
+) -> Vec<InfrastructureSignalRecord> {
+    let Some(system_contract) = system_contract else {
+        return Vec::new();
+    };
+
+    [
+        (
+            system_contract.clock_signal.as_str(),
+            InfrastructureSignalKind::SystemClock,
+        ),
+        (
+            system_contract.reset_signal.as_str(),
+            InfrastructureSignalKind::SystemReset,
+        ),
+    ]
+    .into_iter()
+    .map(|(signal_name, kind)| {
+        let connectivity = signal_connectivity
+            .iter()
+            .find(|record| record.signal_name == signal_name);
+        let recovered_source_actor_ids = connectivity
+            .map(|record| record.producer_actor_ids.clone())
+            .unwrap_or_default();
+        let recovered_source_actor_names = connectivity
+            .map(|record| record.producer_actor_names.clone())
+            .unwrap_or_default();
+        let distributed_to_actor_ids = connectivity
+            .map(|record| record.consumer_actor_ids.clone())
+            .unwrap_or_default();
+        let distributed_to_actor_names = connectivity
+            .map(|record| record.consumer_actor_names.clone())
+            .unwrap_or_default();
+        let supporting_statement_ids = connectivity
+            .map(|record| record.source_statement_ids.clone())
+            .filter(|ids| !ids.is_empty())
+            .unwrap_or_else(|| system_contract.supporting_statement_ids.clone());
+        let automation_confidence = connectivity
+            .map(|record| record.automation_confidence)
+            .unwrap_or(system_contract.automation_confidence);
+
+        InfrastructureSignalRecord {
+            signal_name: signal_name.to_string(),
+            kind,
+            source_status: infrastructure_source_status(recovered_source_actor_ids.len()),
+            recovered_source_actor_ids,
+            recovered_source_actor_names,
+            distribution_status: infrastructure_distribution_status(distributed_to_actor_ids.len()),
+            distributed_to_actor_ids,
+            distributed_to_actor_names,
+            supporting_statement_ids,
+            automation_confidence,
+        }
+    })
+    .collect()
+}
+
+fn infrastructure_source_status(source_count: usize) -> InfrastructureSignalSourceStatus {
+    match source_count {
+        0 => InfrastructureSignalSourceStatus::UnresolvedSource,
+        1 => InfrastructureSignalSourceStatus::RecoveredProducer,
+        _ => InfrastructureSignalSourceStatus::MultipleRecoveredProducers,
+    }
+}
+
+fn infrastructure_distribution_status(
+    consumer_count: usize,
+) -> InfrastructureSignalDistributionStatus {
+    match consumer_count {
+        0 => InfrastructureSignalDistributionStatus::NoRecoveredConsumers,
+        1 => InfrastructureSignalDistributionStatus::SingleRecoveredConsumer,
+        _ => InfrastructureSignalDistributionStatus::SharedRecoveredConsumers,
+    }
 }
 
 fn classify_signal_connectivity(
@@ -12563,6 +12687,67 @@ mod tests {
     }
 
     #[test]
+    fn system_contract_emits_infrastructure_records_without_actor_ports() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("clock_reset_contract_only.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Contract\n",
+                "Clock ACLK.\n",
+                "Reset ARESETN is asynchronous active low.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.extracted_statements.push(ExtractedStatement {
+            statement_id: "statement_clock".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: "Clock ACLK.".to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+        });
+        evidence_ir.extracted_statements.push(ExtractedStatement {
+            statement_id: "statement_reset".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: "Reset ARESETN is asynchronous active low.".to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        assert!(semantic_ir.actor_ports.is_empty());
+        assert!(semantic_ir.signal_connectivity.is_empty());
+        assert_eq!(semantic_ir.infrastructure_signals.len(), 2);
+        assert!(semantic_ir.infrastructure_signals.iter().all(|record| {
+            record.source_status
+                == crate::ir::semantic::InfrastructureSignalSourceStatus::UnresolvedSource
+                && record.distribution_status
+                    == crate::ir::semantic::InfrastructureSignalDistributionStatus::NoRecoveredConsumers
+                && record.recovered_source_actor_ids.is_empty()
+                && record.distributed_to_actor_ids.is_empty()
+        }));
+
+        Ok(())
+    }
+
+    #[test]
     fn clock_and_reset_gain_input_actor_ports_for_relation_actors() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("clock_reset_ports.md");
@@ -12666,6 +12851,43 @@ mod tests {
                     == crate::ir::semantic::SignalConnectivityClass::SystemReset
                 && record.producer_actor_ids.is_empty()
         }));
+        let clock_infrastructure = semantic_ir
+            .infrastructure_signals
+            .iter()
+            .find(|record| record.signal_name == "ACLK")
+            .expect("expected first-class ACLK infrastructure record");
+        assert_eq!(
+            clock_infrastructure.kind,
+            crate::ir::semantic::InfrastructureSignalKind::SystemClock
+        );
+        assert_eq!(
+            clock_infrastructure.source_status,
+            crate::ir::semantic::InfrastructureSignalSourceStatus::UnresolvedSource
+        );
+        assert_eq!(
+            clock_infrastructure.distribution_status,
+            crate::ir::semantic::InfrastructureSignalDistributionStatus::SharedRecoveredConsumers
+        );
+        assert_eq!(clock_infrastructure.distributed_to_actor_names.len(), 2);
+
+        let reset_infrastructure = semantic_ir
+            .infrastructure_signals
+            .iter()
+            .find(|record| record.signal_name == "ARESETN")
+            .expect("expected first-class ARESETN infrastructure record");
+        assert_eq!(
+            reset_infrastructure.kind,
+            crate::ir::semantic::InfrastructureSignalKind::SystemReset
+        );
+        assert_eq!(
+            reset_infrastructure.source_status,
+            crate::ir::semantic::InfrastructureSignalSourceStatus::UnresolvedSource
+        );
+        assert_eq!(
+            reset_infrastructure.distribution_status,
+            crate::ir::semantic::InfrastructureSignalDistributionStatus::SharedRecoveredConsumers
+        );
+        assert_eq!(reset_infrastructure.distributed_to_actor_names.len(), 2);
 
         Ok(())
     }

@@ -70,6 +70,10 @@ A `SignalConnectivityRecord` summarizes:
 For protocol signals, this gives the canonical producer/consumer view of the signal.
 For infrastructure signals, the connectivity class can be `system_clock` or `system_reset` instead of ordinary `protocol`.
 
+Infrastructure signals also have their own canonical status records.
+Those records track source status and recovered distribution status separately from ordinary producer/consumer protocol ownership.
+That keeps useful graph information visible without pretending a clock/reset tree is just another payload edge.
+
 ## Why graph direction beats flat direction
 
 Flat direction hints are still useful compatibility data.
@@ -177,4 +181,3 @@ If direction coverage is weak, the right question is usually:
 not only:
 
 - did a table contain a literal `input` or `output` string?
-

@@ -10,6 +10,7 @@
 - constraints
 - assumptions
 - system contract
+- infrastructure signal source/distribution status
 - carried conflicts
 - carried residual decisions
 
@@ -54,6 +55,7 @@ The product boundary is supposed to be reusable implementation intent, not one s
 - high direction and width coverage
 - grounded actor-relative connectivity
 - explicit system-contract handling
+- explicit infrastructure-signal sourcing/distribution status
 - typed timing and behavioral constraints
 - low residual count
 - conflicts surfaced rather than hidden

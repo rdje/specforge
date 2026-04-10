@@ -72,6 +72,11 @@ into the same category as ordinary payload or handshake signals.
 
 The dedicated [Clock And Reset Infrastructure](../domain/clock-reset.md) chapter explains that domain boundary in more detail.
 
+Current `SemanticIR` therefore has two related surfaces:
+
+- `signal_connectivity`, where infrastructure signals carry `system_clock` or `system_reset` connectivity class
+- `infrastructure_signals`, where source status and recovered distribution status are recorded without inventing ordinary protocol producers
+
 ## Residual decisions
 
 Residual packets exist because the project would rather preserve unresolved ambiguity than fabricate a clean but wrong canonical answer.

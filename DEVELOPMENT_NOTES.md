@@ -961,8 +961,12 @@
   - explicit reset discipline rather than flattening resets into generic control edges
 - implementation consequence:
   - do not let clock/reset graph edges silently imply "ordinary producer/consumer semantics"
-  - preserve them through `SystemContractRecord` and future infrastructure-specific canonical records instead
+  - preserve them through `SystemContractRecord` and infrastructure-specific canonical records instead
   - prefer truthfulness over apparent graph completeness when clock/reset ownership is not explicit in the current PDF
+- current implementation:
+  - `SignalConnectivityRecord.connectivity_class` keeps clocks/resets separate from ordinary `protocol` connectivity
+  - `InfrastructureSignalRecord` now makes clock/reset source status and recovered distribution status first-class in `SemanticIR` and `IntentIR`
+  - unresolved sourcing is modeled as `unresolved_source`, not as a fabricated `Clock`, `External`, or `input` producer actor
 
 ## Knowledge graph extraction — design decisions (2026-04-03)
 

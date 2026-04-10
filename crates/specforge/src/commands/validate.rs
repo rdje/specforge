@@ -19,8 +19,10 @@ use crate::ir::prior_memory::{
     temporal_value_conflict_negative_knowledge_pattern,
 };
 use crate::ir::semantic::{
-    ActorPortRecord, ActorRelativeDirection, ClockEdge, InterfaceSignalConflictRecord, SemanticIr,
-    SignalConnectivityClass, SignalConnectivityConflictRecord, TemporalConflictRecord,
+    ActorPortRecord, ActorRelativeDirection, ClockEdge, InfrastructureSignalDistributionStatus,
+    InfrastructureSignalKind, InfrastructureSignalRecord, InfrastructureSignalSourceStatus,
+    InterfaceSignalConflictRecord, SemanticIr, SignalConnectivityClass,
+    SignalConnectivityConflictRecord, TemporalConflictRecord,
 };
 use crate::ir::source::{
     AutomationConfidence, DiagramKind, ResidualDecisionPacket, SourceIr, ValidationFindingRecord,
@@ -354,6 +356,57 @@ fn infrastructure_signal_connectivity_count(
         .iter()
         .filter(|record| is_infrastructure_connectivity_class(record.connectivity_class))
         .count()
+}
+
+fn infrastructure_signals_with_source_status_count(
+    infrastructure_signals: &[InfrastructureSignalRecord],
+    status: InfrastructureSignalSourceStatus,
+) -> usize {
+    infrastructure_signals
+        .iter()
+        .filter(|record| record.source_status == status)
+        .count()
+}
+
+fn infrastructure_signals_with_distribution_status_count(
+    infrastructure_signals: &[InfrastructureSignalRecord],
+    status: InfrastructureSignalDistributionStatus,
+) -> usize {
+    infrastructure_signals
+        .iter()
+        .filter(|record| record.distribution_status == status)
+        .count()
+}
+
+fn describe_infrastructure_signal_kind(kind: InfrastructureSignalKind) -> &'static str {
+    match kind {
+        InfrastructureSignalKind::SystemClock => "system_clock",
+        InfrastructureSignalKind::SystemReset => "system_reset",
+    }
+}
+
+fn describe_infrastructure_source_status(status: InfrastructureSignalSourceStatus) -> &'static str {
+    match status {
+        InfrastructureSignalSourceStatus::UnresolvedSource => "unresolved_source",
+        InfrastructureSignalSourceStatus::RecoveredProducer => "recovered_producer",
+        InfrastructureSignalSourceStatus::MultipleRecoveredProducers => {
+            "multiple_recovered_producers"
+        }
+    }
+}
+
+fn describe_infrastructure_distribution_status(
+    status: InfrastructureSignalDistributionStatus,
+) -> &'static str {
+    match status {
+        InfrastructureSignalDistributionStatus::NoRecoveredConsumers => "no_recovered_consumers",
+        InfrastructureSignalDistributionStatus::SingleRecoveredConsumer => {
+            "single_recovered_consumer"
+        }
+        InfrastructureSignalDistributionStatus::SharedRecoveredConsumers => {
+            "shared_recovered_consumers"
+        }
+    }
 }
 
 fn resolved_direction_counts<'a>(
@@ -1596,6 +1649,33 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         interface_signals_with_visual_semantic_grounding_count(&ir.interfaces);
     let infrastructure_signal_connectivity =
         infrastructure_signal_connectivity_count(&ir.signal_connectivity);
+    let infrastructure_signals_unresolved_source = infrastructure_signals_with_source_status_count(
+        &ir.infrastructure_signals,
+        InfrastructureSignalSourceStatus::UnresolvedSource,
+    );
+    let infrastructure_signals_recovered_source = infrastructure_signals_with_source_status_count(
+        &ir.infrastructure_signals,
+        InfrastructureSignalSourceStatus::RecoveredProducer,
+    );
+    let infrastructure_signals_multiple_source = infrastructure_signals_with_source_status_count(
+        &ir.infrastructure_signals,
+        InfrastructureSignalSourceStatus::MultipleRecoveredProducers,
+    );
+    let infrastructure_signals_no_recovered_distribution =
+        infrastructure_signals_with_distribution_status_count(
+            &ir.infrastructure_signals,
+            InfrastructureSignalDistributionStatus::NoRecoveredConsumers,
+        );
+    let infrastructure_signals_single_recovered_distribution =
+        infrastructure_signals_with_distribution_status_count(
+            &ir.infrastructure_signals,
+            InfrastructureSignalDistributionStatus::SingleRecoveredConsumer,
+        );
+    let infrastructure_signals_shared_recovered_distribution =
+        infrastructure_signals_with_distribution_status_count(
+            &ir.infrastructure_signals,
+            InfrastructureSignalDistributionStatus::SharedRecoveredConsumers,
+        );
     let fully_typed = ir
         .interfaces
         .iter()
@@ -1679,6 +1759,26 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     println!("  signal_connectivity: {}", ir.signal_connectivity.len());
     println!("  infrastructure_signal_connectivity: {infrastructure_signal_connectivity}");
     println!(
+        "  infrastructure_signals: {}",
+        ir.infrastructure_signals.len()
+    );
+    println!(
+        "  infrastructure_signals_unresolved_source: {infrastructure_signals_unresolved_source}"
+    );
+    println!(
+        "  infrastructure_signals_recovered_source: {infrastructure_signals_recovered_source}"
+    );
+    println!("  infrastructure_signals_multiple_source: {infrastructure_signals_multiple_source}");
+    println!(
+        "  infrastructure_signals_no_recovered_distribution: {infrastructure_signals_no_recovered_distribution}"
+    );
+    println!(
+        "  infrastructure_signals_single_recovered_distribution: {infrastructure_signals_single_recovered_distribution}"
+    );
+    println!(
+        "  infrastructure_signals_shared_recovered_distribution: {infrastructure_signals_shared_recovered_distribution}"
+    );
+    println!(
         "  interface_signal_conflicts: {}",
         ir.interface_signal_conflicts.len()
     );
@@ -1739,6 +1839,23 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         println!("  automation_confidence: {:?}", sc.automation_confidence);
     } else {
         println!("  ABSENT — no explicit Clock/Reset declarations found");
+    }
+    println!();
+
+    println!("=== Infrastructure Signals ===");
+    if ir.infrastructure_signals.is_empty() {
+        println!("  none");
+    } else {
+        for signal in &ir.infrastructure_signals {
+            println!(
+                "  - {} ({}): source={}, distribution={}, distributed_to={}",
+                signal.signal_name,
+                describe_infrastructure_signal_kind(signal.kind),
+                describe_infrastructure_source_status(signal.source_status),
+                describe_infrastructure_distribution_status(signal.distribution_status),
+                signal.distributed_to_actor_names.len()
+            );
+        }
     }
     println!();
 
@@ -1881,7 +1998,7 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             ValidationFindingSeverity::Info,
             "system_contract",
             format!(
-                "{} infrastructure signal(s) have no resolved producer actor in SemanticIR connectivity; canonical sourcing remains in the system-contract surface",
+                "{} infrastructure signal(s) have no resolved producer actor in SemanticIR connectivity; canonical sourcing status remains explicit in the infrastructure/system-contract surface",
                 infrastructure_missing_producer_signals.len()
             ),
             infrastructure_missing_producer_signals
@@ -2266,6 +2383,34 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 infrastructure_signal_connectivity.to_string(),
             ),
             metric(
+                "infrastructure_signals",
+                ir.infrastructure_signals.len().to_string(),
+            ),
+            metric(
+                "infrastructure_signals_unresolved_source",
+                infrastructure_signals_unresolved_source.to_string(),
+            ),
+            metric(
+                "infrastructure_signals_recovered_source",
+                infrastructure_signals_recovered_source.to_string(),
+            ),
+            metric(
+                "infrastructure_signals_multiple_source",
+                infrastructure_signals_multiple_source.to_string(),
+            ),
+            metric(
+                "infrastructure_signals_no_recovered_distribution",
+                infrastructure_signals_no_recovered_distribution.to_string(),
+            ),
+            metric(
+                "infrastructure_signals_single_recovered_distribution",
+                infrastructure_signals_single_recovered_distribution.to_string(),
+            ),
+            metric(
+                "infrastructure_signals_shared_recovered_distribution",
+                infrastructure_signals_shared_recovered_distribution.to_string(),
+            ),
+            metric(
                 "infrastructure_signals_missing_producer",
                 infrastructure_missing_producer_signals.len().to_string(),
             ),
@@ -2435,6 +2580,33 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         interface_signals_with_visual_semantic_grounding_count(&ir.interfaces);
     let infrastructure_signal_connectivity =
         infrastructure_signal_connectivity_count(&ir.signal_connectivity);
+    let infrastructure_signals_unresolved_source = infrastructure_signals_with_source_status_count(
+        &ir.infrastructure_signals,
+        InfrastructureSignalSourceStatus::UnresolvedSource,
+    );
+    let infrastructure_signals_recovered_source = infrastructure_signals_with_source_status_count(
+        &ir.infrastructure_signals,
+        InfrastructureSignalSourceStatus::RecoveredProducer,
+    );
+    let infrastructure_signals_multiple_source = infrastructure_signals_with_source_status_count(
+        &ir.infrastructure_signals,
+        InfrastructureSignalSourceStatus::MultipleRecoveredProducers,
+    );
+    let infrastructure_signals_no_recovered_distribution =
+        infrastructure_signals_with_distribution_status_count(
+            &ir.infrastructure_signals,
+            InfrastructureSignalDistributionStatus::NoRecoveredConsumers,
+        );
+    let infrastructure_signals_single_recovered_distribution =
+        infrastructure_signals_with_distribution_status_count(
+            &ir.infrastructure_signals,
+            InfrastructureSignalDistributionStatus::SingleRecoveredConsumer,
+        );
+    let infrastructure_signals_shared_recovered_distribution =
+        infrastructure_signals_with_distribution_status_count(
+            &ir.infrastructure_signals,
+            InfrastructureSignalDistributionStatus::SharedRecoveredConsumers,
+        );
     let dir_pct = if declared_count > 0 {
         with_direction * 100 / declared_count
     } else {
@@ -2505,6 +2677,26 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     println!("  actor_ports: {}", ir.actor_ports.len());
     println!("  signal_connectivity: {}", ir.signal_connectivity.len());
     println!("  infrastructure_signal_connectivity: {infrastructure_signal_connectivity}");
+    println!(
+        "  infrastructure_signals: {}",
+        ir.infrastructure_signals.len()
+    );
+    println!(
+        "  infrastructure_signals_unresolved_source: {infrastructure_signals_unresolved_source}"
+    );
+    println!(
+        "  infrastructure_signals_recovered_source: {infrastructure_signals_recovered_source}"
+    );
+    println!("  infrastructure_signals_multiple_source: {infrastructure_signals_multiple_source}");
+    println!(
+        "  infrastructure_signals_no_recovered_distribution: {infrastructure_signals_no_recovered_distribution}"
+    );
+    println!(
+        "  infrastructure_signals_single_recovered_distribution: {infrastructure_signals_single_recovered_distribution}"
+    );
+    println!(
+        "  infrastructure_signals_shared_recovered_distribution: {infrastructure_signals_shared_recovered_distribution}"
+    );
     println!(
         "  interface_signal_conflicts: {}",
         ir.interface_signal_conflicts.len()
@@ -2623,6 +2815,23 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         _ => "INCOMPLETE",
     };
     println!("  overall_score: {score:.0}/100 — {grade}");
+    println!();
+
+    println!("=== Infrastructure Signals ===");
+    if ir.infrastructure_signals.is_empty() {
+        println!("  none");
+    } else {
+        for signal in &ir.infrastructure_signals {
+            println!(
+                "  - {} ({}): source={}, distribution={}, distributed_to={}",
+                signal.signal_name,
+                describe_infrastructure_signal_kind(signal.kind),
+                describe_infrastructure_source_status(signal.source_status),
+                describe_infrastructure_distribution_status(signal.distribution_status),
+                signal.distributed_to_actor_names.len()
+            );
+        }
+    }
     println!();
 
     println!("=== Residual Decisions ===");
@@ -2763,7 +2972,7 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             ValidationFindingSeverity::Info,
             "system_contract",
             format!(
-                "{} infrastructure signal(s) have no resolved producer actor in IntentIR connectivity; canonical sourcing remains in the system-contract surface",
+                "{} infrastructure signal(s) have no resolved producer actor in IntentIR connectivity; canonical sourcing status remains explicit in the infrastructure/system-contract surface",
                 infrastructure_missing_producer_signals.len()
             ),
             infrastructure_missing_producer_signals
@@ -3156,6 +3365,34 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             metric(
                 "infrastructure_signal_connectivity",
                 infrastructure_signal_connectivity.to_string(),
+            ),
+            metric(
+                "infrastructure_signals",
+                ir.infrastructure_signals.len().to_string(),
+            ),
+            metric(
+                "infrastructure_signals_unresolved_source",
+                infrastructure_signals_unresolved_source.to_string(),
+            ),
+            metric(
+                "infrastructure_signals_recovered_source",
+                infrastructure_signals_recovered_source.to_string(),
+            ),
+            metric(
+                "infrastructure_signals_multiple_source",
+                infrastructure_signals_multiple_source.to_string(),
+            ),
+            metric(
+                "infrastructure_signals_no_recovered_distribution",
+                infrastructure_signals_no_recovered_distribution.to_string(),
+            ),
+            metric(
+                "infrastructure_signals_single_recovered_distribution",
+                infrastructure_signals_single_recovered_distribution.to_string(),
+            ),
+            metric(
+                "infrastructure_signals_shared_recovered_distribution",
+                infrastructure_signals_shared_recovered_distribution.to_string(),
             ),
             metric(
                 "infrastructure_signals_missing_producer",
@@ -4221,6 +4458,18 @@ mod tests {
         let report = validate_intent_ir(&intent_ir, "infra_connectivity".to_string());
         assert_eq!(
             metric_value(&report, "infrastructure_signal_connectivity"),
+            Some("2")
+        );
+        assert_eq!(metric_value(&report, "infrastructure_signals"), Some("2"));
+        assert_eq!(
+            metric_value(&report, "infrastructure_signals_unresolved_source"),
+            Some("2")
+        );
+        assert_eq!(
+            metric_value(
+                &report,
+                "infrastructure_signals_shared_recovered_distribution"
+            ),
             Some("2")
         );
         assert_eq!(

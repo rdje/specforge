@@ -1763,6 +1763,7 @@ mod tests {
             actor_signal_relations: Vec::new(),
             actor_ports: Vec::new(),
             signal_connectivity: Vec::new(),
+            infrastructure_signals: Vec::new(),
             interface_signal_conflicts: Vec::new(),
             signal_connectivity_conflicts: Vec::new(),
             signal_polarities: Vec::new(),

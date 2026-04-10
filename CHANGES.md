@@ -1,5 +1,28 @@
 # CHANGES
 
+## 2026-04-10 (Infrastructure source/distribution status is first-class)
+
+### Added: canonical infrastructure signal status
+- Added `InfrastructureSignalRecord` to [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so `SemanticIR` now records clock/reset infrastructure kind, unresolved vs recovered source status, recovered distribution status, supporting statements, and automation confidence.
+- `SemanticIR` derives this surface from the local `SystemContractRecord` plus recovered `SignalConnectivityRecord`s, so `ACLK` / `ARESETN` can be marked as infrastructure while keeping unresolved source ownership explicit.
+- Updated [intent.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/intent.rs) so `IntentIR` carries the same `infrastructure_signals` surface forward as part of the canonical product artifact.
+
+### Preserved: no fake clock/reset producer actors
+- Unresolved infrastructure sourcing is now represented as `unresolved_source`.
+- The model does not invent producer actors named `Clock`, `External`, or `input`.
+- Recovered distribution status reports whether the signal reaches zero, one, or multiple recovered actors; it is not a physical clock-tree or reset-tree proof.
+
+### Added: validation and docs
+- Updated [validate.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/validate.rs) with `infrastructure_signals`, unresolved-source, recovered-source, and recovered-distribution metrics for `SemanticIR` and `IntentIR`.
+- Updated the public mdBook clock/reset and pipeline chapters so the new surface is documented as project-facing behavior, not just a continuity note.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml system_contract_emits_infrastructure_records_without_actor_ports -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml clock_and_reset_gain_input_actor_ports_for_relation_actors -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml carries_infrastructure_signal_connectivity_class_into_intent_ir -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml validate_intent_ir_treats_clock_and_reset_as_infrastructure_connectivity -- --nocapture` -> passed
+- `bash scripts/run_ci.sh` -> passed
+
 ## 2026-04-10 (Negative-knowledge cautions now reach carried semantic/intent surfaces)
 
 ### Added: deep-layer validation-only caution matching

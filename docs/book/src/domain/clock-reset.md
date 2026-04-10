@@ -45,6 +45,27 @@ The connectivity surface also distinguishes:
 
 That distinction lets validation treat `ACLK` and `ARESETN`-style signals as infrastructure connectivity instead of ordinary protocol missing-producer cases.
 
+`SemanticIR` and `IntentIR` also carry `infrastructure_signals`.
+
+Each infrastructure signal record captures:
+
+- signal name
+- infrastructure kind
+- source status
+- recovered source actor IDs and names, if grounded
+- distribution status
+- recovered destination actor IDs and names, if grounded
+- supporting statements
+- automation confidence
+
+The source status is intentionally conservative.
+If the current document grounds `ACLK` as a clock but does not ground a clock generator, PLL, or other source actor, the record says `unresolved_source`.
+It does not invent a producer named `Clock`, `External`, or `input`.
+
+The distribution status is similarly bounded.
+It can say whether the clock or reset is distributed to zero, one, or multiple recovered actors.
+That is useful for semantic inspection, but it is still not a physical clock-tree or reset-tree proof.
+
 ## Reset polarity
 
 Single-bit control signals have polarity.
@@ -106,6 +127,9 @@ Validation can expose clock/reset handling through:
 - `has_system_contract`
 - `with_resolved_polarity`
 - infrastructure connectivity metrics and notes
+- `infrastructure_signals`
+- `infrastructure_signals_unresolved_source`
+- `infrastructure_signals_shared_recovered_distribution`
 - signal polarity conflicts
 - temporal conflicts that account for resolved polarity
 
@@ -125,4 +149,3 @@ It does not yet fully model:
 
 Those are future directions.
 The important current boundary is that clock and reset semantics are first-class infrastructure intent, not ordinary protocol edges.
-
