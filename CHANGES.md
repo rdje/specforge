@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-04-10 (Rescan execution summaries now gate promotion explicitly)
+
+### Added: machine-readable not-promoted gate
+- Updated [project_validation.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/project_validation.rs) so `ProjectRescanExecutionSummary` carries `promotion_status` and `promotion_blockers` in addition to automation status, arbitration verdict, and validation deltas.
+- Updated [rescan_plan.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/rescan_plan.rs) so executed recommendations now write `not_promoted_no_change` for unchanged validation snapshots and `not_promoted_review_required` for possible-improvement, regression, or neutral artifact-drift verdicts.
+- The blockers make the policy explicit in generated schema-v2 plans: rescans do not mutate canonical IR, validation deltas are not truth promotion, and changed outcomes still require current-document evidence review.
+
+### Preserved: backward-compatible local plans
+- Older local execution summaries that do not yet contain promotion fields, or that contain stale nonmatching promotion text, deserialize safely and are normalized when `project-validation` preserves matching execution state.
+- `VALIDATION_SNAPSHOT.md` and the managed live-status validation block now project the promotion gate beside verdict and delta details, so future review does not need to inspect raw JSON to see that a favorable delta remains unpromoted.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml rescan_plan -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml project_validation -- --nocapture` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-10 (Project validation projects rescan execution summaries)
 
 ### Added: review-facing rescan execution projection

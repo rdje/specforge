@@ -76,7 +76,8 @@
   - it refuses untrusted executables, non-repository working directories, and unsupported command shapes instead of shelling out through display strings
   - successful execution validates the target artifact before and after the whitelisted commands, then marks the local plan recommendation as `executed_validated_no_change` or `executed_validated_changed`
   - executed recommendations now persist an optional `execution_summary` with before/after validation snapshots, score and finding-count deltas, added/removed finding ids, and a conservative verdict (`validated_no_change`, `possible_improvement_review_required`, `regression_review_required`, or `neutral_change_review_required`)
-  - `project-validation` now preserves matching execution summaries when refreshing the local plan and projects their counts/deltas into `VALIDATION_SNAPSHOT.md` plus the managed live-status validation block
+  - executed summaries now also carry a machine-readable promotion gate: unchanged runs are `not_promoted_no_change`, changed runs are `not_promoted_review_required`, and blockers such as `canonical_ir_not_mutated_by_rescan_plan`, `validation_delta_is_not_truth_promotion`, and `current_document_evidence_review_required` keep favorable deltas from being treated as canonical truth
+  - `project-validation` now preserves matching execution summaries when refreshing the local plan and projects their counts, promotion gates, and deltas into `VALIDATION_SNAPSHOT.md` plus the managed live-status validation block
   - the changed/no-change status is still not a canonical truth promotion or improvement claim
 - `specforge converge --rescan-plan <plan>` now consumes the same schema-v2 rescan plan only after the fixed-point pipeline snapshot stabilizes:
   - the hook is opt-in and dry-run by default
@@ -211,8 +212,8 @@
 - `.venv-docling/` is also local-only runtime state and should stay untracked
 
 ## Exact next steps
-1. harden promotion policy around rescan `execution_summary` verdicts so possible-improvement outcomes cannot be treated as canonical until current-document evidence gates approve them
-2. broaden visual-motif prior benchmarking beyond the first diagram-classification consumer, especially around rescan selection and multimodal corroboration
+1. broaden visual-motif prior benchmarking beyond the first diagram-classification consumer, especially around rescan selection and multimodal corroboration
+2. connect the explicit rescan promotion gate to a future human/policy approval path if the project starts mutating canonical artifacts from rescan outcomes
 3. deepen clock/reset topology only when the current document explicitly names gated branches, synchronizer stages, or reset-tree target structure
 
 ## Remaining engineering gaps after this commit
@@ -221,7 +222,7 @@
 - KG-guided multimodal rescans (`R15c`)
 - broader evidence arbitration / conflict handling beyond polarity, interface-shape, multi-producer ambiguity, modality-aware semantic-role grounding, consensus summaries, semantic candidates, and semantic arbitration summaries (`R15d`)
 - broader KG-quality evaluation and benchmark hardening beyond the new seed fixture pack (`R15e`)
-- cross-document extractor learning is now started, and the first seven bounded prior-consumer paths are now live; negative-knowledge priors now have validation-only caution coverage, machine-readable rescan/corroboration guidance, a `project-validation` consumer that writes a schema-v2 replay-oriented rescan/extractor-selection target list, a first explicit `rescan-plan` consumer, an opt-in `converge --rescan-plan <plan>` hook, persisted execution summaries for changed-outcome review, and review-facing projection of those summaries into validation docs; the remaining gap is promotion policy gates
+- cross-document extractor learning is now started, and the first seven bounded prior-consumer paths are now live; negative-knowledge priors now have validation-only caution coverage, machine-readable rescan/corroboration guidance, a `project-validation` consumer that writes a schema-v2 replay-oriented rescan/extractor-selection target list, a first explicit `rescan-plan` consumer, an opt-in `converge --rescan-plan <plan>` hook, persisted execution summaries for changed-outcome review, explicit not-promoted gates on those summaries, and review-facing projection of those summaries into validation docs; the remaining gap is promotion policy wiring if future work decides to mutate canonical artifacts from approved rescan outcomes
 - Tier 3 relation extraction after the graph/temporal/eval surfaces are ready (`R14`)
 - some downstream compatibility and consumer paths still rely on flat `direction_hint` instead of the graph-native surface
 - meaning-based role inference now covers tables, prose, alias-grounded prose, visual captions, and VLM timing annotations, and canonical layers now preserve that provenance, but broader downstream use of preserved arbitration state is still early

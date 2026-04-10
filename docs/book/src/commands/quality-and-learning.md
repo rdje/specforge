@@ -89,12 +89,16 @@ That is still not a canonical truth decision.
 It means the relevant stage was rebuilt and validated, and that the validation fingerprint/score/finding-count surface either changed or did not.
 Any fact promotion still has to survive current-document evidence, validation, and arbitration.
 Executed recommendations also carry an optional `execution_summary`.
-That summary preserves before/after validation snapshots, score and finding-count deltas, added/removed finding ids, and a conservative arbitration verdict:
+That summary preserves before/after validation snapshots, score and finding-count deltas, added/removed finding ids, a conservative arbitration verdict, and an explicit promotion gate:
 
 - `validated_no_change`
 - `possible_improvement_review_required`
 - `regression_review_required`
 - `neutral_change_review_required`
+
+Promotion is recorded separately from validation movement.
+A no-change run stays `not_promoted_no_change`, and any changed run stays `not_promoted_review_required` with blockers such as `validation_delta_is_not_truth_promotion` and `current_document_evidence_review_required`.
+That makes the machine-readable plan say the same thing as the product policy: a favorable validation delta is a review signal, not canonical truth.
 
 The convergent loop can consume the same plan after stability:
 

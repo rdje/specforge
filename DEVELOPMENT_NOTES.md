@@ -809,12 +809,17 @@
   - a conservative verdict: `validated_no_change`, `possible_improvement_review_required`, `regression_review_required`, or `neutral_change_review_required`
 - `converge --rescan-plan <plan>` now rolls those verdicts into review-required counters so the summary distinguishes possible improvement from regression or neutral artifact drift
 - this is still not promotion: even favorable validation deltas need current-document evidence review before they can become canonical truth
+- the summary now makes that policy machine-readable too:
+  - `promotion_status: not_promoted_no_change` for unchanged validation snapshots
+  - `promotion_status: not_promoted_review_required` for possible-improvement, regression, and neutral artifact-drift verdicts
+  - `promotion_blockers` such as `canonical_ir_not_mutated_by_rescan_plan`, `validation_delta_is_not_truth_promotion`, and `current_document_evidence_review_required`
+- this keeps old and new rescan consumers from quietly interpreting a better score or fewer findings as a canonical truth mutation
 
 ### Project validation now projects rescan execution summaries
 - `project-validation` now reads the existing local schema-v2 rescan plan before refreshing it and preserves matching `automation_status` / `execution_summary` entries
 - matching uses document key, stage, artifact path, finding id, extractor lane, and related ids so stale execution state does not attach to unrelated fresh recommendations
-- `VALIDATION_SNAPSHOT.md` now shows rescan execution-summary counts plus per-recommendation verdict, automation status, validation delta, and added/removed finding ids when execution summaries exist
-- the managed live-status validation block now carries the same review-required count summary and inline verdict/delta detail for the targeted rescan queue
+- `VALIDATION_SNAPSHOT.md` now shows rescan execution-summary counts plus per-recommendation verdict, promotion gate, automation status, validation delta, and added/removed finding ids when execution summaries exist
+- the managed live-status validation block now carries the same review-required count summary and inline verdict/promotion/delta detail for the targeted rescan queue
 - this makes changed-outcome review possible from tracked docs without requiring a human or future agent to open raw generated JSON first
 
 ### Fifth landed bounded prior family and semantic-stage arbitration slice

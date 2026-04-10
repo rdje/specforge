@@ -181,9 +181,10 @@
   - `specforge project-validation <artifact>...` now validates the passed artifacts and projects their persisted reports into tracked live docs via `VALIDATION_SNAPSHOT.md` plus a managed validation block in `LIVE_ACHIEVEMENT_STATUS.md`
   - `project-validation` now writes schema-v2 replay-oriented rescan recommendations with typed replay inputs, structured command hints, and `planned_not_executed` automation status for explicit rescan consumers
   - `specforge rescan-plan [--execute]` now consumes that schema-v2 plan through a dry-run-by-default, whitelisted in-process executor surface with before/after validation changed/no-change status and persisted execution summaries
+  - those execution summaries now include explicit not-promoted gates and blockers, so possible-improvement validation deltas stay review signals instead of canonical truth mutations
 - remaining:
   - extend validation into the upcoming semantic-truthfulness surfaces (temporal rules, arbitration/conflict records, and KG-quality benchmarks)
-  - harden promotion policy around rescan execution-summary verdicts and current-document evidence gates
+  - wire a deliberate approval/promotion path only if future rescan loops are allowed to mutate canonical artifacts after current-document evidence review
   - keep adapter validation (SystemVerilog/Verilog/VHDL targets) as horizon work until the semantic pipeline is materially harder to fool
 
 ### R8 SourceIR SOTA capture (Tier 1 of EXTRACTION_ARCHITECTURE.md)
@@ -568,9 +569,9 @@
     - a locally `unknown` `Parameter | Min | Max | Unit` table stays inert without prior memory and gains timing-parameter recovery only when a matching learned table-shape prior is staged into the fixture
   - `specforge kg-bench` now also has the first semantic modality-reliability gold/negative pair proving a locally conflicted role like `XCTRL` stays honestly contested without prior memory and becomes decisively resolved only when a matching modality-reliability prior is staged, while preserving the original conflict record
 - remaining:
-  - broaden the prior store beyond the first actor-taxonomy / semantic / semantic-modality-reliability / temporal / table-shape families into visual-motif and negative-knowledge priors
+  - broaden benchmarking and downstream use for the newer visual-motif and negative-knowledge prior families, especially around rescan selection and multimodal corroboration
   - decide how protocol-family scoping should grow beyond the current AMBA family inference without hardcoding brittle protocol logic
-  - broaden prior consumption beyond the first actor-taxonomy / semantic-role / table-shape `EvidenceIR` slices plus the first temporal-language and semantic-modality-reliability `SemanticIR` slices into visual-motif and negative-knowledge suggestions without bypassing local grounding
+  - broaden prior consumption beyond the current actor-taxonomy / semantic-role / table-shape / visual-motif `EvidenceIR` slices plus temporal-language and semantic-modality-reliability `SemanticIR` slices into richer negative-knowledge rescan selection without bypassing local grounding
   - broaden the first benchmark coverage for prior-guided unseen-document improvement beyond the new actor-taxonomy, temporal, semantic, visual, table-shape, and semantic-modality-reliability gold/negative pairs into negative-knowledge prior families
 
 ### R15g Corpus knowledge base plane

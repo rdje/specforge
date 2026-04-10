@@ -10,6 +10,7 @@ use crate::error::{AppError, Result};
 use super::project_validation::{
     ProjectRescanCommandHint, ProjectRescanExecutionSummary, ProjectRescanPlanRecord,
     ProjectRescanRecommendation, ProjectRescanValidationDelta, ProjectRescanValidationSnapshot,
+    rescan_promotion_blockers_for, rescan_promotion_status_for,
 };
 
 const SUPPORTED_RESCAN_PLAN_SCHEMA_VERSION: u32 = 2;
@@ -226,6 +227,8 @@ fn execute_recommendation(
         execution_summary: ProjectRescanExecutionSummary {
             automation_status: automation_status.to_string(),
             arbitration_verdict: arbitration_verdict.to_string(),
+            promotion_status: rescan_promotion_status_for(arbitration_verdict).to_string(),
+            promotion_blockers: rescan_promotion_blockers_for(arbitration_verdict),
             before_validation: before,
             after_validation: after,
             validation_delta,
@@ -466,6 +469,7 @@ mod tests {
     use super::*;
     use crate::commands::project_validation::{
         ProjectRescanCommandHint, ProjectRescanPlanRecord, ProjectRescanRecommendation,
+        RESCAN_PROMOTION_NOT_PROMOTED_NO_CHANGE, RESCAN_PROMOTION_NOT_PROMOTED_REVIEW_REQUIRED,
     };
     use crate::ir::source::SourceIr;
 
@@ -566,6 +570,15 @@ mod tests {
         assert_eq!(
             execution_summary.arbitration_verdict,
             ARBITRATION_VALIDATED_NO_CHANGE
+        );
+        assert_eq!(
+            execution_summary.promotion_status,
+            RESCAN_PROMOTION_NOT_PROMOTED_NO_CHANGE
+        );
+        assert!(
+            execution_summary
+                .promotion_blockers
+                .contains(&"canonical_ir_not_mutated_by_rescan_plan".to_string())
         );
         assert_eq!(execution_summary.before_validation.finding_count, 0);
         assert_eq!(execution_summary.after_validation.finding_count, 0);
@@ -673,6 +686,14 @@ mod tests {
             arbitration_verdict(&possible_improvement_delta),
             ARBITRATION_POSSIBLE_IMPROVEMENT_REVIEW_REQUIRED
         );
+        assert_eq!(
+            rescan_promotion_status_for(arbitration_verdict(&possible_improvement_delta)),
+            RESCAN_PROMOTION_NOT_PROMOTED_REVIEW_REQUIRED
+        );
+        assert!(
+            rescan_promotion_blockers_for(arbitration_verdict(&possible_improvement_delta))
+                .contains(&"validation_delta_is_not_truth_promotion".to_string())
+        );
 
         let regression_delta = validation_delta(&before, &regression);
         assert_eq!(regression_delta.score_delta, Some(-10));
@@ -681,11 +702,19 @@ mod tests {
             arbitration_verdict(&regression_delta),
             ARBITRATION_REGRESSION_REVIEW_REQUIRED
         );
+        assert_eq!(
+            rescan_promotion_status_for(arbitration_verdict(&regression_delta)),
+            RESCAN_PROMOTION_NOT_PROMOTED_REVIEW_REQUIRED
+        );
 
         let neutral_change_delta = validation_delta(&before, &neutral_change);
         assert_eq!(
             arbitration_verdict(&neutral_change_delta),
             ARBITRATION_NEUTRAL_CHANGE_REVIEW_REQUIRED
+        );
+        assert_eq!(
+            rescan_promotion_status_for(arbitration_verdict(&neutral_change_delta)),
+            RESCAN_PROMOTION_NOT_PROMOTED_REVIEW_REQUIRED
         );
     }
 

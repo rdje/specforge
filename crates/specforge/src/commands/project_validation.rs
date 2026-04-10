@@ -85,9 +85,56 @@ pub(crate) struct ProjectRescanValidationDelta {
 pub(crate) struct ProjectRescanExecutionSummary {
     pub(crate) automation_status: String,
     pub(crate) arbitration_verdict: String,
+    #[serde(default, skip_serializing_if = "String::is_empty")]
+    pub(crate) promotion_status: String,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub(crate) promotion_blockers: Vec<String>,
     pub(crate) before_validation: ProjectRescanValidationSnapshot,
     pub(crate) after_validation: ProjectRescanValidationSnapshot,
     pub(crate) validation_delta: ProjectRescanValidationDelta,
+}
+
+pub(crate) const RESCAN_PROMOTION_NOT_PROMOTED_NO_CHANGE: &str = "not_promoted_no_change";
+pub(crate) const RESCAN_PROMOTION_NOT_PROMOTED_REVIEW_REQUIRED: &str =
+    "not_promoted_review_required";
+const RESCAN_PROMOTION_BLOCKER_CANONICAL_IR_NOT_MUTATED: &str =
+    "canonical_ir_not_mutated_by_rescan_plan";
+const RESCAN_PROMOTION_BLOCKER_VALIDATION_DELTA_NOT_TRUTH: &str =
+    "validation_delta_is_not_truth_promotion";
+const RESCAN_PROMOTION_BLOCKER_CURRENT_EVIDENCE_REVIEW: &str =
+    "current_document_evidence_review_required";
+const RESCAN_PROMOTION_BLOCKER_NO_DELTA: &str = "no_validation_delta_to_promote";
+
+pub(crate) fn rescan_promotion_status_for(arbitration_verdict: &str) -> &'static str {
+    if arbitration_verdict == "validated_no_change" {
+        RESCAN_PROMOTION_NOT_PROMOTED_NO_CHANGE
+    } else {
+        RESCAN_PROMOTION_NOT_PROMOTED_REVIEW_REQUIRED
+    }
+}
+
+pub(crate) fn rescan_promotion_blockers_for(arbitration_verdict: &str) -> Vec<String> {
+    let mut blockers = vec![RESCAN_PROMOTION_BLOCKER_CANONICAL_IR_NOT_MUTATED.to_string()];
+    if arbitration_verdict == "validated_no_change" {
+        blockers.push(RESCAN_PROMOTION_BLOCKER_NO_DELTA.to_string());
+    } else {
+        blockers.push(RESCAN_PROMOTION_BLOCKER_VALIDATION_DELTA_NOT_TRUTH.to_string());
+        blockers.push(RESCAN_PROMOTION_BLOCKER_CURRENT_EVIDENCE_REVIEW.to_string());
+    }
+    blockers
+}
+
+pub(crate) fn normalize_rescan_execution_summary(summary: &mut ProjectRescanExecutionSummary) {
+    let expected_status = rescan_promotion_status_for(&summary.arbitration_verdict);
+    if summary.promotion_status != expected_status {
+        summary.promotion_status = expected_status.to_string();
+    }
+
+    for blocker in rescan_promotion_blockers_for(&summary.arbitration_verdict) {
+        if !summary.promotion_blockers.contains(&blocker) {
+            summary.promotion_blockers.push(blocker);
+        }
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -354,6 +401,11 @@ fn render_validation_snapshot_doc(
                     summary.arbitration_verdict, summary.automation_status
                 ));
                 lines.push(format!(
+                    "- promotion_gate: `{}` (blockers: {})",
+                    summary_promotion_status(summary),
+                    render_inline_code_list(&summary_promotion_blockers(summary))
+                ));
+                lines.push(format!(
                     "- validation_delta: fingerprint_changed `{}`, score_delta `{}`, grade_changed `{}`, finding_count_delta `{}`",
                     summary.validation_delta.fingerprint_changed,
                     render_signed_option_i32(summary.validation_delta.score_delta),
@@ -529,6 +581,9 @@ fn merge_previous_rescan_execution_state(
         if let Some(previous) = previous_by_key.get(&rescan_recommendation_key(recommendation)) {
             recommendation.automation_status = previous.automation_status.clone();
             recommendation.execution_summary = previous.execution_summary.clone();
+            if let Some(summary) = recommendation.execution_summary.as_mut() {
+                normalize_rescan_execution_summary(summary);
+            }
         }
     }
 }
@@ -809,11 +864,31 @@ fn render_execution_summary_inline(summary: Option<&ProjectRescanExecutionSummar
         return String::new();
     };
     format!(
-        ", verdict `{}`, score_delta `{}`, finding_count_delta `{}`",
+        ", verdict `{}`, promotion `{}`, score_delta `{}`, finding_count_delta `{}`",
         summary.arbitration_verdict,
+        summary_promotion_status(summary),
         render_signed_option_i32(summary.validation_delta.score_delta),
         render_signed_i64(summary.validation_delta.finding_count_delta)
     )
+}
+
+fn summary_promotion_status(summary: &ProjectRescanExecutionSummary) -> &str {
+    let expected_status = rescan_promotion_status_for(&summary.arbitration_verdict);
+    if summary.promotion_status == expected_status {
+        summary.promotion_status.as_str()
+    } else {
+        expected_status
+    }
+}
+
+fn summary_promotion_blockers(summary: &ProjectRescanExecutionSummary) -> Vec<String> {
+    let mut blockers = summary.promotion_blockers.clone();
+    for blocker in rescan_promotion_blockers_for(&summary.arbitration_verdict) {
+        if !blockers.contains(&blocker) {
+            blockers.push(blocker);
+        }
+    }
+    blockers
 }
 
 fn render_signed_option_i32(value: Option<i32>) -> String {
@@ -1134,6 +1209,9 @@ mod tests {
             "- execution_summary: `possible_improvement_review_required` (`executed_validated_changed`)"
         ));
         assert!(snapshot_doc.contains(
+            "- promotion_gate: `not_promoted_review_required` (blockers: `canonical_ir_not_mutated_by_rescan_plan`, `validation_delta_is_not_truth_promotion`, `current_document_evidence_review_required`)"
+        ));
+        assert!(snapshot_doc.contains(
             "- validation_delta: fingerprint_changed `true`, score_delta `+5`, grade_changed `true`, finding_count_delta `-1`"
         ));
         assert!(snapshot_doc.contains("- finding_delta: added none; removed `finding_b`"));
@@ -1147,7 +1225,7 @@ mod tests {
             "- Rescan execution summaries: 1 total; 1 review required (possible improvement: 1, regression: 0, neutral change: 0); 0 no-change"
         ));
         assert!(live_projection.contains(
-            "verdict `possible_improvement_review_required`, score_delta `+5`, finding_count_delta `-1`"
+            "verdict `possible_improvement_review_required`, promotion `not_promoted_review_required`, score_delta `+5`, finding_count_delta `-1`"
         ));
 
         let plan_path = write_validation_rescan_plan(repo_root, recommendations)?;
@@ -1223,6 +1301,78 @@ mod tests {
                 .arbitration_verdict,
             "regression_review_required"
         );
+        assert_eq!(
+            refreshed_recommendations[0]
+                .execution_summary
+                .as_ref()
+                .expect("execution summary")
+                .promotion_status,
+            RESCAN_PROMOTION_NOT_PROMOTED_REVIEW_REQUIRED
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn project_validation_normalizes_legacy_rescan_execution_summary_gate() -> Result<()> {
+        let mut summary: ProjectRescanExecutionSummary = serde_json::from_str(
+            r#"{
+                "automation_status": "executed_validated_changed",
+                "arbitration_verdict": "possible_improvement_review_required",
+                "before_validation": {
+                    "artifact_fingerprint": "before",
+                    "overall_score": 80,
+                    "grade": "GOOD",
+                    "finding_count": 2,
+                    "finding_ids": ["finding_a", "finding_b"]
+                },
+                "after_validation": {
+                    "artifact_fingerprint": "after",
+                    "overall_score": 85,
+                    "grade": "EXCELLENT",
+                    "finding_count": 1,
+                    "finding_ids": ["finding_a"]
+                },
+                "validation_delta": {
+                    "fingerprint_changed": true,
+                    "score_changed": true,
+                    "score_delta": 5,
+                    "grade_changed": true,
+                    "finding_count_delta": -1,
+                    "added_findings": [],
+                    "removed_findings": ["finding_b"]
+                }
+            }"#,
+        )?;
+
+        assert!(summary.promotion_status.is_empty());
+        assert!(summary.promotion_blockers.is_empty());
+
+        normalize_rescan_execution_summary(&mut summary);
+
+        assert_eq!(
+            summary.promotion_status,
+            RESCAN_PROMOTION_NOT_PROMOTED_REVIEW_REQUIRED
+        );
+        assert!(
+            summary
+                .promotion_blockers
+                .contains(&"validation_delta_is_not_truth_promotion".to_string())
+        );
+
+        summary.promotion_status = "promoted_without_review".to_string();
+        summary.promotion_blockers.clear();
+        normalize_rescan_execution_summary(&mut summary);
+
+        assert_eq!(
+            summary.promotion_status,
+            RESCAN_PROMOTION_NOT_PROMOTED_REVIEW_REQUIRED
+        );
+        assert!(
+            summary
+                .promotion_blockers
+                .contains(&"current_document_evidence_review_required".to_string())
+        );
 
         Ok(())
     }
@@ -1235,6 +1385,8 @@ mod tests {
         ProjectRescanExecutionSummary {
             automation_status: "executed_validated_changed".to_string(),
             arbitration_verdict: arbitration_verdict.to_string(),
+            promotion_status: rescan_promotion_status_for(arbitration_verdict).to_string(),
+            promotion_blockers: rescan_promotion_blockers_for(arbitration_verdict),
             before_validation: ProjectRescanValidationSnapshot {
                 artifact_fingerprint: "before".to_string(),
                 overall_score: Some(80),

@@ -91,6 +91,7 @@ That target list is versioned and replay-oriented: each recommendation carries t
 It can also scope a multi-document queue with `--document-key <key>`.
 Execution validates before and after the rebuild and records only neutral changed/no-change status, not an improvement claim.
 Executed recommendations also persist an `execution_summary` containing before/after validation snapshots, score/finding deltas, added/removed finding ids, and a conservative verdict that distinguishes possible improvement from regression or neutral artifact drift while still requiring review.
+That summary also carries an explicit promotion gate: no-change executions remain `not_promoted_no_change`, and changed executions remain `not_promoted_review_required` until current-document evidence and arbitration policy approve any canonical change.
 `converge --rescan-plan <plan>` now reuses that same consumer after the fixed-point loop stabilizes.
 It filters the queue to the current source document key, can dry-run the queue, or execute it only when `--execute-rescan-plan` is present, and reports changed outcomes as review-required arbitration state rather than promoting facts.
 
