@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-04-11 (Active-low VLM timing polarity is fixture-locked)
+
+### Added: timing-annotation KG fixture
+- Added tracked KG-quality fixture `vlm_timing_active_low_assertion_equivalence_gold`.
+- The fixture proves that a VLM timing diagram that reports the same active-low reset as `asserted` and `LOW` produces typed timing-derived signal constraints and temporal rules without creating a false temporal conflict.
+- The fixture also asserts that resolved reset polarity remains visible and no signal-polarity conflict is reported.
+
+### Validation
+- `cargo run -p specforge -- kg-bench vlm_timing_active_low_assertion_equivalence_gold` -> passed
+- `cargo test --manifest-path Cargo.toml kg_bench_runs_tracked_fixtures -- --nocapture` -> passed
+- `bash scripts/run_ci.sh` -> passed
+
 ## 2026-04-11 (Rescan approval artifact boundary is explicit)
 
 ### Documented: review metadata is not approval evidence

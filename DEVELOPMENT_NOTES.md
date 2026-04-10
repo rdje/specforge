@@ -57,8 +57,10 @@
 - VLM timing-diagram signal/value tuples are allowed to become typed temporal evidence only through the same bounded path:
   - document-grounded signal names can become `SignalConstraintRecord` entries
   - values like `HIGH`, `LOW`, `ASSERTED`, `DEASSERTED`, `0`, and `1` should normalize into typed signal-constraint kinds
+  - `ASSERTED` / `DEASSERTED` stay polarity-relative when temporal conflicts are evaluated, so an active-low reset observed as both `asserted` and `LOW` is equivalent rather than contradictory
   - generic visual words like `transfer` must remain rejected as fake signal names
   - unknown/don't-care values should stay unpromoted instead of creating false temporal facts
+  - the tracked `vlm_timing_active_low_assertion_equivalence_gold` KG fixture now locks this active-low VLM timing edge case end-to-end
 - VLM state-machine guard text is still a bounded hypothesis, not an authority:
   - simple comparisons like `PREADY = 1` should be converted into typed guards
   - generic visual prose like `transfer` must not become a fake signal unless it is document-grounded as a signal

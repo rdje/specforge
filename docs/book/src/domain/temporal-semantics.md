@@ -67,6 +67,17 @@ Cycle windows are useful because an unbounded temporal statement is weaker than 
 Validation can report temporal rules that still lack cycle-window grounding.
 That is not always fatal, but it is an honest quality signal.
 
+## Polarity-relative values
+
+Temporal values such as `ASSERTED` and `DEASSERTED` are not always logic levels.
+They are polarity-relative.
+
+For an active-low reset such as `ARESETN`, `ASSERTED` means `LOW`.
+For an active-high control signal, `ASSERTED` means `HIGH`.
+
+The temporal-conflict surface therefore normalizes assertion values through resolved signal polarity when that polarity is known.
+This prevents a VLM timing diagram that observes an active-low reset as both `asserted` and `LOW` from becoming a false conflict.
+
 ## Handshake completion as timing
 
 Handshake recovery is not only a semantic-role problem.
@@ -152,4 +163,3 @@ When debugging timing, inspect:
 - validation metrics such as `temporal_rules_with_cycle_window`, `temporal_rules_with_actor_grounding`, and `temporal_rules_with_handshake_completion`
 
 The aim is to turn timing prose into typed, inspectable obligations without fabricating precision the source document does not justify.
-

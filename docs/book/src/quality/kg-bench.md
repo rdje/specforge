@@ -52,6 +52,10 @@ Negative-knowledge fixtures make that last rule executable.
 The suite now has prior-guided caution fixtures for signal-semantic conflicts, temporal conflicts, residual packets, signal-connectivity conflicts, and interface-signal conflicts.
 Those fixtures require the matched local conflict or residual to remain present while validation only adds `negative_knowledge_prior_matches`, rescan recommendations, corroboration requirements, and stage-specific rescan-guidance findings.
 
+Timing-annotation fixtures also cover polarity-sensitive multimodal evidence.
+For example, `vlm_timing_active_low_assertion_equivalence_gold` proves that an active-low reset observed by a VLM timing diagram as both `asserted` and `LOW` becomes typed temporal evidence without creating a false temporal conflict.
+That matters because `ASSERTED` is polarity-relative, not a synonym for `HIGH`.
+
 ## Practical role in the project
 
 If `validate` tells us how strong one artifact is, `kg-bench` tells us whether the extraction logic is still behaving correctly across targeted truthfulness cases.

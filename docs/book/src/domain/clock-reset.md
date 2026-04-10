@@ -18,6 +18,7 @@ Clock and reset signals usually have system-level responsibilities:
 For example, an active-low reset such as `ARESETN` or `rst_n` is asserted when the signal is low, not high.
 That is why `ASSERTED` must not be blindly treated as `HIGH`.
 It is polarity-relative.
+The same rule applies when a VLM timing diagram reports reset waveform values: an active-low reset observed as `asserted` and `LOW` should stay equivalent temporal evidence, not become a contradiction.
 
 ## What `specforge` models today
 
