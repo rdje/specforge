@@ -32,7 +32,7 @@
 - the enrichment, convergence, validation, benchmark, targeted-rescan, and first prior-learning toolchain is also real: `specforge enrich`, `specforge nlp-enrich`, `specforge converge`, `specforge validate`, `specforge project-validation`, `specforge rescan-plan`, `specforge kg-bench`, and `specforge learn-priors` are wired into the CLI and exercised by the workspace tests
 - `project-validation` and `rescan-plan` now form a schema-v2 targeted-rescan loop: recommendations carry typed replay inputs, structured local command hints, dry-run-by-default execution, before/after validation snapshots, execution summaries, promotion-gate descriptors, and an explicit no-canonical-mutation boundary
 - `CorpusMemory` schema v5 now carries actor-taxonomy, semantic-phrase, semantic-modality-reliability, temporal-phrase, table-shape, visual-motif, and negative-knowledge prior families; current consumers remain advisory and locally grounded rather than fact-authoring
-- the tracked KG-quality benchmark surface currently contains 44 fixtures, including active-low VLM timing polarity-equivalence coverage that proves `ASSERTED` and `LOW` agree for active-low reset timing evidence
+- the tracked KG-quality benchmark surface currently contains 45 fixtures, including active-low VLM timing polarity-equivalence coverage that proves `ASSERTED` / `LOW` and `DEASSERTED` / `HIGH` agree for active-low reset timing evidence
 - the local runtime boundary is now operationally stronger too: `specforge doctor` reports Docling readiness, the default Ollama loopback readiness, and LM Studio fallback readiness directly, repo-local `.venv-docling` auto-discovery is supported, and the backend now probes versioned Python candidates like `python3.11` before giving up on fresh ingest
 - GitHub Actions CI is now part of the repo baseline and runs `cargo fmt --all --check`, warning-deny Clippy, warning-deny Rust tests, warning-deny rustdoc, and the mdBook build on every `push` and `pull_request`, which keeps the hosted validation path aligned with the local Rust/docs quality gate
 - that CI path now has a single checked-in entrypoint at `scripts/run_ci.sh`, and the GitHub workflow calls that script directly so local and hosted Rust validation do not drift apart
@@ -66,6 +66,11 @@
 - `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` is now clean
 - fixed a broken intra-doc link interpretation in the `ActorSignalRelation` docs by changing bracket-shaped `output_of[...]` / `input_of[...]` wording into code-formatted prose
 - `scripts/run_ci.sh` now runs rustdoc before the mdBook build and composes caller-provided `RUSTDOCFLAGS` with `-D warnings`
+
+## Session update (2026-04-11 active-low VLM deassertion fixture)
+- added `vlm_timing_active_low_deassertion_equivalence_gold` to lock the reset-release mirror of the existing active-low VLM timing polarity fixture
+- the fixture proves active-low `ARESETN` observed as both `deasserted` and `HIGH` creates two typed temporal rules and zero temporal/polarity conflicts
+- targeted `kg-bench` validation for the new fixture passed
 
 ## Session update (2026-04-04)
 - `specforge converge` now drives the persisted `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters` path as a fixed-point loop and stops when the materialized knowledge snapshot is stable
@@ -467,7 +472,7 @@
 ## Testing implications
 - current full local CI path: `bash scripts/run_ci.sh`
 - current Rust test count observed through that path: 282 library tests, 0 binary tests, and 0 doc tests, all passing under `RUSTFLAGS="-D warnings"` after clean `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings` and `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` passes
-- current tracked KG-quality fixture count: 44
+- current tracked KG-quality fixture count: 45
 - current tests cover:
   - source-kind detection
   - deterministic source key naming

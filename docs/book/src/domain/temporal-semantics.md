@@ -73,10 +73,11 @@ Temporal values such as `ASSERTED` and `DEASSERTED` are not always logic levels.
 They are polarity-relative.
 
 For an active-low reset such as `ARESETN`, `ASSERTED` means `LOW`.
+For the same reset, `DEASSERTED` means `HIGH`.
 For an active-high control signal, `ASSERTED` means `HIGH`.
 
 The temporal-conflict surface therefore normalizes assertion values through resolved signal polarity when that polarity is known.
-This prevents a VLM timing diagram that observes an active-low reset as both `asserted` and `LOW` from becoming a false conflict.
+This prevents a VLM timing diagram that observes an active-low reset as both `asserted` and `LOW`, or as both `deasserted` and `HIGH`, from becoming a false conflict.
 
 ## Handshake completion as timing
 
@@ -134,6 +135,7 @@ For example:
 - if polarity is unknown, `ASSERTED` remains assertion-level meaning
 - if a signal is active-high, `ASSERTED` can compare as `HIGH`
 - if a signal is active-low, `ASSERTED` can compare as `LOW`
+- if a signal is active-low, `DEASSERTED` can compare as `HIGH`
 
 This is especially important for resets such as `ARESETN` or `rst_n`.
 

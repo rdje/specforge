@@ -54,7 +54,8 @@ Those fixtures require the matched local conflict or residual to remain present 
 
 Timing-annotation fixtures also cover polarity-sensitive multimodal evidence.
 For example, `vlm_timing_active_low_assertion_equivalence_gold` proves that an active-low reset observed by a VLM timing diagram as both `asserted` and `LOW` becomes typed temporal evidence without creating a false temporal conflict.
-That matters because `ASSERTED` is polarity-relative, not a synonym for `HIGH`.
+The companion `vlm_timing_active_low_deassertion_equivalence_gold` fixture proves the reset-release mirror case: `deasserted` and `HIGH` are equivalent for the same active-low reset.
+That matters because `ASSERTED` and `DEASSERTED` are polarity-relative, not synonyms for fixed logic levels.
 
 ## Practical role in the project
 

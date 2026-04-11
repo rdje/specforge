@@ -32,6 +32,11 @@
 - Broken intra-doc links and malformed public Rust documentation are treated as CI failures, not as optional cleanup.
 - The runner composes caller-provided `RUSTDOCFLAGS` with `-D warnings`, matching the existing `RUSTFLAGS` handling for warning-denied Rust tests.
 
+## 2026-04-11 active-low VLM deassertion fixture
+- `vlm_timing_active_low_deassertion_equivalence_gold` now locks the reset-release side of polarity-relative VLM timing evidence.
+- Active-low `ARESETN` reported as both `deasserted` and `HIGH` must produce typed temporal evidence without creating a false temporal conflict or polarity conflict.
+- This complements the existing reset-entry fixture for `asserted` plus `LOW`, so both assertion and deassertion semantics are regression-protected.
+
 ## Foundational engineering choices
 ### IntentIR instead of AST
 - the final canonical output must capture semantics and implementation-relevant intent, not only syntax structure
@@ -82,10 +87,10 @@
 - VLM timing-diagram signal/value tuples are allowed to become typed temporal evidence only through the same bounded path:
   - document-grounded signal names can become `SignalConstraintRecord` entries
   - values like `HIGH`, `LOW`, `ASSERTED`, `DEASSERTED`, `0`, and `1` should normalize into typed signal-constraint kinds
-  - `ASSERTED` / `DEASSERTED` stay polarity-relative when temporal conflicts are evaluated, so an active-low reset observed as both `asserted` and `LOW` is equivalent rather than contradictory
+  - `ASSERTED` / `DEASSERTED` stay polarity-relative when temporal conflicts are evaluated, so an active-low reset observed as both `asserted` and `LOW` or as both `deasserted` and `HIGH` is equivalent rather than contradictory
   - generic visual words like `transfer` must remain rejected as fake signal names
   - unknown/don't-care values should stay unpromoted instead of creating false temporal facts
-  - the tracked `vlm_timing_active_low_assertion_equivalence_gold` KG fixture now locks this active-low VLM timing edge case end-to-end
+  - the tracked `vlm_timing_active_low_assertion_equivalence_gold` and `vlm_timing_active_low_deassertion_equivalence_gold` KG fixtures now lock these active-low VLM timing edge cases end-to-end
 - VLM state-machine guard text is still a bounded hypothesis, not an authority:
   - simple comparisons like `PREADY = 1` should be converted into typed guards
   - generic visual prose like `transfer` must not become a fake signal unless it is document-grounded as a signal

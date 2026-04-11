@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-04-11 (Active-low VLM reset release polarity is fixture-locked)
+
+### Added: reset-release timing-annotation KG fixture
+- Added tracked KG-quality fixture `vlm_timing_active_low_deassertion_equivalence_gold`.
+- The fixture proves that a VLM timing diagram reporting active-low `ARESETN` as both `deasserted` and `HIGH` produces typed temporal evidence without a false temporal or polarity conflict.
+- This complements `vlm_timing_active_low_assertion_equivalence_gold`, so the benchmark surface now locks both active-low reset entry (`ASSERTED` == `LOW`) and reset release (`DEASSERTED` == `HIGH`) behavior.
+
+### Validation
+- `cargo run -p specforge -- kg-bench vlm_timing_active_low_deassertion_equivalence_gold` -> passed
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, 282 Rust tests under `RUSTFLAGS="-D warnings"` including the tracked 45-fixture KG benchmark test, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and mdBook build
+
 ## 2026-04-11 (Rustdoc warning gate joins CI)
 
 ### Changed: Rust API docs are warning-denied

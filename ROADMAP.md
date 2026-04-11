@@ -477,7 +477,7 @@
     - a stage-patched VLM timing-note gold fixture proving a semantic hint can come from `vlm_timing_diagram_extraction` itself rather than only from captions, tables, or prose
     - a stage-patched VLM timing-note negative fixture proving waveform/tick annotations on a handshake-shaped signal name do not create semantic-role hints by spelling alone while timing extraction still succeeds
     - a stage-patched visual-source conflict fixture proving a caption and a VLM timing note can disagree on the same signal role without collapsing into false visual consensus
-    - a stage-patched active-low VLM timing fixture proving `asserted` and `LOW` observations on an active-low reset stay equivalent temporal evidence rather than becoming a false temporal conflict
+    - stage-patched active-low VLM timing fixtures proving `asserted` and `LOW` observations, plus `deasserted` and `HIGH` observations, on an active-low reset stay equivalent temporal evidence rather than becoming false temporal conflicts
     - a first representative AMBA-style gold fixture proving `Source`-column signal tables recover driver-side actor ports, table-grounded semantic request/accept roles, and typed handshake completion from a guarded constraint
     - a representative AMBA-style gold fixture proving `Destination`-column signal tables recover consumer-side `Reads` relations and actor-relative input ports end-to-end through `SemanticIR` and `IntentIR`
     - a representative APB-style gold fixture proving `Requester` / `Completer` source roles survive canonically as driver-side actor relations, actor-relative ports, request/accept semantics, and typed handshake completion

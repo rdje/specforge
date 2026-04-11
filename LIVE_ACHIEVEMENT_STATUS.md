@@ -118,6 +118,7 @@
 - KG benchmark harness now locks field-table misclassification rejection: Done
 - KG benchmark harness now locks spurious VLM timing-annotation rejection: Done
 - KG benchmark harness now locks active-low VLM timing polarity equivalence: Done
+- KG benchmark harness now locks active-low VLM reset-release polarity equivalence: Done
 - KG benchmark harness can now assert canonical actor-signal relations directly: Done
 - KG benchmark harness can now patch `document_sections` and assert per-signal directions directly: Done
 - Cross-document actor-taxonomy priors in typed prior memory: Done

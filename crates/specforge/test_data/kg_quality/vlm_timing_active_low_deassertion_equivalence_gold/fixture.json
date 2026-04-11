@@ -1,0 +1,70 @@
+{
+  "name": "vlm_timing_active_low_deassertion_equivalence_gold",
+  "source": "source.md",
+  "source_ir_patch": {
+    "visual_assets": [
+      {
+        "asset_id": "figure_active_low_reset_release_timing",
+        "asset_kind": "diagram",
+        "page_id": "page_0001",
+        "image_path": null,
+        "caption_text": "Figure 8: Active-low reset release timing.",
+        "caption_source_path": null,
+        "source_ref": null,
+        "placeholder_text": null,
+        "note": "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"ARESETN\",\"values\":[{\"cycle\":\"T1\",\"state\":\"deasserted\"},{\"cycle\":\"T1\",\"state\":\"HIGH\"}]}],\"annotations\":[\"ARESETN is deasserted high during reset release.\"]}",
+        "diagram_kind": "timing_diagram"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["ACLK", "ARESETN"],
+      "signal_polarity_conflicts": 0,
+      "temporal_rule_count": 2,
+      "temporal_conflicts": 0
+    },
+    "intent": {
+      "signal_names_include": ["ACLK", "ARESETN"],
+      "signal_polarity_conflicts": 0,
+      "temporal_rule_count": 2,
+      "temporal_conflicts": 0
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "signal_polarity_conflicts": "0",
+          "timing_diagram_extractions": "1"
+        }
+      },
+      "semantic": {
+        "finding_ids_exclude": [
+          "semantic_signal_polarity_conflicts_present",
+          "semantic_temporal_conflicts_present"
+        ],
+        "metric_values": {
+          "signal_polarity_conflicts": "0",
+          "with_resolved_polarity": "2",
+          "timing_constraints": "1",
+          "signal_constraints": "2",
+          "temporal_rules": "2",
+          "temporal_conflicts": "0"
+        }
+      },
+      "intent": {
+        "finding_ids_exclude": [
+          "intent_signal_polarity_conflicts_present",
+          "intent_temporal_conflicts_present"
+        ],
+        "metric_values": {
+          "signal_polarity_conflicts": "0",
+          "with_resolved_polarity": "2",
+          "timing_constraints": "1",
+          "signal_constraints": "2",
+          "temporal_rules": "2",
+          "temporal_conflicts": "0"
+        }
+      }
+    }
+  }
+}
