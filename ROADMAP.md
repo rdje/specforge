@@ -339,8 +339,9 @@
   - `specforge validate` now reports actor-signal relation, actor-port, and connectivity counts for `SemanticIR` / `IntentIR`
   - `specforge validate` now scores semantic and intent signal-direction coverage from the actor-relative graph first, with flat `direction_hint` lag exposed as compatibility diagnostics rather than truth-model loss
   - the `.fsm` explicit-module/top-composition adapter path now overlays matching `IntentIR.actor_ports` before renderability analysis, so child-module port directions can be recovered from the actor-relative graph when flat module-local `direction_hint` values lag
+  - standalone direct `.fsm` roots can now also recover missing local signal directions from `IntentIR.actor_ports`, but only when all renderable actor-port evidence relevant to the direct local signal inventory points at one unambiguous actor context
 - remaining:
-  - keep moving the remaining direct consumers from flat `direction_hint` onto actor-relative graph semantics
+  - keep moving the remaining direct consumers from flat `direction_hint` onto actor-relative graph semantics beyond the explicit-module and unambiguous-standalone `.fsm` paths
   - compute target-actor-relative port directions from the actor-relative graph for every downstream consumer that still needs them
 - completion criteria:
   - downstream consumers can compute correct actor-relative port directions without depending on flat compatibility `direction_hint`

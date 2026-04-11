@@ -167,8 +167,15 @@ It ties a timing obligation back to the responsible actor.
 
 Adapters should consume this graph when they need a target-actor-relative direction.
 
-The first bounded consumer is the `.fsm` explicit-module/top-composition path.
+The first bounded consumers are `.fsm` lowering paths.
+
+The explicit-module/top-composition path has the cleanest target actor context.
 When an explicit child module already has a local signal and width but the flat module-local `direction_hint` is missing or stale, the adapter can overlay matching `IntentIR.actor_ports` for that module actor before renderability analysis.
+
+Standalone direct roots are stricter.
+They do not carry a module name that says which actor the target is relative to, so the adapter only overlays graph-backed directions when all renderable actor-port evidence for signals already present in the direct local inventory points at one unambiguous actor.
+Unrelated graph-only actor ports are ignored by this direct-root context gate and are not added to the standalone inventory.
+If the graph mixes multiple actors, such as a producer and a consumer in the same direct root, the adapter leaves the missing flat directions unresolved and blocks rather than guessing.
 
 This is still conservative.
 Graph `input` and `output` directions can fill the module-local port role, but `in_out` and `unknown` are not turned into fake `.fsm` directions.

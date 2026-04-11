@@ -841,6 +841,17 @@ fn build_signal_inventory(intent_ir: &IntentIr) -> Vec<FsmSignalCandidate> {
         }
     }
 
+    if let Some(actor_name) =
+        unambiguous_direct_actor_name(intent_ir.actor_ports.as_slice(), &inventory)
+    {
+        overlay_actor_port_inventory_for_actor(
+            &mut inventory,
+            actor_name,
+            intent_ir.actor_ports.as_slice(),
+            false,
+        );
+    }
+
     inventory_to_signal_candidates(inventory)
 }
 
@@ -947,10 +958,11 @@ fn build_module_candidate(
         &module.decision_tree_fragments,
         &module.control_blocks,
     );
-    overlay_actor_port_inventory_for_module(
+    overlay_actor_port_inventory_for_actor(
         &mut signal_inventory,
         &module.module_name,
         actor_ports,
+        true,
     );
     let signal_inventory = inventory_to_signal_candidates(signal_inventory);
     let state_candidates = build_state_candidates_from_records(&module.regular_states);
@@ -987,15 +999,19 @@ fn build_module_candidate(
     }
 }
 
-fn overlay_actor_port_inventory_for_module(
+fn overlay_actor_port_inventory_for_actor(
     inventory: &mut BTreeMap<String, SignalInventoryEvidence>,
-    module_name: &str,
+    actor_name: &str,
     actor_ports: &[ActorPortRecord],
+    allow_new_signals: bool,
 ) {
     for port in actor_ports
         .iter()
-        .filter(|port| port.actor_name.eq_ignore_ascii_case(module_name))
+        .filter(|port| port.actor_name.eq_ignore_ascii_case(actor_name))
     {
+        if !allow_new_signals && !inventory.contains_key(&port.signal_name) {
+            continue;
+        }
         let direction_hint = actor_relative_direction_to_interface_hint(port.direction);
         let width_hint = port
             .width_hint
@@ -1011,17 +1027,40 @@ fn overlay_actor_port_inventory_for_module(
             port.source_statement_ids.clone()
         };
 
-        for supporting_id in supporting_ids {
-            register_canonical_signal(
-                inventory,
-                &port.signal_name,
-                direction_hint,
-                width_hint,
-                &supporting_id,
-                "actor_port",
-                port.automation_confidence,
-            );
-        }
+        register_canonical_signal_with_supporting_ids(
+            inventory,
+            &port.signal_name,
+            direction_hint,
+            width_hint,
+            supporting_ids,
+            "actor_port",
+            port.automation_confidence,
+        );
+    }
+}
+
+fn unambiguous_direct_actor_name<'a>(
+    actor_ports: &'a [ActorPortRecord],
+    inventory: &BTreeMap<String, SignalInventoryEvidence>,
+) -> Option<&'a str> {
+    let actor_names = actor_ports
+        .iter()
+        .filter(|port| {
+            actor_relative_direction_to_interface_hint(port.direction).is_some()
+                && inventory.contains_key(&port.signal_name)
+        })
+        .map(|port| {
+            (
+                port.actor_name.to_ascii_lowercase(),
+                port.actor_name.as_str(),
+            )
+        })
+        .collect::<BTreeMap<_, _>>();
+
+    if actor_names.len() == 1 {
+        actor_names.into_values().next()
+    } else {
+        None
     }
 }
 
@@ -3162,12 +3201,34 @@ fn register_canonical_signal(
     mention_category: &str,
     automation_confidence: AutomationConfidence,
 ) {
+    register_canonical_signal_with_supporting_ids(
+        inventory,
+        signal_name,
+        direction_hint,
+        width_hint,
+        std::iter::once(supporting_canonical_id.to_string()),
+        mention_category,
+        automation_confidence,
+    );
+}
+
+fn register_canonical_signal_with_supporting_ids<I>(
+    inventory: &mut BTreeMap<String, SignalInventoryEvidence>,
+    signal_name: &str,
+    direction_hint: Option<InterfaceSignalDirection>,
+    width_hint: Option<u32>,
+    supporting_canonical_ids: I,
+    mention_category: &str,
+    automation_confidence: AutomationConfidence,
+) where
+    I: IntoIterator<Item = String>,
+{
     let entry = inventory.entry(signal_name.to_string()).or_default();
     merge_signal_hint(&mut entry.direction_hint, direction_hint);
     merge_signal_hint(&mut entry.width_hint, width_hint);
     entry
         .supporting_canonical_ids
-        .insert(supporting_canonical_id.to_string());
+        .extend(supporting_canonical_ids);
     entry
         .mention_categories
         .insert(mention_category.to_string());
@@ -4598,6 +4659,14 @@ mod tests {
         }
     }
 
+    fn clear_direct_interface_direction_hints(intent_ir: &mut IntentIr) {
+        for interface in &mut intent_ir.interfaces {
+            for signal in &mut interface.signal_records {
+                signal.direction_hint = None;
+            }
+        }
+    }
+
     fn build_missing_child_module_top_intent_ir(base: &Path) -> Result<IntentIr> {
         build_intent_ir_from_markdown(
             base,
@@ -4748,6 +4817,131 @@ mod tests {
                 .residual_decisions
                 .iter()
                 .all(|packet| packet.packet_id != "fsm_adapter_dt_action_graph")
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn standalone_dt_recovers_directions_from_unambiguous_actor_ports() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_explicit_control_intent_ir(tempdir.path())?;
+        clear_direct_interface_direction_hints(&mut intent_ir);
+        intent_ir.actor_ports = vec![
+            actor_port("controller", "DATA_IN", ActorRelativeDirection::Input),
+            actor_port("controller", "DATA_OUT", ActorRelativeDirection::Output),
+            actor_port("controller", "ZERO_FLAG", ActorRelativeDirection::Output),
+        ];
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+        adapter.write_to_disk()?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "renderable");
+        let emitted_target_path = adapter
+            .artifact_layout
+            .emitted_target_path
+            .as_ref()
+            .expect("graph-backed standalone adapter should emit target text");
+        let emitted_text = fs::read_to_string(emitted_target_path)?;
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let data_out = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "DATA_OUT")
+            .expect("DATA_OUT should stay in the direct signal inventory");
+
+        assert_eq!(
+            data_out.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert!(
+            data_out
+                .mention_categories
+                .iter()
+                .any(|category| category == "actor_port")
+        );
+        assert!(emitted_text.contains("(?dt:comb_dt"));
+        assert!(emitted_text.contains("(DATA_OUT = DATA_IN)"));
+        assert!(emitted_text.contains("(ZERO_FLAG = 1)"));
+
+        Ok(())
+    }
+
+    #[test]
+    fn standalone_dt_ignores_unrelated_actor_ports_for_graph_context() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_explicit_control_intent_ir(tempdir.path())?;
+        clear_direct_interface_direction_hints(&mut intent_ir);
+        intent_ir.actor_ports = vec![
+            actor_port("controller", "DATA_IN", ActorRelativeDirection::Input),
+            actor_port("controller", "DATA_OUT", ActorRelativeDirection::Output),
+            actor_port("controller", "ZERO_FLAG", ActorRelativeDirection::Output),
+            actor_port("monitor", "SIDE_BAND", ActorRelativeDirection::Input),
+        ];
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "renderable");
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        assert!(
+            fsm.signal_inventory
+                .iter()
+                .filter(|signal| signal.signal_name == "DATA_OUT")
+                .all(|signal| signal.direction_hint == Some(InterfaceSignalDirection::Output))
+        );
+        assert!(
+            fsm.signal_inventory
+                .iter()
+                .all(|signal| signal.signal_name != "SIDE_BAND")
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn standalone_dt_ignores_ambiguous_actor_port_context() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_explicit_control_intent_ir(tempdir.path())?;
+        clear_direct_interface_direction_hints(&mut intent_ir);
+        intent_ir.actor_ports = vec![
+            actor_port("producer", "DATA_OUT", ActorRelativeDirection::Output),
+            actor_port("consumer", "DATA_IN", ActorRelativeDirection::Input),
+        ];
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        assert!(
+            fsm.signal_inventory
+                .iter()
+                .filter(|signal| signal.signal_name == "DATA_OUT")
+                .all(|signal| signal.direction_hint.is_none())
+        );
+        assert!(
+            fsm.renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason.contains("missing a canonical direction hint"))
         );
 
         Ok(())
@@ -5332,11 +5526,15 @@ mod tests {
     fn top_composition_blocks_conflicting_actor_port_directions() -> Result<()> {
         let tempdir = tempdir()?;
         let mut intent_ir = build_explicit_top_composition_intent_ir(tempdir.path())?;
-        intent_ir.actor_ports = vec![actor_port(
+        let mut conflicting_port = actor_port(
             "producer_core",
             "output_data",
             ActorRelativeDirection::Input,
-        )];
+        );
+        conflicting_port
+            .source_statement_ids
+            .push("graph_duplicate_producer_core_output_data".to_string());
+        intent_ir.actor_ports = vec![conflicting_port];
         intent_ir.write_to_disk()?;
 
         let artifact_base = tempdir.path().join("generated").join("adapters");

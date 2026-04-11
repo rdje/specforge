@@ -1362,6 +1362,29 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 - Extend the same graph-first discipline into the remaining direct adapter/control consumers that still consult `direction_hint` without a target actor context.
 - Keep bidirectional and unknown graph directions blocked until a target backend slice has an honest representation for them.
 
+## Graph-backed `.fsm` direct-root direction recovery (2026-04-11)
+
+### Why this slice landed now
+- After explicit module/top lowering, standalone direct `.fsm` roots were the next safe `R15` consumer still blocked by flat `direction_hint` lag.
+- Direct roots are riskier than explicit modules because they do not carry a module name that identifies the target actor context.
+- The safe rule is therefore narrower: graph-backed actor-port evidence can fill missing direct-root signal directions only when all renderable actor ports relevant to the direct local signal inventory point at one unambiguous actor.
+
+### Implementation shape
+- `crates/specforge/src/ir/adapters.rs` now checks `IntentIR.actor_ports` during direct signal-inventory construction.
+- If the renderable actor-port graph for signals already present in the direct inventory has exactly one actor, matching `Input` / `Output` actor-relative directions can fill missing local signal directions.
+- The direct-root overlay deliberately does not add graph-only signals; it only strengthens the already-local signal inventory.
+- Unrelated graph-only actor ports are ignored by the direct-root actor-context gate and remain absent from the standalone signal inventory.
+- If the graph mixes multiple actors, the adapter leaves missing flat directions unresolved and renderability remains blocked.
+- Actor-port provenance is now merged once per actor-port record before hint reconciliation, so a conflicting graph direction with multiple supporting ids cannot accidentally restore a direction after the first merge collapsed it to unresolved.
+
+### Validation
+- The new regressions prove the gate: one standalone direct root lowers when a single `controller` actor supplies the missing `DATA_IN`, `DATA_OUT`, and `ZERO_FLAG` directions, an unrelated graph-only `SIDE_BAND` actor port stays ignored, and a mixed producer/consumer actor-port graph stays blocked with missing direction hints.
+- The top-composition conflict regression now includes a duplicate supporting id on the conflicting graph port, proving multi-provenance graph evidence still blocks instead of weakening the conflict.
+- `cargo test --manifest-path Cargo.toml standalone_dt -- --nocapture` passed across the focused standalone direct regression set.
+- `cargo test --manifest-path Cargo.toml top_composition_blocks_conflicting_actor_port_directions -- --nocapture` passed for the duplicate-provenance conflict regression.
+- `cargo test --manifest-path Cargo.toml ir::adapters::tests -- --nocapture` passed with 22 adapter tests.
+- `bash scripts/run_ci.sh` passed with Clippy `-D warnings`, 287 Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and mdBook build.
+
 ## Initial typed temporal-rule surface in SemanticIR / IntentIR (2026-04-04)
 
 ### Why this slice landed now

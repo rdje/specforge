@@ -1,5 +1,28 @@
 # CHANGES
 
+## 2026-04-11 (FSM adapter consumes graph-backed direct directions)
+
+### Changed: standalone direct lowering uses bounded actor-relative port evidence
+- Updated the standalone direct `.fsm` adapter inventory path so it can recover missing local signal directions from `IntentIR.actor_ports` when the actor-port graph relevant to the direct local signal inventory has exactly one actor context.
+- Kept the direct-root rule stricter than explicit module lowering: direct roots have no module name to identify the target actor, so mixed producer/consumer graph contexts remain blocked instead of guessing a perspective.
+- The direct-root overlay only strengthens signals already present in the local direct inventory; it does not add graph-only signals for standalone lowering.
+- Tightened actor-port provenance merging so a conflicting graph direction with multiple supporting ids cannot accidentally restore a resolved direction after the merge collapsed the conflict to unresolved.
+
+### Tests
+- Added a regression proving standalone direct `.fsm` lowering still renders when flat `direction_hint` values are cleared but one `controller` actor supplies `DATA_IN`, `DATA_OUT`, and `ZERO_FLAG` actor-port directions.
+- Added a regression proving unrelated graph-only actor ports are ignored for the direct-root context gate and are not added to the standalone signal inventory.
+- Added a regression proving mixed `producer` / `consumer` actor-port context is ambiguous for a standalone direct root and remains blocked with missing canonical direction hints.
+- Strengthened the top-composition graph-conflict regression with duplicate supporting provenance ids to lock the conservative conflict merge behavior.
+
+### Validation
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml standalone_dt -- --nocapture` -> passed with 4 focused tests
+- `cargo test --manifest-path Cargo.toml top_composition_blocks_conflicting_actor_port_directions -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml ir::adapters::tests -- --nocapture` -> passed with 22 adapter tests
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, 287 Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and mdBook build
+- `bash scripts/run_docs_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-11 (FSM adapter consumes graph-backed module directions)
 
 ### Changed: explicit module lowering uses actor-relative port evidence
