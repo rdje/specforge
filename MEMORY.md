@@ -22,21 +22,22 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `8501a6e`
-- latest_commit_brief_message: `feat(evidence): recover asserted-level control polarity`
-- note: the current session is extending the polarity slice from single-signal asserted-when-level prose into collective non-reset control polarity recovery without suffix guessing or duplicate canonical records
+- latest_commit_hash: `84f7706`
+- latest_commit_brief_message: `feat(evidence): recover collective control polarity`
+- note: the current session is extending the polarity slice from collective active-level prose into safe mixed clause-local non-reset control polarity recovery without suffix guessing or implicit-subject borrowing
 
 ## Recent commit chain (last 5)
+- `84f7706` feat(evidence): recover collective control polarity
 - `8501a6e` feat(evidence): recover asserted-level control polarity
 - `aa4d776` test(kg): assert graph direction coverage
 - `6307c85` feat(adapter): recover top directions from links
 - `e910a28` feat(adapter): recover direct directions from graph
-- `a77fec8` feat(adapter): recover module directions from graph
 
 ## Current repository state
 - active workspace member: `crates/specforge`
+- the latest committed collective-polarity follow-on extends `EvidenceIR` to recover active-level prose like `CS_N and WE_N are active LOW signals`, keeps mixed low/high compound prose unresolved until clause-local parsing is safe, and prevents polarity-only co-mentions of declared signals from minting duplicate heuristic interface records
+- the in-progress polarity follow-on adds that safe clause-local parser for mixed active-level prose like `CS_N is active LOW and ENABLE is active HIGH`, while detached wording such as `CS_N is active LOW and active HIGH` still stays unresolved instead of borrowing an implicit subject
 - the latest committed polarity follow-on teaches `EvidenceIR` to recover non-reset control polarity from explicit asserted-when-level prose like `CS_N is asserted when LOW` without inferring polarity from the `_N` suffix alone, and tightens `SemanticIR` so that local single-signal control prose enriches the declared signal instead of minting a duplicate heuristic interface record
-- the in-progress polarity follow-on extends that behavior to collective active-level prose like `CS_N and WE_N are active LOW signals`, keeps mixed low/high compound prose unresolved until clause-local parsing is safe, and prevents polarity-only co-mentions of declared signals from minting duplicate heuristic interface records
 - the latest committed KG-bench follow-on adds explicit graph direction coverage expectations so fixtures can test canonical `actor_ports` coverage without overloading flat compatibility `direction_hint`; targeted `kg_bench` and full `scripts/run_ci.sh` validation passed for that slice
 - the previous `R15` graph-first adapter slices teach explicit-module `.fsm` top-composition lowering, standalone direct-root lowering, and top-boundary link-topology lowering to consume bounded graph/topology evidence without guessing missing direction hints
 - the latest committed KG-quality slice added `vlm_timing_active_low_deassertion_equivalence_gold`, complementing the existing active-low assertion fixture by proving `DEASSERTED` and `HIGH` are equivalent for active-low reset release timing evidence
@@ -47,7 +48,7 @@
 - the Rust warning baseline is clean and now enforced in the shared local/hosted CI path rather than suppressed with `#[allow(dead_code)]`
 - README bootstrap currently resolves to `SESSION_BOOTSTRAP.md`, which instructs future agents to read the referenced live docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if necessary, and then continue from the roadmap
 - this bootstrap refresh observed 28 Rust source files and about 53,858 lines under `crates/specforge/src`, with the CLI now including `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, and `nlp-enrich` beside the core staged IR commands
-- `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the collective-control-polarity slice; the tracked KG fixture count is `47` and the full local CI gate reports `295` passing Rust tests
+- `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the mixed-clause-control-polarity slice; the tracked KG fixture count is `48`, and the full local CI gate reports `296` passing Rust tests
 - the latest README bootstrap hygiene pass found no new Rust architecture drift; the concrete fix was to refresh the committed baseline in this memory file and remove stray example bullets from `USER_GUIDE.md`'s root-document list
 - the latest active KG benchmark slice is `vlm_timing_active_low_deassertion_equivalence_gold`, which proves a VLM timing diagram that reports active-low `ARESETN` as both `deasserted` and `HIGH` yields typed temporal evidence without a false temporal or polarity conflict
 - the canonical user-facing documentation surface is now the mdBook under `docs/book/`
@@ -167,7 +168,7 @@
 - validator handling now matches that boundary too: infrastructure signals with no resolved producer actor emit a dedicated `[info:system_contract]` finding instead of a generic signal-connectivity warning, and validation now reports `infrastructure_signals` plus source/distribution status metrics alongside `infrastructure_signal_connectivity`
 - same-cycle timing language now lands as bounded temporal semantics too: AXI-Stream currently carries `6` explicit `0`-cycle windows from phrases like `in the same ACLK cycle`, and the old `no cycle-window grounding` warning is gone from the live validation projection
 - temporal-conflict detection is now polarity-aware: `ASSERTED` / `DEASSERTED` only collapse to `HIGH` / `LOW` when the current document grounds the signal polarity, so active-low controls like `ARESETN` stay semantically correct and unknown-polarity assertions stay abstract
-- resolved signal polarity now also lives directly on canonical `InterfaceSignalRecord`s and is reported by validation as `with_resolved_polarity`; after the latest infrastructure-interface fix, AXI/APB/AHB/AXI-Stream now all report `1`, and the current polarity work now covers both single-signal asserted-when-level prose and collective active-level control prose
+- resolved signal polarity now also lives directly on canonical `InterfaceSignalRecord`s and is reported by validation as `with_resolved_polarity`; after the latest infrastructure-interface fix, AXI/APB/AHB/AXI-Stream now all report `1`, and the current polarity work now covers single-signal asserted-when-level prose, collective active-level control prose, and safe mixed clause-local control prose
 - the tracked live validation baseline has now been refreshed against the current semantic/intent stack and is more honest than the old stale snapshot: AXI 85/100 GOOD, APB 90/100 EXCELLENT, AHB 94/100 EXCELLENT, AXI-Stream 90/100 EXCELLENT
 - full original-PDF `converge` reruns are currently blocked locally because `docling` is not importable from the active `python3`; use `SPECFORGE_DOCLING_PYTHON=/path/to/python` or install `docling` into a discoverable interpreter before relying on fresh ingest reruns
 - the learning plane now applies the same bogus-actor hygiene rule at harvest and lookup time, and the stale `control information -> requester_like` actor-taxonomy prior has been removed from local `CorpusMemory`
@@ -253,7 +254,7 @@
 - richer explicit clock-tick temporal semantics (`R15b`)
 - KG-guided multimodal rescans (`R15c`)
 - broader evidence arbitration / conflict handling beyond polarity, interface-shape, multi-producer ambiguity, modality-aware semantic-role grounding, consensus summaries, semantic candidates, and semantic arbitration summaries (`R15d`)
-- broader KG-quality evaluation and benchmark hardening beyond the new seed fixture pack (`R15e`); recent slices added active-low reset-release VLM coverage, graph direction coverage expectations, explicit asserted-when-level non-reset control polarity recovery, and collective active-level non-reset control polarity recovery
+- broader KG-quality evaluation and benchmark hardening beyond the new seed fixture pack (`R15e`); recent slices added active-low reset-release VLM coverage, graph direction coverage expectations, explicit asserted-when-level non-reset control polarity recovery, collective active-level non-reset control polarity recovery, and mixed clause-local non-reset control polarity recovery
 - cross-document extractor learning is now started, and the first seven bounded prior-consumer paths are now live; visual-motif priors now have explicit local enrichment rescan hints, negative-knowledge priors now have validation-only caution coverage, machine-readable rescan/corroboration guidance, a `project-validation` consumer that writes a schema-v2 replay-oriented rescan/extractor-selection target list, a first explicit `rescan-plan` consumer, an opt-in `converge --rescan-plan <plan>` hook, persisted execution summaries for changed-outcome review, explicit not-promoted gates plus structured promotion-review requirements on those summaries, and review-facing projection of those summaries into validation docs; an approval artifact should remain local/generated unless future work deliberately introduces canonical artifact mutation plus a tracked approval-evidence schema
 - Tier 3 relation extraction after the graph/temporal/eval surfaces are ready (`R14`)
 - some downstream compatibility and consumer paths still rely on flat `direction_hint` instead of the graph-native surface; explicit-module `.fsm` top composition, unambiguous standalone direct roots, and explicit top-link boundary recovery now have bounded adapter-side recovery paths, but the broader direct-consumer cleanup remains open

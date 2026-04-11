@@ -3479,22 +3479,28 @@ fn extract_signal_polarity_from_prose(
 
     for statement in statements {
         let lowered = statement.text.to_ascii_lowercase();
-        let polarity = detect_signal_polarity(&lowered);
-        let Some(polarity) = polarity else {
-            continue;
-        };
+        let mut signal_polarities = Vec::new();
 
-        let mentioned_signals = known_signals_referenced_in_text(&lowered, &ordered_signals);
-        let signal_names = if mentioned_signals.len() == 1 {
-            mentioned_signals
-        } else {
-            collective_polarity_subject_signals(&lowered, polarity, &ordered_signals)
-        };
-        if signal_names.is_empty() {
-            continue;
+        if let Some(polarity) = detect_signal_polarity(&lowered) {
+            let mentioned_signals = known_signals_referenced_in_text(&lowered, &ordered_signals);
+            let signal_names = if mentioned_signals.len() == 1 {
+                mentioned_signals
+            } else {
+                collective_polarity_subject_signals(&lowered, polarity, &ordered_signals)
+            };
+
+            signal_polarities.extend(
+                signal_names
+                    .into_iter()
+                    .map(|signal_name| (signal_name, polarity)),
+            );
         }
 
-        for signal_name in signal_names {
+        if signal_polarities.is_empty() {
+            signal_polarities = clause_local_polarity_subject_signals(&lowered, &ordered_signals);
+        }
+
+        for (signal_name, polarity) in signal_polarities {
             observations.push(SignalPolarityObservationCandidate {
                 signal_name,
                 polarity,
@@ -3725,6 +3731,76 @@ fn collective_polarity_subject_signals(
     }
 
     Vec::new()
+}
+
+fn clause_local_polarity_subject_signals(
+    text_lower: &str,
+    ordered_signals: &[&String],
+) -> Vec<(String, SignalPolarity)> {
+    let mentioned_signals = known_signals_referenced_in_text(text_lower, ordered_signals);
+    if mentioned_signals.len() < 2 {
+        return Vec::new();
+    }
+
+    let mut recovered_polarity_by_signal = BTreeMap::<String, SignalPolarity>::new();
+    for clause in polarity_clause_segments(text_lower) {
+        let clause = clause.trim();
+        if clause.is_empty() {
+            continue;
+        }
+        let polarity = detect_signal_polarity(clause);
+        let clause_signals = known_signals_referenced_in_text(clause, ordered_signals);
+
+        let Some(polarity) = polarity else {
+            continue;
+        };
+        if clause_signals.len() != 1 {
+            return Vec::new();
+        }
+
+        let signal_name = clause_signals[0].clone();
+        match recovered_polarity_by_signal.get(&signal_name) {
+            Some(existing) if *existing != polarity => return Vec::new(),
+            Some(_) => {}
+            None => {
+                recovered_polarity_by_signal.insert(signal_name, polarity);
+            }
+        }
+    }
+
+    if recovered_polarity_by_signal.len() != mentioned_signals.len() {
+        return Vec::new();
+    }
+
+    mentioned_signals
+        .into_iter()
+        .filter_map(|signal_name| {
+            recovered_polarity_by_signal
+                .get(&signal_name)
+                .copied()
+                .map(|polarity| (signal_name, polarity))
+        })
+        .collect()
+}
+
+fn polarity_clause_segments(text_lower: &str) -> Vec<String> {
+    let mut clauses = vec![text_lower.to_string()];
+
+    for delimiter in [";", ".", ",", " and ", " but ", " while ", " whereas "] {
+        clauses = clauses
+            .into_iter()
+            .flat_map(|clause| {
+                clause
+                    .split(delimiter)
+                    .map(str::trim)
+                    .filter(|segment| !segment.is_empty())
+                    .map(str::to_string)
+                    .collect::<Vec<_>>()
+            })
+            .collect();
+    }
+
+    clauses
 }
 
 fn record_signal_polarity_observation(
@@ -8597,6 +8673,10 @@ mod tests {
             super::detect_signal_polarity("enable is high when asserted"),
             Some(super::SignalPolarity::ActiveHigh)
         );
+        assert_eq!(
+            super::detect_signal_polarity("cs_n is active low and enable is active high"),
+            None
+        );
     }
 
     #[test]
@@ -8710,7 +8790,7 @@ mod tests {
     }
 
     #[test]
-    fn mixed_polarity_prose_does_not_guess_collective_control_polarity() -> Result<()> {
+    fn mixed_polarity_prose_recovers_clause_local_control_polarities() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("mixed_control_polarity.md");
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
@@ -8739,19 +8819,68 @@ mod tests {
             &evidence_artifact_base,
         )?;
 
-        assert!(
-            evidence_ir.signal_polarities.is_empty(),
-            "mixed-polarity compound prose should stay unresolved until the extractor can parse each clause safely"
-        );
+        let cs_n_polarity = evidence_ir
+            .signal_polarities
+            .iter()
+            .find(|record| record.signal_name == "CS_N")
+            .expect("expected clause-local active-low polarity for CS_N");
+        assert_eq!(cs_n_polarity.polarity, super::SignalPolarity::ActiveLow);
+        let enable_polarity = evidence_ir
+            .signal_polarities
+            .iter()
+            .find(|record| record.signal_name == "ENABLE")
+            .expect("expected clause-local active-high polarity for ENABLE");
+        assert_eq!(enable_polarity.polarity, super::SignalPolarity::ActiveHigh);
         assert!(evidence_ir.signal_constraints.iter().any(|constraint| {
             constraint.subject_signal == "CS_N"
                 && matches!(
                     constraint.constraint_kind,
-                    crate::ir::source::SignalConstraintKind::MustBeAsserted
+                    crate::ir::source::SignalConstraintKind::MustBeLow
                 )
         }));
         assert!(evidence_ir.signal_constraints.iter().any(|constraint| {
             constraint.subject_signal == "ENABLE"
+                && matches!(
+                    constraint.constraint_kind,
+                    crate::ir::source::SignalConstraintKind::MustBeHigh
+                )
+        }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn detached_mixed_polarity_prose_does_not_guess_implicit_control_polarity() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("detached_mixed_control_polarity.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Control\n",
+                "Signal CS_N is input width 1.\n",
+                "\n",
+                "CS_N is active LOW and active HIGH.\n",
+                "\n",
+                "CS_N must be asserted.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        assert!(
+            evidence_ir.signal_polarities.is_empty(),
+            "detached mixed-polarity prose must stay unresolved instead of inheriting an implicit signal subject"
+        );
+        assert!(evidence_ir.signal_constraints.iter().any(|constraint| {
+            constraint.subject_signal == "CS_N"
                 && matches!(
                     constraint.constraint_kind,
                     crate::ir::source::SignalConstraintKind::MustBeAsserted

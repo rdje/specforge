@@ -45,6 +45,12 @@
 - The semantic fix is bounded to polarity-only co-mentions of already authoritative signals. Single-signal declared-control prose remains suppressed as before, collective polarity-only declarations enrich the authoritative records, and non-polarity multi-signal co-mentions can still become heuristic grouping evidence when they may carry real interface structure.
 - `multi_control_polarity_gold` now locks the end-to-end behavior with two canonical signal records, two resolved polarities, two refined constraints, and zero polarity/temporal conflicts through `EvidenceIR`, `SemanticIR`, and `IntentIR`.
 
+## 2026-04-11 mixed clause-local control polarity
+- The mixed-polarity gap left by the collective slice now has a bounded parser: if prose says `CS_N is active LOW and ENABLE is active HIGH`, `EvidenceIR` can split the local clauses and recover active-low `CS_N` plus active-high `ENABLE`.
+- This is intentionally not a general anaphora or implicit-subject parser. The fallback only succeeds when every mentioned known signal is recovered and every recovered polarity clause names exactly one known signal.
+- Detached wording such as `CS_N is active LOW and active HIGH` still stays unresolved, because the second polarity phrase has no explicit signal anchor and could otherwise create a silent wrong fact.
+- `mixed_control_polarity_gold` locks the end-to-end behavior with two canonical declared signal records, zero heuristic duplicates, two resolved polarities, and no polarity/temporal conflicts through the staged IR pipeline.
+
 ## Foundational engineering choices
 ### IntentIR instead of AST
 - the final canonical output must capture semantics and implementation-relevant intent, not only syntax structure

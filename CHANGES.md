@@ -1,5 +1,26 @@
 # CHANGES
 
+## 2026-04-11 (EvidenceIR recovers mixed clause-local control polarity)
+
+### Changed: safe clause-local polarity parsing
+- Added a bounded clause-local fallback for mixed active-level prose, so a statement like `CS_N is active LOW and ENABLE is active HIGH` can recover active-low polarity for `CS_N` and active-high polarity for `ENABLE`.
+- Kept the fallback strict: every recovered clause must bind one polarity phrase to exactly one known signal, every mentioned signal in the statement must be recovered, and detached wording such as `CS_N is active LOW and active HIGH` stays unresolved instead of inheriting an implicit subject.
+- The whole-statement detector still returns no polarity for mixed low/high text; the new recovery path is separate and only promotes facts after clause-local validation succeeds.
+
+### Added: tracked KG fixture for mixed control polarity
+- Added [mixed_control_polarity_gold](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/mixed_control_polarity_gold/fixture.json), which proves mixed clause-local polarity recovery produces two canonical declared signal records, two resolved polarities, zero heuristic duplicates, and zero polarity or temporal conflicts through `SemanticIR` and `IntentIR`.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml mixed_polarity_prose_recovers_clause_local_control_polarities -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml detached_mixed_polarity_prose_does_not_guess_implicit_control_polarity -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml signal_polarity_detector_accepts_asserted_when_level_phrases -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench mixed_control_polarity_gold` -> passed
+- `cargo test --manifest-path Cargo.toml polarity -- --nocapture` -> passed with 25 focused polarity tests
+- `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` -> passed with 48 tracked KG fixtures
+- `cargo fmt --all --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, 296 Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and mdBook build
+
 ## 2026-04-11 (EvidenceIR recovers collective control polarity)
 
 ### Changed: collective active-level prose can ground multiple controls
