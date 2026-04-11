@@ -17,8 +17,8 @@ use crate::ir::prior_memory::{
     TemporalPhrasePriorRecord, VisualMotifPriorRecord,
 };
 use crate::ir::semantic::{
-    ActorPortRecord, ActorRelativeDirection, InterfaceRecord, InterfaceSignalDirection, SemanticIr,
-    TemporalRuleRecord,
+    ActorPortRecord, ActorRelativeDirection, InterfaceRecord, InterfaceSignalDirection,
+    RegularStateRecord, SemanticIr, StateTransitionRecord, TemporalRuleRecord,
 };
 use crate::ir::source::{
     ActorSignalRelation, RelationKind, ResidualDecisionPacket, ValidationFindingRecord,
@@ -105,6 +105,14 @@ struct CanonicalStageExpectations {
     #[serde(default)]
     actor_signal_relations_include: Vec<ExpectedActorSignalRelation>,
     #[serde(default)]
+    state_names_include: Vec<String>,
+    #[serde(default)]
+    state_names_exclude: Vec<String>,
+    #[serde(default)]
+    state_transitions_include: Vec<ExpectedStateTransition>,
+    #[serde(default)]
+    state_transitions_exclude: Vec<ExpectedStateTransition>,
+    #[serde(default)]
     residual_decision_ids_include: Vec<String>,
     #[serde(default)]
     residual_decision_ids_exclude: Vec<String>,
@@ -176,6 +184,12 @@ struct ExpectedActorSignalRelation {
     actor_name: String,
     signal_name: String,
     relation: RelationKind,
+}
+
+#[derive(Debug, Deserialize)]
+struct ExpectedStateTransition {
+    source_state: String,
+    target_state: String,
 }
 
 #[derive(Debug, Default, Deserialize)]
@@ -396,6 +410,8 @@ fn run_fixture(fixture_path: &Path) -> Result<FixtureOutcome> {
             &semantic_ir.interfaces,
             &semantic_ir.actor_signal_relations,
             &semantic_ir.actor_ports,
+            &semantic_ir.regular_states,
+            &semantic_ir.state_transitions,
             &semantic_ir.residual_decisions,
             &[],
             &semantic_ir.temporal_rules,
@@ -414,6 +430,8 @@ fn run_fixture(fixture_path: &Path) -> Result<FixtureOutcome> {
             &intent_ir.interfaces,
             &intent_ir.actor_signal_relations,
             &intent_ir.actor_ports,
+            &intent_ir.regular_states,
+            &intent_ir.state_transitions,
             &intent_ir.residual_decisions,
             &intent_ir.assumptions,
             &intent_ir.temporal_rules,
@@ -473,6 +491,8 @@ fn evaluate_canonical_expectations(
     interfaces: &[InterfaceRecord],
     actor_signal_relations: &[ActorSignalRelation],
     actor_ports: &[ActorPortRecord],
+    regular_states: &[RegularStateRecord],
+    state_transitions: &[StateTransitionRecord],
     residual_decisions: &[ResidualDecisionPacket],
     assumptions: &[IntentAssumption],
     temporal_rules: &[TemporalRuleRecord],
@@ -737,6 +757,38 @@ fn evaluate_canonical_expectations(
         }
     }
 
+    let state_names = regular_state_names(regular_states);
+    assert_includes(
+        label,
+        "state_names_include",
+        &expectations.state_names_include,
+        &state_names,
+        failures,
+    );
+    assert_excludes(
+        label,
+        "state_names_exclude",
+        &expectations.state_names_exclude,
+        &state_names,
+        failures,
+    );
+
+    let state_transition_keys = state_transition_endpoint_keys(state_transitions);
+    assert_includes(
+        label,
+        "state_transitions_include",
+        &expected_state_transition_keys(&expectations.state_transitions_include),
+        &state_transition_keys,
+        failures,
+    );
+    assert_excludes(
+        label,
+        "state_transitions_exclude",
+        &expected_state_transition_keys(&expectations.state_transitions_exclude),
+        &state_transition_keys,
+        failures,
+    );
+
     let residual_ids = residual_decision_ids(residual_decisions);
     assert_includes(
         label,
@@ -965,6 +1017,35 @@ fn graph_direction_signal_names(actor_ports: &[ActorPortRecord]) -> BTreeSet<Str
         .filter(|port| !matches!(port.direction, ActorRelativeDirection::Unknown))
         .map(|port| port.signal_name.clone())
         .collect()
+}
+
+fn regular_state_names(regular_states: &[RegularStateRecord]) -> BTreeSet<String> {
+    regular_states
+        .iter()
+        .map(|state| state.state_name.clone())
+        .collect()
+}
+
+fn state_transition_endpoint_keys(state_transitions: &[StateTransitionRecord]) -> BTreeSet<String> {
+    state_transitions
+        .iter()
+        .map(|transition| {
+            state_transition_endpoint_key(&transition.source_state, &transition.target_state)
+        })
+        .collect()
+}
+
+fn expected_state_transition_keys(expected_transitions: &[ExpectedStateTransition]) -> Vec<String> {
+    expected_transitions
+        .iter()
+        .map(|transition| {
+            state_transition_endpoint_key(&transition.source_state, &transition.target_state)
+        })
+        .collect()
+}
+
+fn state_transition_endpoint_key(source_state: &str, target_state: &str) -> String {
+    format!("{source_state}->{target_state}")
 }
 
 fn residual_decision_ids(residual_decisions: &[ResidualDecisionPacket]) -> BTreeSet<String> {

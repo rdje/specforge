@@ -38,6 +38,11 @@
 - Active-low `ARESETN` reported as both `deasserted` and `HIGH` must produce typed temporal evidence without creating a false temporal conflict or polarity conflict.
 - This complements the existing reset-entry fixture for `asserted` plus `LOW`, so both assertion and deassertion semantics are regression-protected.
 
+## 2026-04-11 VLM state-machine label filtering
+- VLM state-machine extraction is useful evidence, but raw visual labels are still hypotheses and must pass the same canonical-state boundary as explicit state syntax before entering `SemanticIR`.
+- State names and transition endpoints extracted from `vlm_state_machine_extraction` are now accepted only when they parse as identifiers. Clean labels such as `IDLE` and `BUSY` survive, while prose/OCR labels such as `IDLE state` and `ACCESS phase` are filtered instead of becoming backend-facing FSM names.
+- `vlm_state_machine_label_noise_negative` locks this end to end, and `kg-bench` can now assert state names plus transition endpoints directly.
+
 ## 2026-04-11 VLM timing waveform motion filtering
 - VLM timing `signals[].values[].state` strings are not all equally authoritative signal values.
 - Concrete sampled values such as `HIGH`, `LOW`, `ASSERTED`, `DEASSERTED`, `0`, and `1` can become typed signal constraints when the signal name is document-grounded, but waveform motion descriptors such as `rising`, `falling`, `stable`, `steady`, `unchanged`, `toggle`, `RISING_EDGE`, `LOW_TO_HIGH`, `POS_EDGE`, `risingedge`, and `LOW2HIGH` should not be promoted through the generic symbolic-value fallback.

@@ -9144,14 +9144,13 @@ fn parse_state_machine_observation(
     // Parse states.
     if let Some(states) = value.get("states").and_then(|s| s.as_array()) {
         for (idx, state_val) in states.iter().enumerate() {
-            let name = state_val
+            let Some(name) = state_val
                 .get("name")
                 .and_then(|n| n.as_str())
-                .unwrap_or_default()
-                .trim();
-            if name.is_empty() {
+                .and_then(parse_identifier)
+            else {
                 continue;
-            }
+            };
             let is_initial = state_val
                 .get("is_initial")
                 .and_then(|b| b.as_bool())
@@ -9160,9 +9159,9 @@ fn parse_state_machine_observation(
                 state_id: format!(
                     "vlm_state_{}_{}",
                     document_key(evidence_id),
-                    document_key(name)
+                    document_key(&name)
                 ),
-                state_name: name.to_string(),
+                state_name: name,
                 is_initial,
                 declaration_order: u32::try_from(idx).unwrap_or(0),
                 supporting_statement_ids: vec![evidence_id.to_string()],
@@ -9174,21 +9173,20 @@ fn parse_state_machine_observation(
     // Parse transitions.
     if let Some(transitions) = value.get("transitions").and_then(|t| t.as_array()) {
         for (idx, trans_val) in transitions.iter().enumerate() {
-            let from = trans_val
+            let Some(from) = trans_val
                 .get("from")
                 .and_then(|f| f.as_str())
-                .unwrap_or_default()
-                .trim()
-                .to_string();
-            let to = trans_val
+                .and_then(parse_identifier)
+            else {
+                continue;
+            };
+            let Some(to) = trans_val
                 .get("to")
                 .and_then(|t| t.as_str())
-                .unwrap_or_default()
-                .trim()
-                .to_string();
-            if from.is_empty() || to.is_empty() {
+                .and_then(parse_identifier)
+            else {
                 continue;
-            }
+            };
             let guard_text = trans_val
                 .get("guard")
                 .and_then(|g| g.as_str())
@@ -10678,6 +10676,90 @@ mod tests {
                 .iter()
                 .any(|t| t.source_state == "IDLE" && t.target_state == "BUSY"),
             "expected IDLE→BUSY transition from VLM extraction"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn vlm_state_machine_observation_rejects_non_identifier_state_labels() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("sm_label_noise_spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            "# State Machine\nSignal PREADY is input width 1.\n",
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.visual_assets.push(VisualAsset {
+            asset_id: "picture_0003".to_string(),
+            asset_kind: VisualAssetKind::Diagram,
+            page_id: Some("page_0001".to_string()),
+            image_path: None,
+            caption_text: Some("Figure 5-2 Noisy transfer state machine".to_string()),
+            caption_source_path: None,
+            source_ref: None,
+            placeholder_text: None,
+            note: Some(
+                "vlm_state_machine_extraction: {\"states\":[{\"name\":\"IDLE\",\"is_initial\":true},{\"name\":\"IDLE state\",\"is_initial\":false},{\"name\":\"BUSY\",\"is_initial\":false},{\"name\":\"ACCESS phase\",\"is_initial\":false}],\"transitions\":[{\"from\":\"IDLE\",\"to\":\"BUSY\",\"guard\":\"PREADY = 1\"},{\"from\":\"IDLE state\",\"to\":\"BUSY\",\"guard\":\"PREADY = 1\"},{\"from\":\"BUSY\",\"to\":\"ACCESS phase\",\"guard\":\"PREADY = 1\"}]}"
+                    .to_string(),
+            ),
+            diagram_kind: crate::ir::source::DiagramKind::StateMachineDiagram,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        assert!(
+            semantic_ir
+                .regular_states
+                .iter()
+                .any(|state| state.state_name == "IDLE" && state.is_initial),
+            "expected valid IDLE state to survive"
+        );
+        assert!(
+            semantic_ir
+                .regular_states
+                .iter()
+                .any(|state| state.state_name == "BUSY"),
+            "expected valid BUSY state to survive"
+        );
+        assert!(
+            !semantic_ir
+                .regular_states
+                .iter()
+                .any(|state| state.state_name == "IDLE state"
+                    || state.state_name == "ACCESS phase"),
+            "VLM prose state labels must not become canonical states: {:?}",
+            semantic_ir.regular_states
+        );
+        assert!(
+            semantic_ir
+                .state_transitions
+                .iter()
+                .any(|transition| transition.source_state == "IDLE"
+                    && transition.target_state == "BUSY"),
+            "expected valid IDLE to BUSY transition to survive"
+        );
+        assert!(
+            !semantic_ir.state_transitions.iter().any(|transition| {
+                transition.source_state == "IDLE state" || transition.target_state == "ACCESS phase"
+            }),
+            "VLM prose transition endpoints must not become canonical transitions: {:?}",
+            semantic_ir.state_transitions
         );
 
         Ok(())

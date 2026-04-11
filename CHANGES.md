@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-04-11 (VLM state machine rejects prose labels)
+
+### Fixed: state-machine VLM labels must be canonical identifiers
+- `SemanticIR` now parses VLM state-machine `states[].name` and transition `from` / `to` endpoints through the same identifier boundary used by explicit state syntax, so prose labels such as `IDLE state` and `ACCESS phase` cannot become canonical FSM states or transition endpoints.
+- `kg-bench` can now assert canonical state names and state-transition endpoints directly, which lets tracked fixtures lock VLM FSM truthfulness without inspecting generated artifacts by hand.
+- Added `vlm_state_machine_label_noise_negative`, proving valid `IDLE` / `BUSY` state evidence and `IDLE->BUSY` transition evidence survive while prose-like VLM labels are filtered.
+
+### Validation
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml --lib vlm_state_machine_observation_rejects_non_identifier_state_labels -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality vlm_state_machine_label_noise_negative` -> passed
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, 301 Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and mdBook build
+
 ## 2026-04-11 (VLM timing rejects compact edge spellings)
 
 ### Fixed: compact edge labels stay out of signal values

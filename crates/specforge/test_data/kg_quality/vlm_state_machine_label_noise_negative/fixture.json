@@ -1,0 +1,81 @@
+{
+  "name": "vlm_state_machine_label_noise_negative",
+  "source": "source.md",
+  "source_ir_patch": {
+    "visual_assets": [
+      {
+        "asset_id": "visual_vlm_noisy_state_machine",
+        "asset_kind": "diagram",
+        "page_id": "page_0001",
+        "image_path": null,
+        "caption_text": "Figure 5-2 Noisy transfer state machine",
+        "caption_source_path": null,
+        "source_ref": null,
+        "placeholder_text": null,
+        "note": "vlm_state_machine_extraction: {\"states\":[{\"name\":\"IDLE\",\"is_initial\":true},{\"name\":\"IDLE state\",\"is_initial\":false},{\"name\":\"BUSY\",\"is_initial\":false},{\"name\":\"ACCESS phase\",\"is_initial\":false}],\"transitions\":[{\"from\":\"IDLE\",\"to\":\"BUSY\",\"guard\":\"PREADY = 1\"},{\"from\":\"IDLE state\",\"to\":\"BUSY\",\"guard\":\"PREADY = 1\"},{\"from\":\"BUSY\",\"to\":\"ACCESS phase\",\"guard\":\"PREADY = 1\"}]}",
+        "diagram_kind": "state_machine_diagram"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "state_names_include": ["IDLE", "BUSY"],
+      "state_names_exclude": ["IDLE state", "ACCESS phase"],
+      "state_transitions_include": [
+        {
+          "source_state": "IDLE",
+          "target_state": "BUSY"
+        }
+      ],
+      "state_transitions_exclude": [
+        {
+          "source_state": "IDLE state",
+          "target_state": "BUSY"
+        },
+        {
+          "source_state": "BUSY",
+          "target_state": "ACCESS phase"
+        }
+      ]
+    },
+    "intent": {
+      "state_names_include": ["IDLE", "BUSY"],
+      "state_names_exclude": ["IDLE state", "ACCESS phase"],
+      "state_transitions_include": [
+        {
+          "source_state": "IDLE",
+          "target_state": "BUSY"
+        }
+      ],
+      "state_transitions_exclude": [
+        {
+          "source_state": "IDLE state",
+          "target_state": "BUSY"
+        },
+        {
+          "source_state": "BUSY",
+          "target_state": "ACCESS phase"
+        }
+      ]
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "state_machine_extractions": "1"
+        }
+      },
+      "semantic": {
+        "metric_values": {
+          "regular_states": "2",
+          "state_transitions": "1"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "regular_states": "2",
+          "state_transitions": "1"
+        }
+      }
+    }
+  }
+}

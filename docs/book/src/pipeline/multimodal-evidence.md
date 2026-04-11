@@ -132,6 +132,7 @@ This lets state diagrams contribute structured behavior without forcing the enti
 
 Guard text extracted from state-machine diagrams is treated as a bounded hypothesis.
 Simple comparisons such as `PREADY = 1` can become typed guards, but generic visual prose such as `transfer` should not become a fake signal unless it is grounded as a signal elsewhere in the document.
+State names and transition endpoints are bounded too: identifier-shaped labels such as `IDLE` and `BUSY` can enter canonical state records, while prose/OCR labels such as `IDLE state` and `ACCESS phase` are filtered until a safer explicit normalization path exists.
 
 ## Captions as semantic evidence
 
