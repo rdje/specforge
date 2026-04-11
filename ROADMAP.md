@@ -505,6 +505,7 @@
     - a negative fixture proving VLM state-machine prose labels like `IDLE state` and `ACCESS phase` do not become canonical FSM state names or transition endpoints while clean identifier labels and transitions still survive
     - a negative fixture proving VLM state-machine transition endpoints must reference states declared in the same VLM observation, so identifier-shaped `DONE` / `RESET` endpoint guesses do not become canonical transition facts
     - a gold fixture proving duplicate VLM state-machine state labels merge by state name and preserve a later `is_initial: true` marker instead of losing initial-state truth by first-observation order
+    - a negative fixture proving VLM state-machine extractions with multiple initial markers keep their graph visible but emit semantic and intent initial-cardinality validation warnings
     - a gold fixture proving collective non-reset control polarity prose recovers multiple active-low control signals without duplicating canonical signal records
     - a gold fixture proving mixed clause-local non-reset control polarity prose recovers active-low and active-high controls without duplicating canonical signal records
     - a negative fixture proving detached mixed-polarity prose stays unresolved instead of borrowing an implicit active-level subject

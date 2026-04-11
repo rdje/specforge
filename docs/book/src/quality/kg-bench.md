@@ -77,6 +77,7 @@ State-machine visual fixtures protect the FSM side of the same boundary.
 `vlm_state_machine_label_noise_negative` proves identifier labels such as `IDLE` and `BUSY` survive into canonical state records and transition endpoints, while prose/OCR labels such as `IDLE state` and `ACCESS phase` stay out.
 `vlm_state_machine_undeclared_transition_negative` adds the graph-grounding guard: transition endpoints such as `DONE` and `RESET` stay out unless the same VLM observation also declared them as accepted states.
 `vlm_state_machine_duplicate_initial_gold` locks the complementary positive case: duplicate state labels are merged, a later `is_initial: true` marker still makes `IDLE` the canonical initial state, and validation reports exactly one `initial_regular_states` record.
+`vlm_state_machine_multiple_initial_negative` locks the companion warning path: when VLM marks more than one canonical state initial, the graph remains inspectable but semantic and intent validation report state-machine initial-cardinality findings.
 
 The polarity fixture family also covers non-reset controls.
 Gold fixtures prove explicit asserted-when-level prose, collective active-level prose, and safe clause-local mixed prose can recover active-low or active-high facts.

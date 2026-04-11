@@ -501,6 +501,26 @@ fn initial_regular_states_count(
         .count()
 }
 
+fn state_machine_initial_cardinality_related_ids(
+    regular_states: &[crate::ir::semantic::RegularStateRecord],
+) -> Vec<String> {
+    let initial_states = regular_states
+        .iter()
+        .filter(|state| state.is_initial)
+        .map(|state| state.state_name.clone())
+        .take(8)
+        .collect::<Vec<_>>();
+    if initial_states.is_empty() {
+        regular_states
+            .iter()
+            .map(|state| state.state_name.clone())
+            .take(8)
+            .collect()
+    } else {
+        initial_states
+    }
+}
+
 fn temporal_rules_with_cycle_window_count(
     temporal_rules: &[crate::ir::semantic::TemporalRuleRecord],
 ) -> usize {
@@ -2415,6 +2435,17 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 .collect(),
         ));
     }
+    if !ir.regular_states.is_empty() && initial_regular_states != 1 {
+        findings.push(finding(
+            "semantic_state_machine_initial_cardinality",
+            ValidationFindingSeverity::Warning,
+            "state_machine",
+            format!(
+                "SemanticIR state machine has {initial_regular_states} canonical initial state(s); expected exactly one when regular states are present"
+            ),
+            state_machine_initial_cardinality_related_ids(&ir.regular_states),
+        ));
+    }
     if temporal_rules_with_alias_dependent_handshake_completion > 0 {
         findings.push(finding(
             "semantic_alias_dependent_handshake_completion_present",
@@ -3462,6 +3493,17 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 .iter()
                 .map(|conflict| conflict.conflict_id.clone())
                 .collect(),
+        ));
+    }
+    if !ir.regular_states.is_empty() && initial_regular_states != 1 {
+        findings.push(finding(
+            "intent_state_machine_initial_cardinality",
+            ValidationFindingSeverity::Warning,
+            "state_machine",
+            format!(
+                "IntentIR state machine has {initial_regular_states} canonical initial state(s); expected exactly one when regular states are present"
+            ),
+            state_machine_initial_cardinality_related_ids(&ir.regular_states),
         ));
     }
     if temporal_rules_with_alias_dependent_handshake_completion > 0 {
@@ -7080,6 +7122,65 @@ mod tests {
         assert!(has_finding(
             &report,
             "intent_interface_signal_conflicts_present"
+        ));
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_semantic_and_intent_ir_flag_multiple_initial_states() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("multiple_initial_states.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# State Machine\n",
+                "State idle is initial.\n\n",
+                "State busy is initial.\n\n",
+                "Transition idle -> busy when GO.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let semantic_report =
+            validate_semantic_ir(&semantic_ir, "multiple_initial_semantic".to_string());
+        assert_eq!(
+            metric_value(&semantic_report, "initial_regular_states"),
+            Some("2")
+        );
+        assert!(has_finding(
+            &semantic_report,
+            "semantic_state_machine_initial_cardinality"
+        ));
+
+        let intent_report = validate_intent_ir(&intent_ir, "multiple_initial_intent".to_string());
+        assert_eq!(
+            metric_value(&intent_report, "initial_regular_states"),
+            Some("2")
+        );
+        assert!(has_finding(
+            &intent_report,
+            "intent_state_machine_initial_cardinality"
         ));
 
         Ok(())

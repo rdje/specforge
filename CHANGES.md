@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-04-12 (Validation flags bad FSM initial cardinality)
+
+### Changed: state machines with zero or multiple initial states are validation-visible
+- `specforge validate` now emits `semantic_state_machine_initial_cardinality` and `intent_state_machine_initial_cardinality` warnings when a canonical state graph exists but does not have exactly one initial state.
+- Added `vlm_state_machine_multiple_initial_negative`, proving a VLM state-machine extraction with both `IDLE` and `BUSY` marked initial keeps the graph visible while validation flags the unsafe initial-state cardinality at both `SemanticIR` and `IntentIR`.
+- Added a direct validation regression for explicit state declarations with two initial states, so the warning is not only covered through the KG fixture path.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml --lib validate_semantic_and_intent_ir_flag_multiple_initial_states -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality vlm_state_machine_multiple_initial_negative` -> passed
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, 304 Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and mdBook build
+
 ## 2026-04-12 (Validation counts initial FSM states)
 
 ### Changed: validation makes initial-state cardinality visible
