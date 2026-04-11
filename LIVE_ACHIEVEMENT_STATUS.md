@@ -61,6 +61,7 @@
 - Graph-first direction coverage/scoring in `specforge validate` implemented: Done
 - `.fsm` explicit-module/top-composition lowering now recovers child port directions from matching `IntentIR.actor_ports` when flat module-local hints lag: Done
 - `.fsm` standalone direct-root lowering now recovers local directions from `IntentIR.actor_ports` when the direct actor context is unambiguous: Done
+- `.fsm` standalone sequential system-contract direction recovery from graph-backed actor ports is regression-locked: Done
 - `.fsm` explicit top-root lowering now recovers width-only top boundary port directions from explicit top-link topology: Done
 - Initial typed `temporal_rules` surface in `SemanticIR` / `IntentIR` implemented: Done
 - Cycle-window recovery for typed temporal rules, including idiomatic one-cycle phrases like `next cycle` / `next tick`, implemented: Done

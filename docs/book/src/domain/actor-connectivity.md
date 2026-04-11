@@ -176,6 +176,7 @@ Standalone direct roots are stricter.
 They do not carry a module name that says which actor the target is relative to, so the adapter only overlays graph-backed directions when all renderable actor-port evidence for signals already present in the direct local inventory points at one unambiguous actor.
 Unrelated graph-only actor ports are ignored by this direct-root context gate and are not added to the standalone inventory.
 If the graph mixes multiple actors, such as a producer and a consumer in the same direct root, the adapter leaves the missing flat directions unresolved and blocks rather than guessing.
+That same guarded direct-root path now has regression coverage for sequential system contracts too: graph-backed actor ports can satisfy the clock/reset input directions needed for `(+system ...)` when flat direct-interface hints lag.
 
 Explicit top composition has one more bounded recovery path.
 If a top boundary port has width but no flat direction, explicit link topology can recover the boundary role: a top endpoint used as a link source is a top input, and a top endpoint used as a link target is a top output.

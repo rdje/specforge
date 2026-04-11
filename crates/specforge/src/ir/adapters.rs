@@ -5180,6 +5180,67 @@ mod tests {
     }
 
     #[test]
+    fn standalone_sequential_dt_recovers_system_directions_from_actor_ports() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_explicit_sequential_control_intent_ir(tempdir.path())?;
+        clear_direct_interface_direction_hints(&mut intent_ir);
+        intent_ir.actor_ports = vec![
+            actor_port("controller", "clk", ActorRelativeDirection::Input),
+            actor_port("controller", "rst_n", ActorRelativeDirection::Input),
+            actor_port("controller", "DATA_IN", ActorRelativeDirection::Input),
+            actor_port("controller", "ACC", ActorRelativeDirection::Output),
+        ];
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+        adapter.write_to_disk()?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "renderable");
+        let emitted_target_path = adapter
+            .artifact_layout
+            .emitted_target_path
+            .as_ref()
+            .expect("graph-backed sequential adapter should emit target text");
+        let emitted_text = fs::read_to_string(emitted_target_path)?;
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let clk = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "clk")
+            .expect("clock should remain in the signal inventory");
+        let rst_n = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "rst_n")
+            .expect("reset should remain in the signal inventory");
+
+        assert_eq!(clk.direction_hint, Some(InterfaceSignalDirection::Input));
+        assert_eq!(rst_n.direction_hint, Some(InterfaceSignalDirection::Input));
+        assert!(
+            clk.mention_categories
+                .iter()
+                .any(|category| category == "actor_port")
+        );
+        assert!(fsm.renderability.is_renderable);
+        assert!(emitted_text.contains("(+system"));
+        assert!(emitted_text.contains("(clock clk)"));
+        assert!(emitted_text.contains("(asreset rst_n)"));
+        assert!(
+            adapter
+                .residual_decisions
+                .iter()
+                .all(|packet| packet.packet_id != "fsm_adapter_system_contract")
+        );
+
+        Ok(())
+    }
+
+    #[test]
     fn keeps_standalone_sequential_dt_blocked_without_system_contract() -> Result<()> {
         let tempdir = tempdir()?;
         let intent_ir = build_incomplete_sequential_control_intent_ir(tempdir.path())?;

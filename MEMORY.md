@@ -22,21 +22,22 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `3e6c541`
-- latest_commit_brief_message: `feat(evidence): recover mixed control polarity`
-- note: the current session is locking the detached mixed-polarity negative path in KG-bench so `CS_N is active LOW and active HIGH` stays unresolved instead of borrowing an implicit subject
+- latest_commit_hash: `2775b26`
+- latest_commit_brief_message: `test(kg): lock detached mixed polarity rejection`
+- note: the current session is locking graph-backed standalone sequential `.fsm` system-contract direction recovery with a focused adapter regression
 
 ## Recent commit chain (last 5)
+- `2775b26` test(kg): lock detached mixed polarity rejection
 - `3e6c541` feat(evidence): recover mixed control polarity
 - `84f7706` feat(evidence): recover collective control polarity
 - `8501a6e` feat(evidence): recover asserted-level control polarity
 - `aa4d776` test(kg): assert graph direction coverage
-- `6307c85` feat(adapter): recover top directions from links
 
 ## Current repository state
 - active workspace member: `crates/specforge`
+- the in-progress adapter-quality follow-on adds a regression proving standalone sequential `.fsm` DT lowering can still render `(+system ...)` when flat `direction_hint` values are absent but an unambiguous actor-port graph supplies `clk`, `rst_n`, data input, and accumulator output directions
+- the latest committed KG-quality follow-on added a tracked negative fixture for the detached mixed-polarity path so `CS_N is active LOW and active HIGH` remains unresolved through `SemanticIR` / `IntentIR`, not only in extractor unit tests
 - the latest committed mixed-polarity follow-on adds the safe clause-local parser for mixed active-level prose like `CS_N is active LOW and ENABLE is active HIGH`, while detached wording such as `CS_N is active LOW and active HIGH` still stays unresolved instead of borrowing an implicit subject
-- the in-progress KG-quality follow-on adds a tracked negative fixture for that detached mixed-polarity path so the unresolved behavior is locked at `SemanticIR` / `IntentIR`, not only in extractor unit tests
 - the previous collective-polarity follow-on extends `EvidenceIR` to recover active-level prose like `CS_N and WE_N are active LOW signals`, keeps mixed low/high compound prose unresolved until clause-local parsing is safe, and prevents polarity-only co-mentions of declared signals from minting duplicate heuristic interface records
 - the latest committed polarity follow-on teaches `EvidenceIR` to recover non-reset control polarity from explicit asserted-when-level prose like `CS_N is asserted when LOW` without inferring polarity from the `_N` suffix alone, and tightens `SemanticIR` so that local single-signal control prose enriches the declared signal instead of minting a duplicate heuristic interface record
 - the latest committed KG-bench follow-on adds explicit graph direction coverage expectations so fixtures can test canonical `actor_ports` coverage without overloading flat compatibility `direction_hint`; targeted `kg_bench` and full `scripts/run_ci.sh` validation passed for that slice
@@ -49,7 +50,7 @@
 - the Rust warning baseline is clean and now enforced in the shared local/hosted CI path rather than suppressed with `#[allow(dead_code)]`
 - README bootstrap currently resolves to `SESSION_BOOTSTRAP.md`, which instructs future agents to read the referenced live docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if necessary, and then continue from the roadmap
 - this bootstrap refresh observed 28 Rust source files and about 53,858 lines under `crates/specforge/src`, with the CLI now including `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, and `nlp-enrich` beside the core staged IR commands
-- `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the detached-mixed-control-polarity negative slice; the tracked KG fixture count is `49`, and the full local CI gate reports `296` passing Rust tests
+- `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the graph-backed sequential system-direction test slice; the tracked KG fixture count is `49`, and the full local CI gate reports `297` passing Rust tests
 - the latest README bootstrap hygiene pass found no new Rust architecture drift; the concrete fix was to refresh the committed baseline in this memory file and remove stray example bullets from `USER_GUIDE.md`'s root-document list
 - the latest active KG benchmark slice is `vlm_timing_active_low_deassertion_equivalence_gold`, which proves a VLM timing diagram that reports active-low `ARESETN` as both `deasserted` and `HIGH` yields typed temporal evidence without a false temporal or polarity conflict
 - the canonical user-facing documentation surface is now the mdBook under `docs/book/`
@@ -194,6 +195,7 @@
 - added explicit `kg-bench` graph direction coverage expectations (`graph_direction_signal_names_include` / `graph_direction_signal_names_exclude`) so fixtures can assert canonical `actor_ports` direction coverage separately from flat compatibility `signal_directions_include`
 - preserved width-only explicit top boundary ports and added bounded `.fsm` top-link topology recovery so a top endpoint used as a link source becomes a top input, a top endpoint used as a link target becomes a top output, and unresolved or conflicting top boundary directions still block
 - extended graph-backed `.fsm` adapter direction recovery into standalone direct roots under a stricter direct-inventory unambiguous-actor gate, with regressions proving single-actor recovery, unrelated graph-only port ignoring, mixed-actor blocking, and duplicate-provenance conflict handling
+- locked graph-backed standalone sequential `.fsm` system-contract direction recovery with a regression proving `clk` / `rst_n` can be recovered from one unambiguous actor-port graph when flat direct-interface hints are absent
 - moved the first `.fsm` adapter consumer onto target-actor-relative graph evidence: explicit module candidates now overlay matching `IntentIR.actor_ports` before top-composition renderability analysis, with regressions proving child-module directions recover from actor ports when flat module-local hints are cleared and conflicting graph directions still block lowering
 - executed the README -> `SESSION_BOOTSTRAP.md` bootstrap path again, reviewed the high-signal live docs and current Rust surface, confirmed 28 Rust source files / 45 tracked KG-quality fixtures / expected CLI command surface at that time, refreshed the latest committed baseline to `35a8372`, and cleaned stray compatibility-guide bullets from `USER_GUIDE.md`
 - added `vlm_timing_active_low_deassertion_equivalence_gold`, a tracked KG-quality fixture proving active-low reset release observations `deasserted` and `HIGH` stay equivalent VLM timing evidence; targeted `kg-bench` validation passed
@@ -258,7 +260,7 @@
 - broader KG-quality evaluation and benchmark hardening beyond the new seed fixture pack (`R15e`); recent slices added active-low reset-release VLM coverage, graph direction coverage expectations, explicit asserted-when-level non-reset control polarity recovery, collective active-level non-reset control polarity recovery, mixed clause-local non-reset control polarity recovery, and detached mixed-polarity rejection coverage
 - cross-document extractor learning is now started, and the first seven bounded prior-consumer paths are now live; visual-motif priors now have explicit local enrichment rescan hints, negative-knowledge priors now have validation-only caution coverage, machine-readable rescan/corroboration guidance, a `project-validation` consumer that writes a schema-v2 replay-oriented rescan/extractor-selection target list, a first explicit `rescan-plan` consumer, an opt-in `converge --rescan-plan <plan>` hook, persisted execution summaries for changed-outcome review, explicit not-promoted gates plus structured promotion-review requirements on those summaries, and review-facing projection of those summaries into validation docs; an approval artifact should remain local/generated unless future work deliberately introduces canonical artifact mutation plus a tracked approval-evidence schema
 - Tier 3 relation extraction after the graph/temporal/eval surfaces are ready (`R14`)
-- some downstream compatibility and consumer paths still rely on flat `direction_hint` instead of the graph-native surface; explicit-module `.fsm` top composition, unambiguous standalone direct roots, and explicit top-link boundary recovery now have bounded adapter-side recovery paths, but the broader direct-consumer cleanup remains open
+- some downstream compatibility and consumer paths still rely on flat `direction_hint` instead of the graph-native surface; explicit-module `.fsm` top composition, unambiguous standalone direct roots, standalone sequential system-contract renderability, and explicit top-link boundary recovery now have bounded adapter-side recovery paths, but the broader direct-consumer cleanup remains open
 - meaning-based role inference now covers tables, prose, alias-grounded prose, visual captions, and VLM timing annotations, and canonical layers now preserve that provenance, but broader downstream use of preserved arbitration state is still early
 - semantic-role disagreement is now surfaced explicitly across `EvidenceIR`, `SemanticIR`, and `IntentIR`, but richer multimodal role grounding and broader arbitration still need to grow
 - `SourceIR` / ingest are strong enough to remain the foundation, but not strong enough to be assumed universal; future Tier 1 work should stay focused on robustness and honest failure handling

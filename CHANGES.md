@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-04-11 (FSM adapter locks graph-backed sequential system directions)
+
+### Added: graph-backed sequential system-contract regression
+- Added a focused `.fsm` adapter regression proving standalone sequential DT lowering remains renderable when flat top-level `direction_hint` values are cleared, as long as one unambiguous `IntentIR.actor_ports` context supplies graph-backed directions for `clk`, `rst_n`, `DATA_IN`, and `ACC`.
+- The test locks the system-contract path specifically: graph-backed `clk` / `rst_n` inputs must satisfy `(+system ...)` renderability and avoid the `fsm_adapter_system_contract` residual.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml standalone_sequential_dt_recovers_system_directions_from_actor_ports -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml ir::adapters::tests -- --nocapture` -> passed with 24 adapter tests
+- `cargo fmt --all --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, 297 Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and mdBook build
+
 ## 2026-04-11 (KG bench locks detached mixed polarity rejection)
 
 ### Added: tracked negative fixture for detached mixed polarity

@@ -37,7 +37,12 @@
 - GitHub Actions CI is now part of the repo baseline and runs `cargo fmt --all --check`, warning-deny Clippy, warning-deny Rust tests, warning-deny rustdoc, and the mdBook build on every `push` and `pull_request`, which keeps the hosted validation path aligned with the local Rust/docs quality gate
 - that CI path now has a single checked-in entrypoint at `scripts/run_ci.sh`, and the GitHub workflow calls that script directly so local and hosted Rust validation do not drift apart
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and adding the planned `R15g` corpus knowledge base beside the already-live typed prior-memory plane; adapter expansion is now horizon work
-- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the detached mixed-polarity negative fixture slice, the full local CI path reports clean Clippy, 296 passing Rust tests, clean Rust API docs, and a successful mdBook build
+- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the graph-backed sequential system-direction regression slice, the full local CI path reports clean Clippy, 297 passing Rust tests, clean Rust API docs, and a successful mdBook build
+
+## Session update (2026-04-11 graph-backed sequential system directions)
+- Added an adapter regression proving standalone sequential DT lowering remains renderable after clearing flat direct-interface direction hints when a single `controller` actor-port graph supplies directions for `clk`, `rst_n`, `DATA_IN`, and `ACC`.
+- This locks the system-contract renderability path, not just ordinary data-port rendering: `clk` and `rst_n` are recovered as graph-backed inputs, `(+system ...)` still emits, and `fsm_adapter_system_contract` is not produced.
+- Focused validation passed for `standalone_sequential_dt_recovers_system_directions_from_actor_ports`, the full `ir::adapters::tests` suite passed with 24 adapter tests, and the full local CI gate passed with 297 Rust tests.
 
 ## Session update (2026-04-11 mixed clause-local control polarity)
 - `EvidenceIR` now has a bounded fallback that can split mixed active-level prose such as `CS_N is active LOW and ENABLE is active HIGH` into clause-local polarity observations.
@@ -529,7 +534,7 @@
 
 ## Testing implications
 - current full local CI path: `bash scripts/run_ci.sh`
-- current Rust test count observed through that path after the current slice: 296 library tests, 0 binary tests, and 0 doc tests, all passing under `RUSTFLAGS="-D warnings"` after clean `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings` and `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` passes
+- current Rust test count observed through that path after the current slice: 297 library tests, 0 binary tests, and 0 doc tests, all passing under `RUSTFLAGS="-D warnings"` after clean `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings` and `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` passes
 - current tracked KG-quality fixture count: 49
 - current tests cover:
   - source-kind detection
@@ -557,7 +562,7 @@
   - markdown-marker alias rejection for Form 2 alias learning
   - actor-signal relation extraction from prose and table roles
   - AMBA `Source` / `Driver` / `Destination` signal-direction handling
-  - `.fsm` adapter renderability, including graph-backed top-composition child direction recovery, unambiguous standalone direct direction recovery, graph-only direct-context filtering, top-link boundary direction recovery, and conflict/ambiguity blocking
+  - `.fsm` adapter renderability, including graph-backed top-composition child direction recovery, unambiguous standalone direct direction recovery, graph-backed sequential system-contract direction recovery, graph-only direct-context filtering, top-link boundary direction recovery, and conflict/ambiguity blocking
   - `specforge validate` for all four IR stages
   - project-level validation projection and schema-v2 rescan-plan generation
   - schema-v2 `rescan-plan` normalization, whitelisted execution, execution summaries, and no-promotion review gates
@@ -571,7 +576,7 @@
 
 ## Latest validation completed in this refresh
 - `bash scripts/run_ci.sh`
-  - passed; Rust test suite reported 288 passed tests under `RUSTFLAGS="-D warnings"`, 0 failures, 0 binary tests, 0 doc tests, rustdoc completed under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build completed successfully
+  - passed; Rust test suite reported 297 passed tests under `RUSTFLAGS="-D warnings"`, 0 failures, 0 binary tests, 0 doc tests, rustdoc completed under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build completed successfully
 
 ## Earlier validation trail
 - `cargo run --manifest-path Cargo.toml -p specforge -- --help`
