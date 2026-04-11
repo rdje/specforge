@@ -1118,11 +1118,15 @@ fn build_top_candidate(
         .collect::<Vec<_>>();
     let (renderability, renderable_top) =
         analyze_top_renderability(top, &children, module_candidates_by_name);
+    let ports = renderable_top
+        .as_ref()
+        .map(|top| top.ports.clone())
+        .unwrap_or_else(|| top.ports.clone());
 
     FsmTopCandidate {
         top_name: top.top_name.clone(),
         declaration_order: top.declaration_order,
-        ports: top.ports.clone(),
+        ports,
         children,
         links: top.links.clone(),
         renderability,
@@ -1407,7 +1411,7 @@ fn build_top_signal_inventory(ports: &[ExplicitTopPortRecord]) -> Vec<FsmSignalC
         .iter()
         .map(|port| FsmSignalCandidate {
             signal_name: port.port_name.clone(),
-            direction_hint: Some(port.direction_hint),
+            direction_hint: port.direction_hint,
             width_hint: port.width_hint.as_ref().and_then(|w| w.as_numeric()),
             supporting_canonical_ids: port.supporting_statement_ids.clone(),
             mention_categories: vec!["top_port".to_string()],
@@ -1486,6 +1490,7 @@ fn analyze_top_renderability(
     }
 
     let mut seen_top_ports = BTreeSet::new();
+    let mut top_port_directions = BTreeMap::<String, Option<InterfaceSignalDirection>>::new();
     let mut top_ports_by_name = BTreeMap::new();
     for port in &top.ports {
         if !seen_top_ports.insert(port.port_name.clone()) {
@@ -1500,10 +1505,56 @@ fn analyze_top_renderability(
                 "deduplicate explicit top-port records before lowering `?top:name`".to_string(),
             );
         }
+        top_port_directions.insert(port.port_name.clone(), port.direction_hint);
+    }
+
+    for link in &top.links {
+        if link.source.instance_name.is_none() {
+            merge_top_port_direction_from_link(
+                &mut top_port_directions,
+                &link.source.signal_name,
+                InterfaceSignalDirection::Input,
+                &format!(
+                    "Top link source `{}`",
+                    render_top_link_endpoint(&link.source)
+                ),
+                &mut blocking_reasons,
+                &mut required_canonical_enrichments,
+            );
+        }
+        if link.target.instance_name.is_none() {
+            merge_top_port_direction_from_link(
+                &mut top_port_directions,
+                &link.target.signal_name,
+                InterfaceSignalDirection::Output,
+                &format!(
+                    "Top link target `{}`",
+                    render_top_link_endpoint(&link.target)
+                ),
+                &mut blocking_reasons,
+                &mut required_canonical_enrichments,
+            );
+        }
+    }
+
+    for port in &top.ports {
+        let Some(Some(direction_hint)) = top_port_directions.get(&port.port_name) else {
+            push_unique_message(
+                &mut blocking_reasons,
+                &format!(
+                    "Top port `{}` is missing a direction hint or unambiguous top-link direction recovery.",
+                    port.port_name
+                ),
+            );
+            required_canonical_enrichments.insert(
+                "recover each top boundary port direction from explicit declaration or unambiguous top-link topology before lowering `?top:name`".to_string(),
+            );
+            continue;
+        };
         top_ports_by_name.insert(
             port.port_name.clone(),
             RenderableEndpointPort {
-                direction_hint: port.direction_hint,
+                direction_hint: *direction_hint,
                 width_hint: port.width_hint.as_ref().and_then(|w| w.as_numeric()),
             },
         );
@@ -1698,14 +1749,55 @@ fn analyze_top_renderability(
         blocking_reasons,
         required_canonical_enrichments: required_canonical_enrichments.into_iter().collect(),
     };
-    let renderable_top = renderability.is_renderable.then_some(FsmRenderableTopRoot {
+    let renderable_top = renderability.is_renderable.then(|| FsmRenderableTopRoot {
         top_name: top.top_name.clone(),
-        ports: top.ports.clone(),
+        ports: top
+            .ports
+            .iter()
+            .map(|port| {
+                let mut resolved_port = port.clone();
+                resolved_port.direction_hint =
+                    top_port_directions.get(&port.port_name).copied().flatten();
+                resolved_port
+            })
+            .collect(),
         children: renderable_children,
         links: top.links.clone(),
     });
 
     (renderability, renderable_top)
+}
+
+fn merge_top_port_direction_from_link(
+    top_port_directions: &mut BTreeMap<String, Option<InterfaceSignalDirection>>,
+    port_name: &str,
+    direction_hint: InterfaceSignalDirection,
+    endpoint_description: &str,
+    blocking_reasons: &mut Vec<String>,
+    required_canonical_enrichments: &mut BTreeSet<String>,
+) {
+    let Some(existing_direction) = top_port_directions.get_mut(port_name) else {
+        return;
+    };
+
+    match existing_direction {
+        None => *existing_direction = Some(direction_hint),
+        Some(existing) if *existing == direction_hint => {}
+        Some(existing) => {
+            push_unique_message(
+                blocking_reasons,
+                &format!(
+                    "{endpoint_description} implies top port `{port_name}` is `{}`, but existing top-boundary direction evidence is `{}`.",
+                    direction_hint.as_str(),
+                    existing.as_str()
+                ),
+            );
+            required_canonical_enrichments.insert(
+                "resolve conflicting top boundary port direction evidence before lowering `?top:name`"
+                    .to_string(),
+            );
+        }
+    }
 }
 
 fn renderable_ports_for_module_candidate(
@@ -3611,7 +3703,10 @@ fn render_top_root(top_root: &FsmRenderableTopRoot) -> String {
 fn render_top_port_token(port: &ExplicitTopPortRecord) -> String {
     // The FSM adapter uses numeric widths only; parametric widths are not yet rendered.
     let numeric_width = port.width_hint.as_ref().and_then(|w| w.as_numeric());
-    match (port.direction_hint, numeric_width) {
+    let direction_hint = port
+        .direction_hint
+        .expect("renderable top ports should have resolved directions");
+    match (direction_hint, numeric_width) {
         (InterfaceSignalDirection::Input, None | Some(1)) => port.port_name.clone(),
         (InterfaceSignalDirection::Input, Some(width)) => format!("{}<{width}", port.port_name),
         (InterfaceSignalDirection::Output, None | Some(1)) => format!("{}>", port.port_name),
@@ -4632,6 +4727,14 @@ mod tests {
         )
     }
 
+    fn build_width_only_top_port_composition_intent_ir(base: &Path) -> Result<IntentIr> {
+        build_intent_ir_from_markdown(
+            base,
+            "width_only_top_port.md",
+            "# Explicit Composition\nTop datapath.\n\nTop datapath port result_data is width 8.\n\nTop datapath child producer uses module producer_core.\n\nTop datapath child consumer uses module consumer_core.\n\nTop datapath link producer.output_data -> consumer.input_data.\n\nTop datapath link consumer.result_data -> result_data.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n\nModule consumer_core signal input_data is input width 8.\n\nModule consumer_core signal result_data is output width 8.\n\nModule consumer_core block route: result_data = input_data.\n",
+        )
+    }
+
     fn actor_port(
         actor_name: &str,
         signal_name: &str,
@@ -5454,6 +5557,72 @@ mod tests {
                 .iter()
                 .all(|packet| packet.packet_id != "fsm_adapter_composition_topology")
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn top_composition_recovers_top_port_direction_from_link_topology() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_width_only_top_port_composition_intent_ir(tempdir.path())?;
+        let explicit_top = intent_ir
+            .explicit_tops
+            .iter()
+            .find(|top| top.top_name == "datapath")
+            .expect("explicit top should be present");
+        let raw_port = explicit_top
+            .ports
+            .iter()
+            .find(|port| port.port_name == "result_data")
+            .expect("width-only top port should be preserved");
+
+        assert_eq!(raw_port.direction_hint, None);
+        assert_eq!(
+            raw_port.width_hint.as_ref().and_then(|w| w.as_numeric()),
+            Some(8)
+        );
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+        adapter.write_to_disk()?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "renderable");
+        let emitted_target_path = adapter
+            .artifact_layout
+            .emitted_target_path
+            .as_ref()
+            .expect("topology-recovered top should emit target text");
+        let emitted_text = fs::read_to_string(emitted_target_path)?;
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let top_candidate = fsm
+            .top_candidates
+            .iter()
+            .find(|top| top.top_name == "datapath")
+            .expect("top candidate should be present");
+        let recovered_port = top_candidate
+            .ports
+            .iter()
+            .find(|port| port.port_name == "result_data")
+            .expect("recovered top port should be present");
+        let signal_inventory_port = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "result_data")
+            .expect("recovered top port should stay in signal inventory");
+
+        assert_eq!(
+            recovered_port.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert_eq!(
+            signal_inventory_port.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert!(emitted_text.contains("result_data>8"));
 
         Ok(())
     }

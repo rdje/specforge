@@ -1268,7 +1268,8 @@ pub struct ExplicitTopRecord {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct ExplicitTopPortRecord {
     pub port_name: String,
-    pub direction_hint: InterfaceSignalDirection,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub direction_hint: Option<InterfaceSignalDirection>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub width_hint: Option<WidthHint>,
     pub declaration_order: u32,
@@ -2630,14 +2631,11 @@ fn build_explicit_tops(context: &SemanticContext) -> Vec<ExplicitTopRecord> {
         };
 
         if let Some(parsed_port) = parse_explicit_top_port(scoped_text) {
-            let Some(direction_hint) = parsed_port.direction_hint else {
-                continue;
-            };
             let declaration_order =
                 u32::try_from(entry.ports.len()).expect("top port count should fit in u32");
             entry.ports.push(ExplicitTopPortRecord {
                 port_name: parsed_port.signal_name,
-                direction_hint,
+                direction_hint: parsed_port.direction_hint,
                 width_hint: parsed_port.width_hint,
                 declaration_order,
                 supporting_statement_ids: vec![statement.statement_id.clone()],
@@ -10253,7 +10251,7 @@ mod tests {
         assert_eq!(explicit_top.links.len(), 2);
         assert!(explicit_top.ports.iter().any(|port| {
             port.port_name == "result_data"
-                && port.direction_hint == InterfaceSignalDirection::Output
+                && port.direction_hint == Some(InterfaceSignalDirection::Output)
                 && port.width_hint == Some(WidthHint::Numeric(8))
         }));
         assert!(explicit_top.children.iter().any(|child| {

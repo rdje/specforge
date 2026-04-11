@@ -1385,6 +1385,25 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 - `cargo test --manifest-path Cargo.toml ir::adapters::tests -- --nocapture` passed with 22 adapter tests.
 - `bash scripts/run_ci.sh` passed with Clippy `-D warnings`, 287 Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and mdBook build.
 
+## Top-link-backed `.fsm` boundary direction recovery (2026-04-11)
+
+### Why this slice landed now
+- After module and standalone actor-port overlays, top boundary ports were still more fragile than necessary: `SemanticIR` dropped explicit top ports that had width but no flat direction even when explicit composition links made the boundary role deterministic.
+- A top endpoint used as a link source has a clear `.fsm` top-boundary role: input. A top endpoint used as a link target has a clear role: output.
+- This is not actor-graph inference; it is explicit composition-topology recovery, so it stays bounded to the `?top:name` adapter path.
+
+### Implementation shape
+- `ExplicitTopPortRecord.direction_hint` is now optional, allowing width-only top boundary ports to survive `SemanticIR` / `IntentIR`.
+- `crates/specforge/src/ir/adapters.rs` now merges top boundary port directions from explicit top-link endpoints before renderability analysis.
+- Conflicting explicit direction versus link topology stays blocked, unresolved top boundary ports stay blocked, and renderable top roots carry resolved port directions before emitting `.fsm` text.
+
+### Validation
+- The new regression proves a width-only top port `result_data` stays canonical and renders as `result_data>8` only because the explicit top link `consumer.result_data -> result_data` recovers the top-output role.
+- `cargo test --manifest-path Cargo.toml top_composition -- --nocapture` passed across the focused top-composition set.
+- `cargo test --manifest-path Cargo.toml extracts_explicit_modules_and_tops_from_markdown -- --nocapture` passed after making top port direction optional.
+- `cargo test --manifest-path Cargo.toml ir::adapters::tests -- --nocapture` passed with 23 adapter tests.
+- `bash scripts/run_ci.sh` passed with Clippy `-D warnings`, 288 Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and mdBook build.
+
 ## Initial typed temporal-rule surface in SemanticIR / IntentIR (2026-04-04)
 
 ### Why this slice landed now

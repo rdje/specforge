@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-11 (FSM adapter recovers width-only top port directions from links)
+
+### Changed: top-boundary lowering can use explicit link topology
+- `ExplicitTopPortRecord.direction_hint` is now optional, so `SemanticIR` / `IntentIR` can preserve width-only top boundary port records instead of dropping them before the adapter sees the composition.
+- The `.fsm` top-composition adapter now recovers missing top boundary port directions from explicit top-link position: a top endpoint used as a link source is a top input, and a top endpoint used as a link target is a top output.
+- Recovery remains deterministic and bounded: unresolved top ports still block, conflicting explicit direction versus link topology still blocks, and the adapter only uses this for explicit `?top:name` composition topology rather than inventing actor-relative roles.
+
+### Tests
+- Added a regression proving `Top datapath port result_data is width 8` survives into canonical top composition and renders as `result_data>8` only because the explicit link `consumer.result_data -> result_data` establishes it as a top output.
+
+### Validation
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml top_composition -- --nocapture` -> passed with 5 focused tests
+- `cargo test --manifest-path Cargo.toml extracts_explicit_modules_and_tops_from_markdown -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml ir::adapters::tests -- --nocapture` -> passed with 23 adapter tests
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, 288 Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and mdBook build
+- `bash scripts/run_docs_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-11 (FSM adapter consumes graph-backed direct directions)
 
 ### Changed: standalone direct lowering uses bounded actor-relative port evidence

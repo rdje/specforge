@@ -37,7 +37,7 @@
 - GitHub Actions CI is now part of the repo baseline and runs `cargo fmt --all --check`, warning-deny Clippy, warning-deny Rust tests, warning-deny rustdoc, and the mdBook build on every `push` and `pull_request`, which keeps the hosted validation path aligned with the local Rust/docs quality gate
 - that CI path now has a single checked-in entrypoint at `scripts/run_ci.sh`, and the GitHub workflow calls that script directly so local and hosted Rust validation do not drift apart
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and adding the planned `R15g` corpus knowledge base beside the already-live typed prior-memory plane; adapter expansion is now horizon work
-- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the graph-backed `.fsm` direct-root direction slice, the latest full local CI path reports clean Clippy, 287 passing Rust tests, clean Rust API docs, and a successful mdBook build
+- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the top-link-backed `.fsm` boundary direction slice, the latest full local CI path reports clean Clippy, 288 passing Rust tests, clean Rust API docs, and a successful mdBook build
 
 ## Session update (2026-04-11 bootstrap refresh)
 - executed the README terminal instruction by reading `SESSION_BOOTSTRAP.md`, which expands the task into reading the referenced live docs, analyzing the Rust codebase, updating this analysis if necessary, and continuing from the roadmap
@@ -86,6 +86,13 @@
 - actor-port provenance merging now reconciles direction once per actor-port record, preventing a conflicting graph direction with multiple supporting ids from accidentally reintroducing a resolved direction after conflict collapse
 - focused tests now prove unambiguous standalone recovery, unrelated graph-only actor-port ignoring, ambiguous mixed-actor blocking, and duplicate-provenance conflict blocking for top-composition graph evidence
 - the full local CI path passed with 287 Rust tests, warning-deny Clippy, warning-deny rustdoc, and mdBook build
+
+## Session update (2026-04-11 top-link-backed `.fsm` boundary directions)
+- explicit top ports now preserve width-only declarations by making `ExplicitTopPortRecord.direction_hint` optional
+- `.fsm` top-composition renderability can recover a missing top boundary direction from explicit link topology: top link source means top input, and top link target means top output
+- the recovery is not actor-graph inference and does not invent boundary roles; unresolved top directions and conflicts between explicit direction and link topology still block
+- focused tests prove width-only `result_data` survives into canonical top composition and renders as `result_data>8` only through the explicit `consumer.result_data -> result_data` link
+- the full local CI path passed with 288 Rust tests, warning-deny Clippy, warning-deny rustdoc, and mdBook build
 
 ## Session update (2026-04-04)
 - `specforge converge` now drives the persisted `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters` path as a fixed-point loop and stops when the materialized knowledge snapshot is stable
@@ -168,7 +175,7 @@
 - the documented README staged flow was re-executed on `README.md` through `inspect -> ingest -> evidence -> semantic -> intent -> adapt --dry-run`, confirming the current entry path still runs end-to-end
 - the roadmap now explicitly treats adapter expansion as horizon work; the next structural gaps are making the actor-relative graph primary, broadening the new table/prose/alias-grounded role inference into richer multimodal grounding, adding deeper explicit temporal semantics, and hardening KG quality/evaluation
 - the current architecture is still intentionally document-local, which is correct for truthfulness, but the next strategic expansion after the current semantic-truthfulness work should be a separate cross-document learning plane that stores reusable extraction priors rather than cross-document facts
-- the local Rust test suite is now at `287/287` passing in the latest full CI run after the graph-backed `.fsm` direct-root recovery and conflict regressions landed
+- the local Rust test suite is now at `288/288` passing in the latest full CI run after the top-link-backed `.fsm` boundary direction recovery regression landed
 - `specforge kg-bench` now provides the first tracked KG-quality fixture harness under `crates/specforge/test_data/kg_quality`, including:
   - a gold actor-port recovery fixture
   - a negative name-only semantic noise fixture
@@ -461,6 +468,7 @@
   - consumes canonical signal inventory, backend-neutral system/init records, backend-neutral control fragments, explicit regular-state/transition records, and explicit module/top composition facts when present
   - overlays explicit module signal inventory with matching `IntentIR.actor_ports` so graph-backed module actor directions can fill missing child-module port hints during `?top:name` renderability analysis
   - overlays standalone direct signal inventory with graph-backed actor-port directions only when all renderable actor-port evidence for signals already present in the local direct inventory points at one unambiguous actor
+  - recovers missing top boundary port directions from explicit top-link source/target topology before rendering `?top:name`
   - emits a real standalone `?dt:name` file only when widths, directions, guarded/action blocks, and any required standalone sequential system/init facts are explicit enough to avoid semantic invention
   - emits a real structured `?fsm:name` file only when the state graph, transition targets, and state-body control are explicit enough to avoid semantic invention
   - emits a real explicit `?top:name` source document only when the top ports, child modules, and links are explicit enough to avoid semantic invention
@@ -488,7 +496,7 @@
 
 ## Testing implications
 - current full local CI path: `bash scripts/run_ci.sh`
-- current Rust test count observed through that path: 287 library tests, 0 binary tests, and 0 doc tests, all passing under `RUSTFLAGS="-D warnings"` after clean `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings` and `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` passes
+- current Rust test count observed through that path: 288 library tests, 0 binary tests, and 0 doc tests, all passing under `RUSTFLAGS="-D warnings"` after clean `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings` and `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` passes
 - current tracked KG-quality fixture count: 45
 - current tests cover:
   - source-kind detection
@@ -516,7 +524,7 @@
   - markdown-marker alias rejection for Form 2 alias learning
   - actor-signal relation extraction from prose and table roles
   - AMBA `Source` / `Driver` / `Destination` signal-direction handling
-  - `.fsm` adapter renderability, including graph-backed top-composition child direction recovery, unambiguous standalone direct direction recovery, graph-only direct-context filtering, and conflict/ambiguity blocking
+  - `.fsm` adapter renderability, including graph-backed top-composition child direction recovery, unambiguous standalone direct direction recovery, graph-only direct-context filtering, top-link boundary direction recovery, and conflict/ambiguity blocking
   - `specforge validate` for all four IR stages
   - project-level validation projection and schema-v2 rescan-plan generation
   - schema-v2 `rescan-plan` normalization, whitelisted execution, execution summaries, and no-promotion review gates
@@ -530,7 +538,7 @@
 
 ## Latest validation completed in this refresh
 - `bash scripts/run_ci.sh`
-  - passed; Rust test suite reported 287 passed tests under `RUSTFLAGS="-D warnings"`, 0 failures, 0 binary tests, 0 doc tests, rustdoc completed under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build completed successfully
+  - passed; Rust test suite reported 288 passed tests under `RUSTFLAGS="-D warnings"`, 0 failures, 0 binary tests, 0 doc tests, rustdoc completed under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build completed successfully
 
 ## Earlier validation trail
 - `cargo run --manifest-path Cargo.toml -p specforge -- --help`

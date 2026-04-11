@@ -177,6 +177,10 @@ They do not carry a module name that says which actor the target is relative to,
 Unrelated graph-only actor ports are ignored by this direct-root context gate and are not added to the standalone inventory.
 If the graph mixes multiple actors, such as a producer and a consumer in the same direct root, the adapter leaves the missing flat directions unresolved and blocks rather than guessing.
 
+Explicit top composition has one more bounded recovery path.
+If a top boundary port has width but no flat direction, explicit link topology can recover the boundary role: a top endpoint used as a link source is a top input, and a top endpoint used as a link target is a top output.
+That path is composition-topology recovery, not actor-graph inference, and conflicting or unresolved top boundary directions still block.
+
 This is still conservative.
 Graph `input` and `output` directions can fill the module-local port role, but `in_out` and `unknown` are not turned into fake `.fsm` directions.
 Conflicts between flat hints and graph evidence still collapse to unresolved state and block lowering instead of silently choosing a winner.
