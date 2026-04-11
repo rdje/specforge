@@ -4,6 +4,8 @@
   "expectations": {
     "semantic": {
       "signal_names_include": ["PREADY"],
+      "graph_direction_signal_names_include": ["PREADY"],
+      "graph_direction_signal_names_exclude": ["PSEL"],
       "actor_ports_include": [
         {
           "actor_name": "Completer",
@@ -19,6 +21,8 @@
     },
     "intent": {
       "signal_names_include": ["PREADY"],
+      "graph_direction_signal_names_include": ["PREADY"],
+      "graph_direction_signal_names_exclude": ["PSEL"],
       "actor_ports_include": [
         {
           "actor_name": "Completer",

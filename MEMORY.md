@@ -22,22 +22,23 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `e910a28`
-- latest_commit_brief_message: `feat(adapter): recover direct directions from graph`
-- note: the current session is moving the next `R15` downstream consumer from flat `direction_hint` dependence toward explicit top-link boundary direction recovery for width-only `.fsm` top ports
+- latest_commit_hash: `6307c85`
+- latest_commit_brief_message: `feat(adapter): recover top directions from links`
+- note: the current session is moving the next `R15` / `R15e` benchmark surface from flat `direction_hint` dependence toward explicit graph-backed direction coverage assertions in `kg-bench`
 
 ## Recent commit chain (last 5)
+- `6307c85` feat(adapter): recover top directions from links
 - `e910a28` feat(adapter): recover direct directions from graph
 - `a77fec8` feat(adapter): recover module directions from graph
 - `7d298a9` docs(bootstrap): clean handoff hygiene
 - `35a8372` test(kg): lock active-low vlm reset release
-- `59622ec` ci: deny rustdoc warnings
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - the current `R15` graph-first adapter slice teaches explicit-module `.fsm` top-composition lowering to overlay matching `IntentIR.actor_ports` before renderability analysis, so child-module input/output directions can be recovered from actor-relative graph evidence when flat module-local `direction_hint` values lag
 - the latest committed direct-root follow-on teaches standalone `.fsm` lowering to overlay `IntentIR.actor_ports` only when the direct actor context is unambiguous, leaving mixed producer/consumer graph contexts blocked instead of guessing a target-actor perspective
-- the in-progress top-boundary follow-on preserves width-only explicit top ports and recovers missing top input/output direction from explicit top-link topology only
+- the latest committed top-boundary follow-on preserves width-only explicit top ports and recovers missing top input/output direction from explicit top-link topology only
+- the in-progress KG-bench follow-on adds explicit graph direction coverage expectations so fixtures can test canonical `actor_ports` coverage without overloading flat compatibility `direction_hint`; targeted `kg_bench` and full `scripts/run_ci.sh` validation have passed for the slice
 - the latest committed KG-quality slice added `vlm_timing_active_low_deassertion_equivalence_gold`, complementing the existing active-low assertion fixture by proving `DEASSERTED` and `HIGH` are equivalent for active-low reset release timing evidence
 - the previous quality slice added rustdoc warning denial to the shared CI path and fixed the only discovered rustdoc broken-link interpretation in `ActorSignalRelation` docs
 - `scripts/run_ci.sh` now runs Clippy with `-D warnings` before the Rust test suite, and GitHub Actions installs the `clippy` component so the hosted gate matches the local gate
@@ -187,6 +188,7 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
+- added explicit `kg-bench` graph direction coverage expectations (`graph_direction_signal_names_include` / `graph_direction_signal_names_exclude`) so fixtures can assert canonical `actor_ports` direction coverage separately from flat compatibility `signal_directions_include`
 - preserved width-only explicit top boundary ports and added bounded `.fsm` top-link topology recovery so a top endpoint used as a link source becomes a top input, a top endpoint used as a link target becomes a top output, and unresolved or conflicting top boundary directions still block
 - extended graph-backed `.fsm` adapter direction recovery into standalone direct roots under a stricter direct-inventory unambiguous-actor gate, with regressions proving single-actor recovery, unrelated graph-only port ignoring, mixed-actor blocking, and duplicate-provenance conflict handling
 - moved the first `.fsm` adapter consumer onto target-actor-relative graph evidence: explicit module candidates now overlay matching `IntentIR.actor_ports` before top-composition renderability analysis, with regressions proving child-module directions recover from actor ports when flat module-local hints are cleared and conflicting graph directions still block lowering

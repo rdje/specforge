@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-04-11 (KG bench can assert graph-backed direction coverage)
+
+### Added: graph-native direction expectation surface
+- Added `graph_direction_signal_names_include` / `graph_direction_signal_names_exclude` to `specforge kg-bench` canonical stage expectations.
+- The new expectation checks `actor_ports` directly for non-`unknown` graph direction coverage by signal name, so fixtures can lock the graph-native surface without overloading flat `signal_directions_include`.
+- Existing flat direction expectations are unchanged and still check `InterfaceSignalRecord.direction_hint` only.
+
+### Tests
+- Strengthened `actor_ports_gold` so both `SemanticIR` and `IntentIR` assert that `PREADY` has graph-backed direction coverage and `PSEL` does not.
+
+### Validation
+- `cargo fmt --all --check` -> passed
+- `git diff --check` -> passed
+- `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` -> passed with all 45 tracked KG fixtures
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, 288 Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and mdBook build
+
 ## 2026-04-11 (FSM adapter recovers width-only top port directions from links)
 
 ### Changed: top-boundary lowering can use explicit link topology

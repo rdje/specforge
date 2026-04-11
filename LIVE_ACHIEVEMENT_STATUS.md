@@ -123,6 +123,7 @@
 - KG benchmark harness now locks active-low VLM timing polarity equivalence: Done
 - KG benchmark harness now locks active-low VLM reset-release polarity equivalence: Done
 - KG benchmark harness can now assert canonical actor-signal relations directly: Done
+- KG benchmark harness can now assert graph-backed direction coverage by signal name directly: Done
 - KG benchmark harness can now patch `document_sections` and assert per-signal directions directly: Done
 - Cross-document actor-taxonomy priors in typed prior memory: Done
 - Prior-guided actor taxonomy consumption in `EvidenceIR`: Done

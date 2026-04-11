@@ -14,6 +14,7 @@ The fixture set is used to lock:
 - conflict surfacing
 - residual quality
 - prior-guided before/after behavior
+- graph-backed direction coverage without falling back to flat compatibility hints
 
 This lets the project protect individual truthfulness properties instead of relying only on broad integration runs.
 
@@ -27,6 +28,17 @@ Without fixture coverage, the pipeline can drift in subtle ways:
 - a table-shape rule might begin misclassifying field tables as real signal tables
 
 `kg-bench` exists to catch exactly that kind of drift.
+
+## Graph-Backed Direction Expectations
+
+Actor-relative direction is a graph surface, not just a flat signal annotation.
+
+Fixtures can therefore assert graph direction coverage directly with `graph_direction_signal_names_include` and `graph_direction_signal_names_exclude`.
+Those fields inspect canonical `actor_ports` for non-`unknown` direction evidence by signal name.
+
+This is intentionally separate from `signal_directions_include`.
+The older field still checks the flat compatibility `direction_hint` on interface signal records.
+Keeping both surfaces separate prevents the harness from flattening producer/consumer actor roles into a fake single perspective while still letting graph-first recovery be tested explicitly.
 
 ## Gold fixtures versus negative fixtures
 

@@ -1404,6 +1404,25 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 - `cargo test --manifest-path Cargo.toml ir::adapters::tests -- --nocapture` passed with 23 adapter tests.
 - `bash scripts/run_ci.sh` passed with Clippy `-D warnings`, 288 Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and mdBook build.
 
+## KG-bench graph-backed direction assertions (2026-04-11)
+
+### Why this slice landed now
+- R15 is deliberately moving downstream consumers from flat compatibility `direction_hint` toward actor-relative graph surfaces.
+- `kg-bench` could already assert specific actor ports, and it could assert flat per-signal directions, but it did not have a direct expectation for graph direction coverage by signal name.
+- Reusing `signal_directions_include` for this would be wrong because some fixtures intentionally preserve a flat interface perspective while actor ports describe producer/consumer-relative roles.
+
+### Implementation shape
+- `CanonicalStageExpectations` now accepts `graph_direction_signal_names_include` and `graph_direction_signal_names_exclude`.
+- The harness computes the set from canonical `actor_ports` with any non-`unknown` actor-relative direction.
+- The existing `signal_directions_include` behavior remains flat and compatibility-specific, so graph-native and compatibility surfaces stay testable independently.
+
+### Validation
+- `actor_ports_gold` now proves the new expectation surface across both `SemanticIR` and `IntentIR` by requiring graph-backed coverage for `PREADY` and excluding unrelated `PSEL`.
+- `cargo fmt --all --check` passed.
+- `git diff --check` passed.
+- `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` passed with all 45 tracked KG fixtures.
+- `bash scripts/run_ci.sh` passed with Clippy `-D warnings`, 288 Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and mdBook build.
+
 ## Initial typed temporal-rule surface in SemanticIR / IntentIR (2026-04-04)
 
 ### Why this slice landed now

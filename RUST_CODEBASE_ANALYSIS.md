@@ -37,7 +37,14 @@
 - GitHub Actions CI is now part of the repo baseline and runs `cargo fmt --all --check`, warning-deny Clippy, warning-deny Rust tests, warning-deny rustdoc, and the mdBook build on every `push` and `pull_request`, which keeps the hosted validation path aligned with the local Rust/docs quality gate
 - that CI path now has a single checked-in entrypoint at `scripts/run_ci.sh`, and the GitHub workflow calls that script directly so local and hosted Rust validation do not drift apart
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and adding the planned `R15g` corpus knowledge base beside the already-live typed prior-memory plane; adapter expansion is now horizon work
-- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the top-link-backed `.fsm` boundary direction slice, the latest full local CI path reports clean Clippy, 288 passing Rust tests, clean Rust API docs, and a successful mdBook build
+- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the KG-bench graph-direction expectation slice, the latest full local CI path reports clean Clippy, 288 passing Rust tests, clean Rust API docs, and a successful mdBook build
+
+## Session update (2026-04-11 KG-bench graph direction expectations)
+- `specforge kg-bench` canonical stage expectations now include `graph_direction_signal_names_include` and `graph_direction_signal_names_exclude`
+- those expectations inspect canonical `actor_ports` for non-`unknown` direction evidence by signal name, which lets fixtures test graph-backed direction coverage directly without overloading flat `InterfaceSignalRecord.direction_hint`
+- the existing `signal_directions_include` expectation remains compatibility-specific; this matters because actor-relative producer/consumer roles should not be flattened into a fake global direction when a fixture really means flat interface perspective
+- `actor_ports_gold` now exercises the new surface for both `SemanticIR` and `IntentIR`
+- the full local CI path passed with 288 Rust tests, warning-deny Clippy, warning-deny rustdoc, and mdBook build
 
 ## Session update (2026-04-11 bootstrap refresh)
 - executed the README terminal instruction by reading `SESSION_BOOTSTRAP.md`, which expands the task into reading the referenced live docs, analyzing the Rust codebase, updating this analysis if necessary, and continuing from the roadmap
@@ -175,7 +182,7 @@
 - the documented README staged flow was re-executed on `README.md` through `inspect -> ingest -> evidence -> semantic -> intent -> adapt --dry-run`, confirming the current entry path still runs end-to-end
 - the roadmap now explicitly treats adapter expansion as horizon work; the next structural gaps are making the actor-relative graph primary, broadening the new table/prose/alias-grounded role inference into richer multimodal grounding, adding deeper explicit temporal semantics, and hardening KG quality/evaluation
 - the current architecture is still intentionally document-local, which is correct for truthfulness, but the next strategic expansion after the current semantic-truthfulness work should be a separate cross-document learning plane that stores reusable extraction priors rather than cross-document facts
-- the local Rust test suite is now at `288/288` passing in the latest full CI run after the top-link-backed `.fsm` boundary direction recovery regression landed
+- the local Rust test suite is now at `288/288` passing in the latest full CI run after the KG-bench graph-direction expectation surface landed
 - `specforge kg-bench` now provides the first tracked KG-quality fixture harness under `crates/specforge/test_data/kg_quality`, including:
   - a gold actor-port recovery fixture
   - a negative name-only semantic noise fixture

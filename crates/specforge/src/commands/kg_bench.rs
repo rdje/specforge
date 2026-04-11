@@ -95,6 +95,10 @@ struct CanonicalStageExpectations {
     #[serde(default)]
     signal_names_include: Vec<String>,
     #[serde(default)]
+    graph_direction_signal_names_include: Vec<String>,
+    #[serde(default)]
+    graph_direction_signal_names_exclude: Vec<String>,
+    #[serde(default)]
     signal_directions_include: Vec<ExpectedSignalDirection>,
     #[serde(default)]
     actor_ports_include: Vec<ExpectedActorPort>,
@@ -485,6 +489,22 @@ fn evaluate_canonical_expectations(
         "signal_names_include",
         &expectations.signal_names_include,
         &signal_names,
+        failures,
+    );
+
+    let graph_direction_signal_names = graph_direction_signal_names(actor_ports);
+    assert_includes(
+        label,
+        "graph_direction_signal_names_include",
+        &expectations.graph_direction_signal_names_include,
+        &graph_direction_signal_names,
+        failures,
+    );
+    assert_excludes(
+        label,
+        "graph_direction_signal_names_exclude",
+        &expectations.graph_direction_signal_names_exclude,
+        &graph_direction_signal_names,
         failures,
     );
 
@@ -937,6 +957,14 @@ fn find_interface_signal<'a>(
         .iter()
         .flat_map(|interface| interface.signal_records.iter())
         .find(|signal| signal.signal_name == signal_name)
+}
+
+fn graph_direction_signal_names(actor_ports: &[ActorPortRecord]) -> BTreeSet<String> {
+    actor_ports
+        .iter()
+        .filter(|port| !matches!(port.direction, ActorRelativeDirection::Unknown))
+        .map(|port| port.signal_name.clone())
+        .collect()
 }
 
 fn residual_decision_ids(residual_decisions: &[ResidualDecisionPacket]) -> BTreeSet<String> {
