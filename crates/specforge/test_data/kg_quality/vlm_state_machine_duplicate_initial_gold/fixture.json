@@ -49,12 +49,14 @@
       "semantic": {
         "metric_values": {
           "regular_states": "2",
+          "initial_regular_states": "1",
           "state_transitions": "1"
         }
       },
       "intent": {
         "metric_values": {
           "regular_states": "2",
+          "initial_regular_states": "1",
           "state_transitions": "1"
         }
       }

@@ -44,6 +44,7 @@
 - `vlm_state_machine_label_noise_negative` locks this end to end, and `kg-bench` can now assert state names plus transition endpoints directly.
 - VLM transitions now have a second boundary too: both endpoints must refer to state names accepted from the same VLM observation. Identifier-shaped but undeclared endpoints such as `DONE` and `RESET` are filtered rather than treated as canonical graph facts. `vlm_state_machine_undeclared_transition_negative` locks that behavior end to end.
 - Duplicate VLM state labels now merge by state name like explicit state declarations do. If any duplicate carries `is_initial: true`, the canonical state preserves that initial marker. `vlm_state_machine_duplicate_initial_gold` locks the case where `IDLE` appears first as non-initial and later as initial, while `kg-bench` now exposes direct initial-state expectations.
+- `specforge validate` now also reports `initial_regular_states` for `SemanticIR` and `IntentIR`, so exactly-one-initial FSM truth is visible in validation reports and can be locked by KG fixtures instead of only inferred from state names.
 
 ## 2026-04-11 VLM timing waveform motion filtering
 - VLM timing `signals[].values[].state` strings are not all equally authoritative signal values.

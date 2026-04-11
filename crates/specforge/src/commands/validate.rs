@@ -492,6 +492,15 @@ fn temporal_rules_missing_clock_grounding_count(
         .count()
 }
 
+fn initial_regular_states_count(
+    regular_states: &[crate::ir::semantic::RegularStateRecord],
+) -> usize {
+    regular_states
+        .iter()
+        .filter(|state| state.is_initial)
+        .count()
+}
+
 fn temporal_rules_with_cycle_window_count(
     temporal_rules: &[crate::ir::semantic::TemporalRuleRecord],
 ) -> usize {
@@ -1835,6 +1844,7 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         &ir.infrastructure_signals,
         Some(InfrastructureTopologyKind::ResetTreeTargets),
     );
+    let initial_regular_states = initial_regular_states_count(&ir.regular_states);
     let fully_typed = ir
         .interfaces
         .iter()
@@ -1966,6 +1976,7 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         ir.symbol_definitions.len()
     );
     println!("  regular_states: {}", ir.regular_states.len());
+    println!("  initial_regular_states: {initial_regular_states}");
     println!("  state_transitions: {}", ir.state_transitions.len());
     println!("  register_records: {}", ir.register_records.len());
     println!("  timing_constraints: {}", ir.timing_constraints.len());
@@ -2645,6 +2656,7 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 ir.symbol_definitions.len().to_string(),
             ),
             metric("regular_states", ir.regular_states.len().to_string()),
+            metric("initial_regular_states", initial_regular_states.to_string()),
             metric("state_transitions", ir.state_transitions.len().to_string()),
             metric("register_records", ir.register_records.len().to_string()),
             metric(
@@ -2837,6 +2849,7 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         &ir.infrastructure_signals,
         Some(InfrastructureTopologyKind::ResetTreeTargets),
     );
+    let initial_regular_states = initial_regular_states_count(&ir.regular_states);
     let dir_pct = if declared_count > 0 {
         with_direction * 100 / declared_count
     } else {
@@ -2954,6 +2967,7 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     println!("  assumptions: {}", ir.assumptions.len());
     println!("  symbol_definitions: {}", ir.symbol_definitions.len());
     println!("  regular_states: {}", ir.regular_states.len());
+    println!("  initial_regular_states: {initial_regular_states}");
     println!("  state_transitions: {}", ir.state_transitions.len());
     println!("  register_records: {}", ir.register_records.len());
     println!("  timing_constraints: {}", ir.timing_constraints.len());
@@ -3701,6 +3715,7 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 ir.symbol_definitions.len().to_string(),
             ),
             metric("regular_states", ir.regular_states.len().to_string()),
+            metric("initial_regular_states", initial_regular_states.to_string()),
             metric("state_transitions", ir.state_transitions.len().to_string()),
             metric("register_records", ir.register_records.len().to_string()),
             metric(

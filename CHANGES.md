@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-04-12 (Validation counts initial FSM states)
+
+### Changed: validation makes initial-state cardinality visible
+- `specforge validate` now reports `initial_regular_states` for both `SemanticIR` and `IntentIR`, next to the existing `regular_states` and `state_transitions` metrics.
+- The `vlm_state_machine_duplicate_initial_gold` fixture now asserts that duplicate VLM state labels still leave exactly one canonical initial state after merge, not merely that `IDLE` appears in the initial-state name set.
+- The mdBook KG-bench chapter documents this stronger validation surface for VLM state-machine truthfulness.
+
+### Validation
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml --lib validate_semantic_ir_artifact_reports_without_error -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality vlm_state_machine_duplicate_initial_gold` -> passed
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, 303 Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and mdBook build
+
 ## 2026-04-12 (VLM state machine merges duplicate initial markers)
 
 ### Fixed: duplicate VLM state labels preserve initial-state evidence

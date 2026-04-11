@@ -37,7 +37,12 @@
 - GitHub Actions CI is now part of the repo baseline and runs `cargo fmt --all --check`, warning-deny Clippy, warning-deny Rust tests, warning-deny rustdoc, and the mdBook build on every `push` and `pull_request`, which keeps the hosted validation path aligned with the local Rust/docs quality gate
 - that CI path now has a single checked-in entrypoint at `scripts/run_ci.sh`, and the GitHub workflow calls that script directly so local and hosted Rust validation do not drift apart
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and adding the planned `R15g` corpus knowledge base beside the already-live typed prior-memory plane; adapter expansion is now horizon work
-- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the VLM duplicate-initial state-machine slice, the full local CI path reports clean Clippy, 303 passing Rust tests, clean Rust API docs, and a successful mdBook build
+- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the initial FSM state validation metric slice, the full local CI path reports clean Clippy, 303 passing Rust tests, clean Rust API docs, and a successful mdBook build
+
+## Session update (2026-04-12 initial FSM state validation metric)
+- `specforge validate` now reports `initial_regular_states` for both `SemanticIR` and `IntentIR`, making FSM initial-state cardinality visible beside total state and transition counts.
+- The tracked `vlm_state_machine_duplicate_initial_gold` fixture now asserts `initial_regular_states = 1` at both semantic and intent validation stages, so the duplicate-label merge path proves exactly one canonical initial state survives.
+- Focused semantic validation, targeted `kg-bench` validation, and the full local CI gate passed with 303 Rust tests for this slice.
 
 ## Session update (2026-04-12 VLM state-machine duplicate initial markers)
 - `SemanticIR` now merges duplicate VLM state-machine state labels by state name before adding canonical `RegularStateRecord`s, preserving `is_initial` if any duplicate carries it.
