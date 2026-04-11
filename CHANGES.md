@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-04-11 (FSM adapter locks sticky actor-port width conflicts)
+
+### Added: width regression for sticky adapter conflicts
+- Added a standalone direct `.fsm` regression proving actor-port width disagreement stays unresolved after conflict collapse: a flat `DATA_OUT` width `8`, graph-backed `DATA_OUT` width `16`, and later duplicate graph-backed width `8` must still block lowering instead of self-healing.
+- This completes regression coverage for the sticky adapter inventory conflict path across both role direction and numeric width hints.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml --lib standalone_dt_keeps_conflicting_actor_port_width_unresolved -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml --lib ir::adapters::tests -- --nocapture` -> passed with 26 adapter tests
+- `cargo fmt --all --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, 299 Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and mdBook build
+
 ## 2026-04-11 (FSM adapter keeps actor-port direction conflicts sticky)
 
 ### Changed: adapter inventory conflicts cannot self-heal by repetition

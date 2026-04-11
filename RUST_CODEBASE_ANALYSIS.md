@@ -37,7 +37,12 @@
 - GitHub Actions CI is now part of the repo baseline and runs `cargo fmt --all --check`, warning-deny Clippy, warning-deny Rust tests, warning-deny rustdoc, and the mdBook build on every `push` and `pull_request`, which keeps the hosted validation path aligned with the local Rust/docs quality gate
 - that CI path now has a single checked-in entrypoint at `scripts/run_ci.sh`, and the GitHub workflow calls that script directly so local and hosted Rust validation do not drift apart
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and adding the planned `R15g` corpus knowledge base beside the already-live typed prior-memory plane; adapter expansion is now horizon work
-- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the actor-port conflict-stickiness adapter slice, the full local CI path reports clean Clippy, 298 passing Rust tests, clean Rust API docs, and a successful mdBook build
+- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the actor-port width-conflict stickiness test slice, the full local CI path reports clean Clippy, 299 passing Rust tests, clean Rust API docs, and a successful mdBook build
+
+## Session update (2026-04-11 actor-port width conflict stickiness)
+- Added `standalone_dt_keeps_conflicting_actor_port_width_unresolved`, proving sticky adapter inventory conflicts cover numeric width as well as direction roles.
+- The regression starts with canonical flat `DATA_OUT` width `8`, overlays graph-backed `DATA_OUT` width `16`, then repeats graph-backed width `8`; lowering must remain blocked with `DATA_OUT.width_hint == None` instead of resurrecting the original width.
+- Focused validation passed for the new regression, the full `ir::adapters::tests` suite passed with 26 adapter tests, and the full local CI gate passed with 299 Rust tests.
 
 ## Session update (2026-04-11 actor-port conflict stickiness)
 - `FsmSignalCandidate` inventory evidence now tracks whether a direction or width hint already conflicted, so `None` no longer ambiguously means both unknown and conflict-collapsed.
@@ -540,7 +545,7 @@
 
 ## Testing implications
 - current full local CI path: `bash scripts/run_ci.sh`
-- current Rust test count observed through that path after the current slice: 298 library tests, 0 binary tests, and 0 doc tests, all passing under `RUSTFLAGS="-D warnings"` after clean `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings` and `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` passes
+- current Rust test count observed through that path after the current slice: 299 library tests, 0 binary tests, and 0 doc tests, all passing under `RUSTFLAGS="-D warnings"` after clean `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings` and `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` passes
 - current tracked KG-quality fixture count: 49
 - current tests cover:
   - source-kind detection
@@ -568,7 +573,7 @@
   - markdown-marker alias rejection for Form 2 alias learning
   - actor-signal relation extraction from prose and table roles
   - AMBA `Source` / `Driver` / `Destination` signal-direction handling
-  - `.fsm` adapter renderability, including graph-backed top-composition child direction recovery, unambiguous standalone direct direction recovery, sticky actor-port conflict blocking, graph-backed sequential system-contract direction recovery, graph-only direct-context filtering, top-link boundary direction recovery, and conflict/ambiguity blocking
+  - `.fsm` adapter renderability, including graph-backed top-composition child direction recovery, unambiguous standalone direct direction recovery, sticky actor-port direction/width conflict blocking, graph-backed sequential system-contract direction recovery, graph-only direct-context filtering, top-link boundary direction recovery, and conflict/ambiguity blocking
   - `specforge validate` for all four IR stages
   - project-level validation projection and schema-v2 rescan-plan generation
   - schema-v2 `rescan-plan` normalization, whitelisted execution, execution summaries, and no-promotion review gates
@@ -582,7 +587,7 @@
 
 ## Latest validation completed in this refresh
 - `bash scripts/run_ci.sh`
-  - passed; Rust test suite reported 298 passed tests under `RUSTFLAGS="-D warnings"`, 0 failures, 0 binary tests, 0 doc tests, rustdoc completed under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build completed successfully
+  - passed; Rust test suite reported 299 passed tests under `RUSTFLAGS="-D warnings"`, 0 failures, 0 binary tests, 0 doc tests, rustdoc completed under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build completed successfully
 
 ## Earlier validation trail
 - `cargo run --manifest-path Cargo.toml -p specforge -- --help`

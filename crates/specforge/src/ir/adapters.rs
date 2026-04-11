@@ -4507,7 +4507,7 @@ mod tests {
         ActorPortRecord, ActorRelativeDirection, InterfaceSignalDirection, SemanticIr,
         SystemResetPolarity, SystemResetTargetKind, SystemResetTimingRelation,
     };
-    use crate::ir::source::{AutomationConfidence, SourceIr};
+    use crate::ir::source::{AutomationConfidence, SourceIr, WidthHint};
 
     fn build_handshake_intent_ir(base: &Path) -> Result<IntentIr> {
         let source = base.join("handshake.md");
@@ -4770,6 +4770,17 @@ mod tests {
             source_statement_ids: vec![format!("graph_{actor_name}_{signal_name}")],
             automation_confidence: AutomationConfidence::High,
         }
+    }
+
+    fn actor_port_with_numeric_width(
+        actor_name: &str,
+        signal_name: &str,
+        direction: ActorRelativeDirection,
+        width: u32,
+    ) -> ActorPortRecord {
+        let mut port = actor_port(actor_name, signal_name, direction);
+        port.width_hint = Some(WidthHint::Numeric(width));
+        port
     }
 
     fn clear_explicit_module_direction_hints(intent_ir: &mut IntentIr) {
@@ -5112,6 +5123,75 @@ mod tests {
                 .blocking_reasons
                 .iter()
                 .any(|reason| reason.contains("missing a canonical direction hint"))
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn standalone_dt_keeps_conflicting_actor_port_width_unresolved() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_explicit_control_intent_ir(tempdir.path())?;
+        intent_ir.actor_ports = vec![
+            actor_port_with_numeric_width(
+                "controller",
+                "DATA_IN",
+                ActorRelativeDirection::Input,
+                8,
+            ),
+            actor_port_with_numeric_width(
+                "controller",
+                "DATA_OUT",
+                ActorRelativeDirection::Output,
+                16,
+            ),
+            actor_port_with_numeric_width(
+                "controller",
+                "DATA_OUT",
+                ActorRelativeDirection::Output,
+                8,
+            ),
+            actor_port_with_numeric_width(
+                "controller",
+                "ZERO_FLAG",
+                ActorRelativeDirection::Output,
+                1,
+            ),
+        ];
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let data_out = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "DATA_OUT")
+            .expect("DATA_OUT should stay in the direct signal inventory");
+
+        assert_eq!(
+            data_out.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert_eq!(data_out.width_hint, None);
+        assert!(
+            data_out
+                .mention_categories
+                .iter()
+                .any(|category| category == "actor_port")
+        );
+        assert!(
+            fsm.renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason.contains("missing a canonical width hint"))
         );
 
         Ok(())
