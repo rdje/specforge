@@ -59,6 +59,7 @@
 - Interface-signal conflict surfacing for conflicting direction/width evidence implemented: Done
 - Signal-connectivity conflict surfacing for multi-producer ambiguity implemented: Done
 - Graph-first direction coverage/scoring in `specforge validate` implemented: Done
+- `.fsm` explicit-module/top-composition lowering now recovers child port directions from matching `IntentIR.actor_ports` when flat module-local hints lag: Done
 - Initial typed `temporal_rules` surface in `SemanticIR` / `IntentIR` implemented: Done
 - Cycle-window recovery for typed temporal rules, including idiomatic one-cycle phrases like `next cycle` / `next tick`, implemented: Done
 - Actor-grounded drive predicates in typed temporal rules implemented: Done
@@ -142,7 +143,7 @@
 - Cross-document typed prior memory (`R15f`): In Progress
 
 ## Highest-priority remaining gap
-- Finish replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics, then broaden `R15f` beyond its first actor-taxonomy / semantic / semantic-modality-reliability / temporal / table-shape prior families into visual-motif and negative-knowledge priors, and then add `R15g` so compiled cross-document synthesis has a persistent corpus knowledge base plane beside the KG and typed priors
+- Continue replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics beyond the first `.fsm` explicit-module/top-composition consumer, then broaden `R15f` beyond its first actor-taxonomy / semantic / semantic-modality-reliability / temporal / table-shape prior families into visual-motif and negative-knowledge priors, and then add `R15g` so compiled cross-document synthesis has a persistent corpus knowledge base plane beside the KG and typed priors
 - Latest unseen-protocol live run:
 - `IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf` converged in `2` pipeline iterations and currently validates at `90/100 EXCELLENT`; parity-check table semantics now recover both structural KG ownership and carried width hints for the `*CHK` surface, declared graph-direction and width coverage are both `22/22`, `ACLK` / `ARESETN` now surface as infrastructure connectivity with a dedicated system-contract note instead of an ordinary missing-producer warning, six same-cycle temporal rules now carry explicit `0`-cycle windows, there are now no remaining typed temporal conflicts because assertion-vs-level comparison is polarity-aware rather than flattened, and the last carried interface-grouping residual is now gone
 - Canonical per-signal polarity surface: Done

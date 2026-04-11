@@ -8,16 +8,16 @@ use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::intent::{IntentDocumentIdentity, IntentIr};
 use crate::ir::semantic::{
-    ControlActionRecord, ControlAssignmentTargetRecord, ControlBinaryOperator, ControlBlockRecord,
-    ControlBlockRole, ControlBranchRecord, ControlCompoundUpdateOperation, ControlDualOutputKind,
-    ControlExpressionRecord, ControlReferenceKind, ControlReferenceRecord, ControlReferenceSuffix,
-    ControlUnaryOperator, DecisionTreeActionRecord, DecisionTreeAssignmentKind,
-    DecisionTreeComparisonOperator, DecisionTreeFragmentRecord, DecisionTreeGuardRecord,
-    DecisionTreeValueRecord, ExplicitModuleRecord, ExplicitTopLinkEndpoint, ExplicitTopLinkRecord,
-    ExplicitTopPortRecord, ExplicitTopRecord, InitAssignmentRecord, InterfaceRecord,
-    InterfaceSignalDirection, StateTransitionRecord, SymbolDefinitionKind, SymbolDefinitionRecord,
-    SystemContractRecord, SystemResetKind, SystemResetPolarity, SystemResetTargetKind,
-    SystemResetTimingRelation,
+    ActorPortRecord, ActorRelativeDirection, ControlActionRecord, ControlAssignmentTargetRecord,
+    ControlBinaryOperator, ControlBlockRecord, ControlBlockRole, ControlBranchRecord,
+    ControlCompoundUpdateOperation, ControlDualOutputKind, ControlExpressionRecord,
+    ControlReferenceKind, ControlReferenceRecord, ControlReferenceSuffix, ControlUnaryOperator,
+    DecisionTreeActionRecord, DecisionTreeAssignmentKind, DecisionTreeComparisonOperator,
+    DecisionTreeFragmentRecord, DecisionTreeGuardRecord, DecisionTreeValueRecord,
+    ExplicitModuleRecord, ExplicitTopLinkEndpoint, ExplicitTopLinkRecord, ExplicitTopPortRecord,
+    ExplicitTopRecord, InitAssignmentRecord, InterfaceRecord, InterfaceSignalDirection,
+    StateTransitionRecord, SymbolDefinitionKind, SymbolDefinitionRecord, SystemContractRecord,
+    SystemResetKind, SystemResetPolarity, SystemResetTargetKind, SystemResetTimingRelation,
 };
 use crate::ir::source::{
     AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket, document_key,
@@ -934,16 +934,25 @@ fn build_module_candidates(intent_ir: &IntentIr) -> Vec<FsmExplicitModuleCandida
     intent_ir
         .explicit_modules
         .iter()
-        .map(build_module_candidate)
+        .map(|module| build_module_candidate(module, intent_ir.actor_ports.as_slice()))
         .collect()
 }
 
-fn build_module_candidate(module: &ExplicitModuleRecord) -> FsmExplicitModuleCandidate {
-    let signal_inventory = inventory_to_signal_candidates(build_signal_inventory_map_from_surface(
+fn build_module_candidate(
+    module: &ExplicitModuleRecord,
+    actor_ports: &[ActorPortRecord],
+) -> FsmExplicitModuleCandidate {
+    let mut signal_inventory = build_signal_inventory_map_from_surface(
         &module.interfaces,
         &module.decision_tree_fragments,
         &module.control_blocks,
-    ));
+    );
+    overlay_actor_port_inventory_for_module(
+        &mut signal_inventory,
+        &module.module_name,
+        actor_ports,
+    );
+    let signal_inventory = inventory_to_signal_candidates(signal_inventory);
     let state_candidates = build_state_candidates_from_records(&module.regular_states);
     let transition_candidates = build_transition_candidates_from_records(&module.state_transitions);
     let root_kind_decision = build_root_kind_decision(&state_candidates);
@@ -975,6 +984,54 @@ fn build_module_candidate(module: &ExplicitModuleRecord) -> FsmExplicitModuleCan
         transition_candidates,
         renderability,
         renderable_module,
+    }
+}
+
+fn overlay_actor_port_inventory_for_module(
+    inventory: &mut BTreeMap<String, SignalInventoryEvidence>,
+    module_name: &str,
+    actor_ports: &[ActorPortRecord],
+) {
+    for port in actor_ports
+        .iter()
+        .filter(|port| port.actor_name.eq_ignore_ascii_case(module_name))
+    {
+        let direction_hint = actor_relative_direction_to_interface_hint(port.direction);
+        let width_hint = port
+            .width_hint
+            .as_ref()
+            .and_then(|width| width.as_numeric());
+        let supporting_ids = if port.source_statement_ids.is_empty() {
+            vec![format!(
+                "actor_port:{}:{}",
+                document_key(&port.actor_name),
+                document_key(&port.signal_name)
+            )]
+        } else {
+            port.source_statement_ids.clone()
+        };
+
+        for supporting_id in supporting_ids {
+            register_canonical_signal(
+                inventory,
+                &port.signal_name,
+                direction_hint,
+                width_hint,
+                &supporting_id,
+                "actor_port",
+                port.automation_confidence,
+            );
+        }
+    }
+}
+
+fn actor_relative_direction_to_interface_hint(
+    direction: ActorRelativeDirection,
+) -> Option<InterfaceSignalDirection> {
+    match direction {
+        ActorRelativeDirection::Input => Some(InterfaceSignalDirection::Input),
+        ActorRelativeDirection::Output => Some(InterfaceSignalDirection::Output),
+        ActorRelativeDirection::InOut | ActorRelativeDirection::Unknown => None,
     }
 }
 
@@ -4271,9 +4328,10 @@ mod tests {
     use crate::ir::evidence::EvidenceIr;
     use crate::ir::intent::IntentIr;
     use crate::ir::semantic::{
-        SemanticIr, SystemResetPolarity, SystemResetTargetKind, SystemResetTimingRelation,
+        ActorPortRecord, ActorRelativeDirection, InterfaceSignalDirection, SemanticIr,
+        SystemResetPolarity, SystemResetTargetKind, SystemResetTimingRelation,
     };
-    use crate::ir::source::SourceIr;
+    use crate::ir::source::{AutomationConfidence, SourceIr};
 
     fn build_handshake_intent_ir(base: &Path) -> Result<IntentIr> {
         let source = base.join("handshake.md");
@@ -4511,6 +4569,33 @@ mod tests {
             "explicit_top.md",
             "# Explicit Composition\nTop datapath.\n\nTop datapath port result_data is output width 8.\n\nTop datapath child producer uses module producer_core.\n\nTop datapath child consumer uses module consumer_core.\n\nTop datapath link producer.output_data -> consumer.input_data.\n\nTop datapath link consumer.result_data -> result_data.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n\nModule consumer_core signal input_data is input width 8.\n\nModule consumer_core signal result_data is output width 8.\n\nModule consumer_core block route: result_data = input_data.\n",
         )
+    }
+
+    fn actor_port(
+        actor_name: &str,
+        signal_name: &str,
+        direction: ActorRelativeDirection,
+    ) -> ActorPortRecord {
+        ActorPortRecord {
+            actor_id: format!("actor_{actor_name}"),
+            actor_name: actor_name.to_string(),
+            signal_name: signal_name.to_string(),
+            direction,
+            relation_basis: Vec::new(),
+            width_hint: None,
+            source_statement_ids: vec![format!("graph_{actor_name}_{signal_name}")],
+            automation_confidence: AutomationConfidence::High,
+        }
+    }
+
+    fn clear_explicit_module_direction_hints(intent_ir: &mut IntentIr) {
+        for module in &mut intent_ir.explicit_modules {
+            for interface in &mut module.interfaces {
+                for signal in &mut interface.signal_records {
+                    signal.direction_hint = None;
+                }
+            }
+        }
     }
 
     fn build_missing_child_module_top_intent_ir(base: &Path) -> Result<IntentIr> {
@@ -5175,6 +5260,116 @@ mod tests {
                 .iter()
                 .all(|packet| packet.packet_id != "fsm_adapter_composition_topology")
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn top_composition_recovers_child_directions_from_actor_ports() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_explicit_top_composition_intent_ir(tempdir.path())?;
+        clear_explicit_module_direction_hints(&mut intent_ir);
+        intent_ir.actor_ports = vec![
+            actor_port(
+                "producer_core",
+                "output_data",
+                ActorRelativeDirection::Output,
+            ),
+            actor_port("consumer_core", "input_data", ActorRelativeDirection::Input),
+            actor_port(
+                "consumer_core",
+                "result_data",
+                ActorRelativeDirection::Output,
+            ),
+        ];
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+        adapter.write_to_disk()?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "renderable");
+        let emitted_target_path = adapter
+            .artifact_layout
+            .emitted_target_path
+            .as_ref()
+            .expect("graph-backed top adapter should emit target text");
+        let emitted_text = fs::read_to_string(emitted_target_path)?;
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let producer = fsm
+            .module_candidates
+            .iter()
+            .find(|candidate| candidate.module_name == "producer_core")
+            .expect("producer module candidate should exist");
+        let output_data = producer
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "output_data")
+            .expect("producer output_data should stay in the module inventory");
+
+        assert_eq!(
+            output_data.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert!(
+            output_data
+                .mention_categories
+                .iter()
+                .any(|category| category == "actor_port")
+        );
+        assert!(fsm.renderability.is_renderable);
+        assert!(emitted_text.contains("/producer.output_data/consumer.input_data/"));
+        assert!(emitted_text.contains("/consumer.result_data/result_data/"));
+
+        Ok(())
+    }
+
+    #[test]
+    fn top_composition_blocks_conflicting_actor_port_directions() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_explicit_top_composition_intent_ir(tempdir.path())?;
+        intent_ir.actor_ports = vec![actor_port(
+            "producer_core",
+            "output_data",
+            ActorRelativeDirection::Input,
+        )];
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let producer = fsm
+            .module_candidates
+            .iter()
+            .find(|candidate| candidate.module_name == "producer_core")
+            .expect("producer module candidate should exist");
+        let output_data = producer
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "output_data")
+            .expect("producer output_data should stay in the module inventory");
+
+        assert_eq!(output_data.direction_hint, None);
+        assert!(!producer.renderability.is_renderable);
+        assert!(
+            producer
+                .renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason.contains("missing a canonical direction hint"))
+        );
+        assert!(!fsm.renderability.is_renderable);
 
         Ok(())
     }

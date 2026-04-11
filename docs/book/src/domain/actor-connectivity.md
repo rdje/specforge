@@ -163,6 +163,17 @@ If the system knows that `Requester` drives `PSEL`, a temporal rule can express 
 That is more useful than only saying `PSEL is asserted`.
 It ties a timing obligation back to the responsible actor.
 
+## Adapter use
+
+Adapters should consume this graph when they need a target-actor-relative direction.
+
+The first bounded consumer is the `.fsm` explicit-module/top-composition path.
+When an explicit child module already has a local signal and width but the flat module-local `direction_hint` is missing or stale, the adapter can overlay matching `IntentIR.actor_ports` for that module actor before renderability analysis.
+
+This is still conservative.
+Graph `input` and `output` directions can fill the module-local port role, but `in_out` and `unknown` are not turned into fake `.fsm` directions.
+Conflicts between flat hints and graph evidence still collapse to unresolved state and block lowering instead of silently choosing a winner.
+
 ## What users should inspect
 
 When debugging direction or connectivity, inspect:

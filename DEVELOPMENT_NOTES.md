@@ -1337,6 +1337,31 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 - some downstream consumers still read flat `direction_hint` fields directly, so this slice fixes scoring truthfulness but does not finish the whole `R15` program
 - the next graph-first work should move remaining consumer logic onto actor-relative relations and keep `direction_hint` purely as a derived compatibility surface
 
+## Graph-backed `.fsm` module direction recovery (2026-04-11)
+
+### Why this slice landed now
+- `R15` was still blocked by downstream consumers that required flat `direction_hint` values even when the actor-relative graph already knew the target actor's port direction.
+- Explicit module/top lowering was a safe first adapter consumer because the module name provides the target actor context needed to interpret `IntentIR.actor_ports`.
+- This moves one adapter path from "flat hint required" toward "graph first, flat hint compatible" without widening `.fsm` lowering into speculative direction inference.
+
+### Implementation shape
+- `crates/specforge/src/ir/adapters.rs` now overlays explicit module signal inventory with matching `IntentIR.actor_ports` before renderability analysis.
+- For a module actor such as `producer_core`, an actor port `output_data: output` can fill a missing module-local direction hint while preserving the signal's existing width and provenance.
+- `ActorRelativeDirection::Input` maps to an adapter input and `ActorRelativeDirection::Output` maps to an adapter output; `InOut` and `Unknown` stay unresolved for the current `.fsm` slice.
+- Existing hint merge behavior remains conservative: conflicting flat and graph directions collapse to `None`, which keeps lowering blocked instead of selecting a hidden winner.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml top_composition_recovers_child_directions_from_actor_ports -- --nocapture` passed.
+- `cargo test --manifest-path Cargo.toml top_composition -- --nocapture` passed across the top-composition focused regression set.
+- `cargo test --manifest-path Cargo.toml ir::adapters::tests -- --nocapture` passed with 19 adapter tests.
+- `bash scripts/run_ci.sh` passed with Clippy `-D warnings`, 284 Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and mdBook build.
+- The first regression deliberately clears the flat child-module signal directions in an explicit top composition and proves the composition still lowers when graph-backed actor ports provide the child module directions.
+- The second regression supplies a conflicting graph direction for `producer_core.output_data` and proves lowering stays blocked instead of silently overriding the flat module-local direction.
+
+### Remaining follow-up
+- Extend the same graph-first discipline into the remaining direct adapter/control consumers that still consult `direction_hint` without a target actor context.
+- Keep bidirectional and unknown graph directions blocked until a target backend slice has an honest representation for them.
+
 ## Initial typed temporal-rule surface in SemanticIR / IntentIR (2026-04-04)
 
 ### Why this slice landed now

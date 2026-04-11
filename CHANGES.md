@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-04-11 (FSM adapter consumes graph-backed module directions)
+
+### Changed: explicit module lowering uses actor-relative port evidence
+- Updated the `.fsm` adapter so explicit module candidates overlay matching `IntentIR.actor_ports` before renderability analysis.
+- If an explicit module signal has width/provenance but its flat `direction_hint` is missing, the adapter can now recover that module-local input/output role from actor-relative graph evidence for the matching module actor.
+- Conflicting or non-renderable graph directions still stay conservative: `in_out` and `unknown` do not become fake `.fsm` input/output hints, and normal hint merging still collapses contradictions to `None`.
+- Added a regression that clears all flat child-module directions in an explicit top composition and proves the composition still lowers when `actor_ports` provide `producer_core.output_data` as output, `consumer_core.input_data` as input, and `consumer_core.result_data` as output.
+- Added a companion regression proving a conflicting graph direction for `producer_core.output_data` blocks top lowering instead of silently overriding the flat module-local direction.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml top_composition -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml top_composition_recovers_child_directions_from_actor_ports -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml ir::adapters::tests -- --nocapture` -> passed with 19 adapter tests
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, 284 Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-11 (README bootstrap handoff hygiene)
 
 ### Fixed: compatibility guide root-doc list

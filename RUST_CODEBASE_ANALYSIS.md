@@ -37,7 +37,7 @@
 - GitHub Actions CI is now part of the repo baseline and runs `cargo fmt --all --check`, warning-deny Clippy, warning-deny Rust tests, warning-deny rustdoc, and the mdBook build on every `push` and `pull_request`, which keeps the hosted validation path aligned with the local Rust/docs quality gate
 - that CI path now has a single checked-in entrypoint at `scripts/run_ci.sh`, and the GitHub workflow calls that script directly so local and hosted Rust validation do not drift apart
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and adding the planned `R15g` corpus knowledge base beside the already-live typed prior-memory plane; adapter expansion is now horizon work
-- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the rustdoc gate addition, the latest full local CI path reports clean Clippy, 282 passing Rust tests, clean Rust API docs, and no warning output
+- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the graph-backed `.fsm` module-direction slice, the latest full local CI path reports clean Clippy, 284 passing Rust tests, clean Rust API docs, and no warning output
 
 ## Session update (2026-04-11 bootstrap refresh)
 - executed the README terminal instruction by reading `SESSION_BOOTSTRAP.md`, which expands the task into reading the referenced live docs, analyzing the Rust codebase, updating this analysis if necessary, and continuing from the roadmap
@@ -72,6 +72,12 @@
 - added `vlm_timing_active_low_deassertion_equivalence_gold` to lock the reset-release mirror of the existing active-low VLM timing polarity fixture
 - the fixture proves active-low `ARESETN` observed as both `deasserted` and `HIGH` creates two typed temporal rules and zero temporal/polarity conflicts
 - targeted `kg-bench` validation for the new fixture passed
+
+## Session update (2026-04-11 graph-backed `.fsm` module directions)
+- moved the first `.fsm` adapter consumer onto target-actor-relative graph evidence: explicit module candidates now overlay matching `IntentIR.actor_ports` before renderability analysis
+- this lets an explicit top composition lower when a child module's flat module-local `direction_hint` values lag but the actor-relative graph already resolves the module actor's input/output port roles
+- the slice stays conservative: `Input` / `Output` graph directions can fill `.fsm` module port roles, but `InOut` / `Unknown` do not become fake directions, and conflicts with flat hints still collapse to unresolved state
+- added regressions that clear flat child-module directions to prove graph-backed `producer_core` / `consumer_core` actor ports recover the needed child port directions, and that inject a conflicting graph direction to prove lowering stays blocked instead of silently overriding local evidence
 
 ## Session update (2026-04-04)
 - `specforge converge` now drives the persisted `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters` path as a fixed-point loop and stops when the materialized knowledge snapshot is stable
@@ -154,7 +160,7 @@
 - the documented README staged flow was re-executed on `README.md` through `inspect -> ingest -> evidence -> semantic -> intent -> adapt --dry-run`, confirming the current entry path still runs end-to-end
 - the roadmap now explicitly treats adapter expansion as horizon work; the next structural gaps are making the actor-relative graph primary, broadening the new table/prose/alias-grounded role inference into richer multimodal grounding, adding deeper explicit temporal semantics, and hardening KG quality/evaluation
 - the current architecture is still intentionally document-local, which is correct for truthfulness, but the next strategic expansion after the current semantic-truthfulness work should be a separate cross-document learning plane that stores reusable extraction priors rather than cross-document facts
-- the local Rust test suite is now at `282/282` passing in the latest full CI run after the later rescan, prior-memory, infrastructure, temporal, and KG-benchmark slices landed
+- the local Rust test suite is now at `284/284` passing in the latest full CI run after the graph-backed `.fsm` module-direction recovery and conflict regressions landed
 - `specforge kg-bench` now provides the first tracked KG-quality fixture harness under `crates/specforge/test_data/kg_quality`, including:
   - a gold actor-port recovery fixture
   - a negative name-only semantic noise fixture
@@ -250,7 +256,7 @@
 ### Immediate implication
 - the codebase is no longer mostly scaffolding; the main open problem is semantic truthfulness across the four IR layers, especially graph primacy, temporal semantics, multimodal rescans, and evidence arbitration
 - the practical risk is now split across two partial migrations:
-  - `SemanticIR` and `IntentIR` still expose both graph-native actor-relative records and legacy flat `direction_hint` fields; validation/scoring is now graph-first, but some downstream compatibility and consumer paths still consult the flat hints directly
+  - `SemanticIR` and `IntentIR` still expose both graph-native actor-relative records and legacy flat `direction_hint` fields; validation/scoring is now graph-first and explicit-module `.fsm` top composition has its first graph-backed direction overlay, but some downstream compatibility and consumer paths still consult the flat hints directly
   - the new temporal-rule layer is real and now includes bounded cycle windows, compound antecedents, typed temporal conflicts, and first actor-grounded drive/stability predicates, but it still covers only a narrow slice of possible temporal/actor semantics and does not yet arbitrate broader cross-rule or cross-modality contradictions
 - the continuity risk around untracked generated artifacts is lower now that validation snapshots can be re-projected into tracked docs deterministically, but the docs still depend on someone running the projection flow after meaningful validation runs
 
@@ -353,7 +359,7 @@
 ### What is still insufficient
 - only the `.fsm` adapter is implemented today; SystemVerilog, Verilog, and VHDL adapters are still absent
 - validation now backannotates persisted IR artifacts, writes stage-local sidecars, and can project the latest staged snapshot back into tracked docs
-- the actor-signal relation graph now survives into `SemanticIR` / `IntentIR`, but legacy interface records still flatten some downstream consumers onto actor-agnostic `direction_hint` values
+- the actor-signal relation graph now survives into `SemanticIR` / `IntentIR`, and the first explicit-module `.fsm` composition consumer can use matching `actor_ports` to recover child-module port directions, but legacy interface records still flatten some other downstream consumers onto actor-agnostic `direction_hint` values
 - the previous dead-code warning baseline has been cleaned by deleting stale helpers rather than suppressing them
 - the current renderable `.fsm` slices are intentionally narrow: they handle explicit standalone combinational/sequential DT control, canonical symbol-definition sections, structured reset-role blocks, selector/test-node branches, compound-update shorthand, explicit structured FSM-root cases, and explicit top-root composition, while broader unsupported selector/predicate shapes and non-FSM backends stay deferred
 
@@ -445,6 +451,7 @@
   - builds a typed `.fsm` adapter artifact from persisted `IntentIR`
   - chooses `?dt:name` for explicit standalone DT cases, `?fsm:name` when explicit regular-state and transition records are present, and `?top:name` when explicit module/top composition facts are present
   - consumes canonical signal inventory, backend-neutral system/init records, backend-neutral control fragments, explicit regular-state/transition records, and explicit module/top composition facts when present
+  - overlays explicit module signal inventory with matching `IntentIR.actor_ports` so graph-backed module actor directions can fill missing child-module port hints during `?top:name` renderability analysis
   - emits a real standalone `?dt:name` file only when widths, directions, guarded/action blocks, and any required standalone sequential system/init facts are explicit enough to avoid semantic invention
   - emits a real structured `?fsm:name` file only when the state graph, transition targets, and state-body control are explicit enough to avoid semantic invention
   - emits a real explicit `?top:name` source document only when the top ports, child modules, and links are explicit enough to avoid semantic invention
@@ -472,7 +479,7 @@
 
 ## Testing implications
 - current full local CI path: `bash scripts/run_ci.sh`
-- current Rust test count observed through that path: 282 library tests, 0 binary tests, and 0 doc tests, all passing under `RUSTFLAGS="-D warnings"` after clean `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings` and `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` passes
+- current Rust test count observed through that path: 284 library tests, 0 binary tests, and 0 doc tests, all passing under `RUSTFLAGS="-D warnings"` after clean `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings` and `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` passes
 - current tracked KG-quality fixture count: 45
 - current tests cover:
   - source-kind detection
@@ -500,7 +507,7 @@
   - markdown-marker alias rejection for Form 2 alias learning
   - actor-signal relation extraction from prose and table roles
   - AMBA `Source` / `Driver` / `Destination` signal-direction handling
-  - `.fsm` adapter renderability (12 adapter cases)
+  - `.fsm` adapter renderability, including graph-backed top-composition child direction recovery and conflict blocking
   - `specforge validate` for all four IR stages
   - project-level validation projection and schema-v2 rescan-plan generation
   - schema-v2 `rescan-plan` normalization, whitelisted execution, execution summaries, and no-promotion review gates
@@ -514,7 +521,7 @@
 
 ## Latest validation completed in this refresh
 - `bash scripts/run_ci.sh`
-  - passed; Rust test suite reported 282 passed tests under `RUSTFLAGS="-D warnings"`, 0 failures, 0 binary tests, 0 doc tests, rustdoc completed under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build completed successfully
+  - passed; Rust test suite reported 284 passed tests under `RUSTFLAGS="-D warnings"`, 0 failures, 0 binary tests, 0 doc tests, rustdoc completed under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build completed successfully
 
 ## Earlier validation trail
 - `cargo run --manifest-path Cargo.toml -p specforge -- --help`

@@ -338,9 +338,10 @@
   - `ActorRecord` / `IntentActor` now preserve the surfaced actor name when it is grounded by relation evidence
   - `specforge validate` now reports actor-signal relation, actor-port, and connectivity counts for `SemanticIR` / `IntentIR`
   - `specforge validate` now scores semantic and intent signal-direction coverage from the actor-relative graph first, with flat `direction_hint` lag exposed as compatibility diagnostics rather than truth-model loss
+  - the `.fsm` explicit-module/top-composition adapter path now overlays matching `IntentIR.actor_ports` before renderability analysis, so child-module port directions can be recovered from the actor-relative graph when flat module-local `direction_hint` values lag
 - remaining:
-  - make the actor-relative graph, not flat `direction_hint`, the primary downstream signal-direction surface
-  - compute target-actor-relative port directions from the actor-relative graph whenever a downstream consumer needs them
+  - keep moving the remaining direct consumers from flat `direction_hint` onto actor-relative graph semantics
+  - compute target-actor-relative port directions from the actor-relative graph for every downstream consumer that still needs them
 - completion criteria:
   - downstream consumers can compute correct actor-relative port directions without depending on flat compatibility `direction_hint`
   - `IntentIR` carries a proper directed graph, not a flat list with implicit actor context
