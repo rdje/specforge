@@ -500,6 +500,7 @@
     - a negative fixture proving low-value VLM timing-diagram annotation labels like `T0`, `Addr 1`, and `Cycle 2` do not become timing constraints or temporal rules while the underlying timing extraction still remains visible at the evidence stage
     - a gold fixture proving collective non-reset control polarity prose recovers multiple active-low control signals without duplicating canonical signal records
     - a gold fixture proving mixed clause-local non-reset control polarity prose recovers active-low and active-high controls without duplicating canonical signal records
+    - a negative fixture proving detached mixed-polarity prose stays unresolved instead of borrowing an implicit active-level subject
     - prior-guided negative-knowledge caution fixtures proving semantic conflicts, temporal conflicts, residual packets, signal-connectivity conflicts, and interface-signal conflicts keep their local conflict/residual surfaces while only adding caution/rescan/corroboration guidance
   - fixture expectations can now assert canonical actor-signal relations directly, so the harness can lock `Drives` versus `Reads` semantics instead of relying only on actor-port projections or relation counts
   - fixture expectations can now assert graph-backed direction coverage by signal name directly via `graph_direction_signal_names_include` / `graph_direction_signal_names_exclude`, keeping graph-native coverage checks separate from flat compatibility `direction_hint` assertions

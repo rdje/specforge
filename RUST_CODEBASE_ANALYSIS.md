@@ -32,12 +32,12 @@
 - the enrichment, convergence, validation, benchmark, targeted-rescan, and first prior-learning toolchain is also real: `specforge enrich`, `specforge nlp-enrich`, `specforge converge`, `specforge validate`, `specforge project-validation`, `specforge rescan-plan`, `specforge kg-bench`, and `specforge learn-priors` are wired into the CLI and exercised by the workspace tests
 - `project-validation` and `rescan-plan` now form a schema-v2 targeted-rescan loop: recommendations carry typed replay inputs, structured local command hints, dry-run-by-default execution, before/after validation snapshots, execution summaries, promotion-gate descriptors, and an explicit no-canonical-mutation boundary
 - `CorpusMemory` schema v5 now carries actor-taxonomy, semantic-phrase, semantic-modality-reliability, temporal-phrase, table-shape, visual-motif, and negative-knowledge prior families; current consumers remain advisory and locally grounded rather than fact-authoring
-- the tracked KG-quality benchmark surface currently contains 48 fixtures, including active-low VLM timing polarity-equivalence coverage plus collective and mixed clause-local non-reset control polarity coverage
+- the tracked KG-quality benchmark surface currently contains 49 fixtures, including active-low VLM timing polarity-equivalence coverage plus collective, mixed clause-local, and detached mixed-polarity negative non-reset control polarity coverage
 - the local runtime boundary is now operationally stronger too: `specforge doctor` reports Docling readiness, the default Ollama loopback readiness, and LM Studio fallback readiness directly, repo-local `.venv-docling` auto-discovery is supported, and the backend now probes versioned Python candidates like `python3.11` before giving up on fresh ingest
 - GitHub Actions CI is now part of the repo baseline and runs `cargo fmt --all --check`, warning-deny Clippy, warning-deny Rust tests, warning-deny rustdoc, and the mdBook build on every `push` and `pull_request`, which keeps the hosted validation path aligned with the local Rust/docs quality gate
 - that CI path now has a single checked-in entrypoint at `scripts/run_ci.sh`, and the GitHub workflow calls that script directly so local and hosted Rust validation do not drift apart
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and adding the planned `R15g` corpus knowledge base beside the already-live typed prior-memory plane; adapter expansion is now horizon work
-- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the mixed clause-local control-polarity slice, the full local CI path reports clean Clippy, 296 passing Rust tests, clean Rust API docs, and a successful mdBook build
+- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the detached mixed-polarity negative fixture slice, the full local CI path reports clean Clippy, 296 passing Rust tests, clean Rust API docs, and a successful mdBook build
 
 ## Session update (2026-04-11 mixed clause-local control polarity)
 - `EvidenceIR` now has a bounded fallback that can split mixed active-level prose such as `CS_N is active LOW and ENABLE is active HIGH` into clause-local polarity observations.
@@ -45,6 +45,11 @@
 - The whole-statement detector still returns no polarity for text containing both active-low and active-high cues; clause-local recovery is a separate guarded path rather than a broad global guess.
 - `mixed_control_polarity_gold` locks the path through the KG benchmark surface with two declared canonical signal records, zero heuristic duplicates, two resolved polarities, and zero polarity/temporal conflicts.
 - Focused validation passed for the mixed-clause positive case, the detached-polarity negative case, the detector guard, targeted `kg-bench mixed_control_polarity_gold`, the full 48-fixture KG benchmark suite, and the full local CI gate with 296 Rust tests.
+
+## Session update (2026-04-11 detached mixed polarity negative fixture)
+- `detached_mixed_control_polarity_negative` now locks the conservative mirror case for `CS_N is active LOW and active HIGH` through the tracked KG benchmark surface.
+- The fixture proves the signal remains declared and constrained, but `with_resolved_polarity` stays `0` through `SemanticIR` and `IntentIR`, with zero heuristic duplicates, zero polarity conflicts, and zero temporal conflicts.
+- Targeted `kg-bench detached_mixed_control_polarity_negative` passed, the full `kg_bench` test passed with 49 tracked fixtures, and the full local CI gate passed with 296 Rust tests.
 
 ## Session update (2026-04-11 collective control polarity)
 - `EvidenceIR` now recovers unambiguous collective active-level prose such as `CS_N and WE_N are active LOW signals`, producing polarity observations for both declared controls and refining asserted/deasserted constraints after polarity is grounded.
@@ -525,7 +530,7 @@
 ## Testing implications
 - current full local CI path: `bash scripts/run_ci.sh`
 - current Rust test count observed through that path after the current slice: 296 library tests, 0 binary tests, and 0 doc tests, all passing under `RUSTFLAGS="-D warnings"` after clean `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings` and `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` passes
-- current tracked KG-quality fixture count: 48
+- current tracked KG-quality fixture count: 49
 - current tests cover:
   - source-kind detection
   - deterministic source key naming
@@ -537,7 +542,7 @@
   - markdown-backed `EvidenceIR` construction
   - table-synthesized signal, enum, register, and timing evidence
   - anchored encoding-table rescans and dynamic value-constraint extraction
-  - polarity refinement from active-low / active-high prose, including explicit asserted-when-level, collective active-level, and safe mixed clause-local control wording
+  - polarity refinement from active-low / active-high prose, including explicit asserted-when-level, collective active-level, safe mixed clause-local control wording, and detached mixed-polarity rejection
   - caption and figure-reference grounding into visual evidence
   - VLM observation injection (TimingDiagramExtraction, StateMachineExtraction from VisualAsset.note)
   - handshake-driven `SemanticIR` actor/interface/invariant extraction

@@ -69,6 +69,10 @@ For example, `vlm_timing_active_low_assertion_equivalence_gold` proves that an a
 The companion `vlm_timing_active_low_deassertion_equivalence_gold` fixture proves the reset-release mirror case: `deasserted` and `HIGH` are equivalent for the same active-low reset.
 That matters because `ASSERTED` and `DEASSERTED` are polarity-relative, not synonyms for fixed logic levels.
 
+The polarity fixture family also covers non-reset controls.
+Gold fixtures prove explicit asserted-when-level prose, collective active-level prose, and safe clause-local mixed prose can recover active-low or active-high facts.
+The detached mixed-polarity negative fixture proves a phrase like `CS_N is active LOW and active HIGH` stays unresolved instead of borrowing an implicit subject.
+
 ## Practical role in the project
 
 If `validate` tells us how strong one artifact is, `kg-bench` tells us whether the extraction logic is still behaving correctly across targeted truthfulness cases.

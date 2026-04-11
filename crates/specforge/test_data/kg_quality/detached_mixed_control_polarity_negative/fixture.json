@@ -1,0 +1,48 @@
+{
+  "name": "detached_mixed_control_polarity_negative",
+  "source": "source.md",
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["CS_N"],
+      "signal_polarity_conflicts": 0
+    },
+    "intent": {
+      "signal_names_include": ["CS_N"],
+      "signal_polarity_conflicts": 0
+    },
+    "validation": {
+      "evidence": {
+        "finding_ids_exclude": ["evidence_signal_polarity_conflicts_present"],
+        "metric_values": {
+          "signal_constraints": "1",
+          "signal_polarity_conflicts": "0"
+        }
+      },
+      "semantic": {
+        "finding_ids_exclude": [
+          "semantic_signal_polarity_conflicts_present",
+          "semantic_temporal_conflicts_present"
+        ],
+        "metric_values": {
+          "total_signal_records": "1",
+          "with_resolved_polarity": "0",
+          "temporal_conflicts": "0",
+          "signal_polarity_conflicts": "0"
+        }
+      },
+      "intent": {
+        "finding_ids_exclude": [
+          "intent_signal_polarity_conflicts_present",
+          "intent_temporal_conflicts_present"
+        ],
+        "metric_values": {
+          "declared_signal_records": "1",
+          "heuristic_signal_records": "0",
+          "with_resolved_polarity": "0",
+          "temporal_conflicts": "0",
+          "signal_polarity_conflicts": "0"
+        }
+      }
+    }
+  }
+}

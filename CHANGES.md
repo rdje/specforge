@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-04-11 (KG bench locks detached mixed polarity rejection)
+
+### Added: tracked negative fixture for detached mixed polarity
+- Added [detached_mixed_control_polarity_negative](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/detached_mixed_control_polarity_negative/fixture.json), which proves detached wording like `CS_N is active LOW and active HIGH` does not borrow an implicit subject or resolve polarity through `SemanticIR` / `IntentIR`.
+- The fixture keeps `CS_N` declared and constrained, but requires `with_resolved_polarity: 0`, zero heuristic signal records, zero polarity conflicts, and zero temporal conflicts.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench detached_mixed_control_polarity_negative` -> passed
+- `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` -> passed with 49 tracked KG fixtures
+- `cargo fmt --all --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, 296 Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and mdBook build
+
 ## 2026-04-11 (EvidenceIR recovers mixed clause-local control polarity)
 
 ### Changed: safe clause-local polarity parsing
