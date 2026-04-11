@@ -504,6 +504,7 @@
     - a negative fixture proving VLM timing-diagram waveform motion states like `rising`, `stable`, `falling`, `UNCHANGED`, `RISING_EDGE`, `LOW_TO_HIGH`, `POS_EDGE`, `risingedge`, and `LOW2HIGH` do not become symbolic signal values while concrete samples like `HIGH` still survive
     - a negative fixture proving VLM state-machine prose labels like `IDLE state` and `ACCESS phase` do not become canonical FSM state names or transition endpoints while clean identifier labels and transitions still survive
     - a negative fixture proving VLM state-machine transition endpoints must reference states declared in the same VLM observation, so identifier-shaped `DONE` / `RESET` endpoint guesses do not become canonical transition facts
+    - a gold fixture proving duplicate VLM state-machine state labels merge by state name and preserve a later `is_initial: true` marker instead of losing initial-state truth by first-observation order
     - a gold fixture proving collective non-reset control polarity prose recovers multiple active-low control signals without duplicating canonical signal records
     - a gold fixture proving mixed clause-local non-reset control polarity prose recovers active-low and active-high controls without duplicating canonical signal records
     - a negative fixture proving detached mixed-polarity prose stays unresolved instead of borrowing an implicit active-level subject
@@ -512,7 +513,7 @@
   - fixture expectations can now assert graph-backed direction coverage by signal name directly via `graph_direction_signal_names_include` / `graph_direction_signal_names_exclude`, keeping graph-native coverage checks separate from flat compatibility `direction_hint` assertions
   - fixture inputs can now also patch `SourceIR.document_sections`, and fixture expectations can assert per-signal canonical direction directly, so section-heading-driven protocol-family direction recovery is benchmarkable instead of living only in unit tests
   - fixture expectations can now assert canonical semantic candidates plus decisive vs non-decisive semantic arbitration directly, so the benchmark harness checks the truth-model state itself rather than only downstream residual/finding side effects
-  - fixture expectations can now assert canonical state names and transition endpoints directly, so VLM state-machine truthfulness can be locked without generated-artifact spelunking
+  - fixture expectations can now assert canonical state names, initial-state names, and transition endpoints directly, so VLM state-machine truthfulness can be locked without generated-artifact spelunking
   - fixture expectations can now also assert persisted validation metric values directly at the evidence, semantic, and intent stages, and `SourceIR` fixture patches can now inject visual assets as well as tables, so the harness can lock cross-modality grounding behavior and VLM-note semantic provenance with tracked staged fixtures
   - width-only synthesized signal declarations now survive into canonical `SemanticIR` / `IntentIR` records, so AXI-style `Name | Width | Description` tables can be benchmarked honestly instead of stopping at raw actor relations and connectivity
 - remaining:

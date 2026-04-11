@@ -32,12 +32,17 @@
 - the enrichment, convergence, validation, benchmark, targeted-rescan, and first prior-learning toolchain is also real: `specforge enrich`, `specforge nlp-enrich`, `specforge converge`, `specforge validate`, `specforge project-validation`, `specforge rescan-plan`, `specforge kg-bench`, and `specforge learn-priors` are wired into the CLI and exercised by the workspace tests
 - `project-validation` and `rescan-plan` now form a schema-v2 targeted-rescan loop: recommendations carry typed replay inputs, structured local command hints, dry-run-by-default execution, before/after validation snapshots, execution summaries, promotion-gate descriptors, and an explicit no-canonical-mutation boundary
 - `CorpusMemory` schema v5 now carries actor-taxonomy, semantic-phrase, semantic-modality-reliability, temporal-phrase, table-shape, visual-motif, and negative-knowledge prior families; current consumers remain advisory and locally grounded rather than fact-authoring
-- the tracked KG-quality benchmark surface currently contains 52 fixtures, including VLM timing waveform-motion rejection, VLM state-machine label-noise and undeclared-transition rejection, active-low VLM timing polarity-equivalence coverage, and collective, mixed clause-local, and detached mixed-polarity negative non-reset control polarity coverage
+- the tracked KG-quality benchmark surface currently contains 53 fixtures, including VLM timing waveform-motion rejection, VLM state-machine label-noise, undeclared-transition, and duplicate-initial coverage, active-low VLM timing polarity-equivalence coverage, and collective, mixed clause-local, and detached mixed-polarity negative non-reset control polarity coverage
 - the local runtime boundary is now operationally stronger too: `specforge doctor` reports Docling readiness, the default Ollama loopback readiness, and LM Studio fallback readiness directly, repo-local `.venv-docling` auto-discovery is supported, and the backend now probes versioned Python candidates like `python3.11` before giving up on fresh ingest
 - GitHub Actions CI is now part of the repo baseline and runs `cargo fmt --all --check`, warning-deny Clippy, warning-deny Rust tests, warning-deny rustdoc, and the mdBook build on every `push` and `pull_request`, which keeps the hosted validation path aligned with the local Rust/docs quality gate
 - that CI path now has a single checked-in entrypoint at `scripts/run_ci.sh`, and the GitHub workflow calls that script directly so local and hosted Rust validation do not drift apart
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and adding the planned `R15g` corpus knowledge base beside the already-live typed prior-memory plane; adapter expansion is now horizon work
-- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the VLM state-machine undeclared-transition slice, the full local CI path reports clean Clippy, 302 passing Rust tests, clean Rust API docs, and a successful mdBook build
+- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the VLM duplicate-initial state-machine slice, the full local CI path reports clean Clippy, 303 passing Rust tests, clean Rust API docs, and a successful mdBook build
+
+## Session update (2026-04-12 VLM state-machine duplicate initial markers)
+- `SemanticIR` now merges duplicate VLM state-machine state labels by state name before adding canonical `RegularStateRecord`s, preserving `is_initial` if any duplicate carries it.
+- `kg-bench` can now assert canonical initial-state names directly, and the tracked `vlm_state_machine_duplicate_initial_gold` fixture proves `IDLE` remains the single initial state when a duplicate later marks it as initial while `BUSY` stays non-initial.
+- Focused validation passed for the semantic regression, targeted `kg-bench` validation passed for `vlm_state_machine_duplicate_initial_gold`, and the full local CI gate passed with 303 Rust tests.
 
 ## Session update (2026-04-11 VLM state-machine undeclared-transition filtering)
 - `SemanticIR` now requires VLM state-machine transition `from` / `to` endpoints to reference state names accepted from the same `vlm_state_machine_extraction` observation before adding `StateTransitionRecord` entries.
@@ -283,10 +288,11 @@
   - a VLM waveform-motion negative fixture that proves `rising`, `stable`, `falling`, `UNCHANGED`, `RISING_EDGE`, `LOW_TO_HIGH`, `HIGH_TO_LOW`, `POS_EDGE`, `NEG_EDGE`, `risingedge`, `LOW2HIGH`, and `HIGH2LOW` timing states do not become symbolic signal values while a concrete `HIGH` sample still survives
   - a VLM state-machine label-noise negative fixture that proves prose/OCR labels like `IDLE state` and `ACCESS phase` do not become canonical FSM state names or transition endpoints while clean identifier evidence still survives
   - a VLM state-machine undeclared-transition negative fixture that proves identifier-shaped but undeclared endpoints such as `DONE` and `RESET` do not become canonical transition graph facts
+  - a VLM state-machine duplicate-initial gold fixture that proves duplicate state labels merge and preserve an initial marker if any duplicate carries it
 - the harness can now also assert canonical actor-signal relations directly, so tracked gold fixtures can lock `Drives` versus `Reads` truth instead of checking only actor-port projections or relation counts
 - the harness can now also patch `SourceIR.document_sections` and assert per-signal canonical direction directly, which is important for protocol families like AHB where section-heading context still carries real directionality
 - the harness now also asserts canonical semantic candidates and decisive-vs-contested semantic arbitration directly, which is a better `R15e` truthfulness check than inferring arbitration quality only from blocked fallback or validation side effects
-- the harness now also asserts canonical state names and transition endpoints directly, so VLM state-machine truthfulness can be locked in tracked fixtures instead of only in unit tests
+- the harness now also asserts canonical state names, initial-state names, and transition endpoints directly, so VLM state-machine truthfulness can be locked in tracked fixtures instead of only in unit tests
 - the harness now also asserts persisted validation metric values directly at the evidence, semantic, and intent stages and can patch `SourceIR` visual assets, which makes tracked cross-modality grounding and VLM-note provenance checks practical instead of leaving them to ad hoc unit tests
 - table-based relation extraction itself is also less lossy now:
   - `Source` / `Driver` columns become `Drives`
@@ -603,7 +609,7 @@
   - parametric-width handling through the IR pipeline
   - VLM timing diagram annotation → TimingConstraintRecord in SemanticIR
   - VLM timing signal-value filtering for waveform motion states, separator variants, and compact edge spellings such as rising/stable/falling/RISING_EDGE/LOW_TO_HIGH/POS_EDGE/LOW2HIGH
-  - VLM state machine extraction → identifier-bounded RegularStateRecord plus same-observation declared-endpoint-gated StateTransitionRecord in SemanticIR
+  - VLM state machine extraction → duplicate-merged identifier-bounded RegularStateRecord plus same-observation declared-endpoint-gated StateTransitionRecord in SemanticIR
   - ambiguous visual-grounding residual decisions in `SemanticIR`
   - handshake-driven `IntentIR` identity/behavior/constraint/assumption construction
   - residual-decision preservation from `SemanticIR` into `IntentIR`

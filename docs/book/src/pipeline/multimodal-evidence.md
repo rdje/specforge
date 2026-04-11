@@ -134,6 +134,7 @@ Guard text extracted from state-machine diagrams is treated as a bounded hypothe
 Simple comparisons such as `PREADY = 1` can become typed guards, but generic visual prose such as `transfer` should not become a fake signal unless it is grounded as a signal elsewhere in the document.
 State names and transition endpoints are bounded too: identifier-shaped labels such as `IDLE` and `BUSY` can enter canonical state records, while prose/OCR labels such as `IDLE state` and `ACCESS phase` are filtered until a safer explicit normalization path exists.
 Transitions have an additional grounding rule: both endpoints must reference states accepted from the same VLM observation, so an identifier-shaped guess like `DONE` does not become a canonical transition target merely because it looks state-like.
+Repeated state labels are merged by name, and an initial marker survives if any duplicate carries it; this avoids losing `IDLE` as the initial state just because a VLM listed it once before recognizing the initial marker.
 
 ## Captions as semantic evidence
 

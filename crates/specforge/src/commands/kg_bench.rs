@@ -109,6 +109,10 @@ struct CanonicalStageExpectations {
     #[serde(default)]
     state_names_exclude: Vec<String>,
     #[serde(default)]
+    initial_state_names_include: Vec<String>,
+    #[serde(default)]
+    initial_state_names_exclude: Vec<String>,
+    #[serde(default)]
     state_transitions_include: Vec<ExpectedStateTransition>,
     #[serde(default)]
     state_transitions_exclude: Vec<ExpectedStateTransition>,
@@ -773,6 +777,22 @@ fn evaluate_canonical_expectations(
         failures,
     );
 
+    let initial_state_names = initial_regular_state_names(regular_states);
+    assert_includes(
+        label,
+        "initial_state_names_include",
+        &expectations.initial_state_names_include,
+        &initial_state_names,
+        failures,
+    );
+    assert_excludes(
+        label,
+        "initial_state_names_exclude",
+        &expectations.initial_state_names_exclude,
+        &initial_state_names,
+        failures,
+    );
+
     let state_transition_keys = state_transition_endpoint_keys(state_transitions);
     assert_includes(
         label,
@@ -1022,6 +1042,14 @@ fn graph_direction_signal_names(actor_ports: &[ActorPortRecord]) -> BTreeSet<Str
 fn regular_state_names(regular_states: &[RegularStateRecord]) -> BTreeSet<String> {
     regular_states
         .iter()
+        .map(|state| state.state_name.clone())
+        .collect()
+}
+
+fn initial_regular_state_names(regular_states: &[RegularStateRecord]) -> BTreeSet<String> {
+    regular_states
+        .iter()
+        .filter(|state| state.is_initial)
         .map(|state| state.state_name.clone())
         .collect()
 }

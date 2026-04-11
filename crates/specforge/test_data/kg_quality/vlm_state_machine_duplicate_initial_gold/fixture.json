@@ -1,0 +1,63 @@
+{
+  "name": "vlm_state_machine_duplicate_initial_gold",
+  "source": "source.md",
+  "source_ir_patch": {
+    "visual_assets": [
+      {
+        "asset_id": "visual_vlm_duplicate_initial_state",
+        "asset_kind": "diagram",
+        "page_id": "page_0001",
+        "image_path": null,
+        "caption_text": "Figure 5-4 Duplicate initial state marker",
+        "caption_source_path": null,
+        "source_ref": null,
+        "placeholder_text": null,
+        "note": "vlm_state_machine_extraction: {\"states\":[{\"name\":\"IDLE\",\"is_initial\":false},{\"name\":\"BUSY\",\"is_initial\":false},{\"name\":\"IDLE\",\"is_initial\":true}],\"transitions\":[{\"from\":\"IDLE\",\"to\":\"BUSY\",\"guard\":\"PREADY = 1\"}]}",
+        "diagram_kind": "state_machine_diagram"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "state_names_include": ["IDLE", "BUSY"],
+      "initial_state_names_include": ["IDLE"],
+      "initial_state_names_exclude": ["BUSY"],
+      "state_transitions_include": [
+        {
+          "source_state": "IDLE",
+          "target_state": "BUSY"
+        }
+      ]
+    },
+    "intent": {
+      "state_names_include": ["IDLE", "BUSY"],
+      "initial_state_names_include": ["IDLE"],
+      "initial_state_names_exclude": ["BUSY"],
+      "state_transitions_include": [
+        {
+          "source_state": "IDLE",
+          "target_state": "BUSY"
+        }
+      ]
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "state_machine_extractions": "1"
+        }
+      },
+      "semantic": {
+        "metric_values": {
+          "regular_states": "2",
+          "state_transitions": "1"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "regular_states": "2",
+          "state_transitions": "1"
+        }
+      }
+    }
+  }
+}

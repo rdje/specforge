@@ -9158,6 +9158,22 @@ fn parse_state_machine_observation(
                 .and_then(|b| b.as_bool())
                 .unwrap_or(false);
             observation_state_names.insert(name.clone());
+            if let Some(existing_state) = state_records
+                .iter_mut()
+                .find(|state| state.state_name == name)
+            {
+                existing_state.is_initial |= is_initial;
+                if !existing_state
+                    .supporting_statement_ids
+                    .iter()
+                    .any(|statement_id| statement_id == evidence_id)
+                {
+                    existing_state
+                        .supporting_statement_ids
+                        .push(evidence_id.to_string());
+                }
+                continue;
+            }
             state_records.push(RegularStateRecord {
                 state_id: format!(
                     "vlm_state_{}_{}",
@@ -10682,6 +10698,83 @@ mod tests {
                 .iter()
                 .any(|t| t.source_state == "IDLE" && t.target_state == "BUSY"),
             "expected IDLE→BUSY transition from VLM extraction"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn vlm_state_machine_observation_merges_duplicate_state_initial_markers() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("sm_duplicate_state_spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            "# State Machine\nSignal PREADY is input width 1.\n",
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.visual_assets.push(VisualAsset {
+            asset_id: "picture_0005".to_string(),
+            asset_kind: VisualAssetKind::Diagram,
+            page_id: Some("page_0001".to_string()),
+            image_path: None,
+            caption_text: Some("Figure 5-4 Duplicate state marker".to_string()),
+            caption_source_path: None,
+            source_ref: None,
+            placeholder_text: None,
+            note: Some(
+                "vlm_state_machine_extraction: {\"states\":[{\"name\":\"IDLE\",\"is_initial\":false},{\"name\":\"BUSY\",\"is_initial\":false},{\"name\":\"IDLE\",\"is_initial\":true}],\"transitions\":[{\"from\":\"IDLE\",\"to\":\"BUSY\",\"guard\":\"PREADY = 1\"}]}"
+                    .to_string(),
+            ),
+            diagram_kind: crate::ir::source::DiagramKind::StateMachineDiagram,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let idle_states = semantic_ir
+            .regular_states
+            .iter()
+            .filter(|state| state.state_name == "IDLE")
+            .collect::<Vec<_>>();
+        assert_eq!(
+            idle_states.len(),
+            1,
+            "duplicate VLM state labels must collapse into one canonical state"
+        );
+        assert!(
+            idle_states[0].is_initial,
+            "duplicate VLM state labels must preserve an initial marker if any duplicate carries it"
+        );
+        assert_eq!(
+            semantic_ir
+                .regular_states
+                .iter()
+                .filter(|state| state.state_name == "BUSY")
+                .count(),
+            1,
+            "expected BUSY to survive once"
+        );
+        assert!(
+            semantic_ir
+                .state_transitions
+                .iter()
+                .any(|transition| transition.source_state == "IDLE"
+                    && transition.target_state == "BUSY"),
+            "expected transition between deduped states to survive"
         );
 
         Ok(())

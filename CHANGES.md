@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-04-12 (VLM state machine merges duplicate initial markers)
+
+### Fixed: duplicate VLM state labels preserve initial-state evidence
+- `SemanticIR` now merges duplicate VLM state-machine state labels by state name before they enter canonical `RegularStateRecord`s, preserving an `is_initial` marker if any duplicate carries it.
+- This mirrors the explicit state-declaration parser and prevents a VLM output like `IDLE` non-initial followed by duplicate `IDLE` initial from losing the true initial-state marker.
+- `kg-bench` can now assert initial-state names directly, and `vlm_state_machine_duplicate_initial_gold` locks that `IDLE` stays the single initial state while `BUSY` stays non-initial.
+
+### Validation
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml --lib vlm_state_machine_observation_merges_duplicate_state_initial_markers -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality vlm_state_machine_duplicate_initial_gold` -> passed
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, 303 Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and mdBook build
+
 ## 2026-04-11 (VLM state machine gates transition endpoints)
 
 ### Fixed: VLM transitions must target declared states
