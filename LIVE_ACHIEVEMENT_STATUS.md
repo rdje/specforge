@@ -93,6 +93,7 @@
 - Typed temporal conflict records for contradictory value obligations implemented: Done
 - Convergent EvidenceIR enrichment for anchored encodings and polarity from prose/signal tables implemented: Done
 - Non-reset control polarity recovery from explicit asserted-when-level prose implemented: Done
+- Collective non-reset control polarity recovery from explicit active-level prose implemented: Done
 - EvidenceIR polarity-conflict surfacing and validation reporting implemented: Done
 - SemanticIR / IntentIR polarity-conflict carry-through and validation reporting implemented: Done
 - `WidthHint` / parametric-width support propagated through the IR pipeline: Done
@@ -123,6 +124,7 @@
 - KG benchmark harness now locks spurious VLM timing-annotation rejection: Done
 - KG benchmark harness now locks active-low VLM timing polarity equivalence: Done
 - KG benchmark harness now locks active-low VLM reset-release polarity equivalence: Done
+- KG benchmark harness now locks collective non-reset control polarity recovery: Done
 - KG benchmark harness can now assert canonical actor-signal relations directly: Done
 - KG benchmark harness can now assert graph-backed direction coverage by signal name directly: Done
 - KG benchmark harness can now patch `document_sections` and assert per-signal directions directly: Done
@@ -151,7 +153,7 @@
 - Latest unseen-protocol live run:
 - `IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf` converged in `2` pipeline iterations and currently validates at `90/100 EXCELLENT`; parity-check table semantics now recover both structural KG ownership and carried width hints for the `*CHK` surface, declared graph-direction and width coverage are both `22/22`, `ACLK` / `ARESETN` now surface as infrastructure connectivity with a dedicated system-contract note instead of an ordinary missing-producer warning, six same-cycle temporal rules now carry explicit `0`-cycle windows, there are now no remaining typed temporal conflicts because assertion-vs-level comparison is polarity-aware rather than flattened, and the last carried interface-grouping residual is now gone
 - Canonical per-signal polarity surface: Done
-- Live projected polarity coverage across AXI/APB/AHB/AXI-Stream is now `1 / 1 / 1 / 1`; carry-through is real, and the next polarity gap is broader non-reset control polarity discovery beyond the new explicit asserted-when-level phrase family
+- Live projected polarity coverage across AXI/APB/AHB/AXI-Stream is now `1 / 1 / 1 / 1`; carry-through is real, and non-reset control polarity recovery now covers both explicit asserted-when-level prose and unambiguous collective active-level prose without suffix guessing
 - The refreshed live AMBA baseline is now AXI `85/100 GOOD`, APB `90/100 EXCELLENT`, AHB `94/100 EXCELLENT`, and AXI-Stream `90/100 EXCELLENT`; the old `94/95/95/90` snapshot was stale relative to the current semantic/intent stack, fresh rebuilds from current tracked `IntentIR` artifacts restored AHB to the excellent lane, the latest AXI semantic-hint hygiene fix removed the last blocked-handshake residual plus the false `AWAKEUP` / `CRVALID` semantic-role conflicts, the infrastructure-row hygiene fix removed the false `ACLK` / `ARESETN` interface-direction conflicts by refusing to treat `External` as a protocol actor, and the latest tie-off hygiene fix removed the bogus `BROADCAST*` missing-consumer warning by stopping appendix `Tie-off` rows from becoming fake producer actors
 
 ## Validation Projection

@@ -1,0 +1,45 @@
+{
+  "name": "multi_control_polarity_gold",
+  "source": "source.md",
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["CS_N", "WE_N"],
+      "signal_polarity_conflicts": 0
+    },
+    "intent": {
+      "signal_names_include": ["CS_N", "WE_N"],
+      "signal_polarity_conflicts": 0
+    },
+    "validation": {
+      "evidence": {
+        "finding_ids_exclude": ["evidence_signal_polarity_conflicts_present"],
+        "metric_values": {
+          "signal_constraints": "2",
+          "signal_polarity_conflicts": "0"
+        }
+      },
+      "semantic": {
+        "finding_ids_exclude": [
+          "semantic_signal_polarity_conflicts_present",
+          "semantic_temporal_conflicts_present"
+        ],
+        "metric_values": {
+          "with_resolved_polarity": "2",
+          "temporal_conflicts": "0",
+          "signal_polarity_conflicts": "0"
+        }
+      },
+      "intent": {
+        "finding_ids_exclude": [
+          "intent_signal_polarity_conflicts_present",
+          "intent_temporal_conflicts_present"
+        ],
+        "metric_values": {
+          "with_resolved_polarity": "2",
+          "temporal_conflicts": "0",
+          "signal_polarity_conflicts": "0"
+        }
+      }
+    }
+  }
+}

@@ -22,24 +22,23 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `aa4d776`
-- latest_commit_brief_message: `test(kg): assert graph direction coverage`
-- note: the current session is moving the next polarity slice from reset-heavy coverage toward explicit non-reset asserted-when-level control polarity recovery
+- latest_commit_hash: `8501a6e`
+- latest_commit_brief_message: `feat(evidence): recover asserted-level control polarity`
+- note: the current session is extending the polarity slice from single-signal asserted-when-level prose into collective non-reset control polarity recovery without suffix guessing or duplicate canonical records
 
 ## Recent commit chain (last 5)
+- `8501a6e` feat(evidence): recover asserted-level control polarity
 - `aa4d776` test(kg): assert graph direction coverage
 - `6307c85` feat(adapter): recover top directions from links
 - `e910a28` feat(adapter): recover direct directions from graph
 - `a77fec8` feat(adapter): recover module directions from graph
-- `7d298a9` docs(bootstrap): clean handoff hygiene
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- the current `R15` graph-first adapter slice teaches explicit-module `.fsm` top-composition lowering to overlay matching `IntentIR.actor_ports` before renderability analysis, so child-module input/output directions can be recovered from actor-relative graph evidence when flat module-local `direction_hint` values lag
-- the latest committed direct-root follow-on teaches standalone `.fsm` lowering to overlay `IntentIR.actor_ports` only when the direct actor context is unambiguous, leaving mixed producer/consumer graph contexts blocked instead of guessing a target-actor perspective
-- the latest committed top-boundary follow-on preserves width-only explicit top ports and recovers missing top input/output direction from explicit top-link topology only
+- the latest committed polarity follow-on teaches `EvidenceIR` to recover non-reset control polarity from explicit asserted-when-level prose like `CS_N is asserted when LOW` without inferring polarity from the `_N` suffix alone, and tightens `SemanticIR` so that local single-signal control prose enriches the declared signal instead of minting a duplicate heuristic interface record
+- the in-progress polarity follow-on extends that behavior to collective active-level prose like `CS_N and WE_N are active LOW signals`, keeps mixed low/high compound prose unresolved until clause-local parsing is safe, and prevents polarity-only co-mentions of declared signals from minting duplicate heuristic interface records
 - the latest committed KG-bench follow-on adds explicit graph direction coverage expectations so fixtures can test canonical `actor_ports` coverage without overloading flat compatibility `direction_hint`; targeted `kg_bench` and full `scripts/run_ci.sh` validation passed for that slice
-- the in-progress polarity follow-on teaches `EvidenceIR` to recover non-reset control polarity from explicit asserted-when-level prose like `CS_N is asserted when LOW` without inferring polarity from the `_N` suffix alone, and tightens `SemanticIR` so that local single-signal control prose enriches the declared signal instead of minting a duplicate heuristic interface record
+- the previous `R15` graph-first adapter slices teach explicit-module `.fsm` top-composition lowering, standalone direct-root lowering, and top-boundary link-topology lowering to consume bounded graph/topology evidence without guessing missing direction hints
 - the latest committed KG-quality slice added `vlm_timing_active_low_deassertion_equivalence_gold`, complementing the existing active-low assertion fixture by proving `DEASSERTED` and `HIGH` are equivalent for active-low reset release timing evidence
 - the previous quality slice added rustdoc warning denial to the shared CI path and fixed the only discovered rustdoc broken-link interpretation in `ActorSignalRelation` docs
 - `scripts/run_ci.sh` now runs Clippy with `-D warnings` before the Rust test suite, and GitHub Actions installs the `clippy` component so the hosted gate matches the local gate
@@ -48,7 +47,7 @@
 - the Rust warning baseline is clean and now enforced in the shared local/hosted CI path rather than suppressed with `#[allow(dead_code)]`
 - README bootstrap currently resolves to `SESSION_BOOTSTRAP.md`, which instructs future agents to read the referenced live docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if necessary, and then continue from the roadmap
 - this bootstrap refresh observed 28 Rust source files and about 53,858 lines under `crates/specforge/src`, with the CLI now including `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, and `nlp-enrich` beside the core staged IR commands
-- `RUST_CODEBASE_ANALYSIS.md` has been refreshed to reflect schema-v2 rescan planning/execution, `CorpusMemory` schema v5, 45 tracked KG fixtures, and the latest full CI baseline of 288 passing Rust tests plus mdBook build
+- `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the collective-control-polarity slice; the tracked KG fixture count is `47` and the full local CI gate reports `295` passing Rust tests
 - the latest README bootstrap hygiene pass found no new Rust architecture drift; the concrete fix was to refresh the committed baseline in this memory file and remove stray example bullets from `USER_GUIDE.md`'s root-document list
 - the latest active KG benchmark slice is `vlm_timing_active_low_deassertion_equivalence_gold`, which proves a VLM timing diagram that reports active-low `ARESETN` as both `deasserted` and `HIGH` yields typed temporal evidence without a false temporal or polarity conflict
 - the canonical user-facing documentation surface is now the mdBook under `docs/book/`
@@ -168,7 +167,7 @@
 - validator handling now matches that boundary too: infrastructure signals with no resolved producer actor emit a dedicated `[info:system_contract]` finding instead of a generic signal-connectivity warning, and validation now reports `infrastructure_signals` plus source/distribution status metrics alongside `infrastructure_signal_connectivity`
 - same-cycle timing language now lands as bounded temporal semantics too: AXI-Stream currently carries `6` explicit `0`-cycle windows from phrases like `in the same ACLK cycle`, and the old `no cycle-window grounding` warning is gone from the live validation projection
 - temporal-conflict detection is now polarity-aware: `ASSERTED` / `DEASSERTED` only collapse to `HIGH` / `LOW` when the current document grounds the signal polarity, so active-low controls like `ARESETN` stay semantically correct and unknown-polarity assertions stay abstract
-- resolved signal polarity now also lives directly on canonical `InterfaceSignalRecord`s and is reported by validation as `with_resolved_polarity`; after the latest infrastructure-interface fix, AXI/APB/AHB/AXI-Stream now all report `1`, so the next polarity step is broader non-reset control polarity recovery
+- resolved signal polarity now also lives directly on canonical `InterfaceSignalRecord`s and is reported by validation as `with_resolved_polarity`; after the latest infrastructure-interface fix, AXI/APB/AHB/AXI-Stream now all report `1`, and the current polarity work now covers both single-signal asserted-when-level prose and collective active-level control prose
 - the tracked live validation baseline has now been refreshed against the current semantic/intent stack and is more honest than the old stale snapshot: AXI 85/100 GOOD, APB 90/100 EXCELLENT, AHB 94/100 EXCELLENT, AXI-Stream 90/100 EXCELLENT
 - full original-PDF `converge` reruns are currently blocked locally because `docling` is not importable from the active `python3`; use `SPECFORGE_DOCLING_PYTHON=/path/to/python` or install `docling` into a discoverable interpreter before relying on fresh ingest reruns
 - the learning plane now applies the same bogus-actor hygiene rule at harvest and lookup time, and the stale `control information -> requester_like` actor-taxonomy prior has been removed from local `CorpusMemory`
@@ -194,7 +193,7 @@
 - preserved width-only explicit top boundary ports and added bounded `.fsm` top-link topology recovery so a top endpoint used as a link source becomes a top input, a top endpoint used as a link target becomes a top output, and unresolved or conflicting top boundary directions still block
 - extended graph-backed `.fsm` adapter direction recovery into standalone direct roots under a stricter direct-inventory unambiguous-actor gate, with regressions proving single-actor recovery, unrelated graph-only port ignoring, mixed-actor blocking, and duplicate-provenance conflict handling
 - moved the first `.fsm` adapter consumer onto target-actor-relative graph evidence: explicit module candidates now overlay matching `IntentIR.actor_ports` before top-composition renderability analysis, with regressions proving child-module directions recover from actor ports when flat module-local hints are cleared and conflicting graph directions still block lowering
-- executed the README -> `SESSION_BOOTSTRAP.md` bootstrap path again, reviewed the high-signal live docs and current Rust surface, confirmed 28 Rust source files / 45 tracked KG-quality fixtures / expected CLI command surface, refreshed the latest committed baseline to `35a8372`, and cleaned stray compatibility-guide bullets from `USER_GUIDE.md`
+- executed the README -> `SESSION_BOOTSTRAP.md` bootstrap path again, reviewed the high-signal live docs and current Rust surface, confirmed 28 Rust source files / 45 tracked KG-quality fixtures / expected CLI command surface at that time, refreshed the latest committed baseline to `35a8372`, and cleaned stray compatibility-guide bullets from `USER_GUIDE.md`
 - added `vlm_timing_active_low_deassertion_equivalence_gold`, a tracked KG-quality fixture proving active-low reset release observations `deasserted` and `HIGH` stay equivalent VLM timing evidence; targeted `kg-bench` validation passed
 - fixed the `ActorSignalRelation` rustdoc wording that rustdoc interpreted as broken intra-doc links, wired `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` into `scripts/run_ci.sh`, and documented the new rustdoc warning-deny gate before the full CI rerun
 - fixed mechanical Clippy findings, localized intentional broad IR-shape exceptions with `#[expect(...)]` reasons, wired `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings` into the shared CI script plus GitHub toolchain component list, and confirmed `bash scripts/run_ci.sh` passes through Clippy, 282 warning-denied Rust tests, and mdBook build
@@ -254,7 +253,7 @@
 - richer explicit clock-tick temporal semantics (`R15b`)
 - KG-guided multimodal rescans (`R15c`)
 - broader evidence arbitration / conflict handling beyond polarity, interface-shape, multi-producer ambiguity, modality-aware semantic-role grounding, consensus summaries, semantic candidates, and semantic arbitration summaries (`R15d`)
-- broader KG-quality evaluation and benchmark hardening beyond the new seed fixture pack (`R15e`); recent slices added active-low reset-release VLM coverage, graph direction coverage expectations, and explicit asserted-when-level non-reset control polarity recovery
+- broader KG-quality evaluation and benchmark hardening beyond the new seed fixture pack (`R15e`); recent slices added active-low reset-release VLM coverage, graph direction coverage expectations, explicit asserted-when-level non-reset control polarity recovery, and collective active-level non-reset control polarity recovery
 - cross-document extractor learning is now started, and the first seven bounded prior-consumer paths are now live; visual-motif priors now have explicit local enrichment rescan hints, negative-knowledge priors now have validation-only caution coverage, machine-readable rescan/corroboration guidance, a `project-validation` consumer that writes a schema-v2 replay-oriented rescan/extractor-selection target list, a first explicit `rescan-plan` consumer, an opt-in `converge --rescan-plan <plan>` hook, persisted execution summaries for changed-outcome review, explicit not-promoted gates plus structured promotion-review requirements on those summaries, and review-facing projection of those summaries into validation docs; an approval artifact should remain local/generated unless future work deliberately introduces canonical artifact mutation plus a tracked approval-evidence schema
 - Tier 3 relation extraction after the graph/temporal/eval surfaces are ready (`R14`)
 - some downstream compatibility and consumer paths still rely on flat `direction_hint` instead of the graph-native surface; explicit-module `.fsm` top composition, unambiguous standalone direct roots, and explicit top-link boundary recovery now have bounded adapter-side recovery paths, but the broader direct-consumer cleanup remains open

@@ -3484,24 +3484,25 @@ fn extract_signal_polarity_from_prose(
             continue;
         };
 
-        let mentioned_signals: Vec<String> = ordered_signals
-            .iter()
-            .filter_map(|signal| {
-                let signal_lower = signal.to_ascii_lowercase();
-                contains_reference_token(&lowered, &signal_lower).then_some((*signal).clone())
-            })
-            .collect();
-        if mentioned_signals.len() != 1 {
+        let mentioned_signals = known_signals_referenced_in_text(&lowered, &ordered_signals);
+        let signal_names = if mentioned_signals.len() == 1 {
+            mentioned_signals
+        } else {
+            collective_polarity_subject_signals(&lowered, polarity, &ordered_signals)
+        };
+        if signal_names.is_empty() {
             continue;
         }
 
-        observations.push(SignalPolarityObservationCandidate {
-            signal_name: mentioned_signals[0].clone(),
-            polarity,
-            source_kind: SignalPolarityEvidenceSourceKind::ProseStatement,
-            supporting_statement_ids: vec![statement.statement_id.clone()],
-            supporting_table_ids: Vec::new(),
-        });
+        for signal_name in signal_names {
+            observations.push(SignalPolarityObservationCandidate {
+                signal_name,
+                polarity,
+                source_kind: SignalPolarityEvidenceSourceKind::ProseStatement,
+                supporting_statement_ids: vec![statement.statement_id.clone()],
+                supporting_table_ids: Vec::new(),
+            });
+        }
     }
 
     observations
@@ -3650,29 +3651,80 @@ fn signal_name_from_signal_table_row(
 }
 
 fn detect_signal_polarity(text_lower: &str) -> Option<SignalPolarity> {
-    if text_lower.contains("active low")
+    let has_active_low = text_lower.contains("active low")
         || text_lower.contains("active-low")
         || text_lower.contains("asserted low")
         || text_lower.contains("low asserted")
         || text_lower.contains("asserted when low")
         || text_lower.contains("low when asserted")
         || text_lower.contains("asserted by driving low")
-        || text_lower.contains("driven low to assert")
-    {
-        Some(SignalPolarity::ActiveLow)
-    } else if text_lower.contains("active high")
+        || text_lower.contains("driven low to assert");
+    let has_active_high = text_lower.contains("active high")
         || text_lower.contains("active-high")
         || text_lower.contains("asserted high")
         || text_lower.contains("high asserted")
         || text_lower.contains("asserted when high")
         || text_lower.contains("high when asserted")
         || text_lower.contains("asserted by driving high")
-        || text_lower.contains("driven high to assert")
-    {
-        Some(SignalPolarity::ActiveHigh)
-    } else {
-        None
+        || text_lower.contains("driven high to assert");
+
+    match (has_active_low, has_active_high) {
+        (true, false) => Some(SignalPolarity::ActiveLow),
+        (false, true) => Some(SignalPolarity::ActiveHigh),
+        _ => None,
     }
+}
+
+fn known_signals_referenced_in_text(text_lower: &str, ordered_signals: &[&String]) -> Vec<String> {
+    ordered_signals
+        .iter()
+        .filter_map(|signal| {
+            let signal_lower = signal.to_ascii_lowercase();
+            contains_reference_token(text_lower, &signal_lower).then_some((*signal).clone())
+        })
+        .collect()
+}
+
+fn collective_polarity_subject_signals(
+    text_lower: &str,
+    polarity: SignalPolarity,
+    ordered_signals: &[&String],
+) -> Vec<String> {
+    let markers = match polarity {
+        SignalPolarity::ActiveLow => [
+            " are active low",
+            " are active-low",
+            " are asserted low",
+            " are low asserted",
+            " are asserted when low",
+            " are low when asserted",
+            " are asserted by driving low",
+            " are driven low to assert",
+        ],
+        SignalPolarity::ActiveHigh => [
+            " are active high",
+            " are active-high",
+            " are asserted high",
+            " are high asserted",
+            " are asserted when high",
+            " are high when asserted",
+            " are asserted by driving high",
+            " are driven high to assert",
+        ],
+    };
+
+    for marker in markers {
+        let Some(index) = text_lower.find(marker) else {
+            continue;
+        };
+        let subject = &text_lower[..index];
+        let signals = known_signals_referenced_in_text(subject, ordered_signals);
+        if signals.len() >= 2 {
+            return signals;
+        }
+    }
+
+    Vec::new()
 }
 
 fn record_signal_polarity_observation(
@@ -8595,6 +8647,114 @@ mod tests {
                 && matches!(
                     constraint.constraint_kind,
                     crate::ir::source::SignalConstraintKind::MustBeHigh
+                )
+        }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn collective_active_low_prose_recovers_multiple_control_polarities() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("collective_control_polarity.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Control\n",
+                "Signal CS_N is input width 1.\n",
+                "\n",
+                "Signal WE_N is input width 1.\n",
+                "\n",
+                "CS_N and WE_N are active LOW signals.\n",
+                "\n",
+                "CS_N must be asserted.\n",
+                "\n",
+                "WE_N must be deasserted.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        for signal_name in ["CS_N", "WE_N"] {
+            let polarity = evidence_ir
+                .signal_polarities
+                .iter()
+                .find(|record| record.signal_name == signal_name)
+                .expect("expected collective active-low prose to recover both control signals");
+            assert_eq!(polarity.polarity, super::SignalPolarity::ActiveLow);
+        }
+        assert!(evidence_ir.signal_constraints.iter().any(|constraint| {
+            constraint.subject_signal == "CS_N"
+                && matches!(
+                    constraint.constraint_kind,
+                    crate::ir::source::SignalConstraintKind::MustBeLow
+                )
+        }));
+        assert!(evidence_ir.signal_constraints.iter().any(|constraint| {
+            constraint.subject_signal == "WE_N"
+                && matches!(
+                    constraint.constraint_kind,
+                    crate::ir::source::SignalConstraintKind::MustBeHigh
+                )
+        }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn mixed_polarity_prose_does_not_guess_collective_control_polarity() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("mixed_control_polarity.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Control\n",
+                "Signal CS_N is input width 1.\n",
+                "\n",
+                "Signal ENABLE is input width 1.\n",
+                "\n",
+                "CS_N is active LOW and ENABLE is active HIGH.\n",
+                "\n",
+                "CS_N must be asserted.\n",
+                "\n",
+                "ENABLE must be asserted.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        assert!(
+            evidence_ir.signal_polarities.is_empty(),
+            "mixed-polarity compound prose should stay unresolved until the extractor can parse each clause safely"
+        );
+        assert!(evidence_ir.signal_constraints.iter().any(|constraint| {
+            constraint.subject_signal == "CS_N"
+                && matches!(
+                    constraint.constraint_kind,
+                    crate::ir::source::SignalConstraintKind::MustBeAsserted
+                )
+        }));
+        assert!(evidence_ir.signal_constraints.iter().any(|constraint| {
+            constraint.subject_signal == "ENABLE"
+                && matches!(
+                    constraint.constraint_kind,
+                    crate::ir::source::SignalConstraintKind::MustBeAsserted
                 )
         }));
 

@@ -235,6 +235,7 @@
   - weakly labeled encoding tables can now be recovered via signal anchors instead of requiring a hardcoded per-protocol value list
   - prose polarity extraction now refines asserted/deasserted constraints into polarity-aware low/high constraints when the spec says active-low or active-high
   - prose polarity extraction now also recognizes explicit asserted-when-level wording such as `asserted when LOW` / `LOW when asserted` for non-reset control signals without inferring polarity from names alone
+  - prose polarity extraction now also recognizes unambiguous collective active-level wording such as `CS_N and WE_N are active LOW signals`, while mixed low/high compound prose stays unresolved until clause-local parsing is safe
   - regression tests cover anchored encoding scanning and polarity refinement
 
 ### R10 EvidenceIR visual content (Tier 3 of EXTRACTION_ARCHITECTURE.md)
@@ -438,6 +439,8 @@
   - `specforge validate` now reports and flags those polarity conflicts explicitly, so contradictory polarity stays inspectable instead of only affecting the derived constraint kind
   - `SemanticIR` / `IntentIR` now carry those `signal_polarity_conflicts` forward too, and `specforge validate` now reports them at both canonical stages so contradictory active-level evidence no longer disappears after `EvidenceIR`
   - local asserted-when-level polarity phrases now apply beyond reset, so a non-reset control signal explicitly described as `asserted when LOW` can refine asserted/deasserted constraints without guessing from a suffix alone
+  - unambiguous collective active-level polarity phrases now apply beyond reset too, so statements like `CS_N and WE_N are active LOW signals` can refine multiple declared controls while mixed low/high compound prose stays unresolved
+  - `SemanticIR` now treats polarity-only co-mentions of already declared signals as record enrichment rather than heuristic interface-group evidence, preventing duplicated canonical signal records and inflated polarity coverage
   - `EvidenceIR` now persists `signal_semantic_conflicts: Vec<SignalSemanticConflictRecord>` when meaning-based role evidence assigns incompatible roles to the same signal
   - `specforge validate` now reports and flags those semantic-role conflicts explicitly instead of leaving incompatible role evidence hidden inside a dual-tag ambiguity
   - `SemanticIR` / `IntentIR` now carry `signal_semantic_conflicts` forward, so unresolved role disagreement remains visible in the canonical layers instead of disappearing after `EvidenceIR`
@@ -494,6 +497,7 @@
     - a negative fixture proving `Clock` / `Reset` infrastructure rows in AMBA-style `Source` columns do not become bogus protocol actors while real requester/subordinate rows still recover driver-side actor ports and semantic role grounding
     - a negative fixture proving a misclassified `Bits | Name | Description` field table does not synthesize fake top-level signals or semantic roles from field names like `REQ` / `ACK`
     - a negative fixture proving low-value VLM timing-diagram annotation labels like `T0`, `Addr 1`, and `Cycle 2` do not become timing constraints or temporal rules while the underlying timing extraction still remains visible at the evidence stage
+    - a gold fixture proving collective non-reset control polarity prose recovers multiple active-low control signals without duplicating canonical signal records
     - prior-guided negative-knowledge caution fixtures proving semantic conflicts, temporal conflicts, residual packets, signal-connectivity conflicts, and interface-signal conflicts keep their local conflict/residual surfaces while only adding caution/rescan/corroboration guidance
   - fixture expectations can now assert canonical actor-signal relations directly, so the harness can lock `Drives` versus `Reads` semantics instead of relying only on actor-port projections or relation counts
   - fixture expectations can now assert graph-backed direction coverage by signal name directly via `graph_direction_signal_names_include` / `graph_direction_signal_names_exclude`, keeping graph-native coverage checks separate from flat compatibility `direction_hint` assertions

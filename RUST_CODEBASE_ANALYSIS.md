@@ -32,19 +32,26 @@
 - the enrichment, convergence, validation, benchmark, targeted-rescan, and first prior-learning toolchain is also real: `specforge enrich`, `specforge nlp-enrich`, `specforge converge`, `specforge validate`, `specforge project-validation`, `specforge rescan-plan`, `specforge kg-bench`, and `specforge learn-priors` are wired into the CLI and exercised by the workspace tests
 - `project-validation` and `rescan-plan` now form a schema-v2 targeted-rescan loop: recommendations carry typed replay inputs, structured local command hints, dry-run-by-default execution, before/after validation snapshots, execution summaries, promotion-gate descriptors, and an explicit no-canonical-mutation boundary
 - `CorpusMemory` schema v5 now carries actor-taxonomy, semantic-phrase, semantic-modality-reliability, temporal-phrase, table-shape, visual-motif, and negative-knowledge prior families; current consumers remain advisory and locally grounded rather than fact-authoring
-- the tracked KG-quality benchmark surface currently contains 45 fixtures, including active-low VLM timing polarity-equivalence coverage that proves `ASSERTED` / `LOW` and `DEASSERTED` / `HIGH` agree for active-low reset timing evidence
+- the tracked KG-quality benchmark surface currently contains 47 fixtures, including active-low VLM timing polarity-equivalence coverage and collective non-reset control polarity coverage
 - the local runtime boundary is now operationally stronger too: `specforge doctor` reports Docling readiness, the default Ollama loopback readiness, and LM Studio fallback readiness directly, repo-local `.venv-docling` auto-discovery is supported, and the backend now probes versioned Python candidates like `python3.11` before giving up on fresh ingest
 - GitHub Actions CI is now part of the repo baseline and runs `cargo fmt --all --check`, warning-deny Clippy, warning-deny Rust tests, warning-deny rustdoc, and the mdBook build on every `push` and `pull_request`, which keeps the hosted validation path aligned with the local Rust/docs quality gate
 - that CI path now has a single checked-in entrypoint at `scripts/run_ci.sh`, and the GitHub workflow calls that script directly so local and hosted Rust validation do not drift apart
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and adding the planned `R15g` corpus knowledge base beside the already-live typed prior-memory plane; adapter expansion is now horizon work
-- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the asserted-when-level control polarity slice, the latest full local CI path reports clean Clippy, 292 passing Rust tests, clean Rust API docs, and a successful mdBook build
+- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the collective control-polarity slice, the full local CI path reports clean Clippy, 295 passing Rust tests, clean Rust API docs, and a successful mdBook build
+
+## Session update (2026-04-11 collective control polarity)
+- `EvidenceIR` now recovers unambiguous collective active-level prose such as `CS_N and WE_N are active LOW signals`, producing polarity observations for both declared controls and refining asserted/deasserted constraints after polarity is grounded.
+- Mixed low/high compound prose remains unresolved until clause-local parsing can safely bind each signal to exactly one polarity phrase.
+- `SemanticIR` now treats polarity-only co-mentions of already declared signals as enrichment of the authoritative records rather than low-confidence heuristic interface groups, preventing duplicate canonical signal records and inflated polarity metrics.
+- `multi_control_polarity_gold` locks the path through the KG benchmark surface with two resolved polarities and zero polarity/temporal conflicts.
+- Focused validation passed for the new evidence regressions, semantic duplicate-suppression regression, targeted `kg-bench multi_control_polarity_gold`, the full 47-fixture KG benchmark suite, and the full local CI gate with 295 Rust tests.
 
 ## Session update (2026-04-11 asserted-when-level control polarity)
 - `EvidenceIR` polarity detection now recognizes explicit local phrases such as `asserted when LOW`, `LOW when asserted`, `asserted by driving LOW`, and their active-high mirrors
 - the new path is intentionally evidence-grounded: it does not infer active-low from `_N` suffixes alone
 - focused regressions prove the detector accepts asserted-when-level wording and that a non-reset control signal `CS_N` refines asserted/deasserted constraints to LOW/HIGH only after local prose says it is asserted when LOW
 - `SemanticIR` now suppresses redundant one-signal heuristic interface candidates when that signal is already explicitly declared, preventing local polarity prose from double-counting the same canonical signal
-- focused `cargo test --manifest-path Cargo.toml polarity -- --nocapture` passed with 21 polarity tests, `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` passed with all 46 KG fixtures, and `bash scripts/run_ci.sh` passed with 292 Rust tests plus docs
+- focused `cargo test --manifest-path Cargo.toml polarity -- --nocapture` passed with 21 polarity tests, `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` passed with all 46 KG fixtures, and `bash scripts/run_ci.sh` passed with 292 Rust tests plus docs for that slice
 
 ## Session update (2026-04-11 KG-bench graph direction expectations)
 - `specforge kg-bench` canonical stage expectations now include `graph_direction_signal_names_include` and `graph_direction_signal_names_exclude`
@@ -179,7 +186,7 @@
 - the KG benchmark harness can now also stage a fixture-owned `CorpusMemory`, and the first tracked gold/negative pair proves that unseen local timing language only gains a `cycle_window` when a matching learned temporal prior is present
 - the KG benchmark harness now also locks the same before/after truthfulness pattern for semantic priors: unseen local role language only gains canonical semantic recovery when a matching learned semantic prior is present
 - the latest unseen protocol stress run is now AXI-Stream: it converges in `2` full pipeline iterations, validates at `90/100 EXCELLENT`, and the latest truthfulness fixes now recover both parity-check ownership and parity-check widths from the local `Check Signal / Signals Covered` semantics, bringing declared graph-direction and width coverage to `22/22`; `ACLK` / `ARESETN` now classify as infrastructure connectivity with canonical sourcing left in the system-contract surface, same-cycle timing language now lands as six explicit `0`-cycle temporal windows, assertion-vs-level temporal comparison is now polarity-aware, and the last carried interface-grouping residual is gone after heuristic grouping stopped treating width/table metadata as interface signals and explicit interfaces began subsuming smaller statement fragments
-- resolved signal polarity now also survives directly on canonical `InterfaceSignalRecord`s and is visible in validator metrics as `with_resolved_polarity`; after the latest AHB infrastructure-interface fix, AXI/APB/AHB/AXI-Stream now all report `1`, so the remaining polarity work is broader non-reset control coverage rather than carry-through plumbing
+- resolved signal polarity now also survives directly on canonical `InterfaceSignalRecord`s and is visible in validator metrics as `with_resolved_polarity`; after the latest AHB infrastructure-interface fix, AXI/APB/AHB/AXI-Stream now all report `1`, and non-reset control coverage now includes both asserted-when-level prose and unambiguous collective active-level prose rather than only reset carry-through plumbing
 - `specforge converge` now excludes downstream adapter residual work from `knowledge_fact_count`, so fewer adapter residual decisions do not falsely trip the monotone-knowledge guard
 - `generated/` is now intentionally git-ignored and untracked, so local validation snapshots must be recorded in the live docs instead of relying on versioned artifacts
 - latest local validation snapshot is now AXI `85/100 GOOD`, APB `90/100 EXCELLENT`, AHB `94/100 EXCELLENT`, and AXI-Stream `90/100 EXCELLENT`; this refresh replaced a stale optimistic snapshot, the current tracked four-artifact projection now uses APB `IHI0024_E`, AHB remains in the excellent lane, and the latest AXI truthfulness fixes removed the last blocked-handshake residual, the false `AWAKEUP` / `CRVALID` semantic-role conflicts, the false `ACLK` / `ARESETN` interface-direction conflicts, and the bogus `Tie-off`-driven `BROADCAST*` missing-consumer warning while leaving AXI as the main remaining live quality outlier
@@ -510,8 +517,8 @@
 
 ## Testing implications
 - current full local CI path: `bash scripts/run_ci.sh`
-- current Rust test count observed through that path: 288 library tests, 0 binary tests, and 0 doc tests, all passing under `RUSTFLAGS="-D warnings"` after clean `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings` and `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` passes
-- current tracked KG-quality fixture count: 45
+- current Rust test count observed through that path after the current slice: 295 library tests, 0 binary tests, and 0 doc tests, all passing under `RUSTFLAGS="-D warnings"` after clean `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings` and `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` passes
+- current tracked KG-quality fixture count: 47
 - current tests cover:
   - source-kind detection
   - deterministic source key naming
@@ -523,7 +530,7 @@
   - markdown-backed `EvidenceIR` construction
   - table-synthesized signal, enum, register, and timing evidence
   - anchored encoding-table rescans and dynamic value-constraint extraction
-  - polarity refinement from active-low / active-high prose, including explicit asserted-when-level control wording
+  - polarity refinement from active-low / active-high prose, including explicit asserted-when-level and collective active-level control wording
   - caption and figure-reference grounding into visual evidence
   - VLM observation injection (TimingDiagramExtraction, StateMachineExtraction from VisualAsset.note)
   - handshake-driven `SemanticIR` actor/interface/invariant extraction

@@ -43,7 +43,7 @@ It is supposed to be disciplined in the sense of preserving recoverable evidence
 - prose-grounded actor relations
 - visual-caption semantic hints
 - VLM timing-note observations
-- polarity extraction, including explicit asserted-when-level prose such as `CS_N is asserted when LOW`
+- polarity extraction, including explicit asserted-when-level prose such as `CS_N is asserted when LOW` and unambiguous collective prose such as `CS_N and WE_N are active LOW signals`
 - negative-knowledge caution surfacing during validation
 
 These wins are valuable because they give later stages something much stronger than free-form text:
@@ -67,6 +67,10 @@ It is allowed to say:
 - this signal appears in a relation-like table row
 - this caption text supports a semantic-role hint
 - this table suggests a width, polarity, or source/destination relation
+
+It can also apply a collective polarity statement to multiple declared controls when the wording has one unambiguous active level.
+For example, `CS_N and WE_N are active LOW signals` can ground both controls as active-low.
+Mixed compound wording such as `CS_N is active LOW and ENABLE is active HIGH` should stay unresolved until a clause-local parser can split and validate each signal-level pair safely.
 
 It is not supposed to decide the final canonical meaning of the whole interface.
 Likewise, negative-knowledge priors may make validation more alert to a repeated evidence-stage conflict pattern, but they do not suppress the current evidence or decide the conflict.

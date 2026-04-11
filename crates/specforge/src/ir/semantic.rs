@@ -1846,6 +1846,7 @@ fn build_interfaces(
         if heuristic_interface_candidate_is_redundant_with_authoritative_surface(
             candidate_signals.as_slice(),
             &authoritative_signal_names,
+            &statement.text,
         ) {
             continue;
         }
@@ -4471,12 +4472,44 @@ fn retain_authoritative_interface_candidate_signals(
 fn heuristic_interface_candidate_is_redundant_with_authoritative_surface(
     signals: &[String],
     authoritative_signal_names: &BTreeSet<String>,
+    statement_text: &str,
 ) -> bool {
-    if authoritative_signal_names.is_empty() || signals.len() != 1 {
+    if authoritative_signal_names.is_empty() || signals.is_empty() {
         return false;
     }
 
-    authoritative_signal_names.contains(&signals[0])
+    if !signals
+        .iter()
+        .all(|signal| authoritative_signal_names.contains(signal))
+    {
+        return false;
+    }
+
+    signals.len() == 1 || statement_text_describes_signal_polarity(statement_text)
+}
+
+fn statement_text_describes_signal_polarity(text: &str) -> bool {
+    let lowered = normalize_sentence(text).to_ascii_lowercase();
+    [
+        "active low",
+        "active-low",
+        "asserted low",
+        "low asserted",
+        "asserted when low",
+        "low when asserted",
+        "asserted by driving low",
+        "driven low to assert",
+        "active high",
+        "active-high",
+        "asserted high",
+        "high asserted",
+        "asserted when high",
+        "high when asserted",
+        "asserted by driving high",
+        "driven high to assert",
+    ]
+    .iter()
+    .any(|phrase| lowered.contains(phrase))
 }
 
 fn parse_explicit_system_clock(text: &str) -> Option<String> {
@@ -11519,6 +11552,66 @@ mod tests {
     }
 
     #[test]
+    fn collective_polarity_prose_does_not_duplicate_interface_records() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir
+            .path()
+            .join("semantic_collective_control_polarity.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Control\n",
+                "Signal CS_N is input width 1.\n",
+                "\n",
+                "Signal WE_N is input width 1.\n",
+                "\n",
+                "CS_N and WE_N are active LOW signals.\n",
+                "\n",
+                "CS_N must be asserted.\n",
+                "\n",
+                "WE_N must be deasserted.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        for signal_name in ["CS_N", "WE_N"] {
+            let records: Vec<_> = semantic_ir
+                .interfaces
+                .iter()
+                .flat_map(|interface| interface.signal_records.iter())
+                .filter(|signal| signal.signal_name == signal_name)
+                .collect();
+            assert_eq!(
+                records.len(),
+                1,
+                "collective polarity prose should enrich {signal_name}, not mint a duplicate heuristic interface record"
+            );
+            assert_eq!(
+                records[0].resolved_polarity,
+                Some(crate::ir::evidence::SignalPolarity::ActiveLow)
+            );
+        }
+
+        Ok(())
+    }
+
+    #[test]
     fn carries_semantic_observations_into_interface_records() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("semantic_role_observations.md");
@@ -13564,19 +13657,36 @@ mod tests {
     }
 
     #[test]
-    fn redundant_single_authoritative_signal_candidate_is_not_a_heuristic_interface() {
-        let authoritative = std::collections::BTreeSet::from(["CS_N".to_string()]);
+    fn redundant_authoritative_polarity_candidate_is_not_a_heuristic_interface() {
+        let authoritative =
+            std::collections::BTreeSet::from(["CS_N".to_string(), "WE_N".to_string()]);
 
         assert!(
             super::heuristic_interface_candidate_is_redundant_with_authoritative_surface(
                 &["CS_N".to_string()],
                 &authoritative,
+                "CS_N must be asserted.",
+            )
+        );
+        assert!(
+            super::heuristic_interface_candidate_is_redundant_with_authoritative_surface(
+                &["CS_N".to_string(), "WE_N".to_string()],
+                &authoritative,
+                "CS_N and WE_N are active LOW signals.",
+            )
+        );
+        assert!(
+            !super::heuristic_interface_candidate_is_redundant_with_authoritative_surface(
+                &["CS_N".to_string(), "WE_N".to_string()],
+                &authoritative,
+                "CS_N and WE_N change together.",
             )
         );
         assert!(
             !super::heuristic_interface_candidate_is_redundant_with_authoritative_surface(
                 &["CS_N".to_string(), "PREADY".to_string()],
                 &authoritative,
+                "CS_N and PREADY are active LOW signals.",
             )
         );
     }

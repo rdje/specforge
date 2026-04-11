@@ -104,6 +104,7 @@ For resets:
 The same polarity rule applies to other single-bit control signals.
 If the current document says `CS_N is asserted when LOW`, the assertion level is locally grounded and `ASSERTED` can refine to `LOW`.
 That is different from guessing from the `_N` suffix alone.
+Likewise, an unambiguous collective sentence such as `CS_N and WE_N are active LOW signals` can ground both declared controls as active-low, while mixed low/high compound wording should stay unresolved until the clause-level evidence is safe to split.
 
 This matters for temporal rules and conflict detection.
 

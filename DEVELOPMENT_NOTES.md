@@ -38,6 +38,13 @@
 - Active-low `ARESETN` reported as both `deasserted` and `HIGH` must produce typed temporal evidence without creating a false temporal conflict or polarity conflict.
 - This complements the existing reset-entry fixture for `asserted` plus `LOW`, so both assertion and deassertion semantics are regression-protected.
 
+## 2026-04-11 collective non-reset control polarity
+- `EvidenceIR` now recovers unambiguous collective active-level prose such as `CS_N and WE_N are active LOW signals`, producing one explicit polarity observation per declared signal and letting later asserted/deasserted constraints refine into concrete low/high obligations.
+- The extractor deliberately stays conservative for mixed compound polarity prose such as `CS_N is active LOW and ENABLE is active HIGH`; until there is a clause-local parser that can bind each polarity phrase to exactly one signal, the safer behavior is to leave the polarity unresolved rather than guess.
+- The KG fixture exposed a second quality issue: collective polarity prose was also being treated as a low-confidence heuristic interface group, duplicating already declared `CS_N` / `WE_N` records and inflating `with_resolved_polarity` from `2` to `4`.
+- The semantic fix is bounded to polarity-only co-mentions of already authoritative signals. Single-signal declared-control prose remains suppressed as before, collective polarity-only declarations enrich the authoritative records, and non-polarity multi-signal co-mentions can still become heuristic grouping evidence when they may carry real interface structure.
+- `multi_control_polarity_gold` now locks the end-to-end behavior with two canonical signal records, two resolved polarities, two refined constraints, and zero polarity/temporal conflicts through `EvidenceIR`, `SemanticIR`, and `IntentIR`.
+
 ## Foundational engineering choices
 ### IntentIR instead of AST
 - the final canonical output must capture semantics and implementation-relevant intent, not only syntax structure
