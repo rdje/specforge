@@ -70,7 +70,7 @@ The companion `vlm_timing_active_low_deassertion_equivalence_gold` fixture prove
 That matters because `ASSERTED` and `DEASSERTED` are polarity-relative, not synonyms for fixed logic levels.
 
 Timing-annotation negative fixtures also protect against visual overreach.
-Low-value labels such as `T0` and `Addr 1` do not become timing constraints, and waveform motion states such as `rising`, `stable`, `falling`, `UNCHANGED`, `RISING_EDGE`, and `LOW_TO_HIGH` do not become symbolic signal values.
+Low-value labels such as `T0` and `Addr 1` do not become timing constraints, and waveform motion states such as `rising`, `stable`, `falling`, `UNCHANGED`, `RISING_EDGE`, `LOW_TO_HIGH`, `POS_EDGE`, `risingedge`, and `LOW2HIGH` do not become symbolic signal values.
 Concrete sampled values such as `HIGH` can still become typed temporal evidence when the signal itself is document-grounded.
 
 The polarity fixture family also covers non-reset controls.

@@ -12,7 +12,7 @@
         "caption_source_path": null,
         "source_ref": null,
         "placeholder_text": null,
-        "note": "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"T0\",\"state\":\"rising\"},{\"cycle\":\"T1\",\"state\":\"HIGH\"},{\"cycle\":\"T2\",\"state\":\"stable\"},{\"cycle\":\"T3\",\"state\":\"falling\"},{\"cycle\":\"T4\",\"state\":\"UNCHANGED\"},{\"cycle\":\"T5\",\"state\":\"RISING_EDGE\"},{\"cycle\":\"T6\",\"state\":\"LOW_TO_HIGH\"},{\"cycle\":\"T7\",\"state\":\"HIGH_TO_LOW\"}]}],\"annotations\":[]}",
+        "note": "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"T0\",\"state\":\"rising\"},{\"cycle\":\"T1\",\"state\":\"HIGH\"},{\"cycle\":\"T2\",\"state\":\"stable\"},{\"cycle\":\"T3\",\"state\":\"falling\"},{\"cycle\":\"T4\",\"state\":\"UNCHANGED\"},{\"cycle\":\"T5\",\"state\":\"RISING_EDGE\"},{\"cycle\":\"T6\",\"state\":\"LOW_TO_HIGH\"},{\"cycle\":\"T7\",\"state\":\"HIGH_TO_LOW\"},{\"cycle\":\"T8\",\"state\":\"POS_EDGE\"},{\"cycle\":\"T9\",\"state\":\"NEG_EDGE\"},{\"cycle\":\"T10\",\"state\":\"risingedge\"},{\"cycle\":\"T11\",\"state\":\"LOW2HIGH\"},{\"cycle\":\"T12\",\"state\":\"HIGH2LOW\"}]}],\"annotations\":[]}",
         "diagram_kind": "timing_diagram"
       }
     ]

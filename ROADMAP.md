@@ -501,7 +501,7 @@
     - a negative fixture proving `Clock` / `Reset` infrastructure rows in AMBA-style `Source` columns do not become bogus protocol actors while real requester/subordinate rows still recover driver-side actor ports and semantic role grounding
     - a negative fixture proving a misclassified `Bits | Name | Description` field table does not synthesize fake top-level signals or semantic roles from field names like `REQ` / `ACK`
     - a negative fixture proving low-value VLM timing-diagram annotation labels like `T0`, `Addr 1`, and `Cycle 2` do not become timing constraints or temporal rules while the underlying timing extraction still remains visible at the evidence stage
-    - a negative fixture proving VLM timing-diagram waveform motion states like `rising`, `stable`, `falling`, `UNCHANGED`, `RISING_EDGE`, and `LOW_TO_HIGH` do not become symbolic signal values while concrete samples like `HIGH` still survive
+    - a negative fixture proving VLM timing-diagram waveform motion states like `rising`, `stable`, `falling`, `UNCHANGED`, `RISING_EDGE`, `LOW_TO_HIGH`, `POS_EDGE`, `risingedge`, and `LOW2HIGH` do not become symbolic signal values while concrete samples like `HIGH` still survive
     - a gold fixture proving collective non-reset control polarity prose recovers multiple active-low control signals without duplicating canonical signal records
     - a gold fixture proving mixed clause-local non-reset control polarity prose recovers active-low and active-high controls without duplicating canonical signal records
     - a negative fixture proving detached mixed-polarity prose stays unresolved instead of borrowing an implicit active-level subject

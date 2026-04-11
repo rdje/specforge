@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-04-11 (VLM timing rejects compact edge spellings)
+
+### Fixed: compact edge labels stay out of signal values
+- `SemanticIR` now rejects additional VLM timing waveform-motion spellings such as `POS_EDGE`, `NEG_EDGE`, `risingedge`, `LOW2HIGH`, and `HIGH2LOW` before the symbolic-value fallback can promote them into false signal-value facts.
+- Strengthened the existing semantic regression and `vlm_timing_waveform_motion_negative` fixture so the only surviving VLM-authored signal constraint remains the concrete `HIGH` sample.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml --lib vlm_timing_diagram_observation_rejects_waveform_motion_states -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality vlm_timing_waveform_motion_negative` -> passed
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, 300 Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and mdBook build
+
 ## 2026-04-11 (VLM timing normalizes motion spellings)
 
 ### Fixed: separator variants of waveform transitions stay non-factual

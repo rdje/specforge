@@ -9022,8 +9022,16 @@ fn is_vlm_waveform_motion_state(state: &str) -> bool {
             | "falling"
             | "rising edge"
             | "falling edge"
+            | "rise edge"
+            | "fall edge"
             | "positive edge"
             | "negative edge"
+            | "pos edge"
+            | "neg edge"
+            | "risingedge"
+            | "fallingedge"
+            | "positiveedge"
+            | "negativeedge"
             | "posedge"
             | "negedge"
             | "edge"
@@ -9038,6 +9046,10 @@ fn is_vlm_waveform_motion_state(state: &str) -> bool {
             | "hold"
             | "low to high"
             | "high to low"
+            | "lowtohigh"
+            | "hightolow"
+            | "low2high"
+            | "high2low"
             | "0 to 1"
             | "1 to 0"
             | "zero to one"
@@ -10801,7 +10813,7 @@ mod tests {
             source_ref: None,
             placeholder_text: None,
             note: Some(
-                "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"T0\",\"state\":\"rising\"},{\"cycle\":\"T1\",\"state\":\"HIGH\"},{\"cycle\":\"T2\",\"state\":\"stable\"},{\"cycle\":\"T3\",\"state\":\"falling\"},{\"cycle\":\"T4\",\"state\":\"UNCHANGED\"},{\"cycle\":\"T5\",\"state\":\"RISING_EDGE\"},{\"cycle\":\"T6\",\"state\":\"LOW_TO_HIGH\"},{\"cycle\":\"T7\",\"state\":\"HIGH_TO_LOW\"}]}],\"annotations\":[\"XREQ rises, stays stable, then falls\"]}"
+                "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"T0\",\"state\":\"rising\"},{\"cycle\":\"T1\",\"state\":\"HIGH\"},{\"cycle\":\"T2\",\"state\":\"stable\"},{\"cycle\":\"T3\",\"state\":\"falling\"},{\"cycle\":\"T4\",\"state\":\"UNCHANGED\"},{\"cycle\":\"T5\",\"state\":\"RISING_EDGE\"},{\"cycle\":\"T6\",\"state\":\"LOW_TO_HIGH\"},{\"cycle\":\"T7\",\"state\":\"HIGH_TO_LOW\"},{\"cycle\":\"T8\",\"state\":\"POS_EDGE\"},{\"cycle\":\"T9\",\"state\":\"NEG_EDGE\"},{\"cycle\":\"T10\",\"state\":\"risingedge\"},{\"cycle\":\"T11\",\"state\":\"LOW2HIGH\"},{\"cycle\":\"T12\",\"state\":\"HIGH2LOW\"}]}],\"annotations\":[\"XREQ rises, stays stable, then falls\"]}"
                     .to_string(),
             ),
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
