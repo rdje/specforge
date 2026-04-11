@@ -310,7 +310,8 @@ pub enum RelationKind {
 /// Forms a node in the knowledge graph:
 ///   `(actor_name) —[Drives|Reads]—> (signal_name)`
 ///
-/// Direction is derived: if (A, Drives, S) then S is output_of[A] and input_of[others].
+/// Direction is derived: if `(A, Drives, S)`, then `S` is `output_of(A)` and
+/// `input_of(others)`.
 /// Actor identity is behavioral: names like “Manager”, “Requester”, “master”, “slave”
 /// are all accepted as-is — the graph normalises them through co-occurrence,
 /// not through a hardcoded vocabulary.

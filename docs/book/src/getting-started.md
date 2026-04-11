@@ -81,6 +81,7 @@ That now checks:
 - Rust formatting
 - Clippy with warnings denied
 - Rust tests with Rust warnings denied
+- Rustdoc with warnings denied
 - mdBook build
 
 ## Where the outputs go

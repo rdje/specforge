@@ -6,6 +6,7 @@
 - Canonical CI entrypoint runnable locally and reused by GitHub Actions: Done
 - Canonical CI now runs Clippy with warnings denied: Done
 - Canonical CI now denies Rust warnings during tests: Done
+- Canonical CI now denies rustdoc warnings: Done
 - Rust dead-code warning baseline cleaned without suppressing warnings: Done
 - README single-entrypoint contract established: Done
 - SESSION_BOOTSTRAP handoff contract established: Done

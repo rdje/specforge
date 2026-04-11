@@ -22,21 +22,23 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `ca75e51`
-- latest_commit_brief_message: `ci: deny Rust warnings in local gate`
-- note: the current session picked the next quality task and is bringing Clippy into the shared local/hosted CI gate
+- latest_commit_hash: `f0796f6`
+- latest_commit_brief_message: `ci: add clippy warning gate`
+- note: the current session picked the next quality task and is adding rustdoc warning denial to the shared local/hosted CI gate
 
 ## Recent commit chain (last 5)
+- `f0796f6` ci: add clippy warning gate
 - `ca75e51` ci: deny Rust warnings in local gate
 - `308d527` chore(rust): remove stale dead-code helpers
 - `8b6007b` docs(bootstrap): refresh Rust codebase analysis
 - `4cfb825` test(kg): lock active-low vlm timing polarity
-- `aa1e163` docs(validation): define rescan approval boundary
 
 ## Current repository state
 - active workspace member: `crates/specforge`
+- the current quality slice adds rustdoc warning denial to the shared CI path and fixes the only discovered rustdoc broken-link interpretation in `ActorSignalRelation` docs
 - `scripts/run_ci.sh` now runs Clippy with `-D warnings` before the Rust test suite, and GitHub Actions installs the `clippy` component so the hosted gate matches the local gate
 - `scripts/run_ci.sh` now enforces `RUSTFLAGS="-D warnings"` during the Rust test step, and GitHub Actions inherits that warning-deny gate because it calls the same script
+- `scripts/run_ci.sh` now also builds Rust API docs with `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` before the mdBook build, preserving caller-provided `RUSTDOCFLAGS`
 - the Rust warning baseline is clean and now enforced in the shared local/hosted CI path rather than suppressed with `#[allow(dead_code)]`
 - README bootstrap currently resolves to `SESSION_BOOTSTRAP.md`, which instructs future agents to read the referenced live docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if necessary, and then continue from the roadmap
 - this bootstrap refresh observed 28 Rust source files and about 53,977 lines under `crates/specforge/src`, with the CLI now including `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, and `nlp-enrich` beside the core staged IR commands
@@ -180,6 +182,7 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
+- fixed the `ActorSignalRelation` rustdoc wording that rustdoc interpreted as broken intra-doc links, wired `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` into `scripts/run_ci.sh`, and documented the new rustdoc warning-deny gate before the full CI rerun
 - fixed mechanical Clippy findings, localized intentional broad IR-shape exceptions with `#[expect(...)]` reasons, wired `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings` into the shared CI script plus GitHub toolchain component list, and confirmed `bash scripts/run_ci.sh` passes through Clippy, 282 warning-denied Rust tests, and mdBook build
 - made the clean Rust warning baseline enforceable by updating `scripts/run_ci.sh` to run `cargo test --manifest-path Cargo.toml` with `RUSTFLAGS="-D warnings"`; this applies both locally and in GitHub Actions because the workflow delegates to the shared script
 - removed the remaining dead-code warning sources: an orphaned legacy `.fsm` adapter renderability path, the unused legacy adapter `render_action` helper, and empty semantic register/timing builder stubs that no longer had call sites
@@ -246,6 +249,7 @@
 - `SourceIR` / ingest are strong enough to remain the foundation, but not strong enough to be assumed universal; future Tier 1 work should stay focused on robustness and honest failure handling
 - adapter expansion and adapter validation are now intentionally horizon work
 - keep the Rust and Clippy warning baselines clean; do not reintroduce dead helper paths or broad lint exceptions unless they are wired into active behavior, explicitly tested, or narrowly documented with `#[expect(...)]`
+- keep the rustdoc warning baseline clean too; public Rust documentation should not rely on broken intra-doc links or ambiguous bracket syntax that turns prose into accidental links
 
 ## If resuming from an interruption
 1. read `README.md`

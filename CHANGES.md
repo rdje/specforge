@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-04-11 (Rustdoc warning gate joins CI)
+
+### Changed: Rust API docs are warning-denied
+- Fixed a broken rustdoc intra-doc-link interpretation in the `ActorSignalRelation` documentation by formatting the derived `output_of(A)` / `input_of(others)` wording as code/prose instead of bracket syntax.
+- Updated `scripts/run_ci.sh` so local CI runs `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` before the mdBook build.
+- The new gate preserves caller-provided `RUSTDOCFLAGS`, matching the existing Rust warning flag composition for tests.
+
+### Validation
+- `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` -> passed
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, 282 Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and mdBook build
+
 ## 2026-04-11 (Clippy warning gate joins CI)
 
 ### Changed: Clippy is now part of the shared quality gate

@@ -27,6 +27,11 @@
 - Mechanical Clippy warnings should be fixed directly. Intentional broad IR plumbing is allowed only through localized `#[expect(...)]` attributes with a reason, so future unrelated Clippy drift still fails CI.
 - GitHub Actions installs both `rustfmt` and `clippy`, then delegates to the shared local CI script so hosted behavior stays aligned with local pre-push validation.
 
+## 2026-04-11 rustdoc warning-deny gate
+- `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` is now part of the shared `scripts/run_ci.sh` gate.
+- Broken intra-doc links and malformed public Rust documentation are treated as CI failures, not as optional cleanup.
+- The runner composes caller-provided `RUSTDOCFLAGS` with `-D warnings`, matching the existing `RUSTFLAGS` handling for warning-denied Rust tests.
+
 ## Foundational engineering choices
 ### IntentIR instead of AST
 - the final canonical output must capture semantics and implementation-relevant intent, not only syntax structure
@@ -162,6 +167,7 @@
   - `cargo fmt --all --check`
   - `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings`
   - `RUSTFLAGS="-D warnings" cargo test --manifest-path Cargo.toml`
+  - `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps`
   - `./scripts/run_docs_ci.sh`
 
 ## Docling runtime hardening
