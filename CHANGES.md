@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-04-11 (FSM adapter keeps actor-port direction conflicts sticky)
+
+### Changed: adapter inventory conflicts cannot self-heal by repetition
+- `FsmSignalCandidate` inventory evidence now distinguishes unknown direction/width hints from already-conflicted hints, so a later duplicate actor-port or interface hint cannot resurrect a value after disagreement collapsed it to unresolved.
+- Added a standalone direct `.fsm` regression where one unambiguous `controller` actor repeats `DATA_OUT` as `output`, then `input`, then `output`; the adapter must keep `DATA_OUT` unresolved and block lowering instead of treating the final duplicate as truth.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml --lib standalone_dt_keeps_conflicting_actor_port_direction_unresolved -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml --lib ir::adapters::tests -- --nocapture` -> passed with 25 adapter tests
+- `cargo fmt --all --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, 298 Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and mdBook build
+
 ## 2026-04-11 (FSM adapter locks graph-backed sequential system directions)
 
 ### Added: graph-backed sequential system-contract regression

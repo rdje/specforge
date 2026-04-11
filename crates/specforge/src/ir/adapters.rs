@@ -3316,8 +3316,16 @@ fn register_canonical_signal_with_supporting_ids<I>(
     I: IntoIterator<Item = String>,
 {
     let entry = inventory.entry(signal_name.to_string()).or_default();
-    merge_signal_hint(&mut entry.direction_hint, direction_hint);
-    merge_signal_hint(&mut entry.width_hint, width_hint);
+    merge_signal_hint(
+        &mut entry.direction_hint,
+        &mut entry.direction_hint_conflicted,
+        direction_hint,
+    );
+    merge_signal_hint(
+        &mut entry.width_hint,
+        &mut entry.width_hint_conflicted,
+        width_hint,
+    );
     entry
         .supporting_canonical_ids
         .extend(supporting_canonical_ids);
@@ -3347,10 +3355,18 @@ fn register_signal_mentions(
     }
 }
 
-fn merge_signal_hint<T: Copy + Eq>(target: &mut Option<T>, incoming: Option<T>) {
-    match (*target, incoming) {
-        (None, Some(value)) => *target = Some(value),
-        (Some(existing), Some(value)) if existing != value => *target = None,
+fn merge_signal_hint<T: Copy + Eq>(
+    target: &mut Option<T>,
+    target_conflicted: &mut bool,
+    incoming: Option<T>,
+) {
+    match (*target, *target_conflicted, incoming) {
+        (_, true, Some(_)) => {}
+        (None, false, Some(value)) => *target = Some(value),
+        (Some(existing), false, Some(value)) if existing != value => {
+            *target = None;
+            *target_conflicted = true;
+        }
         _ => {}
     }
 }
@@ -4449,7 +4465,9 @@ fn canonicalize_existing_path(path: &Path) -> Result<PathBuf> {
 #[derive(Debug)]
 struct SignalInventoryEvidence {
     direction_hint: Option<InterfaceSignalDirection>,
+    direction_hint_conflicted: bool,
     width_hint: Option<u32>,
+    width_hint_conflicted: bool,
     supporting_canonical_ids: BTreeSet<String>,
     mention_categories: BTreeSet<String>,
     automation_confidence: AutomationConfidence,
@@ -4459,7 +4477,9 @@ impl Default for SignalInventoryEvidence {
     fn default() -> Self {
         Self {
             direction_hint: None,
+            direction_hint_conflicted: false,
             width_hint: None,
+            width_hint_conflicted: false,
             supporting_canonical_ids: BTreeSet::new(),
             mention_categories: BTreeSet::new(),
             automation_confidence: AutomationConfidence::Low,
@@ -5039,6 +5059,53 @@ mod tests {
                 .iter()
                 .filter(|signal| signal.signal_name == "DATA_OUT")
                 .all(|signal| signal.direction_hint.is_none())
+        );
+        assert!(
+            fsm.renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason.contains("missing a canonical direction hint"))
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn standalone_dt_keeps_conflicting_actor_port_direction_unresolved() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_explicit_control_intent_ir(tempdir.path())?;
+        clear_direct_interface_direction_hints(&mut intent_ir);
+        intent_ir.actor_ports = vec![
+            actor_port("controller", "DATA_IN", ActorRelativeDirection::Input),
+            actor_port("controller", "DATA_OUT", ActorRelativeDirection::Output),
+            actor_port("controller", "DATA_OUT", ActorRelativeDirection::Input),
+            actor_port("controller", "DATA_OUT", ActorRelativeDirection::Output),
+            actor_port("controller", "ZERO_FLAG", ActorRelativeDirection::Output),
+        ];
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let data_out = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "DATA_OUT")
+            .expect("DATA_OUT should stay in the direct signal inventory");
+
+        assert_eq!(data_out.direction_hint, None);
+        assert!(
+            data_out
+                .mention_categories
+                .iter()
+                .any(|category| category == "actor_port")
         );
         assert!(
             fsm.renderability

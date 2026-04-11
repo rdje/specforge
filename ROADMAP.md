@@ -342,6 +342,7 @@
   - `specforge validate` now scores semantic and intent signal-direction coverage from the actor-relative graph first, with flat `direction_hint` lag exposed as compatibility diagnostics rather than truth-model loss
   - the `.fsm` explicit-module/top-composition adapter path now overlays matching `IntentIR.actor_ports` before renderability analysis, so child-module port directions can be recovered from the actor-relative graph when flat module-local `direction_hint` values lag
   - standalone direct `.fsm` roots can now also recover missing local signal directions from `IntentIR.actor_ports`, but only when all renderable actor-port evidence relevant to the direct local signal inventory points at one unambiguous actor context
+  - adapter signal-inventory direction/width conflict collapse is now sticky, so repeated actor-port evidence cannot resurrect a graph direction after disagreement
   - standalone sequential `.fsm` roots now have regression coverage proving graph-backed actor ports can satisfy clock/reset system-contract direction needs when flat direct-interface hints lag
   - explicit top `.fsm` composition can now preserve width-only top boundary port records and recover missing top input/output direction from explicit top-link source/target topology
 - remaining:
