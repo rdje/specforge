@@ -56,7 +56,7 @@
 - Markdown-marker alias garbage filter in `specforge nlp-enrich`: Done
 - Tier 2 actor-signal relation extraction from prose and signal-description tables implemented: Done
 - Actor-relative KG carry-through into `SemanticIR` / `IntentIR` (`actor_signal_relations`, `actor_ports`, `signal_connectivity`) implemented: Done
-- Interface-signal conflict surfacing for conflicting direction/width evidence implemented: Done
+- Interface-signal conflict surfacing for conflicting direction/width evidence, including sticky canonical hint collapse, implemented: Done
 - Signal-connectivity conflict surfacing for multi-producer ambiguity implemented: Done
 - Graph-first direction coverage/scoring in `specforge validate` implemented: Done
 - `.fsm` explicit-module/top-composition lowering now recovers child port directions from matching `IntentIR.actor_ports` when flat module-local hints lag: Done

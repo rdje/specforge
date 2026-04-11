@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-04-11 (SemanticIR keeps interface conflicts sticky)
+
+### Changed: canonical interface shape conflicts cannot self-heal by repetition
+- `SemanticIR` interface-signal accumulation now distinguishes unknown direction/width hints from conflict-collapsed hints, so a later duplicate declaration cannot resurrect a canonical direction or width after disagreement.
+- Strengthened the existing interface-conflict regression with `Signal DATA is input width 8`, `Signal DATA is output width 16`, and then `Signal DATA is input width 8` again; `DATA.direction_hint` and `DATA.width_hint` must remain unresolved while the explicit direction and width conflict records stay visible.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml --lib surfaces_interface_signal_conflicts_for_conflicting_explicit_declarations -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml --lib ir::semantic::tests -- --nocapture` -> passed with 65 semantic tests
+- `cargo fmt --all --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, 299 Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and mdBook build
+
 ## 2026-04-11 (FSM adapter locks sticky actor-port width conflicts)
 
 ### Added: width regression for sticky adapter conflicts

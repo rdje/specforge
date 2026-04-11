@@ -1513,7 +1513,9 @@ struct InterfaceAccumulator {
 #[derive(Debug, Clone)]
 struct InterfaceSignalAccumulator {
     direction_hint: Option<InterfaceSignalDirection>,
+    direction_hint_conflicted: bool,
     width_hint: Option<WidthHint>,
+    width_hint_conflicted: bool,
     semantic_tags: BTreeSet<SignalSemanticTag>,
     semantic_observations: Vec<InterfaceSignalSemanticObservationRecord>,
     direction_observations: BTreeMap<String, BTreeSet<String>>,
@@ -5846,7 +5848,9 @@ fn register_interface_signal_record(
         .entry(signal_name.to_string())
         .or_insert_with(|| InterfaceSignalAccumulator {
             direction_hint: None,
+            direction_hint_conflicted: false,
             width_hint: None,
+            width_hint_conflicted: false,
             semantic_tags: BTreeSet::new(),
             semantic_observations: Vec::new(),
             direction_observations: BTreeMap::new(),
@@ -5868,8 +5872,16 @@ fn register_interface_signal_record(
             .or_default()
             .insert(supporting_statement_id.to_string());
     }
-    merge_signal_hint(&mut entry.direction_hint, direction_hint);
-    merge_signal_hint(&mut entry.width_hint, width_hint);
+    merge_sticky_signal_hint(
+        &mut entry.direction_hint,
+        &mut entry.direction_hint_conflicted,
+        direction_hint,
+    );
+    merge_sticky_signal_hint(
+        &mut entry.width_hint,
+        &mut entry.width_hint_conflicted,
+        width_hint,
+    );
     entry
         .supporting_statement_ids
         .insert(supporting_statement_id.to_string());
@@ -5923,6 +5935,22 @@ fn merge_signal_hint<T: Clone + Eq>(target: &mut Option<T>, incoming: Option<T>)
     match (target.as_ref(), incoming.as_ref()) {
         (None, Some(value)) => *target = Some(value.clone()),
         (Some(existing), Some(value)) if existing != value => *target = None,
+        _ => {}
+    }
+}
+
+fn merge_sticky_signal_hint<T: Clone + Eq>(
+    target: &mut Option<T>,
+    target_conflicted: &mut bool,
+    incoming: Option<T>,
+) {
+    match (target.as_ref(), *target_conflicted, incoming.as_ref()) {
+        (_, true, Some(_)) => {}
+        (None, false, Some(value)) => *target = Some(value.clone()),
+        (Some(existing), false, Some(value)) if existing != value => {
+            *target = None;
+            *target_conflicted = true;
+        }
         _ => {}
     }
 }
@@ -10802,7 +10830,8 @@ mod tests {
             concat!(
                 "# Protocol\n",
                 "Signal DATA is input width 8.\n\n",
-                "Signal DATA is output width 16.\n",
+                "Signal DATA is output width 16.\n\n",
+                "Signal DATA is input width 8.\n",
             ),
         )?;
 

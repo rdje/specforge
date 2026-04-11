@@ -52,6 +52,9 @@ The dedicated [Handshake And Semantic Roles](../domain/handshake-semantics.md) c
 Competing semantic candidates should stay visible.
 Unsafe forced winners are worse than honest contestation.
 
+Interface-shape conflicts follow the same rule.
+If declarations disagree about a signal's direction or width, `SemanticIR` records the conflict and keeps the canonical hint unresolved; later repeated declarations cannot resurrect the old direction or width just because they appear again.
+
 ### Declared records stay canonical
 
 When a signal is already explicitly declared, a single-signal prose sentence should enrich that declared record rather than minting a second heuristic interface record.

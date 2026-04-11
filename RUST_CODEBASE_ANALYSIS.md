@@ -37,7 +37,12 @@
 - GitHub Actions CI is now part of the repo baseline and runs `cargo fmt --all --check`, warning-deny Clippy, warning-deny Rust tests, warning-deny rustdoc, and the mdBook build on every `push` and `pull_request`, which keeps the hosted validation path aligned with the local Rust/docs quality gate
 - that CI path now has a single checked-in entrypoint at `scripts/run_ci.sh`, and the GitHub workflow calls that script directly so local and hosted Rust validation do not drift apart
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and adding the planned `R15g` corpus knowledge base beside the already-live typed prior-memory plane; adapter expansion is now horizon work
-- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the actor-port width-conflict stickiness test slice, the full local CI path reports clean Clippy, 299 passing Rust tests, clean Rust API docs, and a successful mdBook build
+- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the SemanticIR sticky interface-conflict slice, the full local CI path reports clean Clippy, 299 passing Rust tests, clean Rust API docs, and a successful mdBook build
+
+## Session update (2026-04-11 SemanticIR sticky interface conflicts)
+- `InterfaceSignalAccumulator` now tracks whether direction and width hints already conflicted, so `None` no longer ambiguously means both unknown and conflict-collapsed inside the canonical interface builder.
+- Strengthened `surfaces_interface_signal_conflicts_for_conflicting_explicit_declarations` with an input/output/input width 8/16/8 declaration sequence; `DATA.direction_hint` and `DATA.width_hint` remain unresolved instead of self-healing to the repeated original value.
+- Focused validation passed for the strengthened regression, the full `ir::semantic::tests` suite passed with 65 semantic tests, and the full local CI gate passed with 299 Rust tests.
 
 ## Session update (2026-04-11 actor-port width conflict stickiness)
 - Added `standalone_dt_keeps_conflicting_actor_port_width_unresolved`, proving sticky adapter inventory conflicts cover numeric width as well as direction roles.
@@ -563,6 +568,7 @@
   - VLM observation injection (TimingDiagramExtraction, StateMachineExtraction from VisualAsset.note)
   - handshake-driven `SemanticIR` actor/interface/invariant extraction
   - structured-table signal direction+width extraction through EvidenceIR → SemanticIR
+  - sticky SemanticIR interface direction/width conflict collapse when conflicting declarations repeat
   - parametric-width handling through the IR pipeline
   - VLM timing diagram annotation → TimingConstraintRecord in SemanticIR
   - VLM state machine extraction → RegularStateRecord + StateTransitionRecord in SemanticIR
