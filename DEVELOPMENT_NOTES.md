@@ -22,6 +22,11 @@
 - `scripts/run_ci.sh` runs the Rust test step with `RUSTFLAGS="-D warnings"` so warning regressions fail before push and in GitHub Actions.
 - The warning gate lives in the shared script rather than only in `.github/workflows/ci.yml`; this keeps local and hosted CI behavior aligned.
 
+## 2026-04-11 Clippy gate
+- `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings` is now clean and part of the shared `scripts/run_ci.sh` gate.
+- Mechanical Clippy warnings should be fixed directly. Intentional broad IR plumbing is allowed only through localized `#[expect(...)]` attributes with a reason, so future unrelated Clippy drift still fails CI.
+- GitHub Actions installs both `rustfmt` and `clippy`, then delegates to the shared local CI script so hosted behavior stays aligned with local pre-push validation.
+
 ## Foundational engineering choices
 ### IntentIR instead of AST
 - the final canonical output must capture semantics and implementation-relevant intent, not only syntax structure
@@ -155,6 +160,7 @@
 - the GitHub Actions workflow now calls the same checked-in runner used locally: `./scripts/run_ci.sh`
 - the current canonical Rust CI runner executes:
   - `cargo fmt --all --check`
+  - `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings`
   - `RUSTFLAGS="-D warnings" cargo test --manifest-path Cargo.toml`
   - `./scripts/run_docs_ci.sh`
 

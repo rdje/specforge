@@ -946,7 +946,7 @@ fn resolve_docling_python() -> Result<PathBuf> {
     diagnosis
         .selected_python
         .clone()
-        .ok_or_else(|| AppError::MissingRuntimeDependency {
+        .ok_or(AppError::MissingRuntimeDependency {
             dependency: "docling",
             resolution,
         })

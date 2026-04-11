@@ -1773,10 +1773,10 @@ fn build_interfaces(
         build_signal_polarity_lookup(signal_polarities, system_contract);
 
     for statement in &context.statements {
-        if let Some(signal_declaration) = parse_explicit_signal_declaration(&statement.text) {
-            if !interface_signal_declaration_looks_like_width_symbol(&signal_declaration) {
-                authoritative_signal_names.insert(signal_declaration.signal_name);
-            }
+        if let Some(signal_declaration) = parse_explicit_signal_declaration(&statement.text)
+            && !interface_signal_declaration_looks_like_width_symbol(&signal_declaration)
+        {
+            authoritative_signal_names.insert(signal_declaration.signal_name);
         }
     }
     if let Some(system_contract) = system_contract {
@@ -5034,9 +5034,9 @@ fn parse_explicit_control_action(
             target_state: parse_identifier(normalized[11..].trim())?,
         });
     }
-    if normalized.starts_with("->") {
+    if let Some(stripped) = normalized.strip_prefix("->") {
         return Some(ControlActionRecord::Transition {
-            target_state: parse_identifier(normalized[2..].trim())?,
+            target_state: parse_identifier(stripped.trim())?,
         });
     }
     if lowered.starts_with("pulse ") {
@@ -5627,12 +5627,10 @@ fn parse_interface_signal_direction(token: &str) -> Option<InterfaceSignalDirect
 }
 
 fn parse_optional_width_hint(tokens: &[&str], index: &mut usize) -> Option<WidthHint> {
-    let Some(token) = tokens.get(*index).copied() else {
-        return None;
-    };
+    let token = tokens.get(*index).copied()?;
 
     if token.eq_ignore_ascii_case("width") {
-        let width = parse_width_token(*tokens.get(*index + 1)?)?;
+        let width = parse_width_token(tokens.get(*index + 1).copied()?)?;
         *index += 2;
         return Some(width);
     }
@@ -5674,10 +5672,10 @@ fn known_explicit_signal_names(context: &SemanticContext) -> BTreeSet<String> {
     let mut signal_names = BTreeSet::new();
 
     for statement in &context.statements {
-        if let Some(signal_declaration) = parse_explicit_signal_declaration(&statement.text) {
-            if !interface_signal_declaration_looks_like_width_symbol(&signal_declaration) {
-                signal_names.insert(signal_declaration.signal_name);
-            }
+        if let Some(signal_declaration) = parse_explicit_signal_declaration(&statement.text)
+            && !interface_signal_declaration_looks_like_width_symbol(&signal_declaration)
+        {
+            signal_names.insert(signal_declaration.signal_name);
         }
         if let Some(clock_signal) = parse_explicit_system_clock(&statement.text) {
             signal_names.insert(clock_signal);
@@ -5691,10 +5689,10 @@ fn known_explicit_signal_names(context: &SemanticContext) -> BTreeSet<String> {
                 signal_names.insert(signal_name);
             }
         }
-        if let Some(transition) = parse_explicit_state_transition(&statement.text) {
-            if let Some(guard) = transition.guard.as_ref() {
-                signal_names.extend(referenced_signal_names_for_guard(guard));
-            }
+        if let Some(transition) = parse_explicit_state_transition(&statement.text)
+            && let Some(guard) = transition.guard.as_ref()
+        {
+            signal_names.extend(referenced_signal_names_for_guard(guard));
         }
         if let Some(fragment) = parse_explicit_decision_tree_fragment(&statement.text) {
             signal_names.extend(fragment.referenced_signal_names);
@@ -6941,6 +6939,10 @@ fn contains_phrase(text: &str, phrase: &str) -> bool {
     false
 }
 
+#[expect(
+    clippy::too_many_arguments,
+    reason = "temporal rule synthesis intentionally consumes the explicit semantic evidence planes"
+)]
 fn build_temporal_rules(
     context: &SemanticContext,
     interfaces: &[InterfaceRecord],
@@ -7270,6 +7272,10 @@ enum SemanticObservationModality {
     Visual,
 }
 
+#[expect(
+    clippy::type_complexity,
+    reason = "semantic role resolution returns the coupled candidate, arbitration, role, strength, and consensus surfaces"
+)]
 fn resolve_interface_signal_semantic_role(
     semantic_tags: &[SignalSemanticTag],
     semantic_observations: &[InterfaceSignalSemanticObservationRecord],
@@ -8346,30 +8352,28 @@ fn extract_cycle_window_from_text(text: &str) -> Option<CycleWindowRecord> {
     }
 
     for index in 0..tokens.len() {
-        if tokens[index] == "cycle" {
-            if let Some(count) = tokens
+        if tokens[index] == "cycle"
+            && let Some(count) = tokens
                 .get(index + 1)
                 .copied()
                 .and_then(parse_diagram_cycle_count_value)
-            {
-                return Some(CycleWindowRecord {
-                    min_cycles: Some(count),
-                    max_cycles: Some(count),
-                });
-            }
+        {
+            return Some(CycleWindowRecord {
+                min_cycles: Some(count),
+                max_cycles: Some(count),
+            });
         }
 
-        if matches!(tokens[index], "at" | "during" | "on") {
-            if let Some(count) = tokens
+        if matches!(tokens[index], "at" | "during" | "on")
+            && let Some(count) = tokens
                 .get(index + 1)
                 .copied()
                 .and_then(parse_diagram_cycle_count_value)
-            {
-                return Some(CycleWindowRecord {
-                    min_cycles: Some(count),
-                    max_cycles: Some(count),
-                });
-            }
+        {
+            return Some(CycleWindowRecord {
+                min_cycles: Some(count),
+                max_cycles: Some(count),
+            });
         }
     }
 
@@ -8611,7 +8615,7 @@ fn contains_token_phrase(tokens: &[&str], phrase: &[&str]) -> bool {
 }
 
 fn parse_cycle_count_value(token: &str) -> Option<u32> {
-    parse_u32_token(token).or_else(|| match token {
+    parse_u32_token(token).or(match token {
         "one" => Some(1),
         "two" => Some(2),
         "three" => Some(3),
@@ -9247,10 +9251,10 @@ fn parse_vlm_decision_tree_value(
         });
     }
 
-    if let Some(signal_name) = parse_identifier(value_text) {
-        if known_signal_names.is_empty() || known_signal_names.contains(&signal_name) {
-            return Some(DecisionTreeValueRecord::SignalRef { signal_name });
-        }
+    if let Some(signal_name) = parse_identifier(value_text)
+        && (known_signal_names.is_empty() || known_signal_names.contains(&signal_name))
+    {
+        return Some(DecisionTreeValueRecord::SignalRef { signal_name });
     }
 
     Some(DecisionTreeValueRecord::Literal {

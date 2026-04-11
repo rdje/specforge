@@ -1085,10 +1085,10 @@ fn validate_source_ir(ir: &SourceIr, artifact_fingerprint: String) -> Validation
     println!("structured_tables: {}", ir.structured_tables.len());
     println!("content_elements: {}", ir.content_elements.len());
     println!("document_sections: {}", ir.document_sections.len());
-    if let Some(profile) = &ir.document_profile {
-        if let Some(title) = &profile.title {
-            println!("document_title: {title}");
-        }
+    if let Some(profile) = &ir.document_profile
+        && let Some(title) = &profile.title
+    {
+        println!("document_title: {title}");
     }
     println!();
 

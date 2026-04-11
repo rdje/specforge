@@ -415,6 +415,10 @@ struct AbstractionContext {
     description: String,
 }
 
+#[expect(
+    clippy::too_many_arguments,
+    reason = "Intent identity summarizes all canonical slices explicitly for traceable reporting"
+)]
 fn build_intent_identity(
     document_identity: &IntentDocumentIdentity,
     actors: &[IntentActor],

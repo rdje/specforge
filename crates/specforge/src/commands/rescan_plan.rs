@@ -154,9 +154,8 @@ fn selected_pending_indices(
         .iter()
         .enumerate()
         .filter_map(|(index, recommendation)| {
-            let document_matches = document_key.map_or(true, |document_key| {
-                recommendation.document_key == document_key
-            });
+            let document_matches =
+                document_key.is_none_or(|document_key| recommendation.document_key == document_key);
             (document_matches && recommendation.automation_status == PLANNED_NOT_EXECUTED)
                 .then_some(index)
         });

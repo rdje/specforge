@@ -371,10 +371,10 @@ impl EvidenceIr {
                 note,
             });
 
-            if let Some(section_index) = section_index {
-                if let Some(source_page) = source_page {
-                    section_pages[section_index].push(source_page);
-                }
+            if let Some(section_index) = section_index
+                && let Some(source_page) = source_page
+            {
+                section_pages[section_index].push(source_page);
             }
 
             let related_visual_evidence_ids: Vec<String> = linked_asset_ids
@@ -2342,13 +2342,12 @@ fn infer_signal_table_row_width_hint(
         header.contains("signals covered")
             || (header.contains("covered") && header.contains("signal"))
     });
-    if check_signal_col.is_some() {
-        if let Some(width_hint) = covered_signal_col
+    if check_signal_col.is_some()
+        && let Some(width_hint) = covered_signal_col
             .and_then(|col| row.get(col))
             .and_then(|cell| parse_width_hint_from_covered_signal_cell(&cell.text))
-        {
-            return Some(width_hint);
-        }
+    {
+        return Some(width_hint);
     }
 
     None
@@ -2537,20 +2536,20 @@ fn extract_actor_signal_relations(
                     let by_pat = format!("{} is {} {}", sig_lower, verb, preposition.trim());
                     if let Some(pat_pos) = lowered.find(&by_pat) {
                         let actor_start = pat_pos + by_pat.len();
-                        if actor_start <= text.len() {
-                            if let Some(actor) = extract_actor_phrase(&text[actor_start..]) {
-                                let key = (actor.clone(), signal.clone(), 1u8);
-                                if seen.insert(key) {
-                                    records.push(ActorSignalRelation {
-                                        relation_id: format!("asr_{counter:04}"),
-                                        actor_name: actor,
-                                        signal_name: signal.clone(),
-                                        relation: RelationKind::Reads,
-                                        source_statement_ids: vec![stmt.statement_id.clone()],
-                                        automation_confidence: AutomationConfidence::Medium,
-                                    });
-                                    counter += 1;
-                                }
+                        if actor_start <= text.len()
+                            && let Some(actor) = extract_actor_phrase(&text[actor_start..])
+                        {
+                            let key = (actor.clone(), signal.clone(), 1u8);
+                            if seen.insert(key) {
+                                records.push(ActorSignalRelation {
+                                    relation_id: format!("asr_{counter:04}"),
+                                    actor_name: actor,
+                                    signal_name: signal.clone(),
+                                    relation: RelationKind::Reads,
+                                    source_statement_ids: vec![stmt.statement_id.clone()],
+                                    automation_confidence: AutomationConfidence::Medium,
+                                });
+                                counter += 1;
                             }
                         }
                     }
@@ -2845,10 +2844,10 @@ fn extract_subject_phrase(text: &str) -> Option<String> {
             }
         }
 
-        if !actor_words.is_empty() {
-            if let Some(actor) = normalize_relation_actor_name(&actor_words.join(" ")) {
-                return Some(actor);
-            }
+        if !actor_words.is_empty()
+            && let Some(actor) = normalize_relation_actor_name(&actor_words.join(" "))
+        {
+            return Some(actor);
         }
     }
 
@@ -3949,7 +3948,7 @@ fn synthesize_system_contract_from_table_descriptions(
                 }
 
                 // Clock description — prefer longer / more informative text.
-                if cell_lower.starts_with("clock")
+                if (cell_lower.starts_with("clock")
                     || cell_lower.contains("clock signal")
                     || cell_lower.contains("bus clock")
                     || cell_lower.contains("is a clock")
@@ -3958,34 +3957,30 @@ fn synthesize_system_contract_from_table_descriptions(
                     || cell_lower.contains("sampled on the rising edge of")
                     || cell_lower.contains("related to the rising edge")
                     || cell_lower.contains("all signals are sampled")
-                    || cell_lower.contains("all signal timings")
-                {
-                    if row_clock_desc
+                    || cell_lower.contains("all signal timings"))
+                    && row_clock_desc
                         .as_ref()
                         .map(|d: &String| d.len())
                         .unwrap_or(0)
                         < cell_lower.len()
-                    {
-                        row_clock_desc = Some(cell_lower.clone());
-                    }
+                {
+                    row_clock_desc = Some(cell_lower.clone());
                 }
 
                 // Reset description — prefer longer / more informative text.
-                if cell_lower.starts_with("reset")
+                if (cell_lower.starts_with("reset")
                     || cell_lower.contains("reset signal")
                     || cell_lower.contains("is the reset")
                     || cell_lower.contains("is a reset")
                     || cell_lower.contains("bus reset")
-                    || (cell_lower.contains("is an active") && cell_lower.contains("reset"))
-                {
-                    if row_reset_desc
+                    || (cell_lower.contains("is an active") && cell_lower.contains("reset")))
+                    && row_reset_desc
                         .as_ref()
                         .map(|d: &String| d.len())
                         .unwrap_or(0)
                         < cell_lower.len()
-                    {
-                        row_reset_desc = Some(cell_lower.clone());
-                    }
+                {
+                    row_reset_desc = Some(cell_lower.clone());
                 }
             }
 
@@ -4008,43 +4003,39 @@ fn synthesize_system_contract_from_table_descriptions(
             }
 
             // ── Reset detection ────────────────────────────────────────────────
-            if !reset_found {
-                if let Some(desc) = row_reset_desc {
-                    // Polarity: explicit keyword wins; signal ending with N or B is
-                    // a secondary indicator (AMBA naming convention).
-                    let polarity = if desc.contains("active-low")
-                        || desc.contains("active low")
-                        || desc.contains("active_low")
-                        || (!desc.contains("active-high")
-                            && !desc.contains("active high")
-                            && (signal.ends_with('N') || signal.ends_with('B')))
-                    {
-                        "active low"
-                    } else {
-                        "active high"
-                    };
-                    // Kind: explicit keyword wins; active-low AMBA resets are
-                    // conventionally asserted asynchronously.
-                    let kind = if desc.contains("synchronous") {
-                        "synchronous"
-                    } else if desc.contains("asynchronous") || desc.contains("async") {
-                        "asynchronous"
-                    } else if polarity == "active low" {
-                        "asynchronous"
-                    } else {
-                        "synchronous"
-                    };
-                    *statement_counter += 1;
-                    statements.push(ExtractedStatement {
-                        statement_id: format!("statement_{statement_counter:04}"),
-                        class: StatementClass::SourceFact,
-                        modality: EvidenceModality::Text,
-                        text: format!("Reset {signal} is {kind} {polarity}."),
-                        evidence_span_ids: vec![],
-                        related_visual_evidence_ids: vec![],
-                    });
-                    reset_found = true;
-                }
+            if !reset_found && let Some(desc) = row_reset_desc {
+                // Polarity: explicit keyword wins; signal ending with N or B is
+                // a secondary indicator (AMBA naming convention).
+                let polarity = if desc.contains("active-low")
+                    || desc.contains("active low")
+                    || desc.contains("active_low")
+                    || (!desc.contains("active-high")
+                        && !desc.contains("active high")
+                        && (signal.ends_with('N') || signal.ends_with('B')))
+                {
+                    "active low"
+                } else {
+                    "active high"
+                };
+                // Kind: explicit keyword wins; active-low AMBA resets are
+                // conventionally asserted asynchronously.
+                let explicit_async = desc.contains("asynchronous") || desc.contains("async");
+                let explicit_sync = desc.contains("synchronous");
+                let kind = if explicit_async || (!explicit_sync && polarity == "active low") {
+                    "asynchronous"
+                } else {
+                    "synchronous"
+                };
+                *statement_counter += 1;
+                statements.push(ExtractedStatement {
+                    statement_id: format!("statement_{statement_counter:04}"),
+                    class: StatementClass::SourceFact,
+                    modality: EvidenceModality::Text,
+                    text: format!("Reset {signal} is {kind} {polarity}."),
+                    evidence_span_ids: vec![],
+                    related_visual_evidence_ids: vec![],
+                });
+                reset_found = true;
             }
 
             if clock_found && reset_found {
@@ -4456,6 +4447,10 @@ fn synthesize_signal_semantic_hints_from_visual_evidence(
     hints
 }
 
+#[expect(
+    clippy::too_many_arguments,
+    reason = "visual semantic hint emission keeps evidence provenance, modality, and prior guidance explicit"
+)]
 fn push_visual_signal_semantic_hint(
     hints: &mut Vec<SignalSemanticHintRecord>,
     seen: &mut BTreeSet<String>,
@@ -4683,10 +4678,10 @@ fn collect_signal_semantic_target_mentions(
 
     let mut collapsed: Vec<SignalSemanticTargetMention> = Vec::new();
     for mention in mentions {
-        if let Some(previous) = collapsed.last() {
-            if mention.start < previous.end {
-                continue;
-            }
+        if let Some(previous) = collapsed.last()
+            && mention.start < previous.end
+        {
+            continue;
         }
         collapsed.push(mention);
     }
@@ -5347,7 +5342,7 @@ fn extract_conditional_rules(
         // Try to find the consequent signal (uppercase token in the consequent clause).
         let consequent_signal = consequent
             .split(|c: char| !(c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_'))
-            .filter(|tok| {
+            .find(|tok| {
                 tok.len() >= 3
                     && tok
                         .chars()
@@ -5362,7 +5357,6 @@ fn extract_conditional_rules(
                         "HIGH" | "LOW" | "IDLE" | "BUSY" | "NONSEQ" | "SEQ" | "OKAY" | "ERROR"
                     )
             })
-            .next()
             .map(|s| s.to_string());
 
         // Extract the action verb phrase from the consequent.
@@ -6201,6 +6195,10 @@ fn dedup_actor_signal_relations(relations: Vec<ActorSignalRelation>) -> Vec<Acto
     deduped
 }
 
+#[expect(
+    clippy::type_complexity,
+    reason = "evidence convergence returns the synchronized extraction families that must remain aligned"
+)]
 fn converge_evidence_extractions(
     source_ir: &SourceIr,
     base_extracted_statements: Vec<ExtractedStatement>,
@@ -6326,7 +6324,7 @@ fn converge_evidence_extractions(
 /// These observations are then available to `SemanticIR` for parsing into typed records.
 fn inject_vlm_observations(
     assets: &[crate::ir::source::VisualAsset],
-    visual_evidence: &mut Vec<VisualEvidenceItem>,
+    visual_evidence: &mut [VisualEvidenceItem],
     asset_id_to_visual_index: &HashMap<String, usize>,
 ) {
     for asset in assets {

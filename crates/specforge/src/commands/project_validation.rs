@@ -778,28 +778,27 @@ fn recommended_rescan_commands(
     repo_root: &Path,
 ) -> Vec<ProjectRescanCommandHint> {
     let mut commands = Vec::new();
-    if is_visual_motif_corroboration_rescan(stage, finding) {
-        if let Some(input) = snapshot
+    if is_visual_motif_corroboration_rescan(stage, finding)
+        && let Some(input) = snapshot
             .replay_inputs
             .iter()
             .find(|input| input.input_kind == "source_ir")
-        {
-            let mut enrich_args = vec![
-                "enrich".to_string(),
-                repo_relative_display(&input.path, repo_root),
-                "--vlm-provider".to_string(),
-                rescan_vlm_provider_name(select_rescan_vlm_provider(
-                    rescan_vlm_policy.provider,
-                    doctor::local_vlm_default_model_present,
-                ))
-                .to_string(),
-            ];
-            if let Some(model) = rescan_vlm_policy.model.as_ref() {
-                enrich_args.push("--vlm-model".to_string());
-                enrich_args.push(model.clone());
-            }
-            commands.push(specforge_command_hint("enrich_source_ir", enrich_args));
+    {
+        let mut enrich_args = vec![
+            "enrich".to_string(),
+            repo_relative_display(&input.path, repo_root),
+            "--vlm-provider".to_string(),
+            rescan_vlm_provider_name(select_rescan_vlm_provider(
+                rescan_vlm_policy.provider,
+                doctor::local_vlm_default_model_present,
+            ))
+            .to_string(),
+        ];
+        if let Some(model) = rescan_vlm_policy.model.as_ref() {
+            enrich_args.push("--vlm-model".to_string());
+            enrich_args.push(model.clone());
         }
+        commands.push(specforge_command_hint("enrich_source_ir", enrich_args));
     }
 
     if let Some(input) = snapshot.replay_inputs.first() {

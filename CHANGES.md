@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-04-11 (Clippy warning gate joins CI)
+
+### Changed: Clippy is now part of the shared quality gate
+- Fixed mechanical Clippy findings across enrichment, prior learning, rescan planning, validation, adapter, evidence, semantic, intent, and Docling helper code.
+- Added localized `#[expect(...)]` attributes with reasons for intentional broad IR builder/evaluator signatures and coupled semantic/evidence return surfaces instead of globally allowing those lints.
+- Updated `scripts/run_ci.sh` so local CI runs `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings` before the Rust test suite.
+- Updated GitHub Actions to install the `clippy` component, so hosted CI runs the same Clippy gate via the shared script.
+
+### Validation
+- `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings` -> passed
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, 282 Rust tests under `RUSTFLAGS="-D warnings"`, and mdBook build
+
 ## 2026-04-11 (CI now denies Rust warnings)
 
 ### Changed: warning-clean baseline is enforced

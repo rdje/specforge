@@ -9,11 +9,15 @@ cd "${ROOT_DIR}"
 echo "[specforge-ci] checking formatting"
 cargo fmt --all --check
 
-echo "[specforge-ci] running test suite with Rust warnings denied"
 CI_RUSTFLAGS="-D warnings"
 if [[ -n "${RUSTFLAGS:-}" ]]; then
   CI_RUSTFLAGS="${RUSTFLAGS} ${CI_RUSTFLAGS}"
 fi
+
+echo "[specforge-ci] running clippy with warnings denied"
+RUSTFLAGS="${CI_RUSTFLAGS}" cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings
+
+echo "[specforge-ci] running test suite with Rust warnings denied"
 RUSTFLAGS="${CI_RUSTFLAGS}" cargo test --manifest-path Cargo.toml
 
 echo "[specforge-ci] building docs"

@@ -290,7 +290,7 @@ fn call_vlm_for_asset(
     let prompt = build_vlm_prompt(diagram_type, caption);
 
     // Encode image as base64.
-    let image_bytes = fs::read(image_path).map_err(|e| AppError::Io(e))?;
+    let image_bytes = fs::read(image_path).map_err(AppError::Io)?;
     let image_b64 = base64_encode(&image_bytes);
 
     // Build the OpenAI-compatible chat completions request.
@@ -405,7 +405,7 @@ fn extract_vlm_content(response_json: &str) -> Result<String> {
 /// Simple base64 encoder without external dependencies.
 fn base64_encode(data: &[u8]) -> String {
     const CHARS: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-    let mut result = String::with_capacity((data.len() * 4 + 2) / 3);
+    let mut result = String::with_capacity((data.len() * 4).div_ceil(3));
     let mut i = 0;
     while i < data.len() {
         let b0 = data[i] as u32;

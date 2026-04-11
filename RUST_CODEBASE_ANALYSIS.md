@@ -34,10 +34,10 @@
 - `CorpusMemory` schema v5 now carries actor-taxonomy, semantic-phrase, semantic-modality-reliability, temporal-phrase, table-shape, visual-motif, and negative-knowledge prior families; current consumers remain advisory and locally grounded rather than fact-authoring
 - the tracked KG-quality benchmark surface currently contains 44 fixtures, including active-low VLM timing polarity-equivalence coverage that proves `ASSERTED` and `LOW` agree for active-low reset timing evidence
 - the local runtime boundary is now operationally stronger too: `specforge doctor` reports Docling readiness, the default Ollama loopback readiness, and LM Studio fallback readiness directly, repo-local `.venv-docling` auto-discovery is supported, and the backend now probes versioned Python candidates like `python3.11` before giving up on fresh ingest
-- GitHub Actions CI is now part of the repo baseline and runs `cargo fmt --all --check`, warning-deny Rust tests, and the mdBook build on every `push` and `pull_request`, which keeps the hosted validation path aligned with the local Rust/docs quality gate
+- GitHub Actions CI is now part of the repo baseline and runs `cargo fmt --all --check`, warning-deny Clippy, warning-deny Rust tests, and the mdBook build on every `push` and `pull_request`, which keeps the hosted validation path aligned with the local Rust/docs quality gate
 - that CI path now has a single checked-in entrypoint at `scripts/run_ci.sh`, and the GitHub workflow calls that script directly so local and hosted Rust validation do not drift apart
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and adding the planned `R15g` corpus knowledge base beside the already-live typed prior-memory plane; adapter expansion is now horizon work
-- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Rust tests with `RUSTFLAGS="-D warnings"`, and the mdBook docs build; after the dead-code cleanup, the latest full local CI path reports 282 passing Rust tests and no dead-code warning output
+- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, and the mdBook docs build; after the Clippy cleanup, the latest full local CI path reports clean Clippy, 282 passing Rust tests, and no warning output
 
 ## Session update (2026-04-11 bootstrap refresh)
 - executed the README terminal instruction by reading `SESSION_BOOTSTRAP.md`, which expands the task into reading the referenced live docs, analyzing the Rust codebase, updating this analysis if necessary, and continuing from the roadmap
@@ -56,6 +56,11 @@
 - `scripts/run_ci.sh` now runs `cargo test --manifest-path Cargo.toml` with `RUSTFLAGS="-D warnings"`
 - the warning-deny gate lives in the shared script, so local pre-push validation and GitHub Actions enforce the same baseline
 - this turns the cleaned warning baseline into a regression guard rather than a one-time cleanup
+
+## Session update (2026-04-11 Clippy gate)
+- `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings` is now clean
+- `scripts/run_ci.sh` now runs Clippy before the Rust test suite, and GitHub Actions installs the `clippy` component before calling the shared script
+- mechanical Clippy findings were fixed directly; intentional broad IR plumbing remains localized behind `#[expect(...)]` attributes with reasons rather than global allows
 
 
 ## Session update (2026-04-04)
@@ -457,7 +462,7 @@
 
 ## Testing implications
 - current full local CI path: `bash scripts/run_ci.sh`
-- current Rust test count observed through that path: 282 library tests, 0 binary tests, and 0 doc tests, all passing under `RUSTFLAGS="-D warnings"`
+- current Rust test count observed through that path: 282 library tests, 0 binary tests, and 0 doc tests, all passing under `RUSTFLAGS="-D warnings"` after a clean `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings` pass
 - current tracked KG-quality fixture count: 44
 - current tests cover:
   - source-kind detection

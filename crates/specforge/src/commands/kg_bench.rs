@@ -459,6 +459,10 @@ fn run_fixture(fixture_path: &Path) -> Result<FixtureOutcome> {
     })
 }
 
+#[expect(
+    clippy::too_many_arguments,
+    reason = "KG fixture evaluation keeps each canonical stage surface explicit for clearer failure messages"
+)]
 fn evaluate_canonical_expectations(
     label: &str,
     expectations: &CanonicalStageExpectations,
@@ -1061,12 +1065,12 @@ fn assert_optional_count(
     actual: usize,
     failures: &mut Vec<String>,
 ) {
-    if let Some(expected) = expected {
-        if actual != expected {
-            failures.push(format!(
-                "{label}: expected `{field}` = {expected}, got {actual}"
-            ));
-        }
+    if let Some(expected) = expected
+        && actual != expected
+    {
+        failures.push(format!(
+            "{label}: expected `{field}` = {expected}, got {actual}"
+        ));
     }
 }
 

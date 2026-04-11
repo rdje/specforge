@@ -233,16 +233,15 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
                             // Form 2: learn alias if signal name is not in the source text.
                             if let Some(phrase) =
                                 extract_alias_phrase(&statement.text, &record.subject_signal)
+                                && let std::collections::btree_map::Entry::Vacant(entry) =
+                                    evidence_ir.signal_alias_map.entry(phrase)
                             {
-                                if !evidence_ir.signal_alias_map.contains_key(&phrase) {
-                                    println!(
-                                        "  alias_learned: \"{}\" → {}",
-                                        phrase, record.subject_signal
-                                    );
-                                    evidence_ir
-                                        .signal_alias_map
-                                        .insert(phrase, record.subject_signal.clone());
-                                }
+                                println!(
+                                    "  alias_learned: \"{}\" → {}",
+                                    entry.key(),
+                                    record.subject_signal
+                                );
+                                entry.insert(record.subject_signal.clone());
                             }
                             new_signal_constraints.push(record);
                         }

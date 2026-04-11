@@ -1182,6 +1182,10 @@ fn temporal_rule_has_handshake_completion(rule: &crate::ir::semantic::TemporalRu
         .any(|predicate| matches!(predicate, TemporalPredicateRecord::HandshakeComplete { .. }))
 }
 
+#[expect(
+    clippy::too_many_arguments,
+    reason = "prior harvesting keeps the source evidence, document scope, and accumulator explicit"
+)]
 fn harvest_temporal_language_phrase(
     source_text: &str,
     cycle_window: Option<crate::ir::semantic::CycleWindowRecord>,
@@ -1677,7 +1681,7 @@ fn contains_token_phrase(tokens: &[&str], phrase: &[&str]) -> bool {
 }
 
 fn parse_cycle_count_value(token: &str) -> Option<u32> {
-    token.parse::<u32>().ok().or_else(|| match token {
+    token.parse::<u32>().ok().or(match token {
         "one" => Some(1),
         "two" => Some(2),
         "three" => Some(3),

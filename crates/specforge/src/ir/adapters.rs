@@ -1580,21 +1580,20 @@ fn analyze_top_renderability(
 
         if let (Some(source_width), Some(target_width)) =
             (source_port.width_hint, target_port.width_hint)
+            && source_width != target_width
         {
-            if source_width != target_width {
-                push_unique_message(
-                    &mut blocking_reasons,
-                    &format!(
-                        "Top link `{}` -> `{}` connects width {} to width {}.",
-                        render_top_link_endpoint(&link.source),
-                        render_top_link_endpoint(&link.target),
-                        source_width,
-                        target_width
-                    ),
-                );
-                required_canonical_enrichments
-                    .insert("keep first-slice top-link endpoints width-compatible".to_string());
-            }
+            push_unique_message(
+                &mut blocking_reasons,
+                &format!(
+                    "Top link `{}` -> `{}` connects width {} to width {}.",
+                    render_top_link_endpoint(&link.source),
+                    render_top_link_endpoint(&link.target),
+                    source_width,
+                    target_width
+                ),
+            );
+            required_canonical_enrichments
+                .insert("keep first-slice top-link endpoints width-compatible".to_string());
         }
     }
 
@@ -1676,6 +1675,10 @@ fn render_top_link_endpoint(endpoint: &ExplicitTopLinkEndpoint) -> String {
     }
 }
 
+#[expect(
+    clippy::too_many_arguments,
+    reason = "adapter renderability analysis intentionally receives the explicit candidate slices it arbitrates"
+)]
 fn analyze_renderability(
     signal_inventory: &[FsmSignalCandidate],
     system_contract: Option<&SystemContractRecord>,
@@ -1871,6 +1874,10 @@ fn analyze_dt_root_renderability(
     (renderability, renderable_module)
 }
 
+#[expect(
+    clippy::too_many_arguments,
+    reason = "FSM-root renderability keeps independent canonical slices visible at the adapter boundary"
+)]
 fn analyze_fsm_root_renderability(
     signal_inventory: &[FsmSignalCandidate],
     system_contract: Option<&SystemContractRecord>,
@@ -2370,6 +2377,10 @@ fn collect_renderable_dt_blocks(
     renderable_blocks
 }
 
+#[expect(
+    clippy::too_many_arguments,
+    reason = "block collection shares renderability accumulators to preserve exact diagnostic provenance"
+)]
 fn collect_renderable_fsm_blocks(
     control_blocks: &[ControlBlockRecord],
     state_names: &BTreeSet<String>,
@@ -2459,6 +2470,10 @@ fn collect_renderable_fsm_blocks(
     (state_blocks, top_level_blocks)
 }
 
+#[expect(
+    clippy::too_many_arguments,
+    reason = "branch validation threads explicit renderability context and diagnostics without hiding mutation"
+)]
 fn validate_control_block_branches(
     block: &ControlBlockRecord,
     allow_transition_actions: bool,
@@ -2629,6 +2644,10 @@ fn validate_control_expression_renderability(
     }
 }
 
+#[expect(
+    clippy::too_many_arguments,
+    reason = "action validation needs the same explicit renderability context as branch validation"
+)]
 fn validate_control_action_renderability(
     action: &ControlActionRecord,
     allow_transition_actions: bool,
@@ -2706,20 +2725,20 @@ fn validate_control_action_renderability(
                 );
                 return;
             }
-            if let Some(state_names) = state_names {
-                if !state_names.contains(target_state) {
-                    push_unique_message(
-                        blocking_reasons,
-                        &format!(
-                            "Transition action target `{}` is not declared as a canonical regular state.",
-                            target_state
-                        ),
-                    );
-                    required_canonical_enrichments.insert(
-                        "declare every transition target as an explicit canonical regular state"
-                            .to_string(),
-                    );
-                }
+            if let Some(state_names) = state_names
+                && !state_names.contains(target_state)
+            {
+                push_unique_message(
+                    blocking_reasons,
+                    &format!(
+                        "Transition action target `{}` is not declared as a canonical regular state.",
+                        target_state
+                    ),
+                );
+                required_canonical_enrichments.insert(
+                    "declare every transition target as an explicit canonical regular state"
+                        .to_string(),
+                );
             }
         }
         ControlActionRecord::DelayedPulse {
@@ -2864,6 +2883,10 @@ fn validate_transition_renderability(
     }
 }
 
+#[expect(
+    clippy::too_many_arguments,
+    reason = "adapter residual construction compares all candidate families explicitly"
+)]
 fn build_adapter_residual_decisions(
     intent_ir: &IntentIr,
     signal_inventory: &[FsmSignalCandidate],

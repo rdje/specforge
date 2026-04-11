@@ -79,6 +79,7 @@ bash scripts/run_ci.sh
 That now checks:
 
 - Rust formatting
+- Clippy with warnings denied
 - Rust tests with Rust warnings denied
 - mdBook build
 

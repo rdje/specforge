@@ -22,19 +22,20 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `308d527`
-- latest_commit_brief_message: `chore(rust): remove stale dead-code helpers`
-- note: the current session picked the next quality task and is making the clean Rust warning baseline enforceable in shared local/hosted CI
+- latest_commit_hash: `ca75e51`
+- latest_commit_brief_message: `ci: deny Rust warnings in local gate`
+- note: the current session picked the next quality task and is bringing Clippy into the shared local/hosted CI gate
 
 ## Recent commit chain (last 5)
+- `ca75e51` ci: deny Rust warnings in local gate
 - `308d527` chore(rust): remove stale dead-code helpers
 - `8b6007b` docs(bootstrap): refresh Rust codebase analysis
 - `4cfb825` test(kg): lock active-low vlm timing polarity
 - `aa1e163` docs(validation): define rescan approval boundary
-- `96810ff` test(kg): cover negative knowledge conflict priors
 
 ## Current repository state
 - active workspace member: `crates/specforge`
+- `scripts/run_ci.sh` now runs Clippy with `-D warnings` before the Rust test suite, and GitHub Actions installs the `clippy` component so the hosted gate matches the local gate
 - `scripts/run_ci.sh` now enforces `RUSTFLAGS="-D warnings"` during the Rust test step, and GitHub Actions inherits that warning-deny gate because it calls the same script
 - the Rust warning baseline is clean and now enforced in the shared local/hosted CI path rather than suppressed with `#[allow(dead_code)]`
 - README bootstrap currently resolves to `SESSION_BOOTSTRAP.md`, which instructs future agents to read the referenced live docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if necessary, and then continue from the roadmap
@@ -179,6 +180,7 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
+- fixed mechanical Clippy findings, localized intentional broad IR-shape exceptions with `#[expect(...)]` reasons, wired `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings` into the shared CI script plus GitHub toolchain component list, and confirmed `bash scripts/run_ci.sh` passes through Clippy, 282 warning-denied Rust tests, and mdBook build
 - made the clean Rust warning baseline enforceable by updating `scripts/run_ci.sh` to run `cargo test --manifest-path Cargo.toml` with `RUSTFLAGS="-D warnings"`; this applies both locally and in GitHub Actions because the workflow delegates to the shared script
 - removed the remaining dead-code warning sources: an orphaned legacy `.fsm` adapter renderability path, the unused legacy adapter `render_action` helper, and empty semantic register/timing builder stubs that no longer had call sites
 - confirmed both `cargo test --manifest-path Cargo.toml --lib` and `bash scripts/run_ci.sh` pass with 282 tests and no dead-code warning output; full CI also rebuilt the mdBook successfully
@@ -243,7 +245,7 @@
 - semantic-role disagreement is now surfaced explicitly across `EvidenceIR`, `SemanticIR`, and `IntentIR`, but richer multimodal role grounding and broader arbitration still need to grow
 - `SourceIR` / ingest are strong enough to remain the foundation, but not strong enough to be assumed universal; future Tier 1 work should stay focused on robustness and honest failure handling
 - adapter expansion and adapter validation are now intentionally horizon work
-- keep the Rust warning baseline clean; do not reintroduce dead helper paths unless they are wired into active behavior or explicitly tested
+- keep the Rust and Clippy warning baselines clean; do not reintroduce dead helper paths or broad lint exceptions unless they are wired into active behavior, explicitly tested, or narrowly documented with `#[expect(...)]`
 
 ## If resuming from an interruption
 1. read `README.md`
