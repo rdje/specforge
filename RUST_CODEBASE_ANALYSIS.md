@@ -32,12 +32,18 @@
 - the enrichment, convergence, validation, benchmark, targeted-rescan, and first prior-learning toolchain is also real: `specforge enrich`, `specforge nlp-enrich`, `specforge converge`, `specforge validate`, `specforge project-validation`, `specforge rescan-plan`, `specforge kg-bench`, and `specforge learn-priors` are wired into the CLI and exercised by the workspace tests
 - `project-validation` and `rescan-plan` now form a schema-v2 targeted-rescan loop: recommendations carry typed replay inputs, structured local command hints, dry-run-by-default execution, before/after validation snapshots, execution summaries, promotion-gate descriptors, and an explicit no-canonical-mutation boundary
 - `CorpusMemory` schema v5 now carries actor-taxonomy, semantic-phrase, semantic-modality-reliability, temporal-phrase, table-shape, visual-motif, and negative-knowledge prior families; current consumers remain advisory and locally grounded rather than fact-authoring
-- the tracked KG-quality benchmark surface currently contains 49 fixtures, including active-low VLM timing polarity-equivalence coverage plus collective, mixed clause-local, and detached mixed-polarity negative non-reset control polarity coverage
+- the tracked KG-quality benchmark surface currently contains 50 fixtures, including VLM timing waveform-motion rejection, active-low VLM timing polarity-equivalence coverage, and collective, mixed clause-local, and detached mixed-polarity negative non-reset control polarity coverage
 - the local runtime boundary is now operationally stronger too: `specforge doctor` reports Docling readiness, the default Ollama loopback readiness, and LM Studio fallback readiness directly, repo-local `.venv-docling` auto-discovery is supported, and the backend now probes versioned Python candidates like `python3.11` before giving up on fresh ingest
 - GitHub Actions CI is now part of the repo baseline and runs `cargo fmt --all --check`, warning-deny Clippy, warning-deny Rust tests, warning-deny rustdoc, and the mdBook build on every `push` and `pull_request`, which keeps the hosted validation path aligned with the local Rust/docs quality gate
 - that CI path now has a single checked-in entrypoint at `scripts/run_ci.sh`, and the GitHub workflow calls that script directly so local and hosted Rust validation do not drift apart
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and adding the planned `R15g` corpus knowledge base beside the already-live typed prior-memory plane; adapter expansion is now horizon work
-- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the SemanticIR sticky interface-conflict slice, the full local CI path reports clean Clippy, 299 passing Rust tests, clean Rust API docs, and a successful mdBook build
+- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the VLM waveform-motion timing slice, the full local CI path reports clean Clippy, 300 passing Rust tests, clean Rust API docs, and a successful mdBook build
+
+## Session update (2026-04-11 VLM timing waveform motion filtering)
+- `SemanticIR` VLM timing signal-value lifting now filters waveform motion descriptors such as `rising`, `falling`, `stable`, `steady`, `unchanged`, and `toggle` before the generic symbolic-value fallback can promote them into false `MustBeValue` facts.
+- Concrete VLM timing values still flow through the bounded path: `HIGH`, `LOW`, `ASSERTED`, `DEASSERTED`, `0`, and `1` remain eligible for typed signal constraints and temporal predicates when the signal name is document-grounded.
+- Added `vlm_timing_diagram_observation_rejects_waveform_motion_states` plus tracked KG fixture `vlm_timing_waveform_motion_negative`, proving a mixed `rising` / `HIGH` / `stable` / `falling` / `UNCHANGED` waveform creates exactly one concrete signal constraint and temporal rule.
+- Focused validation passed for the semantic regression, targeted `kg-bench` validation passed for `vlm_timing_waveform_motion_negative`, and the full local CI gate passed with 300 Rust tests.
 
 ## Session update (2026-04-11 SemanticIR sticky interface conflicts)
 - `InterfaceSignalAccumulator` now tracks whether direction and width hints already conflicted, so `None` no longer ambiguously means both unknown and conflict-collapsed inside the canonical interface builder.
@@ -254,6 +260,7 @@
   - a bogus-actor-attribution negative fixture that proves `Clock` / `Reset` infrastructure rows in AMBA-style `Source` columns do not become protocol actors while the true requester/subordinate rows still survive canonically
   - a field-table misclassification negative fixture that proves a misclassified `Bits | Name | Description` table does not synthesize fake top-level signals or semantic roles from field names that merely look signal-like
   - a spurious-timing negative fixture that proves low-value VLM timing-diagram labels like `T0`, `Addr 1`, and `Cycle 2` still count as timing-diagram extraction at the evidence stage but do not survive into `TimingConstraintRecord` or `TemporalRuleRecord`
+  - a VLM waveform-motion negative fixture that proves `rising`, `stable`, `falling`, and `UNCHANGED` timing states do not become symbolic signal values while a concrete `HIGH` sample still survives
 - the harness can now also assert canonical actor-signal relations directly, so tracked gold fixtures can lock `Drives` versus `Reads` truth instead of checking only actor-port projections or relation counts
 - the harness can now also patch `SourceIR.document_sections` and assert per-signal canonical direction directly, which is important for protocol families like AHB where section-heading context still carries real directionality
 - the harness now also asserts canonical semantic candidates and decisive-vs-contested semantic arbitration directly, which is a better `R15e` truthfulness check than inferring arbitration quality only from blocked fallback or validation side effects
@@ -267,6 +274,7 @@
   - that guard now protects fake-signal leakage across declarations, semantic hints, and related table-driven inference paths
 - timing-diagram lifting is also less noisy now:
   - label-only VLM annotations such as `T0`, `Addr 1`, and `Cycle 2` are treated as waveform labels, not as timing semantics
+  - VLM timing signal-value states such as `rising`, `stable`, `falling`, and `UNCHANGED` are treated as waveform motion descriptors, not as concrete symbolic signal values
   - the semantic lift now keeps the timing extraction visible upstream while refusing to fabricate canonical timing constraints from those low-value labels alone
 - that negative multimodal fixture also locks an important nuance in the validation surface:
   - conflicting multimodal evidence should still count as visual grounding
@@ -550,8 +558,8 @@
 
 ## Testing implications
 - current full local CI path: `bash scripts/run_ci.sh`
-- current Rust test count observed through that path after the current slice: 299 library tests, 0 binary tests, and 0 doc tests, all passing under `RUSTFLAGS="-D warnings"` after clean `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings` and `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` passes
-- current tracked KG-quality fixture count: 49
+- current Rust test count observed through that path after the current slice: 300 library tests, 0 binary tests, and 0 doc tests, all passing under `RUSTFLAGS="-D warnings"` after clean `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings` and `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` passes
+- current tracked KG-quality fixture count: 50
 - current tests cover:
   - source-kind detection
   - deterministic source key naming
@@ -571,6 +579,7 @@
   - sticky SemanticIR interface direction/width conflict collapse when conflicting declarations repeat
   - parametric-width handling through the IR pipeline
   - VLM timing diagram annotation → TimingConstraintRecord in SemanticIR
+  - VLM timing signal-value filtering for waveform motion states such as rising/stable/falling
   - VLM state machine extraction → RegularStateRecord + StateTransitionRecord in SemanticIR
   - ambiguous visual-grounding residual decisions in `SemanticIR`
   - handshake-driven `IntentIR` identity/behavior/constraint/assumption construction

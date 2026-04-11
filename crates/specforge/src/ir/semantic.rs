@@ -8998,6 +8998,9 @@ fn signal_constraint_kind_from_vlm_state(
         "deasserted" | "deassert" => Some((SignalConstraintKind::MustBeDeasserted, None)),
         "x" | "z" | "unknown" | "don't care" | "dont care" => None,
         _ => {
+            if is_vlm_waveform_motion_state(state) {
+                return None;
+            }
             let symbolic_value = parse_identifier(state)?;
             Some((
                 SignalConstraintKind::MustBeValue {
@@ -9007,6 +9010,28 @@ fn signal_constraint_kind_from_vlm_state(
             ))
         }
     }
+}
+
+fn is_vlm_waveform_motion_state(state: &str) -> bool {
+    matches!(
+        state.trim().to_ascii_lowercase().as_str(),
+        "rise"
+            | "rising"
+            | "fall"
+            | "falling"
+            | "posedge"
+            | "negedge"
+            | "edge"
+            | "transition"
+            | "transient"
+            | "toggle"
+            | "toggling"
+            | "stable"
+            | "steady"
+            | "unchanged"
+            | "held"
+            | "hold"
+    )
 }
 
 fn is_spurious_timing_annotation_label(text: &str) -> bool {
@@ -10727,6 +10752,67 @@ mod tests {
             semantic_ir.timing_constraints.is_empty(),
             "label-only timing annotations must not become timing constraints: {:?}",
             semantic_ir.timing_constraints
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn vlm_timing_diagram_observation_rejects_waveform_motion_states() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("timing_motion_spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(&source, "# Timing\nSignal XREQ is input width 1.\n")?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.visual_assets.push(VisualAsset {
+            asset_id: "picture_0005".to_string(),
+            asset_kind: VisualAssetKind::Diagram,
+            page_id: Some("page_0001".to_string()),
+            image_path: None,
+            caption_text: Some("Figure 3-4 Request waveform motion".to_string()),
+            caption_source_path: None,
+            source_ref: None,
+            placeholder_text: None,
+            note: Some(
+                "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"T0\",\"state\":\"rising\"},{\"cycle\":\"T1\",\"state\":\"HIGH\"},{\"cycle\":\"T2\",\"state\":\"stable\"},{\"cycle\":\"T3\",\"state\":\"falling\"},{\"cycle\":\"T4\",\"state\":\"UNCHANGED\"}]}],\"annotations\":[\"XREQ rises, stays stable, then falls\"]}"
+                    .to_string(),
+            ),
+            diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let vlm_constraints = semantic_ir
+            .signal_constraints
+            .iter()
+            .filter(|constraint| constraint.constraint_id.starts_with("vlm_signal_value_"))
+            .collect::<Vec<_>>();
+        assert_eq!(
+            vlm_constraints.len(),
+            1,
+            "only the concrete HIGH sample should become a VLM-authored signal constraint: {vlm_constraints:?}"
+        );
+        assert!(
+            vlm_constraints.iter().any(|constraint| {
+                constraint.subject_signal == "XREQ"
+                    && matches!(constraint.constraint_kind, SignalConstraintKind::MustBeHigh)
+                    && constraint.source_text.contains("cycle T1")
+            }),
+            "expected the concrete HIGH sample to survive as timing evidence"
         );
 
         Ok(())

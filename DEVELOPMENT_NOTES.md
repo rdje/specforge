@@ -38,6 +38,11 @@
 - Active-low `ARESETN` reported as both `deasserted` and `HIGH` must produce typed temporal evidence without creating a false temporal conflict or polarity conflict.
 - This complements the existing reset-entry fixture for `asserted` plus `LOW`, so both assertion and deassertion semantics are regression-protected.
 
+## 2026-04-11 VLM timing waveform motion filtering
+- VLM timing `signals[].values[].state` strings are not all equally authoritative signal values.
+- Concrete sampled values such as `HIGH`, `LOW`, `ASSERTED`, `DEASSERTED`, `0`, and `1` can become typed signal constraints when the signal name is document-grounded, but waveform motion descriptors such as `rising`, `falling`, `stable`, `steady`, `unchanged`, and `toggle` should not be promoted through the generic symbolic-value fallback.
+- This preserves useful timing observations while avoiding false facts like `XREQ == RISING`. The `vlm_timing_waveform_motion_negative` KG fixture locks the boundary end-to-end.
+
 ## 2026-04-11 collective non-reset control polarity
 - `EvidenceIR` now recovers unambiguous collective active-level prose such as `CS_N and WE_N are active LOW signals`, producing one explicit polarity observation per declared signal and letting later asserted/deasserted constraints refine into concrete low/high obligations.
 - The extractor deliberately stays conservative for mixed compound polarity prose such as `CS_N is active LOW and ENABLE is active HIGH`; until there is a clause-local parser that can bind each polarity phrase to exactly one signal, the safer behavior is to leave the polarity unresolved rather than guess.
@@ -104,6 +109,7 @@
   - `ASSERTED` / `DEASSERTED` stay polarity-relative when temporal conflicts are evaluated, so an active-low reset observed as both `asserted` and `LOW` or as both `deasserted` and `HIGH` is equivalent rather than contradictory
   - generic visual words like `transfer` must remain rejected as fake signal names
   - unknown/don't-care values should stay unpromoted instead of creating false temporal facts
+  - waveform motion descriptors like `rising`, `falling`, `stable`, and `unchanged` should stay unpromoted instead of becoming fake symbolic signal values
   - the tracked `vlm_timing_active_low_assertion_equivalence_gold` and `vlm_timing_active_low_deassertion_equivalence_gold` KG fixtures now lock these active-low VLM timing edge cases end-to-end
 - VLM state-machine guard text is still a bounded hypothesis, not an authority:
   - simple comparisons like `PREADY = 1` should be converted into typed guards

@@ -22,20 +22,21 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `4501982`
-- latest_commit_brief_message: `test(adapter): lock sticky actor port widths`
-- note: the current session is making SemanticIR interface-signal direction/width conflicts sticky so repeated declarations cannot resurrect canonical shape hints
+- latest_commit_hash: `2fbb8bd`
+- latest_commit_brief_message: `fix(semantic): keep interface conflicts sticky`
+- note: the current session is filtering VLM timing waveform motion labels so `rising` / `stable` / `falling` do not become fake signal values
 
 ## Recent commit chain (last 5)
+- `2fbb8bd` fix(semantic): keep interface conflicts sticky
 - `4501982` test(adapter): lock sticky actor port widths
 - `cbc8584` fix(adapter): keep actor port conflicts sticky
 - `6d150c8` test(adapter): lock graph-backed sequential directions
 - `2775b26` test(kg): lock detached mixed polarity rejection
-- `3e6c541` feat(evidence): recover mixed control polarity
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- the in-progress SemanticIR truthfulness follow-on makes interface-signal direction/width conflict collapse sticky, proving repeated explicit `DATA input width 8` evidence cannot resurrect canonical hints after `DATA output width 16` creates direction and width conflicts
+- the in-progress KG-quality follow-on filters VLM timing waveform motion labels such as `rising`, `stable`, `falling`, and `UNCHANGED` so only concrete sampled values like `HIGH` become signal constraints and temporal rules
+- the latest committed SemanticIR truthfulness follow-on made interface-signal direction/width conflict collapse sticky, proving repeated explicit `DATA input width 8` evidence cannot resurrect canonical hints after `DATA output width 16` creates direction and width conflicts
 - the latest committed adapter-quality follow-on added the width-side regression for sticky adapter signal-inventory conflicts, proving a flat `DATA_OUT` width `8`, graph-backed width `16`, and later duplicate graph-backed width `8` still leaves width unresolved and blocks lowering
 - the latest committed adapter-quality follow-on made adapter signal-inventory direction/width conflicts sticky, with a regression proving repeated same-actor `DATA_OUT` actor-port evidence cannot self-heal after an `output` / `input` disagreement
 - the latest committed adapter-quality follow-on added a regression proving standalone sequential `.fsm` DT lowering can still render `(+system ...)` when flat `direction_hint` values are absent but an unambiguous actor-port graph supplies `clk`, `rst_n`, data input, and accumulator output directions
@@ -53,9 +54,9 @@
 - the Rust warning baseline is clean and now enforced in the shared local/hosted CI path rather than suppressed with `#[allow(dead_code)]`
 - README bootstrap currently resolves to `SESSION_BOOTSTRAP.md`, which instructs future agents to read the referenced live docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if necessary, and then continue from the roadmap
 - this bootstrap refresh observed 28 Rust source files and about 53,858 lines under `crates/specforge/src`, with the CLI now including `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, and `nlp-enrich` beside the core staged IR commands
-- `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the SemanticIR sticky interface-conflict slice; the tracked KG fixture count is `49`, and the full local CI gate reports `299` passing Rust tests
+- `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the VLM waveform-motion timing slice; the tracked KG fixture count is now `50`, and the full local CI gate reports `300` passing Rust tests
 - the latest README bootstrap hygiene pass found no new Rust architecture drift; the concrete fix was to refresh the committed baseline in this memory file and remove stray example bullets from `USER_GUIDE.md`'s root-document list
-- the latest active KG benchmark slice is `vlm_timing_active_low_deassertion_equivalence_gold`, which proves a VLM timing diagram that reports active-low `ARESETN` as both `deasserted` and `HIGH` yields typed temporal evidence without a false temporal or polarity conflict
+- the latest active KG benchmark slice is `vlm_timing_waveform_motion_negative`, which proves a VLM timing diagram can preserve the real `HIGH` sample while rejecting waveform motion descriptors such as `rising`, `stable`, `falling`, and `UNCHANGED` as concrete signal values
 - the canonical user-facing documentation surface is now the mdBook under `docs/book/`
 - that mdBook should now be treated as a live book that evolves alongside user-facing project changes, not as a static scaffold
 - the split is now explicit too:
@@ -194,6 +195,7 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
+- filtered VLM timing waveform motion labels so `rising`, `stable`, `falling`, and `UNCHANGED` do not become symbolic signal values; added a semantic regression and the tracked `vlm_timing_waveform_motion_negative` KG fixture while keeping concrete `HIGH` samples alive
 - broadened explicit polarity phrase recovery so non-reset control prose such as `CS_N is asserted when LOW` creates active-low evidence and refines asserted/deasserted constraints without suffix-only guessing; added a clean KG fixture and a semantic duplicate-record guard; focused polarity tests, KG-bench, and full local CI passed
 - made SemanticIR interface-signal direction/width conflict collapse sticky so later repeated declarations cannot restore canonical hints after disagreement; strengthened the conflict regression with an input/output/input width 8/16/8 sequence
 - added explicit `kg-bench` graph direction coverage expectations (`graph_direction_signal_names_include` / `graph_direction_signal_names_exclude`) so fixtures can assert canonical `actor_ports` direction coverage separately from flat compatibility `signal_directions_include`

@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-04-11 (VLM timing rejects waveform motion as values)
+
+### Fixed: waveform motion labels no longer become fake signal values
+- `SemanticIR` VLM timing lift now rejects motion-only `signals[].values[].state` labels such as `rising`, `falling`, `stable`, and `UNCHANGED` instead of promoting them as symbolic `MustBeValue` temporal facts.
+- Concrete sampled values such as `HIGH`, `LOW`, `ASSERTED`, `DEASSERTED`, `0`, and `1` still survive through the existing bounded VLM signal-value path.
+- Added semantic regression coverage proving a mixed waveform sequence keeps only the concrete `XREQ == HIGH @ T1` sample.
+- Added tracked KG-quality fixture `vlm_timing_waveform_motion_negative`, which keeps the VLM timing extraction visible while requiring exactly one signal constraint / temporal rule and zero semantic-role hints from motion labels.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml --lib vlm_timing_diagram_observation_rejects_waveform_motion_states -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality vlm_timing_waveform_motion_negative` -> passed
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, 300 Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and mdBook build
+
 ## 2026-04-11 (SemanticIR keeps interface conflicts sticky)
 
 ### Changed: canonical interface shape conflicts cannot self-heal by repetition

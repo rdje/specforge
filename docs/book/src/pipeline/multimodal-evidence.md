@@ -107,6 +107,7 @@ The expected VLM extraction shape is conceptually:
 `SemanticIR` can parse those observations into timing constraints.
 It can also lift grounded `signals[].values[]` tuples into signal-value constraints that feed temporal predicates, such as `XREQ` being `HIGH` at a diagram cycle.
 It also filters low-value labels such as pure cycle markers or address labels when they do not carry real timing semantics.
+Waveform motion descriptors such as `rising`, `stable`, `falling`, and `UNCHANGED` are also filtered from the signal-value path; they describe movement or persistence, not concrete sampled values.
 Generic visual words such as `transfer` should not become fake signal names just because they appear in a timing diagram observation.
 
 ## State-machine diagrams
