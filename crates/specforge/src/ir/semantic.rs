@@ -6941,23 +6941,6 @@ fn contains_phrase(text: &str, phrase: &str) -> bool {
     false
 }
 
-fn build_register_records(context: &SemanticContext) -> Vec<RegisterRecord> {
-    // Currently carry-through from EvidenceIR. Direct semantic enrichment
-    // (cross-referencing registers against signal declarations, etc.) is future work.
-    // The context does not yet expose EvidenceIR register_records directly, so we
-    // return an empty Vec here; the IntentIR builder reads them from SemanticIR
-    // which receives them via EvidenceIR.load_from_path already.//
-    // NOTE: SemanticIR.register_records is populated directly in SemanticIr::build()
-    // from evidence_ir.register_records; this stub exists to satisfy the call site.
-    let _ = context;
-    Vec::new()
-}
-
-fn build_timing_constraints(context: &SemanticContext) -> Vec<TimingConstraintRecord> {
-    let _ = context;
-    Vec::new()
-}
-
 fn build_temporal_rules(
     context: &SemanticContext,
     interfaces: &[InterfaceRecord],

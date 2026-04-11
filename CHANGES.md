@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-04-11 (Rust dead-code warning baseline is clean)
+
+### Fixed: stale warning-only code paths
+- Removed the orphaned `.fsm` adapter renderability helper path that still operated on legacy `DecisionTreeFragmentRecord` actions after the active lowering path moved to `ControlBlockRecord` branches.
+- Removed the unused `render_action` helper; active rendering now goes through `render_control_action`.
+- Removed empty semantic-stage register/timing builder stubs that no longer had call sites because `SemanticIR` carries register and timing records directly from `EvidenceIR` plus VLM timing extraction.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml --lib` -> passed with 282 tests and no dead-code warning output
+- `bash scripts/run_ci.sh` -> passed with 282 tests, mdBook build, and no dead-code warning output
+
 ## 2026-04-11 (README bootstrap refresh updates Rust analysis)
 
 ### Updated: bootstrap and codebase analysis

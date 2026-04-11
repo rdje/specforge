@@ -2819,73 +2819,6 @@ fn validate_control_action_renderability(
     }
 }
 
-fn validate_block_set_renderability(
-    blocks: &[DecisionTreeFragmentRecord],
-    duplicate_names_allowed: &BTreeSet<String>,
-    signals_by_name: &BTreeMap<String, &FsmSignalCandidate>,
-    size_entries: &mut BTreeMap<String, FsmRenderableSizeEntry>,
-    driven_outputs: &mut BTreeSet<String>,
-    sequential_targets: &mut BTreeSet<String>,
-    blocking_reasons: &mut Vec<String>,
-    required_canonical_enrichments: &mut BTreeSet<String>,
-) {
-    let mut seen_block_names = BTreeSet::new();
-
-    for block in blocks {
-        if !duplicate_names_allowed.contains(&block.block_name)
-            && !seen_block_names.insert(block.block_name.clone())
-        {
-            push_unique_message(
-                blocking_reasons,
-                &format!(
-                    "Canonical control block `{}` is duplicated; the current `.fsm` slice expects one unique standalone block per non-state name.",
-                    block.block_name
-                ),
-            );
-            required_canonical_enrichments.insert(
-                "normalize canonical standalone block names before lowering `.fsm` text"
-                    .to_string(),
-            );
-        }
-
-        if block.actions.is_empty() {
-            push_unique_message(
-                blocking_reasons,
-                &format!(
-                    "Canonical control block `{}` has no typed actions to lower into `.fsm`.",
-                    block.block_name
-                ),
-            );
-            required_canonical_enrichments.insert(
-                "keep each canonical control block anchored to at least one typed assignment action"
-                    .to_string(),
-            );
-        }
-
-        if let Some(guard) = block.guard.as_ref() {
-            validate_guard_renderability(
-                guard,
-                signals_by_name,
-                size_entries,
-                blocking_reasons,
-                required_canonical_enrichments,
-            );
-        }
-
-        for action in &block.actions {
-            validate_action_renderability(
-                action,
-                signals_by_name,
-                size_entries,
-                driven_outputs,
-                sequential_targets,
-                blocking_reasons,
-                required_canonical_enrichments,
-            );
-        }
-    }
-}
-
 fn validate_transition_renderability(
     transition: &FsmTransitionCandidate,
     state_names: &BTreeSet<String>,
@@ -3257,61 +3190,6 @@ fn validate_guard_renderability(
                 );
             }
             if let DecisionTreeValueRecord::SignalRef { signal_name } = right {
-                register_renderable_signal(
-                    signal_name,
-                    signals_by_name,
-                    size_entries,
-                    blocking_reasons,
-                    required_canonical_enrichments,
-                );
-            }
-        }
-    }
-}
-
-fn validate_action_renderability(
-    action: &DecisionTreeActionRecord,
-    signals_by_name: &BTreeMap<String, &FsmSignalCandidate>,
-    size_entries: &mut BTreeMap<String, FsmRenderableSizeEntry>,
-    driven_outputs: &mut BTreeSet<String>,
-    sequential_targets: &mut BTreeSet<String>,
-    blocking_reasons: &mut Vec<String>,
-    required_canonical_enrichments: &mut BTreeSet<String>,
-) {
-    match action {
-        DecisionTreeActionRecord::Assign {
-            target_signal,
-            assignment_kind,
-            value,
-        } => {
-            let target_direction = register_renderable_signal(
-                target_signal,
-                signals_by_name,
-                size_entries,
-                blocking_reasons,
-                required_canonical_enrichments,
-            );
-            if !matches!(target_direction, Some(InterfaceSignalDirection::Output)) {
-                push_unique_message(
-                    blocking_reasons,
-                    &format!(
-                        "Assignment target `{}` is not declared as a canonical output signal.",
-                        target_signal
-                    ),
-                );
-                required_canonical_enrichments.insert(
-                    "keep first-slice assignment targets aligned with explicit output roles"
-                        .to_string(),
-                );
-            } else {
-                driven_outputs.insert(target_signal.clone());
-            }
-
-            if matches!(assignment_kind, DecisionTreeAssignmentKind::Sequential) {
-                sequential_targets.insert(target_signal.clone());
-            }
-
-            if let DecisionTreeValueRecord::SignalRef { signal_name } = value {
                 register_renderable_signal(
                     signal_name,
                     signals_by_name,
@@ -4158,21 +4036,6 @@ fn render_guard(guard: &DecisionTreeGuardRecord) -> String {
             left_signal,
             render_comparison_operator(*operator),
             render_value(right)
-        ),
-    }
-}
-
-fn render_action(action: &DecisionTreeActionRecord, root_kind: FsmRootKind) -> String {
-    match action {
-        DecisionTreeActionRecord::Assign {
-            target_signal,
-            assignment_kind,
-            value,
-        } => format!(
-            "{} {} {}",
-            target_signal,
-            render_assignment_operator(*assignment_kind, root_kind),
-            render_value(value)
         ),
     }
 }

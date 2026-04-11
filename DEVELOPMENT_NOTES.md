@@ -12,6 +12,11 @@
 - This refresh found that the Rust analysis lagged the implementation: `rescan-plan`, schema-v2 replay/execution summaries, the no-canonical-mutation promotion-review boundary, `CorpusMemory` schema v5, 44 tracked KG fixtures, and the 282-test full-CI baseline were all newer than parts of the analysis doc.
 - The fix is documentation-only. The engineering decision is to keep `RUST_CODEBASE_ANALYSIS.md` as a living architecture snapshot rather than letting it become a stale historical essay, because it is part of the crash-recovery and handoff contract.
 
+## 2026-04-11 dead-code warning cleanup
+- Rust warnings are treated as quality drift, not harmless background noise.
+- The dead-code cleanup deletes stale helper paths instead of adding `#[allow(dead_code)]`: the removed adapter helpers belonged to the old direct `DecisionTreeFragmentRecord` renderability path, while active `.fsm` lowering now validates and renders `ControlBlockRecord` / `ControlActionRecord`; the removed semantic helpers were empty stubs after register/timing carry-through moved into `SemanticIr::build()`.
+- Future placeholder helpers should either be wired into an active call path, covered by tests, or left out until the implementation slice genuinely needs them.
+
 ## Foundational engineering choices
 ### IntentIR instead of AST
 - the final canonical output must capture semantics and implementation-relevant intent, not only syntax structure

@@ -22,19 +22,20 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `4cfb825`
-- latest_commit_brief_message: `test(kg): lock active-low vlm timing polarity`
-- note: the current session executed the README bootstrap path, found `RUST_CODEBASE_ANALYSIS.md` stale relative to the current CLI/test/rescan/prior-memory surface, and is refreshing continuity documentation only
+- latest_commit_hash: `8b6007b`
+- latest_commit_brief_message: `docs(bootstrap): refresh Rust codebase analysis`
+- note: the current session picked the next quality task and is removing the remaining Rust dead-code warning sources instead of suppressing them
 
 ## Recent commit chain (last 5)
+- `8b6007b` docs(bootstrap): refresh Rust codebase analysis
 - `4cfb825` test(kg): lock active-low vlm timing polarity
 - `aa1e163` docs(validation): define rescan approval boundary
 - `96810ff` test(kg): cover negative knowledge conflict priors
 - `b2f80c0` feat(semantic): recover explicit clock reset topology hints
-- `0e660a4` feat(validation): add rescan promotion review path
 
 ## Current repository state
 - active workspace member: `crates/specforge`
+- the Rust warning baseline is being cleaned by deleting unused stale helpers rather than adding `#[allow(dead_code)]`
 - README bootstrap currently resolves to `SESSION_BOOTSTRAP.md`, which instructs future agents to read the referenced live docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if necessary, and then continue from the roadmap
 - this bootstrap refresh observed 28 Rust source files and about 53,977 lines under `crates/specforge/src`, with the CLI now including `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, and `nlp-enrich` beside the core staged IR commands
 - `RUST_CODEBASE_ANALYSIS.md` has been refreshed to reflect schema-v2 rescan planning/execution, `CorpusMemory` schema v5, 44 tracked KG fixtures, and the latest full CI baseline of 282 passing Rust tests plus mdBook build
@@ -177,6 +178,8 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
+- removed the remaining dead-code warning sources: an orphaned legacy `.fsm` adapter renderability path, the unused legacy adapter `render_action` helper, and empty semantic register/timing builder stubs that no longer had call sites
+- confirmed both `cargo test --manifest-path Cargo.toml --lib` and `bash scripts/run_ci.sh` pass with 282 tests and no dead-code warning output; full CI also rebuilt the mdBook successfully
 - executed the README -> `SESSION_BOOTSTRAP.md` bootstrap flow for this turn, reviewed the high-signal live docs, compared them against the current Rust CLI/module/test surface, and refreshed the Rust codebase analysis accordingly
 - broadened negative-knowledge prior consumption into `SemanticIR` / `IntentIR` validation: current carried conflicts and residual packet classes can now exact-match prior memory and surface caution findings only
 - added the first bounded negative-knowledge prior consumer: `EvidenceIR` validation can now surface exact-match signal-semantic conflict patterns from prior memory as caution findings only
@@ -238,7 +241,7 @@
 - semantic-role disagreement is now surfaced explicitly across `EvidenceIR`, `SemanticIR`, and `IntentIR`, but richer multimodal role grounding and broader arbitration still need to grow
 - `SourceIR` / ingest are strong enough to remain the foundation, but not strong enough to be assumed universal; future Tier 1 work should stay focused on robustness and honest failure handling
 - adapter expansion and adapter validation are now intentionally horizon work
-- the workspace still emits compile warnings in `ir/adapters.rs` and `ir/semantic.rs`
+- keep the Rust warning baseline clean; do not reintroduce dead helper paths unless they are wired into active behavior or explicitly tested
 
 ## If resuming from an interruption
 1. read `README.md`

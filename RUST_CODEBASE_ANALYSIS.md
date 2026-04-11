@@ -37,7 +37,7 @@
 - GitHub Actions CI is now part of the repo baseline and runs `cargo fmt --all --check` plus `cargo test --manifest-path Cargo.toml` on every `push` and `pull_request`, which keeps the hosted validation path aligned with the local Rust quality gate
 - that CI path now has a single checked-in entrypoint at `scripts/run_ci.sh`, and the GitHub workflow calls that script directly so local and hosted Rust validation do not drift apart
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and adding the planned `R15g` corpus knowledge base beside the already-live typed prior-memory plane; adapter expansion is now horizon work
-- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting/tests and the mdBook docs build; the latest observed full CI path reports 282 passing Rust tests, 0 binary tests, 0 doc tests, and five dead-code warnings
+- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting/tests and the mdBook docs build; after the dead-code cleanup, the latest full local CI path reports 282 passing Rust tests and no dead-code warning output
 
 ## Session update (2026-04-11 bootstrap refresh)
 - executed the README terminal instruction by reading `SESSION_BOOTSTRAP.md`, which expands the task into reading the referenced live docs, analyzing the Rust codebase, updating this analysis if necessary, and continuing from the roadmap
@@ -45,6 +45,12 @@
 - observed the current Rust implementation under `crates/specforge/src`: 28 Rust files and about 53,977 lines across the active single-crate implementation
 - corrected stale analysis claims around the CLI command list, `rescan-plan`, schema-v2 rescan execution, promotion-review boundaries, `CorpusMemory` schema v5 prior families, KG fixture count, and current test count
 - the codebase remains a real end-to-end staged IR pipeline with a growing learning/rescan plane, but it is not yet a universal chip-spec-PDF oracle; the honest next pressure remains graph-first semantics, temporal/clock-reset truthfulness, multimodal arbitration, KG-quality expansion, and corpus-level learning without cross-document fact leakage
+
+## Session update (2026-04-11 dead-code warning cleanup)
+- removed the last five dead-code warning sources instead of suppressing them
+- the deleted adapter helpers were stale legacy paths for `DecisionTreeFragmentRecord` block/action validation and direct `DecisionTreeActionRecord` rendering; the active `.fsm` lowering path now validates and renders `ControlBlockRecord` / `ControlActionRecord` instead
+- the deleted semantic helpers were empty register/timing builder stubs with no call sites; `SemanticIR` already carries register records from `EvidenceIR` and extends timing records with VLM timing extraction directly in `SemanticIr::build()`
+- targeted validation with `cargo test --manifest-path Cargo.toml --lib` now reports 282 passing tests and no dead-code warning output
 
 
 ## Session update (2026-04-04)
@@ -328,7 +334,7 @@
 - only the `.fsm` adapter is implemented today; SystemVerilog, Verilog, and VHDL adapters are still absent
 - validation now backannotates persisted IR artifacts, writes stage-local sidecars, and can project the latest staged snapshot back into tracked docs
 - the actor-signal relation graph now survives into `SemanticIR` / `IntentIR`, but legacy interface records still flatten some downstream consumers onto actor-agnostic `direction_hint` values
-- the workspace still emits five compiler warnings in normal `cargo test` / `cargo run` flows: five dead-code helpers across `ir/adapters.rs` and `ir/semantic.rs`
+- the previous dead-code warning baseline has been cleaned by deleting stale helpers rather than suppressing them
 - the current renderable `.fsm` slices are intentionally narrow: they handle explicit standalone combinational/sequential DT control, canonical symbol-definition sections, structured reset-role blocks, selector/test-node branches, compound-update shorthand, explicit structured FSM-root cases, and explicit top-root composition, while broader unsupported selector/predicate shapes and non-FSM backends stay deferred
 
 ## Architectural recommendation
