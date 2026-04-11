@@ -22,20 +22,21 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `5ed6e32`
-- latest_commit_brief_message: `fix(semantic): merge duplicate vlm states`
-- note: the current session is adding validation findings and KG coverage for VLM state-machine graphs with multiple initial markers
+- latest_commit_hash: `4fad762`
+- latest_commit_brief_message: `feat(validation): flag fsm initial cardinality`
+- note: the current session is adding the missing-initial companion regression and KG fixture for the same FSM initial-cardinality warning surface
 
 ## Recent commit chain (last 5)
+- `4fad762` feat(validation): flag fsm initial cardinality
+- `f39b456` feat(validation): count initial fsm states
 - `5ed6e32` fix(semantic): merge duplicate vlm states
 - `7b1cdf6` fix(semantic): require declared vlm transition states
 - `0a8e383` fix(semantic): reject prose vlm state labels
-- `e1a9ae6` fix(semantic): reject compact vlm motion states
-- `5aa0a6e` fix(semantic): normalize vlm motion states
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- the current validation follow-on emits semantic and intent initial-cardinality findings when a state graph has zero or multiple initial states; the new tracked `vlm_state_machine_multiple_initial_negative` fixture locks the multi-initial VLM case
+- the in-progress KG-quality follow-on adds `vlm_state_machine_missing_initial_negative`, locking the zero-initial VLM state-machine case against the same semantic and intent initial-cardinality warnings
+- the latest committed validation follow-on emits semantic and intent initial-cardinality findings when a state graph has zero or multiple initial states; the tracked `vlm_state_machine_multiple_initial_negative` fixture locks the multi-initial VLM case
 - the latest committed validation follow-on adds `initial_regular_states` metrics to `SemanticIR` and `IntentIR` validation so FSM exactly-one-initial truth can be projected and asserted directly
 - the latest committed KG-quality follow-on merges duplicate VLM state-machine state labels by state name and preserves an initial-state marker when any duplicate carries `is_initial: true`; `kg-bench` can now assert initial-state names directly
 - the latest committed KG-quality follow-on requires VLM state-machine transition endpoints to reference accepted state labels from the same VLM observation, so identifier-shaped but undeclared endpoints such as `DONE` and `RESET` cannot become canonical FSM transition graph facts
@@ -61,13 +62,14 @@
 - the Rust warning baseline is clean and now enforced in the shared local/hosted CI path rather than suppressed with `#[allow(dead_code)]`
 - README bootstrap currently resolves to `SESSION_BOOTSTRAP.md`, which instructs future agents to read the referenced live docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if necessary, and then continue from the roadmap
 - this bootstrap refresh observed 28 Rust source files and about 53,858 lines under `crates/specforge/src`, with the CLI now including `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, and `nlp-enrich` beside the core staged IR commands
-- `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the initial FSM state cardinality warning slice; the tracked KG fixture count is now `54`, and the full local CI gate reports `304` passing Rust tests for this slice
+- `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the missing-initial FSM state cardinality warning slice; the tracked KG fixture count is now `55`, and the full local CI gate reports `305` passing Rust tests for this slice
 - the latest README bootstrap hygiene pass found no new Rust architecture drift; the concrete fix was to refresh the committed baseline in this memory file and remove stray example bullets from `USER_GUIDE.md`'s root-document list
 - the earlier VLM timing KG benchmark slice `vlm_timing_waveform_motion_negative` proves a VLM timing diagram can preserve the real `HIGH` sample while rejecting waveform motion descriptors and transition spellings such as `rising`, `stable`, `falling`, `UNCHANGED`, `RISING_EDGE`, `LOW_TO_HIGH`, `HIGH_TO_LOW`, `POS_EDGE`, `NEG_EDGE`, `risingedge`, `LOW2HIGH`, and `HIGH2LOW` as concrete signal values
 - the previous VLM state-machine KG benchmark slice `vlm_state_machine_label_noise_negative` proves VLM state-machine observations preserve clean identifier labels like `IDLE` / `BUSY` and the `IDLE->BUSY` transition while filtering prose labels like `IDLE state` / `ACCESS phase`
 - the previous active KG benchmark slice is `vlm_state_machine_undeclared_transition_negative`, which proves undeclared but identifier-shaped VLM transition endpoints like `DONE` and `RESET` are filtered while the declared `IDLE->BUSY` transition survives
 - the previous active KG benchmark slice is `vlm_state_machine_duplicate_initial_gold`, which proves duplicate VLM `IDLE` state labels collapse into one canonical state, preserve a later `is_initial: true` marker, and validate exactly one canonical initial state via `initial_regular_states`
-- the current active KG benchmark slice is `vlm_state_machine_multiple_initial_negative`, which proves VLM state-machine extractions with `IDLE` and `BUSY` both marked initial keep their graph visible but emit semantic and intent initial-cardinality validation warnings
+- the previous active KG benchmark slice is `vlm_state_machine_multiple_initial_negative`, which proves VLM state-machine extractions with `IDLE` and `BUSY` both marked initial keep their graph visible but emit semantic and intent initial-cardinality validation warnings
+- the current active KG benchmark slice is `vlm_state_machine_missing_initial_negative`, which proves VLM state-machine extractions with no initial marker keep their graph visible but emit the same semantic and intent initial-cardinality validation warnings
 - the canonical user-facing documentation surface is now the mdBook under `docs/book/`
 - that mdBook should now be treated as a live book that evolves alongside user-facing project changes, not as a static scaffold
 - the split is now explicit too:
@@ -206,6 +208,7 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
+- added the missing-initial companion for FSM initial-cardinality validation: a direct explicit-state validation regression plus the tracked `vlm_state_machine_missing_initial_negative` fixture
 - added semantic and intent state-machine initial-cardinality validation findings for canonical FSM graphs with zero or multiple initial states; added a direct validation regression and the tracked `vlm_state_machine_multiple_initial_negative` fixture
 - added `initial_regular_states` validation metrics for `SemanticIR` and `IntentIR`, and tightened `vlm_state_machine_duplicate_initial_gold` so validation asserts exactly one canonical initial state after duplicate VLM state-label merge
 - merged duplicate VLM state-machine state labels by state name so a later duplicate initial marker is not lost; added a semantic regression, direct `kg-bench` initial-state expectations, and the tracked `vlm_state_machine_duplicate_initial_gold` fixture

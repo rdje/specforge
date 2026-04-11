@@ -127,7 +127,7 @@
 - KG benchmark harness now locks spurious VLM timing-annotation and waveform-motion state rejection: Done
 - KG benchmark harness now locks active-low VLM timing polarity equivalence: Done
 - KG benchmark harness now locks active-low VLM reset-release polarity equivalence: Done
-- KG benchmark harness now locks VLM state-machine initial-cardinality warnings: Done
+- KG benchmark harness now locks VLM state-machine multiple-initial and missing-initial cardinality warnings: Done
 - KG benchmark harness now locks collective non-reset control polarity recovery: Done
 - KG benchmark harness now locks mixed clause-local non-reset control polarity recovery: Done
 - KG benchmark harness now locks detached mixed-polarity rejection: Done

@@ -3848,6 +3848,38 @@ mod tests {
         StructuredTableRecord, TableKind, VisualAsset, VisualAssetKind,
     };
 
+    fn build_semantic_and_intent_from_markdown(
+        source_file_name: &str,
+        markdown: &str,
+    ) -> Result<(SemanticIr, IntentIr)> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join(source_file_name);
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(&source, markdown)?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        Ok((semantic_ir, intent_ir))
+    }
+
     fn make_table_cell(text: &str, is_header: bool) -> StructuredTableCellRecord {
         StructuredTableCellRecord {
             text: text.to_string(),
@@ -7129,37 +7161,14 @@ mod tests {
 
     #[test]
     fn validate_semantic_and_intent_ir_flag_multiple_initial_states() -> Result<()> {
-        let tempdir = tempdir()?;
-        let source = tempdir.path().join("multiple_initial_states.md");
-        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
-        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
-        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
-        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
-        fs::write(
-            &source,
+        let (semantic_ir, intent_ir) = build_semantic_and_intent_from_markdown(
+            "multiple_initial_states.md",
             concat!(
                 "# State Machine\n",
                 "State idle is initial.\n\n",
                 "State busy is initial.\n\n",
                 "Transition idle -> busy when GO.\n",
             ),
-        )?;
-
-        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
-        let evidence_ir = EvidenceIr::build(
-            &source_ir.artifact_layout.source_ir_path,
-            &evidence_artifact_base,
-        )?;
-        evidence_ir.write_to_disk()?;
-        let semantic_ir = SemanticIr::build(
-            &evidence_ir.artifact_layout.evidence_ir_path,
-            &semantic_artifact_base,
-        )?;
-        semantic_ir.write_to_disk()?;
-        let intent_ir = IntentIr::build(
-            &semantic_ir.artifact_layout.semantic_ir_path,
-            &intent_artifact_base,
         )?;
 
         let semantic_report =
@@ -7177,6 +7186,42 @@ mod tests {
         assert_eq!(
             metric_value(&intent_report, "initial_regular_states"),
             Some("2")
+        );
+        assert!(has_finding(
+            &intent_report,
+            "intent_state_machine_initial_cardinality"
+        ));
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_semantic_and_intent_ir_flag_missing_initial_state() -> Result<()> {
+        let (semantic_ir, intent_ir) = build_semantic_and_intent_from_markdown(
+            "missing_initial_state.md",
+            concat!(
+                "# State Machine\n",
+                "State idle.\n\n",
+                "State busy.\n\n",
+                "Transition idle -> busy when GO.\n",
+            ),
+        )?;
+
+        let semantic_report =
+            validate_semantic_ir(&semantic_ir, "missing_initial_semantic".to_string());
+        assert_eq!(
+            metric_value(&semantic_report, "initial_regular_states"),
+            Some("0")
+        );
+        assert!(has_finding(
+            &semantic_report,
+            "semantic_state_machine_initial_cardinality"
+        ));
+
+        let intent_report = validate_intent_ir(&intent_ir, "missing_initial_intent".to_string());
+        assert_eq!(
+            metric_value(&intent_report, "initial_regular_states"),
+            Some("0")
         );
         assert!(has_finding(
             &intent_report,

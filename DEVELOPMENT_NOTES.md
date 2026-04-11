@@ -46,6 +46,7 @@
 - Duplicate VLM state labels now merge by state name like explicit state declarations do. If any duplicate carries `is_initial: true`, the canonical state preserves that initial marker. `vlm_state_machine_duplicate_initial_gold` locks the case where `IDLE` appears first as non-initial and later as initial, while `kg-bench` now exposes direct initial-state expectations.
 - `specforge validate` now also reports `initial_regular_states` for `SemanticIR` and `IntentIR`, so exactly-one-initial FSM truth is visible in validation reports and can be locked by KG fixtures instead of only inferred from state names.
 - `specforge validate` now also emits semantic and intent state-machine initial-cardinality warnings when a state graph has zero or multiple initial states. `vlm_state_machine_multiple_initial_negative` locks the multi-initial VLM case while preserving the graph for review instead of hiding it.
+- `vlm_state_machine_missing_initial_negative` locks the missing-initial companion case: VLM-authored states and transitions still remain visible, but both semantic and intent validation emit the same initial-cardinality warning when no state is marked initial.
 
 ## 2026-04-11 VLM timing waveform motion filtering
 - VLM timing `signals[].values[].state` strings are not all equally authoritative signal values.

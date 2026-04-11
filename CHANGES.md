@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-04-12 (Validation flags missing FSM initial states)
+
+### Changed: missing initial states are covered like multiple initial states
+- Added `vlm_state_machine_missing_initial_negative`, proving a VLM state-machine extraction with `IDLE` and `BUSY` but no initial marker keeps the state graph visible while validation flags the unsafe cardinality at both `SemanticIR` and `IntentIR`.
+- Added a direct validation regression for explicit state declarations with zero initial states, sharing the same staged IR build helper as the multiple-initial regression.
+- The tracked KG-quality fixture count is now `55`.
+
+### Validation
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml --lib validate_semantic_and_intent_ir_flag_missing_initial_state -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality vlm_state_machine_missing_initial_negative` -> passed
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, `305` Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build
+
 ## 2026-04-12 (Validation flags bad FSM initial cardinality)
 
 ### Changed: state machines with zero or multiple initial states are validation-visible
