@@ -3654,12 +3654,20 @@ fn detect_signal_polarity(text_lower: &str) -> Option<SignalPolarity> {
         || text_lower.contains("active-low")
         || text_lower.contains("asserted low")
         || text_lower.contains("low asserted")
+        || text_lower.contains("asserted when low")
+        || text_lower.contains("low when asserted")
+        || text_lower.contains("asserted by driving low")
+        || text_lower.contains("driven low to assert")
     {
         Some(SignalPolarity::ActiveLow)
     } else if text_lower.contains("active high")
         || text_lower.contains("active-high")
         || text_lower.contains("asserted high")
         || text_lower.contains("high asserted")
+        || text_lower.contains("asserted when high")
+        || text_lower.contains("high when asserted")
+        || text_lower.contains("asserted by driving high")
+        || text_lower.contains("driven high to assert")
     {
         Some(SignalPolarity::ActiveHigh)
     } else {
@@ -8523,6 +8531,72 @@ mod tests {
             }),
             "expected active-low prose to refine asserted constraint into MustBeLow"
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn signal_polarity_detector_accepts_asserted_when_level_phrases() {
+        assert_eq!(
+            super::detect_signal_polarity("cs_n is asserted when low"),
+            Some(super::SignalPolarity::ActiveLow)
+        );
+        assert_eq!(
+            super::detect_signal_polarity("enable is high when asserted"),
+            Some(super::SignalPolarity::ActiveHigh)
+        );
+    }
+
+    #[test]
+    fn prose_asserted_when_low_recovers_non_reset_control_polarity() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("chip_select_polarity.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Control\n",
+                "Signal CS_N is input width 1.\n",
+                "\n",
+                "CS_N is asserted when LOW.\n",
+                "\n",
+                "CS_N must be asserted.\n",
+                "\n",
+                "CS_N must be deasserted.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        let polarity = evidence_ir
+            .signal_polarities
+            .iter()
+            .find(|record| record.signal_name == "CS_N")
+            .expect("expected explicit asserted-when-LOW prose to recover CS_N polarity");
+        assert_eq!(polarity.polarity, super::SignalPolarity::ActiveLow);
+        assert!(evidence_ir.signal_constraints.iter().any(|constraint| {
+            constraint.subject_signal == "CS_N"
+                && constraint.source_text == "CS_N must be asserted."
+                && matches!(
+                    constraint.constraint_kind,
+                    crate::ir::source::SignalConstraintKind::MustBeLow
+                )
+        }));
+        assert!(evidence_ir.signal_constraints.iter().any(|constraint| {
+            constraint.subject_signal == "CS_N"
+                && constraint.source_text == "CS_N must be deasserted."
+                && matches!(
+                    constraint.constraint_kind,
+                    crate::ir::source::SignalConstraintKind::MustBeHigh
+                )
+        }));
 
         Ok(())
     }

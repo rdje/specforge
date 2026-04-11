@@ -43,7 +43,7 @@ It is supposed to be disciplined in the sense of preserving recoverable evidence
 - prose-grounded actor relations
 - visual-caption semantic hints
 - VLM timing-note observations
-- polarity extraction
+- polarity extraction, including explicit asserted-when-level prose such as `CS_N is asserted when LOW`
 - negative-knowledge caution surfacing during validation
 
 These wins are valuable because they give later stages something much stronger than free-form text:

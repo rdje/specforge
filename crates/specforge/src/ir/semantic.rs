@@ -1841,6 +1841,14 @@ fn build_interfaces(
             filtered_interface_candidate_signals(statement.signals.as_slice()).as_slice(),
             &authoritative_signal_names,
         );
+        // Single-signal control prose should enrich an explicit declaration, not mint a duplicate
+        // low-confidence interface for the same canonical signal.
+        if heuristic_interface_candidate_is_redundant_with_authoritative_surface(
+            candidate_signals.as_slice(),
+            &authoritative_signal_names,
+        ) {
+            continue;
+        }
         if !should_emit_interface_candidate(candidate_signals.as_slice()) {
             continue;
         }
@@ -4458,6 +4466,17 @@ fn retain_authoritative_interface_candidate_signals(
         .filter(|signal| authoritative_signal_names.contains(*signal))
         .cloned()
         .collect()
+}
+
+fn heuristic_interface_candidate_is_redundant_with_authoritative_surface(
+    signals: &[String],
+    authoritative_signal_names: &BTreeSet<String>,
+) -> bool {
+    if authoritative_signal_names.is_empty() || signals.len() != 1 {
+        return false;
+    }
+
+    authoritative_signal_names.contains(&signals[0])
 }
 
 fn parse_explicit_system_clock(text: &str) -> Option<String> {
@@ -11446,6 +11465,60 @@ mod tests {
     }
 
     #[test]
+    fn explicit_asserted_when_level_polarity_does_not_duplicate_interface_records() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("semantic_control_polarity.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Control\n",
+                "Signal CS_N is input width 1.\n",
+                "\n",
+                "CS_N is asserted when LOW.\n",
+                "\n",
+                "CS_N must be asserted.\n",
+                "\n",
+                "CS_N must be deasserted.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let cs_n_records: Vec<_> = semantic_ir
+            .interfaces
+            .iter()
+            .flat_map(|interface| interface.signal_records.iter())
+            .filter(|signal| signal.signal_name == "CS_N")
+            .collect();
+        assert_eq!(
+            cs_n_records.len(),
+            1,
+            "explicit single-signal polarity prose should enrich CS_N, not mint a duplicate heuristic interface record"
+        );
+        assert_eq!(
+            cs_n_records[0].resolved_polarity,
+            Some(crate::ir::evidence::SignalPolarity::ActiveLow)
+        );
+
+        Ok(())
+    }
+
+    #[test]
     fn carries_semantic_observations_into_interface_records() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("semantic_role_observations.md");
@@ -13488,6 +13561,24 @@ mod tests {
         );
 
         assert_eq!(filtered, vec!["PADDR".to_string(), "PREADY".to_string()]);
+    }
+
+    #[test]
+    fn redundant_single_authoritative_signal_candidate_is_not_a_heuristic_interface() {
+        let authoritative = std::collections::BTreeSet::from(["CS_N".to_string()]);
+
+        assert!(
+            super::heuristic_interface_candidate_is_redundant_with_authoritative_surface(
+                &["CS_N".to_string()],
+                &authoritative,
+            )
+        );
+        assert!(
+            !super::heuristic_interface_candidate_is_redundant_with_authoritative_surface(
+                &["CS_N".to_string(), "PREADY".to_string()],
+                &authoritative,
+            )
+        );
     }
 
     #[test]

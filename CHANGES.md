@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-11 (EvidenceIR recovers asserted-when-level control polarity)
+
+### Changed: explicit polarity prose covers more control-signal wording
+- Broadened `EvidenceIR` signal-polarity detection to treat local phrases like `asserted when LOW`, `LOW when asserted`, `asserted by driving LOW`, and `driven LOW to assert` as active-low evidence.
+- Added the symmetric active-high phrase forms for `HIGH`.
+- This remains evidence-grounded polarity recovery: it does not infer polarity from a `_N` suffix alone and it applies only when the current document explicitly says how assertion maps to a logic level.
+- Tightened `SemanticIR` interface construction so a one-signal local polarity/control sentence enriches an already declared signal instead of minting a duplicate low-confidence heuristic interface record.
+
+### Tests
+- Added a detector regression for asserted-when-level wording.
+- Added a non-reset `CS_N` control-signal regression proving explicit `CS_N is asserted when LOW` recovers active-low polarity and refines `CS_N must be asserted` / `CS_N must be deasserted` into LOW / HIGH constraints.
+- Added a `kg-bench` fixture locking the non-reset control polarity path with no polarity or temporal conflicts.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml polarity -- --nocapture` -> passed with 21 focused polarity tests
+- `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` -> passed with 46 tracked KG fixtures
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, 292 Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and mdBook build
+
 ## 2026-04-11 (KG bench can assert graph-backed direction coverage)
 
 ### Added: graph-native direction expectation surface

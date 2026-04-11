@@ -25,7 +25,7 @@
 - the staged pipeline is operational through `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 - a whole-pipeline fixed-point entrypoint now exists via `specforge converge`, which reuses persisted artifacts, defaults to Ollama VLM + NLP Level 3, and stops when the cross-stage knowledge snapshot is stable
 - `SourceIR` now captures structured Docling output, typed content elements, structured tables, visual assets, and document-profile metadata
-- `EvidenceIR` now synthesizes typed declarations and records from tables, preserves typed NLP outputs, persists alias-learning state, extracts actor-signal relation triples from prose and signal-description tables, runs a monotone convergence loop so discovered enum facts and prose polarity can unlock additional signal constraints without hardcoded protocol-specific value lists, and now keeps polarity disagreement explicit through typed conflict records instead of only via a neutralized fallback
+- `EvidenceIR` now synthesizes typed declarations and records from tables, preserves typed NLP outputs, persists alias-learning state, extracts actor-signal relation triples from prose and signal-description tables, runs a monotone convergence loop so discovered enum facts and explicit active-level polarity prose can unlock additional signal constraints without hardcoded protocol-specific value lists, and now keeps polarity disagreement explicit through typed conflict records instead of only via a neutralized fallback
 - `SemanticIR` now lifts that evidence into interfaces, explicit interface-signal conflict records for conflicting direction/width evidence, actor-relative port/connectivity records, explicit signal-connectivity conflict records for unresolved multi-producer ambiguity, system/reset/init records, control/state records, timing/register records, and filtered NLP constraints, with VLM observations merged into the semantic surface
 - `IntentIR` now carries forward the canonical signal/control/system/state/register/timing surface plus the actor-relative KG needed for honest downstream lowering
 - the current `.fsm` adapter slice is real and intentionally narrow: it can emit honest `?dt:name`, `?fsm:name`, and `?top:name` outputs when the canonical facts are explicit enough
@@ -37,7 +37,14 @@
 - GitHub Actions CI is now part of the repo baseline and runs `cargo fmt --all --check`, warning-deny Clippy, warning-deny Rust tests, warning-deny rustdoc, and the mdBook build on every `push` and `pull_request`, which keeps the hosted validation path aligned with the local Rust/docs quality gate
 - that CI path now has a single checked-in entrypoint at `scripts/run_ci.sh`, and the GitHub workflow calls that script directly so local and hosted Rust validation do not drift apart
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and adding the planned `R15g` corpus knowledge base beside the already-live typed prior-memory plane; adapter expansion is now horizon work
-- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the KG-bench graph-direction expectation slice, the latest full local CI path reports clean Clippy, 288 passing Rust tests, clean Rust API docs, and a successful mdBook build
+- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the asserted-when-level control polarity slice, the latest full local CI path reports clean Clippy, 292 passing Rust tests, clean Rust API docs, and a successful mdBook build
+
+## Session update (2026-04-11 asserted-when-level control polarity)
+- `EvidenceIR` polarity detection now recognizes explicit local phrases such as `asserted when LOW`, `LOW when asserted`, `asserted by driving LOW`, and their active-high mirrors
+- the new path is intentionally evidence-grounded: it does not infer active-low from `_N` suffixes alone
+- focused regressions prove the detector accepts asserted-when-level wording and that a non-reset control signal `CS_N` refines asserted/deasserted constraints to LOW/HIGH only after local prose says it is asserted when LOW
+- `SemanticIR` now suppresses redundant one-signal heuristic interface candidates when that signal is already explicitly declared, preventing local polarity prose from double-counting the same canonical signal
+- focused `cargo test --manifest-path Cargo.toml polarity -- --nocapture` passed with 21 polarity tests, `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` passed with all 46 KG fixtures, and `bash scripts/run_ci.sh` passed with 292 Rust tests plus docs
 
 ## Session update (2026-04-11 KG-bench graph direction expectations)
 - `specforge kg-bench` canonical stage expectations now include `graph_direction_signal_names_include` and `graph_direction_signal_names_exclude`
@@ -516,7 +523,7 @@
   - markdown-backed `EvidenceIR` construction
   - table-synthesized signal, enum, register, and timing evidence
   - anchored encoding-table rescans and dynamic value-constraint extraction
-  - polarity refinement from active-low / active-high prose
+  - polarity refinement from active-low / active-high prose, including explicit asserted-when-level control wording
   - caption and figure-reference grounding into visual evidence
   - VLM observation injection (TimingDiagramExtraction, StateMachineExtraction from VisualAsset.note)
   - handshake-driven `SemanticIR` actor/interface/invariant extraction

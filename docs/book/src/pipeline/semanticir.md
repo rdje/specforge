@@ -52,6 +52,11 @@ The dedicated [Handshake And Semantic Roles](../domain/handshake-semantics.md) c
 Competing semantic candidates should stay visible.
 Unsafe forced winners are worse than honest contestation.
 
+### Declared records stay canonical
+
+When a signal is already explicitly declared, a single-signal prose sentence should enrich that declared record rather than minting a second heuristic interface record.
+For example, `CS_N is asserted when LOW` can attach active-low polarity to the declared `CS_N` surface, but it should not create a duplicate low-confidence `CS_N` interface just because the same signal was mentioned again.
+
 ### Negative-knowledge cautions
 
 If a carried conflict or residual packet shape matches learned negative knowledge, `SemanticIR` validation may report `negative_knowledge_prior_matches`.

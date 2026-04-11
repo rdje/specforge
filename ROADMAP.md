@@ -234,6 +234,7 @@
   - `EvidenceIr::build()` now uses a monotone convergence loop so newly synthesized enum facts can unlock later value-constraint extraction in the same build
   - weakly labeled encoding tables can now be recovered via signal anchors instead of requiring a hardcoded per-protocol value list
   - prose polarity extraction now refines asserted/deasserted constraints into polarity-aware low/high constraints when the spec says active-low or active-high
+  - prose polarity extraction now also recognizes explicit asserted-when-level wording such as `asserted when LOW` / `LOW when asserted` for non-reset control signals without inferring polarity from names alone
   - regression tests cover anchored encoding scanning and polarity refinement
 
 ### R10 EvidenceIR visual content (Tier 3 of EXTRACTION_ARCHITECTURE.md)
@@ -436,6 +437,7 @@
   - `EvidenceIR` now persists `signal_polarity_conflicts: Vec<SignalPolarityConflictRecord>` when prose and signal-description tables disagree on active-high/active-low semantics
   - `specforge validate` now reports and flags those polarity conflicts explicitly, so contradictory polarity stays inspectable instead of only affecting the derived constraint kind
   - `SemanticIR` / `IntentIR` now carry those `signal_polarity_conflicts` forward too, and `specforge validate` now reports them at both canonical stages so contradictory active-level evidence no longer disappears after `EvidenceIR`
+  - local asserted-when-level polarity phrases now apply beyond reset, so a non-reset control signal explicitly described as `asserted when LOW` can refine asserted/deasserted constraints without guessing from a suffix alone
   - `EvidenceIR` now persists `signal_semantic_conflicts: Vec<SignalSemanticConflictRecord>` when meaning-based role evidence assigns incompatible roles to the same signal
   - `specforge validate` now reports and flags those semantic-role conflicts explicitly instead of leaving incompatible role evidence hidden inside a dual-tag ambiguity
   - `SemanticIR` / `IntentIR` now carry `signal_semantic_conflicts` forward, so unresolved role disagreement remains visible in the canonical layers instead of disappearing after `EvidenceIR`

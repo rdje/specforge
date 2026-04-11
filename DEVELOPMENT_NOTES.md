@@ -1423,6 +1423,27 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 - `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` passed with all 45 tracked KG fixtures.
 - `bash scripts/run_ci.sh` passed with Clippy `-D warnings`, 288 Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and mdBook build.
 
+## Asserted-when-level control polarity recovery (2026-04-11)
+
+### Why this slice landed now
+- The canonical polarity surface already carries active-high / active-low facts and uses them to keep `ASSERTED` / `DEASSERTED` polarity-relative.
+- Reset polarity was well covered, but the user reminded us that every single-bit control signal has a polarity, not only resets.
+- A safe next step was to widen explicit local phrase coverage for non-reset controls without inferring polarity from suffixes alone.
+
+### Implementation shape
+- `EvidenceIR` polarity detection now recognizes explicit forms such as `asserted when LOW`, `LOW when asserted`, `asserted by driving LOW`, and `driven LOW to assert` as active-low evidence.
+- The same asserted-when-level forms are supported for active-high evidence.
+- This is still local-evidence recovery: `CS_N` can be active-low when the current document says it is asserted when low, but `_N` alone is not treated as sufficient.
+- `SemanticIR` now suppresses redundant one-signal heuristic interface candidates when that signal is already explicitly declared, so local polarity/control prose enriches the canonical declared signal instead of creating a duplicate low-confidence interface record.
+
+### Validation
+- Added a detector-level regression for asserted-when-level phrase forms.
+- Added a non-reset `CS_N` control-signal regression proving `CS_N is asserted when LOW` recovers active-low polarity and refines `CS_N must be asserted` / `CS_N must be deasserted` into LOW / HIGH constraints.
+- Added a KG-quality fixture for non-reset control polarity recovery with no polarity or temporal conflicts.
+- `cargo test --manifest-path Cargo.toml polarity -- --nocapture` passed with 21 focused polarity tests.
+- `cargo test --manifest-path Cargo.toml kg_bench -- --nocapture` passed with all 46 tracked KG fixtures.
+- `bash scripts/run_ci.sh` passed with Clippy `-D warnings`, 292 Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and mdBook build.
+
 ## Initial typed temporal-rule surface in SemanticIR / IntentIR (2026-04-04)
 
 ### Why this slice landed now

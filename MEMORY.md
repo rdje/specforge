@@ -22,23 +22,24 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `6307c85`
-- latest_commit_brief_message: `feat(adapter): recover top directions from links`
-- note: the current session is moving the next `R15` / `R15e` benchmark surface from flat `direction_hint` dependence toward explicit graph-backed direction coverage assertions in `kg-bench`
+- latest_commit_hash: `aa4d776`
+- latest_commit_brief_message: `test(kg): assert graph direction coverage`
+- note: the current session is moving the next polarity slice from reset-heavy coverage toward explicit non-reset asserted-when-level control polarity recovery
 
 ## Recent commit chain (last 5)
+- `aa4d776` test(kg): assert graph direction coverage
 - `6307c85` feat(adapter): recover top directions from links
 - `e910a28` feat(adapter): recover direct directions from graph
 - `a77fec8` feat(adapter): recover module directions from graph
 - `7d298a9` docs(bootstrap): clean handoff hygiene
-- `35a8372` test(kg): lock active-low vlm reset release
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - the current `R15` graph-first adapter slice teaches explicit-module `.fsm` top-composition lowering to overlay matching `IntentIR.actor_ports` before renderability analysis, so child-module input/output directions can be recovered from actor-relative graph evidence when flat module-local `direction_hint` values lag
 - the latest committed direct-root follow-on teaches standalone `.fsm` lowering to overlay `IntentIR.actor_ports` only when the direct actor context is unambiguous, leaving mixed producer/consumer graph contexts blocked instead of guessing a target-actor perspective
 - the latest committed top-boundary follow-on preserves width-only explicit top ports and recovers missing top input/output direction from explicit top-link topology only
-- the in-progress KG-bench follow-on adds explicit graph direction coverage expectations so fixtures can test canonical `actor_ports` coverage without overloading flat compatibility `direction_hint`; targeted `kg_bench` and full `scripts/run_ci.sh` validation have passed for the slice
+- the latest committed KG-bench follow-on adds explicit graph direction coverage expectations so fixtures can test canonical `actor_ports` coverage without overloading flat compatibility `direction_hint`; targeted `kg_bench` and full `scripts/run_ci.sh` validation passed for that slice
+- the in-progress polarity follow-on teaches `EvidenceIR` to recover non-reset control polarity from explicit asserted-when-level prose like `CS_N is asserted when LOW` without inferring polarity from the `_N` suffix alone, and tightens `SemanticIR` so that local single-signal control prose enriches the declared signal instead of minting a duplicate heuristic interface record
 - the latest committed KG-quality slice added `vlm_timing_active_low_deassertion_equivalence_gold`, complementing the existing active-low assertion fixture by proving `DEASSERTED` and `HIGH` are equivalent for active-low reset release timing evidence
 - the previous quality slice added rustdoc warning denial to the shared CI path and fixed the only discovered rustdoc broken-link interpretation in `ActorSignalRelation` docs
 - `scripts/run_ci.sh` now runs Clippy with `-D warnings` before the Rust test suite, and GitHub Actions installs the `clippy` component so the hosted gate matches the local gate
@@ -188,6 +189,7 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
+- broadened explicit polarity phrase recovery so non-reset control prose such as `CS_N is asserted when LOW` creates active-low evidence and refines asserted/deasserted constraints without suffix-only guessing; added a clean KG fixture and a semantic duplicate-record guard; focused polarity tests, KG-bench, and full local CI passed
 - added explicit `kg-bench` graph direction coverage expectations (`graph_direction_signal_names_include` / `graph_direction_signal_names_exclude`) so fixtures can assert canonical `actor_ports` direction coverage separately from flat compatibility `signal_directions_include`
 - preserved width-only explicit top boundary ports and added bounded `.fsm` top-link topology recovery so a top endpoint used as a link source becomes a top input, a top endpoint used as a link target becomes a top output, and unresolved or conflicting top boundary directions still block
 - extended graph-backed `.fsm` adapter direction recovery into standalone direct roots under a stricter direct-inventory unambiguous-actor gate, with regressions proving single-actor recovery, unrelated graph-only port ignoring, mixed-actor blocking, and duplicate-provenance conflict handling
@@ -252,7 +254,7 @@
 - richer explicit clock-tick temporal semantics (`R15b`)
 - KG-guided multimodal rescans (`R15c`)
 - broader evidence arbitration / conflict handling beyond polarity, interface-shape, multi-producer ambiguity, modality-aware semantic-role grounding, consensus summaries, semantic candidates, and semantic arbitration summaries (`R15d`)
-- broader KG-quality evaluation and benchmark hardening beyond the new seed fixture pack (`R15e`); the latest slice adds `vlm_timing_active_low_deassertion_equivalence_gold`, proving a VLM timing diagram that reports an active-low reset as both `deasserted` and `HIGH` creates typed temporal evidence without a false temporal conflict
+- broader KG-quality evaluation and benchmark hardening beyond the new seed fixture pack (`R15e`); recent slices added active-low reset-release VLM coverage, graph direction coverage expectations, and explicit asserted-when-level non-reset control polarity recovery
 - cross-document extractor learning is now started, and the first seven bounded prior-consumer paths are now live; visual-motif priors now have explicit local enrichment rescan hints, negative-knowledge priors now have validation-only caution coverage, machine-readable rescan/corroboration guidance, a `project-validation` consumer that writes a schema-v2 replay-oriented rescan/extractor-selection target list, a first explicit `rescan-plan` consumer, an opt-in `converge --rescan-plan <plan>` hook, persisted execution summaries for changed-outcome review, explicit not-promoted gates plus structured promotion-review requirements on those summaries, and review-facing projection of those summaries into validation docs; an approval artifact should remain local/generated unless future work deliberately introduces canonical artifact mutation plus a tracked approval-evidence schema
 - Tier 3 relation extraction after the graph/temporal/eval surfaces are ready (`R14`)
 - some downstream compatibility and consumer paths still rely on flat `direction_hint` instead of the graph-native surface; explicit-module `.fsm` top composition, unambiguous standalone direct roots, and explicit top-link boundary recovery now have bounded adapter-side recovery paths, but the broader direct-consumer cleanup remains open

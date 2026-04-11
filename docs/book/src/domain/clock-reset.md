@@ -101,6 +101,10 @@ For resets:
 - `active low` means asserted at logical low
 - names like `rst_n` and `ARESETN` are useful cues, but explicit document evidence is stronger
 
+The same polarity rule applies to other single-bit control signals.
+If the current document says `CS_N is asserted when LOW`, the assertion level is locally grounded and `ASSERTED` can refine to `LOW`.
+That is different from guessing from the `_N` suffix alone.
+
 This matters for temporal rules and conflict detection.
 
 For example:

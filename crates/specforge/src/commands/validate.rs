@@ -4500,7 +4500,7 @@ mod tests {
         )?;
 
         let report = validate_semantic_ir(&semantic_ir, "resolved_signal_polarity".to_string());
-        assert_eq!(metric_value(&report, "with_resolved_polarity"), Some("2"));
+        assert_eq!(metric_value(&report, "with_resolved_polarity"), Some("1"));
 
         Ok(())
     }
@@ -6977,7 +6977,7 @@ mod tests {
         )?;
 
         let report = validate_intent_ir(&intent_ir, "resolved_signal_polarity".to_string());
-        assert_eq!(metric_value(&report, "with_resolved_polarity"), Some("2"));
+        assert_eq!(metric_value(&report, "with_resolved_polarity"), Some("1"));
 
         Ok(())
     }

@@ -137,7 +137,8 @@ For example:
 - if a signal is active-low, `ASSERTED` can compare as `LOW`
 - if a signal is active-low, `DEASSERTED` can compare as `HIGH`
 
-This is especially important for resets such as `ARESETN` or `rst_n`.
+This is especially important for resets such as `ARESETN` or `rst_n`, and for non-reset control signals when the current document explicitly grounds the assertion level.
+For example, `CS_N is asserted when LOW` is enough local evidence to treat `ASSERTED` as `LOW` for `CS_N`; the `_N` suffix alone is not.
 
 ## Prior-guided timing
 
