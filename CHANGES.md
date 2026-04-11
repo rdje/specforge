@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-04-11 (VLM timing normalizes motion spellings)
+
+### Fixed: separator variants of waveform transitions stay non-factual
+- `SemanticIR` now normalizes VLM timing motion-state spellings across spaces, underscores, and hyphens before filtering them, so values like `RISING_EDGE`, `LOW_TO_HIGH`, and `HIGH_TO_LOW` cannot slip through as symbolic `MustBeValue` facts.
+- Strengthened the existing semantic regression and `vlm_timing_waveform_motion_negative` fixture so they cover both plain motion labels and identifier-shaped transition labels while still preserving the concrete `HIGH` sample.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml --lib vlm_timing_diagram_observation_rejects_waveform_motion_states -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality vlm_timing_waveform_motion_negative` -> passed
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, 300 Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and mdBook build
+
 ## 2026-04-11 (VLM timing rejects waveform motion as values)
 
 ### Fixed: waveform motion labels no longer become fake signal values

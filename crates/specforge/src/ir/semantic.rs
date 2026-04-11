@@ -9013,12 +9013,17 @@ fn signal_constraint_kind_from_vlm_state(
 }
 
 fn is_vlm_waveform_motion_state(state: &str) -> bool {
+    let normalized = normalize_vlm_waveform_motion_state(state);
     matches!(
-        state.trim().to_ascii_lowercase().as_str(),
+        normalized.as_str(),
         "rise"
             | "rising"
             | "fall"
             | "falling"
+            | "rising edge"
+            | "falling edge"
+            | "positive edge"
+            | "negative edge"
             | "posedge"
             | "negedge"
             | "edge"
@@ -9031,7 +9036,25 @@ fn is_vlm_waveform_motion_state(state: &str) -> bool {
             | "unchanged"
             | "held"
             | "hold"
+            | "low to high"
+            | "high to low"
+            | "0 to 1"
+            | "1 to 0"
+            | "zero to one"
+            | "one to zero"
     )
+}
+
+fn normalize_vlm_waveform_motion_state(state: &str) -> String {
+    state
+        .trim()
+        .to_ascii_lowercase()
+        .split(|character: char| {
+            character == '_' || character == '-' || character.is_ascii_whitespace()
+        })
+        .filter(|token| !token.is_empty())
+        .collect::<Vec<_>>()
+        .join(" ")
 }
 
 fn is_spurious_timing_annotation_label(text: &str) -> bool {
@@ -10778,7 +10801,7 @@ mod tests {
             source_ref: None,
             placeholder_text: None,
             note: Some(
-                "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"T0\",\"state\":\"rising\"},{\"cycle\":\"T1\",\"state\":\"HIGH\"},{\"cycle\":\"T2\",\"state\":\"stable\"},{\"cycle\":\"T3\",\"state\":\"falling\"},{\"cycle\":\"T4\",\"state\":\"UNCHANGED\"}]}],\"annotations\":[\"XREQ rises, stays stable, then falls\"]}"
+                "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"T0\",\"state\":\"rising\"},{\"cycle\":\"T1\",\"state\":\"HIGH\"},{\"cycle\":\"T2\",\"state\":\"stable\"},{\"cycle\":\"T3\",\"state\":\"falling\"},{\"cycle\":\"T4\",\"state\":\"UNCHANGED\"},{\"cycle\":\"T5\",\"state\":\"RISING_EDGE\"},{\"cycle\":\"T6\",\"state\":\"LOW_TO_HIGH\"},{\"cycle\":\"T7\",\"state\":\"HIGH_TO_LOW\"}]}],\"annotations\":[\"XREQ rises, stays stable, then falls\"]}"
                     .to_string(),
             ),
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,

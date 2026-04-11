@@ -40,7 +40,7 @@
 
 ## 2026-04-11 VLM timing waveform motion filtering
 - VLM timing `signals[].values[].state` strings are not all equally authoritative signal values.
-- Concrete sampled values such as `HIGH`, `LOW`, `ASSERTED`, `DEASSERTED`, `0`, and `1` can become typed signal constraints when the signal name is document-grounded, but waveform motion descriptors such as `rising`, `falling`, `stable`, `steady`, `unchanged`, and `toggle` should not be promoted through the generic symbolic-value fallback.
+- Concrete sampled values such as `HIGH`, `LOW`, `ASSERTED`, `DEASSERTED`, `0`, and `1` can become typed signal constraints when the signal name is document-grounded, but waveform motion descriptors such as `rising`, `falling`, `stable`, `steady`, `unchanged`, `toggle`, `RISING_EDGE`, and `LOW_TO_HIGH` should not be promoted through the generic symbolic-value fallback.
 - This preserves useful timing observations while avoiding false facts like `XREQ == RISING`. The `vlm_timing_waveform_motion_negative` KG fixture locks the boundary end-to-end.
 
 ## 2026-04-11 collective non-reset control polarity
@@ -109,7 +109,7 @@
   - `ASSERTED` / `DEASSERTED` stay polarity-relative when temporal conflicts are evaluated, so an active-low reset observed as both `asserted` and `LOW` or as both `deasserted` and `HIGH` is equivalent rather than contradictory
   - generic visual words like `transfer` must remain rejected as fake signal names
   - unknown/don't-care values should stay unpromoted instead of creating false temporal facts
-  - waveform motion descriptors like `rising`, `falling`, `stable`, and `unchanged` should stay unpromoted instead of becoming fake symbolic signal values
+  - waveform motion descriptors and transition spellings like `rising`, `falling`, `stable`, `unchanged`, `RISING_EDGE`, and `LOW_TO_HIGH` should stay unpromoted instead of becoming fake symbolic signal values
   - the tracked `vlm_timing_active_low_assertion_equivalence_gold` and `vlm_timing_active_low_deassertion_equivalence_gold` KG fixtures now lock these active-low VLM timing edge cases end-to-end
 - VLM state-machine guard text is still a bounded hypothesis, not an authority:
   - simple comparisons like `PREADY = 1` should be converted into typed guards

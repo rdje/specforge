@@ -37,7 +37,12 @@
 - GitHub Actions CI is now part of the repo baseline and runs `cargo fmt --all --check`, warning-deny Clippy, warning-deny Rust tests, warning-deny rustdoc, and the mdBook build on every `push` and `pull_request`, which keeps the hosted validation path aligned with the local Rust/docs quality gate
 - that CI path now has a single checked-in entrypoint at `scripts/run_ci.sh`, and the GitHub workflow calls that script directly so local and hosted Rust validation do not drift apart
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and adding the planned `R15g` corpus knowledge base beside the already-live typed prior-memory plane; adapter expansion is now horizon work
-- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the VLM waveform-motion timing slice, the full local CI path reports clean Clippy, 300 passing Rust tests, clean Rust API docs, and a successful mdBook build
+- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the VLM waveform-motion spelling slice, the full local CI path reports clean Clippy, 300 passing Rust tests, clean Rust API docs, and a successful mdBook build
+
+## Session update (2026-04-11 VLM timing waveform motion spelling variants)
+- `SemanticIR` now normalizes VLM timing motion states across spaces, underscores, and hyphens before applying the waveform-motion filter, so identifier-shaped values such as `RISING_EDGE`, `LOW_TO_HIGH`, and `HIGH_TO_LOW` do not become false symbolic signal values.
+- Strengthened `vlm_timing_diagram_observation_rejects_waveform_motion_states` and `vlm_timing_waveform_motion_negative` to cover those separator variants while keeping the concrete `HIGH` sample as the only surviving signal constraint and temporal rule.
+- Focused validation passed for the semantic regression, targeted `kg-bench` validation passed for `vlm_timing_waveform_motion_negative`, and the full local CI gate passed with 300 Rust tests.
 
 ## Session update (2026-04-11 VLM timing waveform motion filtering)
 - `SemanticIR` VLM timing signal-value lifting now filters waveform motion descriptors such as `rising`, `falling`, `stable`, `steady`, `unchanged`, and `toggle` before the generic symbolic-value fallback can promote them into false `MustBeValue` facts.
@@ -260,7 +265,7 @@
   - a bogus-actor-attribution negative fixture that proves `Clock` / `Reset` infrastructure rows in AMBA-style `Source` columns do not become protocol actors while the true requester/subordinate rows still survive canonically
   - a field-table misclassification negative fixture that proves a misclassified `Bits | Name | Description` table does not synthesize fake top-level signals or semantic roles from field names that merely look signal-like
   - a spurious-timing negative fixture that proves low-value VLM timing-diagram labels like `T0`, `Addr 1`, and `Cycle 2` still count as timing-diagram extraction at the evidence stage but do not survive into `TimingConstraintRecord` or `TemporalRuleRecord`
-  - a VLM waveform-motion negative fixture that proves `rising`, `stable`, `falling`, and `UNCHANGED` timing states do not become symbolic signal values while a concrete `HIGH` sample still survives
+  - a VLM waveform-motion negative fixture that proves `rising`, `stable`, `falling`, `UNCHANGED`, `RISING_EDGE`, `LOW_TO_HIGH`, and `HIGH_TO_LOW` timing states do not become symbolic signal values while a concrete `HIGH` sample still survives
 - the harness can now also assert canonical actor-signal relations directly, so tracked gold fixtures can lock `Drives` versus `Reads` truth instead of checking only actor-port projections or relation counts
 - the harness can now also patch `SourceIR.document_sections` and assert per-signal canonical direction directly, which is important for protocol families like AHB where section-heading context still carries real directionality
 - the harness now also asserts canonical semantic candidates and decisive-vs-contested semantic arbitration directly, which is a better `R15e` truthfulness check than inferring arbitration quality only from blocked fallback or validation side effects
@@ -274,7 +279,7 @@
   - that guard now protects fake-signal leakage across declarations, semantic hints, and related table-driven inference paths
 - timing-diagram lifting is also less noisy now:
   - label-only VLM annotations such as `T0`, `Addr 1`, and `Cycle 2` are treated as waveform labels, not as timing semantics
-  - VLM timing signal-value states such as `rising`, `stable`, `falling`, and `UNCHANGED` are treated as waveform motion descriptors, not as concrete symbolic signal values
+  - VLM timing signal-value states such as `rising`, `stable`, `falling`, `UNCHANGED`, `RISING_EDGE`, `LOW_TO_HIGH`, and `HIGH_TO_LOW` are treated as waveform motion descriptors, not as concrete symbolic signal values
   - the semantic lift now keeps the timing extraction visible upstream while refusing to fabricate canonical timing constraints from those low-value labels alone
 - that negative multimodal fixture also locks an important nuance in the validation surface:
   - conflicting multimodal evidence should still count as visual grounding
@@ -579,7 +584,7 @@
   - sticky SemanticIR interface direction/width conflict collapse when conflicting declarations repeat
   - parametric-width handling through the IR pipeline
   - VLM timing diagram annotation → TimingConstraintRecord in SemanticIR
-  - VLM timing signal-value filtering for waveform motion states such as rising/stable/falling
+  - VLM timing signal-value filtering for waveform motion states and separator variants such as rising/stable/falling/RISING_EDGE/LOW_TO_HIGH
   - VLM state machine extraction → RegularStateRecord + StateTransitionRecord in SemanticIR
   - ambiguous visual-grounding residual decisions in `SemanticIR`
   - handshake-driven `IntentIR` identity/behavior/constraint/assumption construction
