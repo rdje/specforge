@@ -18,6 +18,7 @@
   - `validate`
   - `kg-bench`
   - `project-validation`
+  - `rescan-plan`
   - `learn-priors`
   - `nlp-enrich`
 - the canonical product boundary remains `IntentIR`, not `.fsm`
@@ -28,12 +29,22 @@
 - `SemanticIR` now lifts that evidence into interfaces, explicit interface-signal conflict records for conflicting direction/width evidence, actor-relative port/connectivity records, explicit signal-connectivity conflict records for unresolved multi-producer ambiguity, system/reset/init records, control/state records, timing/register records, and filtered NLP constraints, with VLM observations merged into the semantic surface
 - `IntentIR` now carries forward the canonical signal/control/system/state/register/timing surface plus the actor-relative KG needed for honest downstream lowering
 - the current `.fsm` adapter slice is real and intentionally narrow: it can emit honest `?dt:name`, `?fsm:name`, and `?top:name` outputs when the canonical facts are explicit enough
-- the enrichment, convergence, validation, benchmark, and first prior-learning toolchain is also real: `specforge enrich`, `specforge nlp-enrich`, `specforge converge`, `specforge validate`, `specforge kg-bench`, and `specforge learn-priors` are wired into the CLI and exercised by the workspace tests
+- the enrichment, convergence, validation, benchmark, targeted-rescan, and first prior-learning toolchain is also real: `specforge enrich`, `specforge nlp-enrich`, `specforge converge`, `specforge validate`, `specforge project-validation`, `specforge rescan-plan`, `specforge kg-bench`, and `specforge learn-priors` are wired into the CLI and exercised by the workspace tests
+- `project-validation` and `rescan-plan` now form a schema-v2 targeted-rescan loop: recommendations carry typed replay inputs, structured local command hints, dry-run-by-default execution, before/after validation snapshots, execution summaries, promotion-gate descriptors, and an explicit no-canonical-mutation boundary
+- `CorpusMemory` schema v5 now carries actor-taxonomy, semantic-phrase, semantic-modality-reliability, temporal-phrase, table-shape, visual-motif, and negative-knowledge prior families; current consumers remain advisory and locally grounded rather than fact-authoring
+- the tracked KG-quality benchmark surface currently contains 44 fixtures, including active-low VLM timing polarity-equivalence coverage that proves `ASSERTED` and `LOW` agree for active-low reset timing evidence
 - the local runtime boundary is now operationally stronger too: `specforge doctor` reports Docling readiness, the default Ollama loopback readiness, and LM Studio fallback readiness directly, repo-local `.venv-docling` auto-discovery is supported, and the backend now probes versioned Python candidates like `python3.11` before giving up on fresh ingest
 - GitHub Actions CI is now part of the repo baseline and runs `cargo fmt --all --check` plus `cargo test --manifest-path Cargo.toml` on every `push` and `pull_request`, which keeps the hosted validation path aligned with the local Rust quality gate
 - that CI path now has a single checked-in entrypoint at `scripts/run_ci.sh`, and the GitHub workflow calls that script directly so local and hosted Rust validation do not drift apart
-- the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and eventually adding a separate cross-document prior-learning plane that can improve extraction without leaking facts across documents; adapter expansion is now horizon work
-- the workspace currently validates with `cargo test --manifest-path Cargo.toml`, with 199 passing tests
+- the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and adding the planned `R15g` corpus knowledge base beside the already-live typed prior-memory plane; adapter expansion is now horizon work
+- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting/tests and the mdBook docs build; the latest observed full CI path reports 282 passing Rust tests, 0 binary tests, 0 doc tests, and five dead-code warnings
+
+## Session update (2026-04-11 bootstrap refresh)
+- executed the README terminal instruction by reading `SESSION_BOOTSTRAP.md`, which expands the task into reading the referenced live docs, analyzing the Rust codebase, updating this analysis if necessary, and continuing from the roadmap
+- reviewed the high-signal live docs (`README.md`, `SESSION_BOOTSTRAP.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `VALIDATION_SNAPSHOT.md`, `INTENTIR_SPEC.md`, `MEMORY.md`, `COMMIT.md`) and compared their claims against the current CLI/module surface
+- observed the current Rust implementation under `crates/specforge/src`: 28 Rust files and about 53,977 lines across the active single-crate implementation
+- corrected stale analysis claims around the CLI command list, `rescan-plan`, schema-v2 rescan execution, promotion-review boundaries, `CorpusMemory` schema v5 prior families, KG fixture count, and current test count
+- the codebase remains a real end-to-end staged IR pipeline with a growing learning/rescan plane, but it is not yet a universal chip-spec-PDF oracle; the honest next pressure remains graph-first semantics, temporal/clock-reset truthfulness, multimodal arbitration, KG-quality expansion, and corpus-level learning without cross-document fact leakage
 
 
 ## Session update (2026-04-04)
@@ -117,7 +128,7 @@
 - the documented README staged flow was re-executed on `README.md` through `inspect -> ingest -> evidence -> semantic -> intent -> adapt --dry-run`, confirming the current entry path still runs end-to-end
 - the roadmap now explicitly treats adapter expansion as horizon work; the next structural gaps are making the actor-relative graph primary, broadening the new table/prose/alias-grounded role inference into richer multimodal grounding, adding deeper explicit temporal semantics, and hardening KG quality/evaluation
 - the current architecture is still intentionally document-local, which is correct for truthfulness, but the next strategic expansion after the current semantic-truthfulness work should be a separate cross-document learning plane that stores reusable extraction priors rather than cross-document facts
-- the local test suite is now at `202/202` passing after the first prior-consumption slice landed
+- the local Rust test suite is now at `282/282` passing in the latest full CI run after the later rescan, prior-memory, infrastructure, temporal, and KG-benchmark slices landed
 - `specforge kg-bench` now provides the first tracked KG-quality fixture harness under `crates/specforge/test_data/kg_quality`, including:
   - a gold actor-port recovery fixture
   - a negative name-only semantic noise fixture
@@ -184,6 +195,10 @@
 - `crates/specforge/src/commands/adapt.rs`
 - `crates/specforge/src/commands/enrich.rs`
 - `crates/specforge/src/commands/validate.rs`
+- `crates/specforge/src/commands/project_validation.rs`
+- `crates/specforge/src/commands/rescan_plan.rs`
+- `crates/specforge/src/commands/kg_bench.rs`
+- `crates/specforge/src/commands/learn_priors.rs`
 - `crates/specforge/src/commands/nlp_enrich.rs`
 - `crates/specforge/src/test_support.rs`
 - `crates/specforge/src/ir/mod.rs`
@@ -193,6 +208,7 @@
 - `crates/specforge/src/ir/semantic.rs`
 - `crates/specforge/src/ir/intent.rs`
 - `crates/specforge/src/ir/adapters.rs`
+- `crates/specforge/src/ir/prior_memory.rs`
 - `subs/fsmgen/`
 
 ### Rust-specific contents still absent
@@ -202,7 +218,7 @@
 - no dedicated `specforge-intent` crate
 - no dedicated `specforge-adapters` crate
 - no dedicated validation crate
-- no integration-test harness beyond crate-local unit tests
+- no separate Rust integration-test crate; the tracked KG-quality fixture harness lives inside the active crate under `crates/specforge/test_data/kg_quality`
 - no additional real builders beyond the current `SourceIR`/`EvidenceIR`/`SemanticIR`/`IntentIR` slices and the first `.fsm` adapter slice
 
 ### Immediate implication
@@ -258,8 +274,14 @@
   - VLM-backed visual enrichment command for `SourceIR`
 - `src/commands/validate.rs`
   - stage-aware artifact validation and quality-scoring command
+- `src/commands/project_validation.rs`
+  - project-level validation snapshot projection and schema-v2 targeted rescan recommendation generation
+- `src/commands/rescan_plan.rs`
+  - dry-run-first consumer and whitelisted local executor for schema-v2 targeted rescan plans
 - `src/commands/kg_bench.rs`
   - tracked KG-quality benchmark harness over staged IR artifacts and persisted validation findings
+- `src/commands/learn_priors.rs`
+  - local typed `CorpusMemory` harvesting command for advisory cross-document extraction priors
 - `src/commands/nlp_enrich.rs`
   - LLM-backed NLP Level 3 enrichment command for `EvidenceIR`
 - `src/test_support.rs`
@@ -278,6 +300,8 @@
   - concrete `IntentIR` builder, canonicalization heuristics, and residual-decision preservation
 - `src/ir/adapters.rs`
   - typed adapter artifacts, `.fsm` lowering logic, renderability gating, and adapter-side residual-decision generation
+- `src/ir/prior_memory.rs`
+  - typed local prior-memory schema and helper logic for advisory cross-document extraction priors
 
 ## Assessment of current structure
 ### What is good
@@ -323,7 +347,7 @@
 - finish moving the downstream signal-direction model from compatibility flat hints to actor-relative semantics before serious SystemVerilog adapter work
 - keep compatibility-level `?mod:name` / `?module:name` spellings outside the adapter root-kind model until a real backend-neutral direct-module distinction exists
 - keep any new composition/control enrichment backend-neutral so the canonical model boundary stays intact
-- keep the latest local APB/AHB/AXI 95/95/94 snapshot visible as follow-on work lands, and close the remaining AXI width/connectivity gaps from that improved baseline
+- keep the latest projected four-artifact snapshot visible as follow-on work lands: AXI `85/100 GOOD`, APB `90/100 EXCELLENT`, AHB `94/100 EXCELLENT`, and AXI-Stream `90/100 EXCELLENT`, with AXI still the main quality outlier
 
 #### Split into dedicated crates when pressure becomes real
 - `specforge-source`
@@ -421,7 +445,9 @@
 - this is acceptable temporarily, but should be closed soon so the first stage is truly operational for PDFs
 
 ## Testing implications
-- current test count: 99 (all passing)
+- current full local CI path: `bash scripts/run_ci.sh`
+- current Rust test count observed through that path: 282 library tests, 0 binary tests, and 0 doc tests, all passing
+- current tracked KG-quality fixture count: 44
 - current tests cover:
   - source-kind detection
   - deterministic source key naming
@@ -450,14 +476,21 @@
   - AMBA `Source` / `Driver` / `Destination` signal-direction handling
   - `.fsm` adapter renderability (12 adapter cases)
   - `specforge validate` for all four IR stages
+  - project-level validation projection and schema-v2 rescan-plan generation
+  - schema-v2 `rescan-plan` normalization, whitelisted execution, execution summaries, and no-promotion review gates
+  - bounded prior-family harvest/consumption for actor taxonomy, semantic phrases, temporal phrases, table shapes, semantic modality reliability, visual motifs, and negative knowledge
+  - KG-quality fixture execution across gold, negative, conflict, multimodal, prior-guided, infrastructure, and active-low VLM timing polarity-equivalence cases
 - next tests should cover:
   - richer APB and AXI end-to-end fixtures for relation-driven direction coverage
   - actor-relative direction modeling once it lands in `SemanticIR` / `IntentIR`
-  - validation back-annotation persistence
   - wider `.fsm` renderability coverage and snapshot stability on protocol-heavy fixtures
   - future adapter targets beyond the current `.fsm` slice
 
-## Validation completed in this session
+## Latest validation completed in this refresh
+- `bash scripts/run_ci.sh`
+  - passed; Rust test suite reported 282 passed tests, 0 failures, 0 binary tests, 0 doc tests, and the mdBook build completed successfully
+
+## Earlier validation trail
 - `cargo run --manifest-path Cargo.toml -p specforge -- --help`
   - passed and confirmed the current CLI surface includes `enrich`, `validate`, and `nlp-enrich`
 - `cargo test --manifest-path Cargo.toml`

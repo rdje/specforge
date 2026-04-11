@@ -19,6 +19,8 @@
 - `specforge adapt` command created: Done
 - `specforge enrich` command created: Done
 - `specforge validate` command created: Done
+- `specforge project-validation` command created: Done
+- `specforge rescan-plan` command created: Done
 - `specforge kg-bench` command created: Done
 - `specforge learn-priors` command created: Done
 - `specforge nlp-enrich` command created: Done
@@ -111,6 +113,7 @@
 - KG benchmark harness now locks bogus actor-attribution rejection for `Source`-column infrastructure rows: Done
 - KG benchmark harness now locks field-table misclassification rejection: Done
 - KG benchmark harness now locks spurious VLM timing-annotation rejection: Done
+- KG benchmark harness now locks active-low VLM timing polarity equivalence: Done
 - KG benchmark harness can now assert canonical actor-signal relations directly: Done
 - KG benchmark harness can now patch `document_sections` and assert per-signal directions directly: Done
 - Cross-document actor-taxonomy priors in typed prior memory: Done

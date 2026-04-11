@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-04-11 (README bootstrap refresh updates Rust analysis)
+
+### Updated: bootstrap and codebase analysis
+- Executed the README handoff path by reading `SESSION_BOOTSTRAP.md` and the high-signal referenced live docs.
+- Refreshed `RUST_CODEBASE_ANALYSIS.md` so it reflects the current CLI surface, including `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, and `nlp-enrich`.
+- Updated the analysis to capture schema-v2 rescan execution, the no-canonical-mutation promotion-review boundary, `CorpusMemory` schema v5 prior families, the 44-fixture KG benchmark surface, and the latest observed 282-test Rust baseline.
+- Updated continuity memory so the latest committed baseline is `4cfb825 test(kg): lock active-low vlm timing polarity`.
+
+### Validation
+- `bash scripts/run_ci.sh` -> passed
+
 ## 2026-04-11 (Active-low VLM timing polarity is fixture-locked)
 
 ### Added: timing-annotation KG fixture

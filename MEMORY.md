@@ -22,19 +22,23 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `f37e19f`
-- latest_commit_brief_message: `feat(validation): surface negative knowledge priors`
-- note: the current session is now broadening negative-knowledge validation cautions into `SemanticIR` / `IntentIR` carried conflict and residual surfaces
+- latest_commit_hash: `4cfb825`
+- latest_commit_brief_message: `test(kg): lock active-low vlm timing polarity`
+- note: the current session executed the README bootstrap path, found `RUST_CODEBASE_ANALYSIS.md` stale relative to the current CLI/test/rescan/prior-memory surface, and is refreshing continuity documentation only
 
 ## Recent commit chain (last 5)
-- `f37e19f` feat(validation): surface negative knowledge priors
-- `344a126` feat(evidence): consume visual motif priors
-- `f94796a` feat(learning): add visual motif memory
-- `4dd9cfc` feat(semantic): lift VLM timing tuples
-- `d792f18` fix(semantic): bound VLM state machine guards
+- `4cfb825` test(kg): lock active-low vlm timing polarity
+- `aa1e163` docs(validation): define rescan approval boundary
+- `96810ff` test(kg): cover negative knowledge conflict priors
+- `b2f80c0` feat(semantic): recover explicit clock reset topology hints
+- `0e660a4` feat(validation): add rescan promotion review path
 
 ## Current repository state
 - active workspace member: `crates/specforge`
+- README bootstrap currently resolves to `SESSION_BOOTSTRAP.md`, which instructs future agents to read the referenced live docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if necessary, and then continue from the roadmap
+- this bootstrap refresh observed 28 Rust source files and about 53,977 lines under `crates/specforge/src`, with the CLI now including `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, and `nlp-enrich` beside the core staged IR commands
+- `RUST_CODEBASE_ANALYSIS.md` has been refreshed to reflect schema-v2 rescan planning/execution, `CorpusMemory` schema v5, 44 tracked KG fixtures, and the latest full CI baseline of 282 passing Rust tests plus mdBook build
+- the latest committed KG benchmark slice is `vlm_timing_active_low_assertion_equivalence_gold`, which proves a VLM timing diagram that reports active-low `ARESETN` as both `asserted` and `LOW` yields typed temporal evidence without a false temporal or polarity conflict
 - the canonical user-facing documentation surface is now the mdBook under `docs/book/`
 - that mdBook should now be treated as a live book that evolves alongside user-facing project changes, not as a static scaffold
 - the split is now explicit too:
@@ -173,6 +177,7 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
+- executed the README -> `SESSION_BOOTSTRAP.md` bootstrap flow for this turn, reviewed the high-signal live docs, compared them against the current Rust CLI/module/test surface, and refreshed the Rust codebase analysis accordingly
 - broadened negative-knowledge prior consumption into `SemanticIR` / `IntentIR` validation: current carried conflicts and residual packet classes can now exact-match prior memory and surface caution findings only
 - added the first bounded negative-knowledge prior consumer: `EvidenceIR` validation can now surface exact-match signal-semantic conflict patterns from prior memory as caution findings only
 - added the first bounded visual-motif prior consumer: `EvidenceIR` can now attach a prior-memory `Classification` observation to a current unknown captioned visual asset and use that recovered diagram kind for visual role only

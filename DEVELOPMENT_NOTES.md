@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-11 README bootstrap refresh
+- The README terminal instruction currently routes future sessions through `SESSION_BOOTSTRAP.md`; executing that path means reading the referenced live docs, analyzing the Rust codebase, updating `RUST_CODEBASE_ANALYSIS.md` if it drifted, and then continuing from the roadmap.
+- This refresh found that the Rust analysis lagged the implementation: `rescan-plan`, schema-v2 replay/execution summaries, the no-canonical-mutation promotion-review boundary, `CorpusMemory` schema v5, 44 tracked KG fixtures, and the 282-test full-CI baseline were all newer than parts of the analysis doc.
+- The fix is documentation-only. The engineering decision is to keep `RUST_CODEBASE_ANALYSIS.md` as a living architecture snapshot rather than letting it become a stale historical essay, because it is part of the crash-recovery and handoff contract.
+
 ## Foundational engineering choices
 ### IntentIR instead of AST
 - the final canonical output must capture semantics and implementation-relevant intent, not only syntax structure
