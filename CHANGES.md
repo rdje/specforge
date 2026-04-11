@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-04-11 (VLM state machine gates transition endpoints)
+
+### Fixed: VLM transitions must target declared states
+- `SemanticIR` now accepts VLM state-machine transitions only when both `from` and `to` endpoints refer to state labels accepted from the same `vlm_state_machine_extraction` observation.
+- This keeps identifier-shaped but undeclared VLM endpoints such as `DONE` or `RESET` from becoming canonical transition graph facts just because they look like plausible FSM state names.
+- Added `vlm_state_machine_undeclared_transition_negative`, proving `IDLE` / `BUSY` states and `IDLE->BUSY` survive while `BUSY->DONE` and `RESET->IDLE` are filtered.
+
+### Validation
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml --lib vlm_state_machine_observation_rejects_undeclared_transition_endpoints -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality vlm_state_machine_undeclared_transition_negative` -> passed
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, 302 Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and mdBook build
+
 ## 2026-04-11 (VLM state machine rejects prose labels)
 
 ### Fixed: state-machine VLM labels must be canonical identifiers

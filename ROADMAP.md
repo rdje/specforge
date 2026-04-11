@@ -503,6 +503,7 @@
     - a negative fixture proving low-value VLM timing-diagram annotation labels like `T0`, `Addr 1`, and `Cycle 2` do not become timing constraints or temporal rules while the underlying timing extraction still remains visible at the evidence stage
     - a negative fixture proving VLM timing-diagram waveform motion states like `rising`, `stable`, `falling`, `UNCHANGED`, `RISING_EDGE`, `LOW_TO_HIGH`, `POS_EDGE`, `risingedge`, and `LOW2HIGH` do not become symbolic signal values while concrete samples like `HIGH` still survive
     - a negative fixture proving VLM state-machine prose labels like `IDLE state` and `ACCESS phase` do not become canonical FSM state names or transition endpoints while clean identifier labels and transitions still survive
+    - a negative fixture proving VLM state-machine transition endpoints must reference states declared in the same VLM observation, so identifier-shaped `DONE` / `RESET` endpoint guesses do not become canonical transition facts
     - a gold fixture proving collective non-reset control polarity prose recovers multiple active-low control signals without duplicating canonical signal records
     - a gold fixture proving mixed clause-local non-reset control polarity prose recovers active-low and active-high controls without duplicating canonical signal records
     - a negative fixture proving detached mixed-polarity prose stays unresolved instead of borrowing an implicit active-level subject

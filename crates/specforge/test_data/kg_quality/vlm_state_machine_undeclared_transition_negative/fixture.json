@@ -1,0 +1,81 @@
+{
+  "name": "vlm_state_machine_undeclared_transition_negative",
+  "source": "source.md",
+  "source_ir_patch": {
+    "visual_assets": [
+      {
+        "asset_id": "visual_vlm_partial_state_machine",
+        "asset_kind": "diagram",
+        "page_id": "page_0001",
+        "image_path": null,
+        "caption_text": "Figure 5-3 Partial transfer state machine",
+        "caption_source_path": null,
+        "source_ref": null,
+        "placeholder_text": null,
+        "note": "vlm_state_machine_extraction: {\"states\":[{\"name\":\"IDLE\",\"is_initial\":true},{\"name\":\"BUSY\",\"is_initial\":false}],\"transitions\":[{\"from\":\"IDLE\",\"to\":\"BUSY\",\"guard\":\"PREADY = 1\"},{\"from\":\"BUSY\",\"to\":\"DONE\",\"guard\":\"PREADY = 1\"},{\"from\":\"RESET\",\"to\":\"IDLE\",\"guard\":\"PREADY = 1\"}]}",
+        "diagram_kind": "state_machine_diagram"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "state_names_include": ["IDLE", "BUSY"],
+      "state_names_exclude": ["DONE", "RESET"],
+      "state_transitions_include": [
+        {
+          "source_state": "IDLE",
+          "target_state": "BUSY"
+        }
+      ],
+      "state_transitions_exclude": [
+        {
+          "source_state": "BUSY",
+          "target_state": "DONE"
+        },
+        {
+          "source_state": "RESET",
+          "target_state": "IDLE"
+        }
+      ]
+    },
+    "intent": {
+      "state_names_include": ["IDLE", "BUSY"],
+      "state_names_exclude": ["DONE", "RESET"],
+      "state_transitions_include": [
+        {
+          "source_state": "IDLE",
+          "target_state": "BUSY"
+        }
+      ],
+      "state_transitions_exclude": [
+        {
+          "source_state": "BUSY",
+          "target_state": "DONE"
+        },
+        {
+          "source_state": "RESET",
+          "target_state": "IDLE"
+        }
+      ]
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "state_machine_extractions": "1"
+        }
+      },
+      "semantic": {
+        "metric_values": {
+          "regular_states": "2",
+          "state_transitions": "1"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "regular_states": "2",
+          "state_transitions": "1"
+        }
+      }
+    }
+  }
+}

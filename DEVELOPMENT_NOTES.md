@@ -42,6 +42,7 @@
 - VLM state-machine extraction is useful evidence, but raw visual labels are still hypotheses and must pass the same canonical-state boundary as explicit state syntax before entering `SemanticIR`.
 - State names and transition endpoints extracted from `vlm_state_machine_extraction` are now accepted only when they parse as identifiers. Clean labels such as `IDLE` and `BUSY` survive, while prose/OCR labels such as `IDLE state` and `ACCESS phase` are filtered instead of becoming backend-facing FSM names.
 - `vlm_state_machine_label_noise_negative` locks this end to end, and `kg-bench` can now assert state names plus transition endpoints directly.
+- VLM transitions now have a second boundary too: both endpoints must refer to state names accepted from the same VLM observation. Identifier-shaped but undeclared endpoints such as `DONE` and `RESET` are filtered rather than treated as canonical graph facts. `vlm_state_machine_undeclared_transition_negative` locks that behavior end to end.
 
 ## 2026-04-11 VLM timing waveform motion filtering
 - VLM timing `signals[].values[].state` strings are not all equally authoritative signal values.

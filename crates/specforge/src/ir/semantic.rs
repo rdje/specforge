@@ -9141,6 +9141,8 @@ fn parse_state_machine_observation(
         return;
     };
 
+    let mut observation_state_names = BTreeSet::new();
+
     // Parse states.
     if let Some(states) = value.get("states").and_then(|s| s.as_array()) {
         for (idx, state_val) in states.iter().enumerate() {
@@ -9155,6 +9157,7 @@ fn parse_state_machine_observation(
                 .get("is_initial")
                 .and_then(|b| b.as_bool())
                 .unwrap_or(false);
+            observation_state_names.insert(name.clone());
             state_records.push(RegularStateRecord {
                 state_id: format!(
                     "vlm_state_{}_{}",
@@ -9187,6 +9190,9 @@ fn parse_state_machine_observation(
             else {
                 continue;
             };
+            if !observation_state_names.contains(&from) || !observation_state_names.contains(&to) {
+                continue;
+            }
             let guard_text = trans_val
                 .get("guard")
                 .and_then(|g| g.as_str())
@@ -10676,6 +10682,86 @@ mod tests {
                 .iter()
                 .any(|t| t.source_state == "IDLE" && t.target_state == "BUSY"),
             "expected IDLE→BUSY transition from VLM extraction"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn vlm_state_machine_observation_rejects_undeclared_transition_endpoints() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("sm_undeclared_endpoint_spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            "# State Machine\nSignal PREADY is input width 1.\n",
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.visual_assets.push(VisualAsset {
+            asset_id: "picture_0004".to_string(),
+            asset_kind: VisualAssetKind::Diagram,
+            page_id: Some("page_0001".to_string()),
+            image_path: None,
+            caption_text: Some("Figure 5-3 Partial transfer state machine".to_string()),
+            caption_source_path: None,
+            source_ref: None,
+            placeholder_text: None,
+            note: Some(
+                "vlm_state_machine_extraction: {\"states\":[{\"name\":\"IDLE\",\"is_initial\":true},{\"name\":\"BUSY\",\"is_initial\":false}],\"transitions\":[{\"from\":\"IDLE\",\"to\":\"BUSY\",\"guard\":\"PREADY = 1\"},{\"from\":\"BUSY\",\"to\":\"DONE\",\"guard\":\"PREADY = 1\"},{\"from\":\"RESET\",\"to\":\"IDLE\",\"guard\":\"PREADY = 1\"}]}"
+                    .to_string(),
+            ),
+            diagram_kind: crate::ir::source::DiagramKind::StateMachineDiagram,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        assert!(
+            semantic_ir
+                .regular_states
+                .iter()
+                .any(|state| state.state_name == "IDLE" && state.is_initial),
+            "expected valid IDLE state to survive"
+        );
+        assert!(
+            semantic_ir
+                .regular_states
+                .iter()
+                .any(|state| state.state_name == "BUSY"),
+            "expected valid BUSY state to survive"
+        );
+        assert!(
+            semantic_ir
+                .state_transitions
+                .iter()
+                .any(|transition| transition.source_state == "IDLE"
+                    && transition.target_state == "BUSY"),
+            "expected declared IDLE to BUSY transition to survive"
+        );
+        assert!(
+            !semantic_ir.state_transitions.iter().any(|transition| {
+                transition.target_state == "DONE" || transition.source_state == "RESET"
+            }),
+            "VLM transitions with undeclared endpoints must not survive: {:?}",
+            semantic_ir.state_transitions
+        );
+        assert_eq!(
+            semantic_ir.state_transitions.len(),
+            1,
+            "only the transition whose endpoints were declared in the VLM state list should survive"
         );
 
         Ok(())
