@@ -42,8 +42,9 @@
 ## Session update (2026-04-11 bootstrap refresh)
 - executed the README terminal instruction by reading `SESSION_BOOTSTRAP.md`, which expands the task into reading the referenced live docs, analyzing the Rust codebase, updating this analysis if necessary, and continuing from the roadmap
 - reviewed the high-signal live docs (`README.md`, `SESSION_BOOTSTRAP.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `VALIDATION_SNAPSHOT.md`, `INTENTIR_SPEC.md`, `MEMORY.md`, `COMMIT.md`) and compared their claims against the current CLI/module surface
-- observed the current Rust implementation under `crates/specforge/src`: 28 Rust files and about 53,977 lines across the active single-crate implementation
+- observed the current Rust implementation under `crates/specforge/src`: 28 Rust files and about 53,858 lines across the active single-crate implementation
 - corrected stale analysis claims around the CLI command list, `rescan-plan`, schema-v2 rescan execution, promotion-review boundaries, `CorpusMemory` schema v5 prior families, KG fixture count, and current test count
+- re-ran the README bootstrap sanity pass after `35a8372` and found no new Rust architecture drift beyond continuity/doc hygiene: `MEMORY.md` needed the latest committed baseline and `USER_GUIDE.md` had stray example bullets under its root-doc list
 - the codebase remains a real end-to-end staged IR pipeline with a growing learning/rescan plane, but it is not yet a universal chip-spec-PDF oracle; the honest next pressure remains graph-first semantics, temporal/clock-reset truthfulness, multimodal arbitration, KG-quality expansion, and corpus-level learning without cross-document fact leakage
 
 ## Session update (2026-04-11 dead-code warning cleanup)

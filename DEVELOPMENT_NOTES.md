@@ -9,8 +9,9 @@
 
 ## 2026-04-11 README bootstrap refresh
 - The README terminal instruction currently routes future sessions through `SESSION_BOOTSTRAP.md`; executing that path means reading the referenced live docs, analyzing the Rust codebase, updating `RUST_CODEBASE_ANALYSIS.md` if it drifted, and then continuing from the roadmap.
-- This refresh found that the Rust analysis lagged the implementation: `rescan-plan`, schema-v2 replay/execution summaries, the no-canonical-mutation promotion-review boundary, `CorpusMemory` schema v5, 44 tracked KG fixtures, and the 282-test full-CI baseline were all newer than parts of the analysis doc.
+- This refresh found that the Rust analysis lagged the implementation: `rescan-plan`, schema-v2 replay/execution summaries, the no-canonical-mutation promotion-review boundary, `CorpusMemory` schema v5, 45 tracked KG fixtures, and the 282-test full-CI baseline were all newer than parts of the analysis doc.
 - The fix is documentation-only. The engineering decision is to keep `RUST_CODEBASE_ANALYSIS.md` as a living architecture snapshot rather than letting it become a stale historical essay, because it is part of the crash-recovery and handoff contract.
+- A follow-up bootstrap hygiene pass after `35a8372` found no new Rust architecture drift. The correct fix was to refresh continuity state to the latest committed baseline and remove stray example bullets from `USER_GUIDE.md`'s root-document list, keeping the compatibility pointer clean while the mdBook remains the canonical public documentation surface.
 
 ## 2026-04-11 dead-code warning cleanup
 - Rust warnings are treated as quality drift, not harmless background noise.

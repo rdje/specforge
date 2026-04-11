@@ -46,10 +46,6 @@ The most important ones are:
 - `DEVELOPMENT_NOTES.md`
 - `CHANGES.md`
 - `MEMORY.md`
-  - `Top datapath link producer.output_data -> consumer.input_data.`
-  - `Module producer_core signal output_data is output width 8.`
-  - `Module producer_core block produce: output_data = 8'3.`
-- when explicit `active high` / `active low` wording is omitted, the current canonical reset slice infers active-low from `_n` / `_b` reset naming and otherwise falls back to active-high with lower automation confidence
 
 ## Planned user workflow
 1. provide a source specification

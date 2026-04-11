@@ -22,28 +22,29 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `59622ec`
-- latest_commit_brief_message: `ci: deny rustdoc warnings`
-- note: the current session picked the next KG-quality hardening task and is adding an active-low VLM reset-release polarity fixture
+- latest_commit_hash: `35a8372`
+- latest_commit_brief_message: `test(kg): lock active-low vlm reset release`
+- note: the current session is executing the README bootstrap path and cleaning the small continuity/doc hygiene drift it surfaced
 
 ## Recent commit chain (last 5)
+- `35a8372` test(kg): lock active-low vlm reset release
 - `59622ec` ci: deny rustdoc warnings
 - `f0796f6` ci: add clippy warning gate
 - `ca75e51` ci: deny Rust warnings in local gate
 - `308d527` chore(rust): remove stale dead-code helpers
-- `8b6007b` docs(bootstrap): refresh Rust codebase analysis
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- the current KG-quality slice adds `vlm_timing_active_low_deassertion_equivalence_gold`, complementing the existing active-low assertion fixture by proving `DEASSERTED` and `HIGH` are equivalent for active-low reset release timing evidence
+- the latest committed KG-quality slice added `vlm_timing_active_low_deassertion_equivalence_gold`, complementing the existing active-low assertion fixture by proving `DEASSERTED` and `HIGH` are equivalent for active-low reset release timing evidence
 - the previous quality slice added rustdoc warning denial to the shared CI path and fixed the only discovered rustdoc broken-link interpretation in `ActorSignalRelation` docs
 - `scripts/run_ci.sh` now runs Clippy with `-D warnings` before the Rust test suite, and GitHub Actions installs the `clippy` component so the hosted gate matches the local gate
 - `scripts/run_ci.sh` now enforces `RUSTFLAGS="-D warnings"` during the Rust test step, and GitHub Actions inherits that warning-deny gate because it calls the same script
 - `scripts/run_ci.sh` now also builds Rust API docs with `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` before the mdBook build, preserving caller-provided `RUSTDOCFLAGS`
 - the Rust warning baseline is clean and now enforced in the shared local/hosted CI path rather than suppressed with `#[allow(dead_code)]`
 - README bootstrap currently resolves to `SESSION_BOOTSTRAP.md`, which instructs future agents to read the referenced live docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if necessary, and then continue from the roadmap
-- this bootstrap refresh observed 28 Rust source files and about 53,977 lines under `crates/specforge/src`, with the CLI now including `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, and `nlp-enrich` beside the core staged IR commands
+- this bootstrap refresh observed 28 Rust source files and about 53,858 lines under `crates/specforge/src`, with the CLI now including `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, and `nlp-enrich` beside the core staged IR commands
 - `RUST_CODEBASE_ANALYSIS.md` has been refreshed to reflect schema-v2 rescan planning/execution, `CorpusMemory` schema v5, 45 tracked KG fixtures, and the latest full CI baseline of 282 passing Rust tests plus mdBook build
+- the latest README bootstrap hygiene pass found no new Rust architecture drift; the concrete fix was to refresh the committed baseline in this memory file and remove stray example bullets from `USER_GUIDE.md`'s root-document list
 - the latest active KG benchmark slice is `vlm_timing_active_low_deassertion_equivalence_gold`, which proves a VLM timing diagram that reports active-low `ARESETN` as both `deasserted` and `HIGH` yields typed temporal evidence without a false temporal or polarity conflict
 - the canonical user-facing documentation surface is now the mdBook under `docs/book/`
 - that mdBook should now be treated as a live book that evolves alongside user-facing project changes, not as a static scaffold
@@ -183,6 +184,7 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
+- executed the README -> `SESSION_BOOTSTRAP.md` bootstrap path again, reviewed the high-signal live docs and current Rust surface, confirmed 28 Rust source files / 45 tracked KG-quality fixtures / expected CLI command surface, refreshed the latest committed baseline to `35a8372`, and cleaned stray compatibility-guide bullets from `USER_GUIDE.md`
 - added `vlm_timing_active_low_deassertion_equivalence_gold`, a tracked KG-quality fixture proving active-low reset release observations `deasserted` and `HIGH` stay equivalent VLM timing evidence; targeted `kg-bench` validation passed
 - fixed the `ActorSignalRelation` rustdoc wording that rustdoc interpreted as broken intra-doc links, wired `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` into `scripts/run_ci.sh`, and documented the new rustdoc warning-deny gate before the full CI rerun
 - fixed mechanical Clippy findings, localized intentional broad IR-shape exceptions with `#[expect(...)]` reasons, wired `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings` into the shared CI script plus GitHub toolchain component list, and confirmed `bash scripts/run_ci.sh` passes through Clippy, 282 warning-denied Rust tests, and mdBook build
