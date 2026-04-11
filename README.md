@@ -78,8 +78,8 @@ Use it first for the project objective, document navigation, and the current imp
   - semantic phrase priors to interpret locally grounded signal-description/prose phrases that normalize to learned semantic-role evidence without weakening the name-noise protections
 - `SemanticIR` now has a third bounded prior consumer too: if the current PDF contains local timing text whose phrase shape matches a learned temporal prior and the built-in parser still cannot recover a cycle window on its own, the semantic stage can advisory-recover that cycle window without inventing a timing rule that is not already locally grounded
 - `EvidenceIR` now has a fourth bounded prior consumer too: if ingest left a current table as `unknown` but the local header shape matches a learned table-shape prior, evidence extraction can advisory-recover that table kind locally without rewriting `SourceIR` or overriding explicit local table classifications
-- GitHub Actions CI now runs `cargo fmt --all --check` and `cargo test --manifest-path Cargo.toml` on every `push` and `pull_request`, so the local Rust quality gate is mirrored automatically on GitHub
-- the hosted CI path is now driven by `./scripts/run_ci.sh`, so the exact Rust + docs CI suite can be run locally before push instead of only after GitHub receives the commit
+- GitHub Actions CI now runs `cargo fmt --all --check`, `RUSTFLAGS="-D warnings" cargo test --manifest-path Cargo.toml`, and the mdBook build on every `push` and `pull_request`, so the local Rust quality gate is mirrored automatically on GitHub
+- the hosted CI path is now driven by `./scripts/run_ci.sh`, so the exact warning-deny Rust + docs CI suite can be run locally before push instead of only after GitHub receives the commit
 - the current `R15f` slice now learns five safe prior families:
   - actor-taxonomy priors from decisive actor-grounded handshake-role evidence plus conservative self-identifying actor vocabulary (`requester`, `completer`, `manager`, `subordinate`, and similar explicit role terms)
   - semantic-role phrase priors from decisive, non-alias-dependent semantic consensus plus preserved observation text

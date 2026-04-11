@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-04-11 (CI now denies Rust warnings)
+
+### Changed: warning-clean baseline is enforced
+- Updated `scripts/run_ci.sh` so the Rust test step runs with `RUSTFLAGS="-D warnings"`.
+- Because GitHub Actions calls the same script, the warning gate now applies both locally and on hosted CI without duplicating workflow logic.
+- Updated the README, mdBook getting-started page, Rust codebase analysis, memory, development notes, and live status to document the warning-deny CI contract.
+
+### Validation
+- `bash scripts/run_ci.sh` -> passed with 282 Rust tests under `RUSTFLAGS="-D warnings"` plus mdBook build
+
 ## 2026-04-11 (Rust dead-code warning baseline is clean)
 
 ### Fixed: stale warning-only code paths

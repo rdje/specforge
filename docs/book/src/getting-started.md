@@ -79,7 +79,7 @@ bash scripts/run_ci.sh
 That now checks:
 
 - Rust formatting
-- Rust tests
+- Rust tests with Rust warnings denied
 - mdBook build
 
 ## Where the outputs go

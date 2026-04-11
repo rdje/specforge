@@ -17,6 +17,11 @@
 - The dead-code cleanup deletes stale helper paths instead of adding `#[allow(dead_code)]`: the removed adapter helpers belonged to the old direct `DecisionTreeFragmentRecord` renderability path, while active `.fsm` lowering now validates and renders `ControlBlockRecord` / `ControlActionRecord`; the removed semantic helpers were empty stubs after register/timing carry-through moved into `SemanticIr::build()`.
 - Future placeholder helpers should either be wired into an active call path, covered by tests, or left out until the implementation slice genuinely needs them.
 
+## 2026-04-11 CI warning-deny gate
+- The clean Rust warning baseline is now enforced by the canonical local/hosted CI path.
+- `scripts/run_ci.sh` runs the Rust test step with `RUSTFLAGS="-D warnings"` so warning regressions fail before push and in GitHub Actions.
+- The warning gate lives in the shared script rather than only in `.github/workflows/ci.yml`; this keeps local and hosted CI behavior aligned.
+
 ## Foundational engineering choices
 ### IntentIR instead of AST
 - the final canonical output must capture semantics and implementation-relevant intent, not only syntax structure
@@ -150,7 +155,8 @@
 - the GitHub Actions workflow now calls the same checked-in runner used locally: `./scripts/run_ci.sh`
 - the current canonical Rust CI runner executes:
   - `cargo fmt --all --check`
-  - `cargo test --manifest-path Cargo.toml`
+  - `RUSTFLAGS="-D warnings" cargo test --manifest-path Cargo.toml`
+  - `./scripts/run_docs_ci.sh`
 
 ## Docling runtime hardening
 - the Docling runtime should not depend on whichever `python3` happens to be first on `PATH`

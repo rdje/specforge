@@ -22,20 +22,21 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `8b6007b`
-- latest_commit_brief_message: `docs(bootstrap): refresh Rust codebase analysis`
-- note: the current session picked the next quality task and is removing the remaining Rust dead-code warning sources instead of suppressing them
+- latest_commit_hash: `308d527`
+- latest_commit_brief_message: `chore(rust): remove stale dead-code helpers`
+- note: the current session picked the next quality task and is making the clean Rust warning baseline enforceable in shared local/hosted CI
 
 ## Recent commit chain (last 5)
+- `308d527` chore(rust): remove stale dead-code helpers
 - `8b6007b` docs(bootstrap): refresh Rust codebase analysis
 - `4cfb825` test(kg): lock active-low vlm timing polarity
 - `aa1e163` docs(validation): define rescan approval boundary
 - `96810ff` test(kg): cover negative knowledge conflict priors
-- `b2f80c0` feat(semantic): recover explicit clock reset topology hints
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- the Rust warning baseline is being cleaned by deleting unused stale helpers rather than adding `#[allow(dead_code)]`
+- `scripts/run_ci.sh` now enforces `RUSTFLAGS="-D warnings"` during the Rust test step, and GitHub Actions inherits that warning-deny gate because it calls the same script
+- the Rust warning baseline is clean and now enforced in the shared local/hosted CI path rather than suppressed with `#[allow(dead_code)]`
 - README bootstrap currently resolves to `SESSION_BOOTSTRAP.md`, which instructs future agents to read the referenced live docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if necessary, and then continue from the roadmap
 - this bootstrap refresh observed 28 Rust source files and about 53,977 lines under `crates/specforge/src`, with the CLI now including `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, and `nlp-enrich` beside the core staged IR commands
 - `RUST_CODEBASE_ANALYSIS.md` has been refreshed to reflect schema-v2 rescan planning/execution, `CorpusMemory` schema v5, 44 tracked KG fixtures, and the latest full CI baseline of 282 passing Rust tests plus mdBook build
@@ -178,6 +179,7 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
+- made the clean Rust warning baseline enforceable by updating `scripts/run_ci.sh` to run `cargo test --manifest-path Cargo.toml` with `RUSTFLAGS="-D warnings"`; this applies both locally and in GitHub Actions because the workflow delegates to the shared script
 - removed the remaining dead-code warning sources: an orphaned legacy `.fsm` adapter renderability path, the unused legacy adapter `render_action` helper, and empty semantic register/timing builder stubs that no longer had call sites
 - confirmed both `cargo test --manifest-path Cargo.toml --lib` and `bash scripts/run_ci.sh` pass with 282 tests and no dead-code warning output; full CI also rebuilt the mdBook successfully
 - executed the README -> `SESSION_BOOTSTRAP.md` bootstrap flow for this turn, reviewed the high-signal live docs, compared them against the current Rust CLI/module/test surface, and refreshed the Rust codebase analysis accordingly

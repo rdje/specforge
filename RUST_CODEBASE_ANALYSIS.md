@@ -34,10 +34,10 @@
 - `CorpusMemory` schema v5 now carries actor-taxonomy, semantic-phrase, semantic-modality-reliability, temporal-phrase, table-shape, visual-motif, and negative-knowledge prior families; current consumers remain advisory and locally grounded rather than fact-authoring
 - the tracked KG-quality benchmark surface currently contains 44 fixtures, including active-low VLM timing polarity-equivalence coverage that proves `ASSERTED` and `LOW` agree for active-low reset timing evidence
 - the local runtime boundary is now operationally stronger too: `specforge doctor` reports Docling readiness, the default Ollama loopback readiness, and LM Studio fallback readiness directly, repo-local `.venv-docling` auto-discovery is supported, and the backend now probes versioned Python candidates like `python3.11` before giving up on fresh ingest
-- GitHub Actions CI is now part of the repo baseline and runs `cargo fmt --all --check` plus `cargo test --manifest-path Cargo.toml` on every `push` and `pull_request`, which keeps the hosted validation path aligned with the local Rust quality gate
+- GitHub Actions CI is now part of the repo baseline and runs `cargo fmt --all --check`, warning-deny Rust tests, and the mdBook build on every `push` and `pull_request`, which keeps the hosted validation path aligned with the local Rust/docs quality gate
 - that CI path now has a single checked-in entrypoint at `scripts/run_ci.sh`, and the GitHub workflow calls that script directly so local and hosted Rust validation do not drift apart
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and adding the planned `R15g` corpus knowledge base beside the already-live typed prior-memory plane; adapter expansion is now horizon work
-- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting/tests and the mdBook docs build; after the dead-code cleanup, the latest full local CI path reports 282 passing Rust tests and no dead-code warning output
+- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Rust tests with `RUSTFLAGS="-D warnings"`, and the mdBook docs build; after the dead-code cleanup, the latest full local CI path reports 282 passing Rust tests and no dead-code warning output
 
 ## Session update (2026-04-11 bootstrap refresh)
 - executed the README terminal instruction by reading `SESSION_BOOTSTRAP.md`, which expands the task into reading the referenced live docs, analyzing the Rust codebase, updating this analysis if necessary, and continuing from the roadmap
@@ -51,6 +51,11 @@
 - the deleted adapter helpers were stale legacy paths for `DecisionTreeFragmentRecord` block/action validation and direct `DecisionTreeActionRecord` rendering; the active `.fsm` lowering path now validates and renders `ControlBlockRecord` / `ControlActionRecord` instead
 - the deleted semantic helpers were empty register/timing builder stubs with no call sites; `SemanticIR` already carries register records from `EvidenceIR` and extends timing records with VLM timing extraction directly in `SemanticIr::build()`
 - targeted validation with `cargo test --manifest-path Cargo.toml --lib` now reports 282 passing tests and no dead-code warning output
+
+## Session update (2026-04-11 warning-deny CI)
+- `scripts/run_ci.sh` now runs `cargo test --manifest-path Cargo.toml` with `RUSTFLAGS="-D warnings"`
+- the warning-deny gate lives in the shared script, so local pre-push validation and GitHub Actions enforce the same baseline
+- this turns the cleaned warning baseline into a regression guard rather than a one-time cleanup
 
 
 ## Session update (2026-04-04)
@@ -452,7 +457,7 @@
 
 ## Testing implications
 - current full local CI path: `bash scripts/run_ci.sh`
-- current Rust test count observed through that path: 282 library tests, 0 binary tests, and 0 doc tests, all passing
+- current Rust test count observed through that path: 282 library tests, 0 binary tests, and 0 doc tests, all passing under `RUSTFLAGS="-D warnings"`
 - current tracked KG-quality fixture count: 44
 - current tests cover:
   - source-kind detection
@@ -494,7 +499,7 @@
 
 ## Latest validation completed in this refresh
 - `bash scripts/run_ci.sh`
-  - passed; Rust test suite reported 282 passed tests, 0 failures, 0 binary tests, 0 doc tests, and the mdBook build completed successfully
+  - passed; Rust test suite reported 282 passed tests under `RUSTFLAGS="-D warnings"`, 0 failures, 0 binary tests, 0 doc tests, and the mdBook build completed successfully
 
 ## Earlier validation trail
 - `cargo run --manifest-path Cargo.toml -p specforge -- --help`
