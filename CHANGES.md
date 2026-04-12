@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-04-12 (NLP alias learning rejects list markers)
+
+### Fixed: Form 2 alias learning rejects broader markdown/list prefixes
+- `extract_alias_phrase()` now rejects alias subjects beginning with common markdown bullets, block quotes, and ordered-list markers such as `*`, `+`, `>`, `1.`, and `2)` in addition to the existing `-`, `|`, and `#` guards.
+- This prevents `specforge nlp-enrich` from learning garbage aliases from formatted list/table text while leaving ordinary prose aliases such as `address bus` unchanged.
+
+### Validation
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml --lib extract_alias_phrase_rejects_markdown_marker_prefixes -- --nocapture` -> passed
+- `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings` -> passed
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, `305` Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build
+
 ## 2026-04-12 (VLM timing filters bracketed sample labels)
 
 ### Fixed: bracketed waveform sample labels stay out of timing constraints

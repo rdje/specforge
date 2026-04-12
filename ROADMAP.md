@@ -284,7 +284,7 @@
 - done:
   - direction/source/destination column handling widened for AMBA 5 terminology and infrastructure signals
   - width-only and parametric-width declarations landed so coverage reporting is more honest
-  - `extract_alias_phrase()` now rejects alias subjects beginning with markdown/table markers `-`, `|`, or `#`
+  - `extract_alias_phrase()` now rejects alias subjects beginning with markdown/table/list markers such as `-`, `|`, `#`, `*`, `+`, `>`, `1.`, or `2)`
   - representative local APB/AHB/AXI validation snapshots were refreshed from the current semantic/intent stack:
     - APB 94/100 EXCELLENT
     - AHB 94/100 EXCELLENT

@@ -1222,11 +1222,11 @@ Reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` for full analysis and implementatio
 ## Markdown-marker alias cleanup (2026-04-03)
 
 ### Root cause
-- Form 2 alias learning in `specforge nlp-enrich` could still absorb markdown formatting noise when a normative sentence started with a bullet marker, table-cell marker, or heading marker before the real noun phrase.
+- Form 2 alias learning in `specforge nlp-enrich` could still absorb markdown formatting noise when a normative sentence started with a bullet marker, table-cell marker, heading marker, block quote, or ordered-list marker before the real noun phrase.
 - The concrete failure mode was learning aliases such as `- the address` instead of a real phrase such as `address bus`.
 
 ### Implementation shape
-- `crates/specforge/src/commands/nlp_enrich.rs` now rejects alias subjects that begin with `-`, `|`, or `#` before article stripping and phrase normalization.
+- `crates/specforge/src/commands/nlp_enrich.rs` now rejects alias subjects that begin with markdown/table/list prefixes such as `-`, `|`, `#`, `*`, `+`, `>`, `1.`, or `2)` before article stripping and phrase normalization.
 - The ordinary noun-phrase path is unchanged, so genuine prose aliases still accumulate in `signal_alias_map`.
 - Added regression coverage for marker-prefixed alias subjects.
 

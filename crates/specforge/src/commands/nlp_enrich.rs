@@ -471,7 +471,7 @@ fn extract_alias_phrase(sentence: &str, subject_signal: &str) -> Option<String> 
     if subject_raw.is_empty() {
         return None;
     }
-    if subject_raw.starts_with(['-', '|', '#']) {
+    if subject_has_markup_prefix(subject_raw) {
         return None;
     }
 
@@ -506,6 +506,22 @@ fn extract_alias_phrase(sentence: &str, subject_signal: &str) -> Option<String> 
     } else {
         None
     }
+}
+
+fn subject_has_markup_prefix(subject: &str) -> bool {
+    let subject = subject.trim_start();
+    if subject.starts_with(['-', '|', '#', '*', '+', '>']) {
+        return true;
+    }
+
+    if let Some((marker, _rest)) = subject
+        .split_once(['.', ')'])
+        .filter(|(_, rest)| rest.starts_with(char::is_whitespace))
+    {
+        return !marker.is_empty() && marker.chars().all(|character| character.is_ascii_digit());
+    }
+
+    false
 }
 
 /// Strip common leading determiners / articles from a noun phrase.
@@ -1117,6 +1133,26 @@ mod tests {
         assert!(
             extract_alias_phrase("# the address bus shall remain stable", "HADDR").is_none(),
             "heading-style markdown prefixes must not become learned aliases"
+        );
+        assert!(
+            extract_alias_phrase("* the address bus shall remain stable", "HADDR").is_none(),
+            "asterisk markdown bullets must not become learned aliases"
+        );
+        assert!(
+            extract_alias_phrase("+ the address bus shall remain stable", "HADDR").is_none(),
+            "plus markdown bullets must not become learned aliases"
+        );
+        assert!(
+            extract_alias_phrase("> the address bus shall remain stable", "HADDR").is_none(),
+            "quote-style markdown prefixes must not become learned aliases"
+        );
+        assert!(
+            extract_alias_phrase("1. the address bus shall remain stable", "HADDR").is_none(),
+            "ordered-list markdown prefixes must not become learned aliases"
+        );
+        assert!(
+            extract_alias_phrase("2) the address bus shall remain stable", "HADDR").is_none(),
+            "ordered-list paren prefixes must not become learned aliases"
         );
     }
 

@@ -37,7 +37,12 @@
 - GitHub Actions CI is now part of the repo baseline and runs `cargo fmt --all --check`, warning-deny Clippy, warning-deny Rust tests, warning-deny rustdoc, and the mdBook build on every `push` and `pull_request`, which keeps the hosted validation path aligned with the local Rust/docs quality gate
 - that CI path now has a single checked-in entrypoint at `scripts/run_ci.sh`, and the GitHub workflow calls that script directly so local and hosted Rust validation do not drift apart
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and adding the planned `R15g` corpus knowledge base beside the already-live typed prior-memory plane; adapter expansion is now horizon work
-- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the VLM timing bracketed sample label filtering slice, the full local CI path reports clean Clippy, 305 passing Rust tests, clean Rust API docs, and a successful mdBook build
+- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the NLP alias markdown/list marker filtering slice, the full local CI path reports clean Clippy, 305 passing Rust tests, clean Rust API docs, and a successful mdBook build
+
+## Session update (2026-04-12 NLP alias markdown/list marker filtering)
+- `extract_alias_phrase()` now rejects broader Form 2 alias subjects that begin with markdown bullets, block quotes, and ordered-list markers such as `*`, `+`, `>`, `1.`, and `2)` in addition to the existing `-`, `|`, and `#` guards.
+- This keeps list/table formatting out of `signal_alias_map` while preserving ordinary prose alias learning for noun phrases like `address bus`.
+- Focused validation, warning-deny Clippy, and the full local CI gate passed with `305` Rust tests for this slice.
 
 ## Session update (2026-04-12 VLM timing bracketed sample label filtering)
 - `SemanticIR` now filters bracketed VLM timing annotation labels such as `D[0]`, `A[1]`, `DATA[3]`, and `ADDR[7]` as low-value waveform/sample markup instead of allowing them to become `TimingConstraintRecord`s.
@@ -281,7 +286,7 @@
 - latest local validation snapshot is now AXI `85/100 GOOD`, APB `90/100 EXCELLENT`, AHB `94/100 EXCELLENT`, and AXI-Stream `90/100 EXCELLENT`; this refresh replaced a stale optimistic snapshot, the current tracked four-artifact projection now uses APB `IHI0024_E`, AHB remains in the excellent lane, and the latest AXI truthfulness fixes removed the last blocked-handshake residual, the false `AWAKEUP` / `CRVALID` semantic-role conflicts, the false `ACLK` / `ARESETN` interface-direction conflicts, and the bogus `Tie-off`-driven `BROADCAST*` missing-consumer warning while leaving AXI as the main remaining live quality outlier
 - APB `IHI0024_D` was re-run from the original PDF through full `specforge converge` with Ollama VLM + NLP Level 3 and converged in 2 passes
 - AXI `IHI0022_L` was re-run from the original PDF through full `specforge converge` with Ollama VLM + NLP Level 3, converged in 2 passes, and recovered timing to reach 94/100 EXCELLENT
-- `extract_alias_phrase()` now rejects markdown/table marker prefixes `-`, `|`, and `#`, closing the last small R12 cleanup in the NLP alias-learning loop
+- `extract_alias_phrase()` now rejects markdown/table/list marker prefixes such as `-`, `|`, `#`, `*`, `+`, `>`, `1.`, and `2)`, closing the last small R12 cleanup in the NLP alias-learning loop
 - the documented README staged flow was re-executed on `README.md` through `inspect -> ingest -> evidence -> semantic -> intent -> adapt --dry-run`, confirming the current entry path still runs end-to-end
 - the roadmap now explicitly treats adapter expansion as horizon work; the next structural gaps are making the actor-relative graph primary, broadening the new table/prose/alias-grounded role inference into richer multimodal grounding, adding deeper explicit temporal semantics, and hardening KG quality/evaluation
 - the current architecture is still intentionally document-local, which is correct for truthfulness, but the next strategic expansion after the current semantic-truthfulness work should be a separate cross-document learning plane that stores reusable extraction priors rather than cross-document facts
@@ -639,7 +644,7 @@
   - handshake-driven `IntentIR` identity/behavior/constraint/assumption construction
   - residual-decision preservation from `SemanticIR` into `IntentIR`
   - NLP Level 3 extraction, backannotation, and alias learning
-  - markdown-marker alias rejection for Form 2 alias learning
+  - markdown/table/list marker alias rejection for Form 2 alias learning
   - actor-signal relation extraction from prose and table roles
   - AMBA `Source` / `Driver` / `Destination` signal-direction handling
   - `.fsm` adapter renderability, including graph-backed top-composition child direction recovery, unambiguous standalone direct direction recovery, sticky actor-port direction/width conflict blocking, graph-backed sequential system-contract direction recovery, graph-only direct-context filtering, top-link boundary direction recovery, and conflict/ambiguity blocking
