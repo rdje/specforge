@@ -21,6 +21,7 @@
 - [Validation And Learning](quality/validation.md)
   - [KG Bench And Fixtures](quality/kg-bench.md)
   - [Corpus Memory And Priors](quality/corpus-memory.md)
+  - [Corpus Knowledge Base](quality/corpus-kb.md)
 - [Reference](reference/overview.md)
   - [Generated Artifacts](reference/generated-artifacts.md)
   - [Documentation Scope And Continuity](reference/documentation-scope.md)

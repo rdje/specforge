@@ -22,20 +22,21 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `bb0574c`
-- latest_commit_brief_message: `docs: refresh README bootstrap baseline`
-- note: the current session recovered an interrupted README-bootstrap/PNT slice after the crash and is finishing the VLM timing bit-select annotation filter against that committed baseline
+- latest_commit_hash: `aba6493`
+- latest_commit_brief_message: `fix(semantic): filter bit-select timing labels`
+- note: the current session is executing the README bootstrap path against that baseline and starting the `R15g` corpus knowledge-base plane
 
 ## Recent commit chain (last 5)
+- `aba6493` fix(semantic): filter bit-select timing labels
 - `bb0574c` docs: refresh README bootstrap baseline
 - `76274f6` fix(nlp): reject list-prefixed aliases
 - `da0797f` fix(semantic): filter bracketed vlm timing labels
 - `2cc3a4d` fix(semantic): filter compact vlm timing labels
-- `98b516b` test(validation): cover missing fsm initial state
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- the current recovered KG-quality follow-on tightens `vlm_timing_spurious_annotation_negative` again so standalone signal bit-select/range annotation labels such as `XREQ[0]`, `XREQ<1>`, and `XREQ[3:0]` stay out of `TimingConstraintRecord`s while the same VLM observation's grounded `signals[].values[]` samples still produce typed temporal evidence
+- the current `R15g` follow-on adds a tracked `corpus_kb/` root and a new `specforge corpus-kb` command that refreshes managed corpus knowledge-base validation-finding pages from validation report sidecars without mutating canonical IR or typed priors
+- the latest committed KG-quality follow-on tightens `vlm_timing_spurious_annotation_negative` again so standalone signal bit-select/range annotation labels such as `XREQ[0]`, `XREQ<1>`, and `XREQ[3:0]` stay out of `TimingConstraintRecord`s while the same VLM observation's grounded `signals[].values[]` samples still produce typed temporal evidence
 - the latest committed NLP-quality follow-on tightens `extract_alias_phrase()` so broader markdown/list marker prefixes such as `*`, `+`, `>`, `1.`, and `2)` cannot become learned Form 2 aliases
 - the latest committed KG-quality follow-on tightens `vlm_timing_spurious_annotation_negative` again so bracketed waveform sample labels such as `D[0]`, `A[1]`, `DATA[3]`, and `ADDR[7]` stay out of `TimingConstraintRecord`s
 - the latest committed KG-quality follow-on tightens `vlm_timing_spurious_annotation_negative` so compact waveform sample labels such as `D0`, `A1`, `DATA0`, and `0xAA` stay out of `TimingConstraintRecord`s
@@ -65,8 +66,8 @@
 - `scripts/run_ci.sh` now also builds Rust API docs with `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` before the mdBook build, preserving caller-provided `RUSTDOCFLAGS`
 - the Rust warning baseline is clean and now enforced in the shared local/hosted CI path rather than suppressed with `#[allow(dead_code)]`
 - README bootstrap currently resolves to `SESSION_BOOTSTRAP.md`, which instructs future agents to read the referenced live docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if necessary, and then continue from the roadmap
-- this recovery bootstrap observed 29 Rust source files and 56,040 lines under `crates/specforge/src`, with the CLI now including `doctor`, `converge`, `enrich`, `validate`, `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, and `nlp-enrich` beside the core staged IR commands
-- `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the README bootstrap pass and the NLP alias markdown/list marker filtering slice; the tracked KG fixture count remains `55`, and the full local CI gate reports `305` passing Rust tests for this baseline
+- this README bootstrap observed 30 Rust source files and 56,332 lines under `crates/specforge/src`, with the CLI now including `doctor`, `converge`, `enrich`, `validate`, `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, `corpus-kb`, and `nlp-enrich` beside the core staged IR commands
+- `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the README bootstrap pass and the `R15g` corpus knowledge-base slice; the tracked KG fixture count remains `55`, and the full local CI gate now reports `307` passing Rust tests
 - the latest README bootstrap hygiene pass found no new Rust architecture drift requiring code changes; the concrete fixes were to refresh the README implementation-path map, refresh the committed baseline in this memory file, update the current testing/validation counts in `RUST_CODEBASE_ANALYSIS.md`, and normalize old checkout-specific markdown links to repo-relative paths
 - the earlier VLM timing KG benchmark slice `vlm_timing_waveform_motion_negative` proves a VLM timing diagram can preserve the real `HIGH` sample while rejecting waveform motion descriptors and transition spellings such as `rising`, `stable`, `falling`, `UNCHANGED`, `RISING_EDGE`, `LOW_TO_HIGH`, `HIGH_TO_LOW`, `POS_EDGE`, `NEG_EDGE`, `risingedge`, `LOW2HIGH`, and `HIGH2LOW` as concrete signal values
 - the latest committed VLM timing KG benchmark slices tighten `vlm_timing_spurious_annotation_negative`, proving compact and bracketed waveform/sample labels such as `D0`, `A1`, `DATA0`, `0xAA`, `D[0]`, `A[1]`, `DATA[3]`, and `ADDR[7]` are annotation noise rather than timing constraints
@@ -128,7 +129,7 @@
   - the convergence result remains the stable pre-rescan snapshot
   - post-rescan changes are summarized as arbitration state such as `changed_requires_validation_review`, with review-required counters split by possible improvement, regression, and neutral artifact drift, not as automatic improvement
 - root docs remain important, but they now serve continuity, roadmap, validation, and developer-state roles more than primary end-user onboarding
-- runnable CLI surface includes `inspect`, `doctor`, `converge`, `ingest`, `evidence`, `semantic`, `intent`, `adapt`, `enrich`, `validate`, `kg-bench`, `project-validation`, `rescan-plan`, `learn-priors`, and `nlp-enrich`
+- runnable CLI surface includes `inspect`, `doctor`, `converge`, `ingest`, `evidence`, `semantic`, `intent`, `adapt`, `enrich`, `validate`, `kg-bench`, `project-validation`, `rescan-plan`, `learn-priors`, `corpus-kb`, and `nlp-enrich`
 - `specforge converge` now defaults to full Ollama-backed VLM image enrichment plus NLP Level 3 backannotation; use `--vlm-provider skip` and/or `--nlp-provider skip` only when intentionally narrowing the loop
 - GitHub Actions now mirrors the baseline Rust quality gate on every `push` / `pull_request` via `.github/workflows/ci.yml`
 - `scripts/run_ci.sh` is now the canonical Rust + docs CI entrypoint and is reused by GitHub Actions, so the same hosted path can be exercised locally before push
@@ -213,6 +214,7 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
+- executed the README -> `SESSION_BOOTSTRAP.md` bootstrap path against commit `aba6493`, reviewed the referenced live docs and current Rust surface, added `specforge corpus-kb`, created the tracked `corpus_kb/` root with schema/policy docs, and seeded `corpus_kb/failures/validation-findings.md` from the current four AMBA validation report sidecars while preserving the no-canonical-mutation boundary
 - recovered the interrupted README -> `SESSION_BOOTSTRAP.md` bootstrap/PNT path after the crash, reviewed the referenced live docs and current Rust surface, confirmed the working tree contained only the in-flight VLM timing label-noise files, and finished the standalone signal bit-select/range annotation filter for `XREQ[0]`, `XREQ<1>`, and `XREQ[3:0]` in both the direct semantic regression and `vlm_timing_spurious_annotation_negative`
 - executed the README -> `SESSION_BOOTSTRAP.md` bootstrap path against commit `76274f6`, reviewed the referenced live docs and current Rust surface, confirmed 29 Rust files / 56,024 source lines / 55 tracked KG-quality fixtures / 305-test full-CI baseline, refreshed the README implementation map plus `RUST_CODEBASE_ANALYSIS.md` current testing counts, and normalized old checkout-specific markdown links to repo-relative paths
 - tightened NLP Form 2 alias learning so broader markdown/list marker prefixes such as `*`, `+`, `>`, `1.`, and `2)` are rejected before alias phrase normalization; strengthened `extract_alias_phrase_rejects_markdown_marker_prefixes`

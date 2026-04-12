@@ -19,6 +19,7 @@ Current surface:
 - `project-validation <artifact>...`
 - `rescan-plan [--execute]`
 - `learn-priors <intent-ir>...`
+- `corpus-kb <validation-report>...`
 
 The commands fall into three groups:
 
@@ -72,6 +73,12 @@ If you want to update the cross-document prior store:
 
 ```bash
 cargo run --manifest-path Cargo.toml -- learn-priors generated/intent_ir/.../intent_ir.json
+```
+
+If you want to refresh the tracked corpus knowledge-base synthesis pages:
+
+```bash
+cargo run --manifest-path Cargo.toml -- corpus-kb generated/intent_ir/.../validation_report.json
 ```
 
 The next two chapters break those paths down in more detail.

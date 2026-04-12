@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-13 R15g corpus knowledge-base bootstrap
+- The README bootstrap now moves into `R15g` rather than adding more one-off extractor fixes. The missing plane was not another canonical IR field or another hidden memory file; it was a tracked, reviewable corpus synthesis root that can survive session loss and accumulate cross-document lessons without promoting facts.
+- `corpus_kb/` is deliberately separate from `generated/prior_memory/corpus_memory.json`. The prior store is machine-usable extraction memory; the corpus KB is human/LLM-readable synthesis, negative-knowledge notes, validation pattern memory, and prior-candidate staging.
+- `specforge corpus-kb` provides the first auto-refreshable page family. It reads validation report sidecars and updates only the managed block in `corpus_kb/failures/validation-findings.md`, preserving human-authored synthesis outside that block.
+- This keeps the promotion boundary honest: corpus KB observations can inspire KG-bench fixtures, rescan targets, or future typed prior families, but they cannot mutate `SourceIR`, `EvidenceIR`, `SemanticIR`, `IntentIR`, adapters, or `CorpusMemory` without a separate validation-gated implementation path.
+
 ## 2026-04-12 VLM timing standalone bit-select annotation filtering
 - The interrupted recovery slice continues the same KG-quality theme as the compact/bracketed timing-label filters: VLM timing `annotations[]` can contain figure markup that looks signal-like, not just generic tokens like `T0` or `DATA[3]`.
 - Standalone annotation labels such as `XREQ[0]`, `XREQ<1>`, and `XREQ[3:0]` are now treated as waveform/bit-select labels rather than timing constraints. That is the safe interpretation because no timing relation, value obligation, or sentence-shaped rule is present in the annotation itself.

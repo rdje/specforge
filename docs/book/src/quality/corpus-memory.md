@@ -6,6 +6,13 @@ The thing that grows over time is a typed symbolic prior store:
 
 `generated/prior_memory/corpus_memory.json`
 
+There is now a second cross-document artifact plane too:
+
+`corpus_kb/`
+
+That corpus knowledge base is for reviewable synthesis and failure-pattern notes, not machine-usable priors.
+If a corpus KB observation should become executable extraction behavior, it must still move through a typed prior schema, KG-bench coverage, and validation-gated promotion.
+
 ## Two separate planes
 
 The architecture keeps document truth and learned experience separate.

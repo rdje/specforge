@@ -45,6 +45,8 @@ pub enum Commands {
     KgBench(KgBenchArgs),
     /// Build a local cross-document prior store from validated IntentIR artifacts
     LearnPriors(LearnPriorsArgs),
+    /// Refresh tracked corpus knowledge-base pages from reviewable evidence
+    CorpusKb(CorpusKbArgs),
     /// Enrich an EvidenceIR artifact with LLM-extracted NLP Level 3 constraints
     NlpEnrich(NlpEnrichArgs),
 }
@@ -263,6 +265,16 @@ pub struct LearnPriorsArgs {
     pub dry_run: bool,
 }
 
+#[derive(Debug, Args)]
+pub struct CorpusKbArgs {
+    /// Validation report JSON files to project into the tracked corpus knowledge base
+    #[arg(required = true)]
+    pub validation_reports: Vec<std::path::PathBuf>,
+    /// Repository root containing corpus_kb/
+    #[arg(long, default_value = ".")]
+    pub repo_root: std::path::PathBuf,
+}
+
 /// VLM provider selection for the `enrich` command.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum)]
 pub enum VlmProviderArg {
@@ -386,6 +398,26 @@ mod tests {
             RescanVlmProviderArg::AutoLocal
         ));
         assert!(args.rescan_vlm_model.is_none());
+    }
+
+    #[test]
+    fn corpus_kb_defaults_to_repo_root_current_directory() {
+        let cli = Cli::parse_from([
+            "specforge",
+            "corpus-kb",
+            "generated/intent_ir/doc/validation_report.json",
+        ]);
+        let Commands::CorpusKb(args) = cli.command else {
+            panic!("expected corpus-kb command");
+        };
+
+        assert_eq!(args.repo_root, PathBuf::from("."));
+        assert_eq!(
+            args.validation_reports,
+            vec![PathBuf::from(
+                "generated/intent_ir/doc/validation_report.json"
+            )]
+        );
     }
 
     #[test]

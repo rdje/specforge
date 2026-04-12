@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-04-13 (R15g corpus knowledge base bootstrap)
+
+### Added: tracked corpus knowledge-base plane
+- Added `corpus_kb/` with a schema/policy root and the first `failures/` page family for reviewable cross-document synthesis.
+- Seeded `corpus_kb/failures/validation-findings.md` from the current four projected AMBA `IntentIR` validation reports, preserving human synthesis outside the managed block.
+
+### Added: `specforge corpus-kb`
+- Added a new CLI command that refreshes the managed validation-finding block from validation report sidecars.
+- The command preserves existing human-authored notes and only replaces the managed block, so corpus KB pages remain guidance and synthesis rather than canonical truth promotion.
+- Added focused coverage for CLI parsing and managed-block preservation.
+
+### Validation
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml --lib corpus_kb -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --repo-root . generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/validation_report.json generated/intent_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/validation_report.json generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/validation_report.json generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/validation_report.json` -> passed
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, `307` Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build
+
 ## 2026-04-12 (VLM timing filters signal bit-select annotation labels)
 
 ### Fixed: standalone signal index labels stay out of timing constraints

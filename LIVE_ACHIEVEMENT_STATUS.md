@@ -27,6 +27,7 @@
 - `specforge rescan-plan` command created: Done
 - `specforge kg-bench` command created: Done
 - `specforge learn-priors` command created: Done
+- `specforge corpus-kb` command created: Done
 - `specforge nlp-enrich` command created: Done
 - `specforge converge` command created: Done
 - End-to-end source-to-IntentIR pipeline implemented: Done
@@ -148,14 +149,14 @@
 - Cross-modality evidence arbitration / conflict handling: In Progress
 - KG-quality evaluation with gold fixtures and negative fixtures: In Progress
 - Cross-document extraction learning plane with typed reusable priors: In Progress
-- Corpus knowledge base plane beside KG + typed priors: Planned
+- Corpus knowledge base plane beside KG + typed priors: In Progress
 - SystemVerilog/Verilog/VHDL adapter expansion: Horizon
 - Adapter validation (SystemVerilog/Verilog/VHDL targets): Horizon
 - Actor-relative direction model in `SemanticIR` / `IntentIR`: In Progress
 - Cross-document typed prior memory (`R15f`): In Progress
 
 ## Highest-priority remaining gap
-- Continue replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics beyond the first `.fsm` explicit-module/top-composition, unambiguous standalone-direct, and explicit top-link topology consumers, then broaden `R15f` beyond its first actor-taxonomy / semantic / semantic-modality-reliability / temporal / table-shape prior families into visual-motif and negative-knowledge priors, and then add `R15g` so compiled cross-document synthesis has a persistent corpus knowledge base plane beside the KG and typed priors
+- Continue replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics beyond the first `.fsm` explicit-module/top-composition, unambiguous standalone-direct, and explicit top-link topology consumers, then broaden `R15f` beyond its first actor-taxonomy / semantic / semantic-modality-reliability / temporal / table-shape prior families into visual-motif and negative-knowledge priors, and then deepen the now-started `R15g` corpus knowledge base plane beyond its first validation-finding page family
 - Latest unseen-protocol live run:
 - `IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf` converged in `2` pipeline iterations and currently validates at `90/100 EXCELLENT`; parity-check table semantics now recover both structural KG ownership and carried width hints for the `*CHK` surface, declared graph-direction and width coverage are both `22/22`, `ACLK` / `ARESETN` now surface as infrastructure connectivity with a dedicated system-contract note instead of an ordinary missing-producer warning, six same-cycle temporal rules now carry explicit `0`-cycle windows, there are now no remaining typed temporal conflicts because assertion-vs-level comparison is polarity-aware rather than flattened, and the last carried interface-grouping residual is now gone
 - Canonical per-signal polarity surface: Done

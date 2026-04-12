@@ -24,6 +24,7 @@ pub fn run(cli: Cli) -> Result<()> {
         Commands::RescanPlan(args) => commands::rescan_plan::run(args),
         Commands::KgBench(args) => commands::kg_bench::run(args),
         Commands::LearnPriors(args) => commands::learn_priors::run(args),
+        Commands::CorpusKb(args) => commands::corpus_kb::run(args),
         Commands::NlpEnrich(args) => commands::nlp_enrich::run(args),
     }
 }

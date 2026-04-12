@@ -95,4 +95,8 @@ Generated artifacts are written under `generated/`:
 - `generated/adapters/fsm/<document_key>/adapter.json`
 - `generated/prior_memory/corpus_memory.json`
 
+Tracked corpus knowledge-base synthesis lives outside `generated/`:
+
+- `corpus_kb/`
+
 The `generated/` tree stays local and untracked.

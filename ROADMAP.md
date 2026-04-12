@@ -603,7 +603,7 @@
   - broaden the first benchmark coverage for prior-guided unseen-document improvement beyond the new actor-taxonomy, temporal, semantic, visual, table-shape, and semantic-modality-reliability gold/negative pairs into negative-knowledge prior families
 
 ### R15g Corpus knowledge base plane
-- status: Planned
+- status: In Progress
 - objective:
   - add a persistent corpus-level knowledge base beside the per-document IR pipeline and the typed prior store, so the extractor can accumulate reviewable cross-document synthesis instead of rediscovering higher-level extraction knowledge from scratch
 - motivation:
@@ -647,6 +647,14 @@
   - the interaction boundary is explicit:
     - corpus KB may inform humans, LLM summarization, benchmark design, and prior-candidate generation
     - canonical IR and typed priors still require their own validation-gated promotion paths
+- done:
+  - `corpus_kb/` now exists as the tracked corpus knowledge-base root with `README.md`, `SCHEMA.md`, and a failure-page family
+  - `specforge corpus-kb <validation-report>...` refreshes the managed validation-finding projection in `corpus_kb/failures/validation-findings.md`
+  - the first managed page preserves human-authored synthesis outside the generated block and cites validation report sidecars by document key/path/fingerprint/finding id
+- remaining:
+  - add more page families for tables, visuals, timing motifs, infrastructure semantics, and protocol-family notes
+  - connect selected corpus KB patterns back into typed prior-candidate generation only through explicit schemas, KG-bench fixtures, and validation gates
+  - add benchmark-result refresh surfaces without overwriting human-authored synthesis
 
 ### R16 SystemVerilog adapter (Horizon)
 - status: Horizon

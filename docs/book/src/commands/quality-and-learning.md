@@ -8,6 +8,7 @@ For the deeper rationale behind validation, fixture truthfulness, and cross-docu
 - [Validation And Learning](../quality/validation.md)
 - [KG Bench And Fixtures](../quality/kg-bench.md)
 - [Corpus Memory And Priors](../quality/corpus-memory.md)
+- [Corpus Knowledge Base](../quality/corpus-kb.md)
 
 ## `validate`
 
@@ -173,6 +174,26 @@ Visual-motif priors remember recurring visual patterns, while negative-knowledge
 Visual-motif priors now have a first bounded consumer: `EvidenceIR` may add a prior-memory classification observation for a current unknown visual asset when its local caption matches a unique learned motif.
 Negative-knowledge priors now have bounded validation consumers too: `EvidenceIR` may surface caution for repeated local signal-semantic conflict patterns, while `SemanticIR` and `IntentIR` may surface caution for repeated carried conflict and residual packet patterns.
 That caution does not suppress evidence, remove residuals, or decide semantic truth.
+
+## `corpus-kb`
+
+```bash
+cargo run --manifest-path Cargo.toml -- corpus-kb generated/intent_ir/.../validation_report.json
+```
+
+This refreshes tracked corpus knowledge-base pages under `corpus_kb/`.
+
+The first page family is:
+
+`corpus_kb/failures/validation-findings.md`
+
+It projects validation reports into a managed block while preserving human-authored synthesis around that block.
+This is the first concrete `R15g` surface: persistent corpus-level synthesis beside the KG and prior memory.
+
+The boundary is strict:
+
+- corpus KB pages can inform humans, future LLM sessions, benchmark design, and prior-candidate design
+- corpus KB pages cannot directly mutate canonical IR or become typed priors without a separate validation-gated promotion path
 
 ## `enrich` and `nlp-enrich`
 

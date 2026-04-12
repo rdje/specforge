@@ -23,7 +23,8 @@ The canonical user-facing documentation for `specforge` has moved to the mdBook 
 7. `docs/book/src/quality/validation.md`
 8. `docs/book/src/quality/kg-bench.md`
 9. `docs/book/src/quality/corpus-memory.md`
-10. `docs/book/src/reference/troubleshooting.md`
+10. `docs/book/src/quality/corpus-kb.md`
+11. `docs/book/src/reference/troubleshooting.md`
 
 ## What stays in the repo root
 
@@ -46,6 +47,7 @@ The most important ones are:
 - `DEVELOPMENT_NOTES.md`
 - `CHANGES.md`
 - `MEMORY.md`
+- `corpus_kb/`
 
 ## Planned user workflow
 1. provide a source specification
@@ -67,6 +69,7 @@ The most important ones are:
 - `specforge validate <artifact>`
 - `specforge project-validation <artifact>...`
 - `specforge learn-priors <intent-ir>...`
+- `specforge corpus-kb <validation-report>...`
 
 ## Expected user-visible principles
 - the tool should be staged and inspectable
@@ -95,6 +98,7 @@ The most important ones are:
   - an `unknown` `Name | Direction | Width` table only becomes a signal-description table when the matching prior is staged
   - an `unknown` `Parameter | Min | Max | Unit` table only becomes a timing-parameter table when the matching prior is staged
 - `SemanticIR` now also consults the persisted prior-memory path indirectly through the upstream `EvidenceIR`, and the first bounded temporal consumer uses temporal phrase priors only as a fallback for local timing text when the built-in cycle-window parser cannot recover the timing window directly
+- `specforge corpus-kb <validation-report>...` now refreshes tracked `corpus_kb/` pages from reviewable validation reports, preserving human-authored synthesis outside managed blocks and keeping the corpus KB as guidance rather than canonical truth promotion
 
 ## Where to look next
 - `README.md`
