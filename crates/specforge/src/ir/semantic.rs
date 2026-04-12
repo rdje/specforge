@@ -9199,18 +9199,34 @@ fn is_compact_waveform_index_label(text: &str) -> bool {
                 | "lane"
                 | "channel"
                 | "wait"
-        ) {
+        ) && parse_identifier(prefix).is_none()
+        {
             continue;
         }
-        if index.chars().all(|character| character.is_ascii_digit()) {
+        if is_waveform_index_token(index) {
             return true;
         }
-        if let Some(hex_digits) = index.strip_prefix("0x") {
-            return !hex_digits.is_empty()
-                && hex_digits
-                    .chars()
-                    .all(|character| character.is_ascii_hexdigit());
-        }
+    }
+
+    false
+}
+
+fn is_waveform_index_token(index: &str) -> bool {
+    let index = index.trim();
+    if index.is_empty() {
+        return false;
+    }
+    if index.chars().all(|character| character.is_ascii_digit()) {
+        return true;
+    }
+    if let Some(hex_digits) = index.strip_prefix("0x") {
+        return !hex_digits.is_empty()
+            && hex_digits
+                .chars()
+                .all(|character| character.is_ascii_hexdigit());
+    }
+    if let Some((left, right)) = index.split_once(':') {
+        return [left, right].into_iter().all(is_waveform_index_token);
     }
 
     false
@@ -11115,7 +11131,7 @@ mod tests {
             source_ref: None,
             placeholder_text: None,
             note: Some(
-                "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"T0\",\"state\":\"LOW\"},{\"cycle\":\"T1\",\"state\":\"HIGH\"}]}],\"annotations\":[\"T0\",\"Addr 1\",\"Cycle 2\",\"D0\",\"A1\",\"DATA0\",\"0xAA\",\"D[0]\",\"A[1]\",\"DATA[3]\",\"ADDR[7]\"]}"
+                "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"T0\",\"state\":\"LOW\"},{\"cycle\":\"T1\",\"state\":\"HIGH\"}]}],\"annotations\":[\"T0\",\"Addr 1\",\"Cycle 2\",\"D0\",\"A1\",\"DATA0\",\"0xAA\",\"D[0]\",\"A[1]\",\"DATA[3]\",\"ADDR[7]\",\"XREQ[0]\",\"XREQ<1>\",\"XREQ[3:0]\"]}"
                     .to_string(),
             ),
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,

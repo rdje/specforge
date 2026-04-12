@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-12 VLM timing standalone bit-select annotation filtering
+- The interrupted recovery slice continues the same KG-quality theme as the compact/bracketed timing-label filters: VLM timing `annotations[]` can contain figure markup that looks signal-like, not just generic tokens like `T0` or `DATA[3]`.
+- Standalone annotation labels such as `XREQ[0]`, `XREQ<1>`, and `XREQ[3:0]` are now treated as waveform/bit-select labels rather than timing constraints. That is the safe interpretation because no timing relation, value obligation, or sentence-shaped rule is present in the annotation itself.
+- The boundary is intentionally narrow. A real VLM `signals[].values[]` tuple for document-grounded `XREQ` still becomes typed temporal evidence when the value is concrete; only standalone index labels in `annotations[]` are filtered as low-value visual markup.
+- The existing `vlm_timing_spurious_annotation_negative` fixture remains the right regression home because this is not a new semantic family. It is a deeper edge case in the same "VLM timing label noise must not become protocol law" contract.
+
 ## 2026-04-12 README bootstrap refresh
 - The README handoff was executed again after `76274f6`. The current Rust surface now has 29 Rust source files and 56,024 lines under `crates/specforge/src`, with the full staged command set wired through `cli.rs`, `commands/mod.rs`, and `lib.rs`.
 - No code change was required by this bootstrap pass. The drift was documentation/continuity drift: `README.md` was missing several active command/module paths in its implementation map, `RUST_CODEBASE_ANALYSIS.md` still carried stale current testing counts in its lower testing section, and `MEMORY.md` still pointed at `da0797f` instead of the latest committed baseline.

@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-04-12 (VLM timing filters signal bit-select annotation labels)
+
+### Fixed: standalone signal index labels stay out of timing constraints
+- `SemanticIR` now treats standalone VLM timing annotation labels such as `XREQ[0]`, `XREQ<1>`, and `XREQ[3:0]` as waveform/bit-select markup when they appear only in `annotations[]`.
+- The filter remains scoped to standalone timing annotations: grounded `signals[].values[]` observations for `XREQ` still become typed signal constraints and temporal rules when they carry concrete sampled values such as `LOW` and `HIGH`.
+- Strengthened the existing `vlm_timing_spurious_annotation_negative` fixture and direct semantic regression again, deepening the same 55-fixture KG-quality surface rather than adding a redundant fixture.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml --lib vlm_timing_diagram_observation_rejects_label_only_noise -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality vlm_timing_spurious_annotation_negative` -> passed
+- `cargo fmt --all --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, `305` Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build
+
 ## 2026-04-12 (README bootstrap refresh)
 
 ### Changed: live bootstrap docs match the current Rust surface

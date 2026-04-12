@@ -22,19 +22,20 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `76274f6`
-- latest_commit_brief_message: `fix(nlp): reject list-prefixed aliases`
-- note: the current session is executing the README bootstrap path and refreshing documentation continuity against that committed baseline
+- latest_commit_hash: `bb0574c`
+- latest_commit_brief_message: `docs: refresh README bootstrap baseline`
+- note: the current session recovered an interrupted README-bootstrap/PNT slice after the crash and is finishing the VLM timing bit-select annotation filter against that committed baseline
 
 ## Recent commit chain (last 5)
+- `bb0574c` docs: refresh README bootstrap baseline
 - `76274f6` fix(nlp): reject list-prefixed aliases
 - `da0797f` fix(semantic): filter bracketed vlm timing labels
 - `2cc3a4d` fix(semantic): filter compact vlm timing labels
 - `98b516b` test(validation): cover missing fsm initial state
-- `4fad762` feat(validation): flag fsm initial cardinality
 
 ## Current repository state
 - active workspace member: `crates/specforge`
+- the current recovered KG-quality follow-on tightens `vlm_timing_spurious_annotation_negative` again so standalone signal bit-select/range annotation labels such as `XREQ[0]`, `XREQ<1>`, and `XREQ[3:0]` stay out of `TimingConstraintRecord`s while the same VLM observation's grounded `signals[].values[]` samples still produce typed temporal evidence
 - the latest committed NLP-quality follow-on tightens `extract_alias_phrase()` so broader markdown/list marker prefixes such as `*`, `+`, `>`, `1.`, and `2)` cannot become learned Form 2 aliases
 - the latest committed KG-quality follow-on tightens `vlm_timing_spurious_annotation_negative` again so bracketed waveform sample labels such as `D[0]`, `A[1]`, `DATA[3]`, and `ADDR[7]` stay out of `TimingConstraintRecord`s
 - the latest committed KG-quality follow-on tightens `vlm_timing_spurious_annotation_negative` so compact waveform sample labels such as `D0`, `A1`, `DATA0`, and `0xAA` stay out of `TimingConstraintRecord`s
@@ -64,7 +65,7 @@
 - `scripts/run_ci.sh` now also builds Rust API docs with `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` before the mdBook build, preserving caller-provided `RUSTDOCFLAGS`
 - the Rust warning baseline is clean and now enforced in the shared local/hosted CI path rather than suppressed with `#[allow(dead_code)]`
 - README bootstrap currently resolves to `SESSION_BOOTSTRAP.md`, which instructs future agents to read the referenced live docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if necessary, and then continue from the roadmap
-- this bootstrap refresh observed 29 Rust source files and 56,024 lines under `crates/specforge/src`, with the CLI now including `doctor`, `converge`, `enrich`, `validate`, `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, and `nlp-enrich` beside the core staged IR commands
+- this recovery bootstrap observed 29 Rust source files and 56,040 lines under `crates/specforge/src`, with the CLI now including `doctor`, `converge`, `enrich`, `validate`, `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, and `nlp-enrich` beside the core staged IR commands
 - `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the README bootstrap pass and the NLP alias markdown/list marker filtering slice; the tracked KG fixture count remains `55`, and the full local CI gate reports `305` passing Rust tests for this baseline
 - the latest README bootstrap hygiene pass found no new Rust architecture drift requiring code changes; the concrete fixes were to refresh the README implementation-path map, refresh the committed baseline in this memory file, update the current testing/validation counts in `RUST_CODEBASE_ANALYSIS.md`, and normalize old checkout-specific markdown links to repo-relative paths
 - the earlier VLM timing KG benchmark slice `vlm_timing_waveform_motion_negative` proves a VLM timing diagram can preserve the real `HIGH` sample while rejecting waveform motion descriptors and transition spellings such as `rising`, `stable`, `falling`, `UNCHANGED`, `RISING_EDGE`, `LOW_TO_HIGH`, `HIGH_TO_LOW`, `POS_EDGE`, `NEG_EDGE`, `risingedge`, `LOW2HIGH`, and `HIGH2LOW` as concrete signal values
@@ -212,6 +213,7 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
+- recovered the interrupted README -> `SESSION_BOOTSTRAP.md` bootstrap/PNT path after the crash, reviewed the referenced live docs and current Rust surface, confirmed the working tree contained only the in-flight VLM timing label-noise files, and finished the standalone signal bit-select/range annotation filter for `XREQ[0]`, `XREQ<1>`, and `XREQ[3:0]` in both the direct semantic regression and `vlm_timing_spurious_annotation_negative`
 - executed the README -> `SESSION_BOOTSTRAP.md` bootstrap path against commit `76274f6`, reviewed the referenced live docs and current Rust surface, confirmed 29 Rust files / 56,024 source lines / 55 tracked KG-quality fixtures / 305-test full-CI baseline, refreshed the README implementation map plus `RUST_CODEBASE_ANALYSIS.md` current testing counts, and normalized old checkout-specific markdown links to repo-relative paths
 - tightened NLP Form 2 alias learning so broader markdown/list marker prefixes such as `*`, `+`, `>`, `1.`, and `2)` are rejected before alias phrase normalization; strengthened `extract_alias_phrase_rejects_markdown_marker_prefixes`
 - tightened VLM timing spurious-annotation filtering so bracketed waveform/sample labels such as `D[0]`, `A[1]`, `DATA[3]`, and `ADDR[7]` are rejected like compact label noise; strengthened the direct semantic regression plus `vlm_timing_spurious_annotation_negative`
