@@ -652,10 +652,11 @@
   - `specforge corpus-kb <validation-report>...` refreshes the managed validation-finding projection in `corpus_kb/failures/validation-findings.md`
   - the first managed page preserves human-authored synthesis outside the generated block and cites validation report sidecars by document key/path/fingerprint/finding id
   - `specforge corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` now runs the tracked KG fixture suite and refreshes `corpus_kb/benchmarks/kg-fixtures.md` with managed pass/fail fixture outcomes while preserving human synthesis
+  - KG fixture validation now uses an internal quiet validation path, so `kg-bench` and corpus-KB benchmark projection no longer dump full validation reports while computing validation-backed fixture expectations
 - remaining:
   - add more page families for tables, visuals, timing motifs, infrastructure semantics, and protocol-family notes
   - connect selected corpus KB patterns back into typed prior-candidate generation only through explicit schemas, KG-bench fixtures, and validation gates
-  - deepen benchmark-result projection beyond pass/fail into fixture-family summaries and quieter internal validation reporting
+  - deepen benchmark-result projection beyond pass/fail into fixture-family summaries
 
 ### R16 SystemVerilog adapter (Horizon)
 - status: Horizon

@@ -29,6 +29,7 @@
 - `specforge learn-priors` command created: Done
 - `specforge corpus-kb` command created: Done
 - `specforge corpus-kb` KG fixture-result projection created: Done
+- Quiet KG fixture validation path for corpus-KB projection: Done
 - `specforge nlp-enrich` command created: Done
 - `specforge converge` command created: Done
 - End-to-end source-to-IntentIR pipeline implemented: Done

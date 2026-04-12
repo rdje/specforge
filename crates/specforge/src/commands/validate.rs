@@ -1,3 +1,4 @@
+use std::cell::Cell;
 use std::collections::{BTreeSet, HashMap};
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -28,6 +29,23 @@ use crate::ir::source::{
     AutomationConfidence, DiagramKind, ResidualDecisionPacket, SourceIr, ValidationFindingRecord,
     ValidationFindingSeverity, ValidationMetricRecord, ValidationReportRecord, WidthHint,
 };
+
+thread_local! {
+    static VALIDATION_OUTPUT_SUPPRESSED: Cell<bool> = const { Cell::new(false) };
+}
+
+macro_rules! println {
+    () => {
+        if !validation_output_suppressed() {
+            std::println!();
+        }
+    };
+    ($($arg:tt)*) => {
+        if !validation_output_suppressed() {
+            std::println!($($arg)*);
+        }
+    };
+}
 
 pub fn run(args: ValidateArgs) -> Result<()> {
     // Auto-detect stage from artifact JSON `stage` field.
@@ -73,6 +91,30 @@ pub fn run(args: ValidateArgs) -> Result<()> {
     }
 
     Ok(())
+}
+
+pub(crate) fn run_quiet(args: ValidateArgs) -> Result<()> {
+    with_suppressed_validation_output(|| run(args))
+}
+
+fn validation_output_suppressed() -> bool {
+    VALIDATION_OUTPUT_SUPPRESSED.with(Cell::get)
+}
+
+fn with_suppressed_validation_output<T>(operation: impl FnOnce() -> T) -> T {
+    let previous = VALIDATION_OUTPUT_SUPPRESSED.with(|flag| flag.replace(true));
+    let _guard = ValidationOutputSuppressionGuard { previous };
+    operation()
+}
+
+struct ValidationOutputSuppressionGuard {
+    previous: bool,
+}
+
+impl Drop for ValidationOutputSuppressionGuard {
+    fn drop(&mut self) {
+        VALIDATION_OUTPUT_SUPPRESSED.with(|flag| flag.set(self.previous));
+    }
 }
 
 fn stable_fingerprint(text: &str) -> String {
@@ -3847,6 +3889,15 @@ mod tests {
         SignalConstraintKind, SignalConstraintRecord, SourceIr, StructuredTableCellRecord,
         StructuredTableRecord, TableKind, VisualAsset, VisualAssetKind,
     };
+
+    #[test]
+    fn quiet_validation_output_guard_restores_previous_state() {
+        assert!(!validation_output_suppressed());
+        with_suppressed_validation_output(|| {
+            assert!(validation_output_suppressed());
+        });
+        assert!(!validation_output_suppressed());
+    }
 
     fn build_semantic_and_intent_from_markdown(
         source_file_name: &str,

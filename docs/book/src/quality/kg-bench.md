@@ -89,6 +89,7 @@ The detached mixed-polarity negative fixture proves a phrase like `CS_N is activ
 If `validate` tells us how strong one artifact is, `kg-bench` tells us whether the extraction logic is still behaving correctly across targeted truthfulness cases.
 
 In practice, it is one of the main ways `specforge` stays honest as the pipeline grows more capable.
+Fixture-local validation checks run through the same validator as `specforge validate`, but the harness suppresses the full validation report text so benchmark output stays focused on fixture pass/fail status.
 
 The current fixture run can also be projected into the corpus knowledge base:
 

@@ -7,12 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-13 R15g quiet KG fixture validation path
+- The previous corpus-KB benchmark projection exposed a quality issue: the fixture runner had to invoke `validate::run()` to produce validation sidecars for validation-backed expectations, and that command path printed the full validation report for every fixture.
+- The fix keeps public `specforge validate` behavior unchanged while adding `validate::run_quiet()` for internal callers that need the side effects and reports without the user-facing printout.
+- The quiet path uses a thread-local output guard around the existing validation implementation instead of duplicating validator logic. This keeps the validation semantics single-sourced and avoids a second, drifting report-construction path.
+- `kg-bench` now uses the quiet entrypoint for fixture-local validation. As a result, both `specforge kg-bench` and `specforge corpus-kb --kg-fixtures-root ...` stay focused on fixture pass/fail outcomes rather than dumping validation details for every validation-backed fixture.
+- The guard restores the previous output state through `Drop`, so early returns and test panics do not leave the current thread stuck in quiet mode.
+
 ## 2026-04-13 R15g KG fixture-result corpus KB projection
 - The second `R15g` refreshable page family turns the KG fixture suite into reviewable corpus synthesis without replacing the executable `specforge kg-bench` gate.
 - `specforge corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` runs the tracked fixture suite through the existing benchmark engine and writes only the managed block in `corpus_kb/benchmarks/kg-fixtures.md`.
 - The page is intentionally modest: fixture path, pass/fail status, and failure text if any. It does not summarize canonical truth, mutate IR artifacts, or approve any promotion.
 - The implementation exposes a small internal `kg_bench::collect_fixture_outcomes()` seam so the standalone benchmark command and the corpus-KB projection share the same fixture discovery/evaluation path.
-- The current quality caveat is CLI noise: fixture evaluation invokes `validate::run()`, and validation report construction is still coupled to detailed command-line printing. A future cleanup should split silent validation report construction from user-facing validation reporting so corpus-KB benchmark projection remains concise.
+- This originally exposed a CLI-noise caveat because fixture evaluation invoked `validate::run()`. The follow-up quiet-validation slice now closes that caveat while keeping validation report construction single-sourced.
 
 ## 2026-04-13 R15g corpus knowledge-base bootstrap
 - The README bootstrap now moves into `R15g` rather than adding more one-off extractor fixes. The missing plane was not another canonical IR field or another hidden memory file; it was a tracked, reviewable corpus synthesis root that can survive session loss and accumulate cross-document lessons without promoting facts.

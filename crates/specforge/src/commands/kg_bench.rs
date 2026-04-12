@@ -353,7 +353,7 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
         .and_then(|expectations| expectations.evidence.as_ref())
         .is_some()
     {
-        validate::run(ValidateArgs {
+        validate::run_quiet(ValidateArgs {
             artifact: evidence_ir.artifact_layout.evidence_ir_path.clone(),
         })?;
         let reloaded = EvidenceIr::load_from_path(&evidence_ir.artifact_layout.evidence_ir_path)?;
@@ -383,7 +383,7 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
         .and_then(|expectations| expectations.semantic.as_ref())
         .is_some()
     {
-        validate::run(ValidateArgs {
+        validate::run_quiet(ValidateArgs {
             artifact: semantic_ir.artifact_layout.semantic_ir_path.clone(),
         })?;
         let reloaded = SemanticIr::load_from_path(&semantic_ir.artifact_layout.semantic_ir_path)?;
@@ -402,7 +402,7 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
         .and_then(|expectations| expectations.intent.as_ref())
         .is_some()
     {
-        validate::run(ValidateArgs {
+        validate::run_quiet(ValidateArgs {
             artifact: intent_ir.artifact_layout.intent_ir_path.clone(),
         })?;
         let reloaded = IntentIr::load_from_path(&intent_ir.artifact_layout.intent_ir_path)?;

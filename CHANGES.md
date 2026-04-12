@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-04-13 (R15g quiet KG fixture validation path)
+
+### Changed: benchmark validation can run quietly
+- Added an internal quiet validation entrypoint so KG fixture execution can still persist validation sidecars/backannotations without printing full stage reports for every fixture.
+- Switched `kg-bench` fixture evaluation to use that quiet path, which also keeps `specforge corpus-kb --kg-fixtures-root ...` concise when it projects KG fixture outcomes into the corpus knowledge base.
+- Added a focused guard test proving the quiet-validation output flag restores its prior state after use.
+
+### Validation
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml --lib quiet_validation_output_guard_restores_previous_state -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml --lib kg_bench_reports_fixture_failure -- --nocapture` -> passed with concise fixture-failure output
+- `cargo test --manifest-path Cargo.toml --lib corpus_kb_refreshes_kg_fixture_results_without_replacing_human_synthesis -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed with concise corpus-KB refresh output and `55` passed / `0` failed fixtures
+- `cargo test --manifest-path Cargo.toml --lib kg_bench -- --nocapture` -> passed, including the full `55`-fixture tracked KG suite
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, `312` Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build
+
 ## 2026-04-13 (R15g KG fixture-result corpus KB projection)
 
 ### Added: benchmark-result page family
@@ -10,7 +26,7 @@
 ### Changed: `specforge corpus-kb`
 - `specforge corpus-kb` now accepts optional `--kg-fixtures-root <fixture-root>` and repeated `--kg-fixture <fixture>` selectors, so it can refresh benchmark-result pages independently of validation-report pages.
 - `kg_bench` now exposes an internal fixture-outcome collection seam reused by the corpus-KB projection while preserving the standalone `specforge kg-bench` command behavior.
-- Documented a follow-up quality caveat: the benchmark projection currently reuses validation paths that print detailed stage reports during fixture execution, so a future validator/report split should make this projection quieter.
+- Documented the then-open follow-up quality caveat that the benchmark projection reused validation paths that printed detailed stage reports during fixture execution.
 
 ### Validation
 - `cargo fmt --all` -> passed

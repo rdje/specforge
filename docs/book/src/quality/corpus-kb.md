@@ -63,6 +63,7 @@ Human-authored synthesis outside those blocks is preserved.
 
 The KG fixture projection records fixture paths plus pass/fail status.
 It is a review surface, not a replacement for the executable `specforge kg-bench` gate.
+Fixture-local validation runs quietly during this projection, so the command output remains a concise corpus-KB refresh summary.
 
 ## Promotion rule
 
