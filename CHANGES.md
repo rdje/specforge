@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-04-12 (VLM timing filters bracketed sample labels)
+
+### Fixed: bracketed waveform sample labels stay out of timing constraints
+- `SemanticIR` now treats bracketed VLM timing annotation labels such as `D[0]`, `A[1]`, `DATA[3]`, and `ADDR[7]` as low-value waveform/sample markup when they appear as standalone annotations.
+- Strengthened `vlm_timing_spurious_annotation_negative` and the direct semantic regression again so bracketed bus/sample labels do not become `TimingConstraintRecord`s while grounded signal samples still produce typed temporal evidence.
+- The tracked KG-quality fixture count remains `55`; this slice deepens the existing spurious-annotation negative fixture.
+
+### Validation
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml --lib vlm_timing_diagram_observation_rejects_label_only_noise -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality vlm_timing_spurious_annotation_negative` -> passed
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, `305` Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build
+
 ## 2026-04-12 (VLM timing filters compact sample labels)
 
 ### Fixed: compact waveform sample labels stay out of timing constraints

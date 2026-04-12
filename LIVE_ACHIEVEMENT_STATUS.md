@@ -124,7 +124,7 @@
 - KG benchmark harness now includes an AHB wait-state timing gold fixture: Done
 - KG benchmark harness now locks bogus actor-attribution rejection for `Source`-column infrastructure rows: Done
 - KG benchmark harness now locks field-table misclassification rejection: Done
-- KG benchmark harness now locks spurious VLM timing-annotation sample-label and waveform-motion state rejection: Done
+- KG benchmark harness now locks spurious VLM timing-annotation sample/index-label and waveform-motion state rejection: Done
 - KG benchmark harness now locks active-low VLM timing polarity equivalence: Done
 - KG benchmark harness now locks active-low VLM reset-release polarity equivalence: Done
 - KG benchmark harness now locks VLM state-machine multiple-initial and missing-initial cardinality warnings: Done

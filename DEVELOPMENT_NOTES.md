@@ -52,7 +52,7 @@
 - VLM timing `signals[].values[].state` strings are not all equally authoritative signal values.
 - Concrete sampled values such as `HIGH`, `LOW`, `ASSERTED`, `DEASSERTED`, `0`, and `1` can become typed signal constraints when the signal name is document-grounded, but waveform motion descriptors such as `rising`, `falling`, `stable`, `steady`, `unchanged`, `toggle`, `RISING_EDGE`, `LOW_TO_HIGH`, `POS_EDGE`, `risingedge`, and `LOW2HIGH` should not be promoted through the generic symbolic-value fallback.
 - This preserves useful timing observations while avoiding false facts like `XREQ == RISING`. The `vlm_timing_waveform_motion_negative` KG fixture locks the boundary end-to-end.
-- The spurious-annotation side has the same boundary: standalone waveform/sample labels such as `D0`, `A1`, `DATA0`, and `0xAA` are now treated like `T0`, `Addr 1`, and `Cycle 2` when they appear in VLM timing `annotations[]`. They remain figure markup, not timing constraints; `vlm_timing_spurious_annotation_negative` locks that expanded label-noise set.
+- The spurious-annotation side has the same boundary: standalone waveform/sample labels such as `D0`, `A1`, `DATA0`, `0xAA`, `D[0]`, `A[1]`, `DATA[3]`, and `ADDR[7]` are now treated like `T0`, `Addr 1`, and `Cycle 2` when they appear in VLM timing `annotations[]`. They remain figure markup, not timing constraints; `vlm_timing_spurious_annotation_negative` locks that expanded label-noise set.
 
 ## 2026-04-11 collective non-reset control polarity
 - `EvidenceIR` now recovers unambiguous collective active-level prose such as `CS_N and WE_N are active LOW signals`, producing one explicit polarity observation per declared signal and letting later asserted/deasserted constraints refine into concrete low/high obligations.

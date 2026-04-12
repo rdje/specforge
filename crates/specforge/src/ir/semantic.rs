@@ -9078,6 +9078,9 @@ fn is_spurious_timing_annotation_label(text: &str) -> bool {
     if is_timing_cycle_marker_token(trimmed) {
         return true;
     }
+    if is_compact_waveform_index_label(trimmed) {
+        return true;
+    }
 
     let tokens = trimmed
         .split(|character: char| !character.is_ascii_alphanumeric())
@@ -9164,6 +9167,53 @@ fn is_compact_waveform_sample_label(token: &str) -> bool {
     matches!(prefix, 'a' | 'd')
         && !suffix.is_empty()
         && suffix.chars().all(|character| character.is_ascii_digit())
+}
+
+fn is_compact_waveform_index_label(text: &str) -> bool {
+    let text = text.trim().to_ascii_lowercase();
+    if text.is_empty() {
+        return false;
+    }
+
+    for (open_delimiter, close_delimiter) in [('[', ']'), ('<', '>')] {
+        let Some((prefix_text, index_with_delimiter)) = text.split_once(open_delimiter) else {
+            continue;
+        };
+        let Some(index_text) = index_with_delimiter.strip_suffix(close_delimiter) else {
+            continue;
+        };
+        let prefix = prefix_text.trim();
+        let index = index_text.trim();
+        if prefix.is_empty() || index.is_empty() || index.contains(open_delimiter) {
+            continue;
+        }
+        if !matches!(
+            prefix,
+            "a" | "d"
+                | "addr"
+                | "address"
+                | "data"
+                | "beat"
+                | "cycle"
+                | "slot"
+                | "lane"
+                | "channel"
+                | "wait"
+        ) {
+            continue;
+        }
+        if index.chars().all(|character| character.is_ascii_digit()) {
+            return true;
+        }
+        if let Some(hex_digits) = index.strip_prefix("0x") {
+            return !hex_digits.is_empty()
+                && hex_digits
+                    .chars()
+                    .all(|character| character.is_ascii_hexdigit());
+        }
+    }
+
+    false
 }
 
 /// Parse a `StateMachineExtraction` JSON observation into state and transition records.
@@ -11065,7 +11115,7 @@ mod tests {
             source_ref: None,
             placeholder_text: None,
             note: Some(
-                "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"T0\",\"state\":\"LOW\"},{\"cycle\":\"T1\",\"state\":\"HIGH\"}]}],\"annotations\":[\"T0\",\"Addr 1\",\"Cycle 2\",\"D0\",\"A1\",\"DATA0\",\"0xAA\"]}"
+                "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"T0\",\"state\":\"LOW\"},{\"cycle\":\"T1\",\"state\":\"HIGH\"}]}],\"annotations\":[\"T0\",\"Addr 1\",\"Cycle 2\",\"D0\",\"A1\",\"DATA0\",\"0xAA\",\"D[0]\",\"A[1]\",\"DATA[3]\",\"ADDR[7]\"]}"
                     .to_string(),
             ),
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,

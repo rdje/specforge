@@ -22,20 +22,21 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `98b516b`
-- latest_commit_brief_message: `test(validation): cover missing fsm initial state`
-- note: the current session is tightening VLM timing spurious-annotation filtering for compact waveform sample labels
+- latest_commit_hash: `2cc3a4d`
+- latest_commit_brief_message: `fix(semantic): filter compact vlm timing labels`
+- note: the current session is tightening VLM timing spurious-annotation filtering for bracketed waveform sample labels
 
 ## Recent commit chain (last 5)
+- `2cc3a4d` fix(semantic): filter compact vlm timing labels
 - `98b516b` test(validation): cover missing fsm initial state
 - `4fad762` feat(validation): flag fsm initial cardinality
 - `f39b456` feat(validation): count initial fsm states
 - `5ed6e32` fix(semantic): merge duplicate vlm states
-- `7b1cdf6` fix(semantic): require declared vlm transition states
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- the in-progress KG-quality follow-on tightens `vlm_timing_spurious_annotation_negative` so compact waveform sample labels such as `D0`, `A1`, `DATA0`, and `0xAA` stay out of `TimingConstraintRecord`s
+- the in-progress KG-quality follow-on tightens `vlm_timing_spurious_annotation_negative` again so bracketed waveform sample labels such as `D[0]`, `A[1]`, `DATA[3]`, and `ADDR[7]` stay out of `TimingConstraintRecord`s
+- the latest committed KG-quality follow-on tightens `vlm_timing_spurious_annotation_negative` so compact waveform sample labels such as `D0`, `A1`, `DATA0`, and `0xAA` stay out of `TimingConstraintRecord`s
 - the latest committed KG-quality follow-on adds `vlm_state_machine_missing_initial_negative`, locking the zero-initial VLM state-machine case against the same semantic and intent initial-cardinality warnings
 - the latest committed validation follow-on emits semantic and intent initial-cardinality findings when a state graph has zero or multiple initial states; the tracked `vlm_state_machine_multiple_initial_negative` fixture locks the multi-initial VLM case
 - the latest committed validation follow-on adds `initial_regular_states` metrics to `SemanticIR` and `IntentIR` validation so FSM exactly-one-initial truth can be projected and asserted directly
@@ -63,10 +64,11 @@
 - the Rust warning baseline is clean and now enforced in the shared local/hosted CI path rather than suppressed with `#[allow(dead_code)]`
 - README bootstrap currently resolves to `SESSION_BOOTSTRAP.md`, which instructs future agents to read the referenced live docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if necessary, and then continue from the roadmap
 - this bootstrap refresh observed 28 Rust source files and about 53,858 lines under `crates/specforge/src`, with the CLI now including `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, and `nlp-enrich` beside the core staged IR commands
-- `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the VLM timing compact sample label filtering slice; the tracked KG fixture count remains `55`, and the full local CI gate reports `305` passing Rust tests for this slice
+- `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the VLM timing bracketed sample label filtering slice; the tracked KG fixture count remains `55`, and the full local CI gate reports `305` passing Rust tests for this slice
 - the latest README bootstrap hygiene pass found no new Rust architecture drift; the concrete fix was to refresh the committed baseline in this memory file and remove stray example bullets from `USER_GUIDE.md`'s root-document list
 - the earlier VLM timing KG benchmark slice `vlm_timing_waveform_motion_negative` proves a VLM timing diagram can preserve the real `HIGH` sample while rejecting waveform motion descriptors and transition spellings such as `rising`, `stable`, `falling`, `UNCHANGED`, `RISING_EDGE`, `LOW_TO_HIGH`, `HIGH_TO_LOW`, `POS_EDGE`, `NEG_EDGE`, `risingedge`, `LOW2HIGH`, and `HIGH2LOW` as concrete signal values
-- the current VLM timing KG benchmark slice tightens `vlm_timing_spurious_annotation_negative`, proving compact waveform/sample labels such as `D0`, `A1`, `DATA0`, and `0xAA` are annotation noise rather than timing constraints
+- the latest committed VLM timing KG benchmark slice tightens `vlm_timing_spurious_annotation_negative`, proving compact waveform/sample labels such as `D0`, `A1`, `DATA0`, and `0xAA` are annotation noise rather than timing constraints
+- the current VLM timing KG benchmark slice tightens the same fixture for bracketed waveform/sample labels such as `D[0]`, `A[1]`, `DATA[3]`, and `ADDR[7]`
 - the previous VLM state-machine KG benchmark slice `vlm_state_machine_label_noise_negative` proves VLM state-machine observations preserve clean identifier labels like `IDLE` / `BUSY` and the `IDLE->BUSY` transition while filtering prose labels like `IDLE state` / `ACCESS phase`
 - the previous active KG benchmark slice is `vlm_state_machine_undeclared_transition_negative`, which proves undeclared but identifier-shaped VLM transition endpoints like `DONE` and `RESET` are filtered while the declared `IDLE->BUSY` transition survives
 - the previous active KG benchmark slice is `vlm_state_machine_duplicate_initial_gold`, which proves duplicate VLM `IDLE` state labels collapse into one canonical state, preserve a later `is_initial: true` marker, and validate exactly one canonical initial state via `initial_regular_states`
@@ -210,6 +212,7 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
+- tightened VLM timing spurious-annotation filtering so bracketed waveform/sample labels such as `D[0]`, `A[1]`, `DATA[3]`, and `ADDR[7]` are rejected like compact label noise; strengthened the direct semantic regression plus `vlm_timing_spurious_annotation_negative`
 - tightened VLM timing spurious-annotation filtering so compact waveform/sample labels such as `D0`, `A1`, `DATA0`, and `0xAA` are rejected like `T0` / `Addr 1` / `Cycle 2`; strengthened the direct semantic regression plus `vlm_timing_spurious_annotation_negative`
 - added the missing-initial companion for FSM initial-cardinality validation: a direct explicit-state validation regression plus the tracked `vlm_state_machine_missing_initial_negative` fixture
 - added semantic and intent state-machine initial-cardinality validation findings for canonical FSM graphs with zero or multiple initial states; added a direct validation regression and the tracked `vlm_state_machine_multiple_initial_negative` fixture
