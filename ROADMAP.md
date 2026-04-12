@@ -500,7 +500,7 @@
     - a representative AHB-style timing gold fixture proving section-heading context plus destination-column signal tables and explicit actor relations can also recover wait-state timing, actor-grounded temporal predicates, bounded next-cycle latency, and multi-predicate guards together
     - a negative fixture proving `Clock` / `Reset` infrastructure rows in AMBA-style `Source` columns do not become bogus protocol actors while real requester/subordinate rows still recover driver-side actor ports and semantic role grounding
     - a negative fixture proving a misclassified `Bits | Name | Description` field table does not synthesize fake top-level signals or semantic roles from field names like `REQ` / `ACK`
-    - a negative fixture proving low-value VLM timing-diagram annotation labels like `T0`, `Addr 1`, and `Cycle 2` do not become timing constraints or temporal rules while the underlying timing extraction still remains visible at the evidence stage
+    - a negative fixture proving low-value VLM timing-diagram annotation labels like `T0`, `Addr 1`, `Cycle 2`, `D0`, `A1`, `DATA0`, and `0xAA` do not become timing constraints or temporal rules while the underlying timing extraction still remains visible at the evidence stage
     - a negative fixture proving VLM timing-diagram waveform motion states like `rising`, `stable`, `falling`, `UNCHANGED`, `RISING_EDGE`, `LOW_TO_HIGH`, `POS_EDGE`, `risingedge`, and `LOW2HIGH` do not become symbolic signal values while concrete samples like `HIGH` still survive
     - a negative fixture proving VLM state-machine prose labels like `IDLE state` and `ACCESS phase` do not become canonical FSM state names or transition endpoints while clean identifier labels and transitions still survive
     - a negative fixture proving VLM state-machine transition endpoints must reference states declared in the same VLM observation, so identifier-shaped `DONE` / `RESET` endpoint guesses do not become canonical transition facts
@@ -520,7 +520,7 @@
   - width-only synthesized signal declarations now survive into canonical `SemanticIR` / `IntentIR` records, so AXI-style `Name | Width | Description` tables can be benchmarked honestly instead of stopping at raw actor relations and connectivity
 - remaining:
   - expand from the current AMBA + APB + AHB + richer APB/AHB timing gold paths to a broader AXI-focused suite plus remaining structured-constraint fixtures
-  - add broader negative fixtures for multimodal arbitration drift and richer timing-annotation edge cases beyond the new low-value label and waveform-motion filters
+  - add broader negative fixtures for multimodal arbitration drift and richer timing-annotation edge cases beyond the compact low-value label and waveform-motion filters
   - add broader metric-oriented expectation surfaces once the current canonical+metric fixture layer stabilizes
 
 ### R15f Cross-document extraction learning plane

@@ -9111,6 +9111,7 @@ fn is_generic_waveform_label_token(token: &str) -> bool {
 
     lowered.chars().all(|character| character.is_ascii_digit())
         || is_timing_cycle_marker_token(&lowered)
+        || is_compact_waveform_sample_label(&lowered)
         || matches!(
             lowered.as_str(),
             "addr"
@@ -9125,6 +9126,44 @@ fn is_generic_waveform_label_token(token: &str) -> bool {
                 | "lane"
                 | "channel"
         )
+}
+
+fn is_compact_waveform_sample_label(token: &str) -> bool {
+    let token = token.trim().to_ascii_lowercase();
+    if token.is_empty() {
+        return false;
+    }
+
+    if let Some(hex_digits) = token.strip_prefix("0x") {
+        return !hex_digits.is_empty()
+            && hex_digits
+                .chars()
+                .all(|character| character.is_ascii_hexdigit());
+    }
+    if let Some(binary_digits) = token.strip_prefix("0b") {
+        return !binary_digits.is_empty()
+            && binary_digits
+                .chars()
+                .all(|character| matches!(character, '0' | '1'));
+    }
+
+    for prefix in [
+        "addr", "address", "data", "beat", "cycle", "slot", "lane", "channel", "wait",
+    ] {
+        if let Some(suffix) = token.strip_prefix(prefix) {
+            return !suffix.is_empty()
+                && suffix.chars().all(|character| character.is_ascii_digit());
+        }
+    }
+
+    let mut chars = token.chars();
+    let Some(prefix) = chars.next() else {
+        return false;
+    };
+    let suffix = chars.as_str();
+    matches!(prefix, 'a' | 'd')
+        && !suffix.is_empty()
+        && suffix.chars().all(|character| character.is_ascii_digit())
 }
 
 /// Parse a `StateMachineExtraction` JSON observation into state and transition records.
@@ -11026,7 +11065,7 @@ mod tests {
             source_ref: None,
             placeholder_text: None,
             note: Some(
-                "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"T0\",\"state\":\"LOW\"},{\"cycle\":\"T1\",\"state\":\"HIGH\"}]}],\"annotations\":[\"T0\",\"Addr 1\",\"Cycle 2\"]}"
+                "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"T0\",\"state\":\"LOW\"},{\"cycle\":\"T1\",\"state\":\"HIGH\"}]}],\"annotations\":[\"T0\",\"Addr 1\",\"Cycle 2\",\"D0\",\"A1\",\"DATA0\",\"0xAA\"]}"
                     .to_string(),
             ),
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,

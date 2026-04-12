@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-04-12 (VLM timing filters compact sample labels)
+
+### Fixed: compact waveform sample labels stay out of timing constraints
+- `SemanticIR` now treats compact VLM timing annotation labels such as `D0`, `A1`, `DATA0`, and `0xAA` as low-value waveform/sample markup when they appear as standalone annotations.
+- Strengthened the existing `vlm_timing_spurious_annotation_negative` KG fixture and the direct semantic regression so those labels do not become `TimingConstraintRecord`s while real signal samples still produce typed temporal evidence.
+- The tracked KG-quality fixture count remains `55`; this slice deepens an existing negative fixture rather than adding a duplicate case.
+
+### Validation
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml --lib vlm_timing_diagram_observation_rejects_label_only_noise -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality vlm_timing_spurious_annotation_negative` -> passed
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, `305` Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build
+
 ## 2026-04-12 (Validation flags missing FSM initial states)
 
 ### Changed: missing initial states are covered like multiple initial states
