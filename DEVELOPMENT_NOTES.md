@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-12 README bootstrap refresh
+- The README handoff was executed again after `76274f6`. The current Rust surface now has 29 Rust source files and 56,024 lines under `crates/specforge/src`, with the full staged command set wired through `cli.rs`, `commands/mod.rs`, and `lib.rs`.
+- No code change was required by this bootstrap pass. The drift was documentation/continuity drift: `README.md` was missing several active command/module paths in its implementation map, `RUST_CODEBASE_ANALYSIS.md` still carried stale current testing counts in its lower testing section, and `MEMORY.md` still pointed at `da0797f` instead of the latest committed baseline.
+- The path-policy cleanup is also intentional. Older changelog/memory entries contained checkout-specific repo-internal markdown links; those were normalized to repo-relative links so tracked docs remain portable across clones.
+
 ## 2026-04-11 README bootstrap refresh
 - The README terminal instruction currently routes future sessions through `SESSION_BOOTSTRAP.md`; executing that path means reading the referenced live docs, analyzing the Rust codebase, updating `RUST_CODEBASE_ANALYSIS.md` if it drifted, and then continuing from the roadmap.
 - This refresh found that the Rust analysis lagged the implementation: `rescan-plan`, schema-v2 replay/execution summaries, the no-canonical-mutation promotion-review boundary, `CorpusMemory` schema v5, 45 tracked KG fixtures, and the 282-test full-CI baseline were all newer than parts of the analysis doc.

@@ -296,8 +296,16 @@ Use it first for the project objective, document navigation, and the current imp
   - clap-based CLI model
 - `crates/specforge/src/error.rs`
   - typed error boundary
+- `crates/specforge/src/test_support.rs`
+  - shared test synchronization utilities for env-var-mutating CLI tests
+- `crates/specforge/src/commands/mod.rs`
+  - command module namespace
 - `crates/specforge/src/commands/inspect.rs`
   - source/path inspection command
+- `crates/specforge/src/commands/doctor.rs`
+  - local runtime readiness command for Docling, Ollama, and LM Studio
+- `crates/specforge/src/commands/converge.rs`
+  - fixed-point whole-pipeline orchestration command
 - `crates/specforge/src/commands/ingest.rs`
   - `SourceIR` preview/materialization command
 - `crates/specforge/src/commands/evidence.rs`
@@ -308,10 +316,20 @@ Use it first for the project objective, document navigation, and the current imp
   - `IntentIR` preview/materialization command
 - `crates/specforge/src/commands/adapt.rs`
   - `.fsm` adapter preview/materialization command for the current honest DT/FSM/top lowering slices
+- `crates/specforge/src/commands/enrich.rs`
+  - VLM-backed `SourceIR` visual enrichment command
+- `crates/specforge/src/commands/validate.rs`
+  - stage-aware validation and report back-annotation command
 - `crates/specforge/src/commands/project_validation.rs`
   - validation snapshot projection command for tracked live docs
+- `crates/specforge/src/commands/rescan_plan.rs`
+  - schema-v2 targeted rescan plan dry-run/execution command
 - `crates/specforge/src/commands/kg_bench.rs`
   - tracked KG-quality benchmark command for gold and negative fixture evaluation
+- `crates/specforge/src/commands/learn_priors.rs`
+  - typed local `CorpusMemory` prior harvesting command
+- `crates/specforge/src/commands/nlp_enrich.rs`
+  - LLM-backed NLP Level 3 evidence enrichment command
 - `crates/specforge/src/ir/mod.rs`
   - staged IR namespace and stage identifiers
 - `crates/specforge/src/ir/source.rs`
@@ -326,6 +344,8 @@ Use it first for the project objective, document navigation, and the current imp
   - first real `IntentIR` builder for canonical intent identity, actor responsibilities, carried interface inventory, carried backend-neutral control fragments, carried explicit module/top composition facts, behaviors, constraints, assumptions, and residual decisions
 - `crates/specforge/src/ir/adapters.rs`
   - typed adapter artifacts, honest standalone/structured/top-root `.fsm` lowering logic, renderability analysis, and adapter-side residual decisions
+- `crates/specforge/src/ir/prior_memory.rs`
+  - advisory cross-document `CorpusMemory` prior schema and lookup helpers
 
 ### Planned future implementation paths
 - `fixtures/`

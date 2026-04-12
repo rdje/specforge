@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-04-12 (README bootstrap refresh)
+
+### Changed: live bootstrap docs match the current Rust surface
+- Executed the README -> `SESSION_BOOTSTRAP.md` handoff, re-read the referenced live docs, and compared their current claims against the active Rust codebase.
+- Refreshed the README implementation-path map so it includes the active command modules for `doctor`, `converge`, `enrich`, `validate`, `rescan-plan`, `learn-priors`, `nlp-enrich`, plus `commands/mod.rs`, `test_support.rs`, and `ir/prior_memory.rs`.
+- Refreshed `RUST_CODEBASE_ANALYSIS.md` and `MEMORY.md` so the current continuity baseline reflects commit `76274f6`, `29` Rust source files, `56,024` Rust source lines, `55` tracked KG-quality fixtures, and the latest `305`-test full-CI baseline.
+- Normalized old checkout-specific repo-internal markdown links in the tracked changelog/memory surface to repo-relative paths.
+
+### Validation
+- repo-internal absolute checkout path scan across tracked markdown -> passed with no matches after the path-policy cleanup
+- `git diff --check` -> passed
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, `305` Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build
+
 ## 2026-04-12 (NLP alias learning rejects list markers)
 
 ### Fixed: Form 2 alias learning rejects broader markdown/list prefixes
@@ -205,7 +219,7 @@
 ## 2026-04-11 (KG bench locks detached mixed polarity rejection)
 
 ### Added: tracked negative fixture for detached mixed polarity
-- Added [detached_mixed_control_polarity_negative](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/detached_mixed_control_polarity_negative/fixture.json), which proves detached wording like `CS_N is active LOW and active HIGH` does not borrow an implicit subject or resolve polarity through `SemanticIR` / `IntentIR`.
+- Added [detached_mixed_control_polarity_negative](crates/specforge/test_data/kg_quality/detached_mixed_control_polarity_negative/fixture.json), which proves detached wording like `CS_N is active LOW and active HIGH` does not borrow an implicit subject or resolve polarity through `SemanticIR` / `IntentIR`.
 - The fixture keeps `CS_N` declared and constrained, but requires `with_resolved_polarity: 0`, zero heuristic signal records, zero polarity conflicts, and zero temporal conflicts.
 
 ### Validation
@@ -223,7 +237,7 @@
 - The whole-statement detector still returns no polarity for mixed low/high text; the new recovery path is separate and only promotes facts after clause-local validation succeeds.
 
 ### Added: tracked KG fixture for mixed control polarity
-- Added [mixed_control_polarity_gold](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/mixed_control_polarity_gold/fixture.json), which proves mixed clause-local polarity recovery produces two canonical declared signal records, two resolved polarities, zero heuristic duplicates, and zero polarity or temporal conflicts through `SemanticIR` and `IntentIR`.
+- Added [mixed_control_polarity_gold](crates/specforge/test_data/kg_quality/mixed_control_polarity_gold/fixture.json), which proves mixed clause-local polarity recovery produces two canonical declared signal records, two resolved polarities, zero heuristic duplicates, and zero polarity or temporal conflicts through `SemanticIR` and `IntentIR`.
 
 ### Validation
 - `cargo test --manifest-path Cargo.toml mixed_polarity_prose_recovers_clause_local_control_polarities -- --nocapture` -> passed
@@ -244,7 +258,7 @@
 - Tightened `SemanticIR` interface construction so polarity-only co-mentions of already declared signals enrich the authoritative signal records instead of minting duplicate low-confidence heuristic interface records.
 
 ### Added: tracked KG fixture for collective control polarity
-- Added [multi_control_polarity_gold](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/multi_control_polarity_gold/fixture.json), which proves collective active-low prose recovers two resolved polarities, refines asserted/deasserted constraints correctly, and preserves zero polarity or temporal conflicts through `SemanticIR` and `IntentIR`.
+- Added [multi_control_polarity_gold](crates/specforge/test_data/kg_quality/multi_control_polarity_gold/fixture.json), which proves collective active-low prose recovers two resolved polarities, refines asserted/deasserted constraints correctly, and preserves zero polarity or temporal conflicts through `SemanticIR` and `IntentIR`.
 
 ### Validation
 - `cargo test --manifest-path Cargo.toml collective_active_low_prose_recovers_multiple_control_polarities -- --nocapture` -> passed
@@ -469,13 +483,13 @@
 ## 2026-04-10 (Explicit clock/reset topology hints are typed)
 
 ### Added: bounded infrastructure topology records
-- Updated [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so `InfrastructureSignalRecord` now carries `infrastructure_topology` records for explicit current-document clock/reset topology hints.
+- Updated [semantic.rs](crates/specforge/src/ir/semantic.rs) so `InfrastructureSignalRecord` now carries `infrastructure_topology` records for explicit current-document clock/reset topology hints.
 - The first topology kinds are `clock_gated_branch`, `reset_synchronizer_stages`, and `reset_tree_targets`.
 - The extractor records component names, reset synchronizer stage counts, target actor names, supporting statement IDs, and automation confidence when the source text is explicit enough.
 - Vague wording such as a reset that "may use a synchronizer" remains ignored; the new surface preserves evidence but does not claim full physical clock-tree/reset-tree proof.
 
 ### Added: validation visibility
-- Updated [validate.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/validate.rs) so `SemanticIR` and `IntentIR` validation report `infrastructure_topology_records`, `infrastructure_clock_gated_branches`, `infrastructure_reset_synchronizer_stages`, and `infrastructure_reset_tree_targets`.
+- Updated [validate.rs](crates/specforge/src/commands/validate.rs) so `SemanticIR` and `IntentIR` validation report `infrastructure_topology_records`, `infrastructure_clock_gated_branches`, `infrastructure_reset_synchronizer_stages`, and `infrastructure_reset_tree_targets`.
 - Validation console output now shows per-signal topology counts and record summaries under `Infrastructure Signals`.
 - Updated the mdBook clock/reset, SemanticIR, and IntentIR chapters plus live continuity docs to document the new boundary.
 
@@ -487,13 +501,13 @@
 ## 2026-04-10 (Rescan promotion review path is explicit)
 
 ### Added: promotion-review policy record
-- Updated [project_validation.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/project_validation.rs) so `ProjectRescanExecutionSummary` now carries a structured `promotion_review` record beside `promotion_status` and `promotion_blockers`.
+- Updated [project_validation.rs](crates/specforge/src/commands/project_validation.rs) so `ProjectRescanExecutionSummary` now carries a structured `promotion_review` record beside `promotion_status` and `promotion_blockers`.
 - The review record captures `review_status`, `approval_policy`, `required_decisions`, `approval_record_required`, and `canonical_mutation_allowed`.
 - Changed rescan outcomes now require `human_review_required`, an approval record, current-document evidence support, validation-delta review, explicit canonical mutation scope approval, and a check that prior memory was not used as truth authority.
 - No-change outcomes are marked `not_reviewable_no_change`, and every path keeps `canonical_mutation_allowed: false`.
 
 ### Preserved: no canonical mutation path yet
-- Updated [rescan_plan.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/rescan_plan.rs) so executed recommendations persist the new review record.
+- Updated [rescan_plan.rs](crates/specforge/src/commands/rescan_plan.rs) so executed recommendations persist the new review record.
 - Legacy execution summaries without `promotion_review` still deserialize and are normalized by `project-validation`.
 - The validation snapshot and live-status projection now show the review status in addition to the not-promoted gate.
 
@@ -507,12 +521,12 @@
 ## 2026-04-10 (Visual-motif rescans now replay local enrichment)
 
 ### Added: explicit visual corroboration replay command
-- Updated [project_validation.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/project_validation.rs) so `evidence_visual_motif_corroboration_guidance` recommendations now emit `enrich_source_ir` before the downstream `rebuild_evidence_ir` and `validate_current_artifact` hints.
+- Updated [project_validation.rs](crates/specforge/src/commands/project_validation.rs) so `evidence_visual_motif_corroboration_guidance` recommendations now emit `enrich_source_ir` before the downstream `rebuild_evidence_ir` and `validate_current_artifact` hints.
 - Added `project-validation --rescan-vlm-provider auto-local|ollama|lmstudio|skip` and optional `--rescan-vlm-model <model>` so generated visual-motif enrichment hints can prefer ready local Ollama, fall back to ready local LM Studio, or be forced by policy instead of always emitting Ollama.
-- Updated [doctor.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/doctor.rs) with a reusable local default-model presence helper and bounded curl timeouts for readiness probes.
-- Updated [rescan_plan.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/rescan_plan.rs) so `rescan-plan --execute` can parse and run whitelisted local `enrich` hints in-process.
+- Updated [doctor.rs](crates/specforge/src/commands/doctor.rs) with a reusable local default-model presence helper and bounded curl timeouts for readiness probes.
+- Updated [rescan_plan.rs](crates/specforge/src/commands/rescan_plan.rs) so `rescan-plan --execute` can parse and run whitelisted local `enrich` hints in-process.
 - The enrich replay parser accepts local Ollama, local LM Studio, or `skip`, supports an optional model and `--classify-only`, and intentionally rejects OpenAI replay hints so generated rescans stay local-first.
-- Updated [cli.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/cli.rs) so VLM provider args can participate in typed rescan invocation equality tests.
+- Updated [cli.rs](crates/specforge/src/cli.rs) so VLM provider args can participate in typed rescan invocation equality tests.
 
 ### Documentation
 - Updated the README, live notes, roadmap, memory, and mdBook validation/quality/multimodal/corpus-memory chapters so the public contract is clear: visual-motif prior memory may route a local enrichment rescan, but it still does not promote truth.
@@ -533,14 +547,14 @@
 ## 2026-04-10 (Visual-motif priors now emit corroboration targets)
 
 ### Added: validation-visible visual corroboration targets
-- Updated [validate.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/validate.rs) so `EvidenceIR` validation now reports role-level visual evidence metrics: `visual_evidence_normative`, `visual_evidence_explanatory`, `visual_evidence_illustrative`, `visual_evidence_ambiguous`, and `visual_evidence_unknown`.
+- Updated [validate.rs](crates/specforge/src/commands/validate.rs) so `EvidenceIR` validation now reports role-level visual evidence metrics: `visual_evidence_normative`, `visual_evidence_explanatory`, `visual_evidence_illustrative`, `visual_evidence_ambiguous`, and `visual_evidence_unknown`.
 - Prior-classified normative visual evidence now also reports `visual_motif_corroboration_targets` and emits `evidence_visual_motif_corroboration_guidance` when it still lacks VLM timing/state extraction observations.
 - The guidance is explicitly review/rescan routing only: it asks for targeted VLM/multimodal corroboration and still does not rewrite `SourceIR`, synthesize semantic facts, or promote canonical truth from prior memory.
 
 ### Added: gold/negative benchmark pair
-- Strengthened [visual_motif_prior_guided_diagram_classification_gold](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/visual_motif_prior_guided_diagram_classification_gold/fixture.json) so it now proves the prior-backed classification produces one normative visual evidence item, one corroboration target, and zero semantic hints.
-- Added [visual_motif_prior_guided_diagram_classification_without_prior_negative](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/visual_motif_prior_guided_diagram_classification_without_prior_negative/fixture.json), proving the same local `XREQ cycle trace` visual stays ambiguous and unclassified without staged visual-motif memory.
-- Updated [project_validation.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/project_validation.rs) so generic `rescan_guidance` findings with related ids can enter the schema-v2 rescan target list, including the new visual-motif corroboration finding.
+- Strengthened [visual_motif_prior_guided_diagram_classification_gold](crates/specforge/test_data/kg_quality/visual_motif_prior_guided_diagram_classification_gold/fixture.json) so it now proves the prior-backed classification produces one normative visual evidence item, one corroboration target, and zero semantic hints.
+- Added [visual_motif_prior_guided_diagram_classification_without_prior_negative](crates/specforge/test_data/kg_quality/visual_motif_prior_guided_diagram_classification_without_prior_negative/fixture.json), proving the same local `XREQ cycle trace` visual stays ambiguous and unclassified without staged visual-motif memory.
+- Updated [project_validation.rs](crates/specforge/src/commands/project_validation.rs) so generic `rescan_guidance` findings with related ids can enter the schema-v2 rescan target list, including the new visual-motif corroboration finding.
 
 ### Validation
 - `cargo test --manifest-path Cargo.toml visual_motif -- --nocapture` -> passed
@@ -555,8 +569,8 @@
 ## 2026-04-10 (Rescan execution summaries now gate promotion explicitly)
 
 ### Added: machine-readable not-promoted gate
-- Updated [project_validation.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/project_validation.rs) so `ProjectRescanExecutionSummary` carries `promotion_status` and `promotion_blockers` in addition to automation status, arbitration verdict, and validation deltas.
-- Updated [rescan_plan.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/rescan_plan.rs) so executed recommendations now write `not_promoted_no_change` for unchanged validation snapshots and `not_promoted_review_required` for possible-improvement, regression, or neutral artifact-drift verdicts.
+- Updated [project_validation.rs](crates/specforge/src/commands/project_validation.rs) so `ProjectRescanExecutionSummary` carries `promotion_status` and `promotion_blockers` in addition to automation status, arbitration verdict, and validation deltas.
+- Updated [rescan_plan.rs](crates/specforge/src/commands/rescan_plan.rs) so executed recommendations now write `not_promoted_no_change` for unchanged validation snapshots and `not_promoted_review_required` for possible-improvement, regression, or neutral artifact-drift verdicts.
 - The blockers make the policy explicit in generated schema-v2 plans: rescans do not mutate canonical IR, validation deltas are not truth promotion, and changed outcomes still require current-document evidence review.
 
 ### Preserved: backward-compatible local plans
@@ -572,7 +586,7 @@
 ## 2026-04-10 (Project validation projects rescan execution summaries)
 
 ### Added: review-facing rescan execution projection
-- Updated [project_validation.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/project_validation.rs) so `project-validation` preserves matching executed rescan summaries from the existing local schema-v2 plan before refreshing `generated/validation/rescan_plan.json`.
+- Updated [project_validation.rs](crates/specforge/src/commands/project_validation.rs) so `project-validation` preserves matching executed rescan summaries from the existing local schema-v2 plan before refreshing `generated/validation/rescan_plan.json`.
 - `VALIDATION_SNAPSHOT.md` now projects rescan execution-summary counts and per-recommendation verdict/delta details when they exist.
 - The managed live-status validation block now includes the same review-required counts and inline verdict/delta summary for queued recommendations.
 
@@ -588,12 +602,12 @@
 ## 2026-04-10 (Rescan execution persists arbitration summaries)
 
 ### Added: validation-backed execution summaries
-- Updated [project_validation.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/project_validation.rs) so schema-v2 rescan recommendations can carry an optional `execution_summary` after execution.
-- Updated [rescan_plan.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/rescan_plan.rs) so executed recommendations persist before/after validation snapshots, score deltas, finding-count deltas, added/removed finding ids, and an arbitration verdict.
+- Updated [project_validation.rs](crates/specforge/src/commands/project_validation.rs) so schema-v2 rescan recommendations can carry an optional `execution_summary` after execution.
+- Updated [rescan_plan.rs](crates/specforge/src/commands/rescan_plan.rs) so executed recommendations persist before/after validation snapshots, score deltas, finding-count deltas, added/removed finding ids, and an arbitration verdict.
 - Verdicts are deliberately conservative: `validated_no_change`, `possible_improvement_review_required`, `regression_review_required`, or `neutral_change_review_required`.
 
 ### Preserved: review before promotion
-- Updated [converge.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/converge.rs) so convergence summaries count review-required verdicts and split them across possible-improvement, regression, and neutral artifact-change buckets.
+- Updated [converge.rs](crates/specforge/src/commands/converge.rs) so convergence summaries count review-required verdicts and split them across possible-improvement, regression, and neutral artifact-change buckets.
 - A possible improvement is still not a canonical truth promotion; it only means validation deltas moved in a favorable direction and need current-document evidence review.
 
 ### Validation
@@ -607,13 +621,13 @@
 ## 2026-04-10 (Converge can consume rescan plans after stability)
 
 ### Added: opt-in rescan hook for the fixed-point loop
-- Updated [converge.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/converge.rs) so `specforge converge <source> --rescan-plan <plan>` consumes a schema-v2 validation rescan plan after the persisted pipeline snapshot stabilizes.
+- Updated [converge.rs](crates/specforge/src/commands/converge.rs) so `specforge converge <source> --rescan-plan <plan>` consumes a schema-v2 validation rescan plan after the persisted pipeline snapshot stabilizes.
 - Added `--execute-rescan-plan` and `--rescan-plan-limit` to keep execution explicit and bounded.
 - Added a `--document-key` filter to standalone `rescan-plan`; the `converge` hook automatically filters multi-document plans to the current source document key.
 - `--execute-rescan-plan` without `--rescan-plan <plan>` is rejected.
 
 ### Preserved: convergence is not auto-promotion
-- Updated [rescan_plan.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/rescan_plan.rs) to expose a structured run report reused by `converge`.
+- Updated [rescan_plan.rs](crates/specforge/src/commands/rescan_plan.rs) to expose a structured run report reused by `converge`.
 - The convergence summary now reports selected recommendations, changed/no-change validation outcomes, post-rescan snapshot drift, and an arbitration status.
 - The convergence result remains the stable pre-rescan snapshot; `changed_requires_validation_review` is a review signal, not an improvement claim.
 
@@ -627,7 +641,7 @@
 ## 2026-04-10 (Rescan execution records validation deltas)
 
 ### Added: before/after validation accounting
-- Updated [rescan_plan.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/rescan_plan.rs) so `specforge rescan-plan --execute` validates the recommendation artifact before and after whitelisted command execution.
+- Updated [rescan_plan.rs](crates/specforge/src/commands/rescan_plan.rs) so `specforge rescan-plan --execute` validates the recommendation artifact before and after whitelisted command execution.
 - The local generated plan now records neutral execution outcome statuses:
   - `executed_validated_no_change`
   - `executed_validated_changed`
@@ -646,7 +660,7 @@
 ## 2026-04-10 (Rescan plan now has a bounded executor)
 
 ### Added: dry-run-first rescan-plan command
-- Added [rescan_plan.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/rescan_plan.rs) with the new `specforge rescan-plan` command.
+- Added [rescan_plan.rs](crates/specforge/src/commands/rescan_plan.rs) with the new `specforge rescan-plan` command.
 - The command reads schema-v2 `generated/validation/rescan_plan.json`, reports pending `planned_not_executed` targets by default, and supports `--limit` plus `--plan`.
 - Added `--execute` to dispatch only whitelisted in-process `ingest`, `evidence`, `semantic`, `intent`, and `validate` hints from the structured command args.
 - Successful `--execute` runs update local recommendation status in the generated plan.
@@ -658,7 +672,7 @@
 
 ### Documentation
 - Updated the public mdBook command and validation pages with the `rescan-plan` behavior.
-- Updated [README.md](/Users/richarddje/Documents/github/specforge/README.md), [ROADMAP.md](/Users/richarddje/Documents/github/specforge/ROADMAP.md), [DEVELOPMENT_NOTES.md](/Users/richarddje/Documents/github/specforge/DEVELOPMENT_NOTES.md), and [MEMORY.md](/Users/richarddje/Documents/github/specforge/MEMORY.md).
+- Updated [README.md](README.md), [ROADMAP.md](ROADMAP.md), [DEVELOPMENT_NOTES.md](DEVELOPMENT_NOTES.md), and [MEMORY.md](MEMORY.md).
 
 ### Validation
 - `cargo test --manifest-path Cargo.toml rescan_plan -- --nocapture` -> passed
@@ -669,7 +683,7 @@
 ## 2026-04-10 (Rescan plan now carries replayable command hints)
 
 ### Added: schema-v2 replay metadata for targeted rescans
-- Updated [project_validation.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/project_validation.rs) so `generated/validation/rescan_plan.json` now uses schema version 2.
+- Updated [project_validation.rs](crates/specforge/src/commands/project_validation.rs) so `generated/validation/rescan_plan.json` now uses schema version 2.
 - Each recommendation now carries typed `replay_inputs` such as `source_document`, `source_ir`, `evidence_ir`, or `semantic_ir`.
 - Each recommendation now carries structured `recommended_commands` with executable, args, working directory, display string, and command intent.
 - Recommendations now carry `automation_status: planned_not_executed` so future loops can distinguish planned targets from executed rescans.
@@ -682,7 +696,7 @@
 
 ### Documentation
 - Updated the public mdBook validation and command pages to describe the replay-oriented plan contract.
-- Updated [README.md](/Users/richarddje/Documents/github/specforge/README.md), [DEVELOPMENT_NOTES.md](/Users/richarddje/Documents/github/specforge/DEVELOPMENT_NOTES.md), and [MEMORY.md](/Users/richarddje/Documents/github/specforge/MEMORY.md) with the schema-v2 behavior and remaining executor follow-up.
+- Updated [README.md](README.md), [DEVELOPMENT_NOTES.md](DEVELOPMENT_NOTES.md), and [MEMORY.md](MEMORY.md) with the schema-v2 behavior and remaining executor follow-up.
 
 ### Validation
 - `cargo test --manifest-path Cargo.toml project_validation -- --nocapture` -> passed
@@ -693,7 +707,7 @@
 ## 2026-04-10 (Project validation now consumes rescan guidance)
 
 ### Added: generated rescan/extractor-selection plan
-- Updated [project_validation.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/project_validation.rs) so `specforge project-validation` now consumes `*_negative_knowledge_rescan_guidance` findings from validation reports.
+- Updated [project_validation.rs](crates/specforge/src/commands/project_validation.rs) so `specforge project-validation` now consumes `*_negative_knowledge_rescan_guidance` findings from validation reports.
 - The command now writes a local generated `generated/validation/rescan_plan.json` plan with document key, stage, artifact path, finding id, related current-surface ids, extractor lane, corroboration policy, and recommended action.
 - `VALIDATION_SNAPSHOT.md` now renders a `Targeted Rescan Recommendations` section from the same plan.
 - The managed `LIVE_ACHIEVEMENT_STATUS.md` validation projection now includes a concise `Targeted rescan queue`.
@@ -713,7 +727,7 @@
 ## 2026-04-10 (Negative-knowledge now routes rescan/corroboration guidance)
 
 ### Added: machine-readable guidance from known failure shapes
-- Updated [validate.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/validate.rs) so exact negative-knowledge prior matches now emit `negative_knowledge_rescan_recommendations` and `negative_knowledge_corroboration_requirements`.
+- Updated [validate.rs](crates/specforge/src/commands/validate.rs) so exact negative-knowledge prior matches now emit `negative_knowledge_rescan_recommendations` and `negative_knowledge_corroboration_requirements`.
 - Validation now also emits stage-specific `*_negative_knowledge_rescan_guidance` findings for `EvidenceIR`, `SemanticIR`, and `IntentIR`, with the matched current conflict/residual ids preserved as `related_ids`.
 - This gives future rescan/extractor-selection loops a deterministic routing hook instead of only a human-readable caution.
 
@@ -738,9 +752,9 @@
 ## 2026-04-10 (Explicit infrastructure distribution recovery stays bounded)
 
 ### Added: locally grounded clock/reset distribution evidence
-- Updated [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so explicit current-document phrases such as `ACLK is distributed to the Requester and Completer` can recover `distributed_to_*` targets directly into `InfrastructureSignalRecord`.
+- Updated [semantic.rs](crates/specforge/src/ir/semantic.rs) so explicit current-document phrases such as `ACLK is distributed to the Requester and Completer` can recover `distributed_to_*` targets directly into `InfrastructureSignalRecord`.
 - Added active fanout parsing for bounded phrases such as `reset synchronizer feeds ARESETN to the Requester`, allowing the same local sentence to recover a reset infrastructure source and a distribution target.
-- Updated [validate.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/validate.rs) with a regression proving recovered distribution updates the existing infrastructure distribution metrics.
+- Updated [validate.rs](crates/specforge/src/commands/validate.rs) with a regression proving recovered distribution updates the existing infrastructure distribution metrics.
 
 ### Preserved: distribution is not ordinary protocol connectivity
 - Distribution-only evidence does not create ordinary `ActorPortRecord`s.
@@ -757,7 +771,7 @@
 ## 2026-04-10 (Explicit infrastructure source recovery stays bounded)
 
 ### Added: locally grounded infrastructure source evidence
-- Updated [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so explicit current-document phrases such as `clock generator drives ACLK` can recover a source actor directly into `InfrastructureSignalRecord`.
+- Updated [semantic.rs](crates/specforge/src/ir/semantic.rs) so explicit current-document phrases such as `clock generator drives ACLK` can recover a source actor directly into `InfrastructureSignalRecord`.
 - The parser accepts bounded infrastructure component terms such as `clock generator`, `reset controller`, `PLL`, `DLL`, `oscillator`, and synchronizer/gating-style component names without relaxing the ordinary protocol-actor filters.
 - Existing graph-derived sources still contribute when the local KG already recovered a real source such as `PLL generates ACLK`.
 
@@ -776,9 +790,9 @@
 ## 2026-04-10 (Infrastructure source/distribution status is first-class)
 
 ### Added: canonical infrastructure signal status
-- Added `InfrastructureSignalRecord` to [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so `SemanticIR` now records clock/reset infrastructure kind, unresolved vs recovered source status, recovered distribution status, supporting statements, and automation confidence.
+- Added `InfrastructureSignalRecord` to [semantic.rs](crates/specforge/src/ir/semantic.rs) so `SemanticIR` now records clock/reset infrastructure kind, unresolved vs recovered source status, recovered distribution status, supporting statements, and automation confidence.
 - `SemanticIR` derives this surface from the local `SystemContractRecord` plus recovered `SignalConnectivityRecord`s, so `ACLK` / `ARESETN` can be marked as infrastructure while keeping unresolved source ownership explicit.
-- Updated [intent.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/intent.rs) so `IntentIR` carries the same `infrastructure_signals` surface forward as part of the canonical product artifact.
+- Updated [intent.rs](crates/specforge/src/ir/intent.rs) so `IntentIR` carries the same `infrastructure_signals` surface forward as part of the canonical product artifact.
 
 ### Preserved: no fake clock/reset producer actors
 - Unresolved infrastructure sourcing is now represented as `unresolved_source`.
@@ -786,7 +800,7 @@
 - Recovered distribution status reports whether the signal reaches zero, one, or multiple recovered actors; it is not a physical clock-tree or reset-tree proof.
 
 ### Added: validation and docs
-- Updated [validate.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/validate.rs) with `infrastructure_signals`, unresolved-source, recovered-source, and recovered-distribution metrics for `SemanticIR` and `IntentIR`.
+- Updated [validate.rs](crates/specforge/src/commands/validate.rs) with `infrastructure_signals`, unresolved-source, recovered-source, and recovered-distribution metrics for `SemanticIR` and `IntentIR`.
 - Updated the public mdBook clock/reset and pipeline chapters so the new surface is documented as project-facing behavior, not just a continuity note.
 
 ### Validation
@@ -799,9 +813,9 @@
 ## 2026-04-10 (Negative-knowledge cautions now reach carried semantic/intent surfaces)
 
 ### Added: deep-layer validation-only caution matching
-- Updated [prior_memory.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/prior_memory.rs) with shared normalized pattern builders for temporal value conflicts, interface-signal conflicts, signal-connectivity conflicts, and residual decision packets.
-- Updated [learn_priors.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/learn_priors.rs) so negative-knowledge harvesting and validation consumption now use the same shared pattern builders for every harvested negative-knowledge kind.
-- Updated [validate.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/validate.rs) so `SemanticIR` and `IntentIR` validation can recover the linked `EvidenceIR.prior_memory_path` and surface exact-match `negative_knowledge_prior_matches`.
+- Updated [prior_memory.rs](crates/specforge/src/ir/prior_memory.rs) with shared normalized pattern builders for temporal value conflicts, interface-signal conflicts, signal-connectivity conflicts, and residual decision packets.
+- Updated [learn_priors.rs](crates/specforge/src/commands/learn_priors.rs) so negative-knowledge harvesting and validation consumption now use the same shared pattern builders for every harvested negative-knowledge kind.
+- Updated [validate.rs](crates/specforge/src/commands/validate.rs) so `SemanticIR` and `IntentIR` validation can recover the linked `EvidenceIR.prior_memory_path` and surface exact-match `negative_knowledge_prior_matches`.
 - `SemanticIR` validation now emits `semantic_negative_knowledge_prior_matches` when a current carried conflict or residual packet class matches prior negative knowledge.
 - `IntentIR` validation now emits `intent_negative_knowledge_prior_matches` for the same carried caution surface.
 
@@ -814,8 +828,8 @@
 ### Added: unit and KG proof for deeper caution surfaces
 - Added focused validation regressions for temporal-conflict and residual-decision negative-knowledge matches across `SemanticIR` and `IntentIR`.
 - Strengthened the existing semantic-conflict caution fixtures so prior-guided and no-prior cases now also lock `SemanticIR` / `IntentIR` negative-knowledge validation behavior.
-- Added [negative_knowledge_prior_guided_temporal_conflict_caution_gold](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_temporal_conflict_caution_gold/fixture.json), proving a repeated high/low temporal contradiction is flagged as caution while the conflict remains present.
-- Added [negative_knowledge_prior_guided_residual_caution_gold](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_residual_caution_gold/fixture.json), proving a repeated residual packet class is flagged as caution without removing the residual.
+- Added [negative_knowledge_prior_guided_temporal_conflict_caution_gold](crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_temporal_conflict_caution_gold/fixture.json), proving a repeated high/low temporal contradiction is flagged as caution while the conflict remains present.
+- Added [negative_knowledge_prior_guided_residual_caution_gold](crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_residual_caution_gold/fixture.json), proving a repeated residual packet class is flagged as caution without removing the residual.
 
 ### Validation
 - `cargo test --manifest-path Cargo.toml negative_knowledge -- --nocapture` -> passed
@@ -826,10 +840,10 @@
 ## 2026-04-10 (EvidenceIR validation now consumes negative-knowledge priors)
 
 ### Added: bounded negative-knowledge caution surfacing
-- Updated [prior_memory.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/prior_memory.rs) with exact-pattern lookup support for `negative_knowledge_priors`.
+- Updated [prior_memory.rs](crates/specforge/src/ir/prior_memory.rs) with exact-pattern lookup support for `negative_knowledge_priors`.
 - Moved the signal-semantic conflict pattern builder into the prior-memory module so harvesting and validation consumption use the same signature shape.
-- Updated [learn_priors.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/learn_priors.rs) to reuse that shared pattern builder for `SignalSemanticConflict` negative-knowledge harvesting.
-- Updated [validate.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/validate.rs) so `EvidenceIR` validation can load the persisted `prior_memory_path`, match current signal-semantic conflict patterns against prior negative knowledge, and report `negative_knowledge_prior_matches`.
+- Updated [learn_priors.rs](crates/specforge/src/commands/learn_priors.rs) to reuse that shared pattern builder for `SignalSemanticConflict` negative-knowledge harvesting.
+- Updated [validate.rs](crates/specforge/src/commands/validate.rs) so `EvidenceIR` validation can load the persisted `prior_memory_path`, match current signal-semantic conflict patterns against prior negative knowledge, and report `negative_knowledge_prior_matches`.
 - When a match exists, validation emits `evidence_negative_knowledge_prior_matches` as an info-level caution finding.
 
 ### Preserved: negative knowledge cannot suppress evidence
@@ -840,8 +854,8 @@
 - It does not delete conflicts, weaken findings, or synthesize canonical `SemanticIR` / `IntentIR` facts.
 
 ### Added: KG-quality proof for caution-only behavior
-- Strengthened [visual_sources_semantic_conflict_negative](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/visual_sources_semantic_conflict_negative/fixture.json) so the same local conflict reports `negative_knowledge_prior_matches = 0` when no prior memory is staged.
-- Added [negative_knowledge_prior_guided_semantic_conflict_caution_gold](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_semantic_conflict_caution_gold/fixture.json), which proves a staged negative-knowledge prior surfaces a validation caution while the current semantic conflict remains contested downstream.
+- Strengthened [visual_sources_semantic_conflict_negative](crates/specforge/test_data/kg_quality/visual_sources_semantic_conflict_negative/fixture.json) so the same local conflict reports `negative_knowledge_prior_matches = 0` when no prior memory is staged.
+- Added [negative_knowledge_prior_guided_semantic_conflict_caution_gold](crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_semantic_conflict_caution_gold/fixture.json), which proves a staged negative-knowledge prior surfaces a validation caution while the current semantic conflict remains contested downstream.
 
 ### Validation
 - `cargo test --manifest-path Cargo.toml negative_knowledge -- --nocapture` -> passed
@@ -853,8 +867,8 @@
 ## 2026-04-10 (EvidenceIR now consumes visual-motif priors)
 
 ### Added: bounded visual-motif prior classification in `EvidenceIR`
-- Updated [prior_memory.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/prior_memory.rs) with a visual-caption lookup that resolves a unique learned `DiagramKind` only after normalizing a current caption against locally grounded signal and actor vocabulary.
-- Updated [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) so `EvidenceIR` can use that lookup for a current `SourceIR.visual_assets` entry when:
+- Updated [prior_memory.rs](crates/specforge/src/ir/prior_memory.rs) with a visual-caption lookup that resolves a unique learned `DiagramKind` only after normalizing a current caption against locally grounded signal and actor vocabulary.
+- Updated [evidence.rs](crates/specforge/src/ir/evidence.rs) so `EvidenceIR` can use that lookup for a current `SourceIR.visual_assets` entry when:
   - the current visual asset has `diagram_kind = unknown`
   - the current visual asset has local caption text
   - the normalized caption matches exactly one learned visual-motif prior in the applicable protocol scope
@@ -868,8 +882,8 @@
 - Ambiguous visual-motif memory stays silent rather than picking a diagram kind.
 
 ### Added: validation metric and KG-quality fixture
-- Updated [validate.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/validate.rs) so EvidenceIR validation now reports `visual_classification_observations`.
-- Added [visual_motif_prior_guided_diagram_classification_gold](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/visual_motif_prior_guided_diagram_classification_gold/fixture.json), which proves a locally unknown `XREQ cycle trace` visual asset gains a prior-backed timing-diagram classification only through staged prior memory.
+- Updated [validate.rs](crates/specforge/src/commands/validate.rs) so EvidenceIR validation now reports `visual_classification_observations`.
+- Added [visual_motif_prior_guided_diagram_classification_gold](crates/specforge/test_data/kg_quality/visual_motif_prior_guided_diagram_classification_gold/fixture.json), which proves a locally unknown `XREQ cycle trace` visual asset gains a prior-backed timing-diagram classification only through staged prior memory.
 
 ### Validation
 - `cargo test --manifest-path Cargo.toml visual_motif -- --nocapture` -> passed
@@ -880,17 +894,17 @@
 ## 2026-04-10 (CorpusMemory now has visual-motif and negative-knowledge prior families)
 
 ### Added: typed learning memory families for visual motifs and negative knowledge
-- Updated [prior_memory.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/prior_memory.rs) so `CorpusMemory` schema version `5` can carry `visual_motif_priors` and `negative_knowledge_priors`.
+- Updated [prior_memory.rs](crates/specforge/src/ir/prior_memory.rs) so `CorpusMemory` schema version `5` can carry `visual_motif_priors` and `negative_knowledge_priors`.
 - Visual-motif priors remember reusable source-side visual patterns such as diagram kind, asset kind, normalized caption phrase, protocol family, support count, source documents, and strongest confidence.
 - Negative-knowledge priors remember cautionary extraction archetypes such as semantic conflicts, temporal value conflicts, interface-signal conflicts, connectivity conflicts, and unresolved residual-decision classes.
 - Added query helpers for retrieving visual-motif and negative-knowledge priors by protocol family and prior kind.
 - The new families are typed, inspectable, and advisory-only; this slice does not let visual-motif or negative-knowledge priors directly author canonical `EvidenceIR`, `SemanticIR`, or `IntentIR` truth.
 
 ### Added: `learn-priors` harvesting for the new families
-- Updated [learn_priors.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/learn_priors.rs) so validated `IntentIR` artifacts can harvest visual motifs from their linked `SourceIR.visual_assets`.
+- Updated [learn_priors.rs](crates/specforge/src/commands/learn_priors.rs) so validated `IntentIR` artifacts can harvest visual motifs from their linked `SourceIR.visual_assets`.
 - `learn-priors` now harvests negative-knowledge signatures from carried conflicts and residual decisions without declaring any individual conflicting phrase false.
 - `learn-priors` now reports `visual_motif_priors` and `negative_knowledge_priors` counts in its CLI output.
-- Updated the fixture-local prior-memory patch path in [kg_bench.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/kg_bench.rs) so future KG-quality fixtures can seed those two prior families explicitly.
+- Updated the fixture-local prior-memory patch path in [kg_bench.rs](crates/specforge/src/commands/kg_bench.rs) so future KG-quality fixtures can seed those two prior families explicitly.
 
 ### Validation
 - `cargo test --manifest-path Cargo.toml learn_priors_harvests_visual_motif_and_negative_knowledge_priors -- --nocapture` -> passed
@@ -901,7 +915,7 @@
 ## 2026-04-10 (VLM timing tuples now lift into temporal signal values)
 
 ### Added: typed signal-value lift from timing-diagram VLM observations
-- Updated [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so `TimingDiagramExtraction` observations now read `signals[].values[]` tuples, not only free-text `annotations`.
+- Updated [semantic.rs](crates/specforge/src/ir/semantic.rs) so `TimingDiagramExtraction` observations now read `signals[].values[]` tuples, not only free-text `annotations`.
 - Signal/value tuples such as `XREQ` at `T1` with state `HIGH` now become VLM-backed `SignalConstraintRecord` entries and feed the existing temporal-rule builder as `SignalValue` predicates.
 - VLM timing signal names are gated against the document-grounded signal universe when possible, using interface signal records plus locally extracted statement signal tokens.
 - Diagram cycle labels such as `T0` and `T1` are preserved as explicit cycle windows, so distinct timing-diagram states do not collapse into false same-cycle conflicts.
@@ -924,7 +938,7 @@
 ## 2026-04-10 (VLM state-machine guards no longer become raw fake signals)
 
 ### Fixed: bounded guard parsing for visual state-machine observations
-- Updated [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so `StateMachineExtraction` VLM transition guards are parsed conservatively before entering `SemanticIR`.
+- Updated [semantic.rs](crates/specforge/src/ir/semantic.rs) so `StateMachineExtraction` VLM transition guards are parsed conservatively before entering `SemanticIR`.
 - `SemanticIR` now builds a document-grounded signal universe for VLM guard parsing from interface signal records plus extracted local statement signal tokens.
 - VLM guard strings now prefer simple typed comparisons such as `PREADY = 1`, `PREADY == 1`, and `PREADY != 0` instead of turning the entire guard text into a `SignalIsHigh` record.
 - Generic VLM words such as `transfer`, `transaction`, `request`, `response`, `beat`, `cycle`, and `phase` no longer become fake signal names unless they are explicitly grounded as document signal names.
@@ -942,8 +956,8 @@
 ## 2026-04-10 (book now explains multimodal evidence and visual grounding)
 
 ### Added: dedicated public chapter for visual evidence
-- Added [multimodal-evidence.md](/Users/richarddje/Documents/github/specforge/docs/book/src/pipeline/multimodal-evidence.md) under the mdBook Pipeline Model section.
-- Updated [SUMMARY.md](/Users/richarddje/Documents/github/specforge/docs/book/src/SUMMARY.md), [pipeline/overview.md](/Users/richarddje/Documents/github/specforge/docs/book/src/pipeline/overview.md), [sourceir.md](/Users/richarddje/Documents/github/specforge/docs/book/src/pipeline/sourceir.md), [evidenceir.md](/Users/richarddje/Documents/github/specforge/docs/book/src/pipeline/evidenceir.md), [semanticir.md](/Users/richarddje/Documents/github/specforge/docs/book/src/pipeline/semanticir.md), [architecture-rationale.md](/Users/richarddje/Documents/github/specforge/docs/book/src/architecture-rationale.md), and [validation.md](/Users/richarddje/Documents/github/specforge/docs/book/src/quality/validation.md) so the visual path is discoverable from the public docs.
+- Added [multimodal-evidence.md](docs/book/src/pipeline/multimodal-evidence.md) under the mdBook Pipeline Model section.
+- Updated [SUMMARY.md](docs/book/src/SUMMARY.md), [pipeline/overview.md](docs/book/src/pipeline/overview.md), [sourceir.md](docs/book/src/pipeline/sourceir.md), [evidenceir.md](docs/book/src/pipeline/evidenceir.md), [semanticir.md](docs/book/src/pipeline/semanticir.md), [architecture-rationale.md](docs/book/src/architecture-rationale.md), and [validation.md](docs/book/src/quality/validation.md) so the visual path is discoverable from the public docs.
 
 ### Clarified: VLM output is bounded evidence, not canonical truth
 - The new chapter explains:
@@ -960,8 +974,8 @@
 ## 2026-04-10 (book now explains temporal semantics and timing rules)
 
 ### Added: dedicated public chapter for typed timing
-- Added [temporal-semantics.md](/Users/richarddje/Documents/github/specforge/docs/book/src/domain/temporal-semantics.md) under the mdBook Domain Model section.
-- Updated [SUMMARY.md](/Users/richarddje/Documents/github/specforge/docs/book/src/SUMMARY.md), [domain/overview.md](/Users/richarddje/Documents/github/specforge/docs/book/src/domain/overview.md), [architecture-rationale.md](/Users/richarddje/Documents/github/specforge/docs/book/src/architecture-rationale.md), [semanticir.md](/Users/richarddje/Documents/github/specforge/docs/book/src/pipeline/semanticir.md), and [validation.md](/Users/richarddje/Documents/github/specforge/docs/book/src/quality/validation.md) so the public docs now expose the temporal-rule model directly.
+- Added [temporal-semantics.md](docs/book/src/domain/temporal-semantics.md) under the mdBook Domain Model section.
+- Updated [SUMMARY.md](docs/book/src/SUMMARY.md), [domain/overview.md](docs/book/src/domain/overview.md), [architecture-rationale.md](docs/book/src/architecture-rationale.md), [semanticir.md](docs/book/src/pipeline/semanticir.md), and [validation.md](docs/book/src/quality/validation.md) so the public docs now expose the temporal-rule model directly.
 
 ### Clarified: timing prose becomes typed obligations when grounded
 - The new chapter explains:
@@ -977,8 +991,8 @@
 ## 2026-04-09 (book now explains graph-first actor connectivity)
 
 ### Added: dedicated public chapter for actor connectivity
-- Added [actor-connectivity.md](/Users/richarddje/Documents/github/specforge/docs/book/src/domain/actor-connectivity.md) under the mdBook Domain Model section.
-- Updated [SUMMARY.md](/Users/richarddje/Documents/github/specforge/docs/book/src/SUMMARY.md), [domain/overview.md](/Users/richarddje/Documents/github/specforge/docs/book/src/domain/overview.md), [introduction.md](/Users/richarddje/Documents/github/specforge/docs/book/src/introduction.md), [architecture-rationale.md](/Users/richarddje/Documents/github/specforge/docs/book/src/architecture-rationale.md), and [semanticir.md](/Users/richarddje/Documents/github/specforge/docs/book/src/pipeline/semanticir.md) so the new graph-direction domain chapter is visible from the public docs path.
+- Added [actor-connectivity.md](docs/book/src/domain/actor-connectivity.md) under the mdBook Domain Model section.
+- Updated [SUMMARY.md](docs/book/src/SUMMARY.md), [domain/overview.md](docs/book/src/domain/overview.md), [introduction.md](docs/book/src/introduction.md), [architecture-rationale.md](docs/book/src/architecture-rationale.md), and [semanticir.md](docs/book/src/pipeline/semanticir.md) so the new graph-direction domain chapter is visible from the public docs path.
 
 ### Clarified: direction is a structural KG problem first
 - The new chapter explains:
@@ -994,8 +1008,8 @@
 ## 2026-04-09 (book now explains handshake semantic-role arbitration)
 
 ### Added: dedicated public chapter for handshake and semantic roles
-- Added [handshake-semantics.md](/Users/richarddje/Documents/github/specforge/docs/book/src/domain/handshake-semantics.md) under the mdBook Domain Model section.
-- Updated [SUMMARY.md](/Users/richarddje/Documents/github/specforge/docs/book/src/SUMMARY.md), [domain/overview.md](/Users/richarddje/Documents/github/specforge/docs/book/src/domain/overview.md), [introduction.md](/Users/richarddje/Documents/github/specforge/docs/book/src/introduction.md), [architecture-rationale.md](/Users/richarddje/Documents/github/specforge/docs/book/src/architecture-rationale.md), and [semanticir.md](/Users/richarddje/Documents/github/specforge/docs/book/src/pipeline/semanticir.md) so the new domain chapter is discoverable from the public docs path.
+- Added [handshake-semantics.md](docs/book/src/domain/handshake-semantics.md) under the mdBook Domain Model section.
+- Updated [SUMMARY.md](docs/book/src/SUMMARY.md), [domain/overview.md](docs/book/src/domain/overview.md), [introduction.md](docs/book/src/introduction.md), [architecture-rationale.md](docs/book/src/architecture-rationale.md), and [semanticir.md](docs/book/src/pipeline/semanticir.md) so the new domain chapter is discoverable from the public docs path.
 
 ### Clarified: semantic-role truthfulness is now documented as a domain model
 - The new chapter explains the current role surface:
@@ -1011,8 +1025,8 @@
 ## 2026-04-09 (book now has a domain-model section for clock/reset infrastructure)
 
 ### Added: dedicated public domain-model chapter
-- Added [domain/overview.md](/Users/richarddje/Documents/github/specforge/docs/book/src/domain/overview.md) as the first mdBook domain-model landing page.
-- Added [domain/clock-reset.md](/Users/richarddje/Documents/github/specforge/docs/book/src/domain/clock-reset.md) to explain why clocks and resets are infrastructure semantics, not ordinary protocol edges.
+- Added [domain/overview.md](docs/book/src/domain/overview.md) as the first mdBook domain-model landing page.
+- Added [domain/clock-reset.md](docs/book/src/domain/clock-reset.md) to explain why clocks and resets are infrastructure semantics, not ordinary protocol edges.
 
 ### Clarified: clock/reset truthfulness doctrine is now public
 - The new chapter explains:
@@ -1025,16 +1039,16 @@
   - what the current model still does not attempt to cover physically, such as full clock-tree or reset-tree topology
 
 ### Changed: book navigation now exposes domain semantics explicitly
-- Updated [SUMMARY.md](/Users/richarddje/Documents/github/specforge/docs/book/src/SUMMARY.md), [introduction.md](/Users/richarddje/Documents/github/specforge/docs/book/src/introduction.md), [architecture-rationale.md](/Users/richarddje/Documents/github/specforge/docs/book/src/architecture-rationale.md), [semanticir.md](/Users/richarddje/Documents/github/specforge/docs/book/src/pipeline/semanticir.md), and [README.md](/Users/richarddje/Documents/github/specforge/README.md) so domain-model semantics are no longer buried inside the IR-stage discussion.
+- Updated [SUMMARY.md](docs/book/src/SUMMARY.md), [introduction.md](docs/book/src/introduction.md), [architecture-rationale.md](docs/book/src/architecture-rationale.md), [semanticir.md](docs/book/src/pipeline/semanticir.md), and [README.md](README.md) so domain-model semantics are no longer buried inside the IR-stage discussion.
 
 ## 2026-04-09 (book reference section now explains generated artifacts and continuity boundaries)
 
 ### Added: dedicated mdBook reference landing page
-- Added [overview.md](/Users/richarddje/Documents/github/specforge/docs/book/src/reference/overview.md) so the book now has a stable reference entry point instead of making the generated-artifacts page double as the whole reference section.
-- Updated [SUMMARY.md](/Users/richarddje/Documents/github/specforge/docs/book/src/SUMMARY.md) so [Generated Artifacts](/Users/richarddje/Documents/github/specforge/docs/book/src/reference/generated-artifacts.md) is now an explicit reference chapter.
+- Added [overview.md](docs/book/src/reference/overview.md) so the book now has a stable reference entry point instead of making the generated-artifacts page double as the whole reference section.
+- Updated [SUMMARY.md](docs/book/src/SUMMARY.md) so [Generated Artifacts](docs/book/src/reference/generated-artifacts.md) is now an explicit reference chapter.
 
 ### Expanded: generated artifact documentation
-- Expanded [generated-artifacts.md](/Users/richarddje/Documents/github/specforge/docs/book/src/reference/generated-artifacts.md) so it now explains:
+- Expanded [generated-artifacts.md](docs/book/src/reference/generated-artifacts.md) so it now explains:
   - why `generated/` is local execution state rather than source code
   - how the stage artifact roots map to `SourceIR`, `EvidenceIR`, `SemanticIR`, and `IntentIR`
   - what source-side sidecars, validation reports, adapter artifacts, and `CorpusMemory` are for
@@ -1042,7 +1056,7 @@
   - how to inspect artifacts by tracing problems backward through the staged pipeline
 
 ### Expanded: live-docs versus book contract
-- Expanded [live-docs.md](/Users/richarddje/Documents/github/specforge/docs/book/src/reference/live-docs.md) so the public book now spells out the distinction between:
+- Expanded [live-docs.md](docs/book/src/reference/live-docs.md) so the public book now spells out the distinction between:
   - the book as the world-facing documentation product
   - root markdown docs as the operational continuity plane for scores, roadmap state, handoff notes, and crash recovery
 - Added practical guidance for when to update the book, the live docs, or both.
@@ -1050,11 +1064,11 @@
 ## 2026-04-09 (book IR stage chapters now explain their real boundaries)
 
 ### Expanded: the mdBook pipeline chapters are no longer only thin stage summaries
-- Expanded [pipeline/overview.md](/Users/richarddje/Documents/github/specforge/docs/book/src/pipeline/overview.md) so it now explains stage boundaries and the different truthfulness contracts each IR stage is supposed to uphold.
-- Expanded [pipeline/sourceir.md](/Users/richarddje/Documents/github/specforge/docs/book/src/pipeline/sourceir.md) so it now explains what `SourceIR` practically preserves, why early investment there mattered, and what structural failure modes still belong to Tier 1.
-- Expanded [pipeline/evidenceir.md](/Users/richarddje/Documents/github/specforge/docs/book/src/pipeline/evidenceir.md) so it now explains what `EvidenceIR` is allowed to extract, why provenance matters there, and what kinds of false promotion the stage is supposed to avoid.
-- Expanded [pipeline/semanticir.md](/Users/richarddje/Documents/github/specforge/docs/book/src/pipeline/semanticir.md) so it now explains semantic arbitration, graph-first direction, infrastructure handling, and why `SemanticIR` is the main semantic safety boundary before canonical intent.
-- Expanded [pipeline/intentir.md](/Users/richarddje/Documents/github/specforge/docs/book/src/pipeline/intentir.md) so it now explains what canonical means in this project, why adapters come later, and why honest incompleteness is still acceptable there.
+- Expanded [pipeline/overview.md](docs/book/src/pipeline/overview.md) so it now explains stage boundaries and the different truthfulness contracts each IR stage is supposed to uphold.
+- Expanded [pipeline/sourceir.md](docs/book/src/pipeline/sourceir.md) so it now explains what `SourceIR` practically preserves, why early investment there mattered, and what structural failure modes still belong to Tier 1.
+- Expanded [pipeline/evidenceir.md](docs/book/src/pipeline/evidenceir.md) so it now explains what `EvidenceIR` is allowed to extract, why provenance matters there, and what kinds of false promotion the stage is supposed to avoid.
+- Expanded [pipeline/semanticir.md](docs/book/src/pipeline/semanticir.md) so it now explains semantic arbitration, graph-first direction, infrastructure handling, and why `SemanticIR` is the main semantic safety boundary before canonical intent.
+- Expanded [pipeline/intentir.md](docs/book/src/pipeline/intentir.md) so it now explains what canonical means in this project, why adapters come later, and why honest incompleteness is still acceptable there.
 
 ### Changed: the public book now explains not just the stages, but the allowed decisions at each stage
 - This moves the book closer to the intended public role: not only listing the pipeline, but explaining what each layer is for, what it should and should not decide, and why the staged separation exists.
@@ -1062,7 +1076,7 @@
 ## 2026-04-09 (book now has a first-class architecture rationale chapter)
 
 ### Added: dedicated mdBook chapter for why `specforge` is built this way
-- Added [architecture-rationale.md](/Users/richarddje/Documents/github/specforge/docs/book/src/architecture-rationale.md).
+- Added [architecture-rationale.md](docs/book/src/architecture-rationale.md).
 - It explains the core public-facing design logic:
   - why the tool is staged
   - why it is provenance-first
@@ -1071,30 +1085,30 @@
   - why the learning plane is symbolic and separate from canonical per-document truth
 
 ### Changed: the book entry path now exposes rationale earlier
-- Updated [SUMMARY.md](/Users/richarddje/Documents/github/specforge/docs/book/src/SUMMARY.md), [introduction.md](/Users/richarddje/Documents/github/specforge/docs/book/src/introduction.md), [README.md](/Users/richarddje/Documents/github/specforge/README.md), and [USER_GUIDE.md](/Users/richarddje/Documents/github/specforge/USER_GUIDE.md) so readers encounter the architecture explanation before diving straight into usage details.
+- Updated [SUMMARY.md](docs/book/src/SUMMARY.md), [introduction.md](docs/book/src/introduction.md), [README.md](README.md), and [USER_GUIDE.md](USER_GUIDE.md) so readers encounter the architecture explanation before diving straight into usage details.
 
 ## 2026-04-09 (book now covers validation and learning as first-class topics)
 
 ### Added: dedicated mdBook chapters for validation and the learning plane
-- Added [validation.md](/Users/richarddje/Documents/github/specforge/docs/book/src/quality/validation.md) to explain how `specforge` judges artifact quality, why scores are secondary to findings, and how validation gates the learning plane.
-- Added [kg-bench.md](/Users/richarddje/Documents/github/specforge/docs/book/src/quality/kg-bench.md) to explain the fixture harness as a truthfulness regression system rather than just another CLI command.
-- Added [corpus-memory.md](/Users/richarddje/Documents/github/specforge/docs/book/src/quality/corpus-memory.md) to explain what actually grows over time, what the prior store learns, and why it is explicit symbolic memory rather than hidden model weights.
+- Added [validation.md](docs/book/src/quality/validation.md) to explain how `specforge` judges artifact quality, why scores are secondary to findings, and how validation gates the learning plane.
+- Added [kg-bench.md](docs/book/src/quality/kg-bench.md) to explain the fixture harness as a truthfulness regression system rather than just another CLI command.
+- Added [corpus-memory.md](docs/book/src/quality/corpus-memory.md) to explain what actually grows over time, what the prior store learns, and why it is explicit symbolic memory rather than hidden model weights.
 
 ### Changed: command docs now point readers toward deeper rationale chapters
-- Updated [quality-and-learning.md](/Users/richarddje/Documents/github/specforge/docs/book/src/commands/quality-and-learning.md) so it stays the operational CLI page while linking to the deeper validation and learning chapters.
-- Updated [introduction.md](/Users/richarddje/Documents/github/specforge/docs/book/src/introduction.md), [SUMMARY.md](/Users/richarddje/Documents/github/specforge/docs/book/src/SUMMARY.md), [README.md](/Users/richarddje/Documents/github/specforge/README.md), and [USER_GUIDE.md](/Users/richarddje/Documents/github/specforge/USER_GUIDE.md) so the new book coverage is visible from the entry path.
+- Updated [quality-and-learning.md](docs/book/src/commands/quality-and-learning.md) so it stays the operational CLI page while linking to the deeper validation and learning chapters.
+- Updated [introduction.md](docs/book/src/introduction.md), [SUMMARY.md](docs/book/src/SUMMARY.md), [README.md](README.md), and [USER_GUIDE.md](USER_GUIDE.md) so the new book coverage is visible from the entry path.
 
 ## 2026-04-09 (book and continuity docs now have an explicit split contract)
 
 ### Changed: the mdBook is now explicitly the public documentation product
-- Updated [README.md](/Users/richarddje/Documents/github/specforge/README.md), [ROADMAP.md](/Users/richarddje/Documents/github/specforge/ROADMAP.md), and [DEVELOPMENT_NOTES.md](/Users/richarddje/Documents/github/specforge/DEVELOPMENT_NOTES.md) so the repo now states this plainly:
+- Updated [README.md](README.md), [ROADMAP.md](ROADMAP.md), and [DEVELOPMENT_NOTES.md](DEVELOPMENT_NOTES.md) so the repo now states this plainly:
   - the mdBook is what the outside world should read
   - it should openly explain what `specforge` does, how it works, and why it is designed that way
   - every meaningful user-facing aspect of the project should ultimately land in the book with its own section or chapter
 
 ### Added: a dedicated book page for documentation scope
-- Added [documentation-scope.md](/Users/richarddje/Documents/github/specforge/docs/book/src/reference/documentation-scope.md) and linked it from [SUMMARY.md](/Users/richarddje/Documents/github/specforge/docs/book/src/SUMMARY.md).
-- Updated [introduction.md](/Users/richarddje/Documents/github/specforge/docs/book/src/introduction.md) and [live-docs.md](/Users/richarddje/Documents/github/specforge/docs/book/src/reference/live-docs.md) so the book now explains the split directly instead of only implying it.
+- Added [documentation-scope.md](docs/book/src/reference/documentation-scope.md) and linked it from [SUMMARY.md](docs/book/src/SUMMARY.md).
+- Updated [introduction.md](docs/book/src/introduction.md) and [live-docs.md](docs/book/src/reference/live-docs.md) so the book now explains the split directly instead of only implying it.
 
 ### Clarified: root markdown docs are a separate continuity plane
 - The root docs are now described consistently as continuity / steering infrastructure for:
@@ -1107,11 +1121,11 @@
 ## 2026-04-09 (tie-off appendix rows no longer create fake AXI producers)
 
 ### Fixed: `Tie-off` is no longer treated as a real protocol actor
-- Tightened [prior_memory.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/prior_memory.rs) so shared actor-term hygiene now rejects `Tie-off` / `tie off` the same way it already rejects infrastructure placeholders like `External`.
-- Tightened [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) so `Source = Tie-off` rows no longer author `ActorSignalRelation::Drives` edges through table relation recovery.
+- Tightened [prior_memory.rs](crates/specforge/src/ir/prior_memory.rs) so shared actor-term hygiene now rejects `Tie-off` / `tie off` the same way it already rejects infrastructure placeholders like `External`.
+- Tightened [evidence.rs](crates/specforge/src/ir/evidence.rs) so `Source = Tie-off` rows no longer author `ActorSignalRelation::Drives` edges through table relation recovery.
 
 ### Fixed: tie-off source rows now synthesize honest input declarations
-- Updated [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) so `Tie-off` source labels still contribute local direction information, but as `input` declarations instead of fake `output` declarations.
+- Updated [evidence.rs](crates/specforge/src/ir/evidence.rs) so `Tie-off` source labels still contribute local direction information, but as `input` declarations instead of fake `output` declarations.
 - This keeps appendix control pins like `BROADCASTATOMIC`, `BROADCASTSHAREABLE`, `BROADCASTCACHEMAINT`, `BROADCASTCMOPOPA`, `BROADCASTPERSIST`, and `BROADCASTSTORAGE` in the declared signal surface without pretending there is a real driving actor named `Tie-off`.
 
 ### Added: regression coverage for tie-off input rows
@@ -1144,8 +1158,8 @@
 ## 2026-04-09 (external infrastructure rows no longer synthesize false AXI outputs)
 
 ### Fixed: `External` is no longer treated as a protocol actor in source-column relation recovery
-- Tightened [prior_memory.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/prior_memory.rs) so the shared actor-term hygiene now rejects generic environment labels like `External`.
-- Tightened [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) so source-column signal-table relation extraction now uses the stricter relation-actor normalizer instead of the weaker raw table-label normalizer.
+- Tightened [prior_memory.rs](crates/specforge/src/ir/prior_memory.rs) so the shared actor-term hygiene now rejects generic environment labels like `External`.
+- Tightened [evidence.rs](crates/specforge/src/ir/evidence.rs) so source-column signal-table relation extraction now uses the stricter relation-actor normalizer instead of the weaker raw table-label normalizer.
 
 ### Added: regression coverage for external infrastructure rows
 - Added `external_source_rows_do_not_synthesize_infrastructure_outputs`, which proves `ACLK` / `ARESETN` rows with `Source = External` still recover clock/reset semantics locally but no longer synthesize fake protocol actors or false `output` declarations.
@@ -1176,11 +1190,11 @@
 ## 2026-04-09 (AXI semantic-hint hygiene removed false handshake conflict paths)
 
 ### Fixed: generic acknowledged-event prose no longer masquerades as ready-like semantics
-- Tightened [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) so generic acknowledgment wording no longer becomes `handshake_ready_like` by default.
+- Tightened [evidence.rs](crates/specforge/src/ir/evidence.rs) so generic acknowledgment wording no longer becomes `handshake_ready_like` by default.
 - Ready-like acknowledgment recovery now requires more specific request/transfer/receipt phrasing instead of treating any `acknowledged` sentence as handshake acceptance semantics.
 
 ### Fixed: table-of-contents dot-leader lines no longer produce semantic-role hints
-- Added a structural-noise guard in [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) so dot-leader contents rows and similar non-semantic structural lines stop contributing prose semantic hints outside real signal-description tables.
+- Added a structural-noise guard in [evidence.rs](crates/specforge/src/ir/evidence.rs) so dot-leader contents rows and similar non-semantic structural lines stop contributing prose semantic hints outside real signal-description tables.
 - This closes the exact false-positive path that had been turning the AXI contents line for `A14.1.1 AWAKEUP rules and recommendations` into a bogus `valid_like` + `ready_like` conflict.
 
 ### Added: focused regressions for both false-positive paths
@@ -1207,14 +1221,14 @@
 ## 2026-04-09 (mdBook is explicitly a live project book, not a static scaffold)
 
 ### Changed: the documentation contract now treats the book as a living project surface
-- Updated [README.md](/Users/richarddje/Documents/github/specforge/README.md) so the entry-point docs now say the `mdBook` should be treated as a live book that evolves with user-facing project changes.
-- Updated [ROADMAP.md](/Users/richarddje/Documents/github/specforge/ROADMAP.md) so the cross-cutting doctrine now says the `mdBook` under `docs/book/` must evolve alongside user-facing commands, runtime behavior, IR semantics, validation surfaces, and cross-document learning behavior.
-- Updated [DEVELOPMENT_NOTES.md](/Users/richarddje/Documents/github/specforge/DEVELOPMENT_NOTES.md) so the book is explicitly part of the continuity contract: it is the canonical user-facing documentation surface, it should be treated as a live book, and meaningful user-facing changes should refresh it in the same task instead of being left to drift.
+- Updated [README.md](README.md) so the entry-point docs now say the `mdBook` should be treated as a live book that evolves with user-facing project changes.
+- Updated [ROADMAP.md](ROADMAP.md) so the cross-cutting doctrine now says the `mdBook` under `docs/book/` must evolve alongside user-facing commands, runtime behavior, IR semantics, validation surfaces, and cross-document learning behavior.
+- Updated [DEVELOPMENT_NOTES.md](DEVELOPMENT_NOTES.md) so the book is explicitly part of the continuity contract: it is the canonical user-facing documentation surface, it should be treated as a live book, and meaningful user-facing changes should refresh it in the same task instead of being left to drift.
 
 ## 2026-04-09 (mdBook is now the canonical user-facing docs surface)
 
 ### Added: a real `mdBook` for layered user-facing documentation
-- Added the canonical book scaffold under [docs/book/book.toml](/Users/richarddje/Documents/github/specforge/docs/book/book.toml) and [docs/book/src/SUMMARY.md](/Users/richarddje/Documents/github/specforge/docs/book/src/SUMMARY.md).
+- Added the canonical book scaffold under [docs/book/book.toml](docs/book/book.toml) and [docs/book/src/SUMMARY.md](docs/book/src/SUMMARY.md).
 - Seeded the first layered chapter set for:
   - introduction
   - getting started
@@ -1224,13 +1238,13 @@
   - reference material for generated artifacts, live docs, and troubleshooting
 
 ### Changed: root docs now point to the book instead of trying to be the full user-doc surface themselves
-- [README.md](/Users/richarddje/Documents/github/specforge/README.md) now marks the `mdBook` as the canonical user-facing documentation path and explains how to build it locally.
-- [USER_GUIDE.md](/Users/richarddje/Documents/github/specforge/USER_GUIDE.md) is now a compatibility pointer to the book instead of a second large parallel user-doc surface.
+- [README.md](README.md) now marks the `mdBook` as the canonical user-facing documentation path and explains how to build it locally.
+- [USER_GUIDE.md](USER_GUIDE.md) is now a compatibility pointer to the book instead of a second large parallel user-doc surface.
 
 ### Changed: CI now treats docs as first-class project quality, not an optional side task
-- Added [scripts/run_docs_ci.sh](/Users/richarddje/Documents/github/specforge/scripts/run_docs_ci.sh) as the canonical local docs build entrypoint.
-- [scripts/run_ci.sh](/Users/richarddje/Documents/github/specforge/scripts/run_ci.sh) now runs the mdBook build after Rust formatting and tests.
-- [.github/workflows/ci.yml](/Users/richarddje/Documents/github/specforge/.github/workflows/ci.yml) now installs `mdbook v0.5.2` before running the shared CI script, so GitHub checks the same Rust + docs path that local CI runs.
+- Added [scripts/run_docs_ci.sh](scripts/run_docs_ci.sh) as the canonical local docs build entrypoint.
+- [scripts/run_ci.sh](scripts/run_ci.sh) now runs the mdBook build after Rust formatting and tests.
+- [.github/workflows/ci.yml](.github/workflows/ci.yml) now installs `mdbook v0.5.2` before running the shared CI script, so GitHub checks the same Rust + docs path that local CI runs.
 
 ### Validation
 - `bash scripts/run_docs_ci.sh` → passed
@@ -1239,7 +1253,7 @@
 ## 2026-04-09 (abstract transport tables no longer leak into canonical AXI interfaces)
 
 ### Fixed: generic `Tx` / `Rx` transport-primitives no longer masquerade as top-level interface signals
-- Tightened [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) so `signal_description` tables are rejected from the top-level signal surface when they are really abstract transport exemplars: bare transport primitive names such as `VALID`, `PENDING`, `CRDT`, `CRDTSH`, `SHAREDCRD`, and `RP` combined with only `Tx` / `Rx` actor terms.
+- Tightened [evidence.rs](crates/specforge/src/ir/evidence.rs) so `signal_description` tables are rejected from the top-level signal surface when they are really abstract transport exemplars: bare transport primitive names such as `VALID`, `PENDING`, `CRDT`, `CRDTSH`, `SHAREDCRD`, and `RP` combined with only `Tx` / `Rx` actor terms.
 - This keeps real prefixed interface tables like `AWVALID`, `ARCRDT`, or `AWSHAREDCRD` intact, while preventing appendix-level transport teaching tables from authoring canonical declarations, actor relations, and semantic hints.
 
 ### Added: regression coverage for abstract transport-table leakage
@@ -1267,7 +1281,7 @@
 ## 2026-04-09 (axi field-like message tables no longer leak pseudo-signals)
 
 ### Fixed: field-like `Name | Width | Description` tables no longer masquerade as interface signal tables
-- Tightened [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) so top-level signal-table recovery now considers the nearest section title as well as the local caption and headers.
+- Tightened [evidence.rs](crates/specforge/src/ir/evidence.rs) so top-level signal-table recovery now considers the nearest section title as well as the local caption and headers.
 - Continued-page DVM message-field tables now stay classified as field-like context instead of leaking pseudo-signals such as `IS`, `PA`, and `COMPLETION` into `EvidenceIR`.
 
 ### Added: regression coverage for continued-page field-table leakage
@@ -1290,7 +1304,7 @@
 ## 2026-04-08 (passive visual links no longer force semantic residuals)
 
 ### Fixed: ambiguous-visual residuals now require live semantic lift
-- Tightened [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so `semantic_ambiguous_visual_grounding` is emitted only when ambiguous or unknown visual evidence actually survives into carried semantic observations.
+- Tightened [semantic.rs](crates/specforge/src/ir/semantic.rs) so `semantic_ambiguous_visual_grounding` is emitted only when ambiguous or unknown visual evidence actually survives into carried semantic observations.
 - Passive figure references that are merely linked from prose no longer keep a semantic-stage residual alive by themselves.
 
 ### Added: regression coverage for passive-vs-live visual grounding
@@ -1316,7 +1330,7 @@
 ## 2026-04-08 (authoritative signal surface now anchors interface grouping)
 
 ### Fixed: heuristic interface grouping now respects declared signal vocabularies
-- Tightened [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so statement-derived interface fragments are filtered against document-grounded explicit signal declarations whenever that authoritative signal surface exists.
+- Tightened [semantic.rs](crates/specforge/src/ir/semantic.rs) so statement-derived interface fragments are filtered against document-grounded explicit signal declarations whenever that authoritative signal surface exists.
 - This means phase words, enum labels, width symbols, and similar metadata no longer survive into heuristic interface grouping just because they were co-mentioned next to real signals in prose.
 
 ### Added: regression coverage for authoritative grouping filters
@@ -1341,7 +1355,7 @@
 ## 2026-04-08 (AXI-Stream interface grouping residual removed cleanly)
 
 ### Fixed: heuristic interface grouping now ignores width/table metadata noise
-- Tightened [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so heuristic interface grouping filters out metadata-only symbols like `*_WIDTH`, `_WIDTH`, `MIN`, and `MAX` before building statement-derived interface fragments.
+- Tightened [semantic.rs](crates/specforge/src/ir/semantic.rs) so heuristic interface grouping filters out metadata-only symbols like `*_WIDTH`, `_WIDTH`, `MIN`, and `MAX` before building statement-derived interface fragments.
 - This complements the earlier signal-token gate that already rejected leading-digit hex-like values such as `0A`, `0B`, `0E`, and `0F`.
 
 ### Fixed: explicit interfaces now subsume smaller grouped fragments for overlap review
@@ -1368,7 +1382,7 @@
 ## 2026-04-08 (doctor now checks LM Studio fallback readiness too)
 
 ### Added: doctor now verifies the LM Studio fallback path as well as the default Ollama path
-- Extended [doctor.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/doctor.rs) so `specforge doctor [--strict]` now checks and reports:
+- Extended [doctor.rs](crates/specforge/src/commands/doctor.rs) so `specforge doctor [--strict]` now checks and reports:
   - LM Studio `/v1/models`
   - default-model presence for `qwen2.5vl:7b`
   - LM Studio OpenAI-compatible `/v1/chat/completions`
@@ -1394,7 +1408,7 @@
 ## 2026-04-08 (doctor now checks Ollama loopback readiness too)
 
 ### Added: doctor now verifies the default local Ollama runtime, not just Docling
-- Extended [doctor.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/doctor.rs) so `specforge doctor [--strict]` now checks:
+- Extended [doctor.rs](crates/specforge/src/commands/doctor.rs) so `specforge doctor [--strict]` now checks:
   - Docling ingest readiness
   - Ollama `/api/tags`
   - default-model presence for `qwen2.5vl:7b`
@@ -1423,11 +1437,11 @@
 ## 2026-04-08 (Docling runtime discovery, doctor command, and bootstrap path)
 
 ### Added: a first-class Docling runtime doctor command
-- Added [doctor.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/doctor.rs) and wired `specforge doctor [--strict]` into the CLI in [cli.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/cli.rs), [commands/mod.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/mod.rs), and [lib.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/lib.rs).
+- Added [doctor.rs](crates/specforge/src/commands/doctor.rs) and wired `specforge doctor [--strict]` into the CLI in [cli.rs](crates/specforge/src/cli.rs), [commands/mod.rs](crates/specforge/src/commands/mod.rs), and [lib.rs](crates/specforge/src/lib.rs).
 - The new command reports Docling readiness, the selected Python candidate, version information, all probe results, the repo-local bootstrap script path, and the exact missing-runtime resolution when `--strict` is used.
 
 ### Changed: Docling runtime discovery is now operationally stronger
-- Extended [docling_backend.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/source/docling_backend.rs) so the backend no longer depends only on ambient `python3` / `python`.
+- Extended [docling_backend.rs](crates/specforge/src/ir/source/docling_backend.rs) so the backend no longer depends only on ambient `python3` / `python`.
 - Runtime resolution now proceeds in this order:
   - `SPECFORGE_DOCLING_PYTHON`
   - repo-local `.venv-docling`
@@ -1436,9 +1450,9 @@
 - The resolver now keeps a typed diagnosis surface instead of a one-bit import probe, which is shared by both `specforge doctor` and the actual ingest backend.
 
 ### Added: supported repo-local Docling bootstrap path
-- Added [bootstrap_docling.sh](/Users/richarddje/Documents/github/specforge/scripts/bootstrap_docling.sh) as the supported repository-local Docling runtime bootstrap entrypoint.
+- Added [bootstrap_docling.sh](scripts/bootstrap_docling.sh) as the supported repository-local Docling runtime bootstrap entrypoint.
 - The script creates `.venv-docling`, installs the known-good `docling==2.84.0` runtime family by default, and prints the resulting interpreter/version state.
-- Added `/.venv-docling/` to [.gitignore](/Users/richarddje/Documents/github/specforge/.gitignore) so that runtime stays local and untracked.
+- Added `/.venv-docling/` to [.gitignore](.gitignore) so that runtime stays local and untracked.
 
 ### Changed: the local runtime issue is now concretely verified, not just documented
 - `cargo run --manifest-path Cargo.toml -- doctor --strict` now succeeds locally and selects `python3.11` with `docling 2.84.0`, while explicitly reporting that the ambient `python3` probe is still broken because it resolves to Python `3.14.3` without `docling`.
@@ -1457,9 +1471,9 @@
 ## 2026-04-08 (system-contract infrastructure signals now populate canonical interfaces)
 
 ### Fixed: clock/reset signals from the system contract now reach the canonical interface surface
-- Extended [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so grounded `system_contract` clock/reset signals are synthesized into the top-level explicit interface when ordinary signal declarations do not already carry them.
+- Extended [semantic.rs](crates/specforge/src/ir/semantic.rs) so grounded `system_contract` clock/reset signals are synthesized into the top-level explicit interface when ordinary signal declarations do not already carry them.
 - This lets infrastructure signals like `HCLK` and `HRESETN` contribute honest canonical interface direction/width coverage, and it allows reset polarity grounded only through system-contract text to surface as `resolved_polarity` in both `SemanticIR` and `IntentIR`.
-- Added focused regressions in [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) and [validate.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/validate.rs) covering the exact system-contract-only clock/reset case at semantic and intent validation time.
+- Added focused regressions in [semantic.rs](crates/specforge/src/ir/semantic.rs) and [validate.rs](crates/specforge/src/commands/validate.rs) covering the exact system-contract-only clock/reset case at semantic and intent validation time.
 
 ### Changed: AHB now reports resolved polarity in the live baseline
 - Rebuilt AHB `SemanticIR` and `IntentIR` sequentially from the current `EvidenceIR`, re-validated the artifact, and refreshed the tracked four-document projection.
@@ -1478,9 +1492,9 @@
 ## 2026-04-08 (resolved signal polarity now lives on canonical interface records)
 
 ### Added: canonical interface records now carry resolved polarity directly
-- Extended [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so each `InterfaceSignalRecord` can now carry `resolved_polarity` directly instead of forcing downstream consumers to reconstruct polarity only from the carried top-level side list.
-- [intent.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/intent.rs) now preserves that same per-signal polarity surface into `IntentIR`.
-- [validate.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/validate.rs) now reports `with_resolved_polarity` for both `SemanticIR` and `IntentIR`.
+- Extended [semantic.rs](crates/specforge/src/ir/semantic.rs) so each `InterfaceSignalRecord` can now carry `resolved_polarity` directly instead of forcing downstream consumers to reconstruct polarity only from the carried top-level side list.
+- [intent.rs](crates/specforge/src/ir/intent.rs) now preserves that same per-signal polarity surface into `IntentIR`.
+- [validate.rs](crates/specforge/src/commands/validate.rs) now reports `with_resolved_polarity` for both `SemanticIR` and `IntentIR`.
 
 ### Changed: the live corpus now shows the gap honestly
 - Rebuilt the live AMBA `SemanticIR` / `IntentIR` artifacts, re-validated the four-document projection, and refreshed the tracked snapshot docs.
@@ -1500,7 +1514,7 @@
 ## 2026-04-08 (temporal conflict comparison is now polarity-aware)
 
 ### Fixed: asserted/deasserted temporal semantics now respect signal polarity
-- Extended [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs), [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs), and [intent.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/intent.rs) so resolved signal polarity now survives into canonical IR and can guide temporal-conflict comparison.
+- Extended [semantic.rs](crates/specforge/src/ir/semantic.rs), [evidence.rs](crates/specforge/src/ir/evidence.rs), and [intent.rs](crates/specforge/src/ir/intent.rs) so resolved signal polarity now survives into canonical IR and can guide temporal-conflict comparison.
 - `ASSERTED` and `DEASSERTED` are now treated as polarity-relative assertion semantics, not as fixed synonyms for `HIGH` and `LOW`.
 - When the current document grounds polarity, conflict detection now maps assertion semantics through that local polarity:
   - active-high: `ASSERTED -> HIGH`, `DEASSERTED -> LOW`
@@ -1526,7 +1540,7 @@
 ## 2026-04-08 (same-cycle timing language now lands as bounded temporal semantics)
 
 ### Fixed: same-cycle timing phrases now recover explicit `0`-cycle windows
-- Extended [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so `extract_cycle_window_from_text()` now recognizes bounded same-cycle language such as `in the same ACLK cycle`, `in the same tick`, and `on the current rising edge`.
+- Extended [semantic.rs](crates/specforge/src/ir/semantic.rs) so `extract_cycle_window_from_text()` now recognizes bounded same-cycle language such as `in the same ACLK cycle`, `in the same tick`, and `on the current rising edge`.
 - Added focused semantic regressions that lock both layers of the behavior:
   - direct phrase recovery from same-cycle timing language
   - end-to-end temporal-rule derivation from a same-cycle signal constraint
@@ -1551,9 +1565,9 @@
 ## 2026-04-08 (clock/reset connectivity now validates as infrastructure)
 
 ### Changed: clock/reset connectivity is now classified as infrastructure in canonical IR
-- Extended [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so `SignalConnectivityRecord` now carries an explicit `connectivity_class`, with `SystemClock` and `SystemReset` derived from the local system contract instead of flattening those signals into ordinary protocol connectivity.
-- Extended [intent.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/intent.rs) so that infrastructure classification survives into `IntentIR` unchanged.
-- Extended [validate.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/validate.rs) so missing producers on infrastructure connectivity no longer emit the generic `[warning:signal_connectivity]` finding; they now surface as a dedicated `[info:system_contract]` note that keeps canonical sourcing on the system-contract side of the model.
+- Extended [semantic.rs](crates/specforge/src/ir/semantic.rs) so `SignalConnectivityRecord` now carries an explicit `connectivity_class`, with `SystemClock` and `SystemReset` derived from the local system contract instead of flattening those signals into ordinary protocol connectivity.
+- Extended [intent.rs](crates/specforge/src/ir/intent.rs) so that infrastructure classification survives into `IntentIR` unchanged.
+- Extended [validate.rs](crates/specforge/src/commands/validate.rs) so missing producers on infrastructure connectivity no longer emit the generic `[warning:signal_connectivity]` finding; they now surface as a dedicated `[info:system_contract]` note that keeps canonical sourcing on the system-contract side of the model.
 
 ### Changed: AXI-Stream still validates at `90/100 EXCELLENT`, but the remaining gap is now represented more honestly
 - Re-ran full `specforge converge` with Ollama VLM + NLP Level 3 on [IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf](/Users/richarddje/Documents/livework/chipdoc/arm/amba/supporting/axi-stream/current/IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf).
@@ -1575,14 +1589,14 @@
 ## 2026-04-08 (corpus knowledge base plane added to roadmap)
 
 ### Added: explicit `R15g` workstream for a corpus knowledge base layer
-- Logged a new roadmap slice in [ROADMAP.md](/Users/richarddje/Documents/github/specforge/ROADMAP.md) for a persistent corpus knowledge base that sits beside the per-document IR pipeline and the typed `CorpusMemory` prior store.
+- Logged a new roadmap slice in [ROADMAP.md](ROADMAP.md) for a persistent corpus knowledge base that sits beside the per-document IR pipeline and the typed `CorpusMemory` prior store.
 - The design boundary is explicit:
   - per-document canonical truth stays in `SourceIR` / `EvidenceIR` / `SemanticIR` / `IntentIR`
   - typed machine-usable reuse stays in `CorpusMemory`
   - the new corpus knowledge base becomes the human+LLM synthesis layer for recurring motifs, failures, contradiction summaries, table/figure families, and protocol-family notes
 
 ### Changed: live architecture guidance now targets three cross-document planes, not one
-- Updated [DEVELOPMENT_NOTES.md](/Users/richarddje/Documents/github/specforge/DEVELOPMENT_NOTES.md), [README.md](/Users/richarddje/Documents/github/specforge/README.md), and [LIVE_ACHIEVEMENT_STATUS.md](/Users/richarddje/Documents/github/specforge/LIVE_ACHIEVEMENT_STATUS.md) so future work treats the long-term shape as:
+- Updated [DEVELOPMENT_NOTES.md](DEVELOPMENT_NOTES.md), [README.md](README.md), and [LIVE_ACHIEVEMENT_STATUS.md](LIVE_ACHIEVEMENT_STATUS.md) so future work treats the long-term shape as:
   - document-local canonical IR
   - typed cross-document priors
   - corpus-level compiled knowledge base
@@ -1591,7 +1605,7 @@
 ## 2026-04-08 (AXI-Stream parity-check width semantics now survive end to end)
 
 ### Fixed: parity-check rows now recover bounded width hints from their local table semantics
-- Extended [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) so `Check Signal / Signals Covered / Width / Granularity / Check Enable` rows can recover width hints from the `Signals Covered` cell when the literal `Width` cell is only a range placeholder like `1-8`.
+- Extended [evidence.rs](crates/specforge/src/ir/evidence.rs) so `Check Signal / Signals Covered / Width / Granularity / Check Enable` rows can recover width hints from the `Signals Covered` cell when the literal `Width` cell is only a range placeholder like `1-8`.
 - Added a bounded fallback from `Check Enable` / `Granularity` to the grounded base signal when `Signals Covered` only carries a width expression, so the structural and width semantics stay tied to local evidence instead of remaining partially orphaned.
 - Tightened graph-derived declaration synthesis so width-only statements no longer block stronger relation-grounded `Signal X is output width ...` declarations for the same signal.
 
@@ -1613,7 +1627,7 @@
 ## 2026-04-08 (AXI-Stream parity-check table now restores structural ownership)
 
 ### Fixed: parity-check tables now recover actor-signal relations from covered base signals
-- Extended [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) with a bounded second-pass relation recovery path for `Check Signal / Signals Covered` tables.
+- Extended [evidence.rs](crates/specforge/src/ir/evidence.rs) with a bounded second-pass relation recovery path for `Check Signal / Signals Covered` tables.
 - When a local parity-check row explicitly ties a check signal to a covered base signal that already has grounded actor relations, the check signal now inherits those local `drives` / `reads` edges instead of remaining structurally orphaned.
 - Added the focused regression `check_signal_tables_inherit_relations_from_covered_signals`.
 
@@ -1633,20 +1647,20 @@
 ## 2026-04-08 (clock/reset semantics logged as infrastructure-first steering)
 
 ### Changed: design steering now treats clocks and resets as infrastructure semantics, not ordinary protocol edges
-- Logged the implementation doctrine in [DEVELOPMENT_NOTES.md](/Users/richarddje/Documents/github/specforge/DEVELOPMENT_NOTES.md): clocks and resets should remain first-class infrastructure semantics with conservative sourcing/distribution modeling, not flattened into ordinary protocol producer/consumer behavior.
-- Updated [ROADMAP.md](/Users/richarddje/Documents/github/specforge/ROADMAP.md) so `R15b` now explicitly carries that requirement forward into the clock-tick temporal-model workstream.
+- Logged the implementation doctrine in [DEVELOPMENT_NOTES.md](DEVELOPMENT_NOTES.md): clocks and resets should remain first-class infrastructure semantics with conservative sourcing/distribution modeling, not flattened into ordinary protocol producer/consumer behavior.
+- Updated [ROADMAP.md](ROADMAP.md) so `R15b` now explicitly carries that requirement forward into the clock-tick temporal-model workstream.
 - This locks an important architectural boundary for future work on `ACLK`, `ARESETN`, and similar infrastructure signals: graph carry-through is allowed as a local aid, but long-term canonical truth should prefer dedicated infrastructure semantics over false graph completeness.
 
 ## 2026-04-08 (AXI-Stream graph-direction coverage rises after width-symbol cleanup)
 
 ### Fixed: width-only `_WIDTH` declarations no longer masquerade as interface signals
-- Hardened [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so synthesized declarations like `Signal TDATA_WIDTH is width LOW.` no longer become canonical interface-signal records when they carry width metadata but no real port direction.
+- Hardened [semantic.rs](crates/specforge/src/ir/semantic.rs) so synthesized declarations like `Signal TDATA_WIDTH is width LOW.` no longer become canonical interface-signal records when they carry width metadata but no real port direction.
 - Added focused regressions for both sides of the boundary:
   - `width_only_width_parameter_declarations_do_not_become_interface_signal_records`
   - `width_only_signal_declarations_become_interface_signal_records`
 
 ### Fixed: relation-grounded actors now inherit clock/reset input ports from explicit system contracts
-- Extended [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so actors already grounded by structural KG evidence now receive `input` actor ports for the explicit clock and reset signals instead of leaving `ACLK` / `ARESETN` outside the graph-backed port surface.
+- Extended [semantic.rs](crates/specforge/src/ir/semantic.rs) so actors already grounded by structural KG evidence now receive `input` actor ports for the explicit clock and reset signals instead of leaving `ACLK` / `ARESETN` outside the graph-backed port surface.
 - Added the regression `clock_and_reset_gain_input_actor_ports_for_relation_actors`, which locks that actor-relative clock/reset carry-through path.
 
 ### Changed: AXI-Stream now validates at `84/100 GOOD`
@@ -1665,7 +1679,7 @@
 ## 2026-04-08 (AXI-Stream consumer-side connectivity now survives from source tables)
 
 ### Fixed: source-column signal tables can now recover the opposite-side reader when it is uniquely grounded
-- Extended [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) so a `Source` / `Driver` column no longer stops at `(actor, Drives, signal)` when the current document already exposes exactly one opposite actor role locally.
+- Extended [evidence.rs](crates/specforge/src/ir/evidence.rs) so a `Source` / `Driver` column no longer stops at `(actor, Drives, signal)` when the current document already exposes exactly one opposite actor role locally.
 - The new helper path builds a small local actor-role inventory from signal-description tables and section headings, then adds the complementary `Reads` edge only when the opposite requester-like/completer-like actor is unique.
 - Added focused regressions for both the positive case and the ambiguity guard:
   - `source_table_relations_infer_unique_complementary_reads`
@@ -1690,9 +1704,9 @@
 ## 2026-04-08 (learning plane now rejects bogus actor vocabulary)
 
 ### Fixed: actor-taxonomy learning no longer harvests payload nouns as actors
-- Hardened [learn_priors.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/learn_priors.rs) so actor-taxonomy priors now skip non-actor payload/event terms like `control information`, even if an earlier document-local bug let that text survive into `IntentIR`.
-- Added a shared actor-term hygiene guard in [prior_memory.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/prior_memory.rs) so actor-taxonomy prior lookup also ignores those bogus terms if an older local `CorpusMemory` still contains stale entries.
-- Reused the same guard in [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs), so live relation extraction and cross-document learning now reject the same class of bogus actor terms instead of drifting apart.
+- Hardened [learn_priors.rs](crates/specforge/src/commands/learn_priors.rs) so actor-taxonomy priors now skip non-actor payload/event terms like `control information`, even if an earlier document-local bug let that text survive into `IntentIR`.
+- Added a shared actor-term hygiene guard in [prior_memory.rs](crates/specforge/src/ir/prior_memory.rs) so actor-taxonomy prior lookup also ignores those bogus terms if an older local `CorpusMemory` still contains stale entries.
+- Reused the same guard in [evidence.rs](crates/specforge/src/ir/evidence.rs), so live relation extraction and cross-document learning now reject the same class of bogus actor terms instead of drifting apart.
 
 ### Changed: local `CorpusMemory` is now cleaned of the stale AXI-Stream actor prior
 - Re-ran `specforge learn-priors` across AXI/APB/AHB/AXI-Stream `IntentIR` artifacts.
@@ -1707,7 +1721,7 @@
 ## 2026-04-08 (AXI-Stream bogus prose actor extraction fixed)
 
 ### Fixed: prose KG extraction no longer promotes payload nouns into actors
-- Hardened [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) so prose actor extraction now normalizes candidate actor phrases through the same non-actor guard used by table extraction and rejects generic payload/event nouns like `control information`, `data`, and `transfer`.
+- Hardened [evidence.rs](crates/specforge/src/ir/evidence.rs) so prose actor extraction now normalizes candidate actor phrases through the same non-actor guard used by table extraction and rejects generic payload/event nouns like `control information`, `data`, and `transfer`.
 - Tightened active-clause subject recovery so coordinated prose like `the Transmitter presents ... and asserts TVALID` keeps the real actor subject instead of capturing trailing payload phrases or clause verbs.
 - Added the regression `coordinated_active_drive_extracts_real_actor_not_payload_phrase`, which locks the AXI-Stream-style sentence shape that previously leaked `control information` into the structural KG.
 
@@ -1725,11 +1739,11 @@
 
 ### Added: first unseen-protocol full converge + learning refresh
 - Ran full `specforge converge` with Ollama VLM + NLP Level 3 on [IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf](/Users/richarddje/Documents/livework/chipdoc/arm/amba/supporting/axi-stream/current/IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf).
-- The AXI-Stream artifact converged in `2` pipeline iterations and validates at `80/100 GOOD`; it is now included in the tracked [VALIDATION_SNAPSHOT.md](/Users/richarddje/Documents/github/specforge/VALIDATION_SNAPSHOT.md) projection and the managed validation block in [LIVE_ACHIEVEMENT_STATUS.md](/Users/richarddje/Documents/github/specforge/LIVE_ACHIEVEMENT_STATUS.md).
+- The AXI-Stream artifact converged in `2` pipeline iterations and validates at `80/100 GOOD`; it is now included in the tracked [VALIDATION_SNAPSHOT.md](VALIDATION_SNAPSHOT.md) projection and the managed validation block in [LIVE_ACHIEVEMENT_STATUS.md](LIVE_ACHIEVEMENT_STATUS.md).
 - Refreshing `specforge learn-priors` across AXI/APB/AHB/AXI-Stream now yields `16` actor-taxonomy priors, `5` semantic phrase priors, `4` semantic modality-reliability priors, `266` temporal phrase priors, and `99` table-shape priors in local `CorpusMemory`.
 
 ### Fixed: multi-signal table-row semantic-role leakage
-- Extended [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) so signal-description table rows now sanitize against the full local known-signal set before semantic-role inference, preventing a secondary signal mention like `TREADY` from leaking a ready-like role onto a row subject like `TVALID`.
+- Extended [evidence.rs](crates/specforge/src/ir/evidence.rs) so signal-description table rows now sanitize against the full local known-signal set before semantic-role inference, preventing a secondary signal mention like `TREADY` from leaking a ready-like role onto a row subject like `TVALID`.
 - Added the regression `signal_table_descriptions_ignore_other_handshake_signal_mentions`, which locks the AXI-Stream-style case where `TVALID` should stay valid-like even when its row also describes the handshake condition involving `TREADY`.
 
 ### Why this matters
@@ -1739,7 +1753,7 @@
 ## 2026-04-07 (learning-plane structure documented as first-class architecture)
 
 ### Added: explicit doctrine for how `R15f` should learn
-- Logged in [DEVELOPMENT_NOTES.md](/Users/richarddje/Documents/github/specforge/DEVELOPMENT_NOTES.md) that the cross-document learning plane should not try to "mimic humans completely," but should instead borrow the useful structural properties of human learning:
+- Logged in [DEVELOPMENT_NOTES.md](DEVELOPMENT_NOTES.md) that the cross-document learning plane should not try to "mimic humans completely," but should instead borrow the useful structural properties of human learning:
   - accumulate experience across many documents
   - abstract patterns from repeated successful cases
   - keep confidence graded
@@ -1761,7 +1775,7 @@
 ## 2026-04-07 (table-shape timing-table benchmark added)
 
 ### Added: second table-shape gold/negative pair
-- Added [table_shape_prior_guided_timing_table_gold](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/table_shape_prior_guided_timing_table_gold/fixture.json) and [table_shape_prior_guided_timing_table_without_prior_negative](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/table_shape_prior_guided_timing_table_without_prior_negative/fixture.json).
+- Added [table_shape_prior_guided_timing_table_gold](crates/specforge/test_data/kg_quality/table_shape_prior_guided_timing_table_gold/fixture.json) and [table_shape_prior_guided_timing_table_without_prior_negative](crates/specforge/test_data/kg_quality/table_shape_prior_guided_timing_table_without_prior_negative/fixture.json).
 - The pair proves a locally `unknown` `Parameter | Min | Max | Unit` table stays inert without prior memory and yields `timing_constraints = 1` across `EvidenceIR`, `SemanticIR`, and `IntentIR` only when a matching table-shape prior is staged.
 
 ### Why this matters
@@ -1770,14 +1784,14 @@
 ## 2026-04-07 (semantic modality-reliability priors landed as the fifth bounded learning slice)
 
 ### Added: first semantic modality-reliability prior family in `CorpusMemory`
-- Extended [prior_memory.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/prior_memory.rs) with typed `semantic_modality_reliability_priors` plus advisory lookup helpers that score how reliable a given semantic source kind has been for a given role and protocol family.
-- Extended [learn_priors.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/learn_priors.rs) so `specforge learn-priors` now harvests those priors from decisive, non-alias-dependent semantic consensus records rather than from raw guesses.
+- Extended [prior_memory.rs](crates/specforge/src/ir/prior_memory.rs) with typed `semantic_modality_reliability_priors` plus advisory lookup helpers that score how reliable a given semantic source kind has been for a given role and protocol family.
+- Extended [learn_priors.rs](crates/specforge/src/commands/learn_priors.rs) so `specforge learn-priors` now harvests those priors from decisive, non-alias-dependent semantic consensus records rather than from raw guesses.
 - The latest local AMBA run over APB/AHB/AXI still yields `0` semantic modality-reliability priors, which is the honest current state: the family is landed, but the real canonical artifacts are not yet surfacing enough promoted semantic consensus to populate it automatically.
 
 ### Added: bounded semantic arbitration consumption and benchmark coverage
-- Extended [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so `SemanticIR` can advisory-adjust local semantic arbitration using modality-reliability priors, but only when the current PDF already contains multiple locally grounded semantic candidates; the original conflict remains visible either way.
-- Extended [validate.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/validate.rs) so semantic and intent validation now report prior-guided semantic arbitration and prior-guided semantic consensus explicitly instead of hiding that path inside the canonical result.
-- Added the tracked gold/negative fixture pair [semantic_modality_reliability_prior_guided_conflict_gold](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/semantic_modality_reliability_prior_guided_conflict_gold/fixture.json) and [semantic_modality_reliability_prior_guided_conflict_without_prior_negative](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/semantic_modality_reliability_prior_guided_conflict_without_prior_negative/fixture.json), which prove locally conflicted role evidence stays contested without the staged prior and becomes decisively resolved only when the matching modality-reliability prior is present.
+- Extended [semantic.rs](crates/specforge/src/ir/semantic.rs) so `SemanticIR` can advisory-adjust local semantic arbitration using modality-reliability priors, but only when the current PDF already contains multiple locally grounded semantic candidates; the original conflict remains visible either way.
+- Extended [validate.rs](crates/specforge/src/commands/validate.rs) so semantic and intent validation now report prior-guided semantic arbitration and prior-guided semantic consensus explicitly instead of hiding that path inside the canonical result.
+- Added the tracked gold/negative fixture pair [semantic_modality_reliability_prior_guided_conflict_gold](crates/specforge/test_data/kg_quality/semantic_modality_reliability_prior_guided_conflict_gold/fixture.json) and [semantic_modality_reliability_prior_guided_conflict_without_prior_negative](crates/specforge/test_data/kg_quality/semantic_modality_reliability_prior_guided_conflict_without_prior_negative/fixture.json), which prove locally conflicted role evidence stays contested without the staged prior and becomes decisively resolved only when the matching modality-reliability prior is present.
 
 ### Why this matters
 - This is the first learning slice that improves semantic arbitration itself instead of only widening local phrase, actor-vocabulary, timing, or table-shape interpretation.
@@ -1791,13 +1805,13 @@
 ## 2026-04-07 (table-shape priors landed as the fourth bounded learning slice)
 
 ### Added: first table-shape prior family in `CorpusMemory`
-- Extended [prior_memory.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/prior_memory.rs) with typed `table_shape_priors`, normalized structured-table header signatures, and advisory lookup helpers that can resolve a local table kind only when the signature matches uniquely.
-- Extended [learn_priors.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/learn_priors.rs) so `specforge learn-priors` now harvests table-shape priors from validated document chains by walking `IntentIR -> SemanticIR -> EvidenceIR -> SourceIR`.
+- Extended [prior_memory.rs](crates/specforge/src/ir/prior_memory.rs) with typed `table_shape_priors`, normalized structured-table header signatures, and advisory lookup helpers that can resolve a local table kind only when the signature matches uniquely.
+- Extended [learn_priors.rs](crates/specforge/src/commands/learn_priors.rs) so `specforge learn-priors` now harvests table-shape priors from validated document chains by walking `IntentIR -> SemanticIR -> EvidenceIR -> SourceIR`.
 - The latest local AMBA run over APB/AHB/AXI now yields `94` table-shape priors in addition to the existing actor-taxonomy and temporal families.
 
 ### Added: bounded table-shape prior consumption and benchmark coverage
-- Extended [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) so `EvidenceIR` can advisory-recover a local table kind from prior memory, but only when the current table is still `unknown`; explicit local `SourceIR.table_kind` values remain authoritative.
-- Added the tracked gold/negative fixture pair [table_shape_prior_guided_signal_table_gold](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/table_shape_prior_guided_signal_table_gold/fixture.json) and [table_shape_prior_guided_signal_table_without_prior_negative](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/table_shape_prior_guided_signal_table_without_prior_negative/fixture.json), which prove a locally `unknown` `Name | Direction | Width` table stays inert without prior memory and gains signal-description recovery only when a matching learned prior is staged.
+- Extended [evidence.rs](crates/specforge/src/ir/evidence.rs) so `EvidenceIR` can advisory-recover a local table kind from prior memory, but only when the current table is still `unknown`; explicit local `SourceIR.table_kind` values remain authoritative.
+- Added the tracked gold/negative fixture pair [table_shape_prior_guided_signal_table_gold](crates/specforge/test_data/kg_quality/table_shape_prior_guided_signal_table_gold/fixture.json) and [table_shape_prior_guided_signal_table_without_prior_negative](crates/specforge/test_data/kg_quality/table_shape_prior_guided_signal_table_without_prior_negative/fixture.json), which prove a locally `unknown` `Name | Direction | Width` table stays inert without prior memory and gains signal-description recovery only when a matching learned prior is staged.
 
 ### Why this matters
 - This is the first cross-document learning slice that improves table interpretation directly, not just actor vocabulary or phrase interpretation.
@@ -1806,8 +1820,8 @@
 ## 2026-04-07 (Learning-plane growth model clarified)
 
 ### Added: explicit note on what grows to materialize learning
-- Logged in [DEVELOPMENT_NOTES.md](/Users/richarddje/Documents/github/specforge/DEVELOPMENT_NOTES.md) that the learning capability is defined in code, while the thing that actually grows over time is the typed prior store, typically [corpus_memory.json](/Users/richarddje/Documents/github/specforge/generated/prior_memory/corpus_memory.json).
-- Added the matching short entry-point note in [README.md](/Users/richarddje/Documents/github/specforge/README.md), so future sessions do not confuse `R15f` with neural-network-style hidden-weight learning.
+- Logged in [DEVELOPMENT_NOTES.md](DEVELOPMENT_NOTES.md) that the learning capability is defined in code, while the thing that actually grows over time is the typed prior store, typically [corpus_memory.json](generated/prior_memory/corpus_memory.json).
+- Added the matching short entry-point note in [README.md](README.md), so future sessions do not confuse `R15f` with neural-network-style hidden-weight learning.
 
 ### Why this matters
 - This makes the learning model explicit: `specforge` uses symbolic, inspectable, typed memory rather than opaque learned weights.
@@ -1819,8 +1833,8 @@
 ## 2026-04-07 (Actor-taxonomy priors now recover structural KG from section headings)
 
 ### Added: prior-guided structural KG recovery for width-only section-guided signal tables
-- Extended [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) so actor-taxonomy priors can now lift width-only `Signal | Width` tables under headings like `Issuer signals` or `Acceptor signals` into structural `ActorSignalRelation::Drives` edges, not just flat compatibility directions.
-- Strengthened the tracked gold fixture [actor_taxonomy_prior_guided_section_direction_gold](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/actor_taxonomy_prior_guided_section_direction_gold/fixture.json) so it now requires graph-backed recovery too: `actor_signal_relations = 3`, `actor_ports = 3`, and `with_graph_direction = 3`.
+- Extended [evidence.rs](crates/specforge/src/ir/evidence.rs) so actor-taxonomy priors can now lift width-only `Signal | Width` tables under headings like `Issuer signals` or `Acceptor signals` into structural `ActorSignalRelation::Drives` edges, not just flat compatibility directions.
+- Strengthened the tracked gold fixture [actor_taxonomy_prior_guided_section_direction_gold](crates/specforge/test_data/kg_quality/actor_taxonomy_prior_guided_section_direction_gold/fixture.json) so it now requires graph-backed recovery too: `actor_signal_relations = 3`, `actor_ports = 3`, and `with_graph_direction = 3`.
 
 ### Why this matters
 - This closes an important quality gap in the first learning-plane consumer: prior-guided section headings now improve the canonical structural KG, not just the compatibility hint surface.
@@ -1834,8 +1848,8 @@
 ## 2026-04-07 (KG fixtures now lock prior-guided visual semantic recovery)
 
 ### Added: prior-guided visual semantic gold/negative pair
-- Added [visual_semantic_prior_guided_caption_gold](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/visual_semantic_prior_guided_caption_gold/fixture.json), which proves the unseen local visual-caption phrase `XACK can sink the transfer` gains ready-like semantic recovery only when a matching `visual_caption` semantic prior is staged into the fixture.
-- Added [visual_semantic_prior_guided_caption_without_prior_negative](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/visual_semantic_prior_guided_caption_without_prior_negative/fixture.json), which locks the honest fallback behavior that the same local caption stays semantically unresolved when prior memory is absent.
+- Added [visual_semantic_prior_guided_caption_gold](crates/specforge/test_data/kg_quality/visual_semantic_prior_guided_caption_gold/fixture.json), which proves the unseen local visual-caption phrase `XACK can sink the transfer` gains ready-like semantic recovery only when a matching `visual_caption` semantic prior is staged into the fixture.
+- Added [visual_semantic_prior_guided_caption_without_prior_negative](crates/specforge/test_data/kg_quality/visual_semantic_prior_guided_caption_without_prior_negative/fixture.json), which locks the honest fallback behavior that the same local caption stays semantically unresolved when prior memory is absent.
 
 ### Why this matters
 - This broadens the first benchmark surface into a second modality without inventing a new unsafe prior family prematurely.
@@ -1849,8 +1863,8 @@
 ## 2026-04-07 (KG fixtures now lock prior-guided actor-taxonomy recovery)
 
 ### Added: prior-guided actor-taxonomy gold/negative pair
-- Added [actor_taxonomy_prior_guided_section_direction_gold](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/actor_taxonomy_prior_guided_section_direction_gold/fixture.json), which proves width-only `Issuer signals` / `Acceptor signals` sections gain canonical signal directions only when matching actor-taxonomy priors are staged into the fixture.
-- Added [actor_taxonomy_prior_guided_section_direction_without_prior_negative](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/actor_taxonomy_prior_guided_section_direction_without_prior_negative/fixture.json), which locks the honest fallback behavior that the same local section headings stay directionless when prior memory is absent.
+- Added [actor_taxonomy_prior_guided_section_direction_gold](crates/specforge/test_data/kg_quality/actor_taxonomy_prior_guided_section_direction_gold/fixture.json), which proves width-only `Issuer signals` / `Acceptor signals` sections gain canonical signal directions only when matching actor-taxonomy priors are staged into the fixture.
+- Added [actor_taxonomy_prior_guided_section_direction_without_prior_negative](crates/specforge/test_data/kg_quality/actor_taxonomy_prior_guided_section_direction_without_prior_negative/fixture.json), which locks the honest fallback behavior that the same local section headings stay directionless when prior memory is absent.
 
 ### Why this matters
 - This completes the first benchmark triangle for the three initial bounded prior families: actor-taxonomy, semantic-role phrases, and temporal-language phrases.
@@ -1864,8 +1878,8 @@
 ## 2026-04-07 (KG fixtures now lock prior-guided semantic recovery)
 
 ### Added: prior-guided unseen-phrase semantic gold/negative pair
-- Added [semantic_prior_guided_phrase_gold](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/semantic_prior_guided_phrase_gold/fixture.json), which proves the unseen local phrase `XACK can receive the transfer` gains ready-like semantic recovery only when a matching semantic prior is staged into the fixture.
-- Added [semantic_prior_guided_phrase_without_prior_negative](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/semantic_prior_guided_phrase_without_prior_negative/fixture.json), which locks the honest fallback behavior that the same local phrase stays semantically unresolved when prior memory is absent.
+- Added [semantic_prior_guided_phrase_gold](crates/specforge/test_data/kg_quality/semantic_prior_guided_phrase_gold/fixture.json), which proves the unseen local phrase `XACK can receive the transfer` gains ready-like semantic recovery only when a matching semantic prior is staged into the fixture.
+- Added [semantic_prior_guided_phrase_without_prior_negative](crates/specforge/test_data/kg_quality/semantic_prior_guided_phrase_without_prior_negative/fixture.json), which locks the honest fallback behavior that the same local phrase stays semantically unresolved when prior memory is absent.
 
 ### Why this matters
 - This is the second tracked benchmark proof that the cross-document learning plane can strengthen analysis of an unseen local phrase without leaking canonical facts across documents.
@@ -1879,12 +1893,12 @@
 ## 2026-04-07 (KG fixtures now lock prior-guided temporal recovery)
 
 ### Added: fixture-owned prior-memory patching in `specforge kg-bench`
-- Extended [kg_bench.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/kg_bench.rs) so tracked fixtures can now stage a local `CorpusMemory` before `EvidenceIR` is built.
+- Extended [kg_bench.rs](crates/specforge/src/commands/kg_bench.rs) so tracked fixtures can now stage a local `CorpusMemory` before `EvidenceIR` is built.
 - The new patch surface is generic across actor-taxonomy, semantic, and temporal priors, so later `R15f` benchmark slices can exercise more prior families without depending on a shared mutable prior file.
 
 ### Added: prior-guided unseen-phrase temporal gold/negative pair
-- Added [temporal_prior_guided_cycle_window_gold](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/temporal_prior_guided_cycle_window_gold/fixture.json), which proves the unseen local phrase `PREADY must be asserted one beat later` gains a one-cycle `cycle_window` only when a matching temporal prior is staged into the fixture.
-- Added [temporal_prior_guided_cycle_window_without_prior_negative](/Users/richarddje/Documents/github/specforge/crates/specforge/test_data/kg_quality/temporal_prior_guided_cycle_window_without_prior_negative/fixture.json), which locks the honest fallback behavior that the same local phrase still yields a temporal rule but no bounded `cycle_window` without prior memory.
+- Added [temporal_prior_guided_cycle_window_gold](crates/specforge/test_data/kg_quality/temporal_prior_guided_cycle_window_gold/fixture.json), which proves the unseen local phrase `PREADY must be asserted one beat later` gains a one-cycle `cycle_window` only when a matching temporal prior is staged into the fixture.
+- Added [temporal_prior_guided_cycle_window_without_prior_negative](crates/specforge/test_data/kg_quality/temporal_prior_guided_cycle_window_without_prior_negative/fixture.json), which locks the honest fallback behavior that the same local phrase still yields a temporal rule but no bounded `cycle_window` without prior memory.
 
 ### Why this matters
 - This is the first tracked benchmark evidence that the cross-document learning plane can improve analysis of an unseen local phrase without leaking canonical facts across documents.
@@ -1898,8 +1912,8 @@
 ## 2026-04-06 (bounded temporal prior consumption landed)
 
 ### Added: prior-guided cycle-window recovery in `SemanticIR`
-- Extended [prior_memory.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/prior_memory.rs) with a typed temporal phrase lookup that can resolve a unique learned `CycleWindowRecord` from locally grounded timing text.
-- Extended [semantic.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/semantic.rs) so `SemanticIR` now loads advisory prior memory from the persisted upstream `prior_memory_path` and uses temporal phrase priors only as a fallback when direct cycle-window parsing cannot recover the local timing window.
+- Extended [prior_memory.rs](crates/specforge/src/ir/prior_memory.rs) with a typed temporal phrase lookup that can resolve a unique learned `CycleWindowRecord` from locally grounded timing text.
+- Extended [semantic.rs](crates/specforge/src/ir/semantic.rs) so `SemanticIR` now loads advisory prior memory from the persisted upstream `prior_memory_path` and uses temporal phrase priors only as a fallback when direct cycle-window parsing cannot recover the local timing window.
 - Added a direct semantic regression proving `PREADY must be asserted one beat later` still yields no built-in cycle window on its own, but does recover a one-cycle temporal rule when a validated temporal prior is present.
 
 ### Why this matters
@@ -1915,8 +1929,8 @@
 ## 2026-04-06 (bounded semantic prior consumption landed)
 
 ### Added: prior-guided semantic hint recovery in `EvidenceIR`
-- Extended [prior_memory.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/prior_memory.rs) with shared semantic-phrase normalization and lookup helpers, so the same phrase-shape logic now powers both `learn-priors` and runtime prior consumption.
-- Extended [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) so `EvidenceIR` can now use semantic phrase priors to recover local signal-role hints from non-hardcoded grounded phrases.
+- Extended [prior_memory.rs](crates/specforge/src/ir/prior_memory.rs) with shared semantic-phrase normalization and lookup helpers, so the same phrase-shape logic now powers both `learn-priors` and runtime prior consumption.
+- Extended [evidence.rs](crates/specforge/src/ir/evidence.rs) so `EvidenceIR` can now use semantic phrase priors to recover local signal-role hints from non-hardcoded grounded phrases.
 - `EvidenceIR` now also persists the consulted `prior_memory_path`, so later `refresh_signal_semantic_hints()` calls during NLP loopback keep the same advisory prior guidance instead of silently dropping it.
 
 ### Why this matters
@@ -1933,12 +1947,12 @@
 ## 2026-04-06 (first bounded prior-consumption path landed)
 
 ### Added: advisory prior-guided direction recovery in `EvidenceIR`
-- Extended [prior_memory.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/prior_memory.rs) with reusable actor-taxonomy lookup helpers, normalized actor-term matching, and protocol-family inference so the learning plane can be queried safely during extraction.
-- Extended [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/evidence.rs) with `build_with_prior_memory(...)` plus the first bounded prior consumer:
+- Extended [prior_memory.rs](crates/specforge/src/ir/prior_memory.rs) with reusable actor-taxonomy lookup helpers, normalized actor-term matching, and protocol-family inference so the learning plane can be queried safely during extraction.
+- Extended [evidence.rs](crates/specforge/src/ir/evidence.rs) with `build_with_prior_memory(...)` plus the first bounded prior consumer:
   - section-heading direction inference can now use actor-taxonomy priors
   - `Source` / `Destination` column direction inference can now use actor-taxonomy priors
   - prior guidance still requires explicit local actor terms already present in the current document
-- Extended [cli.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/cli.rs), [evidence.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/evidence.rs), and [converge.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/converge.rs) so `specforge evidence` and `specforge converge` now consult `--prior-memory generated/prior_memory/corpus_memory.json` by default.
+- Extended [cli.rs](crates/specforge/src/cli.rs), [evidence.rs](crates/specforge/src/commands/evidence.rs), and [converge.rs](crates/specforge/src/commands/converge.rs) so `specforge evidence` and `specforge converge` now consult `--prior-memory generated/prior_memory/corpus_memory.json` by default.
 
 ### Why this matters
 - The cross-document learning plane is no longer just storing priors; it now has its first real bounded consumer in the staged pipeline.
@@ -1954,8 +1968,8 @@
 ## 2026-04-06 (typed prior memory now learns actor taxonomy too)
 
 ### Added: actor-taxonomy priors for `R15f`
-- Extended [prior_memory.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/ir/prior_memory.rs) with a typed `actor_taxonomy_priors` family plus query helpers by protocol family and taxonomy role.
-- Extended [learn_priors.rs](/Users/richarddje/Documents/github/specforge/crates/specforge/src/commands/learn_priors.rs) so `specforge learn-priors` now harvests actor-taxonomy priors from:
+- Extended [prior_memory.rs](crates/specforge/src/ir/prior_memory.rs) with a typed `actor_taxonomy_priors` family plus query helpers by protocol family and taxonomy role.
+- Extended [learn_priors.rs](crates/specforge/src/commands/learn_priors.rs) so `specforge learn-priors` now harvests actor-taxonomy priors from:
   - decisive, non-alias-dependent actor-grounded handshake-role evidence
   - conservative self-identifying actor vocabulary such as `requester`, `completer`, `manager`, and `subordinate`
 
@@ -1972,12 +1986,12 @@
 ## 2026-04-06 (local and hosted CI now share one entrypoint)
 
 ### Added: checked-in local CI runner
-- Added [run_ci.sh](/Users/richarddje/Documents/github/specforge/scripts/run_ci.sh), a repository-local CI entrypoint that runs the canonical Rust quality gate from the repo root:
+- Added [run_ci.sh](scripts/run_ci.sh), a repository-local CI entrypoint that runs the canonical Rust quality gate from the repo root:
   - `cargo fmt --all --check`
   - `cargo test --manifest-path Cargo.toml`
 
 ### Changed: GitHub Actions now reuses the local runner
-- Updated [.github/workflows/ci.yml](/Users/richarddje/Documents/github/specforge/.github/workflows/ci.yml) so GitHub Actions calls `./scripts/run_ci.sh` instead of duplicating the commands inline.
+- Updated [.github/workflows/ci.yml](.github/workflows/ci.yml) so GitHub Actions calls `./scripts/run_ci.sh` instead of duplicating the commands inline.
 
 ### Why this matters
 - The full Rust CI path can now be run locally before push, which makes CI breakage easier to catch on the developer machine instead of waiting for GitHub.
@@ -1991,7 +2005,7 @@
 ## 2026-04-06 (GitHub Actions CI baseline established)
 
 ### Added: repo-hosted Rust CI on `push` / `pull_request`
-- Added [.github/workflows/ci.yml](/Users/richarddje/Documents/github/specforge/.github/workflows/ci.yml), a GitHub Actions workflow that installs Rust `1.89.0`, caches Cargo artifacts, and runs the same baseline Rust gate used locally:
+- Added [.github/workflows/ci.yml](.github/workflows/ci.yml), a GitHub Actions workflow that installs Rust `1.89.0`, caches Cargo artifacts, and runs the same baseline Rust gate used locally:
   - `cargo fmt --all --check`
   - `cargo test --manifest-path Cargo.toml`
 

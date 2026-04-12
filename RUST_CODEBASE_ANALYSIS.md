@@ -39,6 +39,11 @@
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and adding the planned `R15g` corpus knowledge base beside the already-live typed prior-memory plane; adapter expansion is now horizon work
 - the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the NLP alias markdown/list marker filtering slice, the full local CI path reports clean Clippy, 305 passing Rust tests, clean Rust API docs, and a successful mdBook build
 
+## Session update (2026-04-12 README bootstrap refresh)
+- Executed the README handoff through `SESSION_BOOTSTRAP.md`, re-read the referenced live docs, and compared the current Rust implementation surface against the documentation map.
+- The active Rust surface now contains `29` Rust source files and `56,024` lines under `crates/specforge/src`, including the full command set wired through `cli.rs`, `commands/mod.rs`, and `lib.rs`: `inspect`, `doctor`, `converge`, `ingest`, `evidence`, `semantic`, `intent`, `adapt`, `enrich`, `validate`, `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, and `nlp-enrich`.
+- No Rust architecture drift requiring code changes was found, but the README implementation-path map and this analysis file's current testing subsection lagged the codebase; this refresh aligns them with the `76274f6` baseline, `55` tracked KG-quality fixtures, and the latest full local CI result of `305` passing Rust tests.
+
 ## Session update (2026-04-12 NLP alias markdown/list marker filtering)
 - `extract_alias_phrase()` now rejects broader Form 2 alias subjects that begin with markdown bullets, block quotes, and ordered-list markers such as `*`, `+`, `>`, `1.`, and `2)` in addition to the existing `-`, `|`, and `#` guards.
 - This keeps list/table formatting out of `signal_alias_map` while preserving ordinary prose alias learning for noun phrases like `address bus`.
@@ -617,8 +622,8 @@
 
 ## Testing implications
 - current full local CI path: `bash scripts/run_ci.sh`
-- current Rust test count observed through that path after the current slice: 300 library tests, 0 binary tests, and 0 doc tests, all passing under `RUSTFLAGS="-D warnings"` after clean `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings` and `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` passes
-- current tracked KG-quality fixture count: 50
+- current Rust test count observed through that path after the current slice: 305 library tests, 0 binary tests, and 0 doc tests, all passing under `RUSTFLAGS="-D warnings"` after clean `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings` and `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` passes
+- current tracked KG-quality fixture count: 55
 - current tests cover:
   - source-kind detection
   - deterministic source key naming
@@ -661,7 +666,7 @@
 
 ## Latest validation completed in this refresh
 - `bash scripts/run_ci.sh`
-  - passed; Rust test suite reported 299 passed tests under `RUSTFLAGS="-D warnings"`, 0 failures, 0 binary tests, 0 doc tests, rustdoc completed under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build completed successfully
+  - passed; Rust test suite reported 305 passed tests under `RUSTFLAGS="-D warnings"`, 0 failures, 0 binary tests, 0 doc tests, rustdoc completed under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build completed successfully
 
 ## Earlier validation trail
 - `cargo run --manifest-path Cargo.toml -p specforge -- --help`
