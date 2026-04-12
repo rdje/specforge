@@ -21,7 +21,7 @@ It can inform humans, future LLM sessions, benchmark design, rescan targeting, a
 ## Page Families
 
 - `failures/validation-findings.md`: auto-refreshable validation finding projection plus human synthesis notes.
-- `benchmarks/kg-fixtures.md`: auto-refreshable KG fixture-result projection plus human synthesis notes.
+- `benchmarks/kg-fixtures.md`: auto-refreshable KG fixture-result and fixture-family summary projection plus human synthesis notes.
 
 Future page families can include:
 

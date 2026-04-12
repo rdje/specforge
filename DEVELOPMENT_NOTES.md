@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-13 R15g KG fixture-family corpus KB summary
+- The next `R15g` step deepens the managed KG benchmark projection from flat pass/fail accounting into reviewable fixture-family synthesis.
+- The projection now emits a deterministic family summary table before the per-fixture list in `corpus_kb/benchmarks/kg-fixtures.md`. The current categories are intentionally orthogonal: a fixture can count under protocol-family coverage, temporal semantics, VLM evidence, typed-prior behavior, and truthfulness-negative coverage at the same time.
+- This remains a corpus-KB review surface, not a new truth source. The family labels summarize benchmark coverage for humans and future LLM sessions; they do not change fixture execution, validation scoring, canonical IR, or `CorpusMemory`.
+- The implementation keeps human-authored synthesis outside the managed block intact and keeps failed-family member reporting ready for future regressions, so the page can become a useful debugging index if a fixture family turns red.
+
 ## 2026-04-13 R15g quiet KG fixture validation path
 - The previous corpus-KB benchmark projection exposed a quality issue: the fixture runner had to invoke `validate::run()` to produce validation sidecars for validation-backed expectations, and that command path printed the full validation report for every fixture.
 - The fix keeps public `specforge validate` behavior unchanged while adding `validate::run_quiet()` for internal callers that need the side effects and reports without the user-facing printout.

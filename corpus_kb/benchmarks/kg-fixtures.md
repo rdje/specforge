@@ -17,6 +17,25 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 - fixtures_passed: `55`
 - fixtures_failed: `0`
 
+### Fixture Family Summary
+Fixtures can appear in more than one family because protocol semantics, modality, and expected behavior are orthogonal.
+
+| family | fixtures | passed | failed |
+| --- | ---: | ---: | ---: |
+| VLM state machines | `5` | `5` | `0` |
+| VLM timing diagrams | `6` | `6` | `0` |
+| actor connectivity | `11` | `11` | `0` |
+| multimodal visual grounding | `18` | `18` | `0` |
+| negative knowledge | `5` | `5` | `0` |
+| polarity semantics | `6` | `6` | `0` |
+| protocol-family AMBA/APB/AHB/AXI | `9` | `9` | `0` |
+| residuals and caveats | `3` | `3` | `0` |
+| semantic role arbitration | `17` | `17` | `0` |
+| table extraction and hygiene | `8` | `8` | `0` |
+| temporal semantics | `14` | `14` | `0` |
+| truthfulness negatives and cautions | `30` | `30` | `0` |
+| typed prior memory | `21` | `21` | `0` |
+
 ### actor_boundary_residual
 - fixture_path: `crates/specforge/test_data/kg_quality/actor_boundary_residual/fixture.json`
 - status: `pass`

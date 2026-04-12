@@ -1,3 +1,4 @@
+use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -30,6 +31,15 @@ struct KgFixturesRefresh {
     page_path: PathBuf,
     fixture_count: usize,
     failed_count: usize,
+}
+
+#[derive(Debug)]
+struct KgFixtureFamilySummary {
+    label: String,
+    fixture_count: usize,
+    passed_count: usize,
+    failed_count: usize,
+    failed_fixture_names: Vec<String>,
 }
 
 pub fn run(args: CorpusKbArgs) -> Result<()> {
@@ -248,6 +258,44 @@ fn render_kg_fixtures_block(entries: &[KgFixtureProjection]) -> String {
     output.push_str(&failed.to_string());
     output.push_str("`\n\n");
 
+    let family_summaries = kg_fixture_family_summaries(entries);
+    if !family_summaries.is_empty() {
+        output.push_str("### Fixture Family Summary\n");
+        output.push_str(
+            "Fixtures can appear in more than one family because protocol semantics, modality, and expected behavior are orthogonal.\n\n",
+        );
+        output.push_str("| family | fixtures | passed | failed |\n");
+        output.push_str("| --- | ---: | ---: | ---: |\n");
+        for summary in &family_summaries {
+            output.push_str("| ");
+            output.push_str(&escape_markdown_line(&summary.label));
+            output.push_str(" | `");
+            output.push_str(&summary.fixture_count.to_string());
+            output.push_str("` | `");
+            output.push_str(&summary.passed_count.to_string());
+            output.push_str("` | `");
+            output.push_str(&summary.failed_count.to_string());
+            output.push_str("` |\n");
+        }
+        output.push('\n');
+
+        let failed_summaries = family_summaries
+            .iter()
+            .filter(|summary| !summary.failed_fixture_names.is_empty())
+            .collect::<Vec<_>>();
+        if !failed_summaries.is_empty() {
+            output.push_str("Failed fixture family members:\n");
+            for summary in failed_summaries {
+                output.push_str("- ");
+                output.push_str(&escape_markdown_line(&summary.label));
+                output.push_str(": `");
+                output.push_str(&summary.failed_fixture_names.join("`, `"));
+                output.push_str("`\n");
+            }
+            output.push('\n');
+        }
+    }
+
     if entries.is_empty() {
         output.push_str("- No KG fixtures were projected.\n\n");
     }
@@ -282,6 +330,130 @@ fn render_kg_fixtures_block(entries: &[KgFixtureProjection]) -> String {
     output.push_str(KG_FIXTURES_MANAGED_END);
     output.push('\n');
     output
+}
+
+fn kg_fixture_family_summaries(entries: &[KgFixtureProjection]) -> Vec<KgFixtureFamilySummary> {
+    let mut summaries = BTreeMap::<String, KgFixtureFamilySummary>::new();
+    for entry in entries {
+        for label in kg_fixture_family_labels(&entry.outcome.name) {
+            let summary =
+                summaries
+                    .entry(label.to_string())
+                    .or_insert_with(|| KgFixtureFamilySummary {
+                        label: label.to_string(),
+                        fixture_count: 0,
+                        passed_count: 0,
+                        failed_count: 0,
+                        failed_fixture_names: Vec::new(),
+                    });
+            summary.fixture_count += 1;
+            if entry.outcome.failures.is_empty() {
+                summary.passed_count += 1;
+            } else {
+                summary.failed_count += 1;
+                summary
+                    .failed_fixture_names
+                    .push(entry.outcome.name.clone());
+            }
+        }
+    }
+    summaries.into_values().collect()
+}
+
+fn kg_fixture_family_labels(name: &str) -> BTreeSet<&'static str> {
+    let mut labels = BTreeSet::new();
+    let normalized = name.to_ascii_lowercase();
+
+    if normalized.contains("actor")
+        || normalized.contains("producer")
+        || normalized.contains("source_column")
+        || normalized.contains("destination_column")
+        || normalized.contains("direction")
+        || normalized.contains("connectivity")
+        || normalized.contains("ports")
+    {
+        labels.insert("actor connectivity");
+    }
+    if normalized.starts_with("amba_")
+        || normalized.starts_with("apb_")
+        || normalized.starts_with("ahb_")
+        || normalized.starts_with("axi_")
+        || normalized.contains("source_column")
+        || normalized.contains("destination_column")
+    {
+        labels.insert("protocol-family AMBA/APB/AHB/AXI");
+    }
+    if normalized.contains("semantic")
+        || normalized.contains("handshake")
+        || normalized.contains("alias_dependent")
+        || normalized.contains("name_only")
+        || normalized.contains("modality_reliability")
+    {
+        labels.insert("semantic role arbitration");
+    }
+    if normalized.contains("timing")
+        || normalized.contains("temporal")
+        || normalized.contains("cycle")
+        || normalized.contains("wait_state")
+    {
+        labels.insert("temporal semantics");
+    }
+    if normalized.contains("polarity")
+        || normalized.contains("active_low")
+        || normalized.contains("non_reset_control")
+    {
+        labels.insert("polarity semantics");
+    }
+    if normalized.contains("visual")
+        || normalized.contains("vlm")
+        || normalized.contains("cross_modality")
+    {
+        labels.insert("multimodal visual grounding");
+    }
+    if normalized.contains("vlm_timing") {
+        labels.insert("VLM timing diagrams");
+    }
+    if normalized.contains("vlm_state_machine") {
+        labels.insert("VLM state machines");
+    }
+    if normalized.contains("_prior_guided")
+        || normalized.contains("negative_knowledge")
+        || normalized.contains("modality_reliability")
+        || normalized.contains("without_prior")
+    {
+        labels.insert("typed prior memory");
+    }
+    if normalized.contains("negative_knowledge") {
+        labels.insert("negative knowledge");
+    }
+    if normalized.contains("table")
+        || normalized.contains("source_column")
+        || normalized.contains("destination_column")
+    {
+        labels.insert("table extraction and hygiene");
+    }
+    if normalized.contains("_negative")
+        || normalized.contains("conflict")
+        || normalized.contains("misclassification")
+        || normalized.contains("noise")
+        || normalized.contains("bogus")
+        || normalized.contains("without_prior")
+        || normalized.contains("caution")
+        || normalized.contains("residual")
+    {
+        labels.insert("truthfulness negatives and cautions");
+    }
+    if normalized.contains("residual")
+        || normalized.contains("caveat")
+        || normalized.contains("alias_dependent")
+    {
+        labels.insert("residuals and caveats");
+    }
+
+    if labels.is_empty() {
+        labels.insert("uncategorized");
+    }
+    labels
 }
 
 fn replace_managed_block(
@@ -434,7 +606,7 @@ Keep this curated note.\n\n\
         let tempdir = tempdir()?;
         let repo_root = tempdir.path();
         let fixtures_root = repo_root.join("fixtures");
-        let fixture_dir = fixtures_root.join("toy_fixture");
+        let fixture_dir = fixtures_root.join("semantic_prior_guided_phrase_gold");
         fs::create_dir_all(&fixture_dir)?;
         fs::write(
             fixture_dir.join("source.md"),
@@ -443,7 +615,7 @@ Keep this curated note.\n\n\
         fs::write(
             fixture_dir.join("fixture.json"),
             r#"{
-  "name": "toy_fixture",
+  "name": "semantic_prior_guided_phrase_gold",
   "source": "source.md",
   "expectations": {}
 }"#,
@@ -472,10 +644,27 @@ Keep this benchmark note.\n\n\
         assert_eq!(refresh.failed_count, 0);
         assert!(refreshed.contains("Keep this benchmark note."));
         assert!(!refreshed.contains("old generated benchmark content"));
-        assert!(refreshed.contains("### toy_fixture"));
+        assert!(refreshed.contains("### Fixture Family Summary"));
+        assert!(refreshed.contains("| semantic role arbitration | `1` | `1` | `0` |"));
+        assert!(refreshed.contains("| typed prior memory | `1` | `1` | `0` |"));
+        assert!(refreshed.contains("### semantic_prior_guided_phrase_gold"));
         assert!(refreshed.contains("- status: `pass`"));
 
         Ok(())
+    }
+
+    #[test]
+    fn kg_fixture_family_labels_are_deterministic_and_review_facing() {
+        let labels =
+            kg_fixture_family_labels("visual_motif_prior_guided_diagram_classification_gold");
+
+        assert!(labels.contains("multimodal visual grounding"));
+        assert!(labels.contains("typed prior memory"));
+        assert!(!labels.contains("uncategorized"));
+
+        let labels = kg_fixture_family_labels("toy_fixture");
+        assert_eq!(labels.len(), 1);
+        assert!(labels.contains("uncategorized"));
     }
 
     #[test]

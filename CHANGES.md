@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-04-13 (R15g KG fixture-family corpus KB summary)
+
+### Added: fixture-family benchmark synthesis
+- `specforge corpus-kb --kg-fixtures-root ...` now projects a managed fixture-family summary table above the per-fixture KG benchmark results.
+- The family summary is review-facing only: fixtures can appear in multiple orthogonal families, and the table does not mutate canonical IR, typed priors, or the executable `kg-bench` gate.
+- Refreshed `corpus_kb/benchmarks/kg-fixtures.md` so the tracked suite now reports `55` total fixtures, `55` passed, `0` failed, plus family coverage for VLM timing/state-machine, actor connectivity, multimodal visual grounding, negative knowledge, polarity, AMBA-family protocols, semantic arbitration, table hygiene, temporal semantics, truthfulness negatives, and typed prior memory.
+- Added focused corpus-KB coverage proving the managed KG projection preserves human synthesis while emitting family summaries.
+
+### Validation
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml --lib corpus_kb -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed `corpus_kb/benchmarks/kg-fixtures.md` with `55` passed / `0` failed fixtures
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, `313` Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build
+
 ## 2026-04-13 (R15g quiet KG fixture validation path)
 
 ### Changed: benchmark validation can run quietly
