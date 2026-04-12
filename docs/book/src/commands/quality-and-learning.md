@@ -179,15 +179,17 @@ That caution does not suppress evidence, remove residuals, or decide semantic tr
 
 ```bash
 cargo run --manifest-path Cargo.toml -- corpus-kb generated/intent_ir/.../validation_report.json
+cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality
 ```
 
 This refreshes tracked corpus knowledge-base pages under `corpus_kb/`.
 
-The first page family is:
+The first page families are:
 
-`corpus_kb/failures/validation-findings.md`
+- `corpus_kb/failures/validation-findings.md`
+- `corpus_kb/benchmarks/kg-fixtures.md`
 
-It projects validation reports into a managed block while preserving human-authored synthesis around that block.
+They project validation reports and KG fixture outcomes into managed blocks while preserving human-authored synthesis around those blocks.
 This is the first concrete `R15g` surface: persistent corpus-level synthesis beside the KG and prior memory.
 
 The boundary is strict:

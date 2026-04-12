@@ -34,11 +34,16 @@ Every page should state:
 Auto-refreshable sections must use explicit managed markers.
 Human-authored synthesis should live outside managed blocks so refreshes do not overwrite review notes.
 
-The first managed block family is:
+The current managed block families are:
 
 ```text
 <!-- corpus_kb_validation_findings:start -->
 <!-- corpus_kb_validation_findings:end -->
+```
+
+```text
+<!-- corpus_kb_kg_fixtures:start -->
+<!-- corpus_kb_kg_fixtures:end -->
 ```
 
 ## Promotion Policy

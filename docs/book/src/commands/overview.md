@@ -19,7 +19,7 @@ Current surface:
 - `project-validation <artifact>...`
 - `rescan-plan [--execute]`
 - `learn-priors <intent-ir>...`
-- `corpus-kb <validation-report>...`
+- `corpus-kb [validation-report]... [--kg-fixtures-root <fixture-root>]`
 
 The commands fall into three groups:
 
@@ -79,6 +79,7 @@ If you want to refresh the tracked corpus knowledge-base synthesis pages:
 
 ```bash
 cargo run --manifest-path Cargo.toml -- corpus-kb generated/intent_ir/.../validation_report.json
+cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality
 ```
 
 The next two chapters break those paths down in more detail.

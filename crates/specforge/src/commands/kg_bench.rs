@@ -217,23 +217,20 @@ struct ValidationStageExpectations {
 }
 
 #[derive(Debug)]
-struct FixtureOutcome {
-    name: String,
-    fixture_path: PathBuf,
-    failures: Vec<String>,
+pub(crate) struct KgBenchFixtureOutcome {
+    pub(crate) name: String,
+    pub(crate) fixture_path: PathBuf,
+    pub(crate) failures: Vec<String>,
 }
 
 pub fn run(args: KgBenchArgs) -> Result<()> {
-    let fixtures_root = canonicalize_existing_path(&args.fixtures_root)?;
-    let fixture_paths = resolve_fixture_paths(&fixtures_root, &args.fixtures)?;
+    let (fixtures_root, outcomes) = collect_fixture_outcomes(&args.fixtures_root, &args.fixtures)?;
 
     println!("command: kg-bench");
     println!("fixtures_root: {}", fixtures_root.display());
-    println!("fixtures_requested: {}", fixture_paths.len());
+    println!("fixtures_requested: {}", outcomes.len());
 
-    let mut outcomes = Vec::new();
-    for fixture_path in fixture_paths {
-        let outcome = run_fixture(&fixture_path)?;
+    for outcome in &outcomes {
         println!(
             "fixture: {} [{}]",
             outcome.name,
@@ -246,7 +243,6 @@ pub fn run(args: KgBenchArgs) -> Result<()> {
         for failure in &outcome.failures {
             println!("  - {failure}");
         }
-        outcomes.push(outcome);
     }
 
     let passed = outcomes
@@ -278,7 +274,20 @@ pub fn run(args: KgBenchArgs) -> Result<()> {
     Ok(())
 }
 
-fn run_fixture(fixture_path: &Path) -> Result<FixtureOutcome> {
+pub(crate) fn collect_fixture_outcomes(
+    fixtures_root: &Path,
+    requested: &[PathBuf],
+) -> Result<(PathBuf, Vec<KgBenchFixtureOutcome>)> {
+    let fixtures_root = canonicalize_existing_path(fixtures_root)?;
+    let fixture_paths = resolve_fixture_paths(&fixtures_root, requested)?;
+    let mut outcomes = Vec::new();
+    for fixture_path in fixture_paths {
+        outcomes.push(run_fixture(&fixture_path)?);
+    }
+    Ok((fixtures_root, outcomes))
+}
+
+fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
     let fixture = load_fixture(fixture_path)?;
     let fixture_dir = fixture_path.parent().ok_or_else(|| {
         AppError::InvalidStageArtifact(format!(
@@ -478,7 +487,7 @@ fn run_fixture(fixture_path: &Path) -> Result<FixtureOutcome> {
         }
     }
 
-    Ok(FixtureOutcome {
+    Ok(KgBenchFixtureOutcome {
         name: fixture.name,
         fixture_path: fixture_path.to_path_buf(),
         failures,

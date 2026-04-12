@@ -21,6 +21,7 @@ It can inform humans, future LLM sessions, benchmark design, rescan targeting, a
 ## Page Families
 
 - `failures/validation-findings.md`: auto-refreshable validation finding projection plus human synthesis notes.
+- `benchmarks/kg-fixtures.md`: auto-refreshable KG fixture-result projection plus human synthesis notes.
 
 Future page families can include:
 
@@ -31,10 +32,11 @@ Future page families can include:
 - `timing/`
 - `infra/`
 - `failures/`
+- `benchmarks/`
 
 ## Refresh
 
-The first refreshable surface is:
+The validation-finding refresh surface is:
 
 ```bash
 cargo run --manifest-path Cargo.toml -- corpus-kb \
@@ -43,6 +45,13 @@ cargo run --manifest-path Cargo.toml -- corpus-kb \
   generated/intent_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/validation_report.json \
   generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/validation_report.json \
   generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/validation_report.json
+```
+
+The KG fixture-result refresh surface is:
+
+```bash
+cargo run --manifest-path Cargo.toml -- corpus-kb \
+  --kg-fixtures-root crates/specforge/test_data/kg_quality
 ```
 
 The command updates only managed blocks and preserves human-authored synthesis around them.

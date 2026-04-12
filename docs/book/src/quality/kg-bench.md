@@ -89,3 +89,12 @@ The detached mixed-polarity negative fixture proves a phrase like `CS_N is activ
 If `validate` tells us how strong one artifact is, `kg-bench` tells us whether the extraction logic is still behaving correctly across targeted truthfulness cases.
 
 In practice, it is one of the main ways `specforge` stays honest as the pipeline grows more capable.
+
+The current fixture run can also be projected into the corpus knowledge base:
+
+```bash
+cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality
+```
+
+That projection writes `corpus_kb/benchmarks/kg-fixtures.md`.
+It is a reviewable synthesis page, not a replacement for the executable `kg-bench` gate.

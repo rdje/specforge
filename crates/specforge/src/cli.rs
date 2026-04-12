@@ -268,11 +268,16 @@ pub struct LearnPriorsArgs {
 #[derive(Debug, Args)]
 pub struct CorpusKbArgs {
     /// Validation report JSON files to project into the tracked corpus knowledge base
-    #[arg(required = true)]
-    pub validation_reports: Vec<std::path::PathBuf>,
+    pub validation_reports: Vec<PathBuf>,
     /// Repository root containing corpus_kb/
     #[arg(long, default_value = ".")]
-    pub repo_root: std::path::PathBuf,
+    pub repo_root: PathBuf,
+    /// Optional KG-quality fixture root to run and project into the corpus knowledge base
+    #[arg(long)]
+    pub kg_fixtures_root: Option<PathBuf>,
+    /// Optional KG-quality fixture paths or directories relative to --kg-fixtures-root
+    #[arg(long)]
+    pub kg_fixture: Vec<PathBuf>,
 }
 
 /// VLM provider selection for the `enrich` command.
@@ -412,12 +417,36 @@ mod tests {
         };
 
         assert_eq!(args.repo_root, PathBuf::from("."));
+        assert_eq!(args.kg_fixtures_root, None);
+        assert!(args.kg_fixture.is_empty());
         assert_eq!(
             args.validation_reports,
             vec![PathBuf::from(
                 "generated/intent_ir/doc/validation_report.json"
             )]
         );
+    }
+
+    #[test]
+    fn corpus_kb_accepts_kg_fixture_refresh_without_validation_reports() {
+        let cli = Cli::parse_from([
+            "specforge",
+            "corpus-kb",
+            "--kg-fixtures-root",
+            "crates/specforge/test_data/kg_quality",
+            "--kg-fixture",
+            "actor_ports_gold",
+        ]);
+        let Commands::CorpusKb(args) = cli.command else {
+            panic!("expected corpus-kb command");
+        };
+
+        assert!(args.validation_reports.is_empty());
+        assert_eq!(
+            args.kg_fixtures_root,
+            Some(PathBuf::from("crates/specforge/test_data/kg_quality"))
+        );
+        assert_eq!(args.kg_fixture, vec![PathBuf::from("actor_ports_gold")]);
     }
 
     #[test]

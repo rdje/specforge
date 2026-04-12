@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-13 R15g KG fixture-result corpus KB projection
+- The second `R15g` refreshable page family turns the KG fixture suite into reviewable corpus synthesis without replacing the executable `specforge kg-bench` gate.
+- `specforge corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` runs the tracked fixture suite through the existing benchmark engine and writes only the managed block in `corpus_kb/benchmarks/kg-fixtures.md`.
+- The page is intentionally modest: fixture path, pass/fail status, and failure text if any. It does not summarize canonical truth, mutate IR artifacts, or approve any promotion.
+- The implementation exposes a small internal `kg_bench::collect_fixture_outcomes()` seam so the standalone benchmark command and the corpus-KB projection share the same fixture discovery/evaluation path.
+- The current quality caveat is CLI noise: fixture evaluation invokes `validate::run()`, and validation report construction is still coupled to detailed command-line printing. A future cleanup should split silent validation report construction from user-facing validation reporting so corpus-KB benchmark projection remains concise.
+
 ## 2026-04-13 R15g corpus knowledge-base bootstrap
 - The README bootstrap now moves into `R15g` rather than adding more one-off extractor fixes. The missing plane was not another canonical IR field or another hidden memory file; it was a tracked, reviewable corpus synthesis root that can survive session loss and accumulate cross-document lessons without promoting facts.
 - `corpus_kb/` is deliberately separate from `generated/prior_memory/corpus_memory.json`. The prior store is machine-usable extraction memory; the corpus KB is human/LLM-readable synthesis, negative-knowledge notes, validation pattern memory, and prior-candidate staging.

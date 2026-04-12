@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-13 (R15g KG fixture-result corpus KB projection)
+
+### Added: benchmark-result page family
+- Added `corpus_kb/benchmarks/` with a page-family README and the managed `kg-fixtures.md` projection.
+- The new page records the tracked KG fixture suite outcome as reviewable corpus synthesis: `55` total fixtures, `55` passed, and `0` failed, with fixture paths kept as provenance.
+- The page preserves human-authored synthesis outside the managed block and remains guidance rather than canonical truth promotion.
+
+### Changed: `specforge corpus-kb`
+- `specforge corpus-kb` now accepts optional `--kg-fixtures-root <fixture-root>` and repeated `--kg-fixture <fixture>` selectors, so it can refresh benchmark-result pages independently of validation-report pages.
+- `kg_bench` now exposes an internal fixture-outcome collection seam reused by the corpus-KB projection while preserving the standalone `specforge kg-bench` command behavior.
+- Documented a follow-up quality caveat: the benchmark projection currently reuses validation paths that print detailed stage reports during fixture execution, so a future validator/report split should make this projection quieter.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test --manifest-path Cargo.toml --lib corpus_kb -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml --lib kg_bench -- --nocapture` -> passed, including the full `55`-fixture tracked KG suite
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed `corpus_kb/benchmarks/kg-fixtures.md`
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, `311` Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build
+
 ## 2026-04-13 (R15g corpus knowledge base bootstrap)
 
 ### Added: tracked corpus knowledge-base plane

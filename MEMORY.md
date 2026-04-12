@@ -22,20 +22,21 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `aba6493`
-- latest_commit_brief_message: `fix(semantic): filter bit-select timing labels`
-- note: the current session is executing the README bootstrap path against that baseline and starting the `R15g` corpus knowledge-base plane
+- latest_commit_hash: `1229426`
+- latest_commit_brief_message: `feat(corpus): bootstrap corpus knowledge base`
+- note: the current session is executing the README/PNT continuation against that baseline and adding the `R15g` KG fixture-result corpus-KB projection
 
 ## Recent commit chain (last 5)
+- `1229426` feat(corpus): bootstrap corpus knowledge base
 - `aba6493` fix(semantic): filter bit-select timing labels
 - `bb0574c` docs: refresh README bootstrap baseline
 - `76274f6` fix(nlp): reject list-prefixed aliases
 - `da0797f` fix(semantic): filter bracketed vlm timing labels
-- `2cc3a4d` fix(semantic): filter compact vlm timing labels
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- the current `R15g` follow-on adds a tracked `corpus_kb/` root and a new `specforge corpus-kb` command that refreshes managed corpus knowledge-base validation-finding pages from validation report sidecars without mutating canonical IR or typed priors
+- the current `R15g` follow-on extends `specforge corpus-kb` with optional KG fixture-result projection: `--kg-fixtures-root crates/specforge/test_data/kg_quality` refreshes `corpus_kb/benchmarks/kg-fixtures.md` from the tracked fixture suite while preserving human synthesis and keeping canonical IR / typed priors untouched
+- the latest committed `R15g` follow-on added a tracked `corpus_kb/` root and a new `specforge corpus-kb` command that refreshes managed corpus knowledge-base validation-finding pages from validation report sidecars without mutating canonical IR or typed priors
 - the latest committed KG-quality follow-on tightens `vlm_timing_spurious_annotation_negative` again so standalone signal bit-select/range annotation labels such as `XREQ[0]`, `XREQ<1>`, and `XREQ[3:0]` stay out of `TimingConstraintRecord`s while the same VLM observation's grounded `signals[].values[]` samples still produce typed temporal evidence
 - the latest committed NLP-quality follow-on tightens `extract_alias_phrase()` so broader markdown/list marker prefixes such as `*`, `+`, `>`, `1.`, and `2)` cannot become learned Form 2 aliases
 - the latest committed KG-quality follow-on tightens `vlm_timing_spurious_annotation_negative` again so bracketed waveform sample labels such as `D[0]`, `A[1]`, `DATA[3]`, and `ADDR[7]` stay out of `TimingConstraintRecord`s
@@ -66,8 +67,8 @@
 - `scripts/run_ci.sh` now also builds Rust API docs with `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` before the mdBook build, preserving caller-provided `RUSTDOCFLAGS`
 - the Rust warning baseline is clean and now enforced in the shared local/hosted CI path rather than suppressed with `#[allow(dead_code)]`
 - README bootstrap currently resolves to `SESSION_BOOTSTRAP.md`, which instructs future agents to read the referenced live docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if necessary, and then continue from the roadmap
-- this README bootstrap observed 30 Rust source files and 56,332 lines under `crates/specforge/src`, with the CLI now including `doctor`, `converge`, `enrich`, `validate`, `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, `corpus-kb`, and `nlp-enrich` beside the core staged IR commands
-- `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the README bootstrap pass and the `R15g` corpus knowledge-base slice; the tracked KG fixture count remains `55`, and the full local CI gate now reports `307` passing Rust tests
+- this README/PNT continuation observed 30 Rust source files and 56,601 lines under `crates/specforge/src`, with the CLI now including `doctor`, `converge`, `enrich`, `validate`, `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, `corpus-kb`, and `nlp-enrich` beside the core staged IR commands
+- `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the `R15g` KG fixture-result corpus-KB projection; the tracked KG fixture count remains `55`, and the full local CI gate now reports `311` passing Rust tests
 - the latest README bootstrap hygiene pass found no new Rust architecture drift requiring code changes; the concrete fixes were to refresh the README implementation-path map, refresh the committed baseline in this memory file, update the current testing/validation counts in `RUST_CODEBASE_ANALYSIS.md`, and normalize old checkout-specific markdown links to repo-relative paths
 - the earlier VLM timing KG benchmark slice `vlm_timing_waveform_motion_negative` proves a VLM timing diagram can preserve the real `HIGH` sample while rejecting waveform motion descriptors and transition spellings such as `rising`, `stable`, `falling`, `UNCHANGED`, `RISING_EDGE`, `LOW_TO_HIGH`, `HIGH_TO_LOW`, `POS_EDGE`, `NEG_EDGE`, `risingedge`, `LOW2HIGH`, and `HIGH2LOW` as concrete signal values
 - the latest committed VLM timing KG benchmark slices tighten `vlm_timing_spurious_annotation_negative`, proving compact and bracketed waveform/sample labels such as `D0`, `A1`, `DATA0`, `0xAA`, `D[0]`, `A[1]`, `DATA[3]`, and `ADDR[7]` are annotation noise rather than timing constraints
@@ -214,6 +215,7 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
+- continued the `R15g` corpus knowledge-base work from commit `1229426`, added an optional KG fixture-result projection to `specforge corpus-kb`, exposed `kg_bench::collect_fixture_outcomes()` for shared benchmark evaluation, created `corpus_kb/benchmarks/kg-fixtures.md` plus the page-family README, refreshed the page with the current tracked KG suite result (`55` total fixtures, `55` passed, `0` failed), and passed the full local CI gate with `311` Rust tests
 - executed the README -> `SESSION_BOOTSTRAP.md` bootstrap path against commit `aba6493`, reviewed the referenced live docs and current Rust surface, added `specforge corpus-kb`, created the tracked `corpus_kb/` root with schema/policy docs, and seeded `corpus_kb/failures/validation-findings.md` from the current four AMBA validation report sidecars while preserving the no-canonical-mutation boundary
 - recovered the interrupted README -> `SESSION_BOOTSTRAP.md` bootstrap/PNT path after the crash, reviewed the referenced live docs and current Rust surface, confirmed the working tree contained only the in-flight VLM timing label-noise files, and finished the standalone signal bit-select/range annotation filter for `XREQ[0]`, `XREQ<1>`, and `XREQ[3:0]` in both the direct semantic regression and `vlm_timing_spurious_annotation_negative`
 - executed the README -> `SESSION_BOOTSTRAP.md` bootstrap path against commit `76274f6`, reviewed the referenced live docs and current Rust surface, confirmed 29 Rust files / 56,024 source lines / 55 tracked KG-quality fixtures / 305-test full-CI baseline, refreshed the README implementation map plus `RUST_CODEBASE_ANALYSIS.md` current testing counts, and normalized old checkout-specific markdown links to repo-relative paths

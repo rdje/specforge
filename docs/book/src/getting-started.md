@@ -98,5 +98,7 @@ Generated artifacts are written under `generated/`:
 Tracked corpus knowledge-base synthesis lives outside `generated/`:
 
 - `corpus_kb/`
+- `corpus_kb/failures/validation-findings.md`
+- `corpus_kb/benchmarks/kg-fixtures.md`
 
 The `generated/` tree stays local and untracked.

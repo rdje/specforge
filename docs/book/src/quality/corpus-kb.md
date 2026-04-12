@@ -12,6 +12,7 @@ Some cross-document knowledge is useful but should not become canonical document
 Examples include:
 
 - recurring validation finding patterns
+- repeatable KG fixture-result patterns
 - extractor failure archetypes
 - negative-knowledge patterns
 - table, timing, visual, and infrastructure families
@@ -34,11 +35,12 @@ It cannot directly author canonical IR facts.
 
 ## Refreshable pages
 
-The first refreshable page family is:
+The first refreshable page families are:
 
-`corpus_kb/failures/validation-findings.md`
+- `corpus_kb/failures/validation-findings.md`
+- `corpus_kb/benchmarks/kg-fixtures.md`
 
-It is refreshed from validation report sidecars:
+The validation page is refreshed from validation report sidecars:
 
 ```bash
 cargo run --manifest-path Cargo.toml -- corpus-kb \
@@ -49,8 +51,18 @@ cargo run --manifest-path Cargo.toml -- corpus-kb \
   generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/validation_report.json
 ```
 
+The benchmark page is refreshed by running the tracked KG fixture suite:
+
+```bash
+cargo run --manifest-path Cargo.toml -- corpus-kb \
+  --kg-fixtures-root crates/specforge/test_data/kg_quality
+```
+
 The command updates only managed blocks.
 Human-authored synthesis outside those blocks is preserved.
+
+The KG fixture projection records fixture paths plus pass/fail status.
+It is a review surface, not a replacement for the executable `specforge kg-bench` gate.
 
 ## Promotion rule
 
