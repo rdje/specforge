@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-04-13 (R15g state-machine corpus KB page)
+
+### Added: dedicated state-machine fixture-family page
+- `specforge corpus-kb --kg-fixtures-root ...` now refreshes `corpus_kb/state_machines/kg-fixtures.md` from KG fixtures tagged as `VLM state machines`.
+- Added `corpus_kb/state_machines/README.md` to define this page family as reviewable synthesis for VLM state labels, transition endpoint grounding, duplicate state merging, initial marker handling, and initial-cardinality validation behavior.
+- The live refresh currently projects `5` passing state-machine fixtures with explicit fixture-path provenance, while preserving human synthesis outside the managed block.
+- This page remains non-promoting corpus knowledge: it does not change KG-bench execution, validation scoring, canonical IR, typed prior memory, or adapter lowering.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test --manifest-path Cargo.toml --lib corpus_kb -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed the aggregate, state-machine, fixture-family, and prior-candidate corpus-KB pages with `55` passed / `0` failed fixtures
+- `git diff --check` -> passed
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, `313` Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build
+
 ## 2026-04-13 (R15g prior-candidate gate matrix)
 
 ### Added: review-gated prior-candidate surface

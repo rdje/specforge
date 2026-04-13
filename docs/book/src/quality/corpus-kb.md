@@ -42,6 +42,7 @@ The first refreshable page families are:
 - `corpus_kb/patterns/kg-fixtures.md`
 - `corpus_kb/tables/kg-fixtures.md`
 - `corpus_kb/visuals/kg-fixtures.md`
+- `corpus_kb/state_machines/kg-fixtures.md`
 - `corpus_kb/timing/kg-fixtures.md`
 - `corpus_kb/infra/kg-fixtures.md`
 - `corpus_kb/protocols/amba-kg-fixtures.md`
@@ -69,7 +70,7 @@ The command updates only managed blocks.
 Human-authored synthesis outside those blocks is preserved.
 
 The KG fixture projection records fixture paths, pass/fail status, and a review-facing fixture-family summary table.
-The same refresh also updates dedicated semantic/truthfulness pattern, table, visual, timing, infrastructure/polarity, and AMBA-family pages.
+The same refresh also updates dedicated semantic/truthfulness pattern, table, visual, state-machine, timing, infrastructure/polarity, and AMBA-family pages.
 It also updates a review-only prior-candidate page that names target `CorpusMemory` schema surfaces, required gates, and a family-level promotion gate review matrix without writing corpus memory.
 That matrix is still only a review checklist; it is not an approval record and cannot promote a concrete prior.
 It is a review surface, not a replacement for the executable `specforge kg-bench` gate.

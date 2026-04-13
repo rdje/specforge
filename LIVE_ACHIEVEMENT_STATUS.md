@@ -35,6 +35,7 @@
 - Review-only corpus-KB prior-candidate projection from KG fixtures: Done
 - Semantic/truthfulness corpus-KB fixture pattern page: Done
 - Prior-candidate corpus-KB gate review matrix: Done
+- Dedicated corpus-KB state-machine fixture page: Done
 - `specforge nlp-enrich` command created: Done
 - `specforge converge` command created: Done
 - End-to-end source-to-IntentIR pipeline implemented: Done

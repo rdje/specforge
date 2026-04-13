@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-13 R15g state-machine corpus KB page
+- This slice adds a dedicated `corpus_kb/state_machines/kg-fixtures.md` family page for VLM state-machine fixture behavior that was previously visible only inside the broader visual page.
+- The page is selected by the existing `VLM state machines` fixture-family label and is refreshed through the same managed-block path as the other KG fixture-family pages.
+- The tracked refresh currently projects five passing fixtures: duplicate-initial merge, label-noise filtering, missing-initial warning, multiple-initial warning, and undeclared-transition endpoint filtering.
+- The page is still corpus synthesis only. It can guide state-machine extraction review, VLM fixture design, and adapter-readiness discussion, but it cannot promote visual hypotheses into canonical IR or typed prior memory.
+
 ## 2026-04-13 R15g prior-candidate gate matrix
 - This slice deepens the prior-candidate bridge without allowing corpus KB to write prior memory or canonical IR.
 - `corpus_kb/prior_candidates/kg-fixture-candidates.md` now explicitly states `review_scope: family_surface_not_individual_prior`, because the page is a family-level review index rather than an approval artifact for a concrete prior record.

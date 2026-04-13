@@ -29,6 +29,7 @@ const VISUAL_FAMILY_LABELS: &[&str] = &[
     "VLM state machines",
     "VLM timing diagrams",
 ];
+const STATE_MACHINE_FAMILY_LABELS: &[&str] = &["VLM state machines"];
 const TIMING_FAMILY_LABELS: &[&str] = &["temporal semantics", "VLM timing diagrams"];
 const INFRA_FAMILY_LABELS: &[&str] = &["infrastructure semantics", "polarity semantics"];
 const AMBA_PROTOCOL_FAMILY_LABELS: &[&str] = &["protocol-family AMBA/APB/AHB/AXI"];
@@ -127,6 +128,13 @@ const KG_FIXTURE_FAMILY_PAGE_SPECS: &[KgFixtureFamilyPageSpec] = &[
         description: "This page records visual and VLM-related KG fixture coverage from the tracked truthfulness benchmark suite.",
         human_prompt: "Use this section for curated notes about visual grounding, VLM timing/state-machine extraction, and multimodal conflict patterns.",
         labels: VISUAL_FAMILY_LABELS,
+    },
+    KgFixtureFamilyPageSpec {
+        relative_path: "state_machines/kg-fixtures.md",
+        title: "State-Machine Fixture Patterns",
+        description: "This page records VLM state-machine KG fixture coverage from the tracked truthfulness benchmark suite.",
+        human_prompt: "Use this section for curated notes about state labels, transition endpoint grounding, duplicate initial markers, and initial-cardinality validation behavior.",
+        labels: STATE_MACHINE_FAMILY_LABELS,
     },
     KgFixtureFamilyPageSpec {
         relative_path: "timing/kg-fixtures.md",
@@ -1102,6 +1110,21 @@ Keep this curated note.\n\n\
   "expectations": {}
 }"#,
         )?;
+        let state_machine_fixture_dir =
+            fixtures_root.join("vlm_state_machine_duplicate_initial_gold");
+        fs::create_dir_all(&state_machine_fixture_dir)?;
+        fs::write(
+            state_machine_fixture_dir.join("source.md"),
+            "# Toy Protocol\n\nThe IDLE state transitions to BUSY.\n",
+        )?;
+        fs::write(
+            state_machine_fixture_dir.join("fixture.json"),
+            r#"{
+  "name": "vlm_state_machine_duplicate_initial_gold",
+  "source": "source.md",
+  "expectations": {}
+}"#,
+        )?;
 
         let page_path = repo_root
             .join("corpus_kb")
@@ -1122,17 +1145,20 @@ Keep this benchmark note.\n\n\
         let refresh = refresh_kg_fixtures_page(repo_root, &fixtures_root, &[])?;
         let refreshed = fs::read_to_string(page_path)?;
 
-        assert_eq!(refresh.fixture_count, 2);
+        assert_eq!(refresh.fixture_count, 3);
         assert_eq!(refresh.failed_count, 0);
         assert!(refreshed.contains("Keep this benchmark note."));
         assert!(!refreshed.contains("old generated benchmark content"));
         assert!(refreshed.contains("### Fixture Family Summary"));
         assert!(refreshed.contains("| table extraction and hygiene | `1` | `1` | `0` |"));
+        assert!(refreshed.contains("| VLM state machines | `1` | `1` | `0` |"));
+        assert!(refreshed.contains("| multimodal visual grounding | `1` | `1` | `0` |"));
         assert!(refreshed.contains("| typed prior memory | `1` | `1` | `0` |"));
         assert!(refreshed.contains("| semantic role arbitration | `1` | `1` | `0` |"));
         assert!(refreshed.contains("| truthfulness negatives and cautions | `1` | `1` | `0` |"));
         assert!(refreshed.contains("### table_shape_prior_guided_signal_table_gold"));
         assert!(refreshed.contains("### name_only_semantic_noise_negative"));
+        assert!(refreshed.contains("### vlm_state_machine_duplicate_initial_gold"));
         assert!(refreshed.contains("- status: `pass`"));
 
         let pattern_family_page = repo_root
@@ -1158,6 +1184,18 @@ Keep this benchmark note.\n\n\
                 .contains("| `table_shape_prior_guided_signal_table_gold` | `pass` |")
         );
         assert!(table_family_refreshed.contains("`table extraction and hygiene`"));
+
+        let state_machine_family_page = repo_root
+            .join("corpus_kb")
+            .join("state_machines")
+            .join("kg-fixtures.md");
+        let state_machine_family_refreshed = fs::read_to_string(state_machine_family_page)?;
+        assert!(state_machine_family_refreshed.contains("# State-Machine Fixture Patterns"));
+        assert!(
+            state_machine_family_refreshed
+                .contains("| `vlm_state_machine_duplicate_initial_gold` | `pass` |")
+        );
+        assert!(state_machine_family_refreshed.contains("`VLM state machines`"));
 
         let prior_candidate_page = repo_root
             .join("corpus_kb")
