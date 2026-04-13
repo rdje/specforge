@@ -79,7 +79,74 @@
       "resolved_semantic_role_signal_names_include": ["AWVALID", "AWREADY"],
       "semantic_consensus_signal_names_include": ["AWVALID", "AWREADY"],
       "temporal_rule_count": 2,
-      "temporal_rules_with_handshake_completion": 1
+      "temporal_rules_with_handshake_completion": 1,
+      "temporal_rules_include": [
+        {
+          "source_text": "AWREADY must be asserted on the next cycle.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_axi_awready_next_cycle"],
+          "consequents_include": [
+            {
+              "kind": "actor_drives_signal",
+              "actor_name": "Subordinate",
+              "signal_name": "AWREADY",
+              "phase": "post_tick"
+            },
+            {
+              "kind": "signal_value",
+              "signal_name": "AWREADY",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "AWADDR must not change when AWVALID is HIGH and AWREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_awaddr_handshake_hold"],
+          "antecedents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "AWVALID",
+              "value": "HIGH",
+              "phase": "pre_tick"
+            },
+            {
+              "kind": "signal_value",
+              "signal_name": "AWREADY",
+              "value": "HIGH",
+              "phase": "pre_tick"
+            },
+            {
+              "kind": "handshake_complete",
+              "valid_signal": "AWVALID",
+              "ready_signal": "AWREADY",
+              "phase": "pre_tick"
+            }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Manager",
+              "signal_name": "AWADDR",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "AWADDR",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        }
+      ]
     },
     "intent": {
       "signal_names_include": ["AWVALID", "AWREADY", "AWADDR"],
@@ -94,7 +161,74 @@
       "resolved_semantic_role_signal_names_include": ["AWVALID", "AWREADY"],
       "semantic_consensus_signal_names_include": ["AWVALID", "AWREADY"],
       "temporal_rule_count": 2,
-      "temporal_rules_with_handshake_completion": 1
+      "temporal_rules_with_handshake_completion": 1,
+      "temporal_rules_include": [
+        {
+          "source_text": "AWREADY must be asserted on the next cycle.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_axi_awready_next_cycle"],
+          "consequents_include": [
+            {
+              "kind": "actor_drives_signal",
+              "actor_name": "Subordinate",
+              "signal_name": "AWREADY",
+              "phase": "post_tick"
+            },
+            {
+              "kind": "signal_value",
+              "signal_name": "AWREADY",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "AWADDR must not change when AWVALID is HIGH and AWREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_awaddr_handshake_hold"],
+          "antecedents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "AWVALID",
+              "value": "HIGH",
+              "phase": "pre_tick"
+            },
+            {
+              "kind": "signal_value",
+              "signal_name": "AWREADY",
+              "value": "HIGH",
+              "phase": "pre_tick"
+            },
+            {
+              "kind": "handshake_complete",
+              "valid_signal": "AWVALID",
+              "ready_signal": "AWREADY",
+              "phase": "pre_tick"
+            }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Manager",
+              "signal_name": "AWADDR",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "AWADDR",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        }
+      ]
     },
     "validation": {
       "evidence": {

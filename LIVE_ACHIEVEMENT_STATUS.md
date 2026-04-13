@@ -130,6 +130,7 @@
 - KG benchmark harness now includes an APB setup/access timing gold fixture: Done
 - KG benchmark harness now includes an AXI width-only plus prose-direction gold fixture: Done
 - KG benchmark harness now includes an AXI next-cycle timing gold fixture: Done
+- KG benchmark harness can now assert canonical temporal-rule shape directly: Done
 - Width-only synthesized signal declarations now survive into canonical `SemanticIR` / `IntentIR` signal records: Done
 - KG benchmark harness now includes an AHB-style section-heading gold fixture for direction recovery: Done
 - KG benchmark harness now includes an AHB wait-state timing gold fixture: Done

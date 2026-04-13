@@ -7,6 +7,14 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-13 KG-bench temporal-rule expectations
+- This slice moves representative APB/AHB/AXI timing truth from validation-count confidence into direct typed temporal-rule assertions.
+- `kg-bench` can now assert `SemanticIR` / `IntentIR` `temporal_rules` with partial matching on `source_text`, `clock_signal`, `edge`, `cycle_window`, supporting statement ids, antecedent predicates, and consequent predicates.
+- The matcher is intentionally partial rather than snapshot-based: fixtures can lock the meaning-bearing predicates they care about while staying robust to unrelated future temporal-rule metadata.
+- `axi_next_cycle_timing_gold` now asserts the `AWREADY` one-cycle post-tick assertion and the `AWADDR` handshake-stability rule, including `HandshakeComplete(AWVALID, AWREADY)`.
+- `apb_setup_access_timing_gold` now asserts the `PENABLE` one-cycle setup/access transition and the `PADDR` access-phase stability rule, including `HandshakeComplete(PSEL, PREADY)`.
+- `ahb_wait_state_timing_gold` now asserts the `HREADY` next-cycle response and the `HTRANS` wait-state stability rule with the compound `HREADY LOW` / `HSEL HIGH` guard.
+
 ## 2026-04-13 KG-bench infrastructure topology expectations
 - This slice moves clock/reset infrastructure topology from unit-test-only confidence into tracked KG-quality coverage.
 - `kg-bench` can now assert `SemanticIR` / `IntentIR` `infrastructure_signals` by signal name, kind, optional source/distribution status, recovered source actor names, and distribution target actor names.

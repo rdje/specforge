@@ -104,7 +104,82 @@
       "resolved_semantic_role_signal_names_include": ["PSEL", "PREADY"],
       "semantic_consensus_signal_names_include": ["PSEL", "PREADY"],
       "temporal_rule_count": 3,
-      "temporal_rules_with_handshake_completion": 1
+      "temporal_rules_with_handshake_completion": 1,
+      "temporal_rules_include": [
+        {
+          "source_text": "PENABLE must be asserted on the next cycle when PSEL is HIGH.",
+          "clock_signal": "PCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_apb_penable_next_cycle"],
+          "antecedents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PSEL",
+              "value": "HIGH",
+              "phase": "pre_tick"
+            }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_drives_signal",
+              "actor_name": "Requester",
+              "signal_name": "PENABLE",
+              "phase": "post_tick"
+            },
+            {
+              "kind": "signal_value",
+              "signal_name": "PENABLE",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PADDR must not change when PSEL is HIGH and PREADY is HIGH.",
+          "clock_signal": "PCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_apb_access_hold"],
+          "antecedents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PSEL",
+              "value": "HIGH",
+              "phase": "pre_tick"
+            },
+            {
+              "kind": "signal_value",
+              "signal_name": "PREADY",
+              "value": "HIGH",
+              "phase": "pre_tick"
+            },
+            {
+              "kind": "handshake_complete",
+              "valid_signal": "PSEL",
+              "ready_signal": "PREADY",
+              "phase": "pre_tick"
+            }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Requester",
+              "signal_name": "PADDR",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "PADDR",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        }
+      ]
     },
     "intent": {
       "signal_names_include": ["PSEL", "PENABLE", "PREADY", "PADDR"],
@@ -123,7 +198,82 @@
       "resolved_semantic_role_signal_names_include": ["PSEL", "PREADY"],
       "semantic_consensus_signal_names_include": ["PSEL", "PREADY"],
       "temporal_rule_count": 3,
-      "temporal_rules_with_handshake_completion": 1
+      "temporal_rules_with_handshake_completion": 1,
+      "temporal_rules_include": [
+        {
+          "source_text": "PENABLE must be asserted on the next cycle when PSEL is HIGH.",
+          "clock_signal": "PCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_apb_penable_next_cycle"],
+          "antecedents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PSEL",
+              "value": "HIGH",
+              "phase": "pre_tick"
+            }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_drives_signal",
+              "actor_name": "Requester",
+              "signal_name": "PENABLE",
+              "phase": "post_tick"
+            },
+            {
+              "kind": "signal_value",
+              "signal_name": "PENABLE",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PADDR must not change when PSEL is HIGH and PREADY is HIGH.",
+          "clock_signal": "PCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_apb_access_hold"],
+          "antecedents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PSEL",
+              "value": "HIGH",
+              "phase": "pre_tick"
+            },
+            {
+              "kind": "signal_value",
+              "signal_name": "PREADY",
+              "value": "HIGH",
+              "phase": "pre_tick"
+            },
+            {
+              "kind": "handshake_complete",
+              "valid_signal": "PSEL",
+              "ready_signal": "PREADY",
+              "phase": "pre_tick"
+            }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Requester",
+              "signal_name": "PADDR",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "PADDR",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        }
+      ]
     },
     "validation": {
       "evidence": {

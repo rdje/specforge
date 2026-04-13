@@ -155,7 +155,76 @@
         { "actor_name": "Subordinate", "signal_name": "HREADY", "direction": "output" },
         { "actor_name": "Manager", "signal_name": "HREADY", "direction": "input" }
       ],
-      "temporal_rule_count": 3
+      "temporal_rule_count": 3,
+      "temporal_rules_include": [
+        {
+          "source_text": "HREADY must be asserted on the next cycle when HSEL is HIGH.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_ahb_hready_next_cycle"],
+          "antecedents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "HSEL",
+              "value": "HIGH",
+              "phase": "pre_tick"
+            }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_drives_signal",
+              "actor_name": "Subordinate",
+              "signal_name": "HREADY",
+              "phase": "post_tick"
+            },
+            {
+              "kind": "signal_value",
+              "signal_name": "HREADY",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "HTRANS must not change when HREADY is LOW and HSEL is HIGH.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_ahb_htrans_wait_hold"],
+          "antecedents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "HREADY",
+              "value": "LOW",
+              "phase": "pre_tick"
+            },
+            {
+              "kind": "signal_value",
+              "signal_name": "HSEL",
+              "value": "HIGH",
+              "phase": "pre_tick"
+            }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Manager",
+              "signal_name": "HTRANS",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "HTRANS",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        }
+      ]
     },
     "intent": {
       "signal_names_include": ["HADDR", "HTRANS", "HSEL", "HREADY"],
@@ -185,7 +254,76 @@
         { "actor_name": "Subordinate", "signal_name": "HREADY", "direction": "output" },
         { "actor_name": "Manager", "signal_name": "HREADY", "direction": "input" }
       ],
-      "temporal_rule_count": 3
+      "temporal_rule_count": 3,
+      "temporal_rules_include": [
+        {
+          "source_text": "HREADY must be asserted on the next cycle when HSEL is HIGH.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_ahb_hready_next_cycle"],
+          "antecedents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "HSEL",
+              "value": "HIGH",
+              "phase": "pre_tick"
+            }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_drives_signal",
+              "actor_name": "Subordinate",
+              "signal_name": "HREADY",
+              "phase": "post_tick"
+            },
+            {
+              "kind": "signal_value",
+              "signal_name": "HREADY",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "HTRANS must not change when HREADY is LOW and HSEL is HIGH.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_ahb_htrans_wait_hold"],
+          "antecedents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "HREADY",
+              "value": "LOW",
+              "phase": "pre_tick"
+            },
+            {
+              "kind": "signal_value",
+              "signal_name": "HSEL",
+              "value": "HIGH",
+              "phase": "pre_tick"
+            }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Manager",
+              "signal_name": "HTRANS",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "HTRANS",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        }
+      ]
     },
     "validation": {
       "evidence": {

@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-04-13 (KG bench asserts temporal rule shape)
+
+### Added: canonical temporal-rule expectations in KG fixtures
+- `kg-bench` fixtures can now assert canonical `temporal_rules` directly at the `SemanticIR` and `IntentIR` stages.
+- The new `temporal_rules_include` matcher supports partial checks for source text, clock signal, edge, cycle window, supporting statement ids, antecedent predicates, and consequent predicates.
+- Strengthened the representative AXI next-cycle, APB setup/access, and AHB wait-state timing fixtures so they lock actor-grounded drive/stability predicates, compound guard predicates, handshake-completion predicates, and one-cycle windows as typed IR instead of only aggregate validation metrics.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality axi_next_cycle_timing_gold` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality apb_setup_access_timing_gold` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality ahb_wait_state_timing_gold` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `57` passed / `0` failed fixtures
+- `cargo test --manifest-path Cargo.toml --lib kg_bench -- --nocapture` -> passed with the tracked fixture suite reporting `57` passed / `0` failed fixtures
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `313` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+
 ## 2026-04-13 (KG bench asserts clock/reset infrastructure topology)
 
 ### Added: canonical infrastructure expectations in KG fixtures

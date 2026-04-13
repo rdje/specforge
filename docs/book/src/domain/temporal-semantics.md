@@ -67,6 +67,9 @@ Cycle windows are useful because an unbounded temporal statement is weaker than 
 Validation can report temporal rules that still lack cycle-window grounding.
 That is not always fatal, but it is an honest quality signal.
 
+The KG benchmark harness can now assert this temporal shape directly.
+Representative AXI, APB, and AHB timing fixtures lock clock/edge grounding, cycle windows, actor-grounded consequents, compound antecedents, and `HandshakeComplete` predicates at the `SemanticIR` and `IntentIR` layers instead of relying only on aggregate validation metrics.
+
 ## Polarity-relative values
 
 Temporal values such as `ASSERTED` and `DEASSERTED` are not always logic levels.

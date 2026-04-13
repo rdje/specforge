@@ -17,10 +17,11 @@ use crate::ir::prior_memory::{
     TemporalPhrasePriorRecord, VisualMotifPriorRecord,
 };
 use crate::ir::semantic::{
-    ActorPortRecord, ActorRelativeDirection, InfrastructureSignalDistributionStatus,
-    InfrastructureSignalKind, InfrastructureSignalRecord, InfrastructureSignalSourceStatus,
-    InfrastructureTopologyKind, InterfaceRecord, InterfaceSignalDirection, RegularStateRecord,
-    SemanticIr, StateTransitionRecord, TemporalRuleRecord,
+    ActorPortRecord, ActorRelativeDirection, ClockEdge, CycleWindowRecord,
+    InfrastructureSignalDistributionStatus, InfrastructureSignalKind, InfrastructureSignalRecord,
+    InfrastructureSignalSourceStatus, InfrastructureTopologyKind, InterfaceRecord,
+    InterfaceSignalDirection, RegularStateRecord, SemanticIr, StateTransitionRecord,
+    TemporalPredicateRecord, TemporalRuleRecord,
 };
 use crate::ir::source::{
     ActorSignalRelation, RelationKind, ResidualDecisionPacket, ValidationFindingRecord,
@@ -166,6 +167,8 @@ struct CanonicalStageExpectations {
     non_decisive_semantic_arbitration_signal_names_include: Vec<String>,
     #[serde(default)]
     non_decisive_semantic_arbitration_signal_names_exclude: Vec<String>,
+    #[serde(default)]
+    temporal_rules_include: Vec<ExpectedTemporalRule>,
     temporal_rule_count: Option<usize>,
     temporal_rules_with_handshake_completion: Option<usize>,
     temporal_rules_with_alias_dependent_handshake_completion: Option<usize>,
@@ -221,6 +224,24 @@ struct ExpectedInfrastructureTopology {
     stage_count: Option<u32>,
     #[serde(default)]
     target_actor_names_include: Vec<String>,
+}
+
+#[derive(Debug, Deserialize)]
+struct ExpectedTemporalRule {
+    #[serde(default)]
+    source_text: Option<String>,
+    #[serde(default)]
+    clock_signal: Option<String>,
+    #[serde(default)]
+    edge: Option<ClockEdge>,
+    #[serde(default)]
+    cycle_window: Option<CycleWindowRecord>,
+    #[serde(default)]
+    supporting_statement_ids_include: Vec<String>,
+    #[serde(default)]
+    antecedents_include: Vec<TemporalPredicateRecord>,
+    #[serde(default)]
+    consequents_include: Vec<TemporalPredicateRecord>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -925,6 +946,9 @@ fn evaluate_canonical_expectations(
         temporal_rules_with_alias_dependent_handshake_completion_count(interfaces, temporal_rules),
         failures,
     );
+    for expected_temporal_rule in &expectations.temporal_rules_include {
+        evaluate_expected_temporal_rule(label, expected_temporal_rule, temporal_rules, failures);
+    }
     assert_optional_count(
         label,
         "signal_polarity_conflicts",
@@ -960,6 +984,61 @@ fn evaluate_canonical_expectations(
         temporal_conflicts,
         failures,
     );
+}
+
+fn evaluate_expected_temporal_rule(
+    label: &str,
+    expectation: &ExpectedTemporalRule,
+    temporal_rules: &[TemporalRuleRecord],
+    failures: &mut Vec<String>,
+) {
+    let found = temporal_rules
+        .iter()
+        .any(|rule| temporal_rule_matches_expectation(rule, expectation));
+
+    if !found {
+        failures.push(format!(
+            "{label}: missing temporal rule matching source_text `{:?}`, clock `{:?}`, edge `{:?}`, cycle_window `{:?}`, supporting ids {:?}, antecedents {:?}, and consequents {:?}",
+            expectation.source_text,
+            expectation.clock_signal,
+            expectation.edge,
+            expectation.cycle_window,
+            expectation.supporting_statement_ids_include,
+            expectation.antecedents_include,
+            expectation.consequents_include
+        ));
+    }
+}
+
+fn temporal_rule_matches_expectation(
+    rule: &TemporalRuleRecord,
+    expectation: &ExpectedTemporalRule,
+) -> bool {
+    expectation
+        .source_text
+        .as_ref()
+        .is_none_or(|source_text| rule.source_text == *source_text)
+        && expectation
+            .clock_signal
+            .as_ref()
+            .is_none_or(|clock_signal| rule.clock_signal.as_deref() == Some(clock_signal.as_str()))
+        && expectation.edge.is_none_or(|edge| rule.edge == edge)
+        && expectation
+            .cycle_window
+            .as_ref()
+            .is_none_or(|cycle_window| rule.cycle_window.as_ref() == Some(cycle_window))
+        && expectation
+            .supporting_statement_ids_include
+            .iter()
+            .all(|statement_id| rule.supporting_statement_ids.contains(statement_id))
+        && expectation
+            .antecedents_include
+            .iter()
+            .all(|predicate| rule.antecedents.contains(predicate))
+        && expectation
+            .consequents_include
+            .iter()
+            .all(|predicate| rule.consequents.contains(predicate))
 }
 
 fn evaluate_expected_infrastructure_signal(
