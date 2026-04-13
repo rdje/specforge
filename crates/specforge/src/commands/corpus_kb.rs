@@ -23,6 +23,7 @@ const PATTERN_FAMILY_LABELS: &[&str] = &[
     "truthfulness negatives and cautions",
     "residuals and caveats",
 ];
+const PRIOR_MEMORY_FAMILY_LABELS: &[&str] = &["typed prior memory"];
 const TABLE_FAMILY_LABELS: &[&str] = &["table extraction and hygiene"];
 const VISUAL_FAMILY_LABELS: &[&str] = &[
     "multimodal visual grounding",
@@ -114,6 +115,13 @@ const KG_FIXTURE_FAMILY_PAGE_SPECS: &[KgFixtureFamilyPageSpec] = &[
         description: "This page records semantic arbitration, actor/connectivity, residual, caveat, negative-knowledge, and truthfulness-caution KG fixture coverage from the tracked truthfulness benchmark suite.",
         human_prompt: "Use this section for curated notes about semantic arbitration, graph/connectivity evidence, residual/caveat behavior, and false-positive control patterns.",
         labels: PATTERN_FAMILY_LABELS,
+    },
+    KgFixtureFamilyPageSpec {
+        relative_path: "prior_memory/kg-fixtures.md",
+        title: "Typed Prior-Memory Fixture Patterns",
+        description: "This page records typed prior-memory KG fixture coverage from the tracked truthfulness benchmark suite.",
+        human_prompt: "Use this section for curated notes about prior-guided gold/negative pairs, caution-only negative knowledge, local-grounding boundaries, and future CorpusMemory benchmark gaps.",
+        labels: PRIOR_MEMORY_FAMILY_LABELS,
     },
     KgFixtureFamilyPageSpec {
         relative_path: "tables/kg-fixtures.md",
@@ -1172,6 +1180,18 @@ Keep this benchmark note.\n\n\
         );
         assert!(pattern_family_refreshed.contains("`semantic role arbitration`"));
         assert!(pattern_family_refreshed.contains("`truthfulness negatives and cautions`"));
+
+        let prior_memory_family_page = repo_root
+            .join("corpus_kb")
+            .join("prior_memory")
+            .join("kg-fixtures.md");
+        let prior_memory_family_refreshed = fs::read_to_string(prior_memory_family_page)?;
+        assert!(prior_memory_family_refreshed.contains("# Typed Prior-Memory Fixture Patterns"));
+        assert!(
+            prior_memory_family_refreshed
+                .contains("| `table_shape_prior_guided_signal_table_gold` | `pass` |")
+        );
+        assert!(prior_memory_family_refreshed.contains("`typed prior memory`"));
 
         let table_family_page = repo_root
             .join("corpus_kb")

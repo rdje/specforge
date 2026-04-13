@@ -61,6 +61,9 @@ They can name a target `CorpusMemory` schema and required gates, but they must a
 If a prior-candidate block includes a gate matrix, the matrix is a family-level review checklist only.
 It may name visible schema, fixture, harvest, and consumer surfaces, but it must still preserve `review_scope: family_surface_not_individual_prior` and a non-mutation promotion boundary.
 
+Typed prior-memory fixture-family pages are also non-promoting.
+They can summarize KG fixtures that stage or exercise local `CorpusMemory`, but they are not `generated/prior_memory/corpus_memory.json` and cannot add, edit, approve, or delete machine-usable priors.
+
 ## Promotion Policy
 
 Corpus KB observations can become machine-usable only by moving through a stricter surface:

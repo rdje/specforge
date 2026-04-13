@@ -33,6 +33,7 @@
 - KG fixture-family summary projection for corpus-KB benchmark results: Done
 - Dedicated corpus-KB fixture-family pages for tables, visuals, timing, infrastructure, and AMBA protocols: Done
 - Review-only corpus-KB prior-candidate projection from KG fixtures: Done
+- Dedicated corpus-KB typed prior-memory fixture page: Done
 - Semantic/truthfulness corpus-KB fixture pattern page: Done
 - Prior-candidate corpus-KB gate review matrix: Done
 - Dedicated corpus-KB state-machine fixture page: Done

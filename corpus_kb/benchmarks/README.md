@@ -11,7 +11,7 @@ Pages in this family can feed:
 - future corpus-KB synthesis notes
 - prior-candidate and rescan-target ideas
 
-The aggregate benchmark page can also feed dedicated fixture-family pages under `tables/`, `visuals/`, `state_machines/`, `timing/`, `infra/`, and `protocols/`.
+The aggregate benchmark page can also feed dedicated fixture-family pages under `prior_memory/`, `tables/`, `visuals/`, `state_machines/`, `timing/`, `infra/`, and `protocols/`.
 Those pages are still benchmark projections, not canonical truth stores.
 
 They cannot approve canonical IR mutation, suppress local validation findings, or replace the `specforge kg-bench` executable gate.

@@ -23,6 +23,7 @@ It can inform humans, future LLM sessions, benchmark design, rescan targeting, a
 - `failures/validation-findings.md`: auto-refreshable validation finding projection plus human synthesis notes.
 - `benchmarks/kg-fixtures.md`: auto-refreshable KG fixture-result and fixture-family summary projection plus human synthesis notes.
 - `patterns/kg-fixtures.md`: auto-refreshable semantic/truthfulness pattern fixture-family projection plus human synthesis notes.
+- `prior_memory/kg-fixtures.md`: auto-refreshable typed prior-memory fixture-family projection plus human synthesis notes.
 - `tables/kg-fixtures.md`: auto-refreshable table extraction fixture-family projection plus human synthesis notes.
 - `visuals/kg-fixtures.md`: auto-refreshable visual/VLM fixture-family projection plus human synthesis notes.
 - `state_machines/kg-fixtures.md`: auto-refreshable VLM state-machine fixture-family projection plus human synthesis notes.
@@ -34,6 +35,7 @@ It can inform humans, future LLM sessions, benchmark design, rescan targeting, a
 Future page families can include:
 
 - `protocols/`
+- `prior_memory/`
 - `tables/`
 - `visuals/`
 - `state_machines/`

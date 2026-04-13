@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-04-13 (R15g typed prior-memory corpus KB page)
+
+### Added: dedicated typed prior-memory fixture-family page
+- `specforge corpus-kb --kg-fixtures-root ...` now refreshes `corpus_kb/prior_memory/kg-fixtures.md` from KG fixtures tagged as `typed prior memory`.
+- Added `corpus_kb/prior_memory/README.md` to define this page family as reviewable synthesis for prior-guided gold/negative pairs, caution-only negative knowledge, local-grounding boundaries, and future `CorpusMemory` benchmark gaps.
+- The live refresh currently projects `21` passing typed-prior-memory fixtures with explicit fixture-path provenance, while preserving human synthesis outside the managed block.
+- This page remains non-promoting corpus knowledge: it is not `generated/prior_memory/corpus_memory.json`, does not write `CorpusMemory`, and cannot mutate canonical IR.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test --manifest-path Cargo.toml --lib corpus_kb -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed the aggregate, typed prior-memory, fixture-family, and prior-candidate corpus-KB pages with `55` passed / `0` failed fixtures
+- `git diff --check` -> passed
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, `313` Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build
+
 ## 2026-04-13 (R15g state-machine corpus KB page)
 
 ### Added: dedicated state-machine fixture-family page

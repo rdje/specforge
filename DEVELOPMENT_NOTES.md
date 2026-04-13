@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-13 R15g typed prior-memory corpus KB page
+- This slice adds a dedicated `corpus_kb/prior_memory/kg-fixtures.md` family page for typed prior-memory fixture behavior that was previously visible only through the aggregate benchmark, broad pattern page, and prior-candidate planning surface.
+- The page is selected by the existing `typed prior memory` fixture-family label and is refreshed through the same managed-block path as the other KG fixture-family pages.
+- The tracked refresh currently projects 21 passing fixtures across prior-guided actor-taxonomy, semantic phrase, semantic modality-reliability, temporal phrase, table-shape, visual semantic, visual-motif, and caution-only negative-knowledge behavior.
+- The page is still corpus synthesis only. It can guide prior-memory fixture review and implementation planning, but it is not `generated/prior_memory/corpus_memory.json`, cannot write `CorpusMemory`, and cannot promote cross-document memory into canonical document truth.
+
 ## 2026-04-13 R15g state-machine corpus KB page
 - This slice adds a dedicated `corpus_kb/state_machines/kg-fixtures.md` family page for VLM state-machine fixture behavior that was previously visible only inside the broader visual page.
 - The page is selected by the existing `VLM state machines` fixture-family label and is refreshed through the same managed-block path as the other KG fixture-family pages.
