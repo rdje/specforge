@@ -100,3 +100,4 @@ cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/spec
 That projection writes `corpus_kb/benchmarks/kg-fixtures.md`.
 It is a reviewable synthesis page, not a replacement for the executable `kg-bench` gate.
 It also includes a fixture-family summary table so coverage by truthfulness family is visible beside the per-fixture pass/fail list.
+The same refresh now populates dedicated table, visual, timing, infrastructure/polarity, and AMBA-family corpus-KB pages from the same fixture outcomes.

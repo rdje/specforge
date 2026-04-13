@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-13 R15g dedicated corpus KB fixture-family pages
+- The next `R15g` step turns the family summary from a single aggregate table into dedicated corpus-KB page families for tables, visuals, timing motifs, infrastructure semantics, and AMBA-family protocol notes.
+- The implementation deliberately reuses the same `kg_bench::collect_fixture_outcomes()` refresh pass. That keeps the aggregate page and family pages grounded in the same executable benchmark outcomes rather than letting hand-maintained corpus notes drift away from the regression suite.
+- The page-family labels are deterministic and review-facing. They are derived from fixture names and used only to organize corpus synthesis; they do not affect fixture evaluation, validation scoring, canonical IR, or typed prior memory.
+- The infrastructure page intentionally includes active-low VLM timing and polarity fixtures as infrastructure-adjacent evidence, while keeping non-reset control polarity visible as polarity coverage rather than pretending it proves clock/reset topology.
+- Each generated page keeps a human synthesis section outside the managed block, so future review notes can accumulate without being overwritten by refreshes.
+
 ## 2026-04-13 R15g KG fixture-family corpus KB summary
 - The next `R15g` step deepens the managed KG benchmark projection from flat pass/fail accounting into reviewable fixture-family synthesis.
 - The projection now emits a deterministic family summary table before the per-fixture list in `corpus_kb/benchmarks/kg-fixtures.md`. The current categories are intentionally orthogonal: a fixture can count under protocol-family coverage, temporal semantics, VLM evidence, typed-prior behavior, and truthfulness-negative coverage at the same time.

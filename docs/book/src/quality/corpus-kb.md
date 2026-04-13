@@ -39,6 +39,11 @@ The first refreshable page families are:
 
 - `corpus_kb/failures/validation-findings.md`
 - `corpus_kb/benchmarks/kg-fixtures.md`
+- `corpus_kb/tables/kg-fixtures.md`
+- `corpus_kb/visuals/kg-fixtures.md`
+- `corpus_kb/timing/kg-fixtures.md`
+- `corpus_kb/infra/kg-fixtures.md`
+- `corpus_kb/protocols/amba-kg-fixtures.md`
 
 The validation page is refreshed from validation report sidecars:
 
@@ -51,7 +56,7 @@ cargo run --manifest-path Cargo.toml -- corpus-kb \
   generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/validation_report.json
 ```
 
-The benchmark page is refreshed by running the tracked KG fixture suite:
+The benchmark and fixture-family pages are refreshed by running the tracked KG fixture suite:
 
 ```bash
 cargo run --manifest-path Cargo.toml -- corpus-kb \
@@ -62,6 +67,7 @@ The command updates only managed blocks.
 Human-authored synthesis outside those blocks is preserved.
 
 The KG fixture projection records fixture paths, pass/fail status, and a review-facing fixture-family summary table.
+The same refresh also updates dedicated table, visual, timing, infrastructure/polarity, and AMBA-family pages.
 It is a review surface, not a replacement for the executable `specforge kg-bench` gate.
 Fixture-local validation runs quietly during this projection, so the command output remains a concise corpus-KB refresh summary.
 Fixture-family labels summarize coverage only; they do not mutate canonical IR or typed prior memory.

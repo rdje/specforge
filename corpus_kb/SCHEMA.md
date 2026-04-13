@@ -46,6 +46,11 @@ The current managed block families are:
 <!-- corpus_kb_kg_fixtures:end -->
 ```
 
+```text
+<!-- corpus_kb_kg_fixture_family:start -->
+<!-- corpus_kb_kg_fixture_family:end -->
+```
+
 ## Promotion Policy
 
 Corpus KB observations can become machine-usable only by moving through a stricter surface:

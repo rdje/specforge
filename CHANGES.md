@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-04-13 (R15g dedicated corpus KB fixture-family pages)
+
+### Added: dedicated KG fixture-derived page families
+- `specforge corpus-kb --kg-fixtures-root ...` now refreshes the aggregate benchmark page plus dedicated managed corpus-KB pages for table, visual, timing, infrastructure, and AMBA-family fixture patterns.
+- Added tracked page-family roots and READMEs under `corpus_kb/tables/`, `corpus_kb/visuals/`, `corpus_kb/timing/`, `corpus_kb/infra/`, and `corpus_kb/protocols/`.
+- Refreshed the new managed pages from the tracked KG suite: table fixtures `8/8`, visual fixtures `18/18`, timing fixtures `14/14`, infrastructure/polarity fixtures `6/6`, and AMBA-family fixtures `9/9`, all with explicit fixture-path provenance.
+- The new pages remain review-only corpus synthesis. They preserve human synthesis outside managed blocks and do not change KG-bench execution, canonical IR, validation scoring, or typed prior memory.
+
+### Validation
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml --lib corpus_kb -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed the aggregate plus dedicated KG fixture-family corpus-KB pages with `55` passed / `0` failed fixtures
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, `313` Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build
+
 ## 2026-04-13 (R15g KG fixture-family corpus KB summary)
 
 ### Added: fixture-family benchmark synthesis

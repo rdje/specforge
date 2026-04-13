@@ -654,8 +654,9 @@
   - `specforge corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` now runs the tracked KG fixture suite and refreshes `corpus_kb/benchmarks/kg-fixtures.md` with managed pass/fail fixture outcomes while preserving human synthesis
   - KG fixture validation now uses an internal quiet validation path, so `kg-bench` and corpus-KB benchmark projection no longer dump full validation reports while computing validation-backed fixture expectations
   - the KG fixture-result page now also projects a review-facing fixture-family summary table, so corpus synthesis captures which truthfulness families are covered rather than only aggregate pass/fail counts
+  - `specforge corpus-kb --kg-fixtures-root ...` now also refreshes dedicated KG fixture-derived corpus-KB pages for table, visual, timing, infrastructure/polarity, and AMBA-family protocol patterns while preserving human synthesis outside managed blocks
 - remaining:
-  - add more page families for tables, visuals, timing motifs, infrastructure semantics, and protocol-family notes
+  - add more page families beyond the first KG fixture-derived table, visual, timing, infrastructure, and protocol pages when new evidence families need their own durable corpus synthesis surfaces
   - connect selected corpus KB patterns back into typed prior-candidate generation only through explicit schemas, KG-bench fixtures, and validation gates
 
 ### R16 SystemVerilog adapter (Horizon)

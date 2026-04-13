@@ -11,6 +11,56 @@ const VALIDATION_MANAGED_START: &str = "<!-- corpus_kb_validation_findings:start
 const VALIDATION_MANAGED_END: &str = "<!-- corpus_kb_validation_findings:end -->";
 const KG_FIXTURES_MANAGED_START: &str = "<!-- corpus_kb_kg_fixtures:start -->";
 const KG_FIXTURES_MANAGED_END: &str = "<!-- corpus_kb_kg_fixtures:end -->";
+const KG_FIXTURE_FAMILY_MANAGED_START: &str = "<!-- corpus_kb_kg_fixture_family:start -->";
+const KG_FIXTURE_FAMILY_MANAGED_END: &str = "<!-- corpus_kb_kg_fixture_family:end -->";
+
+const TABLE_FAMILY_LABELS: &[&str] = &["table extraction and hygiene"];
+const VISUAL_FAMILY_LABELS: &[&str] = &[
+    "multimodal visual grounding",
+    "VLM state machines",
+    "VLM timing diagrams",
+];
+const TIMING_FAMILY_LABELS: &[&str] = &["temporal semantics", "VLM timing diagrams"];
+const INFRA_FAMILY_LABELS: &[&str] = &["infrastructure semantics", "polarity semantics"];
+const AMBA_PROTOCOL_FAMILY_LABELS: &[&str] = &["protocol-family AMBA/APB/AHB/AXI"];
+
+const KG_FIXTURE_FAMILY_PAGE_SPECS: &[KgFixtureFamilyPageSpec] = &[
+    KgFixtureFamilyPageSpec {
+        relative_path: "tables/kg-fixtures.md",
+        title: "Table Extraction Fixture Patterns",
+        description: "This page records table-related KG fixture coverage from the tracked truthfulness benchmark suite.",
+        human_prompt: "Use this section for curated notes about table-shape recovery, table-misclassification risks, and future table-prior candidates.",
+        labels: TABLE_FAMILY_LABELS,
+    },
+    KgFixtureFamilyPageSpec {
+        relative_path: "visuals/kg-fixtures.md",
+        title: "Visual Evidence Fixture Patterns",
+        description: "This page records visual and VLM-related KG fixture coverage from the tracked truthfulness benchmark suite.",
+        human_prompt: "Use this section for curated notes about visual grounding, VLM timing/state-machine extraction, and multimodal conflict patterns.",
+        labels: VISUAL_FAMILY_LABELS,
+    },
+    KgFixtureFamilyPageSpec {
+        relative_path: "timing/kg-fixtures.md",
+        title: "Timing Motif Fixture Patterns",
+        description: "This page records temporal and timing-motif KG fixture coverage from the tracked truthfulness benchmark suite.",
+        human_prompt: "Use this section for curated notes about cycle windows, handshake completion, timing diagrams, and temporal conflict patterns.",
+        labels: TIMING_FAMILY_LABELS,
+    },
+    KgFixtureFamilyPageSpec {
+        relative_path: "infra/kg-fixtures.md",
+        title: "Infrastructure Semantics Fixture Patterns",
+        description: "This page records infrastructure-adjacent KG fixture coverage from the tracked truthfulness benchmark suite.",
+        human_prompt: "Use this section for curated notes about clock/reset handling, active-level polarity, and infrastructure/control boundaries.",
+        labels: INFRA_FAMILY_LABELS,
+    },
+    KgFixtureFamilyPageSpec {
+        relative_path: "protocols/amba-kg-fixtures.md",
+        title: "AMBA Family Fixture Patterns",
+        description: "This page records AMBA/APB/AHB/AXI-style KG fixture coverage from the tracked truthfulness benchmark suite.",
+        human_prompt: "Use this section for curated notes about AMBA-family evidence idioms, protocol vocabulary, and future protocol-family benchmark gaps.",
+        labels: AMBA_PROTOCOL_FAMILY_LABELS,
+    },
+];
 
 #[derive(Debug)]
 struct ValidationFindingProjection {
@@ -28,7 +78,7 @@ struct KgFixtureProjection {
 
 #[derive(Debug)]
 struct KgFixturesRefresh {
-    page_path: PathBuf,
+    page_paths: Vec<PathBuf>,
     fixture_count: usize,
     failed_count: usize,
 }
@@ -40,6 +90,14 @@ struct KgFixtureFamilySummary {
     passed_count: usize,
     failed_count: usize,
     failed_fixture_names: Vec<String>,
+}
+
+struct KgFixtureFamilyPageSpec {
+    relative_path: &'static str,
+    title: &'static str,
+    description: &'static str,
+    human_prompt: &'static str,
+    labels: &'static [&'static str],
 }
 
 pub fn run(args: CorpusKbArgs) -> Result<()> {
@@ -65,7 +123,9 @@ pub fn run(args: CorpusKbArgs) -> Result<()> {
 
     if let Some(fixtures_root) = args.kg_fixtures_root.as_deref() {
         let refresh = refresh_kg_fixtures_page(&args.repo_root, fixtures_root, &args.kg_fixture)?;
-        println!("refreshed_page: {}", refresh.page_path.display());
+        for page_path in &refresh.page_paths {
+            println!("refreshed_page: {}", page_path.display());
+        }
         println!("kg_fixtures: {}", refresh.fixture_count);
         println!("kg_fixtures_failed: {}", refresh.failed_count);
         if refresh.failed_count > 0 {
@@ -144,12 +204,44 @@ fn refresh_kg_fixtures_page(
         "## Managed KG Benchmark Projection",
     )?;
     fs::write(&page_path, updated)?;
+    let mut page_paths = vec![page_path];
+    page_paths.extend(refresh_kg_fixture_family_pages(repo_root, &entries)?);
 
     Ok(KgFixturesRefresh {
-        page_path,
+        page_paths,
         fixture_count: entries.len(),
         failed_count,
     })
+}
+
+fn refresh_kg_fixture_family_pages(
+    repo_root: &Path,
+    entries: &[KgFixtureProjection],
+) -> Result<Vec<PathBuf>> {
+    let mut page_paths = Vec::new();
+    for spec in KG_FIXTURE_FAMILY_PAGE_SPECS {
+        let page_path = repo_root.join("corpus_kb").join(spec.relative_path);
+        if let Some(parent) = page_path.parent() {
+            fs::create_dir_all(parent)?;
+        }
+        let family_entries = entries
+            .iter()
+            .filter(|entry| kg_fixture_matches_any_family(&entry.outcome.name, spec.labels))
+            .collect::<Vec<_>>();
+        let existing =
+            fs::read_to_string(&page_path).unwrap_or_else(|_| default_kg_fixture_family_page(spec));
+        let managed_block = render_kg_fixture_family_block(spec, &family_entries);
+        let updated = replace_managed_block(
+            &existing,
+            &managed_block,
+            KG_FIXTURE_FAMILY_MANAGED_START,
+            KG_FIXTURE_FAMILY_MANAGED_END,
+            "## Managed Fixture Projection",
+        )?;
+        fs::write(&page_path, updated)?;
+        page_paths.push(page_path);
+    }
+    Ok(page_paths)
 }
 
 fn load_validation_report_projections(
@@ -332,6 +424,84 @@ fn render_kg_fixtures_block(entries: &[KgFixtureProjection]) -> String {
     output
 }
 
+fn render_kg_fixture_family_block(
+    spec: &KgFixtureFamilyPageSpec,
+    entries: &[&KgFixtureProjection],
+) -> String {
+    let mut output = String::new();
+    output.push_str(KG_FIXTURE_FAMILY_MANAGED_START);
+    output.push('\n');
+    output.push_str("<!-- This block is refreshed by `specforge corpus-kb`. -->\n\n");
+    output.push_str("- source: `kg-bench fixtures`\n");
+    output.push_str("- selected_family_labels: `");
+    output.push_str(&spec.labels.join("`, `"));
+    output.push_str("`\n");
+    let passed = entries
+        .iter()
+        .filter(|entry| entry.outcome.failures.is_empty())
+        .count();
+    let failed = entries.len().saturating_sub(passed);
+    output.push_str("- fixtures_total: `");
+    output.push_str(&entries.len().to_string());
+    output.push_str("`\n");
+    output.push_str("- fixtures_passed: `");
+    output.push_str(&passed.to_string());
+    output.push_str("`\n");
+    output.push_str("- fixtures_failed: `");
+    output.push_str(&failed.to_string());
+    output.push_str("`\n\n");
+
+    if entries.is_empty() {
+        output.push_str("- No KG fixtures currently match this family page.\n\n");
+    } else {
+        output.push_str("| fixture | status | matched families | path |\n");
+        output.push_str("| --- | --- | --- | --- |\n");
+        for entry in entries {
+            let family_labels = kg_fixture_family_labels(&entry.outcome.name)
+                .into_iter()
+                .filter(|label| spec.labels.contains(label))
+                .collect::<Vec<_>>();
+            output.push_str("| `");
+            output.push_str(&entry.outcome.name);
+            output.push_str("` | `");
+            output.push_str(if entry.outcome.failures.is_empty() {
+                "pass"
+            } else {
+                "fail"
+            });
+            output.push_str("` | `");
+            output.push_str(&family_labels.join("`, `"));
+            output.push_str("` | `");
+            output.push_str(&entry.display_path);
+            output.push_str("` |\n");
+        }
+        output.push('\n');
+    }
+
+    let failing_entries = entries
+        .iter()
+        .filter(|entry| !entry.outcome.failures.is_empty())
+        .collect::<Vec<_>>();
+    if !failing_entries.is_empty() {
+        output.push_str("Failed fixture details:\n");
+        for entry in failing_entries {
+            output.push_str("- `");
+            output.push_str(&entry.outcome.name);
+            output.push_str("`:\n");
+            for failure in &entry.outcome.failures {
+                output.push_str("  - ");
+                output.push_str(&escape_markdown_line(failure));
+                output.push('\n');
+            }
+        }
+        output.push('\n');
+    }
+
+    output.push_str(KG_FIXTURE_FAMILY_MANAGED_END);
+    output.push('\n');
+    output
+}
+
 fn kg_fixture_family_summaries(entries: &[KgFixtureProjection]) -> Vec<KgFixtureFamilySummary> {
     let mut summaries = BTreeMap::<String, KgFixtureFamilySummary>::new();
     for entry in entries {
@@ -358,6 +528,11 @@ fn kg_fixture_family_summaries(entries: &[KgFixtureProjection]) -> Vec<KgFixture
         }
     }
     summaries.into_values().collect()
+}
+
+fn kg_fixture_matches_any_family(name: &str, labels: &[&str]) -> bool {
+    let fixture_labels = kg_fixture_family_labels(name);
+    labels.iter().any(|label| fixture_labels.contains(label))
 }
 
 fn kg_fixture_family_labels(name: &str) -> BTreeSet<&'static str> {
@@ -403,6 +578,12 @@ fn kg_fixture_family_labels(name: &str) -> BTreeSet<&'static str> {
         || normalized.contains("non_reset_control")
     {
         labels.insert("polarity semantics");
+    }
+    if normalized.contains("active_low")
+        || normalized.contains("clock")
+        || (normalized.contains("reset") && !normalized.contains("non_reset"))
+    {
+        labels.insert("infrastructure semantics");
     }
     if normalized.contains("visual")
         || normalized.contains("vlm")
@@ -513,6 +694,24 @@ Keep provenance explicit, and do not treat this page as an approval artifact.\n\
     )
 }
 
+fn default_kg_fixture_family_page(spec: &KgFixtureFamilyPageSpec) -> String {
+    format!(
+        "# {title}\n\n\
+{description}\n\
+It is derived from tracked KG fixture outcomes and remains reviewable synthesis, not canonical document truth.\n\n\
+## Human Synthesis\n\n\
+{human_prompt}\n\
+Keep provenance explicit, and do not treat this page as an approval artifact.\n\n\
+## Managed Fixture Projection\n\n\
+{managed_start}\n{managed_end}\n",
+        title = spec.title,
+        description = spec.description,
+        human_prompt = spec.human_prompt,
+        managed_start = KG_FIXTURE_FAMILY_MANAGED_START,
+        managed_end = KG_FIXTURE_FAMILY_MANAGED_END,
+    )
+}
+
 fn document_key_from_report_path(report_path: &Path) -> String {
     report_path
         .parent()
@@ -606,7 +805,7 @@ Keep this curated note.\n\n\
         let tempdir = tempdir()?;
         let repo_root = tempdir.path();
         let fixtures_root = repo_root.join("fixtures");
-        let fixture_dir = fixtures_root.join("semantic_prior_guided_phrase_gold");
+        let fixture_dir = fixtures_root.join("table_shape_prior_guided_signal_table_gold");
         fs::create_dir_all(&fixture_dir)?;
         fs::write(
             fixture_dir.join("source.md"),
@@ -615,7 +814,7 @@ Keep this curated note.\n\n\
         fs::write(
             fixture_dir.join("fixture.json"),
             r#"{
-  "name": "semantic_prior_guided_phrase_gold",
+  "name": "table_shape_prior_guided_signal_table_gold",
   "source": "source.md",
   "expectations": {}
 }"#,
@@ -645,10 +844,22 @@ Keep this benchmark note.\n\n\
         assert!(refreshed.contains("Keep this benchmark note."));
         assert!(!refreshed.contains("old generated benchmark content"));
         assert!(refreshed.contains("### Fixture Family Summary"));
-        assert!(refreshed.contains("| semantic role arbitration | `1` | `1` | `0` |"));
+        assert!(refreshed.contains("| table extraction and hygiene | `1` | `1` | `0` |"));
         assert!(refreshed.contains("| typed prior memory | `1` | `1` | `0` |"));
-        assert!(refreshed.contains("### semantic_prior_guided_phrase_gold"));
+        assert!(refreshed.contains("### table_shape_prior_guided_signal_table_gold"));
         assert!(refreshed.contains("- status: `pass`"));
+
+        let table_family_page = repo_root
+            .join("corpus_kb")
+            .join("tables")
+            .join("kg-fixtures.md");
+        let table_family_refreshed = fs::read_to_string(table_family_page)?;
+        assert!(table_family_refreshed.contains("# Table Extraction Fixture Patterns"));
+        assert!(
+            table_family_refreshed
+                .contains("| `table_shape_prior_guided_signal_table_gold` | `pass` |")
+        );
+        assert!(table_family_refreshed.contains("`table extraction and hygiene`"));
 
         Ok(())
     }
@@ -661,6 +872,11 @@ Keep this benchmark note.\n\n\
         assert!(labels.contains("multimodal visual grounding"));
         assert!(labels.contains("typed prior memory"));
         assert!(!labels.contains("uncategorized"));
+
+        let labels = kg_fixture_family_labels("vlm_timing_active_low_assertion_equivalence_gold");
+        assert!(labels.contains("infrastructure semantics"));
+        assert!(labels.contains("polarity semantics"));
+        assert!(labels.contains("VLM timing diagrams"));
 
         let labels = kg_fixture_family_labels("toy_fixture");
         assert_eq!(labels.len(), 1);

@@ -31,6 +31,7 @@
 - `specforge corpus-kb` KG fixture-result projection created: Done
 - Quiet KG fixture validation path for corpus-KB projection: Done
 - KG fixture-family summary projection for corpus-KB benchmark results: Done
+- Dedicated corpus-KB fixture-family pages for tables, visuals, timing, infrastructure, and AMBA protocols: Done
 - `specforge nlp-enrich` command created: Done
 - `specforge converge` command created: Done
 - End-to-end source-to-IntentIR pipeline implemented: Done

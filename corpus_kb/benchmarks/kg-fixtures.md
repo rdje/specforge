@@ -25,6 +25,7 @@ Fixtures can appear in more than one family because protocol semantics, modality
 | VLM state machines | `5` | `5` | `0` |
 | VLM timing diagrams | `6` | `6` | `0` |
 | actor connectivity | `11` | `11` | `0` |
+| infrastructure semantics | `2` | `2` | `0` |
 | multimodal visual grounding | `18` | `18` | `0` |
 | negative knowledge | `5` | `5` | `0` |
 | polarity semantics | `6` | `6` | `0` |
