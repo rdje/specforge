@@ -71,6 +71,7 @@ That matters because `ASSERTED` and `DEASSERTED` are polarity-relative, not syno
 
 Timing-annotation negative fixtures also protect against visual overreach.
 Low-value labels such as `T0`, `Addr 1`, `Cycle 2`, `D0`, `A1`, `DATA0`, `0xAA`, `D[0]`, `A[1]`, `DATA[3]`, and `ADDR[7]` do not become timing constraints, and waveform motion states such as `rising`, `stable`, `falling`, `UNCHANGED`, `RISING_EDGE`, `LOW_TO_HIGH`, `POS_EDGE`, `risingedge`, and `LOW2HIGH` do not become symbolic signal values.
+Motion-only annotation prose such as `XREQ rises, remains stable, then falls` is filtered the same way unless it carries real timing/constraint indicators.
 Concrete sampled values such as `HIGH` can still become typed temporal evidence when the signal itself is document-grounded.
 
 State-machine visual fixtures protect the FSM side of the same boundary.

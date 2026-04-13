@@ -15,8 +15,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 
 - source: `kg-bench fixtures`
 - selected_family_labels: `actor connectivity`, `semantic role arbitration`, `negative knowledge`, `truthfulness negatives and cautions`, `residuals and caveats`
-- fixtures_total: `42`
-- fixtures_passed: `42`
+- fixtures_total: `43`
+- fixtures_passed: `43`
 - fixtures_failed: `0`
 
 | fixture | status | matched families | path |
@@ -59,6 +59,7 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `vlm_state_machine_missing_initial_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/vlm_state_machine_missing_initial_negative/fixture.json` |
 | `vlm_state_machine_multiple_initial_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/vlm_state_machine_multiple_initial_negative/fixture.json` |
 | `vlm_state_machine_undeclared_transition_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/vlm_state_machine_undeclared_transition_negative/fixture.json` |
+| `vlm_timing_motion_annotation_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/vlm_timing_motion_annotation_negative/fixture.json` |
 | `vlm_timing_name_only_semantic_noise_negative` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/vlm_timing_name_only_semantic_noise_negative/fixture.json` |
 | `vlm_timing_semantic_grounding_gold` | `pass` | `semantic role arbitration` | `crates/specforge/test_data/kg_quality/vlm_timing_semantic_grounding_gold/fixture.json` |
 | `vlm_timing_spurious_annotation_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/vlm_timing_spurious_annotation_negative/fixture.json` |

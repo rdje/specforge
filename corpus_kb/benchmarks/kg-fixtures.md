@@ -13,8 +13,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 <!-- corpus_kb_kg_fixtures:start -->
 <!-- This block is refreshed by `specforge corpus-kb`. -->
 
-- fixtures_total: `55`
-- fixtures_passed: `55`
+- fixtures_total: `56`
+- fixtures_passed: `56`
 - fixtures_failed: `0`
 
 ### Fixture Family Summary
@@ -23,18 +23,18 @@ Fixtures can appear in more than one family because protocol semantics, modality
 | family | fixtures | passed | failed |
 | --- | ---: | ---: | ---: |
 | VLM state machines | `5` | `5` | `0` |
-| VLM timing diagrams | `6` | `6` | `0` |
+| VLM timing diagrams | `7` | `7` | `0` |
 | actor connectivity | `11` | `11` | `0` |
 | infrastructure semantics | `2` | `2` | `0` |
-| multimodal visual grounding | `18` | `18` | `0` |
+| multimodal visual grounding | `19` | `19` | `0` |
 | negative knowledge | `5` | `5` | `0` |
 | polarity semantics | `6` | `6` | `0` |
 | protocol-family AMBA/APB/AHB/AXI | `9` | `9` | `0` |
 | residuals and caveats | `3` | `3` | `0` |
 | semantic role arbitration | `17` | `17` | `0` |
 | table extraction and hygiene | `8` | `8` | `0` |
-| temporal semantics | `14` | `14` | `0` |
-| truthfulness negatives and cautions | `30` | `30` | `0` |
+| temporal semantics | `15` | `15` | `0` |
+| truthfulness negatives and cautions | `31` | `31` | `0` |
 | typed prior memory | `21` | `21` | `0` |
 
 ### actor_boundary_residual
@@ -339,6 +339,12 @@ Fixtures can appear in more than one family because protocol semantics, modality
 
 ### vlm_timing_active_low_deassertion_equivalence_gold
 - fixture_path: `crates/specforge/test_data/kg_quality/vlm_timing_active_low_deassertion_equivalence_gold/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### vlm_timing_motion_annotation_negative
+- fixture_path: `crates/specforge/test_data/kg_quality/vlm_timing_motion_annotation_negative/fixture.json`
 - status: `pass`
 - failures:
   - none

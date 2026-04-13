@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-04-13 (VLM timing filters motion-only annotations)
+
+### Fixed: motion-only VLM timing annotations no longer become timing constraints
+- `SemanticIR` now treats non-quantitative waveform-motion prose in VLM timing `annotations[]`, such as `XREQ rises, remains stable, then falls`, as visual markup rather than a typed timing constraint.
+- The filter is deliberately conservative: setup/hold/delay/timing terms, explicit temporal relation words, and numeric/cycle-bearing annotations remain eligible for timing extraction instead of being blanket-suppressed.
+- Added tracked KG fixture `vlm_timing_motion_annotation_negative`, proving motion-only annotations stay out of `TimingConstraintRecord`s while a concrete document-grounded `HIGH` sample still becomes typed temporal evidence.
+- Refreshed the corpus-KB benchmark, timing, visual, and semantic/truthfulness pattern pages from the now `56`-fixture KG suite.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml --lib vlm_timing_diagram_observation_rejects_waveform_motion_states -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml --lib vlm_timing_diagram_observation_accepts_fenced_json_with_trailing_prose -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality vlm_timing_motion_annotation_negative` -> passed after failing before the parser fix with `timing_constraints = 2`
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality vlm_timing_semantic_grounding_gold` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `56` passed / `0` failed fixtures
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed corpus-KB fixture projections with `56` passed / `0` failed fixtures
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, `313` Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build
+
 ## 2026-04-13 (R15g prior-candidate readiness manifest)
 
 ### Added: fixture-surface readiness for prior candidates

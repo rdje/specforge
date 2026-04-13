@@ -15,8 +15,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 
 - source: `kg-bench fixtures`
 - selected_family_labels: `multimodal visual grounding`, `VLM state machines`, `VLM timing diagrams`
-- fixtures_total: `18`
-- fixtures_passed: `18`
+- fixtures_total: `19`
+- fixtures_passed: `19`
 - fixtures_failed: `0`
 
 | fixture | status | matched families | path |
@@ -35,6 +35,7 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `vlm_state_machine_undeclared_transition_negative` | `pass` | `VLM state machines`, `multimodal visual grounding` | `crates/specforge/test_data/kg_quality/vlm_state_machine_undeclared_transition_negative/fixture.json` |
 | `vlm_timing_active_low_assertion_equivalence_gold` | `pass` | `VLM timing diagrams`, `multimodal visual grounding` | `crates/specforge/test_data/kg_quality/vlm_timing_active_low_assertion_equivalence_gold/fixture.json` |
 | `vlm_timing_active_low_deassertion_equivalence_gold` | `pass` | `VLM timing diagrams`, `multimodal visual grounding` | `crates/specforge/test_data/kg_quality/vlm_timing_active_low_deassertion_equivalence_gold/fixture.json` |
+| `vlm_timing_motion_annotation_negative` | `pass` | `VLM timing diagrams`, `multimodal visual grounding` | `crates/specforge/test_data/kg_quality/vlm_timing_motion_annotation_negative/fixture.json` |
 | `vlm_timing_name_only_semantic_noise_negative` | `pass` | `VLM timing diagrams`, `multimodal visual grounding` | `crates/specforge/test_data/kg_quality/vlm_timing_name_only_semantic_noise_negative/fixture.json` |
 | `vlm_timing_semantic_grounding_gold` | `pass` | `VLM timing diagrams`, `multimodal visual grounding` | `crates/specforge/test_data/kg_quality/vlm_timing_semantic_grounding_gold/fixture.json` |
 | `vlm_timing_spurious_annotation_negative` | `pass` | `VLM timing diagrams`, `multimodal visual grounding` | `crates/specforge/test_data/kg_quality/vlm_timing_spurious_annotation_negative/fixture.json` |

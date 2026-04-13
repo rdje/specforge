@@ -9081,6 +9081,9 @@ fn is_spurious_timing_annotation_label(text: &str) -> bool {
     if is_compact_waveform_index_label(trimmed) {
         return true;
     }
+    if is_non_quantitative_waveform_motion_annotation(trimmed) {
+        return true;
+    }
 
     let tokens = trimmed
         .split(|character: char| !character.is_ascii_alphanumeric())
@@ -9094,6 +9097,96 @@ fn is_spurious_timing_annotation_label(text: &str) -> bool {
         && tokens
             .iter()
             .all(|token| is_generic_waveform_label_token(token))
+}
+
+fn is_non_quantitative_waveform_motion_annotation(text: &str) -> bool {
+    let tokens = text
+        .split(|character: char| {
+            !(character.is_ascii_alphanumeric() || character == '_' || character == '\'')
+        })
+        .filter(|token| !token.is_empty())
+        .map(str::to_ascii_lowercase)
+        .collect::<Vec<_>>();
+    if tokens.is_empty()
+        || !tokens
+            .iter()
+            .any(|token| is_waveform_motion_annotation_token(token))
+    {
+        return false;
+    }
+    if tokens
+        .iter()
+        .any(|token| is_timing_annotation_constraint_token(token))
+    {
+        return false;
+    }
+    if tokens
+        .iter()
+        .any(|token| token.chars().any(|character| character.is_ascii_digit()))
+    {
+        return false;
+    }
+
+    true
+}
+
+fn is_waveform_motion_annotation_token(token: &str) -> bool {
+    let normalized = normalize_vlm_waveform_motion_state(token);
+    is_vlm_waveform_motion_state(&normalized)
+        || matches!(
+            normalized.as_str(),
+            "rises"
+                | "falls"
+                | "rose"
+                | "fell"
+                | "stays"
+                | "stay"
+                | "remains"
+                | "remain"
+                | "keeps"
+                | "kept"
+                | "settles"
+                | "settled"
+        )
+}
+
+fn is_timing_annotation_constraint_token(token: &str) -> bool {
+    matches!(
+        token,
+        "setup"
+            | "hold"
+            | "time"
+            | "timing"
+            | "delay"
+            | "delayed"
+            | "latency"
+            | "period"
+            | "pulse"
+            | "width"
+            | "skew"
+            | "window"
+            | "minimum"
+            | "maximum"
+            | "min"
+            | "max"
+            | "within"
+            | "before"
+            | "after"
+            | "until"
+            | "during"
+            | "while"
+            | "when"
+            | "if"
+            | "must"
+            | "shall"
+            | "require"
+            | "requires"
+            | "required"
+            | "cycle"
+            | "cycles"
+            | "tick"
+            | "ticks"
+    )
 }
 
 fn is_timing_cycle_marker_token(token: &str) -> bool {
@@ -11197,6 +11290,11 @@ mod tests {
             &semantic_artifact_base,
         )?;
 
+        assert!(
+            semantic_ir.timing_constraints.is_empty(),
+            "motion-only timing annotations must not become timing constraints: {:?}",
+            semantic_ir.timing_constraints
+        );
         let vlm_constraints = semantic_ir
             .signal_constraints
             .iter()

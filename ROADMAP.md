@@ -502,6 +502,7 @@
     - a negative fixture proving a misclassified `Bits | Name | Description` field table does not synthesize fake top-level signals or semantic roles from field names like `REQ` / `ACK`
     - a negative fixture proving low-value VLM timing-diagram annotation labels like `T0`, `Addr 1`, `Cycle 2`, `D0`, `A1`, `DATA0`, `0xAA`, `D[0]`, `A[1]`, `DATA[3]`, and `ADDR[7]` do not become timing constraints or temporal rules while the underlying timing extraction still remains visible at the evidence stage
     - a negative fixture proving VLM timing-diagram waveform motion states like `rising`, `stable`, `falling`, `UNCHANGED`, `RISING_EDGE`, `LOW_TO_HIGH`, `POS_EDGE`, `risingedge`, and `LOW2HIGH` do not become symbolic signal values while concrete samples like `HIGH` still survive
+    - a negative fixture proving motion-only VLM timing-diagram annotations like `XREQ rises, remains stable, then falls` do not become timing constraints while concrete document-grounded signal samples still survive as temporal evidence
     - a negative fixture proving VLM state-machine prose labels like `IDLE state` and `ACCESS phase` do not become canonical FSM state names or transition endpoints while clean identifier labels and transitions still survive
     - a negative fixture proving VLM state-machine transition endpoints must reference states declared in the same VLM observation, so identifier-shaped `DONE` / `RESET` endpoint guesses do not become canonical transition facts
     - a gold fixture proving duplicate VLM state-machine state labels merge by state name and preserve a later `is_initial: true` marker instead of losing initial-state truth by first-observation order
@@ -520,7 +521,7 @@
   - width-only synthesized signal declarations now survive into canonical `SemanticIR` / `IntentIR` records, so AXI-style `Name | Width | Description` tables can be benchmarked honestly instead of stopping at raw actor relations and connectivity
 - remaining:
   - expand from the current AMBA + APB + AHB + richer APB/AHB timing gold paths to a broader AXI-focused suite plus remaining structured-constraint fixtures
-  - add broader negative fixtures for multimodal arbitration drift and richer timing-annotation edge cases beyond the compact/bracketed low-value label and waveform-motion filters
+  - add broader negative fixtures for multimodal arbitration drift and richer timing-annotation edge cases beyond the current low-value label, motion-only annotation, and waveform-motion state filters
   - add broader metric-oriented expectation surfaces once the current canonical+metric fixture layer stabilizes
 
 ### R15f Cross-document extraction learning plane

@@ -1,0 +1,56 @@
+{
+  "name": "vlm_timing_motion_annotation_negative",
+  "source": "source.md",
+  "source_ir_patch": {
+    "visual_assets": [
+      {
+        "asset_id": "visual_0001",
+        "asset_kind": "diagram",
+        "page_id": "page_0001",
+        "image_path": null,
+        "caption_text": "Figure 4-3 Request waveform motion",
+        "caption_source_path": null,
+        "source_ref": null,
+        "placeholder_text": null,
+        "note": "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"T1\",\"state\":\"HIGH\"}]}],\"annotations\":[\"XREQ rises, remains stable, then falls.\",\"XREQ LOW_TO_HIGH transition\"]}",
+        "diagram_kind": "timing_diagram"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["XREQ"],
+      "temporal_rule_count": 1,
+      "temporal_conflicts": 0
+    },
+    "intent": {
+      "signal_names_include": ["XREQ"],
+      "temporal_rule_count": 1,
+      "temporal_conflicts": 0
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "timing_diagram_extractions": "1",
+          "signal_semantic_hints_from_vlm_timing_annotations": "0"
+        }
+      },
+      "semantic": {
+        "metric_values": {
+          "timing_constraints": "0",
+          "temporal_rules": "1",
+          "temporal_conflicts": "0",
+          "signal_constraints": "1"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "timing_constraints": "0",
+          "temporal_rules": "1",
+          "temporal_conflicts": "0",
+          "signal_constraints": "1"
+        }
+      }
+    }
+  }
+}

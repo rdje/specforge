@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-13 VLM timing motion-only annotation filtering
+- This slice fixes a false-positive gap in the VLM timing path: label-only annotation filters and waveform-motion `signals[].values[].state` filters were already present, but prose annotations such as `XREQ rises, remains stable, then falls` could still become `TimingConstraintRecord`s.
+- That was too permissive because motion-only annotation prose is often figure markup or OCR/VLM commentary, not a numeric timing requirement, temporal bound, setup/hold parameter, or protocol law.
+- `SemanticIR` now rejects VLM timing annotations when they contain waveform-motion vocabulary but no timing/constraint indicators and no numeric/cycle-bearing anchor. Concrete signal samples in `signals[].values[]` still use the existing bounded path, so `XREQ` being `HIGH` at `T1` remains typed temporal evidence.
+- The positive VLM annotation path remains intact: setup/hold-style annotations and direct semantic-grounding annotations still pass their focused tests/fixtures.
+- The new `vlm_timing_motion_annotation_negative` KG fixture captured the bug first, failed with two unexpected timing constraints, and now passes with zero timing constraints, one concrete signal constraint, and one temporal rule.
+
 ## 2026-04-13 R15g prior-candidate readiness manifest
 - This slice deepens the prior-candidate bridge again, but still keeps the corpus KB out of the truth path.
 - `specforge corpus-kb --kg-fixtures-root ...` now emits a tracked `corpus_kb/prior_candidates/kg-fixture-candidates.json` manifest beside the Markdown planning page. The manifest is intentionally machine-readable for review, automation, and future implementation planning, not machine-promoting.

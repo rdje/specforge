@@ -15,8 +15,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 
 - source: `kg-bench fixtures`
 - selected_family_labels: `temporal semantics`, `VLM timing diagrams`
-- fixtures_total: `14`
-- fixtures_passed: `14`
+- fixtures_total: `15`
+- fixtures_passed: `15`
 - fixtures_failed: `0`
 
 | fixture | status | matched families | path |
@@ -31,6 +31,7 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `temporal_prior_guided_cycle_window_without_prior_negative` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/temporal_prior_guided_cycle_window_without_prior_negative/fixture.json` |
 | `vlm_timing_active_low_assertion_equivalence_gold` | `pass` | `VLM timing diagrams`, `temporal semantics` | `crates/specforge/test_data/kg_quality/vlm_timing_active_low_assertion_equivalence_gold/fixture.json` |
 | `vlm_timing_active_low_deassertion_equivalence_gold` | `pass` | `VLM timing diagrams`, `temporal semantics` | `crates/specforge/test_data/kg_quality/vlm_timing_active_low_deassertion_equivalence_gold/fixture.json` |
+| `vlm_timing_motion_annotation_negative` | `pass` | `VLM timing diagrams`, `temporal semantics` | `crates/specforge/test_data/kg_quality/vlm_timing_motion_annotation_negative/fixture.json` |
 | `vlm_timing_name_only_semantic_noise_negative` | `pass` | `VLM timing diagrams`, `temporal semantics` | `crates/specforge/test_data/kg_quality/vlm_timing_name_only_semantic_noise_negative/fixture.json` |
 | `vlm_timing_semantic_grounding_gold` | `pass` | `VLM timing diagrams`, `temporal semantics` | `crates/specforge/test_data/kg_quality/vlm_timing_semantic_grounding_gold/fixture.json` |
 | `vlm_timing_spurious_annotation_negative` | `pass` | `VLM timing diagrams`, `temporal semantics` | `crates/specforge/test_data/kg_quality/vlm_timing_spurious_annotation_negative/fixture.json` |

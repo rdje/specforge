@@ -22,28 +22,30 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `c2e6084`
-- latest_commit_brief_message: `feat(corpus): add prior memory page`
-- note: the current session is executing the PNT continuation against that baseline and adding a review-only prior-candidate readiness manifest
+- latest_commit_hash: `7ce78ea`
+- latest_commit_brief_message: `feat(corpus): add prior readiness manifest`
+- note: the current session is executing the PNT continuation against that baseline and adding a VLM timing motion-only annotation negative fixture plus parser hardening
 
 ## Recent commit chain (last 5)
+- `7ce78ea` feat(corpus): add prior readiness manifest
 - `c2e6084` feat(corpus): add prior memory page
 - `fd716eb` feat(corpus): add state machine page
 - `91492cc` feat(corpus): add prior gate matrix
 - `2286f86` feat(corpus): add semantic pattern pages
-- `b3c05f5` feat(corpus): project prior candidates
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- the current `R15g` follow-on adds `corpus_kb/prior_candidates/kg-fixture-candidates.json`, a schema-versioned review-only prior-candidate readiness manifest, and mirrors that readiness in `corpus_kb/prior_candidates/kg-fixture-candidates.md`
-- the new readiness surface reports paired prior fixture coverage as `fixture_paired_review_ready`, reports negative-knowledge coverage as `caution_surface_review_ready`, and still preserves `review_only_no_corpus_memory_or_canonical_ir_mutation`
+- the current KG-quality follow-on adds `vlm_timing_motion_annotation_negative`, proving motion-only VLM timing annotations such as `XREQ rises, remains stable, then falls` stay out of `TimingConstraintRecord`s while concrete `signals[].values[]` samples still become typed temporal evidence
+- `SemanticIR` now filters non-quantitative waveform-motion annotation prose only when it lacks timing/constraint indicators and numeric/cycle anchors, preserving setup/hold/timing and positive semantic-grounding annotation paths
+- the latest committed `R15g` follow-on added `corpus_kb/prior_candidates/kg-fixture-candidates.json`, a schema-versioned review-only prior-candidate readiness manifest, and mirrors that readiness in `corpus_kb/prior_candidates/kg-fixture-candidates.md`
+- that readiness surface reports paired prior fixture coverage as `fixture_paired_review_ready`, reports negative-knowledge coverage as `caution_surface_review_ready`, and still preserves `review_only_no_corpus_memory_or_canonical_ir_mutation`
 - the latest committed `R15g` follow-on added `corpus_kb/prior_memory/kg-fixtures.md`, a dedicated typed prior-memory fixture-family page refreshed from the existing `typed prior memory` label with 21 passing fixtures and explicit fixture-path provenance
 - the latest committed `R15g` follow-on added `corpus_kb/state_machines/kg-fixtures.md`, a dedicated VLM state-machine fixture-family page refreshed from the existing `VLM state machines` label with five passing fixtures and explicit fixture-path provenance
 - the latest committed `R15g` follow-on deepened `corpus_kb/prior_candidates/kg-fixture-candidates.md` with `review_scope: family_surface_not_individual_prior` plus a family-level promotion gate review matrix for schema, fixture, harvest, consumer, and non-mutation boundary status
 - the latest committed `R15g` follow-on added `corpus_kb/patterns/kg-fixtures.md`, a semantic/truthfulness pattern page for actor/connectivity, semantic role arbitration, negative knowledge, truthfulness-negative/caution, and residual/caveat fixture patterns
 - the previous committed `R15g` follow-on added `corpus_kb/prior_candidates/kg-fixture-candidates.md`, a review-only prior-candidate planning page that names target `CorpusMemory` schema surfaces, supporting fixtures, positive/guard evidence, and required promotion gates without mutating corpus memory or canonical IR
 - the previous committed `R15g` follow-on expanded the same KG fixture refresh into dedicated corpus-KB family pages under `tables/`, `visuals/`, `timing/`, `infra/`, and `protocols/` in addition to the aggregate benchmark page
-- the previous committed `R15g` follow-on added a managed fixture-family summary table to `corpus_kb/benchmarks/kg-fixtures.md`, so `specforge corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` reports both aggregate `55/55` pass status and review-facing coverage by truthfulness family
+- the previous committed `R15g` follow-on added a managed fixture-family summary table to `corpus_kb/benchmarks/kg-fixtures.md`; after the current in-flight motion-annotation fixture, `specforge corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` reports aggregate `56/56` pass status and review-facing coverage by truthfulness family
 - the previous committed `R15g` follow-on added `validate::run_quiet()` and routes KG fixture-local validation through it, so `specforge kg-bench` and `specforge corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` stay concise while preserving the same validation sidecars/backannotations
 - the latest committed `R15g` follow-on extends `specforge corpus-kb` with optional KG fixture-result projection: `--kg-fixtures-root crates/specforge/test_data/kg_quality` refreshes `corpus_kb/benchmarks/kg-fixtures.md` from the tracked fixture suite while preserving human synthesis and keeping canonical IR / typed priors untouched
 - the latest committed `R15g` follow-on added a tracked `corpus_kb/` root and a new `specforge corpus-kb` command that refreshes managed corpus knowledge-base validation-finding pages from validation report sidecars without mutating canonical IR or typed priors
@@ -77,8 +79,8 @@
 - `scripts/run_ci.sh` now also builds Rust API docs with `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` before the mdBook build, preserving caller-provided `RUSTDOCFLAGS`
 - the Rust warning baseline is clean and now enforced in the shared local/hosted CI path rather than suppressed with `#[allow(dead_code)]`
 - README bootstrap currently resolves to `SESSION_BOOTSTRAP.md`, which instructs future agents to read the referenced live docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if necessary, and then continue from the roadmap
-- this README/PNT continuation observed 30 Rust source files and 57,614 lines under `crates/specforge/src`, with the CLI now including `doctor`, `converge`, `enrich`, `validate`, `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, `corpus-kb`, and `nlp-enrich` beside the core staged IR commands
-- `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the `R15g` prior-candidate readiness manifest path; the tracked KG fixture count remains `55`, and the full local CI gate reports `313` passing Rust tests
+- this README/PNT continuation observed 30 Rust source files and 57,712 lines under `crates/specforge/src`, with the CLI now including `doctor`, `converge`, `enrich`, `validate`, `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, `corpus-kb`, and `nlp-enrich` beside the core staged IR commands
+- `RUST_CODEBASE_ANALYSIS.md` was refreshed again for the VLM timing motion-only annotation filter path; the tracked KG fixture count is now `56`, the current focused KG suite passes `56/56`, and the full local CI gate reports `313` passing Rust tests
 - the latest README bootstrap hygiene pass found no new Rust architecture drift requiring code changes; the concrete fixes were to refresh the README implementation-path map, refresh the committed baseline in this memory file, update the current testing/validation counts in `RUST_CODEBASE_ANALYSIS.md`, and normalize old checkout-specific markdown links to repo-relative paths
 - the earlier VLM timing KG benchmark slice `vlm_timing_waveform_motion_negative` proves a VLM timing diagram can preserve the real `HIGH` sample while rejecting waveform motion descriptors and transition spellings such as `rising`, `stable`, `falling`, `UNCHANGED`, `RISING_EDGE`, `LOW_TO_HIGH`, `HIGH_TO_LOW`, `POS_EDGE`, `NEG_EDGE`, `risingedge`, `LOW2HIGH`, and `HIGH2LOW` as concrete signal values
 - the latest committed VLM timing KG benchmark slices tighten `vlm_timing_spurious_annotation_negative`, proving compact and bracketed waveform/sample labels such as `D0`, `A1`, `DATA0`, `0xAA`, `D[0]`, `A[1]`, `DATA[3]`, and `ADDR[7]` are annotation noise rather than timing constraints
