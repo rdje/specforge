@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-04-13 (R15g prior-candidate readiness manifest)
+
+### Added: fixture-surface readiness for prior candidates
+- `specforge corpus-kb --kg-fixtures-root ...` now refreshes `corpus_kb/prior_candidates/kg-fixture-candidates.json` beside the Markdown prior-candidate page.
+- The JSON manifest is schema-versioned and records candidate kind, target `CorpusMemory` schema, readiness, fixture counts, supporting/positive/guard fixture names, gate identifiers, and the explicit non-mutation promotion boundary.
+- `corpus_kb/prior_candidates/kg-fixture-candidates.md` now includes a `Readiness Summary` table, with paired prior families marked as `fixture_paired_review_ready` and the caution-only negative-knowledge family marked as `caution_surface_review_ready`.
+- The manifest and table remain review-only corpus-KB artifacts. They do not approve individual priors, write `generated/prior_memory/corpus_memory.json`, or mutate canonical IR.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test --manifest-path Cargo.toml --lib corpus_kb -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed the aggregate, fixture-family, Markdown prior-candidate, and JSON prior-candidate corpus-KB artifacts with `55` passed / `0` failed fixtures
+- `git diff --check` -> passed
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, `313` Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build
+
 ## 2026-04-13 (R15g typed prior-memory corpus KB page)
 
 ### Added: dedicated typed prior-memory fixture-family page

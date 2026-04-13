@@ -2,6 +2,8 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
+use serde::Serialize;
+
 use crate::cli::CorpusKbArgs;
 use crate::commands::kg_bench::{self, KgBenchFixtureOutcome};
 use crate::error::{AppError, Result};
@@ -230,6 +232,41 @@ struct PriorCandidateProjection {
     guard_fixtures: BTreeSet<String>,
 }
 
+#[derive(Debug, Serialize)]
+struct PriorCandidateManifest {
+    schema_version: u32,
+    source: &'static str,
+    review_scope: &'static str,
+    promotion_status: &'static str,
+    canonical_mutation_allowed: bool,
+    corpus_memory_mutation_allowed: bool,
+    candidates: Vec<PriorCandidateManifestEntry>,
+}
+
+#[derive(Debug, Serialize)]
+struct PriorCandidateManifestEntry {
+    candidate_kind: &'static str,
+    target_schema: &'static str,
+    readiness: &'static str,
+    supporting_fixture_count: usize,
+    positive_fixture_count: usize,
+    guard_fixture_count: usize,
+    supporting_fixtures: Vec<String>,
+    positive_fixtures: Vec<String>,
+    guard_fixtures: Vec<String>,
+    required_gates: &'static str,
+    gates: PriorCandidateGateManifest,
+    promotion_boundary: &'static str,
+}
+
+#[derive(Debug, Serialize)]
+struct PriorCandidateGateManifest {
+    schema_gate: &'static str,
+    fixture_gate: &'static str,
+    harvest_gate: &'static str,
+    consumer_gate: &'static str,
+}
+
 pub fn run(args: CorpusKbArgs) -> Result<()> {
     if args.validation_reports.is_empty() && args.kg_fixtures_root.is_none() {
         return Err(AppError::InvalidStageArtifact(
@@ -336,7 +373,7 @@ fn refresh_kg_fixtures_page(
     fs::write(&page_path, updated)?;
     let mut page_paths = vec![page_path];
     page_paths.extend(refresh_kg_fixture_family_pages(repo_root, &entries)?);
-    page_paths.push(refresh_prior_candidate_page(repo_root, &entries)?);
+    page_paths.extend(refresh_prior_candidate_projection(repo_root, &entries)?);
 
     Ok(KgFixturesRefresh {
         page_paths,
@@ -375,10 +412,10 @@ fn refresh_kg_fixture_family_pages(
     Ok(page_paths)
 }
 
-fn refresh_prior_candidate_page(
+fn refresh_prior_candidate_projection(
     repo_root: &Path,
     entries: &[KgFixtureProjection],
-) -> Result<PathBuf> {
+) -> Result<Vec<PathBuf>> {
     let page_path = repo_root
         .join("corpus_kb")
         .join("prior_candidates")
@@ -388,7 +425,8 @@ fn refresh_prior_candidate_page(
     }
     let existing =
         fs::read_to_string(&page_path).unwrap_or_else(|_| default_prior_candidate_page());
-    let managed_block = render_prior_candidate_block(entries);
+    let candidates = prior_candidate_projections(entries);
+    let managed_block = render_prior_candidate_block(&candidates);
     let updated = replace_managed_block(
         &existing,
         &managed_block,
@@ -397,7 +435,14 @@ fn refresh_prior_candidate_page(
         "## Managed Prior Candidate Projection",
     )?;
     fs::write(&page_path, updated)?;
-    Ok(page_path)
+
+    let manifest_path = repo_root
+        .join("corpus_kb")
+        .join("prior_candidates")
+        .join("kg-fixture-candidates.json");
+    let manifest = prior_candidate_manifest(&candidates);
+    fs::write(&manifest_path, serde_json::to_string_pretty(&manifest)?)?;
+    Ok(vec![page_path, manifest_path])
 }
 
 fn load_validation_report_projections(
@@ -658,8 +703,7 @@ fn render_kg_fixture_family_block(
     output
 }
 
-fn render_prior_candidate_block(entries: &[KgFixtureProjection]) -> String {
-    let candidates = prior_candidate_projections(entries);
+fn render_prior_candidate_block(candidates: &[PriorCandidateProjection]) -> String {
     let mut output = String::new();
     output.push_str(PRIOR_CANDIDATES_MANAGED_START);
     output.push('\n');
@@ -676,7 +720,7 @@ fn render_prior_candidate_block(entries: &[KgFixtureProjection]) -> String {
     } else {
         output.push_str("| candidate_kind | target_schema | supporting | positive_gates | guard_gates | required_gates |\n");
         output.push_str("| --- | --- | ---: | --- | --- | --- |\n");
-        for candidate in &candidates {
+        for candidate in candidates {
             output.push_str("| `");
             output.push_str(candidate.candidate_kind);
             output.push_str("` | `");
@@ -692,11 +736,31 @@ fn render_prior_candidate_block(entries: &[KgFixtureProjection]) -> String {
             output.push_str(" |\n");
         }
         output.push('\n');
+        output.push_str("### Readiness Summary\n");
+        output.push_str("Readiness is fixture-surface readiness only. It is not promotion approval and does not allow `CorpusMemory` or canonical IR mutation.\n\n");
+        output.push_str(
+            "| candidate_kind | readiness | supporting | positive | guard | promotion_boundary |\n",
+        );
+        output.push_str("| --- | --- | ---: | ---: | ---: | --- |\n");
+        for candidate in candidates {
+            output.push_str("| `");
+            output.push_str(candidate.candidate_kind);
+            output.push_str("` | `");
+            output.push_str(prior_candidate_readiness(candidate));
+            output.push_str("` | `");
+            output.push_str(&candidate.supporting_fixtures.len().to_string());
+            output.push_str("` | `");
+            output.push_str(&candidate.positive_fixtures.len().to_string());
+            output.push_str("` | `");
+            output.push_str(&candidate.guard_fixtures.len().to_string());
+            output.push_str("` | `review_only_no_corpus_memory_or_canonical_ir_mutation` |\n");
+        }
+        output.push('\n');
         output.push_str("### Promotion Gate Review Matrix\n");
         output.push_str("These gates describe the family-level implementation surface already visible to review. They are not approval records and do not grant mutation authority.\n\n");
         output.push_str("| candidate_kind | schema_gate | fixture_gate | harvest_gate | consumer_gate | promotion_boundary |\n");
         output.push_str("| --- | --- | --- | --- | --- | --- |\n");
-        for candidate in &candidates {
+        for candidate in candidates {
             output.push_str("| `");
             output.push_str(candidate.candidate_kind);
             output.push_str("` | `");
@@ -715,6 +779,56 @@ fn render_prior_candidate_block(entries: &[KgFixtureProjection]) -> String {
     output.push_str(PRIOR_CANDIDATES_MANAGED_END);
     output.push('\n');
     output
+}
+
+fn prior_candidate_manifest(candidates: &[PriorCandidateProjection]) -> PriorCandidateManifest {
+    PriorCandidateManifest {
+        schema_version: 1,
+        source: "kg-bench fixtures",
+        review_scope: "family_surface_not_individual_prior",
+        promotion_status: "candidate_not_promoted_review_required",
+        canonical_mutation_allowed: false,
+        corpus_memory_mutation_allowed: false,
+        candidates: candidates
+            .iter()
+            .map(|candidate| PriorCandidateManifestEntry {
+                candidate_kind: candidate.candidate_kind,
+                target_schema: candidate.target_schema,
+                readiness: prior_candidate_readiness(candidate),
+                supporting_fixture_count: candidate.supporting_fixtures.len(),
+                positive_fixture_count: candidate.positive_fixtures.len(),
+                guard_fixture_count: candidate.guard_fixtures.len(),
+                supporting_fixtures: candidate.supporting_fixtures.iter().cloned().collect(),
+                positive_fixtures: candidate.positive_fixtures.iter().cloned().collect(),
+                guard_fixtures: candidate.guard_fixtures.iter().cloned().collect(),
+                required_gates: candidate.required_gates,
+                gates: PriorCandidateGateManifest {
+                    schema_gate: candidate.schema_gate,
+                    fixture_gate: candidate.fixture_gate,
+                    harvest_gate: candidate.harvest_gate,
+                    consumer_gate: candidate.consumer_gate,
+                },
+                promotion_boundary: "review_only_no_corpus_memory_or_canonical_ir_mutation",
+            })
+            .collect(),
+    }
+}
+
+fn prior_candidate_readiness(candidate: &PriorCandidateProjection) -> &'static str {
+    if candidate.candidate_kind == "negative_knowledge_prior"
+        && !candidate.guard_fixtures.is_empty()
+    {
+        return "caution_surface_review_ready";
+    }
+    match (
+        candidate.positive_fixtures.is_empty(),
+        candidate.guard_fixtures.is_empty(),
+    ) {
+        (false, false) => "fixture_paired_review_ready",
+        (false, true) => "needs_guard_fixture",
+        (true, false) => "needs_positive_fixture",
+        (true, true) => "needs_fixture_coverage",
+    }
 }
 
 fn prior_candidate_projections(entries: &[KgFixtureProjection]) -> Vec<PriorCandidateProjection> {
@@ -1104,6 +1218,21 @@ Keep this curated note.\n\n\
   "expectations": {}
 }"#,
         )?;
+        let table_guard_fixture_dir =
+            fixtures_root.join("table_shape_prior_guided_signal_table_without_prior_negative");
+        fs::create_dir_all(&table_guard_fixture_dir)?;
+        fs::write(
+            table_guard_fixture_dir.join("source.md"),
+            "# Toy Protocol\n\nSignal XREQ is output width 1.\n",
+        )?;
+        fs::write(
+            table_guard_fixture_dir.join("fixture.json"),
+            r#"{
+  "name": "table_shape_prior_guided_signal_table_without_prior_negative",
+  "source": "source.md",
+  "expectations": {}
+}"#,
+        )?;
         let semantic_fixture_dir = fixtures_root.join("name_only_semantic_noise_negative");
         fs::create_dir_all(&semantic_fixture_dir)?;
         fs::write(
@@ -1153,18 +1282,21 @@ Keep this benchmark note.\n\n\
         let refresh = refresh_kg_fixtures_page(repo_root, &fixtures_root, &[])?;
         let refreshed = fs::read_to_string(page_path)?;
 
-        assert_eq!(refresh.fixture_count, 3);
+        assert_eq!(refresh.fixture_count, 4);
         assert_eq!(refresh.failed_count, 0);
         assert!(refreshed.contains("Keep this benchmark note."));
         assert!(!refreshed.contains("old generated benchmark content"));
         assert!(refreshed.contains("### Fixture Family Summary"));
-        assert!(refreshed.contains("| table extraction and hygiene | `1` | `1` | `0` |"));
+        assert!(refreshed.contains("| table extraction and hygiene | `2` | `2` | `0` |"));
         assert!(refreshed.contains("| VLM state machines | `1` | `1` | `0` |"));
         assert!(refreshed.contains("| multimodal visual grounding | `1` | `1` | `0` |"));
-        assert!(refreshed.contains("| typed prior memory | `1` | `1` | `0` |"));
+        assert!(refreshed.contains("| typed prior memory | `2` | `2` | `0` |"));
         assert!(refreshed.contains("| semantic role arbitration | `1` | `1` | `0` |"));
-        assert!(refreshed.contains("| truthfulness negatives and cautions | `1` | `1` | `0` |"));
+        assert!(refreshed.contains("| truthfulness negatives and cautions | `2` | `2` | `0` |"));
         assert!(refreshed.contains("### table_shape_prior_guided_signal_table_gold"));
+        assert!(
+            refreshed.contains("### table_shape_prior_guided_signal_table_without_prior_negative")
+        );
         assert!(refreshed.contains("### name_only_semantic_noise_negative"));
         assert!(refreshed.contains("### vlm_state_machine_duplicate_initial_gold"));
         assert!(refreshed.contains("- status: `pass`"));
@@ -1191,6 +1323,9 @@ Keep this benchmark note.\n\n\
             prior_memory_family_refreshed
                 .contains("| `table_shape_prior_guided_signal_table_gold` | `pass` |")
         );
+        assert!(prior_memory_family_refreshed.contains(
+            "| `table_shape_prior_guided_signal_table_without_prior_negative` | `pass` |"
+        ));
         assert!(prior_memory_family_refreshed.contains("`typed prior memory`"));
 
         let table_family_page = repo_root
@@ -1203,6 +1338,9 @@ Keep this benchmark note.\n\n\
             table_family_refreshed
                 .contains("| `table_shape_prior_guided_signal_table_gold` | `pass` |")
         );
+        assert!(table_family_refreshed.contains(
+            "| `table_shape_prior_guided_signal_table_without_prior_negative` | `pass` |"
+        ));
         assert!(table_family_refreshed.contains("`table extraction and hygiene`"));
 
         let state_machine_family_page = repo_root
@@ -1228,6 +1366,8 @@ Keep this benchmark note.\n\n\
         assert!(prior_candidate_refreshed.contains("candidate_not_promoted_review_required"));
         assert!(prior_candidate_refreshed.contains("`table_shape_prior_guided_signal_table_gold`"));
         assert!(prior_candidate_refreshed.contains("### Promotion Gate Review Matrix"));
+        assert!(prior_candidate_refreshed.contains("### Readiness Summary"));
+        assert!(prior_candidate_refreshed.contains("`fixture_paired_review_ready`"));
         assert!(prior_candidate_refreshed.contains("family_surface_not_individual_prior"));
         assert!(
             prior_candidate_refreshed
@@ -1236,6 +1376,27 @@ Keep this benchmark note.\n\n\
         assert!(
             prior_candidate_refreshed
                 .contains("`review_only_no_corpus_memory_or_canonical_ir_mutation`")
+        );
+        let prior_candidate_manifest = fs::read_to_string(
+            repo_root
+                .join("corpus_kb")
+                .join("prior_candidates")
+                .join("kg-fixture-candidates.json"),
+        )?;
+        let prior_candidate_manifest: serde_json::Value =
+            serde_json::from_str(&prior_candidate_manifest)?;
+        assert_eq!(prior_candidate_manifest["schema_version"], 1);
+        assert_eq!(
+            prior_candidate_manifest["promotion_status"],
+            "candidate_not_promoted_review_required"
+        );
+        assert_eq!(
+            prior_candidate_manifest["candidates"][0]["readiness"],
+            "fixture_paired_review_ready"
+        );
+        assert_eq!(
+            prior_candidate_manifest["candidates"][0]["promotion_boundary"],
+            "review_only_no_corpus_memory_or_canonical_ir_mutation"
         );
 
         Ok(())

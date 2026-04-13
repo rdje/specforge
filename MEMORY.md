@@ -22,20 +22,22 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `fd716eb`
-- latest_commit_brief_message: `feat(corpus): add state machine page`
-- note: the current session is executing the PNT continuation against that baseline and adding a dedicated typed prior-memory corpus-KB fixture-family page
+- latest_commit_hash: `c2e6084`
+- latest_commit_brief_message: `feat(corpus): add prior memory page`
+- note: the current session is executing the PNT continuation against that baseline and adding a review-only prior-candidate readiness manifest
 
 ## Recent commit chain (last 5)
+- `c2e6084` feat(corpus): add prior memory page
 - `fd716eb` feat(corpus): add state machine page
 - `91492cc` feat(corpus): add prior gate matrix
 - `2286f86` feat(corpus): add semantic pattern pages
 - `b3c05f5` feat(corpus): project prior candidates
-- `0f3166f` feat(corpus): add kg fixture family pages
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- the current `R15g` follow-on adds `corpus_kb/prior_memory/kg-fixtures.md`, a dedicated typed prior-memory fixture-family page refreshed from the existing `typed prior memory` label with 21 passing fixtures and explicit fixture-path provenance
+- the current `R15g` follow-on adds `corpus_kb/prior_candidates/kg-fixture-candidates.json`, a schema-versioned review-only prior-candidate readiness manifest, and mirrors that readiness in `corpus_kb/prior_candidates/kg-fixture-candidates.md`
+- the new readiness surface reports paired prior fixture coverage as `fixture_paired_review_ready`, reports negative-knowledge coverage as `caution_surface_review_ready`, and still preserves `review_only_no_corpus_memory_or_canonical_ir_mutation`
+- the latest committed `R15g` follow-on added `corpus_kb/prior_memory/kg-fixtures.md`, a dedicated typed prior-memory fixture-family page refreshed from the existing `typed prior memory` label with 21 passing fixtures and explicit fixture-path provenance
 - the latest committed `R15g` follow-on added `corpus_kb/state_machines/kg-fixtures.md`, a dedicated VLM state-machine fixture-family page refreshed from the existing `VLM state machines` label with five passing fixtures and explicit fixture-path provenance
 - the latest committed `R15g` follow-on deepened `corpus_kb/prior_candidates/kg-fixture-candidates.md` with `review_scope: family_surface_not_individual_prior` plus a family-level promotion gate review matrix for schema, fixture, harvest, consumer, and non-mutation boundary status
 - the latest committed `R15g` follow-on added `corpus_kb/patterns/kg-fixtures.md`, a semantic/truthfulness pattern page for actor/connectivity, semantic role arbitration, negative knowledge, truthfulness-negative/caution, and residual/caveat fixture patterns
@@ -75,8 +77,8 @@
 - `scripts/run_ci.sh` now also builds Rust API docs with `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` before the mdBook build, preserving caller-provided `RUSTDOCFLAGS`
 - the Rust warning baseline is clean and now enforced in the shared local/hosted CI path rather than suppressed with `#[allow(dead_code)]`
 - README bootstrap currently resolves to `SESSION_BOOTSTRAP.md`, which instructs future agents to read the referenced live docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if necessary, and then continue from the roadmap
-- this README/PNT continuation observed 30 Rust source files and 57,453 lines under `crates/specforge/src`, with the CLI now including `doctor`, `converge`, `enrich`, `validate`, `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, `corpus-kb`, and `nlp-enrich` beside the core staged IR commands
-- `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the `R15g` typed prior-memory corpus-KB page path; the tracked KG fixture count remains `55`, and the full local CI gate reports `313` passing Rust tests
+- this README/PNT continuation observed 30 Rust source files and 57,614 lines under `crates/specforge/src`, with the CLI now including `doctor`, `converge`, `enrich`, `validate`, `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, `corpus-kb`, and `nlp-enrich` beside the core staged IR commands
+- `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the `R15g` prior-candidate readiness manifest path; the tracked KG fixture count remains `55`, and the full local CI gate reports `313` passing Rust tests
 - the latest README bootstrap hygiene pass found no new Rust architecture drift requiring code changes; the concrete fixes were to refresh the README implementation-path map, refresh the committed baseline in this memory file, update the current testing/validation counts in `RUST_CODEBASE_ANALYSIS.md`, and normalize old checkout-specific markdown links to repo-relative paths
 - the earlier VLM timing KG benchmark slice `vlm_timing_waveform_motion_negative` proves a VLM timing diagram can preserve the real `HIGH` sample while rejecting waveform motion descriptors and transition spellings such as `rising`, `stable`, `falling`, `UNCHANGED`, `RISING_EDGE`, `LOW_TO_HIGH`, `HIGH_TO_LOW`, `POS_EDGE`, `NEG_EDGE`, `risingedge`, `LOW2HIGH`, and `HIGH2LOW` as concrete signal values
 - the latest committed VLM timing KG benchmark slices tighten `vlm_timing_spurious_annotation_negative`, proving compact and bracketed waveform/sample labels such as `D0`, `A1`, `DATA0`, `0xAA`, `D[0]`, `A[1]`, `DATA[3]`, and `ADDR[7]` are annotation noise rather than timing constraints

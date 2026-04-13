@@ -1,0 +1,211 @@
+{
+  "schema_version": 1,
+  "source": "kg-bench fixtures",
+  "review_scope": "family_surface_not_individual_prior",
+  "promotion_status": "candidate_not_promoted_review_required",
+  "canonical_mutation_allowed": false,
+  "corpus_memory_mutation_allowed": false,
+  "candidates": [
+    {
+      "candidate_kind": "actor_taxonomy_prior",
+      "target_schema": "CorpusMemory.actor_taxonomy_priors",
+      "readiness": "fixture_paired_review_ready",
+      "supporting_fixture_count": 2,
+      "positive_fixture_count": 1,
+      "guard_fixture_count": 1,
+      "supporting_fixtures": [
+        "actor_taxonomy_prior_guided_section_direction_gold",
+        "actor_taxonomy_prior_guided_section_direction_without_prior_negative"
+      ],
+      "positive_fixtures": [
+        "actor_taxonomy_prior_guided_section_direction_gold"
+      ],
+      "guard_fixtures": [
+        "actor_taxonomy_prior_guided_section_direction_without_prior_negative"
+      ],
+      "required_gates": "typed CorpusMemory schema; paired KG-bench gold/negative coverage; validated IntentIR harvest input; local-grounding consumer",
+      "gates": {
+        "schema_gate": "present_schema_v5",
+        "fixture_gate": "paired_gold_without_prior_fixture",
+        "harvest_gate": "learn_priors_actor_taxonomy_harvester_present",
+        "consumer_gate": "evidence_actor_taxonomy_local_grounding_consumer_present"
+      },
+      "promotion_boundary": "review_only_no_corpus_memory_or_canonical_ir_mutation"
+    },
+    {
+      "candidate_kind": "negative_knowledge_prior",
+      "target_schema": "CorpusMemory.negative_knowledge_priors",
+      "readiness": "caution_surface_review_ready",
+      "supporting_fixture_count": 5,
+      "positive_fixture_count": 5,
+      "guard_fixture_count": 5,
+      "supporting_fixtures": [
+        "negative_knowledge_prior_guided_connectivity_conflict_caution_gold",
+        "negative_knowledge_prior_guided_interface_conflict_caution_gold",
+        "negative_knowledge_prior_guided_residual_caution_gold",
+        "negative_knowledge_prior_guided_semantic_conflict_caution_gold",
+        "negative_knowledge_prior_guided_temporal_conflict_caution_gold"
+      ],
+      "positive_fixtures": [
+        "negative_knowledge_prior_guided_connectivity_conflict_caution_gold",
+        "negative_knowledge_prior_guided_interface_conflict_caution_gold",
+        "negative_knowledge_prior_guided_residual_caution_gold",
+        "negative_knowledge_prior_guided_semantic_conflict_caution_gold",
+        "negative_knowledge_prior_guided_temporal_conflict_caution_gold"
+      ],
+      "guard_fixtures": [
+        "negative_knowledge_prior_guided_connectivity_conflict_caution_gold",
+        "negative_knowledge_prior_guided_interface_conflict_caution_gold",
+        "negative_knowledge_prior_guided_residual_caution_gold",
+        "negative_knowledge_prior_guided_semantic_conflict_caution_gold",
+        "negative_knowledge_prior_guided_temporal_conflict_caution_gold"
+      ],
+      "required_gates": "typed CorpusMemory schema; caution-only validation consumer; paired KG-bench conflict/residual coverage; rescan guidance review gate",
+      "gates": {
+        "schema_gate": "present_schema_v5",
+        "fixture_gate": "caution_fixtures_across_conflict_residual_families_present",
+        "harvest_gate": "learn_priors_conflict_residual_negative_knowledge_harvester_present",
+        "consumer_gate": "validation_caution_and_rescan_guidance_consumer_present"
+      },
+      "promotion_boundary": "review_only_no_corpus_memory_or_canonical_ir_mutation"
+    },
+    {
+      "candidate_kind": "semantic_modality_reliability_prior",
+      "target_schema": "CorpusMemory.semantic_modality_reliability_priors",
+      "readiness": "fixture_paired_review_ready",
+      "supporting_fixture_count": 2,
+      "positive_fixture_count": 1,
+      "guard_fixture_count": 1,
+      "supporting_fixtures": [
+        "semantic_modality_reliability_prior_guided_conflict_gold",
+        "semantic_modality_reliability_prior_guided_conflict_without_prior_negative"
+      ],
+      "positive_fixtures": [
+        "semantic_modality_reliability_prior_guided_conflict_gold"
+      ],
+      "guard_fixtures": [
+        "semantic_modality_reliability_prior_guided_conflict_without_prior_negative"
+      ],
+      "required_gates": "typed CorpusMemory schema; paired KG-bench conflict coverage; validated IntentIR harvest input; local-grounded arbitration consumer",
+      "gates": {
+        "schema_gate": "present_schema_v5",
+        "fixture_gate": "paired_conflict_gold_without_prior_fixture",
+        "harvest_gate": "learn_priors_modality_reliability_harvester_present",
+        "consumer_gate": "semantic_arbitration_reliability_consumer_present"
+      },
+      "promotion_boundary": "review_only_no_corpus_memory_or_canonical_ir_mutation"
+    },
+    {
+      "candidate_kind": "semantic_phrase_prior",
+      "target_schema": "CorpusMemory.semantic_phrase_priors",
+      "readiness": "fixture_paired_review_ready",
+      "supporting_fixture_count": 4,
+      "positive_fixture_count": 2,
+      "guard_fixture_count": 2,
+      "supporting_fixtures": [
+        "semantic_prior_guided_phrase_gold",
+        "semantic_prior_guided_phrase_without_prior_negative",
+        "visual_semantic_prior_guided_caption_gold",
+        "visual_semantic_prior_guided_caption_without_prior_negative"
+      ],
+      "positive_fixtures": [
+        "semantic_prior_guided_phrase_gold",
+        "visual_semantic_prior_guided_caption_gold"
+      ],
+      "guard_fixtures": [
+        "semantic_prior_guided_phrase_without_prior_negative",
+        "visual_semantic_prior_guided_caption_without_prior_negative"
+      ],
+      "required_gates": "typed CorpusMemory schema; paired KG-bench gold/negative coverage; validated IntentIR harvest input; local-grounding semantic consumer",
+      "gates": {
+        "schema_gate": "present_schema_v5",
+        "fixture_gate": "paired_text_and_visual_gold_without_prior_fixtures",
+        "harvest_gate": "learn_priors_semantic_phrase_harvester_present",
+        "consumer_gate": "evidence_semantic_phrase_local_grounding_consumer_present"
+      },
+      "promotion_boundary": "review_only_no_corpus_memory_or_canonical_ir_mutation"
+    },
+    {
+      "candidate_kind": "table_shape_prior",
+      "target_schema": "CorpusMemory.table_shape_priors",
+      "readiness": "fixture_paired_review_ready",
+      "supporting_fixture_count": 4,
+      "positive_fixture_count": 2,
+      "guard_fixture_count": 2,
+      "supporting_fixtures": [
+        "table_shape_prior_guided_signal_table_gold",
+        "table_shape_prior_guided_signal_table_without_prior_negative",
+        "table_shape_prior_guided_timing_table_gold",
+        "table_shape_prior_guided_timing_table_without_prior_negative"
+      ],
+      "positive_fixtures": [
+        "table_shape_prior_guided_signal_table_gold",
+        "table_shape_prior_guided_timing_table_gold"
+      ],
+      "guard_fixtures": [
+        "table_shape_prior_guided_signal_table_without_prior_negative",
+        "table_shape_prior_guided_timing_table_without_prior_negative"
+      ],
+      "required_gates": "typed CorpusMemory schema; paired KG-bench gold/negative coverage; validated SourceIR/IntentIR harvest chain; local table-kind consumer",
+      "gates": {
+        "schema_gate": "present_schema_v5",
+        "fixture_gate": "paired_signal_and_timing_table_gold_without_prior_fixtures",
+        "harvest_gate": "learn_priors_source_ir_table_shape_harvester_present",
+        "consumer_gate": "evidence_table_kind_local_shape_consumer_present"
+      },
+      "promotion_boundary": "review_only_no_corpus_memory_or_canonical_ir_mutation"
+    },
+    {
+      "candidate_kind": "temporal_phrase_prior",
+      "target_schema": "CorpusMemory.temporal_phrase_priors",
+      "readiness": "fixture_paired_review_ready",
+      "supporting_fixture_count": 2,
+      "positive_fixture_count": 1,
+      "guard_fixture_count": 1,
+      "supporting_fixtures": [
+        "temporal_prior_guided_cycle_window_gold",
+        "temporal_prior_guided_cycle_window_without_prior_negative"
+      ],
+      "positive_fixtures": [
+        "temporal_prior_guided_cycle_window_gold"
+      ],
+      "guard_fixtures": [
+        "temporal_prior_guided_cycle_window_without_prior_negative"
+      ],
+      "required_gates": "typed CorpusMemory schema; paired KG-bench gold/negative coverage; validated IntentIR harvest input; local-grounding temporal consumer",
+      "gates": {
+        "schema_gate": "present_schema_v5",
+        "fixture_gate": "paired_gold_without_prior_fixture",
+        "harvest_gate": "learn_priors_temporal_phrase_harvester_present",
+        "consumer_gate": "semantic_temporal_phrase_cycle_window_consumer_present"
+      },
+      "promotion_boundary": "review_only_no_corpus_memory_or_canonical_ir_mutation"
+    },
+    {
+      "candidate_kind": "visual_motif_prior",
+      "target_schema": "CorpusMemory.visual_motif_priors",
+      "readiness": "fixture_paired_review_ready",
+      "supporting_fixture_count": 2,
+      "positive_fixture_count": 1,
+      "guard_fixture_count": 1,
+      "supporting_fixtures": [
+        "visual_motif_prior_guided_diagram_classification_gold",
+        "visual_motif_prior_guided_diagram_classification_without_prior_negative"
+      ],
+      "positive_fixtures": [
+        "visual_motif_prior_guided_diagram_classification_gold"
+      ],
+      "guard_fixtures": [
+        "visual_motif_prior_guided_diagram_classification_without_prior_negative"
+      ],
+      "required_gates": "typed CorpusMemory schema; paired KG-bench gold/negative coverage; validated IntentIR harvest input; VLM/multimodal corroboration gate",
+      "gates": {
+        "schema_gate": "present_schema_v5",
+        "fixture_gate": "paired_visual_motif_gold_without_prior_fixture",
+        "harvest_gate": "learn_priors_source_ir_visual_motif_harvester_present",
+        "consumer_gate": "evidence_visual_caption_motif_consumer_with_corroboration_gate_present"
+      },
+      "promotion_boundary": "review_only_no_corpus_memory_or_canonical_ir_mutation"
+    }
+  ]
+}

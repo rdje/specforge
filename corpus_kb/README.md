@@ -30,7 +30,8 @@ It can inform humans, future LLM sessions, benchmark design, rescan targeting, a
 - `timing/kg-fixtures.md`: auto-refreshable timing motif fixture-family projection plus human synthesis notes.
 - `infra/kg-fixtures.md`: auto-refreshable infrastructure/polarity fixture-family projection plus human synthesis notes.
 - `protocols/amba-kg-fixtures.md`: auto-refreshable AMBA-family fixture projection plus human synthesis notes.
-- `prior_candidates/kg-fixture-candidates.md`: auto-refreshable review-only prior-candidate projection, family-level gate matrix, and human synthesis notes.
+- `prior_candidates/kg-fixture-candidates.md`: auto-refreshable review-only prior-candidate projection, readiness summary, family-level gate matrix, and human synthesis notes.
+- `prior_candidates/kg-fixture-candidates.json`: auto-refreshable schema-versioned prior-candidate readiness manifest for review automation; it is not a `CorpusMemory` artifact or approval record.
 
 Future page families can include:
 

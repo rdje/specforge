@@ -29,6 +29,19 @@ Every machine-usable promotion must still pass through an explicit schema, KG-be
 | `temporal_phrase_prior` | `CorpusMemory.temporal_phrase_priors` | `2` | `temporal_prior_guided_cycle_window_gold` | `temporal_prior_guided_cycle_window_without_prior_negative` | typed CorpusMemory schema; paired KG-bench gold/negative coverage; validated IntentIR harvest input; local-grounding temporal consumer |
 | `visual_motif_prior` | `CorpusMemory.visual_motif_priors` | `2` | `visual_motif_prior_guided_diagram_classification_gold` | `visual_motif_prior_guided_diagram_classification_without_prior_negative` | typed CorpusMemory schema; paired KG-bench gold/negative coverage; validated IntentIR harvest input; VLM/multimodal corroboration gate |
 
+### Readiness Summary
+Readiness is fixture-surface readiness only. It is not promotion approval and does not allow `CorpusMemory` or canonical IR mutation.
+
+| candidate_kind | readiness | supporting | positive | guard | promotion_boundary |
+| --- | --- | ---: | ---: | ---: | --- |
+| `actor_taxonomy_prior` | `fixture_paired_review_ready` | `2` | `1` | `1` | `review_only_no_corpus_memory_or_canonical_ir_mutation` |
+| `negative_knowledge_prior` | `caution_surface_review_ready` | `5` | `5` | `5` | `review_only_no_corpus_memory_or_canonical_ir_mutation` |
+| `semantic_modality_reliability_prior` | `fixture_paired_review_ready` | `2` | `1` | `1` | `review_only_no_corpus_memory_or_canonical_ir_mutation` |
+| `semantic_phrase_prior` | `fixture_paired_review_ready` | `4` | `2` | `2` | `review_only_no_corpus_memory_or_canonical_ir_mutation` |
+| `table_shape_prior` | `fixture_paired_review_ready` | `4` | `2` | `2` | `review_only_no_corpus_memory_or_canonical_ir_mutation` |
+| `temporal_phrase_prior` | `fixture_paired_review_ready` | `2` | `1` | `1` | `review_only_no_corpus_memory_or_canonical_ir_mutation` |
+| `visual_motif_prior` | `fixture_paired_review_ready` | `2` | `1` | `1` | `review_only_no_corpus_memory_or_canonical_ir_mutation` |
+
 ### Promotion Gate Review Matrix
 These gates describe the family-level implementation surface already visible to review. They are not approval records and do not grant mutation authority.
 

@@ -36,6 +36,7 @@
 - Dedicated corpus-KB typed prior-memory fixture page: Done
 - Semantic/truthfulness corpus-KB fixture pattern page: Done
 - Prior-candidate corpus-KB gate review matrix: Done
+- Prior-candidate corpus-KB readiness manifest: Done
 - Dedicated corpus-KB state-machine fixture page: Done
 - `specforge nlp-enrich` command created: Done
 - `specforge converge` command created: Done

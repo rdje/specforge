@@ -48,6 +48,7 @@ The first refreshable page families are:
 - `corpus_kb/infra/kg-fixtures.md`
 - `corpus_kb/protocols/amba-kg-fixtures.md`
 - `corpus_kb/prior_candidates/kg-fixture-candidates.md`
+- `corpus_kb/prior_candidates/kg-fixture-candidates.json`
 
 The validation page is refreshed from validation report sidecars:
 
@@ -74,6 +75,7 @@ The KG fixture projection records fixture paths, pass/fail status, and a review-
 The same refresh also updates dedicated semantic/truthfulness pattern, typed-prior-memory, table, visual, state-machine, timing, infrastructure/polarity, and AMBA-family pages.
 It also updates a review-only prior-candidate page that names target `CorpusMemory` schema surfaces, required gates, and a family-level promotion gate review matrix without writing corpus memory.
 That matrix is still only a review checklist; it is not an approval record and cannot promote a concrete prior.
+The sibling JSON readiness manifest exposes the same non-promoting candidate surface for review automation, including readiness labels such as `fixture_paired_review_ready` and `caution_surface_review_ready`.
 It is a review surface, not a replacement for the executable `specforge kg-bench` gate.
 Fixture-local validation runs quietly during this projection, so the command output remains a concise corpus-KB refresh summary.
 Fixture-family labels summarize coverage only; they do not mutate canonical IR or typed prior memory.

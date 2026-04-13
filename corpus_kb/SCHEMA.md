@@ -60,6 +60,9 @@ Prior-candidate managed rows must remain non-promoting.
 They can name a target `CorpusMemory` schema and required gates, but they must also preserve explicit non-mutation state for canonical IR and corpus memory until a separate validated promotion workflow exists.
 If a prior-candidate block includes a gate matrix, the matrix is a family-level review checklist only.
 It may name visible schema, fixture, harvest, and consumer surfaces, but it must still preserve `review_scope: family_surface_not_individual_prior` and a non-mutation promotion boundary.
+The sibling `prior_candidates/kg-fixture-candidates.json` manifest is the machine-readable form of that review index.
+It may expose fixture counts, readiness labels, gate identifiers, and fixture names for future tooling, but it must keep `canonical_mutation_allowed: false`, `corpus_memory_mutation_allowed: false`, and `promotion_boundary: review_only_no_corpus_memory_or_canonical_ir_mutation`.
+Readiness labels such as `fixture_paired_review_ready` or `caution_surface_review_ready` mean the fixture surface is reviewable; they do not approve any concrete prior record.
 
 Typed prior-memory fixture-family pages are also non-promoting.
 They can summarize KG fixtures that stage or exercise local `CorpusMemory`, but they are not `generated/prior_memory/corpus_memory.json` and cannot add, edit, approve, or delete machine-usable priors.

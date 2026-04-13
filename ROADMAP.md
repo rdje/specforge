@@ -660,6 +660,7 @@
   - the prior-candidate page now includes a family-level promotion gate review matrix for schema, fixture, harvest, consumer, and non-mutation boundary status without allowing corpus KB to write `CorpusMemory` or canonical IR
   - `specforge corpus-kb --kg-fixtures-root ...` now refreshes a dedicated VLM state-machine fixture-family page covering label hygiene, transition endpoint grounding, duplicate-initial merge, and initial-cardinality warning fixtures
   - `specforge corpus-kb --kg-fixtures-root ...` now refreshes a dedicated typed prior-memory fixture-family page covering prior-guided gold/negative pairs and caution-only negative-knowledge behavior without writing `CorpusMemory`
+  - `specforge corpus-kb --kg-fixtures-root ...` now refreshes a tracked review-only prior-candidate readiness manifest at `corpus_kb/prior_candidates/kg-fixture-candidates.json` plus a Markdown readiness summary, exposing paired fixture/caution-surface readiness without approving priors or mutating `CorpusMemory`
 - remaining:
   - add further specialized page families beyond the current semantic/truthfulness, typed-prior-memory, table, visual, state-machine, timing, infrastructure, protocol, and prior-candidate pages when new evidence families need their own durable corpus synthesis surfaces
   - continue deepening the prior-candidate bridge only through typed schemas, KG-bench fixtures, and validation gates; do not let corpus-KB candidates directly write `CorpusMemory` or canonical IR

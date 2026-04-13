@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-13 R15g prior-candidate readiness manifest
+- This slice deepens the prior-candidate bridge again, but still keeps the corpus KB out of the truth path.
+- `specforge corpus-kb --kg-fixtures-root ...` now emits a tracked `corpus_kb/prior_candidates/kg-fixture-candidates.json` manifest beside the Markdown planning page. The manifest is intentionally machine-readable for review, automation, and future implementation planning, not machine-promoting.
+- The manifest records schema version, source, review scope, non-mutation flags, candidate readiness, fixture counts, positive/guard fixture names, required gate text, structured gate identifiers, and the `review_only_no_corpus_memory_or_canonical_ir_mutation` promotion boundary.
+- The Markdown page now mirrors that state with a `Readiness Summary` table. Paired prior families use `fixture_paired_review_ready`; negative knowledge uses `caution_surface_review_ready` because its current fixture surface is caution-only rather than a normal gold/without-prior pair.
+- This gives future sessions a durable answer to "which prior families look ready to review next?" while preserving the core rule: corpus-KB readiness is not approval, not `CorpusMemory`, and not canonical IR mutation.
+
 ## 2026-04-13 R15g typed prior-memory corpus KB page
 - This slice adds a dedicated `corpus_kb/prior_memory/kg-fixtures.md` family page for typed prior-memory fixture behavior that was previously visible only through the aggregate benchmark, broad pattern page, and prior-candidate planning surface.
 - The page is selected by the existing `typed prior memory` fixture-family label and is refreshed through the same managed-block path as the other KG fixture-family pages.
