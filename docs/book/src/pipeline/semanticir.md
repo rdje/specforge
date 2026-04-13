@@ -54,6 +54,7 @@ Unsafe forced winners are worse than honest contestation.
 
 Interface-shape conflicts follow the same rule.
 If declarations disagree about a signal's direction or width, `SemanticIR` records the conflict and keeps the canonical hint unresolved; later repeated declarations cannot resurrect the old direction or width just because they appear again.
+The KG fixture harness can now assert those `interface_signal_conflicts` directly by signal, conflict kind, and preserved observation values, so this contract is executable rather than only described as a validator count.
 
 ### Declared records stay canonical
 

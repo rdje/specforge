@@ -22,21 +22,23 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `5b56ce3`
-- latest_commit_brief_message: `test(kg): assert semantic conflict shape`
-- note: the current session is executing the PNT continuation against that baseline and adding direct KG-bench signal-connectivity conflict shape expectations
+- latest_commit_hash: `e1e629e`
+- latest_commit_brief_message: `test(kg): assert connectivity conflict shape`
+- note: the current session is executing the PNT continuation against that baseline and adding direct KG-bench interface-signal conflict shape expectations
 
 ## Recent commit chain (last 5)
+- `e1e629e` test(kg): assert connectivity conflict shape
 - `5b56ce3` test(kg): assert semantic conflict shape
 - `92344fa` test(kg): assert temporal conflict shape
 - `7490cb5` test(kg): assert temporal rule shape
 - `f99956e` test(kg): assert clock reset topology
-- `37cd89a` fix(semantic): reject motion-only timing annotations
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- the current KG-quality follow-on extends `kg-bench` with direct canonical signal-connectivity conflict expectations for `signal_connectivity_conflicts`
-- the current KG-quality follow-on strengthens `multi_producer_conflict_negative` and `negative_knowledge_prior_guided_connectivity_conflict_caution_gold` so the `PREADY` multi-producer conflict is asserted by signal, kind, and conflicting actor names at the `SemanticIR` / `IntentIR` stages
+- the current KG-quality follow-on extends `kg-bench` with direct canonical interface-signal conflict expectations for `interface_signal_conflicts`
+- the current KG-quality follow-on strengthens `negative_knowledge_prior_guided_interface_conflict_caution_gold` so the `DATA` direction mismatch (`input` / `output`) and width mismatch (`8` / `16`) are asserted by signal, conflict kind, and observation values at the `SemanticIR` / `IntentIR` stages
+- the latest committed KG-quality follow-on extended `kg-bench` with direct canonical signal-connectivity conflict expectations for `signal_connectivity_conflicts`
+- the latest committed KG-quality follow-on strengthened `multi_producer_conflict_negative` and `negative_knowledge_prior_guided_connectivity_conflict_caution_gold` so the `PREADY` multi-producer conflict is asserted by signal, kind, and conflicting actor names at the `SemanticIR` / `IntentIR` stages
 - the latest committed KG-quality follow-on extended `kg-bench` with direct canonical signal-semantic conflict expectations for `signal_semantic_conflicts`
 - the latest committed KG-quality follow-on strengthened `visual_sources_semantic_conflict_negative` so the `XCTRL` multimodal conflict is asserted as visual-caption `handshake_valid_like` evidence versus VLM timing-diagram annotation `handshake_ready_like` evidence at the `SemanticIR` / `IntentIR` stages
 - the latest committed KG-quality follow-on extended `kg-bench` with direct canonical temporal-conflict expectations for `temporal_conflicts`
@@ -90,6 +92,7 @@
 - the Rust warning baseline is clean and now enforced in the shared local/hosted CI path rather than suppressed with `#[allow(dead_code)]`
 - README bootstrap currently resolves to `SESSION_BOOTSTRAP.md`, which instructs future agents to read the referenced live docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if necessary, and then continue from the roadmap
 - this README/PNT continuation observed 30 Rust source files and 58,291 lines under `crates/specforge/src`, with the CLI now including `doctor`, `converge`, `enrich`, `validate`, `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, `corpus-kb`, and `nlp-enrich` beside the core staged IR commands
+- `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the KG-bench interface-signal conflict expectation path; the tracked KG fixture count remains `57`, focused KG-bench validation passes for the strengthened prior-guided interface-conflict fixture, the full tracked KG suite reports `57/57`, and full local CI passes with `313` Rust tests plus the mdBook build
 - `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the KG-bench signal-connectivity conflict expectation path; the tracked KG fixture count remains `57`, focused KG-bench validation passes for the strengthened multi-producer and prior-guided connectivity-conflict fixtures, the full tracked KG suite reports `57/57`, and full local CI passes with `313` Rust tests plus the mdBook build
 - `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the KG-bench signal-semantic conflict expectation path; the tracked KG fixture count remains `57`, focused KG-bench validation passes for the strengthened visual semantic-conflict fixture, the full tracked KG suite reports `57/57`, and full local CI passes with `313` Rust tests plus the mdBook build
 - `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the KG-bench temporal-conflict expectation path; the tracked KG fixture count remains `57`, focused KG-bench validation passes for the strengthened negative-knowledge temporal-conflict caution fixture, the full tracked KG suite reports `57/57`, and full local CI passes with `313` Rust tests plus the mdBook build

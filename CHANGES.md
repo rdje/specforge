@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-04-13 (KG bench asserts interface conflict shape)
+
+### Added: canonical interface-signal conflict expectations in KG fixtures
+- `kg-bench` fixtures can now assert canonical `interface_signal_conflicts` directly at the `SemanticIR` and `IntentIR` stages.
+- The new `interface_signal_conflicts_include` matcher supports partial checks for conflict signal, optional conflict id, conflict kind, and included observation values plus supporting statement ids.
+- Strengthened `negative_knowledge_prior_guided_interface_conflict_caution_gold` so it locks the `DATA` conflict shape directly: `direction_mismatch` preserves `input` / `output` observations, `width_mismatch` preserves `8` / `16` observations, and prior-memory caution still cannot mutate that local interface-shape conflict away.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality negative_knowledge_prior_guided_interface_conflict_caution_gold` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `57` passed / `0` failed fixtures
+- `cargo test --manifest-path Cargo.toml --lib kg_bench -- --nocapture` -> passed with the tracked fixture suite reporting `57` passed / `0` failed fixtures
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `313` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+
 ## 2026-04-13 (KG bench asserts connectivity conflict shape)
 
 ### Added: canonical signal-connectivity conflict expectations in KG fixtures

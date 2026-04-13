@@ -56,6 +56,10 @@ Fixtures can assert canonical signal-semantic conflicts directly as well.
 `signal_semantic_conflicts_include` checks the conflicted signal and included observations by semantic tag, source kind, source text, and supporting evidence ids.
 That lets multimodal disagreement fixtures prove, for example, that visual-caption evidence and VLM timing-diagram annotation evidence support different handshake roles without reducing the test to "one conflict exists."
 
+Fixtures can assert canonical interface-signal conflicts directly as well.
+`interface_signal_conflicts_include` checks the conflicted signal, conflict kind, and included observation values plus supporting statement ids.
+That lets direction/width disagreement fixtures prove that the canonical layers preserved the exact contested shape, such as `input` versus `output` or width `8` versus `16`, rather than only counting that some interface conflict exists.
+
 Fixtures can also assert canonical clock/reset infrastructure records directly.
 `infrastructure_signals_include` checks the typed infrastructure signal surface, and `infrastructure_topologies_include` checks explicit current-document topology such as clock-gated branches, reset synchronizer stages, and reset-tree targets.
 That keeps infrastructure doctrine executable instead of leaving it as prose-only guidance or aggregate validation metrics.

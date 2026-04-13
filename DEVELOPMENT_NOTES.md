@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-13 KG-bench interface-signal conflict expectations
+- This slice moves interface declaration conflict truth from count-only confidence into direct typed conflict assertions.
+- `kg-bench` can now assert `SemanticIR` / `IntentIR` `interface_signal_conflicts` with partial matching on conflict signal, optional conflict id, conflict kind, and included observation values plus supporting statement ids.
+- `negative_knowledge_prior_guided_interface_conflict_caution_gold` now proves the `DATA` interface-shape conflict is specifically both a `direction_mismatch` over `input` / `output` and a `width_mismatch` over `8` / `16`.
+- This preserves the same prior boundary as the other negative-knowledge caution fixtures: prior memory can add caution/rescan/corroboration guidance, but it cannot repair, hide, or rewrite current-document interface-shape truth.
+
 ## 2026-04-13 KG-bench signal-connectivity conflict expectations
 - This slice moves multi-producer graph conflict truth from count-only confidence into direct typed conflict assertions.
 - `kg-bench` can now assert `SemanticIR` / `IntentIR` `signal_connectivity_conflicts` with partial matching on conflict signal, optional conflict id, conflict kind, conflicting actor ids/names, and supporting statement ids.

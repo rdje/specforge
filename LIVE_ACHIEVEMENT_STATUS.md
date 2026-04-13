@@ -40,6 +40,7 @@
 - Dedicated corpus-KB state-machine fixture page: Done
 - KG benchmark harness can now assert canonical signal-connectivity conflict shape directly: Done
 - KG benchmark harness can now assert canonical signal-semantic conflict shape directly: Done
+- KG benchmark harness can now assert canonical interface-signal conflict shape directly: Done
 - `specforge nlp-enrich` command created: Done
 - `specforge converge` command created: Done
 - End-to-end source-to-IntentIR pipeline implemented: Done
