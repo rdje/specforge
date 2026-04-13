@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-13 KG-bench signal-semantic conflict expectations
+- This slice moves signal-semantic conflict truth from count-only confidence into direct typed conflict assertions.
+- `kg-bench` can now assert `SemanticIR` / `IntentIR` `signal_semantic_conflicts` with partial matching on conflict signal, optional conflict id, and included observations by semantic tags, source kind, source text, and supporting statement/table/visual evidence ids.
+- `visual_sources_semantic_conflict_negative` now proves the `XCTRL` multimodal disagreement is a real shape: visual-caption evidence supports `handshake_valid_like`, VLM timing-diagram annotation evidence supports `handshake_ready_like`, and the canonical layers preserve the conflict plus non-decisive arbitration rather than forcing a winner.
+- This keeps multimodal arbitration drift visible in the executable benchmark surface, not just in validation metrics or residual/finding side effects.
+
 ## 2026-04-13 KG-bench temporal-conflict expectations
 - This slice moves temporal contradiction truth from count-only confidence into direct typed temporal-conflict assertions.
 - `kg-bench` can now assert `SemanticIR` / `IntentIR` `temporal_conflicts` with partial matching on signal name, phase, clock signal, edge, cycle window, antecedent predicates, conflicting values, supporting rule ids, and supporting statement ids.

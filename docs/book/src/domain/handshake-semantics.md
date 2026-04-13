@@ -168,6 +168,9 @@ Literal name fallback is intentionally blocked when preserved role evidence is c
 For example, a signal named `XVALID` might look valid-like by spelling.
 But if the document evidence also supports a competing ready-like interpretation, the pipeline should preserve the contest instead of silently accepting the name.
 
+The KG benchmark harness can assert that preserved contest directly with `signal_semantic_conflicts_include`.
+This matters for multimodal cases where, for example, a visual caption supports valid-like meaning while a VLM timing-diagram annotation supports ready-like meaning for the same signal.
+
 That can surface as a blocked handshake-name fallback residual.
 
 This is a feature, not a failure.
@@ -188,4 +191,3 @@ When debugging handshake recovery, inspect:
 
 The goal is not to make every signal resolve immediately.
 The goal is to make the evidence trail strong enough that accepted handshake semantics are trustworthy.
-

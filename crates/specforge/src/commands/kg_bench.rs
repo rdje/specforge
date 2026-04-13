@@ -8,7 +8,10 @@ use tempfile::tempdir;
 use crate::cli::{KgBenchArgs, ValidateArgs};
 use crate::commands::validate;
 use crate::error::{AppError, Result};
-use crate::ir::evidence::EvidenceIr;
+use crate::ir::evidence::{
+    EvidenceIr, SignalSemanticConflictObservationRecord, SignalSemanticConflictRecord,
+    SignalSemanticHintSourceKind, SignalSemanticTag,
+};
 use crate::ir::intent::{IntentAssumption, IntentIr};
 use crate::ir::prior_memory::{
     ActorTaxonomyPriorRecord, CorpusMemory, CorpusMemoryUpdatePolicyRecord,
@@ -171,6 +174,8 @@ struct CanonicalStageExpectations {
     temporal_rules_include: Vec<ExpectedTemporalRule>,
     #[serde(default)]
     temporal_conflicts_include: Vec<ExpectedTemporalConflict>,
+    #[serde(default)]
+    signal_semantic_conflicts_include: Vec<ExpectedSignalSemanticConflict>,
     temporal_rule_count: Option<usize>,
     temporal_rules_with_handshake_completion: Option<usize>,
     temporal_rules_with_alias_dependent_handshake_completion: Option<usize>,
@@ -265,6 +270,31 @@ struct ExpectedTemporalConflict {
     supporting_rule_ids_include: Vec<String>,
     #[serde(default)]
     supporting_statement_ids_include: Vec<String>,
+}
+
+#[derive(Debug, Deserialize)]
+struct ExpectedSignalSemanticConflict {
+    signal_name: String,
+    #[serde(default)]
+    conflict_id: Option<String>,
+    #[serde(default)]
+    observations_include: Vec<ExpectedSignalSemanticConflictObservation>,
+}
+
+#[derive(Debug, Deserialize)]
+struct ExpectedSignalSemanticConflictObservation {
+    #[serde(default)]
+    semantic_tags_include: Vec<SignalSemanticTag>,
+    #[serde(default)]
+    source_kind: Option<SignalSemanticHintSourceKind>,
+    #[serde(default)]
+    source_text: Option<String>,
+    #[serde(default)]
+    supporting_statement_ids_include: Vec<String>,
+    #[serde(default)]
+    supporting_table_ids_include: Vec<String>,
+    #[serde(default)]
+    supporting_visual_evidence_ids_include: Vec<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -507,7 +537,7 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
             &[],
             &semantic_ir.temporal_rules,
             semantic_ir.signal_polarity_conflicts.len(),
-            semantic_ir.signal_semantic_conflicts.len(),
+            &semantic_ir.signal_semantic_conflicts,
             semantic_ir.signal_connectivity_conflicts.len(),
             semantic_ir.interface_signal_conflicts.len(),
             &semantic_ir.temporal_conflicts,
@@ -528,7 +558,7 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
             &intent_ir.assumptions,
             &intent_ir.temporal_rules,
             intent_ir.signal_polarity_conflicts.len(),
-            intent_ir.signal_semantic_conflicts.len(),
+            &intent_ir.signal_semantic_conflicts,
             intent_ir.signal_connectivity_conflicts.len(),
             intent_ir.interface_signal_conflicts.len(),
             &intent_ir.temporal_conflicts,
@@ -590,7 +620,7 @@ fn evaluate_canonical_expectations(
     assumptions: &[IntentAssumption],
     temporal_rules: &[TemporalRuleRecord],
     signal_polarity_conflicts: usize,
-    signal_semantic_conflicts: usize,
+    signal_semantic_conflicts: &[SignalSemanticConflictRecord],
     signal_connectivity_conflicts: usize,
     interface_signal_conflicts: usize,
     temporal_conflicts: &[TemporalConflictRecord],
@@ -983,9 +1013,17 @@ fn evaluate_canonical_expectations(
         label,
         "signal_semantic_conflicts",
         expectations.signal_semantic_conflicts,
-        signal_semantic_conflicts,
+        signal_semantic_conflicts.len(),
         failures,
     );
+    for expected_signal_semantic_conflict in &expectations.signal_semantic_conflicts_include {
+        evaluate_expected_signal_semantic_conflict(
+            label,
+            expected_signal_semantic_conflict,
+            signal_semantic_conflicts,
+            failures,
+        );
+    }
     assert_optional_count(
         label,
         "signal_connectivity_conflicts",
@@ -1133,6 +1171,79 @@ fn temporal_conflict_matches_expectation(
             .supporting_statement_ids_include
             .iter()
             .all(|statement_id| conflict.supporting_statement_ids.contains(statement_id))
+}
+
+fn evaluate_expected_signal_semantic_conflict(
+    label: &str,
+    expectation: &ExpectedSignalSemanticConflict,
+    signal_semantic_conflicts: &[SignalSemanticConflictRecord],
+    failures: &mut Vec<String>,
+) {
+    let found = signal_semantic_conflicts
+        .iter()
+        .any(|conflict| signal_semantic_conflict_matches_expectation(conflict, expectation));
+
+    if !found {
+        failures.push(format!(
+            "{label}: missing signal semantic conflict matching signal `{}`, conflict id `{:?}`, and observations {:?}",
+            expectation.signal_name, expectation.conflict_id, expectation.observations_include
+        ));
+    }
+}
+
+fn signal_semantic_conflict_matches_expectation(
+    conflict: &SignalSemanticConflictRecord,
+    expectation: &ExpectedSignalSemanticConflict,
+) -> bool {
+    conflict.signal_name == expectation.signal_name
+        && expectation
+            .conflict_id
+            .as_ref()
+            .is_none_or(|conflict_id| conflict.conflict_id == *conflict_id)
+        && expectation
+            .observations_include
+            .iter()
+            .all(|expected_observation| {
+                conflict.observations.iter().any(|observation| {
+                    signal_semantic_conflict_observation_matches_expectation(
+                        observation,
+                        expected_observation,
+                    )
+                })
+            })
+}
+
+fn signal_semantic_conflict_observation_matches_expectation(
+    observation: &SignalSemanticConflictObservationRecord,
+    expectation: &ExpectedSignalSemanticConflictObservation,
+) -> bool {
+    expectation
+        .semantic_tags_include
+        .iter()
+        .all(|tag| observation.semantic_tags.contains(tag))
+        && expectation
+            .source_kind
+            .is_none_or(|source_kind| observation.source_kind == source_kind)
+        && expectation
+            .source_text
+            .as_ref()
+            .is_none_or(|source_text| observation.source_text == *source_text)
+        && expectation
+            .supporting_statement_ids_include
+            .iter()
+            .all(|statement_id| observation.supporting_statement_ids.contains(statement_id))
+        && expectation
+            .supporting_table_ids_include
+            .iter()
+            .all(|table_id| observation.supporting_table_ids.contains(table_id))
+        && expectation
+            .supporting_visual_evidence_ids_include
+            .iter()
+            .all(|visual_evidence_id| {
+                observation
+                    .supporting_visual_evidence_ids
+                    .contains(visual_evidence_id)
+            })
 }
 
 fn evaluate_expected_infrastructure_signal(

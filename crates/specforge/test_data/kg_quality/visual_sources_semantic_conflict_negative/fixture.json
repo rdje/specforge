@@ -27,7 +27,22 @@
       "non_decisive_semantic_arbitration_signal_names_include": ["XCTRL"],
       "resolved_semantic_role_signal_names_exclude": ["XCTRL"],
       "semantic_consensus_signal_names_exclude": ["XCTRL"],
-      "signal_semantic_conflicts": 1
+      "signal_semantic_conflicts": 1,
+      "signal_semantic_conflicts_include": [
+        {
+          "signal_name": "XCTRL",
+          "observations_include": [
+            {
+              "semantic_tags_include": ["handshake_valid_like"],
+              "source_kind": "visual_caption"
+            },
+            {
+              "semantic_tags_include": ["handshake_ready_like"],
+              "source_kind": "vlm_timing_diagram_annotation"
+            }
+          ]
+        }
+      ]
     },
     "intent": {
       "signal_names_include": ["XCTRL"],
@@ -38,7 +53,22 @@
       "non_decisive_semantic_arbitration_signal_names_include": ["XCTRL"],
       "resolved_semantic_role_signal_names_exclude": ["XCTRL"],
       "semantic_consensus_signal_names_exclude": ["XCTRL"],
-      "signal_semantic_conflicts": 1
+      "signal_semantic_conflicts": 1,
+      "signal_semantic_conflicts_include": [
+        {
+          "signal_name": "XCTRL",
+          "observations_include": [
+            {
+              "semantic_tags_include": ["handshake_valid_like"],
+              "source_kind": "visual_caption"
+            },
+            {
+              "semantic_tags_include": ["handshake_ready_like"],
+              "source_kind": "vlm_timing_diagram_annotation"
+            }
+          ]
+        }
+      ]
     },
     "validation": {
       "evidence": {
