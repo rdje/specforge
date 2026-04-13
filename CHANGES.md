@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-04-13 (R15g prior-candidate corpus KB projection)
+
+### Added: review-only prior-candidate bridge
+- `specforge corpus-kb --kg-fixtures-root ...` now refreshes `corpus_kb/prior_candidates/kg-fixture-candidates.md` from KG fixtures that already encode prior-guided gold/negative/caution behavior.
+- The candidate projection groups fixture-backed candidates for `actor_taxonomy_prior`, `semantic_phrase_prior`, `semantic_modality_reliability_prior`, `temporal_phrase_prior`, `table_shape_prior`, `visual_motif_prior`, and `negative_knowledge_prior`.
+- Each candidate row records the target `CorpusMemory` schema surface, supporting fixture count, positive fixtures, guard/caution fixtures, and required promotion gates.
+- The page is explicitly non-promoting: `promotion_status` is `candidate_not_promoted_review_required`, `canonical_mutation_allowed` is `false`, and `corpus_memory_mutation_allowed` is `false`.
+
+### Validation
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml --lib corpus_kb -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed the aggregate, fixture-family, and prior-candidate corpus-KB pages with `55` passed / `0` failed fixtures
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, `313` Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build
+
 ## 2026-04-13 (R15g dedicated corpus KB fixture-family pages)
 
 ### Added: dedicated KG fixture-derived page families

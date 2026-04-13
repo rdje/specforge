@@ -51,6 +51,14 @@ The current managed block families are:
 <!-- corpus_kb_kg_fixture_family:end -->
 ```
 
+```text
+<!-- corpus_kb_prior_candidates:start -->
+<!-- corpus_kb_prior_candidates:end -->
+```
+
+Prior-candidate managed rows must remain non-promoting.
+They can name a target `CorpusMemory` schema and required gates, but they must also preserve explicit non-mutation state for canonical IR and corpus memory until a separate validated promotion workflow exists.
+
 ## Promotion Policy
 
 Corpus KB observations can become machine-usable only by moving through a stricter surface:

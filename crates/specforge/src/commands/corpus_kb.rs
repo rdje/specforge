@@ -13,6 +13,8 @@ const KG_FIXTURES_MANAGED_START: &str = "<!-- corpus_kb_kg_fixtures:start -->";
 const KG_FIXTURES_MANAGED_END: &str = "<!-- corpus_kb_kg_fixtures:end -->";
 const KG_FIXTURE_FAMILY_MANAGED_START: &str = "<!-- corpus_kb_kg_fixture_family:start -->";
 const KG_FIXTURE_FAMILY_MANAGED_END: &str = "<!-- corpus_kb_kg_fixture_family:end -->";
+const PRIOR_CANDIDATES_MANAGED_START: &str = "<!-- corpus_kb_prior_candidates:start -->";
+const PRIOR_CANDIDATES_MANAGED_END: &str = "<!-- corpus_kb_prior_candidates:end -->";
 
 const TABLE_FAMILY_LABELS: &[&str] = &["table extraction and hygiene"];
 const VISUAL_FAMILY_LABELS: &[&str] = &[
@@ -23,6 +25,51 @@ const VISUAL_FAMILY_LABELS: &[&str] = &[
 const TIMING_FAMILY_LABELS: &[&str] = &["temporal semantics", "VLM timing diagrams"];
 const INFRA_FAMILY_LABELS: &[&str] = &["infrastructure semantics", "polarity semantics"];
 const AMBA_PROTOCOL_FAMILY_LABELS: &[&str] = &["protocol-family AMBA/APB/AHB/AXI"];
+
+const PRIOR_CANDIDATE_SPECS: &[PriorCandidateSpec] = &[
+    PriorCandidateSpec {
+        marker: "actor_taxonomy_prior",
+        candidate_kind: "actor_taxonomy_prior",
+        target_schema: "CorpusMemory.actor_taxonomy_priors",
+        required_gates: "typed CorpusMemory schema; paired KG-bench gold/negative coverage; validated IntentIR harvest input; local-grounding consumer",
+    },
+    PriorCandidateSpec {
+        marker: "semantic_modality_reliability_prior",
+        candidate_kind: "semantic_modality_reliability_prior",
+        target_schema: "CorpusMemory.semantic_modality_reliability_priors",
+        required_gates: "typed CorpusMemory schema; paired KG-bench conflict coverage; validated IntentIR harvest input; local-grounded arbitration consumer",
+    },
+    PriorCandidateSpec {
+        marker: "semantic_prior",
+        candidate_kind: "semantic_phrase_prior",
+        target_schema: "CorpusMemory.semantic_phrase_priors",
+        required_gates: "typed CorpusMemory schema; paired KG-bench gold/negative coverage; validated IntentIR harvest input; local-grounding semantic consumer",
+    },
+    PriorCandidateSpec {
+        marker: "temporal_prior",
+        candidate_kind: "temporal_phrase_prior",
+        target_schema: "CorpusMemory.temporal_phrase_priors",
+        required_gates: "typed CorpusMemory schema; paired KG-bench gold/negative coverage; validated IntentIR harvest input; local-grounding temporal consumer",
+    },
+    PriorCandidateSpec {
+        marker: "table_shape_prior",
+        candidate_kind: "table_shape_prior",
+        target_schema: "CorpusMemory.table_shape_priors",
+        required_gates: "typed CorpusMemory schema; paired KG-bench gold/negative coverage; validated SourceIR/IntentIR harvest chain; local table-kind consumer",
+    },
+    PriorCandidateSpec {
+        marker: "visual_motif_prior",
+        candidate_kind: "visual_motif_prior",
+        target_schema: "CorpusMemory.visual_motif_priors",
+        required_gates: "typed CorpusMemory schema; paired KG-bench gold/negative coverage; validated IntentIR harvest input; VLM/multimodal corroboration gate",
+    },
+    PriorCandidateSpec {
+        marker: "negative_knowledge_prior",
+        candidate_kind: "negative_knowledge_prior",
+        target_schema: "CorpusMemory.negative_knowledge_priors",
+        required_gates: "typed CorpusMemory schema; caution-only validation consumer; paired KG-bench conflict/residual coverage; rescan guidance review gate",
+    },
+];
 
 const KG_FIXTURE_FAMILY_PAGE_SPECS: &[KgFixtureFamilyPageSpec] = &[
     KgFixtureFamilyPageSpec {
@@ -98,6 +145,23 @@ struct KgFixtureFamilyPageSpec {
     description: &'static str,
     human_prompt: &'static str,
     labels: &'static [&'static str],
+}
+
+struct PriorCandidateSpec {
+    marker: &'static str,
+    candidate_kind: &'static str,
+    target_schema: &'static str,
+    required_gates: &'static str,
+}
+
+#[derive(Debug)]
+struct PriorCandidateProjection {
+    candidate_kind: &'static str,
+    target_schema: &'static str,
+    required_gates: &'static str,
+    supporting_fixtures: BTreeSet<String>,
+    positive_fixtures: BTreeSet<String>,
+    guard_fixtures: BTreeSet<String>,
 }
 
 pub fn run(args: CorpusKbArgs) -> Result<()> {
@@ -206,6 +270,7 @@ fn refresh_kg_fixtures_page(
     fs::write(&page_path, updated)?;
     let mut page_paths = vec![page_path];
     page_paths.extend(refresh_kg_fixture_family_pages(repo_root, &entries)?);
+    page_paths.push(refresh_prior_candidate_page(repo_root, &entries)?);
 
     Ok(KgFixturesRefresh {
         page_paths,
@@ -242,6 +307,31 @@ fn refresh_kg_fixture_family_pages(
         page_paths.push(page_path);
     }
     Ok(page_paths)
+}
+
+fn refresh_prior_candidate_page(
+    repo_root: &Path,
+    entries: &[KgFixtureProjection],
+) -> Result<PathBuf> {
+    let page_path = repo_root
+        .join("corpus_kb")
+        .join("prior_candidates")
+        .join("kg-fixture-candidates.md");
+    if let Some(parent) = page_path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    let existing =
+        fs::read_to_string(&page_path).unwrap_or_else(|_| default_prior_candidate_page());
+    let managed_block = render_prior_candidate_block(entries);
+    let updated = replace_managed_block(
+        &existing,
+        &managed_block,
+        PRIOR_CANDIDATES_MANAGED_START,
+        PRIOR_CANDIDATES_MANAGED_END,
+        "## Managed Prior Candidate Projection",
+    )?;
+    fs::write(&page_path, updated)?;
+    Ok(page_path)
 }
 
 fn load_validation_report_projections(
@@ -502,6 +592,99 @@ fn render_kg_fixture_family_block(
     output
 }
 
+fn render_prior_candidate_block(entries: &[KgFixtureProjection]) -> String {
+    let candidates = prior_candidate_projections(entries);
+    let mut output = String::new();
+    output.push_str(PRIOR_CANDIDATES_MANAGED_START);
+    output.push('\n');
+    output.push_str("<!-- This block is refreshed by `specforge corpus-kb`. -->\n\n");
+    output.push_str("- source: `kg-bench fixtures`\n");
+    output.push_str("- promotion_status: `candidate_not_promoted_review_required`\n");
+    output.push_str("- canonical_mutation_allowed: `false`\n");
+    output.push_str("- corpus_memory_mutation_allowed: `false`\n\n");
+
+    if candidates.is_empty() {
+        output
+            .push_str("- No prior candidates were projected from the current KG fixture run.\n\n");
+    } else {
+        output.push_str("| candidate_kind | target_schema | supporting | positive_gates | guard_gates | required_gates |\n");
+        output.push_str("| --- | --- | ---: | --- | --- | --- |\n");
+        for candidate in candidates {
+            output.push_str("| `");
+            output.push_str(candidate.candidate_kind);
+            output.push_str("` | `");
+            output.push_str(candidate.target_schema);
+            output.push_str("` | `");
+            output.push_str(&candidate.supporting_fixtures.len().to_string());
+            output.push_str("` | ");
+            output.push_str(&render_fixture_set(&candidate.positive_fixtures));
+            output.push_str(" | ");
+            output.push_str(&render_fixture_set(&candidate.guard_fixtures));
+            output.push_str(" | ");
+            output.push_str(&escape_markdown_line(candidate.required_gates));
+            output.push_str(" |\n");
+        }
+        output.push('\n');
+    }
+
+    output.push_str(PRIOR_CANDIDATES_MANAGED_END);
+    output.push('\n');
+    output
+}
+
+fn prior_candidate_projections(entries: &[KgFixtureProjection]) -> Vec<PriorCandidateProjection> {
+    let mut candidates = BTreeMap::<&'static str, PriorCandidateProjection>::new();
+    for entry in entries {
+        let normalized_name = entry.outcome.name.to_ascii_lowercase();
+        for spec in PRIOR_CANDIDATE_SPECS {
+            if !normalized_name.contains(spec.marker) {
+                continue;
+            }
+            let candidate =
+                candidates
+                    .entry(spec.candidate_kind)
+                    .or_insert_with(|| PriorCandidateProjection {
+                        candidate_kind: spec.candidate_kind,
+                        target_schema: spec.target_schema,
+                        required_gates: spec.required_gates,
+                        supporting_fixtures: BTreeSet::new(),
+                        positive_fixtures: BTreeSet::new(),
+                        guard_fixtures: BTreeSet::new(),
+                    });
+            candidate
+                .supporting_fixtures
+                .insert(entry.outcome.name.clone());
+            if normalized_name.contains("_gold") {
+                candidate
+                    .positive_fixtures
+                    .insert(entry.outcome.name.clone());
+            }
+            if normalized_name.contains("_negative")
+                || normalized_name.contains("without_prior")
+                || normalized_name.contains("caution")
+            {
+                candidate.guard_fixtures.insert(entry.outcome.name.clone());
+            }
+        }
+    }
+    candidates.into_values().collect()
+}
+
+fn render_fixture_set(fixtures: &BTreeSet<String>) -> String {
+    if fixtures.is_empty() {
+        "`none`".to_string()
+    } else {
+        format!(
+            "`{}`",
+            fixtures
+                .iter()
+                .map(String::as_str)
+                .collect::<Vec<_>>()
+                .join("`, `")
+        )
+    }
+}
+
 fn kg_fixture_family_summaries(entries: &[KgFixtureProjection]) -> Vec<KgFixtureFamilySummary> {
     let mut summaries = BTreeMap::<String, KgFixtureFamilySummary>::new();
     for entry in entries {
@@ -712,6 +895,19 @@ Keep provenance explicit, and do not treat this page as an approval artifact.\n\
     )
 }
 
+fn default_prior_candidate_page() -> String {
+    format!(
+        "# KG Fixture Prior Candidates\n\n\
+This page records review-only prior candidates derived from tracked KG fixture patterns.\n\
+It is an explicit candidate surface, not a `CorpusMemory` artifact and not a promotion approval.\n\n\
+## Human Synthesis\n\n\
+Use this section for curated notes about which candidate prior families should become typed harvesters or consumers next.\n\
+Every machine-usable promotion must still pass through an explicit schema, KG-bench coverage, validation, and local-grounding review.\n\n\
+## Managed Prior Candidate Projection\n\n\
+{PRIOR_CANDIDATES_MANAGED_START}\n{PRIOR_CANDIDATES_MANAGED_END}\n"
+    )
+}
+
 fn document_key_from_report_path(report_path: &Path) -> String {
     report_path
         .parent()
@@ -860,6 +1056,17 @@ Keep this benchmark note.\n\n\
                 .contains("| `table_shape_prior_guided_signal_table_gold` | `pass` |")
         );
         assert!(table_family_refreshed.contains("`table extraction and hygiene`"));
+
+        let prior_candidate_page = repo_root
+            .join("corpus_kb")
+            .join("prior_candidates")
+            .join("kg-fixture-candidates.md");
+        let prior_candidate_refreshed = fs::read_to_string(prior_candidate_page)?;
+        assert!(prior_candidate_refreshed.contains("# KG Fixture Prior Candidates"));
+        assert!(prior_candidate_refreshed.contains("`table_shape_prior`"));
+        assert!(prior_candidate_refreshed.contains("`CorpusMemory.table_shape_priors`"));
+        assert!(prior_candidate_refreshed.contains("candidate_not_promoted_review_required"));
+        assert!(prior_candidate_refreshed.contains("`table_shape_prior_guided_signal_table_gold`"));
 
         Ok(())
     }

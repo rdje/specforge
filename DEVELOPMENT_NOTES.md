@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-13 R15g prior-candidate corpus KB projection
+- This slice adds the first explicit bridge from corpus-KB benchmark synthesis toward prior-candidate planning, while keeping the promotion boundary closed.
+- `corpus_kb/prior_candidates/kg-fixture-candidates.md` is refreshed from KG fixture names that already encode prior-guided gold/negative/caution behavior. It groups candidates by target `CorpusMemory` schema family and lists the positive plus guard fixtures that make the candidate reviewable.
+- The managed block is intentionally machine-shaped but not machine-promoting: it records `promotion_status: candidate_not_promoted_review_required`, `canonical_mutation_allowed: false`, and `corpus_memory_mutation_allowed: false`.
+- This is the safe intermediate plane the roadmap asked for: corpus KB can now propose prior-candidate families, but any actual machine-usable prior still has to go through typed `CorpusMemory` schema, validated harvest inputs, local-grounding consumers, and KG-bench/validation gates.
+
 ## 2026-04-13 R15g dedicated corpus KB fixture-family pages
 - The next `R15g` step turns the family summary from a single aggregate table into dedicated corpus-KB page families for tables, visuals, timing motifs, infrastructure semantics, and AMBA-family protocol notes.
 - The implementation deliberately reuses the same `kg_bench::collect_fixture_outcomes()` refresh pass. That keeps the aggregate page and family pages grounded in the same executable benchmark outcomes rather than letting hand-maintained corpus notes drift away from the regression suite.

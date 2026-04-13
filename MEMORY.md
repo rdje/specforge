@@ -22,21 +22,22 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `8681b13`
-- latest_commit_brief_message: `feat(corpus): summarize kg fixture families`
-- note: the current session is executing the PNT continuation against that baseline and expanding the `R15g` corpus-KB benchmark projection into dedicated fixture-family pages
+- latest_commit_hash: `0f3166f`
+- latest_commit_brief_message: `feat(corpus): add kg fixture family pages`
+- note: the current session is executing the PNT continuation against that baseline and adding a review-only prior-candidate projection from KG fixture patterns
 
 ## Recent commit chain (last 5)
+- `0f3166f` feat(corpus): add kg fixture family pages
 - `8681b13` feat(corpus): summarize kg fixture families
 - `62be333` fix(validation): quiet fixture-local validation
 - `84500f5` feat(corpus): project kg fixtures into corpus kb
 - `1229426` feat(corpus): bootstrap corpus knowledge base
-- `aba6493` fix(semantic): filter bit-select timing labels
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- the current `R15g` follow-on expands `specforge corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` so the same validated fixture refresh writes dedicated corpus-KB family pages under `tables/`, `visuals/`, `timing/`, `infra/`, and `protocols/` in addition to the aggregate benchmark page
-- the latest committed `R15g` follow-on added a managed fixture-family summary table to `corpus_kb/benchmarks/kg-fixtures.md`, so `specforge corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` reports both aggregate `55/55` pass status and review-facing coverage by truthfulness family
+- the current `R15g` follow-on expands `specforge corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` so the same validated fixture refresh writes `corpus_kb/prior_candidates/kg-fixture-candidates.md`, a review-only prior-candidate planning page that names target `CorpusMemory` schema surfaces, supporting fixtures, positive/guard evidence, and required promotion gates without mutating corpus memory or canonical IR
+- the latest committed `R15g` follow-on expanded the same KG fixture refresh into dedicated corpus-KB family pages under `tables/`, `visuals/`, `timing/`, `infra/`, and `protocols/` in addition to the aggregate benchmark page
+- the previous committed `R15g` follow-on added a managed fixture-family summary table to `corpus_kb/benchmarks/kg-fixtures.md`, so `specforge corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` reports both aggregate `55/55` pass status and review-facing coverage by truthfulness family
 - the previous committed `R15g` follow-on added `validate::run_quiet()` and routes KG fixture-local validation through it, so `specforge kg-bench` and `specforge corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` stay concise while preserving the same validation sidecars/backannotations
 - the latest committed `R15g` follow-on extends `specforge corpus-kb` with optional KG fixture-result projection: `--kg-fixtures-root crates/specforge/test_data/kg_quality` refreshes `corpus_kb/benchmarks/kg-fixtures.md` from the tracked fixture suite while preserving human synthesis and keeping canonical IR / typed priors untouched
 - the latest committed `R15g` follow-on added a tracked `corpus_kb/` root and a new `specforge corpus-kb` command that refreshes managed corpus knowledge-base validation-finding pages from validation report sidecars without mutating canonical IR or typed priors
@@ -70,8 +71,8 @@
 - `scripts/run_ci.sh` now also builds Rust API docs with `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` before the mdBook build, preserving caller-provided `RUSTDOCFLAGS`
 - the Rust warning baseline is clean and now enforced in the shared local/hosted CI path rather than suppressed with `#[allow(dead_code)]`
 - README bootstrap currently resolves to `SESSION_BOOTSTRAP.md`, which instructs future agents to read the referenced live docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if necessary, and then continue from the roadmap
-- this README/PNT continuation observed 30 Rust source files and 57,076 lines under `crates/specforge/src`, with the CLI now including `doctor`, `converge`, `enrich`, `validate`, `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, `corpus-kb`, and `nlp-enrich` beside the core staged IR commands
-- `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the `R15g` dedicated corpus-KB fixture-family page path; the tracked KG fixture count remains `55`, and the full local CI gate reports `313` passing Rust tests
+- this README/PNT continuation observed 30 Rust source files and 57,283 lines under `crates/specforge/src`, with the CLI now including `doctor`, `converge`, `enrich`, `validate`, `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, `corpus-kb`, and `nlp-enrich` beside the core staged IR commands
+- `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the `R15g` prior-candidate corpus-KB projection path; the tracked KG fixture count remains `55`, and the full local CI gate reports `313` passing Rust tests
 - the latest README bootstrap hygiene pass found no new Rust architecture drift requiring code changes; the concrete fixes were to refresh the README implementation-path map, refresh the committed baseline in this memory file, update the current testing/validation counts in `RUST_CODEBASE_ANALYSIS.md`, and normalize old checkout-specific markdown links to repo-relative paths
 - the earlier VLM timing KG benchmark slice `vlm_timing_waveform_motion_negative` proves a VLM timing diagram can preserve the real `HIGH` sample while rejecting waveform motion descriptors and transition spellings such as `rising`, `stable`, `falling`, `UNCHANGED`, `RISING_EDGE`, `LOW_TO_HIGH`, `HIGH_TO_LOW`, `POS_EDGE`, `NEG_EDGE`, `risingedge`, `LOW2HIGH`, and `HIGH2LOW` as concrete signal values
 - the latest committed VLM timing KG benchmark slices tighten `vlm_timing_spurious_annotation_negative`, proving compact and bracketed waveform/sample labels such as `D0`, `A1`, `DATA0`, `0xAA`, `D[0]`, `A[1]`, `DATA[3]`, and `ADDR[7]` are annotation noise rather than timing constraints
@@ -218,6 +219,7 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
+- continued the `R15g` corpus knowledge-base work from commit `0f3166f`, added a review-only prior-candidate projection from KG fixture patterns into `corpus_kb/prior_candidates/kg-fixture-candidates.md`, preserved explicit no-promotion/no-mutation gates for canonical IR and `CorpusMemory`, refreshed the page from the tracked `55/55` fixture suite, and passed focused `corpus_kb` validation, the live corpus-KB KG fixture refresh command, docs CI, and the full local CI gate with `313` Rust tests
 - continued the `R15g` corpus knowledge-base work from commit `8681b13`, added dedicated KG fixture-derived corpus-KB page families for tables, visuals, timing, infrastructure/polarity, and AMBA protocols, refreshed those pages from the tracked `55/55` fixture suite with explicit fixture-path provenance, and passed focused `corpus_kb` validation, the live corpus-KB KG fixture refresh command, and the full local CI gate with `313` Rust tests
 - continued the `R15g` corpus knowledge-base work from commit `62be333`, added a deterministic fixture-family summary projection to the managed KG benchmark corpus-KB page, refreshed `corpus_kb/benchmarks/kg-fixtures.md` with family coverage plus `55` passed / `0` failed fixtures, and passed the focused `corpus_kb` test target, the live corpus-KB KG fixture refresh command, and the full local CI gate with `313` Rust tests
 - continued the `R15g` corpus knowledge-base work from commit `84500f5`, added `validate::run_quiet()` with a thread-local output suppression guard, switched fixture-local KG-bench validation to that quiet path, confirmed `corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` now prints only the concise corpus-KB refresh summary, and passed focused guard / fixture / corpus-KB / full `kg_bench` tests plus full local CI with `312` Rust tests

@@ -27,6 +27,7 @@ It can inform humans, future LLM sessions, benchmark design, rescan targeting, a
 - `timing/kg-fixtures.md`: auto-refreshable timing motif fixture-family projection plus human synthesis notes.
 - `infra/kg-fixtures.md`: auto-refreshable infrastructure/polarity fixture-family projection plus human synthesis notes.
 - `protocols/amba-kg-fixtures.md`: auto-refreshable AMBA-family fixture projection plus human synthesis notes.
+- `prior_candidates/kg-fixture-candidates.md`: auto-refreshable review-only prior-candidate projection plus human synthesis notes.
 
 Future page families can include:
 
@@ -52,7 +53,7 @@ cargo run --manifest-path Cargo.toml -- corpus-kb \
   generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/validation_report.json
 ```
 
-The KG fixture-result refresh surface also refreshes the dedicated family pages listed above:
+The KG fixture-result refresh surface also refreshes the dedicated family and prior-candidate pages listed above:
 
 ```bash
 cargo run --manifest-path Cargo.toml -- corpus-kb \
