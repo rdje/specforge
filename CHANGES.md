@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-04-13 (KG bench asserts connectivity conflict shape)
+
+### Added: canonical signal-connectivity conflict expectations in KG fixtures
+- `kg-bench` fixtures can now assert canonical `signal_connectivity_conflicts` directly at the `SemanticIR` and `IntentIR` stages.
+- The new `signal_connectivity_conflicts_include` matcher supports partial checks for conflict signal, optional conflict id, conflict kind, included conflicting actor ids/names, and supporting statement ids.
+- Strengthened `multi_producer_conflict_negative` and `negative_knowledge_prior_guided_connectivity_conflict_caution_gold` so they lock the `PREADY` multiple-producer conflict shape directly: `Completer` and `Monitor` both drive `PREADY`, and prior-memory caution still cannot mutate that local graph conflict away.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality multi_producer_conflict_negative` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality negative_knowledge_prior_guided_connectivity_conflict_caution_gold` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `57` passed / `0` failed fixtures
+- `cargo test --manifest-path Cargo.toml --lib kg_bench -- --nocapture` -> passed with the tracked fixture suite reporting `57` passed / `0` failed fixtures
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `313` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+
 ## 2026-04-13 (KG bench asserts semantic conflict shape)
 
 ### Added: canonical signal-semantic conflict expectations in KG fixtures

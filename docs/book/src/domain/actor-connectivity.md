@@ -143,6 +143,9 @@ Graph extraction can produce real conflicts.
 The most important one today is multiple producer ambiguity.
 If a signal appears to have more than one producer, `specforge` should surface that as a connectivity conflict instead of silently picking one.
 
+The KG benchmark harness can assert the shape of that conflict directly with `signal_connectivity_conflicts_include`.
+For example, a fixture can require that `PREADY` is a `multiple_producers` conflict involving both `Completer` and `Monitor`, not merely that some connectivity conflict count is nonzero.
+
 That conflict can then be carried through:
 
 - `EvidenceIR`

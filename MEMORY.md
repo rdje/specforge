@@ -22,21 +22,23 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `92344fa`
-- latest_commit_brief_message: `test(kg): assert temporal conflict shape`
-- note: the current session is executing the PNT continuation against that baseline and adding direct KG-bench signal-semantic conflict shape expectations
+- latest_commit_hash: `5b56ce3`
+- latest_commit_brief_message: `test(kg): assert semantic conflict shape`
+- note: the current session is executing the PNT continuation against that baseline and adding direct KG-bench signal-connectivity conflict shape expectations
 
 ## Recent commit chain (last 5)
+- `5b56ce3` test(kg): assert semantic conflict shape
 - `92344fa` test(kg): assert temporal conflict shape
 - `7490cb5` test(kg): assert temporal rule shape
 - `f99956e` test(kg): assert clock reset topology
 - `37cd89a` fix(semantic): reject motion-only timing annotations
-- `7ce78ea` feat(corpus): add prior readiness manifest
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- the current KG-quality follow-on extends `kg-bench` with direct canonical signal-semantic conflict expectations for `signal_semantic_conflicts`
-- the current KG-quality follow-on strengthens `visual_sources_semantic_conflict_negative` so the `XCTRL` multimodal conflict is asserted as visual-caption `handshake_valid_like` evidence versus VLM timing-diagram annotation `handshake_ready_like` evidence at the `SemanticIR` / `IntentIR` stages
+- the current KG-quality follow-on extends `kg-bench` with direct canonical signal-connectivity conflict expectations for `signal_connectivity_conflicts`
+- the current KG-quality follow-on strengthens `multi_producer_conflict_negative` and `negative_knowledge_prior_guided_connectivity_conflict_caution_gold` so the `PREADY` multi-producer conflict is asserted by signal, kind, and conflicting actor names at the `SemanticIR` / `IntentIR` stages
+- the latest committed KG-quality follow-on extended `kg-bench` with direct canonical signal-semantic conflict expectations for `signal_semantic_conflicts`
+- the latest committed KG-quality follow-on strengthened `visual_sources_semantic_conflict_negative` so the `XCTRL` multimodal conflict is asserted as visual-caption `handshake_valid_like` evidence versus VLM timing-diagram annotation `handshake_ready_like` evidence at the `SemanticIR` / `IntentIR` stages
 - the latest committed KG-quality follow-on extended `kg-bench` with direct canonical temporal-conflict expectations for `temporal_conflicts`
 - the latest committed KG-quality follow-on strengthened `negative_knowledge_prior_guided_temporal_conflict_caution_gold` so the `PREADY` post-tick `HIGH` / `LOW` conflict under `HREADY LOW` is asserted by signal, phase, clock/edge context, antecedent, conflicting values, supporting rule ids, and supporting statement ids at the `SemanticIR` / `IntentIR` stages
 - the latest committed KG-quality follow-on extended `kg-bench` with direct canonical temporal-rule expectations for `temporal_rules`
@@ -87,7 +89,8 @@
 - `scripts/run_ci.sh` now also builds Rust API docs with `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` before the mdBook build, preserving caller-provided `RUSTDOCFLAGS`
 - the Rust warning baseline is clean and now enforced in the shared local/hosted CI path rather than suppressed with `#[allow(dead_code)]`
 - README bootstrap currently resolves to `SESSION_BOOTSTRAP.md`, which instructs future agents to read the referenced live docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if necessary, and then continue from the roadmap
-- this README/PNT continuation observed 30 Rust source files and 58,215 lines under `crates/specforge/src`, with the CLI now including `doctor`, `converge`, `enrich`, `validate`, `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, `corpus-kb`, and `nlp-enrich` beside the core staged IR commands
+- this README/PNT continuation observed 30 Rust source files and 58,291 lines under `crates/specforge/src`, with the CLI now including `doctor`, `converge`, `enrich`, `validate`, `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, `corpus-kb`, and `nlp-enrich` beside the core staged IR commands
+- `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the KG-bench signal-connectivity conflict expectation path; the tracked KG fixture count remains `57`, focused KG-bench validation passes for the strengthened multi-producer and prior-guided connectivity-conflict fixtures, the full tracked KG suite reports `57/57`, and full local CI passes with `313` Rust tests plus the mdBook build
 - `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the KG-bench signal-semantic conflict expectation path; the tracked KG fixture count remains `57`, focused KG-bench validation passes for the strengthened visual semantic-conflict fixture, the full tracked KG suite reports `57/57`, and full local CI passes with `313` Rust tests plus the mdBook build
 - `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the KG-bench temporal-conflict expectation path; the tracked KG fixture count remains `57`, focused KG-bench validation passes for the strengthened negative-knowledge temporal-conflict caution fixture, the full tracked KG suite reports `57/57`, and full local CI passes with `313` Rust tests plus the mdBook build
 - the latest README bootstrap hygiene pass found no new Rust architecture drift requiring code changes; the concrete fixes were to refresh the README implementation-path map, refresh the committed baseline in this memory file, update the current testing/validation counts in `RUST_CODEBASE_ANALYSIS.md`, and normalize old checkout-specific markdown links to repo-relative paths
@@ -236,6 +239,7 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
+- continued the KG-quality benchmark hardening work from commit `5b56ce3`, extended `kg-bench` with direct canonical `signal_connectivity_conflicts` expectations, strengthened `multi_producer_conflict_negative` and `negative_knowledge_prior_guided_connectivity_conflict_caution_gold` with typed multi-producer graph conflict-shape assertions, and passed focused `kg-bench` validation for both fixtures, the full tracked KG suite, and the full local CI gate with `313` Rust tests
 - continued the KG-quality benchmark hardening work from commit `92344fa`, extended `kg-bench` with direct canonical `signal_semantic_conflicts` expectations, strengthened `visual_sources_semantic_conflict_negative` with typed multimodal conflict-shape assertions, and passed focused `kg-bench` validation for that fixture, the full tracked KG suite, and the full local CI gate with `313` Rust tests
 - continued the KG-quality benchmark hardening work from commit `7490cb5`, extended `kg-bench` with direct canonical `temporal_conflicts` expectations, strengthened `negative_knowledge_prior_guided_temporal_conflict_caution_gold` with typed conflict-shape assertions, and passed focused `kg-bench` validation for that fixture
 - continued the KG-quality benchmark hardening work from commit `f99956e`, extended `kg-bench` with direct canonical `temporal_rules` expectations, strengthened the representative AXI/APB/AHB timing fixtures with typed clock/edge/cycle-window/antecedent/consequent assertions, and passed focused `kg-bench` validation for `axi_next_cycle_timing_gold`, `apb_setup_access_timing_gold`, and `ahb_wait_state_timing_gold`, the full tracked KG suite, and the full local CI gate with `313` Rust tests
@@ -333,7 +337,7 @@
 - richer explicit clock-tick temporal semantics (`R15b`)
 - KG-guided multimodal rescans (`R15c`)
 - broader evidence arbitration / conflict handling beyond polarity, interface-shape, multi-producer ambiguity, modality-aware semantic-role grounding, consensus summaries, semantic candidates, and semantic arbitration summaries (`R15d`)
-- broader KG-quality evaluation and benchmark hardening beyond the new seed fixture pack (`R15e`); recent slices added active-low reset-release VLM coverage, graph direction coverage expectations, explicit asserted-when-level non-reset control polarity recovery, collective active-level non-reset control polarity recovery, mixed clause-local non-reset control polarity recovery, detached mixed-polarity rejection coverage, motion-only VLM timing annotation rejection, direct clock/reset infrastructure-topology coverage, direct temporal-rule shape coverage, direct temporal-conflict shape coverage, and direct signal-semantic conflict shape coverage
+- broader KG-quality evaluation and benchmark hardening beyond the new seed fixture pack (`R15e`); recent slices added active-low reset-release VLM coverage, graph direction coverage expectations, explicit asserted-when-level non-reset control polarity recovery, collective active-level non-reset control polarity recovery, mixed clause-local non-reset control polarity recovery, detached mixed-polarity rejection coverage, motion-only VLM timing annotation rejection, direct clock/reset infrastructure-topology coverage, direct temporal-rule shape coverage, direct temporal-conflict shape coverage, direct signal-semantic conflict shape coverage, and direct signal-connectivity conflict shape coverage
 - cross-document extractor learning is now started, and the first seven bounded prior-consumer paths are now live; visual-motif priors now have explicit local enrichment rescan hints, negative-knowledge priors now have validation-only caution coverage, machine-readable rescan/corroboration guidance, a `project-validation` consumer that writes a schema-v2 replay-oriented rescan/extractor-selection target list, a first explicit `rescan-plan` consumer, an opt-in `converge --rescan-plan <plan>` hook, persisted execution summaries for changed-outcome review, explicit not-promoted gates plus structured promotion-review requirements on those summaries, and review-facing projection of those summaries into validation docs; an approval artifact should remain local/generated unless future work deliberately introduces canonical artifact mutation plus a tracked approval-evidence schema
 - Tier 3 relation extraction after the graph/temporal/eval surfaces are ready (`R14`)
 - some downstream compatibility and consumer paths still rely on flat `direction_hint` instead of the graph-native surface; explicit-module `.fsm` top composition, unambiguous standalone direct roots, standalone sequential system-contract renderability, and explicit top-link boundary recovery now have bounded adapter-side recovery paths, but the broader direct-consumer cleanup remains open

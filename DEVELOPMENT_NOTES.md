@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-13 KG-bench signal-connectivity conflict expectations
+- This slice moves multi-producer graph conflict truth from count-only confidence into direct typed conflict assertions.
+- `kg-bench` can now assert `SemanticIR` / `IntentIR` `signal_connectivity_conflicts` with partial matching on conflict signal, optional conflict id, conflict kind, conflicting actor ids/names, and supporting statement ids.
+- `multi_producer_conflict_negative` now proves the `PREADY` conflict is specifically a `multiple_producers` conflict over `Completer` and `Monitor`.
+- `negative_knowledge_prior_guided_connectivity_conflict_caution_gold` now proves the same shape survives when prior memory adds caution/rescan/corroboration guidance, preserving the boundary that priors cannot repair local graph truth.
+
 ## 2026-04-13 KG-bench signal-semantic conflict expectations
 - This slice moves signal-semantic conflict truth from count-only confidence into direct typed conflict assertions.
 - `kg-bench` can now assert `SemanticIR` / `IntentIR` `signal_semantic_conflicts` with partial matching on conflict signal, optional conflict id, and included observations by semantic tags, source kind, source text, and supporting statement/table/visual evidence ids.

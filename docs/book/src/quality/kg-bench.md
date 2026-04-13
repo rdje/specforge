@@ -40,6 +40,10 @@ This is intentionally separate from `signal_directions_include`.
 The older field still checks the flat compatibility `direction_hint` on interface signal records.
 Keeping both surfaces separate prevents the harness from flattening producer/consumer actor roles into a fake single perspective while still letting graph-first recovery be tested explicitly.
 
+Fixtures can assert canonical signal-connectivity conflicts directly.
+`signal_connectivity_conflicts_include` checks the conflicted signal, conflict kind, conflicting actor ids or names, and optional supporting statement ids.
+That lets graph-conflict fixtures prove the actual multi-producer actor set rather than reducing the test to "one connectivity conflict exists."
+
 Fixtures can assert canonical temporal rules directly too.
 `temporal_rules_include` checks typed clock/edge grounding, cycle windows, supporting statement ids, antecedent predicates, and consequent predicates.
 That lets APB/AHB/AXI timing fixtures prove actor-grounded drive or stability predicates, compound guards, and `HandshakeComplete` predicates as IR shape rather than only as validation-count side effects.

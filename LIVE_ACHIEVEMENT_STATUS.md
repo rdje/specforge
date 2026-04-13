@@ -38,6 +38,7 @@
 - Prior-candidate corpus-KB gate review matrix: Done
 - Prior-candidate corpus-KB readiness manifest: Done
 - Dedicated corpus-KB state-machine fixture page: Done
+- KG benchmark harness can now assert canonical signal-connectivity conflict shape directly: Done
 - KG benchmark harness can now assert canonical signal-semantic conflict shape directly: Done
 - `specforge nlp-enrich` command created: Done
 - `specforge converge` command created: Done

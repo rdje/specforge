@@ -23,8 +23,9 @@ use crate::ir::semantic::{
     ActorPortRecord, ActorRelativeDirection, ClockEdge, CycleWindowRecord,
     InfrastructureSignalDistributionStatus, InfrastructureSignalKind, InfrastructureSignalRecord,
     InfrastructureSignalSourceStatus, InfrastructureTopologyKind, InterfaceRecord,
-    InterfaceSignalDirection, RegularStateRecord, SemanticIr, StateTransitionRecord,
-    TemporalConflictRecord, TemporalPredicateRecord, TemporalRuleRecord, TickPhase,
+    InterfaceSignalDirection, RegularStateRecord, SemanticIr, SignalConnectivityConflictKind,
+    SignalConnectivityConflictRecord, StateTransitionRecord, TemporalConflictRecord,
+    TemporalPredicateRecord, TemporalRuleRecord, TickPhase,
 };
 use crate::ir::source::{
     ActorSignalRelation, RelationKind, ResidualDecisionPacket, ValidationFindingRecord,
@@ -176,6 +177,8 @@ struct CanonicalStageExpectations {
     temporal_conflicts_include: Vec<ExpectedTemporalConflict>,
     #[serde(default)]
     signal_semantic_conflicts_include: Vec<ExpectedSignalSemanticConflict>,
+    #[serde(default)]
+    signal_connectivity_conflicts_include: Vec<ExpectedSignalConnectivityConflict>,
     temporal_rule_count: Option<usize>,
     temporal_rules_with_handshake_completion: Option<usize>,
     temporal_rules_with_alias_dependent_handshake_completion: Option<usize>,
@@ -295,6 +298,21 @@ struct ExpectedSignalSemanticConflictObservation {
     supporting_table_ids_include: Vec<String>,
     #[serde(default)]
     supporting_visual_evidence_ids_include: Vec<String>,
+}
+
+#[derive(Debug, Deserialize)]
+struct ExpectedSignalConnectivityConflict {
+    signal_name: String,
+    #[serde(default)]
+    conflict_id: Option<String>,
+    #[serde(default)]
+    conflict_kind: Option<SignalConnectivityConflictKind>,
+    #[serde(default)]
+    conflicting_actor_ids_include: Vec<String>,
+    #[serde(default)]
+    conflicting_actor_names_include: Vec<String>,
+    #[serde(default)]
+    supporting_statement_ids_include: Vec<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -538,7 +556,7 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
             &semantic_ir.temporal_rules,
             semantic_ir.signal_polarity_conflicts.len(),
             &semantic_ir.signal_semantic_conflicts,
-            semantic_ir.signal_connectivity_conflicts.len(),
+            &semantic_ir.signal_connectivity_conflicts,
             semantic_ir.interface_signal_conflicts.len(),
             &semantic_ir.temporal_conflicts,
             &mut failures,
@@ -559,7 +577,7 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
             &intent_ir.temporal_rules,
             intent_ir.signal_polarity_conflicts.len(),
             &intent_ir.signal_semantic_conflicts,
-            intent_ir.signal_connectivity_conflicts.len(),
+            &intent_ir.signal_connectivity_conflicts,
             intent_ir.interface_signal_conflicts.len(),
             &intent_ir.temporal_conflicts,
             &mut failures,
@@ -621,7 +639,7 @@ fn evaluate_canonical_expectations(
     temporal_rules: &[TemporalRuleRecord],
     signal_polarity_conflicts: usize,
     signal_semantic_conflicts: &[SignalSemanticConflictRecord],
-    signal_connectivity_conflicts: usize,
+    signal_connectivity_conflicts: &[SignalConnectivityConflictRecord],
     interface_signal_conflicts: usize,
     temporal_conflicts: &[TemporalConflictRecord],
     failures: &mut Vec<String>,
@@ -1028,9 +1046,18 @@ fn evaluate_canonical_expectations(
         label,
         "signal_connectivity_conflicts",
         expectations.signal_connectivity_conflicts,
-        signal_connectivity_conflicts,
+        signal_connectivity_conflicts.len(),
         failures,
     );
+    for expected_signal_connectivity_conflict in &expectations.signal_connectivity_conflicts_include
+    {
+        evaluate_expected_signal_connectivity_conflict(
+            label,
+            expected_signal_connectivity_conflict,
+            signal_connectivity_conflicts,
+            failures,
+        );
+    }
     assert_optional_count(
         label,
         "interface_signal_conflicts",
@@ -1244,6 +1271,55 @@ fn signal_semantic_conflict_observation_matches_expectation(
                     .supporting_visual_evidence_ids
                     .contains(visual_evidence_id)
             })
+}
+
+fn evaluate_expected_signal_connectivity_conflict(
+    label: &str,
+    expectation: &ExpectedSignalConnectivityConflict,
+    signal_connectivity_conflicts: &[SignalConnectivityConflictRecord],
+    failures: &mut Vec<String>,
+) {
+    let found = signal_connectivity_conflicts
+        .iter()
+        .any(|conflict| signal_connectivity_conflict_matches_expectation(conflict, expectation));
+
+    if !found {
+        failures.push(format!(
+            "{label}: missing signal connectivity conflict matching signal `{}`, conflict id `{:?}`, kind `{:?}`, actor ids {:?}, actor names {:?}, and statement ids {:?}",
+            expectation.signal_name,
+            expectation.conflict_id,
+            expectation.conflict_kind,
+            expectation.conflicting_actor_ids_include,
+            expectation.conflicting_actor_names_include,
+            expectation.supporting_statement_ids_include
+        ));
+    }
+}
+
+fn signal_connectivity_conflict_matches_expectation(
+    conflict: &SignalConnectivityConflictRecord,
+    expectation: &ExpectedSignalConnectivityConflict,
+) -> bool {
+    conflict.signal_name == expectation.signal_name
+        && expectation
+            .conflict_id
+            .as_ref()
+            .is_none_or(|conflict_id| conflict.conflict_id == *conflict_id)
+        && expectation
+            .conflict_kind
+            .is_none_or(|conflict_kind| conflict.conflict_kind == conflict_kind)
+        && expectation
+            .conflicting_actor_ids_include
+            .iter()
+            .all(|actor_id| conflict.conflicting_actor_ids.contains(actor_id))
+        && expectation
+            .conflicting_actor_names_include
+            .iter()
+            .all(|actor_name| conflict.conflicting_actor_names.contains(actor_name))
+        && expectation
+            .supporting_statement_ids_include
+            .iter()
+            .all(|statement_id| conflict.supporting_statement_ids.contains(statement_id))
 }
 
 fn evaluate_expected_infrastructure_signal(

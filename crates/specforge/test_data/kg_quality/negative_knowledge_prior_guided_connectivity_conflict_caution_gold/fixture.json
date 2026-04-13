@@ -16,10 +16,24 @@
   },
   "expectations": {
     "semantic": {
-      "signal_connectivity_conflicts": 1
+      "signal_connectivity_conflicts": 1,
+      "signal_connectivity_conflicts_include": [
+        {
+          "signal_name": "PREADY",
+          "conflict_kind": "multiple_producers",
+          "conflicting_actor_names_include": ["Completer", "Monitor"]
+        }
+      ]
     },
     "intent": {
-      "signal_connectivity_conflicts": 1
+      "signal_connectivity_conflicts": 1,
+      "signal_connectivity_conflicts_include": [
+        {
+          "signal_name": "PREADY",
+          "conflict_kind": "multiple_producers",
+          "conflicting_actor_names_include": ["Completer", "Monitor"]
+        }
+      ]
     },
     "validation": {
       "semantic": {
