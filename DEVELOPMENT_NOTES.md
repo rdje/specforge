@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-13 R15g semantic/truthfulness corpus KB patterns
+- This slice adds the missing `patterns/` corpus-KB page family for cross-cutting semantic and truthfulness motifs that do not fit cleanly into table, visual, timing, infrastructure, protocol, or prior-candidate pages.
+- The page is refreshed from the same `kg_bench::collect_fixture_outcomes()` pass as the aggregate benchmark projection. It selects fixtures labeled as actor/connectivity, semantic role arbitration, negative knowledge, truthfulness negatives/cautions, or residual/caveat behavior.
+- The current live projection captures `42/42` passing pattern fixtures with explicit fixture-path provenance. That makes the page useful as a review/debugging index for accepted, contested, blocked, and residual candidate facts.
+- The boundary remains deliberately closed: pattern labels and page content are corpus synthesis only. They do not affect fixture evaluation, validation scoring, `CorpusMemory`, or canonical IR promotion.
+
 ## 2026-04-13 R15g prior-candidate corpus KB projection
 - This slice adds the first explicit bridge from corpus-KB benchmark synthesis toward prior-candidate planning, while keeping the promotion boundary closed.
 - `corpus_kb/prior_candidates/kg-fixture-candidates.md` is refreshed from KG fixture names that already encode prior-guided gold/negative/caution behavior. It groups candidates by target `CorpusMemory` schema family and lists the positive plus guard fixtures that make the candidate reviewable.

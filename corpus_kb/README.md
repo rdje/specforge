@@ -22,6 +22,7 @@ It can inform humans, future LLM sessions, benchmark design, rescan targeting, a
 
 - `failures/validation-findings.md`: auto-refreshable validation finding projection plus human synthesis notes.
 - `benchmarks/kg-fixtures.md`: auto-refreshable KG fixture-result and fixture-family summary projection plus human synthesis notes.
+- `patterns/kg-fixtures.md`: auto-refreshable semantic/truthfulness pattern fixture-family projection plus human synthesis notes.
 - `tables/kg-fixtures.md`: auto-refreshable table extraction fixture-family projection plus human synthesis notes.
 - `visuals/kg-fixtures.md`: auto-refreshable visual/VLM fixture-family projection plus human synthesis notes.
 - `timing/kg-fixtures.md`: auto-refreshable timing motif fixture-family projection plus human synthesis notes.
@@ -32,7 +33,6 @@ It can inform humans, future LLM sessions, benchmark design, rescan targeting, a
 Future page families can include:
 
 - `protocols/`
-- `patterns/`
 - `tables/`
 - `visuals/`
 - `timing/`
@@ -53,7 +53,7 @@ cargo run --manifest-path Cargo.toml -- corpus-kb \
   generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/validation_report.json
 ```
 
-The KG fixture-result refresh surface also refreshes the dedicated family and prior-candidate pages listed above:
+The KG fixture-result refresh surface also refreshes the dedicated pattern, family, and prior-candidate pages listed above:
 
 ```bash
 cargo run --manifest-path Cargo.toml -- corpus-kb \

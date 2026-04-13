@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-04-13 (R15g semantic/truthfulness corpus KB patterns)
+
+### Added: semantic and truthfulness pattern page family
+- `specforge corpus-kb --kg-fixtures-root ...` now refreshes `corpus_kb/patterns/kg-fixtures.md` from KG fixtures tagged as actor/connectivity, semantic role arbitration, negative knowledge, truthfulness negatives/cautions, or residual/caveat patterns.
+- Added `corpus_kb/patterns/README.md` to define this page family as reviewable synthesis for why candidate facts are accepted, contested, blocked, or left as residuals.
+- The live refresh currently projects `42` passing semantic/truthfulness pattern fixtures with explicit fixture-path provenance, while preserving human synthesis outside the managed block.
+- This page remains non-promoting corpus knowledge: it does not change KG-bench execution, validation scoring, canonical IR, or typed prior memory.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test --manifest-path Cargo.toml --lib corpus_kb -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed the aggregate, semantic/truthfulness pattern, fixture-family, and prior-candidate corpus-KB pages with `55` passed / `0` failed fixtures
+- `git diff --check` -> passed
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, `313` Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build
+
 ## 2026-04-13 (R15g prior-candidate corpus KB projection)
 
 ### Added: review-only prior-candidate bridge

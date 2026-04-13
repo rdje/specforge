@@ -656,8 +656,9 @@
   - the KG fixture-result page now also projects a review-facing fixture-family summary table, so corpus synthesis captures which truthfulness families are covered rather than only aggregate pass/fail counts
   - `specforge corpus-kb --kg-fixtures-root ...` now also refreshes dedicated KG fixture-derived corpus-KB pages for table, visual, timing, infrastructure/polarity, and AMBA-family protocol patterns while preserving human synthesis outside managed blocks
   - `specforge corpus-kb --kg-fixtures-root ...` now refreshes a review-only prior-candidate page from KG fixtures that already encode prior-guided gold/negative/caution behavior, with explicit target schemas and no-promotion gates
+  - `specforge corpus-kb --kg-fixtures-root ...` now refreshes a semantic/truthfulness pattern page for actor/connectivity, semantic role arbitration, negative knowledge, truthfulness-negative/caution, and residual/caveat fixture patterns
 - remaining:
-  - add more page families beyond the first KG fixture-derived table, visual, timing, infrastructure, and protocol pages when new evidence families need their own durable corpus synthesis surfaces
+  - add further specialized page families beyond the current semantic/truthfulness, table, visual, timing, infrastructure, protocol, and prior-candidate pages when new evidence families need their own durable corpus synthesis surfaces
   - deepen the prior-candidate bridge only through typed schemas, KG-bench fixtures, and validation gates; do not let corpus-KB candidates directly write `CorpusMemory` or canonical IR
 
 ### R16 SystemVerilog adapter (Horizon)

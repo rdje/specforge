@@ -16,6 +16,13 @@ const KG_FIXTURE_FAMILY_MANAGED_END: &str = "<!-- corpus_kb_kg_fixture_family:en
 const PRIOR_CANDIDATES_MANAGED_START: &str = "<!-- corpus_kb_prior_candidates:start -->";
 const PRIOR_CANDIDATES_MANAGED_END: &str = "<!-- corpus_kb_prior_candidates:end -->";
 
+const PATTERN_FAMILY_LABELS: &[&str] = &[
+    "actor connectivity",
+    "semantic role arbitration",
+    "negative knowledge",
+    "truthfulness negatives and cautions",
+    "residuals and caveats",
+];
 const TABLE_FAMILY_LABELS: &[&str] = &["table extraction and hygiene"];
 const VISUAL_FAMILY_LABELS: &[&str] = &[
     "multimodal visual grounding",
@@ -72,6 +79,13 @@ const PRIOR_CANDIDATE_SPECS: &[PriorCandidateSpec] = &[
 ];
 
 const KG_FIXTURE_FAMILY_PAGE_SPECS: &[KgFixtureFamilyPageSpec] = &[
+    KgFixtureFamilyPageSpec {
+        relative_path: "patterns/kg-fixtures.md",
+        title: "Semantic And Truthfulness Fixture Patterns",
+        description: "This page records semantic arbitration, actor/connectivity, residual, caveat, negative-knowledge, and truthfulness-caution KG fixture coverage from the tracked truthfulness benchmark suite.",
+        human_prompt: "Use this section for curated notes about semantic arbitration, graph/connectivity evidence, residual/caveat behavior, and false-positive control patterns.",
+        labels: PATTERN_FAMILY_LABELS,
+    },
     KgFixtureFamilyPageSpec {
         relative_path: "tables/kg-fixtures.md",
         title: "Table Extraction Fixture Patterns",
@@ -1015,6 +1029,20 @@ Keep this curated note.\n\n\
   "expectations": {}
 }"#,
         )?;
+        let semantic_fixture_dir = fixtures_root.join("name_only_semantic_noise_negative");
+        fs::create_dir_all(&semantic_fixture_dir)?;
+        fs::write(
+            semantic_fixture_dir.join("source.md"),
+            "# Toy Protocol\n\nThe VALID signal is listed by name only.\n",
+        )?;
+        fs::write(
+            semantic_fixture_dir.join("fixture.json"),
+            r#"{
+  "name": "name_only_semantic_noise_negative",
+  "source": "source.md",
+  "expectations": {}
+}"#,
+        )?;
 
         let page_path = repo_root
             .join("corpus_kb")
@@ -1035,15 +1063,30 @@ Keep this benchmark note.\n\n\
         let refresh = refresh_kg_fixtures_page(repo_root, &fixtures_root, &[])?;
         let refreshed = fs::read_to_string(page_path)?;
 
-        assert_eq!(refresh.fixture_count, 1);
+        assert_eq!(refresh.fixture_count, 2);
         assert_eq!(refresh.failed_count, 0);
         assert!(refreshed.contains("Keep this benchmark note."));
         assert!(!refreshed.contains("old generated benchmark content"));
         assert!(refreshed.contains("### Fixture Family Summary"));
         assert!(refreshed.contains("| table extraction and hygiene | `1` | `1` | `0` |"));
         assert!(refreshed.contains("| typed prior memory | `1` | `1` | `0` |"));
+        assert!(refreshed.contains("| semantic role arbitration | `1` | `1` | `0` |"));
+        assert!(refreshed.contains("| truthfulness negatives and cautions | `1` | `1` | `0` |"));
         assert!(refreshed.contains("### table_shape_prior_guided_signal_table_gold"));
+        assert!(refreshed.contains("### name_only_semantic_noise_negative"));
         assert!(refreshed.contains("- status: `pass`"));
+
+        let pattern_family_page = repo_root
+            .join("corpus_kb")
+            .join("patterns")
+            .join("kg-fixtures.md");
+        let pattern_family_refreshed = fs::read_to_string(pattern_family_page)?;
+        assert!(pattern_family_refreshed.contains("# Semantic And Truthfulness Fixture Patterns"));
+        assert!(
+            pattern_family_refreshed.contains("| `name_only_semantic_noise_negative` | `pass` |")
+        );
+        assert!(pattern_family_refreshed.contains("`semantic role arbitration`"));
+        assert!(pattern_family_refreshed.contains("`truthfulness negatives and cautions`"));
 
         let table_family_page = repo_root
             .join("corpus_kb")
