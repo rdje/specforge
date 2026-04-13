@@ -127,6 +127,9 @@ Temporal conflicts preserve:
 The goal is not to hide contradictions.
 The goal is to make them precise enough that the user can inspect them.
 
+The KG benchmark harness can assert temporal conflicts directly.
+That means a fixture can prove not only that a conflict exists, but also which signal, phase, clock/edge context, antecedents, values, rule ids, and statement ids make up the contradiction.
+
 ## Polarity-aware values
 
 Temporal value comparison is polarity-aware.

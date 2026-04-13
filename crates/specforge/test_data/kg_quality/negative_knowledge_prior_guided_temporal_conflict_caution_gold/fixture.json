@@ -51,11 +51,61 @@
   "expectations": {
     "semantic": {
       "signal_names_include": ["PREADY", "HREADY"],
-      "temporal_conflicts": 1
+      "temporal_conflicts": 1,
+      "temporal_conflicts_include": [
+        {
+          "signal_name": "PREADY",
+          "phase": "post_tick",
+          "clock_signal": "clk",
+          "edge": "rising",
+          "antecedents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "HREADY",
+              "value": "LOW",
+              "phase": "pre_tick"
+            }
+          ],
+          "conflicting_values_include": ["HIGH", "LOW"],
+          "supporting_rule_ids_include": [
+            "temporal_signal_constraint_sigcon_pready_high",
+            "temporal_signal_constraint_sigcon_pready_low"
+          ],
+          "supporting_statement_ids_include": [
+            "stmt_pready_high",
+            "stmt_pready_low"
+          ]
+        }
+      ]
     },
     "intent": {
       "signal_names_include": ["PREADY", "HREADY"],
-      "temporal_conflicts": 1
+      "temporal_conflicts": 1,
+      "temporal_conflicts_include": [
+        {
+          "signal_name": "PREADY",
+          "phase": "post_tick",
+          "clock_signal": "clk",
+          "edge": "rising",
+          "antecedents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "HREADY",
+              "value": "LOW",
+              "phase": "pre_tick"
+            }
+          ],
+          "conflicting_values_include": ["HIGH", "LOW"],
+          "supporting_rule_ids_include": [
+            "temporal_signal_constraint_sigcon_pready_high",
+            "temporal_signal_constraint_sigcon_pready_low"
+          ],
+          "supporting_statement_ids_include": [
+            "stmt_pready_high",
+            "stmt_pready_low"
+          ]
+        }
+      ]
     },
     "validation": {
       "semantic": {

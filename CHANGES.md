@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-04-13 (KG bench asserts temporal conflict shape)
+
+### Added: canonical temporal-conflict expectations in KG fixtures
+- `kg-bench` fixtures can now assert canonical `temporal_conflicts` directly at the `SemanticIR` and `IntentIR` stages.
+- The new `temporal_conflicts_include` matcher supports partial checks for signal name, phase, clock signal, edge, cycle window, antecedent predicates, conflicting values, supporting rule ids, and supporting statement ids.
+- Strengthened `negative_knowledge_prior_guided_temporal_conflict_caution_gold` so it locks the current-document `PREADY` `HIGH` / `LOW` contradiction shape directly while still proving prior-memory caution only adds rescan/corroboration guidance instead of mutating the conflict away.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality negative_knowledge_prior_guided_temporal_conflict_caution_gold` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `57` passed / `0` failed fixtures
+- `cargo test --manifest-path Cargo.toml --lib kg_bench -- --nocapture` -> passed with the tracked fixture suite reporting `57` passed / `0` failed fixtures
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `313` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+
 ## 2026-04-13 (KG bench asserts temporal rule shape)
 
 ### Added: canonical temporal-rule expectations in KG fixtures

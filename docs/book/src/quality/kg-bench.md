@@ -44,6 +44,10 @@ Fixtures can assert canonical temporal rules directly too.
 `temporal_rules_include` checks typed clock/edge grounding, cycle windows, supporting statement ids, antecedent predicates, and consequent predicates.
 That lets APB/AHB/AXI timing fixtures prove actor-grounded drive or stability predicates, compound guards, and `HandshakeComplete` predicates as IR shape rather than only as validation-count side effects.
 
+Fixtures can assert canonical temporal conflicts directly too.
+`temporal_conflicts_include` checks the contradiction signal, phase, clock/edge context, antecedent predicates, conflicting values, supporting rule ids, and supporting statement ids.
+That keeps conflict-surfacing benchmarks honest: a prior can add caution guidance, but it cannot make the current-document contradiction disappear.
+
 Fixtures can also assert canonical clock/reset infrastructure records directly.
 `infrastructure_signals_include` checks the typed infrastructure signal surface, and `infrastructure_topologies_include` checks explicit current-document topology such as clock-gated branches, reset synchronizer stages, and reset-tree targets.
 That keeps infrastructure doctrine executable instead of leaving it as prose-only guidance or aggregate validation metrics.

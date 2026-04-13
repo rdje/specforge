@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-13 KG-bench temporal-conflict expectations
+- This slice moves temporal contradiction truth from count-only confidence into direct typed temporal-conflict assertions.
+- `kg-bench` can now assert `SemanticIR` / `IntentIR` `temporal_conflicts` with partial matching on signal name, phase, clock signal, edge, cycle window, antecedent predicates, conflicting values, supporting rule ids, and supporting statement ids.
+- `negative_knowledge_prior_guided_temporal_conflict_caution_gold` now proves the `PREADY` post-tick `HIGH` / `LOW` conflict under `HREADY LOW` survives canonically with both contributing temporal rule ids and statement ids.
+- This keeps negative-knowledge priors honest: they can add caution/rescan/corroboration guidance, but the current-document contradiction remains visible and cannot be silently repaired by prior memory.
+
 ## 2026-04-13 KG-bench temporal-rule expectations
 - This slice moves representative APB/AHB/AXI timing truth from validation-count confidence into direct typed temporal-rule assertions.
 - `kg-bench` can now assert `SemanticIR` / `IntentIR` `temporal_rules` with partial matching on `source_text`, `clock_signal`, `edge`, `cycle_window`, supporting statement ids, antecedent predicates, and consequent predicates.

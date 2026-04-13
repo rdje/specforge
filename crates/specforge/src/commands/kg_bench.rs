@@ -21,7 +21,7 @@ use crate::ir::semantic::{
     InfrastructureSignalDistributionStatus, InfrastructureSignalKind, InfrastructureSignalRecord,
     InfrastructureSignalSourceStatus, InfrastructureTopologyKind, InterfaceRecord,
     InterfaceSignalDirection, RegularStateRecord, SemanticIr, StateTransitionRecord,
-    TemporalPredicateRecord, TemporalRuleRecord,
+    TemporalConflictRecord, TemporalPredicateRecord, TemporalRuleRecord, TickPhase,
 };
 use crate::ir::source::{
     ActorSignalRelation, RelationKind, ResidualDecisionPacket, ValidationFindingRecord,
@@ -169,6 +169,8 @@ struct CanonicalStageExpectations {
     non_decisive_semantic_arbitration_signal_names_exclude: Vec<String>,
     #[serde(default)]
     temporal_rules_include: Vec<ExpectedTemporalRule>,
+    #[serde(default)]
+    temporal_conflicts_include: Vec<ExpectedTemporalConflict>,
     temporal_rule_count: Option<usize>,
     temporal_rules_with_handshake_completion: Option<usize>,
     temporal_rules_with_alias_dependent_handshake_completion: Option<usize>,
@@ -242,6 +244,27 @@ struct ExpectedTemporalRule {
     antecedents_include: Vec<TemporalPredicateRecord>,
     #[serde(default)]
     consequents_include: Vec<TemporalPredicateRecord>,
+}
+
+#[derive(Debug, Deserialize)]
+struct ExpectedTemporalConflict {
+    signal_name: String,
+    #[serde(default)]
+    phase: Option<TickPhase>,
+    #[serde(default)]
+    clock_signal: Option<String>,
+    #[serde(default)]
+    edge: Option<ClockEdge>,
+    #[serde(default)]
+    cycle_window: Option<CycleWindowRecord>,
+    #[serde(default)]
+    antecedents_include: Vec<TemporalPredicateRecord>,
+    #[serde(default)]
+    conflicting_values_include: Vec<String>,
+    #[serde(default)]
+    supporting_rule_ids_include: Vec<String>,
+    #[serde(default)]
+    supporting_statement_ids_include: Vec<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -487,7 +510,7 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
             semantic_ir.signal_semantic_conflicts.len(),
             semantic_ir.signal_connectivity_conflicts.len(),
             semantic_ir.interface_signal_conflicts.len(),
-            semantic_ir.temporal_conflicts.len(),
+            &semantic_ir.temporal_conflicts,
             &mut failures,
         );
     }
@@ -508,7 +531,7 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
             intent_ir.signal_semantic_conflicts.len(),
             intent_ir.signal_connectivity_conflicts.len(),
             intent_ir.interface_signal_conflicts.len(),
-            intent_ir.temporal_conflicts.len(),
+            &intent_ir.temporal_conflicts,
             &mut failures,
         );
     }
@@ -570,7 +593,7 @@ fn evaluate_canonical_expectations(
     signal_semantic_conflicts: usize,
     signal_connectivity_conflicts: usize,
     interface_signal_conflicts: usize,
-    temporal_conflicts: usize,
+    temporal_conflicts: &[TemporalConflictRecord],
     failures: &mut Vec<String>,
 ) {
     let signal_names = interface_signal_names(interfaces);
@@ -981,9 +1004,17 @@ fn evaluate_canonical_expectations(
         label,
         "temporal_conflicts",
         expectations.temporal_conflicts,
-        temporal_conflicts,
+        temporal_conflicts.len(),
         failures,
     );
+    for expected_temporal_conflict in &expectations.temporal_conflicts_include {
+        evaluate_expected_temporal_conflict(
+            label,
+            expected_temporal_conflict,
+            temporal_conflicts,
+            failures,
+        );
+    }
 }
 
 fn evaluate_expected_temporal_rule(
@@ -1039,6 +1070,69 @@ fn temporal_rule_matches_expectation(
             .consequents_include
             .iter()
             .all(|predicate| rule.consequents.contains(predicate))
+}
+
+fn evaluate_expected_temporal_conflict(
+    label: &str,
+    expectation: &ExpectedTemporalConflict,
+    temporal_conflicts: &[TemporalConflictRecord],
+    failures: &mut Vec<String>,
+) {
+    let found = temporal_conflicts
+        .iter()
+        .any(|conflict| temporal_conflict_matches_expectation(conflict, expectation));
+
+    if !found {
+        failures.push(format!(
+            "{label}: missing temporal conflict matching signal `{}`, phase `{:?}`, clock `{:?}`, edge `{:?}`, cycle_window `{:?}`, antecedents {:?}, values {:?}, rule ids {:?}, and statement ids {:?}",
+            expectation.signal_name,
+            expectation.phase,
+            expectation.clock_signal,
+            expectation.edge,
+            expectation.cycle_window,
+            expectation.antecedents_include,
+            expectation.conflicting_values_include,
+            expectation.supporting_rule_ids_include,
+            expectation.supporting_statement_ids_include
+        ));
+    }
+}
+
+fn temporal_conflict_matches_expectation(
+    conflict: &TemporalConflictRecord,
+    expectation: &ExpectedTemporalConflict,
+) -> bool {
+    conflict.signal_name == expectation.signal_name
+        && expectation
+            .phase
+            .is_none_or(|phase| conflict.phase == phase)
+        && expectation
+            .clock_signal
+            .as_ref()
+            .is_none_or(|clock_signal| {
+                conflict.clock_signal.as_deref() == Some(clock_signal.as_str())
+            })
+        && expectation.edge.is_none_or(|edge| conflict.edge == edge)
+        && expectation
+            .cycle_window
+            .as_ref()
+            .is_none_or(|cycle_window| conflict.cycle_window.as_ref() == Some(cycle_window))
+        && expectation
+            .antecedents_include
+            .iter()
+            .all(|predicate| conflict.antecedents.contains(predicate))
+        && expectation
+            .conflicting_values_include
+            .iter()
+            .all(|value| conflict.conflicting_values.contains(value))
+        && expectation
+            .supporting_rule_ids_include
+            .iter()
+            .all(|rule_id| conflict.supporting_rule_ids.contains(rule_id))
+        && expectation
+            .supporting_statement_ids_include
+            .iter()
+            .all(|statement_id| conflict.supporting_statement_ids.contains(statement_id))
 }
 
 fn evaluate_expected_infrastructure_signal(

@@ -22,21 +22,23 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `f99956e`
-- latest_commit_brief_message: `test(kg): assert clock reset topology`
-- note: the current session is executing the PNT continuation against that baseline and adding direct KG-bench temporal-rule shape expectations to representative timing fixtures
+- latest_commit_hash: `7490cb5`
+- latest_commit_brief_message: `test(kg): assert temporal rule shape`
+- note: the current session is executing the PNT continuation against that baseline and adding direct KG-bench temporal-conflict shape expectations
 
 ## Recent commit chain (last 5)
+- `7490cb5` test(kg): assert temporal rule shape
 - `f99956e` test(kg): assert clock reset topology
 - `37cd89a` fix(semantic): reject motion-only timing annotations
 - `7ce78ea` feat(corpus): add prior readiness manifest
 - `c2e6084` feat(corpus): add prior memory page
-- `fd716eb` feat(corpus): add state machine page
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- the current KG-quality follow-on extends `kg-bench` with direct canonical temporal-rule expectations for `temporal_rules`
-- the current KG-quality follow-on strengthens `axi_next_cycle_timing_gold`, `apb_setup_access_timing_gold`, and `ahb_wait_state_timing_gold` so representative AXI/APB/AHB timing fixtures assert clock/edge grounding, one-cycle windows, actor-grounded drive/stability predicates, compound antecedents, and handshake-completion predicates directly at the `SemanticIR` / `IntentIR` stages
+- the current KG-quality follow-on extends `kg-bench` with direct canonical temporal-conflict expectations for `temporal_conflicts`
+- the current KG-quality follow-on strengthens `negative_knowledge_prior_guided_temporal_conflict_caution_gold` so the `PREADY` post-tick `HIGH` / `LOW` conflict under `HREADY LOW` is asserted by signal, phase, clock/edge context, antecedent, conflicting values, supporting rule ids, and supporting statement ids at the `SemanticIR` / `IntentIR` stages
+- the latest committed KG-quality follow-on extended `kg-bench` with direct canonical temporal-rule expectations for `temporal_rules`
+- the latest committed KG-quality follow-on strengthened `axi_next_cycle_timing_gold`, `apb_setup_access_timing_gold`, and `ahb_wait_state_timing_gold` so representative AXI/APB/AHB timing fixtures assert clock/edge grounding, one-cycle windows, actor-grounded drive/stability predicates, compound antecedents, and handshake-completion predicates directly at the `SemanticIR` / `IntentIR` stages
 - the latest committed KG-quality follow-on extended `kg-bench` with direct canonical infrastructure expectations for `infrastructure_signals` and `infrastructure_topology`
 - the latest committed KG-quality follow-on added `clock_reset_topology_gold`, proving explicit current-document clock-gate, reset-synchronizer, and reset-tree topology survives through `SemanticIR` / `IntentIR` while generic topology advice does not inflate topology counts or create ordinary actor ports
 - the latest committed KG-quality follow-on added `vlm_timing_motion_annotation_negative`, proving motion-only VLM timing annotations such as `XREQ rises, remains stable, then falls` stay out of `TimingConstraintRecord`s while concrete `signals[].values[]` samples still become typed temporal evidence
@@ -83,8 +85,8 @@
 - `scripts/run_ci.sh` now also builds Rust API docs with `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` before the mdBook build, preserving caller-provided `RUSTDOCFLAGS`
 - the Rust warning baseline is clean and now enforced in the shared local/hosted CI path rather than suppressed with `#[allow(dead_code)]`
 - README bootstrap currently resolves to `SESSION_BOOTSTRAP.md`, which instructs future agents to read the referenced live docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if necessary, and then continue from the roadmap
-- this README/PNT continuation observed 30 Rust source files and 58,010 lines under `crates/specforge/src`, with the CLI now including `doctor`, `converge`, `enrich`, `validate`, `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, `corpus-kb`, and `nlp-enrich` beside the core staged IR commands
-- `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the KG-bench temporal-rule expectation path; the tracked KG fixture count remains `57`, focused KG-bench validation passes for the strengthened AXI/APB/AHB timing fixtures, the full tracked KG suite passes `57/57`, and the full local CI gate reports `313` passing Rust tests
+- this README/PNT continuation observed 30 Rust source files and 58,104 lines under `crates/specforge/src`, with the CLI now including `doctor`, `converge`, `enrich`, `validate`, `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, `corpus-kb`, and `nlp-enrich` beside the core staged IR commands
+- `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the KG-bench temporal-conflict expectation path; the tracked KG fixture count remains `57`, focused KG-bench validation passes for the strengthened negative-knowledge temporal-conflict caution fixture, the full tracked KG suite reports `57/57`, and full local CI passes with `313` Rust tests plus the mdBook build
 - the latest README bootstrap hygiene pass found no new Rust architecture drift requiring code changes; the concrete fixes were to refresh the README implementation-path map, refresh the committed baseline in this memory file, update the current testing/validation counts in `RUST_CODEBASE_ANALYSIS.md`, and normalize old checkout-specific markdown links to repo-relative paths
 - the earlier VLM timing KG benchmark slice `vlm_timing_waveform_motion_negative` proves a VLM timing diagram can preserve the real `HIGH` sample while rejecting waveform motion descriptors and transition spellings such as `rising`, `stable`, `falling`, `UNCHANGED`, `RISING_EDGE`, `LOW_TO_HIGH`, `HIGH_TO_LOW`, `POS_EDGE`, `NEG_EDGE`, `risingedge`, `LOW2HIGH`, and `HIGH2LOW` as concrete signal values
 - the latest committed VLM timing KG benchmark slices tighten `vlm_timing_spurious_annotation_negative`, proving compact and bracketed waveform/sample labels such as `D0`, `A1`, `DATA0`, `0xAA`, `D[0]`, `A[1]`, `DATA[3]`, and `ADDR[7]` are annotation noise rather than timing constraints
@@ -231,6 +233,7 @@
 - tracked KG-quality fixtures now live under `crates/specforge/test_data/kg_quality/`
 
 ## Completed technical work in this session
+- continued the KG-quality benchmark hardening work from commit `7490cb5`, extended `kg-bench` with direct canonical `temporal_conflicts` expectations, strengthened `negative_knowledge_prior_guided_temporal_conflict_caution_gold` with typed conflict-shape assertions, and passed focused `kg-bench` validation for that fixture
 - continued the KG-quality benchmark hardening work from commit `f99956e`, extended `kg-bench` with direct canonical `temporal_rules` expectations, strengthened the representative AXI/APB/AHB timing fixtures with typed clock/edge/cycle-window/antecedent/consequent assertions, and passed focused `kg-bench` validation for `axi_next_cycle_timing_gold`, `apb_setup_access_timing_gold`, and `ahb_wait_state_timing_gold`, the full tracked KG suite, and the full local CI gate with `313` Rust tests
 - continued the KG-quality benchmark hardening work from commit `37cd89a`, extended `kg-bench` with direct canonical `infrastructure_signals` / `infrastructure_topology` expectations, added `clock_reset_topology_gold`, refreshed the benchmark and infrastructure corpus-KB pages from the tracked `57/57` fixture suite, and passed focused `kg_bench` validation, the full KG fixture run, the live corpus-KB refresh, and the full local CI gate with `313` Rust tests
 - continued the `R15g` corpus knowledge-base work from commit `fd716eb`, added the dedicated `corpus_kb/prior_memory/kg-fixtures.md` page family for typed prior-memory fixture patterns, refreshed it from the tracked `55/55` fixture suite with 21 passing prior-memory fixtures and explicit fixture-path provenance, preserved the review-only corpus-KB boundary, and passed focused `corpus_kb` validation, the live corpus-KB KG fixture refresh command, docs CI, and the full local CI gate with `313` Rust tests
@@ -326,7 +329,7 @@
 - richer explicit clock-tick temporal semantics (`R15b`)
 - KG-guided multimodal rescans (`R15c`)
 - broader evidence arbitration / conflict handling beyond polarity, interface-shape, multi-producer ambiguity, modality-aware semantic-role grounding, consensus summaries, semantic candidates, and semantic arbitration summaries (`R15d`)
-- broader KG-quality evaluation and benchmark hardening beyond the new seed fixture pack (`R15e`); recent slices added active-low reset-release VLM coverage, graph direction coverage expectations, explicit asserted-when-level non-reset control polarity recovery, collective active-level non-reset control polarity recovery, mixed clause-local non-reset control polarity recovery, detached mixed-polarity rejection coverage, motion-only VLM timing annotation rejection, direct clock/reset infrastructure-topology coverage, and direct temporal-rule shape coverage
+- broader KG-quality evaluation and benchmark hardening beyond the new seed fixture pack (`R15e`); recent slices added active-low reset-release VLM coverage, graph direction coverage expectations, explicit asserted-when-level non-reset control polarity recovery, collective active-level non-reset control polarity recovery, mixed clause-local non-reset control polarity recovery, detached mixed-polarity rejection coverage, motion-only VLM timing annotation rejection, direct clock/reset infrastructure-topology coverage, direct temporal-rule shape coverage, and direct temporal-conflict shape coverage
 - cross-document extractor learning is now started, and the first seven bounded prior-consumer paths are now live; visual-motif priors now have explicit local enrichment rescan hints, negative-knowledge priors now have validation-only caution coverage, machine-readable rescan/corroboration guidance, a `project-validation` consumer that writes a schema-v2 replay-oriented rescan/extractor-selection target list, a first explicit `rescan-plan` consumer, an opt-in `converge --rescan-plan <plan>` hook, persisted execution summaries for changed-outcome review, explicit not-promoted gates plus structured promotion-review requirements on those summaries, and review-facing projection of those summaries into validation docs; an approval artifact should remain local/generated unless future work deliberately introduces canonical artifact mutation plus a tracked approval-evidence schema
 - Tier 3 relation extraction after the graph/temporal/eval surfaces are ready (`R14`)
 - some downstream compatibility and consumer paths still rely on flat `direction_hint` instead of the graph-native surface; explicit-module `.fsm` top composition, unambiguous standalone direct roots, standalone sequential system-contract renderability, and explicit top-link boundary recovery now have bounded adapter-side recovery paths, but the broader direct-consumer cleanup remains open

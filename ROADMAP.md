@@ -520,6 +520,7 @@
   - fixture expectations can now assert canonical state names, initial-state names, and transition endpoints directly, so VLM state-machine truthfulness can be locked without generated-artifact spelunking
   - fixture expectations can now also assert persisted validation metric values directly at the evidence, semantic, and intent stages, and `SourceIR` fixture patches can now inject visual assets as well as tables, so the harness can lock cross-modality grounding behavior and VLM-note semantic provenance with tracked staged fixtures
   - fixture expectations can now assert canonical `temporal_rules` directly, so APB/AHB/AXI timing truthfulness is checked as typed clock/edge/cycle-window/predicate IR instead of only through validation metrics
+  - fixture expectations can now assert canonical `temporal_conflicts` directly, so contradiction surfacing is checked as typed context/value/supporting-evidence IR instead of only a conflict count
   - fixture expectations can now assert canonical `infrastructure_signals` and `infrastructure_topology` records directly, so clock/reset topology truthfulness is checked as typed IR instead of only through validation metrics
   - width-only synthesized signal declarations now survive into canonical `SemanticIR` / `IntentIR` records, so AXI-style `Name | Width | Description` tables can be benchmarked honestly instead of stopping at raw actor relations and connectivity
 - remaining:
