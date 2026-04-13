@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-04-13 (KG bench asserts clock/reset infrastructure topology)
+
+### Added: canonical infrastructure expectations in KG fixtures
+- `kg-bench` fixtures can now assert canonical `infrastructure_signals` and `infrastructure_topology` records directly at the `SemanticIR` and `IntentIR` stages.
+- Added tracked fixture `clock_reset_topology_gold`, proving explicit current-document clock-gate, reset-synchronizer, and reset-tree topology survives canonically while generic clock-gate/synchronizer advice does not inflate topology counts.
+- Refreshed the corpus-KB benchmark and infrastructure/polarity fixture pages from the now `57`-fixture KG suite.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality clock_reset_topology_gold` -> passed
+- `cargo test --manifest-path Cargo.toml --lib kg_bench -- --nocapture` -> passed with the tracked fixture suite reporting `57` passed / `0` failed fixtures
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `57` passed / `0` failed fixtures
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed corpus-KB fixture projections with `57` passed / `0` failed fixtures
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `313` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+
 ## 2026-04-13 (VLM timing filters motion-only annotations)
 
 ### Fixed: motion-only VLM timing annotations no longer become timing constraints

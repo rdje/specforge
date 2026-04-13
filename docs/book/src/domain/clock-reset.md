@@ -89,6 +89,7 @@ A sentence such as `The ARESETN reset tree targets the Requester registers and C
 
 This is intentionally not learned from generic clock/reset doctrine or prior memory.
 If the current document only says that a synchronizer might exist, or gives generic advice about clock gating, the topology record should stay absent.
+The tracked KG fixture `clock_reset_topology_gold` now locks that boundary at the benchmark layer as well as in unit tests.
 
 ## Reset polarity
 

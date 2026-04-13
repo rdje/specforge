@@ -40,6 +40,10 @@ This is intentionally separate from `signal_directions_include`.
 The older field still checks the flat compatibility `direction_hint` on interface signal records.
 Keeping both surfaces separate prevents the harness from flattening producer/consumer actor roles into a fake single perspective while still letting graph-first recovery be tested explicitly.
 
+Fixtures can also assert canonical clock/reset infrastructure records directly.
+`infrastructure_signals_include` checks the typed infrastructure signal surface, and `infrastructure_topologies_include` checks explicit current-document topology such as clock-gated branches, reset synchronizer stages, and reset-tree targets.
+That keeps infrastructure doctrine executable instead of leaving it as prose-only guidance or aggregate validation metrics.
+
 ## Gold fixtures versus negative fixtures
 
 Gold fixtures prove that a wanted path works.
@@ -84,6 +88,9 @@ State-machine visual fixtures protect the FSM side of the same boundary.
 The polarity fixture family also covers non-reset controls.
 Gold fixtures prove explicit asserted-when-level prose, collective active-level prose, and safe clause-local mixed prose can recover active-low or active-high facts.
 The detached mixed-polarity negative fixture proves a phrase like `CS_N is active LOW and active HIGH` stays unresolved instead of borrowing an implicit subject.
+
+The infrastructure fixture family now includes explicit clock/reset topology coverage too.
+`clock_reset_topology_gold` proves that current-document clock-gate, reset-synchronizer, and reset-tree phrases become typed infrastructure topology, while generic guidance such as glitch-avoidance advice or possible synchronizer usage does not add extra topology records or ordinary protocol actor ports.
 
 ## Practical role in the project
 

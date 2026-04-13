@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-13 KG-bench infrastructure topology expectations
+- This slice moves clock/reset infrastructure topology from unit-test-only confidence into tracked KG-quality coverage.
+- `kg-bench` can now assert `SemanticIR` / `IntentIR` `infrastructure_signals` by signal name, kind, optional source/distribution status, recovered source actor names, and distribution target actor names.
+- It can also assert `infrastructure_topology` records by signal name, topology kind, optional component name, optional stage count, and expected target actors.
+- The new `clock_reset_topology_gold` fixture locks the doctrine that explicit current-document phrases such as `The ACLK clock gate CGATE0 feeds the Requester branch`, `The two-stage reset synchronizer RSTSYNC0 feeds ARESETN to the Requester`, and `The ARESETN reset tree targets the Requester registers and Completer registers` become typed infrastructure topology, while generic advice like `clock gate policy should avoid glitches` or `may use a synchronizer` does not add extra topology records.
+- The fixture keeps `actor_ports = 0` in validation to prove topology-only clock/reset evidence stays in the infrastructure surface rather than becoming ordinary protocol actor ports.
+
 ## 2026-04-13 VLM timing motion-only annotation filtering
 - This slice fixes a false-positive gap in the VLM timing path: label-only annotation filters and waveform-motion `signals[].values[].state` filters were already present, but prose annotations such as `XREQ rises, remains stable, then falls` could still become `TimingConstraintRecord`s.
 - That was too permissive because motion-only annotation prose is often figure markup or OCR/VLM commentary, not a numeric timing requirement, temporal bound, setup/hold parameter, or protocol law.

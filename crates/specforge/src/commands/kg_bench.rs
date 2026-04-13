@@ -17,8 +17,10 @@ use crate::ir::prior_memory::{
     TemporalPhrasePriorRecord, VisualMotifPriorRecord,
 };
 use crate::ir::semantic::{
-    ActorPortRecord, ActorRelativeDirection, InterfaceRecord, InterfaceSignalDirection,
-    RegularStateRecord, SemanticIr, StateTransitionRecord, TemporalRuleRecord,
+    ActorPortRecord, ActorRelativeDirection, InfrastructureSignalDistributionStatus,
+    InfrastructureSignalKind, InfrastructureSignalRecord, InfrastructureSignalSourceStatus,
+    InfrastructureTopologyKind, InterfaceRecord, InterfaceSignalDirection, RegularStateRecord,
+    SemanticIr, StateTransitionRecord, TemporalRuleRecord,
 };
 use crate::ir::source::{
     ActorSignalRelation, RelationKind, ResidualDecisionPacket, ValidationFindingRecord,
@@ -105,6 +107,10 @@ struct CanonicalStageExpectations {
     #[serde(default)]
     actor_signal_relations_include: Vec<ExpectedActorSignalRelation>,
     #[serde(default)]
+    infrastructure_signals_include: Vec<ExpectedInfrastructureSignal>,
+    #[serde(default)]
+    infrastructure_topologies_include: Vec<ExpectedInfrastructureTopology>,
+    #[serde(default)]
     state_names_include: Vec<String>,
     #[serde(default)]
     state_names_exclude: Vec<String>,
@@ -188,6 +194,33 @@ struct ExpectedActorSignalRelation {
     actor_name: String,
     signal_name: String,
     relation: RelationKind,
+}
+
+#[derive(Debug, Deserialize)]
+struct ExpectedInfrastructureSignal {
+    signal_name: String,
+    #[serde(default)]
+    kind: Option<InfrastructureSignalKind>,
+    #[serde(default)]
+    source_status: Option<InfrastructureSignalSourceStatus>,
+    #[serde(default)]
+    distribution_status: Option<InfrastructureSignalDistributionStatus>,
+    #[serde(default)]
+    recovered_source_actor_names_include: Vec<String>,
+    #[serde(default)]
+    distributed_to_actor_names_include: Vec<String>,
+}
+
+#[derive(Debug, Deserialize)]
+struct ExpectedInfrastructureTopology {
+    signal_name: String,
+    topology_kind: InfrastructureTopologyKind,
+    #[serde(default)]
+    component_name: Option<String>,
+    #[serde(default)]
+    stage_count: Option<u32>,
+    #[serde(default)]
+    target_actor_names_include: Vec<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -423,6 +456,7 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
             &semantic_ir.interfaces,
             &semantic_ir.actor_signal_relations,
             &semantic_ir.actor_ports,
+            &semantic_ir.infrastructure_signals,
             &semantic_ir.regular_states,
             &semantic_ir.state_transitions,
             &semantic_ir.residual_decisions,
@@ -443,6 +477,7 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
             &intent_ir.interfaces,
             &intent_ir.actor_signal_relations,
             &intent_ir.actor_ports,
+            &intent_ir.infrastructure_signals,
             &intent_ir.regular_states,
             &intent_ir.state_transitions,
             &intent_ir.residual_decisions,
@@ -504,6 +539,7 @@ fn evaluate_canonical_expectations(
     interfaces: &[InterfaceRecord],
     actor_signal_relations: &[ActorSignalRelation],
     actor_ports: &[ActorPortRecord],
+    infrastructure_signals: &[InfrastructureSignalRecord],
     regular_states: &[RegularStateRecord],
     state_transitions: &[StateTransitionRecord],
     residual_decisions: &[ResidualDecisionPacket],
@@ -770,6 +806,24 @@ fn evaluate_canonical_expectations(
         }
     }
 
+    for expected_infrastructure_signal in &expectations.infrastructure_signals_include {
+        evaluate_expected_infrastructure_signal(
+            label,
+            expected_infrastructure_signal,
+            infrastructure_signals,
+            failures,
+        );
+    }
+
+    for expected_topology in &expectations.infrastructure_topologies_include {
+        evaluate_expected_infrastructure_topology(
+            label,
+            expected_topology,
+            infrastructure_signals,
+            failures,
+        );
+    }
+
     let state_names = regular_state_names(regular_states);
     assert_includes(
         label,
@@ -906,6 +960,132 @@ fn evaluate_canonical_expectations(
         temporal_conflicts,
         failures,
     );
+}
+
+fn evaluate_expected_infrastructure_signal(
+    label: &str,
+    expectation: &ExpectedInfrastructureSignal,
+    infrastructure_signals: &[InfrastructureSignalRecord],
+    failures: &mut Vec<String>,
+) {
+    let Some(record) = infrastructure_signals
+        .iter()
+        .find(|record| record.signal_name == expectation.signal_name)
+    else {
+        failures.push(format!(
+            "{label}: missing infrastructure signal `{}`",
+            expectation.signal_name
+        ));
+        return;
+    };
+
+    if let Some(kind) = expectation.kind
+        && record.kind != kind
+    {
+        failures.push(format!(
+            "{label}: expected infrastructure signal `{}` kind `{}`, got `{}`",
+            expectation.signal_name,
+            infrastructure_signal_kind_label(kind),
+            infrastructure_signal_kind_label(record.kind)
+        ));
+    }
+    if let Some(source_status) = expectation.source_status
+        && record.source_status != source_status
+    {
+        failures.push(format!(
+            "{label}: expected infrastructure signal `{}` source status `{}`, got `{}`",
+            expectation.signal_name,
+            infrastructure_source_status_label(source_status),
+            infrastructure_source_status_label(record.source_status)
+        ));
+    }
+    if let Some(distribution_status) = expectation.distribution_status
+        && record.distribution_status != distribution_status
+    {
+        failures.push(format!(
+            "{label}: expected infrastructure signal `{}` distribution status `{}`, got `{}`",
+            expectation.signal_name,
+            infrastructure_distribution_status_label(distribution_status),
+            infrastructure_distribution_status_label(record.distribution_status)
+        ));
+    }
+
+    let recovered_sources = record
+        .recovered_source_actor_names
+        .iter()
+        .cloned()
+        .collect::<BTreeSet<_>>();
+    assert_includes(
+        label,
+        "infrastructure_signal.recovered_source_actor_names_include",
+        &expectation.recovered_source_actor_names_include,
+        &recovered_sources,
+        failures,
+    );
+
+    let distributed_targets = record
+        .distributed_to_actor_names
+        .iter()
+        .cloned()
+        .collect::<BTreeSet<_>>();
+    assert_includes(
+        label,
+        "infrastructure_signal.distributed_to_actor_names_include",
+        &expectation.distributed_to_actor_names_include,
+        &distributed_targets,
+        failures,
+    );
+}
+
+fn evaluate_expected_infrastructure_topology(
+    label: &str,
+    expectation: &ExpectedInfrastructureTopology,
+    infrastructure_signals: &[InfrastructureSignalRecord],
+    failures: &mut Vec<String>,
+) {
+    let matching_signal_records = infrastructure_signals
+        .iter()
+        .filter(|record| record.signal_name == expectation.signal_name)
+        .collect::<Vec<_>>();
+    if matching_signal_records.is_empty() {
+        failures.push(format!(
+            "{label}: missing infrastructure signal `{}` while checking topology `{}`",
+            expectation.signal_name,
+            infrastructure_topology_kind_label(expectation.topology_kind)
+        ));
+        return;
+    }
+
+    let found = matching_signal_records
+        .iter()
+        .flat_map(|record| &record.infrastructure_topology)
+        .any(|topology| {
+            topology.topology_kind == expectation.topology_kind
+                && expectation
+                    .component_name
+                    .as_ref()
+                    .is_none_or(|component_name| {
+                        topology.component_name.as_deref() == Some(component_name.as_str())
+                    })
+                && expectation
+                    .stage_count
+                    .is_none_or(|stage_count| topology.stage_count == Some(stage_count))
+                && expectation
+                    .target_actor_names_include
+                    .iter()
+                    .all(|actor_name| topology.target_actor_names.contains(actor_name))
+        });
+
+    if !found {
+        failures.push(format!(
+            "{label}: missing infrastructure topology `{}` for signal `{}` with component `{:?}`, stage_count `{:?}`, and targets {:?}",
+            infrastructure_topology_kind_label(expectation.topology_kind),
+            expectation.signal_name,
+            expectation.component_name,
+            expectation.stage_count,
+            expectation.target_actor_names_include
+        ));
+    }
 }
 
 fn evaluate_validation_expectations(
@@ -1234,6 +1414,45 @@ fn interface_signal_direction_label(direction: InterfaceSignalDirection) -> &'st
         InterfaceSignalDirection::Input => "input",
         InterfaceSignalDirection::Output => "output",
         InterfaceSignalDirection::Internal => "internal",
+    }
+}
+
+fn infrastructure_signal_kind_label(kind: InfrastructureSignalKind) -> &'static str {
+    match kind {
+        InfrastructureSignalKind::SystemClock => "system_clock",
+        InfrastructureSignalKind::SystemReset => "system_reset",
+    }
+}
+
+fn infrastructure_source_status_label(status: InfrastructureSignalSourceStatus) -> &'static str {
+    match status {
+        InfrastructureSignalSourceStatus::UnresolvedSource => "unresolved_source",
+        InfrastructureSignalSourceStatus::RecoveredProducer => "recovered_producer",
+        InfrastructureSignalSourceStatus::MultipleRecoveredProducers => {
+            "multiple_recovered_producers"
+        }
+    }
+}
+
+fn infrastructure_distribution_status_label(
+    status: InfrastructureSignalDistributionStatus,
+) -> &'static str {
+    match status {
+        InfrastructureSignalDistributionStatus::NoRecoveredConsumers => "no_recovered_consumers",
+        InfrastructureSignalDistributionStatus::SingleRecoveredConsumer => {
+            "single_recovered_consumer"
+        }
+        InfrastructureSignalDistributionStatus::SharedRecoveredConsumers => {
+            "shared_recovered_consumers"
+        }
+    }
+}
+
+fn infrastructure_topology_kind_label(kind: InfrastructureTopologyKind) -> &'static str {
+    match kind {
+        InfrastructureTopologyKind::ClockGatedBranch => "clock_gated_branch",
+        InfrastructureTopologyKind::ResetSynchronizerStages => "reset_synchronizer_stages",
+        InfrastructureTopologyKind::ResetTreeTargets => "reset_tree_targets",
     }
 }
 

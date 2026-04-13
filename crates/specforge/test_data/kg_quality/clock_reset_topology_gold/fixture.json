@@ -1,0 +1,94 @@
+{
+  "name": "clock_reset_topology_gold",
+  "source": "source.md",
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["ACLK", "ARESETN"],
+      "infrastructure_signals_include": [
+        {
+          "signal_name": "ACLK",
+          "kind": "system_clock"
+        },
+        {
+          "signal_name": "ARESETN",
+          "kind": "system_reset"
+        }
+      ],
+      "infrastructure_topologies_include": [
+        {
+          "signal_name": "ACLK",
+          "topology_kind": "clock_gated_branch",
+          "component_name": "CGATE0",
+          "target_actor_names_include": ["Requester"]
+        },
+        {
+          "signal_name": "ARESETN",
+          "topology_kind": "reset_synchronizer_stages",
+          "component_name": "RSTSYNC0",
+          "stage_count": 2,
+          "target_actor_names_include": ["Requester"]
+        },
+        {
+          "signal_name": "ARESETN",
+          "topology_kind": "reset_tree_targets",
+          "target_actor_names_include": ["Requester", "Completer"]
+        }
+      ]
+    },
+    "intent": {
+      "signal_names_include": ["ACLK", "ARESETN"],
+      "infrastructure_signals_include": [
+        {
+          "signal_name": "ACLK",
+          "kind": "system_clock"
+        },
+        {
+          "signal_name": "ARESETN",
+          "kind": "system_reset"
+        }
+      ],
+      "infrastructure_topologies_include": [
+        {
+          "signal_name": "ACLK",
+          "topology_kind": "clock_gated_branch",
+          "component_name": "CGATE0",
+          "target_actor_names_include": ["Requester"]
+        },
+        {
+          "signal_name": "ARESETN",
+          "topology_kind": "reset_synchronizer_stages",
+          "component_name": "RSTSYNC0",
+          "stage_count": 2,
+          "target_actor_names_include": ["Requester"]
+        },
+        {
+          "signal_name": "ARESETN",
+          "topology_kind": "reset_tree_targets",
+          "target_actor_names_include": ["Requester", "Completer"]
+        }
+      ]
+    },
+    "validation": {
+      "semantic": {
+        "metric_values": {
+          "actor_ports": "0",
+          "infrastructure_signals": "2",
+          "infrastructure_topology_records": "3",
+          "infrastructure_clock_gated_branches": "1",
+          "infrastructure_reset_synchronizer_stages": "1",
+          "infrastructure_reset_tree_targets": "1"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "actor_ports": "0",
+          "infrastructure_signals": "2",
+          "infrastructure_topology_records": "3",
+          "infrastructure_clock_gated_branches": "1",
+          "infrastructure_reset_synchronizer_stages": "1",
+          "infrastructure_reset_tree_targets": "1"
+        }
+      }
+    }
+  }
+}

@@ -13,8 +13,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 <!-- corpus_kb_kg_fixtures:start -->
 <!-- This block is refreshed by `specforge corpus-kb`. -->
 
-- fixtures_total: `56`
-- fixtures_passed: `56`
+- fixtures_total: `57`
+- fixtures_passed: `57`
 - fixtures_failed: `0`
 
 ### Fixture Family Summary
@@ -25,7 +25,7 @@ Fixtures can appear in more than one family because protocol semantics, modality
 | VLM state machines | `5` | `5` | `0` |
 | VLM timing diagrams | `7` | `7` | `0` |
 | actor connectivity | `11` | `11` | `0` |
-| infrastructure semantics | `2` | `2` | `0` |
+| infrastructure semantics | `3` | `3` | `0` |
 | multimodal visual grounding | `19` | `19` | `0` |
 | negative knowledge | `5` | `5` | `0` |
 | polarity semantics | `6` | `6` | `0` |
@@ -111,6 +111,12 @@ Fixtures can appear in more than one family because protocol semantics, modality
 
 ### axi_width_only_prose_direction_gold
 - fixture_path: `crates/specforge/test_data/kg_quality/axi_width_only_prose_direction_gold/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### clock_reset_topology_gold
+- fixture_path: `crates/specforge/test_data/kg_quality/clock_reset_topology_gold/fixture.json`
 - status: `pass`
 - failures:
   - none

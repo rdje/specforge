@@ -134,6 +134,7 @@
 - KG benchmark harness now includes an AHB-style section-heading gold fixture for direction recovery: Done
 - KG benchmark harness now includes an AHB wait-state timing gold fixture: Done
 - KG benchmark harness now locks bogus actor-attribution rejection for `Source`-column infrastructure rows: Done
+- KG benchmark harness can now assert canonical clock/reset infrastructure records and topology directly: Done
 - KG benchmark harness now locks field-table misclassification rejection: Done
 - KG benchmark harness now locks spurious VLM timing-annotation sample/index-label, motion-only annotation, and waveform-motion state rejection: Done
 - KG benchmark harness now locks active-low VLM timing polarity equivalence: Done
