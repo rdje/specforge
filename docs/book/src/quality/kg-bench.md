@@ -101,4 +101,4 @@ That projection writes `corpus_kb/benchmarks/kg-fixtures.md`.
 It is a reviewable synthesis page, not a replacement for the executable `kg-bench` gate.
 It also includes a fixture-family summary table so coverage by truthfulness family is visible beside the per-fixture pass/fail list.
 The same refresh now populates dedicated semantic/truthfulness pattern, table, visual, timing, infrastructure/polarity, and AMBA-family corpus-KB pages from the same fixture outcomes.
-It also populates a review-only prior-candidate page; that page can guide future typed-prior work but cannot mutate `CorpusMemory`.
+It also populates a review-only prior-candidate page with family-level schema, fixture, harvest, and consumer gate rows; that page can guide future typed-prior work but cannot mutate `CorpusMemory`.

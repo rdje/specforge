@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-04-13 (R15g prior-candidate gate matrix)
+
+### Added: review-gated prior-candidate surface
+- `corpus_kb/prior_candidates/kg-fixture-candidates.md` now includes `review_scope: family_surface_not_individual_prior` so the managed projection cannot be mistaken for individual prior promotion.
+- The managed prior-candidate block now emits a `Promotion Gate Review Matrix` covering `schema_gate`, `fixture_gate`, `harvest_gate`, `consumer_gate`, and the non-mutation `promotion_boundary` for every candidate family.
+- The gate matrix reflects already visible implementation surfaces for the seven `CorpusMemory` families while keeping the corpus-KB page review-only: it does not write prior memory, approve a prior record, or mutate canonical IR.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test --manifest-path Cargo.toml --lib corpus_kb -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed the prior-candidate corpus-KB page with `55` passed / `0` failed fixtures
+- `git diff --check` -> passed
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with Clippy `-D warnings`, `313` Rust tests under `RUSTFLAGS="-D warnings"`, rustdoc under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build
+
 ## 2026-04-13 (R15g semantic/truthfulness corpus KB patterns)
 
 ### Added: semantic and truthfulness pattern page family

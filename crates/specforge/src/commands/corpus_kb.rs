@@ -39,42 +39,70 @@ const PRIOR_CANDIDATE_SPECS: &[PriorCandidateSpec] = &[
         candidate_kind: "actor_taxonomy_prior",
         target_schema: "CorpusMemory.actor_taxonomy_priors",
         required_gates: "typed CorpusMemory schema; paired KG-bench gold/negative coverage; validated IntentIR harvest input; local-grounding consumer",
+        schema_gate: "present_schema_v5",
+        fixture_gate: "paired_gold_without_prior_fixture",
+        harvest_gate: "learn_priors_actor_taxonomy_harvester_present",
+        consumer_gate: "evidence_actor_taxonomy_local_grounding_consumer_present",
     },
     PriorCandidateSpec {
         marker: "semantic_modality_reliability_prior",
         candidate_kind: "semantic_modality_reliability_prior",
         target_schema: "CorpusMemory.semantic_modality_reliability_priors",
         required_gates: "typed CorpusMemory schema; paired KG-bench conflict coverage; validated IntentIR harvest input; local-grounded arbitration consumer",
+        schema_gate: "present_schema_v5",
+        fixture_gate: "paired_conflict_gold_without_prior_fixture",
+        harvest_gate: "learn_priors_modality_reliability_harvester_present",
+        consumer_gate: "semantic_arbitration_reliability_consumer_present",
     },
     PriorCandidateSpec {
         marker: "semantic_prior",
         candidate_kind: "semantic_phrase_prior",
         target_schema: "CorpusMemory.semantic_phrase_priors",
         required_gates: "typed CorpusMemory schema; paired KG-bench gold/negative coverage; validated IntentIR harvest input; local-grounding semantic consumer",
+        schema_gate: "present_schema_v5",
+        fixture_gate: "paired_text_and_visual_gold_without_prior_fixtures",
+        harvest_gate: "learn_priors_semantic_phrase_harvester_present",
+        consumer_gate: "evidence_semantic_phrase_local_grounding_consumer_present",
     },
     PriorCandidateSpec {
         marker: "temporal_prior",
         candidate_kind: "temporal_phrase_prior",
         target_schema: "CorpusMemory.temporal_phrase_priors",
         required_gates: "typed CorpusMemory schema; paired KG-bench gold/negative coverage; validated IntentIR harvest input; local-grounding temporal consumer",
+        schema_gate: "present_schema_v5",
+        fixture_gate: "paired_gold_without_prior_fixture",
+        harvest_gate: "learn_priors_temporal_phrase_harvester_present",
+        consumer_gate: "semantic_temporal_phrase_cycle_window_consumer_present",
     },
     PriorCandidateSpec {
         marker: "table_shape_prior",
         candidate_kind: "table_shape_prior",
         target_schema: "CorpusMemory.table_shape_priors",
         required_gates: "typed CorpusMemory schema; paired KG-bench gold/negative coverage; validated SourceIR/IntentIR harvest chain; local table-kind consumer",
+        schema_gate: "present_schema_v5",
+        fixture_gate: "paired_signal_and_timing_table_gold_without_prior_fixtures",
+        harvest_gate: "learn_priors_source_ir_table_shape_harvester_present",
+        consumer_gate: "evidence_table_kind_local_shape_consumer_present",
     },
     PriorCandidateSpec {
         marker: "visual_motif_prior",
         candidate_kind: "visual_motif_prior",
         target_schema: "CorpusMemory.visual_motif_priors",
         required_gates: "typed CorpusMemory schema; paired KG-bench gold/negative coverage; validated IntentIR harvest input; VLM/multimodal corroboration gate",
+        schema_gate: "present_schema_v5",
+        fixture_gate: "paired_visual_motif_gold_without_prior_fixture",
+        harvest_gate: "learn_priors_source_ir_visual_motif_harvester_present",
+        consumer_gate: "evidence_visual_caption_motif_consumer_with_corroboration_gate_present",
     },
     PriorCandidateSpec {
         marker: "negative_knowledge_prior",
         candidate_kind: "negative_knowledge_prior",
         target_schema: "CorpusMemory.negative_knowledge_priors",
         required_gates: "typed CorpusMemory schema; caution-only validation consumer; paired KG-bench conflict/residual coverage; rescan guidance review gate",
+        schema_gate: "present_schema_v5",
+        fixture_gate: "caution_fixtures_across_conflict_residual_families_present",
+        harvest_gate: "learn_priors_conflict_residual_negative_knowledge_harvester_present",
+        consumer_gate: "validation_caution_and_rescan_guidance_consumer_present",
     },
 ];
 
@@ -166,6 +194,10 @@ struct PriorCandidateSpec {
     candidate_kind: &'static str,
     target_schema: &'static str,
     required_gates: &'static str,
+    schema_gate: &'static str,
+    fixture_gate: &'static str,
+    harvest_gate: &'static str,
+    consumer_gate: &'static str,
 }
 
 #[derive(Debug)]
@@ -173,6 +205,10 @@ struct PriorCandidateProjection {
     candidate_kind: &'static str,
     target_schema: &'static str,
     required_gates: &'static str,
+    schema_gate: &'static str,
+    fixture_gate: &'static str,
+    harvest_gate: &'static str,
+    consumer_gate: &'static str,
     supporting_fixtures: BTreeSet<String>,
     positive_fixtures: BTreeSet<String>,
     guard_fixtures: BTreeSet<String>,
@@ -613,6 +649,7 @@ fn render_prior_candidate_block(entries: &[KgFixtureProjection]) -> String {
     output.push('\n');
     output.push_str("<!-- This block is refreshed by `specforge corpus-kb`. -->\n\n");
     output.push_str("- source: `kg-bench fixtures`\n");
+    output.push_str("- review_scope: `family_surface_not_individual_prior`\n");
     output.push_str("- promotion_status: `candidate_not_promoted_review_required`\n");
     output.push_str("- canonical_mutation_allowed: `false`\n");
     output.push_str("- corpus_memory_mutation_allowed: `false`\n\n");
@@ -623,7 +660,7 @@ fn render_prior_candidate_block(entries: &[KgFixtureProjection]) -> String {
     } else {
         output.push_str("| candidate_kind | target_schema | supporting | positive_gates | guard_gates | required_gates |\n");
         output.push_str("| --- | --- | ---: | --- | --- | --- |\n");
-        for candidate in candidates {
+        for candidate in &candidates {
             output.push_str("| `");
             output.push_str(candidate.candidate_kind);
             output.push_str("` | `");
@@ -637,6 +674,24 @@ fn render_prior_candidate_block(entries: &[KgFixtureProjection]) -> String {
             output.push_str(" | ");
             output.push_str(&escape_markdown_line(candidate.required_gates));
             output.push_str(" |\n");
+        }
+        output.push('\n');
+        output.push_str("### Promotion Gate Review Matrix\n");
+        output.push_str("These gates describe the family-level implementation surface already visible to review. They are not approval records and do not grant mutation authority.\n\n");
+        output.push_str("| candidate_kind | schema_gate | fixture_gate | harvest_gate | consumer_gate | promotion_boundary |\n");
+        output.push_str("| --- | --- | --- | --- | --- | --- |\n");
+        for candidate in &candidates {
+            output.push_str("| `");
+            output.push_str(candidate.candidate_kind);
+            output.push_str("` | `");
+            output.push_str(candidate.schema_gate);
+            output.push_str("` | `");
+            output.push_str(candidate.fixture_gate);
+            output.push_str("` | `");
+            output.push_str(candidate.harvest_gate);
+            output.push_str("` | `");
+            output.push_str(candidate.consumer_gate);
+            output.push_str("` | `review_only_no_corpus_memory_or_canonical_ir_mutation` |\n");
         }
         output.push('\n');
     }
@@ -661,6 +716,10 @@ fn prior_candidate_projections(entries: &[KgFixtureProjection]) -> Vec<PriorCand
                         candidate_kind: spec.candidate_kind,
                         target_schema: spec.target_schema,
                         required_gates: spec.required_gates,
+                        schema_gate: spec.schema_gate,
+                        fixture_gate: spec.fixture_gate,
+                        harvest_gate: spec.harvest_gate,
+                        consumer_gate: spec.consumer_gate,
                         supporting_fixtures: BTreeSet::new(),
                         positive_fixtures: BTreeSet::new(),
                         guard_fixtures: BTreeSet::new(),
@@ -1110,6 +1169,16 @@ Keep this benchmark note.\n\n\
         assert!(prior_candidate_refreshed.contains("`CorpusMemory.table_shape_priors`"));
         assert!(prior_candidate_refreshed.contains("candidate_not_promoted_review_required"));
         assert!(prior_candidate_refreshed.contains("`table_shape_prior_guided_signal_table_gold`"));
+        assert!(prior_candidate_refreshed.contains("### Promotion Gate Review Matrix"));
+        assert!(prior_candidate_refreshed.contains("family_surface_not_individual_prior"));
+        assert!(
+            prior_candidate_refreshed
+                .contains("`learn_priors_source_ir_table_shape_harvester_present`")
+        );
+        assert!(
+            prior_candidate_refreshed
+                .contains("`review_only_no_corpus_memory_or_canonical_ir_mutation`")
+        );
 
         Ok(())
     }

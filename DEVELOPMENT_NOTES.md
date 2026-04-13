@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-13 R15g prior-candidate gate matrix
+- This slice deepens the prior-candidate bridge without allowing corpus KB to write prior memory or canonical IR.
+- `corpus_kb/prior_candidates/kg-fixture-candidates.md` now explicitly states `review_scope: family_surface_not_individual_prior`, because the page is a family-level review index rather than an approval artifact for a concrete prior record.
+- The managed block now emits a `Promotion Gate Review Matrix` with structured schema, fixture, harvest, consumer, and promotion-boundary gates for each candidate family.
+- The statuses are intentionally conservative: they name implementation surfaces already visible in the code and KG fixtures, but every row still ends with `review_only_no_corpus_memory_or_canonical_ir_mutation`.
+
 ## 2026-04-13 R15g semantic/truthfulness corpus KB patterns
 - This slice adds the missing `patterns/` corpus-KB page family for cross-cutting semantic and truthfulness motifs that do not fit cleanly into table, visual, timing, infrastructure, protocol, or prior-candidate pages.
 - The page is refreshed from the same `kg_bench::collect_fixture_outcomes()` pass as the aggregate benchmark projection. It selects fixtures labeled as actor/connectivity, semantic role arbitration, negative knowledge, truthfulness negatives/cautions, or residual/caveat behavior.

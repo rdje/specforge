@@ -58,6 +58,8 @@ The current managed block families are:
 
 Prior-candidate managed rows must remain non-promoting.
 They can name a target `CorpusMemory` schema and required gates, but they must also preserve explicit non-mutation state for canonical IR and corpus memory until a separate validated promotion workflow exists.
+If a prior-candidate block includes a gate matrix, the matrix is a family-level review checklist only.
+It may name visible schema, fixture, harvest, and consumer surfaces, but it must still preserve `review_scope: family_surface_not_individual_prior` and a non-mutation promotion boundary.
 
 ## Promotion Policy
 

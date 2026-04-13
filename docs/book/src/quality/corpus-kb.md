@@ -70,7 +70,8 @@ Human-authored synthesis outside those blocks is preserved.
 
 The KG fixture projection records fixture paths, pass/fail status, and a review-facing fixture-family summary table.
 The same refresh also updates dedicated semantic/truthfulness pattern, table, visual, timing, infrastructure/polarity, and AMBA-family pages.
-It also updates a review-only prior-candidate page that names target `CorpusMemory` schema surfaces and required gates without writing corpus memory.
+It also updates a review-only prior-candidate page that names target `CorpusMemory` schema surfaces, required gates, and a family-level promotion gate review matrix without writing corpus memory.
+That matrix is still only a review checklist; it is not an approval record and cannot promote a concrete prior.
 It is a review surface, not a replacement for the executable `specforge kg-bench` gate.
 Fixture-local validation runs quietly during this projection, so the command output remains a concise corpus-KB refresh summary.
 Fixture-family labels summarize coverage only; they do not mutate canonical IR or typed prior memory.

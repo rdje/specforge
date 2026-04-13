@@ -34,6 +34,7 @@
 - Dedicated corpus-KB fixture-family pages for tables, visuals, timing, infrastructure, and AMBA protocols: Done
 - Review-only corpus-KB prior-candidate projection from KG fixtures: Done
 - Semantic/truthfulness corpus-KB fixture pattern page: Done
+- Prior-candidate corpus-KB gate review matrix: Done
 - `specforge nlp-enrich` command created: Done
 - `specforge converge` command created: Done
 - End-to-end source-to-IntentIR pipeline implemented: Done
