@@ -68,6 +68,10 @@ Fixtures can assert canonical resolved semantic roles directly as well.
 `resolved_semantic_roles_include` checks the signal name and expected valid-like or ready-like role on the canonical interface signal record.
 That lets semantic gold fixtures prove `XREQ` is valid-like or `XACK` is ready-like as typed IR shape, rather than only proving that some semantic role was resolved.
 
+Fixtures can assert canonical semantic grounding strength directly as well.
+`semantic_grounding_strengths_include` checks the signal name and expected single-source, multi-source, or cross-modality grounding strength on the canonical interface signal record.
+That lets semantic gold fixtures prove a multimodal `XREQ` role is really cross-modality grounded, or a VLM-only `XACK` role is really single-source grounded, rather than only proving that a validation counter changed.
+
 Fixtures can assert canonical interface-signal conflicts directly as well.
 `interface_signal_conflicts_include` checks the conflicted signal, conflict kind, and included observation values plus supporting statement ids.
 That lets direction/width disagreement fixtures prove that the canonical layers preserved the exact contested shape, such as `input` versus `output` or width `8` versus `16`, rather than only counting that some interface conflict exists.

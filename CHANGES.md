@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-04-14 (KG bench asserts semantic grounding strength)
+
+### Added: canonical semantic-grounding strength expectations in KG fixtures
+- `kg-bench` fixtures can now assert canonical `InterfaceSignalRecord.semantic_grounding_strength` directly at the `SemanticIR` and `IntentIR` stages.
+- The new `semantic_grounding_strengths_include` matcher checks a signal name plus expected strength such as `single_source`, `multi_source`, or `cross_modality`, instead of relying only on aggregate validation counters.
+- Strengthened `cross_modality_semantic_grounding_gold`, `vlm_timing_semantic_grounding_gold`, `visual_semantic_prior_guided_caption_gold`, and `apb_requester_completer_handshake_gold` so multimodal, VLM timing-note, visual-prior, and APB handshake paths lock exact grounding-strength shape.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality cross_modality_semantic_grounding_gold vlm_timing_semantic_grounding_gold visual_semantic_prior_guided_caption_gold apb_requester_completer_handshake_gold` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `58` passed / `0` failed fixtures
+- `cargo test --manifest-path Cargo.toml --lib kg_bench -- --nocapture` -> passed with the tracked fixture suite reporting `58` passed / `0` failed fixtures
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `313` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+
 ## 2026-04-14 (KG bench asserts resolved semantic-role shape)
 
 ### Added: canonical resolved semantic-role expectations in KG fixtures

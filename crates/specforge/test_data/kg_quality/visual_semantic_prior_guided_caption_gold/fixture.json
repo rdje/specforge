@@ -42,6 +42,12 @@
           "role": "handshake_ready_like"
         }
       ],
+      "semantic_grounding_strengths_include": [
+        {
+          "signal_name": "XACK",
+          "strength": "single_source"
+        }
+      ],
       "semantic_consensus_signal_names_include": ["XACK"],
       "semantic_candidate_signal_names_include": ["XACK"],
       "decisive_semantic_arbitration_signal_names_include": ["XACK"],
@@ -54,6 +60,12 @@
         {
           "signal_name": "XACK",
           "role": "handshake_ready_like"
+        }
+      ],
+      "semantic_grounding_strengths_include": [
+        {
+          "signal_name": "XACK",
+          "strength": "single_source"
         }
       ],
       "semantic_consensus_signal_names_include": ["XACK"],

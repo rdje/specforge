@@ -44,6 +44,7 @@
 - KG benchmark harness can now assert canonical signal-polarity conflict shape directly: Done
 - KG benchmark harness can now assert canonical resolved signal polarity directly: Done
 - KG benchmark harness can now assert canonical resolved semantic-role shape directly: Done
+- KG benchmark harness can now assert canonical semantic grounding-strength shape directly: Done
 - `specforge nlp-enrich` command created: Done
 - `specforge converge` command created: Done
 - End-to-end source-to-IntentIR pipeline implemented: Done

@@ -75,6 +75,12 @@
           "role": "handshake_valid_like"
         }
       ],
+      "semantic_grounding_strengths_include": [
+        {
+          "signal_name": "XREQ",
+          "strength": "cross_modality"
+        }
+      ],
       "semantic_consensus_signal_names_include": ["XREQ"]
     },
     "intent": {
@@ -88,6 +94,12 @@
         {
           "signal_name": "XREQ",
           "role": "handshake_valid_like"
+        }
+      ],
+      "semantic_grounding_strengths_include": [
+        {
+          "signal_name": "XREQ",
+          "strength": "cross_modality"
         }
       ],
       "semantic_consensus_signal_names_include": ["XREQ"]

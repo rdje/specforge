@@ -526,6 +526,7 @@
   - fixture expectations can now assert canonical `signal_polarity_conflicts` directly, so active-level disagreement is checked as typed signal/polarity/source-kind observation IR instead of only a conflict count
   - fixture expectations can now assert canonical resolved signal polarity directly, so active-high/active-low recovery is checked as per-signal IR instead of only through validation metrics
   - fixture expectations can now assert canonical resolved semantic roles directly, so valid-like/ready-like recovery is checked as exact per-signal IR instead of only through role-presence validation metrics
+  - fixture expectations can now assert canonical semantic grounding strength directly, so single-source/multi-source/cross-modality grounding is checked as exact per-signal IR instead of only through validation metrics
   - fixture expectations can now assert canonical `temporal_rules` directly, so APB/AHB/AXI timing truthfulness is checked as typed clock/edge/cycle-window/predicate IR instead of only through validation metrics
   - fixture expectations can now assert canonical `temporal_conflicts` directly, so contradiction surfacing is checked as typed context/value/supporting-evidence IR instead of only a conflict count
   - fixture expectations can now assert canonical `infrastructure_signals` and `infrastructure_topology` records directly, so clock/reset topology truthfulness is checked as typed IR instead of only through validation metrics

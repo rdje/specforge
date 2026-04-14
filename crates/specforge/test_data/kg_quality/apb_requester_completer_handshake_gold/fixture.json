@@ -161,6 +161,16 @@
           "role": "handshake_ready_like"
         }
       ],
+      "semantic_grounding_strengths_include": [
+        {
+          "signal_name": "PSEL",
+          "strength": "single_source"
+        },
+        {
+          "signal_name": "PREADY",
+          "strength": "single_source"
+        }
+      ],
       "semantic_consensus_signal_names_include": [
         "PSEL",
         "PREADY"
@@ -210,6 +220,16 @@
         {
           "signal_name": "PREADY",
           "role": "handshake_ready_like"
+        }
+      ],
+      "semantic_grounding_strengths_include": [
+        {
+          "signal_name": "PSEL",
+          "strength": "single_source"
+        },
+        {
+          "signal_name": "PREADY",
+          "strength": "single_source"
         }
       ],
       "semantic_consensus_signal_names_include": [

@@ -26,7 +26,7 @@ use crate::ir::semantic::{
     InfrastructureSignalSourceStatus, InfrastructureTopologyKind, InterfaceRecord,
     InterfaceSignalConflictKind, InterfaceSignalConflictObservationRecord,
     InterfaceSignalConflictRecord, InterfaceSignalDirection, InterfaceSignalSemanticRole,
-    RegularStateRecord, SemanticIr, SignalConnectivityConflictKind,
+    RegularStateRecord, SemanticGroundingStrength, SemanticIr, SignalConnectivityConflictKind,
     SignalConnectivityConflictRecord, StateTransitionRecord, TemporalConflictRecord,
     TemporalPredicateRecord, TemporalRuleRecord, TickPhase,
 };
@@ -159,6 +159,8 @@ struct CanonicalStageExpectations {
     #[serde(default)]
     resolved_semantic_roles_include: Vec<ExpectedResolvedSemanticRole>,
     #[serde(default)]
+    semantic_grounding_strengths_include: Vec<ExpectedSemanticGroundingStrength>,
+    #[serde(default)]
     semantic_candidate_signal_names_include: Vec<String>,
     #[serde(default)]
     semantic_candidate_signal_names_exclude: Vec<String>,
@@ -223,6 +225,12 @@ struct ExpectedSignalPolarity {
 struct ExpectedResolvedSemanticRole {
     signal_name: String,
     role: InterfaceSignalSemanticRole,
+}
+
+#[derive(Debug, Deserialize)]
+struct ExpectedSemanticGroundingStrength {
+    signal_name: String,
+    strength: SemanticGroundingStrength,
 }
 
 #[derive(Debug, Deserialize)]
@@ -808,6 +816,27 @@ fn evaluate_canonical_expectations(
                 signal
                     .resolved_semantic_role
                     .map(InterfaceSignalSemanticRole::as_str)
+                    .unwrap_or("none")
+            ));
+        }
+    }
+
+    for expected_strength in &expectations.semantic_grounding_strengths_include {
+        let Some(signal) = find_interface_signal(interfaces, &expected_strength.signal_name) else {
+            failures.push(format!(
+                "{label}: missing signal `{}` while checking semantic grounding strength expectation",
+                expected_strength.signal_name
+            ));
+            continue;
+        };
+        if signal.semantic_grounding_strength != Some(expected_strength.strength) {
+            failures.push(format!(
+                "{label}: expected signal `{}` semantic grounding strength `{}`, got `{}`",
+                expected_strength.signal_name,
+                expected_strength.strength.as_str(),
+                signal
+                    .semantic_grounding_strength
+                    .map(SemanticGroundingStrength::as_str)
                     .unwrap_or("none")
             ));
         }

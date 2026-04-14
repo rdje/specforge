@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-14 KG-bench semantic-grounding strength expectations
+- This slice moves semantic grounding-strength truth from validation-count confidence into direct canonical signal assertions.
+- `kg-bench` can now assert `SemanticIR` / `IntentIR` `InterfaceSignalRecord.semantic_grounding_strength` through `semantic_grounding_strengths_include`, matching a signal name plus exact strength such as `single_source`, `multi_source`, or `cross_modality`.
+- `cross_modality_semantic_grounding_gold`, `vlm_timing_semantic_grounding_gold`, `visual_semantic_prior_guided_caption_gold`, and `apb_requester_completer_handshake_gold` now prove exact grounding-strength shape for multimodal consensus, VLM timing-note semantic grounding, visual-caption prior guidance, and APB requester/completer handshake grounding.
+- This keeps the grounding model executable as typed IR shape, so future changes cannot quietly collapse cross-modality evidence back into single-source-looking semantics or inflate a single local source into stronger grounding.
+
 ## 2026-04-14 KG-bench resolved semantic-role expectations
 - This slice moves semantic-role truth from existence-only confidence into direct canonical role assertions.
 - `kg-bench` can now assert `SemanticIR` / `IntentIR` `InterfaceSignalRecord.resolved_semantic_role` through `resolved_semantic_roles_include`, matching a signal name plus exact role such as `handshake_valid_like` or `handshake_ready_like`.
