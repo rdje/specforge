@@ -22,21 +22,24 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `ac7e3f4`
-- latest_commit_brief_message: `test(kg): assert resolved semantic role shape`
-- note: the current session is executing the PNT continuation against that baseline and adding direct KG-bench semantic-grounding strength expectations
+- latest_commit_hash: `6cd5170`
+- latest_commit_brief_message: `test(kg): assert semantic grounding strength`
+- note: the current session is temporarily disabling SPECFORGE automatic hosted CI triggers to conserve GitHub Actions minutes
 
 ## Recent commit chain (last 5)
+- `6cd5170` test(kg): assert semantic grounding strength
 - `ac7e3f4` test(kg): assert resolved semantic role shape
 - `d85a061` test(kg): assert resolved polarity shape
 - `9cb41c8` test(kg): assert polarity conflict shape
 - `010d9e2` test(kg): assert interface conflict shape
-- `e1e629e` test(kg): assert connectivity conflict shape
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- the current KG-quality follow-on extends `kg-bench` with direct canonical semantic-grounding strength expectations for `InterfaceSignalRecord.semantic_grounding_strength`
-- the current KG-quality follow-on strengthens `cross_modality_semantic_grounding_gold`, `vlm_timing_semantic_grounding_gold`, `visual_semantic_prior_guided_caption_gold`, and `apb_requester_completer_handshake_gold` so `XREQ`, `XACK`, `PSEL`, and `PREADY` assert single-source / cross-modality grounding strength directly at the `SemanticIR` / `IntentIR` stages
+- the current workflow follow-on changes `.github/workflows/ci.yml` to manual-only `workflow_dispatch`, temporarily removing automatic `push` / `pull_request` triggers to conserve GitHub Actions minutes
+- local quality expectations are unchanged: `bash scripts/run_ci.sh` remains the canonical Rust + docs gate before commits or any future push
+- validation for the current workflow follow-on passed: trigger inspection shows only `workflow_dispatch`, `git diff --check` is clean, and `bash scripts/run_ci.sh` passes with formatting, warning-deny Clippy, `313` Rust tests, warning-deny rustdoc, and the mdBook build
+- the latest committed KG-quality follow-on extended `kg-bench` with direct canonical semantic-grounding strength expectations for `InterfaceSignalRecord.semantic_grounding_strength`
+- the latest committed KG-quality follow-on strengthened `cross_modality_semantic_grounding_gold`, `vlm_timing_semantic_grounding_gold`, `visual_semantic_prior_guided_caption_gold`, and `apb_requester_completer_handshake_gold` so `XREQ`, `XACK`, `PSEL`, and `PREADY` assert single-source / cross-modality grounding strength directly at the `SemanticIR` / `IntentIR` stages
 - the latest committed KG-quality follow-on extended `kg-bench` with direct canonical resolved semantic-role expectations for `InterfaceSignalRecord.resolved_semantic_role`
 - the latest committed KG-quality follow-on strengthened `cross_modality_semantic_grounding_gold`, `vlm_timing_semantic_grounding_gold`, `visual_semantic_prior_guided_caption_gold`, and `apb_requester_completer_handshake_gold` so `XREQ`, `XACK`, `PSEL`, and `PREADY` assert valid-like / ready-like roles directly at the `SemanticIR` / `IntentIR` stages
 - the latest committed KG-quality follow-on extended `kg-bench` with direct canonical resolved signal-polarity expectations for `InterfaceSignalRecord.resolved_polarity`
@@ -171,8 +174,8 @@
 - root docs remain important, but they now serve continuity, roadmap, validation, and developer-state roles more than primary end-user onboarding
 - runnable CLI surface includes `inspect`, `doctor`, `converge`, `ingest`, `evidence`, `semantic`, `intent`, `adapt`, `enrich`, `validate`, `kg-bench`, `project-validation`, `rescan-plan`, `learn-priors`, `corpus-kb`, and `nlp-enrich`
 - `specforge converge` now defaults to full Ollama-backed VLM image enrichment plus NLP Level 3 backannotation; use `--vlm-provider skip` and/or `--nlp-provider skip` only when intentionally narrowing the loop
-- GitHub Actions now mirrors the baseline Rust quality gate on every `push` / `pull_request` via `.github/workflows/ci.yml`
-- `scripts/run_ci.sh` is now the canonical Rust + docs CI entrypoint and is reused by GitHub Actions, so the same hosted path can be exercised locally before push
+- GitHub Actions now preserves the baseline Rust quality gate as a manual `workflow_dispatch` path via `.github/workflows/ci.yml`; automatic `push` / `pull_request` triggers are temporarily paused to conserve account Actions minutes
+- `scripts/run_ci.sh` is still the canonical Rust + docs CI entrypoint and is reused by GitHub Actions, so the same hosted path can be exercised locally before push
 - `scripts/run_docs_ci.sh` is the dedicated mdBook build entrypoint, and the current local/hosted docs toolchain target is `mdbook v0.5.2`
 - the Docling runtime boundary is now stronger too:
   - `specforge doctor [--strict]` reports the selected Docling Python candidate plus all probe outcomes

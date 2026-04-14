@@ -91,8 +91,8 @@ Use it first for the project objective, document navigation, and the current imp
   - semantic phrase priors to interpret locally grounded signal-description/prose phrases that normalize to learned semantic-role evidence without weakening the name-noise protections
 - `SemanticIR` now has a third bounded prior consumer too: if the current PDF contains local timing text whose phrase shape matches a learned temporal prior and the built-in parser still cannot recover a cycle window on its own, the semantic stage can advisory-recover that cycle window without inventing a timing rule that is not already locally grounded
 - `EvidenceIR` now has a fourth bounded prior consumer too: if ingest left a current table as `unknown` but the local header shape matches a learned table-shape prior, evidence extraction can advisory-recover that table kind locally without rewriting `SourceIR` or overriding explicit local table classifications
-- GitHub Actions CI now runs `cargo fmt --all --check`, `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings`, `RUSTFLAGS="-D warnings" cargo test --manifest-path Cargo.toml`, `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps`, and the mdBook build on every `push` and `pull_request`, so the local Rust quality gate is mirrored automatically on GitHub
-- the hosted CI path is now driven by `./scripts/run_ci.sh`, so the exact Clippy + warning-deny Rust/rustdoc + docs CI suite can be run locally before push instead of only after GitHub receives the commit
+- GitHub Actions CI is temporarily manual-only through `workflow_dispatch` to conserve account Actions minutes, but the workflow still runs `cargo fmt --all --check`, warning-deny Clippy, warning-deny Rust tests, warning-deny rustdoc, and the mdBook build when manually launched
+- the hosted CI path is still driven by `./scripts/run_ci.sh`, so the exact Clippy + warning-deny Rust/rustdoc + docs CI suite remains runnable locally before push even while automatic hosted `push` / `pull_request` triggers are paused
 - the current `R15f` slice now learns five safe prior families:
   - actor-taxonomy priors from decisive actor-grounded handshake-role evidence plus conservative self-identifying actor vocabulary (`requester`, `completer`, `manager`, `subordinate`, and similar explicit role terms)
   - semantic-role phrase priors from decisive, non-alias-dependent semantic consensus plus preserved observation text
@@ -275,7 +275,7 @@ Use it first for the project objective, document navigation, and the current imp
 - `.gitignore`
 - `.gitmodules`
 - `.github/workflows/ci.yml`
-  - GitHub Actions CI workflow for Rust formatting, linting, rustdoc, test validation, and docs validation on `push` and `pull_request`
+  - GitHub Actions CI workflow for Rust formatting, linting, rustdoc, test validation, and docs validation; temporarily manual-only via `workflow_dispatch` to conserve hosted Actions minutes
 - `scripts/run_ci.sh`
   - canonical local/hosted Rust + docs CI runner used both on developer machines and inside GitHub Actions
 - `scripts/run_docs_ci.sh`

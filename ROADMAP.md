@@ -61,7 +61,7 @@
   - establish the live documentation surface
   - define the project objective and staged direction
   - define the commit workflow and continuity expectations
-  - establish a baseline GitHub-hosted CI path for Rust validation on repository pushes
+  - establish a baseline GitHub-hosted CI path for Rust validation, currently manual-only while Actions minutes are being conserved
   - keep the hosted CI path locally runnable so the same validation can be exercised before push
   - create a usable session bootstrap path for future AI/LLM sessions
 - completion criteria:
@@ -69,7 +69,7 @@
   - README is the single entry point
   - SESSION_BOOTSTRAP is in place
   - roadmap and live-status files are established
-  - formatter and test checks run automatically on GitHub `push` / `pull_request`
+  - formatter and test checks can run on GitHub through manual `workflow_dispatch`, with automatic `push` / `pull_request` triggers intentionally paused until hosted CI minutes are available again
   - the same CI entrypoint is runnable locally from the repository checkout
 
 ### R1 IntentIR pivot and CLI identity

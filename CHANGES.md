@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-04-14 (GitHub Actions temporarily manual-only)
+
+### Changed: hosted CI no longer auto-runs on push or pull request
+- `.github/workflows/ci.yml` is temporarily restricted to `workflow_dispatch` to conserve the account's remaining GitHub Actions minutes.
+- The workflow still exists and still delegates to `./scripts/run_ci.sh`, so it can be run manually from GitHub when hosted validation is explicitly desired.
+- Local validation remains unchanged: `bash scripts/run_ci.sh` is still the canonical Rust + docs gate to run before commits or before any future push.
+
+### Validation
+- `git diff --check` -> passed
+- `rg -n '^on:|workflow_dispatch|push:|pull_request:' .github/workflows/ci.yml` -> passed with only the workflow root and `workflow_dispatch` trigger key present
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `313` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+
 ## 2026-04-14 (KG bench asserts semantic grounding strength)
 
 ### Added: canonical semantic-grounding strength expectations in KG fixtures

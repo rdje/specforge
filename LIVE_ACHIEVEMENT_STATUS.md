@@ -2,7 +2,7 @@
 ## Current snapshot
 - Git repository initialized: Done
 - Commit workflow document present and reviewed: Done
-- GitHub Actions CI for Rust formatting/tests on `push` and `pull_request`: Done
+- GitHub Actions CI workflow present but temporarily manual-only to conserve Actions minutes: Done
 - Canonical CI entrypoint runnable locally and reused by GitHub Actions: Done
 - Canonical CI now runs Clippy with warnings denied: Done
 - Canonical CI now denies Rust warnings during tests: Done

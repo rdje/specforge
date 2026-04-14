@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-14 Hosted CI temporarily manual-only
+- The GitHub Actions account is near the included monthly minutes limit, so SPECFORGE hosted CI has been deliberately paused for automatic triggers.
+- `.github/workflows/ci.yml` now exposes only `workflow_dispatch`, with `push` and `pull_request` triggers removed until the user explicitly asks to re-enable hosted automatic CI.
+- This is a cost-control policy change, not a reduction of the quality gate: local `bash scripts/run_ci.sh` remains the canonical pre-commit/pre-push Rust + docs validation command and still matches the hosted workflow body.
+- When automatic hosted CI is re-enabled, restore the `push` / `pull_request` triggers while keeping the workflow delegated to `./scripts/run_ci.sh`.
+
 ## 2026-04-14 KG-bench semantic-grounding strength expectations
 - This slice moves semantic grounding-strength truth from validation-count confidence into direct canonical signal assertions.
 - `kg-bench` can now assert `SemanticIR` / `IntentIR` `InterfaceSignalRecord.semantic_grounding_strength` through `semantic_grounding_strengths_include`, matching a signal name plus exact strength such as `single_source`, `multi_source`, or `cross_modality`.
@@ -171,13 +177,13 @@
 
 ## 2026-04-11 CI warning-deny gate
 - The clean Rust warning baseline is now enforced by the canonical local/hosted CI path.
-- `scripts/run_ci.sh` runs the Rust test step with `RUSTFLAGS="-D warnings"` so warning regressions fail before push and in GitHub Actions.
+- `scripts/run_ci.sh` runs the Rust test step with `RUSTFLAGS="-D warnings"` so warning regressions fail before push locally and in any manually launched GitHub Actions run.
 - The warning gate lives in the shared script rather than only in `.github/workflows/ci.yml`; this keeps local and hosted CI behavior aligned.
 
 ## 2026-04-11 Clippy gate
 - `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings` is now clean and part of the shared `scripts/run_ci.sh` gate.
 - Mechanical Clippy warnings should be fixed directly. Intentional broad IR plumbing is allowed only through localized `#[expect(...)]` attributes with a reason, so future unrelated Clippy drift still fails CI.
-- GitHub Actions installs both `rustfmt` and `clippy`, then delegates to the shared local CI script so hosted behavior stays aligned with local pre-push validation.
+- GitHub Actions installs both `rustfmt` and `clippy`, then delegates to the shared local CI script so manual hosted behavior stays aligned with local pre-push validation.
 
 ## 2026-04-11 rustdoc warning-deny gate
 - `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` is now part of the shared `scripts/run_ci.sh` gate.
@@ -367,7 +373,7 @@
 - `scripts/bootstrap_docling.sh` is now the supported repo-local bootstrap path and targets the known-good `docling==2.84.0` runtime family
 - `.venv-docling/` must stay local and untracked, just like `generated/`
 - this matters because fresh original-PDF reruns should fail for genuine ingest/extraction reasons, not because the CLI silently picked an unusable Python interpreter or launched a long converge run against an unusable local Ollama chat endpoint or an unstarted LM Studio fallback server
-- this keeps push-time validation honest without inventing a different hosted workflow contract from the one used during local task completion
+- this keeps manual hosted validation honest without inventing a different hosted workflow contract from the one used during local task completion
 - future CI expansion should stay conservative and provenance-friendly:
   - add checks only when they are already trusted locally
   - prefer promoting existing quality gates over creating parallel shadow gates
