@@ -13,8 +13,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 <!-- corpus_kb_kg_fixtures:start -->
 <!-- This block is refreshed by `specforge corpus-kb`. -->
 
-- fixtures_total: `57`
-- fixtures_passed: `57`
+- fixtures_total: `58`
+- fixtures_passed: `58`
 - fixtures_failed: `0`
 
 ### Fixture Family Summary
@@ -28,13 +28,13 @@ Fixtures can appear in more than one family because protocol semantics, modality
 | infrastructure semantics | `3` | `3` | `0` |
 | multimodal visual grounding | `19` | `19` | `0` |
 | negative knowledge | `5` | `5` | `0` |
-| polarity semantics | `6` | `6` | `0` |
+| polarity semantics | `7` | `7` | `0` |
 | protocol-family AMBA/APB/AHB/AXI | `9` | `9` | `0` |
 | residuals and caveats | `3` | `3` | `0` |
 | semantic role arbitration | `17` | `17` | `0` |
 | table extraction and hygiene | `8` | `8` | `0` |
 | temporal semantics | `15` | `15` | `0` |
-| truthfulness negatives and cautions | `31` | `31` | `0` |
+| truthfulness negatives and cautions | `32` | `32` | `0` |
 | typed prior memory | `21` | `21` | `0` |
 
 ### actor_boundary_residual
@@ -123,6 +123,12 @@ Fixtures can appear in more than one family because protocol semantics, modality
 
 ### contested_handshake_name_fallback_negative
 - fixture_path: `crates/specforge/test_data/kg_quality/contested_handshake_name_fallback_negative/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### control_polarity_conflict_negative
+- fixture_path: `crates/specforge/test_data/kg_quality/control_polarity_conflict_negative/fixture.json`
 - status: `pass`
 - failures:
   - none

@@ -56,6 +56,10 @@ Fixtures can assert canonical signal-semantic conflicts directly as well.
 `signal_semantic_conflicts_include` checks the conflicted signal and included observations by semantic tag, source kind, source text, and supporting evidence ids.
 That lets multimodal disagreement fixtures prove, for example, that visual-caption evidence and VLM timing-diagram annotation evidence support different handshake roles without reducing the test to "one conflict exists."
 
+Fixtures can assert canonical signal-polarity conflicts directly as well.
+`signal_polarity_conflicts_include` checks the conflicted signal and included observations by polarity, source kind, and supporting statement or table ids.
+That lets polarity-disagreement fixtures prove that active-high prose and active-low table evidence both survived into the canonical conflict surface, rather than only counting that some polarity conflict exists.
+
 Fixtures can assert canonical interface-signal conflicts directly as well.
 `interface_signal_conflicts_include` checks the conflicted signal, conflict kind, and included observation values plus supporting statement ids.
 That lets direction/width disagreement fixtures prove that the canonical layers preserved the exact contested shape, such as `input` versus `output` or width `8` versus `16`, rather than only counting that some interface conflict exists.

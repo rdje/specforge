@@ -512,6 +512,7 @@
     - a gold fixture proving collective non-reset control polarity prose recovers multiple active-low control signals without duplicating canonical signal records
     - a gold fixture proving mixed clause-local non-reset control polarity prose recovers active-low and active-high controls without duplicating canonical signal records
     - a negative fixture proving detached mixed-polarity prose stays unresolved instead of borrowing an implicit active-level subject
+    - a negative fixture proving contradictory prose/table polarity evidence stays explicit as a carried `signal_polarity_conflicts` record instead of forcing a winner
     - prior-guided negative-knowledge caution fixtures proving semantic conflicts, temporal conflicts, residual packets, signal-connectivity conflicts, and interface-signal conflicts keep their local conflict/residual surfaces while only adding caution/rescan/corroboration guidance
   - fixture expectations can now assert canonical actor-signal relations directly, so the harness can lock `Drives` versus `Reads` semantics instead of relying only on actor-port projections or relation counts
   - fixture expectations can now assert graph-backed direction coverage by signal name directly via `graph_direction_signal_names_include` / `graph_direction_signal_names_exclude`, keeping graph-native coverage checks separate from flat compatibility `direction_hint` assertions
@@ -522,6 +523,7 @@
   - fixture expectations can now assert canonical `signal_connectivity_conflicts` directly, so multi-producer graph conflicts are checked as typed signal/kind/actor-set IR instead of only a conflict count
   - fixture expectations can now assert canonical `signal_semantic_conflicts` directly, so multimodal semantic disagreement is checked as typed conflict observations instead of only a conflict count
   - fixture expectations can now assert canonical `interface_signal_conflicts` directly, so interface direction/width disagreement is checked as typed signal/kind/observation IR instead of only a conflict count
+  - fixture expectations can now assert canonical `signal_polarity_conflicts` directly, so active-level disagreement is checked as typed signal/polarity/source-kind observation IR instead of only a conflict count
   - fixture expectations can now assert canonical `temporal_rules` directly, so APB/AHB/AXI timing truthfulness is checked as typed clock/edge/cycle-window/predicate IR instead of only through validation metrics
   - fixture expectations can now assert canonical `temporal_conflicts` directly, so contradiction surfacing is checked as typed context/value/supporting-evidence IR instead of only a conflict count
   - fixture expectations can now assert canonical `infrastructure_signals` and `infrastructure_topology` records directly, so clock/reset topology truthfulness is checked as typed IR instead of only through validation metrics

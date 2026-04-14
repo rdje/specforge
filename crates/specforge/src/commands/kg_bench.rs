@@ -9,8 +9,9 @@ use crate::cli::{KgBenchArgs, ValidateArgs};
 use crate::commands::validate;
 use crate::error::{AppError, Result};
 use crate::ir::evidence::{
-    EvidenceIr, SignalSemanticConflictObservationRecord, SignalSemanticConflictRecord,
-    SignalSemanticHintSourceKind, SignalSemanticTag,
+    EvidenceIr, SignalPolarity, SignalPolarityConflictRecord, SignalPolarityEvidenceSourceKind,
+    SignalPolarityObservationRecord, SignalSemanticConflictObservationRecord,
+    SignalSemanticConflictRecord, SignalSemanticHintSourceKind, SignalSemanticTag,
 };
 use crate::ir::intent::{IntentAssumption, IntentIr};
 use crate::ir::prior_memory::{
@@ -177,6 +178,8 @@ struct CanonicalStageExpectations {
     #[serde(default)]
     temporal_conflicts_include: Vec<ExpectedTemporalConflict>,
     #[serde(default)]
+    signal_polarity_conflicts_include: Vec<ExpectedSignalPolarityConflict>,
+    #[serde(default)]
     signal_semantic_conflicts_include: Vec<ExpectedSignalSemanticConflict>,
     #[serde(default)]
     signal_connectivity_conflicts_include: Vec<ExpectedSignalConnectivityConflict>,
@@ -276,6 +279,27 @@ struct ExpectedTemporalConflict {
     supporting_rule_ids_include: Vec<String>,
     #[serde(default)]
     supporting_statement_ids_include: Vec<String>,
+}
+
+#[derive(Debug, Deserialize)]
+struct ExpectedSignalPolarityConflict {
+    signal_name: String,
+    #[serde(default)]
+    conflict_id: Option<String>,
+    #[serde(default)]
+    observations_include: Vec<ExpectedSignalPolarityConflictObservation>,
+}
+
+#[derive(Debug, Deserialize)]
+struct ExpectedSignalPolarityConflictObservation {
+    #[serde(default)]
+    polarity: Option<SignalPolarity>,
+    #[serde(default)]
+    source_kind: Option<SignalPolarityEvidenceSourceKind>,
+    #[serde(default)]
+    supporting_statement_ids_include: Vec<String>,
+    #[serde(default)]
+    supporting_table_ids_include: Vec<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -575,7 +599,7 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
             &semantic_ir.residual_decisions,
             &[],
             &semantic_ir.temporal_rules,
-            semantic_ir.signal_polarity_conflicts.len(),
+            &semantic_ir.signal_polarity_conflicts,
             &semantic_ir.signal_semantic_conflicts,
             &semantic_ir.signal_connectivity_conflicts,
             &semantic_ir.interface_signal_conflicts,
@@ -596,7 +620,7 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
             &intent_ir.residual_decisions,
             &intent_ir.assumptions,
             &intent_ir.temporal_rules,
-            intent_ir.signal_polarity_conflicts.len(),
+            &intent_ir.signal_polarity_conflicts,
             &intent_ir.signal_semantic_conflicts,
             &intent_ir.signal_connectivity_conflicts,
             &intent_ir.interface_signal_conflicts,
@@ -658,7 +682,7 @@ fn evaluate_canonical_expectations(
     residual_decisions: &[ResidualDecisionPacket],
     assumptions: &[IntentAssumption],
     temporal_rules: &[TemporalRuleRecord],
-    signal_polarity_conflicts: usize,
+    signal_polarity_conflicts: &[SignalPolarityConflictRecord],
     signal_semantic_conflicts: &[SignalSemanticConflictRecord],
     signal_connectivity_conflicts: &[SignalConnectivityConflictRecord],
     interface_signal_conflicts: &[InterfaceSignalConflictRecord],
@@ -1045,9 +1069,17 @@ fn evaluate_canonical_expectations(
         label,
         "signal_polarity_conflicts",
         expectations.signal_polarity_conflicts,
-        signal_polarity_conflicts,
+        signal_polarity_conflicts.len(),
         failures,
     );
+    for expected_signal_polarity_conflict in &expectations.signal_polarity_conflicts_include {
+        evaluate_expected_signal_polarity_conflict(
+            label,
+            expected_signal_polarity_conflict,
+            signal_polarity_conflicts,
+            failures,
+        );
+    }
     assert_optional_count(
         label,
         "signal_semantic_conflicts",
@@ -1227,6 +1259,68 @@ fn temporal_conflict_matches_expectation(
             .supporting_statement_ids_include
             .iter()
             .all(|statement_id| conflict.supporting_statement_ids.contains(statement_id))
+}
+
+fn evaluate_expected_signal_polarity_conflict(
+    label: &str,
+    expectation: &ExpectedSignalPolarityConflict,
+    signal_polarity_conflicts: &[SignalPolarityConflictRecord],
+    failures: &mut Vec<String>,
+) {
+    let found = signal_polarity_conflicts
+        .iter()
+        .any(|conflict| signal_polarity_conflict_matches_expectation(conflict, expectation));
+
+    if !found {
+        failures.push(format!(
+            "{label}: missing signal polarity conflict matching signal `{}`, conflict id `{:?}`, and observations {:?}",
+            expectation.signal_name,
+            expectation.conflict_id,
+            expectation.observations_include
+        ));
+    }
+}
+
+fn signal_polarity_conflict_matches_expectation(
+    conflict: &SignalPolarityConflictRecord,
+    expectation: &ExpectedSignalPolarityConflict,
+) -> bool {
+    conflict.signal_name == expectation.signal_name
+        && expectation
+            .conflict_id
+            .as_ref()
+            .is_none_or(|conflict_id| conflict.conflict_id == *conflict_id)
+        && expectation
+            .observations_include
+            .iter()
+            .all(|expected_observation| {
+                conflict.observations.iter().any(|observation| {
+                    signal_polarity_conflict_observation_matches_expectation(
+                        observation,
+                        expected_observation,
+                    )
+                })
+            })
+}
+
+fn signal_polarity_conflict_observation_matches_expectation(
+    observation: &SignalPolarityObservationRecord,
+    expectation: &ExpectedSignalPolarityConflictObservation,
+) -> bool {
+    expectation
+        .polarity
+        .is_none_or(|polarity| observation.polarity == polarity)
+        && expectation
+            .source_kind
+            .is_none_or(|source_kind| observation.source_kind == source_kind)
+        && expectation
+            .supporting_statement_ids_include
+            .iter()
+            .all(|statement_id| observation.supporting_statement_ids.contains(statement_id))
+        && expectation
+            .supporting_table_ids_include
+            .iter()
+            .all(|table_id| observation.supporting_table_ids.contains(table_id))
 }
 
 fn evaluate_expected_signal_semantic_conflict(

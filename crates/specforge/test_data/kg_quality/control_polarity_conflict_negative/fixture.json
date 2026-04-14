@@ -1,0 +1,110 @@
+{
+  "name": "control_polarity_conflict_negative",
+  "source": "source.md",
+  "source_ir_patch": {
+    "structured_tables": [
+      {
+        "table_id": "table_reset_desc_conflict",
+        "asset_id": "asset_reset_desc_conflict",
+        "page_id": "page_0001",
+        "caption_text": "Reset signal descriptions",
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            {
+              "text": "Signal",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Description",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            }
+          ]
+        ],
+        "body_rows": [
+          [
+            {
+              "text": "PRESETN",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Active low reset.",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ]
+        ],
+        "row_count": 1,
+        "col_count": 2
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["PRESETN"],
+      "signal_polarity_conflicts": 1,
+      "signal_polarity_conflicts_include": [
+        {
+          "signal_name": "PRESETN",
+          "observations_include": [
+            {
+              "polarity": "active_high",
+              "source_kind": "prose_statement"
+            },
+            {
+              "polarity": "active_low",
+              "source_kind": "signal_description_table"
+            }
+          ]
+        }
+      ]
+    },
+    "intent": {
+      "signal_names_include": ["PRESETN"],
+      "signal_polarity_conflicts": 1,
+      "signal_polarity_conflicts_include": [
+        {
+          "signal_name": "PRESETN",
+          "observations_include": [
+            {
+              "polarity": "active_high",
+              "source_kind": "prose_statement"
+            },
+            {
+              "polarity": "active_low",
+              "source_kind": "signal_description_table"
+            }
+          ]
+        }
+      ]
+    },
+    "validation": {
+      "evidence": {
+        "finding_ids_include": ["evidence_signal_polarity_conflicts_present"],
+        "metric_values": {
+          "signal_polarity_conflicts": "1"
+        }
+      },
+      "semantic": {
+        "finding_ids_include": ["semantic_signal_polarity_conflicts_present"],
+        "metric_values": {
+          "signal_polarity_conflicts": "1"
+        }
+      },
+      "intent": {
+        "finding_ids_include": ["intent_signal_polarity_conflicts_present"],
+        "metric_values": {
+          "signal_polarity_conflicts": "1"
+        }
+      }
+    }
+  }
+}

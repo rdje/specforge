@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-14 KG-bench signal-polarity conflict expectations
+- This slice moves active-level disagreement truth from count-only confidence into direct typed conflict assertions.
+- `kg-bench` can now assert `SemanticIR` / `IntentIR` `signal_polarity_conflicts` with partial matching on conflict signal, optional conflict id, observation polarity, observation source kind, supporting statement ids, and supporting table ids.
+- The new `control_polarity_conflict_negative` fixture proves a `PRESETN` active-high prose observation and active-low signal-description-table observation survive as an explicit carried conflict.
+- This is intentionally truth-preserving rather than winner-picking: contradictory polarity evidence should remain inspectable until stronger arbitration or current-document clarification exists.
+
 ## 2026-04-13 KG-bench interface-signal conflict expectations
 - This slice moves interface declaration conflict truth from count-only confidence into direct typed conflict assertions.
 - `kg-bench` can now assert `SemanticIR` / `IntentIR` `interface_signal_conflicts` with partial matching on conflict signal, optional conflict id, conflict kind, and included observation values plus supporting statement ids.

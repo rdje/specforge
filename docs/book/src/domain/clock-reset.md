@@ -107,6 +107,7 @@ If the current document says `CS_N is asserted when LOW`, the assertion level is
 That is different from guessing from the `_N` suffix alone.
 Likewise, an unambiguous collective sentence such as `CS_N and WE_N are active LOW signals` can ground both declared controls as active-low.
 Mixed low/high compound wording such as `CS_N is active LOW and ENABLE is active HIGH` can be recovered only when clause-local evidence binds every polarity phrase to exactly one known signal; detached polarity wording still stays unresolved.
+If current-document sources disagree, for example prose says a reset is active-high while a signal-description table says active-low, the disagreement should stay visible as a polarity conflict rather than being hidden behind a forced active level.
 
 This matters for temporal rules and conflict detection.
 

@@ -72,6 +72,7 @@ It can also apply a collective polarity statement to multiple declared controls 
 For example, `CS_N and WE_N are active LOW signals` can ground both controls as active-low.
 Mixed compound wording such as `CS_N is active LOW and ENABLE is active HIGH` can be recovered only when the clause-local parser can split and validate every signal-level pair safely.
 If a polarity phrase is detached from an explicit signal, the statement stays unresolved instead of borrowing an implicit subject.
+If prose and a signal-description table disagree about the same signal's active level, `EvidenceIR` keeps a typed `signal_polarity_conflicts` record instead of silently picking the prose or table side.
 
 It is not supposed to decide the final canonical meaning of the whole interface.
 Likewise, negative-knowledge priors may make validation more alert to a repeated evidence-stage conflict pattern, but they do not suppress the current evidence or decide the conflict.

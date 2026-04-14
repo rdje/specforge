@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-04-14 (KG bench asserts polarity conflict shape)
+
+### Added: canonical signal-polarity conflict expectations in KG fixtures
+- `kg-bench` fixtures can now assert canonical `signal_polarity_conflicts` directly at the `SemanticIR` and `IntentIR` stages.
+- The new `signal_polarity_conflicts_include` matcher supports partial checks for conflict signal, optional conflict id, and included observations by polarity, source kind, supporting statement ids, and supporting table ids.
+- Added tracked fixture `control_polarity_conflict_negative`, proving a `PRESETN` active-high prose observation and active-low signal-description-table observation remain an explicit carried polarity conflict instead of forcing a winner or hiding behind aggregate conflict counts.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality control_polarity_conflict_negative` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `58` passed / `0` failed fixtures
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed corpus-KB fixture projections with `58` fixtures / `0` failures
+- `cargo test --manifest-path Cargo.toml --lib kg_bench -- --nocapture` -> passed with the tracked fixture suite reporting `58` passed / `0` failed fixtures
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `313` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+
 ## 2026-04-13 (KG bench asserts interface conflict shape)
 
 ### Added: canonical interface-signal conflict expectations in KG fixtures
