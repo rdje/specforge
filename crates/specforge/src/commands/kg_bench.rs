@@ -25,9 +25,10 @@ use crate::ir::semantic::{
     InfrastructureSignalDistributionStatus, InfrastructureSignalKind, InfrastructureSignalRecord,
     InfrastructureSignalSourceStatus, InfrastructureTopologyKind, InterfaceRecord,
     InterfaceSignalConflictKind, InterfaceSignalConflictObservationRecord,
-    InterfaceSignalConflictRecord, InterfaceSignalDirection, RegularStateRecord, SemanticIr,
-    SignalConnectivityConflictKind, SignalConnectivityConflictRecord, StateTransitionRecord,
-    TemporalConflictRecord, TemporalPredicateRecord, TemporalRuleRecord, TickPhase,
+    InterfaceSignalConflictRecord, InterfaceSignalDirection, InterfaceSignalSemanticRole,
+    RegularStateRecord, SemanticIr, SignalConnectivityConflictKind,
+    SignalConnectivityConflictRecord, StateTransitionRecord, TemporalConflictRecord,
+    TemporalPredicateRecord, TemporalRuleRecord, TickPhase,
 };
 use crate::ir::source::{
     ActorSignalRelation, RelationKind, ResidualDecisionPacket, ValidationFindingRecord,
@@ -156,6 +157,8 @@ struct CanonicalStageExpectations {
     #[serde(default)]
     alias_dependent_semantic_candidate_signal_names_exclude: Vec<String>,
     #[serde(default)]
+    resolved_semantic_roles_include: Vec<ExpectedResolvedSemanticRole>,
+    #[serde(default)]
     semantic_candidate_signal_names_include: Vec<String>,
     #[serde(default)]
     semantic_candidate_signal_names_exclude: Vec<String>,
@@ -214,6 +217,12 @@ struct ExpectedSignalDirection {
 struct ExpectedSignalPolarity {
     signal_name: String,
     polarity: SignalPolarity,
+}
+
+#[derive(Debug, Deserialize)]
+struct ExpectedResolvedSemanticRole {
+    signal_name: String,
+    role: InterfaceSignalSemanticRole,
 }
 
 #[derive(Debug, Deserialize)]
@@ -782,6 +791,27 @@ fn evaluate_canonical_expectations(
         &resolved_role_signals,
         failures,
     );
+
+    for expected_role in &expectations.resolved_semantic_roles_include {
+        let Some(signal) = find_interface_signal(interfaces, &expected_role.signal_name) else {
+            failures.push(format!(
+                "{label}: missing signal `{}` while checking resolved semantic role expectation",
+                expected_role.signal_name
+            ));
+            continue;
+        };
+        if signal.resolved_semantic_role != Some(expected_role.role) {
+            failures.push(format!(
+                "{label}: expected signal `{}` resolved semantic role `{}`, got `{}`",
+                expected_role.signal_name,
+                expected_role.role.as_str(),
+                signal
+                    .resolved_semantic_role
+                    .map(InterfaceSignalSemanticRole::as_str)
+                    .unwrap_or("none")
+            ));
+        }
+    }
 
     let semantic_consensus_signals =
         interface_signal_names_matching(interfaces, |signal| signal.semantic_consensus.is_some());

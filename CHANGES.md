@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-04-14 (KG bench asserts resolved semantic-role shape)
+
+### Added: canonical resolved semantic-role expectations in KG fixtures
+- `kg-bench` fixtures can now assert canonical `InterfaceSignalRecord.resolved_semantic_role` directly at the `SemanticIR` and `IntentIR` stages.
+- The new `resolved_semantic_roles_include` matcher checks a signal name plus expected role such as `handshake_valid_like` or `handshake_ready_like`, instead of only proving that some semantic role was resolved.
+- Strengthened `cross_modality_semantic_grounding_gold`, `vlm_timing_semantic_grounding_gold`, `visual_semantic_prior_guided_caption_gold`, and `apb_requester_completer_handshake_gold` so table, visual-caption, VLM timing-note, prior-guided visual, and APB handshake paths lock exact valid-like / ready-like canonical role shape.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality cross_modality_semantic_grounding_gold vlm_timing_semantic_grounding_gold visual_semantic_prior_guided_caption_gold apb_requester_completer_handshake_gold` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `58` passed / `0` failed fixtures
+- `cargo test --manifest-path Cargo.toml --lib kg_bench -- --nocapture` -> passed with the tracked fixture suite reporting `58` passed / `0` failed fixtures
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `313` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+
 ## 2026-04-14 (KG bench asserts resolved polarity shape)
 
 ### Added: canonical resolved signal-polarity expectations in KG fixtures

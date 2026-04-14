@@ -69,6 +69,12 @@
       "decisive_semantic_arbitration_signal_names_include": ["XREQ"],
       "non_decisive_semantic_arbitration_signal_names_exclude": ["XREQ"],
       "resolved_semantic_role_signal_names_include": ["XREQ"],
+      "resolved_semantic_roles_include": [
+        {
+          "signal_name": "XREQ",
+          "role": "handshake_valid_like"
+        }
+      ],
       "semantic_consensus_signal_names_include": ["XREQ"]
     },
     "intent": {
@@ -78,6 +84,12 @@
       "decisive_semantic_arbitration_signal_names_include": ["XREQ"],
       "non_decisive_semantic_arbitration_signal_names_exclude": ["XREQ"],
       "resolved_semantic_role_signal_names_include": ["XREQ"],
+      "resolved_semantic_roles_include": [
+        {
+          "signal_name": "XREQ",
+          "role": "handshake_valid_like"
+        }
+      ],
       "semantic_consensus_signal_names_include": ["XREQ"]
     },
     "validation": {

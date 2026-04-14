@@ -151,6 +151,16 @@
         "PSEL",
         "PREADY"
       ],
+      "resolved_semantic_roles_include": [
+        {
+          "signal_name": "PSEL",
+          "role": "handshake_valid_like"
+        },
+        {
+          "signal_name": "PREADY",
+          "role": "handshake_ready_like"
+        }
+      ],
       "semantic_consensus_signal_names_include": [
         "PSEL",
         "PREADY"
@@ -191,6 +201,16 @@
       "resolved_semantic_role_signal_names_include": [
         "PSEL",
         "PREADY"
+      ],
+      "resolved_semantic_roles_include": [
+        {
+          "signal_name": "PSEL",
+          "role": "handshake_valid_like"
+        },
+        {
+          "signal_name": "PREADY",
+          "role": "handshake_ready_like"
+        }
       ],
       "semantic_consensus_signal_names_include": [
         "PSEL",

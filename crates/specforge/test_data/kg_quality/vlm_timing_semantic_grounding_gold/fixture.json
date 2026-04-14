@@ -25,6 +25,12 @@
       "decisive_semantic_arbitration_signal_names_include": ["XACK"],
       "non_decisive_semantic_arbitration_signal_names_exclude": ["XACK"],
       "resolved_semantic_role_signal_names_include": ["XACK"],
+      "resolved_semantic_roles_include": [
+        {
+          "signal_name": "XACK",
+          "role": "handshake_ready_like"
+        }
+      ],
       "semantic_consensus_signal_names_include": ["XACK"]
     },
     "intent": {
@@ -34,6 +40,12 @@
       "decisive_semantic_arbitration_signal_names_include": ["XACK"],
       "non_decisive_semantic_arbitration_signal_names_exclude": ["XACK"],
       "resolved_semantic_role_signal_names_include": ["XACK"],
+      "resolved_semantic_roles_include": [
+        {
+          "signal_name": "XACK",
+          "role": "handshake_ready_like"
+        }
+      ],
       "semantic_consensus_signal_names_include": ["XACK"]
     },
     "validation": {

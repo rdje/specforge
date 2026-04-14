@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-14 KG-bench resolved semantic-role expectations
+- This slice moves semantic-role truth from existence-only confidence into direct canonical role assertions.
+- `kg-bench` can now assert `SemanticIR` / `IntentIR` `InterfaceSignalRecord.resolved_semantic_role` through `resolved_semantic_roles_include`, matching a signal name plus exact role such as `handshake_valid_like` or `handshake_ready_like`.
+- `cross_modality_semantic_grounding_gold`, `vlm_timing_semantic_grounding_gold`, `visual_semantic_prior_guided_caption_gold`, and `apb_requester_completer_handshake_gold` now prove exact canonical role shape for table+visual consensus, VLM timing-note semantic grounding, visual-caption prior guidance, and APB requester/completer handshake grounding.
+- This closes the gap where a fixture could pass by proving "a role resolved" while accidentally allowing the wrong semantic role to survive into `IntentIR`.
+
 ## 2026-04-14 KG-bench resolved signal-polarity expectations
 - This slice moves resolved polarity truth from validation-count confidence into direct canonical signal assertions.
 - `kg-bench` can now assert `SemanticIR` / `IntentIR` `InterfaceSignalRecord.resolved_polarity` through `signal_polarities_include`, matching a signal name plus `active_high` / `active_low`.
