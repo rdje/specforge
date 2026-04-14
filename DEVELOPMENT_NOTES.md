@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-15 AXI write-response timing KG fixture
+- This slice deepens `R15e` along the current AXI quality gap rather than adding another broad feature.
+- `axi_write_response_timing_gold` is the first tracked AXI write-response-channel timing fixture: a width-only signal table plus prose actor relations must recover `BVALID`, `BREADY`, and `BRESP` as graph-backed actor-relative signals.
+- The fixture proves the same meaning-based handshake machinery generalizes beyond the existing AXI write-address `AW*` coverage: `BVALID` resolves as valid-like, `BREADY` resolves as ready-like, both carry single-source semantic grounding, and the `BVALID` / `BREADY` handshake grounds `BRESP` stability.
+- Temporal expectations are typed, not aggregate-only: `BVALID must be asserted on the next cycle` carries an actor-grounded drive consequent for `Subordinate`, and `BRESP must not change when BVALID is HIGH and BREADY is HIGH` carries an actor-grounded stability consequent.
+- The refreshed corpus-KB projection now records the tracked suite as `59/59`, AMBA-family fixture coverage as `10/10`, and timing-family coverage as `16/16`.
+
 ## 2026-04-14 Hosted CI temporarily manual-only
 - The GitHub Actions account is near the included monthly minutes limit, so SPECFORGE hosted CI has been deliberately paused for automatic triggers.
 - `.github/workflows/ci.yml` now exposes only `workflow_dispatch`, with `push` and `pull_request` triggers removed until the user explicitly asks to re-enable hosted automatic CI.

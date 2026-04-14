@@ -22,22 +22,24 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `6cd5170`
-- latest_commit_brief_message: `test(kg): assert semantic grounding strength`
-- note: the current session is temporarily disabling SPECFORGE automatic hosted CI triggers to conserve GitHub Actions minutes
+- latest_commit_hash: `bc110c3`
+- latest_commit_brief_message: `ci: make hosted workflow manual only`
+- note: the current session is adding AXI write-response timing KG coverage and refreshing corpus-KB projections
 
 ## Recent commit chain (last 5)
+- `bc110c3` ci: make hosted workflow manual only
 - `6cd5170` test(kg): assert semantic grounding strength
 - `ac7e3f4` test(kg): assert resolved semantic role shape
 - `d85a061` test(kg): assert resolved polarity shape
 - `9cb41c8` test(kg): assert polarity conflict shape
-- `010d9e2` test(kg): assert interface conflict shape
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- the current workflow follow-on changes `.github/workflows/ci.yml` to manual-only `workflow_dispatch`, temporarily removing automatic `push` / `pull_request` triggers to conserve GitHub Actions minutes
-- local quality expectations are unchanged: `bash scripts/run_ci.sh` remains the canonical Rust + docs gate before commits or any future push
-- validation for the current workflow follow-on passed: trigger inspection shows only `workflow_dispatch`, `git diff --check` is clean, and `bash scripts/run_ci.sh` passes with formatting, warning-deny Clippy, `313` Rust tests, warning-deny rustdoc, and the mdBook build
+- the current KG-quality follow-on adds `axi_write_response_timing_gold`, a tracked AXI write-response-channel fixture proving width-only `B*` channel tables plus prose actor relations recover graph-backed direction, valid/ready meaning, next-cycle response timing, and handshake stability through `SemanticIR` / `IntentIR`
+- corpus-KB KG fixture projections were refreshed from the tracked `59/59` fixture suite; AMBA-family coverage is now `10/10` and temporal fixture coverage is now `16/16`
+- validation for the current AXI write-response fixture follow-on passed focused `kg-bench`, full tracked `kg-bench`, corpus-KB KG projection refresh, and full `bash scripts/run_ci.sh`
+- the latest committed workflow follow-on changed `.github/workflows/ci.yml` to manual-only `workflow_dispatch`, temporarily removing automatic `push` / `pull_request` triggers to conserve GitHub Actions minutes
+- local quality expectations remain unchanged: `bash scripts/run_ci.sh` is the canonical Rust + docs gate before commits or any future push
 - the latest committed KG-quality follow-on extended `kg-bench` with direct canonical semantic-grounding strength expectations for `InterfaceSignalRecord.semantic_grounding_strength`
 - the latest committed KG-quality follow-on strengthened `cross_modality_semantic_grounding_gold`, `vlm_timing_semantic_grounding_gold`, `visual_semantic_prior_guided_caption_gold`, and `apb_requester_completer_handshake_gold` so `XREQ`, `XACK`, `PSEL`, and `PREADY` assert single-source / cross-modality grounding strength directly at the `SemanticIR` / `IntentIR` stages
 - the latest committed KG-quality follow-on extended `kg-bench` with direct canonical resolved semantic-role expectations for `InterfaceSignalRecord.resolved_semantic_role`

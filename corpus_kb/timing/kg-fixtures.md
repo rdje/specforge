@@ -15,8 +15,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 
 - source: `kg-bench fixtures`
 - selected_family_labels: `temporal semantics`, `VLM timing diagrams`
-- fixtures_total: `15`
-- fixtures_passed: `15`
+- fixtures_total: `16`
+- fixtures_passed: `16`
 - fixtures_failed: `0`
 
 | fixture | status | matched families | path |
@@ -24,6 +24,7 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `ahb_wait_state_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/ahb_wait_state_timing_gold/fixture.json` |
 | `apb_setup_access_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/apb_setup_access_timing_gold/fixture.json` |
 | `axi_next_cycle_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/axi_next_cycle_timing_gold/fixture.json` |
+| `axi_write_response_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/axi_write_response_timing_gold/fixture.json` |
 | `negative_knowledge_prior_guided_temporal_conflict_caution_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_temporal_conflict_caution_gold/fixture.json` |
 | `table_shape_prior_guided_timing_table_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/table_shape_prior_guided_timing_table_gold/fixture.json` |
 | `table_shape_prior_guided_timing_table_without_prior_negative` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/table_shape_prior_guided_timing_table_without_prior_negative/fixture.json` |

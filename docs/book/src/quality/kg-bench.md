@@ -47,6 +47,7 @@ That lets graph-conflict fixtures prove the actual multi-producer actor set rath
 Fixtures can assert canonical temporal rules directly too.
 `temporal_rules_include` checks typed clock/edge grounding, cycle windows, supporting statement ids, antecedent predicates, and consequent predicates.
 That lets APB/AHB/AXI timing fixtures prove actor-grounded drive or stability predicates, compound guards, and `HandshakeComplete` predicates as IR shape rather than only as validation-count side effects.
+The tracked suite now includes both AXI write-address and AXI write-response timing gold paths, so the same width-only table plus prose actor-relation pattern is checked across `AWVALID` / `AWREADY` / `AWADDR` and `BVALID` / `BREADY` / `BRESP` channel shapes.
 
 Fixtures can assert canonical temporal conflicts directly too.
 `temporal_conflicts_include` checks the contradiction signal, phase, clock/edge context, antecedent predicates, conflicting values, supporting rule ids, and supporting statement ids.
