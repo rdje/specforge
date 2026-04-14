@@ -4,10 +4,22 @@
   "expectations": {
     "semantic": {
       "signal_names_include": ["CS_N"],
+      "signal_polarities_include": [
+        {
+          "signal_name": "CS_N",
+          "polarity": "active_low"
+        }
+      ],
       "signal_polarity_conflicts": 0
     },
     "intent": {
       "signal_names_include": ["CS_N"],
+      "signal_polarities_include": [
+        {
+          "signal_name": "CS_N",
+          "polarity": "active_low"
+        }
+      ],
       "signal_polarity_conflicts": 0
     },
     "validation": {

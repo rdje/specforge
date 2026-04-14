@@ -110,6 +110,8 @@ struct CanonicalStageExpectations {
     #[serde(default)]
     signal_directions_include: Vec<ExpectedSignalDirection>,
     #[serde(default)]
+    signal_polarities_include: Vec<ExpectedSignalPolarity>,
+    #[serde(default)]
     actor_ports_include: Vec<ExpectedActorPort>,
     #[serde(default)]
     actor_signal_relations_include: Vec<ExpectedActorSignalRelation>,
@@ -206,6 +208,12 @@ struct ExpectedActorPort {
 struct ExpectedSignalDirection {
     signal_name: String,
     direction: InterfaceSignalDirection,
+}
+
+#[derive(Debug, Deserialize)]
+struct ExpectedSignalPolarity {
+    signal_name: String,
+    polarity: SignalPolarity,
 }
 
 #[derive(Debug, Deserialize)]
@@ -731,6 +739,27 @@ fn evaluate_canonical_expectations(
                 signal
                     .direction_hint
                     .map(interface_signal_direction_label)
+                    .unwrap_or("none")
+            ));
+        }
+    }
+
+    for expected_polarity in &expectations.signal_polarities_include {
+        let Some(signal) = find_interface_signal(interfaces, &expected_polarity.signal_name) else {
+            failures.push(format!(
+                "{label}: missing signal `{}` while checking polarity expectation",
+                expected_polarity.signal_name
+            ));
+            continue;
+        };
+        if signal.resolved_polarity != Some(expected_polarity.polarity) {
+            failures.push(format!(
+                "{label}: expected signal `{}` polarity `{}`, got `{}`",
+                expected_polarity.signal_name,
+                expected_polarity.polarity.as_str(),
+                signal
+                    .resolved_polarity
+                    .map(SignalPolarity::as_str)
                     .unwrap_or("none")
             ));
         }

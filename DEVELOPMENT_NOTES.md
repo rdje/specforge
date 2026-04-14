@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-14 KG-bench resolved signal-polarity expectations
+- This slice moves resolved polarity truth from validation-count confidence into direct canonical signal assertions.
+- `kg-bench` can now assert `SemanticIR` / `IntentIR` `InterfaceSignalRecord.resolved_polarity` through `signal_polarities_include`, matching a signal name plus `active_high` / `active_low`.
+- `non_reset_control_polarity_gold`, `multi_control_polarity_gold`, and `mixed_control_polarity_gold` now prove the exact resolved polarity shape for explicit asserted-when-level prose, collective active-low prose, and mixed clause-local active-low/active-high prose.
+- This keeps the polarity surface executable as typed IR shape instead of only proving the aggregate `with_resolved_polarity` metric increased.
+
 ## 2026-04-14 KG-bench signal-polarity conflict expectations
 - This slice moves active-level disagreement truth from count-only confidence into direct typed conflict assertions.
 - `kg-bench` can now assert `SemanticIR` / `IntentIR` `signal_polarity_conflicts` with partial matching on conflict signal, optional conflict id, observation polarity, observation source kind, supporting statement ids, and supporting table ids.

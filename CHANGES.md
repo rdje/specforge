@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-04-14 (KG bench asserts resolved polarity shape)
+
+### Added: canonical resolved signal-polarity expectations in KG fixtures
+- `kg-bench` fixtures can now assert canonical `InterfaceSignalRecord.resolved_polarity` directly at the `SemanticIR` and `IntentIR` stages.
+- The new `signal_polarities_include` matcher checks a signal name plus expected `active_high` / `active_low` polarity instead of relying only on `with_resolved_polarity` validation counts.
+- Strengthened `non_reset_control_polarity_gold`, `multi_control_polarity_gold`, and `mixed_control_polarity_gold` so explicit asserted-when-level prose, collective active-low prose, and mixed clause-local active-low/active-high prose lock the exact resolved canonical polarity shape.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality non_reset_control_polarity_gold multi_control_polarity_gold mixed_control_polarity_gold` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `58` passed / `0` failed fixtures
+- `cargo test --manifest-path Cargo.toml --lib kg_bench -- --nocapture` -> passed with the tracked fixture suite reporting `58` passed / `0` failed fixtures
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `313` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+
 ## 2026-04-14 (KG bench asserts polarity conflict shape)
 
 ### Added: canonical signal-polarity conflict expectations in KG fixtures

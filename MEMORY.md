@@ -22,21 +22,23 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `010d9e2`
-- latest_commit_brief_message: `test(kg): assert interface conflict shape`
-- note: the current session is executing the PNT continuation against that baseline and adding direct KG-bench signal-polarity conflict shape expectations
+- latest_commit_hash: `9cb41c8`
+- latest_commit_brief_message: `test(kg): assert polarity conflict shape`
+- note: the current session is executing the PNT continuation against that baseline and adding direct KG-bench resolved signal-polarity expectations
 
 ## Recent commit chain (last 5)
+- `9cb41c8` test(kg): assert polarity conflict shape
 - `010d9e2` test(kg): assert interface conflict shape
 - `e1e629e` test(kg): assert connectivity conflict shape
 - `5b56ce3` test(kg): assert semantic conflict shape
 - `92344fa` test(kg): assert temporal conflict shape
-- `7490cb5` test(kg): assert temporal rule shape
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- the current KG-quality follow-on extends `kg-bench` with direct canonical signal-polarity conflict expectations for `signal_polarity_conflicts`
-- the current KG-quality follow-on adds `control_polarity_conflict_negative` so the `PRESETN` active-high prose observation and active-low signal-description-table observation are asserted by signal, polarity, and source kind at the `SemanticIR` / `IntentIR` stages
+- the current KG-quality follow-on extends `kg-bench` with direct canonical resolved signal-polarity expectations for `InterfaceSignalRecord.resolved_polarity`
+- the current KG-quality follow-on strengthens `non_reset_control_polarity_gold`, `multi_control_polarity_gold`, and `mixed_control_polarity_gold` so `CS_N`, `WE_N`, and `ENABLE` assert active-low / active-high polarity directly at the `SemanticIR` / `IntentIR` stages
+- the latest committed KG-quality follow-on extended `kg-bench` with direct canonical signal-polarity conflict expectations for `signal_polarity_conflicts`
+- the latest committed KG-quality follow-on added `control_polarity_conflict_negative` so the `PRESETN` active-high prose observation and active-low signal-description-table observation are asserted by signal, polarity, and source kind at the `SemanticIR` / `IntentIR` stages
 - the latest committed KG-quality follow-on extended `kg-bench` with direct canonical interface-signal conflict expectations for `interface_signal_conflicts`
 - the latest committed KG-quality follow-on strengthened `negative_knowledge_prior_guided_interface_conflict_caution_gold` so the `DATA` direction mismatch (`input` / `output`) and width mismatch (`8` / `16`) are asserted by signal, conflict kind, and observation values at the `SemanticIR` / `IntentIR` stages
 - the latest committed KG-quality follow-on extended `kg-bench` with direct canonical signal-connectivity conflict expectations for `signal_connectivity_conflicts`
@@ -94,6 +96,7 @@
 - the Rust warning baseline is clean and now enforced in the shared local/hosted CI path rather than suppressed with `#[allow(dead_code)]`
 - README bootstrap currently resolves to `SESSION_BOOTSTRAP.md`, which instructs future agents to read the referenced live docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if necessary, and then continue from the roadmap
 - this README/PNT continuation observed 30 Rust source files and 58,291 lines under `crates/specforge/src`, with the CLI now including `doctor`, `converge`, `enrich`, `validate`, `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, `corpus-kb`, and `nlp-enrich` beside the core staged IR commands
+- `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the KG-bench resolved signal-polarity expectation path; the tracked KG fixture count remains `58`, focused KG-bench validation passes for the strengthened polarity gold fixtures, the full tracked KG suite reports `58/58`, and full local CI passes with `313` Rust tests plus the mdBook build
 - `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the KG-bench signal-polarity conflict expectation path; the tracked KG fixture count is now `58`, focused KG-bench validation passes for the new polarity-conflict fixture, the full tracked KG suite reports `58/58`, the corpus-KB fixture projection refresh passes with `58` fixtures / `0` failures, and full local CI passes with `313` Rust tests plus the mdBook build
 - `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the KG-bench interface-signal conflict expectation path; the tracked KG fixture count remains `57`, focused KG-bench validation passes for the strengthened prior-guided interface-conflict fixture, the full tracked KG suite reports `57/57`, and full local CI passes with `313` Rust tests plus the mdBook build
 - `RUST_CODEBASE_ANALYSIS.md` has been refreshed again for the KG-bench signal-connectivity conflict expectation path; the tracked KG fixture count remains `57`, focused KG-bench validation passes for the strengthened multi-producer and prior-guided connectivity-conflict fixtures, the full tracked KG suite reports `57/57`, and full local CI passes with `313` Rust tests plus the mdBook build
