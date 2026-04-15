@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-16 AXI read-data timing KG fixture
+- This slice continues `R15e` by filling another concrete AXI channel shape rather than broadening the code surface prematurely.
+- `axi_read_data_timing_gold` proves the width-only table plus prose actor-relation path on the AXI read-data channel: `RVALID`, `RDATA`, and `RRESP` are driven by `Subordinate`, while `RREADY` is driven by `Manager`, with reciprocal sample/read relations preserved.
+- The fixture intentionally carries `RRESP` as graph-grounded channel evidence even though the timing rule focuses on `RDATA`; this checks that non-timed payload/response signals still survive as canonical actor-relative interface records.
+- Temporal expectations stay typed and actor-grounded: `RVALID must be asserted on the next cycle` binds the post-tick drive/value obligation to `Subordinate`, and `RDATA must not change when RVALID is HIGH and RREADY is HIGH` binds stability to the `RVALID` / `RREADY` handshake.
+- The refreshed corpus-KB projection now records the tracked suite as `60/60`, AMBA-family fixture coverage as `11/11`, and timing-family coverage as `17/17`.
+
 ## 2026-04-15 AXI write-response timing KG fixture
 - This slice deepens `R15e` along the current AXI quality gap rather than adding another broad feature.
 - `axi_write_response_timing_gold` is the first tracked AXI write-response-channel timing fixture: a width-only signal table plus prose actor relations must recover `BVALID`, `BREADY`, and `BRESP` as graph-backed actor-relative signals.

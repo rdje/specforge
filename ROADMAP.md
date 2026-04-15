@@ -497,6 +497,7 @@
     - a representative AXI-style gold fixture proving width-only channel tables plus prose drive/sample relations recover actor-relative direction, signal inventory, request/accept semantics, and typed handshake completion without any table direction column
     - a representative AXI-style timing gold fixture proving width-only channel tables plus prose actor relations can also recover next-cycle timing, actor-grounded temporal predicates, and handshake completion together
     - a representative AXI write-response timing gold fixture proving the same width-only plus prose actor-relation path works for `BVALID` / `BREADY` / `BRESP`, including next-cycle response assertion and handshake-stable response payload semantics
+    - a representative AXI read-data timing gold fixture proving the same width-only plus prose actor-relation path works for `RVALID` / `RREADY` / `RDATA` / `RRESP`, including next-cycle read-data valid assertion and handshake-stable read-data payload semantics
     - a representative AHB-style gold fixture proving section-heading direction context like `Manager signals` / `Subordinate signals` recovers per-signal direction and width correctly even when the table itself only carries destination-side context
     - a representative AHB-style timing gold fixture proving section-heading context plus destination-column signal tables and explicit actor relations can also recover wait-state timing, actor-grounded temporal predicates, bounded next-cycle latency, and multi-predicate guards together
     - a negative fixture proving `Clock` / `Reset` infrastructure rows in AMBA-style `Source` columns do not become bogus protocol actors while real requester/subordinate rows still recover driver-side actor ports and semantic role grounding
@@ -533,7 +534,7 @@
   - fixture expectations can now assert canonical `infrastructure_signals` and `infrastructure_topology` records directly, so clock/reset topology truthfulness is checked as typed IR instead of only through validation metrics
   - width-only synthesized signal declarations now survive into canonical `SemanticIR` / `IntentIR` records, so AXI-style `Name | Width | Description` tables can be benchmarked honestly instead of stopping at raw actor relations and connectivity
 - remaining:
-  - keep expanding from the current AMBA + APB + AHB + AXI write-address/write-response gold paths to broader AXI channel coverage plus remaining structured-constraint fixtures
+  - keep expanding from the current AMBA + APB + AHB + AXI write-address/write-response/read-data gold paths to broader AXI channel coverage plus remaining structured-constraint fixtures
   - add broader negative fixtures for multimodal arbitration drift and richer timing-annotation edge cases beyond the current low-value label, motion-only annotation, and waveform-motion state filters
   - add broader metric-oriented expectation surfaces once the current canonical+metric fixture layer stabilizes
 
