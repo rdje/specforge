@@ -96,6 +96,7 @@
 - Form 1 backannotation and Form 2 signal alias learning implemented: Done
 - Markdown-marker alias garbage filter in `specforge nlp-enrich`: Done
 - Tier 2 actor-signal relation extraction from prose and signal-description tables implemented: Done
+- Active-drive actor extraction rejects relative-clause descriptive phrases such as `mixture of` as protocol actors: Done
 - Actor-relative KG carry-through into `SemanticIR` / `IntentIR` (`actor_signal_relations`, `actor_ports`, `signal_connectivity`) implemented: Done
 - Interface-signal conflict surfacing for conflicting direction/width evidence, including sticky canonical hint collapse, implemented: Done
 - Signal-connectivity conflict surfacing for multi-producer ambiguity implemented: Done

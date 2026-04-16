@@ -116,6 +116,10 @@ Current graph extraction can use:
 The key rule is still local grounding.
 Cross-document priors can widen actor vocabulary, but they cannot invent actors or signals that are not present in the current document.
 
+For active prose, `specforge` also treats relative clauses as dangerous actor-noise zones.
+In text shaped like `An interconnect which connects to components with a mixture of chunking support can drive ARCHUNKEN`, the graph extractor should keep the head subject `interconnect`, not promote the descriptive phrase `mixture of` into a protocol actor.
+That distinction is small but important: the graph should get cleaner because false actors are rejected, not because unresolved real actors are hidden.
+
 ## What gets filtered
 
 Not every noun in a source column or sentence is a real protocol actor.
@@ -128,6 +132,7 @@ Not every noun in a source column or sentence is a real protocol actor.
 - `Tie-off`
 - `input`
 - payload/event nouns such as `data`, `transfer`, or `control information`
+- descriptive support phrases such as `mixture of`
 
 Those labels may still matter as local evidence, but they should not become fake protocol actors in the structural graph.
 

@@ -2816,7 +2816,20 @@ fn extract_subject_phrase(text: &str) -> Option<String> {
         "transmit",
         "transmits",
     ];
-    let words: Vec<&str> = text.split_whitespace().collect();
+    let mut subject_text = text;
+    if let Some(sentence_start) = subject_text.rfind(['.', ';', '\n']) {
+        subject_text = &subject_text[sentence_start + 1..];
+    }
+
+    let lowered_subject = subject_text.to_ascii_lowercase();
+    for marker in [" which ", " that ", " who ", " whose "] {
+        if let Some(relative_start) = lowered_subject.find(marker) {
+            subject_text = &subject_text[..relative_start];
+            break;
+        }
+    }
+
+    let words: Vec<&str> = subject_text.split_whitespace().collect();
 
     for idx in (0..words.len()).rev() {
         let determiner = words[idx].trim_matches(|c: char| !c.is_ascii_alphabetic());
@@ -7202,6 +7215,41 @@ mod tests {
                 .iter()
                 .any(|r| r.actor_name == "control information"),
             "payload phrases must not be promoted into actors, got: {:?}",
+            relations
+        );
+    }
+
+    #[test]
+    fn relative_clause_active_drive_extracts_head_subject_not_mixture_phrase() {
+        use super::{
+            EvidenceModality, ExtractedStatement, RelationKind, StatementClass,
+            extract_actor_signal_relations,
+        };
+
+        let signals = ["ARCHUNKEN".to_string(), "RCHUNKV".to_string()]
+            .into_iter()
+            .collect::<std::collections::HashSet<_>>();
+        let stmts = vec![ExtractedStatement {
+            statement_id: "s6".to_string(),
+            text: "An interconnect which connects to components with a mixture of chunking support can drive ARCHUNKEN and RCHUNKV according to the capabilities of the attached components.".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }];
+
+        let relations = extract_actor_signal_relations(&stmts, &signals);
+
+        assert!(
+            relations.iter().any(|r| r.signal_name == "ARCHUNKEN"
+                && matches!(r.relation, RelationKind::Drives)
+                && r.actor_name == "interconnect"),
+            "relative-clause subject parsing must keep interconnect as the ARCHUNKEN actor, got: {:?}",
+            relations
+        );
+        assert!(
+            !relations.iter().any(|r| r.actor_name == "mixture of"),
+            "descriptive phrases like `mixture of` must not become actors, got: {:?}",
             relations
         );
     }

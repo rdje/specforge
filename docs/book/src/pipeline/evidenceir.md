@@ -85,6 +85,7 @@ Later `SemanticIR` and `IntentIR` validation carry the same caution idea forward
 - field tables leaking fake signals
 - abstract example tables pretending to be real interfaces
 - payload nouns being promoted to actors
+- descriptive relative-clause phrases such as `mixture of` being promoted to actors
 - signal names creating semantic meaning by spelling alone
 
 Many of the project’s recent truthfulness slices have been about tightening exactly those boundaries.

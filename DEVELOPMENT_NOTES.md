@@ -7,6 +7,15 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 Relative-clause actor extraction hygiene
+- This slice fixes a precision bug exposed by live AXI read-data chunking prose, not a broad score-chasing rewrite.
+- Active-drive extraction previously could search backward through a relative clause and choose `mixture of` from prose shaped like `components with a mixture of chunking support can drive ARCHUNKEN`.
+- `extract_subject_phrase()` now narrows to the current sentence and strips relative clauses (`which`, `that`, `who`, `whose`) before selecting candidate subject terms.
+- `is_meaningful_actor_term()` now rejects `mixture` / `mixture of` as descriptive corpus/prior actor terms, so stale support-phrase vocabulary cannot be harvested or reused as actor-taxonomy knowledge.
+- The focused regression proves `interconnect` remains the actor for `ARCHUNKEN` and `mixture of` is not promoted.
+- A local AXI rebuild confirms the fake `mixture of` producer is gone while the remaining `ARCHUNKEN` conflict is `Manager` versus `interconnect`, not solved by fiat; the validation score remains `85/100 GOOD`.
+- This is the right truthfulness posture: remove demonstrably bogus actors, preserve real ambiguity, and let validation/arbitration keep exposing the unresolved protocol nuance.
+
 ## 2026-04-17 AHB exclusive/security wait-state stability KG fixture
 - This slice adds focused AHB wait-state stability coverage for `HEXCL`, `HNONSEC`, and `HEXOKAY`.
 - `ahb_exclusive_security_stability_gold` proves that exclusive-transfer, non-secure-transfer, and exclusive-response attributes survive as graph-backed actor outputs and actor-grounded stability obligations while an AHB transfer is stalled.

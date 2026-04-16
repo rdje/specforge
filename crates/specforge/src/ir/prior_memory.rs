@@ -614,6 +614,8 @@ pub fn is_meaningful_actor_term(text: &str) -> bool {
             | "byte lanes"
             | "transfer"
             | "transaction"
+            | "mixture"
+            | "mixture of"
     ) {
         return false;
     }

@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-17 (relative-clause actor extraction hygiene)
+
+### Fixed: active-drive prose no longer promotes descriptive relative-clause phrases into actors
+- Tightened active actor extraction so subject parsing stays inside the current sentence and trims relative clauses such as `which ...`, `that ...`, `who ...`, and `whose ...` before selecting the actor for `drives SIGNAL` / `can drive SIGNAL` prose.
+- Added shared actor-term hygiene for `mixture` / `mixture of`, preventing descriptive support phrases from becoming protocol actors or learned actor-taxonomy terms.
+- Added regression coverage for AXI read-data chunking prose where an interconnect connected to components with a mixture of chunking support can drive `ARCHUNKEN` / `RCHUNKV`; the parser now keeps `interconnect` as the actor and rejects the fake `mixture of` actor.
+- Rebuilt the local AXI `EvidenceIR -> SemanticIR -> IntentIR` chain from the existing generated `SourceIR`; the stale fake `mixture of` producer is gone, while the remaining `ARCHUNKEN` ambiguity is now the real `Manager` versus `interconnect` nuance and the score remains `85/100 GOOD`.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml relative_clause_active_drive_extracts_head_subject_not_mixture_phrase -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml coordinated_active_drive_extracts_real_actor_not_payload_phrase -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml active_drive_pattern_extracts_actor_and_signal -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -- evidence generated/source_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/source_ir.json` -> passed with `6974` extracted statements
+- `cargo run --manifest-path Cargo.toml -- semantic generated/evidence_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/evidence_ir.json` -> passed
+- `cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/semantic_ir.json` -> passed
+- `cargo run --manifest-path Cargo.toml -- validate generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json` -> passed with score `85/100 GOOD`; `ARCHUNKEN` now reports `Manager` versus `interconnect`, not `Manager` versus `mixture of`
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `314` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-17 (AHB exclusive/security stability KG fixture)
 
 ### Added: AHB exclusive/security wait-state stability truthfulness fixture
