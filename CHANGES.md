@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-04-16 (AHB response stability KG fixture)
+
+### Added: AHB response stability truthfulness fixture
+- Added tracked KG fixture `ahb_response_stability_gold` for AHB wait-state read-data/response hold behavior with `Manager signals` / `Subordinate signals` section context, `Name | Destination | Width | Description` table evidence, and explicit structured signal constraints.
+- The fixture locks `HSEL`, `HREADY`, `HRDATA`, and `HRESP` through graph-backed actor relations, actor-relative ports, and two subordinate-grounded temporal stability rules.
+- The temporal rules deliberately use the stalled-transfer guard `HREADY LOW` and `HSEL HIGH`, so the fixture requires `0` handshake-completion predicates while still proving actor-grounded stability for subordinate-owned response outputs.
+- Refreshed corpus-KB KG projections so the tracked suite now reports `67` fixtures / `0` failures, AMBA-family coverage reports `18/18`, and temporal fixture coverage reports `24/24`.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality ahb_response_stability_gold` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `67` passed / `0` failed fixtures
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed corpus-KB fixture projections with `67` fixtures / `0` failures
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `313` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-16 (AHB control stability KG fixture)
 
 ### Added: AHB control stability truthfulness fixture

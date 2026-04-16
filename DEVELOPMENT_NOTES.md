@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-16 AHB response stability KG fixture
+- This slice complements `ahb_control_stability_gold` by checking the subordinate-owned response side of an AHB wait state.
+- `ahb_response_stability_gold` proves that `Manager signals` / `Subordinate signals` section context plus `Destination`-column signal tables recover graph-backed Manager/Subordinate ownership for `HSEL`, `HREADY`, `HRDATA`, and `HRESP`.
+- The fixture focuses on wait-state stability for `HRDATA` and `HRESP` under the guard `HREADY is LOW and HSEL is HIGH`.
+- The important truthfulness point is the same as the manager-control fixture: a stalled transfer can impose stability obligations, but it must not fabricate a completed-handshake predicate.
+- The refreshed corpus-KB projection now records the tracked suite as `67/67`, AMBA-family fixture coverage as `18/18`, and timing-family coverage as `24/24`.
+
 ## 2026-04-16 AHB control stability KG fixture
 - This slice extends the AHB side of the protocol-grade timing/stability suite instead of adding another AXI/APB variant.
 - `ahb_control_stability_gold` proves that `Manager signals` / `Subordinate signals` section context plus `Destination`-column signal tables recover graph-backed Manager/Subordinate ownership for AHB address/control signals.

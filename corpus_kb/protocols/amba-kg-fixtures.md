@@ -15,13 +15,14 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 
 - source: `kg-bench fixtures`
 - selected_family_labels: `protocol-family AMBA/APB/AHB/AXI`
-- fixtures_total: `17`
-- fixtures_passed: `17`
+- fixtures_total: `18`
+- fixtures_passed: `18`
 - fixtures_failed: `0`
 
 | fixture | status | matched families | path |
 | --- | --- | --- | --- |
 | `ahb_control_stability_gold` | `pass` | `protocol-family AMBA/APB/AHB/AXI` | `crates/specforge/test_data/kg_quality/ahb_control_stability_gold/fixture.json` |
+| `ahb_response_stability_gold` | `pass` | `protocol-family AMBA/APB/AHB/AXI` | `crates/specforge/test_data/kg_quality/ahb_response_stability_gold/fixture.json` |
 | `ahb_section_heading_direction_gold` | `pass` | `protocol-family AMBA/APB/AHB/AXI` | `crates/specforge/test_data/kg_quality/ahb_section_heading_direction_gold/fixture.json` |
 | `ahb_wait_state_timing_gold` | `pass` | `protocol-family AMBA/APB/AHB/AXI` | `crates/specforge/test_data/kg_quality/ahb_wait_state_timing_gold/fixture.json` |
 | `amba_destination_column_reads_gold` | `pass` | `protocol-family AMBA/APB/AHB/AXI` | `crates/specforge/test_data/kg_quality/amba_destination_column_reads_gold/fixture.json` |
