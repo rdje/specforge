@@ -15,8 +15,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 
 - source: `kg-bench fixtures`
 - selected_family_labels: `temporal semantics`, `VLM timing diagrams`
-- fixtures_total: `30`
-- fixtures_passed: `30`
+- fixtures_total: `31`
+- fixtures_passed: `31`
 - fixtures_failed: `0`
 
 | fixture | status | matched families | path |
@@ -38,6 +38,7 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `axi_write_address_sideband_stability_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/axi_write_address_sideband_stability_gold/fixture.json` |
 | `axi_write_data_last_stability_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/axi_write_data_last_stability_gold/fixture.json` |
 | `axi_write_data_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/axi_write_data_timing_gold/fixture.json` |
+| `axi_write_response_id_stability_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/axi_write_response_id_stability_gold/fixture.json` |
 | `axi_write_response_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/axi_write_response_timing_gold/fixture.json` |
 | `negative_knowledge_prior_guided_temporal_conflict_caution_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_temporal_conflict_caution_gold/fixture.json` |
 | `table_shape_prior_guided_timing_table_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/table_shape_prior_guided_timing_table_gold/fixture.json` |

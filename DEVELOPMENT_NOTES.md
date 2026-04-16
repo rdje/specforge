@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-16 AXI write-response ID stability KG fixture
+- This slice begins explicit AXI transaction-ID sideband coverage, starting with `BID` on the write-response channel.
+- `axi_write_response_id_stability_gold` proves that `BID` survives as a graph-backed Subordinate output and actor-grounded stability obligation under the controlling `BVALID` / `BREADY` handshake.
+- The fixture intentionally keeps the table width-only and relies on prose actor relations for direction, matching real AXI tables where ID ownership is often implied by channel-level prose rather than repeated in every table row.
+- The temporal expectation requires `HandshakeComplete(BVALID, BREADY)` and a Subordinate-grounded `actor_maintains_signal_stable` consequent, ensuring transaction identity is treated as a stable protocol fact rather than inert table inventory.
+- The refreshed corpus-KB projection now records the tracked suite as `74/74`, AMBA-family fixture coverage as `25/25`, and timing-family coverage as `31/31`.
+
 ## 2026-04-16 AXI read-data response stability KG fixture
 - This slice fills the read-data response sideband gap left after `RDATA` payload stability and `RLAST` last-beat stability were covered separately.
 - `axi_read_data_response_stability_gold` proves that `RRESP` survives as a graph-backed Subordinate output and actor-grounded stability obligation under the controlling `RVALID` / `RREADY` handshake.

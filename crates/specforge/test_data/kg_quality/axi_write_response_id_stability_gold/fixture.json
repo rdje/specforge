@@ -1,0 +1,203 @@
+{
+  "name": "axi_write_response_id_stability_gold",
+  "source": "source.md",
+  "source_ir_patch": {
+    "structured_tables": [
+      {
+        "table_id": "table_axi_write_response_id_stability",
+        "asset_id": "table_axi_write_response_id_stability",
+        "page_id": null,
+        "caption_text": "AXI write-response ID stability signals",
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            { "text": "Name", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Width", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Description", "row_span": 1, "col_span": 1, "is_header": true }
+          ]
+        ],
+        "body_rows": [
+          [
+            { "text": "BVALID", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Indicates that write response ID information is valid for transfer.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "BREADY", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Indicates that the manager can accept the write response transfer.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "BID", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "4", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Write response transaction identifier.", "row_span": 1, "col_span": 1, "is_header": false }
+          ]
+        ],
+        "row_count": 3,
+        "col_count": 3
+      }
+    ]
+  },
+  "evidence_ir_patch": {
+    "signal_constraints": [
+      {
+        "constraint_id": "sigcon_axi_bid_handshake_hold",
+        "subject_signal": "BID",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when BVALID is HIGH and BREADY is HIGH",
+        "negated": false,
+        "source_text": "BID must not change when BVALID is HIGH and BREADY is HIGH.",
+        "supporting_statement_ids": ["stmt_axi_bid_handshake_hold"],
+        "automation_confidence": "medium"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["BVALID", "BREADY", "BID"],
+      "actor_signal_relations_include": [
+        { "actor_name": "Subordinate", "signal_name": "BVALID", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "BVALID", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "BREADY", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "BREADY", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "BID", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "BID", "relation": "reads" }
+      ],
+      "actor_ports_include": [
+        { "actor_name": "Subordinate", "signal_name": "BVALID", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "BVALID", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "BREADY", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "BREADY", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "BID", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "BID", "direction": "input" }
+      ],
+      "resolved_semantic_roles_include": [
+        { "signal_name": "BVALID", "role": "handshake_valid_like" },
+        { "signal_name": "BREADY", "role": "handshake_ready_like" }
+      ],
+      "semantic_grounding_strengths_include": [
+        { "signal_name": "BVALID", "strength": "single_source" },
+        { "signal_name": "BREADY", "strength": "single_source" }
+      ],
+      "semantic_consensus_signal_names_include": ["BVALID", "BREADY"],
+      "temporal_rule_count": 1,
+      "temporal_rules_with_handshake_completion": 1,
+      "temporal_rules_include": [
+        {
+          "source_text": "BID must not change when BVALID is HIGH and BREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_bid_handshake_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "BVALID", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "BREADY", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "handshake_complete", "valid_signal": "BVALID", "ready_signal": "BREADY", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Subordinate",
+              "signal_name": "BID",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "BID",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        }
+      ]
+    },
+    "intent": {
+      "signal_names_include": ["BVALID", "BREADY", "BID"],
+      "actor_signal_relations_include": [
+        { "actor_name": "Subordinate", "signal_name": "BVALID", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "BVALID", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "BREADY", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "BREADY", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "BID", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "BID", "relation": "reads" }
+      ],
+      "actor_ports_include": [
+        { "actor_name": "Subordinate", "signal_name": "BVALID", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "BVALID", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "BREADY", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "BREADY", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "BID", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "BID", "direction": "input" }
+      ],
+      "resolved_semantic_roles_include": [
+        { "signal_name": "BVALID", "role": "handshake_valid_like" },
+        { "signal_name": "BREADY", "role": "handshake_ready_like" }
+      ],
+      "semantic_grounding_strengths_include": [
+        { "signal_name": "BVALID", "strength": "single_source" },
+        { "signal_name": "BREADY", "strength": "single_source" }
+      ],
+      "semantic_consensus_signal_names_include": ["BVALID", "BREADY"],
+      "temporal_rule_count": 1,
+      "temporal_rules_with_handshake_completion": 1,
+      "temporal_rules_include": [
+        {
+          "source_text": "BID must not change when BVALID is HIGH and BREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_bid_handshake_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "BVALID", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "BREADY", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "handshake_complete", "valid_signal": "BVALID", "ready_signal": "BREADY", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Subordinate",
+              "signal_name": "BID",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "BID",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        }
+      ]
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "actor_signal_relations": "6",
+          "signal_constraints": "1",
+          "signal_semantic_hints": "2",
+          "signal_semantic_hints_from_tables": "2"
+        }
+      },
+      "semantic": {
+        "metric_values": {
+          "actor_ports": "6",
+          "temporal_rules": "1",
+          "temporal_rules_with_handshake_completion": "1",
+          "temporal_rules_with_actor_grounding": "1",
+          "temporal_rules_with_multi_predicate_antecedents": "1"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "actor_ports": "6",
+          "temporal_rules": "1",
+          "temporal_rules_with_handshake_completion": "1",
+          "temporal_rules_with_actor_grounding": "1",
+          "temporal_rules_with_multi_predicate_antecedents": "1"
+        }
+      }
+    }
+  }
+}

@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-04-16 (AXI write-response ID stability KG fixture)
+
+### Added: AXI write-response ID stability truthfulness fixture
+- Added tracked KG fixture `axi_write_response_id_stability_gold` for AXI write-response `BID` hold behavior with width-only `Name | Width | Description` table evidence plus prose actor relations.
+- The fixture locks `BVALID`, `BREADY`, and `BID` through graph-backed actor relations, actor-relative ports, resolved `BVALID` / `BREADY` semantic roles, and one subordinate-grounded temporal stability rule.
+- The temporal rule requires `HandshakeComplete(BVALID, BREADY)` and actor-grounded stability for `BID`, extending write-response coverage from payload response semantics into transaction identity sideband stability.
+- Refreshed corpus-KB KG projections so the tracked suite now reports `74` fixtures / `0` failures, AMBA-family coverage reports `25/25`, and temporal fixture coverage reports `31/31`.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality axi_write_response_id_stability_gold` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `74` passed / `0` failed fixtures
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed corpus-KB fixture projections with `74` fixtures / `0` failures
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `313` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-16 (AXI read-data response stability KG fixture)
 
 ### Added: AXI read-data response stability truthfulness fixture
