@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-04-16 (APB write-control stability KG fixture)
+
+### Added: APB write-control stability truthfulness fixture
+- Added tracked KG fixture `apb_write_control_stability_gold` for APB wait-state control/data hold behavior with `Signal | Source | Width | Description` table evidence plus explicit structured signal constraints.
+- The fixture locks `PSEL`, `PENABLE`, `PREADY`, `PWRITE`, `PWDATA`, and `PSTRB` through graph-backed actor relations, actor-relative ports, resolved `PSEL` / `PREADY` semantic roles, and three actor-grounded temporal stability rules.
+- The temporal rules deliberately require no `HandshakeComplete` predicate because the guard is the APB wait-state shape `PSEL HIGH`, `PENABLE HIGH`, and `PREADY LOW`; the value is in proving stable requester-owned control/data sidebands without pretending a transfer completed.
+- Refreshed corpus-KB KG projections so the tracked suite now reports `64` fixtures / `0` failures, AMBA-family coverage reports `15/15`, and temporal fixture coverage reports `21/21`.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality apb_write_control_stability_gold` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `64` passed / `0` failed fixtures
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed corpus-KB fixture projections with `64` fixtures / `0` failures
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `313` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-16 (AXI sideband stability KG fixture)
 
 ### Added: AXI sideband stability truthfulness fixture

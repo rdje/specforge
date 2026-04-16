@@ -15,14 +15,15 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 
 - source: `kg-bench fixtures`
 - selected_family_labels: `temporal semantics`, `VLM timing diagrams`
-- fixtures_total: `20`
-- fixtures_passed: `20`
+- fixtures_total: `21`
+- fixtures_passed: `21`
 - fixtures_failed: `0`
 
 | fixture | status | matched families | path |
 | --- | --- | --- | --- |
 | `ahb_wait_state_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/ahb_wait_state_timing_gold/fixture.json` |
 | `apb_setup_access_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/apb_setup_access_timing_gold/fixture.json` |
+| `apb_write_control_stability_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/apb_write_control_stability_gold/fixture.json` |
 | `axi_next_cycle_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/axi_next_cycle_timing_gold/fixture.json` |
 | `axi_read_address_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/axi_read_address_timing_gold/fixture.json` |
 | `axi_read_data_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/axi_read_data_timing_gold/fixture.json` |

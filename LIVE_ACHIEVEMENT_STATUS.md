@@ -50,6 +50,7 @@
 - KG benchmark harness now includes AXI read-data timing coverage: Done
 - KG benchmark harness now includes AXI write-data timing coverage: Done
 - KG benchmark harness now includes AXI sideband stability coverage: Done
+- KG benchmark harness now includes APB write-control stability coverage: Done
 - `specforge nlp-enrich` command created: Done
 - `specforge converge` command created: Done
 - End-to-end source-to-IntentIR pipeline implemented: Done
@@ -140,6 +141,7 @@
 - KG benchmark harness now includes an AMBA-style `Destination`-column gold fixture for receiver semantics: Done
 - KG benchmark harness now includes an APB-style `Requester` / `Completer` gold fixture: Done
 - KG benchmark harness now includes an APB setup/access timing gold fixture: Done
+- KG benchmark harness now includes an APB write-control stability gold fixture: Done
 - KG benchmark harness now includes an AXI width-only plus prose-direction gold fixture: Done
 - KG benchmark harness now includes an AXI next-cycle timing gold fixture: Done
 - KG benchmark harness can now assert canonical temporal-rule shape directly: Done

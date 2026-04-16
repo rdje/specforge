@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-16 APB write-control stability KG fixture
+- This slice continues R15e structured-constraint coverage on APB instead of adding more AXI-only variants.
+- `apb_write_control_stability_gold` proves that `Signal | Source | Width | Description` APB tables plus structured constraints recover requester-owned stability obligations for `PWRITE`, `PWDATA`, and `PSTRB`.
+- The guard is intentionally the APB wait-state shape: `PSEL` is `HIGH`, `PENABLE` is `HIGH`, and `PREADY` is `LOW`. That checks multi-predicate temporal antecedents and actor-grounded stability without allowing the model to mistake a wait state for completed ready/valid transfer semantics.
+- The fixture asserts `0` temporal rules with handshake completion while still requiring three actor-grounded temporal rules, so this is a useful negative-edge inside a gold fixture: stability must be recovered, but handshake completion must not be fabricated.
+- The refreshed corpus-KB projection now records the tracked suite as `64/64`, AMBA-family fixture coverage as `15/15`, and timing-family coverage as `21/21`.
+
 ## 2026-04-16 AXI sideband stability KG fixture
 - This slice extends the AXI channel sweep from primary payload/address stability into explicit sideband stability, which is a separate truthfulness obligation in real protocol specs.
 - `axi_sideband_stability_gold` proves that a width-only signal table plus prose actor relations can carry two AXI channel fragments at once: `ARVALID` / `ARREADY` / `ARLEN` for read-address sideband stability and `WVALID` / `WREADY` / `WSTRB` for write-data byte-lane sideband stability.
