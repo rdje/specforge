@@ -1,0 +1,253 @@
+{
+  "name": "ahb_write_data_stability_gold",
+  "source": "source.md",
+  "source_ir_patch": {
+    "document_sections": [
+      {
+        "section_id": "sec_ahb_write_data_manager_signals",
+        "title": "Manager signals",
+        "heading_level": 2,
+        "page_id": "page_0001",
+        "source_ref": null,
+        "reading_order": 1,
+        "section_kind": "signal_description"
+      },
+      {
+        "section_id": "sec_ahb_write_data_subordinate_signals",
+        "title": "Subordinate signals",
+        "heading_level": 2,
+        "page_id": "page_0002",
+        "source_ref": null,
+        "reading_order": 10,
+        "section_kind": "signal_description"
+      }
+    ],
+    "structured_tables": [
+      {
+        "table_id": "table_ahb_manager_write_data_stability_signals",
+        "asset_id": "table_ahb_manager_write_data_stability_signals",
+        "page_id": "page_0001",
+        "caption_text": "AHB manager write-data stability signals",
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            { "text": "Name", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Destination", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Width", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Description", "row_span": 1, "col_span": 1, "is_header": true }
+          ]
+        ],
+        "body_rows": [
+          [
+            { "text": "HSEL", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Subordinate", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Select signal.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "HWRITE", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Subordinate", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Write control signal.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "HWDATA", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Subordinate", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "32", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Write data bus from the manager.", "row_span": 1, "col_span": 1, "is_header": false }
+          ]
+        ],
+        "row_count": 3,
+        "col_count": 4
+      },
+      {
+        "table_id": "table_ahb_subordinate_write_data_stability_signals",
+        "asset_id": "table_ahb_subordinate_write_data_stability_signals",
+        "page_id": "page_0002",
+        "caption_text": "AHB subordinate write wait-state signal",
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            { "text": "Name", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Destination", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Width", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Description", "row_span": 1, "col_span": 1, "is_header": true }
+          ]
+        ],
+        "body_rows": [
+          [
+            { "text": "HREADY", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Manager", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Wait-state response from the subordinate.", "row_span": 1, "col_span": 1, "is_header": false }
+          ]
+        ],
+        "row_count": 1,
+        "col_count": 4
+      }
+    ]
+  },
+  "evidence_ir_patch": {
+    "signal_constraints": [
+      {
+        "constraint_id": "sigcon_ahb_hwdata_write_wait_hold",
+        "subject_signal": "HWDATA",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when HREADY is LOW and HSEL is HIGH and HWRITE is HIGH",
+        "negated": false,
+        "source_text": "HWDATA must not change when HREADY is LOW and HSEL is HIGH and HWRITE is HIGH.",
+        "supporting_statement_ids": ["stmt_ahb_hwdata_write_wait_hold"],
+        "automation_confidence": "medium"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["HSEL", "HWRITE", "HWDATA", "HREADY"],
+      "signal_directions_include": [
+        { "signal_name": "HSEL", "direction": "output" },
+        { "signal_name": "HWRITE", "direction": "output" },
+        { "signal_name": "HWDATA", "direction": "output" },
+        { "signal_name": "HREADY", "direction": "input" }
+      ],
+      "actor_signal_relations_include": [
+        { "actor_name": "Manager", "signal_name": "HSEL", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "HSEL", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "HWRITE", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "HWRITE", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "HWDATA", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "HWDATA", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "HREADY", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "HREADY", "relation": "reads" }
+      ],
+      "actor_ports_include": [
+        { "actor_name": "Manager", "signal_name": "HSEL", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "HSEL", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "HWRITE", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "HWRITE", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "HWDATA", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "HWDATA", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "HREADY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "HREADY", "direction": "input" }
+      ],
+      "temporal_rule_count": 1,
+      "temporal_rules_with_handshake_completion": 0,
+      "temporal_rules_include": [
+        {
+          "source_text": "HWDATA must not change when HREADY is LOW and HSEL is HIGH and HWRITE is HIGH.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_ahb_hwdata_write_wait_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "HREADY", "value": "LOW", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "HSEL", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "HWRITE", "value": "HIGH", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Manager",
+              "signal_name": "HWDATA",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "HWDATA",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        }
+      ]
+    },
+    "intent": {
+      "signal_names_include": ["HSEL", "HWRITE", "HWDATA", "HREADY"],
+      "signal_directions_include": [
+        { "signal_name": "HSEL", "direction": "output" },
+        { "signal_name": "HWRITE", "direction": "output" },
+        { "signal_name": "HWDATA", "direction": "output" },
+        { "signal_name": "HREADY", "direction": "input" }
+      ],
+      "actor_signal_relations_include": [
+        { "actor_name": "Manager", "signal_name": "HSEL", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "HSEL", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "HWRITE", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "HWRITE", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "HWDATA", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "HWDATA", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "HREADY", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "HREADY", "relation": "reads" }
+      ],
+      "actor_ports_include": [
+        { "actor_name": "Manager", "signal_name": "HSEL", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "HSEL", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "HWRITE", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "HWRITE", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "HWDATA", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "HWDATA", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "HREADY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "HREADY", "direction": "input" }
+      ],
+      "temporal_rule_count": 1,
+      "temporal_rules_with_handshake_completion": 0,
+      "temporal_rules_include": [
+        {
+          "source_text": "HWDATA must not change when HREADY is LOW and HSEL is HIGH and HWRITE is HIGH.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_ahb_hwdata_write_wait_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "HREADY", "value": "LOW", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "HSEL", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "HWRITE", "value": "HIGH", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Manager",
+              "signal_name": "HWDATA",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "HWDATA",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        }
+      ]
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "actor_signal_relations": "8",
+          "signal_constraints": "1"
+        }
+      },
+      "semantic": {
+        "metric_values": {
+          "actor_ports": "8",
+          "temporal_rules": "1",
+          "temporal_rules_with_handshake_completion": "0",
+          "temporal_rules_with_actor_grounding": "1",
+          "temporal_rules_with_multi_predicate_antecedents": "1"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "actor_ports": "8",
+          "temporal_rules": "1",
+          "temporal_rules_with_handshake_completion": "0",
+          "temporal_rules_with_actor_grounding": "1",
+          "temporal_rules_with_multi_predicate_antecedents": "1"
+        }
+      }
+    }
+  }
+}

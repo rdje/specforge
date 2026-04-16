@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-16 AHB write-data stability KG fixture
+- This slice adds the remaining obvious AHB wait-state stability flank: manager-owned write data.
+- `ahb_write_data_stability_gold` proves that `HWDATA` is not merely another table row; it becomes a graph-backed Manager output and a typed temporal stability obligation under a three-predicate write wait-state guard.
+- The guard `HREADY is LOW and HSEL is HIGH and HWRITE is HIGH` intentionally strengthens the multi-predicate temporal path beyond the prior two-predicate AHB control/response stability fixtures.
+- The fixture still requires `0` handshake-completion predicates, preserving the stalled-transfer distinction while proving write-data stability.
+- The refreshed corpus-KB projection now records the tracked suite as `68/68`, AMBA-family fixture coverage as `19/19`, and timing-family coverage as `25/25`.
+
 ## 2026-04-16 AHB response stability KG fixture
 - This slice complements `ahb_control_stability_gold` by checking the subordinate-owned response side of an AHB wait state.
 - `ahb_response_stability_gold` proves that `Manager signals` / `Subordinate signals` section context plus `Destination`-column signal tables recover graph-backed Manager/Subordinate ownership for `HSEL`, `HREADY`, `HRDATA`, and `HRESP`.
