@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-04-17 (AHB exclusive/security stability KG fixture)
+
+### Added: AHB exclusive/security wait-state stability truthfulness fixture
+- Added tracked KG fixture `ahb_exclusive_security_stability_gold` for AHB `HEXCL`, `HNONSEC`, and `HEXOKAY` hold behavior while `HREADY` is low and `HSEL` is high.
+- The fixture uses `Manager signals` / `Subordinate signals` section context plus `Name | Destination | Width | Description` tables so exclusive, security, select, wait-state, and exclusive-response ownership are recovered from AHB-style document structure.
+- The fixture intentionally mixes Manager-owned controls (`HEXCL`, `HNONSEC`) with a Subordinate-owned response (`HEXOKAY`) under the same wait-state guard, proving actor-grounded stability survives across both sides without fabricating a handshake-completion predicate.
+- Refreshed corpus-KB KG projections so the tracked suite now reports `85` fixtures / `0` failures, AMBA-family coverage reports `36/36`, and temporal fixture coverage reports `42/42`.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality ahb_exclusive_security_stability_gold` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `85` passed / `0` failed fixtures
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed corpus-KB fixture projections with `85` fixtures / `0` failures
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `313` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-17 (AHB transfer/lock stability KG fixture)
 
 ### Added: AHB transfer/lock wait-state stability truthfulness fixture

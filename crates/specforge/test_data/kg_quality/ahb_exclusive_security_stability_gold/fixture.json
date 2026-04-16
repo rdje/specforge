@@ -1,0 +1,323 @@
+{
+  "name": "ahb_exclusive_security_stability_gold",
+  "source": "source.md",
+  "source_ir_patch": {
+    "document_sections": [
+      {
+        "section_id": "sec_ahb_exclusive_security_manager_signals",
+        "title": "Manager signals",
+        "heading_level": 2,
+        "page_id": "page_0001",
+        "source_ref": null,
+        "reading_order": 1,
+        "section_kind": "signal_description"
+      },
+      {
+        "section_id": "sec_ahb_exclusive_security_subordinate_signals",
+        "title": "Subordinate signals",
+        "heading_level": 2,
+        "page_id": "page_0002",
+        "source_ref": null,
+        "reading_order": 10,
+        "section_kind": "signal_description"
+      }
+    ],
+    "structured_tables": [
+      {
+        "table_id": "table_ahb_manager_exclusive_security_stability_signals",
+        "asset_id": "table_ahb_manager_exclusive_security_stability_signals",
+        "page_id": "page_0001",
+        "caption_text": "AHB manager exclusive and security stability signals",
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            { "text": "Name", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Destination", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Width", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Description", "row_span": 1, "col_span": 1, "is_header": true }
+          ]
+        ],
+        "body_rows": [
+          [
+            { "text": "HEXCL", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Subordinate", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Exclusive transfer control field.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "HNONSEC", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Subordinate", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Non-secure transfer control field.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "HSEL", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Subordinate", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Select signal.", "row_span": 1, "col_span": 1, "is_header": false }
+          ]
+        ],
+        "row_count": 3,
+        "col_count": 4
+      },
+      {
+        "table_id": "table_ahb_subordinate_exclusive_security_stability_signals",
+        "asset_id": "table_ahb_subordinate_exclusive_security_stability_signals",
+        "page_id": "page_0002",
+        "caption_text": "AHB subordinate exclusive response stability signals",
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            { "text": "Name", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Destination", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Width", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Description", "row_span": 1, "col_span": 1, "is_header": true }
+          ]
+        ],
+        "body_rows": [
+          [
+            { "text": "HREADY", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Manager", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Wait-state response from the subordinate.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "HEXOKAY", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Manager", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Exclusive access response from the subordinate.", "row_span": 1, "col_span": 1, "is_header": false }
+          ]
+        ],
+        "row_count": 2,
+        "col_count": 4
+      }
+    ]
+  },
+  "evidence_ir_patch": {
+    "signal_constraints": [
+      {
+        "constraint_id": "sigcon_ahb_hexcl_wait_hold",
+        "subject_signal": "HEXCL",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when HREADY is LOW and HSEL is HIGH",
+        "negated": false,
+        "source_text": "HEXCL must not change when HREADY is LOW and HSEL is HIGH.",
+        "supporting_statement_ids": ["stmt_ahb_hexcl_wait_hold"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_ahb_hnonsec_wait_hold",
+        "subject_signal": "HNONSEC",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when HREADY is LOW and HSEL is HIGH",
+        "negated": false,
+        "source_text": "HNONSEC must not change when HREADY is LOW and HSEL is HIGH.",
+        "supporting_statement_ids": ["stmt_ahb_hnonsec_wait_hold"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_ahb_hexokay_wait_hold",
+        "subject_signal": "HEXOKAY",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when HREADY is LOW and HSEL is HIGH",
+        "negated": false,
+        "source_text": "HEXOKAY must not change when HREADY is LOW and HSEL is HIGH.",
+        "supporting_statement_ids": ["stmt_ahb_hexokay_wait_hold"],
+        "automation_confidence": "medium"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["HEXCL", "HNONSEC", "HSEL", "HREADY", "HEXOKAY"],
+      "signal_directions_include": [
+        { "signal_name": "HEXCL", "direction": "output" },
+        { "signal_name": "HNONSEC", "direction": "output" },
+        { "signal_name": "HSEL", "direction": "output" },
+        { "signal_name": "HREADY", "direction": "input" },
+        { "signal_name": "HEXOKAY", "direction": "input" }
+      ],
+      "actor_signal_relations_include": [
+        { "actor_name": "Manager", "signal_name": "HEXCL", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "HEXCL", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "HNONSEC", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "HNONSEC", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "HSEL", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "HSEL", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "HREADY", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "HREADY", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "HEXOKAY", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "HEXOKAY", "relation": "reads" }
+      ],
+      "actor_ports_include": [
+        { "actor_name": "Manager", "signal_name": "HEXCL", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "HEXCL", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "HNONSEC", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "HNONSEC", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "HSEL", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "HSEL", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "HREADY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "HREADY", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "HEXOKAY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "HEXOKAY", "direction": "input" }
+      ],
+      "temporal_rule_count": 3,
+      "temporal_rules_with_handshake_completion": 0,
+      "temporal_rules_include": [
+        {
+          "source_text": "HEXCL must not change when HREADY is LOW and HSEL is HIGH.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_ahb_hexcl_wait_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "HREADY", "value": "LOW", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "HSEL", "value": "HIGH", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            { "kind": "actor_maintains_signal_stable", "actor_name": "Manager", "signal_name": "HEXCL", "from_phase": "pre_tick", "to_phase": "post_tick" },
+            { "kind": "signal_stable", "signal_name": "HEXCL", "from_phase": "pre_tick", "to_phase": "post_tick" }
+          ]
+        },
+        {
+          "source_text": "HNONSEC must not change when HREADY is LOW and HSEL is HIGH.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_ahb_hnonsec_wait_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "HREADY", "value": "LOW", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "HSEL", "value": "HIGH", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            { "kind": "actor_maintains_signal_stable", "actor_name": "Manager", "signal_name": "HNONSEC", "from_phase": "pre_tick", "to_phase": "post_tick" },
+            { "kind": "signal_stable", "signal_name": "HNONSEC", "from_phase": "pre_tick", "to_phase": "post_tick" }
+          ]
+        },
+        {
+          "source_text": "HEXOKAY must not change when HREADY is LOW and HSEL is HIGH.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_ahb_hexokay_wait_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "HREADY", "value": "LOW", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "HSEL", "value": "HIGH", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            { "kind": "actor_maintains_signal_stable", "actor_name": "Subordinate", "signal_name": "HEXOKAY", "from_phase": "pre_tick", "to_phase": "post_tick" },
+            { "kind": "signal_stable", "signal_name": "HEXOKAY", "from_phase": "pre_tick", "to_phase": "post_tick" }
+          ]
+        }
+      ]
+    },
+    "intent": {
+      "signal_names_include": ["HEXCL", "HNONSEC", "HSEL", "HREADY", "HEXOKAY"],
+      "signal_directions_include": [
+        { "signal_name": "HEXCL", "direction": "output" },
+        { "signal_name": "HNONSEC", "direction": "output" },
+        { "signal_name": "HSEL", "direction": "output" },
+        { "signal_name": "HREADY", "direction": "input" },
+        { "signal_name": "HEXOKAY", "direction": "input" }
+      ],
+      "actor_signal_relations_include": [
+        { "actor_name": "Manager", "signal_name": "HEXCL", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "HEXCL", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "HNONSEC", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "HNONSEC", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "HSEL", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "HSEL", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "HREADY", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "HREADY", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "HEXOKAY", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "HEXOKAY", "relation": "reads" }
+      ],
+      "actor_ports_include": [
+        { "actor_name": "Manager", "signal_name": "HEXCL", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "HEXCL", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "HNONSEC", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "HNONSEC", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "HSEL", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "HSEL", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "HREADY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "HREADY", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "HEXOKAY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "HEXOKAY", "direction": "input" }
+      ],
+      "temporal_rule_count": 3,
+      "temporal_rules_with_handshake_completion": 0,
+      "temporal_rules_include": [
+        {
+          "source_text": "HEXCL must not change when HREADY is LOW and HSEL is HIGH.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_ahb_hexcl_wait_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "HREADY", "value": "LOW", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "HSEL", "value": "HIGH", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            { "kind": "actor_maintains_signal_stable", "actor_name": "Manager", "signal_name": "HEXCL", "from_phase": "pre_tick", "to_phase": "post_tick" },
+            { "kind": "signal_stable", "signal_name": "HEXCL", "from_phase": "pre_tick", "to_phase": "post_tick" }
+          ]
+        },
+        {
+          "source_text": "HNONSEC must not change when HREADY is LOW and HSEL is HIGH.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_ahb_hnonsec_wait_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "HREADY", "value": "LOW", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "HSEL", "value": "HIGH", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            { "kind": "actor_maintains_signal_stable", "actor_name": "Manager", "signal_name": "HNONSEC", "from_phase": "pre_tick", "to_phase": "post_tick" },
+            { "kind": "signal_stable", "signal_name": "HNONSEC", "from_phase": "pre_tick", "to_phase": "post_tick" }
+          ]
+        },
+        {
+          "source_text": "HEXOKAY must not change when HREADY is LOW and HSEL is HIGH.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_ahb_hexokay_wait_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "HREADY", "value": "LOW", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "HSEL", "value": "HIGH", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            { "kind": "actor_maintains_signal_stable", "actor_name": "Subordinate", "signal_name": "HEXOKAY", "from_phase": "pre_tick", "to_phase": "post_tick" },
+            { "kind": "signal_stable", "signal_name": "HEXOKAY", "from_phase": "pre_tick", "to_phase": "post_tick" }
+          ]
+        }
+      ]
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "actor_signal_relations": "10",
+          "signal_constraints": "3"
+        }
+      },
+      "semantic": {
+        "metric_values": {
+          "actor_ports": "10",
+          "temporal_rules": "3",
+          "temporal_rules_with_handshake_completion": "0",
+          "temporal_rules_with_actor_grounding": "3",
+          "temporal_rules_with_multi_predicate_antecedents": "3"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "actor_ports": "10",
+          "temporal_rules": "3",
+          "temporal_rules_with_handshake_completion": "0",
+          "temporal_rules_with_actor_grounding": "3",
+          "temporal_rules_with_multi_predicate_antecedents": "3"
+        }
+      }
+    }
+  }
+}

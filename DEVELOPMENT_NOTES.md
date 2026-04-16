@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 AHB exclusive/security wait-state stability KG fixture
+- This slice adds focused AHB wait-state stability coverage for `HEXCL`, `HNONSEC`, and `HEXOKAY`.
+- `ahb_exclusive_security_stability_gold` proves that exclusive-transfer, non-secure-transfer, and exclusive-response attributes survive as graph-backed actor outputs and actor-grounded stability obligations while an AHB transfer is stalled.
+- The fixture intentionally uses `Manager signals` / `Subordinate signals` section context plus `Destination`-column tables, matching specs where optional AHB5-style fields are still carried by the same table idiom as core AHB signals.
+- The temporal expectations require `HREADY LOW` and `HSEL HIGH` antecedents with no handshake-completion predicate, preventing exclusive/security wait-state prose from becoming completed-transfer truth.
+- The refreshed corpus-KB projection now records the tracked suite as `85/85`, AMBA-family fixture coverage as `36/36`, and timing-family coverage as `42/42`.
+
 ## 2026-04-17 AHB transfer/lock wait-state stability KG fixture
 - This slice adds focused AHB wait-state stability coverage for `HTRANS` and `HMASTLOCK`.
 - `ahb_transfer_lock_stability_gold` proves that transfer type and locked-transfer attributes survive as graph-backed Manager outputs and actor-grounded stability obligations while an AHB transfer is stalled.

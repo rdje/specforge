@@ -22,22 +22,22 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `64bc735`
-- latest_commit_brief_message: `test(kg): add APB address protection stability fixture`
-- note: the current session is adding AHB transfer/lock wait-state stability KG coverage and refreshing corpus-KB projections
+- latest_commit_hash: `264be3e`
+- latest_commit_brief_message: `test(kg): add AHB transfer lock stability fixture`
+- note: the current session is adding AHB exclusive/security wait-state stability KG coverage and refreshing corpus-KB projections
 
 ## Recent commit chain (last 5)
+- `264be3e` test(kg): add AHB transfer lock stability fixture
 - `64bc735` test(kg): add APB address protection stability fixture
 - `62fdca5` test(kg): add AXI address response USER sideband fixture
 - `ac0e91b` test(kg): add AXI data USER sideband fixture
 - `672c3b2` test(kg): add AXI address QoS region sideband fixture
-- `59881b3` test(kg): add AXI read address control sideband fixture
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- the current KG-quality follow-on adds `ahb_transfer_lock_stability_gold`, a tracked AHB fixture proving `HTRANS` and `HMASTLOCK` remain Manager-owned stable transfer/control outputs while `HREADY` is low and `HSEL` is high
-- corpus-KB KG fixture projections were refreshed from the tracked `84/84` fixture suite; AMBA-family coverage is now `35/35` and temporal fixture coverage is now `41/41`
-- validation for the current AHB transfer/lock wait-state stability fixture follow-on passed focused `kg-bench`, full tracked `kg-bench`, corpus-KB KG projection refresh, and full `bash scripts/run_ci.sh`
+- the current KG-quality follow-on adds `ahb_exclusive_security_stability_gold`, a tracked AHB fixture proving `HEXCL`, `HNONSEC`, and `HEXOKAY` remain actor-grounded stable exclusive/security outputs while `HREADY` is low and `HSEL` is high
+- corpus-KB KG fixture projections were refreshed from the tracked `85/85` fixture suite; AMBA-family coverage is now `36/36` and temporal fixture coverage is now `42/42`
+- validation for the current AHB exclusive/security wait-state stability fixture follow-on passed focused `kg-bench`, full tracked `kg-bench`, corpus-KB KG projection refresh, and full `bash scripts/run_ci.sh`
 - the latest committed workflow follow-on changed `.github/workflows/ci.yml` to manual-only `workflow_dispatch`, temporarily removing automatic `push` / `pull_request` triggers to conserve GitHub Actions minutes
 - local quality expectations remain unchanged: `bash scripts/run_ci.sh` is the canonical Rust + docs gate before commits or any future push
 - the latest committed KG-quality follow-on extended `kg-bench` with direct canonical semantic-grounding strength expectations for `InterfaceSignalRecord.semantic_grounding_strength`
@@ -105,6 +105,7 @@
 - the Rust warning baseline is clean and now enforced in the shared local/hosted CI path rather than suppressed with `#[allow(dead_code)]`
 - README bootstrap currently resolves to `SESSION_BOOTSTRAP.md`, which instructs future agents to read the referenced live docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if necessary, and then continue from the roadmap
 - this README/PNT continuation observed 30 Rust source files and 58,291 lines under `crates/specforge/src`, with the CLI now including `doctor`, `converge`, `enrich`, `validate`, `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, `corpus-kb`, and `nlp-enrich` beside the core staged IR commands
+- `RUST_CODEBASE_ANALYSIS.md` has been refreshed for the AHB exclusive/security wait-state stability KG fixture path; the tracked KG fixture count is now `85`, focused KG-bench validation passes for the new AHB exclusive/security fixture, the full tracked KG suite reports `85/85`, corpus-KB fixture projections refresh with `85` fixtures / `0` failures, AMBA-family coverage is `36/36`, temporal-family coverage is `42/42`, and full local CI passes with `313` Rust tests plus the mdBook build
 - `RUST_CODEBASE_ANALYSIS.md` has been refreshed for the AHB transfer/lock wait-state stability KG fixture path; the tracked KG fixture count is now `84`, focused KG-bench validation passes for the new AHB transfer/lock fixture, the full tracked KG suite reports `84/84`, corpus-KB fixture projections refresh with `84` fixtures / `0` failures, AMBA-family coverage is `35/35`, temporal-family coverage is `41/41`, and full local CI passes with `313` Rust tests plus the mdBook build
 - `RUST_CODEBASE_ANALYSIS.md` has been refreshed for the APB address/protection wait-state stability KG fixture path; the tracked KG fixture count is now `83`, focused KG-bench validation passes for the new APB address/protection fixture, the full tracked KG suite reports `83/83`, corpus-KB fixture projections refresh with `83` fixtures / `0` failures, AMBA-family coverage is `34/34`, temporal-family coverage is `40/40`, and full local CI passes with `313` Rust tests plus the mdBook build
 - `RUST_CODEBASE_ANALYSIS.md` has been refreshed for the AXI address/response USER sideband stability KG fixture path; the tracked KG fixture count is now `82`, focused KG-bench validation passes for the new AXI address/response USER sideband fixture, the full tracked KG suite reports `82/82`, corpus-KB fixture projections refresh with `82` fixtures / `0` failures, AMBA-family coverage is `33/33`, temporal-family coverage is `39/39`, and full local CI passes with `313` Rust tests plus the mdBook build

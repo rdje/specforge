@@ -15,13 +15,14 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 
 - source: `kg-bench fixtures`
 - selected_family_labels: `protocol-family AMBA/APB/AHB/AXI`
-- fixtures_total: `35`
-- fixtures_passed: `35`
+- fixtures_total: `36`
+- fixtures_passed: `36`
 - fixtures_failed: `0`
 
 | fixture | status | matched families | path |
 | --- | --- | --- | --- |
 | `ahb_control_stability_gold` | `pass` | `protocol-family AMBA/APB/AHB/AXI` | `crates/specforge/test_data/kg_quality/ahb_control_stability_gold/fixture.json` |
+| `ahb_exclusive_security_stability_gold` | `pass` | `protocol-family AMBA/APB/AHB/AXI` | `crates/specforge/test_data/kg_quality/ahb_exclusive_security_stability_gold/fixture.json` |
 | `ahb_response_stability_gold` | `pass` | `protocol-family AMBA/APB/AHB/AXI` | `crates/specforge/test_data/kg_quality/ahb_response_stability_gold/fixture.json` |
 | `ahb_section_heading_direction_gold` | `pass` | `protocol-family AMBA/APB/AHB/AXI` | `crates/specforge/test_data/kg_quality/ahb_section_heading_direction_gold/fixture.json` |
 | `ahb_transfer_lock_stability_gold` | `pass` | `protocol-family AMBA/APB/AHB/AXI` | `crates/specforge/test_data/kg_quality/ahb_transfer_lock_stability_gold/fixture.json` |
