@@ -1,0 +1,305 @@
+{
+  "name": "axi_write_data_timing_gold",
+  "source": "source.md",
+  "source_ir_patch": {
+    "structured_tables": [
+      {
+        "table_id": "table_axi_w_timing_channel",
+        "asset_id": "table_axi_w_timing_channel",
+        "page_id": null,
+        "caption_text": "AXI write data channel signals",
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            { "text": "Name", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Width", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Description", "row_span": 1, "col_span": 1, "is_header": true }
+          ]
+        ],
+        "body_rows": [
+          [
+            { "text": "WVALID", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Indicates that write data and strobes are valid for transfer.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "WREADY", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Indicates that the subordinate can accept the write data transfer.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "WDATA", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "32", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Write data bus.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "WSTRB", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "4", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Write byte lane strobe bus.", "row_span": 1, "col_span": 1, "is_header": false }
+          ]
+        ],
+        "row_count": 4,
+        "col_count": 3
+      }
+    ]
+  },
+  "evidence_ir_patch": {
+    "signal_constraints": [
+      {
+        "constraint_id": "sigcon_axi_wready_next_cycle",
+        "subject_signal": "WREADY",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "WREADY must be asserted on the next cycle.",
+        "supporting_statement_ids": ["stmt_axi_wready_next_cycle"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_axi_wdata_handshake_hold",
+        "subject_signal": "WDATA",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when WVALID is HIGH and WREADY is HIGH",
+        "negated": false,
+        "source_text": "WDATA must not change when WVALID is HIGH and WREADY is HIGH.",
+        "supporting_statement_ids": ["stmt_axi_wdata_handshake_hold"],
+        "automation_confidence": "medium"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["WVALID", "WREADY", "WDATA", "WSTRB"],
+      "actor_signal_relations_include": [
+        { "actor_name": "Manager", "signal_name": "WVALID", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "WVALID", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "WDATA", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "WDATA", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "WSTRB", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "WSTRB", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "WREADY", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "WREADY", "relation": "reads" }
+      ],
+      "actor_ports_include": [
+        { "actor_name": "Manager", "signal_name": "WVALID", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "WVALID", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "WDATA", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "WDATA", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "WSTRB", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "WSTRB", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "WREADY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "WREADY", "direction": "input" }
+      ],
+      "resolved_semantic_roles_include": [
+        { "signal_name": "WVALID", "role": "handshake_valid_like" },
+        { "signal_name": "WREADY", "role": "handshake_ready_like" }
+      ],
+      "semantic_grounding_strengths_include": [
+        { "signal_name": "WVALID", "strength": "single_source" },
+        { "signal_name": "WREADY", "strength": "single_source" }
+      ],
+      "semantic_consensus_signal_names_include": ["WVALID", "WREADY"],
+      "temporal_rule_count": 2,
+      "temporal_rules_with_handshake_completion": 1,
+      "temporal_rules_include": [
+        {
+          "source_text": "WREADY must be asserted on the next cycle.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_axi_wready_next_cycle"],
+          "consequents_include": [
+            {
+              "kind": "actor_drives_signal",
+              "actor_name": "Subordinate",
+              "signal_name": "WREADY",
+              "phase": "post_tick"
+            },
+            {
+              "kind": "signal_value",
+              "signal_name": "WREADY",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "WDATA must not change when WVALID is HIGH and WREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_wdata_handshake_hold"],
+          "antecedents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "WVALID",
+              "value": "HIGH",
+              "phase": "pre_tick"
+            },
+            {
+              "kind": "signal_value",
+              "signal_name": "WREADY",
+              "value": "HIGH",
+              "phase": "pre_tick"
+            },
+            {
+              "kind": "handshake_complete",
+              "valid_signal": "WVALID",
+              "ready_signal": "WREADY",
+              "phase": "pre_tick"
+            }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Manager",
+              "signal_name": "WDATA",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "WDATA",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        }
+      ]
+    },
+    "intent": {
+      "signal_names_include": ["WVALID", "WREADY", "WDATA", "WSTRB"],
+      "actor_signal_relations_include": [
+        { "actor_name": "Manager", "signal_name": "WVALID", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "WVALID", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "WDATA", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "WDATA", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "WSTRB", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "WSTRB", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "WREADY", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "WREADY", "relation": "reads" }
+      ],
+      "actor_ports_include": [
+        { "actor_name": "Manager", "signal_name": "WVALID", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "WVALID", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "WDATA", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "WDATA", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "WSTRB", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "WSTRB", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "WREADY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "WREADY", "direction": "input" }
+      ],
+      "resolved_semantic_roles_include": [
+        { "signal_name": "WVALID", "role": "handshake_valid_like" },
+        { "signal_name": "WREADY", "role": "handshake_ready_like" }
+      ],
+      "semantic_grounding_strengths_include": [
+        { "signal_name": "WVALID", "strength": "single_source" },
+        { "signal_name": "WREADY", "strength": "single_source" }
+      ],
+      "semantic_consensus_signal_names_include": ["WVALID", "WREADY"],
+      "temporal_rule_count": 2,
+      "temporal_rules_with_handshake_completion": 1,
+      "temporal_rules_include": [
+        {
+          "source_text": "WREADY must be asserted on the next cycle.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_axi_wready_next_cycle"],
+          "consequents_include": [
+            {
+              "kind": "actor_drives_signal",
+              "actor_name": "Subordinate",
+              "signal_name": "WREADY",
+              "phase": "post_tick"
+            },
+            {
+              "kind": "signal_value",
+              "signal_name": "WREADY",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "WDATA must not change when WVALID is HIGH and WREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_wdata_handshake_hold"],
+          "antecedents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "WVALID",
+              "value": "HIGH",
+              "phase": "pre_tick"
+            },
+            {
+              "kind": "signal_value",
+              "signal_name": "WREADY",
+              "value": "HIGH",
+              "phase": "pre_tick"
+            },
+            {
+              "kind": "handshake_complete",
+              "valid_signal": "WVALID",
+              "ready_signal": "WREADY",
+              "phase": "pre_tick"
+            }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Manager",
+              "signal_name": "WDATA",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "WDATA",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        }
+      ]
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "actor_signal_relations": "8",
+          "signal_constraints": "2",
+          "signal_semantic_hints": "2",
+          "signal_semantic_hints_from_tables": "2"
+        }
+      },
+      "semantic": {
+        "metric_values": {
+          "actor_ports": "8",
+          "temporal_rules": "2",
+          "temporal_rules_with_handshake_completion": "1",
+          "temporal_rules_with_cycle_window": "1",
+          "temporal_rules_with_actor_grounding": "2"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "actor_ports": "8",
+          "temporal_rules": "2",
+          "temporal_rules_with_handshake_completion": "1",
+          "temporal_rules_with_cycle_window": "1",
+          "temporal_rules_with_actor_grounding": "2"
+        }
+      }
+    }
+  }
+}

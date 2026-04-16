@@ -47,6 +47,7 @@
 - KG benchmark harness can now assert canonical semantic grounding-strength shape directly: Done
 - KG benchmark harness now includes AXI write-response timing coverage: Done
 - KG benchmark harness now includes AXI read-data timing coverage: Done
+- KG benchmark harness now includes AXI write-data timing coverage: Done
 - `specforge nlp-enrich` command created: Done
 - `specforge converge` command created: Done
 - End-to-end source-to-IntentIR pipeline implemented: Done

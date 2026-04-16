@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-16 AXI write-data timing KG fixture
+- This slice continues the same R15e AXI channel sweep with the manager-driven write-data path, rather than expanding the implementation surface before the executable protocol coverage is broader.
+- `axi_write_data_timing_gold` proves the width-only table plus prose actor-relation path on the AXI write-data channel: `WVALID`, `WDATA`, and `WSTRB` are driven by `Manager`, while `WREADY` is driven by `Subordinate`, with reciprocal sample/read relations preserved.
+- The fixture intentionally carries `WSTRB` as graph-grounded channel evidence even though the timing rule focuses on `WDATA`; this checks that byte-lane sideband signals survive as canonical actor-relative interface records without forcing a handshake role.
+- Temporal expectations stay typed and actor-grounded: `WREADY must be asserted on the next cycle` binds the post-tick drive/value obligation to `Subordinate`, and `WDATA must not change when WVALID is HIGH and WREADY is HIGH` binds stability to the `WVALID` / `WREADY` handshake.
+- The refreshed corpus-KB projection now records the tracked suite as `61/61`, AMBA-family fixture coverage as `12/12`, and timing-family coverage as `18/18`.
+
 ## 2026-04-16 AXI read-data timing KG fixture
 - This slice continues `R15e` by filling another concrete AXI channel shape rather than broadening the code surface prematurely.
 - `axi_read_data_timing_gold` proves the width-only table plus prose actor-relation path on the AXI read-data channel: `RVALID`, `RDATA`, and `RRESP` are driven by `Subordinate`, while `RREADY` is driven by `Manager`, with reciprocal sample/read relations preserved.
