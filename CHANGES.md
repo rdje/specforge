@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-04-17 (APB address/protection stability KG fixture)
+
+### Added: APB address/protection wait-state stability truthfulness fixture
+- Added tracked KG fixture `apb_address_protection_stability_gold` for APB `PADDR` and `PPROT` hold behavior while `PSEL` and `PENABLE` are high and `PREADY` is low.
+- The fixture uses a `Signal | Source | Width | Description` table so Requester/Completer ownership is recovered from structured table evidence and reinforced by prose actor relations.
+- Each temporal rule requires three explicit wait-state antecedents and actor-grounded Requester stability while intentionally preserving `temporal_rules_with_handshake_completion: 0`, proving stalled APB accesses do not become false completed handshakes.
+- Refreshed corpus-KB KG projections so the tracked suite now reports `83` fixtures / `0` failures, AMBA-family coverage reports `34/34`, and temporal fixture coverage reports `40/40`.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality apb_address_protection_stability_gold` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `83` passed / `0` failed fixtures
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed corpus-KB fixture projections with `83` fixtures / `0` failures
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `313` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-17 (AXI address/response USER sideband stability KG fixture)
 
 ### Added: AXI address/response USER sideband stability truthfulness fixture

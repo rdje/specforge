@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 APB address/protection wait-state stability KG fixture
+- This slice adds focused APB wait-state stability coverage for `PADDR` and `PPROT`.
+- `apb_address_protection_stability_gold` proves that address and protection attributes survive as graph-backed Requester outputs and actor-grounded stability obligations while an APB access is stalled.
+- The fixture intentionally uses a `Signal | Source | Width | Description` table so actor ownership is recoverable from table structure, matching many bus-spec signal tables where ownership is columnar rather than repeated in prose.
+- The temporal expectations require `PSEL HIGH`, `PENABLE HIGH`, and `PREADY LOW` antecedents with no `HandshakeComplete(PSEL, PREADY)` predicate, preventing stalled wait-state prose from being promoted into completed-transfer truth.
+- The refreshed corpus-KB projection now records the tracked suite as `83/83`, AMBA-family fixture coverage as `34/34`, and timing-family coverage as `40/40`.
+
 ## 2026-04-17 AXI address/response USER sideband stability KG fixture
 - This slice adds focused AXI address-channel and write-response `USER` sideband stability coverage for `AWUSER`, `ARUSER`, and `BUSER`.
 - `axi_address_response_user_sideband_stability_gold` proves that optional user-defined address/response sidebands survive as graph-backed actor outputs and actor-grounded stability obligations under their matching channel handshakes.

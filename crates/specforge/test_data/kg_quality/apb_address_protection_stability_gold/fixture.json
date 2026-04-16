@@ -1,0 +1,254 @@
+{
+  "name": "apb_address_protection_stability_gold",
+  "source": "source.md",
+  "source_ir_patch": {
+    "structured_tables": [
+      {
+        "table_id": "table_apb_address_protection_stability",
+        "asset_id": "table_apb_address_protection_stability",
+        "page_id": null,
+        "caption_text": "APB address protection stability signals",
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            { "text": "Signal", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Source", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Width", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Description", "row_span": 1, "col_span": 1, "is_header": true }
+          ]
+        ],
+        "body_rows": [
+          [
+            { "text": "PSEL", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Requester", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Transfer request. Indicates that address and protection information are valid for transfer.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "PENABLE", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Requester", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Indicates that the access phase is active.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "PREADY", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Completer", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Indicates that the completer can accept and complete the transfer.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "PADDR", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Requester", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "32", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Address bus for the transfer.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "PPROT", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Requester", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "3", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Protection attribute field for the transfer.", "row_span": 1, "col_span": 1, "is_header": false }
+          ]
+        ],
+        "row_count": 5,
+        "col_count": 4
+      }
+    ]
+  },
+  "evidence_ir_patch": {
+    "signal_constraints": [
+      {
+        "constraint_id": "sigcon_apb_paddr_wait_hold",
+        "subject_signal": "PADDR",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when PSEL is HIGH and PENABLE is HIGH and PREADY is LOW",
+        "negated": false,
+        "source_text": "PADDR must not change when PSEL is HIGH and PENABLE is HIGH and PREADY is LOW.",
+        "supporting_statement_ids": ["stmt_apb_paddr_wait_hold"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_apb_pprot_wait_hold",
+        "subject_signal": "PPROT",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when PSEL is HIGH and PENABLE is HIGH and PREADY is LOW",
+        "negated": false,
+        "source_text": "PPROT must not change when PSEL is HIGH and PENABLE is HIGH and PREADY is LOW.",
+        "supporting_statement_ids": ["stmt_apb_pprot_wait_hold"],
+        "automation_confidence": "medium"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["PSEL", "PENABLE", "PREADY", "PADDR", "PPROT"],
+      "actor_signal_relations_include": [
+        { "actor_name": "Requester", "signal_name": "PSEL", "relation": "drives" },
+        { "actor_name": "Completer", "signal_name": "PSEL", "relation": "reads" },
+        { "actor_name": "Requester", "signal_name": "PENABLE", "relation": "drives" },
+        { "actor_name": "Completer", "signal_name": "PENABLE", "relation": "reads" },
+        { "actor_name": "Completer", "signal_name": "PREADY", "relation": "drives" },
+        { "actor_name": "Requester", "signal_name": "PREADY", "relation": "reads" },
+        { "actor_name": "Requester", "signal_name": "PADDR", "relation": "drives" },
+        { "actor_name": "Completer", "signal_name": "PADDR", "relation": "reads" },
+        { "actor_name": "Requester", "signal_name": "PPROT", "relation": "drives" },
+        { "actor_name": "Completer", "signal_name": "PPROT", "relation": "reads" }
+      ],
+      "actor_ports_include": [
+        { "actor_name": "Requester", "signal_name": "PSEL", "direction": "output" },
+        { "actor_name": "Completer", "signal_name": "PSEL", "direction": "input" },
+        { "actor_name": "Requester", "signal_name": "PENABLE", "direction": "output" },
+        { "actor_name": "Completer", "signal_name": "PENABLE", "direction": "input" },
+        { "actor_name": "Completer", "signal_name": "PREADY", "direction": "output" },
+        { "actor_name": "Requester", "signal_name": "PREADY", "direction": "input" },
+        { "actor_name": "Requester", "signal_name": "PADDR", "direction": "output" },
+        { "actor_name": "Completer", "signal_name": "PADDR", "direction": "input" },
+        { "actor_name": "Requester", "signal_name": "PPROT", "direction": "output" },
+        { "actor_name": "Completer", "signal_name": "PPROT", "direction": "input" }
+      ],
+      "resolved_semantic_roles_include": [
+        { "signal_name": "PSEL", "role": "handshake_valid_like" },
+        { "signal_name": "PREADY", "role": "handshake_ready_like" }
+      ],
+      "semantic_grounding_strengths_include": [
+        { "signal_name": "PSEL", "strength": "single_source" },
+        { "signal_name": "PREADY", "strength": "single_source" }
+      ],
+      "semantic_consensus_signal_names_include": ["PSEL", "PREADY"],
+      "temporal_rule_count": 2,
+      "temporal_rules_with_handshake_completion": 0,
+      "temporal_rules_include": [
+        {
+          "source_text": "PADDR must not change when PSEL is HIGH and PENABLE is HIGH and PREADY is LOW.",
+          "clock_signal": "PCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_apb_paddr_wait_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "PSEL", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "PENABLE", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "PREADY", "value": "LOW", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            { "kind": "actor_maintains_signal_stable", "actor_name": "Requester", "signal_name": "PADDR", "from_phase": "pre_tick", "to_phase": "post_tick" },
+            { "kind": "signal_stable", "signal_name": "PADDR", "from_phase": "pre_tick", "to_phase": "post_tick" }
+          ]
+        },
+        {
+          "source_text": "PPROT must not change when PSEL is HIGH and PENABLE is HIGH and PREADY is LOW.",
+          "clock_signal": "PCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_apb_pprot_wait_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "PSEL", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "PENABLE", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "PREADY", "value": "LOW", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            { "kind": "actor_maintains_signal_stable", "actor_name": "Requester", "signal_name": "PPROT", "from_phase": "pre_tick", "to_phase": "post_tick" },
+            { "kind": "signal_stable", "signal_name": "PPROT", "from_phase": "pre_tick", "to_phase": "post_tick" }
+          ]
+        }
+      ]
+    },
+    "intent": {
+      "signal_names_include": ["PSEL", "PENABLE", "PREADY", "PADDR", "PPROT"],
+      "actor_signal_relations_include": [
+        { "actor_name": "Requester", "signal_name": "PSEL", "relation": "drives" },
+        { "actor_name": "Completer", "signal_name": "PSEL", "relation": "reads" },
+        { "actor_name": "Requester", "signal_name": "PENABLE", "relation": "drives" },
+        { "actor_name": "Completer", "signal_name": "PENABLE", "relation": "reads" },
+        { "actor_name": "Completer", "signal_name": "PREADY", "relation": "drives" },
+        { "actor_name": "Requester", "signal_name": "PREADY", "relation": "reads" },
+        { "actor_name": "Requester", "signal_name": "PADDR", "relation": "drives" },
+        { "actor_name": "Completer", "signal_name": "PADDR", "relation": "reads" },
+        { "actor_name": "Requester", "signal_name": "PPROT", "relation": "drives" },
+        { "actor_name": "Completer", "signal_name": "PPROT", "relation": "reads" }
+      ],
+      "actor_ports_include": [
+        { "actor_name": "Requester", "signal_name": "PSEL", "direction": "output" },
+        { "actor_name": "Completer", "signal_name": "PSEL", "direction": "input" },
+        { "actor_name": "Requester", "signal_name": "PENABLE", "direction": "output" },
+        { "actor_name": "Completer", "signal_name": "PENABLE", "direction": "input" },
+        { "actor_name": "Completer", "signal_name": "PREADY", "direction": "output" },
+        { "actor_name": "Requester", "signal_name": "PREADY", "direction": "input" },
+        { "actor_name": "Requester", "signal_name": "PADDR", "direction": "output" },
+        { "actor_name": "Completer", "signal_name": "PADDR", "direction": "input" },
+        { "actor_name": "Requester", "signal_name": "PPROT", "direction": "output" },
+        { "actor_name": "Completer", "signal_name": "PPROT", "direction": "input" }
+      ],
+      "resolved_semantic_roles_include": [
+        { "signal_name": "PSEL", "role": "handshake_valid_like" },
+        { "signal_name": "PREADY", "role": "handshake_ready_like" }
+      ],
+      "semantic_grounding_strengths_include": [
+        { "signal_name": "PSEL", "strength": "single_source" },
+        { "signal_name": "PREADY", "strength": "single_source" }
+      ],
+      "semantic_consensus_signal_names_include": ["PSEL", "PREADY"],
+      "temporal_rule_count": 2,
+      "temporal_rules_with_handshake_completion": 0,
+      "temporal_rules_include": [
+        {
+          "source_text": "PADDR must not change when PSEL is HIGH and PENABLE is HIGH and PREADY is LOW.",
+          "clock_signal": "PCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_apb_paddr_wait_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "PSEL", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "PENABLE", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "PREADY", "value": "LOW", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            { "kind": "actor_maintains_signal_stable", "actor_name": "Requester", "signal_name": "PADDR", "from_phase": "pre_tick", "to_phase": "post_tick" },
+            { "kind": "signal_stable", "signal_name": "PADDR", "from_phase": "pre_tick", "to_phase": "post_tick" }
+          ]
+        },
+        {
+          "source_text": "PPROT must not change when PSEL is HIGH and PENABLE is HIGH and PREADY is LOW.",
+          "clock_signal": "PCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_apb_pprot_wait_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "PSEL", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "PENABLE", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "PREADY", "value": "LOW", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            { "kind": "actor_maintains_signal_stable", "actor_name": "Requester", "signal_name": "PPROT", "from_phase": "pre_tick", "to_phase": "post_tick" },
+            { "kind": "signal_stable", "signal_name": "PPROT", "from_phase": "pre_tick", "to_phase": "post_tick" }
+          ]
+        }
+      ]
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "actor_signal_relations": "10",
+          "signal_constraints": "2",
+          "signal_semantic_hints": "2",
+          "signal_semantic_hints_from_tables": "2"
+        }
+      },
+      "semantic": {
+        "metric_values": {
+          "actor_ports": "10",
+          "temporal_rules": "2",
+          "temporal_rules_with_handshake_completion": "0",
+          "temporal_rules_with_actor_grounding": "2",
+          "temporal_rules_with_multi_predicate_antecedents": "2"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "actor_ports": "10",
+          "temporal_rules": "2",
+          "temporal_rules_with_handshake_completion": "0",
+          "temporal_rules_with_actor_grounding": "2",
+          "temporal_rules_with_multi_predicate_antecedents": "2"
+        }
+      }
+    }
+  }
+}
