@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-04-17 (coordinated active-read KG coverage)
+
+### Strengthened: relative-clause actor-noise fixture now locks coordinated reads too
+- Tightened the tracked `relative_clause_actor_noise_negative` fixture so the manager-side sample relation is one coordinated sentence: `The Manager samples ARCHUNKEN and RCHUNKV.`
+- Added focused extractor regressions proving coordinated active-read clauses recover every sampled object and stop before guard clauses such as `when RVALID is HIGH`.
+- The fixture now proves the same staged graph path handles both producer and consumer coordination: `interconnect` drives both chunking signals, `Manager` reads both chunking signals, `mixture of` stays out of the graph, and `signal_connectivity_conflicts` remains `0`.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml coordinated_active_read -- --nocapture` -> passed with `2` focused tests
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality relative_clause_actor_noise_negative` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `86` passed / `0` failed fixtures
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `317` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-17 (relative-clause actor-noise KG fixture)
 
 ### Added: staged KG benchmark coverage for relative-clause actor hygiene

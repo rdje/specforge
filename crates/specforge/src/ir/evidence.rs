@@ -7389,6 +7389,80 @@ mod tests {
     }
 
     #[test]
+    fn coordinated_active_read_extracts_all_sampled_objects() {
+        use super::{
+            EvidenceModality, ExtractedStatement, RelationKind, StatementClass,
+            extract_actor_signal_relations,
+        };
+
+        let signals = ["ARCHUNKEN".to_string(), "RCHUNKV".to_string()]
+            .into_iter()
+            .collect::<std::collections::HashSet<_>>();
+        let stmts = vec![ExtractedStatement {
+            statement_id: "s8".to_string(),
+            text: "The Manager samples ARCHUNKEN and RCHUNKV.".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }];
+
+        let relations = extract_actor_signal_relations(&stmts, &signals);
+
+        assert!(
+            relations.iter().any(|r| r.signal_name == "ARCHUNKEN"
+                && matches!(r.relation, RelationKind::Reads)
+                && r.actor_name == "Manager"),
+            "coordinated active read must recover Manager reads ARCHUNKEN, got: {:?}",
+            relations
+        );
+        assert!(
+            relations.iter().any(|r| r.signal_name == "RCHUNKV"
+                && matches!(r.relation, RelationKind::Reads)
+                && r.actor_name == "Manager"),
+            "coordinated active read must recover Manager reads RCHUNKV, got: {:?}",
+            relations
+        );
+    }
+
+    #[test]
+    fn coordinated_active_read_object_scan_stops_before_guard_clause() {
+        use super::{
+            EvidenceModality, ExtractedStatement, RelationKind, StatementClass,
+            extract_actor_signal_relations,
+        };
+
+        let signals = ["DATA".to_string(), "RVALID".to_string()]
+            .into_iter()
+            .collect::<std::collections::HashSet<_>>();
+        let stmts = vec![ExtractedStatement {
+            statement_id: "s9".to_string(),
+            text: "The Manager samples DATA when RVALID is HIGH.".to_string(),
+            class: StatementClass::SignalValueConstraint,
+            modality: EvidenceModality::Text,
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }];
+
+        let relations = extract_actor_signal_relations(&stmts, &signals);
+
+        assert!(
+            relations.iter().any(|r| r.signal_name == "DATA"
+                && matches!(r.relation, RelationKind::Reads)
+                && r.actor_name == "Manager"),
+            "active read object scan must keep DATA as the sampled object, got: {:?}",
+            relations
+        );
+        assert!(
+            !relations.iter().any(|r| r.signal_name == "RVALID"
+                && matches!(r.relation, RelationKind::Reads)
+                && r.actor_name == "Manager"),
+            "guard signal RVALID must not become a sampled object, got: {:?}",
+            relations
+        );
+    }
+
+    #[test]
     fn synthesize_directions_produces_signal_is_output_declaration() {
         use super::synthesize_directions_from_relations;
         use crate::ir::source::{

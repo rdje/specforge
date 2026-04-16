@@ -97,7 +97,7 @@
 - Markdown-marker alias garbage filter in `specforge nlp-enrich`: Done
 - Tier 2 actor-signal relation extraction from prose and signal-description tables implemented: Done
 - Active-drive actor extraction rejects relative-clause descriptive phrases such as `mixture of` as protocol actors: Done
-- Active-drive actor extraction recovers coordinated objects under the same head actor: Done
+- Active drive/read actor extraction recovers coordinated objects under the same head actor: Done
 - Actor-relative KG carry-through into `SemanticIR` / `IntentIR` (`actor_signal_relations`, `actor_ports`, `signal_connectivity`) implemented: Done
 - Interface-signal conflict surfacing for conflicting direction/width evidence, including sticky canonical hint collapse, implemented: Done
 - Signal-connectivity conflict surfacing for multi-producer ambiguity implemented: Done
@@ -180,7 +180,7 @@
 - KG benchmark harness now includes an AHB-style section-heading gold fixture for direction recovery: Done
 - KG benchmark harness now includes an AHB wait-state timing gold fixture: Done
 - KG benchmark harness now locks bogus actor-attribution rejection for `Source`-column infrastructure rows: Done
-- KG benchmark harness now locks relative-clause actor-noise rejection and coordinated active-drive recovery: Done
+- KG benchmark harness now locks relative-clause actor-noise rejection and coordinated active drive/read recovery: Done
 - KG benchmark harness can now assert canonical clock/reset infrastructure records and topology directly: Done
 - KG benchmark harness now locks field-table misclassification rejection: Done
 - KG benchmark harness now locks spurious VLM timing-annotation sample/index-label, motion-only annotation, and waveform-motion state rejection: Done

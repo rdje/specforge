@@ -7,6 +7,15 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 Coordinated active-read KG coverage
+- This slice strengthens `relative_clause_actor_noise_negative` so it no longer proves only coordinated producer recovery.
+- The fixture source now uses `The Manager samples ARCHUNKEN and RCHUNKV.`, forcing the staged path to recover coordinated active reads for both chunking signals from one sentence.
+- Added unit coverage for the read-side object scanner:
+  - `coordinated_active_read_extracts_all_sampled_objects`
+  - `coordinated_active_read_object_scan_stops_before_guard_clause`
+- The guard-clause regression matters because broad object scans can otherwise become too eager and turn condition signals such as `RVALID` into sampled objects.
+- The intended extractor contract is now symmetrical: active drive/read clauses can recover multiple object signals from the same clause, but object scanning stops at condition markers and does not cross into guard text.
+
 ## 2026-04-17 Relative-clause actor-noise KG fixture
 - This slice turns the previous extractor-level AXI chunking fix into an executable staged KG fixture.
 - `relative_clause_actor_noise_negative` proves that prose shaped like `An interconnect which connects to components with a mixture of chunking support can drive ARCHUNKEN and RCHUNKV` recovers the real head actor and keeps the descriptive phrase out of the graph.

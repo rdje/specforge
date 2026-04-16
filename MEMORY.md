@@ -22,23 +22,24 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `019f536`
-- latest_commit_brief_message: `fix(evidence): reject relative-clause actor noise`
-- note: the current session is adding staged KG benchmark coverage for relative-clause actor-noise rejection and coordinated active-drive object recovery
+- latest_commit_hash: `4cb4b53`
+- latest_commit_brief_message: `fix(evidence): recover coordinated active-drive objects`
+- note: the current session is strengthening coordinated active-read coverage in the relative-clause actor-noise fixture
 
 ## Recent commit chain (last 5)
+- `4cb4b53` fix(evidence): recover coordinated active-drive objects
 - `019f536` fix(evidence): reject relative-clause actor noise
 - `02d4be1` test(kg): add AHB exclusive security stability fixture
 - `264be3e` test(kg): add AHB transfer lock stability fixture
 - `64bc735` test(kg): add APB address protection stability fixture
-- `62fdca5` test(kg): add AXI address response USER sideband fixture
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- the current KG-quality follow-on adds `relative_clause_actor_noise_negative`, a tracked staged fixture proving AXI-style relative-clause chunking prose recovers `interconnect` as producer for both `ARCHUNKEN` and `RCHUNKV`, keeps `mixture of` out of the graph, and preserves zero connectivity conflicts through `SemanticIR` / `IntentIR`
-- `crates/specforge/src/ir/evidence.rs` now scans the active verb's current object clause, so coordinated objects like `drive ARCHUNKEN and RCHUNKV` both inherit the grounded head actor rather than only the first signal
-- corpus-KB KG fixture projections were refreshed from the tracked `86/86` fixture suite; actor-connectivity coverage is now `12/12` and truthfulness-negative/caution coverage is now `33/33`
-- validation for the current relative-clause actor-noise KG fixture follow-on passed focused extractor tests, focused `kg-bench`, full tracked `kg-bench`, corpus-KB KG projection refresh, and full `bash scripts/run_ci.sh`
+- the current KG-quality follow-on strengthens `relative_clause_actor_noise_negative` so the consumer side is also coordinated: `The Manager samples ARCHUNKEN and RCHUNKV.`
+- `crates/specforge/src/ir/evidence.rs` now has focused unit coverage proving coordinated active-read clauses recover all sampled objects and stop before guard clauses such as `when RVALID is HIGH`
+- validation for the current coordinated active-read follow-on passed focused read-side extractor tests, focused `kg-bench`, full tracked `kg-bench`, and full `bash scripts/run_ci.sh`
+- the latest committed KG-quality follow-on added `relative_clause_actor_noise_negative`, a tracked staged fixture proving AXI-style relative-clause chunking prose recovers `interconnect` as producer for both `ARCHUNKEN` and `RCHUNKV`, keeps `mixture of` out of the graph, and preserves zero connectivity conflicts through `SemanticIR` / `IntentIR`
+- the latest committed evidence follow-on scans the active verb's current object clause, so coordinated objects like `drive ARCHUNKEN and RCHUNKV` both inherit the grounded head actor rather than only the first signal
 - the latest committed actor-extraction hygiene follow-on tightened active-drive subject extraction so prose shaped like `An interconnect which connects to components with a mixture of chunking support can drive ARCHUNKEN` keeps `interconnect` as the actor instead of promoting the descriptive phrase `mixture of`
 - the latest committed actor-extraction hygiene follow-on also rejects `mixture` / `mixture of` as meaningful actor terms so the learning plane cannot harvest or reuse that descriptive phrase as actor-taxonomy vocabulary
 - the latest committed KG-quality follow-on added `ahb_exclusive_security_stability_gold`, a tracked AHB fixture proving `HEXCL`, `HNONSEC`, and `HEXOKAY` remain actor-grounded stable exclusive/security outputs while `HREADY` is low and `HSEL` is high
@@ -110,6 +111,7 @@
 - the Rust warning baseline is clean and now enforced in the shared local/hosted CI path rather than suppressed with `#[allow(dead_code)]`
 - README bootstrap currently resolves to `SESSION_BOOTSTRAP.md`, which instructs future agents to read the referenced live docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if necessary, and then continue from the roadmap
 - this README/PNT continuation observed 30 Rust source files and 58,291 lines under `crates/specforge/src`, with the CLI now including `doctor`, `converge`, `enrich`, `validate`, `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, `corpus-kb`, and `nlp-enrich` beside the core staged IR commands
+- `RUST_CODEBASE_ANALYSIS.md` has been refreshed for the coordinated active-read coverage slice; focused read-side extractor tests pass, focused `kg-bench` passes for `relative_clause_actor_noise_negative`, the full tracked KG suite reports `86/86`, and full local CI passes with `317` Rust tests plus the mdBook build
 - `RUST_CODEBASE_ANALYSIS.md` has been refreshed for the relative-clause actor-noise KG fixture slice; focused extractor tests pass, focused `kg-bench` passes for `relative_clause_actor_noise_negative`, the full tracked KG suite reports `86/86`, corpus-KB fixture projections refresh with `86` fixtures / `0` failures, actor-connectivity coverage is `12/12`, truthfulness-negative/caution coverage is `33/33`, and full local CI passes with `315` Rust tests plus the mdBook build
 - `RUST_CODEBASE_ANALYSIS.md` has been refreshed for the relative-clause actor extraction hygiene slice; focused tests pass, the local AXI rebuild confirms the fake `mixture of` `ARCHUNKEN` producer is gone while the remaining conflict is `Manager` versus `interconnect`, and full local CI passes with `314` Rust tests plus the mdBook build
 - `RUST_CODEBASE_ANALYSIS.md` has been refreshed for the AHB exclusive/security wait-state stability KG fixture path; the tracked KG fixture count is now `85`, focused KG-bench validation passes for the new AHB exclusive/security fixture, the full tracked KG suite reports `85/85`, corpus-KB fixture projections refresh with `85` fixtures / `0` failures, AMBA-family coverage is `36/36`, temporal-family coverage is `42/42`, and full local CI passes with `313` Rust tests plus the mdBook build
