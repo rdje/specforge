@@ -46,6 +46,7 @@
 - KG benchmark harness can now assert canonical resolved semantic-role shape directly: Done
 - KG benchmark harness can now assert canonical semantic grounding-strength shape directly: Done
 - KG benchmark harness now includes AXI write-response timing coverage: Done
+- KG benchmark harness now includes AXI read-address timing coverage: Done
 - KG benchmark harness now includes AXI read-data timing coverage: Done
 - KG benchmark harness now includes AXI write-data timing coverage: Done
 - `specforge nlp-enrich` command created: Done

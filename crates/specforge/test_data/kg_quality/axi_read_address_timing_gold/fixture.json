@@ -1,0 +1,305 @@
+{
+  "name": "axi_read_address_timing_gold",
+  "source": "source.md",
+  "source_ir_patch": {
+    "structured_tables": [
+      {
+        "table_id": "table_axi_ar_timing_channel",
+        "asset_id": "table_axi_ar_timing_channel",
+        "page_id": null,
+        "caption_text": "AXI read address channel signals",
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            { "text": "Name", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Width", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Description", "row_span": 1, "col_span": 1, "is_header": true }
+          ]
+        ],
+        "body_rows": [
+          [
+            { "text": "ARVALID", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Indicates that read address and control information are valid for transfer.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "ARREADY", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Indicates that the subordinate can accept the read address transfer.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "ARADDR", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "32", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Read address bus.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "ARLEN", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "8", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Burst length control field.", "row_span": 1, "col_span": 1, "is_header": false }
+          ]
+        ],
+        "row_count": 4,
+        "col_count": 3
+      }
+    ]
+  },
+  "evidence_ir_patch": {
+    "signal_constraints": [
+      {
+        "constraint_id": "sigcon_axi_arready_next_cycle",
+        "subject_signal": "ARREADY",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "ARREADY must be asserted on the next cycle.",
+        "supporting_statement_ids": ["stmt_axi_arready_next_cycle"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_axi_araddr_handshake_hold",
+        "subject_signal": "ARADDR",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when ARVALID is HIGH and ARREADY is HIGH",
+        "negated": false,
+        "source_text": "ARADDR must not change when ARVALID is HIGH and ARREADY is HIGH.",
+        "supporting_statement_ids": ["stmt_axi_araddr_handshake_hold"],
+        "automation_confidence": "medium"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["ARVALID", "ARREADY", "ARADDR", "ARLEN"],
+      "actor_signal_relations_include": [
+        { "actor_name": "Manager", "signal_name": "ARVALID", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "ARVALID", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "ARADDR", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "ARADDR", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "ARLEN", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "ARLEN", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "ARREADY", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "ARREADY", "relation": "reads" }
+      ],
+      "actor_ports_include": [
+        { "actor_name": "Manager", "signal_name": "ARVALID", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "ARVALID", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "ARADDR", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "ARADDR", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "ARLEN", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "ARLEN", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "ARREADY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "ARREADY", "direction": "input" }
+      ],
+      "resolved_semantic_roles_include": [
+        { "signal_name": "ARVALID", "role": "handshake_valid_like" },
+        { "signal_name": "ARREADY", "role": "handshake_ready_like" }
+      ],
+      "semantic_grounding_strengths_include": [
+        { "signal_name": "ARVALID", "strength": "single_source" },
+        { "signal_name": "ARREADY", "strength": "single_source" }
+      ],
+      "semantic_consensus_signal_names_include": ["ARVALID", "ARREADY"],
+      "temporal_rule_count": 2,
+      "temporal_rules_with_handshake_completion": 1,
+      "temporal_rules_include": [
+        {
+          "source_text": "ARREADY must be asserted on the next cycle.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_axi_arready_next_cycle"],
+          "consequents_include": [
+            {
+              "kind": "actor_drives_signal",
+              "actor_name": "Subordinate",
+              "signal_name": "ARREADY",
+              "phase": "post_tick"
+            },
+            {
+              "kind": "signal_value",
+              "signal_name": "ARREADY",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "ARADDR must not change when ARVALID is HIGH and ARREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_araddr_handshake_hold"],
+          "antecedents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "ARVALID",
+              "value": "HIGH",
+              "phase": "pre_tick"
+            },
+            {
+              "kind": "signal_value",
+              "signal_name": "ARREADY",
+              "value": "HIGH",
+              "phase": "pre_tick"
+            },
+            {
+              "kind": "handshake_complete",
+              "valid_signal": "ARVALID",
+              "ready_signal": "ARREADY",
+              "phase": "pre_tick"
+            }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Manager",
+              "signal_name": "ARADDR",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "ARADDR",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        }
+      ]
+    },
+    "intent": {
+      "signal_names_include": ["ARVALID", "ARREADY", "ARADDR", "ARLEN"],
+      "actor_signal_relations_include": [
+        { "actor_name": "Manager", "signal_name": "ARVALID", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "ARVALID", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "ARADDR", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "ARADDR", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "ARLEN", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "ARLEN", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "ARREADY", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "ARREADY", "relation": "reads" }
+      ],
+      "actor_ports_include": [
+        { "actor_name": "Manager", "signal_name": "ARVALID", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "ARVALID", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "ARADDR", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "ARADDR", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "ARLEN", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "ARLEN", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "ARREADY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "ARREADY", "direction": "input" }
+      ],
+      "resolved_semantic_roles_include": [
+        { "signal_name": "ARVALID", "role": "handshake_valid_like" },
+        { "signal_name": "ARREADY", "role": "handshake_ready_like" }
+      ],
+      "semantic_grounding_strengths_include": [
+        { "signal_name": "ARVALID", "strength": "single_source" },
+        { "signal_name": "ARREADY", "strength": "single_source" }
+      ],
+      "semantic_consensus_signal_names_include": ["ARVALID", "ARREADY"],
+      "temporal_rule_count": 2,
+      "temporal_rules_with_handshake_completion": 1,
+      "temporal_rules_include": [
+        {
+          "source_text": "ARREADY must be asserted on the next cycle.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_axi_arready_next_cycle"],
+          "consequents_include": [
+            {
+              "kind": "actor_drives_signal",
+              "actor_name": "Subordinate",
+              "signal_name": "ARREADY",
+              "phase": "post_tick"
+            },
+            {
+              "kind": "signal_value",
+              "signal_name": "ARREADY",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "ARADDR must not change when ARVALID is HIGH and ARREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_araddr_handshake_hold"],
+          "antecedents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "ARVALID",
+              "value": "HIGH",
+              "phase": "pre_tick"
+            },
+            {
+              "kind": "signal_value",
+              "signal_name": "ARREADY",
+              "value": "HIGH",
+              "phase": "pre_tick"
+            },
+            {
+              "kind": "handshake_complete",
+              "valid_signal": "ARVALID",
+              "ready_signal": "ARREADY",
+              "phase": "pre_tick"
+            }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Manager",
+              "signal_name": "ARADDR",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "ARADDR",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        }
+      ]
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "actor_signal_relations": "8",
+          "signal_constraints": "2",
+          "signal_semantic_hints": "2",
+          "signal_semantic_hints_from_tables": "2"
+        }
+      },
+      "semantic": {
+        "metric_values": {
+          "actor_ports": "8",
+          "temporal_rules": "2",
+          "temporal_rules_with_handshake_completion": "1",
+          "temporal_rules_with_cycle_window": "1",
+          "temporal_rules_with_actor_grounding": "2"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "actor_ports": "8",
+          "temporal_rules": "2",
+          "temporal_rules_with_handshake_completion": "1",
+          "temporal_rules_with_cycle_window": "1",
+          "temporal_rules_with_actor_grounding": "2"
+        }
+      }
+    }
+  }
+}

@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-04-16 (AXI read-address timing KG fixture)
+
+### Added: AXI read-address timing truthfulness fixture
+- Added tracked KG fixture `axi_read_address_timing_gold` for an AXI read-address channel with width-only `Name | Width | Description` table evidence plus prose actor relations.
+- The fixture locks `ARVALID`, `ARREADY`, `ARADDR`, and `ARLEN` through graph-backed actor ports, resolved valid-like / ready-like semantic roles, single-source semantic grounding, next-cycle read-address ready assertion, and `ARADDR` stability across an `ARVALID` / `ARREADY` handshake.
+- Refreshed corpus-KB KG projections so the tracked suite now reports `62` fixtures / `0` failures, AMBA-family coverage reports `13/13`, and temporal fixture coverage reports `19/19`.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality axi_read_address_timing_gold` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `62` passed / `0` failed fixtures
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed corpus-KB fixture projections with `62` fixtures / `0` failures
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `313` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-16 (AXI write-data timing KG fixture)
 
 ### Added: AXI write-data timing truthfulness fixture
