@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-16 AXI read-data last stability KG fixture
+- This slice adds the subordinate-owned side of AXI sideband stability by focusing on `RLAST`, the read-data last-beat indicator.
+- `axi_read_data_last_stability_gold` proves that `RLAST` survives as a graph-backed Subordinate output and actor-grounded stability obligation under the controlling `RVALID` / `RREADY` handshake.
+- The fixture intentionally keeps the table width-only and relies on prose actor relations for direction, matching the same real-document AXI pattern used by the read-data timing and write-address sideband fixtures.
+- The temporal expectation requires `HandshakeComplete(RVALID, RREADY)` and a Subordinate-grounded `actor_maintains_signal_stable` consequent, giving the suite a completed-handshake sideband stability case where the producer is not the Manager.
+- The refreshed corpus-KB projection now records the tracked suite as `70/70`, AMBA-family fixture coverage as `21/21`, and timing-family coverage as `27/27`.
+
 ## 2026-04-16 AXI write-address sideband stability KG fixture
 - This slice fills the write-address sideband hole left after the broader AXI sideband fixture covered `ARLEN` and `WSTRB`.
 - `axi_write_address_sideband_stability_gold` proves that `AWLEN`, `AWSIZE`, and `AWBURST` survive as graph-backed Manager outputs and actor-grounded stability obligations under the controlling `AWVALID` / `AWREADY` handshake.
