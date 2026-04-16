@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-16 AXI read-data response stability KG fixture
+- This slice fills the read-data response sideband gap left after `RDATA` payload stability and `RLAST` last-beat stability were covered separately.
+- `axi_read_data_response_stability_gold` proves that `RRESP` survives as a graph-backed Subordinate output and actor-grounded stability obligation under the controlling `RVALID` / `RREADY` handshake.
+- The fixture intentionally keeps the table width-only and relies on prose actor relations for direction, matching real AXI tables where ownership is often stated outside the signal table itself.
+- The temporal expectation requires `HandshakeComplete(RVALID, RREADY)` and a Subordinate-grounded `actor_maintains_signal_stable` consequent, giving the read-data channel response field the same executable truthfulness treatment as payload and last-beat fields.
+- The refreshed corpus-KB projection now records the tracked suite as `73/73`, AMBA-family fixture coverage as `24/24`, and timing-family coverage as `30/30`.
+
 ## 2026-04-16 AXI read-address sideband stability KG fixture
 - This slice fills the read-address sideband gap left after `ARLEN` was covered by the broader sideband fixture.
 - `axi_read_address_sideband_stability_gold` proves that `ARSIZE` and `ARBURST` survive as graph-backed Manager outputs and actor-grounded stability obligations under the controlling `ARVALID` / `ARREADY` handshake.

@@ -48,6 +48,7 @@
 - KG benchmark harness now includes AXI write-response timing coverage: Done
 - KG benchmark harness now includes AXI read-address timing coverage: Done
 - KG benchmark harness now includes AXI read-data timing coverage: Done
+- KG benchmark harness now includes AXI read-data response stability coverage: Done
 - KG benchmark harness now includes AXI write-data timing coverage: Done
 - KG benchmark harness now includes AXI sideband stability coverage: Done
 - KG benchmark harness now includes AXI read-address sideband stability coverage: Done

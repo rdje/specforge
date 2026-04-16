@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-04-16 (AXI read-data response stability KG fixture)
+
+### Added: AXI read-data response stability truthfulness fixture
+- Added tracked KG fixture `axi_read_data_response_stability_gold` for AXI read-data `RRESP` hold behavior with width-only `Name | Width | Description` table evidence plus prose actor relations.
+- The fixture locks `RVALID`, `RREADY`, and `RRESP` through graph-backed actor relations, actor-relative ports, resolved `RVALID` / `RREADY` semantic roles, and one subordinate-grounded temporal stability rule.
+- The temporal rule requires `HandshakeComplete(RVALID, RREADY)` and actor-grounded stability for `RRESP`, extending read-data channel stability coverage beyond `RDATA` payload stability and `RLAST` last-beat stability.
+- Refreshed corpus-KB KG projections so the tracked suite now reports `73` fixtures / `0` failures, AMBA-family coverage reports `24/24`, and temporal fixture coverage reports `30/30`.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality axi_read_data_response_stability_gold` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `73` passed / `0` failed fixtures
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed corpus-KB fixture projections with `73` fixtures / `0` failures
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `313` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-16 (AXI read-address sideband stability KG fixture)
 
 ### Added: AXI read-address sideband stability truthfulness fixture

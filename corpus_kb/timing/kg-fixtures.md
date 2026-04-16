@@ -15,8 +15,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 
 - source: `kg-bench fixtures`
 - selected_family_labels: `temporal semantics`, `VLM timing diagrams`
-- fixtures_total: `29`
-- fixtures_passed: `29`
+- fixtures_total: `30`
+- fixtures_passed: `30`
 - fixtures_failed: `0`
 
 | fixture | status | matched families | path |
@@ -32,6 +32,7 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `axi_read_address_sideband_stability_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/axi_read_address_sideband_stability_gold/fixture.json` |
 | `axi_read_address_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/axi_read_address_timing_gold/fixture.json` |
 | `axi_read_data_last_stability_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/axi_read_data_last_stability_gold/fixture.json` |
+| `axi_read_data_response_stability_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/axi_read_data_response_stability_gold/fixture.json` |
 | `axi_read_data_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/axi_read_data_timing_gold/fixture.json` |
 | `axi_sideband_stability_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/axi_sideband_stability_gold/fixture.json` |
 | `axi_write_address_sideband_stability_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/axi_write_address_sideband_stability_gold/fixture.json` |
