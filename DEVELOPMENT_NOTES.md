@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-16 AHB control stability KG fixture
+- This slice extends the AHB side of the protocol-grade timing/stability suite instead of adding another AXI/APB variant.
+- `ahb_control_stability_gold` proves that `Manager signals` / `Subordinate signals` section context plus `Destination`-column signal tables recover graph-backed Manager/Subordinate ownership for AHB address/control signals.
+- The fixture focuses on wait-state stability for `HADDR`, `HWRITE`, `HSIZE`, `HBURST`, and `HPROT` under the guard `HREADY is LOW and HSEL is HIGH`.
+- This intentionally mirrors the APB wait-state distinction: the pipeline must recover actor-grounded stability obligations while still reporting `0` handshake-completion predicates, because a stalled transfer is not a completed transfer.
+- The refreshed corpus-KB projection now records the tracked suite as `66/66`, AMBA-family fixture coverage as `17/17`, and timing-family coverage as `23/23`.
+
 ## 2026-04-16 APB response stability KG fixture
 - This slice pairs with the APB write-control wait-state fixture by proving the completed-transfer response side.
 - `apb_response_stability_gold` proves that `Signal | Source | Width | Description` APB tables plus structured constraints recover completer-owned stability obligations for `PRDATA` and `PSLVERR`.

@@ -1,0 +1,543 @@
+{
+  "name": "ahb_control_stability_gold",
+  "source": "source.md",
+  "source_ir_patch": {
+    "document_sections": [
+      {
+        "section_id": "sec_ahb_control_manager_signals",
+        "title": "Manager signals",
+        "heading_level": 2,
+        "page_id": "page_0001",
+        "source_ref": null,
+        "reading_order": 1,
+        "section_kind": "signal_description"
+      },
+      {
+        "section_id": "sec_ahb_control_subordinate_signals",
+        "title": "Subordinate signals",
+        "heading_level": 2,
+        "page_id": "page_0002",
+        "source_ref": null,
+        "reading_order": 10,
+        "section_kind": "signal_description"
+      }
+    ],
+    "structured_tables": [
+      {
+        "table_id": "table_ahb_manager_control_stability_signals",
+        "asset_id": "table_ahb_manager_control_stability_signals",
+        "page_id": "page_0001",
+        "caption_text": "AHB manager address and control stability signals",
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            { "text": "Name", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Destination", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Width", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Description", "row_span": 1, "col_span": 1, "is_header": true }
+          ]
+        ],
+        "body_rows": [
+          [
+            { "text": "HADDR", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Subordinate", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "32", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Address bus.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "HWRITE", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Subordinate", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Write control signal.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "HSIZE", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Subordinate", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "3", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Transfer size control field.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "HBURST", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Subordinate", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "3", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Burst type control field.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "HPROT", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Subordinate", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "4", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Protection control field.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "HSEL", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Subordinate", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Select signal.", "row_span": 1, "col_span": 1, "is_header": false }
+          ]
+        ],
+        "row_count": 6,
+        "col_count": 4
+      },
+      {
+        "table_id": "table_ahb_subordinate_control_stability_signals",
+        "asset_id": "table_ahb_subordinate_control_stability_signals",
+        "page_id": "page_0002",
+        "caption_text": "AHB subordinate wait-state signal",
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            { "text": "Name", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Destination", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Width", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Description", "row_span": 1, "col_span": 1, "is_header": true }
+          ]
+        ],
+        "body_rows": [
+          [
+            { "text": "HREADY", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Manager", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Wait-state response from the subordinate.", "row_span": 1, "col_span": 1, "is_header": false }
+          ]
+        ],
+        "row_count": 1,
+        "col_count": 4
+      }
+    ]
+  },
+  "evidence_ir_patch": {
+    "signal_constraints": [
+      {
+        "constraint_id": "sigcon_ahb_haddr_wait_hold",
+        "subject_signal": "HADDR",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when HREADY is LOW and HSEL is HIGH",
+        "negated": false,
+        "source_text": "HADDR must not change when HREADY is LOW and HSEL is HIGH.",
+        "supporting_statement_ids": ["stmt_ahb_haddr_wait_hold"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_ahb_hwrite_wait_hold",
+        "subject_signal": "HWRITE",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when HREADY is LOW and HSEL is HIGH",
+        "negated": false,
+        "source_text": "HWRITE must not change when HREADY is LOW and HSEL is HIGH.",
+        "supporting_statement_ids": ["stmt_ahb_hwrite_wait_hold"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_ahb_hsize_wait_hold",
+        "subject_signal": "HSIZE",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when HREADY is LOW and HSEL is HIGH",
+        "negated": false,
+        "source_text": "HSIZE must not change when HREADY is LOW and HSEL is HIGH.",
+        "supporting_statement_ids": ["stmt_ahb_hsize_wait_hold"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_ahb_hburst_wait_hold",
+        "subject_signal": "HBURST",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when HREADY is LOW and HSEL is HIGH",
+        "negated": false,
+        "source_text": "HBURST must not change when HREADY is LOW and HSEL is HIGH.",
+        "supporting_statement_ids": ["stmt_ahb_hburst_wait_hold"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_ahb_hprot_wait_hold",
+        "subject_signal": "HPROT",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when HREADY is LOW and HSEL is HIGH",
+        "negated": false,
+        "source_text": "HPROT must not change when HREADY is LOW and HSEL is HIGH.",
+        "supporting_statement_ids": ["stmt_ahb_hprot_wait_hold"],
+        "automation_confidence": "medium"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["HADDR", "HWRITE", "HSIZE", "HBURST", "HPROT", "HSEL", "HREADY"],
+      "signal_directions_include": [
+        { "signal_name": "HADDR", "direction": "output" },
+        { "signal_name": "HWRITE", "direction": "output" },
+        { "signal_name": "HSIZE", "direction": "output" },
+        { "signal_name": "HBURST", "direction": "output" },
+        { "signal_name": "HPROT", "direction": "output" },
+        { "signal_name": "HSEL", "direction": "output" },
+        { "signal_name": "HREADY", "direction": "input" }
+      ],
+      "actor_signal_relations_include": [
+        { "actor_name": "Manager", "signal_name": "HADDR", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "HADDR", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "HWRITE", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "HWRITE", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "HSIZE", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "HSIZE", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "HBURST", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "HBURST", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "HPROT", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "HPROT", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "HSEL", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "HSEL", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "HREADY", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "HREADY", "relation": "reads" }
+      ],
+      "actor_ports_include": [
+        { "actor_name": "Manager", "signal_name": "HADDR", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "HADDR", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "HWRITE", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "HWRITE", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "HSIZE", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "HSIZE", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "HBURST", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "HBURST", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "HPROT", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "HPROT", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "HSEL", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "HSEL", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "HREADY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "HREADY", "direction": "input" }
+      ],
+      "temporal_rule_count": 5,
+      "temporal_rules_with_handshake_completion": 0,
+      "temporal_rules_include": [
+        {
+          "source_text": "HADDR must not change when HREADY is LOW and HSEL is HIGH.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_ahb_haddr_wait_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "HREADY", "value": "LOW", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "HSEL", "value": "HIGH", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Manager",
+              "signal_name": "HADDR",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "HADDR",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "HWRITE must not change when HREADY is LOW and HSEL is HIGH.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_ahb_hwrite_wait_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "HREADY", "value": "LOW", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "HSEL", "value": "HIGH", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Manager",
+              "signal_name": "HWRITE",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "HWRITE",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "HSIZE must not change when HREADY is LOW and HSEL is HIGH.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_ahb_hsize_wait_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "HREADY", "value": "LOW", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "HSEL", "value": "HIGH", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Manager",
+              "signal_name": "HSIZE",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "HSIZE",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "HBURST must not change when HREADY is LOW and HSEL is HIGH.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_ahb_hburst_wait_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "HREADY", "value": "LOW", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "HSEL", "value": "HIGH", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Manager",
+              "signal_name": "HBURST",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "HBURST",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "HPROT must not change when HREADY is LOW and HSEL is HIGH.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_ahb_hprot_wait_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "HREADY", "value": "LOW", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "HSEL", "value": "HIGH", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Manager",
+              "signal_name": "HPROT",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "HPROT",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        }
+      ]
+    },
+    "intent": {
+      "signal_names_include": ["HADDR", "HWRITE", "HSIZE", "HBURST", "HPROT", "HSEL", "HREADY"],
+      "signal_directions_include": [
+        { "signal_name": "HADDR", "direction": "output" },
+        { "signal_name": "HWRITE", "direction": "output" },
+        { "signal_name": "HSIZE", "direction": "output" },
+        { "signal_name": "HBURST", "direction": "output" },
+        { "signal_name": "HPROT", "direction": "output" },
+        { "signal_name": "HSEL", "direction": "output" },
+        { "signal_name": "HREADY", "direction": "input" }
+      ],
+      "actor_signal_relations_include": [
+        { "actor_name": "Manager", "signal_name": "HADDR", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "HADDR", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "HWRITE", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "HWRITE", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "HSIZE", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "HSIZE", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "HBURST", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "HBURST", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "HPROT", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "HPROT", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "HSEL", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "HSEL", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "HREADY", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "HREADY", "relation": "reads" }
+      ],
+      "actor_ports_include": [
+        { "actor_name": "Manager", "signal_name": "HADDR", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "HADDR", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "HWRITE", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "HWRITE", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "HSIZE", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "HSIZE", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "HBURST", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "HBURST", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "HPROT", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "HPROT", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "HSEL", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "HSEL", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "HREADY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "HREADY", "direction": "input" }
+      ],
+      "temporal_rule_count": 5,
+      "temporal_rules_with_handshake_completion": 0,
+      "temporal_rules_include": [
+        {
+          "source_text": "HADDR must not change when HREADY is LOW and HSEL is HIGH.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_ahb_haddr_wait_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "HREADY", "value": "LOW", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "HSEL", "value": "HIGH", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Manager",
+              "signal_name": "HADDR",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "HADDR",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "HWRITE must not change when HREADY is LOW and HSEL is HIGH.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_ahb_hwrite_wait_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "HREADY", "value": "LOW", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "HSEL", "value": "HIGH", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Manager",
+              "signal_name": "HWRITE",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "HWRITE",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "HSIZE must not change when HREADY is LOW and HSEL is HIGH.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_ahb_hsize_wait_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "HREADY", "value": "LOW", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "HSEL", "value": "HIGH", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Manager",
+              "signal_name": "HSIZE",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "HSIZE",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "HBURST must not change when HREADY is LOW and HSEL is HIGH.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_ahb_hburst_wait_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "HREADY", "value": "LOW", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "HSEL", "value": "HIGH", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Manager",
+              "signal_name": "HBURST",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "HBURST",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "HPROT must not change when HREADY is LOW and HSEL is HIGH.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_ahb_hprot_wait_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "HREADY", "value": "LOW", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "HSEL", "value": "HIGH", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Manager",
+              "signal_name": "HPROT",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "HPROT",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        }
+      ]
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "actor_signal_relations": "14",
+          "signal_constraints": "5"
+        }
+      },
+      "semantic": {
+        "metric_values": {
+          "actor_ports": "14",
+          "temporal_rules": "5",
+          "temporal_rules_with_handshake_completion": "0",
+          "temporal_rules_with_actor_grounding": "5",
+          "temporal_rules_with_multi_predicate_antecedents": "5"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "actor_ports": "14",
+          "temporal_rules": "5",
+          "temporal_rules_with_handshake_completion": "0",
+          "temporal_rules_with_actor_grounding": "5",
+          "temporal_rules_with_multi_predicate_antecedents": "5"
+        }
+      }
+    }
+  }
+}
