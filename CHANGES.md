@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-04-17 (AXI data USER sideband stability KG fixture)
+
+### Added: AXI data USER sideband stability truthfulness fixture
+- Added tracked KG fixture `axi_data_user_sideband_stability_gold` for AXI write/read data `USER` sideband hold behavior across `WUSER` and `RUSER` with width-only `Name | Width | Description` table evidence plus prose actor relations.
+- The fixture intentionally pairs opposite producer directions: `WUSER` is a Manager-owned write-data sideband under `WVALID` / `WREADY`, while `RUSER` is a Subordinate-owned read-data sideband under `RVALID` / `RREADY`.
+- Each temporal rule requires the matching typed `HandshakeComplete(...)` predicate and actor-grounded stability for the owning producer, proving optional user-defined sidebands remain owned protocol obligations rather than inert table rows.
+- Refreshed corpus-KB KG projections so the tracked suite now reports `81` fixtures / `0` failures, AMBA-family coverage reports `32/32`, and temporal fixture coverage reports `38/38`.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality axi_data_user_sideband_stability_gold` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `81` passed / `0` failed fixtures
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed corpus-KB fixture projections with `81` fixtures / `0` failures
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `313` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-16 (AXI address QoS/region sideband stability KG fixture)
 
 ### Added: AXI address QoS/region sideband stability truthfulness fixture

@@ -22,22 +22,22 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `59881b3`
-- latest_commit_brief_message: `test(kg): add AXI read address control sideband fixture`
-- note: the current session is adding AXI address QoS/region sideband stability KG coverage and refreshing corpus-KB projections
+- latest_commit_hash: `672c3b2`
+- latest_commit_brief_message: `test(kg): add AXI address QoS region sideband fixture`
+- note: the current session is adding AXI data USER sideband stability KG coverage and refreshing corpus-KB projections
 
 ## Recent commit chain (last 5)
+- `672c3b2` test(kg): add AXI address QoS region sideband fixture
 - `59881b3` test(kg): add AXI read address control sideband fixture
 - `997da1a` test(kg): add AXI write address control sideband fixture
 - `b3c0820` test(kg): add AXI read address ID stability fixture
 - `b9f69d5` test(kg): add AXI write address ID stability fixture
-- `883366f` test(kg): add AXI read data ID stability fixture
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- the current KG-quality follow-on adds `axi_address_qos_region_sideband_stability_gold`, a tracked paired AXI fixture proving `AWQOS`, `AWREGION`, `ARQOS`, and `ARREGION` remain manager-owned stable address-channel sidebands under their matching `AWVALID` / `AWREADY` and `ARVALID` / `ARREADY` handshakes
-- corpus-KB KG fixture projections were refreshed from the tracked `80/80` fixture suite; AMBA-family coverage is now `31/31` and temporal fixture coverage is now `37/37`
-- validation for the current AXI address QoS/region sideband stability fixture follow-on passed focused `kg-bench`, full tracked `kg-bench`, corpus-KB KG projection refresh, and full `bash scripts/run_ci.sh`
+- the current KG-quality follow-on adds `axi_data_user_sideband_stability_gold`, a tracked paired AXI fixture proving `WUSER` remains a manager-owned stable write-data sideband and `RUSER` remains a subordinate-owned stable read-data sideband under their matching data-channel handshakes
+- corpus-KB KG fixture projections were refreshed from the tracked `81/81` fixture suite; AMBA-family coverage is now `32/32` and temporal fixture coverage is now `38/38`
+- validation for the current AXI data USER sideband stability fixture follow-on passed focused `kg-bench`, full tracked `kg-bench`, corpus-KB KG projection refresh, and full `bash scripts/run_ci.sh`
 - the latest committed workflow follow-on changed `.github/workflows/ci.yml` to manual-only `workflow_dispatch`, temporarily removing automatic `push` / `pull_request` triggers to conserve GitHub Actions minutes
 - local quality expectations remain unchanged: `bash scripts/run_ci.sh` is the canonical Rust + docs gate before commits or any future push
 - the latest committed KG-quality follow-on extended `kg-bench` with direct canonical semantic-grounding strength expectations for `InterfaceSignalRecord.semantic_grounding_strength`
@@ -105,6 +105,7 @@
 - the Rust warning baseline is clean and now enforced in the shared local/hosted CI path rather than suppressed with `#[allow(dead_code)]`
 - README bootstrap currently resolves to `SESSION_BOOTSTRAP.md`, which instructs future agents to read the referenced live docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if necessary, and then continue from the roadmap
 - this README/PNT continuation observed 30 Rust source files and 58,291 lines under `crates/specforge/src`, with the CLI now including `doctor`, `converge`, `enrich`, `validate`, `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, `corpus-kb`, and `nlp-enrich` beside the core staged IR commands
+- `RUST_CODEBASE_ANALYSIS.md` has been refreshed for the AXI data USER sideband stability KG fixture path; the tracked KG fixture count is now `81`, focused KG-bench validation passes for the new AXI data USER sideband fixture, the full tracked KG suite reports `81/81`, corpus-KB fixture projections refresh with `81` fixtures / `0` failures, AMBA-family coverage is `32/32`, temporal-family coverage is `38/38`, and full local CI passes with `313` Rust tests plus the mdBook build
 - `RUST_CODEBASE_ANALYSIS.md` has been refreshed for the AXI address QoS/region sideband stability KG fixture path; the tracked KG fixture count is now `80`, focused KG-bench validation passes for the new AXI address QoS/region sideband fixture, the full tracked KG suite reports `80/80`, corpus-KB fixture projections refresh with `80` fixtures / `0` failures, AMBA-family coverage is `31/31`, temporal-family coverage is `37/37`, and full local CI passes with `313` Rust tests plus the mdBook build
 - `RUST_CODEBASE_ANALYSIS.md` has been refreshed for the AXI read-address control sideband stability KG fixture path; the tracked KG fixture count is now `79`, focused KG-bench validation passes for the new AXI read-address control sideband fixture, the full tracked KG suite reports `79/79`, corpus-KB fixture projections refresh with `79` fixtures / `0` failures, AMBA-family coverage is `30/30`, temporal-family coverage is `36/36`, and full local CI passes with `313` Rust tests plus the mdBook build
 - `RUST_CODEBASE_ANALYSIS.md` has been refreshed for the AXI write-address control sideband stability KG fixture path; the tracked KG fixture count is now `78`, focused KG-bench validation passes for the new AXI write-address control sideband fixture, the full tracked KG suite reports `78/78`, corpus-KB fixture projections refresh with `78` fixtures / `0` failures, AMBA-family coverage is `29/29`, temporal-family coverage is `35/35`, and full local CI passes with `313` Rust tests plus the mdBook build
