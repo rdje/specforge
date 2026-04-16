@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-16 AXI write-address sideband stability KG fixture
+- This slice fills the write-address sideband hole left after the broader AXI sideband fixture covered `ARLEN` and `WSTRB`.
+- `axi_write_address_sideband_stability_gold` proves that `AWLEN`, `AWSIZE`, and `AWBURST` survive as graph-backed Manager outputs and actor-grounded stability obligations under the controlling `AWVALID` / `AWREADY` handshake.
+- The fixture intentionally uses a width-only table plus prose actor relations, matching the real AXI extraction path where channel direction often comes from prose or structural context rather than a direction column.
+- The temporal expectations require `HandshakeComplete(AWVALID, AWREADY)` for all three sideband holds, which distinguishes completed-channel stability from APB/AHB wait-state stability fixtures that explicitly require zero completion predicates.
+- The refreshed corpus-KB projection now records the tracked suite as `69/69`, AMBA-family fixture coverage as `20/20`, and timing-family coverage as `26/26`.
+
 ## 2026-04-16 AHB write-data stability KG fixture
 - This slice adds the remaining obvious AHB wait-state stability flank: manager-owned write data.
 - `ahb_write_data_stability_gold` proves that `HWDATA` is not merely another table row; it becomes a graph-backed Manager output and a typed temporal stability obligation under a three-predicate write wait-state guard.

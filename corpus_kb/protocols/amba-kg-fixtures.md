@@ -15,8 +15,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 
 - source: `kg-bench fixtures`
 - selected_family_labels: `protocol-family AMBA/APB/AHB/AXI`
-- fixtures_total: `19`
-- fixtures_passed: `19`
+- fixtures_total: `20`
+- fixtures_passed: `20`
 - fixtures_failed: `0`
 
 | fixture | status | matched families | path |
@@ -37,6 +37,7 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `axi_read_data_timing_gold` | `pass` | `protocol-family AMBA/APB/AHB/AXI` | `crates/specforge/test_data/kg_quality/axi_read_data_timing_gold/fixture.json` |
 | `axi_sideband_stability_gold` | `pass` | `protocol-family AMBA/APB/AHB/AXI` | `crates/specforge/test_data/kg_quality/axi_sideband_stability_gold/fixture.json` |
 | `axi_width_only_prose_direction_gold` | `pass` | `protocol-family AMBA/APB/AHB/AXI` | `crates/specforge/test_data/kg_quality/axi_width_only_prose_direction_gold/fixture.json` |
+| `axi_write_address_sideband_stability_gold` | `pass` | `protocol-family AMBA/APB/AHB/AXI` | `crates/specforge/test_data/kg_quality/axi_write_address_sideband_stability_gold/fixture.json` |
 | `axi_write_data_timing_gold` | `pass` | `protocol-family AMBA/APB/AHB/AXI` | `crates/specforge/test_data/kg_quality/axi_write_data_timing_gold/fixture.json` |
 | `axi_write_response_timing_gold` | `pass` | `protocol-family AMBA/APB/AHB/AXI` | `crates/specforge/test_data/kg_quality/axi_write_response_timing_gold/fixture.json` |
 | `source_column_bogus_actor_attribution_negative` | `pass` | `protocol-family AMBA/APB/AHB/AXI` | `crates/specforge/test_data/kg_quality/source_column_bogus_actor_attribution_negative/fixture.json` |

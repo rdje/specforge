@@ -50,6 +50,7 @@
 - KG benchmark harness now includes AXI read-data timing coverage: Done
 - KG benchmark harness now includes AXI write-data timing coverage: Done
 - KG benchmark harness now includes AXI sideband stability coverage: Done
+- KG benchmark harness now includes AXI write-address sideband stability coverage: Done
 - KG benchmark harness now includes APB write-control stability coverage: Done
 - KG benchmark harness now includes APB response stability coverage: Done
 - KG benchmark harness now includes AHB control stability coverage: Done
@@ -152,6 +153,7 @@
 - KG benchmark harness now includes an AHB write-data stability gold fixture: Done
 - KG benchmark harness now includes an AXI width-only plus prose-direction gold fixture: Done
 - KG benchmark harness now includes an AXI next-cycle timing gold fixture: Done
+- KG benchmark harness now includes an AXI write-address sideband stability gold fixture: Done
 - KG benchmark harness can now assert canonical temporal-rule shape directly: Done
 - KG benchmark harness can now assert canonical temporal-conflict shape directly: Done
 - Width-only synthesized signal declarations now survive into canonical `SemanticIR` / `IntentIR` signal records: Done

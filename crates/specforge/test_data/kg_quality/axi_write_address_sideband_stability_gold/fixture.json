@@ -1,0 +1,355 @@
+{
+  "name": "axi_write_address_sideband_stability_gold",
+  "source": "source.md",
+  "source_ir_patch": {
+    "structured_tables": [
+      {
+        "table_id": "table_axi_write_address_sideband_stability",
+        "asset_id": "table_axi_write_address_sideband_stability",
+        "page_id": null,
+        "caption_text": "AXI write-address sideband stability signals",
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            { "text": "Name", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Width", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Description", "row_span": 1, "col_span": 1, "is_header": true }
+          ]
+        ],
+        "body_rows": [
+          [
+            { "text": "AWVALID", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Indicates that write address sideband information is valid for transfer.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "AWREADY", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Indicates that the subordinate can accept the write address sideband transfer.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "AWLEN", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "8", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Write burst length sideband field.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "AWSIZE", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "3", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Write transfer size sideband field.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "AWBURST", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "2", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Write burst type sideband field.", "row_span": 1, "col_span": 1, "is_header": false }
+          ]
+        ],
+        "row_count": 5,
+        "col_count": 3
+      }
+    ]
+  },
+  "evidence_ir_patch": {
+    "signal_constraints": [
+      {
+        "constraint_id": "sigcon_axi_awlen_handshake_hold",
+        "subject_signal": "AWLEN",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when AWVALID is HIGH and AWREADY is HIGH",
+        "negated": false,
+        "source_text": "AWLEN must not change when AWVALID is HIGH and AWREADY is HIGH.",
+        "supporting_statement_ids": ["stmt_axi_awlen_handshake_hold"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_axi_awsize_handshake_hold",
+        "subject_signal": "AWSIZE",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when AWVALID is HIGH and AWREADY is HIGH",
+        "negated": false,
+        "source_text": "AWSIZE must not change when AWVALID is HIGH and AWREADY is HIGH.",
+        "supporting_statement_ids": ["stmt_axi_awsize_handshake_hold"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_axi_awburst_handshake_hold",
+        "subject_signal": "AWBURST",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when AWVALID is HIGH and AWREADY is HIGH",
+        "negated": false,
+        "source_text": "AWBURST must not change when AWVALID is HIGH and AWREADY is HIGH.",
+        "supporting_statement_ids": ["stmt_axi_awburst_handshake_hold"],
+        "automation_confidence": "medium"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["AWVALID", "AWREADY", "AWLEN", "AWSIZE", "AWBURST"],
+      "actor_signal_relations_include": [
+        { "actor_name": "Manager", "signal_name": "AWVALID", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "AWVALID", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "AWREADY", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "AWREADY", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "AWLEN", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "AWLEN", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "AWSIZE", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "AWSIZE", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "AWBURST", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "AWBURST", "relation": "reads" }
+      ],
+      "actor_ports_include": [
+        { "actor_name": "Manager", "signal_name": "AWVALID", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "AWVALID", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "AWREADY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "AWREADY", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "AWLEN", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "AWLEN", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "AWSIZE", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "AWSIZE", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "AWBURST", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "AWBURST", "direction": "input" }
+      ],
+      "resolved_semantic_roles_include": [
+        { "signal_name": "AWVALID", "role": "handshake_valid_like" },
+        { "signal_name": "AWREADY", "role": "handshake_ready_like" }
+      ],
+      "semantic_grounding_strengths_include": [
+        { "signal_name": "AWVALID", "strength": "single_source" },
+        { "signal_name": "AWREADY", "strength": "single_source" }
+      ],
+      "semantic_consensus_signal_names_include": ["AWVALID", "AWREADY"],
+      "temporal_rule_count": 3,
+      "temporal_rules_with_handshake_completion": 3,
+      "temporal_rules_include": [
+        {
+          "source_text": "AWLEN must not change when AWVALID is HIGH and AWREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_awlen_handshake_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "AWVALID", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "AWREADY", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "handshake_complete", "valid_signal": "AWVALID", "ready_signal": "AWREADY", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Manager",
+              "signal_name": "AWLEN",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "AWLEN",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "AWSIZE must not change when AWVALID is HIGH and AWREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_awsize_handshake_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "AWVALID", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "AWREADY", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "handshake_complete", "valid_signal": "AWVALID", "ready_signal": "AWREADY", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Manager",
+              "signal_name": "AWSIZE",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "AWSIZE",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "AWBURST must not change when AWVALID is HIGH and AWREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_awburst_handshake_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "AWVALID", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "AWREADY", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "handshake_complete", "valid_signal": "AWVALID", "ready_signal": "AWREADY", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Manager",
+              "signal_name": "AWBURST",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "AWBURST",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        }
+      ]
+    },
+    "intent": {
+      "signal_names_include": ["AWVALID", "AWREADY", "AWLEN", "AWSIZE", "AWBURST"],
+      "actor_signal_relations_include": [
+        { "actor_name": "Manager", "signal_name": "AWVALID", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "AWVALID", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "AWREADY", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "AWREADY", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "AWLEN", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "AWLEN", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "AWSIZE", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "AWSIZE", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "AWBURST", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "AWBURST", "relation": "reads" }
+      ],
+      "actor_ports_include": [
+        { "actor_name": "Manager", "signal_name": "AWVALID", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "AWVALID", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "AWREADY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "AWREADY", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "AWLEN", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "AWLEN", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "AWSIZE", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "AWSIZE", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "AWBURST", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "AWBURST", "direction": "input" }
+      ],
+      "resolved_semantic_roles_include": [
+        { "signal_name": "AWVALID", "role": "handshake_valid_like" },
+        { "signal_name": "AWREADY", "role": "handshake_ready_like" }
+      ],
+      "semantic_grounding_strengths_include": [
+        { "signal_name": "AWVALID", "strength": "single_source" },
+        { "signal_name": "AWREADY", "strength": "single_source" }
+      ],
+      "semantic_consensus_signal_names_include": ["AWVALID", "AWREADY"],
+      "temporal_rule_count": 3,
+      "temporal_rules_with_handshake_completion": 3,
+      "temporal_rules_include": [
+        {
+          "source_text": "AWLEN must not change when AWVALID is HIGH and AWREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_awlen_handshake_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "AWVALID", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "AWREADY", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "handshake_complete", "valid_signal": "AWVALID", "ready_signal": "AWREADY", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Manager",
+              "signal_name": "AWLEN",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "AWLEN",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "AWSIZE must not change when AWVALID is HIGH and AWREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_awsize_handshake_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "AWVALID", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "AWREADY", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "handshake_complete", "valid_signal": "AWVALID", "ready_signal": "AWREADY", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Manager",
+              "signal_name": "AWSIZE",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "AWSIZE",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "AWBURST must not change when AWVALID is HIGH and AWREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_awburst_handshake_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "AWVALID", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "AWREADY", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "handshake_complete", "valid_signal": "AWVALID", "ready_signal": "AWREADY", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Manager",
+              "signal_name": "AWBURST",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "AWBURST",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        }
+      ]
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "actor_signal_relations": "10",
+          "signal_constraints": "3",
+          "signal_semantic_hints": "2",
+          "signal_semantic_hints_from_tables": "2"
+        }
+      },
+      "semantic": {
+        "metric_values": {
+          "actor_ports": "10",
+          "temporal_rules": "3",
+          "temporal_rules_with_handshake_completion": "3",
+          "temporal_rules_with_actor_grounding": "3",
+          "temporal_rules_with_multi_predicate_antecedents": "3"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "actor_ports": "10",
+          "temporal_rules": "3",
+          "temporal_rules_with_handshake_completion": "3",
+          "temporal_rules_with_actor_grounding": "3",
+          "temporal_rules_with_multi_predicate_antecedents": "3"
+        }
+      }
+    }
+  }
+}
