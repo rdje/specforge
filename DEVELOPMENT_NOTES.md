@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-16 AXI read-address sideband stability KG fixture
+- This slice fills the read-address sideband gap left after `ARLEN` was covered by the broader sideband fixture.
+- `axi_read_address_sideband_stability_gold` proves that `ARSIZE` and `ARBURST` survive as graph-backed Manager outputs and actor-grounded stability obligations under the controlling `ARVALID` / `ARREADY` handshake.
+- The fixture intentionally keeps the table width-only and relies on prose actor relations for direction, matching real AXI tables where ownership is often stated outside the signal table itself.
+- The temporal expectations require `HandshakeComplete(ARVALID, ARREADY)` and Manager-grounded `actor_maintains_signal_stable` consequents for both sideband fields, pairing the existing write-address sideband coverage with the corresponding read-address size/type fields.
+- The refreshed corpus-KB projection now records the tracked suite as `72/72`, AMBA-family fixture coverage as `23/23`, and timing-family coverage as `29/29`.
+
 ## 2026-04-16 AXI write-data last stability KG fixture
 - This slice mirrors the prior `RLAST` coverage on the write-data channel by focusing on `WLAST`, the manager-driven write burst last-beat indicator.
 - `axi_write_data_last_stability_gold` proves that `WLAST` survives as a graph-backed Manager output and actor-grounded stability obligation under the controlling `WVALID` / `WREADY` handshake.
