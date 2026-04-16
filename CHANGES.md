@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-04-17 (AXI address/response USER sideband stability KG fixture)
+
+### Added: AXI address/response USER sideband stability truthfulness fixture
+- Added tracked KG fixture `axi_address_response_user_sideband_stability_gold` for AXI address-channel and write-response `USER` sideband hold behavior across `AWUSER`, `ARUSER`, and `BUSER` with width-only `Name | Width | Description` table evidence plus prose actor relations.
+- The fixture intentionally pairs Manager-owned address USER fields with a Subordinate-owned write-response USER field: `AWUSER` is guarded by `AWVALID` / `AWREADY`, `ARUSER` is guarded by `ARVALID` / `ARREADY`, and `BUSER` is guarded by `BVALID` / `BREADY`.
+- Each temporal rule requires the matching typed `HandshakeComplete(...)` predicate and actor-grounded stability for the owning producer, extending optional user-defined sideband coverage beyond the data channels.
+- Refreshed corpus-KB KG projections so the tracked suite now reports `82` fixtures / `0` failures, AMBA-family coverage reports `33/33`, and temporal fixture coverage reports `39/39`.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality axi_address_response_user_sideband_stability_gold` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `82` passed / `0` failed fixtures
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed corpus-KB fixture projections with `82` fixtures / `0` failures
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `313` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-17 (AXI data USER sideband stability KG fixture)
 
 ### Added: AXI data USER sideband stability truthfulness fixture

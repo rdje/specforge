@@ -1,0 +1,357 @@
+{
+  "name": "axi_address_response_user_sideband_stability_gold",
+  "source": "source.md",
+  "source_ir_patch": {
+    "structured_tables": [
+      {
+        "table_id": "table_axi_address_response_user_sideband_stability",
+        "asset_id": "table_axi_address_response_user_sideband_stability",
+        "page_id": null,
+        "caption_text": "AXI address and response user sideband stability signals",
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            { "text": "Name", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Width", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Description", "row_span": 1, "col_span": 1, "is_header": true }
+          ]
+        ],
+        "body_rows": [
+          [
+            { "text": "AWVALID", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Indicates that write address user sideband information is valid for transfer.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "AWREADY", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Indicates that the subordinate can accept the write address user sideband transfer.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "AWUSER", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "4", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Write address user-defined sideband field.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "ARVALID", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Indicates that read address user sideband information is valid for transfer.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "ARREADY", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Indicates that the subordinate can accept the read address user sideband transfer.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "ARUSER", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "4", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Read address user-defined sideband field.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "BVALID", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Indicates that write response user sideband information is valid for transfer.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "BREADY", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Indicates that the manager can accept the write response user sideband transfer.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "BUSER", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "4", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Write response user-defined sideband field.", "row_span": 1, "col_span": 1, "is_header": false }
+          ]
+        ],
+        "row_count": 9,
+        "col_count": 3
+      }
+    ]
+  },
+  "evidence_ir_patch": {
+    "signal_constraints": [
+      {
+        "constraint_id": "sigcon_axi_awuser_handshake_hold",
+        "subject_signal": "AWUSER",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when AWVALID is HIGH and AWREADY is HIGH",
+        "negated": false,
+        "source_text": "AWUSER must not change when AWVALID is HIGH and AWREADY is HIGH.",
+        "supporting_statement_ids": ["stmt_axi_awuser_handshake_hold"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_axi_aruser_handshake_hold",
+        "subject_signal": "ARUSER",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when ARVALID is HIGH and ARREADY is HIGH",
+        "negated": false,
+        "source_text": "ARUSER must not change when ARVALID is HIGH and ARREADY is HIGH.",
+        "supporting_statement_ids": ["stmt_axi_aruser_handshake_hold"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_axi_buser_handshake_hold",
+        "subject_signal": "BUSER",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when BVALID is HIGH and BREADY is HIGH",
+        "negated": false,
+        "source_text": "BUSER must not change when BVALID is HIGH and BREADY is HIGH.",
+        "supporting_statement_ids": ["stmt_axi_buser_handshake_hold"],
+        "automation_confidence": "medium"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["AWVALID", "AWREADY", "AWUSER", "ARVALID", "ARREADY", "ARUSER", "BVALID", "BREADY", "BUSER"],
+      "actor_signal_relations_include": [
+        { "actor_name": "Manager", "signal_name": "AWVALID", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "AWVALID", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "AWREADY", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "AWREADY", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "AWUSER", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "AWUSER", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "ARVALID", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "ARVALID", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "ARREADY", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "ARREADY", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "ARUSER", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "ARUSER", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "BVALID", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "BVALID", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "BREADY", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "BREADY", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "BUSER", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "BUSER", "relation": "reads" }
+      ],
+      "actor_ports_include": [
+        { "actor_name": "Manager", "signal_name": "AWVALID", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "AWVALID", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "AWREADY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "AWREADY", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "AWUSER", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "AWUSER", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "ARVALID", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "ARVALID", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "ARREADY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "ARREADY", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "ARUSER", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "ARUSER", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "BVALID", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "BVALID", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "BREADY", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "BREADY", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "BUSER", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "BUSER", "direction": "input" }
+      ],
+      "resolved_semantic_roles_include": [
+        { "signal_name": "AWVALID", "role": "handshake_valid_like" },
+        { "signal_name": "AWREADY", "role": "handshake_ready_like" },
+        { "signal_name": "ARVALID", "role": "handshake_valid_like" },
+        { "signal_name": "ARREADY", "role": "handshake_ready_like" },
+        { "signal_name": "BVALID", "role": "handshake_valid_like" },
+        { "signal_name": "BREADY", "role": "handshake_ready_like" }
+      ],
+      "semantic_grounding_strengths_include": [
+        { "signal_name": "AWVALID", "strength": "single_source" },
+        { "signal_name": "AWREADY", "strength": "single_source" },
+        { "signal_name": "ARVALID", "strength": "single_source" },
+        { "signal_name": "ARREADY", "strength": "single_source" },
+        { "signal_name": "BVALID", "strength": "single_source" },
+        { "signal_name": "BREADY", "strength": "single_source" }
+      ],
+      "semantic_consensus_signal_names_include": ["AWVALID", "AWREADY", "ARVALID", "ARREADY", "BVALID", "BREADY"],
+      "temporal_rule_count": 3,
+      "temporal_rules_with_handshake_completion": 3,
+      "temporal_rules_include": [
+        {
+          "source_text": "AWUSER must not change when AWVALID is HIGH and AWREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_awuser_handshake_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "AWVALID", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "AWREADY", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "handshake_complete", "valid_signal": "AWVALID", "ready_signal": "AWREADY", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            { "kind": "actor_maintains_signal_stable", "actor_name": "Manager", "signal_name": "AWUSER", "from_phase": "pre_tick", "to_phase": "post_tick" },
+            { "kind": "signal_stable", "signal_name": "AWUSER", "from_phase": "pre_tick", "to_phase": "post_tick" }
+          ]
+        },
+        {
+          "source_text": "ARUSER must not change when ARVALID is HIGH and ARREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_aruser_handshake_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "ARVALID", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "ARREADY", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "handshake_complete", "valid_signal": "ARVALID", "ready_signal": "ARREADY", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            { "kind": "actor_maintains_signal_stable", "actor_name": "Manager", "signal_name": "ARUSER", "from_phase": "pre_tick", "to_phase": "post_tick" },
+            { "kind": "signal_stable", "signal_name": "ARUSER", "from_phase": "pre_tick", "to_phase": "post_tick" }
+          ]
+        },
+        {
+          "source_text": "BUSER must not change when BVALID is HIGH and BREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_buser_handshake_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "BVALID", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "BREADY", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "handshake_complete", "valid_signal": "BVALID", "ready_signal": "BREADY", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            { "kind": "actor_maintains_signal_stable", "actor_name": "Subordinate", "signal_name": "BUSER", "from_phase": "pre_tick", "to_phase": "post_tick" },
+            { "kind": "signal_stable", "signal_name": "BUSER", "from_phase": "pre_tick", "to_phase": "post_tick" }
+          ]
+        }
+      ]
+    },
+    "intent": {
+      "signal_names_include": ["AWVALID", "AWREADY", "AWUSER", "ARVALID", "ARREADY", "ARUSER", "BVALID", "BREADY", "BUSER"],
+      "actor_signal_relations_include": [
+        { "actor_name": "Manager", "signal_name": "AWVALID", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "AWVALID", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "AWREADY", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "AWREADY", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "AWUSER", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "AWUSER", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "ARVALID", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "ARVALID", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "ARREADY", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "ARREADY", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "ARUSER", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "ARUSER", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "BVALID", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "BVALID", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "BREADY", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "BREADY", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "BUSER", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "BUSER", "relation": "reads" }
+      ],
+      "actor_ports_include": [
+        { "actor_name": "Manager", "signal_name": "AWVALID", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "AWVALID", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "AWREADY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "AWREADY", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "AWUSER", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "AWUSER", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "ARVALID", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "ARVALID", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "ARREADY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "ARREADY", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "ARUSER", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "ARUSER", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "BVALID", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "BVALID", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "BREADY", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "BREADY", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "BUSER", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "BUSER", "direction": "input" }
+      ],
+      "resolved_semantic_roles_include": [
+        { "signal_name": "AWVALID", "role": "handshake_valid_like" },
+        { "signal_name": "AWREADY", "role": "handshake_ready_like" },
+        { "signal_name": "ARVALID", "role": "handshake_valid_like" },
+        { "signal_name": "ARREADY", "role": "handshake_ready_like" },
+        { "signal_name": "BVALID", "role": "handshake_valid_like" },
+        { "signal_name": "BREADY", "role": "handshake_ready_like" }
+      ],
+      "semantic_grounding_strengths_include": [
+        { "signal_name": "AWVALID", "strength": "single_source" },
+        { "signal_name": "AWREADY", "strength": "single_source" },
+        { "signal_name": "ARVALID", "strength": "single_source" },
+        { "signal_name": "ARREADY", "strength": "single_source" },
+        { "signal_name": "BVALID", "strength": "single_source" },
+        { "signal_name": "BREADY", "strength": "single_source" }
+      ],
+      "semantic_consensus_signal_names_include": ["AWVALID", "AWREADY", "ARVALID", "ARREADY", "BVALID", "BREADY"],
+      "temporal_rule_count": 3,
+      "temporal_rules_with_handshake_completion": 3,
+      "temporal_rules_include": [
+        {
+          "source_text": "AWUSER must not change when AWVALID is HIGH and AWREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_awuser_handshake_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "AWVALID", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "AWREADY", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "handshake_complete", "valid_signal": "AWVALID", "ready_signal": "AWREADY", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            { "kind": "actor_maintains_signal_stable", "actor_name": "Manager", "signal_name": "AWUSER", "from_phase": "pre_tick", "to_phase": "post_tick" },
+            { "kind": "signal_stable", "signal_name": "AWUSER", "from_phase": "pre_tick", "to_phase": "post_tick" }
+          ]
+        },
+        {
+          "source_text": "ARUSER must not change when ARVALID is HIGH and ARREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_aruser_handshake_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "ARVALID", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "ARREADY", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "handshake_complete", "valid_signal": "ARVALID", "ready_signal": "ARREADY", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            { "kind": "actor_maintains_signal_stable", "actor_name": "Manager", "signal_name": "ARUSER", "from_phase": "pre_tick", "to_phase": "post_tick" },
+            { "kind": "signal_stable", "signal_name": "ARUSER", "from_phase": "pre_tick", "to_phase": "post_tick" }
+          ]
+        },
+        {
+          "source_text": "BUSER must not change when BVALID is HIGH and BREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_buser_handshake_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "BVALID", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "BREADY", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "handshake_complete", "valid_signal": "BVALID", "ready_signal": "BREADY", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            { "kind": "actor_maintains_signal_stable", "actor_name": "Subordinate", "signal_name": "BUSER", "from_phase": "pre_tick", "to_phase": "post_tick" },
+            { "kind": "signal_stable", "signal_name": "BUSER", "from_phase": "pre_tick", "to_phase": "post_tick" }
+          ]
+        }
+      ]
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "actor_signal_relations": "18",
+          "signal_constraints": "3",
+          "signal_semantic_hints": "6",
+          "signal_semantic_hints_from_tables": "6"
+        }
+      },
+      "semantic": {
+        "metric_values": {
+          "actor_ports": "18",
+          "temporal_rules": "3",
+          "temporal_rules_with_handshake_completion": "3",
+          "temporal_rules_with_actor_grounding": "3",
+          "temporal_rules_with_multi_predicate_antecedents": "3"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "actor_ports": "18",
+          "temporal_rules": "3",
+          "temporal_rules_with_handshake_completion": "3",
+          "temporal_rules_with_actor_grounding": "3",
+          "temporal_rules_with_multi_predicate_antecedents": "3"
+        }
+      }
+    }
+  }
+}

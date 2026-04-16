@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 AXI address/response USER sideband stability KG fixture
+- This slice adds focused AXI address-channel and write-response `USER` sideband stability coverage for `AWUSER`, `ARUSER`, and `BUSER`.
+- `axi_address_response_user_sideband_stability_gold` proves that optional user-defined address/response sidebands survive as graph-backed actor outputs and actor-grounded stability obligations under their matching channel handshakes.
+- The fixture intentionally covers two ownership directions in one small regression: the Manager owns `AWUSER` and `ARUSER` on the address channels, while the Subordinate owns `BUSER` on the write-response channel.
+- The temporal expectations require typed `HandshakeComplete(AWVALID, AWREADY)`, `HandshakeComplete(ARVALID, ARREADY)`, and `HandshakeComplete(BVALID, BREADY)` predicates plus producer-grounded `actor_maintains_signal_stable` consequents for the relevant `USER` sideband.
+- The refreshed corpus-KB projection now records the tracked suite as `82/82`, AMBA-family fixture coverage as `33/33`, and timing-family coverage as `39/39`.
+
 ## 2026-04-17 AXI data USER sideband stability KG fixture
 - This slice adds focused AXI data-channel `USER` sideband stability coverage for `WUSER` and `RUSER`.
 - `axi_data_user_sideband_stability_gold` proves that optional user-defined data sidebands survive as graph-backed actor outputs and actor-grounded stability obligations under their respective data-channel handshakes.
