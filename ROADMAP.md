@@ -504,6 +504,7 @@
     - a representative AXI read-address ID stability fixture proving manager-owned `ARID` remains graph-grounded and actor-owned when its stability is guarded by `ARVALID` / `ARREADY` completion
     - a representative AXI write-address ID stability fixture proving manager-owned `AWID` remains graph-grounded and actor-owned when its stability is guarded by `AWVALID` / `AWREADY` completion
     - a representative AXI write-address control sideband stability fixture proving `AWPROT`, `AWCACHE`, and `AWLOCK` remain graph-grounded and actor-owned when their stability is guarded by `AWVALID` / `AWREADY` completion
+    - a representative AXI read-address control sideband stability fixture proving `ARPROT`, `ARCACHE`, and `ARLOCK` remain graph-grounded and actor-owned when their stability is guarded by `ARVALID` / `ARREADY` completion
     - a representative AXI read-address sideband stability fixture proving `ARSIZE` and `ARBURST` remain graph-grounded and actor-owned when their stability is guarded by `ARVALID` / `ARREADY` completion
     - a representative AXI read-data timing gold fixture proving the same width-only plus prose actor-relation path works for `RVALID` / `RREADY` / `RDATA` / `RRESP`, including next-cycle read-data valid assertion and handshake-stable read-data payload semantics
     - a representative AXI read-data ID stability fixture proving subordinate-owned `RID` remains graph-grounded and actor-owned when its stability is guarded by `RVALID` / `RREADY` completion
@@ -552,7 +553,7 @@
   - fixture expectations can now assert canonical `infrastructure_signals` and `infrastructure_topology` records directly, so clock/reset topology truthfulness is checked as typed IR instead of only through validation metrics
   - width-only synthesized signal declarations now survive into canonical `SemanticIR` / `IntentIR` records, so AXI-style `Name | Width | Description` tables can be benchmarked honestly instead of stopping at raw actor relations and connectivity
 - remaining:
-  - keep expanding from the current AMBA + APB handshake/setup/access/write-control-stability/response-stability + AHB wait-state/control-stability/response-stability/write-data-stability + AXI write-address/write-response/read-address/read-address-sideband-stability/read-data/read-data-last-stability/write-data/write-data-last-stability/sideband-stability/write-address-sideband-stability gold paths to remaining structured-constraint fixtures
+  - keep expanding from the current AMBA + APB handshake/setup/access/write-control-stability/response-stability + AHB wait-state/control-stability/response-stability/write-data-stability + AXI write-address/write-response/read-address/read-address-control-sideband-stability/read-address-sideband-stability/read-data/read-data-last-stability/write-data/write-data-last-stability/sideband-stability/write-address-control-sideband-stability/write-address-sideband-stability gold paths to remaining structured-constraint fixtures
   - add broader negative fixtures for multimodal arbitration drift and richer timing-annotation edge cases beyond the current low-value label, motion-only annotation, and waveform-motion state filters
   - add broader metric-oriented expectation surfaces once the current canonical+metric fixture layer stabilizes
 
