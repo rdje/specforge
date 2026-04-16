@@ -13,8 +13,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 <!-- corpus_kb_kg_fixtures:start -->
 <!-- This block is refreshed by `specforge corpus-kb`. -->
 
-- fixtures_total: `79`
-- fixtures_passed: `79`
+- fixtures_total: `80`
+- fixtures_passed: `80`
 - fixtures_failed: `0`
 
 ### Fixture Family Summary
@@ -29,11 +29,11 @@ Fixtures can appear in more than one family because protocol semantics, modality
 | multimodal visual grounding | `19` | `19` | `0` |
 | negative knowledge | `5` | `5` | `0` |
 | polarity semantics | `7` | `7` | `0` |
-| protocol-family AMBA/APB/AHB/AXI | `30` | `30` | `0` |
+| protocol-family AMBA/APB/AHB/AXI | `31` | `31` | `0` |
 | residuals and caveats | `3` | `3` | `0` |
 | semantic role arbitration | `17` | `17` | `0` |
 | table extraction and hygiene | `8` | `8` | `0` |
-| temporal semantics | `36` | `36` | `0` |
+| temporal semantics | `37` | `37` | `0` |
 | truthfulness negatives and cautions | `32` | `32` | `0` |
 | typed prior memory | `21` | `21` | `0` |
 
@@ -129,6 +129,12 @@ Fixtures can appear in more than one family because protocol semantics, modality
 
 ### apb_write_control_stability_gold
 - fixture_path: `crates/specforge/test_data/kg_quality/apb_write_control_stability_gold/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### axi_address_qos_region_sideband_stability_gold
+- fixture_path: `crates/specforge/test_data/kg_quality/axi_address_qos_region_sideband_stability_gold/fixture.json`
 - status: `pass`
 - failures:
   - none

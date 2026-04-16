@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-16 AXI address QoS/region sideband stability KG fixture
+- This slice adds paired AXI address-channel QoS/region stability coverage for `AWQOS`, `AWREGION`, `ARQOS`, and `ARREGION`.
+- `axi_address_qos_region_sideband_stability_gold` proves those sidebands survive as graph-backed Manager outputs and actor-grounded stability obligations under their respective `AWVALID` / `AWREADY` and `ARVALID` / `ARREADY` handshakes.
+- The fixture intentionally uses one width-only table plus prose actor relations for both address channels, matching real AXI tables where the channel context carries ownership and the table mainly carries name/width/description evidence.
+- The temporal expectations require the matching typed handshake-completion predicate for each channel and Manager-grounded `actor_maintains_signal_stable` consequents for all four QoS/region sidebands.
+- The refreshed corpus-KB projection now records the tracked suite as `80/80`, AMBA-family fixture coverage as `31/31`, and timing-family coverage as `37/37`.
+
 ## 2026-04-16 AXI read-address control sideband stability KG fixture
 - This slice mirrors the prior write-address control-sideband coverage on the read-address channel with `ARPROT`, `ARCACHE`, and `ARLOCK`.
 - `axi_read_address_control_sideband_stability_gold` proves those sidebands survive as graph-backed Manager outputs and actor-grounded stability obligations under the controlling `ARVALID` / `ARREADY` handshake.

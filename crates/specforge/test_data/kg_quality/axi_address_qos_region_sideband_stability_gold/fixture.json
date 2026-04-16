@@ -1,0 +1,377 @@
+{
+  "name": "axi_address_qos_region_sideband_stability_gold",
+  "source": "source.md",
+  "source_ir_patch": {
+    "structured_tables": [
+      {
+        "table_id": "table_axi_address_qos_region_sideband_stability",
+        "asset_id": "table_axi_address_qos_region_sideband_stability",
+        "page_id": null,
+        "caption_text": "AXI address QoS and region sideband stability signals",
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            { "text": "Name", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Width", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Description", "row_span": 1, "col_span": 1, "is_header": true }
+          ]
+        ],
+        "body_rows": [
+          [
+            { "text": "AWVALID", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Indicates that write address quality and region sideband information is valid for transfer.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "AWREADY", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Indicates that the subordinate can accept the write address quality and region transfer.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "AWQOS", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "4", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Write address quality-of-service sideband field.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "AWREGION", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "4", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Write address region sideband field.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "ARVALID", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Indicates that read address quality and region sideband information is valid for transfer.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "ARREADY", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Indicates that the subordinate can accept the read address quality and region transfer.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "ARQOS", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "4", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Read address quality-of-service sideband field.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "ARREGION", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "4", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Read address region sideband field.", "row_span": 1, "col_span": 1, "is_header": false }
+          ]
+        ],
+        "row_count": 8,
+        "col_count": 3
+      }
+    ]
+  },
+  "evidence_ir_patch": {
+    "signal_constraints": [
+      {
+        "constraint_id": "sigcon_axi_awqos_handshake_hold",
+        "subject_signal": "AWQOS",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when AWVALID is HIGH and AWREADY is HIGH",
+        "negated": false,
+        "source_text": "AWQOS must not change when AWVALID is HIGH and AWREADY is HIGH.",
+        "supporting_statement_ids": ["stmt_axi_awqos_handshake_hold"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_axi_awregion_handshake_hold",
+        "subject_signal": "AWREGION",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when AWVALID is HIGH and AWREADY is HIGH",
+        "negated": false,
+        "source_text": "AWREGION must not change when AWVALID is HIGH and AWREADY is HIGH.",
+        "supporting_statement_ids": ["stmt_axi_awregion_handshake_hold"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_axi_arqos_handshake_hold",
+        "subject_signal": "ARQOS",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when ARVALID is HIGH and ARREADY is HIGH",
+        "negated": false,
+        "source_text": "ARQOS must not change when ARVALID is HIGH and ARREADY is HIGH.",
+        "supporting_statement_ids": ["stmt_axi_arqos_handshake_hold"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_axi_arregion_handshake_hold",
+        "subject_signal": "ARREGION",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when ARVALID is HIGH and ARREADY is HIGH",
+        "negated": false,
+        "source_text": "ARREGION must not change when ARVALID is HIGH and ARREADY is HIGH.",
+        "supporting_statement_ids": ["stmt_axi_arregion_handshake_hold"],
+        "automation_confidence": "medium"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["AWVALID", "AWREADY", "AWQOS", "AWREGION", "ARVALID", "ARREADY", "ARQOS", "ARREGION"],
+      "actor_signal_relations_include": [
+        { "actor_name": "Manager", "signal_name": "AWVALID", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "AWVALID", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "AWREADY", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "AWREADY", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "AWQOS", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "AWQOS", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "AWREGION", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "AWREGION", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "ARVALID", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "ARVALID", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "ARREADY", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "ARREADY", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "ARQOS", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "ARQOS", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "ARREGION", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "ARREGION", "relation": "reads" }
+      ],
+      "actor_ports_include": [
+        { "actor_name": "Manager", "signal_name": "AWVALID", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "AWVALID", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "AWREADY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "AWREADY", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "AWQOS", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "AWQOS", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "AWREGION", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "AWREGION", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "ARVALID", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "ARVALID", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "ARREADY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "ARREADY", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "ARQOS", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "ARQOS", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "ARREGION", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "ARREGION", "direction": "input" }
+      ],
+      "resolved_semantic_roles_include": [
+        { "signal_name": "AWVALID", "role": "handshake_valid_like" },
+        { "signal_name": "AWREADY", "role": "handshake_ready_like" },
+        { "signal_name": "ARVALID", "role": "handshake_valid_like" },
+        { "signal_name": "ARREADY", "role": "handshake_ready_like" }
+      ],
+      "semantic_grounding_strengths_include": [
+        { "signal_name": "AWVALID", "strength": "single_source" },
+        { "signal_name": "AWREADY", "strength": "single_source" },
+        { "signal_name": "ARVALID", "strength": "single_source" },
+        { "signal_name": "ARREADY", "strength": "single_source" }
+      ],
+      "semantic_consensus_signal_names_include": ["AWVALID", "AWREADY", "ARVALID", "ARREADY"],
+      "temporal_rule_count": 4,
+      "temporal_rules_with_handshake_completion": 4,
+      "temporal_rules_include": [
+        {
+          "source_text": "AWQOS must not change when AWVALID is HIGH and AWREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_awqos_handshake_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "AWVALID", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "AWREADY", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "handshake_complete", "valid_signal": "AWVALID", "ready_signal": "AWREADY", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            { "kind": "actor_maintains_signal_stable", "actor_name": "Manager", "signal_name": "AWQOS", "from_phase": "pre_tick", "to_phase": "post_tick" },
+            { "kind": "signal_stable", "signal_name": "AWQOS", "from_phase": "pre_tick", "to_phase": "post_tick" }
+          ]
+        },
+        {
+          "source_text": "AWREGION must not change when AWVALID is HIGH and AWREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_awregion_handshake_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "AWVALID", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "AWREADY", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "handshake_complete", "valid_signal": "AWVALID", "ready_signal": "AWREADY", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            { "kind": "actor_maintains_signal_stable", "actor_name": "Manager", "signal_name": "AWREGION", "from_phase": "pre_tick", "to_phase": "post_tick" },
+            { "kind": "signal_stable", "signal_name": "AWREGION", "from_phase": "pre_tick", "to_phase": "post_tick" }
+          ]
+        },
+        {
+          "source_text": "ARQOS must not change when ARVALID is HIGH and ARREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_arqos_handshake_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "ARVALID", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "ARREADY", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "handshake_complete", "valid_signal": "ARVALID", "ready_signal": "ARREADY", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            { "kind": "actor_maintains_signal_stable", "actor_name": "Manager", "signal_name": "ARQOS", "from_phase": "pre_tick", "to_phase": "post_tick" },
+            { "kind": "signal_stable", "signal_name": "ARQOS", "from_phase": "pre_tick", "to_phase": "post_tick" }
+          ]
+        },
+        {
+          "source_text": "ARREGION must not change when ARVALID is HIGH and ARREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_arregion_handshake_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "ARVALID", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "ARREADY", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "handshake_complete", "valid_signal": "ARVALID", "ready_signal": "ARREADY", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            { "kind": "actor_maintains_signal_stable", "actor_name": "Manager", "signal_name": "ARREGION", "from_phase": "pre_tick", "to_phase": "post_tick" },
+            { "kind": "signal_stable", "signal_name": "ARREGION", "from_phase": "pre_tick", "to_phase": "post_tick" }
+          ]
+        }
+      ]
+    },
+    "intent": {
+      "signal_names_include": ["AWVALID", "AWREADY", "AWQOS", "AWREGION", "ARVALID", "ARREADY", "ARQOS", "ARREGION"],
+      "actor_signal_relations_include": [
+        { "actor_name": "Manager", "signal_name": "AWVALID", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "AWVALID", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "AWREADY", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "AWREADY", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "AWQOS", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "AWQOS", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "AWREGION", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "AWREGION", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "ARVALID", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "ARVALID", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "ARREADY", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "ARREADY", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "ARQOS", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "ARQOS", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "ARREGION", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "ARREGION", "relation": "reads" }
+      ],
+      "actor_ports_include": [
+        { "actor_name": "Manager", "signal_name": "AWVALID", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "AWVALID", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "AWREADY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "AWREADY", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "AWQOS", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "AWQOS", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "AWREGION", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "AWREGION", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "ARVALID", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "ARVALID", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "ARREADY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "ARREADY", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "ARQOS", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "ARQOS", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "ARREGION", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "ARREGION", "direction": "input" }
+      ],
+      "resolved_semantic_roles_include": [
+        { "signal_name": "AWVALID", "role": "handshake_valid_like" },
+        { "signal_name": "AWREADY", "role": "handshake_ready_like" },
+        { "signal_name": "ARVALID", "role": "handshake_valid_like" },
+        { "signal_name": "ARREADY", "role": "handshake_ready_like" }
+      ],
+      "semantic_grounding_strengths_include": [
+        { "signal_name": "AWVALID", "strength": "single_source" },
+        { "signal_name": "AWREADY", "strength": "single_source" },
+        { "signal_name": "ARVALID", "strength": "single_source" },
+        { "signal_name": "ARREADY", "strength": "single_source" }
+      ],
+      "semantic_consensus_signal_names_include": ["AWVALID", "AWREADY", "ARVALID", "ARREADY"],
+      "temporal_rule_count": 4,
+      "temporal_rules_with_handshake_completion": 4,
+      "temporal_rules_include": [
+        {
+          "source_text": "AWQOS must not change when AWVALID is HIGH and AWREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_awqos_handshake_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "AWVALID", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "AWREADY", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "handshake_complete", "valid_signal": "AWVALID", "ready_signal": "AWREADY", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            { "kind": "actor_maintains_signal_stable", "actor_name": "Manager", "signal_name": "AWQOS", "from_phase": "pre_tick", "to_phase": "post_tick" },
+            { "kind": "signal_stable", "signal_name": "AWQOS", "from_phase": "pre_tick", "to_phase": "post_tick" }
+          ]
+        },
+        {
+          "source_text": "AWREGION must not change when AWVALID is HIGH and AWREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_awregion_handshake_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "AWVALID", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "AWREADY", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "handshake_complete", "valid_signal": "AWVALID", "ready_signal": "AWREADY", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            { "kind": "actor_maintains_signal_stable", "actor_name": "Manager", "signal_name": "AWREGION", "from_phase": "pre_tick", "to_phase": "post_tick" },
+            { "kind": "signal_stable", "signal_name": "AWREGION", "from_phase": "pre_tick", "to_phase": "post_tick" }
+          ]
+        },
+        {
+          "source_text": "ARQOS must not change when ARVALID is HIGH and ARREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_arqos_handshake_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "ARVALID", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "ARREADY", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "handshake_complete", "valid_signal": "ARVALID", "ready_signal": "ARREADY", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            { "kind": "actor_maintains_signal_stable", "actor_name": "Manager", "signal_name": "ARQOS", "from_phase": "pre_tick", "to_phase": "post_tick" },
+            { "kind": "signal_stable", "signal_name": "ARQOS", "from_phase": "pre_tick", "to_phase": "post_tick" }
+          ]
+        },
+        {
+          "source_text": "ARREGION must not change when ARVALID is HIGH and ARREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_arregion_handshake_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "ARVALID", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "ARREADY", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "handshake_complete", "valid_signal": "ARVALID", "ready_signal": "ARREADY", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            { "kind": "actor_maintains_signal_stable", "actor_name": "Manager", "signal_name": "ARREGION", "from_phase": "pre_tick", "to_phase": "post_tick" },
+            { "kind": "signal_stable", "signal_name": "ARREGION", "from_phase": "pre_tick", "to_phase": "post_tick" }
+          ]
+        }
+      ]
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "actor_signal_relations": "16",
+          "signal_constraints": "4",
+          "signal_semantic_hints": "4",
+          "signal_semantic_hints_from_tables": "4"
+        }
+      },
+      "semantic": {
+        "metric_values": {
+          "actor_ports": "16",
+          "temporal_rules": "4",
+          "temporal_rules_with_handshake_completion": "4",
+          "temporal_rules_with_actor_grounding": "4",
+          "temporal_rules_with_multi_predicate_antecedents": "4"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "actor_ports": "16",
+          "temporal_rules": "4",
+          "temporal_rules_with_handshake_completion": "4",
+          "temporal_rules_with_actor_grounding": "4",
+          "temporal_rules_with_multi_predicate_antecedents": "4"
+        }
+      }
+    }
+  }
+}

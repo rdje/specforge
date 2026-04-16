@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-04-16 (AXI address QoS/region sideband stability KG fixture)
+
+### Added: AXI address QoS/region sideband stability truthfulness fixture
+- Added tracked KG fixture `axi_address_qos_region_sideband_stability_gold` for paired AXI write/read address QoS and region sideband hold behavior across `AWQOS`, `AWREGION`, `ARQOS`, and `ARREGION` with width-only `Name | Width | Description` table evidence plus prose actor relations.
+- The fixture locks both address-channel handshakes: `AWVALID` / `AWREADY` guard write-address QoS/region stability, and `ARVALID` / `ARREADY` guard read-address QoS/region stability.
+- Each temporal rule requires the matching typed `HandshakeComplete(...)` predicate and a Manager-grounded `actor_maintains_signal_stable` consequent, proving these sidebands remain actor-owned protocol obligations rather than inert table rows.
+- Refreshed corpus-KB KG projections so the tracked suite now reports `80` fixtures / `0` failures, AMBA-family coverage reports `31/31`, and temporal fixture coverage reports `37/37`.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality axi_address_qos_region_sideband_stability_gold` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `80` passed / `0` failed fixtures
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed corpus-KB fixture projections with `80` fixtures / `0` failures
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `313` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-16 (AXI read-address control sideband stability KG fixture)
 
 ### Added: AXI read-address control sideband stability truthfulness fixture
