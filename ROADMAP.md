@@ -495,6 +495,7 @@
     - a representative APB-style gold fixture proving `Requester` / `Completer` source roles survive canonically as driver-side actor relations, actor-relative ports, request/accept semantics, and typed handshake completion
     - a representative APB-style timing gold fixture proving `Requester` / `Completer` source roles can also recover setup/access timing, actor-grounded temporal predicates, multi-predicate guards, bounded next-cycle latency, and handshake completion together
     - a representative APB write-control stability gold fixture proving `PWRITE`, `PWDATA`, and `PSTRB` remain actor-grounded stable requester outputs during `PSEL` / `PENABLE` / `PREADY LOW` wait states without fabricating handshake completion
+    - a representative APB response stability gold fixture proving `PRDATA` and `PSLVERR` remain actor-grounded stable completer outputs during `PSEL` / `PENABLE` / `PREADY HIGH` completed accesses with handshake completion preserved
     - a representative AXI-style gold fixture proving width-only channel tables plus prose drive/sample relations recover actor-relative direction, signal inventory, request/accept semantics, and typed handshake completion without any table direction column
     - a representative AXI-style timing gold fixture proving width-only channel tables plus prose actor relations can also recover next-cycle timing, actor-grounded temporal predicates, and handshake completion together
     - a representative AXI write-response timing gold fixture proving the same width-only plus prose actor-relation path works for `BVALID` / `BREADY` / `BRESP`, including next-cycle response assertion and handshake-stable response payload semantics
@@ -538,7 +539,7 @@
   - fixture expectations can now assert canonical `infrastructure_signals` and `infrastructure_topology` records directly, so clock/reset topology truthfulness is checked as typed IR instead of only through validation metrics
   - width-only synthesized signal declarations now survive into canonical `SemanticIR` / `IntentIR` records, so AXI-style `Name | Width | Description` tables can be benchmarked honestly instead of stopping at raw actor relations and connectivity
 - remaining:
-  - keep expanding from the current AMBA + APB handshake/setup/access/write-control-stability + AHB + AXI write-address/write-response/read-address/read-data/write-data/sideband-stability gold paths to remaining structured-constraint fixtures
+  - keep expanding from the current AMBA + APB handshake/setup/access/write-control-stability/response-stability + AHB + AXI write-address/write-response/read-address/read-data/write-data/sideband-stability gold paths to remaining structured-constraint fixtures
   - add broader negative fixtures for multimodal arbitration drift and richer timing-annotation edge cases beyond the current low-value label, motion-only annotation, and waveform-motion state filters
   - add broader metric-oriented expectation surfaces once the current canonical+metric fixture layer stabilizes
 

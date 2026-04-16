@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-16 APB response stability KG fixture
+- This slice pairs with the APB write-control wait-state fixture by proving the completed-transfer response side.
+- `apb_response_stability_gold` proves that `Signal | Source | Width | Description` APB tables plus structured constraints recover completer-owned stability obligations for `PRDATA` and `PSLVERR`.
+- The guard intentionally uses the completed APB access shape: `PSEL` is `HIGH`, `PENABLE` is `HIGH`, and `PREADY` is `HIGH`. Because `PSEL` and `PREADY` have table-grounded valid-like / ready-like roles, the resulting temporal rules must include `HandshakeComplete(PSEL, PREADY)`.
+- This gives R15e a useful pair of APB structured-constraint gold fixtures: `PREADY LOW` proves no false handshake completion while requester-owned sidebands stay stable, and `PREADY HIGH` proves response stability with a real completion predicate and completer-owned stability.
+- The refreshed corpus-KB projection now records the tracked suite as `65/65`, AMBA-family fixture coverage as `16/16`, and timing-family coverage as `22/22`.
+
 ## 2026-04-16 APB write-control stability KG fixture
 - This slice continues R15e structured-constraint coverage on APB instead of adding more AXI-only variants.
 - `apb_write_control_stability_gold` proves that `Signal | Source | Width | Description` APB tables plus structured constraints recover requester-owned stability obligations for `PWRITE`, `PWDATA`, and `PSTRB`.

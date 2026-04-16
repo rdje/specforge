@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-04-16 (APB response stability KG fixture)
+
+### Added: APB response stability truthfulness fixture
+- Added tracked KG fixture `apb_response_stability_gold` for APB completion-side response hold behavior with `Signal | Source | Width | Description` table evidence plus explicit structured signal constraints.
+- The fixture locks `PSEL`, `PENABLE`, `PREADY`, `PRDATA`, and `PSLVERR` through graph-backed actor relations, actor-relative ports, resolved `PSEL` / `PREADY` semantic roles, and two completer-grounded temporal stability rules.
+- Unlike the APB wait-state write-control fixture, this fixture expects `HandshakeComplete(PSEL, PREADY)` because `PREADY` is `HIGH`; this makes the pair an executable contrast between wait-state stability and completed-transfer response stability.
+- Refreshed corpus-KB KG projections so the tracked suite now reports `65` fixtures / `0` failures, AMBA-family coverage reports `16/16`, and temporal fixture coverage reports `22/22`.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality apb_response_stability_gold` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `65` passed / `0` failed fixtures
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed corpus-KB fixture projections with `65` fixtures / `0` failures
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `313` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-16 (APB write-control stability KG fixture)
 
 ### Added: APB write-control stability truthfulness fixture
