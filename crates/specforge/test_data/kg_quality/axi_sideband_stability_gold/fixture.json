@@ -1,0 +1,371 @@
+{
+  "name": "axi_sideband_stability_gold",
+  "source": "source.md",
+  "source_ir_patch": {
+    "structured_tables": [
+      {
+        "table_id": "table_axi_sideband_stability",
+        "asset_id": "table_axi_sideband_stability",
+        "page_id": null,
+        "caption_text": "AXI sideband stability signals",
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            { "text": "Name", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Width", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Description", "row_span": 1, "col_span": 1, "is_header": true }
+          ]
+        ],
+        "body_rows": [
+          [
+            { "text": "ARVALID", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Indicates that read address sideband information is valid for transfer.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "ARREADY", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Indicates that the subordinate can accept the read address sideband transfer.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "ARLEN", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "8", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Read burst length sideband field.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "WVALID", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Indicates that write-data sideband information is valid for transfer.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "WREADY", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Indicates that the subordinate can accept the write-data sideband transfer.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "WSTRB", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "4", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Write byte-lane strobe sideband field.", "row_span": 1, "col_span": 1, "is_header": false }
+          ]
+        ],
+        "row_count": 6,
+        "col_count": 3
+      }
+    ]
+  },
+  "evidence_ir_patch": {
+    "signal_constraints": [
+      {
+        "constraint_id": "sigcon_axi_arlen_handshake_hold",
+        "subject_signal": "ARLEN",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when ARVALID is HIGH and ARREADY is HIGH",
+        "negated": false,
+        "source_text": "ARLEN must not change when ARVALID is HIGH and ARREADY is HIGH.",
+        "supporting_statement_ids": ["stmt_axi_arlen_handshake_hold"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_axi_wstrb_handshake_hold",
+        "subject_signal": "WSTRB",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when WVALID is HIGH and WREADY is HIGH",
+        "negated": false,
+        "source_text": "WSTRB must not change when WVALID is HIGH and WREADY is HIGH.",
+        "supporting_statement_ids": ["stmt_axi_wstrb_handshake_hold"],
+        "automation_confidence": "medium"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["ARVALID", "ARREADY", "ARLEN", "WVALID", "WREADY", "WSTRB"],
+      "actor_signal_relations_include": [
+        { "actor_name": "Manager", "signal_name": "ARVALID", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "ARVALID", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "ARLEN", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "ARLEN", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "ARREADY", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "ARREADY", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "WVALID", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "WVALID", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "WSTRB", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "WSTRB", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "WREADY", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "WREADY", "relation": "reads" }
+      ],
+      "actor_ports_include": [
+        { "actor_name": "Manager", "signal_name": "ARVALID", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "ARVALID", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "ARLEN", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "ARLEN", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "ARREADY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "ARREADY", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "WVALID", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "WVALID", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "WSTRB", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "WSTRB", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "WREADY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "WREADY", "direction": "input" }
+      ],
+      "resolved_semantic_roles_include": [
+        { "signal_name": "ARVALID", "role": "handshake_valid_like" },
+        { "signal_name": "ARREADY", "role": "handshake_ready_like" },
+        { "signal_name": "WVALID", "role": "handshake_valid_like" },
+        { "signal_name": "WREADY", "role": "handshake_ready_like" }
+      ],
+      "semantic_grounding_strengths_include": [
+        { "signal_name": "ARVALID", "strength": "single_source" },
+        { "signal_name": "ARREADY", "strength": "single_source" },
+        { "signal_name": "WVALID", "strength": "single_source" },
+        { "signal_name": "WREADY", "strength": "single_source" }
+      ],
+      "semantic_consensus_signal_names_include": ["ARVALID", "ARREADY", "WVALID", "WREADY"],
+      "temporal_rule_count": 2,
+      "temporal_rules_with_handshake_completion": 2,
+      "temporal_rules_include": [
+        {
+          "source_text": "ARLEN must not change when ARVALID is HIGH and ARREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_arlen_handshake_hold"],
+          "antecedents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "ARVALID",
+              "value": "HIGH",
+              "phase": "pre_tick"
+            },
+            {
+              "kind": "signal_value",
+              "signal_name": "ARREADY",
+              "value": "HIGH",
+              "phase": "pre_tick"
+            },
+            {
+              "kind": "handshake_complete",
+              "valid_signal": "ARVALID",
+              "ready_signal": "ARREADY",
+              "phase": "pre_tick"
+            }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Manager",
+              "signal_name": "ARLEN",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "ARLEN",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "WSTRB must not change when WVALID is HIGH and WREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_wstrb_handshake_hold"],
+          "antecedents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "WVALID",
+              "value": "HIGH",
+              "phase": "pre_tick"
+            },
+            {
+              "kind": "signal_value",
+              "signal_name": "WREADY",
+              "value": "HIGH",
+              "phase": "pre_tick"
+            },
+            {
+              "kind": "handshake_complete",
+              "valid_signal": "WVALID",
+              "ready_signal": "WREADY",
+              "phase": "pre_tick"
+            }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Manager",
+              "signal_name": "WSTRB",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "WSTRB",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        }
+      ]
+    },
+    "intent": {
+      "signal_names_include": ["ARVALID", "ARREADY", "ARLEN", "WVALID", "WREADY", "WSTRB"],
+      "actor_signal_relations_include": [
+        { "actor_name": "Manager", "signal_name": "ARVALID", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "ARVALID", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "ARLEN", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "ARLEN", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "ARREADY", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "ARREADY", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "WVALID", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "WVALID", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "WSTRB", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "WSTRB", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "WREADY", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "WREADY", "relation": "reads" }
+      ],
+      "actor_ports_include": [
+        { "actor_name": "Manager", "signal_name": "ARVALID", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "ARVALID", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "ARLEN", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "ARLEN", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "ARREADY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "ARREADY", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "WVALID", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "WVALID", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "WSTRB", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "WSTRB", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "WREADY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "WREADY", "direction": "input" }
+      ],
+      "resolved_semantic_roles_include": [
+        { "signal_name": "ARVALID", "role": "handshake_valid_like" },
+        { "signal_name": "ARREADY", "role": "handshake_ready_like" },
+        { "signal_name": "WVALID", "role": "handshake_valid_like" },
+        { "signal_name": "WREADY", "role": "handshake_ready_like" }
+      ],
+      "semantic_grounding_strengths_include": [
+        { "signal_name": "ARVALID", "strength": "single_source" },
+        { "signal_name": "ARREADY", "strength": "single_source" },
+        { "signal_name": "WVALID", "strength": "single_source" },
+        { "signal_name": "WREADY", "strength": "single_source" }
+      ],
+      "semantic_consensus_signal_names_include": ["ARVALID", "ARREADY", "WVALID", "WREADY"],
+      "temporal_rule_count": 2,
+      "temporal_rules_with_handshake_completion": 2,
+      "temporal_rules_include": [
+        {
+          "source_text": "ARLEN must not change when ARVALID is HIGH and ARREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_arlen_handshake_hold"],
+          "antecedents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "ARVALID",
+              "value": "HIGH",
+              "phase": "pre_tick"
+            },
+            {
+              "kind": "signal_value",
+              "signal_name": "ARREADY",
+              "value": "HIGH",
+              "phase": "pre_tick"
+            },
+            {
+              "kind": "handshake_complete",
+              "valid_signal": "ARVALID",
+              "ready_signal": "ARREADY",
+              "phase": "pre_tick"
+            }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Manager",
+              "signal_name": "ARLEN",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "ARLEN",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "WSTRB must not change when WVALID is HIGH and WREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_wstrb_handshake_hold"],
+          "antecedents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "WVALID",
+              "value": "HIGH",
+              "phase": "pre_tick"
+            },
+            {
+              "kind": "signal_value",
+              "signal_name": "WREADY",
+              "value": "HIGH",
+              "phase": "pre_tick"
+            },
+            {
+              "kind": "handshake_complete",
+              "valid_signal": "WVALID",
+              "ready_signal": "WREADY",
+              "phase": "pre_tick"
+            }
+          ],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Manager",
+              "signal_name": "WSTRB",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "WSTRB",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        }
+      ]
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "actor_signal_relations": "12",
+          "signal_constraints": "2",
+          "signal_semantic_hints": "4",
+          "signal_semantic_hints_from_tables": "4"
+        }
+      },
+      "semantic": {
+        "metric_values": {
+          "actor_ports": "12",
+          "temporal_rules": "2",
+          "temporal_rules_with_handshake_completion": "2",
+          "temporal_rules_with_actor_grounding": "2"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "actor_ports": "12",
+          "temporal_rules": "2",
+          "temporal_rules_with_handshake_completion": "2",
+          "temporal_rules_with_actor_grounding": "2"
+        }
+      }
+    }
+  }
+}

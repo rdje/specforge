@@ -7,6 +7,14 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-16 AXI sideband stability KG fixture
+- This slice extends the AXI channel sweep from primary payload/address stability into explicit sideband stability, which is a separate truthfulness obligation in real protocol specs.
+- `axi_sideband_stability_gold` proves that a width-only signal table plus prose actor relations can carry two AXI channel fragments at once: `ARVALID` / `ARREADY` / `ARLEN` for read-address sideband stability and `WVALID` / `WREADY` / `WSTRB` for write-data byte-lane sideband stability.
+- The fixture intentionally focuses the stability rules on `ARLEN` and `WSTRB`, not the already-covered primary `ARADDR` or `WDATA` payloads. That checks whether non-handshake sideband fields survive as graph-grounded, actor-owned temporal obligations instead of being treated as inert table inventory.
+- Temporal expectations stay typed and actor-grounded: `ARLEN must not change when ARVALID is HIGH and ARREADY is HIGH` and `WSTRB must not change when WVALID is HIGH and WREADY is HIGH` both require `HandshakeComplete` antecedents plus `actor_maintains_signal_stable` consequents for `Manager`.
+- The corpus-KB fixture-family classifier now treats `stability` fixture names as temporal semantics too, so review projections count this fixture under both AMBA-family protocol coverage and temporal fixture coverage.
+- The refreshed corpus-KB projection now records the tracked suite as `63/63`, AMBA-family fixture coverage as `14/14`, and timing-family coverage as `20/20`.
+
 ## 2026-04-16 AXI read-address timing KG fixture
 - This slice closes the obvious AXI channel timing sweep by adding the manager-driven read-address path beside write-address, write-response, read-data, and write-data coverage.
 - `axi_read_address_timing_gold` proves the width-only table plus prose actor-relation path on the AXI read-address channel: `ARVALID`, `ARADDR`, and `ARLEN` are driven by `Manager`, while `ARREADY` is driven by `Subordinate`, with reciprocal sample/read relations preserved.

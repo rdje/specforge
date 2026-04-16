@@ -49,6 +49,7 @@
 - KG benchmark harness now includes AXI read-address timing coverage: Done
 - KG benchmark harness now includes AXI read-data timing coverage: Done
 - KG benchmark harness now includes AXI write-data timing coverage: Done
+- KG benchmark harness now includes AXI sideband stability coverage: Done
 - `specforge nlp-enrich` command created: Done
 - `specforge converge` command created: Done
 - End-to-end source-to-IntentIR pipeline implemented: Done

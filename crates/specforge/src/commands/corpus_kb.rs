@@ -955,6 +955,7 @@ fn kg_fixture_family_labels(name: &str) -> BTreeSet<&'static str> {
     if normalized.contains("timing")
         || normalized.contains("temporal")
         || normalized.contains("cycle")
+        || normalized.contains("stability")
         || normalized.contains("wait_state")
     {
         labels.insert("temporal semantics");
@@ -1415,6 +1416,10 @@ Keep this benchmark note.\n\n\
         assert!(labels.contains("infrastructure semantics"));
         assert!(labels.contains("polarity semantics"));
         assert!(labels.contains("VLM timing diagrams"));
+
+        let labels = kg_fixture_family_labels("axi_sideband_stability_gold");
+        assert!(labels.contains("protocol-family AMBA/APB/AHB/AXI"));
+        assert!(labels.contains("temporal semantics"));
 
         let labels = kg_fixture_family_labels("toy_fixture");
         assert_eq!(labels.len(), 1);

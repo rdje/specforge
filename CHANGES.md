@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-04-16 (AXI sideband stability KG fixture)
+
+### Added: AXI sideband stability truthfulness fixture
+- Added tracked KG fixture `axi_sideband_stability_gold` for AXI read-address and write-data sideband hold behavior with width-only `Name | Width | Description` table evidence plus prose actor relations.
+- The fixture locks `ARVALID`, `ARREADY`, `ARLEN`, `WVALID`, `WREADY`, and `WSTRB` through graph-backed actor ports, resolved valid-like / ready-like semantic roles, single-source semantic grounding, and two actor-grounded handshake-stability temporal rules for `ARLEN` and `WSTRB`.
+- Tightened corpus-KB fixture-family labeling so stability-hold fixtures count under temporal semantics, not only protocol-family coverage.
+- Refreshed corpus-KB KG projections so the tracked suite now reports `63` fixtures / `0` failures, AMBA-family coverage reports `14/14`, and temporal fixture coverage reports `20/20`.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality axi_sideband_stability_gold` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `63` passed / `0` failed fixtures
+- `cargo test --manifest-path Cargo.toml --lib corpus_kb::tests::kg_fixture_family_labels_are_deterministic_and_review_facing -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed corpus-KB fixture projections with `63` fixtures / `0` failures
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `313` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-16 (AXI read-address timing KG fixture)
 
 ### Added: AXI read-address timing truthfulness fixture
