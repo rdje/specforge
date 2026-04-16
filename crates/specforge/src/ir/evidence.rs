@@ -2558,6 +2558,29 @@ fn extract_actor_signal_relations(
 
             // ── Active drives: "{actor} {verb} {signal}" ────────────────────
             for verb in ACTIVE_DRIVES_VERBS {
+                let active_verb_pat = format!(" {} ", verb);
+                for (verb_pos, _) in lowered.match_indices(&active_verb_pat) {
+                    let object_start = verb_pos + active_verb_pat.len();
+                    if !active_object_contains_signal(&lowered, object_start, &sig_lower) {
+                        continue;
+                    }
+                    let before = &text[..verb_pos];
+                    if let Some(actor) = extract_subject_phrase(before) {
+                        let key = (actor.clone(), signal.clone(), 0u8);
+                        if seen.insert(key) {
+                            records.push(ActorSignalRelation {
+                                relation_id: format!("asr_{counter:04}"),
+                                actor_name: actor,
+                                signal_name: signal.clone(),
+                                relation: RelationKind::Drives,
+                                source_statement_ids: vec![stmt.statement_id.clone()],
+                                automation_confidence: AutomationConfidence::Medium,
+                            });
+                            counter += 1;
+                        }
+                    }
+                }
+
                 // Look for " {verb} {signal}" in the lowered text
                 let active_pat = format!(" {} {}", verb, sig_lower);
                 if let Some(verb_end_pos) = lowered.find(&active_pat) {
@@ -2601,6 +2624,29 @@ fn extract_actor_signal_relations(
 
             // ── Active reads: "{actor} {verb} {signal}" ─────────────────────
             for verb in ACTIVE_READS_VERBS {
+                let active_verb_pat = format!(" {} ", verb);
+                for (verb_pos, _) in lowered.match_indices(&active_verb_pat) {
+                    let object_start = verb_pos + active_verb_pat.len();
+                    if !active_object_contains_signal(&lowered, object_start, &sig_lower) {
+                        continue;
+                    }
+                    let before = &text[..verb_pos];
+                    if let Some(actor) = extract_subject_phrase(before) {
+                        let key = (actor.clone(), signal.clone(), 1u8);
+                        if seen.insert(key) {
+                            records.push(ActorSignalRelation {
+                                relation_id: format!("asr_{counter:04}"),
+                                actor_name: actor,
+                                signal_name: signal.clone(),
+                                relation: RelationKind::Reads,
+                                source_statement_ids: vec![stmt.statement_id.clone()],
+                                automation_confidence: AutomationConfidence::Medium,
+                            });
+                            counter += 1;
+                        }
+                    }
+                }
+
                 let active_pat = format!(" {} {}", verb, sig_lower);
                 if let Some(verb_end_pos) = lowered.find(&active_pat) {
                     let before = &text[..verb_end_pos];
@@ -2624,6 +2670,50 @@ fn extract_actor_signal_relations(
     }
 
     records
+}
+
+fn active_object_contains_signal(lowered: &str, object_start: usize, sig_lower: &str) -> bool {
+    let Some(object_text) = lowered.get(object_start..) else {
+        return false;
+    };
+    let mut clause_end = object_text
+        .find(['.', ';', '\n'])
+        .unwrap_or(object_text.len());
+    for marker in [
+        " when ",
+        " if ",
+        " while ",
+        " once ",
+        " before ",
+        " after ",
+        " unless ",
+        " according to ",
+        " provided ",
+    ] {
+        if let Some(marker_start) = object_text[..clause_end].find(marker) {
+            clause_end = marker_start;
+        }
+    }
+    contains_signal_token(&object_text[..clause_end], sig_lower)
+}
+
+fn contains_signal_token(text: &str, sig_lower: &str) -> bool {
+    text.match_indices(sig_lower).any(|(start, _)| {
+        let before_is_token = text[..start]
+            .chars()
+            .next_back()
+            .is_some_and(is_signal_name_char);
+        let after_start = start + sig_lower.len();
+        let after_is_token = text[after_start..]
+            .chars()
+            .next()
+            .is_some_and(is_signal_name_char);
+        !before_is_token && !after_is_token
+    })
+}
+
+fn is_signal_name_char(ch: char) -> bool {
+    ch.is_ascii_alphanumeric() || ch == '_'
 }
 
 /// Synthesize `Signal X is output.` declarations from the Drives triples in the
@@ -7248,8 +7338,52 @@ mod tests {
             relations
         );
         assert!(
+            relations.iter().any(|r| r.signal_name == "RCHUNKV"
+                && matches!(r.relation, RelationKind::Drives)
+                && r.actor_name == "interconnect"),
+            "coordinated relative-clause object parsing must keep interconnect as the RCHUNKV actor, got: {:?}",
+            relations
+        );
+        assert!(
             !relations.iter().any(|r| r.actor_name == "mixture of"),
             "descriptive phrases like `mixture of` must not become actors, got: {:?}",
+            relations
+        );
+    }
+
+    #[test]
+    fn coordinated_active_drive_object_scan_stops_before_guard_clause() {
+        use super::{
+            EvidenceModality, ExtractedStatement, RelationKind, StatementClass,
+            extract_actor_signal_relations,
+        };
+
+        let signals = ["DATA".to_string(), "AWVALID".to_string()]
+            .into_iter()
+            .collect::<std::collections::HashSet<_>>();
+        let stmts = vec![ExtractedStatement {
+            statement_id: "s7".to_string(),
+            text: "The Manager drives DATA when AWVALID is HIGH.".to_string(),
+            class: StatementClass::SignalValueConstraint,
+            modality: EvidenceModality::Text,
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }];
+
+        let relations = extract_actor_signal_relations(&stmts, &signals);
+
+        assert!(
+            relations.iter().any(|r| r.signal_name == "DATA"
+                && matches!(r.relation, RelationKind::Drives)
+                && r.actor_name == "Manager"),
+            "active object scan must keep DATA as the driven object, got: {:?}",
+            relations
+        );
+        assert!(
+            !relations.iter().any(|r| r.signal_name == "AWVALID"
+                && matches!(r.relation, RelationKind::Drives)
+                && r.actor_name == "Manager"),
+            "guard signal AWVALID must not become a driven object, got: {:?}",
             relations
         );
     }

@@ -13,8 +13,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 <!-- corpus_kb_kg_fixtures:start -->
 <!-- This block is refreshed by `specforge corpus-kb`. -->
 
-- fixtures_total: `85`
-- fixtures_passed: `85`
+- fixtures_total: `86`
+- fixtures_passed: `86`
 - fixtures_failed: `0`
 
 ### Fixture Family Summary
@@ -24,7 +24,7 @@ Fixtures can appear in more than one family because protocol semantics, modality
 | --- | ---: | ---: | ---: |
 | VLM state machines | `5` | `5` | `0` |
 | VLM timing diagrams | `7` | `7` | `0` |
-| actor connectivity | `11` | `11` | `0` |
+| actor connectivity | `12` | `12` | `0` |
 | infrastructure semantics | `3` | `3` | `0` |
 | multimodal visual grounding | `19` | `19` | `0` |
 | negative knowledge | `5` | `5` | `0` |
@@ -34,7 +34,7 @@ Fixtures can appear in more than one family because protocol semantics, modality
 | semantic role arbitration | `17` | `17` | `0` |
 | table extraction and hygiene | `8` | `8` | `0` |
 | temporal semantics | `42` | `42` | `0` |
-| truthfulness negatives and cautions | `32` | `32` | `0` |
+| truthfulness negatives and cautions | `33` | `33` | `0` |
 | typed prior memory | `21` | `21` | `0` |
 
 ### actor_boundary_residual
@@ -369,6 +369,12 @@ Fixtures can appear in more than one family because protocol semantics, modality
 
 ### non_reset_control_polarity_gold
 - fixture_path: `crates/specforge/test_data/kg_quality/non_reset_control_polarity_gold/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### relative_clause_actor_noise_negative
+- fixture_path: `crates/specforge/test_data/kg_quality/relative_clause_actor_noise_negative/fixture.json`
 - status: `pass`
 - failures:
   - none

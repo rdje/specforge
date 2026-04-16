@@ -118,6 +118,7 @@ Cross-document priors can widen actor vocabulary, but they cannot invent actors 
 
 For active prose, `specforge` also treats relative clauses as dangerous actor-noise zones.
 In text shaped like `An interconnect which connects to components with a mixture of chunking support can drive ARCHUNKEN`, the graph extractor should keep the head subject `interconnect`, not promote the descriptive phrase `mixture of` into a protocol actor.
+If that same clause says `can drive ARCHUNKEN and RCHUNKV`, both signals should inherit the same grounded head actor.
 That distinction is small but important: the graph should get cleaner because false actors are rejected, not because unresolved real actors are hidden.
 
 ## What gets filtered

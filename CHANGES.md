@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-17 (relative-clause actor-noise KG fixture)
+
+### Added: staged KG benchmark coverage for relative-clause actor hygiene
+- Added tracked fixture `relative_clause_actor_noise_negative` for AXI-style chunking prose where an interconnect with a relative clause can drive both `ARCHUNKEN` and `RCHUNKV`.
+- The fixture locks the full staged behavior through `SemanticIR` and `IntentIR`: `interconnect` must drive both chunking signals, `Manager` must read both signals, and `signal_connectivity_conflicts` must remain `0`.
+- Strengthened active object parsing so coordinated objects after an active verb are recovered from the same clause; `can drive ARCHUNKEN and RCHUNKV` now yields producer edges for both signals, not only the first one.
+- Refreshed corpus-KB KG projections so the tracked suite now reports `86` fixtures / `0` failures, actor-connectivity coverage reports `12/12`, and truthfulness-negative/caution coverage reports `33/33`.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml relative_clause_active_drive_extracts_head_subject_not_mixture_phrase -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml coordinated_active_drive_extracts_real_actor_not_payload_phrase -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml coordinated_active_drive_object_scan_stops_before_guard_clause -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality relative_clause_actor_noise_negative` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `86` passed / `0` failed fixtures
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed corpus-KB fixture projections with `86` fixtures / `0` failures
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `315` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-17 (relative-clause actor extraction hygiene)
 
 ### Fixed: active-drive prose no longer promotes descriptive relative-clause phrases into actors

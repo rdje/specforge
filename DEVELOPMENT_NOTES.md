@@ -7,6 +7,14 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 Relative-clause actor-noise KG fixture
+- This slice turns the previous extractor-level AXI chunking fix into an executable staged KG fixture.
+- `relative_clause_actor_noise_negative` proves that prose shaped like `An interconnect which connects to components with a mixture of chunking support can drive ARCHUNKEN and RCHUNKV` recovers the real head actor and keeps the descriptive phrase out of the graph.
+- The first fixture run exposed a useful second-order gap: the fake actor was gone, but the active-drive extractor only attached the head actor to the first coordinated object.
+- Active object parsing now scans the verb's current clause, so `drive ARCHUNKEN and RCHUNKV` can recover producer relations for both signals while still relying on the same sentence/relative-clause subject hygiene.
+- The fixture asserts graph direction, actor-signal relations, actor ports, zero connectivity conflicts, and validation metrics at both `SemanticIR` and `IntentIR`, so this behavior is protected beyond unit-test scope.
+- The refreshed corpus-KB projection now records the tracked suite as `86/86`, actor-connectivity coverage as `12/12`, and truthfulness-negative/caution coverage as `33/33`.
+
 ## 2026-04-17 Relative-clause actor extraction hygiene
 - This slice fixes a precision bug exposed by live AXI read-data chunking prose, not a broad score-chasing rewrite.
 - Active-drive extraction previously could search backward through a relative clause and choose `mixture of` from prose shaped like `components with a mixture of chunking support can drive ARCHUNKEN`.

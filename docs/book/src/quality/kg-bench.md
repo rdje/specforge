@@ -23,6 +23,7 @@ This lets the project protect individual truthfulness properties instead of rely
 Without fixture coverage, the pipeline can drift in subtle ways:
 
 - a false actor might quietly reappear
+- a coordinated active-drive clause might only recover the first signal
 - a semantic role might start resolving from name noise again
 - a learned prior might start overreaching
 - a table-shape rule might begin misclassifying field tables as real signal tables
@@ -97,6 +98,9 @@ Negative fixtures prove that a dangerous path stays blocked.
 
 Both are equally important.
 For a provenance-first extractor, “did not hallucinate a fact” is often just as valuable as “recovered the intended fact.”
+
+One actor-connectivity negative fixture now protects relative-clause actor hygiene directly.
+`relative_clause_actor_noise_negative` proves that AXI-style prose such as `An interconnect which connects to components with a mixture of chunking support can drive ARCHUNKEN and RCHUNKV` recovers `interconnect` as the producer for both signals, keeps `mixture of` out of the graph, and preserves zero signal-connectivity conflicts through `SemanticIR` and `IntentIR`.
 
 ## Prior-guided fixtures
 

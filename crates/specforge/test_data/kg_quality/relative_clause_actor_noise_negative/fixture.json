@@ -1,0 +1,131 @@
+{
+  "name": "relative_clause_actor_noise_negative",
+  "source": "source.md",
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["ARCHUNKEN", "RCHUNKV"],
+      "graph_direction_signal_names_include": ["ARCHUNKEN", "RCHUNKV"],
+      "actor_signal_relations_include": [
+        {
+          "actor_name": "interconnect",
+          "signal_name": "ARCHUNKEN",
+          "relation": "drives"
+        },
+        {
+          "actor_name": "interconnect",
+          "signal_name": "RCHUNKV",
+          "relation": "drives"
+        },
+        {
+          "actor_name": "Manager",
+          "signal_name": "ARCHUNKEN",
+          "relation": "reads"
+        },
+        {
+          "actor_name": "Manager",
+          "signal_name": "RCHUNKV",
+          "relation": "reads"
+        }
+      ],
+      "actor_ports_include": [
+        {
+          "actor_name": "interconnect",
+          "signal_name": "ARCHUNKEN",
+          "direction": "output"
+        },
+        {
+          "actor_name": "interconnect",
+          "signal_name": "RCHUNKV",
+          "direction": "output"
+        },
+        {
+          "actor_name": "Manager",
+          "signal_name": "ARCHUNKEN",
+          "direction": "input"
+        },
+        {
+          "actor_name": "Manager",
+          "signal_name": "RCHUNKV",
+          "direction": "input"
+        }
+      ],
+      "signal_connectivity_conflicts": 0
+    },
+    "intent": {
+      "signal_names_include": ["ARCHUNKEN", "RCHUNKV"],
+      "graph_direction_signal_names_include": ["ARCHUNKEN", "RCHUNKV"],
+      "actor_signal_relations_include": [
+        {
+          "actor_name": "interconnect",
+          "signal_name": "ARCHUNKEN",
+          "relation": "drives"
+        },
+        {
+          "actor_name": "interconnect",
+          "signal_name": "RCHUNKV",
+          "relation": "drives"
+        },
+        {
+          "actor_name": "Manager",
+          "signal_name": "ARCHUNKEN",
+          "relation": "reads"
+        },
+        {
+          "actor_name": "Manager",
+          "signal_name": "RCHUNKV",
+          "relation": "reads"
+        }
+      ],
+      "actor_ports_include": [
+        {
+          "actor_name": "interconnect",
+          "signal_name": "ARCHUNKEN",
+          "direction": "output"
+        },
+        {
+          "actor_name": "interconnect",
+          "signal_name": "RCHUNKV",
+          "direction": "output"
+        },
+        {
+          "actor_name": "Manager",
+          "signal_name": "ARCHUNKEN",
+          "direction": "input"
+        },
+        {
+          "actor_name": "Manager",
+          "signal_name": "RCHUNKV",
+          "direction": "input"
+        }
+      ],
+      "signal_connectivity_conflicts": 0
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "actor_signal_relations": "4"
+        }
+      },
+      "semantic": {
+        "finding_ids_exclude": [
+          "semantic_signal_connectivity_conflicts_present"
+        ],
+        "metric_values": {
+          "actor_signal_relations": "4",
+          "actor_ports": "4",
+          "signal_connectivity_conflicts": "0"
+        }
+      },
+      "intent": {
+        "finding_ids_exclude": [
+          "intent_signal_connectivity_conflicts_present"
+        ],
+        "metric_values": {
+          "actor_signal_relations": "4",
+          "actor_ports": "4",
+          "signal_connectivity_conflicts": "0"
+        }
+      }
+    }
+  }
+}
