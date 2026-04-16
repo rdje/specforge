@@ -52,6 +52,7 @@ The APB timing family now also includes a write-control stability path: `PWRITE`
 Its address/protection wait-state mirror checks `PADDR` and `PPROT` as Requester-owned stable outputs under the same `PSEL HIGH` / `PENABLE HIGH` / `PREADY LOW` stalled-access guard, again without promoting the wait state to handshake completion.
 Its response-stability mirror checks the completed-access side: `PRDATA` and `PSLVERR` must remain completer-owned stable outputs when `PSEL`, `PENABLE`, and `PREADY` are high, and the same rule must preserve `HandshakeComplete(PSEL, PREADY)`.
 The AHB timing family now includes a control-stability wait-state path too: `HADDR`, `HWRITE`, `HSIZE`, `HBURST`, and `HPROT` must remain manager-owned stable outputs while `HREADY` is low and `HSEL` is high, with no false handshake-completion predicate.
+Its transfer/lock mirror checks `HTRANS` and `HMASTLOCK` as manager-owned stable outputs under the same `HREADY LOW` / `HSEL HIGH` wait-state guard, proving transfer-type and locked-transfer attributes remain owned protocol obligations without promoting the stall to handshake completion.
 Its response-side mirror checks `HRDATA` and `HRESP` as subordinate-owned stable outputs under the same `HREADY LOW` / `HSEL HIGH` wait-state guard, again without promoting the stalled transfer to handshake completion.
 The write-data path adds the data-phase guard: `HWDATA` must remain manager-owned stable while `HREADY` is low, `HSEL` is high, and `HWRITE` is high, proving three-predicate wait-state stability without a false completion event.
 

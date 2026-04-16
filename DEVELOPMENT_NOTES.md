@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 AHB transfer/lock wait-state stability KG fixture
+- This slice adds focused AHB wait-state stability coverage for `HTRANS` and `HMASTLOCK`.
+- `ahb_transfer_lock_stability_gold` proves that transfer type and locked-transfer attributes survive as graph-backed Manager outputs and actor-grounded stability obligations while an AHB transfer is stalled.
+- The fixture intentionally uses `Manager signals` / `Subordinate signals` section context plus `Destination`-column tables, matching specs where AHB ownership is conveyed by table placement and destination columns.
+- The temporal expectations require `HREADY LOW` and `HSEL HIGH` antecedents with no handshake-completion predicate, preventing stalled transfer/control prose from becoming completed-transfer truth.
+- The refreshed corpus-KB projection now records the tracked suite as `84/84`, AMBA-family fixture coverage as `35/35`, and timing-family coverage as `41/41`.
+
 ## 2026-04-17 APB address/protection wait-state stability KG fixture
 - This slice adds focused APB wait-state stability coverage for `PADDR` and `PPROT`.
 - `apb_address_protection_stability_gold` proves that address and protection attributes survive as graph-backed Requester outputs and actor-grounded stability obligations while an APB access is stalled.

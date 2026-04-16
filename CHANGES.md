@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-04-17 (AHB transfer/lock stability KG fixture)
+
+### Added: AHB transfer/lock wait-state stability truthfulness fixture
+- Added tracked KG fixture `ahb_transfer_lock_stability_gold` for AHB `HTRANS` and `HMASTLOCK` hold behavior while `HREADY` is low and `HSEL` is high.
+- The fixture uses `Manager signals` / `Subordinate signals` section context plus `Name | Destination | Width | Description` tables so transfer/lock ownership is recovered from document structure rather than hardcoded signal names.
+- Each temporal rule requires the stalled-transfer antecedents and actor-grounded Manager stability while intentionally preserving `temporal_rules_with_handshake_completion: 0`, proving wait-state transfer/control attributes do not become false completed handshakes.
+- Refreshed corpus-KB KG projections so the tracked suite now reports `84` fixtures / `0` failures, AMBA-family coverage reports `35/35`, and temporal fixture coverage reports `41/41`.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality ahb_transfer_lock_stability_gold` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `84` passed / `0` failed fixtures
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed corpus-KB fixture projections with `84` fixtures / `0` failures
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `313` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-17 (APB address/protection stability KG fixture)
 
 ### Added: APB address/protection wait-state stability truthfulness fixture

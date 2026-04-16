@@ -15,14 +15,15 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 
 - source: `kg-bench fixtures`
 - selected_family_labels: `temporal semantics`, `VLM timing diagrams`
-- fixtures_total: `40`
-- fixtures_passed: `40`
+- fixtures_total: `41`
+- fixtures_passed: `41`
 - fixtures_failed: `0`
 
 | fixture | status | matched families | path |
 | --- | --- | --- | --- |
 | `ahb_control_stability_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/ahb_control_stability_gold/fixture.json` |
 | `ahb_response_stability_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/ahb_response_stability_gold/fixture.json` |
+| `ahb_transfer_lock_stability_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/ahb_transfer_lock_stability_gold/fixture.json` |
 | `ahb_wait_state_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/ahb_wait_state_timing_gold/fixture.json` |
 | `ahb_write_data_stability_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/ahb_write_data_stability_gold/fixture.json` |
 | `apb_address_protection_stability_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/apb_address_protection_stability_gold/fixture.json` |

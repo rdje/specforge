@@ -64,6 +64,7 @@
 - KG benchmark harness now includes APB write-control stability coverage: Done
 - KG benchmark harness now includes APB response stability coverage: Done
 - KG benchmark harness now includes AHB control stability coverage: Done
+- KG benchmark harness now includes AHB transfer/lock stability coverage: Done
 - KG benchmark harness now includes AHB response stability coverage: Done
 - KG benchmark harness now includes AHB write-data stability coverage: Done
 - `specforge nlp-enrich` command created: Done
@@ -159,6 +160,7 @@
 - KG benchmark harness now includes an APB write-control stability gold fixture: Done
 - KG benchmark harness now includes an APB response stability gold fixture: Done
 - KG benchmark harness now includes an AHB control stability gold fixture: Done
+- KG benchmark harness now includes an AHB transfer/lock stability gold fixture: Done
 - KG benchmark harness now includes an AHB response stability gold fixture: Done
 - KG benchmark harness now includes an AHB write-data stability gold fixture: Done
 - KG benchmark harness now includes an AXI width-only plus prose-direction gold fixture: Done
