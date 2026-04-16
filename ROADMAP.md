@@ -503,6 +503,7 @@
     - a representative AXI read-address timing gold fixture proving the same width-only plus prose actor-relation path works for `ARVALID` / `ARREADY` / `ARADDR` / `ARLEN`, including next-cycle read-address ready assertion and handshake-stable read-address payload semantics
     - a representative AXI read-address ID stability fixture proving manager-owned `ARID` remains graph-grounded and actor-owned when its stability is guarded by `ARVALID` / `ARREADY` completion
     - a representative AXI write-address ID stability fixture proving manager-owned `AWID` remains graph-grounded and actor-owned when its stability is guarded by `AWVALID` / `AWREADY` completion
+    - a representative AXI write-address control sideband stability fixture proving `AWPROT`, `AWCACHE`, and `AWLOCK` remain graph-grounded and actor-owned when their stability is guarded by `AWVALID` / `AWREADY` completion
     - a representative AXI read-address sideband stability fixture proving `ARSIZE` and `ARBURST` remain graph-grounded and actor-owned when their stability is guarded by `ARVALID` / `ARREADY` completion
     - a representative AXI read-data timing gold fixture proving the same width-only plus prose actor-relation path works for `RVALID` / `RREADY` / `RDATA` / `RRESP`, including next-cycle read-data valid assertion and handshake-stable read-data payload semantics
     - a representative AXI read-data ID stability fixture proving subordinate-owned `RID` remains graph-grounded and actor-owned when its stability is guarded by `RVALID` / `RREADY` completion

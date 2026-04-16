@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-04-16 (AXI write-address control sideband stability KG fixture)
+
+### Added: AXI write-address control sideband stability truthfulness fixture
+- Added tracked KG fixture `axi_write_address_control_sideband_stability_gold` for AXI write-address control sideband hold behavior across `AWPROT`, `AWCACHE`, and `AWLOCK` with width-only `Name | Width | Description` table evidence plus prose actor relations.
+- The fixture locks `AWVALID`, `AWREADY`, `AWPROT`, `AWCACHE`, and `AWLOCK` through graph-backed actor relations, actor-relative ports, resolved `AWVALID` / `AWREADY` semantic roles, and three manager-grounded temporal stability rules.
+- Each temporal rule requires `HandshakeComplete(AWVALID, AWREADY)` and actor-grounded stability for the sideband subject, extending write-address coverage beyond burst length/size/type and transaction ID into protection, cache, and lock attributes.
+- Refreshed corpus-KB KG projections so the tracked suite now reports `78` fixtures / `0` failures, AMBA-family coverage reports `29/29`, and temporal fixture coverage reports `35/35`.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality axi_write_address_control_sideband_stability_gold` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `78` passed / `0` failed fixtures
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed corpus-KB fixture projections with `78` fixtures / `0` failures
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `313` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-16 (AXI read-address ID stability KG fixture)
 
 ### Added: AXI read-address ID stability truthfulness fixture

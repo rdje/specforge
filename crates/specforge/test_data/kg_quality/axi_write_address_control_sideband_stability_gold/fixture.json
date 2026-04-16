@@ -1,0 +1,289 @@
+{
+  "name": "axi_write_address_control_sideband_stability_gold",
+  "source": "source.md",
+  "source_ir_patch": {
+    "structured_tables": [
+      {
+        "table_id": "table_axi_write_address_control_sideband_stability",
+        "asset_id": "table_axi_write_address_control_sideband_stability",
+        "page_id": null,
+        "caption_text": "AXI write-address control sideband stability signals",
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            { "text": "Name", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Width", "row_span": 1, "col_span": 1, "is_header": true },
+            { "text": "Description", "row_span": 1, "col_span": 1, "is_header": true }
+          ]
+        ],
+        "body_rows": [
+          [
+            { "text": "AWVALID", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Indicates that write address control sideband information is valid for transfer.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "AWREADY", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Indicates that the subordinate can accept the write address control transfer.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "AWPROT", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "3", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Write protection sideband field.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "AWCACHE", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "4", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Write cache attribute sideband field.", "row_span": 1, "col_span": 1, "is_header": false }
+          ],
+          [
+            { "text": "AWLOCK", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "1", "row_span": 1, "col_span": 1, "is_header": false },
+            { "text": "Write exclusive access sideband field.", "row_span": 1, "col_span": 1, "is_header": false }
+          ]
+        ],
+        "row_count": 5,
+        "col_count": 3
+      }
+    ]
+  },
+  "evidence_ir_patch": {
+    "signal_constraints": [
+      {
+        "constraint_id": "sigcon_axi_awprot_handshake_hold",
+        "subject_signal": "AWPROT",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when AWVALID is HIGH and AWREADY is HIGH",
+        "negated": false,
+        "source_text": "AWPROT must not change when AWVALID is HIGH and AWREADY is HIGH.",
+        "supporting_statement_ids": ["stmt_axi_awprot_handshake_hold"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_axi_awcache_handshake_hold",
+        "subject_signal": "AWCACHE",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when AWVALID is HIGH and AWREADY is HIGH",
+        "negated": false,
+        "source_text": "AWCACHE must not change when AWVALID is HIGH and AWREADY is HIGH.",
+        "supporting_statement_ids": ["stmt_axi_awcache_handshake_hold"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_axi_awlock_handshake_hold",
+        "subject_signal": "AWLOCK",
+        "constraint_kind": { "kind": "must_not_change" },
+        "target_value": null,
+        "condition_text": "when AWVALID is HIGH and AWREADY is HIGH",
+        "negated": false,
+        "source_text": "AWLOCK must not change when AWVALID is HIGH and AWREADY is HIGH.",
+        "supporting_statement_ids": ["stmt_axi_awlock_handshake_hold"],
+        "automation_confidence": "medium"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["AWVALID", "AWREADY", "AWPROT", "AWCACHE", "AWLOCK"],
+      "actor_signal_relations_include": [
+        { "actor_name": "Manager", "signal_name": "AWVALID", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "AWVALID", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "AWREADY", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "AWREADY", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "AWPROT", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "AWPROT", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "AWCACHE", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "AWCACHE", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "AWLOCK", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "AWLOCK", "relation": "reads" }
+      ],
+      "actor_ports_include": [
+        { "actor_name": "Manager", "signal_name": "AWVALID", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "AWVALID", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "AWREADY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "AWREADY", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "AWPROT", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "AWPROT", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "AWCACHE", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "AWCACHE", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "AWLOCK", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "AWLOCK", "direction": "input" }
+      ],
+      "resolved_semantic_roles_include": [
+        { "signal_name": "AWVALID", "role": "handshake_valid_like" },
+        { "signal_name": "AWREADY", "role": "handshake_ready_like" }
+      ],
+      "semantic_grounding_strengths_include": [
+        { "signal_name": "AWVALID", "strength": "single_source" },
+        { "signal_name": "AWREADY", "strength": "single_source" }
+      ],
+      "semantic_consensus_signal_names_include": ["AWVALID", "AWREADY"],
+      "temporal_rule_count": 3,
+      "temporal_rules_with_handshake_completion": 3,
+      "temporal_rules_include": [
+        {
+          "source_text": "AWPROT must not change when AWVALID is HIGH and AWREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_awprot_handshake_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "AWVALID", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "AWREADY", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "handshake_complete", "valid_signal": "AWVALID", "ready_signal": "AWREADY", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            { "kind": "actor_maintains_signal_stable", "actor_name": "Manager", "signal_name": "AWPROT", "from_phase": "pre_tick", "to_phase": "post_tick" },
+            { "kind": "signal_stable", "signal_name": "AWPROT", "from_phase": "pre_tick", "to_phase": "post_tick" }
+          ]
+        },
+        {
+          "source_text": "AWCACHE must not change when AWVALID is HIGH and AWREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_awcache_handshake_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "AWVALID", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "AWREADY", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "handshake_complete", "valid_signal": "AWVALID", "ready_signal": "AWREADY", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            { "kind": "actor_maintains_signal_stable", "actor_name": "Manager", "signal_name": "AWCACHE", "from_phase": "pre_tick", "to_phase": "post_tick" },
+            { "kind": "signal_stable", "signal_name": "AWCACHE", "from_phase": "pre_tick", "to_phase": "post_tick" }
+          ]
+        },
+        {
+          "source_text": "AWLOCK must not change when AWVALID is HIGH and AWREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_awlock_handshake_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "AWVALID", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "AWREADY", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "handshake_complete", "valid_signal": "AWVALID", "ready_signal": "AWREADY", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            { "kind": "actor_maintains_signal_stable", "actor_name": "Manager", "signal_name": "AWLOCK", "from_phase": "pre_tick", "to_phase": "post_tick" },
+            { "kind": "signal_stable", "signal_name": "AWLOCK", "from_phase": "pre_tick", "to_phase": "post_tick" }
+          ]
+        }
+      ]
+    },
+    "intent": {
+      "signal_names_include": ["AWVALID", "AWREADY", "AWPROT", "AWCACHE", "AWLOCK"],
+      "actor_signal_relations_include": [
+        { "actor_name": "Manager", "signal_name": "AWVALID", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "AWVALID", "relation": "reads" },
+        { "actor_name": "Subordinate", "signal_name": "AWREADY", "relation": "drives" },
+        { "actor_name": "Manager", "signal_name": "AWREADY", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "AWPROT", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "AWPROT", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "AWCACHE", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "AWCACHE", "relation": "reads" },
+        { "actor_name": "Manager", "signal_name": "AWLOCK", "relation": "drives" },
+        { "actor_name": "Subordinate", "signal_name": "AWLOCK", "relation": "reads" }
+      ],
+      "actor_ports_include": [
+        { "actor_name": "Manager", "signal_name": "AWVALID", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "AWVALID", "direction": "input" },
+        { "actor_name": "Subordinate", "signal_name": "AWREADY", "direction": "output" },
+        { "actor_name": "Manager", "signal_name": "AWREADY", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "AWPROT", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "AWPROT", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "AWCACHE", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "AWCACHE", "direction": "input" },
+        { "actor_name": "Manager", "signal_name": "AWLOCK", "direction": "output" },
+        { "actor_name": "Subordinate", "signal_name": "AWLOCK", "direction": "input" }
+      ],
+      "resolved_semantic_roles_include": [
+        { "signal_name": "AWVALID", "role": "handshake_valid_like" },
+        { "signal_name": "AWREADY", "role": "handshake_ready_like" }
+      ],
+      "semantic_grounding_strengths_include": [
+        { "signal_name": "AWVALID", "strength": "single_source" },
+        { "signal_name": "AWREADY", "strength": "single_source" }
+      ],
+      "semantic_consensus_signal_names_include": ["AWVALID", "AWREADY"],
+      "temporal_rule_count": 3,
+      "temporal_rules_with_handshake_completion": 3,
+      "temporal_rules_include": [
+        {
+          "source_text": "AWPROT must not change when AWVALID is HIGH and AWREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_awprot_handshake_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "AWVALID", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "AWREADY", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "handshake_complete", "valid_signal": "AWVALID", "ready_signal": "AWREADY", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            { "kind": "actor_maintains_signal_stable", "actor_name": "Manager", "signal_name": "AWPROT", "from_phase": "pre_tick", "to_phase": "post_tick" },
+            { "kind": "signal_stable", "signal_name": "AWPROT", "from_phase": "pre_tick", "to_phase": "post_tick" }
+          ]
+        },
+        {
+          "source_text": "AWCACHE must not change when AWVALID is HIGH and AWREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_awcache_handshake_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "AWVALID", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "AWREADY", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "handshake_complete", "valid_signal": "AWVALID", "ready_signal": "AWREADY", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            { "kind": "actor_maintains_signal_stable", "actor_name": "Manager", "signal_name": "AWCACHE", "from_phase": "pre_tick", "to_phase": "post_tick" },
+            { "kind": "signal_stable", "signal_name": "AWCACHE", "from_phase": "pre_tick", "to_phase": "post_tick" }
+          ]
+        },
+        {
+          "source_text": "AWLOCK must not change when AWVALID is HIGH and AWREADY is HIGH.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_axi_awlock_handshake_hold"],
+          "antecedents_include": [
+            { "kind": "signal_value", "signal_name": "AWVALID", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "signal_value", "signal_name": "AWREADY", "value": "HIGH", "phase": "pre_tick" },
+            { "kind": "handshake_complete", "valid_signal": "AWVALID", "ready_signal": "AWREADY", "phase": "pre_tick" }
+          ],
+          "consequents_include": [
+            { "kind": "actor_maintains_signal_stable", "actor_name": "Manager", "signal_name": "AWLOCK", "from_phase": "pre_tick", "to_phase": "post_tick" },
+            { "kind": "signal_stable", "signal_name": "AWLOCK", "from_phase": "pre_tick", "to_phase": "post_tick" }
+          ]
+        }
+      ]
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "actor_signal_relations": "10",
+          "signal_constraints": "3",
+          "signal_semantic_hints": "2",
+          "signal_semantic_hints_from_tables": "2"
+        }
+      },
+      "semantic": {
+        "metric_values": {
+          "actor_ports": "10",
+          "temporal_rules": "3",
+          "temporal_rules_with_handshake_completion": "3",
+          "temporal_rules_with_actor_grounding": "3",
+          "temporal_rules_with_multi_predicate_antecedents": "3"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "actor_ports": "10",
+          "temporal_rules": "3",
+          "temporal_rules_with_handshake_completion": "3",
+          "temporal_rules_with_actor_grounding": "3",
+          "temporal_rules_with_multi_predicate_antecedents": "3"
+        }
+      }
+    }
+  }
+}

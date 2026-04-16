@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-16 AXI write-address control sideband stability KG fixture
+- This slice extends write-address sideband stability coverage from burst geometry and transaction identity into control attributes: `AWPROT`, `AWCACHE`, and `AWLOCK`.
+- `axi_write_address_control_sideband_stability_gold` proves those sidebands survive as graph-backed Manager outputs and actor-grounded stability obligations under the controlling `AWVALID` / `AWREADY` handshake.
+- The fixture intentionally stays width-only at the table level and relies on prose actor relations for direction, matching real AXI tables where ownership is often implied by channel context rather than repeated in every row.
+- The temporal expectations require `HandshakeComplete(AWVALID, AWREADY)` and Manager-grounded `actor_maintains_signal_stable` consequents for all three control sidebands, preventing these fields from being treated as inert inventory.
+- The refreshed corpus-KB projection now records the tracked suite as `78/78`, AMBA-family fixture coverage as `29/29`, and timing-family coverage as `35/35`.
+
 ## 2026-04-16 AXI read-address ID stability KG fixture
 - This slice completes the current explicit AXI transaction-ID stability quartet by adding `ARID` beside `AWID`, `BID`, and `RID`.
 - `axi_read_address_id_stability_gold` proves that `ARID` survives as a graph-backed Manager output and actor-grounded stability obligation under the controlling `ARVALID` / `ARREADY` handshake.
