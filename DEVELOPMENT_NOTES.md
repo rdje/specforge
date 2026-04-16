@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-16 AXI read-address ID stability KG fixture
+- This slice completes the current explicit AXI transaction-ID stability quartet by adding `ARID` beside `AWID`, `BID`, and `RID`.
+- `axi_read_address_id_stability_gold` proves that `ARID` survives as a graph-backed Manager output and actor-grounded stability obligation under the controlling `ARVALID` / `ARREADY` handshake.
+- The fixture intentionally keeps the table width-only and relies on prose actor relations for direction, matching real AXI tables where ID ownership is often implied by channel-level prose rather than repeated in every table row.
+- The temporal expectation requires `HandshakeComplete(ARVALID, ARREADY)` and a Manager-grounded `actor_maintains_signal_stable` consequent, ensuring read-address transaction identity is treated as a stable protocol fact rather than inert table inventory.
+- The refreshed corpus-KB projection now records the tracked suite as `77/77`, AMBA-family fixture coverage as `28/28`, and timing-family coverage as `34/34`.
+
 ## 2026-04-16 AXI write-address ID stability KG fixture
 - This slice extends explicit AXI transaction-ID sideband coverage onto the write-address channel with `AWID`.
 - `axi_write_address_id_stability_gold` proves that `AWID` survives as a graph-backed Manager output and actor-grounded stability obligation under the controlling `AWVALID` / `AWREADY` handshake.

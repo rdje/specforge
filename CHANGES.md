@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-04-16 (AXI read-address ID stability KG fixture)
+
+### Added: AXI read-address ID stability truthfulness fixture
+- Added tracked KG fixture `axi_read_address_id_stability_gold` for AXI read-address `ARID` hold behavior with width-only `Name | Width | Description` table evidence plus prose actor relations.
+- The fixture locks `ARVALID`, `ARREADY`, and `ARID` through graph-backed actor relations, actor-relative ports, resolved `ARVALID` / `ARREADY` semantic roles, and one manager-grounded temporal stability rule.
+- The temporal rule requires `HandshakeComplete(ARVALID, ARREADY)` and actor-grounded stability for `ARID`, completing explicit transaction-ID stability coverage across AXI address, response, and read-data channels.
+- Refreshed corpus-KB KG projections so the tracked suite now reports `77` fixtures / `0` failures, AMBA-family coverage reports `28/28`, and temporal fixture coverage reports `34/34`.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality axi_read_address_id_stability_gold` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `77` passed / `0` failed fixtures
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed corpus-KB fixture projections with `77` fixtures / `0` failures
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `313` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-16 (AXI write-address ID stability KG fixture)
 
 ### Added: AXI write-address ID stability truthfulness fixture
