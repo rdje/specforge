@@ -52,6 +52,7 @@
 - KG benchmark harness now includes AXI sideband stability coverage: Done
 - KG benchmark harness now includes AXI write-address sideband stability coverage: Done
 - KG benchmark harness now includes AXI read-data last stability coverage: Done
+- KG benchmark harness now includes AXI write-data last stability coverage: Done
 - KG benchmark harness now includes APB write-control stability coverage: Done
 - KG benchmark harness now includes APB response stability coverage: Done
 - KG benchmark harness now includes AHB control stability coverage: Done

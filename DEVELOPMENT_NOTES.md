@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-16 AXI write-data last stability KG fixture
+- This slice mirrors the prior `RLAST` coverage on the write-data channel by focusing on `WLAST`, the manager-driven write burst last-beat indicator.
+- `axi_write_data_last_stability_gold` proves that `WLAST` survives as a graph-backed Manager output and actor-grounded stability obligation under the controlling `WVALID` / `WREADY` handshake.
+- The fixture intentionally stays width-only at the table level and relies on prose actor relations for direction, matching real AXI tables where ownership is often stated outside the signal table itself.
+- The temporal expectation requires `HandshakeComplete(WVALID, WREADY)` and a Manager-grounded `actor_maintains_signal_stable` consequent, giving the suite a paired read/write last-beat sideband stability check.
+- The refreshed corpus-KB projection now records the tracked suite as `71/71`, AMBA-family fixture coverage as `22/22`, and timing-family coverage as `28/28`.
+
 ## 2026-04-16 AXI read-data last stability KG fixture
 - This slice adds the subordinate-owned side of AXI sideband stability by focusing on `RLAST`, the read-data last-beat indicator.
 - `axi_read_data_last_stability_gold` proves that `RLAST` survives as a graph-backed Subordinate output and actor-grounded stability obligation under the controlling `RVALID` / `RREADY` handshake.
