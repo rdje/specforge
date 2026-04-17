@@ -218,7 +218,8 @@
           "total_signal_records": "3",
           "with_resolved_direction": "3",
           "with_graph_direction": "0",
-          "with_compat_direction_hint": "3"
+          "with_compat_direction_hint": "3",
+          "with_table_support": "3"
         }
       },
       "intent": {
@@ -226,7 +227,8 @@
           "declared_signal_records": "3",
           "with_resolved_direction": "3",
           "with_graph_direction": "0",
-          "with_compat_direction_hint": "3"
+          "with_compat_direction_hint": "3",
+          "with_table_support": "3"
         }
       }
     }

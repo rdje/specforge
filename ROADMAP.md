@@ -188,6 +188,7 @@
   - `specforge rescan-plan [--execute]` now consumes that schema-v2 plan through a dry-run-by-default, whitelisted in-process executor surface with before/after validation changed/no-change status and persisted execution summaries
   - those execution summaries now include explicit not-promoted gates, blockers, and structured `promotion_review` requirements, so possible-improvement validation deltas stay review signals instead of canonical truth mutations
   - `promotion_review` is now documented as a review-requirement descriptor rather than an approval artifact; future approval artifacts stay local/generated unless a deliberate canonical IR mutation workflow also defines tracked approval evidence
+  - `specforge validate` now reports `with_table_support` for `SemanticIR` and `IntentIR`, exposing how many canonical signal records remain backed by structured `SourceIR` tables without treating that metric as a truth-authoring shortcut
 - remaining:
   - extend validation into the upcoming semantic-truthfulness surfaces (temporal rules, arbitration/conflict records, and KG-quality benchmarks)
   - design tracked approval evidence only if canonical IR mutation is explicitly introduced later
@@ -556,6 +557,7 @@
   - fixture expectations can now assert canonical actor-signal relations directly, so the harness can lock `Drives` versus `Reads` semantics instead of relying only on actor-port projections or relation counts
   - fixture expectations can now assert canonical signal-inventory exclusions directly via `signal_names_exclude`, so negative fixtures can prove document/integration terms such as `PDF`, `VIP`, `PLL`, `DFT`, and `SoC` do not become fake interface signals
   - fixture expectations can now assert canonical signal table provenance directly via `signal_supporting_table_ids_include`, so table-authority fixtures prove recovered interface signals remain tied to their originating structured table ids
+  - the table-authority fixture also asserts persisted `with_table_support` validation metrics at `SemanticIR` and `IntentIR`, so table-backed signal coverage is locked as a user-visible validator surface as well as exact canonical provenance
   - fixture expectations can now assert graph-backed direction coverage by signal name directly via `graph_direction_signal_names_include` / `graph_direction_signal_names_exclude`, keeping graph-native coverage checks separate from flat compatibility `direction_hint` assertions
   - fixture inputs can now also patch `SourceIR.document_sections`, and fixture expectations can assert per-signal canonical direction directly, so section-heading-driven protocol-family direction recovery is benchmarkable instead of living only in unit tests
   - fixture expectations can now assert canonical semantic candidates plus decisive vs non-decisive semantic arbitration directly, so the benchmark harness checks the truth-model state itself rather than only downstream residual/finding side effects

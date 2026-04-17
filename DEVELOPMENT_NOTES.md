@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 Validation reports table-backed signal coverage
+- Follow-on to the canonical `supporting_table_ids` carry-through: `specforge validate` now reports `with_table_support` for `SemanticIR` and `IntentIR`.
+- This metric is intentionally diagnostic, not authoring:
+  - it counts canonical signals that still have non-empty `supporting_table_ids`
+  - it does not infer new facts, fix missing provenance, or promote table evidence by itself
+  - exact per-signal provenance remains locked through `kg-bench` expectations such as `signal_supporting_table_ids_include`
+- Semantic-stage counting walks all interface signal records.
+- Intent-stage counting walks declared, non-`Low` signal records, matching the other IntentIR declared-signal coverage metrics.
+- `signal_table_inventory_authority_negative` now asserts `with_table_support: 3` at both canonical stages, so the validation surface proves the three table-authored signals are visible as a table-backed inventory family, while the canonical expectations still prove `XREQ`, `XACK`, and `PAYLOAD` each carry `table_protocol_signal_description`.
+- Focused and full `kg-bench` validation passed with `89/89` fixtures, `corpus-kb` refresh passed with `89` fixtures / `0` failures and no tracked content drift, and full local CI passed with `319` Rust tests plus the mdBook build.
+
 ## 2026-04-17 README bootstrap continuity sync
 - Executed the README handoff path after `bb1def0`.
 - `SESSION_BOOTSTRAP.md` still instructs a future agent to read the referenced docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if needed, and continue from the roadmap.

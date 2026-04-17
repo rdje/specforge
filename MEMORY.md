@@ -22,19 +22,23 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `bb1def0`
-- latest_commit_brief_message: `feat(ir): carry signal table provenance`
-- note: README bootstrap confirmed the provenance slice is now committed and the remaining immediate continuity work is to continue from the roadmap without treating that slice as in-flight
+- latest_commit_hash: `2014352`
+- latest_commit_brief_message: `docs: sync README bootstrap baseline`
+- note: current follow-on work adds a validation coverage metric for table-backed canonical signals; do not treat the prior signal-table provenance slice as in-flight
 
 ## Recent commit chain (last 5)
+- `2014352` docs: sync README bootstrap baseline
 - `bb1def0` feat(ir): carry signal table provenance
 - `e96ebe1` test(kg): lock signal table inventory authority
 - `664f2a5` test(kg): add signal inventory exclusions
 - `4aa4183` test(kg): lock clock reset contract scope
-- `5d49cdb` docs(clock-reset): clarify protocol PDF scope
 
 ## Current repository state
 - active workspace member: `crates/specforge`
+- current validation follow-on adds `with_table_support` to `SemanticIR` and `IntentIR` validation metrics, counting canonical signal records that still carry non-empty `supporting_table_ids`
+- the metric is coverage/explainability only: it does not author truth, while `kg-bench` still asserts exact signal-to-table provenance with `signal_supporting_table_ids_include`
+- `signal_table_inventory_authority_negative` now requires `with_table_support: 3` at both canonical stages, matching `XREQ`, `XACK`, and `PAYLOAD`
+- focused `kg-bench`, full tracked `kg-bench`, and `corpus-kb --kg-fixtures-root` have passed locally for this follow-on with `89/89` fixtures and no tracked corpus-KB content drift; docs CI and full local CI are part of the final commit gate
 - latest committed IR/KG-quality slice promotes signal-table provenance into canonical interface signal records
 - `EvidenceIR` now records `table_signal_declaration_provenance` for formal declarations synthesized from `SourceIR.structured_tables`
 - `SemanticIR` now maps those synthesized statement ids back to table ids and stores them on `InterfaceSignalRecord.supporting_table_ids`; `IntentIR` inherits the same canonical signal provenance

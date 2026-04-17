@@ -1816,6 +1816,12 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         .flat_map(|i| &i.signal_records)
         .filter(|s| s.width_hint.is_some())
         .count();
+    let with_table_support: usize = ir
+        .interfaces
+        .iter()
+        .flat_map(|i| &i.signal_records)
+        .filter(|s| !s.supporting_table_ids.is_empty())
+        .count();
     let with_resolved_polarity = interface_signals_with_resolved_polarity_count(&ir.interfaces);
     let with_semantic_tags = interface_signals_with_semantic_tags_count(&ir.interfaces);
     let semantic_observations = interface_signal_semantic_observations_count(&ir.interfaces);
@@ -1942,10 +1948,16 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     } else {
         0
     };
+    let table_support_pct = if total_signals > 0 {
+        with_table_support * 100 / total_signals
+    } else {
+        0
+    };
     println!("  with_resolved_direction: {with_direction} ({dir_pct}%)");
     println!("  with_graph_direction: {with_graph_direction} ({graph_dir_pct}%)");
     println!("  with_compat_direction_hint: {with_compat_direction_hint} ({compat_dir_pct}%)");
     println!("  with_width: {with_width} ({w_pct}%)");
+    println!("  with_table_support: {with_table_support} ({table_support_pct}%)");
     println!("  with_resolved_polarity: {with_resolved_polarity}");
     println!("  with_semantic_tags: {with_semantic_tags}");
     println!("  semantic_candidates: {semantic_candidates}");
@@ -2567,6 +2579,7 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 with_compat_direction_hint.to_string(),
             ),
             metric("with_width", with_width.to_string()),
+            metric("with_table_support", with_table_support.to_string()),
             metric("with_resolved_polarity", with_resolved_polarity.to_string()),
             metric("with_semantic_tags", with_semantic_tags.to_string()),
             metric("semantic_candidates", semantic_candidates.to_string()),
@@ -2832,6 +2845,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         .filter(|s| matches!(s.width_hint, Some(WidthHint::Parametric(_))))
         .count();
     let with_width = with_numeric_width + with_parametric_width;
+    let with_table_support = declared_signals
+        .iter()
+        .filter(|s| !s.supporting_table_ids.is_empty())
+        .count();
     let with_resolved_polarity = interface_signals_with_resolved_polarity_count(&ir.interfaces);
     let with_semantic_tags = interface_signals_with_semantic_tags_count(&ir.interfaces);
     let semantic_observations = interface_signal_semantic_observations_count(&ir.interfaces);
@@ -2943,6 +2960,11 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     } else {
         0
     };
+    let table_support_pct = if declared_count > 0 {
+        with_table_support * 100 / declared_count
+    } else {
+        0
+    };
     println!("  declared_signal_records: {declared_count}");
     println!("  heuristic_signal_records (excluded from coverage): {heuristic_signals}");
     println!("  with_resolved_direction: {with_direction} ({dir_pct}%)");
@@ -2951,6 +2973,7 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     println!(
         "  with_width: {with_width} ({w_pct}%) [{with_numeric_width} numeric, {with_parametric_width} parametric]"
     );
+    println!("  with_table_support: {with_table_support} ({table_support_pct}%)");
     println!("  with_resolved_polarity: {with_resolved_polarity}");
     println!("  with_semantic_tags: {with_semantic_tags}");
     println!("  semantic_candidates: {semantic_candidates}");
@@ -3637,6 +3660,7 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 with_compat_direction_hint.to_string(),
             ),
             metric("with_width", with_width.to_string()),
+            metric("with_table_support", with_table_support.to_string()),
             metric("with_resolved_polarity", with_resolved_polarity.to_string()),
             metric("with_semantic_tags", with_semantic_tags.to_string()),
             metric("semantic_candidates", semantic_candidates.to_string()),

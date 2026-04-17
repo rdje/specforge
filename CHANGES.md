@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-17 (signal table support validation metric)
+
+### Added: validator now reports table-backed signal coverage
+- Added `with_table_support` to `specforge validate` for `SemanticIR` and `IntentIR`.
+- The semantic-stage metric counts canonical interface signal records whose `supporting_table_ids` are non-empty.
+- The intent-stage metric counts non-`Low` declared signal records whose `supporting_table_ids` are non-empty.
+- This is a coverage and explainability metric only: table support helps users see whether recovered signals remain tied to structured `SourceIR` tables, while `kg-bench` per-signal expectations still lock the exact provenance shape.
+- Hardened `signal_table_inventory_authority_negative` so its validation sidecar now requires `with_table_support: 3` at both `SemanticIR` and `IntentIR`, matching the three table-authored canonical signals `XREQ`, `XACK`, and `PAYLOAD`.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality signal_table_inventory_authority_negative` -> passed
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `89` passed / `0` failed fixtures
+- `cargo run -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed with `89` fixtures / `0` failures and no tracked corpus-KB content drift
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `319` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-17 (README bootstrap continuity sync)
 
 ### Fixed: post-commit memory baseline no longer describes completed provenance work as in-flight

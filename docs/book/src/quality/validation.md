@@ -19,6 +19,7 @@ It measures things like:
 
 - declared-signal direction coverage
 - graph-derived direction coverage
+- table-backed signal coverage
 - width coverage
 - temporal rule cycle-window grounding
 - temporal rule actor grounding
@@ -46,6 +47,10 @@ That matters because:
 - a score can stay flat while the artifact becomes more truthful
 - a score can even go down when the pipeline stops cheating
 - removing false structure is often a real improvement, even if a coarse coverage metric gets stricter
+
+One useful example is `with_table_support` on `SemanticIR` and `IntentIR`.
+It reports how many canonical signal records still carry `supporting_table_ids` from structured `SourceIR` tables.
+That number is a coverage and explainability signal, not a new truth source: exact signal-to-table provenance is still checked by canonical IR shape and benchmark expectations.
 
 So the right way to read a validation result is:
 

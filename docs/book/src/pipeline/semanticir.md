@@ -64,6 +64,7 @@ The same rule applies to polarity-only co-mentions of declared signals: `CS_N an
 
 Declared signal records also keep table support when the declaration was synthesized from a structured signal table.
 `InterfaceSignalRecord.supporting_table_ids` records the `SourceIR` table ids that backed the declaration, so `SemanticIR` and the carried `IntentIR` can explain that a canonical signal came from a specific signal-description table rather than from free-floating prose.
+`specforge validate` reports this as `with_table_support`, giving users a compact coverage view while leaving exact signal-to-table correctness to canonical IR inspection and `kg-bench` expectations.
 
 ### Negative-knowledge cautions
 

@@ -44,6 +44,7 @@ The expected result is intentionally sharp: `XREQ`, `XACK`, and `PAYLOAD` become
 Fixtures can also assert table provenance for canonical interface signals.
 `signal_supporting_table_ids_include` checks `InterfaceSignalRecord.supporting_table_ids`, proving that a recovered signal remains tied to the structured `SourceIR` table that authored its synthesized declaration.
 That matters for signal-table-heavy protocol PDFs: the pipeline should be able to explain that `XREQ` came from a specific signal-description table, not merely that a synthetic `Signal XREQ is output` sentence happened to exist somewhere downstream.
+The same fixture family can also assert persisted validation metrics such as `with_table_support`, so the user-visible validator surface stays aligned with the exact canonical provenance checks.
 
 Actor-relative direction is a graph surface, not just a flat signal annotation.
 
