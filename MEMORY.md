@@ -22,19 +22,21 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `8101034`
-- latest_commit_brief_message: `docs(fsmgen): capture adapter feedback`
-- note: the current session is reframing FSMGEN feedback around IntentIR-aligned `.fsm` language evolution, not only validation tooling
+- latest_commit_hash: `63b3d94`
+- latest_commit_brief_message: `docs(fsmgen): align feedback with IntentIR lowering`
+- note: the current session is making the FSMGEN feedback self-contained by explicitly introducing SPECFORGE, its staged IR pipeline, and why `.fsm` matters as a downstream adapter target
 
 ## Recent commit chain (last 5)
+- `63b3d94` docs(fsmgen): align feedback with IntentIR lowering
 - `8101034` docs(fsmgen): capture adapter feedback
 - `e374a25` fix(adapters): derive direct inputs from control reads
 - `1a8c424` fix(adapters): select direct target actor from graph outputs
 - `14d6496` test(evidence): lock coordinated active reads
-- `4cb4b53` fix(evidence): recover coordinated active-drive objects
 
 ## Current repository state
 - active workspace member: `crates/specforge`
+- `docs/FSMGEN_FEEDBACK.md` now includes a self-contained `What SPECFORGE Is` section explaining SPECFORGE as a Rust toolchain for recovering typed implementation intent from chip-design specs through `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+- the same handoff now explicitly says `IntentIR` is the backend-independent product, `.fsm` is one downstream adapter target, and FSMGEN matters because `.fsm` can become the most natural high-level lowering format for recovered control intent
 - `docs/FSMGEN_FEEDBACK.md` has been expanded so FSMGEN-facing feedback is explicitly about making `.fsm` a natural lowering format for SPECFORGE `IntentIR`, not only about machine-checkable validation hooks
 - the IntentIR-aligned `.fsm` feature suggestions now include first-class clock/reset/system contracts, actor-relative port semantics, interface/channel grouping, temporal/stability contracts, semantic signal roles, generated assumptions/residual/provenance metadata, explicit direct-module root shape, and contract-aware composition
 - the support/tooling suggestions remain as executable contract surfaces: machine-readable capability manifest, JSON check diagnostics, normalized AST/IR export, stable diagnostic codes, and adapter-facing examples

@@ -12,6 +12,37 @@ The goal is narrower and cooperative: help `.fsm` become a natural, precise lowe
 This feedback is therefore not only about validation tooling.
 It is also about language features and orientation that would let FSMGEN represent more of the typed hardware intent that SPECFORGE recovers.
 
+## What SPECFORGE Is
+
+SPECFORGE is a Rust toolchain for recovering typed implementation intent from chip-design specifications, especially PDFs.
+
+Its core pipeline is:
+
+```text
+SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters
+```
+
+The central product is `IntentIR`.
+That artifact is meant to be backend-independent, provenance-aware, and honest about uncertainty.
+It captures the strongest design intent SPECFORGE can justify from source evidence:
+
+- actors and responsibilities
+- interfaces and signal inventory
+- actor-relative port/connectivity facts
+- clock/reset/system contracts
+- reset polarity and timing semantics
+- control/state behavior
+- typed temporal and stability rules
+- assumptions, residual decisions, and conflicts
+
+SPECFORGE is not trying to make `.fsm` the only product boundary.
+Instead, `.fsm` is one downstream adapter target, alongside future SystemVerilog, Verilog, and VHDL targets.
+
+The reason SPECFORGE cares deeply about FSMGEN is that `.fsm` can become the most natural high-level lowering format for recovered control intent.
+If FSMGEN evolves `.fsm` in ways that align with the typed facts above, SPECFORGE can emit `.fsm` that preserves more real source intent instead of flattening it into comments, lossy HDL, or blocked adapter residuals.
+
+So this feedback is written from the perspective of a tool that wants to lower honest `IntentIR` into a strong `.fsm` language, not from the perspective of a tool asking FSMGEN to contort itself around arbitrary output text.
+
 Last SPECFORGE submodule sync reviewed:
 
 - FSMGEN old baseline: `57f00e5`

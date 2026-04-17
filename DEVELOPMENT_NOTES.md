@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 FSMGEN feedback now introduces SPECFORGE
+- `docs/FSMGEN_FEEDBACK.md` now has a self-contained `What SPECFORGE Is` section so FSMGEN can read the handoff without needing prior project context.
+- The section presents SPECFORGE as a Rust toolchain for recovering typed implementation intent from chip-design specs, especially PDFs.
+- It spells out the staged pipeline as `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`, names `IntentIR` as the backend-independent product, and explains that `.fsm` is one downstream adapter target rather than the sole product boundary.
+- The important framing for FSMGEN is now explicit: SPECFORGE cares about FSMGEN because `.fsm` can become the most natural high-level lowering format for recovered control intent if the language evolves to preserve common `IntentIR` facts directly.
+
 ## 2026-04-17 FSMGEN feedback reframed around IntentIR-aligned `.fsm`
 - The FSMGEN feedback needed a course correction: validation/check tooling is useful, but the deeper ask is for `.fsm` to become a natural lowering surface for SPECFORGE's captured `IntentIR`.
 - `docs/FSMGEN_FEEDBACK.md` now separates two layers:

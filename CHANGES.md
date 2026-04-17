@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-04-17 (FSMGEN feedback introduces SPECFORGE explicitly)
+
+### Clarified: FSMGEN handoff can be read without prior SPECFORGE context
+- Added a `What SPECFORGE Is` section to `docs/FSMGEN_FEEDBACK.md`.
+- The feedback now introduces SPECFORGE as a Rust toolchain that recovers typed implementation intent from chip-design specs through `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`.
+- The note now states that `IntentIR` is the backend-independent product and `.fsm` is one downstream adapter target, with FSMGEN important because `.fsm` can become the natural high-level lowering format for recovered control intent.
+
+### Validation
+- `bash scripts/run_docs_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-17 (FSMGEN feedback now targets IntentIR-aligned `.fsm` evolution)
 
 ### Clarified: feedback is about `.fsm` language co-evolution, not only validation tooling

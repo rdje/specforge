@@ -45,6 +45,7 @@
 
 ## Session update (2026-04-17 FSMGEN IntentIR-aligned feedback)
 - `docs/FSMGEN_FEEDBACK.md` now frames SPECFORGE's feedback as `.fsm` language co-evolution, not only adapter validation tooling.
+- The same handoff now introduces SPECFORGE explicitly as a Rust staged-IR toolchain whose product boundary is backend-independent `IntentIR`, so FSMGEN can read the feedback without prior project context.
 - The added feature suggestions target natural `IntentIR` lowering: first-class system contracts, actor-relative ports, interface/channel grouping, temporal/stability contracts, semantic signal roles, generated assumptions/residual/provenance metadata, explicit direct-module root shape, and contract-aware composition.
 - The support/tooling requests remain, but are now secondary to the language goal: capability manifest, JSON diagnostics, normalized AST/IR export, stable diagnostic codes, and adapter-facing examples make the richer `.fsm` contract executable.
 - This preserves the SPECFORGE boundary: `IntentIR` remains canonical, but FSMGEN can evolve `.fsm` so fewer justified canonical facts are lost or blocked at adapter time.
