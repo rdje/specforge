@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-17 (KG evidence provenance count diagnostic coverage)
+
+### Added: focused failure coverage for EvidenceIR table-provenance count expectations
+- Added `kg_bench_reports_evidence_table_provenance_count_failure`, a focused `kg-bench` unit test for the `table_signal_declaration_provenance_count` expectation path.
+- The test reuses the realistic one-row `Signal | Direction | Width | Description` fixture helper, then deliberately expects zero provenance even though the table produces one EvidenceIR table-signal provenance record.
+- The assertion verifies the failure message names the fixture, the `table_signal_declaration_provenance_count` field, and the expected/actual count mismatch.
+- This completes the diagnostic self-test set around EvidenceIR table provenance expectations: count mismatch, missing table/signal provenance record, and mismatched synthesized statement text are all covered.
+- `MEMORY.md` was also brought forward from the stale `cc7e533` baseline to the latest committed local baseline `69351aa`.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge evidence_table_provenance` -> passed with `3` EvidenceIR provenance diagnostic tests
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `89` passed / `0` failed fixtures
+- `cargo run -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed with `89` fixtures / `0` failures and no tracked corpus-KB content drift
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `324` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+- README sentinel check -> passed
+
 ## 2026-04-17 (KG evidence table-provenance count expectation)
 
 ### Added: KG fixtures can assert EvidenceIR table-provenance counts directly

@@ -7,6 +7,21 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 KG EvidenceIR table-provenance count diagnostic self-test
+- Added `kg_bench_reports_evidence_table_provenance_count_failure`.
+- The test builds a temporary fixture with the shared one-row structured signal-table helper and intentionally expects `table_signal_declaration_provenance_count: 0`.
+- Because the table legitimately produces one `EvidenceIr.table_signal_declaration_provenance` record for `XREQ`, the fixture must fail.
+- The diagnostic assertion checks that the failure message includes:
+  - fixture name
+  - failed expectation field
+  - expected count
+  - actual count
+- This rounds out the EvidenceIR table-provenance harness diagnostics:
+  - exact count mismatch
+  - missing expected signal/table provenance
+  - wrong synthesized statement text for an otherwise matching signal/table pair
+- Focused diagnostic validation, full tracked `kg-bench`, `corpus-kb`, docs CI, and full local CI passed; full local CI reports `324` Rust tests plus the mdBook build.
+
 ## 2026-04-17 KG EvidenceIR table-provenance count expectation
 - Added `table_signal_declaration_provenance_count` to `EvidenceStageExpectations`.
 - This count is evaluated directly against `EvidenceIr.table_signal_declaration_provenance.len()`.

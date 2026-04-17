@@ -42,7 +42,13 @@
 - GitHub Actions CI is part of the repo baseline and still runs `cargo fmt --all --check`, warning-deny Clippy, warning-deny Rust tests, warning-deny rustdoc, and the mdBook build when launched manually, but automatic `push` / `pull_request` triggers are temporarily paused to conserve account Actions minutes
 - that CI path still has a single checked-in entrypoint at `scripts/run_ci.sh`, and the GitHub workflow calls that script directly so local and hosted Rust validation do not drift apart
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and deepening the now-started `R15g` corpus knowledge base beside the already-live typed prior-memory plane; adapter expansion is now horizon work
-- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the KG EvidenceIR table-provenance count expectation slice the full local CI path reports clean formatting, clean Clippy, `323` passing Rust tests, clean Rust API docs, and a successful mdBook build
+- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the KG EvidenceIR table-provenance count diagnostic slice the full local CI path reports clean formatting, clean Clippy, `324` passing Rust tests, clean Rust API docs, and a successful mdBook build
+
+## Session update (2026-04-17 KG EvidenceIR table-provenance count diagnostic coverage)
+- Continued from commit `69351aa`, adding focused negative diagnostic coverage for the EvidenceIR table-provenance count expectation.
+- `kg_bench_reports_evidence_table_provenance_count_failure` uses the shared one-row signal-table fixture helper, expects `table_signal_declaration_provenance_count: 0`, and confirms the resulting failure reports the fixture, expectation field, expected count, and actual count.
+- This completes the immediate EvidenceIR table-provenance expectation diagnostic trio: count mismatch, missing signal/table provenance record, and mismatched synthesized statement text.
+- Focused validation, full tracked `kg-bench`, `corpus-kb`, docs CI, and full local CI passed for this slice.
 
 ## Session update (2026-04-17 KG EvidenceIR table-provenance count expectation)
 - Continued from commit `cc7e533`, adding a direct EvidenceIR provenance count expectation to `specforge kg-bench`.

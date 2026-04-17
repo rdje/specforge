@@ -2399,6 +2399,40 @@ mod tests {
     }
 
     #[test]
+    fn kg_bench_reports_evidence_table_provenance_count_failure() -> crate::error::Result<()> {
+        let tempdir = tempdir()?;
+        let fixture_dir = tempdir.path().join("count_evidence_fixture");
+        write_one_signal_table_fixture(
+            &fixture_dir,
+            "count_evidence_fixture",
+            serde_json::json!({
+                "table_signal_declaration_provenance_count": 0
+            }),
+        )?;
+
+        let error = run(KgBenchArgs {
+            fixtures_root: tempdir.path().to_path_buf(),
+            fixtures: Vec::new(),
+        })
+        .expect_err("expected kg-bench to fail for mismatched EvidenceIR provenance count");
+
+        match error {
+            AppError::InvalidStageArtifact(message) => {
+                assert!(message.contains("count_evidence_fixture"));
+                assert!(message.contains("table_signal_declaration_provenance_count"));
+                assert!(
+                    message.contains(
+                        "expected `table_signal_declaration_provenance_count` = 0, got 1"
+                    )
+                );
+            }
+            other => panic!("unexpected error variant: {other}"),
+        }
+
+        Ok(())
+    }
+
+    #[test]
     fn kg_bench_reports_evidence_table_provenance_statement_failure() -> crate::error::Result<()> {
         let tempdir = tempdir()?;
         let fixture_dir = tempdir.path().join("broken_evidence_fixture");
