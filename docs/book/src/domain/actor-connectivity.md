@@ -186,6 +186,9 @@ Standalone direct roots are stricter.
 They do not carry a module name that says which actor the target is relative to, so the adapter first looks for one actor that graph-drives every render-critical assignment or init target already present in the direct local inventory.
 That allows normal external actors to coexist in the same graph: an environment may drive an input signal, and a monitor may read output signals, without making the direct root ambiguous when one target actor clearly owns all produced outputs.
 If no such output-target actor exists, the older one-actor direct context gate remains the fallback.
+After the target actor is selected, the adapter can also use explicit control reads to recover target inputs for signals already present in the direct inventory.
+For example, if `DATA_OUT = DATA_IN` and `ZERO_FLAG` is driven under a `DATA_IN` guard, then `DATA_IN` is read by the selected target actor even if the structural KG only says an external environment drives `DATA_IN`.
+Assigned output targets are excluded from this read-side recovery so outputs do not become fake inputs.
 Unrelated graph-only actor ports are ignored by this direct-root context gate and are not added to the standalone inventory.
 If the graph mixes multiple possible target-output actors, or if no actor owns the required direct output targets, the adapter leaves the missing flat directions unresolved and blocks rather than guessing.
 If repeated evidence for the same actor and signal disagrees, the collapsed direction or width remains unresolved; later duplicate hints cannot resurrect a value after conflict.

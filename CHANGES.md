@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-17 (FSM adapter derives direct target inputs from control reads)
+
+### Changed: direct `.fsm` target-actor recovery now uses explicit control reads for inputs
+- Extended the standalone direct `.fsm` graph overlay so once a target actor is selected, signals read by canonical DT/control guards and assignment expressions can become target-actor inputs in the adapter inventory.
+- Output targets are explicitly excluded from this read-side recovery, so self-referential or assigned signals do not become fake inputs.
+- Recovery remains adapter-local and bounded: it only strengthens signals already present in the direct inventory, it does not mutate canonical `IntentIR`, and it only runs after the target actor context is selected.
+
+### Tests
+- Added `standalone_dt_derives_target_inputs_from_control_reads_after_output_actor_selection`, which clears flat direct-interface directions, supplies only output-side `controller` actor ports, adds an external `environment` producer for `DATA_IN`, and proves `DATA_IN` is recovered as the target input from the explicit control reads rather than from the external actor perspective.
+- Re-ran the focused standalone direct adapter set, including the ambiguity, direction-conflict, width-conflict, unrelated-actor, and output-owner selection guards.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test --manifest-path Cargo.toml standalone_dt_derives_target_inputs_from_control_reads_after_output_actor_selection -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml standalone_dt_ -- --nocapture` -> passed with `8` focused tests
+- `cargo test --manifest-path Cargo.toml ir::adapters::tests -- --nocapture` -> passed with `28` adapter tests
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `319` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-17 (FSM adapter selects direct target actor from graph outputs)
 
 ### Changed: direct `.fsm` roots can ignore external reader/driver actors when the target actor is clear

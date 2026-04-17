@@ -7,6 +7,16 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 Direct `.fsm` target inputs from control reads
+- This slice follows the output-target actor selection work by recovering the other side of the target-actor perspective.
+- Once a standalone direct `.fsm` root has selected one target actor from graph-owned outputs, explicit canonical control structure provides additional bounded evidence:
+  - assignment targets are target outputs
+  - guard signals and expression source signals are target inputs, unless they are also direct output targets
+- The implementation collects input references from canonical DT guards/actions, rich control selectors/predicates/actions, and state-transition guards.
+- It then overlays `direct_control_input` evidence only for signals already present in the direct local inventory and only after a target actor context has been selected.
+- This avoids the old failure mode where `controller` clearly owned `DATA_OUT` / `ZERO_FLAG`, but `DATA_IN` stayed unresolved merely because the KG only said an external `environment` drives it.
+- The recovery remains adapter-time perspective computation, not canonical fact mutation: `IntentIR.actor_ports` is not changed, graph-only signals are not added, and conflicting explicit/graph evidence can still collapse the adapter hint and block lowering.
+
 ## 2026-04-17 Direct `.fsm` target-actor selection from graph outputs
 - This slice continues `R15` by making standalone direct `.fsm` lowering less dependent on a globally unique actor-port context.
 - The previous direct-root graph overlay was safe but overly strict: if a `monitor` read an output signal or an `environment` drove an input signal, the relevant actor-port graph no longer had exactly one actor, so the adapter refused to use graph-backed directions at all.

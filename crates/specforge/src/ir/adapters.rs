@@ -841,25 +841,31 @@ fn build_signal_inventory(intent_ir: &IntentIr) -> Vec<FsmSignalCandidate> {
         }
     }
 
-    if let Some(actor_name) = select_direct_actor_name(intent_ir, &inventory) {
+    let output_targets = collect_direct_output_targets(intent_ir);
+    if let Some(actor_name) = select_direct_actor_name(
+        intent_ir.actor_ports.as_slice(),
+        &inventory,
+        &output_targets,
+    ) {
         overlay_actor_port_inventory_for_actor(
             &mut inventory,
             actor_name,
             intent_ir.actor_ports.as_slice(),
             false,
         );
+        overlay_direct_control_input_inventory(&mut inventory, intent_ir, &output_targets);
     }
 
     inventory_to_signal_candidates(inventory)
 }
 
 fn select_direct_actor_name<'a>(
-    intent_ir: &'a IntentIr,
+    actor_ports: &'a [ActorPortRecord],
     inventory: &BTreeMap<String, SignalInventoryEvidence>,
+    output_targets: &BTreeSet<String>,
 ) -> Option<&'a str> {
-    let output_targets = collect_direct_output_targets(intent_ir);
-    direct_output_target_actor_name(intent_ir.actor_ports.as_slice(), inventory, &output_targets)
-        .or_else(|| unambiguous_direct_actor_name(intent_ir.actor_ports.as_slice(), inventory))
+    direct_output_target_actor_name(actor_ports, inventory, output_targets)
+        .or_else(|| unambiguous_direct_actor_name(actor_ports, inventory))
 }
 
 fn collect_direct_output_targets(intent_ir: &IntentIr) -> BTreeSet<String> {
@@ -902,6 +908,176 @@ fn collect_control_action_output_targets(
         }
         ControlActionRecord::Transition { .. } => {}
     }
+}
+
+fn overlay_direct_control_input_inventory(
+    inventory: &mut BTreeMap<String, SignalInventoryEvidence>,
+    intent_ir: &IntentIr,
+    output_targets: &BTreeSet<String>,
+) {
+    for (signal_name, supporting_ids) in collect_direct_control_input_references(intent_ir) {
+        if output_targets.contains(&signal_name) || !inventory.contains_key(&signal_name) {
+            continue;
+        }
+        register_canonical_signal_with_supporting_ids(
+            inventory,
+            &signal_name,
+            Some(InterfaceSignalDirection::Input),
+            None,
+            supporting_ids,
+            "direct_control_input",
+            AutomationConfidence::Medium,
+        );
+    }
+}
+
+fn collect_direct_control_input_references(
+    intent_ir: &IntentIr,
+) -> BTreeMap<String, BTreeSet<String>> {
+    let mut references = BTreeMap::<String, BTreeSet<String>>::new();
+
+    for fragment in &intent_ir.decision_tree_fragments {
+        if let Some(guard) = fragment.guard.as_ref() {
+            collect_decision_tree_guard_input_references(
+                guard,
+                &fragment.fragment_id,
+                &mut references,
+            );
+        }
+        for action in &fragment.actions {
+            collect_decision_tree_action_input_references(
+                action,
+                &fragment.fragment_id,
+                &mut references,
+            );
+        }
+    }
+
+    for block in &intent_ir.control_blocks {
+        if let Some(selector) = block.selector.as_ref() {
+            collect_control_expression_input_references(selector, &block.block_id, &mut references);
+        }
+        for branch in &block.branches {
+            if let Some(predicate) = branch.predicate.as_ref() {
+                collect_control_expression_input_references(
+                    predicate,
+                    &branch.branch_id,
+                    &mut references,
+                );
+            }
+            for action in &branch.actions {
+                collect_control_action_input_references(action, &branch.branch_id, &mut references);
+            }
+        }
+    }
+
+    for transition in &intent_ir.state_transitions {
+        if let Some(guard) = transition.guard.as_ref() {
+            collect_decision_tree_guard_input_references(
+                guard,
+                &transition.transition_id,
+                &mut references,
+            );
+        }
+    }
+
+    references
+}
+
+fn collect_decision_tree_guard_input_references(
+    guard: &DecisionTreeGuardRecord,
+    supporting_id: &str,
+    references: &mut BTreeMap<String, BTreeSet<String>>,
+) {
+    match guard {
+        DecisionTreeGuardRecord::SignalIsHigh { signal_name } => {
+            record_direct_control_input_reference(references, signal_name, supporting_id);
+        }
+        DecisionTreeGuardRecord::Comparison {
+            left_signal, right, ..
+        } => {
+            record_direct_control_input_reference(references, left_signal, supporting_id);
+            collect_decision_tree_value_input_references(right, supporting_id, references);
+        }
+    }
+}
+
+fn collect_decision_tree_action_input_references(
+    action: &DecisionTreeActionRecord,
+    supporting_id: &str,
+    references: &mut BTreeMap<String, BTreeSet<String>>,
+) {
+    match action {
+        DecisionTreeActionRecord::Assign { value, .. } => {
+            collect_decision_tree_value_input_references(value, supporting_id, references);
+        }
+    }
+}
+
+fn collect_decision_tree_value_input_references(
+    value: &DecisionTreeValueRecord,
+    supporting_id: &str,
+    references: &mut BTreeMap<String, BTreeSet<String>>,
+) {
+    if let DecisionTreeValueRecord::SignalRef { signal_name } = value {
+        record_direct_control_input_reference(references, signal_name, supporting_id);
+    }
+}
+
+fn collect_control_action_input_references(
+    action: &ControlActionRecord,
+    supporting_id: &str,
+    references: &mut BTreeMap<String, BTreeSet<String>>,
+) {
+    match action {
+        ControlActionRecord::Assign { value, .. }
+        | ControlActionRecord::DelayedPulse { value, .. } => {
+            collect_control_expression_input_references(value, supporting_id, references);
+        }
+        ControlActionRecord::CompoundUpdate { amount, .. } => {
+            if let Some(amount) = amount.as_ref() {
+                collect_control_expression_input_references(amount, supporting_id, references);
+            }
+        }
+        ControlActionRecord::Transition { .. } => {}
+    }
+}
+
+fn collect_control_expression_input_references(
+    expression: &ControlExpressionRecord,
+    supporting_id: &str,
+    references: &mut BTreeMap<String, BTreeSet<String>>,
+) {
+    match expression {
+        ControlExpressionRecord::Reference { reference } => {
+            if !matches!(reference.kind_hint, ControlReferenceKind::Symbol) {
+                record_direct_control_input_reference(
+                    references,
+                    &reference.base_name,
+                    supporting_id,
+                );
+            }
+        }
+        ControlExpressionRecord::Literal { .. } => {}
+        ControlExpressionRecord::Unary { operand, .. } => {
+            collect_control_expression_input_references(operand, supporting_id, references);
+        }
+        ControlExpressionRecord::Binary { left, right, .. } => {
+            collect_control_expression_input_references(left, supporting_id, references);
+            collect_control_expression_input_references(right, supporting_id, references);
+        }
+    }
+}
+
+fn record_direct_control_input_reference(
+    references: &mut BTreeMap<String, BTreeSet<String>>,
+    signal_name: &str,
+    supporting_id: &str,
+) {
+    references
+        .entry(signal_name.to_string())
+        .or_default()
+        .insert(supporting_id.to_string());
 }
 
 fn build_signal_inventory_map_from_surface(
@@ -5194,6 +5370,67 @@ mod tests {
         assert!(fsm.renderability.is_renderable);
         assert!(emitted_text.contains("(DATA_OUT = DATA_IN)"));
         assert!(emitted_text.contains("(ZERO_FLAG = 1)"));
+
+        Ok(())
+    }
+
+    #[test]
+    fn standalone_dt_derives_target_inputs_from_control_reads_after_output_actor_selection()
+    -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_explicit_control_intent_ir(tempdir.path())?;
+        clear_direct_interface_direction_hints(&mut intent_ir);
+        intent_ir.actor_ports = vec![
+            actor_port("controller", "DATA_OUT", ActorRelativeDirection::Output),
+            actor_port("controller", "ZERO_FLAG", ActorRelativeDirection::Output),
+            actor_port("environment", "DATA_IN", ActorRelativeDirection::Output),
+            actor_port("monitor", "DATA_OUT", ActorRelativeDirection::Input),
+            actor_port("monitor", "ZERO_FLAG", ActorRelativeDirection::Input),
+        ];
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+        adapter.write_to_disk()?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "renderable");
+        let emitted_target_path = adapter
+            .artifact_layout
+            .emitted_target_path
+            .as_ref()
+            .expect("control-read-backed standalone adapter should emit target text");
+        let emitted_text = fs::read_to_string(emitted_target_path)?;
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let data_in = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "DATA_IN")
+            .expect("DATA_IN should stay in the direct signal inventory");
+
+        assert_eq!(
+            data_in.direction_hint,
+            Some(InterfaceSignalDirection::Input)
+        );
+        assert!(
+            data_in
+                .mention_categories
+                .iter()
+                .any(|category| category == "direct_control_input")
+        );
+        assert!(
+            !data_in
+                .mention_categories
+                .iter()
+                .any(|category| category == "actor_port"),
+            "external environment actor port must not become the target actor perspective"
+        );
+        assert!(fsm.renderability.is_renderable);
+        assert!(emitted_text.contains("(DATA_OUT = DATA_IN)"));
+        assert!(emitted_text.contains("(<DATA_IN==8'0"));
 
         Ok(())
     }

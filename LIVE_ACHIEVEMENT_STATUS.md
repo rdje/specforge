@@ -103,7 +103,7 @@
 - Signal-connectivity conflict surfacing for multi-producer ambiguity implemented: Done
 - Graph-first direction coverage/scoring in `specforge validate` implemented: Done
 - `.fsm` explicit-module/top-composition lowering now recovers child port directions from matching `IntentIR.actor_ports` when flat module-local hints lag: Done
-- `.fsm` standalone direct-root lowering now recovers local directions from `IntentIR.actor_ports` when the direct actor context is unambiguous or one target actor drives all direct output targets despite external shared-signal actors: Done
+- `.fsm` standalone direct-root lowering now recovers local directions from `IntentIR.actor_ports` when the direct actor context is unambiguous or one target actor drives all direct output targets despite external shared-signal actors, then recovers target inputs from explicit control reads: Done
 - `.fsm` adapter actor-port conflict stickiness prevents repeated graph evidence from resurrecting poisoned direction or width hints: Done
 - `.fsm` standalone sequential system-contract direction recovery from graph-backed actor ports is regression-locked: Done
 - `.fsm` explicit top-root lowering now recovers width-only top boundary port directions from explicit top-link topology: Done
