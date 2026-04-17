@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 README bootstrap continuity sync after validation metric
+- Executed the README handoff path after `4f61ec6 feat(validation): report signal table support`.
+- `SESSION_BOOTSTRAP.md` still instructs a future agent to read the referenced docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if needed, and continue from the roadmap.
+- The Rust codebase sanity pass observed the expected active crate shape:
+  - `30` Rust source files under `crates/specforge/src`
+  - `59,341` total Rust source lines in that tree
+  - one workspace package named `specforge`, with library and binary targets from `cargo metadata --no-deps`
+  - CLI dispatch still exposes the staged pipeline plus quality/learning/rescan commands documented in README and the mdBook
+- No `RUST_CODEBASE_ANALYSIS.md` update was needed because it already records the committed table-support validation metric, the current command surface, the staged IR architecture, and the present semantic-truthfulness risk picture.
+- `MEMORY.md` did need the standard post-commit continuity correction: its latest committed baseline still pointed at `2014352`, while the current committed baseline is now `4f61ec6`.
+
 ## 2026-04-17 Validation reports table-backed signal coverage
 - Follow-on to the canonical `supporting_table_ids` carry-through: `specforge validate` now reports `with_table_support` for `SemanticIR` and `IntentIR`.
 - This metric is intentionally diagnostic, not authoring:
