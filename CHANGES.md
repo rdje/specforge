@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-18 (KG validation-finding payload expectations)
+
+### Added: KG fixtures can assert validation finding payloads directly
+- Added `validation.<stage>.findings_include` to the `specforge kg-bench` fixture expectation schema.
+- Each expected finding can match `finding_id`, optional `severity`, optional `category`, optional `summary_contains`, required `related_ids_include`, and forbidden `related_ids_exclude`.
+- Added a focused harness self-test proving mismatched related IDs produce a useful `findings_include` diagnostic.
+- Strengthened the five negative-knowledge prior-guided caution fixtures so they now assert the exact conflict/residual IDs carried by their validation prior-match and rescan-guidance findings.
+- Updated the mdBook quality chapters and live project docs to describe the new validation-finding payload surface and the non-authoring negative-knowledge boundary.
+
+### Validation
+- `cargo fmt --all` -> passed
+- focused five-fixture negative-knowledge `kg-bench` run -> passed
+- `cargo test -p specforge kg_bench` -> passed with `10` harness tests, including the tracked `89/89` fixture suite
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `89` passed / `0` failed fixtures
+- `cargo run -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed with `89` fixtures / `0` failures and no tracked corpus-KB content drift
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `329` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+- README sentinel check -> passed
+
 ## 2026-04-18 (Post-push continuity baseline sync)
 
 ### Changed: live handoff state now points at the pushed baseline

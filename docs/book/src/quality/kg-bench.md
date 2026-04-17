@@ -51,6 +51,10 @@ For negative fixtures, `table_signal_declaration_provenance_count` can require z
 The harness has focused regression tests for the count, missing-record, and synthesized-statement mismatch diagnostics around this EvidenceIR provenance surface.
 The same fixture family can also assert persisted validation metrics such as EvidenceIR `table_signal_declaration_provenance` and canonical `with_table_support`, so the user-visible validator surface stays aligned with both the evidence-stage table bridge and the exact canonical provenance checks.
 
+Fixtures can also assert validation findings directly.
+The validation expectation surface supports coarse `finding_ids_include` / `finding_ids_exclude` checks, and a more precise `findings_include` form that can match a finding id plus optional severity, category, summary substring, required related ids, and excluded related ids.
+That matters for caution and rescan guidance: a fixture can prove not only that validation emitted `semantic_negative_knowledge_prior_matches`, but also that the finding points at the exact local conflict or residual packet that triggered the caution.
+
 Actor-relative direction is a graph surface, not just a flat signal annotation.
 
 Fixtures can therefore assert graph direction coverage directly with `graph_direction_signal_names_include` and `graph_direction_signal_names_exclude`.
@@ -135,6 +139,7 @@ That matters because the learning plane must be tested with the same discipline 
 Negative-knowledge fixtures make that last rule executable.
 The suite now has prior-guided caution fixtures for signal-semantic conflicts, temporal conflicts, residual packets, signal-connectivity conflicts, and interface-signal conflicts.
 Those fixtures require the matched local conflict or residual to remain present while validation only adds `negative_knowledge_prior_matches`, rescan recommendations, corroboration requirements, and stage-specific rescan-guidance findings.
+They also assert the related ids carried by those validation findings, so a caution prior cannot silently drift from "this exact conflict/residual needs attention" into an ungrounded aggregate warning.
 
 Timing-annotation fixtures also cover polarity-sensitive multimodal evidence.
 For example, `vlm_timing_active_low_assertion_equivalence_gold` proves that an active-low reset observed by a VLM timing diagram as both `asserted` and `LOW` becomes typed temporal evidence without creating a false temporal conflict.

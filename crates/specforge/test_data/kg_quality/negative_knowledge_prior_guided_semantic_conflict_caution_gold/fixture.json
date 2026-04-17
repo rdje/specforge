@@ -59,6 +59,22 @@
           "evidence_negative_knowledge_prior_matches",
           "evidence_negative_knowledge_rescan_guidance"
         ],
+        "findings_include": [
+          {
+            "finding_id": "evidence_negative_knowledge_prior_matches",
+            "severity": "info",
+            "category": "negative_knowledge",
+            "summary_contains": "match prior negative knowledge",
+            "related_ids_include": ["semantic_conflict_0001"]
+          },
+          {
+            "finding_id": "evidence_negative_knowledge_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "prior memory did not suppress or rewrite current evidence",
+            "related_ids_include": ["semantic_conflict_0001"]
+          }
+        ],
         "metric_values": {
           "signal_semantic_hints": "2",
           "signal_semantic_hints_from_visual_captions": "1",
@@ -77,6 +93,22 @@
           "semantic_negative_knowledge_prior_matches",
           "semantic_negative_knowledge_rescan_guidance"
         ],
+        "findings_include": [
+          {
+            "finding_id": "semantic_negative_knowledge_prior_matches",
+            "severity": "info",
+            "category": "negative_knowledge",
+            "summary_contains": "match prior negative knowledge",
+            "related_ids_include": ["semantic_conflict_0001"]
+          },
+          {
+            "finding_id": "semantic_negative_knowledge_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "prior memory did not suppress or rewrite current evidence",
+            "related_ids_include": ["semantic_conflict_0001"]
+          }
+        ],
         "metric_values": {
           "signal_semantic_conflicts": "1",
           "with_non_decisive_semantic_arbitration": "1",
@@ -93,6 +125,22 @@
           "intent_non_decisive_semantic_arbitration_present",
           "intent_negative_knowledge_prior_matches",
           "intent_negative_knowledge_rescan_guidance"
+        ],
+        "findings_include": [
+          {
+            "finding_id": "intent_negative_knowledge_prior_matches",
+            "severity": "info",
+            "category": "negative_knowledge",
+            "summary_contains": "match prior negative knowledge",
+            "related_ids_include": ["semantic_conflict_0001"]
+          },
+          {
+            "finding_id": "intent_negative_knowledge_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "prior memory did not suppress or rewrite current evidence",
+            "related_ids_include": ["semantic_conflict_0001"]
+          }
         ],
         "metric_values": {
           "signal_semantic_conflicts": "1",

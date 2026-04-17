@@ -91,6 +91,28 @@
           "semantic_negative_knowledge_prior_matches",
           "semantic_negative_knowledge_rescan_guidance"
         ],
+        "findings_include": [
+          {
+            "finding_id": "semantic_negative_knowledge_prior_matches",
+            "severity": "info",
+            "category": "negative_knowledge",
+            "summary_contains": "match prior negative knowledge",
+            "related_ids_include": [
+              "interface_signal_conflict_0001",
+              "interface_signal_conflict_0002"
+            ]
+          },
+          {
+            "finding_id": "semantic_negative_knowledge_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "prior memory did not suppress or rewrite current evidence",
+            "related_ids_include": [
+              "interface_signal_conflict_0001",
+              "interface_signal_conflict_0002"
+            ]
+          }
+        ],
         "metric_values": {
           "interface_signal_conflicts": "2",
           "negative_knowledge_prior_matches": "2",
@@ -103,6 +125,28 @@
           "intent_interface_signal_conflicts_present",
           "intent_negative_knowledge_prior_matches",
           "intent_negative_knowledge_rescan_guidance"
+        ],
+        "findings_include": [
+          {
+            "finding_id": "intent_negative_knowledge_prior_matches",
+            "severity": "info",
+            "category": "negative_knowledge",
+            "summary_contains": "match prior negative knowledge",
+            "related_ids_include": [
+              "interface_signal_conflict_0001",
+              "interface_signal_conflict_0002"
+            ]
+          },
+          {
+            "finding_id": "intent_negative_knowledge_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "prior memory did not suppress or rewrite current evidence",
+            "related_ids_include": [
+              "interface_signal_conflict_0001",
+              "interface_signal_conflict_0002"
+            ]
+          }
         ],
         "metric_values": {
           "interface_signal_conflicts": "2",

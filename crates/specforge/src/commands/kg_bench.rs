@@ -32,7 +32,7 @@ use crate::ir::semantic::{
 };
 use crate::ir::source::{
     ActorSignalRelation, RelationKind, ResidualDecisionPacket, ValidationFindingRecord,
-    ValidationReportRecord,
+    ValidationFindingSeverity, ValidationReportRecord,
 };
 use crate::ir::{intent, semantic, source};
 
@@ -436,7 +436,24 @@ struct ValidationStageExpectations {
     #[serde(default)]
     finding_ids_exclude: Vec<String>,
     #[serde(default)]
+    findings_include: Vec<ExpectedValidationFinding>,
+    #[serde(default)]
     metric_values: BTreeMap<String, String>,
+}
+
+#[derive(Debug, Deserialize)]
+struct ExpectedValidationFinding {
+    finding_id: String,
+    #[serde(default)]
+    severity: Option<ValidationFindingSeverity>,
+    #[serde(default)]
+    category: Option<String>,
+    #[serde(default)]
+    summary_contains: Option<String>,
+    #[serde(default)]
+    related_ids_include: Vec<String>,
+    #[serde(default)]
+    related_ids_exclude: Vec<String>,
 }
 
 #[derive(Debug)]
@@ -1866,6 +1883,32 @@ fn evaluate_validation_expectations(
         failures,
     );
 
+    for expectation in &expectations.findings_include {
+        let matching_findings = report
+            .findings
+            .iter()
+            .filter(|finding| finding.finding_id == expectation.finding_id)
+            .collect::<Vec<_>>();
+
+        if matching_findings.is_empty() {
+            failures.push(format!(
+                "{label}: expected `findings_include` to contain finding `{}`, but actual finding ids were {:?}",
+                expectation.finding_id, finding_ids
+            ));
+            continue;
+        }
+
+        if !matching_findings
+            .iter()
+            .any(|finding| validation_finding_matches_expectation(finding, expectation))
+        {
+            failures.push(format!(
+                "{label}: expected `findings_include` finding `{}` to satisfy {:?}, but matching findings were {:?}",
+                expectation.finding_id, expectation, matching_findings
+            ));
+        }
+    }
+
     for (metric_name, expected_value) in &expectations.metric_values {
         let actual_value = validation_metric_value(report, metric_name);
         match actual_value {
@@ -1878,6 +1921,43 @@ fn evaluate_validation_expectations(
             )),
         }
     }
+}
+
+fn validation_finding_matches_expectation(
+    finding: &ValidationFindingRecord,
+    expectation: &ExpectedValidationFinding,
+) -> bool {
+    if let Some(expected_severity) = expectation.severity
+        && finding.severity != expected_severity
+    {
+        return false;
+    }
+    if let Some(expected_category) = expectation.category.as_deref()
+        && finding.category != expected_category
+    {
+        return false;
+    }
+    if let Some(expected_summary) = expectation.summary_contains.as_deref()
+        && !finding.summary.contains(expected_summary)
+    {
+        return false;
+    }
+    if expectation
+        .related_ids_include
+        .iter()
+        .any(|expected| !finding.related_ids.contains(expected))
+    {
+        return false;
+    }
+    if expectation
+        .related_ids_exclude
+        .iter()
+        .any(|excluded| finding.related_ids.contains(excluded))
+    {
+        return false;
+    }
+
+    true
 }
 
 fn load_fixture(path: &Path) -> Result<KgBenchFixture> {
@@ -2284,9 +2364,16 @@ mod tests {
 
     use tempfile::tempdir;
 
-    use super::run;
+    use super::{
+        ExpectedValidationFinding, ValidationStageExpectations, evaluate_validation_expectations,
+        run,
+    };
     use crate::cli::KgBenchArgs;
     use crate::error::AppError;
+    use crate::ir::IrStage;
+    use crate::ir::source::{
+        ValidationFindingRecord, ValidationFindingSeverity, ValidationReportRecord,
+    };
 
     fn write_one_signal_table_fixture(
         fixture_dir: &Path,
@@ -2410,6 +2497,51 @@ mod tests {
         }
 
         Ok(())
+    }
+
+    #[test]
+    fn kg_bench_reports_validation_finding_related_id_failure() {
+        let report = ValidationReportRecord {
+            report_id: "validation_report_test".to_string(),
+            validated_stage: IrStage::SemanticIr,
+            artifact_fingerprint: "fingerprint".to_string(),
+            summary: "test report".to_string(),
+            overall_score: Some(100),
+            grade: Some("EXCELLENT".to_string()),
+            metrics: Vec::new(),
+            findings: vec![ValidationFindingRecord {
+                finding_id: "semantic_negative_knowledge_prior_matches".to_string(),
+                severity: ValidationFindingSeverity::Info,
+                category: "negative_knowledge".to_string(),
+                summary: "1 carried conflict/residual pattern(s) match prior negative knowledge"
+                    .to_string(),
+                related_ids: vec!["semantic_conflict_0001".to_string()],
+            }],
+        };
+        let expectations = ValidationStageExpectations {
+            findings_include: vec![ExpectedValidationFinding {
+                finding_id: "semantic_negative_knowledge_prior_matches".to_string(),
+                severity: Some(ValidationFindingSeverity::Info),
+                category: Some("negative_knowledge".to_string()),
+                summary_contains: Some("match prior negative knowledge".to_string()),
+                related_ids_include: vec!["missing_conflict".to_string()],
+                related_ids_exclude: Vec::new(),
+            }],
+            ..ValidationStageExpectations::default()
+        };
+        let mut failures = Vec::new();
+
+        evaluate_validation_expectations(
+            "semantic_validation",
+            &expectations,
+            &report,
+            &mut failures,
+        );
+
+        assert_eq!(failures.len(), 1);
+        assert!(failures[0].contains("findings_include"));
+        assert!(failures[0].contains("missing_conflict"));
+        assert!(failures[0].contains("semantic_conflict_0001"));
     }
 
     #[test]

@@ -22,19 +22,24 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `4dfb6b9`
-- latest_commit_brief_message: `test(kg): cover missing intent table support signals`
-- note: pushed baseline after the 25-commit batch; the canonical table-support diagnostic quartet is committed and pushed, with no in-flight code slice left from that work
+- latest_commit_hash: `9e83612`
+- latest_commit_brief_message: `docs: sync post-push baseline`
+- note: current in-flight KG-quality hardening adds validation-finding payload expectations to `kg-bench` and applies them to negative-knowledge prior-guided caution fixtures
 
 ## Recent commit chain (last 5)
+- `9e83612` docs: sync post-push baseline
 - `4dfb6b9` test(kg): cover missing intent table support signals
 - `849e14a` test(kg): cover missing table support signals
 - `5cdc36e` test(kg): cover intent table support failures
 - `c2bbd8f` test(kg): cover canonical table support failures
-- `ae4ea54` test(kg): cover evidence provenance count failures
 
 ## Current repository state
 - active workspace member: `crates/specforge`
+- branch is ahead of `origin/main`; do not push until 25 local commits since the last push or until the user explicitly asks
+- current in-flight KG-quality hardening adds `validation.<stage>.findings_include` to the `kg-bench` expectation schema so fixtures can assert finding severity, category, summary snippets, and exact related-id inclusion/exclusion
+- the five negative-knowledge prior-guided caution fixtures now assert the exact validation finding related ids for signal-semantic conflicts, temporal value conflicts, residual packets, signal-connectivity conflicts, and interface-signal conflicts
+- focused five-fixture negative-knowledge `kg-bench`, `cargo test -p specforge kg_bench`, full tracked `kg-bench` with `89/89` fixtures, `corpus-kb --kg-fixtures-root` with `89` fixtures / `0` failures, docs CI, full local CI with `329` Rust tests plus mdBook, and `git diff --check` have passed for the current slice
+- latest continuity commit `9e83612` updated live handoff docs after the 25-commit push; production code was unchanged in that docs-only slice
 - branch was clean and aligned with `origin/main` immediately after pushing `4dfb6b9`
 - latest pushed KG-quality hardening adds IntentIR-stage missing-signal diagnostic coverage for canonical `signal_supporting_table_ids_include` expectations in `specforge kg-bench`
 - `kg_bench_reports_missing_intent_table_support_failure` builds a temporary one-row signal-table fixture, expects `MISSING_INTENT_SIGNAL` to carry `table_protocol_signal_description`, and verifies the failure names the fixture, `intent`, the exact signal-specific field, the missing signal, and actual recovered `XREQ`

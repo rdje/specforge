@@ -7,6 +7,21 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-18 KG validation-finding payload expectations
+- Added `findings_include` under `validation.evidence`, `validation.semantic`, and `validation.intent` fixture expectations in `specforge kg-bench`.
+- The new expectation shape complements existing `finding_ids_include` and metric checks by matching the actual validation finding payload:
+  - `finding_id`
+  - optional `severity`
+  - optional `category`
+  - optional `summary_contains`
+  - `related_ids_include`
+  - `related_ids_exclude`
+- This is especially important for negative-knowledge priors. A prior-match finding is only useful if it points to the exact current-document conflict or residual packet that matched the learned caution pattern.
+- Strengthened the negative-knowledge caution fixtures for signal-semantic conflicts, temporal value conflicts, residual packets, signal-connectivity conflicts, and interface-signal conflicts so their validation expectations now assert exact related ids.
+- Added a focused harness self-test that intentionally expects a missing related id and confirms the failure names `findings_include`, the missing expected id, and the actual related id.
+- This remains non-authoring validation hardening: prior memory can route attention and rescan/corroboration requirements, but it still cannot suppress conflicts, remove residuals, mutate canonical IR, or promote facts.
+- Focused fixture validation, `cargo test -p specforge kg_bench`, full tracked `kg-bench`, corpus-KB refresh, docs CI, full local CI, and `git diff --check` passed for this slice; full local CI reports `329` Rust tests plus warning-deny Clippy/rustdoc and the mdBook build.
+
 ## 2026-04-18 Post-push continuity baseline sync
 - Recorded the post-push baseline after the 25-commit batch: `4dfb6b9` / `test(kg): cover missing intent table support signals`.
 - The pushed baseline includes the four focused canonical table-support diagnostic cases: wrong SemanticIR support id, wrong IntentIR support id, missing SemanticIR signal, and missing IntentIR signal.

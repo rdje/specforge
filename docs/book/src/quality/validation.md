@@ -90,6 +90,7 @@ For example, `EvidenceIR` validation can report `negative_knowledge_prior_matche
 `SemanticIR` and `IntentIR` validation can report the same metric when carried conflict or residual packet patterns match learned negative knowledge.
 Those exact matches also surface `negative_knowledge_rescan_recommendations`, `negative_knowledge_corroboration_requirements`, and stage-specific `*_negative_knowledge_rescan_guidance` findings.
 That is guidance for targeted rescans and stronger local corroboration, not a correction: the current conflict or residual remains present and still has to be resolved by local evidence and arbitration.
+The KG benchmark fixture schema can now assert the related ids on those validation findings, which keeps negative-knowledge guidance tied to the exact conflict or residual packet that matched the learned caution pattern.
 `project-validation` is the first consumer for this guidance: it projects those findings into the validation snapshot and writes a generated `generated/validation/rescan_plan.json` target list for later rescan/extractor-selection loops.
 The same rescan-guidance channel also covers prior-classified visual-motif evidence that became normative but still needs VLM/multimodal corroboration.
 When a matching existing plan already carries executed recommendation summaries, `project-validation` preserves them and projects the review-relevant verdict/delta summary into the tracked validation docs.

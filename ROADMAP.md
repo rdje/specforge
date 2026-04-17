@@ -575,6 +575,7 @@
   - fixture expectations can now assert canonical `temporal_rules` directly, so APB/AHB/AXI timing truthfulness is checked as typed clock/edge/cycle-window/predicate IR instead of only through validation metrics
   - fixture expectations can now assert canonical `temporal_conflicts` directly, so contradiction surfacing is checked as typed context/value/supporting-evidence IR instead of only a conflict count
   - fixture expectations can now assert canonical `infrastructure_signals` and `infrastructure_topology` records directly, so clock/reset topology truthfulness is checked as typed IR instead of only through validation metrics
+  - fixture expectations can now assert validation finding payloads directly via `findings_include`, including severity, category, summary snippets, and related-id inclusion/exclusion, so validation-backed caution/rescan surfaces are checked as exact report content instead of only finding ids or metrics
   - width-only synthesized signal declarations now survive into canonical `SemanticIR` / `IntentIR` records, so AXI-style `Name | Width | Description` tables can be benchmarked honestly instead of stopping at raw actor relations and connectivity
 - remaining:
   - keep expanding from the current AMBA + APB handshake/setup/access/address-protection-stability/write-control-stability/response-stability + AHB wait-state/control-stability/transfer-lock-stability/exclusive-security-stability/response-stability/write-data-stability + AXI write-address/write-response/address-response-user-sideband-stability/read-address/address-qos-region-sideband-stability/read-address-control-sideband-stability/read-address-sideband-stability/read-data/read-data-last-stability/data-user-sideband-stability/write-data/write-data-last-stability/sideband-stability/write-address-control-sideband-stability/write-address-sideband-stability gold paths to remaining structured-constraint fixtures
@@ -656,10 +657,11 @@
     - a locally `unknown` `Name | Direction | Width` table stays inert without prior memory and gains signal-description recovery only when a matching learned table-shape prior is staged into the fixture
     - a locally `unknown` `Parameter | Min | Max | Unit` table stays inert without prior memory and gains timing-parameter recovery only when a matching learned table-shape prior is staged into the fixture
   - `specforge kg-bench` now also has the first semantic modality-reliability gold/negative pair proving a locally conflicted role like `XCTRL` stays honestly contested without prior memory and becomes decisively resolved only when a matching modality-reliability prior is staged, while preserving the original conflict record
+  - negative-knowledge prior-guided caution fixtures now also assert the exact validation finding payloads and related ids for signal-semantic conflicts, temporal value conflicts, residual packets, signal-connectivity conflicts, and interface-signal conflicts, so caution memory remains tied to current-document conflict/residual evidence instead of becoming an aggregate score effect
 - remaining:
   - decide how protocol-family scoping should grow beyond the current AMBA family inference without hardcoding brittle protocol logic
-  - broaden prior consumption beyond the current actor-taxonomy / semantic-role / table-shape / visual-motif `EvidenceIR` slices plus temporal-language and semantic-modality-reliability `SemanticIR` slices into richer negative-knowledge rescan selection without bypassing local grounding
-  - broaden the first benchmark coverage for prior-guided unseen-document improvement beyond the new actor-taxonomy, temporal, semantic, visual, table-shape, and semantic-modality-reliability gold/negative pairs into negative-knowledge prior families
+  - deepen negative-knowledge rescan selection beyond current validation routing while preserving the non-authoring local-grounding boundary
+  - broaden prior-guided unseen-document improvement beyond the current actor-taxonomy, temporal, semantic, visual, table-shape, semantic-modality-reliability, visual-motif, and negative-knowledge fixture families only when a new typed prior family has schema, harvester, consumer, and guard coverage
 
 ### R15g Corpus knowledge base plane
 - status: In Progress
