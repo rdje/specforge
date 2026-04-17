@@ -213,6 +213,11 @@
       ]
     },
     "validation": {
+      "evidence": {
+        "metric_values": {
+          "table_signal_declaration_provenance": "3"
+        }
+      },
       "semantic": {
         "metric_values": {
           "total_signal_records": "3",

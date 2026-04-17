@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-04-17 (EvidenceIR table signal provenance validation metric)
+
+### Added: EvidenceIR validation now reports table-signal declaration provenance
+- Added `table_signal_declaration_provenance` to the `specforge validate` EvidenceIR structured-extraction surface.
+- The metric counts the provenance links from formal signal declarations synthesized out of structured `SourceIR` signal-description tables back to the source table ids that authored them.
+- Added focused unit coverage that builds markdown plus a structured `Signal | Direction | Width | Description` table, verifies `EvidenceIr.table_signal_declaration_provenance` contains three table links, and verifies EvidenceIR validation reports `table_signal_declaration_provenance: 3`.
+- Strengthened `signal_table_inventory_authority_negative` so its persisted EvidenceIR validation expectations now lock the same metric, complementing the existing SemanticIR / IntentIR `with_table_support` checks.
+- This is an evidence-stage visibility metric only: it does not promote truth, auto-fix missing provenance, or replace the canonical per-signal provenance checks in `SemanticIR` / `IntentIR`.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge validate_evidence_ir_counts_table_signal_declaration_provenance` -> passed
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality signal_table_inventory_authority_negative` -> passed
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `89` passed / `0` failed fixtures
+- `cargo run -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed with `89` fixtures / `0` failures and no tracked corpus-KB content drift
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `321` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+- README sentinel check -> passed
+
 ## 2026-04-17 (validator table-support unit coverage)
 
 ### Added: direct unit coverage for table-backed signal validation metrics

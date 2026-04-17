@@ -22,21 +22,26 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `8d447e3`
-- latest_commit_brief_message: `docs: sync README bootstrap baseline`
-- note: current follow-on work adds direct unit coverage for the already-committed table-support validation metric; do not treat the metric implementation itself as in-flight
+- latest_commit_hash: `7d8e6e2`
+- latest_commit_brief_message: `test(validation): lock signal table support metric`
+- note: current follow-on work adds EvidenceIR-side validation visibility for the already-committed table-signal provenance bridge; do not treat canonical table-support carry-through as in-flight
 
 ## Recent commit chain (last 5)
+- `7d8e6e2` test(validation): lock signal table support metric
 - `8d447e3` docs: sync README bootstrap baseline
 - `4f61ec6` feat(validation): report signal table support
 - `2014352` docs: sync README bootstrap baseline
 - `bb1def0` feat(ir): carry signal table provenance
-- `e96ebe1` test(kg): lock signal table inventory authority
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- current in-flight validation hardening adds `validate_semantic_and_intent_ir_count_signal_table_support`, a direct unit test that builds `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR` from a structured signal table and asserts `with_table_support: 3` at both canonical validation stages
-- focused validation for that new unit test has passed, and full local CI reports `320` Rust tests after the new regression lands
+- current in-flight validation hardening adds EvidenceIR-side `table_signal_declaration_provenance` reporting to `specforge validate`
+- the new metric counts `EvidenceIr.table_signal_declaration_provenance` entries, making provenance links from table-synthesized signal declarations back to structured `SourceIR` table ids visible before canonical carry-through
+- new focused unit coverage builds markdown plus a structured signal table, verifies three provenance records for `XREQ`, `XACK`, and `PAYLOAD`, and verifies EvidenceIR validation reports `table_signal_declaration_provenance: 3`
+- `signal_table_inventory_authority_negative` now also asserts the EvidenceIR validation metric value `3`, in addition to the existing SemanticIR / IntentIR `with_table_support` expectations and exact canonical per-signal table support expectations
+- focused validation for the new unit test and focused KG fixture passed; full tracked `kg-bench` passed with `89/89` fixtures, `corpus-kb --kg-fixtures-root` passed with `89` fixtures / `0` failures and no tracked corpus-KB drift, docs CI passed, full local CI passed with `321` Rust tests plus the mdBook build, and `git diff --check` passed for the current slice
+- latest committed validation hardening added `validate_semantic_and_intent_ir_count_signal_table_support`, a direct unit test that builds `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR` from a structured signal table and asserts `with_table_support: 3` at both canonical validation stages
+- focused validation for that committed unit test passed, and full local CI reported `320` Rust tests after the regression landed
 - latest committed validation follow-on adds `with_table_support` to `SemanticIR` and `IntentIR` validation metrics, counting canonical signal records that still carry non-empty `supporting_table_ids`
 - the metric is coverage/explainability only: it does not author truth, while `kg-bench` still asserts exact signal-to-table provenance with `signal_supporting_table_ids_include`
 - `signal_table_inventory_authority_negative` now requires `with_table_support: 3` at both canonical stages, matching `XREQ`, `XACK`, and `PAYLOAD`

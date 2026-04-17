@@ -7,6 +7,18 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 EvidenceIR table-signal provenance validation metric
+- Added an EvidenceIR-side validation metric named `table_signal_declaration_provenance`.
+- The metric reports `EvidenceIr.table_signal_declaration_provenance.len()`, making the source-table bridge visible before canonical signal carry-through happens in `SemanticIR` / `IntentIR`.
+- This closes a small observability gap in the table-provenance story:
+  - EvidenceIR now exposes whether table-synthesized declarations are carrying table ids at all
+  - SemanticIR / IntentIR still expose whether canonical signal records retain table support through `with_table_support`
+  - `kg-bench` canonical expectations still lock exact per-signal table provenance with `signal_supporting_table_ids_include`
+- The metric remains diagnostic only. It does not author truth, mutate IR, fix missing provenance, or promote facts; it simply makes a typed evidence bridge countable and benchmarkable.
+- `signal_table_inventory_authority_negative` now asserts the EvidenceIR metric value `3`, matching table-authored `XREQ`, `XACK`, and `PAYLOAD`.
+- Focused validation passed for the new unit test and focused KG fixture; full tracked `kg-bench`, `corpus-kb`, docs CI, full local CI, and `git diff --check` also passed.
+- Full local CI now reports `321` Rust tests plus the mdBook build.
+
 ## 2026-04-17 Direct unit coverage for table-support validation metrics
 - Added `validate_semantic_and_intent_ir_count_signal_table_support` to the validator test suite.
 - The test builds a real staged pipeline from markdown plus a structured signal-description table rather than constructing a report by hand.

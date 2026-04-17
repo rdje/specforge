@@ -51,6 +51,7 @@ That matters because:
 One useful example is `with_table_support` on `SemanticIR` and `IntentIR`.
 It reports how many canonical signal records still carry `supporting_table_ids` from structured `SourceIR` tables.
 That number is a coverage and explainability signal, not a new truth source: exact signal-to-table provenance is still checked by canonical IR shape and benchmark expectations.
+The earlier EvidenceIR metric `table_signal_declaration_provenance` plays the same role one stage earlier: it counts table-synthesized declaration links before canonical signal records exist.
 
 So the right way to read a validation result is:
 

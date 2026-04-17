@@ -1412,6 +1412,10 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         ir.timing_constraints.len()
     );
     println!(
+        "  table_signal_declaration_provenance: {}",
+        ir.table_signal_declaration_provenance.len()
+    );
+    println!(
         "  signal_polarity_conflicts: {}",
         ir.signal_polarity_conflicts.len()
     );
@@ -1679,6 +1683,10 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             metric(
                 "timing_constraints",
                 ir.timing_constraints.len().to_string(),
+            ),
+            metric(
+                "table_signal_declaration_provenance",
+                ir.table_signal_declaration_provenance.len().to_string(),
             ),
             metric(
                 "signal_polarity_conflicts",
@@ -4179,6 +4187,83 @@ mod tests {
         assert_eq!(
             metric_value(&report, "signal_semantic_hints_from_alias_grounded_prose"),
             Some("0")
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_evidence_ir_counts_table_signal_declaration_provenance() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("table_signal_provenance.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "The surrounding PDF text mentions RTL, VIP, and PLL context.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_protocol_signal_description".to_string(),
+            asset_id: "asset_protocol_signal_description".to_string(),
+            page_id: None,
+            caption_text: Some("Protocol signal description".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Direction", true),
+                make_table_cell("Width", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("XREQ", false),
+                    make_table_cell("output", false),
+                    make_table_cell("1", false),
+                    make_table_cell("Request/valid indication.", false),
+                ],
+                vec![
+                    make_table_cell("XACK", false),
+                    make_table_cell("input", false),
+                    make_table_cell("1", false),
+                    make_table_cell("Accept/ready indication.", false),
+                ],
+                vec![
+                    make_table_cell("PAYLOAD", false),
+                    make_table_cell("output", false),
+                    make_table_cell("32", false),
+                    make_table_cell("Data payload.", false),
+                ],
+            ],
+            row_count: 3,
+            col_count: 4,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        assert_eq!(evidence_ir.table_signal_declaration_provenance.len(), 3);
+        assert!(
+            evidence_ir
+                .table_signal_declaration_provenance
+                .iter()
+                .all(|record| record.table_id == "table_protocol_signal_description")
+        );
+
+        let report = validate_evidence_ir(
+            &evidence_ir,
+            "table_signal_declaration_provenance".to_string(),
+        );
+        assert_eq!(
+            metric_value(&report, "table_signal_declaration_provenance"),
+            Some("3")
         );
 
         Ok(())
