@@ -89,7 +89,8 @@ A sentence such as `The ARESETN reset tree targets the Requester registers and C
 
 This is intentionally not learned from generic clock/reset doctrine or prior memory.
 If the current document only says that a synchronizer might exist, or gives generic advice about clock gating, the topology record should stay absent.
-The tracked KG fixture `clock_reset_topology_gold` now locks that boundary at the benchmark layer as well as in unit tests.
+The tracked KG fixture `clock_reset_topology_gold` locks the positive side of that boundary, where explicit current-document topology becomes typed infrastructure topology.
+The companion `clock_reset_generic_advice_negative` fixture locks the negative side, where generic advice remains doctrine/caution and does not author topology facts.
 
 ## Reset polarity
 

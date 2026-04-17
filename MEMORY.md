@@ -22,19 +22,23 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `4f0cf81`
-- latest_commit_brief_message: `docs(fsmgen): introduce specforge in feedback`
-- note: the current session is capturing FSMGEN's tracked response to SPECFORGE feedback and updating adapter planning around the accepted strict-mode/machine-contract sync direction
+- latest_commit_hash: `4912ad7`
+- latest_commit_brief_message: `docs(fsmgen): capture upstream response`
+- note: the current session is adding a clock/reset generic-advice negative KG fixture and refreshing the related corpus-KB and live-document surfaces
 
 ## Recent commit chain (last 5)
+- `4912ad7` docs(fsmgen): capture upstream response
 - `4f0cf81` docs(fsmgen): introduce specforge in feedback
 - `63b3d94` docs(fsmgen): align feedback with IntentIR lowering
 - `8101034` docs(fsmgen): capture adapter feedback
 - `e374a25` fix(adapters): derive direct inputs from control reads
-- `1a8c424` fix(adapters): select direct target actor from graph outputs
 
 ## Current repository state
 - active workspace member: `crates/specforge`
+- current in-flight KG-quality slice adds `clock_reset_generic_advice_negative`, proving generic clock/reset best-practice prose does not mint concrete infrastructure topology while preserving real clock/reset infrastructure signals
+- the fixture source declares `ACLK` and active-low asynchronous `ARESETN`, then adds generic glitch-avoidance, no-glue-reset-tree, possible-synchronizer, and async-assert/sync-release guidance
+- expected staged behavior is `infrastructure_signals: 2` and `infrastructure_topology_records: 0` through both `SemanticIR` and `IntentIR`, with zero ordinary actor ports
+- focused `kg-bench`, full tracked `kg-bench`, `corpus-kb --kg-fixtures-root`, docs CI, and full local CI have passed locally for this slice; the tracked KG suite now reports `87/87`, infrastructure semantics `4/4`, infrastructure/polarity page coverage `9/9`, truthfulness-negative/caution coverage `34/34`, and local CI reports `319` Rust tests plus the mdBook build
 - FSMGEN's tracked response was read from `/Users/richarddje/Documents/github/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md` at observed FSMGEN commit `7475f07`
 - `docs/FSMGEN_FEEDBACK.md` now records that response and the accepted planning interpretation for SPECFORGE
 - `ROADMAP.md` R6 now records the cross-project sync contract: target strict-mode canonical `.fsm`, keep compatibility syntax adapter-blocked unless FSMGEN explicitly marks a generated lane safe, use FSMGEN's mdBook and regression corpus/support-accounting files as the current contract, and plan future validation around capability manifests, stable diagnostic codes, check-only JSON, and normalized semantic JSON export

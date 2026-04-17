@@ -7,6 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 Clock/reset generic advice stays non-authoring
+- Added `clock_reset_generic_advice_negative` as a benchmark-hardening slice, not a production extractor rewrite.
+- The fixture complements `clock_reset_topology_gold`:
+  - the gold fixture proves explicit current-document topology phrases can author bounded `infrastructure_topology`
+  - the new negative fixture proves generic doctrine/advice does not author topology on its own
+- The intended semantic boundary is precise:
+  - clock and reset signals remain first-class infrastructure semantics
+  - explicit reset polarity and asynchronous assertion / synchronous release discipline can be represented
+  - generic advice such as "avoid glitches", "avoid glue logic", or "may use a synchronizer" remains doctrine/caution unless the current document names a concrete gated branch, synchronizer stage count, or reset-tree target
+- The fixture therefore expects `ACLK` and `ARESETN` to survive as `system_clock` / `system_reset` infrastructure signals while all topology counters remain zero through both `SemanticIR` and `IntentIR`.
+- This protects the project from a subtle false-positive class: knowledgeable-sounding engineering prose should make the model more cautious, not more willing to hallucinate concrete implementation topology.
+- Focused and full `kg-bench` validation passed with `87/87` fixtures after the addition, `corpus-kb` refreshed the benchmark, infrastructure, and semantic/truthfulness pattern projections from that run, and full local CI passed with `319` Rust tests plus the mdBook build.
+
 ## 2026-04-17 FSMGEN response accepted cross-project sync contract
 - FSMGEN responded to `docs/FSMGEN_FEEDBACK.md` in its own tracked file at `/Users/richarddje/Documents/github/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md`, observed at FSMGEN commit `7475f07`.
 - The response accepts the shared framing:

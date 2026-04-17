@@ -1,0 +1,54 @@
+{
+  "name": "clock_reset_generic_advice_negative",
+  "source": "source.md",
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["ACLK", "ARESETN"],
+      "infrastructure_signals_include": [
+        {
+          "signal_name": "ACLK",
+          "kind": "system_clock"
+        },
+        {
+          "signal_name": "ARESETN",
+          "kind": "system_reset"
+        }
+      ]
+    },
+    "intent": {
+      "signal_names_include": ["ACLK", "ARESETN"],
+      "infrastructure_signals_include": [
+        {
+          "signal_name": "ACLK",
+          "kind": "system_clock"
+        },
+        {
+          "signal_name": "ARESETN",
+          "kind": "system_reset"
+        }
+      ]
+    },
+    "validation": {
+      "semantic": {
+        "metric_values": {
+          "actor_ports": "0",
+          "infrastructure_signals": "2",
+          "infrastructure_topology_records": "0",
+          "infrastructure_clock_gated_branches": "0",
+          "infrastructure_reset_synchronizer_stages": "0",
+          "infrastructure_reset_tree_targets": "0"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "actor_ports": "0",
+          "infrastructure_signals": "2",
+          "infrastructure_topology_records": "0",
+          "infrastructure_clock_gated_branches": "0",
+          "infrastructure_reset_synchronizer_stages": "0",
+          "infrastructure_reset_tree_targets": "0"
+        }
+      }
+    }
+  }
+}

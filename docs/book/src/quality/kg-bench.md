@@ -139,7 +139,8 @@ Gold fixtures prove explicit asserted-when-level prose, collective active-level 
 The detached mixed-polarity negative fixture proves a phrase like `CS_N is active LOW and active HIGH` stays unresolved instead of borrowing an implicit subject.
 
 The infrastructure fixture family now includes explicit clock/reset topology coverage too.
-`clock_reset_topology_gold` proves that current-document clock-gate, reset-synchronizer, and reset-tree phrases become typed infrastructure topology, while generic guidance such as glitch-avoidance advice or possible synchronizer usage does not add extra topology records or ordinary protocol actor ports.
+`clock_reset_topology_gold` proves that current-document clock-gate, reset-synchronizer, and reset-tree phrases become typed infrastructure topology.
+`clock_reset_generic_advice_negative` proves the companion guard: generic guidance such as glitch-avoidance advice, no-glue reset-tree advice, possible synchronizer usage, or async-assert/sync-release discipline does not add topology records or ordinary protocol actor ports without current-document topology evidence.
 
 ## Practical role in the project
 

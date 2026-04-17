@@ -182,6 +182,7 @@
 - KG benchmark harness now locks bogus actor-attribution rejection for `Source`-column infrastructure rows: Done
 - KG benchmark harness now locks relative-clause actor-noise rejection and coordinated active drive/read recovery: Done
 - KG benchmark harness can now assert canonical clock/reset infrastructure records and topology directly: Done
+- KG benchmark harness now locks generic clock/reset advice as non-authoring for concrete infrastructure topology: Done
 - KG benchmark harness now locks field-table misclassification rejection: Done
 - KG benchmark harness now locks spurious VLM timing-annotation sample/index-label, motion-only annotation, and waveform-motion state rejection: Done
 - KG benchmark harness now locks active-low VLM timing polarity equivalence: Done

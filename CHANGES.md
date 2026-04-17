@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-04-17 (clock/reset generic advice KG negative fixture)
+
+### Added: generic clock/reset doctrine cannot author topology facts
+- Added tracked fixture `clock_reset_generic_advice_negative` under `crates/specforge/test_data/kg_quality/`.
+- The fixture proves generic clock/reset best-practice prose preserves real `ACLK` / `ARESETN` infrastructure signals, but does not create `infrastructure_topology` records, gated-clock branches, reset-synchronizer stages, reset-tree targets, or ordinary protocol actor ports.
+- The guarded prose includes glitch-avoidance clock-gate policy, no-glue reset-tree guidance, possible synchronizer usage, and asynchronous reset assertion / synchronous reset release discipline.
+- Refreshed corpus-KB fixture projections from the `87/87` tracked KG suite; infrastructure semantics coverage is now `4/4`, infrastructure/polarity page coverage is `9/9`, and truthfulness-negative/caution coverage is `34/34`.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality clock_reset_generic_advice_negative` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `87` passed / `0` failed fixtures
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed corpus-KB fixture projections with `87` fixtures / `0` failures
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `319` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+
 ## 2026-04-17 (FSMGEN response sync contract captured)
 
 ### Added: SPECFORGE records FSMGEN's accepted response

@@ -15,8 +15,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 
 - source: `kg-bench fixtures`
 - selected_family_labels: `actor connectivity`, `semantic role arbitration`, `negative knowledge`, `truthfulness negatives and cautions`, `residuals and caveats`
-- fixtures_total: `45`
-- fixtures_passed: `45`
+- fixtures_total: `46`
+- fixtures_passed: `46`
 - fixtures_failed: `0`
 
 | fixture | status | matched families | path |
@@ -31,6 +31,7 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `amba_source_column_handshake_gold` | `pass` | `actor connectivity`, `semantic role arbitration` | `crates/specforge/test_data/kg_quality/amba_source_column_handshake_gold/fixture.json` |
 | `apb_requester_completer_handshake_gold` | `pass` | `semantic role arbitration` | `crates/specforge/test_data/kg_quality/apb_requester_completer_handshake_gold/fixture.json` |
 | `axi_width_only_prose_direction_gold` | `pass` | `actor connectivity` | `crates/specforge/test_data/kg_quality/axi_width_only_prose_direction_gold/fixture.json` |
+| `clock_reset_generic_advice_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/clock_reset_generic_advice_negative/fixture.json` |
 | `contested_handshake_name_fallback_negative` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/contested_handshake_name_fallback_negative/fixture.json` |
 | `control_polarity_conflict_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/control_polarity_conflict_negative/fixture.json` |
 | `cross_modality_semantic_conflict_negative` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/cross_modality_semantic_conflict_negative/fixture.json` |
