@@ -7,6 +7,18 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 Direct `.fsm` target-actor selection from graph outputs
+- This slice continues `R15` by making standalone direct `.fsm` lowering less dependent on a globally unique actor-port context.
+- The previous direct-root graph overlay was safe but overly strict: if a `monitor` read an output signal or an `environment` drove an input signal, the relevant actor-port graph no longer had exactly one actor, so the adapter refused to use graph-backed directions at all.
+- The new rule is still bounded by render-critical output obligations:
+  - collect direct assignment/init targets from canonical DT/control/init surfaces
+  - select one actor only if that actor graph-drives every inventoried output target
+  - overlay only that actor's existing local inventory signals
+  - keep ambiguous, incomplete, `in_out`, unknown, or internally conflicting graph evidence blocked
+- This is a better target-actor-context rule for direct roots: it distinguishes the actor being lowered from external actors that merely share the same signals, without guessing from signal names or flattening producer/consumer roles globally.
+- The regression clears all flat direct-interface direction hints, supplies `controller` output actor ports for `DATA_OUT` / `ZERO_FLAG`, plus an external `environment` producer for `DATA_IN` and a `monitor` reader for outputs, and proves `.fsm` lowering remains renderable.
+- The adjacent standalone direct ambiguity and conflict tests still pass, so this is a precision-preserving widening rather than a blanket relaxation.
+
 ## 2026-04-17 Coordinated active-read KG coverage
 - This slice strengthens `relative_clause_actor_noise_negative` so it no longer proves only coordinated producer recovery.
 - The fixture source now uses `The Manager samples ARCHUNKEN and RCHUNKV.`, forcing the staged path to recover coordinated active reads for both chunking signals from one sentence.

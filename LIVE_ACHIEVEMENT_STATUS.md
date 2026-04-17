@@ -103,7 +103,7 @@
 - Signal-connectivity conflict surfacing for multi-producer ambiguity implemented: Done
 - Graph-first direction coverage/scoring in `specforge validate` implemented: Done
 - `.fsm` explicit-module/top-composition lowering now recovers child port directions from matching `IntentIR.actor_ports` when flat module-local hints lag: Done
-- `.fsm` standalone direct-root lowering now recovers local directions from `IntentIR.actor_ports` when the direct actor context is unambiguous: Done
+- `.fsm` standalone direct-root lowering now recovers local directions from `IntentIR.actor_ports` when the direct actor context is unambiguous or one target actor drives all direct output targets despite external shared-signal actors: Done
 - `.fsm` adapter actor-port conflict stickiness prevents repeated graph evidence from resurrecting poisoned direction or width hints: Done
 - `.fsm` standalone sequential system-contract direction recovery from graph-backed actor ports is regression-locked: Done
 - `.fsm` explicit top-root lowering now recovers width-only top boundary port directions from explicit top-link topology: Done
@@ -214,7 +214,7 @@
 - Cross-document typed prior memory (`R15f`): In Progress
 
 ## Highest-priority remaining gap
-- Continue replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics beyond the first `.fsm` explicit-module/top-composition, unambiguous standalone-direct, and explicit top-link topology consumers, then broaden `R15f` beyond its first actor-taxonomy / semantic / semantic-modality-reliability / temporal / table-shape prior families into visual-motif and negative-knowledge priors, and then deepen the now-started `R15g` corpus knowledge base plane beyond its validation-finding and KG fixture-result page families
+- Continue replacing the remaining direct `direction_hint` consumers with actor-relative graph semantics beyond the first `.fsm` explicit-module/top-composition, target-actor-aware standalone-direct, and explicit top-link topology consumers, then broaden `R15f` beyond its first actor-taxonomy / semantic / semantic-modality-reliability / temporal / table-shape prior families into visual-motif and negative-knowledge priors, and then deepen the now-started `R15g` corpus knowledge base plane beyond its validation-finding and KG fixture-result page families
 - Latest unseen-protocol live run:
 - `IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf` converged in `2` pipeline iterations and currently validates at `90/100 EXCELLENT`; parity-check table semantics now recover both structural KG ownership and carried width hints for the `*CHK` surface, declared graph-direction and width coverage are both `22/22`, `ACLK` / `ARESETN` now surface as infrastructure connectivity with a dedicated system-contract note instead of an ordinary missing-producer warning, six same-cycle temporal rules now carry explicit `0`-cycle windows, there are now no remaining typed temporal conflicts because assertion-vs-level comparison is polarity-aware rather than flattened, and the last carried interface-grouping residual is now gone
 - Canonical per-signal polarity surface: Done

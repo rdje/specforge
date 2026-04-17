@@ -341,12 +341,12 @@
   - `specforge validate` now reports actor-signal relation, actor-port, and connectivity counts for `SemanticIR` / `IntentIR`
   - `specforge validate` now scores semantic and intent signal-direction coverage from the actor-relative graph first, with flat `direction_hint` lag exposed as compatibility diagnostics rather than truth-model loss
   - the `.fsm` explicit-module/top-composition adapter path now overlays matching `IntentIR.actor_ports` before renderability analysis, so child-module port directions can be recovered from the actor-relative graph when flat module-local `direction_hint` values lag
-  - standalone direct `.fsm` roots can now also recover missing local signal directions from `IntentIR.actor_ports`, but only when all renderable actor-port evidence relevant to the direct local signal inventory points at one unambiguous actor context
+  - standalone direct `.fsm` roots can now also recover missing local signal directions from `IntentIR.actor_ports`, either when the direct graph has one unambiguous actor context or when one actor graph-drives every render-critical direct assignment/init target while external actors merely share those signals
   - adapter signal-inventory direction/width conflict collapse is now sticky, so repeated actor-port evidence cannot resurrect a graph direction or numeric width after disagreement
   - standalone sequential `.fsm` roots now have regression coverage proving graph-backed actor ports can satisfy clock/reset system-contract direction needs when flat direct-interface hints lag
   - explicit top `.fsm` composition can now preserve width-only top boundary port records and recover missing top input/output direction from explicit top-link source/target topology
 - remaining:
-  - keep moving the remaining direct consumers from flat `direction_hint` onto actor-relative graph semantics beyond the explicit-module, unambiguous-standalone, and explicit-top-link `.fsm` paths
+  - keep moving the remaining direct consumers from flat `direction_hint` onto actor-relative graph semantics beyond the explicit-module, target-actor-aware standalone, and explicit-top-link `.fsm` paths
   - compute target-actor-relative port directions from the actor-relative graph for every downstream consumer that still needs them
 - completion criteria:
   - downstream consumers can compute correct actor-relative port directions without depending on flat compatibility `direction_hint`

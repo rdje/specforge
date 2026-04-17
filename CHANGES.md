@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-17 (FSM adapter selects direct target actor from graph outputs)
+
+### Changed: direct `.fsm` roots can ignore external reader/driver actors when the target actor is clear
+- Tightened the standalone direct `.fsm` graph overlay so it first looks for one actor that graph-drives every render-critical assignment/init target already present in the direct inventory.
+- This lets a direct root recover the intended target actor even when other local KG actors also share the same signals as external readers or input drivers.
+- The bounded safety gates remain intact: the overlay still adds no graph-only signals, still falls back to the previous one-actor context rule when no output-target actor is available, and still leaves ambiguous or incomplete target-output graphs blocked.
+
+### Tests
+- Added `standalone_dt_selects_output_actor_when_external_actors_share_signals`, which clears flat direct-interface directions and proves the `.fsm` adapter still lowers when `controller` drives `DATA_OUT` / `ZERO_FLAG`, while an `environment` drives `DATA_IN` and a `monitor` reads the outputs.
+- Re-ran the focused standalone direct adapter set, including the existing ambiguous-context, direction-conflict, width-conflict, and unrelated-actor guards.
+
+### Validation
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml standalone_dt_selects_output_actor_when_external_actors_share_signals -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml standalone_dt_ -- --nocapture` -> passed with `7` focused tests
+- `cargo test --manifest-path Cargo.toml ir::adapters::tests -- --nocapture` -> passed with `27` adapter tests
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `318` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-17 (coordinated active-read KG coverage)
 
 ### Strengthened: relative-clause actor-noise fixture now locks coordinated reads too

@@ -22,23 +22,26 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `4cb4b53`
-- latest_commit_brief_message: `fix(evidence): recover coordinated active-drive objects`
-- note: the current session is strengthening coordinated active-read coverage in the relative-clause actor-noise fixture
+- latest_commit_hash: `14d6496`
+- latest_commit_brief_message: `test(evidence): lock coordinated active reads`
+- note: the current session is deepening direct `.fsm` graph-backed direction recovery by selecting the target actor from output-target ownership instead of requiring every shared-signal actor to collapse to one global context
 
 ## Recent commit chain (last 5)
+- `14d6496` test(evidence): lock coordinated active reads
 - `4cb4b53` fix(evidence): recover coordinated active-drive objects
 - `019f536` fix(evidence): reject relative-clause actor noise
 - `02d4be1` test(kg): add AHB exclusive security stability fixture
 - `264be3e` test(kg): add AHB transfer lock stability fixture
-- `64bc735` test(kg): add APB address protection stability fixture
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- the current KG-quality follow-on strengthens `relative_clause_actor_noise_negative` so the consumer side is also coordinated: `The Manager samples ARCHUNKEN and RCHUNKV.`
-- `crates/specforge/src/ir/evidence.rs` now has focused unit coverage proving coordinated active-read clauses recover all sampled objects and stop before guard clauses such as `when RVALID is HIGH`
-- validation for the current coordinated active-read follow-on passed focused read-side extractor tests, focused `kg-bench`, full tracked `kg-bench`, and full `bash scripts/run_ci.sh`
-- the latest committed KG-quality follow-on added `relative_clause_actor_noise_negative`, a tracked staged fixture proving AXI-style relative-clause chunking prose recovers `interconnect` as producer for both `ARCHUNKEN` and `RCHUNKV`, keeps `mixture of` out of the graph, and preserves zero connectivity conflicts through `SemanticIR` / `IntentIR`
+- the current `R15` follow-on updates direct `.fsm` adapter actor-context selection so a standalone direct root can recover graph-backed directions from one actor that drives every render-critical output target, even when external actors also drive inputs or read outputs in the same KG
+- `crates/specforge/src/ir/adapters.rs` now collects direct DT/control/init output targets, selects a single output-target owner before falling back to the older one-actor direct context rule, and still overlays only signals already present in the local direct inventory
+- new regression coverage clears flat direct-interface direction hints, supplies `controller` as the output owner for `DATA_OUT` / `ZERO_FLAG`, adds external `environment` / `monitor` shared-signal actors, and proves the direct `.fsm` root remains renderable
+- validation for the current direct `.fsm` target-actor follow-on passed formatting, the focused new test, the focused `standalone_dt_` adapter set, the full adapter suite, and full local CI with `318` Rust tests plus the mdBook build
+- the latest committed KG-quality follow-on strengthened `relative_clause_actor_noise_negative` so the consumer side is also coordinated: `The Manager samples ARCHUNKEN and RCHUNKV.`
+- the latest committed evidence follow-on has focused unit coverage proving coordinated active-read clauses recover all sampled objects and stop before guard clauses such as `when RVALID is HIGH`
+- the previous committed KG-quality follow-on added `relative_clause_actor_noise_negative`, a tracked staged fixture proving AXI-style relative-clause chunking prose recovers `interconnect` as producer for both `ARCHUNKEN` and `RCHUNKV`, keeps `mixture of` out of the graph, and preserves zero connectivity conflicts through `SemanticIR` / `IntentIR`
 - the latest committed evidence follow-on scans the active verb's current object clause, so coordinated objects like `drive ARCHUNKEN and RCHUNKV` both inherit the grounded head actor rather than only the first signal
 - the latest committed actor-extraction hygiene follow-on tightened active-drive subject extraction so prose shaped like `An interconnect which connects to components with a mixture of chunking support can drive ARCHUNKEN` keeps `interconnect` as the actor instead of promoting the descriptive phrase `mixture of`
 - the latest committed actor-extraction hygiene follow-on also rejects `mixture` / `mixture of` as meaningful actor terms so the learning plane cannot harvest or reuse that descriptive phrase as actor-taxonomy vocabulary
@@ -102,7 +105,7 @@
 - the previous collective-polarity follow-on extends `EvidenceIR` to recover active-level prose like `CS_N and WE_N are active LOW signals`, keeps mixed low/high compound prose unresolved until clause-local parsing is safe, and prevents polarity-only co-mentions of declared signals from minting duplicate heuristic interface records
 - the latest committed polarity follow-on teaches `EvidenceIR` to recover non-reset control polarity from explicit asserted-when-level prose like `CS_N is asserted when LOW` without inferring polarity from the `_N` suffix alone, and tightens `SemanticIR` so that local single-signal control prose enriches the declared signal instead of minting a duplicate heuristic interface record
 - the latest committed KG-bench follow-on adds explicit graph direction coverage expectations so fixtures can test canonical `actor_ports` coverage without overloading flat compatibility `direction_hint`; targeted `kg_bench` and full `scripts/run_ci.sh` validation passed for that slice
-- the previous `R15` graph-first adapter slices teach explicit-module `.fsm` top-composition lowering, standalone direct-root lowering, and top-boundary link-topology lowering to consume bounded graph/topology evidence without guessing missing direction hints
+- the previous `R15` graph-first adapter slices teach explicit-module `.fsm` top-composition lowering, target-actor-aware standalone direct-root lowering, and top-boundary link-topology lowering to consume bounded graph/topology evidence without guessing missing direction hints
 - the latest committed KG-quality slice added `vlm_timing_active_low_deassertion_equivalence_gold`, complementing the existing active-low assertion fixture by proving `DEASSERTED` and `HIGH` are equivalent for active-low reset release timing evidence
 - the previous quality slice added rustdoc warning denial to the shared CI path and fixed the only discovered rustdoc broken-link interpretation in `ActorSignalRelation` docs
 - `scripts/run_ci.sh` now runs Clippy with `-D warnings` before the Rust test suite, and GitHub Actions installs the `clippy` component so the hosted gate matches the local gate
@@ -111,6 +114,7 @@
 - the Rust warning baseline is clean and now enforced in the shared local/hosted CI path rather than suppressed with `#[allow(dead_code)]`
 - README bootstrap currently resolves to `SESSION_BOOTSTRAP.md`, which instructs future agents to read the referenced live docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if necessary, and then continue from the roadmap
 - this README/PNT continuation observed 30 Rust source files and 58,291 lines under `crates/specforge/src`, with the CLI now including `doctor`, `converge`, `enrich`, `validate`, `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, `corpus-kb`, and `nlp-enrich` beside the core staged IR commands
+- `RUST_CODEBASE_ANALYSIS.md` has been refreshed for the direct `.fsm` target-actor selection slice; the focused new adapter regression passes, the full focused `standalone_dt_` adapter set passes, the full adapter suite passes, and full local CI reports `318` Rust tests plus the mdBook build
 - `RUST_CODEBASE_ANALYSIS.md` has been refreshed for the coordinated active-read coverage slice; focused read-side extractor tests pass, focused `kg-bench` passes for `relative_clause_actor_noise_negative`, the full tracked KG suite reports `86/86`, and full local CI passes with `317` Rust tests plus the mdBook build
 - `RUST_CODEBASE_ANALYSIS.md` has been refreshed for the relative-clause actor-noise KG fixture slice; focused extractor tests pass, focused `kg-bench` passes for `relative_clause_actor_noise_negative`, the full tracked KG suite reports `86/86`, corpus-KB fixture projections refresh with `86` fixtures / `0` failures, actor-connectivity coverage is `12/12`, truthfulness-negative/caution coverage is `33/33`, and full local CI passes with `315` Rust tests plus the mdBook build
 - `RUST_CODEBASE_ANALYSIS.md` has been refreshed for the relative-clause actor extraction hygiene slice; focused tests pass, the local AXI rebuild confirms the fake `mixture of` `ARCHUNKEN` producer is gone while the remaining conflict is `Manager` versus `interconnect`, and full local CI passes with `314` Rust tests plus the mdBook build
@@ -393,7 +397,7 @@
 - broader KG-quality evaluation and benchmark hardening beyond the new seed fixture pack (`R15e`); recent slices added active-low reset-release VLM coverage, graph direction coverage expectations, explicit asserted-when-level non-reset control polarity recovery, collective active-level non-reset control polarity recovery, mixed clause-local non-reset control polarity recovery, detached mixed-polarity rejection coverage, motion-only VLM timing annotation rejection, direct clock/reset infrastructure-topology coverage, direct temporal-rule shape coverage, direct temporal-conflict shape coverage, direct signal-semantic conflict shape coverage, and direct signal-connectivity conflict shape coverage
 - cross-document extractor learning is now started, and the first seven bounded prior-consumer paths are now live; visual-motif priors now have explicit local enrichment rescan hints, negative-knowledge priors now have validation-only caution coverage, machine-readable rescan/corroboration guidance, a `project-validation` consumer that writes a schema-v2 replay-oriented rescan/extractor-selection target list, a first explicit `rescan-plan` consumer, an opt-in `converge --rescan-plan <plan>` hook, persisted execution summaries for changed-outcome review, explicit not-promoted gates plus structured promotion-review requirements on those summaries, and review-facing projection of those summaries into validation docs; an approval artifact should remain local/generated unless future work deliberately introduces canonical artifact mutation plus a tracked approval-evidence schema
 - Tier 3 relation extraction after the graph/temporal/eval surfaces are ready (`R14`)
-- some downstream compatibility and consumer paths still rely on flat `direction_hint` instead of the graph-native surface; explicit-module `.fsm` top composition, unambiguous standalone direct roots, standalone sequential system-contract renderability, and explicit top-link boundary recovery now have bounded adapter-side recovery paths, but the broader direct-consumer cleanup remains open
+- some downstream compatibility and consumer paths still rely on flat `direction_hint` instead of the graph-native surface; explicit-module `.fsm` top composition, target-actor-aware standalone direct roots, standalone sequential system-contract renderability, and explicit top-link boundary recovery now have bounded adapter-side recovery paths, but the broader direct-consumer cleanup remains open
 - meaning-based role inference now covers tables, prose, alias-grounded prose, visual captions, and VLM timing annotations, and canonical layers now preserve that provenance, but broader downstream use of preserved arbitration state is still early
 - semantic-role disagreement is now surfaced explicitly across `EvidenceIR`, `SemanticIR`, and `IntentIR`, but richer multimodal role grounding and broader arbitration still need to grow
 - `SourceIR` / ingest are strong enough to remain the foundation, but not strong enough to be assumed universal; future Tier 1 work should stay focused on robustness and honest failure handling

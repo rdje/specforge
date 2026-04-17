@@ -841,9 +841,7 @@ fn build_signal_inventory(intent_ir: &IntentIr) -> Vec<FsmSignalCandidate> {
         }
     }
 
-    if let Some(actor_name) =
-        unambiguous_direct_actor_name(intent_ir.actor_ports.as_slice(), &inventory)
-    {
+    if let Some(actor_name) = select_direct_actor_name(intent_ir, &inventory) {
         overlay_actor_port_inventory_for_actor(
             &mut inventory,
             actor_name,
@@ -853,6 +851,57 @@ fn build_signal_inventory(intent_ir: &IntentIr) -> Vec<FsmSignalCandidate> {
     }
 
     inventory_to_signal_candidates(inventory)
+}
+
+fn select_direct_actor_name<'a>(
+    intent_ir: &'a IntentIr,
+    inventory: &BTreeMap<String, SignalInventoryEvidence>,
+) -> Option<&'a str> {
+    let output_targets = collect_direct_output_targets(intent_ir);
+    direct_output_target_actor_name(intent_ir.actor_ports.as_slice(), inventory, &output_targets)
+        .or_else(|| unambiguous_direct_actor_name(intent_ir.actor_ports.as_slice(), inventory))
+}
+
+fn collect_direct_output_targets(intent_ir: &IntentIr) -> BTreeSet<String> {
+    let mut targets = BTreeSet::new();
+
+    for fragment in &intent_ir.decision_tree_fragments {
+        for action in &fragment.actions {
+            match action {
+                DecisionTreeActionRecord::Assign { target_signal, .. } => {
+                    targets.insert(target_signal.clone());
+                }
+            }
+        }
+    }
+
+    for block in &intent_ir.control_blocks {
+        for branch in &block.branches {
+            for action in &branch.actions {
+                collect_control_action_output_targets(action, &mut targets);
+            }
+        }
+    }
+
+    for init_assignment in &intent_ir.init_assignments {
+        targets.insert(init_assignment.target_signal.clone());
+    }
+
+    targets
+}
+
+fn collect_control_action_output_targets(
+    action: &ControlActionRecord,
+    targets: &mut BTreeSet<String>,
+) {
+    match action {
+        ControlActionRecord::Assign { target, .. }
+        | ControlActionRecord::DelayedPulse { target, .. }
+        | ControlActionRecord::CompoundUpdate { target, .. } => {
+            targets.insert(target.signal_name.clone());
+        }
+        ControlActionRecord::Transition { .. } => {}
+    }
 }
 
 fn build_signal_inventory_map_from_surface(
@@ -1059,6 +1108,48 @@ fn unambiguous_direct_actor_name<'a>(
 
     if actor_names.len() == 1 {
         actor_names.into_values().next()
+    } else {
+        None
+    }
+}
+
+fn direct_output_target_actor_name<'a>(
+    actor_ports: &'a [ActorPortRecord],
+    inventory: &BTreeMap<String, SignalInventoryEvidence>,
+    output_targets: &BTreeSet<String>,
+) -> Option<&'a str> {
+    let inventoried_output_targets = output_targets
+        .iter()
+        .filter(|target| inventory.contains_key(*target))
+        .cloned()
+        .collect::<BTreeSet<_>>();
+    if inventoried_output_targets.is_empty() {
+        return None;
+    }
+
+    let mut output_targets_by_actor = BTreeMap::<String, (&str, BTreeSet<String>)>::new();
+    for port in actor_ports.iter().filter(|port| {
+        inventoried_output_targets.contains(&port.signal_name)
+            && matches!(port.direction, ActorRelativeDirection::Output)
+    }) {
+        let entry = output_targets_by_actor
+            .entry(port.actor_name.to_ascii_lowercase())
+            .or_insert_with(|| (port.actor_name.as_str(), BTreeSet::new()));
+        entry.1.insert(port.signal_name.clone());
+    }
+
+    let candidates = output_targets_by_actor
+        .into_values()
+        .filter(|(_, target_signals)| {
+            inventoried_output_targets
+                .iter()
+                .all(|target| target_signals.contains(target))
+        })
+        .map(|(actor_name, _)| actor_name)
+        .collect::<Vec<_>>();
+
+    if candidates.len() == 1 {
+        candidates.into_iter().next()
     } else {
         None
     }
@@ -5040,6 +5131,69 @@ mod tests {
                 .iter()
                 .all(|signal| signal.signal_name != "SIDE_BAND")
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn standalone_dt_selects_output_actor_when_external_actors_share_signals() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_explicit_control_intent_ir(tempdir.path())?;
+        clear_direct_interface_direction_hints(&mut intent_ir);
+        intent_ir.actor_ports = vec![
+            actor_port("controller", "DATA_IN", ActorRelativeDirection::Input),
+            actor_port("controller", "DATA_OUT", ActorRelativeDirection::Output),
+            actor_port("controller", "ZERO_FLAG", ActorRelativeDirection::Output),
+            actor_port("environment", "DATA_IN", ActorRelativeDirection::Output),
+            actor_port("monitor", "DATA_OUT", ActorRelativeDirection::Input),
+            actor_port("monitor", "ZERO_FLAG", ActorRelativeDirection::Input),
+        ];
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+        adapter.write_to_disk()?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "renderable");
+        let emitted_target_path = adapter
+            .artifact_layout
+            .emitted_target_path
+            .as_ref()
+            .expect("target-actor-backed standalone adapter should emit target text");
+        let emitted_text = fs::read_to_string(emitted_target_path)?;
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let data_out = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "DATA_OUT")
+            .expect("DATA_OUT should stay in the direct signal inventory");
+        let zero_flag = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "ZERO_FLAG")
+            .expect("ZERO_FLAG should stay in the direct signal inventory");
+
+        assert_eq!(
+            data_out.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert_eq!(
+            zero_flag.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert!(
+            data_out
+                .mention_categories
+                .iter()
+                .any(|category| category == "actor_port")
+        );
+        assert!(fsm.renderability.is_renderable);
+        assert!(emitted_text.contains("(DATA_OUT = DATA_IN)"));
+        assert!(emitted_text.contains("(ZERO_FLAG = 1)"));
 
         Ok(())
     }
