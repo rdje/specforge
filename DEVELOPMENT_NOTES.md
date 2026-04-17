@@ -7,6 +7,26 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 EvidenceIR table provenance KG expectations
+- Added a direct EvidenceIR expectation surface to `specforge kg-bench`.
+- The first field is deliberately narrow: `table_signal_declaration_provenance_include`.
+- Each expectation requires:
+  - `signal_name`
+  - `table_id`
+  - optional `statement_text`
+- This lets fixtures prove that the EvidenceIR table bridge contains exact records, not merely that validation counted some number of provenance links.
+- `signal_table_inventory_authority_negative` now uses the field to assert that:
+  - `XREQ` links to `table_protocol_signal_description` and references `Signal XREQ is output width 1.`
+  - `XACK` links to `table_protocol_signal_description` and references `Signal XACK is input width 1.`
+  - `PAYLOAD` links to `table_protocol_signal_description` and references `Signal PAYLOAD is output width DATA_WIDTH.`
+- The focused fixture initially caught an incorrect expectation of `PAYLOAD` width `32`; the real table-derived statement is `DATA_WIDTH`, which proves the new assertion is checking useful truth rather than only a coarse count.
+- This keeps the table-provenance ladder honest across stages:
+  - EvidenceIR exact provenance record
+  - EvidenceIR aggregate validation metric
+  - SemanticIR / IntentIR exact canonical table support
+  - SemanticIR / IntentIR aggregate table-support validation metric
+- Focused and full tracked `kg-bench`, `corpus-kb`, docs CI, and full local CI passed for this slice.
+
 ## 2026-04-17 README bootstrap continuity sync after EvidenceIR metric
 - Executed the README handoff path after `f58ce2e feat(validation): report evidence table provenance`.
 - `SESSION_BOOTSTRAP.md` still instructs future agents to read the referenced docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if needed, and continue from the roadmap.

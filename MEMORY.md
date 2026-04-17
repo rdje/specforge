@@ -22,20 +22,25 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `f58ce2e`
-- latest_commit_brief_message: `feat(validation): report evidence table provenance`
-- note: current follow-on work is a README/bootstrap continuity sync after the committed EvidenceIR provenance metric slice; do not treat the metric implementation itself as in-flight
+- latest_commit_hash: `43653a1`
+- latest_commit_brief_message: `docs: sync README bootstrap baseline`
+- note: current follow-on work adds exact EvidenceIR table-signal provenance expectations to `kg-bench`; do not treat the EvidenceIR validation metric itself as in-flight
 
 ## Recent commit chain (last 5)
+- `43653a1` docs: sync README bootstrap baseline
 - `f58ce2e` feat(validation): report evidence table provenance
 - `7d8e6e2` test(validation): lock signal table support metric
 - `8d447e3` docs: sync README bootstrap baseline
 - `4f61ec6` feat(validation): report signal table support
-- `2014352` docs: sync README bootstrap baseline
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- current in-flight continuity sync updates live handoff docs after `f58ce2e`; production code is unchanged in this slice
+- current in-flight KG-quality hardening adds direct EvidenceIR `table_signal_declaration_provenance_include` expectations to `specforge kg-bench`
+- the new expectation checks exact evidence-stage table provenance records by `signal_name` and `table_id`, with optional synthesized `statement_text`
+- `signal_table_inventory_authority_negative` now asserts EvidenceIR provenance for `XREQ`, `XACK`, and `PAYLOAD`, including their generated declaration text before SemanticIR / IntentIR carry-through is evaluated
+- focused `kg-bench` for `signal_table_inventory_authority_negative` passed after correcting the expected `PAYLOAD` synthesized statement from width `32` to table-derived `DATA_WIDTH`
+- full tracked `kg-bench` passed with `89/89` fixtures, `corpus-kb --kg-fixtures-root` passed with `89` fixtures / `0` failures and no tracked corpus-KB drift, docs CI passed, full local CI passed with `321` Rust tests plus the mdBook build, and `git diff --check` passed for the current slice
+- latest committed continuity sync updated live handoff docs after `f58ce2e`; production code was unchanged in that slice
 - latest committed validation hardening adds EvidenceIR-side `table_signal_declaration_provenance` reporting to `specforge validate`
 - the committed metric counts `EvidenceIr.table_signal_declaration_provenance` entries, making provenance links from table-synthesized signal declarations back to structured `SourceIR` table ids visible before canonical carry-through
 - committed focused unit coverage builds markdown plus a structured signal table, verifies three provenance records for `XREQ`, `XACK`, and `PAYLOAD`, and verifies EvidenceIR validation reports `table_signal_declaration_provenance: 3`

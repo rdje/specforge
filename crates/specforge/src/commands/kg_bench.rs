@@ -93,11 +93,19 @@ struct PriorMemoryPatch {
 #[derive(Debug, Default, Deserialize)]
 struct FixtureExpectations {
     #[serde(default)]
+    evidence: Option<EvidenceStageExpectations>,
+    #[serde(default)]
     semantic: Option<CanonicalStageExpectations>,
     #[serde(default)]
     intent: Option<CanonicalStageExpectations>,
     #[serde(default)]
     validation: Option<ValidationExpectations>,
+}
+
+#[derive(Debug, Default, Deserialize)]
+struct EvidenceStageExpectations {
+    #[serde(default)]
+    table_signal_declaration_provenance_include: Vec<ExpectedTableSignalDeclarationProvenance>,
 }
 
 #[derive(Debug, Default, Deserialize)]
@@ -224,6 +232,14 @@ struct ExpectedSignalTableSupport {
     signal_name: String,
     #[serde(default)]
     table_ids_include: Vec<String>,
+}
+
+#[derive(Debug, Deserialize)]
+struct ExpectedTableSignalDeclarationProvenance {
+    signal_name: String,
+    table_id: String,
+    #[serde(default)]
+    statement_text: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -622,6 +638,9 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
     };
 
     let mut failures = Vec::new();
+    if let Some(expectations) = fixture.expectations.evidence.as_ref() {
+        evaluate_evidence_expectations("evidence", expectations, &evidence_ir, &mut failures);
+    }
     if let Some(expectations) = fixture.expectations.semantic.as_ref() {
         evaluate_canonical_expectations(
             "semantic",
@@ -700,6 +719,63 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
         fixture_path: fixture_path.to_path_buf(),
         failures,
     })
+}
+
+fn evaluate_evidence_expectations(
+    label: &str,
+    expectations: &EvidenceStageExpectations,
+    evidence_ir: &EvidenceIr,
+    failures: &mut Vec<String>,
+) {
+    for expectation in &expectations.table_signal_declaration_provenance_include {
+        let matching_records = evidence_ir
+            .table_signal_declaration_provenance
+            .iter()
+            .filter(|record| {
+                record.signal_name == expectation.signal_name
+                    && record.table_id == expectation.table_id
+            })
+            .collect::<Vec<_>>();
+
+        if matching_records.is_empty() {
+            failures.push(format!(
+                "{label}: expected `table_signal_declaration_provenance_include` to contain signal `{}` from table `{}`, but actual provenance was {:?}",
+                expectation.signal_name,
+                expectation.table_id,
+                evidence_ir.table_signal_declaration_provenance
+            ));
+            continue;
+        }
+
+        if let Some(statement_text) = expectation.statement_text.as_deref() {
+            let has_matching_statement_text = matching_records.iter().any(|record| {
+                evidence_ir.extracted_statements.iter().any(|statement| {
+                    statement.statement_id == record.statement_id
+                        && statement.text == statement_text
+                })
+            });
+
+            if !has_matching_statement_text {
+                let actual_statement_texts = matching_records
+                    .iter()
+                    .filter_map(|record| {
+                        evidence_ir
+                            .extracted_statements
+                            .iter()
+                            .find(|statement| statement.statement_id == record.statement_id)
+                            .map(|statement| statement.text.clone())
+                    })
+                    .collect::<Vec<_>>();
+                failures.push(format!(
+                    "{label}: expected table provenance for signal `{}` from table `{}` to reference synthesized statement text `{}`, but matching records referenced {:?}",
+                    expectation.signal_name,
+                    expectation.table_id,
+                    statement_text,
+                    actual_statement_texts
+                ));
+            }
+        }
+    }
 }
 
 #[expect(

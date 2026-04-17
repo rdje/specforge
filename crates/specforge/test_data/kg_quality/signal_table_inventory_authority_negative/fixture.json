@@ -124,6 +124,25 @@
     ]
   },
   "expectations": {
+    "evidence": {
+      "table_signal_declaration_provenance_include": [
+        {
+          "signal_name": "XREQ",
+          "table_id": "table_protocol_signal_description",
+          "statement_text": "Signal XREQ is output width 1."
+        },
+        {
+          "signal_name": "XACK",
+          "table_id": "table_protocol_signal_description",
+          "statement_text": "Signal XACK is input width 1."
+        },
+        {
+          "signal_name": "PAYLOAD",
+          "table_id": "table_protocol_signal_description",
+          "statement_text": "Signal PAYLOAD is output width DATA_WIDTH."
+        }
+      ]
+    },
     "semantic": {
       "signal_names_include": ["XREQ", "XACK", "PAYLOAD"],
       "signal_names_exclude": [

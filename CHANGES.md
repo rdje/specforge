@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-17 (EvidenceIR table provenance KG expectations)
+
+### Added: KG fixtures can assert EvidenceIR table-signal provenance records directly
+- Added an `evidence` expectation section to `specforge kg-bench`.
+- Added `table_signal_declaration_provenance_include`, allowing tracked fixtures to require that a table-synthesized signal declaration links a specific `signal_name` to a specific `SourceIR` `table_id`.
+- The expectation can also require the synthesized `statement_text`, proving the provenance record points at the intended generated declaration rather than only matching a table/signal pair by count.
+- Strengthened `signal_table_inventory_authority_negative` so `XREQ`, `XACK`, and `PAYLOAD` must each carry exact EvidenceIR table provenance before the later SemanticIR / IntentIR table-support checks run.
+- This complements, but does not replace, the `table_signal_declaration_provenance` validation metric: the metric gives aggregate visibility, while the KG expectation locks exact evidence shape.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality signal_table_inventory_authority_negative` -> passed
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `89` passed / `0` failed fixtures
+- `cargo run -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed with `89` fixtures / `0` failures and no tracked corpus-KB content drift
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `321` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+- README sentinel check -> passed
+
 ## 2026-04-17 (README bootstrap continuity sync after EvidenceIR metric)
 
 ### Fixed: memory baseline now points at the committed EvidenceIR provenance metric slice
