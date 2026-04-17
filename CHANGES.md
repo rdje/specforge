@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-17 (README bootstrap continuity sync after EvidenceIR metric)
+
+### Fixed: memory baseline now points at the committed EvidenceIR provenance metric slice
+- Executed the README bootstrap path by reading `README.md`, `SESSION_BOOTSTRAP.md`, the current roadmap slice, the recent change log, and the Rust codebase analysis.
+- Re-ran the Rust codebase sanity inventory from the current checkout: `30` Rust source files and `59,520` total Rust source lines under `crates/specforge/src`.
+- Confirmed `cargo metadata --no-deps --format-version 1` still reports the single active `specforge` workspace package with library and binary targets.
+- Confirmed the CLI dispatch still exposes the staged pipeline plus validation, benchmark, rescan, prior-memory, corpus-KB, and NLP/VLM enrichment commands documented in README.
+- Updated `MEMORY.md` so the latest committed baseline is `f58ce2e feat(validation): report evidence table provenance` instead of the prior pre-commit baseline.
+- Left `RUST_CODEBASE_ANALYSIS.md` unchanged because it already records the EvidenceIR provenance validation metric, the current command surface, the staged IR architecture, local CI boundary, and remaining semantic-truthfulness risks.
+
+### Validation
+- `git status --short --branch` -> confirmed branch was clean before the continuity-doc edit and ahead of `origin/main`
+- Rust codebase inventory commands over `crates/specforge/src` -> completed
+- `cargo metadata --no-deps --format-version 1` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `git diff --check` -> passed
+- README sentinel check -> passed
+
 ## 2026-04-17 (EvidenceIR table signal provenance validation metric)
 
 ### Added: EvidenceIR validation now reports table-signal declaration provenance

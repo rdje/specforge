@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 README bootstrap continuity sync after EvidenceIR metric
+- Executed the README handoff path after `f58ce2e feat(validation): report evidence table provenance`.
+- `SESSION_BOOTSTRAP.md` still instructs future agents to read the referenced docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if needed, and continue from the roadmap.
+- The Rust codebase sanity pass observed the expected active crate shape:
+  - `30` Rust source files under `crates/specforge/src`
+  - `59,520` total Rust source lines in that tree
+  - one workspace package named `specforge`, with library and binary targets from `cargo metadata --no-deps`
+  - CLI dispatch still exposes the staged pipeline plus quality/learning/rescan commands documented in README and the mdBook
+- No `RUST_CODEBASE_ANALYSIS.md` update was needed because it already records the committed EvidenceIR provenance validation metric, the current command surface, the staged IR architecture, and the present semantic-truthfulness risk picture.
+- `MEMORY.md` did need the standard post-commit continuity correction: its latest committed baseline still pointed at `7d8e6e2`, while the current committed baseline is now `f58ce2e`.
+
 ## 2026-04-17 EvidenceIR table-signal provenance validation metric
 - Added an EvidenceIR-side validation metric named `table_signal_declaration_provenance`.
 - The metric reports `EvidenceIr.table_signal_declaration_provenance.len()`, making the source-table bridge visible before canonical signal carry-through happens in `SemanticIR` / `IntentIR`.
