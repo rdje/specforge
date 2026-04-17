@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-18 (KG IntentIR table-support missing-signal diagnostic coverage)
+
+### Added: focused missing-signal coverage for IntentIR table-support expectations
+- Added `kg_bench_reports_missing_intent_table_support_failure`, a focused `kg-bench` unit test for absent-signal failures under `intent.signal_supporting_table_ids_include`.
+- The test reuses the one-row structured signal-table fixture and expects `MISSING_INTENT_SIGNAL` to carry `table_protocol_signal_description` even though the canonical signal set contains only `XREQ`.
+- The assertion verifies that the failure names the fixture, the `intent` stage, the exact `signal_supporting_table_ids_include[MISSING_INTENT_SIGNAL]` field, the missing expected signal, and an actual recovered signal.
+- The focused `cargo test -p specforge table_support_failure` filter now covers all four canonical table-support diagnostics: wrong SemanticIR support id, wrong IntentIR support id, missing SemanticIR signal, and missing IntentIR signal.
+- `MEMORY.md` was also brought forward from the stale `5cdc36e` baseline to the latest committed local baseline `849e14a`.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge table_support_failure` -> passed with `4` canonical table-support diagnostic tests
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `89` passed / `0` failed fixtures
+- `cargo run -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed with `89` fixtures / `0` failures and no tracked corpus-KB content drift
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `328` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+- README sentinel check -> passed
+
 ## 2026-04-17 (KG canonical table-support missing-signal diagnostic coverage)
 
 ### Improved: canonical table-support failures now identify missing signals precisely

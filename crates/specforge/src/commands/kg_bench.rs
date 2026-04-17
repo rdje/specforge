@@ -2490,6 +2490,47 @@ mod tests {
     }
 
     #[test]
+    fn kg_bench_reports_missing_intent_table_support_failure() -> crate::error::Result<()> {
+        let tempdir = tempdir()?;
+        let fixture_dir = tempdir.path().join("missing_intent_signal_fixture");
+        write_one_signal_table_fixture_with_expectations(
+            &fixture_dir,
+            "missing_intent_signal_fixture",
+            serde_json::json!({
+                "intent": {
+                    "signal_supporting_table_ids_include": [
+                        {
+                            "signal_name": "MISSING_INTENT_SIGNAL",
+                            "table_ids_include": ["table_protocol_signal_description"]
+                        }
+                    ]
+                }
+            }),
+        )?;
+
+        let error = run(KgBenchArgs {
+            fixtures_root: tempdir.path().to_path_buf(),
+            fixtures: Vec::new(),
+        })
+        .expect_err("expected kg-bench to fail for missing IntentIR signal");
+
+        match error {
+            AppError::InvalidStageArtifact(message) => {
+                assert!(message.contains("missing_intent_signal_fixture"));
+                assert!(message.contains("intent"));
+                assert!(
+                    message.contains("signal_supporting_table_ids_include[MISSING_INTENT_SIGNAL]")
+                );
+                assert!(message.contains("MISSING_INTENT_SIGNAL"));
+                assert!(message.contains("XREQ"));
+            }
+            other => panic!("unexpected error variant: {other}"),
+        }
+
+        Ok(())
+    }
+
+    #[test]
     fn kg_bench_reports_intent_table_support_failure() -> crate::error::Result<()> {
         let tempdir = tempdir()?;
         let fixture_dir = tempdir.path().join("intent_table_support_fixture");
