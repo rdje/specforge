@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 Clock/reset protocol scope is now executable
+- Added `clock_reset_contract_scope_negative` to move the protocol-PDF scope boundary from documentation-only steering into tracked KG benchmark coverage.
+- The fixture models the intended document shape directly:
+  - the protocol PDF defines `ACLK` and active-low asynchronous `ARESETN`
+  - it states that the clock/reset contract is for RTL and verification IP
+  - it states that the final physical clock tree and reset tree are built by the integrating SoC team
+  - it names project-local dependencies such as PLLs, clock generators, reset controllers, power domains, DFT/scan constraints, floorplan, and methodology
+- Expected behavior is intentionally narrow: preserve two infrastructure signals, preserve zero ordinary actor ports, and preserve zero concrete topology records.
+- This protects against a plausible overreach bug where integration-scope language such as "physical clock tree" or "reset-tree construction" might look hardware-specific enough to become false topology.
+- Focused and full `kg-bench` validation passed with `88/88` fixtures, `corpus-kb` refreshed the benchmark, infrastructure, and semantic/truthfulness pattern projections from that run, and full local CI passed with `319` Rust tests plus the mdBook build.
+
 ## 2026-04-17 Protocol PDFs expose clock/reset contracts, not physical trees
 - User clarification accepted and recorded: AMBA, Intel, and similar chip-design/protocol PDFs are usually contract documents for RTL implementation and verification IP, not complete implementation plans for the final chip's physical clock/reset distribution.
 - SPECFORGE should therefore treat these documents as sources of interface-visible clock/reset contract semantics:

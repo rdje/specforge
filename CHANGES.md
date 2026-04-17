@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-04-17 (clock/reset protocol scope KG negative fixture)
+
+### Added: protocol PDFs cannot author physical clock/reset tree construction
+- Added tracked fixture `clock_reset_contract_scope_negative` under `crates/specforge/test_data/kg_quality/`.
+- The fixture proves an AMBA-style protocol PDF can define boundary-visible clock/reset contract semantics for RTL and verification IP while explicitly leaving physical clock-tree and reset-tree construction to the integrating SoC team.
+- It preserves `ACLK` / `ARESETN` as first-class `system_clock` / `system_reset` infrastructure signals, but keeps concrete topology records, gated branches, reset-synchronizer stages, reset-tree targets, and ordinary actor ports at zero.
+- Refreshed corpus-KB fixture projections from the `88/88` tracked KG suite; infrastructure semantics coverage is now `5/5`, infrastructure/polarity page coverage is `10/10`, and truthfulness-negative/caution coverage is `35/35`.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality clock_reset_contract_scope_negative` -> passed
+- `cargo run --manifest-path Cargo.toml -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `88` passed / `0` failed fixtures
+- `cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed corpus-KB fixture projections with `88` fixtures / `0` failures
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `319` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+
 ## 2026-04-17 (clock/reset protocol-document scope clarified)
 
 ### Clarified: protocol PDFs define interface contracts, not physical trees

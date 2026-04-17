@@ -182,6 +182,7 @@
 - KG benchmark harness now locks bogus actor-attribution rejection for `Source`-column infrastructure rows: Done
 - KG benchmark harness now locks relative-clause actor-noise rejection and coordinated active drive/read recovery: Done
 - KG benchmark harness can now assert canonical clock/reset infrastructure records and topology directly: Done
+- KG benchmark harness now locks protocol-PDF clock/reset contract scope as non-authoring for physical tree topology: Done
 - KG benchmark harness now locks generic clock/reset advice as non-authoring for concrete infrastructure topology: Done
 - Clock/reset protocol-document scope boundary documented as contract semantics, not physical tree construction: Done
 - KG benchmark harness now locks field-table misclassification rejection: Done

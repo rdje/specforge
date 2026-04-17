@@ -43,6 +43,9 @@ So the extraction boundary is:
 - do not infer complete physical tree construction from a protocol PDF
 - keep physical tree construction as an integration input or residual concern for the team building the chip
 
+The tracked KG fixture `clock_reset_contract_scope_negative` locks this boundary.
+It proves that protocol text can mention RTL/VIP contract scope and integration-owned physical clock/reset trees without creating concrete topology facts.
+
 ## What `specforge` models today
 
 The current canonical surface models this through a `system_contract`.

@@ -15,12 +15,13 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 
 - source: `kg-bench fixtures`
 - selected_family_labels: `infrastructure semantics`, `polarity semantics`
-- fixtures_total: `9`
-- fixtures_passed: `9`
+- fixtures_total: `10`
+- fixtures_passed: `10`
 - fixtures_failed: `0`
 
 | fixture | status | matched families | path |
 | --- | --- | --- | --- |
+| `clock_reset_contract_scope_negative` | `pass` | `infrastructure semantics` | `crates/specforge/test_data/kg_quality/clock_reset_contract_scope_negative/fixture.json` |
 | `clock_reset_generic_advice_negative` | `pass` | `infrastructure semantics` | `crates/specforge/test_data/kg_quality/clock_reset_generic_advice_negative/fixture.json` |
 | `clock_reset_topology_gold` | `pass` | `infrastructure semantics` | `crates/specforge/test_data/kg_quality/clock_reset_topology_gold/fixture.json` |
 | `control_polarity_conflict_negative` | `pass` | `polarity semantics` | `crates/specforge/test_data/kg_quality/control_polarity_conflict_negative/fixture.json` |
