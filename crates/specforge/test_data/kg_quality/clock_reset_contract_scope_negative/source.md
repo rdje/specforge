@@ -8,7 +8,7 @@ Clock ACLK.
 
 Reset ARESETN is asynchronous active low.
 
-This protocol PDF defines the boundary-visible clock and reset contract for RTL and verification IP.
+This protocol PDF defines the boundary-visible clock and reset contract for RTL and verification IP (VIP).
 
 The final chip physical clock tree is built by the integrating SoC team.
 

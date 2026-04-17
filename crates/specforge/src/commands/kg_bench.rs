@@ -105,6 +105,8 @@ struct CanonicalStageExpectations {
     #[serde(default)]
     signal_names_include: Vec<String>,
     #[serde(default)]
+    signal_names_exclude: Vec<String>,
+    #[serde(default)]
     graph_direction_signal_names_include: Vec<String>,
     #[serde(default)]
     graph_direction_signal_names_exclude: Vec<String>,
@@ -719,6 +721,13 @@ fn evaluate_canonical_expectations(
         label,
         "signal_names_include",
         &expectations.signal_names_include,
+        &signal_names,
+        failures,
+    );
+    assert_excludes(
+        label,
+        "signal_names_exclude",
+        &expectations.signal_names_exclude,
         &signal_names,
         failures,
     );

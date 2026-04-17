@@ -25,12 +25,17 @@ Without fixture coverage, the pipeline can drift in subtle ways:
 - a false actor might quietly reappear
 - a coordinated active drive/read clause might only recover the first signal
 - a semantic role might start resolving from name noise again
+- integration vocabulary like `VIP`, `PLL`, or `DFT` might become fake signals
 - a learned prior might start overreaching
 - a table-shape rule might begin misclassifying field tables as real signal tables
 
 `kg-bench` exists to catch exactly that kind of drift.
 
 ## Graph-Backed Direction Expectations
+
+Fixtures can assert canonical signal inventories directly.
+`signal_names_include` checks that required interface signals survive, while `signal_names_exclude` checks that tempting non-signals stay out.
+That second field is especially useful for protocol-PDF scope tests: uppercase engineering words such as `PDF`, `RTL`, `VIP`, `PLL`, `DFT`, or `SoC` may be important document context, but they are not automatically interface signals.
 
 Actor-relative direction is a graph surface, not just a flat signal annotation.
 

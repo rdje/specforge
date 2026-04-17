@@ -7,6 +7,14 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 KG signal-inventory exclusions
+- Added `signal_names_exclude` to `CanonicalStageExpectations` in `specforge kg-bench`.
+- The field checks canonical interface signal names directly, complementing `signal_names_include`.
+- This fills a small but important truthfulness-testing gap: many fixtures could prove that required signals survived, but could not directly prove that tempting document or integration vocabulary stayed out of the signal inventory.
+- The first consumer is `clock_reset_contract_scope_negative`, which now excludes `PDF`, `RTL`, `IP`, `VIP`, `PLL`, `PLLs`, `DFT`, `SoC`, and `SOC` at both `SemanticIR` and `IntentIR`.
+- The source now explicitly says `verification IP (VIP)` so the fixture protects the acronym form the user actually uses.
+- Focused and full `kg-bench` validation passed after adding the exclusion expectations, `corpus-kb` refreshed from the `88/88` fixture suite with `0` failures, and full local CI passed with `319` Rust tests plus the mdBook build.
+
 ## 2026-04-17 Clock/reset protocol scope is now executable
 - Added `clock_reset_contract_scope_negative` to move the protocol-PDF scope boundary from documentation-only steering into tracked KG benchmark coverage.
 - The fixture models the intended document shape directly:

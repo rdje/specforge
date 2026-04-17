@@ -4,6 +4,17 @@
   "expectations": {
     "semantic": {
       "signal_names_include": ["ACLK", "ARESETN"],
+      "signal_names_exclude": [
+        "DFT",
+        "IP",
+        "PDF",
+        "PLL",
+        "PLLs",
+        "RTL",
+        "SoC",
+        "SOC",
+        "VIP"
+      ],
       "infrastructure_signals_include": [
         {
           "signal_name": "ACLK",
@@ -17,6 +28,17 @@
     },
     "intent": {
       "signal_names_include": ["ACLK", "ARESETN"],
+      "signal_names_exclude": [
+        "DFT",
+        "IP",
+        "PDF",
+        "PLL",
+        "PLLs",
+        "RTL",
+        "SoC",
+        "SOC",
+        "VIP"
+      ],
       "infrastructure_signals_include": [
         {
           "signal_name": "ACLK",

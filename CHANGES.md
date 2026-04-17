@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-04-17 (KG signal-inventory exclusion expectations)
+
+### Added: canonical signal inventories can now be guarded against false positives
+- Added `signal_names_exclude` to `specforge kg-bench` canonical stage expectations, mirroring the existing include/exclude pattern used for graph direction, semantic roles, arbitration, residuals, and assumptions.
+- Hardened `clock_reset_contract_scope_negative` so the fixture now proves that integration/document-scope vocabulary such as `PDF`, `RTL`, `IP`, `VIP`, `PLL`, `PLLs`, `DFT`, and `SoC`/`SOC` does not enter the canonical `SemanticIR` or `IntentIR` signal inventory.
+- Updated the fixture source to mention the `VIP` acronym explicitly while still preserving only `ACLK` and `ARESETN` as canonical signals and infrastructure records.
+- This keeps the clock/reset protocol-scope guard precise: protocol PDFs may discuss verification IP, DFT, PLLs, and SoC-owned physical tree construction without those uppercase engineering terms becoming fake interface signals.
+
+### Validation
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality clock_reset_contract_scope_negative` -> passed
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `88` passed / `0` failed fixtures
+- `cargo run -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed corpus-KB fixture projections with `88` fixtures / `0` failures
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `319` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+
 ## 2026-04-17 (clock/reset protocol scope KG negative fixture)
 
 ### Added: protocol PDFs cannot author physical clock/reset tree construction

@@ -22,23 +22,26 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `5d49cdb`
-- latest_commit_brief_message: `docs(clock-reset): clarify protocol PDF scope`
-- note: the current session is adding executable KG coverage for the protocol-PDF clock/reset contract-scope boundary
+- latest_commit_hash: `4aa4183`
+- latest_commit_brief_message: `test(kg): lock clock reset contract scope`
+- note: the current session is adding direct KG benchmark support for canonical signal-inventory exclusions and applying it to the clock/reset contract-scope fixture
 
 ## Recent commit chain (last 5)
+- `4aa4183` test(kg): lock clock reset contract scope
 - `5d49cdb` docs(clock-reset): clarify protocol PDF scope
 - `988e9bc` test(kg): reject generic clock reset topology advice
 - `4912ad7` docs(fsmgen): capture upstream response
 - `4f0cf81` docs(fsmgen): introduce specforge in feedback
-- `63b3d94` docs(fsmgen): align feedback with IntentIR lowering
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- current in-flight KG-quality slice adds `clock_reset_contract_scope_negative`, proving protocol/chip-interface PDFs are contract sources for RTL designers and VIP authors, not sufficient sources for physical clock/reset tree construction
-- the fixture source declares `ACLK` and active-low asynchronous `ARESETN`, says the protocol PDF defines the boundary-visible contract for RTL and verification IP, and states that final physical clock/reset trees are integrating-SoC-team artifacts
+- current in-flight KG-quality slice adds `signal_names_exclude` to `specforge kg-bench` canonical stage expectations
+- `clock_reset_contract_scope_negative` now uses that field to prove document/integration vocabulary such as `PDF`, `RTL`, `IP`, `VIP`, `PLL`, `PLLs`, `DFT`, and `SoC`/`SOC` stays out of canonical signal inventories while `ACLK` and `ARESETN` survive
+- focused `kg-bench`, full tracked `kg-bench`, `corpus-kb --kg-fixtures-root`, docs CI, and full local CI have passed locally for the signal-exclusion slice; the tracked KG suite still reports `88/88`, corpus-KB refresh reports `88` fixtures / `0` failures, and local CI reports `319` Rust tests plus the mdBook build
+- latest committed KG-quality slice added `clock_reset_contract_scope_negative`, proving protocol/chip-interface PDFs are contract sources for RTL designers and VIP authors, not sufficient sources for physical clock/reset tree construction
+- the committed fixture source declares `ACLK` and active-low asynchronous `ARESETN`, says the protocol PDF defines the boundary-visible contract for RTL and verification IP, and states that final physical clock/reset trees are integrating-SoC-team artifacts
 - expected staged behavior is `infrastructure_signals: 2` and `infrastructure_topology_records: 0` through both `SemanticIR` and `IntentIR`, with zero ordinary actor ports
-- focused `kg-bench`, full tracked `kg-bench`, `corpus-kb --kg-fixtures-root`, docs CI, and full local CI have passed locally for this slice; the tracked KG suite now reports `88/88`, infrastructure semantics `5/5`, infrastructure/polarity page coverage `10/10`, truthfulness-negative/caution coverage `35/35`, and local CI reports `319` Rust tests plus the mdBook build
+- focused `kg-bench`, full tracked `kg-bench`, `corpus-kb --kg-fixtures-root`, docs CI, and full local CI passed locally for the committed contract-scope slice; the tracked KG suite reported `88/88`, infrastructure semantics `5/5`, infrastructure/polarity page coverage `10/10`, truthfulness-negative/caution coverage `35/35`, and local CI reported `319` Rust tests plus the mdBook build
 - latest committed documentation slice captured the scope boundary that protocol/chip-interface PDFs are contract sources for RTL designers and VIP authors, not sufficient sources for physical clock/reset tree construction
 - SPECFORGE should recover clock/reset contract semantics from those PDFs: signal identity, polarity, reset kind, assertion/release timing, and boundary-visible obligations
 - physical clock/reset tree construction remains SoC/team-specific integration work, dependent on local clock generators, reset controllers, power domains, CDC/RDC policy, DFT/scan constraints, CTS strategy, floorplan, and methodology

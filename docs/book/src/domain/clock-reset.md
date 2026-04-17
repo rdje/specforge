@@ -45,6 +45,7 @@ So the extraction boundary is:
 
 The tracked KG fixture `clock_reset_contract_scope_negative` locks this boundary.
 It proves that protocol text can mention RTL/VIP contract scope and integration-owned physical clock/reset trees without creating concrete topology facts.
+It also asserts that document/integration terms such as `PDF`, `RTL`, `IP`, `VIP`, `PLL`, `DFT`, and `SoC` do not become canonical interface signals.
 
 ## What `specforge` models today
 
