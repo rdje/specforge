@@ -265,6 +265,8 @@ Use it first for the project objective, document navigation, and the current imp
   - authoritative live progress snapshot using the project status vocabulary
 - `VALIDATION_SNAPSHOT.md`
   - tracked projection of the latest persisted validation reports into a crash-safe markdown summary
+- `docs/FSMGEN_FEEDBACK.md`
+  - tracked SPECFORGE feedback for FSMGEN about features and orientation that would make `.fsm` adapter validation stronger
 - `RUST_CODEBASE_ANALYSIS.md`
   - live deep-dive analysis of the Rust codebase and its architecture
 - `USER_GUIDE.md`
@@ -296,6 +298,7 @@ Use it first for the project objective, document navigation, and the current imp
 - `DEVELOPMENT_NOTES.md`
 - `CHANGES.md`
 - `MEMORY.md`
+- `docs/FSMGEN_FEEDBACK.md`
 - `COMMIT.md`
 - `corpus_kb/README.md`
 - `corpus_kb/SCHEMA.md`
@@ -329,7 +332,9 @@ Use it first for the project objective, document navigation, and the current imp
 ### Reference adapter/tooling paths
 - `subs/fsmgen/`
   - pinned local checkout of `fsmgen`, used as read-only contextual reference while building the first `.fsm` adapter
-  - do not modify it from this repository; if upstream misbehavior is discovered, track it locally as a bug report instead
+  - currently refreshed to the upstream baseline that includes FSMGEN's own live mdBook at `subs/fsmgen/docs/book/`
+  - use its code, tests, strict-mode/support-accounting direction, and book as adapter reference material; do not modify it from this repository
+  - if upstream misbehavior is discovered, track it locally as a bug report instead of patching the submodule
 
 ### Current Rust implementation paths
 - `Cargo.toml`

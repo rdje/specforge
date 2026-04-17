@@ -7,6 +7,32 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 FSMGEN sync and `.fsm` adapter steering
+- `subs/fsmgen` was fast-forwarded from `57f00e5` to `955f2bb` for reconnaissance, not because SPECFORGE wants to turn the submodule into an implementation surface.
+- The refreshed FSMGEN baseline now includes a live mdBook at `subs/fsmgen/docs/book/`, plus substantial R11/R12 work around strict-mode support accounting, typed failure diagnostics, aggregate/package/type semantics, composition/toplink typing, and structural forward-IR layers.
+- The useful SPECFORGE takeaway is that FSMGEN is becoming a better reference for `.fsm` syntax, support boundaries, and validation expectations. It should inform the adapter, but it should not replace the `IntentIR` boundary.
+- Adapter rule reinforced by the sync:
+  - emit `.fsm` only when canonical facts are explicit enough to map into a real FSMGEN-supported construct
+  - prefer a blocked adapter artifact plus residual decision over compatibility-shaped target text when the canonical source lacks a safe root kind, direction, reset, topology, or control-shape fact
+  - keep target-specific perspective recovery inside the adapter, without mutating canonical `IntentIR`
+  - validate generated `.fsm` against FSMGEN when a stable local check surface exists, but do not treat a successful target parse as proof that the PDF intent was correct
+- Current FSMGEN signals that are especially useful for SPECFORGE:
+  - strict-supported corpus gates separate compatibility residue from canonical syntax
+  - typed diagnostic work can become a future adapter validation oracle
+  - aggregate/type/package expansion suggests richer canonical symbol lowering targets once SPECFORGE's own semantic facts are strong enough
+  - composition/toplink expression support gives useful reference shapes for explicit top-root lowering
+  - live mdBook chapters provide a public syntax/semantics map that should be checked before widening `.fsm` emission
+- Recommended FSMGEN feature requests / orientation from the SPECFORGE side:
+  - keep `docs/FSMGEN_FEEDBACK.md` as the focused tracked handoff document that FSMGEN can read directly
+  - publish a machine-readable capability manifest covering root kinds, strict/canonical syntax, supported expression families, reset/system forms, composition forms, and known compatibility-only residue
+  - provide a stable `--check --json` or equivalent mode that validates `.fsm` without requiring HDL generation and returns typed diagnostic codes, source spans, severity, and migration hints
+  - provide a parse/normalize/export mode for `.fsm -> typed AST/IR JSON`, so SPECFORGE can compare emitted text against normalized target semantics instead of string shape alone
+  - expose selected forward IR layers, such as intent/lowered/structural summaries, in a stable machine-readable form when practical
+  - make reset/clock semantics more explicit in diagnostics or metadata, especially polarity, asynchronous assertion, synchronous release, and system-signal role constraints
+  - maintain a small adapter-facing example corpus with input `.fsm`, normalized AST/IR expectations, and HDL-shape expectations for every canonical feature family
+  - keep the strict-mode-first posture: new canonical behavior should be support-accounted with positive and negative fixtures rather than silently accepted through compatibility parsing
+- Validation note: a local FSMGEN `./bin/ci-regression` run was started during the initial submodule-refresh path and intentionally stopped after the scope was clarified. It had reached `t/274-package-aggregate-values.t` with all reported tests green. This was not treated as a full FSMGEN certification run.
+
 ## 2026-04-17 Direct `.fsm` target inputs from control reads
 - This slice follows the output-target actor selection work by recovering the other side of the target-actor perspective.
 - Once a standalone direct `.fsm` root has selected one target actor from graph-owned outputs, explicit canonical control structure provides additional bounded evidence:

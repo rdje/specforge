@@ -22,19 +22,25 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `1a8c424`
-- latest_commit_brief_message: `fix(adapters): select direct target actor from graph outputs`
-- note: the current session is extending direct `.fsm` graph-backed direction recovery so selected target actors can recover input directions from explicit control reads
+- latest_commit_hash: `e374a25`
+- latest_commit_brief_message: `fix(adapters): derive direct inputs from control reads`
+- note: the current session refreshed the local FSMGEN reference for `.fsm` adapter reconnaissance and captured adapter-facing feedback
 
 ## Recent commit chain (last 5)
+- `e374a25` fix(adapters): derive direct inputs from control reads
 - `1a8c424` fix(adapters): select direct target actor from graph outputs
 - `14d6496` test(evidence): lock coordinated active reads
 - `4cb4b53` fix(evidence): recover coordinated active-drive objects
 - `019f536` fix(evidence): reject relative-clause actor noise
-- `02d4be1` test(kg): add AHB exclusive security stability fixture
 
 ## Current repository state
 - active workspace member: `crates/specforge`
+- `subs/fsmgen` has been fast-forwarded from `57f00e5` to `955f2bb` for `.fsm` adapter reconnaissance
+- the refreshed FSMGEN baseline includes its own live mdBook under `subs/fsmgen/docs/book/`, plus current strict-mode/support-accounting, typed diagnostic, aggregate/type/package, composition/toplink, and structural forward-IR work
+- SPECFORGE should use that reference to sharpen `.fsm` renderability gates and validation planning while keeping `IntentIR` canonical and the submodule read-only/contextual from this repo
+- `docs/FSMGEN_FEEDBACK.md` is the tracked handoff document for FSMGEN-facing suggestions from SPECFORGE
+- FSMGEN feature feedback captured this session: machine-readable capability manifest, JSON check/diagnostic mode, `.fsm` normalized AST/IR export, richer reset/clock metadata, adapter-facing examples, and continued strict-mode-first support accounting
+- a local FSMGEN `./bin/ci-regression` run was intentionally stopped after the scope was clarified; it had reached `t/274-package-aggregate-values.t` with all reported tests green, so do not report this as a full FSMGEN validation pass
 - the current `R15` follow-on extends direct `.fsm` adapter actor-context recovery so selected target actors can recover target input directions from explicit control reads
 - `crates/specforge/src/ir/adapters.rs` now collects read references from DT guards/actions, rich control selectors/predicates/actions, and state-transition guards, then overlays `direct_control_input` only for local inventory signals that are not direct output targets and only after target actor selection
 - new regression coverage clears flat direct-interface direction hints, supplies only output-side `controller` actor ports plus an external `environment` producer for `DATA_IN`, and proves `DATA_IN` is recovered as the target input from control reads rather than from the external actor perspective

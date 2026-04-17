@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-17 (FSMGEN reference sync for `.fsm` adapter planning)
+
+### Changed: FSMGEN submodule refreshed for adapter reconnaissance
+- Advanced `subs/fsmgen` from `57f00e5` to `955f2bb` so SPECFORGE can use the current FSMGEN baseline while shaping the downstream `.fsm` adapter.
+- The refreshed baseline includes FSMGEN's live mdBook under `subs/fsmgen/docs/book/`, making the reference no longer only a code checkout but also a progressive syntax/semantics documentation surface.
+- The sync was scoped as reconnaissance for SPECFORGE adapter work: the submodule remains contextual and read-only from this repository, and SPECFORGE should continue changing its own adapter/IR layers rather than patching FSMGEN in-place.
+
+### Captured: adapter-facing lessons and FSMGEN feedback
+- The current FSMGEN direction reinforces SPECFORGE's adapter rule: target `.fsm` text should be emitted only when `IntentIR` facts are explicit enough; otherwise the adapter should preserve residual decisions instead of inventing syntax.
+- FSMGEN's strict-mode/support-accounting work, typed diagnostic direction, aggregate/package/type expansion, composition/toplink typing, and live mdBook now provide better reference material for `.fsm` renderability gates and future adapter validation.
+- Added tracked `docs/FSMGEN_FEEDBACK.md` so FSMGEN can read a focused SPECFORGE feedback document rather than mining scattered continuity notes.
+- Suggested upstream FSMGEN features were captured there and in the live engineering notes: a machine-readable capability manifest, stable JSON diagnostics/check mode, normalized AST/IR export, richer reset/clock metadata, adapter-facing examples, and continued strict-mode-first support accounting.
+
+### Validation
+- `git diff --submodule=log -- subs/fsmgen` -> reviewed the upstream range from `57f00e5` to `955f2bb`
+- `./bin/ci-regression` inside `subs/fsmgen` -> intentionally stopped after scope correction; it had reached `t/274-package-aggregate-values.t` with all reported tests green before termination
+- `bash scripts/run_docs_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-17 (FSM adapter derives direct target inputs from control reads)
 
 ### Changed: direct `.fsm` target-actor recovery now uses explicit control reads for inputs

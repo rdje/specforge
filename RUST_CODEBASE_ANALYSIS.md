@@ -43,6 +43,15 @@
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and deepening the now-started `R15g` corpus knowledge base beside the already-live typed prior-memory plane; adapter expansion is now horizon work
 - the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the direct `.fsm` control-read input recovery slice the full local CI path reports clean Clippy, `319` passing Rust tests, clean Rust API docs, and a successful mdBook build
 
+## Session update (2026-04-17 FSMGEN reference sync)
+- `subs/fsmgen` is now fast-forwarded from `57f00e5` to `955f2bb` for `.fsm` adapter reconnaissance.
+- The updated FSMGEN reference includes its own live mdBook at `subs/fsmgen/docs/book/`, so SPECFORGE can consult both code and progressive user-facing documentation when widening `.fsm` lowering.
+- The adapter-relevant FSMGEN direction is strict-mode/support-accounting, typed diagnostics, richer aggregate/type/package semantics, composition/toplink typing, and structural forward-IR separation.
+- The SPECFORGE implementation stance stays unchanged: `IntentIR` remains canonical, `.fsm` is a downstream target, and FSMGEN is a read-only contextual reference from this repository.
+- `docs/FSMGEN_FEEDBACK.md` is now the tracked handoff document for FSMGEN-facing feedback from SPECFORGE.
+- Recommended FSMGEN feedback for future adapter leverage: machine-readable capability manifest, JSON check/diagnostic mode, normalized AST/IR export, richer reset/clock metadata, adapter-facing example corpus, and continued strict-mode-first support accounting.
+- A local FSMGEN `./bin/ci-regression` run was intentionally stopped after the scope was clarified; it had reached `t/274-package-aggregate-values.t` with all reported tests green, so this sync is not recorded as a full FSMGEN validation pass.
+
 ## Session update (2026-04-17 direct `.fsm` control-read input recovery)
 - Continued from commit `1a8c424`, completing the immediate pair to target-actor selection: after a direct root selects a target actor from graph-owned outputs, explicit control reads can now recover that target actor's input directions.
 - `crates/specforge/src/ir/adapters.rs` now collects read references from DT guards/actions, rich control selectors/predicates/actions, and state-transition guards, then overlays `direct_control_input` only for local inventory signals that are not direct output targets.
