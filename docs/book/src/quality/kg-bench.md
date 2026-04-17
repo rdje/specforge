@@ -37,6 +37,10 @@ Fixtures can assert canonical signal inventories directly.
 `signal_names_include` checks that required interface signals survive, while `signal_names_exclude` checks that tempting non-signals stay out.
 That second field is especially useful for protocol-PDF scope tests: uppercase engineering words such as `PDF`, `RTL`, `VIP`, `PLL`, `DFT`, or `SoC` may be important document context, but they are not automatically interface signals.
 
+The `signal_table_inventory_authority_negative` fixture locks the positive side of that same boundary.
+It provides real signals only through a structured `Signal | Direction | Width | Description` table, then surrounds that table with uppercase implementation vocabulary in prose.
+The expected result is intentionally sharp: `XREQ`, `XACK`, and `PAYLOAD` become canonical signals with table-derived directions, while terms such as `PDF`, `RTL`, `VIP`, `PLL`, `DFT`, `CDC`, `CTS`, `ECO`, and `SoC` remain document context.
+
 Actor-relative direction is a graph surface, not just a flat signal annotation.
 
 Fixtures can therefore assert graph direction coverage directly with `graph_direction_signal_names_include` and `graph_direction_signal_names_exclude`.

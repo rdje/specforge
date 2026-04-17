@@ -7,6 +7,16 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 Signal tables are executable inventory authority
+- Added `signal_table_inventory_authority_negative` to encode the user's point that real chip/protocol PDFs usually carry actual protocol signals in dedicated signal/interface tables.
+- The fixture uses no explicit markdown signal declarations. The real interface inventory comes from a structured `Signal | Direction | Width | Description` table injected through `SourceIR`.
+- Surrounding prose deliberately mentions uppercase non-signal engineering terms: `PDF`, `RTL`, `IP`, `VIP`, `PLL`, `DFT`, `CDC`, `CTS`, `ECO`, and `SoC`.
+- Expected behavior:
+  - `XREQ`, `XACK`, and `PAYLOAD` enter `SemanticIR` / `IntentIR`
+  - table-derived flat directions survive for all three signals
+  - all non-signal engineering/context terms are excluded from canonical signal inventory
+- Focused and full `kg-bench` validation passed with `89/89` fixtures, `corpus-kb` refreshed table coverage to `9/9` and truthfulness-negative/caution coverage to `36/36`, and full local CI passed with `319` Rust tests plus the mdBook build.
+
 ## 2026-04-17 KG signal-inventory exclusions
 - Added `signal_names_exclude` to `CanonicalStageExpectations` in `specforge kg-bench`.
 - The field checks canonical interface signal names directly, complementing `signal_names_include`.

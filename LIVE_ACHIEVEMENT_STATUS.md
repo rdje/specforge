@@ -39,6 +39,7 @@
 - Prior-candidate corpus-KB readiness manifest: Done
 - Dedicated corpus-KB state-machine fixture page: Done
 - KG benchmark harness can now assert canonical signal-inventory exclusions directly: Done
+- KG benchmark harness now includes signal-table inventory authority coverage: Done
 - KG benchmark harness can now assert canonical signal-connectivity conflict shape directly: Done
 - KG benchmark harness can now assert canonical signal-semantic conflict shape directly: Done
 - KG benchmark harness can now assert canonical interface-signal conflict shape directly: Done

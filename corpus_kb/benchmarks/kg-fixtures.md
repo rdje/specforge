@@ -13,8 +13,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 <!-- corpus_kb_kg_fixtures:start -->
 <!-- This block is refreshed by `specforge corpus-kb`. -->
 
-- fixtures_total: `88`
-- fixtures_passed: `88`
+- fixtures_total: `89`
+- fixtures_passed: `89`
 - fixtures_failed: `0`
 
 ### Fixture Family Summary
@@ -32,9 +32,9 @@ Fixtures can appear in more than one family because protocol semantics, modality
 | protocol-family AMBA/APB/AHB/AXI | `36` | `36` | `0` |
 | residuals and caveats | `3` | `3` | `0` |
 | semantic role arbitration | `17` | `17` | `0` |
-| table extraction and hygiene | `8` | `8` | `0` |
+| table extraction and hygiene | `9` | `9` | `0` |
 | temporal semantics | `42` | `42` | `0` |
-| truthfulness negatives and cautions | `35` | `35` | `0` |
+| truthfulness negatives and cautions | `36` | `36` | `0` |
 | typed prior memory | `21` | `21` | `0` |
 
 ### actor_boundary_residual
@@ -411,6 +411,12 @@ Fixtures can appear in more than one family because protocol semantics, modality
 
 ### semantic_prior_guided_phrase_without_prior_negative
 - fixture_path: `crates/specforge/test_data/kg_quality/semantic_prior_guided_phrase_without_prior_negative/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### signal_table_inventory_authority_negative
+- fixture_path: `crates/specforge/test_data/kg_quality/signal_table_inventory_authority_negative/fixture.json`
 - status: `pass`
 - failures:
   - none

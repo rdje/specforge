@@ -1,0 +1,206 @@
+{
+  "name": "signal_table_inventory_authority_negative",
+  "source": "source.md",
+  "source_ir_patch": {
+    "structured_tables": [
+      {
+        "table_id": "table_protocol_signal_description",
+        "asset_id": "table_protocol_signal_description",
+        "page_id": null,
+        "caption_text": "Protocol signal descriptions",
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            {
+              "text": "Signal",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Direction",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Width",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Description",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            }
+          ]
+        ],
+        "body_rows": [
+          [
+            {
+              "text": "XREQ",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "output",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "1",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Indicates that address and control information are valid for transfer.",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ],
+          [
+            {
+              "text": "XACK",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "input",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "1",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Indicates that the receiver can accept the transfer.",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ],
+          [
+            {
+              "text": "PAYLOAD",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "output",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "DATA_WIDTH",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Carries transfer payload data.",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ]
+        ],
+        "row_count": 3,
+        "col_count": 4
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["XREQ", "XACK", "PAYLOAD"],
+      "signal_names_exclude": [
+        "CDC",
+        "CTS",
+        "DFT",
+        "ECO",
+        "IP",
+        "PDF",
+        "PLL",
+        "RTL",
+        "SoC",
+        "SOC",
+        "VIP"
+      ],
+      "signal_directions_include": [
+        {
+          "signal_name": "XREQ",
+          "direction": "output"
+        },
+        {
+          "signal_name": "XACK",
+          "direction": "input"
+        },
+        {
+          "signal_name": "PAYLOAD",
+          "direction": "output"
+        }
+      ]
+    },
+    "intent": {
+      "signal_names_include": ["XREQ", "XACK", "PAYLOAD"],
+      "signal_names_exclude": [
+        "CDC",
+        "CTS",
+        "DFT",
+        "ECO",
+        "IP",
+        "PDF",
+        "PLL",
+        "RTL",
+        "SoC",
+        "SOC",
+        "VIP"
+      ],
+      "signal_directions_include": [
+        {
+          "signal_name": "XREQ",
+          "direction": "output"
+        },
+        {
+          "signal_name": "XACK",
+          "direction": "input"
+        },
+        {
+          "signal_name": "PAYLOAD",
+          "direction": "output"
+        }
+      ]
+    },
+    "validation": {
+      "semantic": {
+        "metric_values": {
+          "total_signal_records": "3",
+          "with_resolved_direction": "3",
+          "with_graph_direction": "0",
+          "with_compat_direction_hint": "3"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "declared_signal_records": "3",
+          "with_resolved_direction": "3",
+          "with_graph_direction": "0",
+          "with_compat_direction_hint": "3"
+        }
+      }
+    }
+  }
+}

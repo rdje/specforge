@@ -22,22 +22,25 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `4aa4183`
-- latest_commit_brief_message: `test(kg): lock clock reset contract scope`
-- note: the current session is adding direct KG benchmark support for canonical signal-inventory exclusions and applying it to the clock/reset contract-scope fixture
+- latest_commit_hash: `664f2a5`
+- latest_commit_brief_message: `test(kg): add signal inventory exclusions`
+- note: the current session is adding a table-authority KG fixture proving signal/interface tables author real signal inventory while uppercase prose context stays excluded
 
 ## Recent commit chain (last 5)
+- `664f2a5` test(kg): add signal inventory exclusions
 - `4aa4183` test(kg): lock clock reset contract scope
 - `5d49cdb` docs(clock-reset): clarify protocol PDF scope
 - `988e9bc` test(kg): reject generic clock reset topology advice
 - `4912ad7` docs(fsmgen): capture upstream response
-- `4f0cf81` docs(fsmgen): introduce specforge in feedback
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- current in-flight KG-quality slice adds `signal_names_exclude` to `specforge kg-bench` canonical stage expectations
-- `clock_reset_contract_scope_negative` now uses that field to prove document/integration vocabulary such as `PDF`, `RTL`, `IP`, `VIP`, `PLL`, `PLLs`, `DFT`, and `SoC`/`SOC` stays out of canonical signal inventories while `ACLK` and `ARESETN` survive
-- focused `kg-bench`, full tracked `kg-bench`, `corpus-kb --kg-fixtures-root`, docs CI, and full local CI have passed locally for the signal-exclusion slice; the tracked KG suite still reports `88/88`, corpus-KB refresh reports `88` fixtures / `0` failures, and local CI reports `319` Rust tests plus the mdBook build
+- current in-flight KG-quality slice adds `signal_table_inventory_authority_negative`, proving structured signal/interface tables author real protocol signal inventory while uppercase document/integration vocabulary stays excluded
+- the fixture injects a structured `Signal | Direction | Width | Description` table through `SourceIR`, recovers `XREQ`, `XACK`, and `PAYLOAD`, and excludes `PDF`, `RTL`, `IP`, `VIP`, `PLL`, `DFT`, `CDC`, `CTS`, `ECO`, and `SoC`/`SOC`
+- focused `kg-bench`, full tracked `kg-bench`, `corpus-kb --kg-fixtures-root`, docs CI, and full local CI have passed locally for this slice; the tracked KG suite now reports `89/89`, corpus-KB refresh reports `89` fixtures / `0` failures, table extraction/hygiene `9/9`, truthfulness-negative/caution `36/36`, and local CI reports `319` Rust tests plus the mdBook build
+- latest committed KG-quality slice added `signal_names_exclude` to `specforge kg-bench` canonical stage expectations and applied it to `clock_reset_contract_scope_negative`
+- `clock_reset_contract_scope_negative` now proves document/integration vocabulary such as `PDF`, `RTL`, `IP`, `VIP`, `PLL`, `PLLs`, `DFT`, and `SoC`/`SOC` stays out of canonical signal inventories while `ACLK` and `ARESETN` survive
+- focused `kg-bench`, full tracked `kg-bench`, `corpus-kb --kg-fixtures-root`, docs CI, and full local CI passed locally for the committed signal-exclusion slice; the tracked KG suite reported `88/88`, corpus-KB refresh reported `88` fixtures / `0` failures, and local CI reported `319` Rust tests plus the mdBook build
 - latest committed KG-quality slice added `clock_reset_contract_scope_negative`, proving protocol/chip-interface PDFs are contract sources for RTL designers and VIP authors, not sufficient sources for physical clock/reset tree construction
 - the committed fixture source declares `ACLK` and active-low asynchronous `ARESETN`, says the protocol PDF defines the boundary-visible contract for RTL and verification IP, and states that final physical clock/reset trees are integrating-SoC-team artifacts
 - expected staged behavior is `infrastructure_signals: 2` and `infrastructure_topology_records: 0` through both `SemanticIR` and `IntentIR`, with zero ordinary actor ports

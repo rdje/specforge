@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-04-17 (signal table inventory authority KG fixture)
+
+### Added: signal tables remain authoritative over uppercase prose context
+- Added tracked fixture `signal_table_inventory_authority_negative` under `crates/specforge/test_data/kg_quality/`.
+- The fixture models a common protocol-PDF shape where surrounding prose mentions `PDF`, `RTL`, `IP`, `VIP`, `PLL`, `DFT`, `CDC`, `CTS`, `ECO`, and `SoC`, while the real interface signals are supplied by a structured `Signal | Direction | Width | Description` table.
+- It proves `XREQ`, `XACK`, and `PAYLOAD` survive through `SemanticIR` / `IntentIR` with table-derived directions, while the uppercase engineering/context terms stay out of canonical signal inventory.
+- Refreshed corpus-KB fixture projections from the `89/89` tracked KG suite; table extraction and hygiene coverage is now `9/9`, and truthfulness-negative/caution coverage is now `36/36`.
+
+### Validation
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality signal_table_inventory_authority_negative` -> passed
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `89` passed / `0` failed fixtures
+- `cargo run -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed and refreshed corpus-KB fixture projections with `89` fixtures / `0` failures
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `319` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+
 ## 2026-04-17 (KG signal-inventory exclusion expectations)
 
 ### Added: canonical signal inventories can now be guarded against false positives
