@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-18 (Adapter blocked-top direction retention)
+
+### Improved: recovered top-boundary directions survive blocked composition artifacts
+- Split top-composition renderability analysis so recovered top ports and renderable top roots are tracked separately.
+- The `.fsm` adapter now preserves explicit top-link topology recovery on `FsmTopCandidate.ports` even when the top remains blocked for another reason such as a missing child module.
+- Selected top-root signal inventory now reflects those recovered top boundary directions in blocked adapter artifacts too, instead of falling back to the raw flat `direction_hint` surface.
+- Added a regression proving a width-only `result_data` top port becomes an output through `consumer.result_data -> result_data` topology while lowering still blocks honestly because `missing_module` is not declared.
+- Updated the mdBook and live project docs to clarify that partial topology recovery remains visible as recovered adapter context, not only as emitted `.fsm` text.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge top_composition_preserves_recovered_top_port_direction_when_still_blocked` -> passed
+- `cargo test -p specforge ir::adapters::tests::` -> passed with `29` adapter tests
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `330` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+- README sentinel check -> passed
+
 ## 2026-04-18 (KG validation-finding payload expectations)
 
 ### Added: KG fixtures can assert validation finding payloads directly

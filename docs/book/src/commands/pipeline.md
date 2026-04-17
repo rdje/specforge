@@ -99,6 +99,7 @@ cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/<document_key>
 `adapt` lowers canonical intent into a backend-specific adapter artifact.
 
 Right now the active downstream target is `.fsm`, and the project still treats adapters as downstream consumers rather than the core product boundary.
+When `.fsm` lowering is blocked, the adapter artifact can still preserve recovered context, such as top-link-derived boundary port directions, so users can inspect what was learned separately from why target text was not emitted.
 
 ## `converge`
 

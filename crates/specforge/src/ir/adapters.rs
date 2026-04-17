@@ -675,6 +675,13 @@ struct SelectedFsmSurface {
     renderable_document: Option<FsmRenderableSourceDocument>,
 }
 
+#[derive(Debug, Clone)]
+struct TopRenderabilityAnalysis {
+    renderability: FsmRenderability,
+    resolved_ports: Vec<ExplicitTopPortRecord>,
+    renderable_top: Option<FsmRenderableTopRoot>,
+}
+
 #[derive(Debug, Clone, Copy)]
 struct RenderableEndpointPort {
     direction_hint: InterfaceSignalDirection,
@@ -1383,21 +1390,16 @@ fn build_top_candidate(
             }
         })
         .collect::<Vec<_>>();
-    let (renderability, renderable_top) =
-        analyze_top_renderability(top, &children, module_candidates_by_name);
-    let ports = renderable_top
-        .as_ref()
-        .map(|top| top.ports.clone())
-        .unwrap_or_else(|| top.ports.clone());
+    let analysis = analyze_top_renderability(top, &children, module_candidates_by_name);
 
     FsmTopCandidate {
         top_name: top.top_name.clone(),
         declaration_order: top.declaration_order,
-        ports,
+        ports: analysis.resolved_ports,
         children,
         links: top.links.clone(),
-        renderability,
-        renderable_top,
+        renderability: analysis.renderability,
+        renderable_top: analysis.renderable_top,
     }
 }
 
@@ -1722,7 +1724,7 @@ fn analyze_top_renderability(
     top: &ExplicitTopRecord,
     children: &[FsmTopChildCandidate],
     module_candidates_by_name: &BTreeMap<String, &FsmExplicitModuleCandidate>,
-) -> (FsmRenderability, Option<FsmRenderableTopRoot>) {
+) -> TopRenderabilityAnalysis {
     let mut blocking_reasons = Vec::new();
     let mut required_canonical_enrichments = BTreeSet::new();
 
@@ -2011,28 +2013,34 @@ fn analyze_top_renderability(
         }
     }
 
+    let is_renderable = blocking_reasons.is_empty();
+    let resolved_ports = top
+        .ports
+        .iter()
+        .map(|port| {
+            let mut resolved_port = port.clone();
+            resolved_port.direction_hint =
+                top_port_directions.get(&port.port_name).copied().flatten();
+            resolved_port
+        })
+        .collect::<Vec<_>>();
     let renderability = FsmRenderability {
-        is_renderable: blocking_reasons.is_empty(),
+        is_renderable,
         blocking_reasons,
         required_canonical_enrichments: required_canonical_enrichments.into_iter().collect(),
     };
-    let renderable_top = renderability.is_renderable.then(|| FsmRenderableTopRoot {
+    let renderable_top = is_renderable.then(|| FsmRenderableTopRoot {
         top_name: top.top_name.clone(),
-        ports: top
-            .ports
-            .iter()
-            .map(|port| {
-                let mut resolved_port = port.clone();
-                resolved_port.direction_hint =
-                    top_port_directions.get(&port.port_name).copied().flatten();
-                resolved_port
-            })
-            .collect(),
+        ports: resolved_ports.clone(),
         children: renderable_children,
         links: top.links.clone(),
     });
 
-    (renderability, renderable_top)
+    TopRenderabilityAnalysis {
+        renderability,
+        resolved_ports,
+        renderable_top,
+    }
 }
 
 fn merge_top_port_direction_from_link(
@@ -6222,6 +6230,59 @@ mod tests {
             Some(InterfaceSignalDirection::Output)
         );
         assert!(emitted_text.contains("result_data>8"));
+
+        Ok(())
+    }
+
+    #[test]
+    fn top_composition_preserves_recovered_top_port_direction_when_still_blocked() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "width_only_top_port_missing_child.md",
+            "# Blocked Composition With Recovered Port\nTop datapath.\n\nTop datapath port result_data is width 8.\n\nTop datapath child consumer uses module missing_module.\n\nTop datapath link consumer.result_data -> result_data.\n",
+        )?;
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let top_candidate = fsm
+            .top_candidates
+            .iter()
+            .find(|top| top.top_name == "datapath")
+            .expect("top candidate should be present");
+        let recovered_port = top_candidate
+            .ports
+            .iter()
+            .find(|port| port.port_name == "result_data")
+            .expect("recovered top port should stay on the blocked top candidate");
+        let signal_inventory_port = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "result_data")
+            .expect("recovered top port should stay in selected top inventory");
+
+        assert_eq!(
+            recovered_port.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert_eq!(
+            signal_inventory_port.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert!(
+            fsm.renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason.contains("missing explicit module `missing_module`"))
+        );
 
         Ok(())
     }

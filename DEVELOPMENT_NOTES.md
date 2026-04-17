@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-18 Adapter blocked-top direction retention
+- Tightened the `.fsm` top-composition adapter path so top-link topology recovery is not coupled to final renderability.
+- `analyze_top_renderability` now returns a small `TopRenderabilityAnalysis` carrying:
+  - full renderability status
+  - top ports after recoverable link-topology direction overlays
+  - optional renderable top root when all composition gates pass
+- This prevents a useful recovered fact from disappearing when a separate gate still blocks emission. For example, `consumer.result_data -> result_data` can prove `result_data` is a top output even if `consumer` points at a missing child module and therefore cannot be emitted.
+- The change is deliberately conservative: it does not auto-create child modules, does not invent link endpoints, does not make a blocked adapter renderable, and does not mutate canonical `IntentIR`.
+- Added `top_composition_preserves_recovered_top_port_direction_when_still_blocked`, which proves a width-only top port keeps the topology-recovered output direction in both `top_candidates[].ports` and selected top signal inventory while the adapter remains blocked on `missing_module`.
+- Focused validation, the full adapter test module, docs CI, and full local CI passed. Full local CI reports `330` Rust tests plus warning-deny Clippy/rustdoc and the mdBook build.
+
 ## 2026-04-18 KG validation-finding payload expectations
 - Added `findings_include` under `validation.evidence`, `validation.semantic`, and `validation.intent` fixture expectations in `specforge kg-bench`.
 - The new expectation shape complements existing `finding_ids_include` and metric checks by matching the actual validation finding payload:
