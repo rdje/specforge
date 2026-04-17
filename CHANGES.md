@@ -1,5 +1,26 @@
 # CHANGES
 
+## 2026-04-17 (KG canonical table-support missing-signal diagnostic coverage)
+
+### Improved: canonical table-support failures now identify missing signals precisely
+- Tightened the missing-signal branch for `signal_supporting_table_ids_include`.
+- When a fixture expects table support for a signal that is absent from the canonical signal inventory, the diagnostic now names the exact `signal_supporting_table_ids_include[<signal>]` field and prints the actual canonical signal set.
+- Added `kg_bench_reports_missing_canonical_table_support_failure`, a focused unit test that expects `MISSING_SIGNAL` to carry `table_protocol_signal_description` while the one-row signal-table fixture only recovers `XREQ`.
+- Renamed the test so the existing `cargo test -p specforge table_support_failure` filter now covers all canonical table-support diagnostic cases together.
+- This completes the immediate diagnostic surface for canonical table support: wrong SemanticIR support id, wrong IntentIR support id, and absent expected canonical signal.
+- `MEMORY.md` was also brought forward from the stale `c2bbd8f` baseline to the latest committed local baseline `5cdc36e`.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge table_support_failure` -> passed with `3` canonical table-support diagnostic tests
+- `cargo test -p specforge evidence_table_provenance` -> passed with the EvidenceIR table-provenance diagnostic tests
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `89` passed / `0` failed fixtures
+- `cargo run -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed with `89` fixtures / `0` failures and no tracked corpus-KB content drift
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `327` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+- README sentinel check -> passed
+
 ## 2026-04-17 (KG IntentIR table-support diagnostic coverage)
 
 ### Added: focused failure coverage for IntentIR signal table-support expectations

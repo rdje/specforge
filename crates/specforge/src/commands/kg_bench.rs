@@ -868,8 +868,10 @@ fn evaluate_canonical_expectations(
         let Some(signal) = find_interface_signal(interfaces, &expected_table_support.signal_name)
         else {
             failures.push(format!(
-                "{label}: missing signal `{}` while checking table provenance expectation",
-                expected_table_support.signal_name
+                "{label}: missing signal `{}` while checking `signal_supporting_table_ids_include[{}]`; actual signals were {:?}",
+                expected_table_support.signal_name,
+                expected_table_support.signal_name,
+                signal_names
             ));
             continue;
         };
@@ -2441,6 +2443,45 @@ mod tests {
                 assert!(message.contains("signal_supporting_table_ids_include[XREQ]"));
                 assert!(message.contains("missing_signal_table"));
                 assert!(message.contains("table_protocol_signal_description"));
+            }
+            other => panic!("unexpected error variant: {other}"),
+        }
+
+        Ok(())
+    }
+
+    #[test]
+    fn kg_bench_reports_missing_canonical_table_support_failure() -> crate::error::Result<()> {
+        let tempdir = tempdir()?;
+        let fixture_dir = tempdir.path().join("missing_canonical_signal_fixture");
+        write_one_signal_table_fixture_with_expectations(
+            &fixture_dir,
+            "missing_canonical_signal_fixture",
+            serde_json::json!({
+                "semantic": {
+                    "signal_supporting_table_ids_include": [
+                        {
+                            "signal_name": "MISSING_SIGNAL",
+                            "table_ids_include": ["table_protocol_signal_description"]
+                        }
+                    ]
+                }
+            }),
+        )?;
+
+        let error = run(KgBenchArgs {
+            fixtures_root: tempdir.path().to_path_buf(),
+            fixtures: Vec::new(),
+        })
+        .expect_err("expected kg-bench to fail for missing canonical signal");
+
+        match error {
+            AppError::InvalidStageArtifact(message) => {
+                assert!(message.contains("missing_canonical_signal_fixture"));
+                assert!(message.contains("semantic"));
+                assert!(message.contains("signal_supporting_table_ids_include[MISSING_SIGNAL]"));
+                assert!(message.contains("MISSING_SIGNAL"));
+                assert!(message.contains("XREQ"));
             }
             other => panic!("unexpected error variant: {other}"),
         }

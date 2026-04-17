@@ -22,20 +22,24 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `c2bbd8f`
-- latest_commit_brief_message: `test(kg): cover canonical table support failures`
-- note: current follow-on work adds IntentIR-stage diagnostic self-test coverage for canonical signal table-support expectations
+- latest_commit_hash: `5cdc36e`
+- latest_commit_brief_message: `test(kg): cover intent table support failures`
+- note: current follow-on work tightens missing-signal diagnostics for canonical signal table-support expectations
 
 ## Recent commit chain (last 5)
+- `5cdc36e` test(kg): cover intent table support failures
 - `c2bbd8f` test(kg): cover canonical table support failures
 - `ae4ea54` test(kg): cover evidence provenance count failures
 - `69351aa` test(kg): assert evidence provenance counts
 - `cc7e533` test(kg): cover missing evidence provenance
-- `5ae15c4` test(kg): cover evidence provenance failures
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- current in-flight KG-quality hardening adds IntentIR-stage diagnostic self-test coverage for canonical `signal_supporting_table_ids_include` expectations in `specforge kg-bench`
+- current in-flight KG-quality hardening tightens the missing-signal diagnostic for canonical `signal_supporting_table_ids_include` expectations in `specforge kg-bench`
+- the missing-signal diagnostic now names the exact `signal_supporting_table_ids_include[<signal>]` field and prints the actual canonical signal set
+- `kg_bench_reports_missing_canonical_table_support_failure` builds a temporary one-row signal-table fixture, expects `MISSING_SIGNAL` to carry `table_protocol_signal_description`, and verifies the failure names the fixture, `semantic`, the exact signal-specific field, the missing signal, and actual recovered `XREQ`
+- focused `cargo test -p specforge table_support_failure` passed with the wrong SemanticIR support-id, wrong IntentIR support-id, and missing canonical signal diagnostics; full tracked `kg-bench` passed with `89/89` fixtures, `corpus-kb --kg-fixtures-root` passed with `89` fixtures / `0` failures and no tracked corpus-KB drift, docs CI passed, full local CI passed with `327` Rust tests plus the mdBook build, and `git diff --check` passed for the current slice
+- latest committed KG-quality hardening added IntentIR-stage diagnostic self-test coverage for canonical `signal_supporting_table_ids_include` expectations in `specforge kg-bench`
 - `kg_bench_reports_intent_table_support_failure` builds a temporary one-row signal-table fixture, deliberately expects `XREQ` to carry a missing IntentIR table id, and verifies the failure names the fixture, `intent`, `signal_supporting_table_ids_include[XREQ]`, the missing expected table id, and the actual canonical table id
 - focused validation passed for `cargo test -p specforge table_support_failure` and `cargo test -p specforge evidence_table_provenance`; full tracked `kg-bench` passed with `89/89` fixtures, `corpus-kb --kg-fixtures-root` passed with `89` fixtures / `0` failures and no tracked corpus-KB drift, docs CI passed, full local CI passed with `326` Rust tests plus the mdBook build, and `git diff --check` passed for the current slice
 - latest committed KG-quality hardening added focused diagnostic self-test coverage for canonical `signal_supporting_table_ids_include` expectations in `specforge kg-bench`

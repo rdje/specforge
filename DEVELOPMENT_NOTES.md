@@ -7,6 +7,20 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 KG canonical table-support missing-signal diagnostic self-test
+- Tightened the canonical `signal_supporting_table_ids_include` missing-signal diagnostic.
+- The previous diagnostic said only that a signal was missing while checking a table-provenance expectation.
+- The new diagnostic names the exact expectation field `signal_supporting_table_ids_include[<signal>]` and shows the actual canonical signal set.
+- Added `kg_bench_reports_missing_canonical_table_support_failure`.
+- The test reuses the one-row structured signal-table fixture, expects `MISSING_SIGNAL` to carry `table_protocol_signal_description`, and confirms the failure reports:
+  - fixture name
+  - `semantic` stage label
+  - exact signal-specific expectation field
+  - missing expected signal name
+  - actual recovered signal `XREQ`
+- The focused `table_support_failure` filter now covers the wrong SemanticIR support-id diagnostic, wrong IntentIR support-id diagnostic, and missing canonical signal diagnostic together.
+- Focused validation, full tracked `kg-bench`, `corpus-kb`, docs CI, and full local CI passed; full local CI reports `327` Rust tests plus the mdBook build.
+
 ## 2026-04-17 KG IntentIR table-support diagnostic self-test
 - Added `kg_bench_reports_intent_table_support_failure`.
 - The test reuses the one-row structured signal-table fixture helper and places the failing `signal_supporting_table_ids_include` expectation under the `intent` stage.
