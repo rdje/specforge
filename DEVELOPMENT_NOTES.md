@@ -7,6 +7,16 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 README bootstrap continuity sync
+- Executed the README handoff path after `bb1def0`.
+- `SESSION_BOOTSTRAP.md` still instructs a future agent to read the referenced docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if needed, and continue from the roadmap.
+- The Rust codebase sanity pass observed the expected active crate shape:
+  - `30` Rust source files under `crates/specforge/src`
+  - `58,038` total Rust source lines in that tree
+  - CLI dispatch still exposes the staged pipeline plus quality/learning commands documented in README
+- No `RUST_CODEBASE_ANALYSIS.md` update was needed because it already records the committed signal-table provenance bridge and current command surface.
+- `MEMORY.md` did need a small correction: its latest committed baseline still pointed at `e96ebe1` and described the provenance work as in-flight, even though `bb1def0 feat(ir): carry signal table provenance` is now committed.
+
 ## 2026-04-17 Signal table provenance is first-class on canonical signals
 - Follow-on to `signal_table_inventory_authority_negative`: table-derived signal inventory is now not only preserved, it is traceable at canonical signal-record granularity.
 - `EvidenceIR` now records `table_signal_declaration_provenance` when `SourceIR.structured_tables` synthesize formal `Signal X is ...` statements from signal-description tables.

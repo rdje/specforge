@@ -22,24 +22,24 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `e96ebe1`
-- latest_commit_brief_message: `test(kg): lock signal table inventory authority`
-- note: the current session is adding first-class table provenance carry-through from table-synthesized EvidenceIR signal declarations into canonical `InterfaceSignalRecord.supporting_table_ids`, plus KG fixture assertions for that provenance
+- latest_commit_hash: `bb1def0`
+- latest_commit_brief_message: `feat(ir): carry signal table provenance`
+- note: README bootstrap confirmed the provenance slice is now committed and the remaining immediate continuity work is to continue from the roadmap without treating that slice as in-flight
 
 ## Recent commit chain (last 5)
+- `bb1def0` feat(ir): carry signal table provenance
 - `e96ebe1` test(kg): lock signal table inventory authority
 - `664f2a5` test(kg): add signal inventory exclusions
 - `4aa4183` test(kg): lock clock reset contract scope
 - `5d49cdb` docs(clock-reset): clarify protocol PDF scope
-- `988e9bc` test(kg): reject generic clock reset topology advice
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- current in-flight IR/KG-quality slice promotes signal-table provenance into canonical interface signal records
+- latest committed IR/KG-quality slice promotes signal-table provenance into canonical interface signal records
 - `EvidenceIR` now records `table_signal_declaration_provenance` for formal declarations synthesized from `SourceIR.structured_tables`
 - `SemanticIR` now maps those synthesized statement ids back to table ids and stores them on `InterfaceSignalRecord.supporting_table_ids`; `IntentIR` inherits the same canonical signal provenance
-- `specforge kg-bench` now supports `signal_supporting_table_ids_include` for semantic and intent expectations, and `signal_table_inventory_authority_negative` now requires `XREQ`, `XACK`, and `PAYLOAD` to carry `table_protocol_signal_description`
-- focused `kg-bench`, full tracked `kg-bench`, `corpus-kb --kg-fixtures-root`, `cargo test -p specforge --no-run`, docs CI, and full local CI have passed locally for this slice; the tracked KG suite remains `89/89`, corpus-KB refresh reports `89` fixtures / `0` failures, and local CI reports `319` Rust tests plus the mdBook build
+- `specforge kg-bench` now supports `signal_supporting_table_ids_include` for semantic and intent expectations, and `signal_table_inventory_authority_negative` requires `XREQ`, `XACK`, and `PAYLOAD` to carry `table_protocol_signal_description`
+- focused `kg-bench`, full tracked `kg-bench`, `corpus-kb --kg-fixtures-root`, `cargo test -p specforge --no-run`, docs CI, and full local CI passed locally for the committed provenance slice; the tracked KG suite remained `89/89`, corpus-KB refresh reported `89` fixtures / `0` failures, and local CI reported `319` Rust tests plus the mdBook build
 - latest committed KG-quality slice added `signal_table_inventory_authority_negative`, proving structured signal/interface tables author real protocol signal inventory while uppercase document/integration vocabulary stays excluded
 - the committed fixture injects a structured `Signal | Direction | Width | Description` table through `SourceIR`, recovers `XREQ`, `XACK`, and `PAYLOAD`, and excludes `PDF`, `RTL`, `IP`, `VIP`, `PLL`, `DFT`, `CDC`, `CTS`, `ECO`, and `SoC`/`SOC`
 - focused `kg-bench`, full tracked `kg-bench`, `corpus-kb --kg-fixtures-root`, docs CI, and full local CI passed locally for the committed table-authority slice; the tracked KG suite reported `89/89`, corpus-KB refresh reported `89` fixtures / `0` failures, table extraction/hygiene `9/9`, truthfulness-negative/caution `36/36`, and local CI reported `319` Rust tests plus the mdBook build
@@ -154,7 +154,7 @@
 - `scripts/run_ci.sh` now also builds Rust API docs with `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` before the mdBook build, preserving caller-provided `RUSTDOCFLAGS`
 - the Rust warning baseline is clean and now enforced in the shared local/hosted CI path rather than suppressed with `#[allow(dead_code)]`
 - README bootstrap currently resolves to `SESSION_BOOTSTRAP.md`, which instructs future agents to read the referenced live docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if necessary, and then continue from the roadmap
-- this README/PNT continuation observed 30 Rust source files and 58,291 lines under `crates/specforge/src`, with the CLI now including `doctor`, `converge`, `enrich`, `validate`, `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, `corpus-kb`, and `nlp-enrich` beside the core staged IR commands
+- this README bootstrap observed 30 Rust source files and 58,038 lines under `crates/specforge/src`, with the CLI including `doctor`, `converge`, `enrich`, `validate`, `project-validation`, `rescan-plan`, `kg-bench`, `learn-priors`, `corpus-kb`, and `nlp-enrich` beside the core staged IR commands
 - `RUST_CODEBASE_ANALYSIS.md` has been refreshed for the direct `.fsm` control-read input recovery slice; the focused new adapter regression passes, the full focused `standalone_dt_` adapter set passes, the full adapter suite passes, and full local CI reports `319` Rust tests plus the mdBook build
 - `RUST_CODEBASE_ANALYSIS.md` has been refreshed for the direct `.fsm` target-actor selection slice; the focused new adapter regression passes, the full focused `standalone_dt_` adapter set passes, the full adapter suite passes, and full local CI reports `318` Rust tests plus the mdBook build
 - `RUST_CODEBASE_ANALYSIS.md` has been refreshed for the coordinated active-read coverage slice; focused read-side extractor tests pass, focused `kg-bench` passes for `relative_clause_actor_noise_negative`, the full tracked KG suite reports `86/86`, and full local CI passes with `317` Rust tests plus the mdBook build

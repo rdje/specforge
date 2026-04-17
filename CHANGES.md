@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-04-17 (README bootstrap continuity sync)
+
+### Fixed: post-commit memory baseline no longer describes completed provenance work as in-flight
+- Executed the README bootstrap path by reading `README.md`, `SESSION_BOOTSTRAP.md`, the referenced live ramp-up docs, and the Rust CLI/module inventory.
+- Confirmed the current `RUST_CODEBASE_ANALYSIS.md` still matches the implemented command surface and the committed signal-table provenance architecture.
+- Updated `MEMORY.md` so the latest committed baseline is `bb1def0 feat(ir): carry signal table provenance` instead of the prior `e96ebe1` baseline.
+- Refreshed the recorded Rust source inventory from the current checkout: `30` Rust source files and `58,038` lines under `crates/specforge/src`.
+
+### Validation
+- `git status --short --branch` -> confirmed branch is clean before the continuity-doc edit and ahead of `origin/main`
+- Rust codebase inventory commands over `crates/specforge/src` -> completed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `git diff --check` -> passed
+- README sentinel check -> passed
+
 ## 2026-04-17 (signal table provenance carry-through)
 
 ### Added: canonical interface signals retain their SourceIR table support
