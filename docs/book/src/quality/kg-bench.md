@@ -43,6 +43,7 @@ The expected result is intentionally sharp: `XREQ`, `XACK`, and `PAYLOAD` become
 
 Fixtures can also assert table provenance for canonical interface signals.
 `signal_supporting_table_ids_include` checks `InterfaceSignalRecord.supporting_table_ids`, proving that a recovered signal remains tied to the structured `SourceIR` table that authored its synthesized declaration.
+The harness self-tests the missing canonical table-support diagnostic so these failures identify the fixture, signal-specific expectation field, missing table id, and actual support set.
 That matters for signal-table-heavy protocol PDFs: the pipeline should be able to explain that `XREQ` came from a specific signal-description table, not merely that a synthetic `Signal XREQ is output` sentence happened to exist somewhere downstream.
 Fixtures can also assert the EvidenceIR side directly with `table_signal_declaration_provenance_include`.
 That checks the table-synthesized declaration before canonical carry-through: the signal name, source table id, and optionally the generated statement text must match.

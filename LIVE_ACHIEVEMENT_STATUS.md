@@ -44,6 +44,7 @@
 - KG benchmark harness can now assert EvidenceIR table-signal provenance counts directly: Done
 - KG benchmark harness self-tests EvidenceIR table-provenance count diagnostics: Done
 - KG benchmark harness can now assert canonical signal table provenance directly: Done
+- KG benchmark harness self-tests canonical signal table-provenance diagnostics: Done
 - `specforge validate` now reports EvidenceIR table-signal declaration provenance: Done
 - `specforge validate` now reports table-backed canonical signal coverage: Done
 - KG benchmark harness can now assert canonical signal-connectivity conflict shape directly: Done

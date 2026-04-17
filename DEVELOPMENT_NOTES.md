@@ -7,6 +7,18 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 KG canonical table-support diagnostic self-test
+- Added `kg_bench_reports_canonical_table_support_failure`.
+- Refactored the temporary one-row signal-table fixture helper so it can accept a full `expectations` object, with the existing EvidenceIR helper now wrapping it.
+- The new test creates a canonical-stage failure for `signal_supporting_table_ids_include` by expecting `XREQ` to carry `missing_signal_table` while the actual canonical support set contains `table_protocol_signal_description`.
+- The diagnostic assertion checks that the failure message includes:
+  - fixture name
+  - failed canonical expectation field with signal name
+  - missing expected table id
+  - actual table id
+- This mirrors the EvidenceIR table-provenance diagnostic self-tests on the canonical carry-through side, keeping both halves of the table-provenance ladder debuggable.
+- Focused validation, full tracked `kg-bench`, `corpus-kb`, docs CI, and full local CI passed; full local CI reports `325` Rust tests plus the mdBook build.
+
 ## 2026-04-17 KG EvidenceIR table-provenance count diagnostic self-test
 - Added `kg_bench_reports_evidence_table_provenance_count_failure`.
 - The test builds a temporary fixture with the shared one-row structured signal-table helper and intentionally expects `table_signal_declaration_provenance_count: 0`.

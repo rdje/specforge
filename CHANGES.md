@@ -1,5 +1,26 @@
 # CHANGES
 
+## 2026-04-17 (KG canonical table-support diagnostic coverage)
+
+### Added: focused failure coverage for canonical signal table-support expectations
+- Added `kg_bench_reports_canonical_table_support_failure`, a focused `kg-bench` unit test for `signal_supporting_table_ids_include`.
+- Refactored the one-row structured signal-table fixture helper so it can drive either EvidenceIR expectations or canonical-stage expectations without duplicating the realistic `SourceIR` table patch.
+- The new test deliberately expects `XREQ` to carry a missing table id even though the canonical signal is backed by `table_protocol_signal_description`.
+- The assertion verifies the failure message names the fixture, the `signal_supporting_table_ids_include[XREQ]` field, the missing expected table id, and the actual table id carried by the canonical signal.
+- This gives the canonical table-provenance expectation the same diagnostic protection now present for EvidenceIR table-provenance count, missing-record, and synthesized-statement mismatch failures.
+- `MEMORY.md` was also brought forward from the stale `69351aa` baseline to the latest committed local baseline `ae4ea54`.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge kg_bench_reports_canonical_table_support_failure` -> passed
+- `cargo test -p specforge evidence_table_provenance` -> passed
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `89` passed / `0` failed fixtures
+- `cargo run -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed with `89` fixtures / `0` failures and no tracked corpus-KB content drift
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `325` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+- README sentinel check -> passed
+
 ## 2026-04-17 (KG evidence provenance count diagnostic coverage)
 
 ### Added: focused failure coverage for EvidenceIR table-provenance count expectations

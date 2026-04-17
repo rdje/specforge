@@ -2291,6 +2291,20 @@ mod tests {
         fixture_name: &str,
         evidence_expectations: serde_json::Value,
     ) -> crate::error::Result<()> {
+        write_one_signal_table_fixture_with_expectations(
+            fixture_dir,
+            fixture_name,
+            serde_json::json!({
+                "evidence": evidence_expectations
+            }),
+        )
+    }
+
+    fn write_one_signal_table_fixture_with_expectations(
+        fixture_dir: &Path,
+        fixture_name: &str,
+        expectations: serde_json::Value,
+    ) -> crate::error::Result<()> {
         fs::create_dir_all(fixture_dir)?;
         fs::write(
             fixture_dir.join("source.md"),
@@ -2337,9 +2351,7 @@ mod tests {
                         }
                     ]
                 },
-                "expectations": {
-                    "evidence": evidence_expectations
-                }
+                "expectations": expectations
             })
             .to_string(),
         )?;
@@ -2391,6 +2403,44 @@ mod tests {
             AppError::InvalidStageArtifact(message) => {
                 assert!(message.contains("broken_fixture"));
                 assert!(message.contains("resolved_semantic_role_signal_names_include"));
+            }
+            other => panic!("unexpected error variant: {other}"),
+        }
+
+        Ok(())
+    }
+
+    #[test]
+    fn kg_bench_reports_canonical_table_support_failure() -> crate::error::Result<()> {
+        let tempdir = tempdir()?;
+        let fixture_dir = tempdir.path().join("canonical_table_support_fixture");
+        write_one_signal_table_fixture_with_expectations(
+            &fixture_dir,
+            "canonical_table_support_fixture",
+            serde_json::json!({
+                "semantic": {
+                    "signal_supporting_table_ids_include": [
+                        {
+                            "signal_name": "XREQ",
+                            "table_ids_include": ["missing_signal_table"]
+                        }
+                    ]
+                }
+            }),
+        )?;
+
+        let error = run(KgBenchArgs {
+            fixtures_root: tempdir.path().to_path_buf(),
+            fixtures: Vec::new(),
+        })
+        .expect_err("expected kg-bench to fail for missing canonical table support");
+
+        match error {
+            AppError::InvalidStageArtifact(message) => {
+                assert!(message.contains("canonical_table_support_fixture"));
+                assert!(message.contains("signal_supporting_table_ids_include[XREQ]"));
+                assert!(message.contains("missing_signal_table"));
+                assert!(message.contains("table_protocol_signal_description"));
             }
             other => panic!("unexpected error variant: {other}"),
         }
