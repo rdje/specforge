@@ -7,6 +7,15 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 KG EvidenceIR table-provenance diagnostic self-test
+- Added `kg_bench_reports_evidence_table_provenance_statement_failure`.
+- The test creates a temporary KG fixture with a real structured signal table and an intentionally wrong expected synthesized statement text.
+- This proves the new `table_signal_declaration_provenance_include` path fails for the important subtle case: the signal/table pair exists, but the provenance record does not point at the expected generated declaration text.
+- The first run exposed a diagnostic asymmetry: missing provenance records named `table_signal_declaration_provenance_include`, but statement-text mismatches did not.
+- The diagnostic now names the same expectation field in both failure modes, so users debugging tracked fixtures see the exact schema field that failed.
+- This is harness quality work, not extractor behavior change: it strengthens trust in the executable benchmark surface that guards EvidenceIR table provenance.
+- Focused validation, full tracked `kg-bench`, `corpus-kb`, docs CI, and full local CI passed; full local CI now reports `322` Rust tests plus the mdBook build.
+
 ## 2026-04-17 EvidenceIR table provenance KG expectations
 - Added a direct EvidenceIR expectation surface to `specforge kg-bench`.
 - The first field is deliberately narrow: `table_signal_declaration_provenance_include`.

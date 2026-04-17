@@ -42,7 +42,14 @@
 - GitHub Actions CI is part of the repo baseline and still runs `cargo fmt --all --check`, warning-deny Clippy, warning-deny Rust tests, warning-deny rustdoc, and the mdBook build when launched manually, but automatic `push` / `pull_request` triggers are temporarily paused to conserve account Actions minutes
 - that CI path still has a single checked-in entrypoint at `scripts/run_ci.sh`, and the GitHub workflow calls that script directly so local and hosted Rust validation do not drift apart
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and deepening the now-started `R15g` corpus knowledge base beside the already-live typed prior-memory plane; adapter expansion is now horizon work
-- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the EvidenceIR table-signal provenance validation slice the full local CI path reports clean formatting, clean Clippy, `321` passing Rust tests, clean Rust API docs, and a successful mdBook build
+- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the KG EvidenceIR table-provenance diagnostic self-test slice the full local CI path reports clean formatting, clean Clippy, `322` passing Rust tests, clean Rust API docs, and a successful mdBook build
+
+## Session update (2026-04-17 KG EvidenceIR table-provenance diagnostic coverage)
+- Continued from commit `487389e`, adding focused negative coverage for the new EvidenceIR table-provenance fixture expectation path.
+- `kg_bench_reports_evidence_table_provenance_statement_failure` builds a temporary fixture with a real structured signal table and deliberately expects the wrong synthesized statement text for `XREQ`.
+- The first focused run exposed that statement-text mismatch diagnostics did not name `table_signal_declaration_provenance_include`.
+- The diagnostic now names that field for statement-text mismatches as well as missing provenance records, so fixture failures point at the relevant schema field.
+- Focused validation, full tracked `kg-bench`, `corpus-kb`, docs CI, and full local CI passed for this slice.
 
 ## Session update (2026-04-17 EvidenceIR table provenance KG expectations)
 - Continued from commit `43653a1`, adding exact EvidenceIR table-provenance fixture expectations rather than another aggregate metric.

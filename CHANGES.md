@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-17 (KG evidence provenance failure diagnostic coverage)
+
+### Added: focused failure coverage for EvidenceIR table-provenance expectations
+- Added a focused `kg-bench` unit test that builds a temporary fixture with a real one-row `Signal | Direction | Width | Description` table.
+- The fixture deliberately expects the wrong synthesized statement text for `XREQ`, proving `table_signal_declaration_provenance_include` fails when the provenance record points at a different declaration than expected.
+- Tightened the statement-text mismatch diagnostic so it names `table_signal_declaration_provenance_include`, matching the missing-record diagnostic and making fixture failures easier to interpret.
+- This hardens the new EvidenceIR provenance expectation surface itself: tracked fixtures now have both positive coverage through `signal_table_inventory_authority_negative` and negative diagnostic coverage through the unit test.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge kg_bench_reports_evidence_table_provenance_statement_failure` -> passed
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `89` passed / `0` failed fixtures
+- `cargo run -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed with `89` fixtures / `0` failures and no tracked corpus-KB content drift
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `322` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+- README sentinel check -> passed
+
 ## 2026-04-17 (EvidenceIR table provenance KG expectations)
 
 ### Added: KG fixtures can assert EvidenceIR table-signal provenance records directly

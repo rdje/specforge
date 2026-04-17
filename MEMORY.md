@@ -22,20 +22,24 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `43653a1`
-- latest_commit_brief_message: `docs: sync README bootstrap baseline`
-- note: current follow-on work adds exact EvidenceIR table-signal provenance expectations to `kg-bench`; do not treat the EvidenceIR validation metric itself as in-flight
+- latest_commit_hash: `487389e`
+- latest_commit_brief_message: `test(kg): assert evidence table provenance`
+- note: current follow-on work adds focused negative diagnostic coverage for the committed EvidenceIR table-provenance expectation surface; do not treat the expectation implementation itself as in-flight
 
 ## Recent commit chain (last 5)
+- `487389e` test(kg): assert evidence table provenance
 - `43653a1` docs: sync README bootstrap baseline
 - `f58ce2e` feat(validation): report evidence table provenance
 - `7d8e6e2` test(validation): lock signal table support metric
 - `8d447e3` docs: sync README bootstrap baseline
-- `4f61ec6` feat(validation): report signal table support
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- current in-flight KG-quality hardening adds direct EvidenceIR `table_signal_declaration_provenance_include` expectations to `specforge kg-bench`
+- current in-flight KG-quality hardening adds focused negative diagnostic coverage for direct EvidenceIR `table_signal_declaration_provenance_include` expectations
+- new unit coverage builds a temporary one-row signal table fixture, deliberately expects the wrong synthesized statement text for `XREQ`, and verifies the `kg-bench` failure names both the expectation field and the expected/actual synthesized statements
+- the first focused run exposed that statement-text mismatch diagnostics did not include `table_signal_declaration_provenance_include`; the diagnostic was tightened and the focused test now passes
+- full tracked `kg-bench` passed with `89/89` fixtures, `corpus-kb --kg-fixtures-root` passed with `89` fixtures / `0` failures and no tracked corpus-KB drift, docs CI passed, full local CI passed with `322` Rust tests plus the mdBook build, and `git diff --check` passed for the current slice
+- latest committed KG-quality hardening added direct EvidenceIR `table_signal_declaration_provenance_include` expectations to `specforge kg-bench`
 - the new expectation checks exact evidence-stage table provenance records by `signal_name` and `table_id`, with optional synthesized `statement_text`
 - `signal_table_inventory_authority_negative` now asserts EvidenceIR provenance for `XREQ`, `XACK`, and `PAYLOAD`, including their generated declaration text before SemanticIR / IntentIR carry-through is evaluated
 - focused `kg-bench` for `signal_table_inventory_authority_negative` passed after correcting the expected `PAYLOAD` synthesized statement from width `32` to table-derived `DATA_WIDTH`
