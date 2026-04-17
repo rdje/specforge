@@ -80,6 +80,9 @@
     ]
   },
   "expectations": {
+    "evidence": {
+      "table_signal_declaration_provenance_count": 0
+    },
     "semantic": {
       "signal_names_include": ["CONTROL"],
       "resolved_semantic_role_signal_names_exclude": ["REQ", "ACK"],
@@ -98,6 +101,7 @@
       "evidence": {
         "metric_values": {
           "actor_signal_relations": "0",
+          "table_signal_declaration_provenance": "0",
           "signal_semantic_hints": "0"
         }
       },

@@ -7,6 +7,15 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 KG EvidenceIR table-provenance count expectation
+- Added `table_signal_declaration_provenance_count` to `EvidenceStageExpectations`.
+- This count is evaluated directly against `EvidenceIr.table_signal_declaration_provenance.len()`.
+- The point is negative leakage coverage: `table_signal_declaration_provenance_include` proves specific records exist, while the count can prove no unexpected records exist.
+- `table_misclassification_field_table_negative` now uses the count to require zero EvidenceIR table-signal provenance from a deliberately misclassified `Bits | Name | Description` field table.
+- The fixture also asserts the user-visible EvidenceIR validation metric `table_signal_declaration_provenance: 0`.
+- This locks the intended boundary at the earliest provenance layer: field tables may remain present as structured tables, but they must not synthesize top-level signal declarations or table-backed signal provenance.
+- Focused fixture validation, full tracked `kg-bench`, `corpus-kb`, docs CI, full local CI, and `git diff --check` passed; full local CI reports `323` Rust tests plus the mdBook build.
+
 ## 2026-04-17 KG EvidenceIR missing-provenance diagnostic self-test
 - Added `kg_bench_reports_missing_evidence_table_provenance_failure`.
 - The test creates a temporary KG fixture with a real structured signal table, then expects `XREQ` provenance from a deliberately wrong table id.

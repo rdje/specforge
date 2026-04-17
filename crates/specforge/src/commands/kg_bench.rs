@@ -104,6 +104,7 @@ struct FixtureExpectations {
 
 #[derive(Debug, Default, Deserialize)]
 struct EvidenceStageExpectations {
+    table_signal_declaration_provenance_count: Option<usize>,
     #[serde(default)]
     table_signal_declaration_provenance_include: Vec<ExpectedTableSignalDeclarationProvenance>,
 }
@@ -727,6 +728,14 @@ fn evaluate_evidence_expectations(
     evidence_ir: &EvidenceIr,
     failures: &mut Vec<String>,
 ) {
+    assert_optional_count(
+        label,
+        "table_signal_declaration_provenance_count",
+        expectations.table_signal_declaration_provenance_count,
+        evidence_ir.table_signal_declaration_provenance.len(),
+        failures,
+    );
+
     for expectation in &expectations.table_signal_declaration_provenance_include {
         let matching_records = evidence_ir
             .table_signal_declaration_provenance

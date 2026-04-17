@@ -22,23 +22,27 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `5ae15c4`
-- latest_commit_brief_message: `test(kg): cover evidence provenance failures`
-- note: current follow-on work adds focused missing-record diagnostic coverage for the committed EvidenceIR table-provenance expectation surface; do not treat the expectation implementation itself as in-flight
+- latest_commit_hash: `cc7e533`
+- latest_commit_brief_message: `test(kg): cover missing evidence provenance`
+- note: current follow-on work adds direct EvidenceIR table-provenance count expectations to `kg-bench`; do not treat the per-record expectation implementation itself as in-flight
 
 ## Recent commit chain (last 5)
+- `cc7e533` test(kg): cover missing evidence provenance
 - `5ae15c4` test(kg): cover evidence provenance failures
 - `487389e` test(kg): assert evidence table provenance
 - `43653a1` docs: sync README bootstrap baseline
 - `f58ce2e` feat(validation): report evidence table provenance
-- `7d8e6e2` test(validation): lock signal table support metric
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- current in-flight KG-quality hardening adds focused missing-record diagnostic coverage for direct EvidenceIR `table_signal_declaration_provenance_include` expectations
-- new unit coverage builds a temporary one-row signal table fixture, deliberately expects `XREQ` provenance from a wrong table id, and verifies the `kg-bench` failure names the fixture, expectation field, missing table id, and actual EvidenceIR table id
+- current in-flight KG-quality hardening adds direct EvidenceIR `table_signal_declaration_provenance_count` expectations to `specforge kg-bench`
+- `table_misclassification_field_table_negative` now requires `table_signal_declaration_provenance_count: 0`, proving a misclassified field table does not create any table-backed signal declaration provenance at EvidenceIR
+- the same fixture now also asserts the persisted EvidenceIR validation metric `table_signal_declaration_provenance: 0`
+- focused `kg-bench` for `table_misclassification_field_table_negative` passed; full tracked `kg-bench` passed with `89/89` fixtures, `corpus-kb --kg-fixtures-root` passed with `89` fixtures / `0` failures and no tracked corpus-KB drift, docs CI passed, full local CI passed with `323` Rust tests plus the mdBook build, and `git diff --check` passed for the current slice
+- latest committed KG-quality hardening added focused missing-record diagnostic coverage for direct EvidenceIR `table_signal_declaration_provenance_include` expectations
+- committed unit coverage builds a temporary one-row signal table fixture, deliberately expects `XREQ` provenance from a wrong table id, and verifies the `kg-bench` failure names the fixture, expectation field, missing table id, and actual EvidenceIR table id
 - the two EvidenceIR provenance diagnostic tests now share a one-row signal-table fixture writer to avoid duplicating structured-table JSON setup
-- focused validation for `cargo test -p specforge evidence_table_provenance` passed with both sibling diagnostic tests; full tracked `kg-bench` passed with `89/89` fixtures, `corpus-kb --kg-fixtures-root` passed with `89` fixtures / `0` failures and no tracked corpus-KB drift, docs CI passed, full local CI passed with `323` Rust tests plus the mdBook build, and `git diff --check` passed for the current slice
+- focused validation for `cargo test -p specforge evidence_table_provenance` passed with both sibling diagnostic tests; full tracked `kg-bench` passed with `89/89` fixtures, `corpus-kb --kg-fixtures-root` passed with `89` fixtures / `0` failures and no tracked corpus-KB drift, docs CI passed, full local CI passed with `323` Rust tests plus the mdBook build, and `git diff --check` passed for the committed missing-provenance diagnostic slice
 - latest committed KG-quality hardening added focused negative diagnostic coverage for direct EvidenceIR `table_signal_declaration_provenance_include` expectations
 - committed unit coverage builds a temporary one-row signal table fixture, deliberately expects the wrong synthesized statement text for `XREQ`, and verifies the `kg-bench` failure names both the expectation field and the expected/actual synthesized statements
 - the first focused run in that committed slice exposed that statement-text mismatch diagnostics did not include `table_signal_declaration_provenance_include`; the diagnostic was tightened and the focused test now passes

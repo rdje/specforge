@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-17 (KG evidence table-provenance count expectation)
+
+### Added: KG fixtures can assert EvidenceIR table-provenance counts directly
+- Added `table_signal_declaration_provenance_count` to the `specforge kg-bench` EvidenceIR expectation surface.
+- The count checks `EvidenceIr.table_signal_declaration_provenance.len()` without requiring the fixture to run validation first.
+- Strengthened `table_misclassification_field_table_negative` so a misclassified `Bits | Name | Description` field table must produce zero EvidenceIR table-signal provenance records.
+- The same fixture now also asserts the persisted EvidenceIR validation metric `table_signal_declaration_provenance: 0`, keeping exact IR-shape and validator-surface expectations aligned.
+- This closes the negative side of the table-provenance guard: true signal tables must produce traceable declarations, while field tables must not create fake table-backed signal provenance at all.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality table_misclassification_field_table_negative` -> passed
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `89` passed / `0` failed fixtures
+- `cargo run -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed with `89` fixtures / `0` failures and no tracked corpus-KB content drift
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `323` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+- README sentinel check -> passed
+
 ## 2026-04-17 (KG evidence provenance missing-record diagnostic coverage)
 
 ### Added: focused failure coverage for missing EvidenceIR table-provenance records

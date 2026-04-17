@@ -41,6 +41,7 @@
 - KG benchmark harness can now assert canonical signal-inventory exclusions directly: Done
 - KG benchmark harness now includes signal-table inventory authority coverage: Done
 - KG benchmark harness can now assert EvidenceIR table-signal provenance directly: Done
+- KG benchmark harness can now assert EvidenceIR table-signal provenance counts directly: Done
 - KG benchmark harness can now assert canonical signal table provenance directly: Done
 - `specforge validate` now reports EvidenceIR table-signal declaration provenance: Done
 - `specforge validate` now reports table-backed canonical signal coverage: Done
