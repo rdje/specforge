@@ -113,6 +113,8 @@ struct CanonicalStageExpectations {
     #[serde(default)]
     signal_directions_include: Vec<ExpectedSignalDirection>,
     #[serde(default)]
+    signal_supporting_table_ids_include: Vec<ExpectedSignalTableSupport>,
+    #[serde(default)]
     signal_polarities_include: Vec<ExpectedSignalPolarity>,
     #[serde(default)]
     actor_ports_include: Vec<ExpectedActorPort>,
@@ -215,6 +217,13 @@ struct ExpectedActorPort {
 struct ExpectedSignalDirection {
     signal_name: String,
     direction: InterfaceSignalDirection,
+}
+
+#[derive(Debug, Deserialize)]
+struct ExpectedSignalTableSupport {
+    signal_name: String,
+    #[serde(default)]
+    table_ids_include: Vec<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -768,6 +777,29 @@ fn evaluate_canonical_expectations(
                     .unwrap_or("none")
             ));
         }
+    }
+
+    for expected_table_support in &expectations.signal_supporting_table_ids_include {
+        let Some(signal) = find_interface_signal(interfaces, &expected_table_support.signal_name)
+        else {
+            failures.push(format!(
+                "{label}: missing signal `{}` while checking table provenance expectation",
+                expected_table_support.signal_name
+            ));
+            continue;
+        };
+        let actual_table_ids: BTreeSet<String> =
+            signal.supporting_table_ids.iter().cloned().collect();
+        assert_includes(
+            label,
+            &format!(
+                "signal_supporting_table_ids_include[{}]",
+                expected_table_support.signal_name
+            ),
+            &expected_table_support.table_ids_include,
+            &actual_table_ids,
+            failures,
+        );
     }
 
     for expected_polarity in &expectations.signal_polarities_include {

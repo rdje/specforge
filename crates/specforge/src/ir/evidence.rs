@@ -119,6 +119,9 @@ pub struct EvidenceIr {
     /// Level 2 NLP: structured records extracted from `ConditionalRule` sentences.
     #[serde(default)]
     pub conditional_rules: Vec<ConditionalRuleRecord>,
+    /// Provenance links from table-synthesized signal declarations back to SourceIR tables.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub table_signal_declaration_provenance: Vec<TableSignalDeclarationProvenanceRecord>,
     /// Resolved signal polarity facts recovered from prose/table evidence.
     /// These remain explicit so downstream layers can interpret asserted/deasserted
     /// semantics without blindly collapsing them to HIGH/LOW.
@@ -476,10 +479,12 @@ impl EvidenceIr {
         // This provides the first seed set for the convergent loop:
         //   1. direct signal declarations from signal-description tables
         //   2. direct enum facts from tables already classified as encodings
+        let mut table_signal_declaration_provenance = Vec::new();
         let synthesized = synthesize_declarations_from_tables(
             &source_ir,
             &mut statement_counter,
             prior_guidance.as_ref(),
+            &mut table_signal_declaration_provenance,
         );
 
         // Extract system contract (clock + reset) from signal-description prose in tables.
@@ -530,6 +535,7 @@ impl EvidenceIr {
             timing_constraints,
             signal_constraints,
             conditional_rules,
+            table_signal_declaration_provenance,
             signal_polarities,
             signal_polarity_conflicts,
             signal_semantic_hints: Vec::new(),
@@ -1012,6 +1018,13 @@ pub struct ExtractedStatement {
     pub text: String,
     pub evidence_span_ids: Vec<String>,
     pub related_visual_evidence_ids: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct TableSignalDeclarationProvenanceRecord {
+    pub statement_id: String,
+    pub signal_name: String,
+    pub table_id: String,
 }
 
 #[derive(Debug, Clone)]
@@ -4054,6 +4067,7 @@ fn synthesize_declarations_from_tables(
     source_ir: &SourceIr,
     statement_counter: &mut usize,
     prior_guidance: Option<&EvidencePriorGuidance>,
+    table_signal_declaration_provenance: &mut Vec<TableSignalDeclarationProvenanceRecord>,
 ) -> Vec<ExtractedStatement> {
     let mut statements = Vec::new();
     if source_ir.structured_tables.is_empty() {
@@ -4101,6 +4115,7 @@ fn synthesize_declarations_from_tables(
                     &section_title,
                     statement_counter,
                     prior_guidance,
+                    table_signal_declaration_provenance,
                 ));
             }
             TableKind::Encoding => {
@@ -6009,6 +6024,7 @@ fn synthesize_signal_declarations(
     section_title: &str,
     statement_counter: &mut usize,
     prior_guidance: Option<&EvidencePriorGuidance>,
+    table_signal_declaration_provenance: &mut Vec<TableSignalDeclarationProvenanceRecord>,
 ) -> Vec<ExtractedStatement> {
     let mut statements = Vec::new();
     if table.body_rows.is_empty() || table.col_count < 2 {
@@ -6130,8 +6146,14 @@ fn synthesize_signal_declarations(
         };
 
         *statement_counter += 1;
+        let statement_id = format!("statement_{statement_counter:04}");
+        table_signal_declaration_provenance.push(TableSignalDeclarationProvenanceRecord {
+            statement_id: statement_id.clone(),
+            signal_name: token.clone(),
+            table_id: table.table_id.clone(),
+        });
         statements.push(ExtractedStatement {
-            statement_id: format!("statement_{statement_counter:04}"),
+            statement_id,
             class: StatementClass::SourceFact,
             modality: EvidenceModality::Text,
             text,

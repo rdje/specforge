@@ -41,6 +41,10 @@ The `signal_table_inventory_authority_negative` fixture locks the positive side 
 It provides real signals only through a structured `Signal | Direction | Width | Description` table, then surrounds that table with uppercase implementation vocabulary in prose.
 The expected result is intentionally sharp: `XREQ`, `XACK`, and `PAYLOAD` become canonical signals with table-derived directions, while terms such as `PDF`, `RTL`, `VIP`, `PLL`, `DFT`, `CDC`, `CTS`, `ECO`, and `SoC` remain document context.
 
+Fixtures can also assert table provenance for canonical interface signals.
+`signal_supporting_table_ids_include` checks `InterfaceSignalRecord.supporting_table_ids`, proving that a recovered signal remains tied to the structured `SourceIR` table that authored its synthesized declaration.
+That matters for signal-table-heavy protocol PDFs: the pipeline should be able to explain that `XREQ` came from a specific signal-description table, not merely that a synthetic `Signal XREQ is output` sentence happened to exist somewhere downstream.
+
 Actor-relative direction is a graph surface, not just a flat signal annotation.
 
 Fixtures can therefore assert graph direction coverage directly with `graph_direction_signal_names_include` and `graph_direction_signal_names_exclude`.

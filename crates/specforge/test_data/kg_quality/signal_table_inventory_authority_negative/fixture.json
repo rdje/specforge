@@ -152,6 +152,20 @@
           "signal_name": "PAYLOAD",
           "direction": "output"
         }
+      ],
+      "signal_supporting_table_ids_include": [
+        {
+          "signal_name": "XREQ",
+          "table_ids_include": ["table_protocol_signal_description"]
+        },
+        {
+          "signal_name": "XACK",
+          "table_ids_include": ["table_protocol_signal_description"]
+        },
+        {
+          "signal_name": "PAYLOAD",
+          "table_ids_include": ["table_protocol_signal_description"]
+        }
       ]
     },
     "intent": {
@@ -181,6 +195,20 @@
         {
           "signal_name": "PAYLOAD",
           "direction": "output"
+        }
+      ],
+      "signal_supporting_table_ids_include": [
+        {
+          "signal_name": "XREQ",
+          "table_ids_include": ["table_protocol_signal_description"]
+        },
+        {
+          "signal_name": "XACK",
+          "table_ids_include": ["table_protocol_signal_description"]
+        },
+        {
+          "signal_name": "PAYLOAD",
+          "table_ids_include": ["table_protocol_signal_description"]
         }
       ]
     },

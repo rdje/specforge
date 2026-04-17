@@ -62,6 +62,9 @@ When a signal is already explicitly declared, a single-signal prose sentence sho
 For example, `CS_N is asserted when LOW` can attach active-low polarity to the declared `CS_N` surface, but it should not create a duplicate low-confidence `CS_N` interface just because the same signal was mentioned again.
 The same rule applies to polarity-only co-mentions of declared signals: `CS_N and WE_N are active LOW signals` should enrich the declared `CS_N` / `WE_N` records, not create a second low-confidence interface group that double-counts polarity coverage.
 
+Declared signal records also keep table support when the declaration was synthesized from a structured signal table.
+`InterfaceSignalRecord.supporting_table_ids` records the `SourceIR` table ids that backed the declaration, so `SemanticIR` and the carried `IntentIR` can explain that a canonical signal came from a specific signal-description table rather than from free-floating prose.
+
 ### Negative-knowledge cautions
 
 If a carried conflict or residual packet shape matches learned negative knowledge, `SemanticIR` validation may report `negative_knowledge_prior_matches`.

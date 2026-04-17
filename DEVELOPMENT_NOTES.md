@@ -7,6 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 Signal table provenance is first-class on canonical signals
+- Follow-on to `signal_table_inventory_authority_negative`: table-derived signal inventory is now not only preserved, it is traceable at canonical signal-record granularity.
+- `EvidenceIR` now records `table_signal_declaration_provenance` when `SourceIR.structured_tables` synthesize formal `Signal X is ...` statements from signal-description tables.
+- `SemanticIR` builds a statement-id to table-id bridge from that provenance and copies those table ids into each `InterfaceSignalRecord.supporting_table_ids` when the declaration is lifted into canonical interface inventory.
+- `IntentIR` inherits the same table support because it carries canonical semantic interface records forward rather than re-extracting them.
+- `specforge kg-bench` now accepts `signal_supporting_table_ids_include` in semantic and intent expectations, so fixtures can prove that a signal is backed by a specific structured table.
+- The hardened `signal_table_inventory_authority_negative` now checks both identity and provenance:
+  - `XREQ`, `XACK`, and `PAYLOAD` must survive through `SemanticIR` and `IntentIR`
+  - all three must carry `table_protocol_signal_description`
+  - uppercase prose vocabulary such as `PDF`, `RTL`, `VIP`, `PLL`, `DFT`, `CDC`, `CTS`, `ECO`, and `SoC` must stay excluded
+- This keeps the model honest in the exact direction the user highlighted: chip-spec PDFs usually contain explicit signal tables, and those tables should be authoritative evidence with recoverable provenance, not merely a convenience that vanishes after statement synthesis.
+- Focused and full KG-bench validation passed with `89/89` fixtures; corpus-KB refresh passed with `89` fixtures / `0` failures; full local CI passed with `319` Rust tests plus the mdBook build.
+
 ## 2026-04-17 Signal tables are executable inventory authority
 - Added `signal_table_inventory_authority_negative` to encode the user's point that real chip/protocol PDFs usually carry actual protocol signals in dedicated signal/interface tables.
 - The fixture uses no explicit markdown signal declarations. The real interface inventory comes from a structured `Signal | Direction | Width | Description` table injected through `SourceIR`.

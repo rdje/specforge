@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-17 (signal table provenance carry-through)
+
+### Added: canonical interface signals retain their SourceIR table support
+- Added `EvidenceIr.table_signal_declaration_provenance`, a compact provenance bridge from table-synthesized `Signal X is ...` declarations back to the originating `SourceIR` structured table id.
+- Added `InterfaceSignalRecord.supporting_table_ids` in `SemanticIR` / `IntentIR`, so canonical interface signals can now say not only which synthesized statement supported them, but which source table produced that statement.
+- Extended `specforge kg-bench` canonical expectations with `signal_supporting_table_ids_include`, allowing fixtures to assert table provenance as typed IR shape instead of relying on artifact inspection.
+- Hardened `signal_table_inventory_authority_negative` so `XREQ`, `XACK`, and `PAYLOAD` must carry `table_protocol_signal_description` through both `SemanticIR` and `IntentIR`.
+- Updated hand-built learning and semantic test records for the widened interface-signal schema while preserving empty table provenance for non-table-backed synthetic records.
+
+### Validation
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality signal_table_inventory_authority_negative` -> passed
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `89` passed / `0` failed fixtures
+- `cargo run -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed with `89` fixtures / `0` failures and no managed-page content drift
+- `cargo test -p specforge --no-run` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `319` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-17 (signal table inventory authority KG fixture)
 
 ### Added: signal tables remain authoritative over uppercase prose context

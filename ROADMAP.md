@@ -236,6 +236,7 @@
   - representative APB/AHB/AXI runs preserve the current honest 90/95/90 baseline from generated artifacts
 - done:
   - signal, enum, register, and timing table synthesis landed in `EvidenceIR`
+  - table-synthesized signal declarations now carry `TableSignalDeclarationProvenanceRecord` links back to the originating `SourceIR` table id, and canonical `InterfaceSignalRecord.supporting_table_ids` preserves that support through `SemanticIR` / `IntentIR`
   - `EvidenceIr::build()` now uses a monotone convergence loop so newly synthesized enum facts can unlock later value-constraint extraction in the same build
   - weakly labeled encoding tables can now be recovered via signal anchors instead of requiring a hardcoded per-protocol value list
   - prose polarity extraction now refines asserted/deasserted constraints into polarity-aware low/high constraints when the spec says active-low or active-high
@@ -554,6 +555,7 @@
     - prior-guided negative-knowledge caution fixtures proving semantic conflicts, temporal conflicts, residual packets, signal-connectivity conflicts, and interface-signal conflicts keep their local conflict/residual surfaces while only adding caution/rescan/corroboration guidance
   - fixture expectations can now assert canonical actor-signal relations directly, so the harness can lock `Drives` versus `Reads` semantics instead of relying only on actor-port projections or relation counts
   - fixture expectations can now assert canonical signal-inventory exclusions directly via `signal_names_exclude`, so negative fixtures can prove document/integration terms such as `PDF`, `VIP`, `PLL`, `DFT`, and `SoC` do not become fake interface signals
+  - fixture expectations can now assert canonical signal table provenance directly via `signal_supporting_table_ids_include`, so table-authority fixtures prove recovered interface signals remain tied to their originating structured table ids
   - fixture expectations can now assert graph-backed direction coverage by signal name directly via `graph_direction_signal_names_include` / `graph_direction_signal_names_exclude`, keeping graph-native coverage checks separate from flat compatibility `direction_hint` assertions
   - fixture inputs can now also patch `SourceIR.document_sections`, and fixture expectations can assert per-signal canonical direction directly, so section-heading-driven protocol-family direction recovery is benchmarkable instead of living only in unit tests
   - fixture expectations can now assert canonical semantic candidates plus decisive vs non-decisive semantic arbitration directly, so the benchmark harness checks the truth-model state itself rather than only downstream residual/finding side effects

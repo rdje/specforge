@@ -623,6 +623,8 @@ pub struct InterfaceSignalRecord {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub semantic_observations: Vec<InterfaceSignalSemanticObservationRecord>,
     pub supporting_statement_ids: Vec<String>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub supporting_table_ids: Vec<String>,
     pub automation_confidence: AutomationConfidence,
 }
 
@@ -1345,6 +1347,17 @@ impl SemanticContext {
             .collect();
 
         let mut section_statement_ids: BTreeMap<String, Vec<String>> = BTreeMap::new();
+        let mut table_ids_by_statement_id: BTreeMap<String, Vec<String>> = BTreeMap::new();
+        for provenance in &evidence_ir.table_signal_declaration_provenance {
+            table_ids_by_statement_id
+                .entry(provenance.statement_id.clone())
+                .or_default()
+                .push(provenance.table_id.clone());
+        }
+        for table_ids in table_ids_by_statement_id.values_mut() {
+            table_ids.sort();
+            table_ids.dedup();
+        }
         let statements = evidence_ir
             .extracted_statements
             .iter()
@@ -1380,6 +1393,10 @@ impl SemanticContext {
                     related_visual_evidence_ids: statement.related_visual_evidence_ids.clone(),
                     section_ids,
                     signals: extract_signal_tokens(&statement.text),
+                    supporting_table_ids: table_ids_by_statement_id
+                        .get(&statement.statement_id)
+                        .cloned()
+                        .unwrap_or_default(),
                 })
             })
             .collect();
@@ -1421,6 +1438,7 @@ struct StatementContext {
     related_visual_evidence_ids: Vec<String>,
     section_ids: Vec<String>,
     signals: Vec<String>,
+    supporting_table_ids: Vec<String>,
 }
 
 impl StatementContext {
@@ -1432,6 +1450,7 @@ impl StatementContext {
             related_visual_evidence_ids: self.related_visual_evidence_ids.clone(),
             section_ids: self.section_ids.clone(),
             signals: extract_signal_tokens(&text),
+            supporting_table_ids: self.supporting_table_ids.clone(),
         }
     }
 }
@@ -1521,6 +1540,7 @@ struct InterfaceSignalAccumulator {
     direction_observations: BTreeMap<String, BTreeSet<String>>,
     width_observations: BTreeMap<String, BTreeSet<String>>,
     supporting_statement_ids: BTreeSet<String>,
+    supporting_table_ids: BTreeSet<String>,
     automation_confidence: AutomationConfidence,
 }
 
@@ -1810,6 +1830,7 @@ fn build_interfaces(
                 signal_declaration.direction_hint,
                 signal_declaration.width_hint,
                 &statement.statement_id,
+                &statement.supporting_table_ids,
                 AutomationConfidence::High,
             );
             continue;
@@ -1871,6 +1892,7 @@ fn build_interfaces(
                 None,
                 None,
                 &statement.statement_id,
+                &[],
                 AutomationConfidence::Low,
             );
         }
@@ -1894,6 +1916,7 @@ fn build_interfaces(
                     Some(InterfaceSignalDirection::Input),
                     Some(WidthHint::Numeric(1)),
                     supporting_statement_id,
+                    &[],
                     system_contract.automation_confidence,
                 );
                 register_interface_signal_record(
@@ -1902,6 +1925,7 @@ fn build_interfaces(
                     Some(InterfaceSignalDirection::Input),
                     Some(WidthHint::Numeric(1)),
                     supporting_statement_id,
+                    &[],
                     system_contract.automation_confidence,
                 );
             }
@@ -2006,6 +2030,7 @@ fn build_interfaces(
                                 .supporting_statement_ids
                                 .into_iter()
                                 .collect(),
+                            supporting_table_ids: signal.supporting_table_ids.into_iter().collect(),
                             automation_confidence: signal.automation_confidence,
                         }
                     })
@@ -5837,6 +5862,7 @@ fn register_interface_signal_record(
     direction_hint: Option<InterfaceSignalDirection>,
     width_hint: Option<WidthHint>,
     supporting_statement_id: &str,
+    supporting_table_ids: &[String],
     automation_confidence: AutomationConfidence,
 ) {
     accumulator.signals.insert(signal_name.to_string());
@@ -5856,6 +5882,7 @@ fn register_interface_signal_record(
             direction_observations: BTreeMap::new(),
             width_observations: BTreeMap::new(),
             supporting_statement_ids: BTreeSet::new(),
+            supporting_table_ids: BTreeSet::new(),
             automation_confidence,
         });
     if let Some(direction_hint) = direction_hint {
@@ -5885,6 +5912,9 @@ fn register_interface_signal_record(
     entry
         .supporting_statement_ids
         .insert(supporting_statement_id.to_string());
+    entry
+        .supporting_table_ids
+        .extend(supporting_table_ids.iter().cloned());
     entry.automation_confidence =
         max_automation_confidence(entry.automation_confidence, automation_confidence);
 }
@@ -9956,6 +9986,7 @@ mod tests {
                 related_visual_evidence_ids: vec!["visual_0001".to_string()],
                 section_ids: Vec::new(),
                 signals: vec!["XACK".to_string()],
+                supporting_table_ids: Vec::new(),
             }],
             section_anchors: Vec::new(),
             visual_roles_by_id: HashMap::from([(
@@ -9991,6 +10022,7 @@ mod tests {
                     automation_confidence: AutomationConfidence::Low,
                 }],
                 supporting_statement_ids: vec!["stmt_visual".to_string()],
+                supporting_table_ids: Vec::new(),
                 automation_confidence: AutomationConfidence::Low,
             }],
             supporting_statement_ids: vec!["stmt_visual".to_string()],
@@ -10031,6 +10063,7 @@ mod tests {
                 semantic_consensus: None,
                 semantic_observations: Vec::new(),
                 supporting_statement_ids: Vec::new(),
+                supporting_table_ids: Vec::new(),
                 automation_confidence: AutomationConfidence::Medium,
             }],
             supporting_statement_ids: Vec::new(),
@@ -10064,6 +10097,7 @@ mod tests {
                 semantic_consensus: None,
                 semantic_observations: Vec::new(),
                 supporting_statement_ids: Vec::new(),
+                supporting_table_ids: Vec::new(),
                 automation_confidence: AutomationConfidence::Medium,
             }],
             supporting_statement_ids: Vec::new(),

@@ -40,6 +40,7 @@
 - Dedicated corpus-KB state-machine fixture page: Done
 - KG benchmark harness can now assert canonical signal-inventory exclusions directly: Done
 - KG benchmark harness now includes signal-table inventory authority coverage: Done
+- KG benchmark harness can now assert canonical signal table provenance directly: Done
 - KG benchmark harness can now assert canonical signal-connectivity conflict shape directly: Done
 - KG benchmark harness can now assert canonical signal-semantic conflict shape directly: Done
 - KG benchmark harness can now assert canonical interface-signal conflict shape directly: Done
@@ -118,6 +119,7 @@
 - Signal-semantic hints from description tables carried into `SemanticIR` / `IntentIR`: Done
 - Signal-semantic hints from prose and alias-grounded prose carried into `SemanticIR` / `IntentIR`: Done
 - Signal-semantic hints from visual captions and VLM timing annotations carried into the semantic pipeline: Done
+- Canonical interface signal records now preserve SourceIR signal-table support ids: Done
 - Prose/visual semantic-hint inference no longer treats signal identifiers as descriptive evidence: Done
 - Multi-signal prose/caption semantic-role grounding via clause-local per-signal windows: Done
 - Explicit signal mentions outrank aliases for semantic-role grounding in the same text region: Done

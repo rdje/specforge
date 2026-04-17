@@ -40,6 +40,7 @@ It is supposed to be disciplined in the sense of preserving recoverable evidence
 
 - source/destination table recovery
 - table-grounded widths
+- table-synthesized signal declarations with provenance back to the originating structured table
 - prose-grounded actor relations
 - visual-caption semantic hints
 - VLM timing-note observations
@@ -74,6 +75,9 @@ Mixed compound wording such as `CS_N is active LOW and ENABLE is active HIGH` ca
 If a polarity phrase is detached from an explicit signal, the statement stays unresolved instead of borrowing an implicit subject.
 When polarity is resolved, later canonical stages expose it per signal, not only as a validation total.
 If prose and a signal-description table disagree about the same signal's active level, `EvidenceIR` keeps a typed `signal_polarity_conflicts` record instead of silently picking the prose or table side.
+
+When `EvidenceIR` synthesizes a formal declaration from a signal-description table, it also records a `table_signal_declaration_provenance` entry.
+That entry links the synthetic statement id back to the structured `SourceIR` table id, so later stages can preserve table support on canonical interface signals instead of losing the fact that the declaration came from a real table.
 
 It is not supposed to decide the final canonical meaning of the whole interface.
 Likewise, negative-knowledge priors may make validation more alert to a repeated evidence-stage conflict pattern, but they do not suppress the current evidence or decide the conflict.
