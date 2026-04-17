@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 Direct unit coverage for table-support validation metrics
+- Added `validate_semantic_and_intent_ir_count_signal_table_support` to the validator test suite.
+- The test builds a real staged pipeline from markdown plus a structured signal-description table rather than constructing a report by hand.
+- It checks that table-authored `XREQ`, `XACK`, and `PAYLOAD` produce `with_table_support: 3` in both canonical validation reports.
+- This complements `signal_table_inventory_authority_negative`: KG-bench still proves exact per-signal table provenance and false-positive exclusion, while the unit test locks the validator metric itself.
+- Focused validation passed for the new test, and full local CI passed with `320` Rust tests plus the mdBook build.
+
 ## 2026-04-17 README bootstrap continuity sync after validation metric
 - Executed the README handoff path after `4f61ec6 feat(validation): report signal table support`.
 - `SESSION_BOOTSTRAP.md` still instructs a future agent to read the referenced docs, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` if needed, and continue from the roadmap.

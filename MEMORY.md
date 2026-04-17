@@ -22,19 +22,21 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `4f61ec6`
-- latest_commit_brief_message: `feat(validation): report signal table support`
-- note: README bootstrap confirmed the validation metric slice is committed and the remaining immediate work is to continue from the roadmap without treating table-support validation as in-flight
+- latest_commit_hash: `8d447e3`
+- latest_commit_brief_message: `docs: sync README bootstrap baseline`
+- note: current follow-on work adds direct unit coverage for the already-committed table-support validation metric; do not treat the metric implementation itself as in-flight
 
 ## Recent commit chain (last 5)
+- `8d447e3` docs: sync README bootstrap baseline
 - `4f61ec6` feat(validation): report signal table support
 - `2014352` docs: sync README bootstrap baseline
 - `bb1def0` feat(ir): carry signal table provenance
 - `e96ebe1` test(kg): lock signal table inventory authority
-- `664f2a5` test(kg): add signal inventory exclusions
 
 ## Current repository state
 - active workspace member: `crates/specforge`
+- current in-flight validation hardening adds `validate_semantic_and_intent_ir_count_signal_table_support`, a direct unit test that builds `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR` from a structured signal table and asserts `with_table_support: 3` at both canonical validation stages
+- focused validation for that new unit test has passed, and full local CI reports `320` Rust tests after the new regression lands
 - latest committed validation follow-on adds `with_table_support` to `SemanticIR` and `IntentIR` validation metrics, counting canonical signal records that still carry non-empty `supporting_table_ids`
 - the metric is coverage/explainability only: it does not author truth, while `kg-bench` still asserts exact signal-to-table provenance with `signal_supporting_table_ids_include`
 - `signal_table_inventory_authority_negative` now requires `with_table_support: 3` at both canonical stages, matching `XREQ`, `XACK`, and `PAYLOAD`

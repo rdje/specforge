@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-04-17 (validator table-support unit coverage)
+
+### Added: direct unit coverage for table-backed signal validation metrics
+- Added a focused validator regression that builds the full `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR` path from a structured `Signal | Direction | Width | Description` table.
+- The test asserts `with_table_support: 3` at both `SemanticIR` and `IntentIR`, complementing the existing KG fixture-level assertion with a direct unit-level guard.
+- The regression also keeps the metric honest as a table-provenance coverage signal: the signals are authored by the structured table, not by free-text signal declarations.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge validate_semantic_and_intent_ir_count_signal_table_support` -> passed
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `320` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+- README sentinel check -> passed
+
 ## 2026-04-17 (README bootstrap continuity sync after validation metric)
 
 ### Fixed: memory baseline now points at the latest committed validation metric slice

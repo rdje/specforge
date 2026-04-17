@@ -4707,6 +4707,100 @@ mod tests {
     }
 
     #[test]
+    fn validate_semantic_and_intent_ir_count_signal_table_support() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("table_backed_signals.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "The PDF text mentions RTL and VIP context, but the interface signal inventory is declared by the table.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_protocol_signal_description".to_string(),
+            asset_id: "asset_protocol_signal_description".to_string(),
+            page_id: None,
+            caption_text: Some("Protocol signal description".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Direction", true),
+                make_table_cell("Width", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("XREQ", false),
+                    make_table_cell("output", false),
+                    make_table_cell("1", false),
+                    make_table_cell("Request/valid indication.", false),
+                ],
+                vec![
+                    make_table_cell("XACK", false),
+                    make_table_cell("input", false),
+                    make_table_cell("1", false),
+                    make_table_cell("Accept/ready indication.", false),
+                ],
+                vec![
+                    make_table_cell("PAYLOAD", false),
+                    make_table_cell("output", false),
+                    make_table_cell("32", false),
+                    make_table_cell("Data payload.", false),
+                ],
+            ],
+            row_count: 3,
+            col_count: 4,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let semantic_report =
+            validate_semantic_ir(&semantic_ir, "semantic_table_support".to_string());
+        assert_eq!(
+            metric_value(&semantic_report, "total_signal_records"),
+            Some("3")
+        );
+        assert_eq!(
+            metric_value(&semantic_report, "with_table_support"),
+            Some("3")
+        );
+
+        let intent_report = validate_intent_ir(&intent_ir, "intent_table_support".to_string());
+        assert_eq!(
+            metric_value(&intent_report, "declared_signal_records"),
+            Some("3")
+        );
+        assert_eq!(
+            metric_value(&intent_report, "with_table_support"),
+            Some("3")
+        );
+
+        Ok(())
+    }
+
+    #[test]
     fn validate_semantic_ir_reports_blocked_handshake_name_fallback() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir

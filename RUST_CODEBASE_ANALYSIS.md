@@ -42,7 +42,13 @@
 - GitHub Actions CI is part of the repo baseline and still runs `cargo fmt --all --check`, warning-deny Clippy, warning-deny Rust tests, warning-deny rustdoc, and the mdBook build when launched manually, but automatic `push` / `pull_request` triggers are temporarily paused to conserve account Actions minutes
 - that CI path still has a single checked-in entrypoint at `scripts/run_ci.sh`, and the GitHub workflow calls that script directly so local and hosted Rust validation do not drift apart
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and deepening the now-started `R15g` corpus knowledge base beside the already-live typed prior-memory plane; adapter expansion is now horizon work
-- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the signal-table support validation metric slice the full local CI path reports clean formatting, clean Clippy, `319` passing Rust tests, clean Rust API docs, and a successful mdBook build
+- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the validator table-support unit coverage slice the full local CI path reports clean formatting, clean Clippy, `320` passing Rust tests, clean Rust API docs, and a successful mdBook build
+
+## Session update (2026-04-17 validator table-support unit coverage)
+- Continued from commit `8d447e3`, adding direct unit coverage for the table-support validation metric rather than widening production behavior.
+- `validate_semantic_and_intent_ir_count_signal_table_support` builds a real staged pipeline from a structured `Signal | Direction | Width | Description` table and checks that `SemanticIR` and `IntentIR` validation both report `with_table_support: 3`.
+- This test complements `signal_table_inventory_authority_negative`: the fixture locks exact per-signal provenance and false-positive exclusion, while the unit test locks the validator metric over the canonical stages.
+- Focused validation and full local CI passed; the suite now reports `320` Rust tests plus the mdBook build.
 
 ## Session update (2026-04-17 signal-table support validation metric)
 - Continued from commit `2014352`, adding a narrow validator coverage metric over the already-committed table-provenance surface.
