@@ -42,7 +42,13 @@
 - GitHub Actions CI is part of the repo baseline and still runs `cargo fmt --all --check`, warning-deny Clippy, warning-deny Rust tests, warning-deny rustdoc, and the mdBook build when launched manually, but automatic `push` / `pull_request` triggers are temporarily paused to conserve account Actions minutes
 - that CI path still has a single checked-in entrypoint at `scripts/run_ci.sh`, and the GitHub workflow calls that script directly so local and hosted Rust validation do not drift apart
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and deepening the now-started `R15g` corpus knowledge base beside the already-live typed prior-memory plane; adapter expansion is now horizon work
-- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the KG canonical table-support diagnostic slice the full local CI path reports clean formatting, clean Clippy, `325` passing Rust tests, clean Rust API docs, and a successful mdBook build
+- the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the KG IntentIR table-support diagnostic slice the full local CI path reports clean formatting, clean Clippy, `326` passing Rust tests, clean Rust API docs, and a successful mdBook build
+
+## Session update (2026-04-17 KG IntentIR table-support diagnostic coverage)
+- Continued from commit `c2bbd8f`, adding focused negative diagnostic coverage for canonical `signal_supporting_table_ids_include` expectations at the `IntentIR` stage.
+- `kg_bench_reports_intent_table_support_failure` reuses the structured one-row signal-table fixture helper, expects `XREQ` to carry `missing_intent_signal_table`, and confirms the failure reports the fixture, `intent` stage, `signal_supporting_table_ids_include[XREQ]`, missing table id, and actual `table_protocol_signal_description` support set.
+- This complements the previous SemanticIR diagnostic test so the canonical table-provenance carry-through path is now guarded at both canonical stages.
+- Focused validation, full tracked `kg-bench`, `corpus-kb`, docs CI, and full local CI passed for this slice.
 
 ## Session update (2026-04-17 KG canonical table-support diagnostic coverage)
 - Continued from commit `ae4ea54`, adding focused negative diagnostic coverage for canonical `signal_supporting_table_ids_include` expectations.

@@ -22,23 +22,26 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `ae4ea54`
-- latest_commit_brief_message: `test(kg): cover evidence provenance count failures`
-- note: current follow-on work adds diagnostic self-test coverage for canonical signal table-support expectations
+- latest_commit_hash: `c2bbd8f`
+- latest_commit_brief_message: `test(kg): cover canonical table support failures`
+- note: current follow-on work adds IntentIR-stage diagnostic self-test coverage for canonical signal table-support expectations
 
 ## Recent commit chain (last 5)
+- `c2bbd8f` test(kg): cover canonical table support failures
 - `ae4ea54` test(kg): cover evidence provenance count failures
 - `69351aa` test(kg): assert evidence provenance counts
 - `cc7e533` test(kg): cover missing evidence provenance
 - `5ae15c4` test(kg): cover evidence provenance failures
-- `487389e` test(kg): assert evidence table provenance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- current in-flight KG-quality hardening adds focused diagnostic self-test coverage for canonical `signal_supporting_table_ids_include` expectations in `specforge kg-bench`
+- current in-flight KG-quality hardening adds IntentIR-stage diagnostic self-test coverage for canonical `signal_supporting_table_ids_include` expectations in `specforge kg-bench`
+- `kg_bench_reports_intent_table_support_failure` builds a temporary one-row signal-table fixture, deliberately expects `XREQ` to carry a missing IntentIR table id, and verifies the failure names the fixture, `intent`, `signal_supporting_table_ids_include[XREQ]`, the missing expected table id, and the actual canonical table id
+- focused validation passed for `cargo test -p specforge table_support_failure` and `cargo test -p specforge evidence_table_provenance`; full tracked `kg-bench` passed with `89/89` fixtures, `corpus-kb --kg-fixtures-root` passed with `89` fixtures / `0` failures and no tracked corpus-KB drift, docs CI passed, full local CI passed with `326` Rust tests plus the mdBook build, and `git diff --check` passed for the current slice
+- latest committed KG-quality hardening added focused diagnostic self-test coverage for canonical `signal_supporting_table_ids_include` expectations in `specforge kg-bench`
 - `kg_bench_reports_canonical_table_support_failure` builds a temporary one-row signal-table fixture, deliberately expects `XREQ` to carry a missing table id, and verifies the failure names the fixture, `signal_supporting_table_ids_include[XREQ]`, the missing expected table id, and the actual canonical table id
 - the one-row signal-table fixture helper now accepts full expectation objects so both EvidenceIR and canonical-stage diagnostics can reuse the same realistic structured-table `SourceIR` patch
-- focused validation passed for `cargo test -p specforge kg_bench_reports_canonical_table_support_failure` and `cargo test -p specforge evidence_table_provenance`; full tracked `kg-bench` passed with `89/89` fixtures, `corpus-kb --kg-fixtures-root` passed with `89` fixtures / `0` failures and no tracked corpus-KB drift, docs CI passed, full local CI passed with `325` Rust tests plus the mdBook build, and `git diff --check` passed for the current slice
+- focused validation passed for `cargo test -p specforge kg_bench_reports_canonical_table_support_failure` and `cargo test -p specforge evidence_table_provenance`; full tracked `kg-bench` passed with `89/89` fixtures, `corpus-kb --kg-fixtures-root` passed with `89` fixtures / `0` failures and no tracked corpus-KB drift, docs CI passed, full local CI passed with `325` Rust tests plus the mdBook build, and `git diff --check` passed for the committed SemanticIR diagnostic slice
 - latest committed KG-quality hardening added focused diagnostic self-test coverage for the direct EvidenceIR `table_signal_declaration_provenance_count` expectation in `specforge kg-bench`
 - `kg_bench_reports_evidence_table_provenance_count_failure` builds a temporary one-row signal-table fixture, deliberately expects zero table-signal provenance, and verifies the failure names the fixture, `table_signal_declaration_provenance_count`, expected count, and actual count
 - focused `cargo test -p specforge evidence_table_provenance` passed with the count-mismatch, missing-record, and statement-text mismatch diagnostic tests; full tracked `kg-bench` passed with `89/89` fixtures, `corpus-kb --kg-fixtures-root` passed with `89` fixtures / `0` failures and no tracked corpus-KB drift, docs CI passed, full local CI passed with `324` Rust tests plus the mdBook build, and `git diff --check` passed for the committed count-diagnostic slice

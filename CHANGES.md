@@ -1,5 +1,26 @@
 # CHANGES
 
+## 2026-04-17 (KG IntentIR table-support diagnostic coverage)
+
+### Added: focused failure coverage for IntentIR signal table-support expectations
+- Added `kg_bench_reports_intent_table_support_failure`, a focused `kg-bench` unit test for `signal_supporting_table_ids_include` at the `IntentIR` expectation stage.
+- The test reuses the same realistic one-row `Signal | Direction | Width | Description` fixture helper as the SemanticIR and EvidenceIR diagnostics.
+- It deliberately expects `XREQ` to carry `missing_intent_signal_table` even though the canonical `IntentIR` signal is backed by `table_protocol_signal_description`.
+- The assertion verifies the failure message names the fixture, the `intent` stage, the `signal_supporting_table_ids_include[XREQ]` field, the missing expected table id, and the actual table id.
+- This completes the immediate canonical table-support diagnostic pair: missing support is now self-tested at both `SemanticIR` and `IntentIR`.
+- `MEMORY.md` was also brought forward from the stale `ae4ea54` baseline to the latest committed local baseline `c2bbd8f`.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge table_support_failure` -> passed with the SemanticIR and IntentIR table-support diagnostic tests
+- `cargo test -p specforge evidence_table_provenance` -> passed with the EvidenceIR table-provenance diagnostic tests
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `89` passed / `0` failed fixtures
+- `cargo run -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed with `89` fixtures / `0` failures and no tracked corpus-KB content drift
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `326` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+- README sentinel check -> passed
+
 ## 2026-04-17 (KG canonical table-support diagnostic coverage)
 
 ### Added: focused failure coverage for canonical signal table-support expectations
