@@ -43,6 +43,12 @@
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and deepening the now-started `R15g` corpus knowledge base beside the already-live typed prior-memory plane; adapter expansion is now horizon work
 - the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the direct `.fsm` control-read input recovery slice the full local CI path reports clean Clippy, `319` passing Rust tests, clean Rust API docs, and a successful mdBook build
 
+## Session update (2026-04-17 FSMGEN response captured)
+- FSMGEN responded to SPECFORGE's feedback in `/Users/richarddje/Documents/github/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md`, observed at FSMGEN commit `7475f07`.
+- SPECFORGE captured that response in `docs/FSMGEN_FEEDBACK.md` and `ROADMAP.md` so `.fsm` adapter planning can rely on the accepted sync contract.
+- The concrete adapter posture is now explicit: target strict-mode canonical `.fsm`, block compatibility syntax by default, use FSMGEN's mdBook and regression corpus/support-accounting sources until machine-readable surfaces exist, and plan future adapter validation around capability manifests, stable diagnostic codes, check-only JSON, and normalized semantic JSON export.
+- Longer-term `.fsm` language features remain valuable only when FSMGEN can parse, validate, normalize, document, support-account, and honestly lower or preserve them as checked metadata.
+
 ## Session update (2026-04-17 FSMGEN IntentIR-aligned feedback)
 - `docs/FSMGEN_FEEDBACK.md` now frames SPECFORGE's feedback as `.fsm` language co-evolution, not only adapter validation tooling.
 - The same handoff now introduces SPECFORGE explicitly as a Rust staged-IR toolchain whose product boundary is backend-independent `IntentIR`, so FSMGEN can read the feedback without prior project context.

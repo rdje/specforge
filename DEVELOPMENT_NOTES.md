@@ -7,6 +7,25 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 FSMGEN response accepted cross-project sync contract
+- FSMGEN responded to `docs/FSMGEN_FEEDBACK.md` in its own tracked file at `/Users/richarddje/Documents/github/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md`, observed at FSMGEN commit `7475f07`.
+- The response accepts the shared framing:
+  - `.fsm` should remain precise rather than permissive
+  - strict mode is the canonical future-facing authoring surface
+  - compatibility syntax remains useful only when labeled as residue
+  - mdBook remains the human language contract
+  - tool consumers need machine-readable contracts
+  - FSMGEN should not become SPECFORGE's PDF extraction engine or canonical `IntentIR`
+- FSMGEN's accepted near-term priority order is now a planning input for SPECFORGE:
+  - build capability metadata from R12 support accounting
+  - start R13 with a bounded capability manifest
+  - introduce stable diagnostic codes
+  - add check-only JSON output
+  - add normalized semantic JSON export
+  - use those surfaces before deeper actor/channel/semantic-role/temporal/provenance language additions are treated as stable
+- SPECFORGE should therefore keep the `.fsm` adapter strict-mode-first, keep compatibility syntax blocked by default, and use FSMGEN's mdBook plus regression corpus/support-accounting files as the current contract until machine-readable surfaces exist.
+- FSMGEN explicitly agreed that longer-term language additions should not be unchecked annotations; they must be parsed, validated, normalized, documented, support-accounted, and either lowered honestly or preserved as checked metadata.
+
 ## 2026-04-17 FSMGEN feedback now introduces SPECFORGE
 - `docs/FSMGEN_FEEDBACK.md` now has a self-contained `What SPECFORGE Is` section so FSMGEN can read the handoff without needing prior project context.
 - The section presents SPECFORGE as a Rust toolchain for recovering typed implementation intent from chip-design specs, especially PDFs.

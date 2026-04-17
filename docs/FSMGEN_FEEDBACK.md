@@ -49,6 +49,22 @@ Last SPECFORGE submodule sync reviewed:
 - FSMGEN refreshed baseline: `955f2bb`
 - notable new surface: FSMGEN live mdBook at `subs/fsmgen/docs/book/`
 
+## FSMGEN Response Received
+
+FSMGEN responded in its own tracked document:
+
+- FSMGEN repo path: `/Users/richarddje/Documents/github/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md`
+- response commit observed by SPECFORGE: `7475f07` (`Docs: track SPECFORGE feedback response`)
+
+SPECFORGE's planning interpretation is:
+
+- FSMGEN accepts the shared high-level direction: `.fsm` should remain precise, strict mode is the canonical future-facing surface, compatibility syntax must stay labeled as compatibility residue, and machine-readable contracts should complement the mdBook.
+- FSMGEN accepts the near-term integration sequence: capability manifest, stable diagnostic codes, check-only JSON diagnostics, normalized semantic JSON export, and first-class reset/clock contract metadata.
+- FSMGEN accepts actor-relative ports, interface/channel grouping, semantic signal roles, temporal/stability contracts, assumptions/residual/provenance metadata, contract-aware composition, and a possible canonical direct-module root as directionally valuable longer-term language features.
+- FSMGEN explicitly does not want unchecked annotations. Future language additions should be parsed, validated, represented in normalized semantics, documented in the mdBook, support-accounted by fixtures, and either lowered honestly to HDL or preserved honestly as checked metadata.
+- Until the machine-readable surfaces exist, SPECFORGE should target strict-mode canonical `.fsm`, treat compatibility syntax as adapter-blocked unless FSMGEN explicitly marks a compatibility lane safe for generated output, and consult FSMGEN's mdBook plus regression corpus/support-accounting sources as the current contract.
+- SPECFORGE can keep FSMGEN as a pinned downstream dependency/reference, but FSMGEN does not need a reciprocal SPECFORGE dependency unless a concrete cross-project conformance workflow later justifies it.
+
 ## Core Adapter Stance
 
 The `.fsm` adapter in SPECFORGE should emit target text only when canonical facts are explicit enough to map into real FSMGEN-supported syntax.

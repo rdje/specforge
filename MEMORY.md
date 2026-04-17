@@ -22,19 +22,23 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `63b3d94`
-- latest_commit_brief_message: `docs(fsmgen): align feedback with IntentIR lowering`
-- note: the current session is making the FSMGEN feedback self-contained by explicitly introducing SPECFORGE, its staged IR pipeline, and why `.fsm` matters as a downstream adapter target
+- latest_commit_hash: `4f0cf81`
+- latest_commit_brief_message: `docs(fsmgen): introduce specforge in feedback`
+- note: the current session is capturing FSMGEN's tracked response to SPECFORGE feedback and updating adapter planning around the accepted strict-mode/machine-contract sync direction
 
 ## Recent commit chain (last 5)
+- `4f0cf81` docs(fsmgen): introduce specforge in feedback
 - `63b3d94` docs(fsmgen): align feedback with IntentIR lowering
 - `8101034` docs(fsmgen): capture adapter feedback
 - `e374a25` fix(adapters): derive direct inputs from control reads
 - `1a8c424` fix(adapters): select direct target actor from graph outputs
-- `14d6496` test(evidence): lock coordinated active reads
 
 ## Current repository state
 - active workspace member: `crates/specforge`
+- FSMGEN's tracked response was read from `/Users/richarddje/Documents/github/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md` at observed FSMGEN commit `7475f07`
+- `docs/FSMGEN_FEEDBACK.md` now records that response and the accepted planning interpretation for SPECFORGE
+- `ROADMAP.md` R6 now records the cross-project sync contract: target strict-mode canonical `.fsm`, keep compatibility syntax adapter-blocked unless FSMGEN explicitly marks a generated lane safe, use FSMGEN's mdBook and regression corpus/support-accounting files as the current contract, and plan future validation around capability manifests, stable diagnostic codes, check-only JSON, and normalized semantic JSON export
+- FSMGEN accepted richer actor/channel/semantic-role/temporal/provenance language features directionally, but only when parsed, validated, normalized, documented, support-accounted, and either lowered honestly or preserved as checked metadata
 - `docs/FSMGEN_FEEDBACK.md` now includes a self-contained `What SPECFORGE Is` section explaining SPECFORGE as a Rust toolchain for recovering typed implementation intent from chip-design specs through `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 - the same handoff now explicitly says `IntentIR` is the backend-independent product, `.fsm` is one downstream adapter target, and FSMGEN matters because `.fsm` can become the most natural high-level lowering format for recovered control intent
 - `docs/FSMGEN_FEEDBACK.md` has been expanded so FSMGEN-facing feedback is explicitly about making `.fsm` a natural lowering format for SPECFORGE `IntentIR`, not only about machine-checkable validation hooks

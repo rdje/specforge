@@ -163,6 +163,11 @@
   - real explicit `?top:name` target text is emitted only when the canonical model carries explicit top ports, child modules, renderable child roots, and width-compatible links
   - the canonical system contract preserves reset kind, polarity, assertion/release timing, and reset-target semantics explicitly enough that adapter lowering does not have to infer hardware reset behavior ad hoc
   - compatibility-level `?mod:name` and `?module:name` spellings stay outside the adapter root-kind model until the canonical layer carries an honest direct-module distinction
+- cross-project FSMGEN sync:
+  - FSMGEN accepted the strict-mode-first `.fsm` contract direction in `docs/SPECFORGE_FEEDBACK_RESPONSE.md` at observed commit `7475f07`
+  - SPECFORGE should target strict-mode canonical `.fsm` by default and treat compatibility syntax as adapter-blocked unless FSMGEN explicitly marks a generated-output lane safe
+  - until capability/check/normalized machine surfaces exist, SPECFORGE should use FSMGEN's mdBook plus regression corpus/support-accounting sources as the current contract
+  - future adapter validation should plan around FSMGEN's accepted priority order: capability manifest, stable diagnostic codes, check-only JSON output, normalized semantic JSON export, then richer language features such as actor roles, channel grouping, semantic roles, temporal/stability contracts, and provenance/residual metadata
 
 ### R7 Validation and back-annotation
 - status: In Progress

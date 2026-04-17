@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-04-17 (FSMGEN response sync contract captured)
+
+### Added: SPECFORGE records FSMGEN's accepted response
+- Read FSMGEN's tracked response at `/Users/richarddje/Documents/github/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md`, observed at commit `7475f07`.
+- Updated `docs/FSMGEN_FEEDBACK.md` with a `FSMGEN Response Received` section that records the accepted shared direction, near-term integration sequence, longer-term language features, and practical SPECFORGE planning rules.
+- Updated the `R6 Adapter layer` roadmap so `.fsm` adapter planning targets strict-mode canonical `.fsm`, blocks compatibility syntax unless FSMGEN explicitly marks it safe for generated output, and plans future validation around capability manifests, stable diagnostic codes, check-only JSON, and normalized semantic JSON export.
+
+### Validation
+- `bash scripts/run_docs_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-17 (FSMGEN feedback introduces SPECFORGE explicitly)
 
 ### Clarified: FSMGEN handoff can be read without prior SPECFORGE context
