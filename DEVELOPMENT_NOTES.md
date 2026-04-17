@@ -7,6 +7,23 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 FSMGEN feedback reframed around IntentIR-aligned `.fsm`
+- The FSMGEN feedback needed a course correction: validation/check tooling is useful, but the deeper ask is for `.fsm` to become a natural lowering surface for SPECFORGE's captured `IntentIR`.
+- `docs/FSMGEN_FEEDBACK.md` now separates two layers:
+  - language-level suggestions that would let `.fsm` carry richer intent directly
+  - support/tooling suggestions that would let SPECFORGE check the target boundary automatically
+- The language-level suggestions are intentionally inline with FSMGEN's active direction rather than adversarial to it: strict-mode canonical syntax, live docs, typed diagnostics, aggregate/type/package support, and composition/toplink semantics are already moving toward a richer language contract.
+- New IntentIR-aligned feature suggestions captured:
+  - first-class clock/reset/system contracts, including polarity and reset timing semantics
+  - actor-relative port semantics and target-actor declarations
+  - protocol-neutral interface/channel grouping with semantic roles
+  - optional temporal/stability contracts such as stable-while, handshake-complete, and bounded-cycle obligations
+  - semantic signal roles for clock/reset/valid/ready/payload/select/enable/response/control meanings
+  - structured assumptions, residuals, caveats, and provenance metadata for generated `.fsm`
+  - a strict-mode direct-module root shape if FSMGEN wants that root to become canonical
+  - contract-aware composition that preserves actor roles, clock/reset distribution, channel grouping, and link provenance across child boundaries
+- The priority order from SPECFORGE's side is now explicit: reset/clock contract metadata, capability manifest, JSON diagnostics, normalized AST/IR export, actor/role annotations, temporal contracts, then adapter-facing examples.
+
 ## 2026-04-17 FSMGEN sync and `.fsm` adapter steering
 - `subs/fsmgen` was fast-forwarded from `57f00e5` to `955f2bb` for reconnaissance, not because SPECFORGE wants to turn the submodule into an implementation surface.
 - The refreshed FSMGEN baseline now includes a live mdBook at `subs/fsmgen/docs/book/`, plus substantial R11/R12 work around strict-mode support accounting, typed failure diagnostics, aggregate/package/type semantics, composition/toplink typing, and structural forward-IR layers.

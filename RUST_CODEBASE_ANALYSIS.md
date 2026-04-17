@@ -43,6 +43,12 @@
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and deepening the now-started `R15g` corpus knowledge base beside the already-live typed prior-memory plane; adapter expansion is now horizon work
 - the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the direct `.fsm` control-read input recovery slice the full local CI path reports clean Clippy, `319` passing Rust tests, clean Rust API docs, and a successful mdBook build
 
+## Session update (2026-04-17 FSMGEN IntentIR-aligned feedback)
+- `docs/FSMGEN_FEEDBACK.md` now frames SPECFORGE's feedback as `.fsm` language co-evolution, not only adapter validation tooling.
+- The added feature suggestions target natural `IntentIR` lowering: first-class system contracts, actor-relative ports, interface/channel grouping, temporal/stability contracts, semantic signal roles, generated assumptions/residual/provenance metadata, explicit direct-module root shape, and contract-aware composition.
+- The support/tooling requests remain, but are now secondary to the language goal: capability manifest, JSON diagnostics, normalized AST/IR export, stable diagnostic codes, and adapter-facing examples make the richer `.fsm` contract executable.
+- This preserves the SPECFORGE boundary: `IntentIR` remains canonical, but FSMGEN can evolve `.fsm` so fewer justified canonical facts are lost or blocked at adapter time.
+
 ## Session update (2026-04-17 FSMGEN reference sync)
 - `subs/fsmgen` is now fast-forwarded from `57f00e5` to `955f2bb` for `.fsm` adapter reconnaissance.
 - The updated FSMGEN reference includes its own live mdBook at `subs/fsmgen/docs/book/`, so SPECFORGE can consult both code and progressive user-facing documentation when widening `.fsm` lowering.

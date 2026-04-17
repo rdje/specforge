@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-04-17 (FSMGEN feedback now targets IntentIR-aligned `.fsm` evolution)
+
+### Clarified: feedback is about `.fsm` language co-evolution, not only validation tooling
+- Expanded `docs/FSMGEN_FEEDBACK.md` so the primary request is now explicit: make `.fsm` a natural lowering format for SPECFORGE `IntentIR`, while staying aligned with FSMGEN's active development goals.
+- Added language-level suggestions for first-class system contracts, actor-relative port semantics, interface/channel grouping, temporal/stability contracts, semantic signal roles, assumptions/residual/provenance metadata, direct-module root shape, and contract-aware composition.
+- Kept the previous machine-readable manifest, JSON diagnostics, normalized AST/IR export, and adapter-facing corpus requests as support/tooling features rather than the whole feedback.
+
+### Validation
+- `bash scripts/run_docs_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-17 (FSMGEN reference sync for `.fsm` adapter planning)
 
 ### Changed: FSMGEN submodule refreshed for adapter reconnaissance

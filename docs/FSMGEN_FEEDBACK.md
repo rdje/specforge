@@ -7,7 +7,10 @@ It exists so FSMGEN can read one stable document and decide which ideas, if any,
 
 SPECFORGE uses FSMGEN as the reference implementation and documentation surface for the downstream `.fsm` adapter.
 SPECFORGE does not expect FSMGEN to solve PDF extraction, `IntentIR` recovery, or chip-spec semantic arbitration.
-The goal is narrower: make the boundary between SPECFORGE's canonical `IntentIR` and FSMGEN's `.fsm` language as precise, validated, and machine-checkable as possible.
+The goal is narrower and cooperative: help `.fsm` become a natural, precise lowering format for SPECFORGE's canonical `IntentIR`, while staying aligned with FSMGEN's own active direction.
+
+This feedback is therefore not only about validation tooling.
+It is also about language features and orientation that would let FSMGEN represent more of the typed hardware intent that SPECFORGE recovers.
 
 Last SPECFORGE submodule sync reviewed:
 
@@ -30,6 +33,8 @@ That means FSMGEN can help SPECFORGE most by making target-language truth machin
 - what diagnostics mean
 - what normalized target semantics FSMGEN recovered from a file
 
+It can also help by making `.fsm` expressive enough to carry common `IntentIR` facts directly, instead of forcing SPECFORGE to choose between lossy lowering and blocked output.
+
 ## What Is Already Helpful In Current FSMGEN
 
 - The live mdBook gives SPECFORGE a progressive human-facing map for `.fsm` syntax and support boundaries.
@@ -39,7 +44,181 @@ That means FSMGEN can help SPECFORGE most by making target-language truth machin
 - Composition/toplink typing gives useful reference shapes for explicit top-root lowering.
 - The emerging forward IR split in FSMGEN is valuable as a reference for keeping authored-source intent, lowered RTL, and structural connectivity separate.
 
-## Requested FSMGEN Features
+## IntentIR-Aligned `.fsm` Feature Suggestions
+
+These suggestions are about the `.fsm` language itself.
+Exact syntax is FSMGEN's choice.
+The important point is the semantic shape.
+
+### 1. First-Class System Contract
+
+SPECFORGE's `IntentIR` carries clock/reset meaning as hardware intent, not merely as ordinary signals.
+
+A natural `.fsm` lowering target would be able to express:
+
+- clock signal identity
+- reset signal identity
+- reset polarity
+- synchronous versus asynchronous reset behavior
+- asynchronous assertion and synchronous release intent
+- reset target registers or state elements
+- reset/source/distribution caveats where representable
+
+This would make `.fsm` a much better target for real chip-spec intent because resets and clocks are special hardware infrastructure, not just inputs named `clk` and `rst_n`.
+
+If FSMGEN intentionally keeps some of those facts out of generated HDL, it would still be useful to preserve them as checked metadata or normalized contract data.
+
+### 2. Actor-Relative Port Semantics
+
+SPECFORGE often knows that a signal is an input or output only relative to a specific actor:
+
+- Manager drives `AWVALID`
+- Subordinate drives `AWREADY`
+- Requester drives `PSEL`
+- Completer drives `PREADY`
+- controller reads `DATA_IN` and drives `DATA_OUT`
+
+Flat port direction is still needed for generated HDL, but `IntentIR` also benefits from preserving actor responsibility.
+
+Potential `.fsm` support:
+
+- optional actor/role annotations on ports
+- explicit producer/consumer metadata
+- module-local target-actor declaration for standalone roots
+- normalized export of actor-relative port facts
+
+This would reduce impedance between SPECFORGE's graph-first actor model and FSMGEN's emitted module boundary.
+
+### 3. Interface Or Channel Grouping
+
+Chip specs often describe related signals as protocol channels rather than isolated scalar ports.
+
+IntentIR can capture that shape:
+
+- ready/valid pairs
+- address channels
+- data channels
+- response channels
+- setup/access phases
+- sideband groups
+- payload plus qualifier/control relationships
+
+A natural `.fsm` target would allow optional grouping metadata for signals that belong to the same logical interface or channel.
+
+This does not require FSMGEN to hardcode AXI/APB/AHB.
+The more general feature would be protocol-neutral grouping with semantic roles such as:
+
+- valid-like
+- ready-like
+- select-like
+- enable-like
+- address
+- data
+- response
+- sideband
+- last/terminal marker
+
+FSMGEN could choose whether these groups affect HDL, generate assertions, or remain normalized metadata.
+
+### 4. Temporal And Stability Contracts
+
+SPECFORGE increasingly recovers temporal rules from specs:
+
+- signal must remain stable while a wait condition holds
+- transfer completes on a ready/valid handshake
+- a response follows an accepted request after a bounded cycle window
+- certain fields remain stable through a transaction phase
+
+Today SPECFORGE should not invent `.fsm` behavior if the target language cannot express the temporal fact.
+Longer term, `.fsm` would be a more natural lowering target if it could carry optional checked temporal contracts.
+
+Useful contract families:
+
+- stable-while predicates
+- handshake-complete predicates
+- next-cycle or bounded-cycle obligations
+- actor-grounded drive/stability obligations
+- named phase conditions
+- optional assertion-generation hooks
+
+Even if FSMGEN initially treats these as metadata or optional generated assertions, preserving them would keep `.fsm` closer to the captured `IntentIR`.
+
+### 5. Semantic Signal Roles
+
+IntentIR may know that a signal is not merely `input wire`.
+It may know that the signal is:
+
+- a clock
+- a reset
+- a valid qualifier
+- a ready qualifier
+- a payload
+- a select
+- an enable
+- an error/response
+- a state/control signal
+
+If `.fsm` can carry those semantic roles, SPECFORGE can lower richer intent without encoding meaning only in names or comments.
+
+FSMGEN could use the roles for:
+
+- stricter diagnostics
+- better generated comments
+- optional assertion generation
+- support-accounted examples
+- normalized AST/IR export
+
+### 6. Assumptions, Residuals, And Provenance Metadata
+
+SPECFORGE will often lower a partially known design.
+When it does, it should preserve why the target is safe enough or why something was intentionally omitted.
+
+Useful `.fsm` metadata would include:
+
+- assumptions
+- residual decisions
+- source provenance IDs
+- confidence/caveat markers
+- unsupported-source-intent notes
+
+This should not pollute normal hand-authored `.fsm`.
+It could live behind a generated-metadata section, structured comments, or a strict machine-readable annotation surface.
+
+The value is round-trip honesty: generated `.fsm` remains inspectable, and downstream tools can see what SPECFORGE knew versus what it could actually express.
+
+### 7. Explicit Direct-Module Root Shape
+
+SPECFORGE currently keeps compatibility-level `?mod:name` / `?module:name` outside its canonical root-kind model until it has a backend-neutral direct-module distinction.
+
+If FSMGEN wants direct-module roots to become a canonical language feature rather than compatibility residue, SPECFORGE would benefit from a documented strict-mode root shape for them.
+
+The useful contract would define:
+
+- how a direct module differs from `?dt`, `?fsm`, and `?top`
+- what control/body forms it may contain
+- how ports/system/reset/init sections behave
+- whether it can carry actor/channel/temporal metadata
+- how it normalizes in exported AST/IR
+
+That would give SPECFORGE a safe future lowering lane for `IntentIR` cases that are module-like but not naturally a pure decision tree or explicit state graph.
+
+### 8. Contract-Aware Composition
+
+FSMGEN's current composition/toplink direction is already useful.
+SPECFORGE would benefit if composition could also preserve contract facts across child boundaries:
+
+- child actor roles
+- top/child channel grouping
+- reset/clock distribution
+- explicit width/type compatibility
+- link provenance
+- interface-level direction and role consistency
+
+This would let SPECFORGE lower more of `IntentIR` topologies without flattening away why the links are semantically correct.
+
+## Requested Support And Tooling Features
+
+These suggestions are about making the language contract executable for tool-to-tool integration.
 
 ### 1. Machine-Readable Capability Manifest
 
@@ -133,6 +312,10 @@ Useful surfaces could include:
 - normalized system-contract JSON for clock/reset declarations
 - clear mdBook guidance on what `.fsm` can and cannot express about reset polarity and release semantics
 
+This overlaps with the language-feature request above.
+The language request is about making reset/clock facts expressible.
+The tooling request is about making those facts visible and checkable.
+
 ### 6. Adapter-Facing Example Corpus
 
 Please consider maintaining a small canonical corpus specifically for tools that emit `.fsm`.
@@ -179,6 +362,21 @@ The best long-term shape is both:
 - book chapters for readers
 - machine-readable support metadata for tools
 
+## Priority From SPECFORGE's Side
+
+If FSMGEN wants an order of attack, the most leverage for SPECFORGE would be:
+
+- first-class reset/clock contract metadata
+- stable strict-mode capability manifest
+- JSON check diagnostics with stable codes
+- normalized AST/IR export
+- actor-relative port and semantic-role annotations
+- temporal/stability contract metadata
+- adapter-facing examples
+
+The first four make the current adapter safer.
+The later ones make `.fsm` a more natural target for future `IntentIR` richness.
+
 ## How SPECFORGE Would Use These Features
 
 SPECFORGE would not use FSMGEN features to mutate canonical `IntentIR`.
@@ -186,9 +384,11 @@ SPECFORGE would not use FSMGEN features to mutate canonical `IntentIR`.
 Instead, it would use them downstream:
 
 - capability manifest decides whether an `IntentIR` shape is renderable as `.fsm`
+- IntentIR-aligned `.fsm` features decide whether richer canonical facts can be preserved instead of becoming adapter residuals
 - JSON check validates emitted `.fsm`
 - normalized AST/IR export verifies target semantics after parsing
 - diagnostic codes map FSMGEN failures into SPECFORGE adapter residual decisions
+- actor/channel/reset/temporal metadata keeps generated `.fsm` closer to source intent
 - example corpus becomes adapter conformance coverage
 - mdBook remains the human reference for why the adapter accepts or blocks a case
 

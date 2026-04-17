@@ -22,19 +22,22 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `e374a25`
-- latest_commit_brief_message: `fix(adapters): derive direct inputs from control reads`
-- note: the current session refreshed the local FSMGEN reference for `.fsm` adapter reconnaissance and captured adapter-facing feedback
+- latest_commit_hash: `8101034`
+- latest_commit_brief_message: `docs(fsmgen): capture adapter feedback`
+- note: the current session is reframing FSMGEN feedback around IntentIR-aligned `.fsm` language evolution, not only validation tooling
 
 ## Recent commit chain (last 5)
+- `8101034` docs(fsmgen): capture adapter feedback
 - `e374a25` fix(adapters): derive direct inputs from control reads
 - `1a8c424` fix(adapters): select direct target actor from graph outputs
 - `14d6496` test(evidence): lock coordinated active reads
 - `4cb4b53` fix(evidence): recover coordinated active-drive objects
-- `019f536` fix(evidence): reject relative-clause actor noise
 
 ## Current repository state
 - active workspace member: `crates/specforge`
+- `docs/FSMGEN_FEEDBACK.md` has been expanded so FSMGEN-facing feedback is explicitly about making `.fsm` a natural lowering format for SPECFORGE `IntentIR`, not only about machine-checkable validation hooks
+- the IntentIR-aligned `.fsm` feature suggestions now include first-class clock/reset/system contracts, actor-relative port semantics, interface/channel grouping, temporal/stability contracts, semantic signal roles, generated assumptions/residual/provenance metadata, explicit direct-module root shape, and contract-aware composition
+- the support/tooling suggestions remain as executable contract surfaces: machine-readable capability manifest, JSON check diagnostics, normalized AST/IR export, stable diagnostic codes, and adapter-facing examples
 - `subs/fsmgen` has been fast-forwarded from `57f00e5` to `955f2bb` for `.fsm` adapter reconnaissance
 - the refreshed FSMGEN baseline includes its own live mdBook under `subs/fsmgen/docs/book/`, plus current strict-mode/support-accounting, typed diagnostic, aggregate/type/package, composition/toplink, and structural forward-IR work
 - SPECFORGE should use that reference to sharpen `.fsm` renderability gates and validation planning while keeping `IntentIR` canonical and the submodule read-only/contextual from this repo
