@@ -2277,6 +2277,67 @@ mod tests {
     use crate::cli::KgBenchArgs;
     use crate::error::AppError;
 
+    fn write_one_signal_table_fixture(
+        fixture_dir: &Path,
+        fixture_name: &str,
+        evidence_expectations: serde_json::Value,
+    ) -> crate::error::Result<()> {
+        fs::create_dir_all(fixture_dir)?;
+        fs::write(
+            fixture_dir.join("source.md"),
+            "# Interface\nThe protocol signals are defined by the signal table.\n",
+        )?;
+
+        let table_cell = |text: &str, is_header: bool| {
+            serde_json::json!({
+                "text": text,
+                "row_span": 1,
+                "col_span": 1,
+                "is_header": is_header
+            })
+        };
+
+        fs::write(
+            fixture_dir.join("fixture.json"),
+            serde_json::json!({
+                "name": fixture_name,
+                "source": "source.md",
+                "source_ir_patch": {
+                    "structured_tables": [
+                        {
+                            "table_id": "table_protocol_signal_description",
+                            "asset_id": "table_protocol_signal_description",
+                            "page_id": null,
+                            "caption_text": "Protocol signal descriptions",
+                            "source_ref": null,
+                            "table_kind": "signal_description",
+                            "header_rows": [[
+                                table_cell("Signal", true),
+                                table_cell("Direction", true),
+                                table_cell("Width", true),
+                                table_cell("Description", true)
+                            ]],
+                            "body_rows": [[
+                                table_cell("XREQ", false),
+                                table_cell("output", false),
+                                table_cell("1", false),
+                                table_cell("Request indication.", false)
+                            ]],
+                            "row_count": 1,
+                            "col_count": 4
+                        }
+                    ]
+                },
+                "expectations": {
+                    "evidence": evidence_expectations
+                }
+            })
+            .to_string(),
+        )?;
+
+        Ok(())
+    }
+
     #[test]
     fn kg_bench_runs_tracked_fixtures() -> crate::error::Result<()> {
         let fixtures_root = Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -2332,65 +2393,18 @@ mod tests {
     fn kg_bench_reports_evidence_table_provenance_statement_failure() -> crate::error::Result<()> {
         let tempdir = tempdir()?;
         let fixture_dir = tempdir.path().join("broken_evidence_fixture");
-        fs::create_dir_all(&fixture_dir)?;
-        fs::write(
-            fixture_dir.join("source.md"),
-            "# Interface\nThe protocol signals are defined by the signal table.\n",
-        )?;
-
-        let table_cell = |text: &str, is_header: bool| {
+        write_one_signal_table_fixture(
+            &fixture_dir,
+            "broken_evidence_fixture",
             serde_json::json!({
-                "text": text,
-                "row_span": 1,
-                "col_span": 1,
-                "is_header": is_header
-            })
-        };
-
-        fs::write(
-            fixture_dir.join("fixture.json"),
-            serde_json::json!({
-                "name": "broken_evidence_fixture",
-                "source": "source.md",
-                "source_ir_patch": {
-                    "structured_tables": [
-                        {
-                            "table_id": "table_protocol_signal_description",
-                            "asset_id": "table_protocol_signal_description",
-                            "page_id": null,
-                            "caption_text": "Protocol signal descriptions",
-                            "source_ref": null,
-                            "table_kind": "signal_description",
-                            "header_rows": [[
-                                table_cell("Signal", true),
-                                table_cell("Direction", true),
-                                table_cell("Width", true),
-                                table_cell("Description", true)
-                            ]],
-                            "body_rows": [[
-                                table_cell("XREQ", false),
-                                table_cell("output", false),
-                                table_cell("1", false),
-                                table_cell("Request indication.", false)
-                            ]],
-                            "row_count": 1,
-                            "col_count": 4
-                        }
-                    ]
-                },
-                "expectations": {
-                    "evidence": {
-                        "table_signal_declaration_provenance_include": [
-                            {
-                                "signal_name": "XREQ",
-                                "table_id": "table_protocol_signal_description",
-                                "statement_text": "Signal XREQ is output width 8."
-                            }
-                        ]
+                "table_signal_declaration_provenance_include": [
+                    {
+                        "signal_name": "XREQ",
+                        "table_id": "table_protocol_signal_description",
+                        "statement_text": "Signal XREQ is output width 8."
                     }
-                }
-            })
-            .to_string(),
+                ]
+            }),
         )?;
 
         let error = run(KgBenchArgs {
@@ -2405,6 +2419,42 @@ mod tests {
                 assert!(message.contains("table_signal_declaration_provenance_include"));
                 assert!(message.contains("Signal XREQ is output width 8."));
                 assert!(message.contains("Signal XREQ is output width 1."));
+            }
+            other => panic!("unexpected error variant: {other}"),
+        }
+
+        Ok(())
+    }
+
+    #[test]
+    fn kg_bench_reports_missing_evidence_table_provenance_failure() -> crate::error::Result<()> {
+        let tempdir = tempdir()?;
+        let fixture_dir = tempdir.path().join("missing_evidence_fixture");
+        write_one_signal_table_fixture(
+            &fixture_dir,
+            "missing_evidence_fixture",
+            serde_json::json!({
+                "table_signal_declaration_provenance_include": [
+                    {
+                        "signal_name": "XREQ",
+                        "table_id": "missing_signal_table"
+                    }
+                ]
+            }),
+        )?;
+
+        let error = run(KgBenchArgs {
+            fixtures_root: tempdir.path().to_path_buf(),
+            fixtures: Vec::new(),
+        })
+        .expect_err("expected kg-bench to fail for missing EvidenceIR provenance");
+
+        match error {
+            AppError::InvalidStageArtifact(message) => {
+                assert!(message.contains("missing_evidence_fixture"));
+                assert!(message.contains("table_signal_declaration_provenance_include"));
+                assert!(message.contains("missing_signal_table"));
+                assert!(message.contains("table_protocol_signal_description"));
             }
             other => panic!("unexpected error variant: {other}"),
         }

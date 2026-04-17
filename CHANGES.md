@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-17 (KG evidence provenance missing-record diagnostic coverage)
+
+### Added: focused failure coverage for missing EvidenceIR table-provenance records
+- Added `kg_bench_reports_missing_evidence_table_provenance_failure`, a sibling negative test for the `table_signal_declaration_provenance_include` expectation path.
+- The test builds a temporary fixture with a real one-row signal table, then deliberately expects the right signal from the wrong source table id.
+- It verifies that `kg-bench` reports the fixture name, the `table_signal_declaration_provenance_include` field, the missing expected table id, and the actual table id carried by EvidenceIR.
+- Refactored the two EvidenceIR table-provenance diagnostic tests through a shared one-row signal-table fixture builder, keeping the failure coverage compact while preserving realistic `SourceIR` table patches.
+- This complements the previous statement-text mismatch coverage: the harness now self-tests both important negative branches for EvidenceIR table provenance expectations.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge evidence_table_provenance` -> passed with both EvidenceIR provenance diagnostic tests
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality` -> passed with `89` passed / `0` failed fixtures
+- `cargo run -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed with `89` fixtures / `0` failures and no tracked corpus-KB content drift
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `323` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+- README sentinel check -> passed
+
 ## 2026-04-17 (KG evidence provenance failure diagnostic coverage)
 
 ### Added: focused failure coverage for EvidenceIR table-provenance expectations

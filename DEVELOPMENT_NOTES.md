@@ -7,6 +7,18 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 KG EvidenceIR missing-provenance diagnostic self-test
+- Added `kg_bench_reports_missing_evidence_table_provenance_failure`.
+- The test creates a temporary KG fixture with a real structured signal table, then expects `XREQ` provenance from a deliberately wrong table id.
+- This proves the missing-record branch of `table_signal_declaration_provenance_include` fails with enough context to debug the fixture:
+  - fixture name
+  - failed expectation field
+  - missing expected table id
+  - actual table id carried by EvidenceIR
+- Refactored the two EvidenceIR provenance diagnostic tests through a shared one-row signal-table fixture writer so future diagnostic cases do not have to duplicate a full structured-table JSON patch.
+- The previous self-test covered the subtle "matching signal/table but wrong synthesized statement text" branch; this one covers the "no matching signal/table provenance record" branch.
+- Focused validation, full tracked `kg-bench`, `corpus-kb`, docs CI, and full local CI passed; full local CI now reports `323` Rust tests plus the mdBook build.
+
 ## 2026-04-17 KG EvidenceIR table-provenance diagnostic self-test
 - Added `kg_bench_reports_evidence_table_provenance_statement_failure`.
 - The test creates a temporary KG fixture with a real structured signal table and an intentionally wrong expected synthesized statement text.
