@@ -20,6 +20,29 @@ That is why `ASSERTED` must not be blindly treated as `HIGH`.
 It is polarity-relative.
 The same rule applies when a VLM timing diagram reports reset waveform values: an active-low reset observed as `asserted` and `LOW`, or as `deasserted` and `HIGH`, should stay equivalent temporal evidence, not become a contradiction.
 
+## Document Scope
+
+Most protocol or chip-interface PDFs are contract documents.
+They are meant to let RTL designers, verification-IP authors, integration teams, and reviewers agree on the interface behavior.
+
+For clock and reset semantics, that usually means the document can define:
+
+- which clock and reset signals exist at the boundary
+- polarity and active level
+- synchronous or asynchronous reset semantics
+- reset assertion and release discipline
+- timing obligations that RTL and VIP can check
+
+That is different from defining the physical clock tree or reset tree of the final chip.
+Those trees are usually custom to the SoC team and depend on project-local choices such as clock generators, PLLs, reset controllers, power domains, CDC/RDC policy, DFT/scan constraints, CTS strategy, floorplan, and methodology.
+
+So the extraction boundary is:
+
+- recover clock/reset contract semantics from protocol PDFs
+- preserve explicit current-document topology hints only when the document actually states them
+- do not infer complete physical tree construction from a protocol PDF
+- keep physical tree construction as an integration input or residual concern for the team building the chip
+
 ## What `specforge` models today
 
 The current canonical surface models this through a `system_contract`.
@@ -175,8 +198,8 @@ When a clock or reset is intentionally classified as infrastructure, it may appe
 
 ## Current limits
 
-The current model is not yet a full physical clock-tree or reset-tree analysis.
-It preserves selected current-document topology hints, but it does not prove implementation quality.
+The current model is not a physical clock-tree or reset-tree implementation engine.
+It preserves contract-level semantics and selected current-document topology hints, but it does not prove implementation quality or synthesize the final chip's tree.
 
 It still does not fully model:
 
@@ -186,5 +209,5 @@ It still does not fully model:
 - reset fanout and distribution quality
 - physical implementation constraints
 
-Those are future directions.
-The important current boundary is that clock and reset semantics are first-class infrastructure intent, not ordinary protocol edges.
+Those are normally integration-team concerns rather than facts recoverable from AMBA-style protocol PDFs.
+The important current boundary is that clock and reset semantics are first-class infrastructure intent, not ordinary protocol edges and not physical-tree signoff.

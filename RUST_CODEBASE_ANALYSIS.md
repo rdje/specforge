@@ -43,6 +43,14 @@
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and deepening the now-started `R15g` corpus knowledge base beside the already-live typed prior-memory plane; adapter expansion is now horizon work
 - the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the clock/reset generic-advice KG fixture slice the full local CI path reports clean formatting, clean Clippy, `319` passing Rust tests, clean Rust API docs, and a successful mdBook build
 
+## Session update (2026-04-17 clock/reset protocol-document scope)
+- Continued from commit `988e9bc`, with no Rust production-code change.
+- The user clarified the intended domain boundary: AMBA, Intel, and similar protocol/chip-interface PDFs are contract documents for RTL designers and VIP creators, not complete sources for physical clock/reset tree construction.
+- SPECFORGE should recover interface-visible clock/reset contract semantics from those PDFs: clock/reset identity, polarity, reset kind, asynchronous assertion / synchronous release discipline, and protocol-boundary timing obligations.
+- Physical clock/reset trees remain team-specific SoC integration artifacts that depend on local clock generators, reset controllers, power domains, CDC/RDC policy, DFT/scan constraints, CTS, floorplan, and methodology.
+- Future implementation should treat complete clock/reset tree synthesis as out of scope for protocol PDFs. Explicit topology phrases can remain bounded intent-level `infrastructure_topology` hints, but they are not signoff-quality physical tree recipes.
+- Docs CI, full local CI with `319` Rust tests, and `git diff --check` passed for this documentation-only scope slice.
+
 ## Session update (2026-04-17 clock/reset generic-advice negative KG fixture)
 - Continued from commit `4912ad7`, with no Rust production-code change and a new tracked KG fixture under `crates/specforge/test_data/kg_quality/clock_reset_generic_advice_negative`.
 - The fixture preserves `ACLK` and active-low asynchronous `ARESETN` as first-class infrastructure signals while proving generic clock/reset doctrine does not create concrete `infrastructure_topology` records.

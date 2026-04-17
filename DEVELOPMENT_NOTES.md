@@ -7,6 +7,22 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-17 Protocol PDFs expose clock/reset contracts, not physical trees
+- User clarification accepted and recorded: AMBA, Intel, and similar chip-design/protocol PDFs are usually contract documents for RTL implementation and verification IP, not complete implementation plans for the final chip's physical clock/reset distribution.
+- SPECFORGE should therefore treat these documents as sources of interface-visible clock/reset contract semantics:
+  - clock and reset signal identity
+  - polarity and active level
+  - synchronous/asynchronous reset kind
+  - reset assertion/release timing discipline
+  - boundary-visible timing and protocol obligations that RTL and VIP can rely on
+- Physical clock and reset trees are normally custom SoC integration artifacts owned by the team building the whole chip. They depend on project-local details such as clock generators, PLLs, reset controllers, power domains, CDC/RDC policy, DFT/scan constraints, CTS strategy, floorplan, and methodology.
+- Implementation steering:
+  - do not infer physical tree implementation from protocol PDFs
+  - keep generic clock/reset advice as doctrine/caution, not topology evidence
+  - allow only explicit current-document topology hints to enter bounded `infrastructure_topology`
+  - even explicit topology hints remain intent-level evidence, not physical signoff or a complete tree recipe
+  - if a downstream RTL/VIP flow needs real clock/reset tree construction, represent that as an integration residual or external project input rather than canonicalizing it from a protocol PDF
+
 ## 2026-04-17 Clock/reset generic advice stays non-authoring
 - Added `clock_reset_generic_advice_negative` as a benchmark-hardening slice, not a production extractor rewrite.
 - The fixture complements `clock_reset_topology_gold`:

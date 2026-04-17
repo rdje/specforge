@@ -122,6 +122,11 @@ They can appear in the same tables as other signals, but they carry system-level
 
 That is why `specforge` treats clock and reset handling as system-contract infrastructure instead of flattening it into the same category as payload or handshake connectivity.
 
+There is also a document-scope boundary here.
+Protocol and chip-interface PDFs are usually shared contracts for RTL designers and verification-IP authors.
+They describe the clock/reset semantics that participants can rely on at the boundary, but they rarely define the final chip's physical clock tree or reset tree.
+Those trees are normally custom SoC integration work owned by the chip team.
+
 The dedicated chapter [Clock And Reset Infrastructure](domain/clock-reset.md) explains that boundary in more detail.
 
 ## Why signal roles are evidence-based

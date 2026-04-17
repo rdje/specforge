@@ -382,11 +382,13 @@
   - temporal derivation now uses an explicit clock declaration even when a full reset-bearing `SystemContractRecord` is not yet available
   - `specforge validate` now reports temporal-rule counts plus missing clock/edge grounding, actor-grounding diagnostics, handshake-predicate coverage, multi-predicate antecedent coverage, and typed temporal conflict counts
   - infrastructure signals now carry a bounded explicit topology surface for current-document `clock_gated_branch`, `reset_synchronizer_stages`, and `reset_tree_targets` evidence without claiming full physical tree signoff
+  - protocol/chip-interface PDFs are now explicitly scoped as RTL/VIP contract sources, so clock/reset physical tree construction stays out of canonical recovery unless provided by explicit integration inputs
 - completion criteria:
   - a typed temporal-rule representation exists in `SemanticIR` and carries forward into `IntentIR`
   - APB/AHB/AXI timing behavior can be represented in actor-relative, tick-relative form rather than only as free-form timing text
   - validation can flag unresolved or contradictory temporal grounding explicitly
   - clock/reset behavior is modeled conservatively enough that infrastructure semantics do not get mistaken for ordinary protocol producer/consumer semantics
+  - physical clock/reset tree synthesis is not inferred from protocol PDFs; the pipeline preserves only contract-level semantics and bounded current-document topology hints
 
 ### R15c KG-guided multimodal rescans
 - status: In Progress

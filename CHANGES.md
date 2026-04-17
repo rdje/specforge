@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-04-17 (clock/reset protocol-document scope clarified)
+
+### Clarified: protocol PDFs define interface contracts, not physical trees
+- Captured the implementation boundary that AMBA/Intel-style protocol and chip-interface PDFs are primarily contract documents for RTL designers and verification-IP authors.
+- Clarified that SPECFORGE should recover clock/reset contract semantics such as signal identity, polarity, reset kind, assertion/release timing, and boundary-visible obligations, but should not infer physical clock-tree or reset-tree implementation from those PDFs.
+- Documented that real clock/reset trees are usually SoC/team-specific integration artifacts involving local clock generators, reset controllers, power domains, CDC/RDC policy, DFT constraints, CTS strategy, and physical implementation choices.
+- Updated the public mdBook clock/reset chapter, architecture rationale, README, roadmap, and live continuity notes so future implementation keeps this scope boundary explicit.
+
+### Validation
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `319` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-17 (clock/reset generic advice KG negative fixture)
 
 ### Added: generic clock/reset doctrine cannot author topology facts
