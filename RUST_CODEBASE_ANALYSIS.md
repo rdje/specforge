@@ -44,6 +44,13 @@
 - the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and deepening the now-started `R15g` corpus knowledge base beside the already-live typed prior-memory plane; adapter expansion is now horizon work
 - the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the KG IntentIR table-support missing-signal diagnostic slice the full local CI path reports clean formatting, clean Clippy, `328` passing Rust tests, clean Rust API docs, and a successful mdBook build
 
+## Session update (2026-04-18 post-push continuity baseline sync)
+- Continued from pushed commit `4dfb6b9`, updating live continuity state rather than Rust code.
+- The post-push baseline is clean and aligned with `origin/main`; the previous KG table-support diagnostic batch is no longer in-flight.
+- No architecture, extractor, validator, fixture, adapter, or mdBook behavior changed in this slice.
+- The full local CI result from the pushed baseline remains the current behavior proof: formatting, warning-deny Clippy, `328` passing Rust tests, warning-deny rustdoc, and mdBook build.
+- Docs-only validation for the continuity sync passed through docs CI, whitespace checking, and the README sentinel check.
+
 ## Session update (2026-04-18 KG IntentIR table-support missing-signal diagnostic coverage)
 - Continued from commit `849e14a`, adding the IntentIR mirror for absent-signal `signal_supporting_table_ids_include` diagnostics.
 - `kg_bench_reports_missing_intent_table_support_failure` expects `MISSING_INTENT_SIGNAL` table support in a one-row signal-table fixture that actually recovers `XREQ`.

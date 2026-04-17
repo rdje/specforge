@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-18 Post-push continuity baseline sync
+- Recorded the post-push baseline after the 25-commit batch: `4dfb6b9` / `test(kg): cover missing intent table support signals`.
+- The pushed baseline includes the four focused canonical table-support diagnostic cases: wrong SemanticIR support id, wrong IntentIR support id, missing SemanticIR signal, and missing IntentIR signal.
+- This is continuity infrastructure only. It does not change extraction, validation, fixture behavior, adapters, or public mdBook content.
+- The distinction remains intentional: the mdBook is the evolving public technical narrative, while `MEMORY.md` and sibling live docs are crash/session recovery and implementation-continuity aids.
+
 ## 2026-04-18 KG IntentIR table-support missing-signal diagnostic self-test
 - Added `kg_bench_reports_missing_intent_table_support_failure`.
 - The test places the absent-signal `signal_supporting_table_ids_include` expectation under the `intent` stage.

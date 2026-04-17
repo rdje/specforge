@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-04-18 (Post-push continuity baseline sync)
+
+### Changed: live handoff state now points at the pushed baseline
+- Updated the continuity ledger after the 25-commit push so it now records `4dfb6b9` as the latest pushed baseline.
+- Recorded that the canonical table-support diagnostic quartet is committed and pushed: wrong SemanticIR support id, wrong IntentIR support id, missing SemanticIR signal, and missing IntentIR signal.
+- Clarified that there is no remaining in-flight code slice from the KG table-support diagnostic work.
+- Kept this as a live-doc-only sync; no Rust, fixture, adapter, pipeline, mdBook, or user-facing behavior changed.
+
+### Validation
+- `bash scripts/run_docs_ci.sh` -> passed
+- `git diff --check` -> passed
+- README sentinel check -> passed
+
 ## 2026-04-18 (KG IntentIR table-support missing-signal diagnostic coverage)
 
 ### Added: focused missing-signal coverage for IntentIR table-support expectations
