@@ -7,6 +7,15 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-18 Adapter system-contract signal recovery
+- Added `overlay_system_contract_signal_inventory`, a bounded adapter projection from canonical `SystemContractRecord` into local `.fsm` signal inventories.
+- The overlay applies to both direct roots and explicit module roots.
+- It only touches already-inventory clock/reset signals, so a system contract that references undeclared signals still blocks through the existing undeclared-signal diagnostic.
+- For existing clock/reset signals, the adapter recovers input direction and scalar width `1` under the `system_contract_signal` evidence category.
+- The merge remains sticky: contradictory flat shape, actor-port, topology, or control-read evidence collapses the affected hint to unresolved and keeps renderability blocked.
+- Added focused regressions for standalone sequential DT and standalone explicit module roots where flat clock/reset direction and width hints are removed. Both render from canonical system-contract facts without mutating `IntentIR`.
+- Formatting, both focused system-contract recovery tests, the full adapter module, docs CI, and full local CI passed. Full local CI reports `337` Rust tests plus warning-deny Clippy/rustdoc and the mdBook build.
+
 ## 2026-04-18 Adapter child-link topology conflict guard
 - Added adversarial coverage for the new child-link topology recovery path.
 - Scenario:

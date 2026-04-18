@@ -22,23 +22,26 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `6d05173`
-- latest_commit_brief_message: `fix(adapter): recover child directions from topology`
-- note: current in-flight adapter hardening adds conflict regression coverage for child-link topology recovery
+- latest_commit_hash: `2bd0034`
+- latest_commit_brief_message: `test(adapter): guard child topology conflicts`
+- note: current in-flight adapter hardening adds clock/reset signal recovery from system-contract facts
 
 ## Recent commit chain (last 5)
+- `2bd0034` test(adapter): guard child topology conflicts
 - `6d05173` fix(adapter): recover child directions from topology
 - `e03d5f3` test(adapter): guard module read conflicts
 - `e7b41e4` fix(adapter): recover explicit module read inputs
 - `ee2f1b4` test(adapter): cover structured fsm graph reads
-- `b888297` fix(adapter): retain blocked top recovered directions
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch is ahead of `origin/main`; do not push until 25 local commits since the last push or until the user explicitly asks
-- current in-flight adapter hardening adds `top_composition_blocks_conflicting_child_link_topology_directions`, proving child-link topology recovery does not override contradictory topology evidence
-- the current regression clears flat module directions, then uses `producer.output_data` as both a child link source and a child link target; expected behavior is unresolved direction, preserved `module_topology_link` evidence category, blocked producer module renderability, and no emitted `.fsm` target text
-- focused validation, the full adapter test module, docs CI, and full local CI passed for the current adapter slice; full local CI reported formatting, warning-deny Clippy, `335` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- current in-flight adapter hardening adds clock/reset signal recovery from canonical system-contract facts for direct roots and explicit module roots
+- the current regressions clear flat clock/reset direction and width hints while keeping the system contract intact; expected behavior is recovered input/1-bit `system_contract_signal` evidence for `clk` / `rst_n`, renderable sequential/direct and explicit-module `.fsm` output, and no canonical `IntentIR` mutation
+- focused validation, the full adapter test module, docs CI, and full local CI passed for the current adapter slice; full local CI reported formatting, warning-deny Clippy, `337` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- latest committed adapter hardening adds `top_composition_blocks_conflicting_child_link_topology_directions`, proving child-link topology recovery does not override contradictory topology evidence
+- the committed regression clears flat module directions, then uses `producer.output_data` as both a child link source and a child link target; expected behavior is unresolved direction, preserved `module_topology_link` evidence category, blocked producer module renderability, and no emitted `.fsm` target text
+- focused validation, the full adapter test module, docs CI, and full local CI passed for commit `2bd0034`; full local CI reported formatting, warning-deny Clippy, `335` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
 - latest committed adapter hardening adds child-module direction recovery from explicit top-link topology, so link sources can recover existing child module outputs and link targets can recover existing child module inputs before module renderability analysis
 - the committed regression clears flat module directions and supplies no actor ports; expected behavior is topology-backed recovery of `producer_core.output_data`, `consumer_core.input_data`, and `consumer_core.result_data` through `module_topology_link`, honest top emission, and no canonical `IntentIR` mutation
 - focused validation, the full adapter test module, docs CI, and full local CI passed for commit `6d05173`; full local CI reported formatting, warning-deny Clippy, `334` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build

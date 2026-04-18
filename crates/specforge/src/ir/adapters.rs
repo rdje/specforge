@@ -848,6 +848,10 @@ fn build_signal_inventory(intent_ir: &IntentIr) -> Vec<FsmSignalCandidate> {
         }
     }
 
+    if let Some(system_contract) = intent_ir.system_contract.as_ref() {
+        overlay_system_contract_signal_inventory(&mut inventory, system_contract);
+    }
+
     let output_targets = collect_direct_output_targets(intent_ir);
     if let Some(actor_name) = select_direct_actor_name(
         intent_ir.actor_ports.as_slice(),
@@ -864,6 +868,54 @@ fn build_signal_inventory(intent_ir: &IntentIr) -> Vec<FsmSignalCandidate> {
     }
 
     inventory_to_signal_candidates(inventory)
+}
+
+fn overlay_system_contract_signal_inventory(
+    inventory: &mut BTreeMap<String, SignalInventoryEvidence>,
+    system_contract: &SystemContractRecord,
+) {
+    overlay_system_contract_signal(
+        inventory,
+        &system_contract.clock_signal,
+        "clock",
+        system_contract,
+    );
+    overlay_system_contract_signal(
+        inventory,
+        &system_contract.reset_signal,
+        "reset",
+        system_contract,
+    );
+}
+
+fn overlay_system_contract_signal(
+    inventory: &mut BTreeMap<String, SignalInventoryEvidence>,
+    signal_name: &str,
+    role_name: &str,
+    system_contract: &SystemContractRecord,
+) {
+    if !inventory.contains_key(signal_name) {
+        return;
+    }
+
+    let supporting_ids = if system_contract.supporting_statement_ids.is_empty() {
+        vec![format!(
+            "system_contract:{}:{}",
+            role_name,
+            document_key(signal_name)
+        )]
+    } else {
+        system_contract.supporting_statement_ids.clone()
+    };
+    register_canonical_signal_with_supporting_ids(
+        inventory,
+        signal_name,
+        Some(InterfaceSignalDirection::Input),
+        Some(1),
+        supporting_ids,
+        "system_contract_signal",
+        system_contract.automation_confidence,
+    );
 }
 
 fn select_direct_actor_name<'a>(
@@ -1225,6 +1277,9 @@ fn build_module_candidate(
         &module.decision_tree_fragments,
         &module.control_blocks,
     );
+    if let Some(system_contract) = module.system_contract.as_ref() {
+        overlay_system_contract_signal_inventory(&mut signal_inventory, system_contract);
+    }
     overlay_actor_port_inventory_for_actor(
         &mut signal_inventory,
         &module.module_name,
@@ -5246,10 +5301,34 @@ mod tests {
         }
     }
 
+    fn clear_explicit_module_signal_shape_hints(intent_ir: &mut IntentIr, signal_names: &[&str]) {
+        for module in &mut intent_ir.explicit_modules {
+            for interface in &mut module.interfaces {
+                for signal in &mut interface.signal_records {
+                    if signal_names.contains(&signal.signal_name.as_str()) {
+                        signal.direction_hint = None;
+                        signal.width_hint = None;
+                    }
+                }
+            }
+        }
+    }
+
     fn clear_direct_interface_direction_hints(intent_ir: &mut IntentIr) {
         for interface in &mut intent_ir.interfaces {
             for signal in &mut interface.signal_records {
                 signal.direction_hint = None;
+            }
+        }
+    }
+
+    fn clear_direct_signal_shape_hints(intent_ir: &mut IntentIr, signal_names: &[&str]) {
+        for interface in &mut intent_ir.interfaces {
+            for signal in &mut interface.signal_records {
+                if signal_names.contains(&signal.signal_name.as_str()) {
+                    signal.direction_hint = None;
+                    signal.width_hint = None;
+                }
             }
         }
     }
@@ -5965,6 +6044,64 @@ mod tests {
     }
 
     #[test]
+    fn standalone_sequential_dt_recovers_system_signals_from_system_contract() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_explicit_sequential_control_intent_ir(tempdir.path())?;
+        clear_direct_signal_shape_hints(&mut intent_ir, &["clk", "rst_n"]);
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+        adapter.write_to_disk()?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "renderable");
+        let emitted_target_path = adapter
+            .artifact_layout
+            .emitted_target_path
+            .as_ref()
+            .expect("system-contract-backed sequential adapter should emit target text");
+        let emitted_text = fs::read_to_string(emitted_target_path)?;
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let clk = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "clk")
+            .expect("clock should remain in the signal inventory");
+        let rst_n = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "rst_n")
+            .expect("reset should remain in the signal inventory");
+
+        for signal in [clk, rst_n] {
+            assert_eq!(signal.direction_hint, Some(InterfaceSignalDirection::Input));
+            assert_eq!(signal.width_hint, Some(1));
+            assert!(
+                signal
+                    .mention_categories
+                    .iter()
+                    .any(|category| category == "system_contract_signal")
+            );
+        }
+        assert!(fsm.renderability.is_renderable);
+        assert!(emitted_text.contains("(+system"));
+        assert!(emitted_text.contains("(clock clk)"));
+        assert!(emitted_text.contains("(asreset rst_n)"));
+        assert!(
+            adapter
+                .residual_decisions
+                .iter()
+                .all(|packet| packet.packet_id != "fsm_adapter_system_contract")
+        );
+
+        Ok(())
+    }
+
+    #[test]
     fn keeps_standalone_sequential_dt_blocked_without_system_contract() -> Result<()> {
         let tempdir = tempdir()?;
         let intent_ir = build_incomplete_sequential_control_intent_ir(tempdir.path())?;
@@ -6507,6 +6644,65 @@ mod tests {
                 .any(|reason| reason.contains("missing a canonical direction hint"))
         );
         assert!(!fsm.renderability.is_renderable);
+
+        Ok(())
+    }
+
+    #[test]
+    fn standalone_explicit_module_recovers_system_signals_from_system_contract() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_standalone_explicit_module_fsm_intent_ir(tempdir.path())?;
+        clear_explicit_module_signal_shape_hints(&mut intent_ir, &["clk", "rst_n"]);
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+        adapter.write_to_disk()?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "renderable");
+        let emitted_target_path = adapter
+            .artifact_layout
+            .emitted_target_path
+            .as_ref()
+            .expect("system-contract-backed explicit module should emit target text");
+        let emitted_text = fs::read_to_string(emitted_target_path)?;
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let module = fsm
+            .module_candidates
+            .iter()
+            .find(|candidate| candidate.module_name == "controller")
+            .expect("controller module candidate should exist");
+        let clk = module
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "clk")
+            .expect("clock should remain in the module inventory");
+        let rst_n = module
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "rst_n")
+            .expect("reset should remain in the module inventory");
+
+        for signal in [clk, rst_n] {
+            assert_eq!(signal.direction_hint, Some(InterfaceSignalDirection::Input));
+            assert_eq!(signal.width_hint, Some(1));
+            assert!(
+                signal
+                    .mention_categories
+                    .iter()
+                    .any(|category| category == "system_contract_signal")
+            );
+        }
+        assert!(module.renderability.is_renderable);
+        assert!(fsm.renderability.is_renderable);
+        assert!(emitted_text.contains("(?fsm:controller"));
+        assert!(emitted_text.contains("(+system"));
+        assert!(emitted_text.contains("(clock clk)"));
+        assert!(emitted_text.contains("(asreset rst_n)"));
 
         Ok(())
     }

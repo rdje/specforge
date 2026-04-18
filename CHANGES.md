@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-04-18 (Adapter system-contract signal recovery)
+
+### Improved: `.fsm` lowering can recover clock/reset port shape from system contracts
+- Added adapter-side recovery for existing clock/reset inventory entries from canonical `SystemContractRecord` facts.
+- Direct roots and explicit module roots now overlay system-contract clock/reset signals as input, 1-bit `system_contract_signal` entries before renderability analysis.
+- The overlay is bounded to signals already present in the local inventory, so it cannot create undeclared clock/reset ports, and it still uses sticky merge behavior if flat hints, actor ports, or other evidence disagree.
+- Added regressions for standalone sequential DT and standalone explicit module roots where flat clock/reset direction and width hints are cleared; both still render honestly from system-contract facts while keeping canonical `IntentIR` unchanged.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge system_signals_from_system_contract` -> passed with both focused system-contract recovery tests
+- `cargo test -p specforge ir::adapters::tests::` -> passed with `36` adapter tests
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `337` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+- README sentinel check -> passed
+
 ## 2026-04-18 (Adapter child-link topology conflict guard)
 
 ### Added: conflicting child-link topology stays blocked

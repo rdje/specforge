@@ -65,6 +65,11 @@ That contract records:
 
 In the Rust IR, this is represented by the system-contract records carried through `SemanticIR` and `IntentIR`.
 
+For adapter lowering, the system contract can also serve as bounded shape evidence.
+If a direct root or explicit module already has the clock/reset signals in its local inventory, `.fsm` lowering can recover those entries as input, 1-bit system-contract signals even when flat interface direction or width hints lag.
+This is adapter-local recovery from canonical system facts, not a mutation of `IntentIR`, and it does not create undeclared clock/reset ports.
+If other evidence contradicts the system-contract shape, the normal sticky conflict behavior keeps the direction or width unresolved and blocks lowering.
+
 The connectivity surface also distinguishes:
 
 - `protocol`
