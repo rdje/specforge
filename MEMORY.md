@@ -22,25 +22,25 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `2e7a49b`
-- latest_commit_brief_message: `feat(adapter): separate graph-backed directions`
-- note: current in-flight slice tightens graph-direction coverage so same-actor self-conflicts no longer count as graph-resolved in validation or `kg-bench`
+- latest_commit_hash: `4fa5e31`
+- latest_commit_brief_message: `fix(validate): guard graph direction coverage`
+- note: current in-flight slice keeps that coverage guard but now makes same-actor graph-direction conflicts explicit in validation metrics and findings
 
 ## Recent commit chain (last 5)
+- `4fa5e31` fix(validate): guard graph direction coverage
 - `2e7a49b` feat(adapter): separate graph-backed directions
 - `42b5adc` docs: refresh README bootstrap analysis snapshot
 - `f81b10c` fix(semantic): reject VLM signal-value labels
 - `53f5953` fix(semantic): reject name-only VLM labels
-- `74a74de` fix(semantic): reject multi-token VLM labels
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch is ahead of `origin/main`; do not push until 25 local commits since the last push or until the user explicitly asks
 - the README/SESSION_BOOTSTRAP handoff has been re-executed from the repo entrypoint and the referenced continuity docs have been reread
-- the active engineering slice is an `R15` validation/benchmark honesty follow-on: graph-direction coverage no longer counts signals whose same-actor `actor_ports` disagree on direction
-- `specforge kg-bench` now reuses the validator’s graph-direction helper, so graph-coverage expectations and validation metrics share one conflict-aware interpretation
-- validation for the in-flight slice has passed through `cargo fmt --all`, `cargo test -p specforge commands::validate::tests::`, `cargo test -p specforge commands::kg_bench::tests::`, `bash scripts/run_docs_ci.sh`, `bash scripts/run_ci.sh`, and `git diff --check`
-- the current full local CI baseline is now `354` Rust tests plus warning-deny rustdoc and the mdBook build
+- the active engineering slice is an `R15` validation honesty follow-on: graph-direction self-conflicts now surface as explicit metrics/findings instead of only appearing as withheld coverage credit
+- the graph-direction helper now returns both resolved and conflicted signal sets so stage validators can report the conflict count while preserving the earlier same-actor coverage guard
+- validation for the in-flight slice has passed through `cargo fmt --all`, `cargo test -p specforge graph_direction`, `cargo test -p specforge commands::kg_bench::tests::canonical_expectations_exclude_conflicting_same_actor_graph_direction`, `bash scripts/run_docs_ci.sh`, `bash scripts/run_ci.sh`, and `git diff --check`
+- the current full local CI baseline is now `356` Rust tests plus warning-deny rustdoc and the mdBook build
 - README sentinel remains intact after the slice: `Read SESSION_BOOTSTRAP.md and start from there.`
 - latest committed adapter hardening adds sticky conflict collapse for duplicate explicit top-port direction declarations
 - the committed regression declares top port `drive_data` once as output and once as input; expected behavior is unresolved top-port direction in both the top candidate and selected signal inventory, blocked renderability, and no emitted `.fsm` target text

@@ -375,7 +375,15 @@ fn intent_negative_knowledge_prior_matches(ir: &IntentIr) -> Vec<String> {
     )
 }
 
-pub(crate) fn graph_direction_signal_names(actor_ports: &[ActorPortRecord]) -> BTreeSet<String> {
+#[derive(Debug, Default, PartialEq, Eq)]
+struct GraphDirectionCoverageSummary {
+    resolved_signal_names: BTreeSet<String>,
+    conflicted_signal_names: BTreeSet<String>,
+}
+
+fn graph_direction_coverage_summary(
+    actor_ports: &[ActorPortRecord],
+) -> GraphDirectionCoverageSummary {
     let mut directions_by_signal_actor =
         BTreeMap::<String, BTreeMap<String, ActorRelativeDirection>>::new();
     let mut conflicted_signals = BTreeSet::new();
@@ -403,7 +411,7 @@ pub(crate) fn graph_direction_signal_names(actor_ports: &[ActorPortRecord]) -> B
         }
     }
 
-    directions_by_signal_actor
+    let resolved_signal_names = directions_by_signal_actor
         .into_iter()
         .filter_map(|(signal_name, actor_directions)| {
             if actor_directions.is_empty() || conflicted_signals.contains(&signal_name) {
@@ -412,7 +420,16 @@ pub(crate) fn graph_direction_signal_names(actor_ports: &[ActorPortRecord]) -> B
                 Some(signal_name)
             }
         })
-        .collect()
+        .collect();
+
+    GraphDirectionCoverageSummary {
+        resolved_signal_names,
+        conflicted_signal_names: conflicted_signals,
+    }
+}
+
+pub(crate) fn graph_direction_signal_names(actor_ports: &[ActorPortRecord]) -> BTreeSet<String> {
+    graph_direction_coverage_summary(actor_ports).resolved_signal_names
 }
 
 fn is_infrastructure_connectivity_class(class: SignalConnectivityClass) -> bool {
@@ -1844,11 +1861,13 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
 
     println!("=== Interface / Signal Coverage ===");
     let total_signals: usize = ir.interfaces.iter().map(|i| i.signal_records.len()).sum();
-    let graph_direction_signals = graph_direction_signal_names(&ir.actor_ports);
+    let graph_direction_summary = graph_direction_coverage_summary(&ir.actor_ports);
+    let graph_direction_signals = &graph_direction_summary.resolved_signal_names;
+    let graph_direction_conflicts = &graph_direction_summary.conflicted_signal_names;
     let (with_direction, with_graph_direction, with_compat_direction_hint) =
         resolved_direction_counts(
             ir.interfaces.iter().flat_map(|i| i.signal_records.iter()),
-            &graph_direction_signals,
+            graph_direction_signals,
         );
     let with_width: usize = ir
         .interfaces
@@ -1995,6 +2014,10 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     };
     println!("  with_resolved_direction: {with_direction} ({dir_pct}%)");
     println!("  with_graph_direction: {with_graph_direction} ({graph_dir_pct}%)");
+    println!(
+        "  graph_direction_conflicts: {}",
+        graph_direction_conflicts.len()
+    );
     println!("  with_compat_direction_hint: {with_compat_direction_hint} ({compat_dir_pct}%)");
     println!("  with_width: {with_width} ({w_pct}%)");
     println!("  with_table_support: {with_table_support} ({table_support_pct}%)");
@@ -2469,6 +2492,18 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             Vec::new(),
         ));
     }
+    if !graph_direction_conflicts.is_empty() {
+        findings.push(finding(
+            "semantic_graph_direction_conflicts_present",
+            ValidationFindingSeverity::Warning,
+            "knowledge_graph",
+            format!(
+                "{} signal(s) have conflicting actor-relative directions from the same actor; graph-direction coverage remains intentionally unresolved until upstream graph evidence is clarified",
+                graph_direction_conflicts.len()
+            ),
+            graph_direction_conflicts.iter().take(8).cloned().collect(),
+        ));
+    }
     if missing_compat_direction_count > 0 {
         findings.push(finding(
             "semantic_compat_direction_hints_incomplete",
@@ -2614,6 +2649,10 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             metric("total_signal_records", total_signals.to_string()),
             metric("with_resolved_direction", with_direction.to_string()),
             metric("with_graph_direction", with_graph_direction.to_string()),
+            metric(
+                "graph_direction_conflicts",
+                graph_direction_conflicts.len().to_string(),
+            ),
             metric(
                 "with_compat_direction_hint",
                 with_compat_direction_hint.to_string(),
@@ -2871,9 +2910,11 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
 
     println!("=== Signal Coverage ===");
     let declared_count = declared_signals.len();
-    let graph_direction_signals = graph_direction_signal_names(&ir.actor_ports);
+    let graph_direction_summary = graph_direction_coverage_summary(&ir.actor_ports);
+    let graph_direction_signals = &graph_direction_summary.resolved_signal_names;
+    let graph_direction_conflicts = &graph_direction_summary.conflicted_signal_names;
     let (with_direction, with_graph_direction, with_compat_direction_hint) =
-        resolved_direction_counts(declared_signals.iter().copied(), &graph_direction_signals);
+        resolved_direction_counts(declared_signals.iter().copied(), graph_direction_signals);
     // Both numeric and parametric widths count as "known" — parametric means the
     // integrator will set the value (e.g. ADDR_WIDTH=32) at instantiation time.
     let with_numeric_width = declared_signals
@@ -3009,6 +3050,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     println!("  heuristic_signal_records (excluded from coverage): {heuristic_signals}");
     println!("  with_resolved_direction: {with_direction} ({dir_pct}%)");
     println!("  with_graph_direction: {with_graph_direction} ({graph_dir_pct}%)");
+    println!(
+        "  graph_direction_conflicts: {}",
+        graph_direction_conflicts.len()
+    );
     println!("  with_compat_direction_hint: {with_compat_direction_hint} ({compat_dir_pct}%)");
     println!(
         "  with_width: {with_width} ({w_pct}%) [{with_numeric_width} numeric, {with_parametric_width} parametric]"
@@ -3539,6 +3584,18 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             Vec::new(),
         ));
     }
+    if !graph_direction_conflicts.is_empty() {
+        findings.push(finding(
+            "intent_graph_direction_conflicts_present",
+            ValidationFindingSeverity::Warning,
+            "knowledge_graph",
+            format!(
+                "{} signal(s) have conflicting actor-relative directions from the same actor; graph-direction coverage remains intentionally unresolved until upstream graph evidence is clarified",
+                graph_direction_conflicts.len()
+            ),
+            graph_direction_conflicts.iter().take(8).cloned().collect(),
+        ));
+    }
     if !ir.actor_ports.is_empty() && with_compat_direction_hint < declared_count {
         findings.push(finding(
             "intent_compat_direction_hints_lag_graph",
@@ -3695,6 +3752,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             metric("heuristic_signal_records", heuristic_signals.to_string()),
             metric("with_resolved_direction", with_direction.to_string()),
             metric("with_graph_direction", with_graph_direction.to_string()),
+            metric(
+                "graph_direction_conflicts",
+                graph_direction_conflicts.len().to_string(),
+            ),
             metric(
                 "with_compat_direction_hint",
                 with_compat_direction_hint.to_string(),
@@ -3991,6 +4052,25 @@ mod tests {
         ]);
 
         assert_eq!(actual, BTreeSet::from(["PADDR".to_string()]));
+    }
+
+    #[test]
+    fn graph_direction_coverage_summary_reports_same_actor_conflicts() {
+        let summary = graph_direction_coverage_summary(&[
+            actor_port("Completer", "PREADY", ActorRelativeDirection::Output),
+            actor_port("Completer", "PREADY", ActorRelativeDirection::Input),
+            actor_port("Requester", "PADDR", ActorRelativeDirection::Output),
+            actor_port("Completer", "PADDR", ActorRelativeDirection::Input),
+        ]);
+
+        assert_eq!(
+            summary.resolved_signal_names,
+            BTreeSet::from(["PADDR".to_string()])
+        );
+        assert_eq!(
+            summary.conflicted_signal_names,
+            BTreeSet::from(["PREADY".to_string()])
+        );
     }
 
     fn build_semantic_and_intent_from_markdown(
@@ -5646,9 +5726,71 @@ mod tests {
         assert_eq!(metric_value(&report, "with_resolved_direction"), Some("1"));
         assert_eq!(metric_value(&report, "with_graph_direction"), Some("1"));
         assert_eq!(
+            metric_value(&report, "graph_direction_conflicts"),
+            Some("1")
+        );
+        assert_eq!(
             metric_value(&report, "with_compat_direction_hint"),
             Some("0")
         );
+        let finding = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "intent_graph_direction_conflicts_present")
+            .expect("expected intent graph-direction conflict finding");
+        assert_eq!(finding.related_ids, vec!["PREADY".to_string()]);
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_semantic_ir_reports_conflicting_same_actor_graph_direction() -> Result<()> {
+        let (mut semantic_ir, _) = build_semantic_and_intent_from_markdown(
+            "semantic_graph_conflict.md",
+            concat!(
+                "# Protocol\n",
+                "Signal PREADY is output width 1.\n",
+                "\n",
+                "Signal PADDR is input width 32.\n",
+                "\n",
+                "The Completer drives PREADY.\n",
+                "\n",
+                "The Requester reads PREADY.\n",
+                "\n",
+                "The Requester drives PADDR.\n",
+                "\n",
+                "The Completer samples PADDR.\n",
+            ),
+        )?;
+
+        for interface in &mut semantic_ir.interfaces {
+            for signal in &mut interface.signal_records {
+                signal.direction_hint = None;
+            }
+        }
+        let mut conflicting_port = semantic_ir
+            .actor_ports
+            .iter()
+            .find(|port| port.actor_name == "Completer" && port.signal_name == "PREADY")
+            .cloned()
+            .expect("Completer PREADY actor port should exist");
+        conflicting_port.direction = ActorRelativeDirection::Input;
+        semantic_ir.actor_ports.push(conflicting_port);
+
+        let report = validate_semantic_ir(&semantic_ir, "semantic_graph_conflict".to_string());
+
+        assert_eq!(metric_value(&report, "with_resolved_direction"), Some("1"));
+        assert_eq!(metric_value(&report, "with_graph_direction"), Some("1"));
+        assert_eq!(
+            metric_value(&report, "graph_direction_conflicts"),
+            Some("1")
+        );
+        let finding = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "semantic_graph_direction_conflicts_present")
+            .expect("expected semantic graph-direction conflict finding");
+        assert_eq!(finding.related_ids, vec!["PREADY".to_string()]);
 
         Ok(())
     }

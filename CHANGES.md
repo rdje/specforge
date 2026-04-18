@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-18 (Graph-direction conflict visibility)
+
+### Changed: graph-direction self-conflicts now surface as first-class validation output
+- `specforge validate` still withholds graph-direction coverage when the same actor claims contradictory directions for the same signal, but it no longer does so silently.
+- Validation now emits an explicit `graph_direction_conflicts` metric at both `SemanticIR` and `IntentIR`, prints that count in the coverage summary, and raises stage-specific warning findings when those same-actor contradictions are present.
+- Added focused regression coverage proving:
+  - the graph-direction helper keeps separate resolved and conflicted signal sets
+  - `SemanticIR` validation reports the new metric and warning finding for a same-actor self-conflict
+  - `IntentIR` validation reports the same metric/finding while still refusing to credit the conflicted signal as graph-resolved
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge graph_direction` -> passed
+- `cargo test -p specforge commands::kg_bench::tests::canonical_expectations_exclude_conflicting_same_actor_graph_direction` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-18 (Graph-direction coverage conflict guard)
 
 ### Changed: graph-direction coverage no longer credits same-actor self-conflicts

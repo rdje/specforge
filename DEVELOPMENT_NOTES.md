@@ -7,6 +7,18 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-18 Graph-direction conflict visibility
+- The previous slice made graph-direction coverage stricter; this follow-on makes that stricter rule legible.
+- A silent coverage drop is the right scoring behavior, but it is not a good debugging surface. If a signal loses graph-direction credit because one actor contradicted itself, validation should say so explicitly rather than leaving users to infer the cause from a percentage change.
+- The added `graph_direction_conflicts` metric is intentionally narrow:
+  - it counts same-actor direction contradictions only
+  - it does not reclassify cross-actor direction differences as conflicts
+  - it does not mutate canonical truth or invent a repaired direction
+- The new warning findings are also intentionally local and review-friendly:
+  - they point at the specific conflicted signal ids
+  - they explain that graph-direction coverage remains unresolved on purpose
+  - they preserve the boundary that validation reports honesty gaps but does not auto-heal the KG
+
 ## 2026-04-18 Graph-direction coverage conflict guard
 - This follow-on `R15` slice is about honesty in evaluation, not about adding a new canonical field.
 - The validator and `kg-bench` were both still slightly too generous: if a signal appeared anywhere in `actor_ports` with a non-`unknown` direction, it counted as graph-backed direction coverage even when the same actor contradicted itself on that same signal.
