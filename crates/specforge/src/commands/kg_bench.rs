@@ -128,6 +128,10 @@ struct CanonicalStageExpectations {
     #[serde(default)]
     graph_direction_signal_names_exclude: Vec<String>,
     #[serde(default)]
+    graph_direction_conflicted_signal_names_include: Vec<String>,
+    #[serde(default)]
+    graph_direction_conflicted_signal_names_exclude: Vec<String>,
+    #[serde(default)]
     signal_directions_include: Vec<ExpectedSignalDirection>,
     #[serde(default)]
     signal_supporting_table_ids_include: Vec<ExpectedSignalTableSupport>,
@@ -869,6 +873,22 @@ fn evaluate_canonical_expectations(
         "graph_direction_signal_names_exclude",
         &expectations.graph_direction_signal_names_exclude,
         &graph_direction_signal_names,
+        failures,
+    );
+    let graph_direction_conflicted_signal_names =
+        validate::graph_direction_conflicted_signal_names(actor_ports);
+    assert_includes(
+        label,
+        "graph_direction_conflicted_signal_names_include",
+        &expectations.graph_direction_conflicted_signal_names_include,
+        &graph_direction_conflicted_signal_names,
+        failures,
+    );
+    assert_excludes(
+        label,
+        "graph_direction_conflicted_signal_names_exclude",
+        &expectations.graph_direction_conflicted_signal_names_exclude,
+        &graph_direction_conflicted_signal_names,
         failures,
     );
 
@@ -2476,11 +2496,15 @@ mod tests {
     fn canonical_expectations_exclude_conflicting_same_actor_graph_direction() {
         let expectations = CanonicalStageExpectations {
             graph_direction_signal_names_exclude: vec!["PREADY".to_string()],
+            graph_direction_conflicted_signal_names_include: vec!["PREADY".to_string()],
+            graph_direction_conflicted_signal_names_exclude: vec!["PADDR".to_string()],
             ..CanonicalStageExpectations::default()
         };
         let actor_ports = vec![
             actor_port("Completer", "PREADY", ActorRelativeDirection::Output),
             actor_port("Completer", "PREADY", ActorRelativeDirection::Input),
+            actor_port("Requester", "PADDR", ActorRelativeDirection::Output),
+            actor_port("Completer", "PADDR", ActorRelativeDirection::Input),
         ];
         let mut failures = Vec::new();
 
@@ -2506,7 +2530,7 @@ mod tests {
 
         assert!(
             failures.is_empty(),
-            "conflicting same-actor graph direction should be excluded from graph_direction_signal_names expectations: {failures:?}"
+            "conflicting same-actor graph direction should be reflected in graph-direction expectation surfaces: {failures:?}"
         );
     }
 

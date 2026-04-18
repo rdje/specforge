@@ -432,6 +432,12 @@ pub(crate) fn graph_direction_signal_names(actor_ports: &[ActorPortRecord]) -> B
     graph_direction_coverage_summary(actor_ports).resolved_signal_names
 }
 
+pub(crate) fn graph_direction_conflicted_signal_names(
+    actor_ports: &[ActorPortRecord],
+) -> BTreeSet<String> {
+    graph_direction_coverage_summary(actor_ports).conflicted_signal_names
+}
+
 fn is_infrastructure_connectivity_class(class: SignalConnectivityClass) -> bool {
     !matches!(class, SignalConnectivityClass::Protocol)
 }

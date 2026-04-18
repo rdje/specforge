@@ -17,11 +17,15 @@
   "expectations": {
     "semantic": {
       "graph_direction_signal_names_include": ["PADDR"],
-      "graph_direction_signal_names_exclude": ["PREADY"]
+      "graph_direction_signal_names_exclude": ["PREADY"],
+      "graph_direction_conflicted_signal_names_include": ["PREADY"],
+      "graph_direction_conflicted_signal_names_exclude": ["PADDR"]
     },
     "intent": {
       "graph_direction_signal_names_include": ["PADDR"],
-      "graph_direction_signal_names_exclude": ["PREADY"]
+      "graph_direction_signal_names_exclude": ["PREADY"],
+      "graph_direction_conflicted_signal_names_include": ["PREADY"],
+      "graph_direction_conflicted_signal_names_exclude": ["PADDR"]
     },
     "validation": {
       "semantic": {

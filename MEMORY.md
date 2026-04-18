@@ -22,25 +22,25 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `1ae25f8`
-- latest_commit_brief_message: `feat(kg-bench): add graph conflict fixture patch lane`
-- note: current in-flight slice refreshes the corpus-KB benchmark projection so the tracked knowledge plane reflects the new `90/90` fixture suite and the new graph-direction self-conflict negative case
+- latest_commit_hash: `f8359fa`
+- latest_commit_brief_message: `docs(corpus-kb): refresh fixture benchmark pages`
+- note: current in-flight slice adds direct canonical conflict-set expectations for graph-direction self-conflict fixtures, so the tracked benchmark contract can name both resolved and conflicted signal sets explicitly
 
 ## Recent commit chain (last 5)
+- `f8359fa` docs(corpus-kb): refresh fixture benchmark pages
 - `1ae25f8` feat(kg-bench): add graph conflict fixture patch lane
 - `99808e9` fix(validate): report graph direction conflicts
 - `4fa5e31` fix(validate): guard graph direction coverage
 - `2e7a49b` feat(adapter): separate graph-backed directions
-- `42b5adc` docs: refresh README bootstrap analysis snapshot
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- branch is ahead of `origin/main` by one local commit (`1ae25f8`); do not push again until 25 new local commits since the last push at `99808e9` or until the user explicitly asks
+- branch is ahead of `origin/main` by two local commits (`1ae25f8`, `f8359fa`); do not push again until 25 new local commits since the last push at `99808e9` or until the user explicitly asks
 - the README/SESSION_BOOTSTRAP handoff has been re-executed from the repo entrypoint and the referenced continuity docs have been reread
-- the active engineering slice is a knowledge-plane refresh follow-on: the managed corpus-KB benchmark and pattern pages now reflect the tracked `90/90` fixture suite after the graph-direction self-conflict fixture landed
-- `corpus_kb/benchmarks/kg-fixtures.md` now reports `90` passing fixtures, while `corpus_kb/patterns/kg-fixtures.md` now reports `49` pattern-family fixtures and explicitly lists `graph_direction_same_actor_conflict_negative`
-- validation for the in-flight slice has passed through `cargo run -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` and `git diff --check`
-- the current full local CI baseline remains `357` Rust tests plus warning-deny rustdoc and the mdBook build from commit `1ae25f8`
+- the active engineering slice extends `specforge kg-bench` so canonical expectations can assert graph-direction conflicted signal names directly, not only infer them from resolved-set exclusions plus validation findings
+- the tracked `graph_direction_same_actor_conflict_negative` fixture now locks the split explicitly: `PADDR` stays in the resolved graph-direction set, while `PREADY` is excluded from that set and included in the conflicted set
+- validation for the in-flight slice has passed through `cargo fmt --all`, `cargo test -p specforge canonical_expectations_exclude_conflicting_same_actor_graph_direction`, `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality graph_direction_same_actor_conflict_negative`, `bash scripts/run_ci.sh`, `bash scripts/run_docs_ci.sh`, and `git diff --check`
+- the current full local CI baseline for the in-flight slice is `357` Rust tests plus warning-deny rustdoc and the mdBook build
 - README sentinel remains intact after the slice: `Read SESSION_BOOTSTRAP.md and start from there.`
 - latest committed adapter hardening adds sticky conflict collapse for duplicate explicit top-port direction declarations
 - the committed regression declares top port `drive_data` once as output and once as input; expected behavior is unresolved top-port direction in both the top candidate and selected signal inventory, blocked renderability, and no emitted `.fsm` target text

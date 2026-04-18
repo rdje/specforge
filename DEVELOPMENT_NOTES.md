@@ -7,6 +7,21 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-18 KG-bench canonical graph-direction conflict expectations
+- The prior graph-direction self-conflict fixture could only prove the right behavior indirectly:
+  - the resolved graph-direction signal set excluded `PREADY`
+  - validation metrics/findings reported the conflict
+- That was serviceable but still lossy for review, because the fixture contract did not name the canonical conflict set directly.
+- This slice adds a narrow expectation surface instead of a new semantic rule:
+  - `graph_direction_conflicted_signal_names_include`
+  - `graph_direction_conflicted_signal_names_exclude`
+- Those fields are derived from the same `graph_direction_coverage_summary` used by validation, so benchmark expectations stay aligned with validation semantics rather than inventing a second interpretation of actor-port conflict truth.
+- Important boundary:
+  - this is observation, not mutation
+  - conflicted signals still do not earn resolved graph-direction coverage
+  - fixtures can now assert both the resolved set and the conflicted set explicitly
+- The tracked negative fixture now makes the split reviewable in one place: `PADDR` remains resolved, while `PREADY` is explicitly locked into the conflicted set.
+
 ## 2026-04-18 Corpus-KB benchmark refresh after graph-direction fixture expansion
 - The new tracked fixture was already part of the executable benchmark suite, but the review-facing corpus-KB projection still said `89/89`.
 - That kind of drift matters because `corpus_kb/` is the persistent human-facing synthesis plane for benchmark coverage and failure families; if it lags, future sessions lose the real picture of what the tracked fixture corpus currently covers.

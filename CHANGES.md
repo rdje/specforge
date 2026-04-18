@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-18 (KG-bench graph-direction conflict expectations)
+
+### Added: canonical conflict-set expectations in `specforge kg-bench`
+- `CanonicalStageExpectations` now supports `graph_direction_conflicted_signal_names_include` and `graph_direction_conflicted_signal_names_exclude`.
+- The harness derives this conflicted set from the same canonical actor-port graph-direction conflict summary used by `specforge validate`, so fixtures can assert which signals were withheld from resolved graph-direction coverage because of same-actor self-conflicts.
+- Updated `graph_direction_same_actor_conflict_negative` to lock both halves of the behavior explicitly:
+  - `PADDR` remains in the resolved graph-direction set
+  - `PREADY` stays out of the resolved set and appears in the conflicted set instead
+- This slice does not mutate canonical truth or auto-repair conflicts; it makes the benchmark contract more explicit and reviewable.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge canonical_expectations_exclude_conflicting_same_actor_graph_direction` -> passed
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality graph_direction_same_actor_conflict_negative` -> passed
+- `bash scripts/run_ci.sh` -> passed with `357` Rust tests and the tracked `90/90` fixture suite
+- `bash scripts/run_docs_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-18 (Corpus-KB benchmark refresh after graph-direction fixture expansion)
 
 ### Refreshed: corpus-KB benchmark projections now reflect the `90/90` tracked fixture suite
