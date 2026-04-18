@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-18 (Adapter graph-backed direction surface split)
+
+### Changed: adapter-local signal inventory now separates graph direction from compatibility direction
+- `FsmSignalCandidate` now carries a dedicated `graph_direction_hint` plus sticky `graph_direction_hint_conflicted`, so actor-port, topology, and control-read overlays no longer have to overwrite compatibility-facing `direction_hint`.
+- Graph-backed overlays now register through a separate adapter-local path for `actor_port`, `module_topology_link`, `module_control_input`, and `direct_control_input`, while flat interface and system-contract shape still remain visible as compatibility hints.
+- Adapter renderability and module-port construction now use a preferred direction rule:
+  - graph direction wins when it is present and unambiguous
+  - compatibility direction can still fill the gap when graph evidence is absent
+  - explicit graph conflict stays blocking instead of silently falling back to compatibility
+- Updated the focused adapter regressions across standalone DT/FSM, explicit-module, sequential system-signal, and top-composition paths so the separation and the conflict semantics are locked in.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge ir::adapters::tests::` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-18 (README bootstrap analysis refresh)
 
 ### Refreshed: live Rust analysis after executing the README bootstrap

@@ -7,6 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-18 Adapter graph-backed direction surface split
+- This `R15` slice is not just another adapter polish pass. It closes a real semantic conflation: adapter-local graph evidence and flat compatibility/system-contract direction evidence were still sharing the same `direction_hint` slot.
+- `FsmSignalCandidate` now preserves those surfaces separately:
+  - `direction_hint` remains the compatibility-facing flat/interface/system-contract view
+  - `graph_direction_hint` is the adapter-local actor/topology/control-read view
+  - `graph_direction_hint_conflicted` preserves the critical difference between "no graph evidence" and "graph evidence exists but disagrees"
+- The preferred read rule is intentionally strict:
+  - if graph direction is present and unambiguous, use it
+  - if graph direction is absent, compatibility direction may still fill the hole
+  - if graph direction is explicitly conflicted, do not silently recover through compatibility
+- That last point matters for honesty. A contradictory actor/topology/control-read graph is already telling us the canonical world model is not internally coherent enough for safe lowering, so the adapter must block instead of letting a flat hint erase the disagreement.
+- This remains adapter-local only. No canonical `IntentIR` fields were widened or mutated in this slice; the change is about how downstream consumers read the already-canonical actor-relative graph more faithfully.
+
 ## 2026-04-18 README bootstrap analysis refresh
 - Executing the README bootstrap again was not busywork here; it exposed continuity drift in the live Rust analysis snapshot.
 - `RUST_CODEBASE_ANALYSIS.md` was lagging the current repository scale and validation surface. The active crate now spans `31` Rust source files and `62,017` lines under `crates/specforge/src`, the tracked KG fixture suite is `89`, and the current local CI baseline is `351` passing Rust tests plus rustdoc and mdBook.

@@ -22,24 +22,26 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `f81b10c`
-- latest_commit_brief_message: `fix(semantic): reject VLM signal-value labels`
-- note: current in-flight slice is a README/bootstrap continuity refresh updating the live Rust analysis snapshot and recording the next roadmap focus after a fresh codebase pass
+- latest_commit_hash: `42b5adc`
+- latest_commit_brief_message: `docs: refresh README bootstrap analysis snapshot`
+- note: current in-flight slice separates adapter-local graph-backed direction from compatibility/system-contract `direction_hint`, with sticky graph-conflict tracking so renderability cannot silently fall back when graph evidence disagrees
 
 ## Recent commit chain (last 5)
+- `42b5adc` docs: refresh README bootstrap analysis snapshot
 - `f81b10c` fix(semantic): reject VLM signal-value labels
 - `53f5953` fix(semantic): reject name-only VLM labels
 - `74a74de` fix(semantic): reject multi-token VLM labels
 - `5996029` fix(semantic): reject compact VLM phase labels
-- `867455e` fix(semantic): reject compact VLM bus labels
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch is ahead of `origin/main`; do not push until 25 local commits since the last push or until the user explicitly asks
 - the README/SESSION_BOOTSTRAP handoff has been re-executed from the repo entrypoint and the referenced continuity docs have been reread
-- `RUST_CODEBASE_ANALYSIS.md` is being refreshed to match the current codebase scale (`31` Rust source files / `62,017` lines), current tracked KG fixture count (`89`), and current local CI baseline (`351` Rust tests plus rustdoc and mdBook)
-- the bootstrap analysis reconfirmed the next roadmap-aligned engineering target: `R15` still has meaningful `direction_hint` dependency pockets in downstream adapter/validation consumers even though actor-relative graph surfaces are already canonical
-- validation target for the in-flight bootstrap refresh is docs CI, full local CI, and `git diff --check` before commit
+- the active engineering slice is an `R15` adapter follow-on: `FsmSignalCandidate` now carries `graph_direction_hint` plus sticky `graph_direction_hint_conflicted`, keeping graph-backed direction evidence separate from flat compatibility/system-contract `direction_hint`
+- graph-backed adapter overlays now flow through dedicated registration for `actor_port`, `module_topology_link`, `module_control_input`, and `direct_control_input`; system-contract and flat interface shape remain on the compatibility side
+- adapter renderability now uses a strict preferred-direction rule: unambiguous graph direction wins, compatibility direction fills only when graph evidence is absent, and explicit graph conflict stays blocking instead of silently recovering through compatibility
+- validation for the in-flight slice has passed through `cargo fmt --all`, `cargo test -p specforge ir::adapters::tests::`, `bash scripts/run_docs_ci.sh`, `bash scripts/run_ci.sh`, and `git diff --check`
+- README sentinel remains intact after the slice: `Read SESSION_BOOTSTRAP.md and start from there.`
 - latest committed adapter hardening adds sticky conflict collapse for duplicate explicit top-port direction declarations
 - the committed regression declares top port `drive_data` once as output and once as input; expected behavior is unresolved top-port direction in both the top candidate and selected signal inventory, blocked renderability, and no emitted `.fsm` target text
 - focused validation, the full adapter test module, docs CI, and full local CI passed for commit `6282875`; full local CI reported formatting, warning-deny Clippy, `340` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build

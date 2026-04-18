@@ -176,7 +176,7 @@ fn validate_system_signal_renderability(
         return;
     };
 
-    match signal.direction_hint {
+    match preferred_signal_direction_hint(signal) {
         Some(InterfaceSignalDirection::Input) => {}
         Some(_) => {
             push_unique_message(
@@ -503,6 +503,10 @@ pub struct FsmSignalCandidate {
     pub signal_name: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub direction_hint: Option<InterfaceSignalDirection>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub graph_direction_hint: Option<InterfaceSignalDirection>,
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub graph_direction_hint_conflicted: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub width_hint: Option<u32>,
     pub supporting_canonical_ids: Vec<String>,
@@ -945,6 +949,7 @@ fn overlay_system_contract_signal(
         supporting_ids,
         "system_contract_signal",
         system_contract.automation_confidence,
+        false,
     );
 }
 
@@ -1020,7 +1025,7 @@ fn overlay_direct_control_input_inventory(
         if output_targets.contains(&signal_name) || !inventory.contains_key(&signal_name) {
             continue;
         }
-        register_canonical_signal_with_supporting_ids(
+        register_graph_backed_canonical_signal_with_supporting_ids(
             inventory,
             &signal_name,
             Some(InterfaceSignalDirection::Input),
@@ -1271,12 +1276,27 @@ fn inventory_to_signal_candidates(
         .map(|(signal_name, evidence)| FsmSignalCandidate {
             signal_name,
             direction_hint: evidence.direction_hint,
+            graph_direction_hint: evidence.graph_direction_hint,
+            graph_direction_hint_conflicted: evidence.graph_direction_hint_conflicted,
             width_hint: evidence.width_hint,
             supporting_canonical_ids: evidence.supporting_canonical_ids.into_iter().collect(),
             mention_categories: evidence.mention_categories.into_iter().collect(),
             automation_confidence: evidence.automation_confidence,
         })
         .collect()
+}
+
+fn is_false(value: &bool) -> bool {
+    !*value
+}
+
+fn preferred_signal_direction_hint(
+    signal: &FsmSignalCandidate,
+) -> Option<InterfaceSignalDirection> {
+    if signal.graph_direction_hint_conflicted {
+        return None;
+    }
+    signal.graph_direction_hint.or(signal.direction_hint)
 }
 
 fn build_module_candidates(intent_ir: &IntentIr) -> Vec<FsmExplicitModuleCandidate> {
@@ -1437,7 +1457,7 @@ fn overlay_module_topology_inventory(
         if !inventory.contains_key(&direction.signal_name) {
             continue;
         }
-        register_canonical_signal_with_supporting_ids(
+        register_graph_backed_canonical_signal_with_supporting_ids(
             inventory,
             &direction.signal_name,
             Some(direction.direction_hint),
@@ -1466,7 +1486,7 @@ fn overlay_module_control_input_inventory(
         if output_targets.contains(&signal_name) || !inventory.contains_key(&signal_name) {
             continue;
         }
-        register_canonical_signal_with_supporting_ids(
+        register_graph_backed_canonical_signal_with_supporting_ids(
             inventory,
             &signal_name,
             Some(InterfaceSignalDirection::Input),
@@ -1506,7 +1526,7 @@ fn overlay_actor_port_inventory_for_actor(
             port.source_statement_ids.clone()
         };
 
-        register_canonical_signal_with_supporting_ids(
+        register_graph_backed_canonical_signal_with_supporting_ids(
             inventory,
             &port.signal_name,
             direction_hint,
@@ -1928,6 +1948,8 @@ fn build_top_signal_inventory(ports: &[ExplicitTopPortRecord]) -> Vec<FsmSignalC
         .map(|port| FsmSignalCandidate {
             signal_name: port.port_name.clone(),
             direction_hint: port.direction_hint,
+            graph_direction_hint: None,
+            graph_direction_hint_conflicted: false,
             width_hint: port.width_hint.as_ref().and_then(|w| w.as_numeric()),
             supporting_canonical_ids: port.supporting_statement_ids.clone(),
             mention_categories: vec!["top_port".to_string()],
@@ -2441,7 +2463,7 @@ fn renderable_ports_for_module_candidate(
         .signal_inventory
         .iter()
         .filter_map(|signal| {
-            signal.direction_hint.map(|direction_hint| {
+            preferred_signal_direction_hint(signal).map(|direction_hint| {
                 (
                     signal.signal_name.clone(),
                     RenderableEndpointPort {
@@ -3724,9 +3746,9 @@ fn build_adapter_residual_decisions(
     let advisory_signal_inventory_only = decision_tree_candidates
         .iter()
         .all(|candidate| candidate.blocks.is_empty())
-        && signal_inventory
-            .iter()
-            .any(|signal| signal.direction_hint.is_none() || signal.width_hint.is_none());
+        && signal_inventory.iter().any(|signal| {
+            preferred_signal_direction_hint(signal).is_none() || signal.width_hint.is_none()
+        });
     let signal_inventory_blocked = advisory_signal_inventory_only
         || renderability.blocking_reasons.iter().any(|reason| {
             reason.contains("signal")
@@ -3935,10 +3957,11 @@ fn register_canonical_signal(
         std::iter::once(supporting_canonical_id.to_string()),
         mention_category,
         automation_confidence,
+        false,
     );
 }
 
-fn register_canonical_signal_with_supporting_ids<I>(
+fn register_graph_backed_canonical_signal_with_supporting_ids<I>(
     inventory: &mut BTreeMap<String, SignalInventoryEvidence>,
     signal_name: &str,
     direction_hint: Option<InterfaceSignalDirection>,
@@ -3949,12 +3972,48 @@ fn register_canonical_signal_with_supporting_ids<I>(
 ) where
     I: IntoIterator<Item = String>,
 {
-    let entry = inventory.entry(signal_name.to_string()).or_default();
-    merge_signal_hint(
-        &mut entry.direction_hint,
-        &mut entry.direction_hint_conflicted,
+    register_canonical_signal_with_supporting_ids(
+        inventory,
+        signal_name,
         direction_hint,
+        width_hint,
+        supporting_canonical_ids,
+        mention_category,
+        automation_confidence,
+        true,
     );
+}
+
+#[expect(
+    clippy::too_many_arguments,
+    reason = "signal inventory registration keeps direction, width, provenance, confidence, and graph/compat split explicit"
+)]
+fn register_canonical_signal_with_supporting_ids<I>(
+    inventory: &mut BTreeMap<String, SignalInventoryEvidence>,
+    signal_name: &str,
+    direction_hint: Option<InterfaceSignalDirection>,
+    width_hint: Option<u32>,
+    supporting_canonical_ids: I,
+    mention_category: &str,
+    automation_confidence: AutomationConfidence,
+    graph_backed_direction: bool,
+) where
+    I: IntoIterator<Item = String>,
+{
+    let entry = inventory.entry(signal_name.to_string()).or_default();
+    if graph_backed_direction {
+        merge_signal_hint(
+            &mut entry.graph_direction_hint,
+            &mut entry.graph_direction_hint_conflicted,
+            direction_hint,
+        );
+    } else {
+        merge_signal_hint(
+            &mut entry.direction_hint,
+            &mut entry.direction_hint_conflicted,
+            direction_hint,
+        );
+    }
     merge_signal_hint(
         &mut entry.width_hint,
         &mut entry.width_hint_conflicted,
@@ -4107,7 +4166,7 @@ fn register_renderable_signal(
         return None;
     };
 
-    let Some(direction_hint) = signal.direction_hint else {
+    let Some(direction_hint) = preferred_signal_direction_hint(signal) else {
         push_unique_message(
             blocking_reasons,
             &format!(
@@ -5100,6 +5159,8 @@ fn canonicalize_existing_path(path: &Path) -> Result<PathBuf> {
 struct SignalInventoryEvidence {
     direction_hint: Option<InterfaceSignalDirection>,
     direction_hint_conflicted: bool,
+    graph_direction_hint: Option<InterfaceSignalDirection>,
+    graph_direction_hint_conflicted: bool,
     width_hint: Option<u32>,
     width_hint_conflicted: bool,
     supporting_canonical_ids: BTreeSet<String>,
@@ -5112,6 +5173,8 @@ impl Default for SignalInventoryEvidence {
         Self {
             direction_hint: None,
             direction_hint_conflicted: false,
+            graph_direction_hint: None,
+            graph_direction_hint_conflicted: false,
             width_hint: None,
             width_hint_conflicted: false,
             supporting_canonical_ids: BTreeSet::new(),
@@ -5678,8 +5741,9 @@ mod tests {
             .find(|signal| signal.signal_name == "DATA_OUT")
             .expect("DATA_OUT should stay in the direct signal inventory");
 
+        assert_eq!(data_out.direction_hint, None);
         assert_eq!(
-            data_out.direction_hint,
+            data_out.graph_direction_hint,
             Some(InterfaceSignalDirection::Output)
         );
         assert!(
@@ -5721,7 +5785,10 @@ mod tests {
             fsm.signal_inventory
                 .iter()
                 .filter(|signal| signal.signal_name == "DATA_OUT")
-                .all(|signal| signal.direction_hint == Some(InterfaceSignalDirection::Output))
+                .all(|signal| {
+                    signal.direction_hint.is_none()
+                        && signal.graph_direction_hint == Some(InterfaceSignalDirection::Output)
+                })
         );
         assert!(
             fsm.signal_inventory
@@ -5774,12 +5841,14 @@ mod tests {
             .find(|signal| signal.signal_name == "ZERO_FLAG")
             .expect("ZERO_FLAG should stay in the direct signal inventory");
 
+        assert_eq!(data_out.direction_hint, None);
         assert_eq!(
-            data_out.direction_hint,
+            data_out.graph_direction_hint,
             Some(InterfaceSignalDirection::Output)
         );
+        assert_eq!(zero_flag.direction_hint, None);
         assert_eq!(
-            zero_flag.direction_hint,
+            zero_flag.graph_direction_hint,
             Some(InterfaceSignalDirection::Output)
         );
         assert!(
@@ -5832,8 +5901,9 @@ mod tests {
             .find(|signal| signal.signal_name == "DATA_IN")
             .expect("DATA_IN should stay in the direct signal inventory");
 
+        assert_eq!(data_in.direction_hint, None);
         assert_eq!(
-            data_in.direction_hint,
+            data_in.graph_direction_hint,
             Some(InterfaceSignalDirection::Input)
         );
         assert!(
@@ -5881,7 +5951,9 @@ mod tests {
             fsm.signal_inventory
                 .iter()
                 .filter(|signal| signal.signal_name == "DATA_OUT")
-                .all(|signal| signal.direction_hint.is_none())
+                .all(|signal| {
+                    signal.direction_hint.is_none() && signal.graph_direction_hint.is_none()
+                })
         );
         assert!(
             fsm.renderability
@@ -5924,6 +5996,7 @@ mod tests {
             .expect("DATA_OUT should stay in the direct signal inventory");
 
         assert_eq!(data_out.direction_hint, None);
+        assert_eq!(data_out.graph_direction_hint, None);
         assert!(
             data_out
                 .mention_categories
@@ -6179,7 +6252,15 @@ mod tests {
             .expect("reset should remain in the signal inventory");
 
         assert_eq!(clk.direction_hint, Some(InterfaceSignalDirection::Input));
+        assert_eq!(
+            clk.graph_direction_hint,
+            Some(InterfaceSignalDirection::Input)
+        );
         assert_eq!(rst_n.direction_hint, Some(InterfaceSignalDirection::Input));
+        assert_eq!(
+            rst_n.graph_direction_hint,
+            Some(InterfaceSignalDirection::Input)
+        );
         assert!(
             clk.mention_categories
                 .iter()
@@ -6677,7 +6758,11 @@ mod tests {
                 .find(|signal| signal.signal_name == signal_name)
                 .unwrap_or_else(|| panic!("{signal_name} should stay in the signal inventory"));
             assert_eq!(
-                signal.direction_hint,
+                signal.direction_hint, None,
+                "{signal_name} should not fabricate a compatibility direction hint"
+            );
+            assert_eq!(
+                signal.graph_direction_hint,
                 Some(InterfaceSignalDirection::Input),
                 "{signal_name} should be recovered as a target-actor input"
             );
@@ -6757,7 +6842,11 @@ mod tests {
                 .find(|signal| signal.signal_name == signal_name)
                 .unwrap_or_else(|| panic!("{signal_name} should stay in module inventory"));
             assert_eq!(
-                signal.direction_hint,
+                signal.direction_hint, None,
+                "{signal_name} should not fabricate a compatibility direction hint"
+            );
+            assert_eq!(
+                signal.graph_direction_hint,
                 Some(InterfaceSignalDirection::Input),
                 "{signal_name} should be recovered as a module-local input"
             );
@@ -6826,6 +6915,7 @@ mod tests {
             .expect("DATA_IN should stay in module inventory");
 
         assert_eq!(data_in.direction_hint, None);
+        assert_eq!(data_in.graph_direction_hint, None);
         assert!(
             data_in
                 .mention_categories
@@ -7316,8 +7406,9 @@ mod tests {
             .find(|signal| signal.signal_name == "output_data")
             .expect("producer output_data should stay in the module inventory");
 
+        assert_eq!(output_data.direction_hint, None);
         assert_eq!(
-            output_data.direction_hint,
+            output_data.graph_direction_hint,
             Some(InterfaceSignalDirection::Output)
         );
         assert!(
@@ -7383,16 +7474,19 @@ mod tests {
             .find(|signal| signal.signal_name == "result_data")
             .expect("consumer result_data should stay in the module inventory");
 
+        assert_eq!(output_data.direction_hint, None);
         assert_eq!(
-            output_data.direction_hint,
+            output_data.graph_direction_hint,
             Some(InterfaceSignalDirection::Output)
         );
+        assert_eq!(input_data.direction_hint, None);
         assert_eq!(
-            input_data.direction_hint,
+            input_data.graph_direction_hint,
             Some(InterfaceSignalDirection::Input)
         );
+        assert_eq!(result_data.direction_hint, None);
         assert_eq!(
-            result_data.direction_hint,
+            result_data.graph_direction_hint,
             Some(InterfaceSignalDirection::Output)
         );
         for signal in [output_data, input_data, result_data] {
@@ -7441,6 +7535,7 @@ mod tests {
             .expect("producer output_data should stay in the module inventory");
 
         assert_eq!(output_data.direction_hint, None);
+        assert_eq!(output_data.graph_direction_hint, None);
         assert!(
             output_data
                 .mention_categories
@@ -7496,7 +7591,12 @@ mod tests {
             .find(|signal| signal.signal_name == "output_data")
             .expect("producer output_data should stay in the module inventory");
 
-        assert_eq!(output_data.direction_hint, None);
+        assert_eq!(
+            output_data.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert_eq!(output_data.graph_direction_hint, None);
+        assert!(output_data.graph_direction_hint_conflicted);
         assert!(!producer.renderability.is_renderable);
         assert!(
             producer
