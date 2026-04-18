@@ -7,6 +7,20 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-19 Graph-direction coverage finding related IDs
+- The graph-direction conflict surface had become nicely precise, but the sibling coverage-gap warning was still weaker than it needed to be.
+- Before this slice, validation could say "1 signal still lacks graph-derived direction coverage" without naming which signal that was.
+- That was needlessly lossy because validation already has the exact canonical signal inventory and the resolved graph-direction set in hand.
+- This slice adds the missing precision without changing the semantics:
+  - `semantic_graph_direction_coverage_incomplete` now carries the missing signal names in `related_ids`
+  - `intent_graph_direction_coverage_incomplete` now does the same for the declared-signal surface
+- The boundary is intentional:
+  - coverage gaps stay signal-level because the question is about which canonical signals still lack graph-derived direction
+  - same-actor contradictions remain a separate conflict surface with actor-aware related ids
+  - we do not merge the two concepts into one over-rich warning
+- A dedicated tracked fixture was worth adding here because this is exactly the kind of observability surface that can silently regress if it is protected only by unit tests.
+- The new negative fixture also gives the corpus-KB pattern plane a cleaner representative case for "some graph exists, but not enough of it yet."
+
 ## 2026-04-19 README bootstrap refresh
 - The bootstrap contract in `SESSION_BOOTSTRAP.md` explicitly says to reread the README-linked markdown surface and then resurvey the Rust codebase.
 - That matters because the root continuity files are part of the operational runtime for this project: they are how a crashed or restarted session becomes trustworthy again.

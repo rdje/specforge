@@ -1,5 +1,26 @@
 # CHANGES
 
+## 2026-04-19 (Graph-direction coverage finding related IDs)
+
+### Improved: validation warnings now name signals still missing graph-derived direction
+- `specforge validate` now emits `related_ids` for `semantic_graph_direction_coverage_incomplete` and `intent_graph_direction_coverage_incomplete` instead of leaving those findings as count-only warnings.
+- The new related-id payload is intentionally signal-level rather than actor-level:
+  - coverage gaps answer "which canonical signals still lack graph-derived direction?"
+  - same-actor graph conflicts still use the separate actor-aware related-id surface added in the previous slice
+- Added focused validator regressions for both `SemanticIR` and `IntentIR`, proving that a mixed graph-coverage case now points directly at `PSEL` when `PREADY` is graph-covered but `PSEL` remains directionless in the actor graph.
+- Added tracked fixture `graph_direction_coverage_incomplete_negative`, which locks the same behavior end to end and keeps the benchmark harness honest about incomplete graph coverage.
+- Refreshed the managed corpus-KB benchmark/pattern projections so the tracked truthfulness suite now reports `91/91` passing fixtures and `50` pattern fixtures.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge validate_intent_ir_reports_missing_graph_direction_related_ids` -> passed
+- `cargo test -p specforge validate_semantic_ir_reports_missing_graph_direction_related_ids` -> passed
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality graph_direction_coverage_incomplete_negative` -> passed
+- `bash scripts/run_ci.sh` -> passed with `359` Rust tests and the mdBook build
+- `cargo run -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed with `91` fixtures and `0` failures
+- `bash scripts/run_docs_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-19 (README bootstrap analysis refresh)
 
 ### Refreshed: live Rust analysis after re-executing the README bootstrap path

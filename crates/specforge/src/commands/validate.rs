@@ -474,6 +474,19 @@ fn graph_direction_conflict_related_id(conflict: &GraphDirectionConflictRecord) 
     )
 }
 
+fn missing_graph_direction_signal_names<'a>(
+    signals: impl IntoIterator<Item = &'a crate::ir::semantic::InterfaceSignalRecord>,
+    graph_direction_signal_names: &BTreeSet<String>,
+) -> Vec<String> {
+    signals
+        .into_iter()
+        .map(|signal| signal.signal_name.clone())
+        .filter(|signal_name| !graph_direction_signal_names.contains(signal_name))
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect()
+}
+
 fn is_infrastructure_connectivity_class(class: SignalConnectivityClass) -> bool {
     !matches!(class, SignalConnectivityClass::Protocol)
 }
@@ -1906,6 +1919,10 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     let graph_direction_summary = graph_direction_coverage_summary(&ir.actor_ports);
     let graph_direction_signals = &graph_direction_summary.resolved_signal_names;
     let graph_direction_conflicts = &graph_direction_summary.conflicted_signal_names;
+    let missing_graph_direction_signal_names = missing_graph_direction_signal_names(
+        ir.interfaces.iter().flat_map(|i| i.signal_records.iter()),
+        graph_direction_signals,
+    );
     let graph_direction_conflict_related_ids: Vec<String> = graph_direction_summary
         .conflicts
         .iter()
@@ -2537,7 +2554,11 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             format!(
                 "{missing_graph_direction_count} interface signal record(s) still lack graph-derived direction coverage"
             ),
-            Vec::new(),
+            missing_graph_direction_signal_names
+                .iter()
+                .take(8)
+                .cloned()
+                .collect(),
         ));
     }
     if !graph_direction_conflicts.is_empty() {
@@ -2962,6 +2983,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     let graph_direction_summary = graph_direction_coverage_summary(&ir.actor_ports);
     let graph_direction_signals = &graph_direction_summary.resolved_signal_names;
     let graph_direction_conflicts = &graph_direction_summary.conflicted_signal_names;
+    let missing_graph_direction_signal_names = missing_graph_direction_signal_names(
+        declared_signals.iter().copied(),
+        graph_direction_signals,
+    );
     let graph_direction_conflict_related_ids: Vec<String> = graph_direction_summary
         .conflicts
         .iter()
@@ -3636,7 +3661,11 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             format!(
                 "{missing_graph_direction_count} declared signal record(s) still lack graph-derived direction coverage"
             ),
-            Vec::new(),
+            missing_graph_direction_signal_names
+                .iter()
+                .take(8)
+                .cloned()
+                .collect(),
         ));
     }
     if !graph_direction_conflicts.is_empty() {
@@ -5811,6 +5840,35 @@ mod tests {
     }
 
     #[test]
+    fn validate_intent_ir_reports_missing_graph_direction_related_ids() -> Result<()> {
+        let (_, intent_ir) = build_semantic_and_intent_from_markdown(
+            "intent_graph_gap.md",
+            concat!(
+                "# Protocol\n",
+                "Signal PREADY is output width 1.\n",
+                "\n",
+                "Signal PSEL is input width 1.\n",
+                "\n",
+                "The Completer drives PREADY.\n",
+                "\n",
+                "The Requester reads PREADY.\n",
+            ),
+        )?;
+
+        let report = validate_intent_ir(&intent_ir, "graph_gap".to_string());
+
+        assert_eq!(metric_value(&report, "with_graph_direction"), Some("1"));
+        let finding = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "intent_graph_direction_coverage_incomplete")
+            .expect("expected intent graph-direction coverage finding");
+        assert_eq!(finding.related_ids, vec!["PSEL".to_string()]);
+
+        Ok(())
+    }
+
+    #[test]
     fn validate_semantic_ir_reports_conflicting_same_actor_graph_direction() -> Result<()> {
         let (mut semantic_ir, _) = build_semantic_and_intent_from_markdown(
             "semantic_graph_conflict.md",
@@ -5861,6 +5919,35 @@ mod tests {
             finding.related_ids,
             vec!["graph_direction_conflict:actor_completer:PREADY".to_string()]
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_semantic_ir_reports_missing_graph_direction_related_ids() -> Result<()> {
+        let (semantic_ir, _) = build_semantic_and_intent_from_markdown(
+            "semantic_graph_gap.md",
+            concat!(
+                "# Protocol\n",
+                "Signal PREADY is output width 1.\n",
+                "\n",
+                "Signal PSEL is input width 1.\n",
+                "\n",
+                "The Completer drives PREADY.\n",
+                "\n",
+                "The Requester reads PREADY.\n",
+            ),
+        )?;
+
+        let report = validate_semantic_ir(&semantic_ir, "semantic_graph_gap".to_string());
+
+        assert_eq!(metric_value(&report, "with_graph_direction"), Some("1"));
+        let finding = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "semantic_graph_direction_coverage_incomplete")
+            .expect("expected semantic graph-direction coverage finding");
+        assert_eq!(finding.related_ids, vec!["PSEL".to_string()]);
 
         Ok(())
     }

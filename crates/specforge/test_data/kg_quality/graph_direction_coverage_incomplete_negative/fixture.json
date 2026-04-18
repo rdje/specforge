@@ -1,0 +1,80 @@
+{
+  "name": "graph_direction_coverage_incomplete_negative",
+  "source": "source.md",
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["PREADY", "PSEL"],
+      "graph_direction_signal_names_include": ["PREADY"],
+      "graph_direction_signal_names_exclude": ["PSEL"],
+      "actor_ports_include": [
+        {
+          "actor_name": "Completer",
+          "signal_name": "PREADY",
+          "direction": "output"
+        },
+        {
+          "actor_name": "Requester",
+          "signal_name": "PREADY",
+          "direction": "input"
+        }
+      ]
+    },
+    "intent": {
+      "signal_names_include": ["PREADY", "PSEL"],
+      "graph_direction_signal_names_include": ["PREADY"],
+      "graph_direction_signal_names_exclude": ["PSEL"],
+      "actor_ports_include": [
+        {
+          "actor_name": "Completer",
+          "signal_name": "PREADY",
+          "direction": "output"
+        },
+        {
+          "actor_name": "Requester",
+          "signal_name": "PREADY",
+          "direction": "input"
+        }
+      ]
+    },
+    "validation": {
+      "semantic": {
+        "finding_ids_include": ["semantic_graph_direction_coverage_incomplete"],
+        "findings_include": [
+          {
+            "finding_id": "semantic_graph_direction_coverage_incomplete",
+            "severity": "info",
+            "category": "knowledge_graph",
+            "summary_contains": "1 interface signal record(s) still lack graph-derived direction coverage",
+            "related_ids_include": ["PSEL"],
+            "related_ids_exclude": ["PREADY"]
+          }
+        ],
+        "metric_values": {
+          "total_signal_records": "2",
+          "with_resolved_direction": "2",
+          "with_graph_direction": "1",
+          "with_compat_direction_hint": "2"
+        }
+      },
+      "intent": {
+        "finding_ids_include": ["intent_graph_direction_coverage_incomplete"],
+        "findings_include": [
+          {
+            "finding_id": "intent_graph_direction_coverage_incomplete",
+            "severity": "info",
+            "category": "knowledge_graph",
+            "summary_contains": "1 declared signal record(s) still lack graph-derived direction coverage",
+            "related_ids_include": ["PSEL"],
+            "related_ids_exclude": ["PREADY"]
+          }
+        ],
+        "metric_values": {
+          "declared_signal_records": "2",
+          "with_resolved_direction": "2",
+          "with_graph_direction": "1",
+          "with_compat_direction_hint": "2"
+        }
+      }
+    }
+  }
+}
