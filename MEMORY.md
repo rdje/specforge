@@ -22,23 +22,23 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `74a74de`
-- latest_commit_brief_message: `fix(semantic): reject multi-token VLM labels`
-- note: current in-flight slice extends the same truthfulness boundary to bare known-signal timing labels such as `XREQ`
+- latest_commit_hash: `53f5953`
+- latest_commit_brief_message: `fix(semantic): reject name-only VLM labels`
+- note: current in-flight slice extends the same truthfulness boundary to bare known-signal sampled-value labels such as `XREQ HIGH`
 
 ## Recent commit chain (last 5)
+- `53f5953` fix(semantic): reject name-only VLM labels
 - `74a74de` fix(semantic): reject multi-token VLM labels
 - `5996029` fix(semantic): reject compact VLM phase labels
 - `867455e` fix(semantic): reject compact VLM bus labels
 - `619a773` fix(semantic): reject VLM timing bus labels
-- `d7f7281` feat(clean): add full generated sweep scope
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch is ahead of `origin/main`; do not push until 25 local commits since the last push or until the user explicitly asks
-- current in-flight semantic hardening extends the same VLM timing spurious-annotation rejection to bare known-signal labels such as `XREQ`
-- the production change lives at the timing-lift boundary in `parse_timing_diagram_observation()`, because this decision depends on the current document's known signal inventory rather than generic waveform vocabulary
-- the direct semantic regression and the tracked `vlm_timing_spurious_annotation_negative` fixture are being tightened together so name-only known-signal labels stay aligned with the production filter
+- current in-flight semantic hardening extends the same VLM timing spurious-annotation rejection to bare known-signal sampled-value labels such as `XREQ HIGH`, `XREQ LOW`, `XREQ asserted`, and `XREQ deasserted`
+- the production change again lives at the timing-lift boundary in `parse_timing_diagram_observation()`, because this decision depends on the current document's known signal inventory plus a narrow sampled-value matcher rather than generic waveform vocabulary
+- the direct semantic regression and the tracked `vlm_timing_spurious_annotation_negative` fixture are being tightened together so these two-token known-signal label variants stay aligned with the production filter
 - validation target for the in-flight slice is the focused semantic regression, the targeted KG fixture, docs CI, and full local CI before commit
 - latest committed adapter hardening adds sticky conflict collapse for duplicate explicit top-port direction declarations
 - the committed regression declares top port `drive_data` once as output and once as input; expected behavior is unresolved top-port direction in both the top candidate and selected signal inventory, blocked renderability, and no emitted `.fsm` target text

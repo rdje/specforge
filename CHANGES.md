@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-04-18 (Signal-value VLM timing label rejection)
+
+### Fixed: bare signal-value labels stay out of timing constraints
+- `SemanticIR` now rejects VLM timing annotations that are only a known signal plus a bare sampled value, so labels such as `XREQ HIGH`, `XREQ LOW`, `XREQ asserted`, and `XREQ deasserted` no longer become fake `TimingConstraintRecord`s.
+- This closes the natural follow-on leak after name-only label rejection: the right decision still depends on the current document's grounded signal inventory, but the label now carries only a lane-style sampled value that the structured `signals[].values[]` path already models more honestly.
+- Strengthened the direct semantic regression and the tracked `vlm_timing_spurious_annotation_negative` KG fixture so known-signal sampled-value labels yield zero timing constraints while grounded `signals[].values[]` samples still author temporal rules.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge vlm_timing_diagram_observation_rejects_label_only_noise` -> passed
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality vlm_timing_spurious_annotation_negative` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+
 ## 2026-04-18 (Name-only VLM timing label rejection)
 
 ### Fixed: bare known signal labels stay out of timing constraints

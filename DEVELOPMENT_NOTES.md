@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-18 Signal-value VLM timing label rejection
+- After the name-only slice, a closely related leak remained: `XREQ HIGH` or `XREQ asserted` could still survive as a `TimingConstraintRecord`.
+- Those labels are still figure markup, not timing law. The structured `signals[].values[]` path is already the honest place to carry sampled signal values from a VLM timing diagram.
+- The bounded fix therefore stays at the timing-lift boundary and stays document-grounded: if an annotation is exactly a known signal plus one simple sampled-value token (`HIGH`, `LOW`, `asserted`, `deasserted`, or the equivalent level literals), it is rejected before timing constraints are created.
+- This does not suppress sentence-shaped notes. It only catches the compact two-token lane-label shape that would otherwise duplicate figure markup as fake timing law.
+
 ## 2026-04-18 Name-only VLM timing label rejection
 - The generic waveform-markup filters were no longer the whole story: a bare known signal label like `XREQ` could still survive as a `TimingConstraintRecord`, because it is not generic markup but it is also not timing law.
 - The right boundary here depends on document grounding, so the fix belongs in `parse_timing_diagram_observation()`: if an annotation is only a known signal name, it should die before timing constraints are created.

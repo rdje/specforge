@@ -8904,6 +8904,7 @@ fn parse_timing_diagram_observation(
             if text.is_empty()
                 || is_spurious_timing_annotation_label(text)
                 || is_name_only_signal_annotation_label(text, known_signal_names)
+                || is_signal_value_annotation_label(text, known_signal_names)
             {
                 continue;
             }
@@ -8937,6 +8938,51 @@ fn is_name_only_signal_annotation_label(text: &str, known_signal_names: &HashSet
     known_signal_names
         .iter()
         .any(|known_name| known_name.eq_ignore_ascii_case(&signal_name))
+}
+
+fn is_signal_value_annotation_label(text: &str, known_signal_names: &HashSet<String>) -> bool {
+    let mut tokens = text.split_whitespace();
+    let Some(signal_token) = tokens.next() else {
+        return false;
+    };
+    let Some(value_token) = tokens.next() else {
+        return false;
+    };
+    if tokens.next().is_some() {
+        return false;
+    }
+
+    let Some(signal_name) = parse_identifier(
+        signal_token
+            .trim_end_matches('.')
+            .trim_end_matches(':')
+            .trim_end_matches(','),
+    ) else {
+        return false;
+    };
+    if !known_signal_names
+        .iter()
+        .any(|known_name| known_name.eq_ignore_ascii_case(&signal_name))
+    {
+        return false;
+    }
+
+    let normalized_value = value_token
+        .trim()
+        .trim_end_matches('.')
+        .trim_end_matches(':')
+        .trim_end_matches(',')
+        .trim_matches(|character| matches!(character, '"' | '`'));
+    matches!(
+        signal_constraint_kind_from_vlm_state(normalized_value),
+        Some((
+            SignalConstraintKind::MustBeHigh
+                | SignalConstraintKind::MustBeLow
+                | SignalConstraintKind::MustBeAsserted
+                | SignalConstraintKind::MustBeDeasserted,
+            None
+        ))
+    )
 }
 
 fn push_signal_constraints_from_timing_diagram_observation(
@@ -11291,7 +11337,7 @@ mod tests {
             source_ref: None,
             placeholder_text: None,
             note: Some(
-                "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"T0\",\"state\":\"LOW\"},{\"cycle\":\"T1\",\"state\":\"HIGH\"}]}],\"annotations\":[\"XREQ\",\"T0\",\"Addr 1\",\"Cycle 2\",\"Burst 1\",\"Packet 2\",\"Frame 3\",\"Transaction 4\",\"Txn 5\",\"Burst1\",\"Packet2\",\"Frame3\",\"Transaction4\",\"Txn5\",\"Phase1\",\"Transfer2\",\"Channel 1 Phase 2\",\"Lane 0 Slot 1\",\"D0\",\"A1\",\"DATA0\",\"0xAA\",\"D[0]\",\"A[1]\",\"DATA[3]\",\"ADDR[7]\",\"XREQ[0]\",\"XREQ<1>\",\"XREQ[3:0]\"]}"
+                "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"T0\",\"state\":\"LOW\"},{\"cycle\":\"T1\",\"state\":\"HIGH\"}]}],\"annotations\":[\"XREQ\",\"XREQ HIGH\",\"XREQ LOW\",\"XREQ asserted\",\"XREQ deasserted\",\"T0\",\"Addr 1\",\"Cycle 2\",\"Burst 1\",\"Packet 2\",\"Frame 3\",\"Transaction 4\",\"Txn 5\",\"Burst1\",\"Packet2\",\"Frame3\",\"Transaction4\",\"Txn5\",\"Phase1\",\"Transfer2\",\"Channel 1 Phase 2\",\"Lane 0 Slot 1\",\"D0\",\"A1\",\"DATA0\",\"0xAA\",\"D[0]\",\"A[1]\",\"DATA[3]\",\"ADDR[7]\",\"XREQ[0]\",\"XREQ<1>\",\"XREQ[3:0]\"]}"
                     .to_string(),
             ),
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,

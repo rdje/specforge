@@ -1450,3 +1450,9 @@
 - `parse_timing_diagram_observation()` now rejects annotations that are only a known signal name, using the document-grounded `known_signal_names` set rather than generic waveform-label heuristics.
 - This closes a separate leak where labels such as `XREQ` could previously survive as `TimingConstraintRecord`s simply because they were neither generic markup nor sentence-shaped timing statements.
 - The direct semantic regression plus `vlm_timing_spurious_annotation_negative` now lock bare known-signal labels alongside the existing generic spaced, compact, and multi-token annotation-noise families.
+
+## Session update (2026-04-18 Signal-value VLM timing label rejection)
+- Continued from commit `53f5953`, tightening the same timing truthfulness boundary for known-signal sampled-value lane labels.
+- `parse_timing_diagram_observation()` now rejects annotations that are exactly a known signal plus one simple sampled-value token such as `HIGH`, `LOW`, `asserted`, or `deasserted`.
+- This closes the follow-on leak where labels such as `XREQ HIGH` could previously survive as `TimingConstraintRecord`s even though the structured `signals[].values[]` path already represents sampled VLM timing values more honestly.
+- The direct semantic regression plus `vlm_timing_spurious_annotation_negative` now lock these two-token known-signal label variants alongside the existing name-only, generic spaced, compact, and multi-token annotation-noise families.
