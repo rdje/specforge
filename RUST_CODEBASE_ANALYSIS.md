@@ -1420,3 +1420,9 @@
 - take the alias-marker cleanup as complete and treat it as evidence that the current multi-spec extraction stack is ready for the next slice
 - finish promoting the signal model from compatibility hints to actor-relative direction semantics next, then extend the same validation/reporting discipline into downstream RTL adapter work
 - do not treat NLP Level 3 as the missing piece anymore; the pipeline now has both Level 3 enrichment and convergent typed EvidenceIR reuse
+
+## Session update (2026-04-18 VLM timing bus-label annotation rejection)
+- Continued from commit `d7f7281`, hardening VLM timing truthfulness rather than broadening extraction authority.
+- `is_generic_waveform_label_token()` now recognizes short bus/waveform labels such as `Burst`, `Packet`, `Frame`, `Transaction`, and `Txn` as the same low-value annotation family as `Addr`, `Cycle`, `D0`, `DATA[3]`, and `XREQ[3:0]`.
+- This closes a realistic chip-spec PDF failure mode where timing-diagram annotation gutters label burst/transaction phases, but those labels are descriptive figure markup rather than timing constraints that should survive into canonical IR.
+- The direct semantic regression plus `vlm_timing_spurious_annotation_negative` now lock the expanded annotation-noise set while preserving the grounded `signals[].values[]` temporal evidence path.

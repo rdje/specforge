@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-04-18 (VLM timing bus-label annotation rejection)
+
+### Fixed: bus-level waveform labels stay out of timing constraints
+- `SemanticIR` now treats standalone VLM timing annotation labels such as `Burst 1`, `Packet 2`, `Frame 3`, `Transaction 4`, and `Txn 5` as the same low-value waveform markup family as `T0`, `Addr 1`, `Cycle 2`, `D0`, `DATA[3]`, and `XREQ[3:0]`.
+- This closes a realistic chip-PDF edge case where bus/timing diagrams use bus-phase labels in the annotation lane, but those labels do not express protocol law and must not survive into canonical timing constraints.
+- Strengthened the direct semantic regression and the tracked `vlm_timing_spurious_annotation_negative` KG fixture so grounded `signals[].values[]` evidence still produces temporal rules while the expanded annotation-noise set yields zero timing constraints.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge vlm_timing_diagram_observation_rejects_label_only_noise` -> passed
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality vlm_timing_spurious_annotation_negative` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+
 ## 2026-04-18 (Generated-root cleanup scope for `specforge clean`)
 
 ### Added: full generated-root sweep inside the cleanup command

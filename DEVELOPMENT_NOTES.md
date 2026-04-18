@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-18 VLM timing bus-label annotation rejection
+- The spurious-annotation filter already handled cycle markers, compact sample labels, bracketed sample labels, and standalone signal bit-select/range labels. A realistic bus-PDF hole remained: bus-level timing labels like `Burst 1` or `Transaction 4` still looked harmless to humans but were not yet explicitly modeled as annotation noise.
+- Added those families to `is_generic_waveform_label_token()` so short annotation token groups composed entirely of generic waveform/bus label vocabulary still die at the semantic boundary instead of becoming `TimingConstraintRecord`s.
+- This is deliberately still bounded. The filter is not learning protocol law from free text. It is only recognizing a wider class of known low-value waveform markup that commonly appears in timing-diagram annotation gutters.
+- The right regression home remains the existing `vlm_timing_spurious_annotation_negative` fixture because the behavior is the same invariant: figure labels must not mutate truth, while grounded timing samples continue to author temporal evidence.
+
 ## 2026-04-18 Generated-root cleanup scope for `specforge clean`
 - The first cleanup slice still left one awkward hole: it could reclaim normalized bundles and per-document stage trees, but a full local generated-root reset still required shelling out to `rm -rf generated`.
 - Added `CleanScopeArg::AllGenerated` so the CLI can now own that full-root sweep too.
