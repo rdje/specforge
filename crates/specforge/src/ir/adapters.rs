@@ -6333,6 +6333,69 @@ mod tests {
     }
 
     #[test]
+    fn standalone_explicit_module_blocks_conflicting_module_control_read_direction() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_standalone_explicit_module_fsm_intent_ir(tempdir.path())?;
+        clear_explicit_module_direction_hints(&mut intent_ir);
+        intent_ir.actor_ports = vec![
+            actor_port("controller", "clk", ActorRelativeDirection::Input),
+            actor_port("controller", "rst_n", ActorRelativeDirection::Input),
+            actor_port("controller", "DATA_IN", ActorRelativeDirection::Output),
+            actor_port("controller", "ACC", ActorRelativeDirection::Output),
+            actor_port("controller", "TRACE", ActorRelativeDirection::Output),
+            actor_port("environment", "GO", ActorRelativeDirection::Output),
+            actor_port("environment", "DONE", ActorRelativeDirection::Output),
+        ];
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let module = fsm
+            .module_candidates
+            .iter()
+            .find(|candidate| candidate.module_name == "controller")
+            .expect("controller module candidate should exist");
+        let data_in = module
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "DATA_IN")
+            .expect("DATA_IN should stay in module inventory");
+
+        assert_eq!(data_in.direction_hint, None);
+        assert!(
+            data_in
+                .mention_categories
+                .iter()
+                .any(|category| category == "actor_port")
+        );
+        assert!(
+            data_in
+                .mention_categories
+                .iter()
+                .any(|category| category == "module_control_input")
+        );
+        assert!(!module.renderability.is_renderable);
+        assert!(
+            module
+                .renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason.contains("missing a canonical direction hint"))
+        );
+        assert!(!fsm.renderability.is_renderable);
+
+        Ok(())
+    }
+
+    #[test]
     fn builds_renderable_top_composition_fsm_adapter_artifact() -> Result<()> {
         let tempdir = tempdir()?;
         let intent_ir = build_explicit_top_composition_intent_ir(tempdir.path())?;

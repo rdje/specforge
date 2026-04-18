@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-04-18 (Adapter explicit-module read conflict guard)
+
+### Added: module control-read recovery now has conflict regression coverage
+- Added a regression proving explicit-module `module_control_input` recovery does not override contradictory module-actor graph evidence.
+- The test clears flat module-local direction hints, marks `DATA_IN` as a `controller` actor output, then relies on module state-body assignments to read `DATA_IN`.
+- The adapter now has coverage proving the actor-port output and module-control input evidence collapse to an unresolved direction, preserve both evidence categories, and block `.fsm` emission rather than guessing.
+- This protects the truthfulness boundary around the previous explicit-module recovery slice: recovery fills missing roles, but contradictory evidence still requires upstream resolution.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge standalone_explicit_module_blocks_conflicting_module_control_read_direction` -> passed
+- `cargo test -p specforge ir::adapters::tests::` -> passed with `32` adapter tests
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `333` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+- README sentinel check -> passed
+
 ## 2026-04-18 (Adapter explicit-module control-read recovery)
 
 ### Improved: standalone explicit modules recover local inputs from module control reads

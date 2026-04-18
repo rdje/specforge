@@ -7,6 +7,16 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-18 Adapter explicit-module read conflict guard
+- Added adversarial coverage for the explicit-module `module_control_input` recovery path.
+- Scenario:
+  - flat module-local directions are removed
+  - `controller` actor graph evidence says `DATA_IN` is an output
+  - module control semantics read `DATA_IN` in state-body assignments
+- Expected behavior is not to pick a side. The signal inventory keeps both `actor_port` and `module_control_input` evidence categories, collapses `DATA_IN.direction_hint` to `None`, and blocks renderability with the existing missing-direction diagnostic.
+- This is coverage-only hardening over the sticky merge behavior: recovery can fill absent roles, but contradictory graph/control-read evidence must remain unresolved until canonical upstream evidence is corrected.
+- Formatting, the focused new adapter test, the full adapter module, docs CI, and full local CI passed. Full local CI reports `333` Rust tests plus warning-deny Clippy/rustdoc and the mdBook build.
+
 ## 2026-04-18 Adapter explicit-module control-read recovery
 - Extended the existing target-actor/control-read recovery pattern into explicit module candidates.
 - Before this slice, `build_module_candidate` overlaid `IntentIR.actor_ports` for the module actor but did not use the module's own control reads to recover missing directions for read-only local inputs when external actors owned those signals.

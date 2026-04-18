@@ -22,23 +22,26 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `ee2f1b4`
-- latest_commit_brief_message: `test(adapter): cover structured fsm graph reads`
-- note: current in-flight adapter hardening extends target-actor/control-read recovery into standalone explicit module roots
+- latest_commit_hash: `e7b41e4`
+- latest_commit_brief_message: `fix(adapter): recover explicit module read inputs`
+- note: current in-flight adapter hardening adds conflict regression coverage for explicit-module control-read recovery
 
 ## Recent commit chain (last 5)
+- `e7b41e4` fix(adapter): recover explicit module read inputs
 - `ee2f1b4` test(adapter): cover structured fsm graph reads
 - `b888297` fix(adapter): retain blocked top recovered directions
 - `4c79c0b` test(kg): assert validation finding payloads
 - `9e83612` docs: sync post-push baseline
-- `4dfb6b9` test(kg): cover missing intent table support signals
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch is ahead of `origin/main`; do not push until 25 local commits since the last push or until the user explicitly asks
-- current in-flight adapter hardening adds module-local control-read direction recovery for explicit module candidates, so standalone explicit `?fsm` roots can recover read-only local inputs without relying on flat module-local `direction_hint` or same-actor graph ports for every read signal
+- current in-flight adapter hardening adds `standalone_explicit_module_blocks_conflicting_module_control_read_direction`, proving module-local control-read recovery does not override contradictory module-actor graph evidence
+- the current regression clears flat module directions, marks `DATA_IN` as a `controller` actor output, then reads `DATA_IN` from the controller module body; expected behavior is unresolved direction, preserved `actor_port` and `module_control_input` evidence categories, and blocked `.fsm` emission
+- focused validation, the full adapter test module, docs CI, and full local CI passed for the current adapter slice; full local CI reported formatting, warning-deny Clippy, `333` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- latest committed adapter hardening adds module-local control-read direction recovery for explicit module candidates, so standalone explicit `?fsm` roots can recover read-only local inputs without relying on flat module-local `direction_hint` or same-actor graph ports for every read signal
 - `standalone_explicit_module_recovers_inputs_from_module_control_reads` proves a standalone explicit `controller` module recovers `DATA_IN`, `GO`, and `DONE` as `module_control_input` from state-body assignments, transition guards, and standalone control blocks while external environment actor ports for those signals stay outside the selected module perspective
-- focused validation, the full adapter test module, docs CI, and full local CI passed for the current adapter slice; full local CI reports formatting, warning-deny Clippy, `332` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- focused validation, the full adapter test module, docs CI, and full local CI passed for commit `e7b41e4`; full local CI reported formatting, warning-deny Clippy, `332` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
 - latest committed adapter hardening adds `structured_fsm_derives_guard_inputs_from_control_reads_after_output_actor_selection`, proving a true `?fsm` root can recover `DATA_IN`, `GO`, and `DONE` as selected-target inputs from state-body assignments, transition guards, and standalone control blocks when flat direct-interface direction hints are absent
 - the committed regression supplies only controller-side graph ports for `clk`, `rst_n`, `ACC`, and `TRACE`, plus external environment producers for `DATA_IN`, `GO`, and `DONE`; it proves the external producer perspective does not overwrite the selected target actor perspective
 - focused validation, the full adapter test module, docs CI, and full local CI passed for commit `ee2f1b4`; full local CI reported formatting, warning-deny Clippy, `331` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
