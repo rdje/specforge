@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-04-18 (Compact VLM timing bus-label rejection)
+
+### Fixed: compact bus-phase labels stay out of timing constraints
+- `SemanticIR` now treats compact VLM timing annotation labels such as `Burst1`, `Packet2`, `Frame3`, `Transaction4`, and `Txn5` as the same low-value waveform markup family as `Burst 1`, `Packet 2`, and other standalone annotation noise.
+- This closes the compact-layout variant of the same chip-PDF edge case: when a waveform gutter is cramped, bus/transaction labels often lose the separating space but still do not express timing law.
+- Strengthened the direct semantic regression and the tracked `vlm_timing_spurious_annotation_negative` KG fixture so both spaced and compact bus-label variants yield zero timing constraints while grounded `signals[].values[]` samples still author temporal rules.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge vlm_timing_diagram_observation_rejects_label_only_noise` -> passed
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality vlm_timing_spurious_annotation_negative` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+
 ## 2026-04-18 (VLM timing bus-label annotation rejection)
 
 ### Fixed: bus-level waveform labels stay out of timing constraints

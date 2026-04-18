@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-18 Compact VLM timing bus-label rejection
+- The spaced bus-label slice closed `Burst 1` / `Transaction 4`, but a realistic diagram-layout variant remained: cramped timing gutters often collapse those same labels into `Burst1`, `Packet2`, `Frame3`, or `Txn5`.
+- That compact form bypassed `is_generic_waveform_label_token()` because there is no non-alphanumeric split point. The right bounded fix is therefore in `is_compact_waveform_sample_label()`, extending the known low-value bus/waveform prefixes rather than adding a broader fuzzy matcher.
+- This keeps the semantic boundary honest: compact bus-phase labels remain figure markup, not timing law, while grounded `signals[].values[]` entries still become typed temporal evidence.
+- The existing `vlm_timing_spurious_annotation_negative` fixture remains the right regression home because this is still the same invariant, only under the compact-layout surface that real chip PDFs use when page real estate gets tight.
+
 ## 2026-04-18 VLM timing bus-label annotation rejection
 - The spurious-annotation filter already handled cycle markers, compact sample labels, bracketed sample labels, and standalone signal bit-select/range labels. A realistic bus-PDF hole remained: bus-level timing labels like `Burst 1` or `Transaction 4` still looked harmless to humans but were not yet explicitly modeled as annotation noise.
 - Added those families to `is_generic_waveform_label_token()` so short annotation token groups composed entirely of generic waveform/bus label vocabulary still die at the semantic boundary instead of becoming `TimingConstraintRecord`s.

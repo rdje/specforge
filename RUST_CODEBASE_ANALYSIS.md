@@ -1426,3 +1426,9 @@
 - `is_generic_waveform_label_token()` now recognizes short bus/waveform labels such as `Burst`, `Packet`, `Frame`, `Transaction`, and `Txn` as the same low-value annotation family as `Addr`, `Cycle`, `D0`, `DATA[3]`, and `XREQ[3:0]`.
 - This closes a realistic chip-spec PDF failure mode where timing-diagram annotation gutters label burst/transaction phases, but those labels are descriptive figure markup rather than timing constraints that should survive into canonical IR.
 - The direct semantic regression plus `vlm_timing_spurious_annotation_negative` now lock the expanded annotation-noise set while preserving the grounded `signals[].values[]` temporal evidence path.
+
+## Session update (2026-04-18 Compact VLM timing bus-label rejection)
+- Continued from commit `619a773`, tightening the same timing truthfulness boundary for compact diagram layout.
+- `is_compact_waveform_sample_label()` now recognizes `Burst1`, `Packet2`, `Frame3`, `Transaction4`, and `Txn5` as the compact equivalents of the already-filtered spaced bus labels.
+- This closes the space-constrained waveform-gutter variant common in chip-spec PDFs, where bus-phase labels are squeezed into one token but still do not encode protocol timing law.
+- The direct semantic regression plus `vlm_timing_spurious_annotation_negative` now lock both spaced and compact bus-label annotation noise while preserving the grounded temporal sample path.
