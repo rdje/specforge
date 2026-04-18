@@ -5333,6 +5333,20 @@ mod tests {
         }
     }
 
+    fn set_direct_signal_direction_hint(
+        intent_ir: &mut IntentIr,
+        signal_name: &str,
+        direction_hint: InterfaceSignalDirection,
+    ) {
+        for interface in &mut intent_ir.interfaces {
+            for signal in &mut interface.signal_records {
+                if signal.signal_name == signal_name {
+                    signal.direction_hint = Some(direction_hint);
+                }
+            }
+        }
+    }
+
     fn build_missing_child_module_top_intent_ir(base: &Path) -> Result<IntentIr> {
         build_intent_ir_from_markdown(
             base,
@@ -6096,6 +6110,53 @@ mod tests {
                 .residual_decisions
                 .iter()
                 .all(|packet| packet.packet_id != "fsm_adapter_system_contract")
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn standalone_sequential_dt_blocks_conflicting_system_contract_signal_direction() -> Result<()>
+    {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_explicit_sequential_control_intent_ir(tempdir.path())?;
+        set_direct_signal_direction_hint(&mut intent_ir, "clk", InterfaceSignalDirection::Output);
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let clk = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "clk")
+            .expect("clock should remain in the signal inventory");
+
+        assert_eq!(clk.direction_hint, None);
+        assert!(
+            clk.mention_categories
+                .iter()
+                .any(|category| category == "system_contract_signal")
+        );
+        assert!(!fsm.renderability.is_renderable);
+        assert!(
+            fsm.renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason.contains("clock signal `clk` is missing a direction hint"))
+        );
+        assert!(
+            adapter
+                .residual_decisions
+                .iter()
+                .any(|packet| packet.packet_id == "fsm_adapter_system_contract")
         );
 
         Ok(())

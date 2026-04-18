@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-04-18 (Adapter system-contract signal conflict guard)
+
+### Added: system-contract recovery cannot override contradictory signal shape
+- Added a regression proving clock/reset recovery from canonical `SystemContractRecord` facts remains sticky when local signal evidence disagrees.
+- The fixture marks `clk` as a flat output while the canonical system contract says `clk` is the clock.
+- The adapter keeps `clk.direction_hint` unresolved, preserves `system_contract_signal` evidence, emits the system-contract residual, and blocks `.fsm` emission rather than silently treating the clock as an input.
+- This protects the previous system-contract recovery slice: clock/reset facts can fill absent adapter shape, but contradictory shape still requires upstream correction.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge standalone_sequential_dt_blocks_conflicting_system_contract_signal_direction` -> passed
+- `cargo test -p specforge ir::adapters::tests::` -> passed with `37` adapter tests
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `338` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+- README sentinel check -> passed
+
 ## 2026-04-18 (Adapter system-contract signal recovery)
 
 ### Improved: `.fsm` lowering can recover clock/reset port shape from system contracts

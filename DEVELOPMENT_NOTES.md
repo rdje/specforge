@@ -7,6 +7,16 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-18 Adapter system-contract signal conflict guard
+- Added adversarial coverage for the system-contract signal recovery path.
+- Scenario:
+  - the direct interface inventory marks `clk` as an output
+  - the canonical `SystemContractRecord` says `clk` is the clock
+  - system-contract recovery attempts to overlay clock shape as input, 1-bit
+- Expected behavior is sticky unresolved direction. The signal inventory keeps `system_contract_signal` provenance visible, collapses `clk.direction_hint` to `None`, blocks renderability with the existing system-contract missing-direction diagnostic, emits a system-contract residual, and emits no target `.fsm`.
+- This is coverage-only hardening over the system-contract overlay: clock/reset facts may recover absent adapter shape, but contradictory local signal shape cannot select a winner.
+- Formatting, the focused new adapter test, the full adapter module, docs CI, and full local CI passed. Full local CI reports `338` Rust tests plus warning-deny Clippy/rustdoc and the mdBook build.
+
 ## 2026-04-18 Adapter system-contract signal recovery
 - Added `overlay_system_contract_signal_inventory`, a bounded adapter projection from canonical `SystemContractRecord` into local `.fsm` signal inventories.
 - The overlay applies to both direct roots and explicit module roots.
