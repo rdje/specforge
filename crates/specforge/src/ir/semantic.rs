@@ -8901,7 +8901,10 @@ fn parse_timing_diagram_observation(
     if let Some(annotations) = value.get("annotations").and_then(|a| a.as_array()) {
         for (idx, annotation) in annotations.iter().enumerate() {
             let text = annotation.as_str().unwrap_or_default().trim();
-            if text.is_empty() || is_spurious_timing_annotation_label(text) {
+            if text.is_empty()
+                || is_spurious_timing_annotation_label(text)
+                || is_name_only_signal_annotation_label(text, known_signal_names)
+            {
                 continue;
             }
             records.push(TimingConstraintRecord {
@@ -8924,6 +8927,16 @@ fn parse_timing_diagram_observation(
         known_signal_names,
         signal_constraints,
     );
+}
+
+fn is_name_only_signal_annotation_label(text: &str, known_signal_names: &HashSet<String>) -> bool {
+    let Some(signal_name) = parse_identifier(text) else {
+        return false;
+    };
+
+    known_signal_names
+        .iter()
+        .any(|known_name| known_name.eq_ignore_ascii_case(&signal_name))
 }
 
 fn push_signal_constraints_from_timing_diagram_observation(
@@ -11278,7 +11291,7 @@ mod tests {
             source_ref: None,
             placeholder_text: None,
             note: Some(
-                "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"T0\",\"state\":\"LOW\"},{\"cycle\":\"T1\",\"state\":\"HIGH\"}]}],\"annotations\":[\"T0\",\"Addr 1\",\"Cycle 2\",\"Burst 1\",\"Packet 2\",\"Frame 3\",\"Transaction 4\",\"Txn 5\",\"Burst1\",\"Packet2\",\"Frame3\",\"Transaction4\",\"Txn5\",\"Phase1\",\"Transfer2\",\"Channel 1 Phase 2\",\"Lane 0 Slot 1\",\"D0\",\"A1\",\"DATA0\",\"0xAA\",\"D[0]\",\"A[1]\",\"DATA[3]\",\"ADDR[7]\",\"XREQ[0]\",\"XREQ<1>\",\"XREQ[3:0]\"]}"
+                "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"T0\",\"state\":\"LOW\"},{\"cycle\":\"T1\",\"state\":\"HIGH\"}]}],\"annotations\":[\"XREQ\",\"T0\",\"Addr 1\",\"Cycle 2\",\"Burst 1\",\"Packet 2\",\"Frame 3\",\"Transaction 4\",\"Txn 5\",\"Burst1\",\"Packet2\",\"Frame3\",\"Transaction4\",\"Txn5\",\"Phase1\",\"Transfer2\",\"Channel 1 Phase 2\",\"Lane 0 Slot 1\",\"D0\",\"A1\",\"DATA0\",\"0xAA\",\"D[0]\",\"A[1]\",\"DATA[3]\",\"ADDR[7]\",\"XREQ[0]\",\"XREQ<1>\",\"XREQ[3:0]\"]}"
                     .to_string(),
             ),
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,

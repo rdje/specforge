@@ -1444,3 +1444,9 @@
 - `is_spurious_timing_annotation_label()` now rejects all-generic annotation groups up to four tokens instead of three.
 - This closes a real leak where labels such as `Channel 1 Phase 2` or `Lane 0 Slot 1` could previously survive as `TimingConstraintRecord`s even though every token was already in the generic waveform-label vocabulary.
 - The direct semantic regression plus `vlm_timing_spurious_annotation_negative` now lock these four-token markup labels alongside the shorter spaced and compact label-noise families.
+
+## Session update (2026-04-18 Name-only VLM timing label rejection)
+- Continued from commit `74a74de`, tightening the same timing truthfulness boundary for bare known-signal labels.
+- `parse_timing_diagram_observation()` now rejects annotations that are only a known signal name, using the document-grounded `known_signal_names` set rather than generic waveform-label heuristics.
+- This closes a separate leak where labels such as `XREQ` could previously survive as `TimingConstraintRecord`s simply because they were neither generic markup nor sentence-shaped timing statements.
+- The direct semantic regression plus `vlm_timing_spurious_annotation_negative` now lock bare known-signal labels alongside the existing generic spaced, compact, and multi-token annotation-noise families.

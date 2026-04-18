@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-18 Name-only VLM timing label rejection
+- The generic waveform-markup filters were no longer the whole story: a bare known signal label like `XREQ` could still survive as a `TimingConstraintRecord`, because it is not generic markup but it is also not timing law.
+- The right boundary here depends on document grounding, so the fix belongs in `parse_timing_diagram_observation()`: if an annotation is only a known signal name, it should die before timing constraints are created.
+- This stays deliberately narrow. It does not suppress sentence-shaped timing notes that happen to mention a known signal; it only rejects name-only labels at the timing-lift boundary.
+- The tracked `vlm_timing_spurious_annotation_negative` fixture remains the right regression home because this is still the same "annotation markup must not become protocol law" invariant, just using the document's known signal inventory as the deciding evidence.
+
 ## 2026-04-18 Multi-token VLM waveform-label rejection
 - The annotation-noise filter was still bounded a little too tightly: it rejected all-generic label groups only up to three tokens.
 - Real waveform gutters often use short four-token composites like `Channel 1 Phase 2` or `Lane 0 Slot 1`. Those are still pure figure markup, and because every surviving annotation becomes a `TimingConstraintRecord`, letting them through was not an acceptable truthfulness gap.

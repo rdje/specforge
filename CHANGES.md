@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-04-18 (Name-only VLM timing label rejection)
+
+### Fixed: bare known signal labels stay out of timing constraints
+- `SemanticIR` now rejects VLM timing annotations that are only a known signal name, so bare labels such as `XREQ` no longer become fake `TimingConstraintRecord`s.
+- This closes a different class of truthfulness leak from the generic waveform-markup filters: the right decision depends on the current document's grounded signal inventory, not just on generic label vocabulary.
+- Strengthened the direct semantic regression and the tracked `vlm_timing_spurious_annotation_negative` KG fixture so a bare known signal label yields zero timing constraints while grounded `signals[].values[]` samples still author temporal rules.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge vlm_timing_diagram_observation_rejects_label_only_noise` -> passed
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality vlm_timing_spurious_annotation_negative` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+
 ## 2026-04-18 (Multi-token VLM waveform-label rejection)
 
 ### Fixed: four-token waveform gutter labels stay out of timing constraints
