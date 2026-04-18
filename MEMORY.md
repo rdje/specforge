@@ -22,27 +22,27 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `781353a`
-- latest_commit_brief_message: `feat(validate): name semantic arbitration signals`
-- note: current in-flight slice hardens semantic-stage regression coverage for the newly added semantic-role related-id payloads
+- latest_commit_hash: `35c449b`
+- latest_commit_brief_message: `test(validate): lock semantic related ids`
+- note: current in-flight slice adds direct semantic+intent proof coverage for the prior-guided semantic related-id path
 
 ## Recent commit chain (last 5)
+- `35c449b` test(validate): lock semantic related ids
 - `781353a` feat(validate): name semantic arbitration signals
 - `cd79915` feat(validate): name compat direction lag
 - `792c60e` fix(validate): separate graph conflicts from gaps
 - `f8164d0` feat(validate): name graph coverage gaps
-- `eeb67a8` docs: refresh bootstrap analysis snapshot
-- `c17dda7` feat(kg-bench): assert graph direction conflicts
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- branch is ahead of `origin/main` by ten local commits (`1ae25f8`, `f8359fa`, `c17dda7`, `08de26a`, `f813461`, `eeb67a8`, `f8164d0`, `792c60e`, `cd79915`, `781353a`); do not push again until 25 new local commits since the last push at `99808e9` or until the user explicitly asks
+- branch is ahead of `origin/main` by eleven local commits (`1ae25f8`, `f8359fa`, `c17dda7`, `08de26a`, `f813461`, `eeb67a8`, `f8164d0`, `792c60e`, `cd79915`, `781353a`, `35c449b`); do not push again until 25 new local commits since the last push at `99808e9` or until the user explicitly asks
 - the README/SESSION_BOOTSTRAP handoff has been re-executed from the repo entrypoint and the referenced continuity docs have been reread
-- the active in-flight slice hardens semantic-stage proof coverage for the new semantic-role related-id surfaces:
-  - existing semantic tests now assert `related_ids` for non-decisive arbitration (`XCTRL`) and blocked handshake fallback (`XVALID`)
-  - new semantic tests directly lock alias-dependent semantic consensus (`XREQ`, `XACK`) and resolved-without-consensus (`XREQ`)
-- validation for the in-flight slice has passed through `cargo fmt --all`, `cargo test -p specforge validate_semantic_ir_flags_signal_semantic_conflicts`, `cargo test -p specforge validate_semantic_ir_reports_blocked_handshake_name_fallback`, `cargo test -p specforge validate_semantic_ir_reports_alias_dependent_semantic_consensus`, `cargo test -p specforge validate_semantic_ir_flags_resolved_roles_without_consensus`, and `bash scripts/run_ci.sh`
-- the current full local CI baseline for the in-flight slice is `363` Rust tests plus warning-deny rustdoc and the mdBook build
+- the active in-flight slice finishes prior-guided semantic related-id parity with one direct semantic+intent regression:
+  - it writes real modality-reliability prior memory
+  - it rebuilds the contested `XCTRL` example through `IntentIR`
+  - it asserts both prior-guided arbitration and prior-guided consensus findings name `XCTRL` in `related_ids`
+- validation for the in-flight slice has passed through `cargo fmt --all`, `cargo test -p specforge validate_semantic_and_intent_ir_report_prior_guided_semantic_related_ids`, `bash scripts/run_ci.sh`, and `bash scripts/run_docs_ci.sh`
+- the current full local CI baseline for the in-flight slice is `364` Rust tests plus warning-deny rustdoc and the mdBook build
 - README sentinel remains intact after the slice: `Read SESSION_BOOTSTRAP.md and start from there.`
 - latest committed adapter hardening adds sticky conflict collapse for duplicate explicit top-port direction declarations
 - the committed regression declares top port `drive_data` once as output and once as input; expected behavior is unresolved top-port direction in both the top candidate and selected signal inventory, blocked renderability, and no emitted `.fsm` target text

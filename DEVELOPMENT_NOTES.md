@@ -7,6 +7,28 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-19 Prior-guided semantic related-id parity
+- The prior semantic-role observability slice already exposed exact signal names for prior-guided arbitration and prior-guided consensus.
+- The remaining weakness was proof shape, not behavior shape:
+  - tracked fixtures covered the end-to-end path
+  - the validators emitted the right payloads
+  - but there was no direct unit regression that rebuilt a real prior-memory-guided `XCTRL` conflict and asserted both semantic-stage and intent-stage findings together
+- That gap matters because this surface depends on a specific pipeline composition:
+  - `SourceIR` must retain the authoritative structured signal-description table
+  - `EvidenceIR` must ingest corpus prior memory through the prior-aware build path
+  - `SemanticIR` must actually resolve the contested role through `PriorGuidedMargin`
+  - validation must then surface the canonical signal name through `related_ids` at both stages
+- The recovered helper in `crates/specforge/src/commands/validate.rs` writes a real modality-reliability prior-memory file instead of shortcutting the condition inside the validator harness.
+- The new regression is intentionally narrow:
+  - one contested signal: `XCTRL`
+  - one prose ready-like hint
+  - one table-backed valid-like hint
+  - one learned modality prior that tips arbitration decisively toward the valid-like role
+- This keeps the proof honest:
+  - validation still does not mutate truth
+  - the test proves pipeline-generated truth survives into the review-facing finding payload
+  - this prior-guided path is no longer protected only by tracked fixtures
+
 ## 2026-04-19 Semantic-stage related-id regression parity
 - The prior slice improved validation observability by naming the exact semantic-role signals in `related_ids`.
 - That slice already had good tracked-fixture protection and direct intent-stage unit coverage, but the semantic-stage unit coverage was thinner than it should have been.

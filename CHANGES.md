@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-04-19 (Prior-guided semantic related-id regression coverage)
+
+### Improved: prior-guided semantic-role related IDs are now locked by a direct semantic+intent regression
+- The previous validation slice taught prior-guided semantic arbitration and prior-guided semantic consensus findings to name their canonical signals in `related_ids`.
+- That behavior was already protected by tracked fixtures, but it still lacked a small direct unit proof that exercises the real prior-memory path and checks both canonical validation stages together.
+- This recovery slice finishes the stalled modality-reliability prior-memory helper in `crates/specforge/src/commands/validate.rs` and adds a combined regression that:
+  - seeds learned prior memory for a valid-like `SignalDescriptionTable` hint
+  - rebuilds `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR` over the contested `XCTRL` example
+  - proves both `semantic_*` and `intent_*` prior-guided findings report `related_ids: ["XCTRL"]`
+- This is a tests-only hardening slice:
+  - no validation logic changed
+  - no canonical IR schema changed
+  - no tracked fixture semantics changed
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge validate_semantic_and_intent_ir_report_prior_guided_semantic_related_ids` -> passed
+- `bash scripts/run_ci.sh` -> passed with `364` Rust tests and the mdBook build
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-04-19 (Semantic-stage related-id regression coverage)
 
 ### Improved: semantic-stage validator regressions now lock the new semantic-role related IDs directly

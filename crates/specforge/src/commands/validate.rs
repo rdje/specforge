@@ -4272,12 +4272,16 @@ mod tests {
 
     use super::*;
     use crate::error::Result;
-    use crate::ir::evidence::EvidenceIr;
+    use crate::ir::evidence::{EvidenceIr, SignalSemanticHintSourceKind};
     use crate::ir::intent::IntentIr;
     use crate::ir::prior_memory::{
         CorpusMemoryUpdatePolicyRecord, NegativeKnowledgePriorRecord, PriorSourceArtifactRecord,
+        SemanticModalityReliabilityPriorRecord,
     };
-    use crate::ir::semantic::{ActorPortRecord, ActorRelativeDirection, SemanticIr};
+    use crate::ir::semantic::{
+        ActorPortRecord, ActorRelativeDirection, InterfaceSignalSemanticRole,
+        SemanticGroundingStrength, SemanticIr,
+    };
     use crate::ir::source::{
         AutomationConfidence, SignalConstraintKind, SignalConstraintRecord, SourceIr,
         StructuredTableCellRecord, StructuredTableRecord, TableKind, VisualAsset, VisualAssetKind,
@@ -4420,6 +4424,64 @@ mod tests {
             visual_motif_priors: Vec::new(),
             negative_knowledge_priors,
         }
+    }
+
+    fn write_semantic_modality_reliability_prior_memory(
+        root: &Path,
+        role: InterfaceSignalSemanticRole,
+        source_kind: SignalSemanticHintSourceKind,
+        strongest_grounding_strength: SemanticGroundingStrength,
+    ) -> Result<PathBuf> {
+        let prior_memory_path = root
+            .join("generated")
+            .join("prior_memory")
+            .join("corpus_memory.json");
+        if let Some(parent) = prior_memory_path.parent() {
+            fs::create_dir_all(parent)?;
+        }
+
+        let corpus_memory = CorpusMemory {
+            schema_version: 5,
+            update_policy: CorpusMemoryUpdatePolicyRecord {
+                advisory_only: true,
+                requires_validated_intent_ir: true,
+                rejects_error_findings: true,
+                excludes_alias_dependent_semantic_consensus: true,
+                local_grounding_required_for_canonical_promotion: true,
+            },
+            source_artifacts: vec![PriorSourceArtifactRecord {
+                artifact_path: root.join("seed_intent_ir.json"),
+                document_key: "seed_doc".to_string(),
+                display_name: "Seed Doc".to_string(),
+                protocol_family: ProtocolFamily::Unknown,
+                overall_score: Some(100),
+                grade: Some("EXCELLENT".to_string()),
+                accepted_for_learning: true,
+                skip_reason: None,
+            }],
+            actor_taxonomy_priors: Vec::new(),
+            semantic_phrase_priors: Vec::new(),
+            semantic_modality_reliability_priors: vec![SemanticModalityReliabilityPriorRecord {
+                prior_id: "semantic_modality_reliability_prior_0001".to_string(),
+                role,
+                protocol_family: ProtocolFamily::Unknown,
+                source_kind,
+                support_count: 3,
+                supporting_document_keys: vec!["seed_doc".to_string()],
+                strongest_automation_confidence: AutomationConfidence::High,
+                strongest_grounding_strength,
+            }],
+            temporal_phrase_priors: Vec::new(),
+            table_shape_priors: Vec::new(),
+            visual_motif_priors: Vec::new(),
+            negative_knowledge_priors: Vec::new(),
+        };
+        fs::write(
+            &prior_memory_path,
+            serde_json::to_string_pretty(&corpus_memory)?,
+        )?;
+
+        Ok(prior_memory_path)
     }
 
     #[test]
@@ -5567,6 +5629,142 @@ mod tests {
             })
             .expect("expected resolved-without-consensus finding");
         assert_eq!(finding.related_ids, vec!["XREQ".to_string()]);
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_semantic_and_intent_ir_report_prior_guided_semantic_related_ids() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("semantic_role_conflict_with_prior.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal XCTRL is input width 1.\n\n",
+                "XCTRL indicates that the subordinate can accept the transfer.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_semantic_conflict".to_string(),
+            asset_id: "asset_semantic_conflict".to_string(),
+            page_id: None,
+            caption_text: Some("Control signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("XCTRL", false),
+                make_table_cell(
+                    "Indicates that address and control information are valid for transfer.",
+                    false,
+                ),
+            ]],
+            row_count: 1,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let prior_memory_path = write_semantic_modality_reliability_prior_memory(
+            tempdir.path(),
+            InterfaceSignalSemanticRole::HandshakeValidLike,
+            SignalSemanticHintSourceKind::SignalDescriptionTable,
+            SemanticGroundingStrength::CrossModality,
+        )?;
+
+        let evidence_ir = EvidenceIr::build_with_prior_memory(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+            Some(&prior_memory_path),
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let semantic_report = validate_semantic_ir(
+            &semantic_ir,
+            "semantic_prior_guided_semantic_related_ids".to_string(),
+        );
+        assert_eq!(
+            metric_value(&semantic_report, "with_prior_guided_semantic_arbitration"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&semantic_report, "with_prior_guided_semantic_consensus"),
+            Some("1")
+        );
+        let semantic_arbitration_finding = semantic_report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == "semantic_prior_guided_semantic_arbitration_present"
+            })
+            .expect("expected semantic prior-guided arbitration finding");
+        assert_eq!(
+            semantic_arbitration_finding.related_ids,
+            vec!["XCTRL".to_string()]
+        );
+        let semantic_consensus_finding = semantic_report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == "semantic_prior_guided_semantic_consensus_present"
+            })
+            .expect("expected semantic prior-guided consensus finding");
+        assert_eq!(
+            semantic_consensus_finding.related_ids,
+            vec!["XCTRL".to_string()]
+        );
+
+        let intent_report = validate_intent_ir(
+            &intent_ir,
+            "intent_prior_guided_semantic_related_ids".to_string(),
+        );
+        assert_eq!(
+            metric_value(&intent_report, "with_prior_guided_semantic_arbitration"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&intent_report, "with_prior_guided_semantic_consensus"),
+            Some("1")
+        );
+        let intent_arbitration_finding = intent_report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == "intent_prior_guided_semantic_arbitration_present"
+            })
+            .expect("expected intent prior-guided arbitration finding");
+        assert_eq!(
+            intent_arbitration_finding.related_ids,
+            vec!["XCTRL".to_string()]
+        );
+        let intent_consensus_finding = intent_report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "intent_prior_guided_semantic_consensus_present")
+            .expect("expected intent prior-guided consensus finding");
+        assert_eq!(
+            intent_consensus_finding.related_ids,
+            vec!["XCTRL".to_string()]
+        );
 
         Ok(())
     }
