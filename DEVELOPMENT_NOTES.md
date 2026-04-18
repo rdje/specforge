@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-18 README bootstrap analysis refresh
+- Executing the README bootstrap again was not busywork here; it exposed continuity drift in the live Rust analysis snapshot.
+- `RUST_CODEBASE_ANALYSIS.md` was lagging the current repository scale and validation surface. The active crate now spans `31` Rust source files and `62,017` lines under `crates/specforge/src`, the tracked KG fixture suite is `89`, and the current local CI baseline is `351` passing Rust tests plus rustdoc and mdBook.
+- The bootstrap pass also reaffirmed the next roadmap-aligned engineering focus: the semantic pipeline is increasingly graph-first, but `R15` is still not complete because several downstream adapter/validation seams continue to consume compatibility `direction_hint` rather than purely actor-relative direction semantics.
+- This was a docs/analysis refresh only. The live-status tracker remains unchanged because no product capability or roadmap closure changed during the bootstrap execution itself.
+
 ## 2026-04-18 Signal-value VLM timing label rejection
 - After the name-only slice, a closely related leak remained: `XREQ HIGH` or `XREQ asserted` could still survive as a `TimingConstraintRecord`.
 - Those labels are still figure markup, not timing law. The structured `signals[].values[]` path is already the honest place to carry sampled signal values from a VLM timing diagram.

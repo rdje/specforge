@@ -22,24 +22,24 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `53f5953`
-- latest_commit_brief_message: `fix(semantic): reject name-only VLM labels`
-- note: current in-flight slice extends the same truthfulness boundary to bare known-signal sampled-value labels such as `XREQ HIGH`
+- latest_commit_hash: `f81b10c`
+- latest_commit_brief_message: `fix(semantic): reject VLM signal-value labels`
+- note: current in-flight slice is a README/bootstrap continuity refresh updating the live Rust analysis snapshot and recording the next roadmap focus after a fresh codebase pass
 
 ## Recent commit chain (last 5)
+- `f81b10c` fix(semantic): reject VLM signal-value labels
 - `53f5953` fix(semantic): reject name-only VLM labels
 - `74a74de` fix(semantic): reject multi-token VLM labels
 - `5996029` fix(semantic): reject compact VLM phase labels
 - `867455e` fix(semantic): reject compact VLM bus labels
-- `619a773` fix(semantic): reject VLM timing bus labels
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch is ahead of `origin/main`; do not push until 25 local commits since the last push or until the user explicitly asks
-- current in-flight semantic hardening extends the same VLM timing spurious-annotation rejection to bare known-signal sampled-value labels such as `XREQ HIGH`, `XREQ LOW`, `XREQ asserted`, and `XREQ deasserted`
-- the production change again lives at the timing-lift boundary in `parse_timing_diagram_observation()`, because this decision depends on the current document's known signal inventory plus a narrow sampled-value matcher rather than generic waveform vocabulary
-- the direct semantic regression and the tracked `vlm_timing_spurious_annotation_negative` fixture are being tightened together so these two-token known-signal label variants stay aligned with the production filter
-- validation target for the in-flight slice is the focused semantic regression, the targeted KG fixture, docs CI, and full local CI before commit
+- the README/SESSION_BOOTSTRAP handoff has been re-executed from the repo entrypoint and the referenced continuity docs have been reread
+- `RUST_CODEBASE_ANALYSIS.md` is being refreshed to match the current codebase scale (`31` Rust source files / `62,017` lines), current tracked KG fixture count (`89`), and current local CI baseline (`351` Rust tests plus rustdoc and mdBook)
+- the bootstrap analysis reconfirmed the next roadmap-aligned engineering target: `R15` still has meaningful `direction_hint` dependency pockets in downstream adapter/validation consumers even though actor-relative graph surfaces are already canonical
+- validation target for the in-flight bootstrap refresh is docs CI, full local CI, and `git diff --check` before commit
 - latest committed adapter hardening adds sticky conflict collapse for duplicate explicit top-port direction declarations
 - the committed regression declares top port `drive_data` once as output and once as input; expected behavior is unresolved top-port direction in both the top candidate and selected signal inventory, blocked renderability, and no emitted `.fsm` target text
 - focused validation, the full adapter test module, docs CI, and full local CI passed for commit `6282875`; full local CI reported formatting, warning-deny Clippy, `340` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build

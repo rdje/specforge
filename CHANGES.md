@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-04-18 (README bootstrap analysis refresh)
+
+### Refreshed: live Rust analysis after executing the README bootstrap
+- Re-ran the README handoff path through `SESSION_BOOTSTRAP.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `MEMORY.md`, `COMMIT.md`, and the current Rust codebase surface before selecting further roadmap work.
+- Refreshed `RUST_CODEBASE_ANALYSIS.md` so its bootstrap snapshot now matches the current repository reality: `31` Rust source files, `62,017` lines under `crates/specforge/src`, `89` tracked KG fixtures, and the current `351`-test local CI baseline.
+- Recorded the next high-leverage roadmap focus from that bootstrap pass: `R15` still has meaningful compatibility-`direction_hint` pockets in adapter/validation consumers even though the actor-relative graph surface is already in place.
+
+### Validation
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-18 (Signal-value VLM timing label rejection)
 
 ### Fixed: bare signal-value labels stay out of timing constraints

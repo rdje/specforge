@@ -1342,8 +1342,9 @@
 
 ## Testing implications
 - current full local CI path: `bash scripts/run_ci.sh`
-- current Rust test count observed through that path after the current slice: 313 library tests, 0 binary tests, and 0 doc tests, all passing under `RUSTFLAGS="-D warnings"` after clean `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings` and `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` passes
-- current tracked KG-quality fixture count: 85
+- current active Rust surface after the README/bootstrap refresh: `31` Rust source files and `62,017` total lines under `crates/specforge/src`
+- current Rust test count observed through the canonical local CI path after the latest slice: 351 library tests, 0 binary tests, and 0 doc tests, all passing under warning-deny Clippy/rustdoc plus the mdBook build
+- current tracked KG-quality fixture count: 89
 - current tests cover:
   - source-kind detection
   - deterministic source key naming
@@ -1386,7 +1387,13 @@
 
 ## Latest validation completed in this refresh
 - `bash scripts/run_ci.sh`
-  - passed; Rust test suite reported 313 passed tests under `RUSTFLAGS="-D warnings"`, 0 failures, 0 binary tests, 0 doc tests, rustdoc completed under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build completed successfully
+  - passed; Rust test suite reported 351 passed tests under warning-deny CI, 0 failures, 0 binary tests, 0 doc tests, rustdoc completed under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build completed successfully
+
+## Session update (2026-04-18 README bootstrap analysis refresh)
+- Re-executed the README handoff path through `SESSION_BOOTSTRAP.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `MEMORY.md`, and `COMMIT.md`, then resurveyed the active Rust crate layout directly from disk.
+- The current Rust implementation now spans `31` source files and `62,017` lines under `crates/specforge/src`, with the tracked KG fixture suite at `89` and the canonical local CI path at `351` passing Rust tests plus warning-deny rustdoc and mdBook validation.
+- The bootstrap pass did not reveal a new architectural pivot, but it did reaffirm the most important remaining codebase-level gap from the roadmap: `R15` is still incomplete because several downstream adapter and validation seams continue to consume compatibility `direction_hint` rather than purely actor-relative graph semantics.
+- That means the next meaningful implementation work should favor graph-first downstream direction consumers over more adapter-family breadth or superficial scoring tweaks.
 
 ## Earlier validation trail
 - `cargo run --manifest-path Cargo.toml -p specforge -- --help`
