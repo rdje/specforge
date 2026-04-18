@@ -136,3 +136,42 @@ This remains an arbitration surface, not an auto-fix path.
 The stable convergence snapshot is the convergence result.
 Post-rescan validation changes are reported as `changed_requires_validation_review` until validation and evidence arbitration say they are safe to promote.
 The convergence summary also exposes review-required counters split across possible-improvement, regression, and neutral artifact-change verdicts from the persisted recommendation execution summaries.
+
+## `clean`
+
+```bash
+cargo run --manifest-path Cargo.toml -- clean
+```
+
+`clean` is the local artifact-reclamation command.
+
+Its default behavior is intentionally narrow:
+
+- dry-run only
+- scans `generated/source_ir/*/normalized`
+- reports reclaimable size before deleting anything
+
+That default targets the heavyweight PDF normalization bundles because they are usually the main disk consumers and are fully rebuildable by rerunning ingest.
+
+To actually delete them:
+
+```bash
+cargo run --manifest-path Cargo.toml -- clean --execute
+```
+
+To delete full generated stage trees for a document instead of only the normalized PDF bundle:
+
+```bash
+cargo run --manifest-path Cargo.toml -- clean --scope document --document-key <document_key> --execute
+```
+
+That document-scope cleanup removes the per-document roots under:
+
+- `generated/source_ir/`
+- `generated/evidence_ir/`
+- `generated/semantic_ir/`
+- `generated/intent_ir/`
+- `generated/adapters/*/`
+
+The cleanup command is deliberately local-only.
+It does not touch tracked docs, curated fixtures, or learned priors.

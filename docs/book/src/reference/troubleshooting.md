@@ -44,6 +44,34 @@ Remember that `generated/` is local and untracked.
 
 If you switch machines or clone fresh, you must rebuild local artifacts.
 
+## Generated artifacts are eating disk space
+
+Start with the explicit local cleanup surface:
+
+```bash
+cargo run --manifest-path Cargo.toml -- clean
+```
+
+That dry-runs the heavyweight `generated/source_ir/*/normalized` bundles and shows how much space is reclaimable.
+
+If the plan looks right:
+
+```bash
+cargo run --manifest-path Cargo.toml -- clean --execute
+```
+
+Remember what that means:
+
+- `normalized/` bundles are rebuildable caches, not tracked project assets
+- deleting them preserves `source_ir.json` by default
+- if you later need page images, visual crops, or backend dumps again, rerun `ingest` or `converge`
+
+If one document is no longer relevant and you want a full local reset for it:
+
+```bash
+cargo run --manifest-path Cargo.toml -- clean --scope document --document-key <document_key> --execute
+```
+
 ## Learning did not seem to improve anything
 
 Check the actual prior store:
@@ -57,4 +85,3 @@ Also remember:
 - priors are advisory only
 
 So it is normal for some new corpora to increase truthfulness only in narrow places rather than across the whole pipeline immediately.
-

@@ -28,6 +28,7 @@
 - `specforge kg-bench` command created: Done
 - `specforge learn-priors` command created: Done
 - `specforge corpus-kb` command created: Done
+- `specforge clean` command created: Done
 - `specforge corpus-kb` KG fixture-result projection created: Done
 - Quiet KG fixture validation path for corpus-KB projection: Done
 - KG fixture-family summary projection for corpus-KB benchmark results: Done
@@ -88,6 +89,7 @@
 - Whole-pipeline fixed-point knowledge-snapshot loop implemented: Done
 - SourceIR type system implemented: Done
 - Structured PDF normalization orchestration implemented: Done
+- PDF re-ingest now atomically replaces doc-scoped normalized bundles: Done
 - Repo-local Docling bootstrap path and runtime doctor for fresh ingest: Done
 - `specforge doctor` now checks default Ollama loopback readiness too: Done
 - `specforge doctor` now checks LM Studio fallback readiness too: Done
@@ -160,6 +162,7 @@
 - `WidthHint` / parametric-width support propagated through the IR pipeline: Done
 - AMBA `Source` / `Driver` / `Destination` signal-table direction handling implemented: Done
 - `generated/` artifacts removed from git tracking and ignored by default: Done
+- Rebuildable generated artifacts now have a first-class cleanup path: Done
 - IR-stage validation back-annotation and stage-local `validation_report.json` artifacts implemented: Done
 - Live-doc projection of persisted IR validation findings implemented: Done
 - Latest local validation snapshot projected into tracked docs: Done

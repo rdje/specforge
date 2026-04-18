@@ -22,23 +22,25 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `6282875`
-- latest_commit_brief_message: `fix(adapter): collapse duplicate top port conflicts`
-- note: current in-flight adapter hardening collapses duplicate top-port width conflicts to unresolved state
+- latest_commit_hash: `d47db80`
+- latest_commit_brief_message: `fix(adapter): collapse duplicate top port widths`
+- note: current in-flight slice adds generated-artifact hygiene through atomic SourceIR normalized-bundle replacement plus a first-class `specforge clean` command
 
 ## Recent commit chain (last 5)
+- `d47db80` fix(adapter): collapse duplicate top port widths
 - `6282875` fix(adapter): collapse duplicate top port conflicts
 - `283215f` fix(adapter): collapse top port direction conflicts
 - `3f99161` test(adapter): guard system contract conflicts
 - `3d417ea` fix(adapter): recover system contract signals
-- `2bd0034` test(adapter): guard child topology conflicts
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch is ahead of `origin/main`; do not push until 25 local commits since the last push or until the user explicitly asks
-- current in-flight adapter hardening adds sticky conflict collapse for duplicate explicit top-port width declarations
-- the current regression declares top port `drive_data` twice as output with widths `8` and `16`; expected behavior is unresolved top-port width in both the top candidate and selected signal inventory, blocked renderability, and no emitted `.fsm` target text
-- focused validation, the full adapter test module, docs CI, and full local CI passed for the current adapter slice; full local CI reported formatting, warning-deny Clippy, `341` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- current in-flight cleanup hardening stages PDF normalization into `generated/source_ir/<document_key>/normalized.staging` and swaps it into `normalized/` only after backend success
+- repeated ingest for the same document key should now drop stale normalized leftovers without deleting the last good normalized bundle on backend failure
+- the new `specforge clean` command dry-runs rebuildable `generated/source_ir/*/normalized` bundles by default, supports `--execute`, and can delete full per-document generated stage trees through `--scope document`
+- a local `specforge clean --execute` run reclaimed the five current normalized PDF bundles, dropping `generated/source_ir` from about `442 MiB` to about `4.9 MiB`
+- focused validation, docs CI, and full local CI now pass for the in-flight cleanup slice; full local CI reports formatting, warning-deny Clippy, `347` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
 - latest committed adapter hardening adds sticky conflict collapse for duplicate explicit top-port direction declarations
 - the committed regression declares top port `drive_data` once as output and once as input; expected behavior is unresolved top-port direction in both the top candidate and selected signal inventory, blocked renderability, and no emitted `.fsm` target text
 - focused validation, the full adapter test module, docs CI, and full local CI passed for commit `6282875`; full local CI reported formatting, warning-deny Clippy, `340` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build

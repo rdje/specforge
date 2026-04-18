@@ -821,9 +821,25 @@ pub fn materialize_pdf(
     artifact_layout: &SourceArtifactLayout,
     document_key: &str,
 ) -> Result<DoclingBackendSummary> {
-    fs::create_dir_all(&artifact_layout.normalized_root)?;
-    fs::create_dir_all(&artifact_layout.page_image_root)?;
-    fs::create_dir_all(&artifact_layout.visual_asset_root)?;
+    fs::create_dir_all(&artifact_layout.artifact_root)?;
+
+    let staged_normalized_root = artifact_layout.artifact_root.join("normalized.staging");
+    cleanup_path_if_exists(&staged_normalized_root)?;
+
+    let staged_promoted_markdown_path =
+        staged_child_path(&staged_normalized_root, promoted_markdown_path)?;
+    let staged_metadata_output_path =
+        staged_child_path(&staged_normalized_root, metadata_output_path)?;
+    let staged_page_image_root = staged_normalized_root.join("pages");
+    let staged_visual_asset_root = staged_normalized_root.join("assets");
+    let staged_backend_raw_output_path = staged_child_path(
+        &staged_normalized_root,
+        &artifact_layout.backend_raw_output_path,
+    )?;
+
+    fs::create_dir_all(&staged_normalized_root)?;
+    fs::create_dir_all(&staged_page_image_root)?;
+    fs::create_dir_all(&staged_visual_asset_root)?;
 
     let tempdir = tempdir()?;
     let summary_output_path = tempdir.path().join("docling_summary.json");
@@ -833,15 +849,15 @@ pub fn materialize_pdf(
         .arg("--input")
         .arg(source_path)
         .arg("--markdown")
-        .arg(promoted_markdown_path)
+        .arg(&staged_promoted_markdown_path)
         .arg("--page-image-root")
-        .arg(&artifact_layout.page_image_root)
+        .arg(&staged_page_image_root)
         .arg("--visual-asset-root")
-        .arg(&artifact_layout.visual_asset_root)
+        .arg(&staged_visual_asset_root)
         .arg("--backend-raw-output")
-        .arg(&artifact_layout.backend_raw_output_path)
+        .arg(&staged_backend_raw_output_path)
         .arg("--metadata-output")
-        .arg(metadata_output_path)
+        .arg(&staged_metadata_output_path)
         .arg("--summary-output")
         .arg(&summary_output_path)
         .arg("--document-key")
@@ -849,6 +865,7 @@ pub fn materialize_pdf(
 
     let output = backend_command.command.output()?;
     if !output.status.success() {
+        cleanup_path_if_exists(&staged_normalized_root)?;
         return Err(AppError::ExternalCommandFailed {
             program: backend_command.display_name,
             exit_code: output.status.code(),
@@ -864,13 +881,68 @@ pub fn materialize_pdf(
     })?;
     let summary =
         serde_json::from_str::<DoclingBackendSummary>(&summary_text).map_err(|error| {
+            let _ = cleanup_path_if_exists(&staged_normalized_root);
             AppError::InvalidBackendOutput(format!(
                 "failed to parse docling backend summary at {}: {error}",
                 summary_output_path.display()
             ))
         })?;
 
-    Ok(summary)
+    cleanup_path_if_exists(&artifact_layout.normalized_root)?;
+    fs::rename(&staged_normalized_root, &artifact_layout.normalized_root)?;
+
+    Ok(summary.relocate_paths(&staged_normalized_root, &artifact_layout.normalized_root))
+}
+
+fn cleanup_path_if_exists(path: &Path) -> std::io::Result<()> {
+    match fs::symlink_metadata(path) {
+        Ok(metadata) if metadata.is_dir() => fs::remove_dir_all(path),
+        Ok(_) => fs::remove_file(path),
+        Err(error) if error.kind() == ErrorKind::NotFound => Ok(()),
+        Err(error) => Err(error),
+    }
+}
+
+fn staged_child_path(staged_normalized_root: &Path, final_path: &Path) -> Result<PathBuf> {
+    let file_name = final_path.file_name().ok_or_else(|| {
+        AppError::InvalidBackendOutput(format!(
+            "cannot derive staged artifact path from {}",
+            final_path.display()
+        ))
+    })?;
+    Ok(staged_normalized_root.join(file_name))
+}
+
+impl DoclingBackendSummary {
+    fn relocate_paths(mut self, from_root: &Path, to_root: &Path) -> Self {
+        for page_artifact in &mut self.page_artifacts {
+            relocate_optional_path(&mut page_artifact.page_image_path, from_root, to_root);
+            relocate_optional_path(&mut page_artifact.layout_metadata_path, from_root, to_root);
+        }
+
+        for visual_asset in &mut self.visual_assets {
+            relocate_optional_path(&mut visual_asset.image_path, from_root, to_root);
+            relocate_optional_path(&mut visual_asset.caption_source_path, from_root, to_root);
+        }
+
+        for binding in &mut self.placeholder_bindings {
+            relocate_path(&mut binding.normalized_source_path, from_root, to_root);
+        }
+
+        self
+    }
+}
+
+fn relocate_optional_path(path: &mut Option<PathBuf>, from_root: &Path, to_root: &Path) {
+    if let Some(path_buf) = path {
+        relocate_path(path_buf, from_root, to_root);
+    }
+}
+
+fn relocate_path(path: &mut PathBuf, from_root: &Path, to_root: &Path) {
+    if let Ok(relative_path) = path.strip_prefix(from_root) {
+        *path = to_root.join(relative_path);
+    }
 }
 
 fn build_backend_command(tempdir: &Path) -> Result<BackendCommand> {

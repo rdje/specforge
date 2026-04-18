@@ -51,6 +51,32 @@ Depending on the input and backend path, these can include:
 Those files are part of the local evidence trail.
 They are useful for debugging and visual grounding, but they should not be treated as hand-authored project assets.
 
+## Artifact lifecycle and cleanup
+
+Generated artifacts are not meant to grow forever without supervision.
+
+Two cleanup rules now define the normal lifecycle:
+
+1. Re-ingesting the same PDF document key replaces that document's `normalized/` bundle atomically.
+2. `specforge clean` provides an explicit local reclamation command for rebuildable generated state.
+
+The first rule matters because old page images, visual crops, and backend dumps can otherwise survive across reruns even after the current normalization no longer references them.
+`specforge` now stages PDF normalization into a sibling `normalized.staging/` tree and only swaps it into place after the backend succeeds.
+That means:
+
+- stale leftovers from earlier runs do not accumulate inside `normalized/`
+- failed reruns do not destroy the last good normalized bundle
+
+The second rule matters because some generated artifacts are intentionally heavy.
+The default cleanup path is:
+
+```bash
+cargo run --manifest-path Cargo.toml -- clean
+```
+
+That dry-runs the heavyweight `generated/source_ir/*/normalized` bundles and reports reclaimable size.
+Add `--execute` to delete them, or use `--scope document --document-key <key>` when you intentionally want a cold rebuild of that document's whole generated stage tree.
+
 ## Validation reports
 
 `validate` writes deterministic validation reports next to the artifact being validated.

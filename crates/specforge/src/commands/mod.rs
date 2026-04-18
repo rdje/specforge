@@ -1,4 +1,5 @@
 pub mod adapt;
+pub mod clean;
 pub mod converge;
 pub mod corpus_kb;
 pub mod doctor;

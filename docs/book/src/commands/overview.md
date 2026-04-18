@@ -20,6 +20,7 @@ Current surface:
 - `rescan-plan [--execute]`
 - `learn-priors <intent-ir>...`
 - `corpus-kb [validation-report]... [--kg-fixtures-root <fixture-root>]`
+- `clean [--execute] [--scope <scope>]`
 
 The commands fall into three groups:
 
@@ -55,6 +56,13 @@ If you want to refresh the tracked validation snapshot:
 
 ```bash
 cargo run --manifest-path Cargo.toml -- project-validation generated/intent_ir/.../intent_ir.json
+```
+
+If you want to reclaim rebuildable generated artifacts before they eat your disk:
+
+```bash
+cargo run --manifest-path Cargo.toml -- clean
+cargo run --manifest-path Cargo.toml -- clean --execute
 ```
 
 If you want to inspect the targeted rescan queue:

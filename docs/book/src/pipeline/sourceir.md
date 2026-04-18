@@ -54,6 +54,10 @@ That is a much better foundation than forcing later stages to work from flattene
 
 The dedicated [Multimodal Evidence And Visual Grounding](multimodal-evidence.md) chapter explains how preserved visual assets flow into visual evidence, VLM observations, and semantic grounding.
 
+Operationally, the source bundle is now managed as a replaceable local cache rather than an append-only dump.
+When the same PDF is ingested again, `specforge` stages the new normalization into `normalized.staging/` and swaps it into `normalized/` only after backend success.
+That keeps stale page/image leftovers from earlier runs out of the current `SourceIR` evidence trail while preserving the last good bundle if the backend fails mid-rerun.
+
 ## What `SourceIR` is not
 
 It is not the place where protocol semantics should be invented.

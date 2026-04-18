@@ -47,6 +47,8 @@ pub enum Commands {
     LearnPriors(LearnPriorsArgs),
     /// Refresh tracked corpus knowledge-base pages from reviewable evidence
     CorpusKb(CorpusKbArgs),
+    /// Reclaim local generated artifacts that can be rebuilt later
+    Clean(CleanArgs),
     /// Enrich an EvidenceIR artifact with LLM-extracted NLP Level 3 constraints
     NlpEnrich(NlpEnrichArgs),
 }
@@ -280,6 +282,30 @@ pub struct CorpusKbArgs {
     pub kg_fixture: Vec<PathBuf>,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum)]
+pub enum CleanScopeArg {
+    /// Delete only heavyweight `generated/source_ir/<document_key>/normalized` bundles.
+    SourceNormalized,
+    /// Delete full per-document generated directories across SourceIR/EvidenceIR/SemanticIR/IntentIR/adapters.
+    Document,
+}
+
+#[derive(Debug, Args)]
+pub struct CleanArgs {
+    /// Generated artifact root to scan
+    #[arg(long, default_value = "generated")]
+    pub generated_root: PathBuf,
+    /// Cleanup scope to target
+    #[arg(long, value_enum, default_value = "source-normalized")]
+    pub scope: CleanScopeArg,
+    /// Optional document key filter
+    #[arg(long)]
+    pub document_key: Option<String>,
+    /// Actually delete the discovered artifacts
+    #[arg(long)]
+    pub execute: bool,
+}
+
 /// VLM provider selection for the `enrich` command.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum)]
 pub enum VlmProviderArg {
@@ -328,7 +354,7 @@ pub struct AdaptArgs {
 mod tests {
     use clap::Parser;
 
-    use super::{Cli, Commands, RescanVlmProviderArg, VlmProviderArg};
+    use super::{CleanScopeArg, Cli, Commands, RescanVlmProviderArg, VlmProviderArg};
 
     #[test]
     fn converge_defaults_to_ollama_for_vlm_and_nlp() {
@@ -457,5 +483,18 @@ mod tests {
         };
 
         assert!(!args.strict);
+    }
+
+    #[test]
+    fn clean_defaults_to_source_normalized_dry_run() {
+        let cli = Cli::parse_from(["specforge", "clean"]);
+        let Commands::Clean(args) = cli.command else {
+            panic!("expected clean command");
+        };
+
+        assert_eq!(args.generated_root, PathBuf::from("generated"));
+        assert!(matches!(args.scope, CleanScopeArg::SourceNormalized));
+        assert_eq!(args.document_key, None);
+        assert!(!args.execute);
     }
 }

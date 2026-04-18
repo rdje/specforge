@@ -49,6 +49,9 @@
 - keep the book and the live root docs as separate planes:
   - the book is for the world-facing, transparent explanation of the product
   - the root markdown docs are for continuity, crash recovery, live validation projection, steering, and handoff between sessions
+- treat local generated artifacts as rebuildable execution state with an explicit lifecycle:
+  - rerunning the same document should replace stale doc-scoped normalization bundles instead of layering fresh files over old leftovers
+  - the CLI should expose a first-class cleanup path so heavyweight local artifacts can be reclaimed without hand-deleting directories or touching tracked docs
 - keep canonical document truth local and provenance-pure:
   - each `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR` pipeline run should remain grounded only in the current document
   - any future cross-document learning layer must learn reusable extraction priors rather than smuggling facts from earlier PDFs into later canonical artifacts
@@ -98,6 +101,8 @@
   - `specforge ingest` materializes `SourceIR`
   - markdown inputs are represented cleanly
   - PDF inputs materialize promoted markdown, page-artifact manifests, page metadata sidecars, metadata JSON, backend raw JSON, and visual-asset manifests
+  - repeated PDF ingest for the same document key atomically replaces `generated/source_ir/<document_key>/normalized` so stale page/image leftovers do not accumulate
+  - a first-class local cleanup command can reclaim rebuildable generated artifacts without touching tracked docs or curated fixtures
   - Docling-backed ingest has a first-class local readiness check and repo-local bootstrap path instead of depending only on ambient `python3`
   - directory and unknown inputs produce residual decisions instead of implicit failure
 

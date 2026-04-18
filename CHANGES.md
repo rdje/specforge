@@ -1,5 +1,31 @@
 # CHANGES
 
+## 2026-04-18 (Generated artifact cleanup and SourceIR normalized-bundle hygiene)
+
+### Added: first-class generated artifact cleanup
+- Added `specforge clean`, a local-only generated-artifact reclamation command.
+- The default scope is intentionally narrow and safe: dry-run only, scanning heavyweight `generated/source_ir/*/normalized` bundles and reporting reclaimable size before deleting anything.
+- `--execute` now deletes those rebuildable normalized bundles while preserving `source_ir.json`, and `--scope document [--document-key <key>]` can remove full per-document generated stage trees when a cold rebuild is intentional.
+
+### Improved: repeated PDF ingest no longer layers stale normalized leftovers
+- Docling-backed PDF materialization now stages into `generated/source_ir/<document_key>/normalized.staging` and swaps that tree into `normalized/` only after backend success.
+- Re-ingesting the same document key now replaces the previous normalized bundle atomically instead of leaving stale page images, crops, or backend dumps from older runs beside the current output.
+- Failed reruns now preserve the last good `normalized/` bundle instead of deleting it before the new backend attempt succeeds.
+
+### Operational result
+- Ran `specforge clean --execute` locally after landing the command and reclaimed the five current normalized AMBA bundles.
+- `generated/source_ir` dropped from about `442 MiB` to about `4.9 MiB`.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge commands::clean::tests::` -> passed
+- `cargo test -p specforge pdf_source_ir_` -> passed
+- `cargo run -p specforge -- clean` -> passed and reported `432.5 MiB` reclaimable across five normalized bundles
+- `cargo run -p specforge -- clean --execute` -> passed and deleted those five normalized bundles
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `347` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-18 (Adapter duplicate top-port width conflict collapse)
 
 ### Improved: duplicate top-port widths cannot overwrite conflicts

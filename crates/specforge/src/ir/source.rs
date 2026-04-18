@@ -1346,6 +1346,13 @@ EOF
             source_ir.visual_assets[0].source_ref.as_deref(),
             Some("#/pictures/0")
         );
+        assert!(
+            source_ir.page_artifacts[0]
+                .page_image_path
+                .as_ref()
+                .is_some_and(|path| path
+                    .ends_with("generated/source_ir/bus_spec/normalized/pages/page-0001.png"))
+        );
         assert_eq!(
             source_ir.planned_actions,
             vec![
@@ -1381,6 +1388,143 @@ EOF
         assert!(page_manifest.contains("\"page_id\": \"page_0001\""));
         assert!(visual_manifest.contains("\"source_ref\": \"#/pictures/0\""));
         assert!(promoted_markdown.contains("![Image](assets/picture-0001.png)"));
+
+        Ok(())
+    }
+
+    #[test]
+    fn pdf_source_ir_materialization_replaces_stale_normalized_artifacts() -> Result<()> {
+        let _env_lock = ENV_LOCK.lock().expect("environment mutex poisoned");
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("bus_spec.pdf");
+        let artifact_base = tempdir.path().join("generated").join("source_ir");
+        let helper = tempdir.path().join("docling_stub.sh");
+        let stale_root = artifact_base.join("bus_spec").join("normalized");
+
+        fs::write(&source, b"%PDF-1.0")?;
+        fs::create_dir_all(&stale_root)?;
+        fs::write(stale_root.join("stale.txt"), b"old")?;
+        fs::write(
+            &helper,
+            r##"#!/bin/sh
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --markdown) markdown="$2"; shift 2 ;;
+    --page-image-root) page_image_root="$2"; shift 2 ;;
+    --visual-asset-root) visual_asset_root="$2"; shift 2 ;;
+    --backend-raw-output) backend_raw_output="$2"; shift 2 ;;
+    --metadata-output) metadata_output="$2"; shift 2 ;;
+    --summary-output) summary_output="$2"; shift 2 ;;
+    *) shift ;;
+  esac
+done
+
+mkdir -p "$(dirname "$markdown")" "$page_image_root" "$visual_asset_root"
+printf '# normalized\n' > "$markdown"
+printf '{}' > "$backend_raw_output"
+printf '{"backend":"docling_stub"}\n' > "$metadata_output"
+printf 'stub-page' > "$page_image_root/page-0001.png"
+printf '{"page_number":1}\n' > "$page_image_root/page-0001.json"
+printf 'stub-asset' > "$visual_asset_root/picture-0001.png"
+cat > "$summary_output" <<EOF
+{
+  "backend_version": "stub-1.0",
+  "page_artifacts": [
+    {
+      "page_id": "page_0001",
+      "page_number": 1,
+      "page_image_path": "$page_image_root/page-0001.png",
+      "layout_metadata_path": "$page_image_root/page-0001.json",
+      "width_px": 800,
+      "height_px": 600
+    }
+  ],
+  "visual_assets": [
+    {
+      "asset_id": "picture_0001",
+      "asset_kind": "figure",
+      "page_id": "page_0001",
+      "image_path": "$visual_asset_root/picture-0001.png",
+      "caption_text": "Stub figure",
+      "caption_source_path": "$backend_raw_output",
+      "source_ref": "#/pictures/0",
+      "placeholder_text": null,
+      "note": null
+    }
+  ],
+  "placeholder_bindings": [],
+  "metadata": {
+    "page_count": 1,
+    "picture_count": 1,
+    "table_count": 0
+  }
+}
+EOF
+"##,
+        )?;
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+
+            fs::set_permissions(&helper, fs::Permissions::from_mode(0o755))?;
+        }
+
+        let _env_guard = EnvVarGuard::set_path("SPECFORGE_DOCLING_HELPER", &helper);
+        let mut source_ir = SourceIr::build(&source, &artifact_base)?;
+        source_ir.materialize()?;
+        source_ir.write_to_disk()?;
+
+        assert!(!stale_root.join("stale.txt").exists());
+        assert!(stale_root.join("bus_spec.md").exists());
+        assert!(
+            !artifact_base
+                .join("bus_spec")
+                .join("normalized.staging")
+                .exists()
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn pdf_source_ir_failed_materialization_keeps_existing_normalized_artifacts() -> Result<()> {
+        let _env_lock = ENV_LOCK.lock().expect("environment mutex poisoned");
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("bus_spec.pdf");
+        let artifact_base = tempdir.path().join("generated").join("source_ir");
+        let helper = tempdir.path().join("docling_stub.sh");
+        let normalized_root = artifact_base.join("bus_spec").join("normalized");
+
+        fs::write(&source, b"%PDF-1.0")?;
+        fs::create_dir_all(&normalized_root)?;
+        fs::write(normalized_root.join("keep.txt"), b"last-good-run")?;
+        fs::write(
+            &helper,
+            r##"#!/bin/sh
+exit 7
+"##,
+        )?;
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+
+            fs::set_permissions(&helper, fs::Permissions::from_mode(0o755))?;
+        }
+
+        let _env_guard = EnvVarGuard::set_path("SPECFORGE_DOCLING_HELPER", &helper);
+        let mut source_ir = SourceIr::build(&source, &artifact_base)?;
+        let error = source_ir
+            .materialize()
+            .expect_err("materialization should fail");
+
+        assert!(error.to_string().contains("exit code: 7"));
+        assert!(normalized_root.join("keep.txt").exists());
+        assert!(
+            !artifact_base
+                .join("bus_spec")
+                .join("normalized.staging")
+                .exists()
+        );
 
         Ok(())
     }

@@ -7,6 +7,25 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-18 Generated artifact cleanup and SourceIR normalized-bundle hygiene
+- Added a first-class `specforge clean` command instead of leaving artifact cleanup as an undocumented manual shell habit.
+- Scope design is intentionally conservative:
+  - default scope is `source-normalized`
+  - default mode is dry-run
+  - `--execute` is required before deletion
+  - `--scope document [--document-key <key>]` exists when a whole per-document generated reset is intentional
+- The narrow default matters because the heavyweight disk cost is usually in `generated/source_ir/<document_key>/normalized`, while `source_ir.json`, downstream IR JSON, validation reports, and learned priors are much smaller and are more often worth keeping.
+- SourceIR PDF normalization now stages into `normalized.staging` and only replaces `normalized` after backend success.
+- That staging swap solves two problems at once:
+  - stale images/crops/backend dumps from earlier runs no longer survive silently beside the new normalization
+  - a failed rerun no longer destroys the previous good normalized bundle before the replacement exists
+- Added focused tests for:
+  - cleanup scope discovery and execute-mode deletion
+  - stale normalized-bundle replacement
+  - failed materialization preserving the previous normalized bundle
+- Ran the new cleanup command locally on the current workspace and reclaimed about `432.5 MiB`, reducing `generated/source_ir` from about `442 MiB` to about `4.9 MiB`.
+- Formatting, focused tests, docs CI, and full local CI passed. Full local CI reports `347` Rust tests plus warning-deny Clippy/rustdoc and the mdBook build.
+
 ## 2026-04-18 Adapter duplicate top-port width conflict collapse
 - Extended explicit top-boundary evidence hardening from direction into width.
 - Previous behavior let duplicate top-port declarations overwrite the per-port numeric width used by endpoint resolution and the blocked artifact surface.
