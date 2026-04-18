@@ -204,6 +204,7 @@ That recovered boundary role remains visible in the adapter artifact even when a
 That path is composition-topology recovery, not actor-graph inference; it does not create undeclared child ports, and conflicting or unresolved top or child directions still block.
 If a top declaration says a boundary port is an output but link topology uses that same boundary endpoint as a source, the adapter collapses the boundary direction to unresolved rather than keeping the stale declaration in the blocked artifact.
 The same collapse applies when duplicate top-port declarations disagree about direction; duplicate declarations still block, but the artifact no longer lets the later declaration overwrite the earlier one.
+The same idea now applies to duplicate top-port widths too: duplicate width disagreement blocks and collapses the blocked artifact width instead of leaving a last-writer numeric width behind.
 For example, if the same child signal is used as both a link source and a link target, the adapter keeps that child port direction unresolved rather than choosing one topology interpretation.
 
 This is still conservative.

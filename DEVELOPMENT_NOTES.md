@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-18 Adapter duplicate top-port width conflict collapse
+- Extended explicit top-boundary evidence hardening from direction into width.
+- Previous behavior let duplicate top-port declarations overwrite the per-port numeric width used by endpoint resolution and the blocked artifact surface.
+- New behavior keeps duplicate detection as a hard blocker while merging duplicate width evidence through sticky `TopPortWidthEvidence`:
+  - same width remains known, though the duplicate declaration still blocks emission
+  - missing width can be filled by a duplicate declaration
+  - contradictory duplicate widths collapse the resolved width to `None`
+  - once conflicted, later repeated width evidence cannot resurrect the value
+- Added `top_composition_keeps_duplicate_top_port_width_conflict_unresolved`, where `drive_data` is declared twice as a top output with widths `8` and `16`. The adapter blocks, emits no `.fsm`, keeps direction resolved as output, and exposes unresolved width in both the top candidate and selected top signal inventory.
+- Formatting, the focused new adapter test, the full adapter module, docs CI, and full local CI passed. Full local CI reports `341` Rust tests plus warning-deny Clippy/rustdoc and the mdBook build.
+
 ## 2026-04-18 Adapter duplicate top-port direction conflict collapse
 - Extended explicit top-boundary direction merging so duplicate top-port declarations also use `TopPortDirectionEvidence`.
 - Previous behavior detected duplicate top ports but inserted each declaration into the direction map directly, so a later duplicate could overwrite earlier direction evidence in the blocked artifact.

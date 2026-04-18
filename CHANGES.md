@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-04-18 (Adapter duplicate top-port width conflict collapse)
+
+### Improved: duplicate top-port widths cannot overwrite conflicts
+- Added sticky width-conflict state for duplicate explicit top-port declarations.
+- If duplicate top-port declarations disagree about width, the adapter now collapses the resolved top-port width to `None` instead of letting the later declaration overwrite the earlier one in blocked top artifacts.
+- Added a regression where `drive_data` is declared twice as a top output with widths `8` and `16`; both duplicate top-port entries and both selected top signal-inventory entries keep unresolved width.
+- This closes the sibling truthfulness gap to the duplicate-direction hardening: blocked top artifacts no longer imply a settled boundary width when duplicate canonical declarations disagree.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge top_composition_keeps_duplicate_top_port_width_conflict_unresolved` -> passed
+- `cargo test -p specforge ir::adapters::tests::` -> passed with `40` adapter tests
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `341` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+- README sentinel check -> passed
+
 ## 2026-04-18 (Adapter duplicate top-port direction conflict collapse)
 
 ### Improved: duplicate top-port declarations cannot overwrite conflicts

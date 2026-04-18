@@ -20,7 +20,7 @@ use crate::ir::semantic::{
     SystemResetKind, SystemResetPolarity, SystemResetTargetKind, SystemResetTimingRelation,
 };
 use crate::ir::source::{
-    AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket, document_key,
+    AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket, WidthHint, document_key,
 };
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
@@ -693,6 +693,21 @@ impl TopPortDirectionEvidence {
         Self {
             direction_hint,
             direction_conflicted: false,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+struct TopPortWidthEvidence {
+    width_hint: Option<WidthHint>,
+    width_conflicted: bool,
+}
+
+impl TopPortWidthEvidence {
+    fn new(width_hint: Option<WidthHint>) -> Self {
+        Self {
+            width_hint,
+            width_conflicted: false,
         }
     }
 }
@@ -1992,6 +2007,7 @@ fn analyze_top_renderability(
 
     let mut seen_top_ports = BTreeSet::new();
     let mut top_port_directions = BTreeMap::<String, TopPortDirectionEvidence>::new();
+    let mut top_port_widths = BTreeMap::<String, TopPortWidthEvidence>::new();
     let mut top_ports_by_name = BTreeMap::new();
     for port in &top.ports {
         if !seen_top_ports.insert(port.port_name.clone()) {
@@ -2021,6 +2037,23 @@ fn analyze_top_renderability(
             top_port_directions.insert(
                 port.port_name.clone(),
                 TopPortDirectionEvidence::new(port.direction_hint),
+            );
+        }
+        if let Some(width_evidence) = top_port_widths.get_mut(&port.port_name) {
+            if let Some(width_hint) = port.width_hint.clone() {
+                merge_top_port_width_evidence(
+                    width_evidence,
+                    &port.port_name,
+                    width_hint,
+                    &format!("Duplicate top port declaration `{}`", port.port_name),
+                    &mut blocking_reasons,
+                    &mut required_canonical_enrichments,
+                );
+            }
+        } else {
+            top_port_widths.insert(
+                port.port_name.clone(),
+                TopPortWidthEvidence::new(port.width_hint.clone()),
             );
         }
     }
@@ -2075,7 +2108,10 @@ fn analyze_top_renderability(
             port.port_name.clone(),
             RenderableEndpointPort {
                 direction_hint,
-                width_hint: port.width_hint.as_ref().and_then(|w| w.as_numeric()),
+                width_hint: top_port_widths
+                    .get(&port.port_name)
+                    .and_then(|width| width.width_hint.as_ref())
+                    .and_then(WidthHint::as_numeric),
             },
         );
     }
@@ -2273,6 +2309,9 @@ fn analyze_top_renderability(
             resolved_port.direction_hint = top_port_directions
                 .get(&port.port_name)
                 .and_then(|direction| direction.direction_hint);
+            resolved_port.width_hint = top_port_widths
+                .get(&port.port_name)
+                .and_then(|width| width.width_hint.clone());
             resolved_port
         })
         .collect::<Vec<_>>();
@@ -2351,6 +2390,47 @@ fn merge_top_port_direction_evidence(
             direction_evidence.direction_hint = None;
             direction_evidence.direction_conflicted = true;
         }
+    }
+}
+
+fn merge_top_port_width_evidence(
+    width_evidence: &mut TopPortWidthEvidence,
+    port_name: &str,
+    width_hint: WidthHint,
+    evidence_description: &str,
+    blocking_reasons: &mut Vec<String>,
+    required_canonical_enrichments: &mut BTreeSet<String>,
+) {
+    if width_evidence.width_conflicted {
+        return;
+    }
+
+    match width_evidence.width_hint.as_ref() {
+        None => width_evidence.width_hint = Some(width_hint),
+        Some(existing) if existing == &width_hint => {}
+        Some(existing) => {
+            push_unique_message(
+                blocking_reasons,
+                &format!(
+                    "{evidence_description} implies top port `{port_name}` has width `{}`, but existing top-boundary width evidence is `{}`.",
+                    render_top_port_width_hint(&width_hint),
+                    render_top_port_width_hint(existing),
+                ),
+            );
+            required_canonical_enrichments.insert(
+                "resolve conflicting top boundary port width evidence before lowering `?top:name`"
+                    .to_string(),
+            );
+            width_evidence.width_hint = None;
+            width_evidence.width_conflicted = true;
+        }
+    }
+}
+
+fn render_top_port_width_hint(width_hint: &WidthHint) -> String {
+    match width_hint {
+        WidthHint::Numeric(bits) => bits.to_string(),
+        WidthHint::Parametric(expr) => expr.clone(),
     }
 }
 
@@ -7111,6 +7191,78 @@ mod tests {
                 .blocking_reasons
                 .iter()
                 .any(|reason| reason.contains("Duplicate top port declaration `drive_data`"))
+        );
+        assert!(!fsm.renderability.is_renderable);
+
+        Ok(())
+    }
+
+    #[test]
+    fn top_composition_keeps_duplicate_top_port_width_conflict_unresolved() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "duplicate_top_port_width.md",
+            "# Duplicate Top Port Width\nTop datapath.\n\nTop datapath port drive_data is output width 8.\n\nTop datapath port drive_data is output width 16.\n\nTop datapath child producer uses module producer_core.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n",
+        )?;
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let top_candidate = fsm
+            .top_candidates
+            .iter()
+            .find(|top| top.top_name == "datapath")
+            .expect("top candidate should be present");
+        let duplicate_ports = top_candidate
+            .ports
+            .iter()
+            .filter(|port| port.port_name == "drive_data")
+            .collect::<Vec<_>>();
+        let duplicate_inventory_entries = fsm
+            .signal_inventory
+            .iter()
+            .filter(|signal| signal.signal_name == "drive_data")
+            .collect::<Vec<_>>();
+
+        assert_eq!(duplicate_ports.len(), 2);
+        assert_eq!(duplicate_inventory_entries.len(), 2);
+        assert!(
+            duplicate_ports
+                .iter()
+                .all(|port| port.direction_hint == Some(InterfaceSignalDirection::Output))
+        );
+        assert!(
+            duplicate_inventory_entries
+                .iter()
+                .all(|signal| signal.direction_hint == Some(InterfaceSignalDirection::Output))
+        );
+        assert!(duplicate_ports.iter().all(|port| port.width_hint.is_none()));
+        assert!(
+            duplicate_inventory_entries
+                .iter()
+                .all(|signal| signal.width_hint.is_none())
+        );
+        assert!(
+            top_candidate
+                .renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason.contains("declared more than once"))
+        );
+        assert!(
+            top_candidate
+                .renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason.contains("has width `16`"))
         );
         assert!(!fsm.renderability.is_renderable);
 
