@@ -62,13 +62,32 @@
     "validation": {
       "semantic": {
         "finding_ids_include": [
+          "semantic_alias_dependent_semantic_consensus_present",
           "semantic_alias_dependent_handshake_completion_present"
+        ],
+        "findings_include": [
+          {
+            "finding_id": "semantic_alias_dependent_semantic_consensus_present",
+            "severity": "info",
+            "category": "semantic_role_consensus",
+            "summary_contains": "depend only on alias-grounded evidence",
+            "related_ids_include": ["XREQ", "XACK"]
+          }
         ]
       },
       "intent": {
         "finding_ids_include": [
           "intent_alias_dependent_semantic_consensus_present",
           "intent_alias_dependent_handshake_completion_present"
+        ],
+        "findings_include": [
+          {
+            "finding_id": "intent_alias_dependent_semantic_consensus_present",
+            "severity": "info",
+            "category": "semantic_role_consensus",
+            "summary_contains": "depend only on alias-grounded evidence",
+            "related_ids_include": ["XREQ", "XACK"]
+          }
         ]
       }
     }

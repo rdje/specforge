@@ -91,6 +91,22 @@
           "semantic_prior_guided_semantic_arbitration_present",
           "semantic_prior_guided_semantic_consensus_present"
         ],
+        "findings_include": [
+          {
+            "finding_id": "semantic_prior_guided_semantic_arbitration_present",
+            "severity": "info",
+            "category": "semantic_role_arbitration",
+            "summary_contains": "use learned modality-reliability priors",
+            "related_ids_include": ["XCTRL"]
+          },
+          {
+            "finding_id": "semantic_prior_guided_semantic_consensus_present",
+            "severity": "info",
+            "category": "semantic_role_consensus",
+            "summary_contains": "consensus that was strengthened by learned modality-reliability priors",
+            "related_ids_include": ["XCTRL"]
+          }
+        ],
         "metric_values": {
           "signal_semantic_conflicts": "1",
           "with_multiple_semantic_candidates": "1",
@@ -107,6 +123,22 @@
           "intent_signal_semantic_conflicts_present",
           "intent_prior_guided_semantic_arbitration_present",
           "intent_prior_guided_semantic_consensus_present"
+        ],
+        "findings_include": [
+          {
+            "finding_id": "intent_prior_guided_semantic_arbitration_present",
+            "severity": "info",
+            "category": "semantic_role_arbitration",
+            "summary_contains": "use learned modality-reliability priors",
+            "related_ids_include": ["XCTRL"]
+          },
+          {
+            "finding_id": "intent_prior_guided_semantic_consensus_present",
+            "severity": "info",
+            "category": "semantic_role_consensus",
+            "summary_contains": "consensus that was strengthened by learned modality-reliability priors",
+            "related_ids_include": ["XCTRL"]
+          }
         ],
         "metric_values": {
           "signal_semantic_conflicts": "1",

@@ -7,6 +7,25 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-19 Semantic arbitration finding related IDs
+- The graph and compat-direction slices improved validation honesty on the structural side; the semantic-role side still had a smaller version of the same weakness.
+- Several semantic-role findings already had precise internal selection logic but still surfaced only counts:
+  - non-decisive arbitration
+  - prior-guided arbitration
+  - resolved roles without consensus
+  - alias-dependent consensus
+  - prior-guided consensus
+- That was weaker than necessary because review and rescan planning benefit from knowing which exact canonical signals are implicated.
+- The right boundary here is signal-level related IDs, not new metrics or new canonical state:
+  - metrics still answer "how many signal records are in this condition?"
+  - `related_ids` now answer "which canonical signals currently satisfy that condition?"
+  - validation remains descriptive and does not promote or mutate truth
+- This slice deliberately keeps the existing semantic-role logic intact and only exposes the already-computed canonical signal set more directly.
+- The tracked fixture updates matter because these observability surfaces are easy to regress during later validation cleanup:
+  - `contested_handshake_name_fallback_negative` now locks `XVALID` for non-decisive arbitration
+  - `alias_dependent_handshake_completion_caveat` now locks `XREQ`/`XACK` for alias-dependent consensus
+  - `semantic_modality_reliability_prior_guided_conflict_gold` now locks `XCTRL` for prior-guided arbitration and consensus
+
 ## 2026-04-19 Compat-direction lag related IDs
 - The graph-direction coverage work exposed one more observability gap: once graph evidence recovers direction honestly, the remaining flat compatibility `direction_hint` lag is no longer an abstract count problem. Validation already knows exactly which canonical signals are lagging.
 - Before this slice:

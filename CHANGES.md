@@ -1,5 +1,34 @@
 # CHANGES
 
+## 2026-04-19 (Semantic arbitration findings now name signals)
+
+### Improved: semantic-role arbitration and consensus findings now carry signal-level related IDs
+- `specforge validate` no longer leaves several semantic-role observability findings as count-only summaries when the exact implicated canonical signals are already known.
+- The following findings now emit signal names in `related_ids` for both `SemanticIR` and `IntentIR`:
+  - `*_non_decisive_semantic_arbitration_present`
+  - `*_prior_guided_semantic_arbitration_present`
+  - `*_resolved_roles_without_consensus_present`
+  - `*_alias_dependent_semantic_consensus_present`
+  - `*_prior_guided_semantic_consensus_present`
+- This is an observability tightening, not a semantic mutation:
+  - the metrics stay unchanged
+  - arbitration, consensus, and conflict logic stay unchanged
+  - validation simply exposes the specific canonical signal names already selected by those truth surfaces
+- Upgraded tracked fixtures now lock the new payloads end to end for:
+  - non-decisive arbitration with blocked handshake fallback
+  - alias-dependent semantic consensus
+  - prior-guided semantic arbitration and consensus
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge validate_intent_ir_reports_alias_dependent_semantic_consensus` -> passed
+- `cargo test -p specforge validate_intent_ir_flags_resolved_roles_without_consensus` -> passed
+- `cargo test -p specforge validate_intent_ir_counts_multiple_semantic_candidates_for_conflicts` -> passed
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality contested_handshake_name_fallback_negative` -> passed
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality alias_dependent_handshake_completion_caveat` -> passed
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality semantic_modality_reliability_prior_guided_conflict_gold` -> passed
+- `bash scripts/run_ci.sh` -> passed with `361` Rust tests and the mdBook build
+
 ## 2026-04-19 (Compat-direction lag now names exact signals)
 
 ### Improved: compatibility-direction lag findings are now precise and graph-scoped

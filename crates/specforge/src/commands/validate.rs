@@ -904,6 +904,31 @@ fn interface_signals_with_non_decisive_semantic_arbitration_count(
         .count()
 }
 
+fn interface_signal_names_matching(
+    interfaces: &[crate::ir::semantic::InterfaceRecord],
+    mut predicate: impl FnMut(&crate::ir::semantic::InterfaceSignalRecord) -> bool,
+) -> Vec<String> {
+    interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+        .filter(|signal| predicate(signal))
+        .map(|signal| signal.signal_name.clone())
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect()
+}
+
+fn interface_signals_with_non_decisive_semantic_arbitration(
+    interfaces: &[crate::ir::semantic::InterfaceRecord],
+) -> Vec<String> {
+    interface_signal_names_matching(interfaces, |signal| {
+        signal
+            .semantic_arbitration
+            .as_ref()
+            .is_some_and(|arbitration| !arbitration.decisive)
+    })
+}
+
 fn interface_signals_with_prior_guided_semantic_arbitration_count(
     interfaces: &[crate::ir::semantic::InterfaceRecord],
 ) -> usize {
@@ -923,6 +948,23 @@ fn interface_signals_with_prior_guided_semantic_arbitration_count(
                 })
         })
         .count()
+}
+
+fn interface_signals_with_prior_guided_semantic_arbitration(
+    interfaces: &[crate::ir::semantic::InterfaceRecord],
+) -> Vec<String> {
+    interface_signal_names_matching(interfaces, |signal| {
+        signal
+            .semantic_arbitration
+            .as_ref()
+            .is_some_and(|arbitration| {
+                arbitration.decisive
+                    && matches!(
+                        arbitration.decision_basis,
+                        crate::ir::semantic::SemanticArbitrationDecisionBasis::PriorGuidedMargin
+                    )
+            })
+    })
 }
 
 fn interface_signals_with_blocked_handshake_name_fallback(
@@ -1007,6 +1049,17 @@ fn interface_signals_with_alias_dependent_semantic_consensus_count(
         .count()
 }
 
+fn interface_signals_with_alias_dependent_semantic_consensus(
+    interfaces: &[crate::ir::semantic::InterfaceRecord],
+) -> Vec<String> {
+    interface_signal_names_matching(interfaces, |signal| {
+        signal
+            .semantic_consensus
+            .as_ref()
+            .is_some_and(|consensus| consensus.alias_dependent)
+    })
+}
+
 fn interface_signals_with_prior_guided_semantic_consensus_count(
     interfaces: &[crate::ir::semantic::InterfaceRecord],
 ) -> usize {
@@ -1020,6 +1073,17 @@ fn interface_signals_with_prior_guided_semantic_consensus_count(
                 .is_some_and(|consensus| consensus.prior_guided)
         })
         .count()
+}
+
+fn interface_signals_with_prior_guided_semantic_consensus(
+    interfaces: &[crate::ir::semantic::InterfaceRecord],
+) -> Vec<String> {
+    interface_signal_names_matching(interfaces, |signal| {
+        signal
+            .semantic_consensus
+            .as_ref()
+            .is_some_and(|consensus| consensus.prior_guided)
+    })
 }
 
 fn interface_signal_alias_dependent_semantic_candidates_count(
@@ -1048,6 +1112,14 @@ fn resolved_semantic_roles_without_consensus_count(
             signal.resolved_semantic_role.is_some() && signal.semantic_consensus.is_none()
         })
         .count()
+}
+
+fn resolved_semantic_roles_without_consensus_signal_names(
+    interfaces: &[crate::ir::semantic::InterfaceRecord],
+) -> Vec<String> {
+    interface_signal_names_matching(interfaces, |signal| {
+        signal.resolved_semantic_role.is_some() && signal.semantic_consensus.is_none()
+    })
 }
 
 fn interface_signals_with_visual_semantic_grounding_count(
@@ -1995,8 +2067,12 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         interface_signals_with_decisive_semantic_arbitration_count(&ir.interfaces);
     let with_non_decisive_semantic_arbitration =
         interface_signals_with_non_decisive_semantic_arbitration_count(&ir.interfaces);
+    let non_decisive_semantic_arbitration_signal_names =
+        interface_signals_with_non_decisive_semantic_arbitration(&ir.interfaces);
     let with_prior_guided_semantic_arbitration =
         interface_signals_with_prior_guided_semantic_arbitration_count(&ir.interfaces);
+    let prior_guided_semantic_arbitration_signal_names =
+        interface_signals_with_prior_guided_semantic_arbitration(&ir.interfaces);
     let blocked_handshake_name_fallback =
         interface_signals_with_blocked_handshake_name_fallback(&ir.interfaces);
     let with_resolved_semantic_role =
@@ -2006,12 +2082,18 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         interface_signals_with_high_confidence_semantic_consensus_count(&ir.interfaces);
     let with_alias_dependent_semantic_consensus =
         interface_signals_with_alias_dependent_semantic_consensus_count(&ir.interfaces);
+    let alias_dependent_semantic_consensus_signal_names =
+        interface_signals_with_alias_dependent_semantic_consensus(&ir.interfaces);
     let with_prior_guided_semantic_consensus =
         interface_signals_with_prior_guided_semantic_consensus_count(&ir.interfaces);
+    let prior_guided_semantic_consensus_signal_names =
+        interface_signals_with_prior_guided_semantic_consensus(&ir.interfaces);
     let alias_dependent_semantic_candidates =
         interface_signal_alias_dependent_semantic_candidates_count(&ir.interfaces);
     let resolved_semantic_roles_without_consensus =
         resolved_semantic_roles_without_consensus_count(&ir.interfaces);
+    let resolved_semantic_roles_without_consensus_signal_names =
+        resolved_semantic_roles_without_consensus_signal_names(&ir.interfaces);
     let with_single_source_semantic_grounding =
         interface_signals_with_semantic_grounding_strength_count(
             &ir.interfaces,
@@ -2523,7 +2605,11 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             format!(
                 "{with_non_decisive_semantic_arbitration} interface signal(s) still have competing semantic role candidates; the canonical surface preserves the current lead, runner-up, and evidence margin without forcing an unsafe winner"
             ),
-            Vec::new(),
+            non_decisive_semantic_arbitration_signal_names
+                .iter()
+                .take(8)
+                .cloned()
+                .collect(),
         ));
     }
     if with_prior_guided_semantic_arbitration > 0 {
@@ -2534,7 +2620,11 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             format!(
                 "{with_prior_guided_semantic_arbitration} interface signal(s) use learned modality-reliability priors to resolve otherwise competing local semantic-role evidence"
             ),
-            Vec::new(),
+            prior_guided_semantic_arbitration_signal_names
+                .iter()
+                .take(8)
+                .cloned()
+                .collect(),
         ));
     }
     if !blocked_handshake_name_fallback.is_empty() {
@@ -2557,7 +2647,11 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             format!(
                 "{resolved_semantic_roles_without_consensus} resolved semantic role(s) still rely on fallback carry-through without an explicit canonical consensus profile"
             ),
-            Vec::new(),
+            resolved_semantic_roles_without_consensus_signal_names
+                .iter()
+                .take(8)
+                .cloned()
+                .collect(),
         ));
     }
     if with_alias_dependent_semantic_consensus > 0 {
@@ -2568,7 +2662,11 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             format!(
                 "{with_alias_dependent_semantic_consensus} resolved semantic role(s) currently depend only on alias-grounded evidence rather than direct signal mentions or corroborating non-alias modalities"
             ),
-            Vec::new(),
+            alias_dependent_semantic_consensus_signal_names
+                .iter()
+                .take(8)
+                .cloned()
+                .collect(),
         ));
     }
     if with_prior_guided_semantic_consensus > 0 {
@@ -2579,7 +2677,11 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             format!(
                 "{with_prior_guided_semantic_consensus} resolved semantic role(s) now carry explicit consensus that was strengthened by learned modality-reliability priors"
             ),
-            Vec::new(),
+            prior_guided_semantic_consensus_signal_names
+                .iter()
+                .take(8)
+                .cloned()
+                .collect(),
         ));
     }
     if !ir.actor_ports.is_empty() && missing_graph_direction_count > 0 {
@@ -3069,8 +3171,12 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         interface_signals_with_decisive_semantic_arbitration_count(&ir.interfaces);
     let with_non_decisive_semantic_arbitration =
         interface_signals_with_non_decisive_semantic_arbitration_count(&ir.interfaces);
+    let non_decisive_semantic_arbitration_signal_names =
+        interface_signals_with_non_decisive_semantic_arbitration(&ir.interfaces);
     let with_prior_guided_semantic_arbitration =
         interface_signals_with_prior_guided_semantic_arbitration_count(&ir.interfaces);
+    let prior_guided_semantic_arbitration_signal_names =
+        interface_signals_with_prior_guided_semantic_arbitration(&ir.interfaces);
     let blocked_handshake_name_fallback =
         interface_signals_with_blocked_handshake_name_fallback(&ir.interfaces);
     let with_resolved_semantic_role =
@@ -3080,12 +3186,18 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         interface_signals_with_high_confidence_semantic_consensus_count(&ir.interfaces);
     let with_alias_dependent_semantic_consensus =
         interface_signals_with_alias_dependent_semantic_consensus_count(&ir.interfaces);
+    let alias_dependent_semantic_consensus_signal_names =
+        interface_signals_with_alias_dependent_semantic_consensus(&ir.interfaces);
     let with_prior_guided_semantic_consensus =
         interface_signals_with_prior_guided_semantic_consensus_count(&ir.interfaces);
+    let prior_guided_semantic_consensus_signal_names =
+        interface_signals_with_prior_guided_semantic_consensus(&ir.interfaces);
     let alias_dependent_semantic_candidates =
         interface_signal_alias_dependent_semantic_candidates_count(&ir.interfaces);
     let resolved_semantic_roles_without_consensus =
         resolved_semantic_roles_without_consensus_count(&ir.interfaces);
+    let resolved_semantic_roles_without_consensus_signal_names =
+        resolved_semantic_roles_without_consensus_signal_names(&ir.interfaces);
     let with_single_source_semantic_grounding =
         interface_signals_with_semantic_grounding_strength_count(
             &ir.interfaces,
@@ -3640,7 +3752,11 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             format!(
                 "{with_non_decisive_semantic_arbitration} declared signal(s) still have competing semantic role candidates; the canonical surface preserves the current lead, runner-up, and evidence margin without forcing an unsafe winner"
             ),
-            Vec::new(),
+            non_decisive_semantic_arbitration_signal_names
+                .iter()
+                .take(8)
+                .cloned()
+                .collect(),
         ));
     }
     if with_prior_guided_semantic_arbitration > 0 {
@@ -3651,7 +3767,11 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             format!(
                 "{with_prior_guided_semantic_arbitration} declared signal(s) use learned modality-reliability priors to resolve otherwise competing local semantic-role evidence"
             ),
-            Vec::new(),
+            prior_guided_semantic_arbitration_signal_names
+                .iter()
+                .take(8)
+                .cloned()
+                .collect(),
         ));
     }
     if !blocked_handshake_name_fallback.is_empty() {
@@ -3674,7 +3794,11 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             format!(
                 "{resolved_semantic_roles_without_consensus} resolved semantic role(s) still rely on fallback carry-through without an explicit canonical consensus profile"
             ),
-            Vec::new(),
+            resolved_semantic_roles_without_consensus_signal_names
+                .iter()
+                .take(8)
+                .cloned()
+                .collect(),
         ));
     }
     if with_alias_dependent_semantic_consensus > 0 {
@@ -3685,7 +3809,11 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             format!(
                 "{with_alias_dependent_semantic_consensus} resolved semantic role(s) currently depend only on alias-grounded evidence rather than direct signal mentions or corroborating non-alias modalities"
             ),
-            Vec::new(),
+            alias_dependent_semantic_consensus_signal_names
+                .iter()
+                .take(8)
+                .cloned()
+                .collect(),
         ));
     }
     if with_prior_guided_semantic_consensus > 0 {
@@ -3696,7 +3824,11 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             format!(
                 "{with_prior_guided_semantic_consensus} resolved semantic role(s) now carry explicit consensus that was strengthened by learned modality-reliability priors"
             ),
-            Vec::new(),
+            prior_guided_semantic_consensus_signal_names
+                .iter()
+                .take(8)
+                .cloned()
+                .collect(),
         ));
     }
     if !ir.actor_ports.is_empty() && missing_graph_direction_count > 0 {
@@ -6682,6 +6814,17 @@ mod tests {
             &report,
             "intent_alias_dependent_semantic_consensus_present"
         ));
+        let finding = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == "intent_alias_dependent_semantic_consensus_present"
+            })
+            .expect("expected alias-dependent semantic consensus finding");
+        assert_eq!(
+            finding.related_ids,
+            vec!["XACK".to_string(), "XREQ".to_string()]
+        );
 
         Ok(())
     }
@@ -7004,6 +7147,12 @@ mod tests {
             &report,
             "intent_resolved_roles_without_consensus_present"
         ));
+        let finding = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "intent_resolved_roles_without_consensus_present")
+            .expect("expected resolved-without-consensus finding");
+        assert_eq!(finding.related_ids, vec!["XREQ".to_string()]);
 
         Ok(())
     }
@@ -7183,6 +7332,14 @@ mod tests {
             &report,
             "intent_non_decisive_semantic_arbitration_present"
         ));
+        let finding = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == "intent_non_decisive_semantic_arbitration_present"
+            })
+            .expect("expected non-decisive semantic arbitration finding");
+        assert_eq!(finding.related_ids, vec!["XCTRL".to_string()]);
 
         Ok(())
     }

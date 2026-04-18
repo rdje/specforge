@@ -22,27 +22,30 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `792c60e`
-- latest_commit_brief_message: `fix(validate): separate graph conflicts from gaps`
-- note: current in-flight slice names exact compat-direction lagging signals and keeps the intent-side warning scoped to graph-backed lag only
+- latest_commit_hash: `cd79915`
+- latest_commit_brief_message: `feat(validate): name compat direction lag`
+- note: current in-flight slice names the exact semantic-role arbitration/consensus signals already implicated by validation instead of leaving those findings count-only
 
 ## Recent commit chain (last 5)
+- `cd79915` feat(validate): name compat direction lag
+- `792c60e` fix(validate): separate graph conflicts from gaps
 - `f8164d0` feat(validate): name graph coverage gaps
 - `eeb67a8` docs: refresh bootstrap analysis snapshot
 - `f813461` fix(validate): emit graph conflict actor ids
-- `08de26a` feat(kg-bench): track graph conflict provenance
 - `c17dda7` feat(kg-bench): assert graph direction conflicts
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- branch is ahead of `origin/main` by eight local commits (`1ae25f8`, `f8359fa`, `c17dda7`, `08de26a`, `f813461`, `eeb67a8`, `f8164d0`, `792c60e`); do not push again until 25 new local commits since the last push at `99808e9` or until the user explicitly asks
+- branch is ahead of `origin/main` by nine local commits (`1ae25f8`, `f8359fa`, `c17dda7`, `08de26a`, `f813461`, `eeb67a8`, `f8164d0`, `792c60e`, `cd79915`); do not push again until 25 new local commits since the last push at `99808e9` or until the user explicitly asks
 - the README/SESSION_BOOTSTRAP handoff has been re-executed from the repo entrypoint and the referenced continuity docs have been reread
-- the active in-flight slice makes compat-direction lag findings concrete:
-  - `semantic_compat_direction_hints_incomplete` now emits signal-level `related_ids`
-  - `intent_compat_direction_hints_lag_graph` now emits signal-level `related_ids` only for graph-backed missing flat hints
-  - `kg-bench` now supports the narrow patch lane `semantic_ir_patch.clear_signal_direction_hints`
-  - the tracked fixture `compat_direction_hints_lag_graph_negative` locks that boundary end to end
-- validation for the in-flight slice has passed through `cargo fmt --all`, `cargo test -p specforge validate_intent_ir_scores_direction_from_graph_before_compat_hints`, `cargo test -p specforge validate_semantic_ir_reports_missing_compat_direction_related_ids`, `cargo test -p specforge kg_bench_supports_semantic_direction_hint_clear_patch`, `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality compat_direction_hints_lag_graph_negative`, `bash scripts/run_ci.sh`, and `cargo run -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality`
+- the active in-flight slice sharpens semantic-role validation observability:
+  - `*_non_decisive_semantic_arbitration_present` now emits signal-level `related_ids`
+  - `*_prior_guided_semantic_arbitration_present` now emits signal-level `related_ids`
+  - `*_resolved_roles_without_consensus_present` now emits signal-level `related_ids`
+  - `*_alias_dependent_semantic_consensus_present` now emits signal-level `related_ids`
+  - `*_prior_guided_semantic_consensus_present` now emits signal-level `related_ids`
+  - tracked fixtures now lock those payloads for non-decisive, alias-dependent, and prior-guided semantic-role surfaces
+- validation for the in-flight slice has passed through `cargo fmt --all`, `cargo test -p specforge validate_intent_ir_reports_alias_dependent_semantic_consensus`, `cargo test -p specforge validate_intent_ir_flags_resolved_roles_without_consensus`, `cargo test -p specforge validate_intent_ir_counts_multiple_semantic_candidates_for_conflicts`, `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality contested_handshake_name_fallback_negative`, `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality alias_dependent_handshake_completion_caveat`, `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality semantic_modality_reliability_prior_guided_conflict_gold`, and `bash scripts/run_ci.sh`
 - the current full local CI baseline for the in-flight slice is `361` Rust tests plus warning-deny rustdoc and the mdBook build
 - README sentinel remains intact after the slice: `Read SESSION_BOOTSTRAP.md and start from there.`
 - latest committed adapter hardening adds sticky conflict collapse for duplicate explicit top-port direction declarations

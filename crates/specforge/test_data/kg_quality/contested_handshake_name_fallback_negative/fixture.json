@@ -153,6 +153,15 @@
           "semantic_non_decisive_semantic_arbitration_present",
           "semantic_handshake_name_fallback_blocked_present",
           "semantic_signal_semantic_conflicts_present"
+        ],
+        "findings_include": [
+          {
+            "finding_id": "semantic_non_decisive_semantic_arbitration_present",
+            "severity": "info",
+            "category": "semantic_role_arbitration",
+            "summary_contains": "still have competing semantic role candidates",
+            "related_ids_include": ["XVALID"]
+          }
         ]
       },
       "intent": {
@@ -160,6 +169,15 @@
           "intent_non_decisive_semantic_arbitration_present",
           "intent_handshake_name_fallback_blocked_present",
           "intent_signal_semantic_conflicts_present"
+        ],
+        "findings_include": [
+          {
+            "finding_id": "intent_non_decisive_semantic_arbitration_present",
+            "severity": "info",
+            "category": "semantic_role_arbitration",
+            "summary_contains": "still have competing semantic role candidates",
+            "related_ids_include": ["XVALID"]
+          }
         ]
       }
     }
