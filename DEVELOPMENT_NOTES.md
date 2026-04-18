@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-18 Adapter top-port direction conflict collapse
+- Added `TopPortDirectionEvidence` for explicit top boundary direction analysis.
+- Previous behavior blocked on contradictory top declaration/topology evidence but could leave the resolved top port carrying the earlier direction hint in the blocked artifact.
+- New behavior is sticky and truth-preserving:
+  - missing top-boundary direction can still be recovered from unambiguous top-link topology
+  - conflicting top-boundary direction evidence records the blocking diagnostic
+  - the resolved top port collapses to `None`
+  - later repeated topology evidence cannot resurrect the direction after conflict
+- Added `top_composition_keeps_conflicting_top_port_direction_unresolved`, where `drive_data` is declared as a top output but used as a top-link source, which implies top input. The adapter blocks, emits no `.fsm`, and exposes `drive_data.direction_hint == None` in both the top candidate and selected top signal inventory.
+- Formatting, the focused new adapter test, the full adapter module, docs CI, and full local CI passed. Full local CI reports `339` Rust tests plus warning-deny Clippy/rustdoc and the mdBook build.
+
 ## 2026-04-18 Adapter system-contract signal conflict guard
 - Added adversarial coverage for the system-contract signal recovery path.
 - Scenario:

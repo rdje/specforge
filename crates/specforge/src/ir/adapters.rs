@@ -683,6 +683,21 @@ struct TopRenderabilityAnalysis {
 }
 
 #[derive(Debug, Clone, Copy)]
+struct TopPortDirectionEvidence {
+    direction_hint: Option<InterfaceSignalDirection>,
+    direction_conflicted: bool,
+}
+
+impl TopPortDirectionEvidence {
+    fn new(direction_hint: Option<InterfaceSignalDirection>) -> Self {
+        Self {
+            direction_hint,
+            direction_conflicted: false,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
 struct RenderableEndpointPort {
     direction_hint: InterfaceSignalDirection,
     width_hint: Option<u32>,
@@ -1976,7 +1991,7 @@ fn analyze_top_renderability(
     }
 
     let mut seen_top_ports = BTreeSet::new();
-    let mut top_port_directions = BTreeMap::<String, Option<InterfaceSignalDirection>>::new();
+    let mut top_port_directions = BTreeMap::<String, TopPortDirectionEvidence>::new();
     let mut top_ports_by_name = BTreeMap::new();
     for port in &top.ports {
         if !seen_top_ports.insert(port.port_name.clone()) {
@@ -1991,7 +2006,10 @@ fn analyze_top_renderability(
                 "deduplicate explicit top-port records before lowering `?top:name`".to_string(),
             );
         }
-        top_port_directions.insert(port.port_name.clone(), port.direction_hint);
+        top_port_directions.insert(
+            port.port_name.clone(),
+            TopPortDirectionEvidence::new(port.direction_hint),
+        );
     }
 
     for link in &top.links {
@@ -2024,7 +2042,10 @@ fn analyze_top_renderability(
     }
 
     for port in &top.ports {
-        let Some(Some(direction_hint)) = top_port_directions.get(&port.port_name) else {
+        let Some(direction_evidence) = top_port_directions.get(&port.port_name) else {
+            continue;
+        };
+        let Some(direction_hint) = direction_evidence.direction_hint else {
             push_unique_message(
                 &mut blocking_reasons,
                 &format!(
@@ -2040,7 +2061,7 @@ fn analyze_top_renderability(
         top_ports_by_name.insert(
             port.port_name.clone(),
             RenderableEndpointPort {
-                direction_hint: *direction_hint,
+                direction_hint,
                 width_hint: port.width_hint.as_ref().and_then(|w| w.as_numeric()),
             },
         );
@@ -2236,8 +2257,9 @@ fn analyze_top_renderability(
         .iter()
         .map(|port| {
             let mut resolved_port = port.clone();
-            resolved_port.direction_hint =
-                top_port_directions.get(&port.port_name).copied().flatten();
+            resolved_port.direction_hint = top_port_directions
+                .get(&port.port_name)
+                .and_then(|direction| direction.direction_hint);
             resolved_port
         })
         .collect::<Vec<_>>();
@@ -2261,20 +2283,23 @@ fn analyze_top_renderability(
 }
 
 fn merge_top_port_direction_from_link(
-    top_port_directions: &mut BTreeMap<String, Option<InterfaceSignalDirection>>,
+    top_port_directions: &mut BTreeMap<String, TopPortDirectionEvidence>,
     port_name: &str,
     direction_hint: InterfaceSignalDirection,
     endpoint_description: &str,
     blocking_reasons: &mut Vec<String>,
     required_canonical_enrichments: &mut BTreeSet<String>,
 ) {
-    let Some(existing_direction) = top_port_directions.get_mut(port_name) else {
+    let Some(direction_evidence) = top_port_directions.get_mut(port_name) else {
         return;
     };
+    if direction_evidence.direction_conflicted {
+        return;
+    }
 
-    match existing_direction {
-        None => *existing_direction = Some(direction_hint),
-        Some(existing) if *existing == direction_hint => {}
+    match direction_evidence.direction_hint {
+        None => direction_evidence.direction_hint = Some(direction_hint),
+        Some(existing) if existing == direction_hint => {}
         Some(existing) => {
             push_unique_message(
                 blocking_reasons,
@@ -2288,6 +2313,8 @@ fn merge_top_port_direction_from_link(
                 "resolve conflicting top boundary port direction evidence before lowering `?top:name`"
                     .to_string(),
             );
+            direction_evidence.direction_hint = None;
+            direction_evidence.direction_conflicted = true;
         }
     }
 }
@@ -6935,6 +6962,55 @@ mod tests {
                 .iter()
                 .any(|reason| reason.contains("missing explicit module `missing_module`"))
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn top_composition_keeps_conflicting_top_port_direction_unresolved() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "conflicting_top_port_direction.md",
+            "# Conflicting Top Port Direction\nTop datapath.\n\nTop datapath port drive_data is output width 8.\n\nTop datapath port result_data is output width 8.\n\nTop datapath child consumer uses module consumer_core.\n\nTop datapath link drive_data -> consumer.input_data.\n\nTop datapath link consumer.result_data -> result_data.\n\nModule consumer_core signal input_data is input width 8.\n\nModule consumer_core signal result_data is output width 8.\n\nModule consumer_core block route: result_data = input_data.\n",
+        )?;
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let top_candidate = fsm
+            .top_candidates
+            .iter()
+            .find(|top| top.top_name == "datapath")
+            .expect("top candidate should be present");
+        let recovered_port = top_candidate
+            .ports
+            .iter()
+            .find(|port| port.port_name == "drive_data")
+            .expect("conflicting top port should remain visible");
+        let signal_inventory_port = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "drive_data")
+            .expect("conflicting top port should stay in selected top inventory");
+
+        assert_eq!(recovered_port.direction_hint, None);
+        assert_eq!(signal_inventory_port.direction_hint, None);
+        assert!(
+            top_candidate
+                .renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason.contains("implies top port `drive_data` is `input`"))
+        );
+        assert!(!fsm.renderability.is_renderable);
 
         Ok(())
     }

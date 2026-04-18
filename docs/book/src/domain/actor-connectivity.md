@@ -202,6 +202,7 @@ If a top boundary port has width but no flat direction, explicit link topology c
 The same explicit links can recover existing child module port roles before module renderability analysis: a child endpoint used as a link source is a module output, and a child endpoint used as a link target is a module input.
 That recovered boundary role remains visible in the adapter artifact even when another composition gate still blocks emission, such as a missing child module.
 That path is composition-topology recovery, not actor-graph inference; it does not create undeclared child ports, and conflicting or unresolved top or child directions still block.
+If a top declaration says a boundary port is an output but link topology uses that same boundary endpoint as a source, the adapter collapses the boundary direction to unresolved rather than keeping the stale declaration in the blocked artifact.
 For example, if the same child signal is used as both a link source and a link target, the adapter keeps that child port direction unresolved rather than choosing one topology interpretation.
 
 This is still conservative.

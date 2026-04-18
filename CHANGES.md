@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-04-18 (Adapter top-port direction conflict collapse)
+
+### Improved: conflicting top-boundary direction evidence stays unresolved
+- Added sticky direction-conflict state for explicit top boundary ports during `.fsm` composition analysis.
+- If a top port declaration and top-link topology disagree, the adapter now records the conflict, collapses the resolved top-port direction to `None`, and keeps the selected top signal inventory unresolved.
+- Added a regression where `drive_data` is declared as a top output but used as a top-link source, which implies top input; lowering stays blocked and no `.fsm` target text is emitted.
+- This keeps blocked adapter artifacts honest: users see the learned uncertainty instead of a stale declaration that looks canonical after contradictory topology was found.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge top_composition_keeps_conflicting_top_port_direction_unresolved` -> passed
+- `cargo test -p specforge ir::adapters::tests::` -> passed with `38` adapter tests
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `339` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+- README sentinel check -> passed
+
 ## 2026-04-18 (Adapter system-contract signal conflict guard)
 
 ### Added: system-contract recovery cannot override contradictory signal shape
