@@ -1,5 +1,26 @@
 # CHANGES
 
+## 2026-04-19 (Graph-direction conflict vs coverage-gap split)
+
+### Improved: same-actor graph conflicts no longer also trip generic coverage-gap findings
+- `specforge validate` now keeps the graph-direction warning surfaces separate:
+  - `*_graph_direction_conflicts_present` still reports same-actor self-conflicts
+  - `*_graph_direction_coverage_incomplete` now reports only signals with no graph-derived direction coverage outside that conflict set
+- This removes a small but real diagnostic blur. A signal like `PREADY` that already has graph evidence but that evidence conflicts should be reported as a conflict, not as both a conflict and a generic missing-coverage case.
+- Strengthened the direct semantic and intent validator regressions so conflict-only cases now assert the absence of `*_graph_direction_coverage_incomplete`.
+- Updated the tracked `graph_direction_same_actor_conflict_negative` fixture so the benchmark harness also locks that absence directly.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge validate_intent_ir_does_not_credit_conflicting_same_actor_graph_direction` -> passed
+- `cargo test -p specforge validate_semantic_ir_reports_conflicting_same_actor_graph_direction` -> passed
+- `cargo test -p specforge validate_intent_ir_reports_missing_graph_direction_related_ids` -> passed
+- `cargo test -p specforge validate_semantic_ir_reports_missing_graph_direction_related_ids` -> passed
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality graph_direction_same_actor_conflict_negative` -> passed
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality graph_direction_coverage_incomplete_negative` -> passed
+- `bash scripts/run_ci.sh` -> passed with `359` Rust tests and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-19 (Graph-direction coverage finding related IDs)
 
 ### Improved: validation warnings now name signals still missing graph-derived direction

@@ -1545,6 +1545,15 @@
 - `parse_timing_diagram_observation()` now rejects annotations that are exactly a known signal plus one simple sampled-value token such as `HIGH`, `LOW`, `asserted`, or `deasserted`.
 - This closes the follow-on leak where labels such as `XREQ HIGH` could previously survive as `TimingConstraintRecord`s even though the structured `signals[].values[]` path already represents sampled VLM timing values more honestly.
 - The direct semantic regression plus `vlm_timing_spurious_annotation_negative` now lock these two-token known-signal label variants alongside the existing name-only, generic spaced, compact, and multi-token annotation-noise families.
+## Session update (2026-04-19 graph-direction conflict vs coverage-gap split)
+- Continued from commit `f8164d0`, tightening the warning boundary inside validation rather than adding new canonical data.
+- Same-actor graph-direction conflicts no longer also emit the generic `*_graph_direction_coverage_incomplete` finding.
+- The split is now cleaner:
+  - conflict findings mean graph evidence exists but disagrees
+  - coverage-gap findings mean the graph still provides no usable direction for those signals
+- Updated the tracked `graph_direction_same_actor_conflict_negative` fixture to assert `finding_ids_exclude` for the generic coverage-gap finding, so the benchmark surface now locks that non-overlap directly.
+- Formatting, four focused validator regressions, two focused tracked fixture runs, full local CI, and whitespace checking passed for this slice.
+
 ## Session update (2026-04-19 graph-direction coverage finding related IDs)
 - Continued from commit `eeb67a8`, tightening the graph-direction validation surface rather than widening extractor or adapter scope.
 - `semantic_graph_direction_coverage_incomplete` and `intent_graph_direction_coverage_incomplete` now emit the missing signal names in `related_ids` instead of remaining count-only findings.

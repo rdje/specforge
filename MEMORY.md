@@ -22,26 +22,25 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `eeb67a8`
-- latest_commit_brief_message: `docs: refresh bootstrap analysis snapshot`
-- note: current in-flight slice upgrades graph-direction coverage-gap findings to emit the missing signal names directly and adds a tracked mixed-coverage negative fixture plus the matching corpus-KB benchmark refresh
+- latest_commit_hash: `f8164d0`
+- latest_commit_brief_message: `feat(validate): name graph coverage gaps`
+- note: current in-flight slice tightens the warning boundary so same-actor graph conflicts no longer also emit the generic graph-direction coverage-gap finding
 
 ## Recent commit chain (last 5)
+- `f8164d0` feat(validate): name graph coverage gaps
 - `eeb67a8` docs: refresh bootstrap analysis snapshot
 - `f813461` fix(validate): emit graph conflict actor ids
 - `08de26a` feat(kg-bench): track graph conflict provenance
 - `c17dda7` feat(kg-bench): assert graph direction conflicts
-- `f8359fa` docs(corpus-kb): refresh fixture benchmark pages
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- branch is ahead of `origin/main` by six local commits (`1ae25f8`, `f8359fa`, `c17dda7`, `08de26a`, `f813461`, `eeb67a8`); do not push again until 25 new local commits since the last push at `99808e9` or until the user explicitly asks
+- branch is ahead of `origin/main` by seven local commits (`1ae25f8`, `f8359fa`, `c17dda7`, `08de26a`, `f813461`, `eeb67a8`, `f8164d0`); do not push again until 25 new local commits since the last push at `99808e9` or until the user explicitly asks
 - the README/SESSION_BOOTSTRAP handoff has been re-executed from the repo entrypoint and the referenced continuity docs have been reread
-- the active in-flight slice upgrades graph-direction coverage-gap warnings so they now emit the missing signal names in `related_ids` for both `SemanticIR` and `IntentIR`
-- a new tracked fixture `graph_direction_coverage_incomplete_negative` now proves the mixed case where `PREADY` is graph-covered but `PSEL` still lacks graph-derived direction coverage
-- the managed corpus-KB benchmark and pattern projections have been refreshed; the tracked truthfulness suite now reports `91/91` fixtures and the semantic/truthfulness pattern page now reports `50` fixtures
-- validation for the in-flight slice has passed through `cargo fmt --all`, `cargo test -p specforge validate_intent_ir_reports_missing_graph_direction_related_ids`, `cargo test -p specforge validate_semantic_ir_reports_missing_graph_direction_related_ids`, `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality graph_direction_coverage_incomplete_negative`, `bash scripts/run_ci.sh`, `cargo run -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality`, `bash scripts/run_docs_ci.sh`, and `git diff --check`
-- the current full local CI baseline for the in-flight slice is `359` Rust tests plus warning-deny rustdoc and the mdBook build
+- the active in-flight slice tightens graph-direction validation semantics so same-actor self-conflicts no longer also produce the generic `*_graph_direction_coverage_incomplete` finding
+- the tracked `graph_direction_same_actor_conflict_negative` fixture now locks that absence directly through `finding_ids_exclude`
+- validation for the in-flight slice has passed through `cargo fmt --all`, `cargo test -p specforge validate_intent_ir_does_not_credit_conflicting_same_actor_graph_direction`, `cargo test -p specforge validate_semantic_ir_reports_conflicting_same_actor_graph_direction`, `cargo test -p specforge validate_intent_ir_reports_missing_graph_direction_related_ids`, `cargo test -p specforge validate_semantic_ir_reports_missing_graph_direction_related_ids`, `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality graph_direction_same_actor_conflict_negative`, `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality graph_direction_coverage_incomplete_negative`, `bash scripts/run_ci.sh`, and `git diff --check`
+- the current full local CI baseline for the in-flight slice remains `359` Rust tests plus warning-deny rustdoc and the mdBook build
 - README sentinel remains intact after the slice: `Read SESSION_BOOTSTRAP.md and start from there.`
 - latest committed adapter hardening adds sticky conflict collapse for duplicate explicit top-port direction declarations
 - the committed regression declares top port `drive_data` once as output and once as input; expected behavior is unresolved top-port direction in both the top candidate and selected signal inventory, blocked renderability, and no emitted `.fsm` target text

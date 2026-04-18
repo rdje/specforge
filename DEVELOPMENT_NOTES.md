@@ -7,6 +7,18 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-19 Graph-direction conflict vs coverage-gap split
+- The previous slice made coverage-gap findings more precise by naming the missing signals directly.
+- That exposed one remaining wrinkle: same-actor graph conflicts were still eligible for the generic `*_graph_direction_coverage_incomplete` finding because the old count/path treated every unresolved graph direction as a missing-coverage case.
+- That was technically defensible but review-noisy.
+- This slice tightens the boundary:
+  - if graph evidence exists but self-conflicts, report it only through the dedicated conflict surface
+  - if a canonical signal has no graph-derived direction at all, report it through the generic coverage-gap surface
+- In other words:
+  - conflicts mean "the graph said something contradictory"
+  - coverage gaps mean "the graph still said nothing useful"
+- The tracked conflict fixture was updated to assert that absence explicitly, because without a benchmark lock this kind of warning-surface overlap can creep back in very easily during future validation edits.
+
 ## 2026-04-19 Graph-direction coverage finding related IDs
 - The graph-direction conflict surface had become nicely precise, but the sibling coverage-gap warning was still weaker than it needed to be.
 - Before this slice, validation could say "1 signal still lacks graph-derived direction coverage" without naming which signal that was.

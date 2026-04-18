@@ -477,11 +477,15 @@ fn graph_direction_conflict_related_id(conflict: &GraphDirectionConflictRecord) 
 fn missing_graph_direction_signal_names<'a>(
     signals: impl IntoIterator<Item = &'a crate::ir::semantic::InterfaceSignalRecord>,
     graph_direction_signal_names: &BTreeSet<String>,
+    conflicted_signal_names: &BTreeSet<String>,
 ) -> Vec<String> {
     signals
         .into_iter()
         .map(|signal| signal.signal_name.clone())
-        .filter(|signal_name| !graph_direction_signal_names.contains(signal_name))
+        .filter(|signal_name| {
+            !graph_direction_signal_names.contains(signal_name)
+                && !conflicted_signal_names.contains(signal_name)
+        })
         .collect::<BTreeSet<_>>()
         .into_iter()
         .collect()
@@ -1922,6 +1926,7 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     let missing_graph_direction_signal_names = missing_graph_direction_signal_names(
         ir.interfaces.iter().flat_map(|i| i.signal_records.iter()),
         graph_direction_signals,
+        graph_direction_conflicts,
     );
     let graph_direction_conflict_related_ids: Vec<String> = graph_direction_summary
         .conflicts
@@ -2351,7 +2356,7 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         .filter(|record| record.consumer_actor_ids.is_empty())
         .map(|record| record.signal_name.clone())
         .collect();
-    let missing_graph_direction_count = total_signals.saturating_sub(with_graph_direction);
+    let missing_graph_direction_count = missing_graph_direction_signal_names.len();
     let missing_compat_direction_count = total_signals.saturating_sub(with_compat_direction_hint);
     let missing_temporal_clock_grounding =
         temporal_rules_missing_clock_grounding_count(&ir.temporal_rules);
@@ -2986,6 +2991,7 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     let missing_graph_direction_signal_names = missing_graph_direction_signal_names(
         declared_signals.iter().copied(),
         graph_direction_signals,
+        graph_direction_conflicts,
     );
     let graph_direction_conflict_related_ids: Vec<String> = graph_direction_summary
         .conflicts
@@ -3459,7 +3465,7 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         .filter(|record| record.consumer_actor_ids.is_empty())
         .map(|record| record.signal_name.clone())
         .collect();
-    let missing_graph_direction_count = declared_count.saturating_sub(with_graph_direction);
+    let missing_graph_direction_count = missing_graph_direction_signal_names.len();
     let missing_temporal_clock_grounding =
         temporal_rules_missing_clock_grounding_count(&ir.temporal_rules);
     let temporal_rules_with_cycle_window =
@@ -5835,6 +5841,10 @@ mod tests {
             finding.related_ids,
             vec!["graph_direction_conflict:actor_completer:PREADY".to_string()]
         );
+        assert!(
+            !has_finding(&report, "intent_graph_direction_coverage_incomplete"),
+            "same-actor graph conflicts should report via the conflict surface rather than the generic coverage-gap finding"
+        );
 
         Ok(())
     }
@@ -5918,6 +5928,10 @@ mod tests {
         assert_eq!(
             finding.related_ids,
             vec!["graph_direction_conflict:actor_completer:PREADY".to_string()]
+        );
+        assert!(
+            !has_finding(&report, "semantic_graph_direction_coverage_incomplete"),
+            "same-actor graph conflicts should report via the conflict surface rather than the generic coverage-gap finding"
         );
 
         Ok(())
