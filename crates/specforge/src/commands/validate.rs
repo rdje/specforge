@@ -1,5 +1,5 @@
 use std::cell::Cell;
-use std::collections::{BTreeSet, HashMap};
+use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -375,11 +375,43 @@ fn intent_negative_knowledge_prior_matches(ir: &IntentIr) -> Vec<String> {
     )
 }
 
-fn graph_direction_signal_names(actor_ports: &[ActorPortRecord]) -> BTreeSet<String> {
-    actor_ports
+pub(crate) fn graph_direction_signal_names(actor_ports: &[ActorPortRecord]) -> BTreeSet<String> {
+    let mut directions_by_signal_actor =
+        BTreeMap::<String, BTreeMap<String, ActorRelativeDirection>>::new();
+    let mut conflicted_signals = BTreeSet::new();
+
+    for port in actor_ports
         .iter()
         .filter(|port| !matches!(port.direction, ActorRelativeDirection::Unknown))
-        .map(|port| port.signal_name.clone())
+    {
+        let actor_key = if port.actor_id.is_empty() {
+            port.actor_name.clone()
+        } else {
+            port.actor_id.clone()
+        };
+        let actor_directions = directions_by_signal_actor
+            .entry(port.signal_name.clone())
+            .or_default();
+        match actor_directions.get(&actor_key).copied() {
+            None => {
+                actor_directions.insert(actor_key, port.direction);
+            }
+            Some(existing) if existing == port.direction => {}
+            Some(_) => {
+                conflicted_signals.insert(port.signal_name.clone());
+            }
+        }
+    }
+
+    directions_by_signal_actor
+        .into_iter()
+        .filter_map(|(signal_name, actor_directions)| {
+            if actor_directions.is_empty() || conflicted_signals.contains(&signal_name) {
+                None
+            } else {
+                Some(signal_name)
+            }
+        })
         .collect()
 }
 
@@ -3905,6 +3937,7 @@ fn sorted_by_value<'a>(map: &'a HashMap<&str, usize>) -> Vec<(&'a &'a str, &'a u
 
 #[cfg(test)]
 mod tests {
+    use std::collections::BTreeSet;
     use std::fs;
 
     use tempfile::tempdir;
@@ -3916,10 +3949,10 @@ mod tests {
     use crate::ir::prior_memory::{
         CorpusMemoryUpdatePolicyRecord, NegativeKnowledgePriorRecord, PriorSourceArtifactRecord,
     };
-    use crate::ir::semantic::SemanticIr;
+    use crate::ir::semantic::{ActorPortRecord, ActorRelativeDirection, SemanticIr};
     use crate::ir::source::{
-        SignalConstraintKind, SignalConstraintRecord, SourceIr, StructuredTableCellRecord,
-        StructuredTableRecord, TableKind, VisualAsset, VisualAssetKind,
+        AutomationConfidence, SignalConstraintKind, SignalConstraintRecord, SourceIr,
+        StructuredTableCellRecord, StructuredTableRecord, TableKind, VisualAsset, VisualAssetKind,
     };
 
     #[test]
@@ -3929,6 +3962,35 @@ mod tests {
             assert!(validation_output_suppressed());
         });
         assert!(!validation_output_suppressed());
+    }
+
+    fn actor_port(
+        actor_name: &str,
+        signal_name: &str,
+        direction: ActorRelativeDirection,
+    ) -> ActorPortRecord {
+        ActorPortRecord {
+            actor_id: format!("actor_{}", actor_name.to_ascii_lowercase()),
+            actor_name: actor_name.to_string(),
+            signal_name: signal_name.to_string(),
+            direction,
+            relation_basis: Vec::new(),
+            width_hint: None,
+            source_statement_ids: Vec::new(),
+            automation_confidence: AutomationConfidence::Medium,
+        }
+    }
+
+    #[test]
+    fn graph_direction_signal_names_excludes_same_actor_conflicts() {
+        let actual = graph_direction_signal_names(&[
+            actor_port("Completer", "PREADY", ActorRelativeDirection::Output),
+            actor_port("Completer", "PREADY", ActorRelativeDirection::Input),
+            actor_port("Requester", "PADDR", ActorRelativeDirection::Output),
+            actor_port("Completer", "PADDR", ActorRelativeDirection::Input),
+        ]);
+
+        assert_eq!(actual, BTreeSet::from(["PADDR".to_string()]));
     }
 
     fn build_semantic_and_intent_from_markdown(
@@ -5515,6 +5577,76 @@ mod tests {
         );
         assert_eq!(
             metric_value(&graph_only_report, "with_compat_direction_hint"),
+            Some("0")
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_intent_ir_does_not_credit_conflicting_same_actor_graph_direction() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal PREADY is output width 1.\n",
+                "\n",
+                "Signal PADDR is input width 32.\n",
+                "\n",
+                "The Completer drives PREADY.\n",
+                "\n",
+                "The Requester reads PREADY.\n",
+                "\n",
+                "The Requester drives PADDR.\n",
+                "\n",
+                "The Completer samples PADDR.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let mut graph_only_intent = intent_ir.clone();
+        for interface in &mut graph_only_intent.interfaces {
+            for signal in &mut interface.signal_records {
+                signal.direction_hint = None;
+            }
+        }
+        let mut conflicting_port = graph_only_intent
+            .actor_ports
+            .iter()
+            .find(|port| port.actor_name == "Completer" && port.signal_name == "PREADY")
+            .cloned()
+            .expect("Completer PREADY actor port should exist");
+        conflicting_port.direction = ActorRelativeDirection::Input;
+        graph_only_intent.actor_ports.push(conflicting_port);
+
+        let report = validate_intent_ir(&graph_only_intent, "graph_conflict".to_string());
+
+        assert_eq!(metric_value(&report, "with_resolved_direction"), Some("1"));
+        assert_eq!(metric_value(&report, "with_graph_direction"), Some("1"));
+        assert_eq!(
+            metric_value(&report, "with_compat_direction_hint"),
             Some("0")
         );
 

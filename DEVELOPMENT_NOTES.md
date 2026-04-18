@@ -7,6 +7,15 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-18 Graph-direction coverage conflict guard
+- This follow-on `R15` slice is about honesty in evaluation, not about adding a new canonical field.
+- The validator and `kg-bench` were both still slightly too generous: if a signal appeared anywhere in `actor_ports` with a non-`unknown` direction, it counted as graph-backed direction coverage even when the same actor contradicted itself on that same signal.
+- The tightened rule is intentionally narrow:
+  - graph-direction coverage remains signal-level, not a forced collapse back to one flat global direction
+  - different actors may still contribute different directions for the same signal without invalidating graph coverage
+  - but one actor claiming both input and output for the same signal is a local contradiction, so that signal no longer earns graph-direction credit
+- `kg-bench` now calls the same helper as `validate`, which matters because benchmark expectations should test the same truth model that validation reports and scores.
+
 ## 2026-04-18 Adapter graph-backed direction surface split
 - This `R15` slice is not just another adapter polish pass. It closes a real semantic conflation: adapter-local graph evidence and flat compatibility/system-contract direction evidence were still sharing the same `direction_hint` slot.
 - `FsmSignalCandidate` now preserves those surfaces separately:

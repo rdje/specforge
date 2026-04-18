@@ -843,7 +843,7 @@ fn evaluate_canonical_expectations(
         failures,
     );
 
-    let graph_direction_signal_names = graph_direction_signal_names(actor_ports);
+    let graph_direction_signal_names = validate::graph_direction_signal_names(actor_ports);
     assert_includes(
         label,
         "graph_direction_signal_names_include",
@@ -2056,14 +2056,6 @@ fn find_interface_signal<'a>(
         .find(|signal| signal.signal_name == signal_name)
 }
 
-fn graph_direction_signal_names(actor_ports: &[ActorPortRecord]) -> BTreeSet<String> {
-    actor_ports
-        .iter()
-        .filter(|port| !matches!(port.direction, ActorRelativeDirection::Unknown))
-        .map(|port| port.signal_name.clone())
-        .collect()
-}
-
 fn regular_state_names(regular_states: &[RegularStateRecord]) -> BTreeSet<String> {
     regular_states
         .iter()
@@ -2365,15 +2357,34 @@ mod tests {
     use tempfile::tempdir;
 
     use super::{
-        ExpectedValidationFinding, ValidationStageExpectations, evaluate_validation_expectations,
-        run,
+        CanonicalStageExpectations, ExpectedValidationFinding, ValidationStageExpectations,
+        evaluate_canonical_expectations, evaluate_validation_expectations, run,
     };
     use crate::cli::KgBenchArgs;
     use crate::error::AppError;
     use crate::ir::IrStage;
+    use crate::ir::semantic::{ActorPortRecord, ActorRelativeDirection};
     use crate::ir::source::{
-        ValidationFindingRecord, ValidationFindingSeverity, ValidationReportRecord,
+        AutomationConfidence, ValidationFindingRecord, ValidationFindingSeverity,
+        ValidationReportRecord,
     };
+
+    fn actor_port(
+        actor_name: &str,
+        signal_name: &str,
+        direction: ActorRelativeDirection,
+    ) -> ActorPortRecord {
+        ActorPortRecord {
+            actor_id: format!("actor_{}", actor_name.to_ascii_lowercase()),
+            actor_name: actor_name.to_string(),
+            signal_name: signal_name.to_string(),
+            direction,
+            relation_basis: Vec::new(),
+            width_hint: None,
+            source_statement_ids: Vec::new(),
+            automation_confidence: AutomationConfidence::Medium,
+        }
+    }
 
     fn write_one_signal_table_fixture(
         fixture_dir: &Path,
@@ -2446,6 +2457,44 @@ mod tests {
         )?;
 
         Ok(())
+    }
+
+    #[test]
+    fn canonical_expectations_exclude_conflicting_same_actor_graph_direction() {
+        let expectations = CanonicalStageExpectations {
+            graph_direction_signal_names_exclude: vec!["PREADY".to_string()],
+            ..CanonicalStageExpectations::default()
+        };
+        let actor_ports = vec![
+            actor_port("Completer", "PREADY", ActorRelativeDirection::Output),
+            actor_port("Completer", "PREADY", ActorRelativeDirection::Input),
+        ];
+        let mut failures = Vec::new();
+
+        evaluate_canonical_expectations(
+            "semantic",
+            &expectations,
+            &[],
+            &[],
+            &actor_ports,
+            &[],
+            &[],
+            &[],
+            &[],
+            &[],
+            &[],
+            &[],
+            &[],
+            &[],
+            &[],
+            &[],
+            &mut failures,
+        );
+
+        assert!(
+            failures.is_empty(),
+            "conflicting same-actor graph direction should be excluded from graph_direction_signal_names expectations: {failures:?}"
+        );
     }
 
     #[test]

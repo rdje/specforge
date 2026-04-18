@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-04-18 (Graph-direction coverage conflict guard)
+
+### Changed: graph-direction coverage no longer credits same-actor self-conflicts
+- `specforge validate` now treats graph-backed direction coverage as unresolved when the same actor claims contradictory directions for the same signal, instead of counting that signal as graph-resolved merely because non-`unknown` actor ports exist.
+- `specforge kg-bench` now reuses the validator’s graph-direction helper, so fixture expectations and validation metrics share the same honesty rule instead of drifting into separate interpretations.
+- Added focused regressions at both command surfaces:
+  - validation helper and report-level coverage proving conflicting same-actor graph ports do not count as resolved graph direction when compatibility hints are absent
+  - `kg-bench` canonical expectation coverage proving `graph_direction_signal_names_exclude` honors the same conflict guard
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge commands::validate::tests::` -> passed
+- `cargo test -p specforge commands::kg_bench::tests::` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-18 (Adapter graph-backed direction surface split)
 
 ### Changed: adapter-local signal inventory now separates graph direction from compatibility direction
