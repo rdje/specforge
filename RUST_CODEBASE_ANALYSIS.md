@@ -1438,3 +1438,9 @@
 - `is_compact_waveform_sample_label()` now recognizes `Phase1` and `Transfer2` as compact waveform-gutter labels rather than timing constraints.
 - This closes the remaining compact-layout gap inside the existing generic waveform label vocabulary: `phase` and `transfer` were already filtered when tokenized, but not when layout collapsed them into a single token.
 - The direct semantic regression plus `vlm_timing_spurious_annotation_negative` now lock compact phase/transfer labels alongside the existing spaced and compact annotation-noise families.
+
+## Session update (2026-04-18 Multi-token VLM waveform-label rejection)
+- Continued from commit `5996029`, tightening the same annotation-noise boundary for short multi-token waveform-gutter labels.
+- `is_spurious_timing_annotation_label()` now rejects all-generic annotation groups up to four tokens instead of three.
+- This closes a real leak where labels such as `Channel 1 Phase 2` or `Lane 0 Slot 1` could previously survive as `TimingConstraintRecord`s even though every token was already in the generic waveform-label vocabulary.
+- The direct semantic regression plus `vlm_timing_spurious_annotation_negative` now lock these four-token markup labels alongside the shorter spaced and compact label-noise families.

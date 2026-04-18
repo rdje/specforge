@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-04-18 (Multi-token VLM waveform-label rejection)
+
+### Fixed: four-token waveform gutter labels stay out of timing constraints
+- `SemanticIR` now treats pure generic VLM timing annotation groups up to four tokens as low-value waveform markup, so labels such as `Channel 1 Phase 2` and `Lane 0 Slot 1` are rejected alongside shorter annotation noise like `Burst 1` or `Phase1`.
+- This closes a realistic chip-PDF edge case where cramped timing gutters use short multi-token lane/phase labels that still do not express timing law but previously slipped past the `<= 3` generic-token boundary.
+- Strengthened the direct semantic regression and the tracked `vlm_timing_spurious_annotation_negative` KG fixture so these four-token markup labels yield zero timing constraints while grounded `signals[].values[]` samples still author temporal rules.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge vlm_timing_diagram_observation_rejects_label_only_noise` -> passed
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality vlm_timing_spurious_annotation_negative` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+
 ## 2026-04-18 (Compact VLM phase/transfer label rejection)
 
 ### Fixed: compact phase and transfer labels stay out of timing constraints

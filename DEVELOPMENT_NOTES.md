@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-18 Multi-token VLM waveform-label rejection
+- The annotation-noise filter was still bounded a little too tightly: it rejected all-generic label groups only up to three tokens.
+- Real waveform gutters often use short four-token composites like `Channel 1 Phase 2` or `Lane 0 Slot 1`. Those are still pure figure markup, and because every surviving annotation becomes a `TimingConstraintRecord`, letting them through was not an acceptable truthfulness gap.
+- The bounded fix is to raise the pure-generic annotation limit from three tokens to four. That stays narrow enough to avoid sentence-like timing statements, because real timing law still carries non-generic words such as `must`, `after`, `before`, `HIGH`, or `LOW`.
+- The existing `vlm_timing_spurious_annotation_negative` fixture remains the right regression home because this is the same annotation-noise invariant under a slightly richer waveform-gutter surface.
+
 ## 2026-04-18 Compact VLM phase/transfer label rejection
 - The compact bus-label slice still left one realistic waveform-gutter gap: `Phase1` and `Transfer2`. Those labels are already handled when they arrive as separate tokens, but not when layout pressure collapses them into one compact token.
 - The bounded fix is again in `is_compact_waveform_sample_label()`, not in a broader fuzzy matcher. We only need to extend the known compact waveform/bus prefix vocabulary to include `phase` and `transfer`.
