@@ -5073,6 +5073,14 @@ mod tests {
             &report,
             "semantic_non_decisive_semantic_arbitration_present"
         ));
+        let finding = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == "semantic_non_decisive_semantic_arbitration_present"
+            })
+            .expect("expected non-decisive semantic arbitration finding");
+        assert_eq!(finding.related_ids, vec!["XCTRL".to_string()]);
 
         Ok(())
     }
@@ -5398,6 +5406,167 @@ mod tests {
             &report,
             "semantic_handshake_name_fallback_blocked_present"
         ));
+        let finding = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == "semantic_handshake_name_fallback_blocked_present"
+            })
+            .expect("expected blocked handshake fallback finding");
+        assert_eq!(finding.related_ids, vec!["XVALID".to_string()]);
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_semantic_ir_reports_alias_dependent_semantic_consensus() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+
+        let tempdir = tempdir()?;
+        let source = tempdir
+            .path()
+            .join("semantic_alias_grounded_semantic_roles.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal XREQ is input width 1.\n\n",
+                "Signal XACK is input width 1.\n\n",
+                "The request phase indicates that address and control information are valid for transfer.\n\n",
+                "The accept phase indicates that the subordinate can accept the transfer.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir
+            .signal_alias_map
+            .insert("request phase".to_string(), "XREQ".to_string());
+        evidence_ir
+            .signal_alias_map
+            .insert("accept phase".to_string(), "XACK".to_string());
+        evidence_ir.refresh_signal_semantic_hints()?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let report =
+            validate_semantic_ir(&semantic_ir, "alias_grounded_semantic_roles".to_string());
+        assert_eq!(
+            metric_value(&report, "with_alias_dependent_semantic_consensus"),
+            Some("2")
+        );
+        let finding = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == "semantic_alias_dependent_semantic_consensus_present"
+            })
+            .expect("expected alias-dependent semantic consensus finding");
+        assert_eq!(
+            finding.related_ids,
+            vec!["XACK".to_string(), "XREQ".to_string()]
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_semantic_ir_flags_resolved_roles_without_consensus() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+
+        let tempdir = tempdir()?;
+        let source = tempdir
+            .path()
+            .join("semantic_resolved_roles_without_consensus.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal XREQ is output width 1.\n\n",
+                "Signal XACK is input width 1.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_signal_semantic_tags".to_string(),
+            asset_id: "table_signal_semantic_tags".to_string(),
+            page_id: None,
+            caption_text: Some("Handshake signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("XREQ", false),
+                    make_table_cell(
+                        "Indicates that address and control information are valid for transfer.",
+                        false,
+                    ),
+                ],
+                vec![
+                    make_table_cell("XACK", false),
+                    make_table_cell(
+                        "Indicates that the subordinate can accept the transfer.",
+                        false,
+                    ),
+                ],
+            ],
+            row_count: 2,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let mut semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        let xreq = semantic_ir
+            .interfaces
+            .iter_mut()
+            .flat_map(|interface| interface.signal_records.iter_mut())
+            .find(|signal| signal.signal_name == "XREQ")
+            .expect("expected XREQ interface signal");
+        xreq.semantic_consensus = None;
+
+        let report = validate_semantic_ir(
+            &semantic_ir,
+            "resolved_semantic_roles_without_consensus".to_string(),
+        );
+        assert_eq!(
+            metric_value(&report, "resolved_semantic_roles_without_consensus"),
+            Some("1")
+        );
+        let finding = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == "semantic_resolved_roles_without_consensus_present"
+            })
+            .expect("expected resolved-without-consensus finding");
+        assert_eq!(finding.related_ids, vec!["XREQ".to_string()]);
 
         Ok(())
     }

@@ -7,6 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-19 Semantic-stage related-id regression parity
+- The prior slice improved validation observability by naming the exact semantic-role signals in `related_ids`.
+- That slice already had good tracked-fixture protection and direct intent-stage unit coverage, but the semantic-stage unit coverage was thinner than it should have been.
+- That imbalance is a regression risk because:
+  - semantic and intent validation share a lot of local shape
+  - shared helpers reduce duplication, but they can also hide stage-local breakage if only one stage has direct assertions
+- This follow-on slice closes that gap by locking the semantic-stage payloads directly for:
+  - non-decisive semantic arbitration
+  - blocked handshake-name fallback
+  - alias-dependent semantic consensus
+  - resolved roles without consensus
+- The point is not to duplicate every fixture with a unit test. The point is to make sure both canonical validation stages have at least one direct proof for each new related-id surface we just declared important.
+
 ## 2026-04-19 Semantic arbitration finding related IDs
 - The graph and compat-direction slices improved validation honesty on the structural side; the semantic-role side still had a smaller version of the same weakness.
 - Several semantic-role findings already had precise internal selection logic but still surfaced only counts:

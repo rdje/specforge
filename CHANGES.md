@@ -1,5 +1,29 @@
 # CHANGES
 
+## 2026-04-19 (Semantic-stage related-id regression coverage)
+
+### Improved: semantic-stage validator regressions now lock the new semantic-role related IDs directly
+- The previous slice taught semantic-role arbitration/consensus findings to name their canonical signals in `related_ids`.
+- This follow-on slice makes the semantic-stage proof surface match the intent-stage proof surface instead of relying mostly on tracked fixtures and shared code paths.
+- Strengthened existing semantic validator tests so they now assert the exact related-id payload for:
+  - non-decisive semantic arbitration on `XCTRL`
+  - blocked handshake-name fallback on `XVALID`
+- Added direct semantic-stage regressions for:
+  - alias-dependent semantic consensus on `XREQ` / `XACK`
+  - resolved semantic roles without consensus on `XREQ`
+- This is a tests-only hardening slice:
+  - no validation behavior changed
+  - no fixture semantics changed
+  - no canonical IR schema changed
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge validate_semantic_ir_flags_signal_semantic_conflicts` -> passed
+- `cargo test -p specforge validate_semantic_ir_reports_blocked_handshake_name_fallback` -> passed
+- `cargo test -p specforge validate_semantic_ir_reports_alias_dependent_semantic_consensus` -> passed
+- `cargo test -p specforge validate_semantic_ir_flags_resolved_roles_without_consensus` -> passed
+- `bash scripts/run_ci.sh` -> passed with `363` Rust tests and the mdBook build
+
 ## 2026-04-19 (Semantic arbitration findings now name signals)
 
 ### Improved: semantic-role arbitration and consensus findings now carry signal-level related IDs
