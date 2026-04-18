@@ -1198,16 +1198,27 @@ fn inventory_to_signal_candidates(
 }
 
 fn build_module_candidates(intent_ir: &IntentIr) -> Vec<FsmExplicitModuleCandidate> {
+    let topology_directions = collect_module_topology_port_directions(&intent_ir.explicit_tops);
     intent_ir
         .explicit_modules
         .iter()
-        .map(|module| build_module_candidate(module, intent_ir.actor_ports.as_slice()))
+        .map(|module| {
+            build_module_candidate(
+                module,
+                intent_ir.actor_ports.as_slice(),
+                topology_directions
+                    .get(&module.module_name)
+                    .map(Vec::as_slice)
+                    .unwrap_or(&[]),
+            )
+        })
         .collect()
 }
 
 fn build_module_candidate(
     module: &ExplicitModuleRecord,
     actor_ports: &[ActorPortRecord],
+    topology_directions: &[ModuleTopologyPortDirection],
 ) -> FsmExplicitModuleCandidate {
     let mut signal_inventory = build_signal_inventory_map_from_surface(
         &module.interfaces,
@@ -1220,6 +1231,7 @@ fn build_module_candidate(
         actor_ports,
         true,
     );
+    overlay_module_topology_inventory(&mut signal_inventory, topology_directions);
     overlay_module_control_input_inventory(&mut signal_inventory, module);
     let signal_inventory = inventory_to_signal_candidates(signal_inventory);
     let state_candidates = build_state_candidates_from_records(&module.regular_states);
@@ -1253,6 +1265,102 @@ fn build_module_candidate(
         transition_candidates,
         renderability,
         renderable_module,
+    }
+}
+
+#[derive(Debug)]
+struct ModuleTopologyPortDirection {
+    signal_name: String,
+    direction_hint: InterfaceSignalDirection,
+    supporting_canonical_ids: Vec<String>,
+    automation_confidence: AutomationConfidence,
+}
+
+fn collect_module_topology_port_directions(
+    explicit_tops: &[ExplicitTopRecord],
+) -> BTreeMap<String, Vec<ModuleTopologyPortDirection>> {
+    let mut directions = BTreeMap::<String, Vec<ModuleTopologyPortDirection>>::new();
+
+    for top in explicit_tops {
+        let child_modules = top
+            .children
+            .iter()
+            .map(|child| {
+                (
+                    child.instance_name.clone(),
+                    child.source_module_name.clone(),
+                )
+            })
+            .collect::<BTreeMap<_, _>>();
+
+        for link in &top.links {
+            record_module_topology_port_direction(
+                &mut directions,
+                &child_modules,
+                &link.source,
+                InterfaceSignalDirection::Output,
+                link,
+            );
+            record_module_topology_port_direction(
+                &mut directions,
+                &child_modules,
+                &link.target,
+                InterfaceSignalDirection::Input,
+                link,
+            );
+        }
+    }
+
+    directions
+}
+
+fn record_module_topology_port_direction(
+    directions: &mut BTreeMap<String, Vec<ModuleTopologyPortDirection>>,
+    child_modules: &BTreeMap<String, String>,
+    endpoint: &ExplicitTopLinkEndpoint,
+    direction_hint: InterfaceSignalDirection,
+    link: &ExplicitTopLinkRecord,
+) {
+    let Some(instance_name) = endpoint.instance_name.as_deref() else {
+        return;
+    };
+    let Some(module_name) = child_modules.get(instance_name) else {
+        return;
+    };
+    let supporting_canonical_ids = if link.supporting_statement_ids.is_empty() {
+        vec![link.link_id.clone()]
+    } else {
+        link.supporting_statement_ids.clone()
+    };
+
+    directions
+        .entry(module_name.clone())
+        .or_default()
+        .push(ModuleTopologyPortDirection {
+            signal_name: endpoint.signal_name.clone(),
+            direction_hint,
+            supporting_canonical_ids,
+            automation_confidence: link.automation_confidence,
+        });
+}
+
+fn overlay_module_topology_inventory(
+    inventory: &mut BTreeMap<String, SignalInventoryEvidence>,
+    topology_directions: &[ModuleTopologyPortDirection],
+) {
+    for direction in topology_directions {
+        if !inventory.contains_key(&direction.signal_name) {
+            continue;
+        }
+        register_canonical_signal_with_supporting_ids(
+            inventory,
+            &direction.signal_name,
+            Some(direction.direction_hint),
+            None,
+            direction.supporting_canonical_ids.clone(),
+            "module_topology_link",
+            direction.automation_confidence,
+        );
     }
 }
 
@@ -6623,6 +6731,85 @@ mod tests {
                 .iter()
                 .any(|category| category == "actor_port")
         );
+        assert!(fsm.renderability.is_renderable);
+        assert!(emitted_text.contains("/producer.output_data/consumer.input_data/"));
+        assert!(emitted_text.contains("/consumer.result_data/result_data/"));
+
+        Ok(())
+    }
+
+    #[test]
+    fn top_composition_recovers_child_directions_from_link_topology() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_explicit_top_composition_intent_ir(tempdir.path())?;
+        clear_explicit_module_direction_hints(&mut intent_ir);
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+        adapter.write_to_disk()?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "renderable");
+        let emitted_target_path = adapter
+            .artifact_layout
+            .emitted_target_path
+            .as_ref()
+            .expect("topology-backed top adapter should emit target text");
+        let emitted_text = fs::read_to_string(emitted_target_path)?;
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let producer = fsm
+            .module_candidates
+            .iter()
+            .find(|candidate| candidate.module_name == "producer_core")
+            .expect("producer module candidate should exist");
+        let consumer = fsm
+            .module_candidates
+            .iter()
+            .find(|candidate| candidate.module_name == "consumer_core")
+            .expect("consumer module candidate should exist");
+
+        let output_data = producer
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "output_data")
+            .expect("producer output_data should stay in the module inventory");
+        let input_data = consumer
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "input_data")
+            .expect("consumer input_data should stay in the module inventory");
+        let result_data = consumer
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "result_data")
+            .expect("consumer result_data should stay in the module inventory");
+
+        assert_eq!(
+            output_data.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert_eq!(
+            input_data.direction_hint,
+            Some(InterfaceSignalDirection::Input)
+        );
+        assert_eq!(
+            result_data.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        for signal in [output_data, input_data, result_data] {
+            assert!(
+                signal
+                    .mention_categories
+                    .iter()
+                    .any(|category| category == "module_topology_link")
+            );
+        }
+        assert!(producer.renderability.is_renderable);
+        assert!(consumer.renderability.is_renderable);
         assert!(fsm.renderability.is_renderable);
         assert!(emitted_text.contains("/producer.output_data/consumer.input_data/"));
         assert!(emitted_text.contains("/consumer.result_data/result_data/"));

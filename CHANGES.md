@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-04-18 (Adapter child-link topology direction recovery)
+
+### Improved: top links can recover existing child module port directions
+- Added a bounded module-topology overlay derived from explicit top links before explicit module renderability analysis.
+- A child endpoint used as a top-link source can recover that module signal as an output; a child endpoint used as a top-link target can recover that module signal as an input.
+- The overlay is conservative: it only applies to signals already present in the child module inventory, does not create ports, does not mutate canonical `IntentIR`, and still uses sticky conflict collapse if other evidence disagrees.
+- Added a top-composition regression where all flat module-local directions are cleared and no actor ports are supplied; the adapter still renders because `producer.output_data -> consumer.input_data` and `consumer.result_data -> result_data` recover the child module port roles from explicit topology.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge top_composition_recovers_child_directions_from_link_topology` -> passed
+- `cargo test -p specforge ir::adapters::tests::` -> passed with `33` adapter tests
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `334` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+- README sentinel check -> passed
+
 ## 2026-04-18 (Adapter explicit-module read conflict guard)
 
 ### Added: module control-read recovery now has conflict regression coverage

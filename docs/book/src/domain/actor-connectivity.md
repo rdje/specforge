@@ -199,8 +199,9 @@ That same guarded direct-root path now has regression coverage for sequential sy
 
 Explicit top composition has one more bounded recovery path.
 If a top boundary port has width but no flat direction, explicit link topology can recover the boundary role: a top endpoint used as a link source is a top input, and a top endpoint used as a link target is a top output.
+The same explicit links can recover existing child module port roles before module renderability analysis: a child endpoint used as a link source is a module output, and a child endpoint used as a link target is a module input.
 That recovered boundary role remains visible in the adapter artifact even when another composition gate still blocks emission, such as a missing child module.
-That path is composition-topology recovery, not actor-graph inference, and conflicting or unresolved top boundary directions still block.
+That path is composition-topology recovery, not actor-graph inference; it does not create undeclared child ports, and conflicting or unresolved top or child directions still block.
 
 This is still conservative.
 Graph `input` and `output` directions can fill the module-local port role, but `in_out` and `unknown` are not turned into fake `.fsm` directions.

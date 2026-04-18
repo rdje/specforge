@@ -7,6 +7,16 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-18 Adapter child-link topology direction recovery
+- Added `collect_module_topology_port_directions`, a bounded projection from explicit top-link endpoints back into child module inventories.
+- Direction semantics are purely positional and topology-local:
+  - child endpoint on a link source means that module signal is an output
+  - child endpoint on a link target means that module signal is an input
+- The overlay only touches signals already present in the module inventory, so a misspelled or undeclared child endpoint cannot synthesize a new module port.
+- The overlay is applied before `overlay_module_control_input_inventory`, and it reuses the existing sticky merge path; contradictory flat, actor-port, control-read, or topology evidence collapses to unresolved and blocks renderability instead of selecting a winner.
+- Added `top_composition_recovers_child_directions_from_link_topology`, which clears module-local `direction_hint` values and supplies no actor ports. The explicit top links alone recover `producer_core.output_data` as output, `consumer_core.input_data` as input, and `consumer_core.result_data` as output, allowing honest `?top:datapath` emission.
+- Formatting, the focused new adapter test, the full adapter module, docs CI, and full local CI passed. Full local CI reports `334` Rust tests plus warning-deny Clippy/rustdoc and the mdBook build.
+
 ## 2026-04-18 Adapter explicit-module read conflict guard
 - Added adversarial coverage for the explicit-module `module_control_input` recovery path.
 - Scenario:
