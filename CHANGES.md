@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-18 (Graph-direction conflict finding provenance)
+
+### Improved: validation warnings now emit actor-aware graph-direction conflict related IDs
+- `specforge validate` now formats same-actor graph-direction conflict findings with stable actor-aware related ids such as `graph_direction_conflict:actor_completer:PREADY` instead of collapsing them to raw signal names.
+- This makes the warning payload match the sharper truth surface already used by the graph-direction coverage summary and the `kg-bench` canonical conflict expectations.
+- The signal-count metric stays intentionally unchanged:
+  - `graph_direction_conflicts` still counts conflicted signals, not actor-signal records
+  - the warning summary now clarifies both the conflicted signal count and the actor-signal conflict record count
+- Updated the tracked `graph_direction_same_actor_conflict_negative` fixture and focused regression coverage so both `SemanticIR` and `IntentIR` validation now lock the actor-aware related-id payload directly.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge validate_intent_ir_does_not_credit_conflicting_same_actor_graph_direction` -> passed
+- `cargo test -p specforge validate_semantic_ir_reports_conflicting_same_actor_graph_direction` -> passed
+- `cargo test -p specforge kg_bench_supports_semantic_actor_port_patch_for_graph_direction_conflicts` -> passed
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality graph_direction_same_actor_conflict_negative` -> passed
+- `bash scripts/run_ci.sh` -> passed with `357` Rust tests and the tracked `90/90` fixture suite
+
 ## 2026-04-18 (KG-bench graph-direction conflict provenance)
 
 ### Added: actor-level graph-direction conflict expectations in `specforge kg-bench`

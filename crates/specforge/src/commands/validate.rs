@@ -462,6 +462,18 @@ pub(crate) fn graph_direction_conflicts(
         .collect()
 }
 
+fn graph_direction_conflict_related_id(conflict: &GraphDirectionConflictRecord) -> String {
+    let actor_key = if conflict.actor_id.is_empty() {
+        conflict.actor_name.as_str()
+    } else {
+        conflict.actor_id.as_str()
+    };
+    format!(
+        "graph_direction_conflict:{actor_key}:{}",
+        conflict.signal_name
+    )
+}
+
 fn is_infrastructure_connectivity_class(class: SignalConnectivityClass) -> bool {
     !matches!(class, SignalConnectivityClass::Protocol)
 }
@@ -1894,6 +1906,12 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     let graph_direction_summary = graph_direction_coverage_summary(&ir.actor_ports);
     let graph_direction_signals = &graph_direction_summary.resolved_signal_names;
     let graph_direction_conflicts = &graph_direction_summary.conflicted_signal_names;
+    let graph_direction_conflict_related_ids: Vec<String> = graph_direction_summary
+        .conflicts
+        .iter()
+        .map(graph_direction_conflict_related_id)
+        .take(8)
+        .collect();
     let (with_direction, with_graph_direction, with_compat_direction_hint) =
         resolved_direction_counts(
             ir.interfaces.iter().flat_map(|i| i.signal_records.iter()),
@@ -2528,10 +2546,11 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             ValidationFindingSeverity::Warning,
             "knowledge_graph",
             format!(
-                "{} signal(s) have conflicting actor-relative directions from the same actor; graph-direction coverage remains intentionally unresolved until upstream graph evidence is clarified",
-                graph_direction_conflicts.len()
+                "{} signal(s) have conflicting actor-relative directions from the same actor across {} actor-signal conflict record(s); graph-direction coverage remains intentionally unresolved until upstream graph evidence is clarified",
+                graph_direction_conflicts.len(),
+                graph_direction_summary.conflicts.len()
             ),
-            graph_direction_conflicts.iter().take(8).cloned().collect(),
+            graph_direction_conflict_related_ids,
         ));
     }
     if missing_compat_direction_count > 0 {
@@ -2943,6 +2962,12 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     let graph_direction_summary = graph_direction_coverage_summary(&ir.actor_ports);
     let graph_direction_signals = &graph_direction_summary.resolved_signal_names;
     let graph_direction_conflicts = &graph_direction_summary.conflicted_signal_names;
+    let graph_direction_conflict_related_ids: Vec<String> = graph_direction_summary
+        .conflicts
+        .iter()
+        .map(graph_direction_conflict_related_id)
+        .take(8)
+        .collect();
     let (with_direction, with_graph_direction, with_compat_direction_hint) =
         resolved_direction_counts(declared_signals.iter().copied(), graph_direction_signals);
     // Both numeric and parametric widths count as "known" — parametric means the
@@ -3620,10 +3645,11 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             ValidationFindingSeverity::Warning,
             "knowledge_graph",
             format!(
-                "{} signal(s) have conflicting actor-relative directions from the same actor; graph-direction coverage remains intentionally unresolved until upstream graph evidence is clarified",
-                graph_direction_conflicts.len()
+                "{} signal(s) have conflicting actor-relative directions from the same actor across {} actor-signal conflict record(s); graph-direction coverage remains intentionally unresolved until upstream graph evidence is clarified",
+                graph_direction_conflicts.len(),
+                graph_direction_summary.conflicts.len()
             ),
-            graph_direction_conflicts.iter().take(8).cloned().collect(),
+            graph_direction_conflict_related_ids,
         ));
     }
     if !ir.actor_ports.is_empty() && with_compat_direction_hint < declared_count {
@@ -5776,7 +5802,10 @@ mod tests {
             .iter()
             .find(|finding| finding.finding_id == "intent_graph_direction_conflicts_present")
             .expect("expected intent graph-direction conflict finding");
-        assert_eq!(finding.related_ids, vec!["PREADY".to_string()]);
+        assert_eq!(
+            finding.related_ids,
+            vec!["graph_direction_conflict:actor_completer:PREADY".to_string()]
+        );
 
         Ok(())
     }
@@ -5828,7 +5857,10 @@ mod tests {
             .iter()
             .find(|finding| finding.finding_id == "semantic_graph_direction_conflicts_present")
             .expect("expected semantic graph-direction conflict finding");
-        assert_eq!(finding.related_ids, vec!["PREADY".to_string()]);
+        assert_eq!(
+            finding.related_ids,
+            vec!["graph_direction_conflict:actor_completer:PREADY".to_string()]
+        );
 
         Ok(())
     }

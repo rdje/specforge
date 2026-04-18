@@ -7,6 +7,20 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-18 Graph-direction conflict finding provenance
+- The prior slice gave `kg-bench` a typed actor-level conflict surface, but validation findings still degraded that same truth back to raw signal names in `related_ids`.
+- That mismatch was not catastrophic, but it was objectively weaker:
+  - the benchmark harness knew `Completer` was the self-conflicting actor on `PREADY`
+  - the validation warning only exposed `PREADY`
+- This slice closes that observability gap by formatting graph-direction conflict `related_ids` from the same actor-level conflict records already computed by validation.
+- Deliberate boundary choices:
+  - keep `graph_direction_conflicts` as a conflicted-signal count, because that metric is about graph coverage loss at the signal level
+  - enrich finding `related_ids` to actor-aware ids, because findings are the right place to carry provenance detail
+  - avoid inventing a second graph-conflict detector or a new canonical data structure just for the warning payload
+- The result is cleaner and more honest:
+  - metrics answer "how many signals lost graph-direction resolution?"
+  - findings answer "which actor-signal self-conflicts caused that loss?"
+
 ## 2026-04-18 KG-bench actor-level graph-direction conflict provenance
 - The previous slice made the conflicted signal set directly assertable, which was already better than inferring conflict from coverage drops plus validation findings.
 - One important piece still stayed implicit, though: which actor was self-conflicting on that signal.

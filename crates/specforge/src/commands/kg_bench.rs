@@ -2736,7 +2736,7 @@ mod tests {
                                     "severity": "warning",
                                     "category": "knowledge_graph",
                                     "summary_contains": "conflicting actor-relative directions from the same actor",
-                                    "related_ids_include": ["PREADY"]
+                                    "related_ids_include": ["graph_direction_conflict:actor_completer:PREADY"]
                                 }
                             ],
                             "metric_values": {
@@ -2751,7 +2751,7 @@ mod tests {
                                     "severity": "warning",
                                     "category": "knowledge_graph",
                                     "summary_contains": "conflicting actor-relative directions from the same actor",
-                                    "related_ids_include": ["PREADY"]
+                                    "related_ids_include": ["graph_direction_conflict:actor_completer:PREADY"]
                                 }
                             ],
                             "metric_values": {
