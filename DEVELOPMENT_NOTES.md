@@ -7,6 +7,25 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-19 Compat-direction lag related IDs
+- The graph-direction coverage work exposed one more observability gap: once graph evidence recovers direction honestly, the remaining flat compatibility `direction_hint` lag is no longer an abstract count problem. Validation already knows exactly which canonical signals are lagging.
+- Before this slice:
+  - `semantic_compat_direction_hints_incomplete` counted missing flat hints but did not name the signals
+  - `intent_compat_direction_hints_lag_graph` also stayed count-only and used a broader missing-flat-hint count than the finding label really justified
+- That was weaker than it should be.
+- The tightened rule is:
+  - semantic-stage compat lag may name every canonical interface signal whose flat `direction_hint` is still absent
+  - intent-stage compat lag should only name graph-backed declared signals whose flat hint is missing
+  - signals with no graph-derived direction at all belong to the graph-coverage surface, not the graph-lagging-compat surface
+- This keeps the warning semantics honest:
+  - graph-first truth remains the stronger source of direction recovery
+  - flat compatibility hints remain useful review-facing carry-through
+  - missing flat hints only become a graph-lag finding when the graph has already done the harder job
+- The new `semantic_ir_patch.clear_signal_direction_hints` lane in `kg-bench` is intentionally narrow for the same reason:
+  - it clears only flat compatibility direction hints
+  - it does not mutate actor ports, signal inventory, or graph evidence
+  - it exists so tracked fixtures can express "graph truth survived, flat compat lagged" without turning the harness into a general semantic rewrite engine
+
 ## 2026-04-19 Graph-direction conflict vs coverage-gap split
 - The previous slice made coverage-gap findings more precise by naming the missing signals directly.
 - That exposed one remaining wrinkle: same-actor graph conflicts were still eligible for the generic `*_graph_direction_coverage_incomplete` finding because the old count/path treated every unresolved graph direction as a missing-coverage case.

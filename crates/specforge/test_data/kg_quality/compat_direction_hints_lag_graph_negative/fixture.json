@@ -1,0 +1,53 @@
+{
+  "name": "compat_direction_hints_lag_graph_negative",
+  "source": "source.md",
+  "semantic_ir_patch": {
+    "clear_signal_direction_hints": ["PREADY", "PADDR"]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["PREADY", "PADDR"],
+      "graph_direction_signal_names_include": ["PREADY", "PADDR"]
+    },
+    "intent": {
+      "signal_names_include": ["PREADY", "PADDR"],
+      "graph_direction_signal_names_include": ["PREADY", "PADDR"]
+    },
+    "validation": {
+      "semantic": {
+        "finding_ids_include": ["semantic_compat_direction_hints_incomplete"],
+        "findings_include": [
+          {
+            "finding_id": "semantic_compat_direction_hints_incomplete",
+            "severity": "info",
+            "category": "compatibility_surface",
+            "summary_contains": "2 interface signal record(s) still lack flat compatibility direction hints",
+            "related_ids_include": ["PADDR", "PREADY"]
+          }
+        ],
+        "metric_values": {
+          "with_resolved_direction": "2",
+          "with_graph_direction": "2",
+          "with_compat_direction_hint": "0"
+        }
+      },
+      "intent": {
+        "finding_ids_include": ["intent_compat_direction_hints_lag_graph"],
+        "findings_include": [
+          {
+            "finding_id": "intent_compat_direction_hints_lag_graph",
+            "severity": "info",
+            "category": "compatibility_surface",
+            "summary_contains": "2 declared signal record(s) still lack flat compatibility direction hints even though actor-relative ports exist",
+            "related_ids_include": ["PADDR", "PREADY"]
+          }
+        ],
+        "metric_values": {
+          "with_resolved_direction": "2",
+          "with_graph_direction": "2",
+          "with_compat_direction_hint": "0"
+        }
+      }
+    }
+  }
+}

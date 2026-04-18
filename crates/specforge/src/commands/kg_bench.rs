@@ -78,6 +78,8 @@ struct EvidenceIrPatch {
 struct SemanticIrPatch {
     #[serde(default)]
     actor_ports_append: Vec<ActorPortRecord>,
+    #[serde(default)]
+    clear_signal_direction_hints: Vec<String>,
 }
 
 #[derive(Debug, Default, Deserialize)]
@@ -635,6 +637,20 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
         semantic_ir
             .actor_ports
             .extend(patch.actor_ports_append.iter().cloned());
+        if !patch.clear_signal_direction_hints.is_empty() {
+            let signal_names: BTreeSet<&str> = patch
+                .clear_signal_direction_hints
+                .iter()
+                .map(String::as_str)
+                .collect();
+            for interface in &mut semantic_ir.interfaces {
+                for signal in &mut interface.signal_records {
+                    if signal_names.contains(signal.signal_name.as_str()) {
+                        signal.direction_hint = None;
+                    }
+                }
+            }
+        }
     }
     semantic_ir.write_to_disk()?;
     let intent_ir = intent::IntentIr::build(
@@ -2756,6 +2772,84 @@ mod tests {
                             ],
                             "metric_values": {
                                 "graph_direction_conflicts": "1"
+                            }
+                        }
+                    }
+                }
+            })
+            .to_string(),
+        )?;
+
+        run(KgBenchArgs {
+            fixtures_root: tempdir.path().to_path_buf(),
+            fixtures: Vec::new(),
+        })?;
+
+        Ok(())
+    }
+
+    #[test]
+    fn kg_bench_supports_semantic_direction_hint_clear_patch() -> crate::error::Result<()> {
+        let tempdir = tempdir()?;
+        let fixture_dir = tempdir.path().join("compat_direction_hint_gap_fixture");
+        fs::create_dir_all(&fixture_dir)?;
+        fs::write(
+            fixture_dir.join("source.md"),
+            concat!(
+                "# Protocol\n",
+                "Signal PREADY is output width 1.\n",
+                "\n",
+                "Signal PADDR is input width 32.\n",
+                "\n",
+                "The Completer drives PREADY.\n",
+                "\n",
+                "The Requester reads PREADY.\n",
+                "\n",
+                "The Requester drives PADDR.\n",
+                "\n",
+                "The Completer samples PADDR.\n"
+            ),
+        )?;
+        fs::write(
+            fixture_dir.join("fixture.json"),
+            serde_json::json!({
+                "name": "compat_direction_hint_gap_fixture",
+                "source": "source.md",
+                "semantic_ir_patch": {
+                    "clear_signal_direction_hints": ["PREADY", "PADDR"]
+                },
+                "expectations": {
+                    "validation": {
+                        "semantic": {
+                            "finding_ids_include": ["semantic_compat_direction_hints_incomplete"],
+                            "findings_include": [
+                                {
+                                    "finding_id": "semantic_compat_direction_hints_incomplete",
+                                    "severity": "info",
+                                    "category": "compatibility_surface",
+                                    "summary_contains": "2 interface signal record(s) still lack flat compatibility direction hints",
+                                    "related_ids_include": ["PADDR", "PREADY"]
+                                }
+                            ],
+                            "metric_values": {
+                                "with_graph_direction": "2",
+                                "with_compat_direction_hint": "0"
+                            }
+                        },
+                        "intent": {
+                            "finding_ids_include": ["intent_compat_direction_hints_lag_graph"],
+                            "findings_include": [
+                                {
+                                    "finding_id": "intent_compat_direction_hints_lag_graph",
+                                    "severity": "info",
+                                    "category": "compatibility_surface",
+                                    "summary_contains": "2 declared signal record(s) still lack flat compatibility direction hints even though actor-relative ports exist",
+                                    "related_ids_include": ["PADDR", "PREADY"]
+                                }
+                            ],
+                            "metric_values": {
+                                "with_graph_direction": "2",
+                                "with_compat_direction_hint": "0"
                             }
                         }
                     }

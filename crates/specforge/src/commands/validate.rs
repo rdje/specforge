@@ -491,6 +491,34 @@ fn missing_graph_direction_signal_names<'a>(
         .collect()
 }
 
+fn missing_compat_direction_signal_names<'a>(
+    signals: impl IntoIterator<Item = &'a crate::ir::semantic::InterfaceSignalRecord>,
+) -> Vec<String> {
+    signals
+        .into_iter()
+        .filter(|signal| signal.direction_hint.is_none())
+        .map(|signal| signal.signal_name.clone())
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect()
+}
+
+fn graph_backed_missing_compat_direction_signal_names<'a>(
+    signals: impl IntoIterator<Item = &'a crate::ir::semantic::InterfaceSignalRecord>,
+    graph_direction_signal_names: &BTreeSet<String>,
+) -> Vec<String> {
+    signals
+        .into_iter()
+        .filter(|signal| {
+            signal.direction_hint.is_none()
+                && graph_direction_signal_names.contains(&signal.signal_name)
+        })
+        .map(|signal| signal.signal_name.clone())
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect()
+}
+
 fn is_infrastructure_connectivity_class(class: SignalConnectivityClass) -> bool {
     !matches!(class, SignalConnectivityClass::Protocol)
 }
@@ -1934,6 +1962,9 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         .map(graph_direction_conflict_related_id)
         .take(8)
         .collect();
+    let missing_compat_direction_signal_names = missing_compat_direction_signal_names(
+        ir.interfaces.iter().flat_map(|i| i.signal_records.iter()),
+    );
     let (with_direction, with_graph_direction, with_compat_direction_hint) =
         resolved_direction_counts(
             ir.interfaces.iter().flat_map(|i| i.signal_records.iter()),
@@ -2357,7 +2388,7 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         .map(|record| record.signal_name.clone())
         .collect();
     let missing_graph_direction_count = missing_graph_direction_signal_names.len();
-    let missing_compat_direction_count = total_signals.saturating_sub(with_compat_direction_hint);
+    let missing_compat_direction_count = missing_compat_direction_signal_names.len();
     let missing_temporal_clock_grounding =
         temporal_rules_missing_clock_grounding_count(&ir.temporal_rules);
     let temporal_rules_with_cycle_window =
@@ -2587,7 +2618,11 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             format!(
                 "{missing_compat_direction_count} interface signal record(s) still lack flat compatibility direction hints"
             ),
-            Vec::new(),
+            missing_compat_direction_signal_names
+                .iter()
+                .take(8)
+                .cloned()
+                .collect(),
         ));
     }
     if !ir.temporal_rules.is_empty() && missing_temporal_clock_grounding > 0 {
@@ -2999,6 +3034,11 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         .map(graph_direction_conflict_related_id)
         .take(8)
         .collect();
+    let graph_backed_missing_compat_direction_signal_names =
+        graph_backed_missing_compat_direction_signal_names(
+            declared_signals.iter().copied(),
+            graph_direction_signals,
+        );
     let (with_direction, with_graph_direction, with_compat_direction_hint) =
         resolved_direction_counts(declared_signals.iter().copied(), graph_direction_signals);
     // Both numeric and parametric widths count as "known" — parametric means the
@@ -3687,16 +3727,20 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             graph_direction_conflict_related_ids,
         ));
     }
-    if !ir.actor_ports.is_empty() && with_compat_direction_hint < declared_count {
+    if !graph_backed_missing_compat_direction_signal_names.is_empty() {
         findings.push(finding(
             "intent_compat_direction_hints_lag_graph",
             ValidationFindingSeverity::Info,
             "compatibility_surface",
             format!(
                 "{} declared signal record(s) still lack flat compatibility direction hints even though actor-relative ports exist",
-                declared_count.saturating_sub(with_compat_direction_hint)
+                graph_backed_missing_compat_direction_signal_names.len()
             ),
-            Vec::new(),
+            graph_backed_missing_compat_direction_signal_names
+                .iter()
+                .take(8)
+                .cloned()
+                .collect(),
         ));
     }
     if !ir.temporal_rules.is_empty() && missing_temporal_clock_grounding > 0 {
@@ -5757,6 +5801,62 @@ mod tests {
         assert_eq!(
             metric_value(&graph_only_report, "with_compat_direction_hint"),
             Some("0")
+        );
+        let finding = graph_only_report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "intent_compat_direction_hints_lag_graph")
+            .expect("expected compat-direction lag finding");
+        assert_eq!(
+            finding.related_ids,
+            vec!["PADDR".to_string(), "PREADY".to_string()]
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_semantic_ir_reports_missing_compat_direction_related_ids() -> Result<()> {
+        let (mut semantic_ir, _) = build_semantic_and_intent_from_markdown(
+            "semantic_compat_direction_gap.md",
+            concat!(
+                "# Protocol\n",
+                "Signal PREADY is output width 1.\n",
+                "\n",
+                "Signal PADDR is input width 32.\n",
+                "\n",
+                "The Completer drives PREADY.\n",
+                "\n",
+                "The Requester reads PREADY.\n",
+                "\n",
+                "The Requester drives PADDR.\n",
+                "\n",
+                "The Completer samples PADDR.\n",
+            ),
+        )?;
+
+        for interface in &mut semantic_ir.interfaces {
+            for signal in &mut interface.signal_records {
+                signal.direction_hint = None;
+            }
+        }
+
+        let report = validate_semantic_ir(&semantic_ir, "semantic_graph_only".to_string());
+
+        assert_eq!(metric_value(&report, "with_resolved_direction"), Some("2"));
+        assert_eq!(metric_value(&report, "with_graph_direction"), Some("2"));
+        assert_eq!(
+            metric_value(&report, "with_compat_direction_hint"),
+            Some("0")
+        );
+        let finding = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "semantic_compat_direction_hints_incomplete")
+            .expect("expected semantic compat-direction gap finding");
+        assert_eq!(
+            finding.related_ids,
+            vec!["PADDR".to_string(), "PREADY".to_string()]
         );
 
         Ok(())

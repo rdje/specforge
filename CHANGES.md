@@ -1,5 +1,27 @@
 # CHANGES
 
+## 2026-04-19 (Compat-direction lag now names exact signals)
+
+### Improved: compatibility-direction lag findings are now precise and graph-scoped
+- `specforge validate` no longer leaves compatibility-direction lag findings as vague count-only notes when the exact lagging signals are already known.
+- `semantic_compat_direction_hints_incomplete` now emits the missing flat-hint signal names in `related_ids`.
+- `intent_compat_direction_hints_lag_graph` now does the same, but only for graph-backed declared signals:
+  - if actor-relative graph evidence already recovers direction for a signal
+  - and the flat compatibility `direction_hint` still lags behind
+  - validation names that exact signal instead of counting every missing flat hint indiscriminately
+- Added a narrow `kg-bench` patch lane, `semantic_ir_patch.clear_signal_direction_hints`, so tracked fixtures can clear flat compatibility direction hints without mutating canonical graph structure or inventing arbitrary semantic rewrites.
+- Added the tracked fixture `compat_direction_hints_lag_graph_negative`, which locks the intended graph-first truth boundary end to end for both `SemanticIR` and `IntentIR`.
+- Refreshed the managed corpus-KB benchmark/pattern projections so the tracked suite now reports `92/92` passing fixtures and the semantic/truthfulness family page now reports `51/51` passing fixtures.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge validate_intent_ir_scores_direction_from_graph_before_compat_hints` -> passed
+- `cargo test -p specforge validate_semantic_ir_reports_missing_compat_direction_related_ids` -> passed
+- `cargo test -p specforge kg_bench_supports_semantic_direction_hint_clear_patch` -> passed
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality compat_direction_hints_lag_graph_negative` -> passed
+- `bash scripts/run_ci.sh` -> passed with `361` Rust tests and the mdBook build
+- `cargo run -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed with `92` fixtures and `0` failures
+
 ## 2026-04-19 (Graph-direction conflict vs coverage-gap split)
 
 ### Improved: same-actor graph conflicts no longer also trip generic coverage-gap findings
