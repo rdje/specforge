@@ -7,6 +7,16 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-18 Adapter child-link topology conflict guard
+- Added adversarial coverage for the new child-link topology recovery path.
+- Scenario:
+  - flat module-local directions are removed
+  - `producer.output_data -> consumer.input_data` says `producer_core.output_data` is a child output
+  - `drive_data -> producer.output_data` says the same child signal is a child input
+- Expected behavior is sticky unresolved direction. The signal inventory keeps `module_topology_link` provenance visible, collapses `producer_core.output_data.direction_hint` to `None`, blocks the producer module with the existing missing-direction diagnostic, and emits no target `.fsm`.
+- This is coverage-only hardening over the topology overlay added in the previous slice: top-link topology may recover absent child port roles, but contradictory topology cannot select a winner.
+- Formatting, the focused new adapter test, the full adapter module, docs CI, and full local CI passed. Full local CI reports `335` Rust tests plus warning-deny Clippy/rustdoc and the mdBook build.
+
 ## 2026-04-18 Adapter child-link topology direction recovery
 - Added `collect_module_topology_port_directions`, a bounded projection from explicit top-link endpoints back into child module inventories.
 - Direction semantics are purely positional and topology-local:

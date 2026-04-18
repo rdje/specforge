@@ -5200,6 +5200,14 @@ mod tests {
         )
     }
 
+    fn build_conflicting_child_link_topology_intent_ir(base: &Path) -> Result<IntentIr> {
+        build_intent_ir_from_markdown(
+            base,
+            "conflicting_child_link_topology.md",
+            "# Explicit Composition\nTop datapath.\n\nTop datapath port drive_data is input width 8.\n\nTop datapath port result_data is output width 8.\n\nTop datapath child producer uses module producer_core.\n\nTop datapath child consumer uses module consumer_core.\n\nTop datapath link producer.output_data -> consumer.input_data.\n\nTop datapath link drive_data -> producer.output_data.\n\nTop datapath link consumer.result_data -> result_data.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n\nModule consumer_core signal input_data is input width 8.\n\nModule consumer_core signal result_data is output width 8.\n\nModule consumer_core block route: result_data = input_data.\n",
+        )
+    }
+
     fn actor_port(
         actor_name: &str,
         signal_name: &str,
@@ -6813,6 +6821,54 @@ mod tests {
         assert!(fsm.renderability.is_renderable);
         assert!(emitted_text.contains("/producer.output_data/consumer.input_data/"));
         assert!(emitted_text.contains("/consumer.result_data/result_data/"));
+
+        Ok(())
+    }
+
+    #[test]
+    fn top_composition_blocks_conflicting_child_link_topology_directions() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_conflicting_child_link_topology_intent_ir(tempdir.path())?;
+        clear_explicit_module_direction_hints(&mut intent_ir);
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let producer = fsm
+            .module_candidates
+            .iter()
+            .find(|candidate| candidate.module_name == "producer_core")
+            .expect("producer module candidate should exist");
+        let output_data = producer
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "output_data")
+            .expect("producer output_data should stay in the module inventory");
+
+        assert_eq!(output_data.direction_hint, None);
+        assert!(
+            output_data
+                .mention_categories
+                .iter()
+                .any(|category| category == "module_topology_link")
+        );
+        assert!(!producer.renderability.is_renderable);
+        assert!(
+            producer
+                .renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason.contains("missing a canonical direction hint"))
+        );
+        assert!(!fsm.renderability.is_renderable);
 
         Ok(())
     }

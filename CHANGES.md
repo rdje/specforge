@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-04-18 (Adapter child-link topology conflict guard)
+
+### Added: conflicting child-link topology stays blocked
+- Added a regression proving child-module direction recovery from top-link topology remains sticky and truth-preserving when topology evidence contradicts itself.
+- The fixture clears all flat module-local directions, then uses `producer.output_data` as both a child link source and a child link target through separate top links.
+- The adapter keeps `producer_core.output_data.direction_hint` unresolved, preserves the `module_topology_link` evidence category, blocks the producer module, and emits no `.fsm` target text.
+- This protects the previous topology recovery slice: explicit links can fill missing child port roles, but contradictory topology still requires upstream correction instead of adapter-side guessing.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge top_composition_blocks_conflicting_child_link_topology_directions` -> passed
+- `cargo test -p specforge ir::adapters::tests::` -> passed with `34` adapter tests
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `335` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+- README sentinel check -> passed
+
 ## 2026-04-18 (Adapter child-link topology direction recovery)
 
 ### Improved: top links can recover existing child module port directions
