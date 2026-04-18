@@ -47,6 +47,8 @@ struct KgBenchFixture {
     #[serde(default)]
     evidence_ir_patch: Option<EvidenceIrPatch>,
     #[serde(default)]
+    semantic_ir_patch: Option<SemanticIrPatch>,
+    #[serde(default)]
     prior_memory_patch: Option<PriorMemoryPatch>,
     #[serde(default)]
     expectations: FixtureExpectations,
@@ -70,6 +72,12 @@ struct EvidenceIrPatch {
     refresh_signal_semantic_hints: bool,
     #[serde(default)]
     signal_constraints: Vec<crate::ir::source::SignalConstraintRecord>,
+}
+
+#[derive(Debug, Default, Deserialize)]
+struct SemanticIrPatch {
+    #[serde(default)]
+    actor_ports_append: Vec<ActorPortRecord>,
 }
 
 #[derive(Debug, Default, Deserialize)]
@@ -605,10 +613,15 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
     } else {
         None
     };
-    let semantic_ir = semantic::SemanticIr::build(
+    let mut semantic_ir = semantic::SemanticIr::build(
         &evidence_ir.artifact_layout.evidence_ir_path,
         &semantic_ir_root,
     )?;
+    if let Some(patch) = fixture.semantic_ir_patch.as_ref() {
+        semantic_ir
+            .actor_ports
+            .extend(patch.actor_ports_append.iter().cloned());
+    }
     semantic_ir.write_to_disk()?;
     let intent_ir = intent::IntentIr::build(
         &semantic_ir.artifact_layout.semantic_ir_path,
@@ -2591,6 +2604,101 @@ mod tests {
         assert!(failures[0].contains("findings_include"));
         assert!(failures[0].contains("missing_conflict"));
         assert!(failures[0].contains("semantic_conflict_0001"));
+    }
+
+    #[test]
+    fn kg_bench_supports_semantic_actor_port_patch_for_graph_direction_conflicts()
+    -> crate::error::Result<()> {
+        let tempdir = tempdir()?;
+        let fixture_dir = tempdir.path().join("graph_direction_conflict_fixture");
+        fs::create_dir_all(&fixture_dir)?;
+        fs::write(
+            fixture_dir.join("source.md"),
+            concat!(
+                "# Protocol\n",
+                "Signal PREADY is output width 1.\n",
+                "\n",
+                "Signal PADDR is input width 32.\n",
+                "\n",
+                "The Completer drives PREADY.\n",
+                "\n",
+                "The Requester reads PREADY.\n",
+                "\n",
+                "The Requester drives PADDR.\n",
+                "\n",
+                "The Completer samples PADDR.\n"
+            ),
+        )?;
+        fs::write(
+            fixture_dir.join("fixture.json"),
+            serde_json::json!({
+                "name": "graph_direction_conflict_fixture",
+                "source": "source.md",
+                "semantic_ir_patch": {
+                    "actor_ports_append": [
+                        {
+                            "actor_id": "actor_completer",
+                            "actor_name": "Completer",
+                            "signal_name": "PREADY",
+                            "direction": "input",
+                            "relation_basis": [],
+                            "source_statement_ids": [],
+                            "automation_confidence": "medium"
+                        }
+                    ]
+                },
+                "expectations": {
+                    "semantic": {
+                        "graph_direction_signal_names_include": ["PADDR"],
+                        "graph_direction_signal_names_exclude": ["PREADY"]
+                    },
+                    "intent": {
+                        "graph_direction_signal_names_include": ["PADDR"],
+                        "graph_direction_signal_names_exclude": ["PREADY"]
+                    },
+                    "validation": {
+                        "semantic": {
+                            "finding_ids_include": ["semantic_graph_direction_conflicts_present"],
+                            "findings_include": [
+                                {
+                                    "finding_id": "semantic_graph_direction_conflicts_present",
+                                    "severity": "warning",
+                                    "category": "knowledge_graph",
+                                    "summary_contains": "conflicting actor-relative directions from the same actor",
+                                    "related_ids_include": ["PREADY"]
+                                }
+                            ],
+                            "metric_values": {
+                                "graph_direction_conflicts": "1"
+                            }
+                        },
+                        "intent": {
+                            "finding_ids_include": ["intent_graph_direction_conflicts_present"],
+                            "findings_include": [
+                                {
+                                    "finding_id": "intent_graph_direction_conflicts_present",
+                                    "severity": "warning",
+                                    "category": "knowledge_graph",
+                                    "summary_contains": "conflicting actor-relative directions from the same actor",
+                                    "related_ids_include": ["PREADY"]
+                                }
+                            ],
+                            "metric_values": {
+                                "graph_direction_conflicts": "1"
+                            }
+                        }
+                    }
+                }
+            })
+            .to_string(),
+        )?;
+
+        run(KgBenchArgs {
+            fixtures_root: tempdir.path().to_path_buf(),
+            fixtures: Vec::new(),
+        })?;
+
+        Ok(())
     }
 
     #[test]

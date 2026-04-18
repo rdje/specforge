@@ -1,0 +1,59 @@
+{
+  "name": "graph_direction_same_actor_conflict_negative",
+  "source": "source.md",
+  "semantic_ir_patch": {
+    "actor_ports_append": [
+      {
+        "actor_id": "actor_completer",
+        "actor_name": "Completer",
+        "signal_name": "PREADY",
+        "direction": "input",
+        "relation_basis": [],
+        "source_statement_ids": [],
+        "automation_confidence": "medium"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "graph_direction_signal_names_include": ["PADDR"],
+      "graph_direction_signal_names_exclude": ["PREADY"]
+    },
+    "intent": {
+      "graph_direction_signal_names_include": ["PADDR"],
+      "graph_direction_signal_names_exclude": ["PREADY"]
+    },
+    "validation": {
+      "semantic": {
+        "finding_ids_include": ["semantic_graph_direction_conflicts_present"],
+        "findings_include": [
+          {
+            "finding_id": "semantic_graph_direction_conflicts_present",
+            "severity": "warning",
+            "category": "knowledge_graph",
+            "summary_contains": "conflicting actor-relative directions from the same actor",
+            "related_ids_include": ["PREADY"]
+          }
+        ],
+        "metric_values": {
+          "graph_direction_conflicts": "1"
+        }
+      },
+      "intent": {
+        "finding_ids_include": ["intent_graph_direction_conflicts_present"],
+        "findings_include": [
+          {
+            "finding_id": "intent_graph_direction_conflicts_present",
+            "severity": "warning",
+            "category": "knowledge_graph",
+            "summary_contains": "conflicting actor-relative directions from the same actor",
+            "related_ids_include": ["PREADY"]
+          }
+        ],
+        "metric_values": {
+          "graph_direction_conflicts": "1"
+        }
+      }
+    }
+  }
+}

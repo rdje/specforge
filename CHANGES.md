@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-04-18 (KG-bench graph-direction conflict fixture lane)
+
+### Changed: `kg-bench` can now express canonical-stage graph-direction conflict fixtures
+- Added a narrow `semantic_ir_patch.actor_ports_append` fixture surface to `specforge kg-bench`, so tracked fixtures can append canonical actor-port records after `SemanticIR` build but before `IntentIR` carry-through.
+- That patch lane is intentionally small and review-friendly: it is just enough to express canonical-stage honesty regressions that are hard to synthesize from raw source text alone, without turning the benchmark harness into a general semantic editor.
+- Added tracked fixture `graph_direction_same_actor_conflict_negative`, which appends a conflicting `Completer -> PREADY` input actor port and proves:
+  - `graph_direction_signal_names` includes `PADDR` but excludes `PREADY`
+  - `SemanticIR` and `IntentIR` validation both report `graph_direction_conflicts: 1`
+  - both stages emit the expected graph-direction conflict warning with `PREADY` as a related id
+- Added focused harness unit coverage so the new patch surface itself is directly protected, not only the tracked fixture outcome.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge kg_bench_supports_semantic_actor_port_patch_for_graph_direction_conflicts` -> passed
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality graph_direction_same_actor_conflict_negative` -> passed
+- `bash scripts/run_ci.sh` -> passed with `357` Rust tests and the tracked `90/90` fixture suite
+
 ## 2026-04-18 (Graph-direction conflict visibility)
 
 ### Changed: graph-direction self-conflicts now surface as first-class validation output

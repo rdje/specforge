@@ -7,6 +7,18 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-18 KG-bench canonical graph-conflict patch lane
+- The new graph-direction conflict validation surface was still protected only by unit tests. That is not enough for a staged extractor whose long-term truth contract lives in tracked fixtures and corpus-facing benchmark refreshes.
+- A source-only fixture cannot always express the exact canonical shape we want to benchmark here, because the normal semantic builder deliberately collapses many local contradictions into safer canonical forms instead of preserving every adversarial intermediate shape verbatim.
+- The answer in this slice is a narrow canonical-stage patch lane, not a general benchmark escape hatch:
+  - `semantic_ir_patch.actor_ports_append` can append actor-port records after normal semantic build
+  - the patched `SemanticIR` is still serialized and then fed through the ordinary `IntentIR` builder
+  - validation and canonical expectation checks still run on the normal stage artifacts
+- This keeps the benchmark harness honest:
+  - we can express review-worthy negative cases such as same-actor graph-direction self-conflicts
+  - we do not grant fixtures arbitrary semantic rewrites
+  - the patch surface remains close to the specific truth boundary we want to test
+
 ## 2026-04-18 Graph-direction conflict visibility
 - The previous slice made graph-direction coverage stricter; this follow-on makes that stricter rule legible.
 - A silent coverage drop is the right scoring behavior, but it is not a good debugging surface. If a signal loses graph-direction credit because one actor contradicted itself, validation should say so explicitly rather than leaving users to infer the cause from a percentage change.
