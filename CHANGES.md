@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-19 (README bootstrap analysis refresh)
+
+### Refreshed: live Rust analysis after re-executing the README bootstrap path
+- Re-ran the repository bootstrap contract from `README.md` through `SESSION_BOOTSTRAP.md`, then reread the linked continuity and user-facing markdown surfaces before re-surveying the active Rust workspace directly from disk.
+- Refreshed `RUST_CODEBASE_ANALYSIS.md` so its bootstrap snapshot now matches the current repository reality:
+  - `31` Rust source files under `crates/specforge/src`
+  - `62,689` total Rust source lines under `crates/specforge/src`
+  - `90` tracked KG-quality fixtures
+  - `357` passing Rust tests in the canonical local CI path
+- This is a docs-only continuity refresh:
+  - no CLI command surface changed
+  - no IR schema, validation rule, benchmark behavior, or adapter logic changed
+  - the goal is to keep the bootstrap/handoff path truthful after the recent graph-direction validation slices
+
+### Validation
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `357` Rust tests and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-18 (Graph-direction conflict finding provenance)
 
 ### Improved: validation warnings now emit actor-aware graph-direction conflict related IDs

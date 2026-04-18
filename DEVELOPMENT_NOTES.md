@@ -7,6 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-19 README bootstrap refresh
+- The bootstrap contract in `SESSION_BOOTSTRAP.md` explicitly says to reread the README-linked markdown surface and then resurvey the Rust codebase.
+- That matters because the root continuity files are part of the operational runtime for this project: they are how a crashed or restarted session becomes trustworthy again.
+- The previous bootstrap snapshot in `RUST_CODEBASE_ANALYSIS.md` had become stale after the recent graph-direction validation/benchmark work:
+  - Rust source line count had grown from `62,017` to `62,689`
+  - tracked KG fixture count had grown from `89` to `90`
+  - canonical local CI test count had grown from `351` to `357`
+- This slice is therefore intentionally docs-only and housekeeping-heavy:
+  - refresh the Rust analysis snapshot to current counts
+  - refresh continuity state in `MEMORY.md`
+  - leave roadmap/status semantics unchanged because no implementation closure changed
+- The outcome we want from a README bootstrap is not prose churn; it is truthful re-entry into the repo's current state.
+
 ## 2026-04-18 Graph-direction conflict finding provenance
 - The prior slice gave `kg-bench` a typed actor-level conflict surface, but validation findings still degraded that same truth back to raw signal names in `related_ids`.
 - That mismatch was not catastrophic, but it was objectively weaker:

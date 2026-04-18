@@ -1418,9 +1418,9 @@
 
 ## Testing implications
 - current full local CI path: `bash scripts/run_ci.sh`
-- current active Rust surface after the README/bootstrap refresh: `31` Rust source files and `62,017` total lines under `crates/specforge/src`
-- current Rust test count observed through the canonical local CI path after the latest slice: 351 library tests, 0 binary tests, and 0 doc tests, all passing under warning-deny Clippy/rustdoc plus the mdBook build
-- current tracked KG-quality fixture count: 89
+- current active Rust surface after the README/bootstrap refresh: `31` Rust source files and `62,689` total lines under `crates/specforge/src`
+- current Rust test count observed through the canonical local CI path after the latest slice: 357 library tests, 0 binary tests, and 0 doc tests, all passing under warning-deny Clippy/rustdoc plus the mdBook build
+- current tracked KG-quality fixture count: 90
 - current tests cover:
   - source-kind detection
   - deterministic source key naming
@@ -1463,7 +1463,13 @@
 
 ## Latest validation completed in this refresh
 - `bash scripts/run_ci.sh`
-  - passed; Rust test suite reported 351 passed tests under warning-deny CI, 0 failures, 0 binary tests, 0 doc tests, rustdoc completed under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build completed successfully
+  - passed; Rust test suite reported 357 passed tests under warning-deny CI, 0 failures, 0 binary tests, 0 doc tests, rustdoc completed under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build completed successfully
+
+## Session update (2026-04-19 README bootstrap analysis refresh)
+- Re-executed the README handoff path through `SESSION_BOOTSTRAP.md`, reread the linked continuity and user-facing markdown surfaces, and resurveyed the active Rust crate layout directly from disk.
+- The current Rust implementation now spans `31` source files and `62,689` lines under `crates/specforge/src`, with the tracked KG fixture suite at `90` and the canonical local CI path at `357` passing Rust tests plus warning-deny rustdoc and mdBook validation.
+- The bootstrap pass did not reveal a new architectural pivot or an unlogged product-surface drift; the recent graph-direction validation work is already represented in the live docs.
+- The meaningful action from this refresh is simply keeping the bootstrap analysis truthful, so future resumed sessions start from current numbers instead of stale ones.
 
 ## Session update (2026-04-18 README bootstrap analysis refresh)
 - Re-executed the README handoff path through `SESSION_BOOTSTRAP.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `MEMORY.md`, and `COMMIT.md`, then resurveyed the active Rust crate layout directly from disk.

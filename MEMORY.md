@@ -22,24 +22,24 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `08de26a`
-- latest_commit_brief_message: `feat(kg-bench): track graph conflict provenance`
-- note: current in-flight slice upgrades validation findings to emit actor-aware graph-direction conflict related ids, so the warning payload matches the actor-level conflict truth already used by the benchmark harness
+- latest_commit_hash: `f813461`
+- latest_commit_brief_message: `fix(validate): emit graph conflict actor ids`
+- note: current in-flight slice is a docs-only README bootstrap refresh that updates the live Rust analysis snapshot and continuity state to match the current repository surface on 2026-04-19
 
 ## Recent commit chain (last 5)
+- `f813461` fix(validate): emit graph conflict actor ids
 - `08de26a` feat(kg-bench): track graph conflict provenance
 - `c17dda7` feat(kg-bench): assert graph direction conflicts
 - `f8359fa` docs(corpus-kb): refresh fixture benchmark pages
 - `1ae25f8` feat(kg-bench): add graph conflict fixture patch lane
-- `99808e9` fix(validate): report graph direction conflicts
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- branch is ahead of `origin/main` by four local commits (`1ae25f8`, `f8359fa`, `c17dda7`, `08de26a`); do not push again until 25 new local commits since the last push at `99808e9` or until the user explicitly asks
+- branch is ahead of `origin/main` by five local commits (`1ae25f8`, `f8359fa`, `c17dda7`, `08de26a`, `f813461`); do not push again until 25 new local commits since the last push at `99808e9` or until the user explicitly asks
 - the README/SESSION_BOOTSTRAP handoff has been re-executed from the repo entrypoint and the referenced continuity docs have been reread
-- the active engineering slice upgrades same-actor graph-direction validation findings from raw signal-name related ids to stable actor-aware related ids such as `graph_direction_conflict:actor_completer:PREADY`
-- the tracked `graph_direction_same_actor_conflict_negative` fixture now locks the validation payload too, so both `SemanticIR` and `IntentIR` warning findings identify the self-conflicting actor instead of only the conflicted signal name
-- validation for the in-flight slice has passed through `cargo fmt --all`, `cargo test -p specforge validate_intent_ir_does_not_credit_conflicting_same_actor_graph_direction`, `cargo test -p specforge validate_semantic_ir_reports_conflicting_same_actor_graph_direction`, `cargo test -p specforge kg_bench_supports_semantic_actor_port_patch_for_graph_direction_conflicts`, `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality graph_direction_same_actor_conflict_negative`, and `bash scripts/run_ci.sh`
+- the active in-flight slice is a README-bootstrap continuity refresh: `RUST_CODEBASE_ANALYSIS.md` is being updated so its repository snapshot matches the current Rust source, fixture, and CI counts
+- no CLI, IR, benchmark, validation, adapter, or mdBook behavior is changing in this slice
+- validation for the in-flight slice has passed through `bash scripts/run_docs_ci.sh`, `bash scripts/run_ci.sh`, and `git diff --check`
 - the current full local CI baseline for the in-flight slice is `357` Rust tests plus warning-deny rustdoc and the mdBook build
 - README sentinel remains intact after the slice: `Read SESSION_BOOTSTRAP.md and start from there.`
 - latest committed adapter hardening adds sticky conflict collapse for duplicate explicit top-port direction declarations
