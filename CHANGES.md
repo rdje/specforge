@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-18 (Adapter explicit-module control-read recovery)
+
+### Improved: standalone explicit modules recover local inputs from module control reads
+- Refactored direct-root output-target and control-read collection into reusable record-slice helpers.
+- Explicit module candidates now overlay module-local `module_control_input` directions after actor-port overlay, using the module's own DT fragments, rich control blocks, state transitions, and init assignments.
+- The recovery is bounded to signals already present in the module inventory and excludes module output targets, so it cannot invent new ports or turn assigned outputs into fake inputs.
+- Added a standalone explicit-module `?fsm` regression where flat module-local direction hints are cleared, the `controller` actor graph only owns clock/reset inputs plus `ACC` / `TRACE` outputs, and external actors drive `DATA_IN`, `GO`, and `DONE`.
+- The test proves the selected explicit module root still renders as `(?fsm:controller)` and recovers `DATA_IN`, `GO`, and `DONE` as module-local inputs from state-body assignments, transition guards, and standalone control blocks.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge standalone_explicit_module_recovers_inputs_from_module_control_reads` -> passed
+- `cargo test -p specforge ir::adapters::tests::` -> passed with `31` adapter tests
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `332` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+- README sentinel check -> passed
+
 ## 2026-04-18 (Adapter structured-FSM graph-read coverage)
 
 ### Added: true FSM roots now have graph-backed control-read regression coverage

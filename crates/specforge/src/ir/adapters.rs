@@ -876,9 +876,21 @@ fn select_direct_actor_name<'a>(
 }
 
 fn collect_direct_output_targets(intent_ir: &IntentIr) -> BTreeSet<String> {
+    collect_output_targets_from_records(
+        &intent_ir.decision_tree_fragments,
+        &intent_ir.control_blocks,
+        &intent_ir.init_assignments,
+    )
+}
+
+fn collect_output_targets_from_records(
+    decision_tree_fragments: &[DecisionTreeFragmentRecord],
+    control_blocks: &[ControlBlockRecord],
+    init_assignments: &[InitAssignmentRecord],
+) -> BTreeSet<String> {
     let mut targets = BTreeSet::new();
 
-    for fragment in &intent_ir.decision_tree_fragments {
+    for fragment in decision_tree_fragments {
         for action in &fragment.actions {
             match action {
                 DecisionTreeActionRecord::Assign { target_signal, .. } => {
@@ -888,7 +900,7 @@ fn collect_direct_output_targets(intent_ir: &IntentIr) -> BTreeSet<String> {
         }
     }
 
-    for block in &intent_ir.control_blocks {
+    for block in control_blocks {
         for branch in &block.branches {
             for action in &branch.actions {
                 collect_control_action_output_targets(action, &mut targets);
@@ -896,7 +908,7 @@ fn collect_direct_output_targets(intent_ir: &IntentIr) -> BTreeSet<String> {
         }
     }
 
-    for init_assignment in &intent_ir.init_assignments {
+    for init_assignment in init_assignments {
         targets.insert(init_assignment.target_signal.clone());
     }
 
@@ -941,9 +953,21 @@ fn overlay_direct_control_input_inventory(
 fn collect_direct_control_input_references(
     intent_ir: &IntentIr,
 ) -> BTreeMap<String, BTreeSet<String>> {
+    collect_control_input_references_from_records(
+        &intent_ir.decision_tree_fragments,
+        &intent_ir.control_blocks,
+        &intent_ir.state_transitions,
+    )
+}
+
+fn collect_control_input_references_from_records(
+    decision_tree_fragments: &[DecisionTreeFragmentRecord],
+    control_blocks: &[ControlBlockRecord],
+    state_transitions: &[StateTransitionRecord],
+) -> BTreeMap<String, BTreeSet<String>> {
     let mut references = BTreeMap::<String, BTreeSet<String>>::new();
 
-    for fragment in &intent_ir.decision_tree_fragments {
+    for fragment in decision_tree_fragments {
         if let Some(guard) = fragment.guard.as_ref() {
             collect_decision_tree_guard_input_references(
                 guard,
@@ -960,7 +984,7 @@ fn collect_direct_control_input_references(
         }
     }
 
-    for block in &intent_ir.control_blocks {
+    for block in control_blocks {
         if let Some(selector) = block.selector.as_ref() {
             collect_control_expression_input_references(selector, &block.block_id, &mut references);
         }
@@ -978,7 +1002,7 @@ fn collect_direct_control_input_references(
         }
     }
 
-    for transition in &intent_ir.state_transitions {
+    for transition in state_transitions {
         if let Some(guard) = transition.guard.as_ref() {
             collect_decision_tree_guard_input_references(
                 guard,
@@ -1196,6 +1220,7 @@ fn build_module_candidate(
         actor_ports,
         true,
     );
+    overlay_module_control_input_inventory(&mut signal_inventory, module);
     let signal_inventory = inventory_to_signal_candidates(signal_inventory);
     let state_candidates = build_state_candidates_from_records(&module.regular_states);
     let transition_candidates = build_transition_candidates_from_records(&module.state_transitions);
@@ -1228,6 +1253,35 @@ fn build_module_candidate(
         transition_candidates,
         renderability,
         renderable_module,
+    }
+}
+
+fn overlay_module_control_input_inventory(
+    inventory: &mut BTreeMap<String, SignalInventoryEvidence>,
+    module: &ExplicitModuleRecord,
+) {
+    let output_targets = collect_output_targets_from_records(
+        &module.decision_tree_fragments,
+        &module.control_blocks,
+        &module.init_assignments,
+    );
+    for (signal_name, supporting_ids) in collect_control_input_references_from_records(
+        &module.decision_tree_fragments,
+        &module.control_blocks,
+        &module.state_transitions,
+    ) {
+        if output_targets.contains(&signal_name) || !inventory.contains_key(&signal_name) {
+            continue;
+        }
+        register_canonical_signal_with_supporting_ids(
+            inventory,
+            &signal_name,
+            Some(InterfaceSignalDirection::Input),
+            None,
+            supporting_ids,
+            "module_control_input",
+            AutomationConfidence::Medium,
+        );
     }
 }
 
@@ -5022,6 +5076,14 @@ mod tests {
         )
     }
 
+    fn build_standalone_explicit_module_fsm_intent_ir(base: &Path) -> Result<IntentIr> {
+        build_intent_ir_from_markdown(
+            base,
+            "standalone_module_fsm.md",
+            "# Standalone Module FSM\nModule controller Signal clk is input width 1.\n\nModule controller Signal rst_n is input width 1.\n\nModule controller Signal GO is input width 1.\n\nModule controller Signal DONE is input width 1.\n\nModule controller Signal DATA_IN is input width 8.\n\nModule controller Signal ACC is output width 8.\n\nModule controller Signal TRACE is output width 1.\n\nModule controller Clock clk.\n\nModule controller Reset rst_n is asynchronous active low.\n\nModule controller Init ACC = 8'0.\n\nModule controller State idle is initial.\n\nModule controller State busy.\n\nModule controller Block idle: ACC <- DATA_IN.\n\nModule controller Transition idle -> busy when GO.\n\nModule controller Block busy: ACC <- DATA_IN.\n\nModule controller Transition busy -> idle when DONE.\n\nModule controller Block trace when DONE: TRACE = 1.\n",
+        )
+    }
+
     fn build_width_only_top_port_composition_intent_ir(base: &Path) -> Result<IntentIr> {
         build_intent_ir_from_markdown(
             base,
@@ -6182,6 +6244,86 @@ mod tests {
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Fsm);
         assert!(fsm.renderability.is_renderable);
         assert!(emitted_text.contains("(?fsm:explicit_fsm"));
+        assert!(emitted_text.contains("(ACC <= DATA_IN)"));
+        assert!(emitted_text.contains("(<GO"));
+        assert!(emitted_text.contains("(<DONE"));
+        assert!(emitted_text.contains("(TRACE = 1)"));
+
+        Ok(())
+    }
+
+    #[test]
+    fn standalone_explicit_module_recovers_inputs_from_module_control_reads() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_standalone_explicit_module_fsm_intent_ir(tempdir.path())?;
+        clear_explicit_module_direction_hints(&mut intent_ir);
+        intent_ir.actor_ports = vec![
+            actor_port("controller", "clk", ActorRelativeDirection::Input),
+            actor_port("controller", "rst_n", ActorRelativeDirection::Input),
+            actor_port("controller", "ACC", ActorRelativeDirection::Output),
+            actor_port("controller", "TRACE", ActorRelativeDirection::Output),
+            actor_port("environment", "DATA_IN", ActorRelativeDirection::Output),
+            actor_port("environment", "GO", ActorRelativeDirection::Output),
+            actor_port("environment", "DONE", ActorRelativeDirection::Output),
+            actor_port("monitor", "ACC", ActorRelativeDirection::Input),
+            actor_port("monitor", "TRACE", ActorRelativeDirection::Input),
+        ];
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+        adapter.write_to_disk()?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "renderable");
+        let emitted_target_path = adapter
+            .artifact_layout
+            .emitted_target_path
+            .as_ref()
+            .expect("graph-backed explicit module should emit target text");
+        let emitted_text = fs::read_to_string(emitted_target_path)?;
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let module = fsm
+            .module_candidates
+            .iter()
+            .find(|candidate| candidate.module_name == "controller")
+            .expect("controller module candidate should exist");
+
+        assert_eq!(fsm.root_name, "controller");
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Fsm);
+        for signal_name in ["DATA_IN", "GO", "DONE"] {
+            let signal = module
+                .signal_inventory
+                .iter()
+                .find(|signal| signal.signal_name == signal_name)
+                .unwrap_or_else(|| panic!("{signal_name} should stay in module inventory"));
+            assert_eq!(
+                signal.direction_hint,
+                Some(InterfaceSignalDirection::Input),
+                "{signal_name} should be recovered as a module-local input"
+            );
+            assert!(
+                signal
+                    .mention_categories
+                    .iter()
+                    .any(|category| category == "module_control_input"),
+                "{signal_name} should be recovered from module-local control reads"
+            );
+            assert!(
+                !signal
+                    .mention_categories
+                    .iter()
+                    .any(|category| category == "actor_port"),
+                "external actor ports must not define the module actor perspective for {signal_name}"
+            );
+        }
+
+        assert!(fsm.renderability.is_renderable);
+        assert!(module.renderability.is_renderable);
+        assert!(emitted_text.contains("(?fsm:controller"));
         assert!(emitted_text.contains("(ACC <= DATA_IN)"));
         assert!(emitted_text.contains("(<GO"));
         assert!(emitted_text.contains("(<DONE"));

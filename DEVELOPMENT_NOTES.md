@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-18 Adapter explicit-module control-read recovery
+- Extended the existing target-actor/control-read recovery pattern into explicit module candidates.
+- Before this slice, `build_module_candidate` overlaid `IntentIR.actor_ports` for the module actor but did not use the module's own control reads to recover missing directions for read-only local inputs when external actors owned those signals.
+- The new `overlay_module_control_input_inventory` path collects read references from the module's DT fragments, rich control blocks, and state-transition guards, then applies `module_control_input` only when:
+  - the signal is already present in the module inventory
+  - the signal is not an output/init target
+  - the recovered role is a module-local input
+- The direct-root helper logic was refactored into slice-based helpers so direct roots and explicit module roots use the same output-target/read-reference semantics without manufacturing a temporary `IntentIr`.
+- Added `standalone_explicit_module_recovers_inputs_from_module_control_reads`, a regression proving a standalone explicit `controller` module can render as `?fsm:controller` after flat module directions are cleared, while external `environment` actor ports for `DATA_IN`, `GO`, and `DONE` do not define the module actor perspective.
+- Formatting, the focused new adapter test, the full adapter module, docs CI, and full local CI passed. Full local CI reports `332` Rust tests plus warning-deny Clippy/rustdoc and the mdBook build.
+
 ## 2026-04-18 Adapter structured-FSM graph-read coverage
 - Added a focused true-FSM regression for the existing target-actor/control-read recovery path.
 - The test starts from explicit FSM intent, clears flat direct-interface `direction_hint` values, and provides graph evidence shaped like a realistic environment:

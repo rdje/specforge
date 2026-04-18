@@ -181,6 +181,7 @@ The first bounded consumers are `.fsm` lowering paths.
 
 The explicit-module/top-composition path has the cleanest target actor context.
 When an explicit child module already has a local signal and width but the flat module-local `direction_hint` is missing or stale, the adapter can overlay matching `IntentIR.actor_ports` for that module actor before renderability analysis.
+For standalone explicit modules, module-local control reads can also recover input roles for signals already in the module inventory, while assigned/init targets stay outputs.
 
 Standalone direct roots are stricter.
 They do not carry a module name that says which actor the target is relative to, so the adapter first looks for one actor that graph-drives every render-critical assignment or init target already present in the direct local inventory.
