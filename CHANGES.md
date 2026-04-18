@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-04-18 (Adapter duplicate top-port direction conflict collapse)
+
+### Improved: duplicate top-port declarations cannot overwrite conflicts
+- Routed duplicate explicit top-port declarations through the same sticky `TopPortDirectionEvidence` merger used for top-link topology recovery.
+- If duplicate declarations disagree about a top boundary direction, the adapter now blocks and collapses the resolved top-port direction to `None` instead of letting the later declaration overwrite the earlier one.
+- Added a regression where `drive_data` is declared once as a top output and once as a top input; the blocked top candidate and selected top signal inventory both expose unresolved direction.
+- This closes another blocked-artifact truthfulness gap around explicit top composition.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` -> passed
+- `cargo test -p specforge ir::adapters::tests::` -> passed with `39` adapter tests
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `340` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+- README sentinel check -> passed
+
 ## 2026-04-18 (Adapter top-port direction conflict collapse)
 
 ### Improved: conflicting top-boundary direction evidence stays unresolved

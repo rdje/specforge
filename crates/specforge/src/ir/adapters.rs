@@ -2006,10 +2006,23 @@ fn analyze_top_renderability(
                 "deduplicate explicit top-port records before lowering `?top:name`".to_string(),
             );
         }
-        top_port_directions.insert(
-            port.port_name.clone(),
-            TopPortDirectionEvidence::new(port.direction_hint),
-        );
+        if let Some(direction_evidence) = top_port_directions.get_mut(&port.port_name) {
+            if let Some(direction_hint) = port.direction_hint {
+                merge_top_port_direction_evidence(
+                    direction_evidence,
+                    &port.port_name,
+                    direction_hint,
+                    &format!("Duplicate top port declaration `{}`", port.port_name),
+                    &mut blocking_reasons,
+                    &mut required_canonical_enrichments,
+                );
+            }
+        } else {
+            top_port_directions.insert(
+                port.port_name.clone(),
+                TopPortDirectionEvidence::new(port.direction_hint),
+            );
+        }
     }
 
     for link in &top.links {
@@ -2297,6 +2310,28 @@ fn merge_top_port_direction_from_link(
         return;
     }
 
+    merge_top_port_direction_evidence(
+        direction_evidence,
+        port_name,
+        direction_hint,
+        endpoint_description,
+        blocking_reasons,
+        required_canonical_enrichments,
+    );
+}
+
+fn merge_top_port_direction_evidence(
+    direction_evidence: &mut TopPortDirectionEvidence,
+    port_name: &str,
+    direction_hint: InterfaceSignalDirection,
+    evidence_description: &str,
+    blocking_reasons: &mut Vec<String>,
+    required_canonical_enrichments: &mut BTreeSet<String>,
+) {
+    if direction_evidence.direction_conflicted {
+        return;
+    }
+
     match direction_evidence.direction_hint {
         None => direction_evidence.direction_hint = Some(direction_hint),
         Some(existing) if existing == direction_hint => {}
@@ -2304,7 +2339,7 @@ fn merge_top_port_direction_from_link(
             push_unique_message(
                 blocking_reasons,
                 &format!(
-                    "{endpoint_description} implies top port `{port_name}` is `{}`, but existing top-boundary direction evidence is `{}`.",
+                    "{evidence_description} implies top port `{port_name}` is `{}`, but existing top-boundary direction evidence is `{}`.",
                     direction_hint.as_str(),
                     existing.as_str()
                 ),
@@ -7009,6 +7044,73 @@ mod tests {
                 .blocking_reasons
                 .iter()
                 .any(|reason| reason.contains("implies top port `drive_data` is `input`"))
+        );
+        assert!(!fsm.renderability.is_renderable);
+
+        Ok(())
+    }
+
+    #[test]
+    fn top_composition_keeps_duplicate_top_port_direction_conflict_unresolved() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "duplicate_top_port_direction.md",
+            "# Duplicate Top Port Direction\nTop datapath.\n\nTop datapath port drive_data is output width 8.\n\nTop datapath port drive_data is input width 8.\n\nTop datapath child producer uses module producer_core.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n",
+        )?;
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let top_candidate = fsm
+            .top_candidates
+            .iter()
+            .find(|top| top.top_name == "datapath")
+            .expect("top candidate should be present");
+
+        let duplicate_ports = top_candidate
+            .ports
+            .iter()
+            .filter(|port| port.port_name == "drive_data")
+            .collect::<Vec<_>>();
+        let duplicate_inventory_entries = fsm
+            .signal_inventory
+            .iter()
+            .filter(|signal| signal.signal_name == "drive_data")
+            .collect::<Vec<_>>();
+
+        assert_eq!(duplicate_ports.len(), 2);
+        assert_eq!(duplicate_inventory_entries.len(), 2);
+        assert!(
+            duplicate_ports
+                .iter()
+                .all(|port| port.direction_hint.is_none())
+        );
+        assert!(
+            duplicate_inventory_entries
+                .iter()
+                .all(|signal| signal.direction_hint.is_none())
+        );
+        assert!(
+            top_candidate
+                .renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason.contains("declared more than once"))
+        );
+        assert!(
+            top_candidate
+                .renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason.contains("Duplicate top port declaration `drive_data`"))
         );
         assert!(!fsm.renderability.is_renderable);
 

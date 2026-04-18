@@ -22,23 +22,26 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `3f99161`
-- latest_commit_brief_message: `test(adapter): guard system contract conflicts`
-- note: current in-flight adapter hardening collapses conflicting top-boundary direction evidence to unresolved state
+- latest_commit_hash: `283215f`
+- latest_commit_brief_message: `fix(adapter): collapse top port direction conflicts`
+- note: current in-flight adapter hardening collapses duplicate top-port direction conflicts to unresolved state
 
 ## Recent commit chain (last 5)
+- `283215f` fix(adapter): collapse top port direction conflicts
 - `3f99161` test(adapter): guard system contract conflicts
 - `3d417ea` fix(adapter): recover system contract signals
 - `2bd0034` test(adapter): guard child topology conflicts
 - `6d05173` fix(adapter): recover child directions from topology
-- `e03d5f3` test(adapter): guard module read conflicts
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch is ahead of `origin/main`; do not push until 25 local commits since the last push or until the user explicitly asks
-- current in-flight adapter hardening adds sticky conflict collapse for explicit top boundary direction evidence
-- the current regression declares top port `drive_data` as an output while topology uses it as a top-link source, which implies top input; expected behavior is unresolved top-port direction in both the top candidate and selected signal inventory, blocked renderability, and no emitted `.fsm` target text
-- focused validation, the full adapter test module, docs CI, and full local CI passed for the current adapter slice; full local CI reported formatting, warning-deny Clippy, `339` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- current in-flight adapter hardening adds sticky conflict collapse for duplicate explicit top-port direction declarations
+- the current regression declares top port `drive_data` once as output and once as input; expected behavior is unresolved top-port direction in both the top candidate and selected signal inventory, blocked renderability, and no emitted `.fsm` target text
+- focused validation, the full adapter test module, docs CI, and full local CI passed for the current adapter slice; full local CI reported formatting, warning-deny Clippy, `340` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- latest committed adapter hardening adds sticky conflict collapse for explicit top boundary direction evidence
+- the committed regression declares top port `drive_data` as an output while topology uses it as a top-link source, which implies top input; expected behavior is unresolved top-port direction in both the top candidate and selected signal inventory, blocked renderability, and no emitted `.fsm` target text
+- focused validation, the full adapter test module, docs CI, and full local CI passed for commit `283215f`; full local CI reported formatting, warning-deny Clippy, `339` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
 - latest committed adapter hardening adds `standalone_sequential_dt_blocks_conflicting_system_contract_signal_direction`, proving clock/reset system-contract recovery does not override contradictory local signal shape
 - the committed regression marks `clk` as an output while the canonical system contract says `clk` is the clock; expected behavior is unresolved direction, preserved `system_contract_signal` evidence category, system-contract residual emission, blocked renderability, and no emitted `.fsm` target text
 - focused validation, the full adapter test module, docs CI, and full local CI passed for commit `3f99161`; full local CI reported formatting, warning-deny Clippy, `338` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build

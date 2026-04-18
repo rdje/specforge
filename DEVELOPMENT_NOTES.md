@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-18 Adapter duplicate top-port direction conflict collapse
+- Extended explicit top-boundary direction merging so duplicate top-port declarations also use `TopPortDirectionEvidence`.
+- Previous behavior detected duplicate top ports but inserted each declaration into the direction map directly, so a later duplicate could overwrite earlier direction evidence in the blocked artifact.
+- New behavior keeps duplicate detection as a hard blocker while also merging any duplicate direction hints:
+  - same direction remains known, though the duplicate declaration still blocks emission
+  - missing direction can be filled by a duplicate declaration or by topology
+  - contradictory duplicate declarations collapse the resolved direction to `None`
+  - once conflicted, later repeated evidence cannot resurrect the direction
+- Added `top_composition_keeps_duplicate_top_port_direction_conflict_unresolved`, where `drive_data` is declared as both top output and top input. The adapter blocks, emits no `.fsm`, and exposes unresolved `drive_data` direction in both the top candidate and selected top signal inventory.
+- Formatting, the focused new adapter test, the full adapter module, docs CI, and full local CI passed. Full local CI reports `340` Rust tests plus warning-deny Clippy/rustdoc and the mdBook build.
+
 ## 2026-04-18 Adapter top-port direction conflict collapse
 - Added `TopPortDirectionEvidence` for explicit top boundary direction analysis.
 - Previous behavior blocked on contradictory top declaration/topology evidence but could leave the resolved top port carrying the earlier direction hint in the blocked artifact.
