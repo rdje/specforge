@@ -22,23 +22,23 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `619a773`
-- latest_commit_brief_message: `fix(semantic): reject VLM timing bus labels`
-- note: current in-flight slice extends that same truthfulness hardening to compact waveform labels such as `Burst1` and `Txn5`
+- latest_commit_hash: `867455e`
+- latest_commit_brief_message: `fix(semantic): reject compact VLM bus labels`
+- note: current in-flight slice extends that same truthfulness hardening to compact phase/transfer labels such as `Phase1` and `Transfer2`
 
 ## Recent commit chain (last 5)
+- `867455e` fix(semantic): reject compact VLM bus labels
 - `619a773` fix(semantic): reject VLM timing bus labels
 - `d7f7281` feat(clean): add full generated sweep scope
 - `3ed2377` feat(clean): add generated artifact cleanup
 - `d47db80` fix(adapter): collapse duplicate top port widths
-- `6282875` fix(adapter): collapse duplicate top port conflicts
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch is ahead of `origin/main`; do not push until 25 local commits since the last push or until the user explicitly asks
-- current in-flight semantic hardening extends the same VLM timing spurious-annotation rejection to compact bus-phase labels such as `Burst1`, `Packet2`, `Frame3`, `Transaction4`, and `Txn5`
-- the production change lives in `is_compact_waveform_sample_label()`, widening the known compact low-value annotation vocabulary without broadening timing-constraint authority
-- the direct semantic regression and the tracked `vlm_timing_spurious_annotation_negative` fixture are being tightened together so both spaced and compact bus-label variants stay aligned with the production filter
+- current in-flight semantic hardening extends the same VLM timing spurious-annotation rejection to compact phase/transfer labels such as `Phase1` and `Transfer2`
+- the production change again lives in `is_compact_waveform_sample_label()`, widening the known compact low-value annotation vocabulary without broadening timing-constraint authority
+- the direct semantic regression and the tracked `vlm_timing_spurious_annotation_negative` fixture are being tightened together so spaced and compact phase/transfer variants stay aligned with the production filter
 - validation target for the in-flight slice is the focused semantic regression, the targeted KG fixture, docs CI, and full local CI before commit
 - latest committed adapter hardening adds sticky conflict collapse for duplicate explicit top-port direction declarations
 - the committed regression declares top port `drive_data` once as output and once as input; expected behavior is unresolved top-port direction in both the top candidate and selected signal inventory, blocked renderability, and no emitted `.fsm` target text

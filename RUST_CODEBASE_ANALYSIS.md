@@ -1432,3 +1432,9 @@
 - `is_compact_waveform_sample_label()` now recognizes `Burst1`, `Packet2`, `Frame3`, `Transaction4`, and `Txn5` as the compact equivalents of the already-filtered spaced bus labels.
 - This closes the space-constrained waveform-gutter variant common in chip-spec PDFs, where bus-phase labels are squeezed into one token but still do not encode protocol timing law.
 - The direct semantic regression plus `vlm_timing_spurious_annotation_negative` now lock both spaced and compact bus-label annotation noise while preserving the grounded temporal sample path.
+
+## Session update (2026-04-18 Compact VLM phase/transfer label rejection)
+- Continued from commit `867455e`, tightening the same compact-layout timing truthfulness boundary one step further.
+- `is_compact_waveform_sample_label()` now recognizes `Phase1` and `Transfer2` as compact waveform-gutter labels rather than timing constraints.
+- This closes the remaining compact-layout gap inside the existing generic waveform label vocabulary: `phase` and `transfer` were already filtered when tokenized, but not when layout collapsed them into a single token.
+- The direct semantic regression plus `vlm_timing_spurious_annotation_negative` now lock compact phase/transfer labels alongside the existing spaced and compact annotation-noise families.

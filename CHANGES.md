@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-04-18 (Compact VLM phase/transfer label rejection)
+
+### Fixed: compact phase and transfer labels stay out of timing constraints
+- `SemanticIR` now treats compact VLM timing annotation labels such as `Phase1` and `Transfer2` as the same low-value waveform markup family as `Phase 1`, `Transfer 2`, `Burst1`, and other standalone annotation noise.
+- This closes another cramped-layout chip-PDF edge case where waveform gutters compress bus-phase labels into a single token without changing their semantic status as figure markup rather than timing law.
+- Strengthened the direct semantic regression and the tracked `vlm_timing_spurious_annotation_negative` KG fixture so compact phase/transfer labels yield zero timing constraints while grounded `signals[].values[]` samples still author temporal rules.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge vlm_timing_diagram_observation_rejects_label_only_noise` -> passed
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality vlm_timing_spurious_annotation_negative` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+
 ## 2026-04-18 (Compact VLM timing bus-label rejection)
 
 ### Fixed: compact bus-phase labels stay out of timing constraints

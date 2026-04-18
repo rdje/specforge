@@ -9287,6 +9287,8 @@ fn is_compact_waveform_sample_label(token: &str) -> bool {
         "packet",
         "transaction",
         "txn",
+        "phase",
+        "transfer",
         "beat",
         "cycle",
         "slot",
@@ -11276,7 +11278,7 @@ mod tests {
             source_ref: None,
             placeholder_text: None,
             note: Some(
-                "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"T0\",\"state\":\"LOW\"},{\"cycle\":\"T1\",\"state\":\"HIGH\"}]}],\"annotations\":[\"T0\",\"Addr 1\",\"Cycle 2\",\"Burst 1\",\"Packet 2\",\"Frame 3\",\"Transaction 4\",\"Txn 5\",\"Burst1\",\"Packet2\",\"Frame3\",\"Transaction4\",\"Txn5\",\"D0\",\"A1\",\"DATA0\",\"0xAA\",\"D[0]\",\"A[1]\",\"DATA[3]\",\"ADDR[7]\",\"XREQ[0]\",\"XREQ<1>\",\"XREQ[3:0]\"]}"
+                "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"T0\",\"state\":\"LOW\"},{\"cycle\":\"T1\",\"state\":\"HIGH\"}]}],\"annotations\":[\"T0\",\"Addr 1\",\"Cycle 2\",\"Burst 1\",\"Packet 2\",\"Frame 3\",\"Transaction 4\",\"Txn 5\",\"Burst1\",\"Packet2\",\"Frame3\",\"Transaction4\",\"Txn5\",\"Phase1\",\"Transfer2\",\"D0\",\"A1\",\"DATA0\",\"0xAA\",\"D[0]\",\"A[1]\",\"DATA[3]\",\"ADDR[7]\",\"XREQ[0]\",\"XREQ<1>\",\"XREQ[3:0]\"]}"
                     .to_string(),
             ),
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,

@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-18 Compact VLM phase/transfer label rejection
+- The compact bus-label slice still left one realistic waveform-gutter gap: `Phase1` and `Transfer2`. Those labels are already handled when they arrive as separate tokens, but not when layout pressure collapses them into one compact token.
+- The bounded fix is again in `is_compact_waveform_sample_label()`, not in a broader fuzzy matcher. We only need to extend the known compact waveform/bus prefix vocabulary to include `phase` and `transfer`.
+- This preserves the truth boundary we want: compact phase/transfer labels stay figure markup, while real timing statements and grounded `signals[].values[]` samples still contribute typed timing evidence.
+- The tracked `vlm_timing_spurious_annotation_negative` fixture remains the right regression home because this is still the same annotation-noise invariant, just under another compact-layout surface.
+
 ## 2026-04-18 Compact VLM timing bus-label rejection
 - The spaced bus-label slice closed `Burst 1` / `Transaction 4`, but a realistic diagram-layout variant remained: cramped timing gutters often collapse those same labels into `Burst1`, `Packet2`, `Frame3`, or `Txn5`.
 - That compact form bypassed `is_generic_waveform_label_token()` because there is no non-alphanumeric split point. The right bounded fix is therefore in `is_compact_waveform_sample_label()`, extending the known low-value bus/waveform prefixes rather than adding a broader fuzzy matcher.
