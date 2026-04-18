@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-04-18 (Corpus-KB benchmark refresh after graph-direction fixture expansion)
+
+### Refreshed: corpus-KB benchmark projections now reflect the `90/90` tracked fixture suite
+- Re-ran `specforge corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` after adding `graph_direction_same_actor_conflict_negative`.
+- The managed benchmark projection in `corpus_kb/benchmarks/kg-fixtures.md` now reports `90` tracked fixtures with `0` failures, up from `89`.
+- The managed pattern-family projection in `corpus_kb/patterns/kg-fixtures.md` now reports `49` pattern fixtures and includes the new graph-direction self-conflict negative case under `actor connectivity` plus `truthfulness negatives and cautions`.
+- This is a review-surface refresh only: no canonical IR semantics, validation behavior, or benchmark execution rules changed in this slice.
+
+### Validation
+- `cargo run -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed with `90` fixtures and `0` failures
+- `git diff --check` -> passed
+
 ## 2026-04-18 (KG-bench graph-direction conflict fixture lane)
 
 ### Changed: `kg-bench` can now express canonical-stage graph-direction conflict fixtures

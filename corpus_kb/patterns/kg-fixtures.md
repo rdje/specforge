@@ -15,8 +15,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 
 - source: `kg-bench fixtures`
 - selected_family_labels: `actor connectivity`, `semantic role arbitration`, `negative knowledge`, `truthfulness negatives and cautions`, `residuals and caveats`
-- fixtures_total: `48`
-- fixtures_passed: `48`
+- fixtures_total: `49`
+- fixtures_passed: `49`
 - fixtures_failed: `0`
 
 | fixture | status | matched families | path |
@@ -38,6 +38,7 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `cross_modality_semantic_conflict_negative` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/cross_modality_semantic_conflict_negative/fixture.json` |
 | `cross_modality_semantic_grounding_gold` | `pass` | `semantic role arbitration` | `crates/specforge/test_data/kg_quality/cross_modality_semantic_grounding_gold/fixture.json` |
 | `detached_mixed_control_polarity_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/detached_mixed_control_polarity_negative/fixture.json` |
+| `graph_direction_same_actor_conflict_negative` | `pass` | `actor connectivity`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/graph_direction_same_actor_conflict_negative/fixture.json` |
 | `multi_producer_conflict_negative` | `pass` | `actor connectivity`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/multi_producer_conflict_negative/fixture.json` |
 | `name_only_semantic_noise_negative` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/name_only_semantic_noise_negative/fixture.json` |
 | `negative_knowledge_prior_guided_connectivity_conflict_caution_gold` | `pass` | `actor connectivity`, `negative knowledge`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_connectivity_conflict_caution_gold/fixture.json` |

@@ -53,6 +53,15 @@
 - This is intentionally a narrow benchmark escape hatch, not a general semantic patching framework. The point is to express canonical honesty regressions that normal source-only synthesis does not naturally preserve, while still exercising the ordinary stage builders and validators.
 - Focused harness-unit validation, focused tracked-fixture validation, full `90/90` tracked KG-bench validation, and full local CI with `357` Rust tests plus rustdoc and the mdBook build passed for this slice.
 
+## Session update (2026-04-18 corpus-KB benchmark refresh to 90 fixtures)
+- Continued from commit `1ae25f8`, synchronizing the review-facing corpus knowledge-base plane with the newly expanded tracked benchmark suite.
+- Re-ran `specforge corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality`, which refreshed the managed benchmark and pattern pages without changing canonical IR, validation behavior, or benchmark execution semantics.
+- The benchmark projection now reports `90/90` passing fixtures, and the pattern page now reports `49` fixtures across the semantic/truthfulness families.
+- `graph_direction_same_actor_conflict_negative` now appears explicitly in those managed review surfaces under:
+  - `actor connectivity`
+  - `truthfulness negatives and cautions`
+- This matters as continuity infrastructure, not only as vanity bookkeeping: future sessions and human reviewers now see the real tracked suite size and the new graph-direction conflict coverage in the persistent corpus-KB plane instead of an outdated `89/89` snapshot.
+
 ## Session update (2026-04-18 graph-direction conflict visibility)
 - Continued from commit `4fa5e31`, keeping the stricter graph-direction truth boundary but improving observability.
 - The validator already refused to credit same-actor self-conflicts as graph-resolved direction; this slice makes that decision explicit through a shared summary helper that returns both resolved signal names and conflicted signal names.

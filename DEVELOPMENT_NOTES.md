@@ -7,6 +7,18 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-18 Corpus-KB benchmark refresh after graph-direction fixture expansion
+- The new tracked fixture was already part of the executable benchmark suite, but the review-facing corpus-KB projection still said `89/89`.
+- That kind of drift matters because `corpus_kb/` is the persistent human-facing synthesis plane for benchmark coverage and failure families; if it lags, future sessions lose the real picture of what the tracked fixture corpus currently covers.
+- This refresh stays deliberately non-semantic:
+  - rerun `specforge corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality`
+  - accept the managed-block updates in the benchmark and pattern pages
+  - avoid inventing extra commentary or changing canonical behavior
+- The new fixture naturally lands in the existing family model:
+  - `actor connectivity`
+  - `truthfulness negatives and cautions`
+- That is good enough for now; a dedicated graph-direction family would only be worth adding once there is a real cluster of graph-direction-specific fixtures instead of a single honest negative case.
+
 ## 2026-04-18 KG-bench canonical graph-conflict patch lane
 - The new graph-direction conflict validation surface was still protected only by unit tests. That is not enough for a staged extractor whose long-term truth contract lives in tracked fixtures and corpus-facing benchmark refreshes.
 - A source-only fixture cannot always express the exact canonical shape we want to benchmark here, because the normal semantic builder deliberately collapses many local contradictions into safer canonical forms instead of preserving every adversarial intermediate shape verbatim.
