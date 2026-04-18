@@ -22,23 +22,26 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `4c79c0b`
-- latest_commit_brief_message: `test(kg): assert validation finding payloads`
-- note: current in-flight adapter hardening preserves top-link-recovered boundary directions in blocked top-composition artifacts without making blocked `.fsm` lowering renderable
+- latest_commit_hash: `b888297`
+- latest_commit_brief_message: `fix(adapter): retain blocked top recovered directions`
+- note: current in-flight adapter hardening adds true structured-FSM regression coverage for target-actor/control-read direction recovery when flat direct-interface hints are absent
 
 ## Recent commit chain (last 5)
+- `b888297` fix(adapter): retain blocked top recovered directions
 - `4c79c0b` test(kg): assert validation finding payloads
 - `9e83612` docs: sync post-push baseline
 - `4dfb6b9` test(kg): cover missing intent table support signals
 - `849e14a` test(kg): cover missing table support signals
-- `5cdc36e` test(kg): cover intent table support failures
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch is ahead of `origin/main`; do not push until 25 local commits since the last push or until the user explicitly asks
-- current in-flight adapter hardening splits top-composition renderability analysis from recovered top-port state so link-topology direction recovery remains visible even when a separate composition gate blocks emission
+- current in-flight adapter hardening adds `structured_fsm_derives_guard_inputs_from_control_reads_after_output_actor_selection`, proving a true `?fsm` root can recover `DATA_IN`, `GO`, and `DONE` as selected-target inputs from state-body assignments, transition guards, and standalone control blocks when flat direct-interface direction hints are absent
+- the current regression supplies only controller-side graph ports for `clk`, `rst_n`, `ACC`, and `TRACE`, plus external environment producers for `DATA_IN`, `GO`, and `DONE`; it proves the external producer perspective does not overwrite the selected target actor perspective
+- focused validation, the full adapter test module, docs CI, and full local CI passed for the current adapter slice; full local CI reports formatting, warning-deny Clippy, `331` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- latest committed adapter hardening splits top-composition renderability analysis from recovered top-port state so link-topology direction recovery remains visible even when a separate composition gate blocks emission
 - `top_composition_preserves_recovered_top_port_direction_when_still_blocked` proves a width-only `result_data` top port keeps an output direction recovered from `consumer.result_data -> result_data` while the adapter remains blocked on missing child module `missing_module`
-- focused validation, the full adapter test module, docs CI, and full local CI passed for the current adapter slice; full local CI reports formatting, warning-deny Clippy, `330` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- focused validation, the full adapter test module, docs CI, and full local CI passed for commit `b888297`; full local CI reported formatting, warning-deny Clippy, `330` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
 - latest committed KG-quality hardening added `validation.<stage>.findings_include` to the `kg-bench` expectation schema so fixtures can assert finding severity, category, summary snippets, and exact related-id inclusion/exclusion
 - the five negative-knowledge prior-guided caution fixtures assert the exact validation finding related ids for signal-semantic conflicts, temporal value conflicts, residual packets, signal-connectivity conflicts, and interface-signal conflicts
 - focused five-fixture negative-knowledge `kg-bench`, `cargo test -p specforge kg_bench`, full tracked `kg-bench` with `89/89` fixtures, `corpus-kb --kg-fixtures-root` with `89` fixtures / `0` failures, docs CI, full local CI with `329` Rust tests plus mdBook, and `git diff --check` passed for commit `4c79c0b`

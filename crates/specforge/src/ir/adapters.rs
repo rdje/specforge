@@ -6117,6 +6117,80 @@ mod tests {
     }
 
     #[test]
+    fn structured_fsm_derives_guard_inputs_from_control_reads_after_output_actor_selection()
+    -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_explicit_fsm_intent_ir(tempdir.path())?;
+        clear_direct_interface_direction_hints(&mut intent_ir);
+        intent_ir.actor_ports = vec![
+            actor_port("controller", "clk", ActorRelativeDirection::Input),
+            actor_port("controller", "rst_n", ActorRelativeDirection::Input),
+            actor_port("controller", "ACC", ActorRelativeDirection::Output),
+            actor_port("controller", "TRACE", ActorRelativeDirection::Output),
+            actor_port("environment", "DATA_IN", ActorRelativeDirection::Output),
+            actor_port("environment", "GO", ActorRelativeDirection::Output),
+            actor_port("environment", "DONE", ActorRelativeDirection::Output),
+            actor_port("monitor", "ACC", ActorRelativeDirection::Input),
+            actor_port("monitor", "TRACE", ActorRelativeDirection::Input),
+        ];
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+        adapter.write_to_disk()?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "renderable");
+        let emitted_target_path = adapter
+            .artifact_layout
+            .emitted_target_path
+            .as_ref()
+            .expect("graph-backed structured FSM should emit target text");
+        let emitted_text = fs::read_to_string(emitted_target_path)?;
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+
+        for signal_name in ["DATA_IN", "GO", "DONE"] {
+            let signal = fsm
+                .signal_inventory
+                .iter()
+                .find(|signal| signal.signal_name == signal_name)
+                .unwrap_or_else(|| panic!("{signal_name} should stay in the signal inventory"));
+            assert_eq!(
+                signal.direction_hint,
+                Some(InterfaceSignalDirection::Input),
+                "{signal_name} should be recovered as a target-actor input"
+            );
+            assert!(
+                signal
+                    .mention_categories
+                    .iter()
+                    .any(|category| category == "direct_control_input"),
+                "{signal_name} should be recovered from structured FSM control reads"
+            );
+            assert!(
+                !signal
+                    .mention_categories
+                    .iter()
+                    .any(|category| category == "actor_port"),
+                "external actor ports must not define the selected target perspective for {signal_name}"
+            );
+        }
+
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Fsm);
+        assert!(fsm.renderability.is_renderable);
+        assert!(emitted_text.contains("(?fsm:explicit_fsm"));
+        assert!(emitted_text.contains("(ACC <= DATA_IN)"));
+        assert!(emitted_text.contains("(<GO"));
+        assert!(emitted_text.contains("(<DONE"));
+        assert!(emitted_text.contains("(TRACE = 1)"));
+
+        Ok(())
+    }
+
+    #[test]
     fn builds_renderable_top_composition_fsm_adapter_artifact() -> Result<()> {
         let tempdir = tempdir()?;
         let intent_ir = build_explicit_top_composition_intent_ir(tempdir.path())?;

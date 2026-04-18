@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-18 Adapter structured-FSM graph-read coverage
+- Added a focused true-FSM regression for the existing target-actor/control-read recovery path.
+- The test starts from explicit FSM intent, clears flat direct-interface `direction_hint` values, and provides graph evidence shaped like a realistic environment:
+  - `controller` owns `ACC` and `TRACE` outputs and reads `clk` / `rst_n`
+  - `environment` drives `DATA_IN`, `GO`, and `DONE`
+  - `monitor` reads `ACC` and `TRACE`
+- The adapter must select `controller` from the output-target graph, then recover `DATA_IN`, `GO`, and `DONE` as `direct_control_input` from structured FSM reads rather than from the external producer perspective.
+- This locks the true `?fsm` root path for state-body assignments, transition guards, and standalone control blocks. It complements earlier coverage for standalone DT, sequential DT, system-contract clock/reset inputs, explicit modules, and top-link topology.
+- The change is intentionally test-only because the production path was already capable; the missing piece was a regression that would catch future drift back toward flat `direction_hint` dependency.
+- Formatting, the focused new adapter test, the full adapter module, docs CI, and full local CI passed. Full local CI reports `331` Rust tests plus warning-deny Clippy/rustdoc and the mdBook build.
+
 ## 2026-04-18 Adapter blocked-top direction retention
 - Tightened the `.fsm` top-composition adapter path so top-link topology recovery is not coupled to final renderability.
 - `analyze_top_renderability` now returns a small `TopRenderabilityAnalysis` carrying:

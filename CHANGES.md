@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-18 (Adapter structured-FSM graph-read coverage)
+
+### Added: true FSM roots now have graph-backed control-read regression coverage
+- Added a structured `?fsm` adapter regression that clears all flat direct-interface direction hints, then supplies graph evidence only for the selected target actor's clock/reset inputs and produced outputs.
+- The same fixture supplies external actors as producers for `DATA_IN`, `GO`, and `DONE`, proving external actor ports do not define the selected target perspective.
+- The adapter must recover `DATA_IN`, `GO`, and `DONE` as target-actor inputs from the structured FSM's control reads: state-body assignments, transition guards, and standalone control blocks.
+- The test proves the true FSM root still renders `(?fsm:explicit_fsm)` with `ACC <= DATA_IN`, `GO` / `DONE` guards, and the `TRACE` block after graph/control-read recovery.
+- This is coverage hardening for existing graph-first adapter behavior, not a semantic widening or canonical IR mutation.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge structured_fsm_derives_guard_inputs_from_control_reads_after_output_actor_selection` -> passed
+- `cargo test -p specforge ir::adapters::tests::` -> passed with `30` adapter tests
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `331` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+- README sentinel check -> passed
+
 ## 2026-04-18 (Adapter blocked-top direction retention)
 
 ### Improved: recovered top-boundary directions survive blocked composition artifacts
