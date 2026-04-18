@@ -375,10 +375,18 @@ fn intent_negative_knowledge_prior_matches(ir: &IntentIr) -> Vec<String> {
     )
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub(crate) struct GraphDirectionConflictRecord {
+    pub signal_name: String,
+    pub actor_id: String,
+    pub actor_name: String,
+}
+
 #[derive(Debug, Default, PartialEq, Eq)]
 struct GraphDirectionCoverageSummary {
     resolved_signal_names: BTreeSet<String>,
     conflicted_signal_names: BTreeSet<String>,
+    conflicts: BTreeSet<GraphDirectionConflictRecord>,
 }
 
 fn graph_direction_coverage_summary(
@@ -387,6 +395,7 @@ fn graph_direction_coverage_summary(
     let mut directions_by_signal_actor =
         BTreeMap::<String, BTreeMap<String, ActorRelativeDirection>>::new();
     let mut conflicted_signals = BTreeSet::new();
+    let mut conflicts = BTreeSet::new();
 
     for port in actor_ports
         .iter()
@@ -407,6 +416,11 @@ fn graph_direction_coverage_summary(
             Some(existing) if existing == port.direction => {}
             Some(_) => {
                 conflicted_signals.insert(port.signal_name.clone());
+                conflicts.insert(GraphDirectionConflictRecord {
+                    signal_name: port.signal_name.clone(),
+                    actor_id: port.actor_id.clone(),
+                    actor_name: port.actor_name.clone(),
+                });
             }
         }
     }
@@ -425,6 +439,7 @@ fn graph_direction_coverage_summary(
     GraphDirectionCoverageSummary {
         resolved_signal_names,
         conflicted_signal_names: conflicted_signals,
+        conflicts,
     }
 }
 
@@ -436,6 +451,15 @@ pub(crate) fn graph_direction_conflicted_signal_names(
     actor_ports: &[ActorPortRecord],
 ) -> BTreeSet<String> {
     graph_direction_coverage_summary(actor_ports).conflicted_signal_names
+}
+
+pub(crate) fn graph_direction_conflicts(
+    actor_ports: &[ActorPortRecord],
+) -> Vec<GraphDirectionConflictRecord> {
+    graph_direction_coverage_summary(actor_ports)
+        .conflicts
+        .into_iter()
+        .collect()
 }
 
 fn is_infrastructure_connectivity_class(class: SignalConnectivityClass) -> bool {
@@ -4076,6 +4100,14 @@ mod tests {
         assert_eq!(
             summary.conflicted_signal_names,
             BTreeSet::from(["PREADY".to_string()])
+        );
+        assert_eq!(
+            summary.conflicts,
+            BTreeSet::from([GraphDirectionConflictRecord {
+                signal_name: "PREADY".to_string(),
+                actor_id: "actor_completer".to_string(),
+                actor_name: "Completer".to_string(),
+            }])
         );
     }
 

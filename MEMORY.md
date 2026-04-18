@@ -22,24 +22,24 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `f8359fa`
-- latest_commit_brief_message: `docs(corpus-kb): refresh fixture benchmark pages`
-- note: current in-flight slice adds direct canonical conflict-set expectations for graph-direction self-conflict fixtures, so the tracked benchmark contract can name both resolved and conflicted signal sets explicitly
+- latest_commit_hash: `c17dda7`
+- latest_commit_brief_message: `feat(kg-bench): assert graph direction conflicts`
+- note: current in-flight slice extends that graph-direction conflict contract from signal-level conflict sets to typed actor-level conflict provenance, so fixtures can name which actor is self-conflicting on which signal
 
 ## Recent commit chain (last 5)
+- `c17dda7` feat(kg-bench): assert graph direction conflicts
 - `f8359fa` docs(corpus-kb): refresh fixture benchmark pages
 - `1ae25f8` feat(kg-bench): add graph conflict fixture patch lane
 - `99808e9` fix(validate): report graph direction conflicts
 - `4fa5e31` fix(validate): guard graph direction coverage
-- `2e7a49b` feat(adapter): separate graph-backed directions
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- branch is ahead of `origin/main` by two local commits (`1ae25f8`, `f8359fa`); do not push again until 25 new local commits since the last push at `99808e9` or until the user explicitly asks
+- branch is ahead of `origin/main` by three local commits (`1ae25f8`, `f8359fa`, `c17dda7`); do not push again until 25 new local commits since the last push at `99808e9` or until the user explicitly asks
 - the README/SESSION_BOOTSTRAP handoff has been re-executed from the repo entrypoint and the referenced continuity docs have been reread
-- the active engineering slice extends `specforge kg-bench` so canonical expectations can assert graph-direction conflicted signal names directly, not only infer them from resolved-set exclusions plus validation findings
-- the tracked `graph_direction_same_actor_conflict_negative` fixture now locks the split explicitly: `PADDR` stays in the resolved graph-direction set, while `PREADY` is excluded from that set and included in the conflicted set
-- validation for the in-flight slice has passed through `cargo fmt --all`, `cargo test -p specforge canonical_expectations_exclude_conflicting_same_actor_graph_direction`, `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality graph_direction_same_actor_conflict_negative`, `bash scripts/run_ci.sh`, `bash scripts/run_docs_ci.sh`, and `git diff --check`
+- the active engineering slice extends same-actor graph-direction conflict coverage from signal-level sets to typed actor-level conflict provenance in `specforge kg-bench`
+- the tracked `graph_direction_same_actor_conflict_negative` fixture now locks the full split explicitly: `PADDR` stays resolved, `PREADY` stays in the conflicted signal set, and `Completer` is recorded as the actor that self-conflicts on `PREADY`
+- validation for the in-flight slice has passed through `cargo fmt --all`, `cargo test -p specforge canonical_expectations_exclude_conflicting_same_actor_graph_direction`, `cargo test -p specforge graph_direction_coverage_summary_reports_same_actor_conflicts`, `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality graph_direction_same_actor_conflict_negative`, and `bash scripts/run_ci.sh`
 - the current full local CI baseline for the in-flight slice is `357` Rust tests plus warning-deny rustdoc and the mdBook build
 - README sentinel remains intact after the slice: `Read SESSION_BOOTSTRAP.md and start from there.`
 - latest committed adapter hardening adds sticky conflict collapse for duplicate explicit top-port direction declarations

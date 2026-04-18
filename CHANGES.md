@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-18 (KG-bench graph-direction conflict provenance)
+
+### Added: actor-level graph-direction conflict expectations in `specforge kg-bench`
+- `CanonicalStageExpectations` now supports `graph_direction_conflicts_include`, so tracked fixtures can assert same-actor graph-direction conflicts as typed actor-plus-signal records instead of only as conflicted signal-name sets.
+- The harness derives those conflict records from the same graph-direction coverage summary used for validation and conflicted signal-name coverage, so this slice adds provenance precision without introducing a second interpretation of graph truth.
+- Updated `graph_direction_same_actor_conflict_negative` so it no longer stops at "PREADY is conflicted"; it now locks the specific culprit too: `Completer` self-conflicts on `PREADY`.
+- This remains an observability slice, not a semantic mutation:
+  - canonical `SemanticIR` / `IntentIR` facts are unchanged
+  - no graph conflict is auto-healed or reclassified
+  - the benchmark contract simply gets sharper about why the signal stayed unresolved
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge canonical_expectations_exclude_conflicting_same_actor_graph_direction` -> passed
+- `cargo test -p specforge graph_direction_coverage_summary_reports_same_actor_conflicts` -> passed
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality graph_direction_same_actor_conflict_negative` -> passed
+- `bash scripts/run_ci.sh` -> passed with `357` Rust tests and the tracked `90/90` fixture suite
+
 ## 2026-04-18 (KG-bench graph-direction conflict expectations)
 
 ### Added: canonical conflict-set expectations in `specforge kg-bench`

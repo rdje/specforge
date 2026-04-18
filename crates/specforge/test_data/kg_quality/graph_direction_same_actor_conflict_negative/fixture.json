@@ -19,13 +19,25 @@
       "graph_direction_signal_names_include": ["PADDR"],
       "graph_direction_signal_names_exclude": ["PREADY"],
       "graph_direction_conflicted_signal_names_include": ["PREADY"],
-      "graph_direction_conflicted_signal_names_exclude": ["PADDR"]
+      "graph_direction_conflicted_signal_names_exclude": ["PADDR"],
+      "graph_direction_conflicts_include": [
+        {
+          "signal_name": "PREADY",
+          "actor_name": "Completer"
+        }
+      ]
     },
     "intent": {
       "graph_direction_signal_names_include": ["PADDR"],
       "graph_direction_signal_names_exclude": ["PREADY"],
       "graph_direction_conflicted_signal_names_include": ["PREADY"],
-      "graph_direction_conflicted_signal_names_exclude": ["PADDR"]
+      "graph_direction_conflicted_signal_names_exclude": ["PADDR"],
+      "graph_direction_conflicts_include": [
+        {
+          "signal_name": "PREADY",
+          "actor_name": "Completer"
+        }
+      ]
     },
     "validation": {
       "semantic": {

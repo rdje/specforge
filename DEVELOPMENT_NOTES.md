@@ -7,6 +7,22 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-18 KG-bench actor-level graph-direction conflict provenance
+- The previous slice made the conflicted signal set directly assertable, which was already better than inferring conflict from coverage drops plus validation findings.
+- One important piece still stayed implicit, though: which actor was self-conflicting on that signal.
+- Existing `actor_ports_include` expectations were not enough to express that precisely:
+  - they could prove both conflicting ports existed
+  - they could not say those ports collectively formed the same-actor conflict the graph summary reported
+- This slice adds a typed benchmark surface instead:
+  - `graph_direction_conflicts_include`
+  - each record names `signal_name`, `actor_name`, and optionally `actor_id`
+- The implementation deliberately reuses the same validation-side graph-direction coverage summary that already computes resolved and conflicted signal sets.
+- That reuse matters:
+  - benchmark provenance stays aligned with validation semantics
+  - we avoid inventing a second conflict detector just for fixtures
+  - same-actor self-conflict truth remains centralized in one place
+- The tracked negative fixture now states the real reason for unresolved coverage in canonical terms: `Completer` self-conflicts on `PREADY`.
+
 ## 2026-04-18 KG-bench canonical graph-direction conflict expectations
 - The prior graph-direction self-conflict fixture could only prove the right behavior indirectly:
   - the resolved graph-direction signal set excluded `PREADY`

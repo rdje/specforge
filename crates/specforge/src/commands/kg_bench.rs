@@ -132,6 +132,8 @@ struct CanonicalStageExpectations {
     #[serde(default)]
     graph_direction_conflicted_signal_names_exclude: Vec<String>,
     #[serde(default)]
+    graph_direction_conflicts_include: Vec<ExpectedGraphDirectionConflict>,
+    #[serde(default)]
     signal_directions_include: Vec<ExpectedSignalDirection>,
     #[serde(default)]
     signal_supporting_table_ids_include: Vec<ExpectedSignalTableSupport>,
@@ -238,6 +240,14 @@ struct ExpectedActorPort {
 struct ExpectedSignalDirection {
     signal_name: String,
     direction: InterfaceSignalDirection,
+}
+
+#[derive(Debug, Deserialize)]
+struct ExpectedGraphDirectionConflict {
+    signal_name: String,
+    actor_name: String,
+    #[serde(default)]
+    actor_id: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -891,6 +901,15 @@ fn evaluate_canonical_expectations(
         &graph_direction_conflicted_signal_names,
         failures,
     );
+    let graph_direction_conflicts = validate::graph_direction_conflicts(actor_ports);
+    for expected_conflict in &expectations.graph_direction_conflicts_include {
+        evaluate_expected_graph_direction_conflict(
+            label,
+            expected_conflict,
+            &graph_direction_conflicts,
+            failures,
+        );
+    }
 
     for expected_direction in &expectations.signal_directions_include {
         let Some(signal) = find_interface_signal(interfaces, &expected_direction.signal_name)
@@ -1406,6 +1425,29 @@ fn evaluate_canonical_expectations(
             temporal_conflicts,
             failures,
         );
+    }
+}
+
+fn evaluate_expected_graph_direction_conflict(
+    label: &str,
+    expectation: &ExpectedGraphDirectionConflict,
+    conflicts: &[validate::GraphDirectionConflictRecord],
+    failures: &mut Vec<String>,
+) {
+    let found = conflicts.iter().any(|conflict| {
+        conflict.signal_name == expectation.signal_name
+            && conflict.actor_name == expectation.actor_name
+            && expectation
+                .actor_id
+                .as_ref()
+                .is_none_or(|actor_id| conflict.actor_id == *actor_id)
+    });
+
+    if !found {
+        failures.push(format!(
+            "{label}: missing graph-direction conflict matching signal `{}`, actor `{}`, and actor_id `{:?}`",
+            expectation.signal_name, expectation.actor_name, expectation.actor_id
+        ));
     }
 }
 
@@ -2498,6 +2540,11 @@ mod tests {
             graph_direction_signal_names_exclude: vec!["PREADY".to_string()],
             graph_direction_conflicted_signal_names_include: vec!["PREADY".to_string()],
             graph_direction_conflicted_signal_names_exclude: vec!["PADDR".to_string()],
+            graph_direction_conflicts_include: vec![super::ExpectedGraphDirectionConflict {
+                signal_name: "PREADY".to_string(),
+                actor_name: "Completer".to_string(),
+                actor_id: None,
+            }],
             ..CanonicalStageExpectations::default()
         };
         let actor_ports = vec![
