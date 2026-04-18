@@ -175,3 +175,12 @@ That document-scope cleanup removes the per-document roots under:
 
 The cleanup command is deliberately local-only.
 It does not touch tracked docs, curated fixtures, or learned priors.
+
+If you intentionally want a full local reset of the generated artifact root itself:
+
+```bash
+cargo run --manifest-path Cargo.toml -- clean --scope all-generated --execute
+```
+
+That removes the whole `generated/` tree in one sweep.
+It is the CLI equivalent of "throw away all rebuildable local execution state and start fresh."

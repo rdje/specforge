@@ -3,7 +3,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use crate::cli::{CleanArgs, CleanScopeArg};
-use crate::error::Result;
+use crate::error::{AppError, Result};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct CleanupTarget {
@@ -65,6 +65,7 @@ fn clean_scope_label(scope: CleanScopeArg) -> &'static str {
     match scope {
         CleanScopeArg::SourceNormalized => "source-normalized",
         CleanScopeArg::Document => "document",
+        CleanScopeArg::AllGenerated => "all-generated",
     }
 }
 
@@ -73,6 +74,13 @@ fn build_cleanup_plan(
     scope: CleanScopeArg,
     document_key: Option<&str>,
 ) -> Result<CleanupPlan> {
+    if matches!(scope, CleanScopeArg::AllGenerated) && document_key.is_some() {
+        return Err(AppError::InvalidStageArtifact(
+            "`specforge clean --scope all-generated` does not accept --document-key; use `--scope document` for per-document cleanup"
+                .to_string(),
+        ));
+    }
+
     let mut candidate_paths = BTreeSet::new();
     match scope {
         CleanScopeArg::SourceNormalized => collect_source_normalized_candidates(
@@ -82,6 +90,9 @@ fn build_cleanup_plan(
         )?,
         CleanScopeArg::Document => {
             collect_document_candidates(generated_root, document_key, &mut candidate_paths)?
+        }
+        CleanScopeArg::AllGenerated => {
+            collect_all_generated_candidate(generated_root, &mut candidate_paths)
         }
     }
 
@@ -96,6 +107,12 @@ fn build_cleanup_plan(
         targets,
         total_bytes,
     })
+}
+
+fn collect_all_generated_candidate(generated_root: &Path, candidate_paths: &mut BTreeSet<PathBuf>) {
+    if generated_root.exists() {
+        candidate_paths.insert(generated_root.to_path_buf());
+    }
 }
 
 fn collect_source_normalized_candidates(
@@ -328,6 +345,77 @@ mod tests {
 
         assert!(!normalized_root.exists());
         assert!(source_document_root.join("source_ir.json").exists());
+
+        Ok(())
+    }
+
+    #[test]
+    fn all_generated_scope_collects_generated_root_once() -> Result<()> {
+        let tempdir = tempdir()?;
+        let generated_root = tempdir.path().join("generated");
+        fs::create_dir_all(generated_root.join("source_ir").join("doc"))?;
+        fs::create_dir_all(generated_root.join("intent_ir").join("doc"))?;
+        fs::write(
+            generated_root
+                .join("source_ir")
+                .join("doc")
+                .join("source_ir.json"),
+            b"{}",
+        )?;
+        fs::write(
+            generated_root
+                .join("intent_ir")
+                .join("doc")
+                .join("intent_ir.json"),
+            b"{}",
+        )?;
+
+        let plan = build_cleanup_plan(&generated_root, CleanScopeArg::AllGenerated, None)?;
+        let collected_paths: Vec<_> = plan.targets.into_iter().map(|target| target.path).collect();
+
+        assert_eq!(collected_paths, vec![generated_root]);
+
+        Ok(())
+    }
+
+    #[test]
+    fn all_generated_scope_rejects_document_key_filter() {
+        let tempdir = tempdir().expect("tempdir");
+        let generated_root = tempdir.path().join("generated");
+
+        let error = build_cleanup_plan(&generated_root, CleanScopeArg::AllGenerated, Some("doc"))
+            .expect_err("all-generated scope should reject document_key");
+
+        assert!(error.to_string().contains("does not accept --document-key"));
+    }
+
+    #[test]
+    fn execute_cleanup_plan_removes_generated_root_for_all_generated_scope() -> Result<()> {
+        let tempdir = tempdir()?;
+        let generated_root = tempdir.path().join("generated");
+        fs::create_dir_all(generated_root.join("source_ir").join("doc"))?;
+        fs::create_dir_all(generated_root.join("prior_memory"))?;
+        fs::write(
+            generated_root
+                .join("source_ir")
+                .join("doc")
+                .join("source_ir.json"),
+            b"{}",
+        )?;
+        fs::write(
+            generated_root
+                .join("prior_memory")
+                .join("corpus_memory.json"),
+            b"{}",
+        )?;
+
+        let plan = build_cleanup_plan(&generated_root, CleanScopeArg::AllGenerated, None)?;
+        execute_cleanup_plan(&CleanupPlan {
+            targets: plan.targets,
+            total_bytes: plan.total_bytes,
+        })?;
+
+        assert!(!generated_root.exists());
 
         Ok(())
     }

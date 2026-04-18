@@ -288,6 +288,8 @@ pub enum CleanScopeArg {
     SourceNormalized,
     /// Delete full per-document generated directories across SourceIR/EvidenceIR/SemanticIR/IntentIR/adapters.
     Document,
+    /// Delete the entire generated artifact root in one sweep.
+    AllGenerated,
 }
 
 #[derive(Debug, Args)]
@@ -496,5 +498,16 @@ mod tests {
         assert!(matches!(args.scope, CleanScopeArg::SourceNormalized));
         assert_eq!(args.document_key, None);
         assert!(!args.execute);
+    }
+
+    #[test]
+    fn clean_accepts_all_generated_scope() {
+        let cli = Cli::parse_from(["specforge", "clean", "--scope", "all-generated"]);
+        let Commands::Clean(args) = cli.command else {
+            panic!("expected clean command");
+        };
+
+        assert!(matches!(args.scope, CleanScopeArg::AllGenerated));
+        assert_eq!(args.document_key, None);
     }
 }

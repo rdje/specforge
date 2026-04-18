@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-18 Generated-root cleanup scope for `specforge clean`
+- The first cleanup slice still left one awkward hole: it could reclaim normalized bundles and per-document stage trees, but a full local generated-root reset still required shelling out to `rm -rf generated`.
+- Added `CleanScopeArg::AllGenerated` so the CLI can now own that full-root sweep too.
+- The scope model is now explicit and complete:
+  - `source-normalized`: reclaim the heavyweight PDF normalization bundles while preserving stage JSON
+  - `document`: reclaim one document's generated stage trees across source/evidence/semantic/intent/adapter roots
+  - `all-generated`: reclaim the whole local generated root as one rebuildable execution-state bundle
+- `--scope all-generated` now rejects `--document-key` explicitly because silently ignoring that filter would be a bad surprise on a destructive cleanup path.
+- Added focused tests for all-generated scope discovery, argument guardrails, and execute-mode deletion of the generated root.
+- Formatting, focused tests, docs CI, and full local CI passed. Full local CI reports `351` Rust tests plus warning-deny Clippy/rustdoc and the mdBook build.
+
 ## 2026-04-18 Generated artifact cleanup and SourceIR normalized-bundle hygiene
 - Added a first-class `specforge clean` command instead of leaving artifact cleanup as an undocumented manual shell habit.
 - Scope design is intentionally conservative:

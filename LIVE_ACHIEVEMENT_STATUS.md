@@ -29,6 +29,7 @@
 - `specforge learn-priors` command created: Done
 - `specforge corpus-kb` command created: Done
 - `specforge clean` command created: Done
+- `specforge clean` full generated-root sweep scope created: Done
 - `specforge corpus-kb` KG fixture-result projection created: Done
 - Quiet KG fixture validation path for corpus-KB projection: Done
 - KG fixture-family summary projection for corpus-KB benchmark results: Done

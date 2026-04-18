@@ -75,7 +75,7 @@ cargo run --manifest-path Cargo.toml -- clean
 ```
 
 That dry-runs the heavyweight `generated/source_ir/*/normalized` bundles and reports reclaimable size.
-Add `--execute` to delete them, or use `--scope document --document-key <key>` when you intentionally want a cold rebuild of that document's whole generated stage tree.
+Add `--execute` to delete them, use `--scope document --document-key <key>` when you intentionally want a cold rebuild of one document's whole generated stage tree, or use `--scope all-generated --execute` when you intentionally want to discard the whole local `generated/` root and rebuild everything later.
 
 ## Validation reports
 

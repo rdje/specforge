@@ -1,5 +1,28 @@
 # CHANGES
 
+## 2026-04-18 (Generated-root cleanup scope for `specforge clean`)
+
+### Added: full generated-root sweep inside the cleanup command
+- Extended `specforge clean` with `--scope all-generated`.
+- That scope dry-runs the whole local `generated/` root as one candidate and, with `--execute`, removes it in one sweep.
+- This closes the last gap in the cleanup story: users no longer need a raw shell `rm -rf generated` when they intentionally want a full local artifact reset.
+
+### Improved: cleanup scope guardrails
+- `specforge clean --scope all-generated` now rejects `--document-key` explicitly instead of silently ignoring it.
+- The command surface stays self-explanatory:
+  - `source-normalized` for heavyweight normalized bundles
+  - `document` for one document's generated stage trees
+  - `all-generated` for the full local generated root
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge commands::clean::tests::` -> passed
+- `cargo run -p specforge -- clean --scope all-generated` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with formatting, warning-deny Clippy, `351` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
+- `git diff --check` -> passed
+- README sentinel check -> passed
+
 ## 2026-04-18 (Generated artifact cleanup and SourceIR normalized-bundle hygiene)
 
 ### Added: first-class generated artifact cleanup

@@ -72,6 +72,12 @@ If one document is no longer relevant and you want a full local reset for it:
 cargo run --manifest-path Cargo.toml -- clean --scope document --document-key <document_key> --execute
 ```
 
+If the whole local generated tree is the problem and you want a true cold rebuild:
+
+```bash
+cargo run --manifest-path Cargo.toml -- clean --scope all-generated --execute
+```
+
 ## Learning did not seem to improve anything
 
 Check the actual prior store:
