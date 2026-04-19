@@ -89,7 +89,8 @@
         "finding_ids_include": [
           "semantic_signal_semantic_conflicts_present",
           "semantic_prior_guided_semantic_arbitration_present",
-          "semantic_prior_guided_semantic_consensus_present"
+          "semantic_prior_guided_semantic_consensus_present",
+          "semantic_prior_guided_semantic_consensus_surface_rescan_guidance"
         ],
         "findings_include": [
           {
@@ -104,6 +105,13 @@
             "severity": "info",
             "category": "semantic_role_consensus",
             "summary_contains": "consensus that was strengthened by learned modality-reliability priors",
+            "related_ids_include": ["XCTRL"]
+          },
+          {
+            "finding_id": "semantic_prior_guided_semantic_consensus_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "prior-guided semantic-role signal id(s)",
             "related_ids_include": ["XCTRL"]
           }
         ],
@@ -122,7 +130,8 @@
         "finding_ids_include": [
           "intent_signal_semantic_conflicts_present",
           "intent_prior_guided_semantic_arbitration_present",
-          "intent_prior_guided_semantic_consensus_present"
+          "intent_prior_guided_semantic_consensus_present",
+          "intent_prior_guided_semantic_consensus_surface_rescan_guidance"
         ],
         "findings_include": [
           {
@@ -137,6 +146,13 @@
             "severity": "info",
             "category": "semantic_role_consensus",
             "summary_contains": "consensus that was strengthened by learned modality-reliability priors",
+            "related_ids_include": ["XCTRL"]
+          },
+          {
+            "finding_id": "intent_prior_guided_semantic_consensus_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "prior-guided semantic-role signal id(s)",
             "related_ids_include": ["XCTRL"]
           }
         ],

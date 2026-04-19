@@ -47,6 +47,10 @@ const SEMANTIC_ALIAS_DEPENDENT_SEMANTIC_CONSENSUS_SURFACE_RESCAN_GUIDANCE: &str 
     "semantic_alias_dependent_semantic_consensus_surface_rescan_guidance";
 const INTENT_ALIAS_DEPENDENT_SEMANTIC_CONSENSUS_SURFACE_RESCAN_GUIDANCE: &str =
     "intent_alias_dependent_semantic_consensus_surface_rescan_guidance";
+const SEMANTIC_PRIOR_GUIDED_SEMANTIC_CONSENSUS_SURFACE_RESCAN_GUIDANCE: &str =
+    "semantic_prior_guided_semantic_consensus_surface_rescan_guidance";
+const INTENT_PRIOR_GUIDED_SEMANTIC_CONSENSUS_SURFACE_RESCAN_GUIDANCE: &str =
+    "intent_prior_guided_semantic_consensus_surface_rescan_guidance";
 
 macro_rules! println {
     () => {
@@ -301,6 +305,28 @@ fn push_alias_dependent_semantic_consensus_rescan_guidance(
         "rescan_guidance",
         format!(
             "{} alias-dependent semantic-role signal id(s) in {stage_label} should trigger targeted NLP rescans plus downstream rebuild because resolved role meaning still depends only on alias-grounded evidence",
+            related_ids.len()
+        ),
+        related_ids.to_vec(),
+    ));
+}
+
+fn push_prior_guided_semantic_consensus_rescan_guidance(
+    findings: &mut Vec<ValidationFindingRecord>,
+    finding_id: &str,
+    stage_label: &str,
+    related_ids: &[String],
+) {
+    if related_ids.is_empty() {
+        return;
+    }
+
+    findings.push(finding(
+        finding_id,
+        ValidationFindingSeverity::Info,
+        "rescan_guidance",
+        format!(
+            "{} prior-guided semantic-role signal id(s) in {stage_label} should trigger targeted NLP rescans plus downstream rebuild because resolved role meaning was strengthened by learned modality-reliability priors",
             related_ids.len()
         ),
         related_ids.to_vec(),
@@ -2998,6 +3024,16 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 .cloned()
                 .collect(),
         ));
+        push_prior_guided_semantic_consensus_rescan_guidance(
+            &mut findings,
+            SEMANTIC_PRIOR_GUIDED_SEMANTIC_CONSENSUS_SURFACE_RESCAN_GUIDANCE,
+            "SemanticIR",
+            &prior_guided_semantic_consensus_signal_names
+                .iter()
+                .take(8)
+                .cloned()
+                .collect::<Vec<_>>(),
+        );
     }
     if !ir.actor_ports.is_empty() && missing_graph_direction_count > 0 {
         findings.push(finding(
@@ -4234,6 +4270,16 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 .cloned()
                 .collect(),
         ));
+        push_prior_guided_semantic_consensus_rescan_guidance(
+            &mut findings,
+            INTENT_PRIOR_GUIDED_SEMANTIC_CONSENSUS_SURFACE_RESCAN_GUIDANCE,
+            "IntentIR",
+            &prior_guided_semantic_consensus_signal_names
+                .iter()
+                .take(8)
+                .cloned()
+                .collect::<Vec<_>>(),
+        );
     }
     if !ir.actor_ports.is_empty() && missing_graph_direction_count > 0 {
         findings.push(finding(
@@ -6269,6 +6315,18 @@ mod tests {
             semantic_consensus_finding.related_ids,
             vec!["XCTRL".to_string()]
         );
+        let semantic_rescan_guidance = semantic_report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id
+                    == SEMANTIC_PRIOR_GUIDED_SEMANTIC_CONSENSUS_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected semantic prior-guided consensus rescan guidance");
+        assert_eq!(
+            semantic_rescan_guidance.related_ids,
+            vec!["XCTRL".to_string()]
+        );
 
         let intent_report = validate_intent_ir(
             &intent_ir,
@@ -6300,6 +6358,17 @@ mod tests {
             .expect("expected intent prior-guided consensus finding");
         assert_eq!(
             intent_consensus_finding.related_ids,
+            vec!["XCTRL".to_string()]
+        );
+        let intent_rescan_guidance = intent_report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == INTENT_PRIOR_GUIDED_SEMANTIC_CONSENSUS_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected intent prior-guided consensus rescan guidance");
+        assert_eq!(
+            intent_rescan_guidance.related_ids,
             vec!["XCTRL".to_string()]
         );
 

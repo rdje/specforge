@@ -1,5 +1,29 @@
 # CHANGES
 
+## 2026-04-19 (Prior-guided semantic consensus now emits replayable rescan guidance)
+
+### Improved: learned-prior-assisted final role meaning now points back to current-document replay
+- Validation already surfaced when `SemanticIR` or `IntentIR` carried semantic-role consensus that had been strengthened by learned modality-reliability priors.
+- That state was honest, but still too inert:
+  - reviewers could see the prior-guided signal ids
+  - the replay planner had no typed next step for seeking stronger current-document corroboration
+  - the final consensus looked more settled than the policy really allows
+- This slice makes that weakness actionable without changing the bounded replay contract:
+  - `validate` now emits `semantic_prior_guided_semantic_consensus_surface_rescan_guidance` / `intent_prior_guided_semantic_consensus_surface_rescan_guidance`
+  - those findings stay in `rescan_guidance` and carry the same signal ids already named by the prior-guided consensus finding
+  - `project-validation` maps them onto the existing local `EvidenceIR -> SemanticIR -> IntentIR? -> validate` NLP replay lane
+  - the action text is explicitly about gaining stronger current-document semantic-role consensus instead of relying on prior-guided carry-through
+- The tracked KG fixture `semantic_modality_reliability_prior_guided_conflict_gold` now also requires those new findings, so the positive prior-guided semantic case is benchmark-locked.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge validate_semantic_and_intent_ir_report_prior_guided_semantic_related_ids` -> passed
+- `cargo test -p specforge prior_guided_semantic_consensus_rescan_guidance` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_ci.sh` -> passed with `383` Rust tests and the mdBook build
+- `bash scripts/run_docs_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-19 (Alias-dependent semantic consensus now emits replayable rescan guidance)
 
 ### Improved: alias-grounded role meaning now advertises the next bounded evidence replay

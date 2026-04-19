@@ -51,6 +51,7 @@ Each target carries the current artifact path, typed replay inputs such as `sour
 Non-decisive semantic-role arbitration findings now also feed this queue through the same bounded local `nlp-enrich -> semantic -> intent? -> validate` replay lane used for other evidence-level semantic rescans.
 Fallback-only resolved semantic roles now feed that same queue as well, so a carried role without observation-backed consensus becomes an explicit local replay target instead of a passive warning.
 Alias-dependent semantic consensus findings now feed it too, so meaning that still depends only on alias grounding can be replayed for stronger non-alias corroboration through the same local pipeline.
+Prior-guided semantic consensus findings now feed it as well, so meaning that converged with learned-prior help can be replayed for stronger current-document corroboration through the same local pipeline.
 For visual-motif corroboration, that sequence now starts with a local VLM `enrich_source_ir` hint, then rebuilds `EvidenceIR`, then validates the current artifact.
 By default, `--rescan-vlm-provider auto-local` prefers a ready local Ollama `qwen2.5vl:7b` model and falls back to a ready local LM Studio `qwen2.5vl:7b` model before emitting the install-guiding Ollama hint.
 Use `--rescan-vlm-provider ollama`, `--rescan-vlm-provider lmstudio`, or `--rescan-vlm-provider skip` to force the generated hint, and `--rescan-vlm-model <model>` to bake a model override into the plan.

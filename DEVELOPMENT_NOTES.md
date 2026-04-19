@@ -7,6 +7,24 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-19 Prior-guided final consensus should be replayable, not treated as fully self-sufficient
+- Prior-guided final semantic consensus is a different weak state from alias-dependence or fallback-only carry-through:
+  - the role has converged
+  - the canonical consensus exists
+  - but the system is explicitly saying learned modality-reliability priors helped that convergence happen
+- That makes it useful but still review-sensitive.
+- If the replay planner ignores it, the product sends a mixed message:
+  - validation admits priors mattered
+  - the action layer behaves as if nothing more current-document-specific should be attempted
+- The right follow-up is conservative and familiar:
+  - rerun local NLP enrichment on `EvidenceIR`
+  - rebuild the downstream canonical stage(s)
+  - review whether the same signal ids now retain strong consensus with less dependence on learned priors
+- This keeps the trust policy coherent:
+  - priors can guide and accelerate
+  - priors do not become unquestionable authority
+  - final meaning that still advertises prior help now also advertises the bounded local replay lane that might strengthen it
+
 ## 2026-04-19 Alias-dependent semantic consensus should be replayable, not only inspectable
 - Alias-dependent consensus is weaker than ordinary observation-backed consensus in a very specific way:
   - the role has converged
