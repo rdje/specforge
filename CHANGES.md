@@ -1,5 +1,33 @@
 # CHANGES
 
+## 2026-04-19 (Fallback semantic-role consensus now emits replayable rescan guidance)
+
+### Improved: provisional semantic meaning now routes into the bounded replay loop
+- Validation already reported when `SemanticIR` or `IntentIR` carried a resolved semantic role without observation-backed `semantic_consensus`.
+- That was honest, but still incomplete:
+  - the canonical layers preserved the provisional meaning
+  - the validator named the affected signal ids
+  - the replay planner still had no typed next step for trying to strengthen that meaning from current-document evidence
+- This slice closes that gap without turning the system into an auto-fixer:
+  - `validate` now emits `semantic_role_consensus_surface_rescan_guidance` / `intent_role_consensus_surface_rescan_guidance`
+  - those findings stay in `rescan_guidance` and carry the exact fallback-only signal ids already exposed by the consensus warning
+  - `project-validation` now maps those findings onto the existing local `EvidenceIR -> SemanticIR -> IntentIR? -> validate` NLP replay lane
+  - the recommended action text is consensus-specific: the operator is asked to check whether those signals gain observation-backed semantic-role consensus, not merely whether any role survives
+- The behavior remains deliberately bounded:
+  - no canonical fact is auto-promoted
+  - no semantic truth is mutated in place
+  - the replay plan only identifies the current-document evidence boundary and the deterministic downstream rebuild path
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge validate_semantic_ir_flags_resolved_roles_without_consensus` -> passed
+- `cargo test -p specforge validate_intent_ir_flags_resolved_roles_without_consensus` -> passed
+- `cargo test -p specforge semantic_role_consensus_rescan_guidance` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_ci.sh` -> passed with `379` Rust tests and the mdBook build
+- `bash scripts/run_docs_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-19 (KG fixtures now lock semantic-arbitration rescan guidance)
 
 ### Improved: tracked semantic-conflict fixtures now require the new replay guidance findings

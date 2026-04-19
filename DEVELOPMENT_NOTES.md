@@ -7,6 +7,26 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-19 Resolved semantic roles without consensus should be replay targets, not resting states
+- The non-decisive semantic-arbitration slice handled the case where multiple role candidates still compete.
+- The adjacent weak state is different:
+  - a role already survived as the current canonical carry-through
+  - but it still lacks observation-backed `semantic_consensus`
+  - that means the meaning is provisionally useful yet still too weak to be treated as settled
+- Letting that state end as only a warning would leave a product hole:
+  - operators could see the weak role ids
+  - but the local replay planner would not know that the right bounded next step is to revisit `EvidenceIR`
+  - the system would look more passive exactly where it should say "this meaning needs more current-document corroboration"
+- The correct response is still conservative:
+  - reuse the same local NLP replay lane as temporal-surface and semantic-arbitration rescans
+  - do not create a special semantic repair engine
+  - do not auto-promote the role if the replay changes anything
+  - keep the action phrased in terms of gaining observation-backed consensus
+- This makes the review story tighter:
+  - contested meaning and fallback-only meaning now both land in bounded replay guidance
+  - decisive, observation-backed consensus remains the threshold for strong downstream trust
+  - provisional carry-through stays inspectable in the canonical layers while also advertising the next evidence-bound thing to try
+
 ## 2026-04-19 New rescan-guidance families should be locked in tracked KG fixtures, not only unit tests
 - The semantic-arbitration replay slice changed a real validation contract:
   - contested semantic-role evidence now yields stage-specific `rescan_guidance`
