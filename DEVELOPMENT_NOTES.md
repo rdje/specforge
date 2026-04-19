@@ -7,6 +7,26 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-19 Intent quality-gap related IDs
+- After the actor-port slice, the only remaining non-honest empty `related_ids` surface was the aggregate IntentIR quality warning.
+- That finding was weaker than necessary because the validator already computes the exact score breakdown before emitting the warning.
+- The right review payload here is not a signal id or rule id; it is a stable score-component id:
+  - the warning belongs to the score model itself
+  - reviewers need to know which dimensions left points on the table
+  - those dimensions should stay deterministic across runs and documents
+- The helper deliberately mirrors the score formula rather than inferring from sibling findings:
+  - partial direction coverage maps to `score_component:signal_direction`
+  - partial width coverage maps to `score_component:signal_width`
+  - fewer than 30 structured NLP constraints map to `score_component:nlp_constraints`
+  - absent enum/register/timing/state-machine/system-contract contributors map to their corresponding `score_component:*` ids
+- This keeps the warning honest:
+  - it names score drivers directly instead of pretending every low score must already have a child finding
+  - it avoids inventing fake artifact record ids for what is really an aggregate quality surface
+- The direct regression uses a deliberately tiny one-signal protocol:
+  - direction and width score full credit
+  - the remaining score components contribute zero
+  - the warning now reports exactly those missing score dimensions in stable order
+
 ## 2026-04-19 Actor-port-gap related IDs
 - The next weak validation surface after the recent temporal and evidence slices was the actor-port synthesis gap.
 - Both canonical validators already had stronger truth than they were surfacing:

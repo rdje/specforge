@@ -1,5 +1,33 @@
 # CHANGES
 
+## 2026-04-19 (Intent quality warnings now name score drivers)
+
+### Improved: low-quality IntentIR findings now surface deterministic score-component IDs
+- The remaining non-honest blank finding was the top-level quality warning:
+  - `intent_quality_below_excellent_threshold` already knew the full score breakdown
+  - the validator already knew which score components were below their maximum contribution
+  - but the finding still emitted empty `related_ids`
+- This slice tightens that surface by surfacing stable score-component IDs for each dimension that left points on the table:
+  - `score_component:signal_direction`
+  - `score_component:signal_width`
+  - `score_component:nlp_constraints`
+  - `score_component:encoding_enums`
+  - `score_component:register_map`
+  - `score_component:timing_constraints`
+  - `score_component:state_machine`
+  - `score_component:system_contract`
+- Added a direct IntentIR regression that builds a minimal one-signal spec, validates the resulting low score, and proves the quality warning now reports the exact missing score components instead of an empty list.
+- This is an observability hardening slice:
+  - no scoring math changed
+  - no canonical IR schema changed
+  - validation now exposes the exact score dimensions it was already using to explain why the artifact stayed below `EXCELLENT`
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge validate_intent_ir_reports_quality_gap_related_ids` -> passed
+- `bash scripts/run_ci.sh` -> passed with `369` Rust tests and the mdBook build
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-04-19 (Actor-port-gap findings now name relation ids)
 
 ### Improved: actor-port-missing findings now carry canonical actor-signal relation ids

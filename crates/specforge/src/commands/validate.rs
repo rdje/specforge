@@ -236,6 +236,49 @@ fn actor_signal_relation_related_ids(relations: &[ActorSignalRelation]) -> Vec<S
         .collect()
 }
 
+#[derive(Clone, Copy)]
+struct IntentQualityScoreInputs {
+    dir_pct: usize,
+    width_pct: usize,
+    structured_nlp_constraints: usize,
+    has_encoding_enums: bool,
+    has_register_map: bool,
+    has_timing_constraints: bool,
+    has_state_machine: bool,
+    has_system_contract: bool,
+}
+
+fn intent_quality_gap_related_ids(inputs: IntentQualityScoreInputs) -> Vec<String> {
+    let mut related_ids = Vec::new();
+
+    if inputs.dir_pct < 100 {
+        related_ids.push("score_component:signal_direction".to_string());
+    }
+    if inputs.width_pct < 100 {
+        related_ids.push("score_component:signal_width".to_string());
+    }
+    if inputs.structured_nlp_constraints < 30 {
+        related_ids.push("score_component:nlp_constraints".to_string());
+    }
+    if !inputs.has_encoding_enums {
+        related_ids.push("score_component:encoding_enums".to_string());
+    }
+    if !inputs.has_register_map {
+        related_ids.push("score_component:register_map".to_string());
+    }
+    if !inputs.has_timing_constraints {
+        related_ids.push("score_component:timing_constraints".to_string());
+    }
+    if !inputs.has_state_machine {
+        related_ids.push("score_component:state_machine".to_string());
+    }
+    if !inputs.has_system_contract {
+        related_ids.push("score_component:system_contract".to_string());
+    }
+
+    related_ids
+}
+
 fn load_prior_memory_for_validation(prior_memory_path: Option<&Path>) -> Option<CorpusMemory> {
     let prior_memory_path = prior_memory_path?;
     if !prior_memory_path.exists() {
@@ -3612,6 +3655,16 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         + fsm_score
         + contract_score)
         .min(100.0);
+    let quality_gap_related_ids = intent_quality_gap_related_ids(IntentQualityScoreInputs {
+        dir_pct,
+        width_pct: w_pct,
+        structured_nlp_constraints: has_constraints,
+        has_encoding_enums: has_enums,
+        has_register_map: has_registers,
+        has_timing_constraints: has_timing,
+        has_state_machine: has_states,
+        has_system_contract,
+    });
 
     println!("=== Quality Score ===");
     println!(
@@ -4169,7 +4222,7 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             ValidationFindingSeverity::Warning,
             "quality_score",
             format!("IntentIR quality score is {score:.0}/100 ({grade})"),
-            Vec::new(),
+            quality_gap_related_ids,
         ));
     }
     if !ir.residual_decisions.is_empty() {
@@ -6497,6 +6550,38 @@ mod tests {
         assert!(
             validation_report_path_for(&artifact_path)?.exists(),
             "expected stage-local validation_report.json sidecar to exist"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_intent_ir_reports_quality_gap_related_ids() -> Result<()> {
+        let (_, intent_ir) = build_semantic_and_intent_from_markdown(
+            "quality_gap_related_ids.md",
+            concat!("# Protocol\n", "Signal XREQ is input width 1.\n"),
+        )?;
+
+        let report = validate_intent_ir(&intent_ir, "quality_gap_related_ids".to_string());
+
+        assert_eq!(report.overall_score, Some(35));
+        assert_eq!(report.grade.as_deref(), Some("NEEDS IMPROVEMENT"));
+
+        let finding = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "intent_quality_below_excellent_threshold")
+            .expect("expected quality-threshold finding");
+        assert_eq!(
+            finding.related_ids,
+            vec![
+                "score_component:nlp_constraints".to_string(),
+                "score_component:encoding_enums".to_string(),
+                "score_component:register_map".to_string(),
+                "score_component:timing_constraints".to_string(),
+                "score_component:state_machine".to_string(),
+                "score_component:system_contract".to_string(),
+            ]
         );
 
         Ok(())
