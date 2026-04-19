@@ -67,6 +67,14 @@ const SEMANTIC_GRAPH_DIRECTION_COVERAGE_SURFACE_RESCAN_GUIDANCE: &str =
     "semantic_graph_direction_coverage_surface_rescan_guidance";
 const INTENT_GRAPH_DIRECTION_COVERAGE_SURFACE_RESCAN_GUIDANCE: &str =
     "intent_graph_direction_coverage_surface_rescan_guidance";
+const SEMANTIC_CONNECTIVITY_MISSING_PRODUCER_SURFACE_RESCAN_GUIDANCE: &str =
+    "semantic_connectivity_missing_producer_surface_rescan_guidance";
+const INTENT_CONNECTIVITY_MISSING_PRODUCER_SURFACE_RESCAN_GUIDANCE: &str =
+    "intent_connectivity_missing_producer_surface_rescan_guidance";
+const SEMANTIC_CONNECTIVITY_MISSING_CONSUMER_SURFACE_RESCAN_GUIDANCE: &str =
+    "semantic_connectivity_missing_consumer_surface_rescan_guidance";
+const INTENT_CONNECTIVITY_MISSING_CONSUMER_SURFACE_RESCAN_GUIDANCE: &str =
+    "intent_connectivity_missing_consumer_surface_rescan_guidance";
 
 macro_rules! println {
     () => {
@@ -431,6 +439,29 @@ fn push_graph_direction_coverage_rescan_guidance(
         "rescan_guidance",
         format!(
             "{} signal id(s) in {stage_label} should trigger targeted NLP rescans plus downstream rebuild because the current canonical surface still lacks actor-relative graph direction coverage",
+            related_ids.len()
+        ),
+        related_ids.to_vec(),
+    ));
+}
+
+fn push_connectivity_gap_rescan_guidance(
+    findings: &mut Vec<ValidationFindingRecord>,
+    finding_id: &str,
+    stage_label: &str,
+    gap_label: &str,
+    related_ids: &[String],
+) {
+    if related_ids.is_empty() {
+        return;
+    }
+
+    findings.push(finding(
+        finding_id,
+        ValidationFindingSeverity::Info,
+        "rescan_guidance",
+        format!(
+            "{} signal id(s) in {stage_label} should trigger targeted NLP rescans plus downstream rebuild because the current connectivity graph still lacks resolved {gap_label} connectivity evidence",
             related_ids.len()
         ),
         related_ids.to_vec(),
@@ -2923,6 +2954,17 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             ),
             missing_producer_signals.iter().take(8).cloned().collect(),
         ));
+        push_connectivity_gap_rescan_guidance(
+            &mut findings,
+            SEMANTIC_CONNECTIVITY_MISSING_PRODUCER_SURFACE_RESCAN_GUIDANCE,
+            "SemanticIR",
+            "producer-side",
+            &missing_producer_signals
+                .iter()
+                .take(8)
+                .cloned()
+                .collect::<Vec<_>>(),
+        );
     }
     if !infrastructure_missing_producer_signals.is_empty() {
         findings.push(finding(
@@ -2951,6 +2993,17 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             ),
             missing_consumer_signals.iter().take(8).cloned().collect(),
         ));
+        push_connectivity_gap_rescan_guidance(
+            &mut findings,
+            SEMANTIC_CONNECTIVITY_MISSING_CONSUMER_SURFACE_RESCAN_GUIDANCE,
+            "SemanticIR",
+            "consumer-side",
+            &missing_consumer_signals
+                .iter()
+                .take(8)
+                .cloned()
+                .collect::<Vec<_>>(),
+        );
     }
     if !ir.signal_connectivity_conflicts.is_empty() {
         findings.push(finding(
@@ -4209,6 +4262,17 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             ),
             missing_producer_signals.iter().take(8).cloned().collect(),
         ));
+        push_connectivity_gap_rescan_guidance(
+            &mut findings,
+            INTENT_CONNECTIVITY_MISSING_PRODUCER_SURFACE_RESCAN_GUIDANCE,
+            "IntentIR",
+            "producer-side",
+            &missing_producer_signals
+                .iter()
+                .take(8)
+                .cloned()
+                .collect::<Vec<_>>(),
+        );
     }
     if !infrastructure_missing_producer_signals.is_empty() {
         findings.push(finding(
@@ -4237,6 +4301,17 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             ),
             missing_consumer_signals.iter().take(8).cloned().collect(),
         ));
+        push_connectivity_gap_rescan_guidance(
+            &mut findings,
+            INTENT_CONNECTIVITY_MISSING_CONSUMER_SURFACE_RESCAN_GUIDANCE,
+            "IntentIR",
+            "consumer-side",
+            &missing_consumer_signals
+                .iter()
+                .take(8)
+                .cloned()
+                .collect::<Vec<_>>(),
+        );
     }
     if !ir.signal_connectivity_conflicts.is_empty() {
         findings.push(finding(
@@ -7399,6 +7474,120 @@ mod tests {
             })
             .expect("expected semantic graph-direction rescan guidance");
         assert_eq!(rescan_guidance.related_ids, vec!["PSEL".to_string()]);
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_semantic_ir_reports_missing_connectivity_endpoint_related_ids() -> Result<()> {
+        let (semantic_ir, _) = build_semantic_and_intent_from_markdown(
+            "semantic_connectivity_gap.md",
+            concat!(
+                "# Protocol\n",
+                "Signal PREADY is output width 1.\n",
+                "\n",
+                "Signal PSEL is input width 1.\n",
+                "\n",
+                "The Requester reads PREADY.\n",
+                "\n",
+                "The Completer drives PSEL.\n",
+            ),
+        )?;
+
+        let report = validate_semantic_ir(&semantic_ir, "semantic_connectivity_gap".to_string());
+
+        let missing_producer = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "semantic_connectivity_missing_producer")
+            .expect("expected semantic missing-producer finding");
+        assert_eq!(missing_producer.related_ids, vec!["PREADY".to_string()]);
+        let missing_producer_rescan = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == SEMANTIC_CONNECTIVITY_MISSING_PRODUCER_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected semantic missing-producer rescan guidance");
+        assert_eq!(
+            missing_producer_rescan.related_ids,
+            vec!["PREADY".to_string()]
+        );
+
+        let missing_consumer = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "semantic_connectivity_missing_consumer")
+            .expect("expected semantic missing-consumer finding");
+        assert_eq!(missing_consumer.related_ids, vec!["PSEL".to_string()]);
+        let missing_consumer_rescan = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == SEMANTIC_CONNECTIVITY_MISSING_CONSUMER_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected semantic missing-consumer rescan guidance");
+        assert_eq!(
+            missing_consumer_rescan.related_ids,
+            vec!["PSEL".to_string()]
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_intent_ir_reports_missing_connectivity_endpoint_related_ids() -> Result<()> {
+        let (_, intent_ir) = build_semantic_and_intent_from_markdown(
+            "intent_connectivity_gap.md",
+            concat!(
+                "# Protocol\n",
+                "Signal PREADY is output width 1.\n",
+                "\n",
+                "Signal PSEL is input width 1.\n",
+                "\n",
+                "The Requester reads PREADY.\n",
+                "\n",
+                "The Completer drives PSEL.\n",
+            ),
+        )?;
+
+        let report = validate_intent_ir(&intent_ir, "intent_connectivity_gap".to_string());
+
+        let missing_producer = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "intent_connectivity_missing_producer")
+            .expect("expected intent missing-producer finding");
+        assert_eq!(missing_producer.related_ids, vec!["PREADY".to_string()]);
+        let missing_producer_rescan = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == INTENT_CONNECTIVITY_MISSING_PRODUCER_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected intent missing-producer rescan guidance");
+        assert_eq!(
+            missing_producer_rescan.related_ids,
+            vec!["PREADY".to_string()]
+        );
+
+        let missing_consumer = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "intent_connectivity_missing_consumer")
+            .expect("expected intent missing-consumer finding");
+        assert_eq!(missing_consumer.related_ids, vec!["PSEL".to_string()]);
+        let missing_consumer_rescan = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == INTENT_CONNECTIVITY_MISSING_CONSUMER_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected intent missing-consumer rescan guidance");
+        assert_eq!(
+            missing_consumer_rescan.related_ids,
+            vec!["PSEL".to_string()]
+        );
 
         Ok(())
     }

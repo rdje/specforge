@@ -1,0 +1,130 @@
+{
+  "name": "connectivity_endpoint_gaps_negative",
+  "source": "source.md",
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["PREADY", "PSEL"],
+      "actor_ports_include": [
+        {
+          "actor_name": "Requester",
+          "signal_name": "PREADY",
+          "direction": "input"
+        },
+        {
+          "actor_name": "Completer",
+          "signal_name": "PSEL",
+          "direction": "output"
+        }
+      ]
+    },
+    "intent": {
+      "signal_names_include": ["PREADY", "PSEL"],
+      "actor_ports_include": [
+        {
+          "actor_name": "Requester",
+          "signal_name": "PREADY",
+          "direction": "input"
+        },
+        {
+          "actor_name": "Completer",
+          "signal_name": "PSEL",
+          "direction": "output"
+        }
+      ]
+    },
+    "validation": {
+      "semantic": {
+        "finding_ids_include": [
+          "semantic_connectivity_missing_producer",
+          "semantic_connectivity_missing_producer_surface_rescan_guidance",
+          "semantic_connectivity_missing_consumer",
+          "semantic_connectivity_missing_consumer_surface_rescan_guidance"
+        ],
+        "findings_include": [
+          {
+            "finding_id": "semantic_connectivity_missing_producer",
+            "severity": "warning",
+            "category": "signal_connectivity",
+            "summary_contains": "no resolved producer actor",
+            "related_ids_include": ["PREADY"],
+            "related_ids_exclude": ["PSEL"]
+          },
+          {
+            "finding_id": "semantic_connectivity_missing_producer_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "producer-side connectivity evidence",
+            "related_ids_include": ["PREADY"],
+            "related_ids_exclude": ["PSEL"]
+          },
+          {
+            "finding_id": "semantic_connectivity_missing_consumer",
+            "severity": "warning",
+            "category": "signal_connectivity",
+            "summary_contains": "no resolved consumer actor",
+            "related_ids_include": ["PSEL"],
+            "related_ids_exclude": ["PREADY"]
+          },
+          {
+            "finding_id": "semantic_connectivity_missing_consumer_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "consumer-side connectivity evidence",
+            "related_ids_include": ["PSEL"],
+            "related_ids_exclude": ["PREADY"]
+          }
+        ],
+        "metric_values": {
+          "signal_connectivity": "2",
+          "signal_connectivity_conflicts": "0"
+        }
+      },
+      "intent": {
+        "finding_ids_include": [
+          "intent_connectivity_missing_producer",
+          "intent_connectivity_missing_producer_surface_rescan_guidance",
+          "intent_connectivity_missing_consumer",
+          "intent_connectivity_missing_consumer_surface_rescan_guidance"
+        ],
+        "findings_include": [
+          {
+            "finding_id": "intent_connectivity_missing_producer",
+            "severity": "warning",
+            "category": "signal_connectivity",
+            "summary_contains": "no resolved producer actor",
+            "related_ids_include": ["PREADY"],
+            "related_ids_exclude": ["PSEL"]
+          },
+          {
+            "finding_id": "intent_connectivity_missing_producer_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "producer-side connectivity evidence",
+            "related_ids_include": ["PREADY"],
+            "related_ids_exclude": ["PSEL"]
+          },
+          {
+            "finding_id": "intent_connectivity_missing_consumer",
+            "severity": "warning",
+            "category": "signal_connectivity",
+            "summary_contains": "no resolved consumer actor",
+            "related_ids_include": ["PSEL"],
+            "related_ids_exclude": ["PREADY"]
+          },
+          {
+            "finding_id": "intent_connectivity_missing_consumer_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "consumer-side connectivity evidence",
+            "related_ids_include": ["PSEL"],
+            "related_ids_exclude": ["PREADY"]
+          }
+        ],
+        "metric_values": {
+          "signal_connectivity": "2",
+          "signal_connectivity_conflicts": "0"
+        }
+      }
+    }
+  }
+}

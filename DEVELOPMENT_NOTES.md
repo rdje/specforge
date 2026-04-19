@@ -7,6 +7,29 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-19 Protocol connectivity endpoint gaps should be replay targets, not passive structural debt
+- Once a protocol `signal_connectivity` record exists, the next weak state is often not a conflict but an incomplete endpoint:
+  - a producer is missing
+  - or a consumer is missing
+- That state is narrower than generic graph incompleteness:
+  - the signal id is stable
+  - one side of the connectivity graph already exists
+  - the missing side should often be recoverable from better local actor/role evidence
+- Leaving that state as only a warning underspecifies the next bounded action.
+- The right follow-up is the same conservative replay lane used for nearby evidence-strength gaps:
+  - rerun local NLP enrichment on `EvidenceIR`
+  - rebuild the downstream canonical stage(s)
+  - review whether the same signal ids now gain the missing producer-side or consumer-side connectivity evidence
+- Infrastructure connectivity should stay out of that replay family.
+- Clock/reset sourcing is different:
+  - protocol PDFs often define the boundary-visible clock/reset contract
+  - but not the final physical generator/controller ownership
+  - so missing infrastructure producers should remain a system-contract note rather than a replay demand
+- This keeps the trust story coherent:
+  - protocol endpoint gaps become explicit replay targets
+  - infrastructure sourcing remains honest about document scope
+  - no canonical truth is auto-mutated just because a replay path exists
+
 ## 2026-04-19 Graph-uncovered canonical signals should be replay targets, not passive graph debt
 - Once canonical signal records exist and some actor-port graph coverage exists, missing graph direction on the remaining signals is a specific weak state:
   - the signal ids are real

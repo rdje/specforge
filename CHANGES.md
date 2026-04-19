@@ -1,5 +1,36 @@
 # CHANGES
 
+## 2026-04-19 (Connectivity endpoint gaps now emit replayable rescan guidance)
+
+### Improved: producerless and consumerless protocol signals now advertise the next bounded replay
+- Validation already reported when `SemanticIR` or `IntentIR` carried protocol `signal_connectivity` records with only one endpoint:
+  - a consumer but no producer
+  - or a producer but no consumer
+- That was honest, but still too passive:
+  - reviewers could see the affected signal ids
+  - the replay planner had no typed next step for revisiting local actor/role evidence on those same signals
+  - endpoint-gapped signals looked like passive structural debt instead of explicit replay targets
+- This slice turns that weak state into the same bounded replay contract used for nearby evidence-strength gaps:
+  - `validate` now emits `semantic_connectivity_missing_producer_surface_rescan_guidance` / `intent_connectivity_missing_producer_surface_rescan_guidance`
+  - `validate` now also emits `semantic_connectivity_missing_consumer_surface_rescan_guidance` / `intent_connectivity_missing_consumer_surface_rescan_guidance`
+  - those findings stay in `rescan_guidance` and carry the same signal ids already reported by the endpoint-gap findings
+  - `project-validation` maps them onto the local `EvidenceIR -> SemanticIR -> IntentIR? -> validate` NLP replay lane
+  - the action text is explicit about gaining producer-side or consumer-side connectivity evidence rather than merely rerunning extraction
+  - the tracked KG fixture `connectivity_endpoint_gaps_negative` now requires both semantic and intent guidance so the benchmark locks the replay surface end to end
+- The scope stays intentionally narrow:
+  - protocol connectivity endpoint gaps are replay targets
+  - infrastructure clock/reset sourcing is not
+  - missing infrastructure producers remain a dedicated `system_contract` note because many protocol PDFs do not name the final clock generator or reset controller
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge connectivity_endpoint_related_ids` -> passed
+- `cargo test -p specforge connectivity_missing_` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `397` Rust tests and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-19 (Graph-direction coverage gaps now emit replayable rescan guidance)
 
 ### Improved: graph-uncovered canonical signals now advertise the next bounded replay

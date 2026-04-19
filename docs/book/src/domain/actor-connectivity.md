@@ -162,6 +162,21 @@ That conflict can then be carried through:
 
 This makes structural uncertainty visible to users and downstream consumers.
 
+## Missing endpoints
+
+The graph can also be incomplete without being contradictory.
+
+For example:
+
+- a signal may have a recovered consumer but no recovered producer
+- a signal may have a recovered producer but no recovered consumer
+
+For protocol signals, validation now treats those endpoint gaps as explicit replay targets rather than passive warnings.
+The stage-specific `semantic_connectivity_missing_producer_surface_rescan_guidance` and `semantic_connectivity_missing_consumer_surface_rescan_guidance` findings tell `project-validation` to rerun the local `EvidenceIR -> SemanticIR -> IntentIR? -> validate` lane for those same signal ids.
+
+Infrastructure signals are intentionally different.
+Clock/reset sourcing can remain a system-contract note without entering the protocol replay family, because many protocol PDFs do not name the eventual clock generator or reset controller.
+
 ## Temporal grounding
 
 Graph facts also help temporal semantics.
