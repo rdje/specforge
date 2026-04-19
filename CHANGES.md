@@ -1,5 +1,32 @@
 # CHANGES
 
+## 2026-04-19 (Actor-port-gap findings now name relation ids)
+
+### Improved: actor-port-missing findings now carry canonical actor-signal relation ids
+- The next observability gap was in the canonical graph-to-port synthesis surface:
+  - `semantic_actor_ports_missing` already knew `actor_signal_relations` existed
+  - `intent_actor_ports_missing` already knew the same graph evidence survived into `IntentIR`
+  - but both findings still emitted empty `related_ids`
+- This slice tightens both findings by surfacing the exact canonical `ActorSignalRelation.relation_id` values that expose the synthesis gap.
+- The validator helper deliberately uses the graph’s own ids instead of inventing a new review abstraction:
+  - collect non-empty `relation_id`s from `actor_signal_relations`
+  - deduplicate into a stable set
+  - surface the first review-facing ids directly in the finding payload
+- Added a direct semantic+intent regression that:
+  - builds real actor-signal relations from source prose
+  - deliberately clears synthesized `actor_ports`
+  - proves both canonical findings now report the exact stranded relation ids instead of an empty list
+- This is an observability hardening slice:
+  - no actor-port synthesis behavior changed
+  - no canonical IR schema changed
+  - validation now exposes the exact graph relations it was already evaluating
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge validate_semantic_and_intent_ir_report_actor_port_gap_related_ids` -> passed
+- `bash scripts/run_ci.sh` -> passed with `368` Rust tests and the mdBook build
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-04-19 (Evidence review findings now name stranded ids)
 
 ### Improved: EvidenceIR structural-KG and normative-residual findings now carry concrete ids

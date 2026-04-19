@@ -22,27 +22,27 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `ad65c39`
-- latest_commit_brief_message: `feat(validate): name temporal surface inputs`
-- note: current in-flight slice hardens EvidenceIR review findings so they name stranded behavioral and normative ids directly
+- latest_commit_hash: `9ece4b9`
+- latest_commit_brief_message: `feat(validate): name evidence stranded ids`
+- note: current in-flight slice hardens semantic/intent actor-port-gap review findings so they name stranded actor-signal relation ids directly
 
 ## Recent commit chain (last 5)
+- `9ece4b9` feat(validate): name evidence stranded ids
 - `ad65c39` feat(validate): name temporal surface inputs
 - `3b7dc32` feat(validate): name temporal gap rules
 - `1f09f97` feat(validate): name alias handshake caveats
 - `29ec1f3` test(validate): lock prior-guided related ids
-- `35c449b` test(validate): lock semantic related ids
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- branch is ahead of `origin/main` by fifteen local commits (`1ae25f8`, `f8359fa`, `c17dda7`, `08de26a`, `f813461`, `eeb67a8`, `f8164d0`, `792c60e`, `cd79915`, `781353a`, `35c449b`, `29ec1f3`, `1f09f97`, `3b7dc32`, `ad65c39`); do not push again until 25 new local commits since the last push at `99808e9` or until the user explicitly asks
+- branch is ahead of `origin/main` by sixteen local commits (`1ae25f8`, `f8359fa`, `c17dda7`, `08de26a`, `f813461`, `eeb67a8`, `f8164d0`, `792c60e`, `cd79915`, `781353a`, `35c449b`, `29ec1f3`, `1f09f97`, `3b7dc32`, `ad65c39`, `9ece4b9`); do not push again until 25 new local commits since the last push at `99808e9` or until the user explicitly asks
 - the README/SESSION_BOOTSTRAP handoff has been re-executed from the repo entrypoint and the referenced continuity docs have been reread
-- the active in-flight slice hardens EvidenceIR review observability:
-  - `evidence_structural_kg_missing` now names the stranded behavioral record ids
-  - `evidence_normative_residuals_remaining` now names the surviving normative statement ids
-  - the new direct regression proves `condrule_htrans_hold`, `sigcon_hready_asserted`, and `stmt_normative_residual` surface exactly where they should
-- validation for the in-flight slice has passed through `cargo fmt --all`, `cargo test -p specforge validate_evidence_ir_reports_structural_kg_and_normative_related_ids`, `bash scripts/run_ci.sh`, and `bash scripts/run_docs_ci.sh`
-- the current full local CI baseline for the in-flight slice is `366` Rust tests plus warning-deny rustdoc and the mdBook build
+- the active in-flight slice hardens semantic/intent actor-port-gap observability:
+  - `semantic_actor_ports_missing` now names stranded `ActorSignalRelation.relation_id` values when graph facts exist but canonical actor-relative ports are absent
+  - `intent_actor_ports_missing` now surfaces the same relation ids after canonical carry-through
+  - the new direct regression proves both stages report the exact extracted relation ids after actor-port state is deliberately cleared
+- validation for the in-flight slice has passed through `cargo fmt --all`, `cargo test -p specforge validate_semantic_and_intent_ir_report_actor_port_gap_related_ids`, `bash scripts/run_ci.sh`, and `bash scripts/run_docs_ci.sh`
+- the current full local CI baseline for the in-flight slice is `368` Rust tests plus warning-deny rustdoc and the mdBook build
 - README sentinel remains intact after the slice: `Read SESSION_BOOTSTRAP.md and start from there.`
 - latest committed adapter hardening adds sticky conflict collapse for duplicate explicit top-port direction declarations
 - the committed regression declares top port `drive_data` once as output and once as input; expected behavior is unresolved top-port direction in both the top candidate and selected signal inventory, blocked renderability, and no emitted `.fsm` target text

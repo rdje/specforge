@@ -7,6 +7,30 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-19 Actor-port-gap related IDs
+- The next weak validation surface after the recent temporal and evidence slices was the actor-port synthesis gap.
+- Both canonical validators already had stronger truth than they were surfacing:
+  - `SemanticIR` knew `actor_signal_relations` existed while `actor_ports` was empty
+  - `IntentIR` inherited the same stranded graph state
+  - both findings still emitted no `related_ids`
+- The right payload for this surface is graph relation ids, not signal names and not actor names:
+  - the failure belongs to the canonical actor-signal edge records
+  - a single signal can participate in multiple actor relations
+  - reviewers need to know which exact graph facts failed to lower into actor-relative ports
+- The helper is intentionally minimal and canonical:
+  - read `ActorSignalRelation.relation_id`
+  - discard empty ids defensively
+  - deduplicate into a stable sorted set for review output
+- The direct regression is purposely honest instead of validator-only synthesis:
+  - build `SourceIR -> EvidenceIR -> SemanticIR` from prose that creates real actor-signal relations
+  - capture the canonical `relation_id` set produced by extraction
+  - deliberately clear `semantic_ir.actor_ports`
+  - rebuild `IntentIR` from that persisted semantic artifact
+  - assert both `semantic_actor_ports_missing` and `intent_actor_ports_missing` now point back to the same stranded relation ids
+- This preserves the boundary we want:
+  - validation explains graph-to-port lowering failure more precisely
+  - validation still does not author new graph facts or mutate canonical truth
+
 ## 2026-04-19 Evidence-side stranded-id related IDs
 - The semantic and intent validators had become noticeably more specific than the Evidence validator on a couple of basic review surfaces.
 - Two Evidence findings already had exact internal truth sources but were still reporting only counts:

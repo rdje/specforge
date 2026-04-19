@@ -26,8 +26,9 @@ use crate::ir::semantic::{
     SignalConnectivityConflictRecord, TemporalConflictRecord,
 };
 use crate::ir::source::{
-    AutomationConfidence, DiagramKind, ResidualDecisionPacket, SourceIr, ValidationFindingRecord,
-    ValidationFindingSeverity, ValidationMetricRecord, ValidationReportRecord, WidthHint,
+    ActorSignalRelation, AutomationConfidence, DiagramKind, ResidualDecisionPacket, SourceIr,
+    ValidationFindingRecord, ValidationFindingSeverity, ValidationMetricRecord,
+    ValidationReportRecord, WidthHint,
 };
 
 thread_local! {
@@ -220,6 +221,16 @@ fn evidence_normative_residual_statement_ids(ir: &EvidenceIr) -> Vec<String> {
         .iter()
         .filter(|statement| matches!(statement.class, StatementClass::NormativeStatement))
         .map(|statement| statement.statement_id.clone())
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect()
+}
+
+fn actor_signal_relation_related_ids(relations: &[ActorSignalRelation]) -> Vec<String> {
+    relations
+        .iter()
+        .map(|relation| relation.relation_id.clone())
+        .filter(|relation_id| !relation_id.is_empty())
         .collect::<BTreeSet<_>>()
         .into_iter()
         .collect()
@@ -2610,6 +2621,8 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         );
     let temporal_rules_with_multi_predicate_antecedents =
         temporal_rules_with_multi_predicate_antecedents_count(&ir.temporal_rules);
+    let actor_signal_relation_related_ids =
+        actor_signal_relation_related_ids(&ir.actor_signal_relations);
 
     let mut findings = Vec::new();
     if !ir.actor_signal_relations.is_empty() && ir.actor_ports.is_empty() {
@@ -2618,7 +2631,11 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             ValidationFindingSeverity::Error,
             "knowledge_graph",
             "SemanticIR carries actor-signal relations but failed to synthesize actor-relative ports",
-            Vec::new(),
+            actor_signal_relation_related_ids
+                .iter()
+                .take(8)
+                .cloned()
+                .collect(),
         ));
     }
     if !missing_producer_signals.is_empty() {
@@ -3793,6 +3810,8 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         );
     let temporal_rules_with_multi_predicate_antecedents =
         temporal_rules_with_multi_predicate_antecedents_count(&ir.temporal_rules);
+    let actor_signal_relation_related_ids =
+        actor_signal_relation_related_ids(&ir.actor_signal_relations);
 
     let mut findings = Vec::new();
     if !ir.actor_signal_relations.is_empty() && ir.actor_ports.is_empty() {
@@ -3801,7 +3820,11 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             ValidationFindingSeverity::Error,
             "knowledge_graph",
             "IntentIR carries actor-signal relations but no actor-relative ports",
-            Vec::new(),
+            actor_signal_relation_related_ids
+                .iter()
+                .take(8)
+                .cloned()
+                .collect(),
         ));
     }
     if !missing_producer_signals.is_empty() {
@@ -6999,6 +7022,77 @@ mod tests {
                 .expect("expected intent temporal-gap finding");
             assert_eq!(finding.related_ids, vec![expected_rule_id.clone()]);
         }
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_semantic_and_intent_ir_report_actor_port_gap_related_ids() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("actor_port_gap_related_ids.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal XVALID is output width 1.\n\n",
+                "The Manager drives XVALID.\n\n",
+                "The Subordinate reads XVALID.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let mut semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        let expected_related_ids = semantic_ir
+            .actor_signal_relations
+            .iter()
+            .map(|relation| relation.relation_id.clone())
+            .collect::<BTreeSet<_>>()
+            .into_iter()
+            .collect::<Vec<_>>();
+        assert!(
+            !expected_related_ids.is_empty(),
+            "expected actor-signal relations before clearing actor ports"
+        );
+
+        semantic_ir.actor_ports.clear();
+        semantic_ir.write_to_disk()?;
+
+        let semantic_report =
+            validate_semantic_ir(&semantic_ir, "actor_port_gap_related_ids".to_string());
+        let semantic_finding = semantic_report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "semantic_actor_ports_missing")
+            .expect("expected semantic actor-port gap finding");
+        assert_eq!(semantic_finding.related_ids, expected_related_ids);
+
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+        let intent_report =
+            validate_intent_ir(&intent_ir, "actor_port_gap_related_ids".to_string());
+        let intent_finding = intent_report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "intent_actor_ports_missing")
+            .expect("expected intent actor-port gap finding");
+        assert_eq!(intent_finding.related_ids, expected_related_ids);
 
         Ok(())
     }
