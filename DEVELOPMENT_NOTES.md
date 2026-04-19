@@ -7,6 +7,29 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-19 Temporal-rule-surface-missing related IDs
+- After the temporal-gap slice, the next adjacent weakness was the "we have temporal evidence but no typed temporal rules" finding.
+- That surface is different from the temporal-gap findings:
+  - temporal-gap findings belong to canonical `TemporalRuleRecord`s that exist but are under-grounded
+  - temporal-rule-surface-missing belongs to upstream timing/constraint inputs that never became typed temporal rules at all
+- That means the right payload is upstream source ids, not canonical temporal rule ids:
+  - `TimingConstraintRecord.constraint_id`
+  - `SignalConstraintRecord.constraint_id`
+  - `ConditionalRuleRecord.rule_id`
+- The helper is intentionally type-aware but still simple:
+  - collect ids from carried timing constraints
+  - collect ids from carried signal constraints
+  - collect ids from carried conditional rules
+  - deduplicate into one stable review-facing related-id set
+- The direct regression uses a real timing-constraint path instead of a synthetic validator shortcut:
+  - `EvidenceIR` receives `timing_hready_setup`
+  - `SemanticIR` carries that timing constraint forward
+  - no typed temporal rule is derived because the description lacks the sampling/capture shape the temporal lowering expects
+  - validation now points directly at `timing_hready_setup` when reporting the missing typed temporal surface
+- This keeps the observability story honest across both temporal layers:
+  - if a typed rule exists but is weakly grounded, findings point at the canonical `rule_id`
+  - if no typed rule exists yet, findings point at the stranded upstream temporal input ids
+
 ## 2026-04-19 Temporal grounding gap related IDs
 - The next observability weakness after the semantic-role work was in temporal grounding review surfaces.
 - Three validator findings already had crisp internal truth conditions but still surfaced only counts:

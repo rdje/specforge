@@ -22,27 +22,27 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `1f09f97`
-- latest_commit_brief_message: `feat(validate): name alias handshake caveats`
-- note: current in-flight slice hardens temporal-gap findings so they name the canonical temporal rule ids directly
+- latest_commit_hash: `3b7dc32`
+- latest_commit_brief_message: `feat(validate): name temporal gap rules`
+- note: current in-flight slice hardens temporal-rule-surface-missing findings so they name the upstream temporal input ids directly
 
 ## Recent commit chain (last 5)
+- `3b7dc32` feat(validate): name temporal gap rules
 - `1f09f97` feat(validate): name alias handshake caveats
 - `29ec1f3` test(validate): lock prior-guided related ids
 - `35c449b` test(validate): lock semantic related ids
 - `781353a` feat(validate): name semantic arbitration signals
-- `cd79915` feat(validate): name compat direction lag
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- branch is ahead of `origin/main` by thirteen local commits (`1ae25f8`, `f8359fa`, `c17dda7`, `08de26a`, `f813461`, `eeb67a8`, `f8164d0`, `792c60e`, `cd79915`, `781353a`, `35c449b`, `29ec1f3`, `1f09f97`); do not push again until 25 new local commits since the last push at `99808e9` or until the user explicitly asks
+- branch is ahead of `origin/main` by fourteen local commits (`1ae25f8`, `f8359fa`, `c17dda7`, `08de26a`, `f813461`, `eeb67a8`, `f8164d0`, `792c60e`, `cd79915`, `781353a`, `35c449b`, `29ec1f3`, `1f09f97`, `3b7dc32`); do not push again until 25 new local commits since the last push at `99808e9` or until the user explicitly asks
 - the README/SESSION_BOOTSTRAP handoff has been re-executed from the repo entrypoint and the referenced continuity docs have been reread
-- the active in-flight slice hardens temporal grounding gap observability:
-  - `semantic_*` and `intent_*` findings for missing clock grounding, missing cycle windows, and missing actor grounding now emit canonical temporal rule ids instead of empty `related_ids`
-  - the new direct regression proves all six findings name `temporal_signal_constraint_sigcon_hready_stable`
-  - shared helper predicates now keep semantic and intent rule-id selection deterministic and aligned
-- validation for the in-flight slice has passed through `cargo fmt --all`, `cargo test -p specforge validate_semantic_and_intent_ir_report_temporal_gap_related_ids`, `bash scripts/run_ci.sh`, and `bash scripts/run_docs_ci.sh`
-- the current full local CI baseline for the in-flight slice is `365` Rust tests plus warning-deny rustdoc and the mdBook build
+- the active in-flight slice hardens temporal-rule-surface-missing observability:
+  - `semantic_temporal_rule_surface_missing` and `intent_temporal_rule_surface_missing` now emit upstream timing/constraint ids instead of empty `related_ids`
+  - the new direct regression proves both stages name `timing_hready_setup`
+  - temporal observability now distinguishes cleanly between "typed rule exists but is under-grounded" and "temporal input exists but no typed rule was derived"
+- validation for the in-flight slice has passed through `cargo fmt --all`, `cargo test -p specforge validate_semantic_and_intent_ir_report_temporal_rule_surface_missing_related_ids`, `bash scripts/run_ci.sh`, and `bash scripts/run_docs_ci.sh`
+- the current full local CI baseline for the in-flight slice is `366` Rust tests plus warning-deny rustdoc and the mdBook build
 - README sentinel remains intact after the slice: `Read SESSION_BOOTSTRAP.md and start from there.`
 - latest committed adapter hardening adds sticky conflict collapse for duplicate explicit top-port direction declarations
 - the committed regression declares top port `drive_data` once as output and once as input; expected behavior is unresolved top-port direction in both the top candidate and selected signal inventory, blocked renderability, and no emitted `.fsm` target text

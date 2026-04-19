@@ -768,6 +768,25 @@ fn temporal_rules_missing_actor_grounding_rule_ids(
     })
 }
 
+fn temporal_rule_surface_input_ids(
+    timing_constraints: &[crate::ir::source::TimingConstraintRecord],
+    signal_constraints: &[crate::ir::source::SignalConstraintRecord],
+    conditional_rules: &[crate::ir::source::ConditionalRuleRecord],
+) -> Vec<String> {
+    timing_constraints
+        .iter()
+        .map(|constraint| constraint.constraint_id.clone())
+        .chain(
+            signal_constraints
+                .iter()
+                .map(|constraint| constraint.constraint_id.clone()),
+        )
+        .chain(conditional_rules.iter().map(|rule| rule.rule_id.clone()))
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect()
+}
+
 fn temporal_rules_with_handshake_completion_count(
     temporal_rules: &[crate::ir::semantic::TemporalRuleRecord],
 ) -> usize {
@@ -2557,6 +2576,11 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             &ir.temporal_rules,
             &ir.interfaces,
         );
+    let temporal_rule_surface_input_ids = temporal_rule_surface_input_ids(
+        &ir.timing_constraints,
+        &ir.signal_constraints,
+        &ir.conditional_rules,
+    );
     let alias_dependent_handshake_completion_signal_names =
         temporal_rules_with_alias_dependent_handshake_completion_signal_names(
             &ir.temporal_rules,
@@ -2903,7 +2927,11 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             "temporal_grounding",
             "semantic evidence includes timing/constraint records but no typed temporal rules were derived"
                 .to_string(),
-            Vec::new(),
+            temporal_rule_surface_input_ids
+                .iter()
+                .take(8)
+                .cloned()
+                .collect(),
         ));
     }
     if !ir.residual_decisions.is_empty() {
@@ -3731,6 +3759,11 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             &ir.temporal_rules,
             &ir.interfaces,
         );
+    let temporal_rule_surface_input_ids = temporal_rule_surface_input_ids(
+        &ir.timing_constraints,
+        &ir.signal_constraints,
+        &ir.conditional_rules,
+    );
     let alias_dependent_handshake_completion_signal_names =
         temporal_rules_with_alias_dependent_handshake_completion_signal_names(
             &ir.temporal_rules,
@@ -4078,7 +4111,11 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             "temporal_grounding",
             "intent evidence includes timing/constraint records but no typed temporal rules were carried forward"
                 .to_string(),
-            Vec::new(),
+            temporal_rule_surface_input_ids
+                .iter()
+                .take(8)
+                .cloned()
+                .collect(),
         ));
     }
     if score < 90.0 {
@@ -4405,7 +4442,8 @@ mod tests {
     };
     use crate::ir::source::{
         AutomationConfidence, SignalConstraintKind, SignalConstraintRecord, SourceIr,
-        StructuredTableCellRecord, StructuredTableRecord, TableKind, VisualAsset, VisualAssetKind,
+        StructuredTableCellRecord, StructuredTableRecord, TableKind, TimingConstraintRecord,
+        VisualAsset, VisualAssetKind,
     };
 
     #[test]
@@ -6858,6 +6896,90 @@ mod tests {
                 .expect("expected intent temporal-gap finding");
             assert_eq!(finding.related_ids, vec![expected_rule_id.clone()]);
         }
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_semantic_and_intent_ir_report_temporal_rule_surface_missing_related_ids()
+    -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("temporal_rule_surface_missing.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal HCLK is input width 1.\n\n",
+                "Signal HREADY is input width 1.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.timing_constraints.push(TimingConstraintRecord {
+            constraint_id: "timing_hready_setup".to_string(),
+            parameter_name: "tSU".to_string(),
+            min_value: Some("2".to_string()),
+            typ_value: None,
+            max_value: None,
+            unit: Some("ns".to_string()),
+            description: Some("HREADY setup requirement before HCLK.".to_string()),
+            supporting_statement_ids: vec!["stmt_timing_hready_setup".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let expected_related_ids = vec!["timing_hready_setup".to_string()];
+
+        let semantic_report =
+            validate_semantic_ir(&semantic_ir, "temporal_rule_surface_missing".to_string());
+        assert_eq!(metric_value(&semantic_report, "temporal_rules"), Some("0"));
+        assert_eq!(
+            metric_value(&semantic_report, "timing_constraints"),
+            Some("1")
+        );
+        let semantic_finding = semantic_report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "semantic_temporal_rule_surface_missing")
+            .expect("expected semantic temporal-rule-surface-missing finding");
+        assert_eq!(semantic_finding.related_ids, expected_related_ids);
+
+        let intent_report =
+            validate_intent_ir(&intent_ir, "temporal_rule_surface_missing".to_string());
+        assert_eq!(metric_value(&intent_report, "temporal_rules"), Some("0"));
+        assert_eq!(
+            metric_value(&intent_report, "timing_constraints"),
+            Some("1")
+        );
+        let intent_finding = intent_report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "intent_temporal_rule_surface_missing")
+            .expect("expected intent temporal-rule-surface-missing finding");
+        assert_eq!(
+            intent_finding.related_ids,
+            vec!["timing_hready_setup".to_string()]
+        );
 
         Ok(())
     }

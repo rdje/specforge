@@ -1,5 +1,29 @@
 # CHANGES
 
+## 2026-04-19 (Temporal-rule-surface-missing findings now name source ids)
+
+### Improved: temporal-rule-surface-missing findings now carry upstream timing/constraint ids
+- The previous temporal observability slice made under-grounded typed temporal rules name their canonical `rule_id`s.
+- The neighboring `*_temporal_rule_surface_missing` findings were still weaker:
+  - validation already knew which timing/constraint records survived into the artifact
+  - validation already knew no typed temporal rules were derived from them
+  - but the finding still emitted empty `related_ids`
+- This slice tightens that surface for both `SemanticIR` and `IntentIR` by surfacing the upstream source record ids that remain unlowered into typed temporal rules:
+  - timing constraint `constraint_id`s
+  - signal constraint `constraint_id`s
+  - conditional rule `rule_id`s
+- Added a direct semantic+intent regression that proves a carried timing constraint with no typed temporal lowering now yields `related_ids: ["timing_hready_setup"]` for both stages.
+- This is an observability hardening slice:
+  - no temporal-rule derivation changed
+  - no canonical IR schema changed
+  - validation now exposes the exact source-side temporal inputs already known to be stranded below the typed temporal surface
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge validate_semantic_and_intent_ir_report_temporal_rule_surface_missing_related_ids` -> passed
+- `bash scripts/run_ci.sh` -> passed with `366` Rust tests and the mdBook build
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-04-19 (Temporal-gap findings now name rule ids)
 
 ### Improved: temporal grounding gap findings now carry canonical temporal-rule IDs
