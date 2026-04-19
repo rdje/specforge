@@ -7,6 +7,21 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-19 Clockless typed temporal rules should be replay targets, not just validation noise
+- Once a typed temporal rule exists, missing clock or edge grounding is a specific weak state:
+  - the rule is real
+  - the rule id is stable and reviewable
+  - but the temporal meaning is still underspecified in a way that matters for downstream trust
+- Leaving that state as only a temporal-grounding warning underspecifies the next bounded action.
+- The right follow-up is the same conservative replay lane used for nearby evidence-strength gaps:
+  - rerun local NLP enrichment on `EvidenceIR`
+  - rebuild the downstream canonical stage(s)
+  - review whether the same temporal rule ids now carry explicit clock or edge grounding
+- This keeps the temporal trust story coherent:
+  - typed-but-weak temporal structure remains visible
+  - weak structure also advertises the exact evidence-bound replay lane that may strengthen it
+  - no canonical truth is auto-mutated just because a replay path exists
+
 ## 2026-04-19 Unbounded typed temporal rules should be replay targets, not just score dents
 - Once typed temporal rules already exist, the next weak state is no longer "did we lower anything at all?" but "did we lower enough timing structure to make the rule operationally useful?"
 - Missing `cycle_window` bounds is a good example:

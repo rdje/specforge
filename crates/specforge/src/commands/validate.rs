@@ -55,6 +55,10 @@ const SEMANTIC_TEMPORAL_CYCLE_WINDOW_SURFACE_RESCAN_GUIDANCE: &str =
     "semantic_temporal_cycle_window_surface_rescan_guidance";
 const INTENT_TEMPORAL_CYCLE_WINDOW_SURFACE_RESCAN_GUIDANCE: &str =
     "intent_temporal_cycle_window_surface_rescan_guidance";
+const SEMANTIC_TEMPORAL_CLOCK_GROUNDING_SURFACE_RESCAN_GUIDANCE: &str =
+    "semantic_temporal_clock_grounding_surface_rescan_guidance";
+const INTENT_TEMPORAL_CLOCK_GROUNDING_SURFACE_RESCAN_GUIDANCE: &str =
+    "intent_temporal_clock_grounding_surface_rescan_guidance";
 
 macro_rules! println {
     () => {
@@ -353,6 +357,28 @@ fn push_temporal_cycle_window_rescan_guidance(
         "rescan_guidance",
         format!(
             "{} typed temporal rule id(s) in {stage_label} should trigger targeted NLP rescans plus downstream rebuild because the current rules still lack explicit cycle-window bounds",
+            related_ids.len()
+        ),
+        related_ids.to_vec(),
+    ));
+}
+
+fn push_temporal_clock_grounding_rescan_guidance(
+    findings: &mut Vec<ValidationFindingRecord>,
+    finding_id: &str,
+    stage_label: &str,
+    related_ids: &[String],
+) {
+    if related_ids.is_empty() {
+        return;
+    }
+
+    findings.push(finding(
+        finding_id,
+        ValidationFindingSeverity::Info,
+        "rescan_guidance",
+        format!(
+            "{} typed temporal rule id(s) in {stage_label} should trigger targeted NLP rescans plus downstream rebuild because the current rules still lack explicit clock or edge grounding",
             related_ids.len()
         ),
         related_ids.to_vec(),
@@ -3118,6 +3144,16 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 .cloned()
                 .collect(),
         ));
+        push_temporal_clock_grounding_rescan_guidance(
+            &mut findings,
+            SEMANTIC_TEMPORAL_CLOCK_GROUNDING_SURFACE_RESCAN_GUIDANCE,
+            "SemanticIR",
+            &temporal_rules_missing_clock_grounding_rule_ids
+                .iter()
+                .take(8)
+                .cloned()
+                .collect::<Vec<_>>(),
+        );
     }
     if !ir.temporal_rules.is_empty() && temporal_rules_with_cycle_window == 0 {
         findings.push(finding(
@@ -4375,6 +4411,16 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 .cloned()
                 .collect(),
         ));
+        push_temporal_clock_grounding_rescan_guidance(
+            &mut findings,
+            INTENT_TEMPORAL_CLOCK_GROUNDING_SURFACE_RESCAN_GUIDANCE,
+            "IntentIR",
+            &temporal_rules_missing_clock_grounding_rule_ids
+                .iter()
+                .take(8)
+                .cloned()
+                .collect::<Vec<_>>(),
+        );
     }
     if !ir.temporal_rules.is_empty() && temporal_rules_with_cycle_window == 0 {
         findings.push(finding(
@@ -7394,6 +7440,17 @@ mod tests {
                 .expect("expected semantic temporal-gap finding");
             assert_eq!(finding.related_ids, vec![expected_rule_id.clone()]);
         }
+        let semantic_clock_rescan_guidance = semantic_report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == SEMANTIC_TEMPORAL_CLOCK_GROUNDING_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected semantic temporal clock-grounding rescan guidance");
+        assert_eq!(
+            semantic_clock_rescan_guidance.related_ids,
+            vec![expected_rule_id.clone()]
+        );
         let semantic_rescan_guidance = semantic_report
             .findings
             .iter()
@@ -7432,6 +7489,17 @@ mod tests {
                 .expect("expected intent temporal-gap finding");
             assert_eq!(finding.related_ids, vec![expected_rule_id.clone()]);
         }
+        let intent_clock_rescan_guidance = intent_report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == INTENT_TEMPORAL_CLOCK_GROUNDING_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected intent temporal clock-grounding rescan guidance");
+        assert_eq!(
+            intent_clock_rescan_guidance.related_ids,
+            vec![expected_rule_id.clone()]
+        );
         let intent_rescan_guidance = intent_report
             .findings
             .iter()
