@@ -52,6 +52,7 @@ Non-decisive semantic-role arbitration findings now also feed this queue through
 Fallback-only resolved semantic roles now feed that same queue as well, so a carried role without observation-backed consensus becomes an explicit local replay target instead of a passive warning.
 Alias-dependent semantic consensus findings now feed it too, so meaning that still depends only on alias grounding can be replayed for stronger non-alias corroboration through the same local pipeline.
 Prior-guided semantic consensus findings now feed it as well, so meaning that converged with learned-prior help can be replayed for stronger current-document corroboration through the same local pipeline.
+Temporal actor-grounding guidance now feeds it too, so already-typed but still-actorless temporal rules can be replayed for explicit actor-relative drive/sample recovery through the same local pipeline.
 Temporal clock-grounding guidance now feeds it too, so already-typed but still-clockless temporal rules can be replayed for explicit clock or edge recovery through the same local pipeline.
 Temporal cycle-window guidance now feeds it too, so already-typed but still-unbounded temporal rules can be replayed for explicit bound recovery through the same local pipeline.
 For visual-motif corroboration, that sequence now starts with a local VLM `enrich_source_ir` hint, then rebuilds `EvidenceIR`, then validates the current artifact.

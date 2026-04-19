@@ -59,6 +59,10 @@ const SEMANTIC_TEMPORAL_CLOCK_GROUNDING_SURFACE_RESCAN_GUIDANCE: &str =
     "semantic_temporal_clock_grounding_surface_rescan_guidance";
 const INTENT_TEMPORAL_CLOCK_GROUNDING_SURFACE_RESCAN_GUIDANCE: &str =
     "intent_temporal_clock_grounding_surface_rescan_guidance";
+const SEMANTIC_TEMPORAL_ACTOR_GROUNDING_SURFACE_RESCAN_GUIDANCE: &str =
+    "semantic_temporal_actor_grounding_surface_rescan_guidance";
+const INTENT_TEMPORAL_ACTOR_GROUNDING_SURFACE_RESCAN_GUIDANCE: &str =
+    "intent_temporal_actor_grounding_surface_rescan_guidance";
 
 macro_rules! println {
     () => {
@@ -379,6 +383,28 @@ fn push_temporal_clock_grounding_rescan_guidance(
         "rescan_guidance",
         format!(
             "{} typed temporal rule id(s) in {stage_label} should trigger targeted NLP rescans plus downstream rebuild because the current rules still lack explicit clock or edge grounding",
+            related_ids.len()
+        ),
+        related_ids.to_vec(),
+    ));
+}
+
+fn push_temporal_actor_grounding_rescan_guidance(
+    findings: &mut Vec<ValidationFindingRecord>,
+    finding_id: &str,
+    stage_label: &str,
+    related_ids: &[String],
+) {
+    if related_ids.is_empty() {
+        return;
+    }
+
+    findings.push(finding(
+        finding_id,
+        ValidationFindingSeverity::Info,
+        "rescan_guidance",
+        format!(
+            "{} typed temporal rule id(s) in {stage_label} should trigger targeted NLP rescans plus downstream rebuild because the current rules still lack actor-relative drive/sample grounding",
             related_ids.len()
         ),
         related_ids.to_vec(),
@@ -3195,6 +3221,16 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 .cloned()
                 .collect(),
         ));
+        push_temporal_actor_grounding_rescan_guidance(
+            &mut findings,
+            SEMANTIC_TEMPORAL_ACTOR_GROUNDING_SURFACE_RESCAN_GUIDANCE,
+            "SemanticIR",
+            &temporal_rules_missing_actor_grounding_rule_ids
+                .iter()
+                .take(8)
+                .cloned()
+                .collect::<Vec<_>>(),
+        );
     }
     if !ir.temporal_conflicts.is_empty() {
         findings.push(finding(
@@ -4462,6 +4498,16 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 .cloned()
                 .collect(),
         ));
+        push_temporal_actor_grounding_rescan_guidance(
+            &mut findings,
+            INTENT_TEMPORAL_ACTOR_GROUNDING_SURFACE_RESCAN_GUIDANCE,
+            "IntentIR",
+            &temporal_rules_missing_actor_grounding_rule_ids
+                .iter()
+                .take(8)
+                .cloned()
+                .collect::<Vec<_>>(),
+        );
     }
     if !ir.temporal_conflicts.is_empty() {
         findings.push(finding(
@@ -7462,6 +7508,17 @@ mod tests {
             semantic_rescan_guidance.related_ids,
             vec![expected_rule_id.clone()]
         );
+        let semantic_actor_rescan_guidance = semantic_report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == SEMANTIC_TEMPORAL_ACTOR_GROUNDING_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected semantic temporal actor-grounding rescan guidance");
+        assert_eq!(
+            semantic_actor_rescan_guidance.related_ids,
+            vec![expected_rule_id.clone()]
+        );
 
         let intent_report = validate_intent_ir(&intent_ir, "temporal_gap_related_ids".to_string());
         assert_eq!(metric_value(&intent_report, "temporal_rules"), Some("1"));
@@ -7509,6 +7566,17 @@ mod tests {
             .expect("expected intent temporal cycle-window rescan guidance");
         assert_eq!(
             intent_rescan_guidance.related_ids,
+            vec![expected_rule_id.clone()]
+        );
+        let intent_actor_rescan_guidance = intent_report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == INTENT_TEMPORAL_ACTOR_GROUNDING_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected intent temporal actor-grounding rescan guidance");
+        assert_eq!(
+            intent_actor_rescan_guidance.related_ids,
             vec![expected_rule_id.clone()]
         );
 

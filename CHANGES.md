@@ -1,5 +1,29 @@
 # CHANGES
 
+## 2026-04-19 (Temporal actor-grounding gaps now emit replayable rescan guidance)
+
+### Improved: actorless typed temporal rules now advertise the next bounded replay
+- Validation already reported when `SemanticIR` or `IntentIR` carried typed temporal rules but none of them had actor-relative drive/sample grounding even though a non-empty actor graph existed.
+- That was truthful, but still too passive:
+  - reviewers could see the affected temporal rule ids
+  - the replay planner had no typed next step for revisiting local timing language on those same rules
+  - actorless rules looked like a scoring artifact instead of an explicit replay surface
+- This slice turns that weak state into the same bounded replay contract used elsewhere:
+  - `validate` now emits `semantic_temporal_actor_grounding_surface_rescan_guidance` / `intent_temporal_actor_grounding_surface_rescan_guidance`
+  - those findings stay in `rescan_guidance` and carry the same temporal rule ids already reported by the missing-actor-grounding finding
+  - `project-validation` maps them onto the local `EvidenceIR -> SemanticIR -> IntentIR? -> validate` NLP replay lane
+  - the action text is explicit about recovering actor-relative drive/sample grounding rather than merely rerunning extraction
+  - the tracked KG fixture `temporal_actor_grounding_surface_negative` now requires the actor-grounding guidance and metric so the actorless-but-clocked temporal case is benchmark-locked
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge validate_semantic_and_intent_ir_report_temporal_gap_related_ids` -> passed
+- `cargo test -p specforge temporal_actor_grounding_rescan_guidance` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_ci.sh` -> passed with `389` Rust tests and the mdBook build
+- `bash scripts/run_docs_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-19 (Temporal clock-grounding gaps now emit replayable rescan guidance)
 
 ### Improved: clockless typed temporal rules now advertise the next bounded replay
