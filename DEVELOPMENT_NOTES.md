@@ -7,6 +7,27 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-19 Rescan review surfaces should not force operators to open raw plan JSON
+- After the recent replay-contract work, the plan itself became substantially more informative:
+  - `replay_inputs` names the real upstream artifact boundary
+  - `recommended_action` names the intended replay story in human language
+  - `recommended_commands` carries the exact executable hints
+- The remaining gap was not in plan generation but in plan legibility.
+- Two compact operator-facing surfaces still hid most of that context:
+  - the live-status rescan queue projection
+  - the `rescan-plan` dry-run preview
+- That is a quality issue because the first review surface should already answer:
+  - what upstream artifacts are implicated?
+  - what sort of replay is being requested?
+  - is this still only planned, or already executed?
+- The right design is tiered rather than duplicated:
+  - compact projections should stay brief, but they must surface the replay-input kind chain and a readable action summary
+  - fuller surfaces such as `VALIDATION_SNAPSHOT.md` and the JSON plan can keep the complete paths and structured command payload
+- This keeps the workflow inspectable without turning operators into raw-JSON readers:
+  - the compact queue can now communicate replay scope honestly
+  - the dry-run CLI can now explain the plan before any command is executed
+  - the full schema-v2 payload remains the canonical machine-readable source of truth
+
 ## 2026-04-19 Human-facing rescan guidance must align with the replay contract
 - A rescan recommendation now has three distinct but related surfaces:
   - `replay_inputs`: the typed upstream artifacts that define the replay boundary

@@ -1,5 +1,34 @@
 # CHANGES
 
+## 2026-04-19 (Rescan review surfaces now show the real replay boundary)
+
+### Improved: compact rescan projections and dry-run previews now expose replay inputs plus action text
+- The recent rescan slices made the plan itself much richer:
+  - `replay_inputs` now say which upstream artifacts a replay actually needs
+  - `recommended_action` now specializes by finding family instead of staying stage-generic
+- But two operator-facing surfaces still lagged behind:
+  - the compact targeted-rescan queue in `LIVE_ACHIEVEMENT_STATUS.md`
+  - the `specforge rescan-plan` dry-run preview
+- Both still mostly read like shorthand:
+  - extractor lane
+  - related ids
+  - command-count summary
+- That was enough to know a target existed, but not enough to understand the replay boundary without opening the JSON plan or the full validation snapshot.
+- This slice makes those review surfaces more honest:
+  - the live projected rescan queue now shows the replay-input kind chain and a concise action summary beside each recommendation
+  - the `rescan-plan` dry-run renderer now prints full `replay_inputs`, `recommended_action`, and `automation_status` before the command hints
+- Result:
+  - the compact review plane now better matches the schema-v2 replay contract
+  - a human can see what would be replayed and why without leaving the first-line review surface
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge project_validation_collects_negative_knowledge_rescan_guidance` -> passed
+- `cargo test -p specforge rescan_plan_dry_run_render_surfaces_replay_boundary_and_action` -> passed
+- `bash scripts/run_ci.sh` -> passed with `375` Rust tests, rustdoc, and the mdBook build
+- `bash scripts/run_docs_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-19 (Rescan guidance text now matches the replay contract)
 
 ### Improved: human-facing `recommended_action` text now specializes along with `replay_inputs` and command plans

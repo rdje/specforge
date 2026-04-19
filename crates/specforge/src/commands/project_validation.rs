@@ -592,11 +592,13 @@ fn render_live_status_projection(
     } else {
         for recommendation in rescan_recommendations.iter().take(8) {
             lines.push(format!(
-                "  - `{}` (`{}`): `{}` for {} ({} command hint(s), `{}`{})",
+                "  - `{}` (`{}`): `{}` for {} (replay `{}`, action: {}, {} command hint(s), `{}`{})",
                 recommendation.display_name,
                 recommendation.stage,
                 recommendation.extractor_lane,
                 render_inline_code_list(&recommendation.related_ids),
+                render_replay_input_kind_chain(&recommendation.replay_inputs),
+                truncate_projection_text(&recommendation.recommended_action, 96),
                 recommendation.recommended_commands.len(),
                 recommendation.automation_status,
                 render_execution_summary_inline(recommendation.execution_summary.as_ref())
@@ -1266,6 +1268,31 @@ fn render_replay_input_list(values: &[ProjectRescanReplayInput]) -> String {
     }
 }
 
+fn render_replay_input_kind_chain(values: &[ProjectRescanReplayInput]) -> String {
+    if values.is_empty() {
+        "none".to_string()
+    } else {
+        values
+            .iter()
+            .map(|value| value.input_kind.as_str())
+            .collect::<Vec<_>>()
+            .join(" -> ")
+    }
+}
+
+fn truncate_projection_text(value: &str, max_chars: usize) -> String {
+    let char_count = value.chars().count();
+    if char_count <= max_chars {
+        return value.to_string();
+    }
+
+    let truncated = value
+        .chars()
+        .take(max_chars.saturating_sub(3))
+        .collect::<String>();
+    format!("{truncated}...")
+}
+
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 struct RescanExecutionCounts {
     total: usize,
@@ -1768,6 +1795,10 @@ mod tests {
             render_live_status_projection(&snapshots, &repo_root, &recommendations);
         assert!(live_projection.contains("- Targeted rescan queue:"));
         assert!(live_projection.contains("intent_ir_canonical_surface_corroboration"));
+        assert!(live_projection.contains("replay `source_ir -> evidence_ir -> semantic_ir`"));
+        assert!(live_projection.contains(
+            "action: restart from SourceIR through EvidenceIR, SemanticIR, and IntentIR"
+        ));
         assert!(live_projection.contains("4 command hint(s)"));
         assert!(live_projection.contains(
             "- Rescan execution summaries: 1 total; 1 review required (possible improvement: 1, regression: 0, neutral change: 0); 0 no-change"

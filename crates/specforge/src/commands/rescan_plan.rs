@@ -168,20 +168,67 @@ fn selected_pending_indices(
 }
 
 fn print_dry_run_plan(plan: &ProjectRescanPlanRecord, selected_indices: &[usize]) {
-    println!("rescan_queue:");
+    println!("{}", render_dry_run_plan(plan, selected_indices));
+}
+
+fn render_dry_run_plan(plan: &ProjectRescanPlanRecord, selected_indices: &[usize]) -> String {
+    let mut lines = vec!["rescan_queue:".to_string()];
     for index in selected_indices {
         let recommendation = &plan.recommendations[*index];
-        println!(
+        lines.push(format!(
             "- {} {} {}",
             recommendation.document_key, recommendation.stage, recommendation.finding_id
-        );
-        println!("  artifact_path: {}", recommendation.artifact_path);
-        println!("  extractor_lane: {}", recommendation.extractor_lane);
-        println!("  related_ids: {}", recommendation.related_ids.join(", "));
-        println!("  recommended_commands:");
-        for command in &recommendation.recommended_commands {
-            println!("  - {}: {}", command.intent, command.display);
+        ));
+        lines.push(format!("  artifact_path: {}", recommendation.artifact_path));
+        lines.push(format!(
+            "  replay_inputs: {}",
+            render_replay_inputs(&recommendation.replay_inputs)
+        ));
+        lines.push(format!(
+            "  extractor_lane: {}",
+            recommendation.extractor_lane
+        ));
+        lines.push(format!(
+            "  recommended_action: {}",
+            recommendation.recommended_action
+        ));
+        lines.push(format!(
+            "  related_ids: {}",
+            render_string_list(&recommendation.related_ids)
+        ));
+        lines.push(format!(
+            "  automation_status: {}",
+            recommendation.automation_status
+        ));
+        if recommendation.recommended_commands.is_empty() {
+            lines.push("  recommended_commands: none".to_string());
+        } else {
+            lines.push("  recommended_commands:".to_string());
+            for command in &recommendation.recommended_commands {
+                lines.push(format!("  - {}: {}", command.intent, command.display));
+            }
         }
+    }
+    lines.join("\n")
+}
+
+fn render_replay_inputs(inputs: &[super::project_validation::ProjectRescanReplayInput]) -> String {
+    if inputs.is_empty() {
+        "none".to_string()
+    } else {
+        inputs
+            .iter()
+            .map(|input| format!("{}:{}", input.input_kind, input.path))
+            .collect::<Vec<_>>()
+            .join(", ")
+    }
+}
+
+fn render_string_list(values: &[String]) -> String {
+    if values.is_empty() {
+        "none".to_string()
+    } else {
+        values.join(", ")
     }
 }
 
@@ -661,7 +708,8 @@ mod tests {
     use super::*;
     use crate::commands::project_validation::{
         ProjectRescanCommandHint, ProjectRescanPlanRecord, ProjectRescanRecommendation,
-        RESCAN_PROMOTION_NOT_PROMOTED_NO_CHANGE, RESCAN_PROMOTION_NOT_PROMOTED_REVIEW_REQUIRED,
+        ProjectRescanReplayInput, RESCAN_PROMOTION_NOT_PROMOTED_NO_CHANGE,
+        RESCAN_PROMOTION_NOT_PROMOTED_REVIEW_REQUIRED,
     };
     use crate::ir::source::SourceIr;
 
@@ -902,6 +950,44 @@ mod tests {
         assert_eq!(selected_pending_indices(&plan, 1, None), vec![0]);
         assert_eq!(selected_pending_indices(&plan, 0, None), vec![0, 2]);
         assert_eq!(selected_pending_indices(&plan, 0, Some("doc_c")), vec![2]);
+    }
+
+    #[test]
+    fn rescan_plan_dry_run_render_surfaces_replay_boundary_and_action() {
+        let mut plan = ProjectRescanPlanRecord {
+            schema_version: 2,
+            generated_by: "test".to_string(),
+            recommendation_count: 1,
+            recommendations: vec![recommendation("doc", PLANNED_NOT_EXECUTED)],
+        };
+        plan.recommendations[0].replay_inputs = vec![
+            ProjectRescanReplayInput {
+                input_kind: "source_ir".to_string(),
+                path: "generated/source_ir/doc/source_ir.json".to_string(),
+            },
+            ProjectRescanReplayInput {
+                input_kind: "evidence_ir".to_string(),
+                path: "generated/evidence_ir/doc/evidence_ir.json".to_string(),
+            },
+            ProjectRescanReplayInput {
+                input_kind: "semantic_ir".to_string(),
+                path: "generated/semantic_ir/doc/semantic_ir.json".to_string(),
+            },
+        ];
+        plan.recommendations[0].recommended_action =
+            "restart from SourceIR through EvidenceIR, SemanticIR, and IntentIR, then validate whether the related canonical conflict or residual ids still reproduce from current-document evidence"
+                .to_string();
+
+        let rendered = render_dry_run_plan(&plan, &[0]);
+
+        assert!(rendered.contains("rescan_queue:"));
+        assert!(rendered.contains(
+            "replay_inputs: source_ir:generated/source_ir/doc/source_ir.json, evidence_ir:generated/evidence_ir/doc/evidence_ir.json, semantic_ir:generated/semantic_ir/doc/semantic_ir.json"
+        ));
+        assert!(rendered.contains(
+            "recommended_action: restart from SourceIR through EvidenceIR, SemanticIR, and IntentIR"
+        ));
+        assert!(rendered.contains("automation_status: planned_not_executed"));
     }
 
     #[test]
