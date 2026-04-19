@@ -7,6 +7,37 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-19 Non-decisive semantic arbitration should be a replay target, not only a warning surface
+- Before this slice, non-decisive semantic-role arbitration was honest but inert:
+  - validation named the contested signal ids
+  - canonical artifacts preserved the unresolved role competition
+  - but no replay-oriented next step existed in the same way it already did for temporal-rule gaps or prior-guided caution surfaces
+- That was a product gap because contested semantic meaning is exactly the sort of state that should be able to say:
+  - here is the bounded local replay boundary
+  - here is the current-document evidence lane to rerun
+  - here is the downstream rebuild path to inspect again
+- The right follow-up is still conservative:
+  - do not invent a special semantic fixer
+  - do not mutate canonical truth
+  - do not treat priors or validation findings as authority
+  - do reuse the existing local NLP evidence-enrichment lane because the missing strength is still semantic grounding on `EvidenceIR`
+- That yields a clean stage-sensitive replay contract:
+  - `SemanticIR` contested semantic arbitration:
+    - `nlp-enrich <evidence_ir>`
+    - `semantic <evidence_ir>`
+    - `validate <semantic_ir>`
+  - `IntentIR` contested semantic arbitration:
+    - recover upstream `evidence_ir` from the tracked `semantic_ir`
+    - `nlp-enrich <evidence_ir>`
+    - `semantic <evidence_ir>`
+    - `intent <semantic_ir>`
+    - `validate <intent_ir>`
+- This is the right boundary for now because it strengthens current-document semantic evidence without pretending to solve arbitration by fiat.
+- The replay action text should say that explicitly:
+  - the success criterion is whether the related signals converge toward a decisive semantic-role outcome
+  - not whether the system auto-promotes a new canonical role
+- The same slice should update the public docs because this becomes part of the operator-visible replay model, not just an internal validator detail
+
 ## 2026-04-19 Public docs must track operator-visible workflow changes, not only internal implementation
 - The recent rescan work changed two real user-facing surfaces:
   - the compact validation queue in tracked live docs

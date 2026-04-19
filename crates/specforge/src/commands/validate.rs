@@ -35,6 +35,11 @@ thread_local! {
     static VALIDATION_OUTPUT_SUPPRESSED: Cell<bool> = const { Cell::new(false) };
 }
 
+const SEMANTIC_ROLE_ARBITRATION_SURFACE_RESCAN_GUIDANCE: &str =
+    "semantic_role_arbitration_surface_rescan_guidance";
+const INTENT_ROLE_ARBITRATION_SURFACE_RESCAN_GUIDANCE: &str =
+    "intent_role_arbitration_surface_rescan_guidance";
+
 macro_rules! println {
     () => {
         if !validation_output_suppressed() {
@@ -222,6 +227,28 @@ fn push_temporal_rule_surface_rescan_guidance(
         "rescan_guidance",
         format!(
             "{} temporal-source id(s) in {stage_label} should trigger targeted NLP rescans plus downstream rebuild because local timing/constraint evidence exists but no typed temporal rules were materialized",
+            related_ids.len()
+        ),
+        related_ids.to_vec(),
+    ));
+}
+
+fn push_semantic_role_arbitration_rescan_guidance(
+    findings: &mut Vec<ValidationFindingRecord>,
+    finding_id: &str,
+    stage_label: &str,
+    related_ids: &[String],
+) {
+    if related_ids.is_empty() {
+        return;
+    }
+
+    findings.push(finding(
+        finding_id,
+        ValidationFindingSeverity::Info,
+        "rescan_guidance",
+        format!(
+            "{} semantic-role arbitration signal id(s) in {stage_label} should trigger targeted NLP rescans plus downstream rebuild because competing local role evidence is still non-decisive",
             related_ids.len()
         ),
         related_ids.to_vec(),
@@ -2817,6 +2844,16 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 .cloned()
                 .collect(),
         ));
+        push_semantic_role_arbitration_rescan_guidance(
+            &mut findings,
+            SEMANTIC_ROLE_ARBITRATION_SURFACE_RESCAN_GUIDANCE,
+            "SemanticIR",
+            &non_decisive_semantic_arbitration_signal_names
+                .iter()
+                .take(8)
+                .cloned()
+                .collect::<Vec<_>>(),
+        );
     }
     if with_prior_guided_semantic_arbitration > 0 {
         findings.push(finding(
@@ -4023,6 +4060,16 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 .cloned()
                 .collect(),
         ));
+        push_semantic_role_arbitration_rescan_guidance(
+            &mut findings,
+            INTENT_ROLE_ARBITRATION_SURFACE_RESCAN_GUIDANCE,
+            "IntentIR",
+            &non_decisive_semantic_arbitration_signal_names
+                .iter()
+                .take(8)
+                .cloned()
+                .collect::<Vec<_>>(),
+        );
     }
     if with_prior_guided_semantic_arbitration > 0 {
         findings.push(finding(
@@ -5517,6 +5564,12 @@ mod tests {
             })
             .expect("expected non-decisive semantic arbitration finding");
         assert_eq!(finding.related_ids, vec!["XCTRL".to_string()]);
+        let rescan_guidance = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == SEMANTIC_ROLE_ARBITRATION_SURFACE_RESCAN_GUIDANCE)
+            .expect("expected semantic-role-arbitration rescan guidance");
+        assert_eq!(rescan_guidance.related_ids, vec!["XCTRL".to_string()]);
 
         Ok(())
     }
@@ -8424,6 +8477,12 @@ mod tests {
             })
             .expect("expected non-decisive semantic arbitration finding");
         assert_eq!(finding.related_ids, vec!["XCTRL".to_string()]);
+        let rescan_guidance = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == INTENT_ROLE_ARBITRATION_SURFACE_RESCAN_GUIDANCE)
+            .expect("expected semantic-role-arbitration rescan guidance");
+        assert_eq!(rescan_guidance.related_ids, vec!["XCTRL".to_string()]);
 
         Ok(())
     }

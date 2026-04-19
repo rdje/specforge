@@ -24,7 +24,7 @@
 ## Latest committed baseline
 - latest_commit_hash: `4dfb4b3`
 - latest_commit_brief_message: `feat(rescan): expose replay scope in review surfaces`
-- note: current in-flight slice syncs the public docs and mdBook so they describe the replay-scope-aware live queue and `rescan-plan` dry-run behavior
+- note: current in-flight slice turns non-decisive semantic-role arbitration into replayable `rescan_guidance` that reuses the local NLP evidence-enrichment lane
 
 ## Recent commit chain (last 5)
 - `4dfb4b3` feat(rescan): expose replay scope in review surfaces
@@ -35,14 +35,15 @@
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- branch is ahead of `origin/main` by twenty-four local commits (`1ae25f8`, `f8359fa`, `c17dda7`, `08de26a`, `f813461`, `eeb67a8`, `f8164d0`, `792c60e`, `cd79915`, `781353a`, `35c449b`, `29ec1f3`, `1f09f97`, `3b7dc32`, `ad65c39`, `9ece4b9`, `e9b89bd`, `be55b7c`, `a1b91af`, `ae92698`, `d6e266d`, `423a458`, `d2a16d8`, `4dfb4b3`); after one more local commit, push because the user requested pushes every 25 commits or on explicit request
+- branch is currently aligned with `origin/main` after the last push at `4821b0a`; do not push this slice unless the user asks or until another 25 local commits accumulate
 - the README/SESSION_BOOTSTRAP handoff has been re-executed from the repo entrypoint and the referenced continuity docs have been reread
-- the active in-flight slice syncs the public documentation plane with the new review surfaces:
-  - `README.md` now explains that the compact live queue exposes replay-input kind chains plus action summaries
-  - the mdBook now explains that `rescan-plan` dry-run prints replay inputs, action text, and automation status before command hints
-  - the generated-artifacts reference now describes those compact review surfaces as part of the local replay queue contract
-- validation for the in-flight slice has now passed through `bash scripts/run_docs_ci.sh`, `bash scripts/run_ci.sh`, and `git diff --check`
-- the current full local CI baseline is `375` Rust tests plus warning-deny rustdoc and the mdBook build
+- the active in-flight slice upgrades contested semantic-role arbitration from a passive finding into replay guidance:
+  - `validate` now emits `semantic_role_arbitration_surface_rescan_guidance` and `intent_role_arbitration_surface_rescan_guidance` when semantic-role arbitration remains non-decisive
+  - `project-validation` now converts those findings into replay-oriented recommendations with `evidence_ir -> semantic_ir?` typed replay inputs
+  - the generated commands reuse the local `nlp-enrich -> semantic -> intent? -> validate` executor lane
+  - the README and mdBook now describe that new replay-guidance family as part of the operator-visible rescan model
+- validation for the in-flight slice has now passed through `cargo fmt --all`, `cargo test -p specforge validate_semantic_ir_flags_signal_semantic_conflicts`, `cargo test -p specforge validate_intent_ir_counts_multiple_semantic_candidates_for_conflicts`, `cargo test -p specforge semantic_role_arbitration_rescan_guidance`, `bash scripts/run_ci.sh`, `bash scripts/run_docs_ci.sh`, and `git diff --check`
+- the current full local CI baseline is `377` Rust tests plus warning-deny rustdoc and the mdBook build
 - README sentinel remains intact after the slice: `Read SESSION_BOOTSTRAP.md and start from there.`
 - latest committed adapter hardening adds sticky conflict collapse for duplicate explicit top-port direction declarations
 - the committed regression declares top port `drive_data` once as output and once as input; expected behavior is unresolved top-port direction in both the top candidate and selected signal inventory, blocked renderability, and no emitted `.fsm` target text

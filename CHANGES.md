@@ -1,5 +1,37 @@
 # CHANGES
 
+## 2026-04-19 (Non-decisive semantic arbitration now emits replayable rescan guidance)
+
+### Improved: contested semantic-role arbitration now routes into the bounded local rescan loop
+- The validator already surfaced non-decisive semantic-role arbitration honestly:
+  - competing role candidates stayed visible
+  - canonical artifacts preserved lead, runner-up, and evidence margin
+  - handshake-name fallback stayed blocked when the role state was still contested
+- But that state still stopped at observation.
+- Operators could see the contested signals, but the replay planner had no typed guidance for what bounded next move should be attempted.
+- This slice adds that missing bridge:
+  - `validate` now emits stage-specific `rescan_guidance` findings when semantic-role arbitration remains non-decisive at `SemanticIR` or `IntentIR`
+  - the related ids are the contested signal names already exposed by the arbitration finding
+  - `project-validation` now turns those findings into replay-oriented recommendations
+  - the replay contract uses the existing local NLP lane:
+    - `SemanticIR`: `evidence_ir -> nlp-enrich -> semantic -> validate`
+    - `IntentIR`: `evidence_ir -> semantic_ir -> nlp-enrich -> semantic -> intent -> validate`
+- The action text is specialized too:
+  - it explicitly says the goal is to see whether the related signals converge toward a decisive semantic-role outcome
+- Result:
+  - contested semantic arbitration is no longer only a passive review warning
+  - it now has the same bounded, local, replayable follow-up shape as the other rescan-guidance families
+  - canonical truth still stays untouched until current-document evidence and review say otherwise
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge validate_semantic_ir_flags_signal_semantic_conflicts` -> passed
+- `cargo test -p specforge validate_intent_ir_counts_multiple_semantic_candidates_for_conflicts` -> passed
+- `cargo test -p specforge semantic_role_arbitration_rescan_guidance` -> passed with the new semantic/intent `project-validation` replay tests
+- `bash scripts/run_ci.sh` -> passed with `377` Rust tests, rustdoc, and the mdBook build
+- `bash scripts/run_docs_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-19 (Book and README now describe replay-scope-aware rescan review)
 
 ### Improved: public docs now explain the richer rescan review surfaces
