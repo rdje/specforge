@@ -7,6 +7,23 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-19 New rescan-guidance families should be locked in tracked KG fixtures, not only unit tests
+- The semantic-arbitration replay slice changed a real validation contract:
+  - contested semantic-role evidence now yields stage-specific `rescan_guidance`
+  - those findings are part of the tracked quality story, not just an internal planner detail
+- Unit tests are necessary here but not sufficient.
+- The KG fixture corpus is the stronger protection because it proves the behavior on staged multi-layer documents where:
+  - the semantic conflict is realistic
+  - the arbitration stays non-decisive through the canonical stages
+  - related findings such as blocked handshake-name fallback or negative-knowledge caution can coexist
+- The right fixtures to harden are the existing contested-semantic ones rather than creating synthetic one-off micro-fixtures:
+  - visual-source conflict
+  - cross-modality conflict
+  - prior-guided semantic conflict caution
+  - contested handshake-name fallback
+- That keeps the benchmark plane aligned with the actual product contract:
+  - if contested semantic arbitration is supposed to become replay guidance, the tracked corpus should fail loudly when that guidance disappears or its related ids drift
+
 ## 2026-04-19 Non-decisive semantic arbitration should be a replay target, not only a warning surface
 - Before this slice, non-decisive semantic-role arbitration was honest but inert:
   - validation named the contested signal ids

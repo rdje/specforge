@@ -151,6 +151,7 @@
       "semantic": {
         "finding_ids_include": [
           "semantic_non_decisive_semantic_arbitration_present",
+          "semantic_role_arbitration_surface_rescan_guidance",
           "semantic_handshake_name_fallback_blocked_present",
           "semantic_signal_semantic_conflicts_present"
         ],
@@ -161,12 +162,20 @@
             "category": "semantic_role_arbitration",
             "summary_contains": "still have competing semantic role candidates",
             "related_ids_include": ["XVALID"]
+          },
+          {
+            "finding_id": "semantic_role_arbitration_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "should trigger targeted NLP rescans plus downstream rebuild",
+            "related_ids_include": ["XVALID"]
           }
         ]
       },
       "intent": {
         "finding_ids_include": [
           "intent_non_decisive_semantic_arbitration_present",
+          "intent_role_arbitration_surface_rescan_guidance",
           "intent_handshake_name_fallback_blocked_present",
           "intent_signal_semantic_conflicts_present"
         ],
@@ -176,6 +185,13 @@
             "severity": "info",
             "category": "semantic_role_arbitration",
             "summary_contains": "still have competing semantic role candidates",
+            "related_ids_include": ["XVALID"]
+          },
+          {
+            "finding_id": "intent_role_arbitration_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "should trigger targeted NLP rescans plus downstream rebuild",
             "related_ids_include": ["XVALID"]
           }
         ]

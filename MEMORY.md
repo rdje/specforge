@@ -22,11 +22,12 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `4dfb4b3`
-- latest_commit_brief_message: `feat(rescan): expose replay scope in review surfaces`
-- note: current in-flight slice turns non-decisive semantic-role arbitration into replayable `rescan_guidance` that reuses the local NLP evidence-enrichment lane
+- latest_commit_hash: `71ad856`
+- latest_commit_brief_message: `feat(validation): route semantic arbitration into rescans`
+- note: current in-flight slice upgrades tracked KG fixtures so the new semantic-arbitration rescan guidance is benchmark-locked on realistic contested-semantic documents
 
 ## Recent commit chain (last 5)
+- `71ad856` feat(validation): route semantic arbitration into rescans
 - `4dfb4b3` feat(rescan): expose replay scope in review surfaces
 - `d2a16d8` feat(rescan): specialize recommended actions
 - `423a458` feat(rescan): key execution state to replay contract
@@ -35,14 +36,13 @@
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- branch is currently aligned with `origin/main` after the last push at `4821b0a`; do not push this slice unless the user asks or until another 25 local commits accumulate
+- branch is ahead of `origin/main` by one local commit (`71ad856`); do not push this slice unless the user asks or until another 25 local commits accumulate from the last push at `4821b0a`
 - the README/SESSION_BOOTSTRAP handoff has been re-executed from the repo entrypoint and the referenced continuity docs have been reread
-- the active in-flight slice upgrades contested semantic-role arbitration from a passive finding into replay guidance:
-  - `validate` now emits `semantic_role_arbitration_surface_rescan_guidance` and `intent_role_arbitration_surface_rescan_guidance` when semantic-role arbitration remains non-decisive
-  - `project-validation` now converts those findings into replay-oriented recommendations with `evidence_ir -> semantic_ir?` typed replay inputs
-  - the generated commands reuse the local `nlp-enrich -> semantic -> intent? -> validate` executor lane
-  - the README and mdBook now describe that new replay-guidance family as part of the operator-visible rescan model
-- validation for the in-flight slice has now passed through `cargo fmt --all`, `cargo test -p specforge validate_semantic_ir_flags_signal_semantic_conflicts`, `cargo test -p specforge validate_intent_ir_counts_multiple_semantic_candidates_for_conflicts`, `cargo test -p specforge semantic_role_arbitration_rescan_guidance`, `bash scripts/run_ci.sh`, `bash scripts/run_docs_ci.sh`, and `git diff --check`
+- the active in-flight slice strengthens tracked KG-quality coverage for the new semantic-arbitration replay guidance:
+  - representative contested-semantic fixtures now require `semantic_role_arbitration_surface_rescan_guidance` / `intent_role_arbitration_surface_rescan_guidance`
+  - the locked cases cover plain visual conflict, cross-modality conflict, prior-guided caution, and blocked handshake-name fallback
+  - this keeps the replay-guidance contract protected on realistic staged documents rather than only by unit tests
+- validation for the in-flight slice has now passed through `cargo test -p specforge kg_bench_runs_tracked_fixtures` and `git diff --check`
 - the current full local CI baseline is `377` Rust tests plus warning-deny rustdoc and the mdBook build
 - README sentinel remains intact after the slice: `Read SESSION_BOOTSTRAP.md and start from there.`
 - latest committed adapter hardening adds sticky conflict collapse for duplicate explicit top-port direction declarations

@@ -92,7 +92,17 @@
       "semantic": {
         "finding_ids_include": [
           "semantic_signal_semantic_conflicts_present",
-          "semantic_non_decisive_semantic_arbitration_present"
+          "semantic_non_decisive_semantic_arbitration_present",
+          "semantic_role_arbitration_surface_rescan_guidance"
+        ],
+        "findings_include": [
+          {
+            "finding_id": "semantic_role_arbitration_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "should trigger targeted NLP rescans plus downstream rebuild",
+            "related_ids_include": ["XCTRL"]
+          }
         ],
         "finding_ids_exclude": [
           "semantic_negative_knowledge_prior_matches",
@@ -112,7 +122,17 @@
       "intent": {
         "finding_ids_include": [
           "intent_signal_semantic_conflicts_present",
-          "intent_non_decisive_semantic_arbitration_present"
+          "intent_non_decisive_semantic_arbitration_present",
+          "intent_role_arbitration_surface_rescan_guidance"
+        ],
+        "findings_include": [
+          {
+            "finding_id": "intent_role_arbitration_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "should trigger targeted NLP rescans plus downstream rebuild",
+            "related_ids_include": ["XCTRL"]
+          }
         ],
         "finding_ids_exclude": [
           "intent_negative_knowledge_prior_matches",

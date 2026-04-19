@@ -1,5 +1,27 @@
 # CHANGES
 
+## 2026-04-19 (KG fixtures now lock semantic-arbitration rescan guidance)
+
+### Improved: tracked semantic-conflict fixtures now require the new replay guidance findings
+- The previous slice added replay-oriented rescan guidance for non-decisive semantic-role arbitration.
+- Unit coverage proved the validator and `project-validation` planner behavior, but the tracked KG benchmark fixtures had not yet been updated to require those new findings on realistic staged documents.
+- This follow-on closes that gap by strengthening representative contested-semantic fixtures:
+  - `visual_sources_semantic_conflict_negative`
+  - `cross_modality_semantic_conflict_negative`
+  - `negative_knowledge_prior_guided_semantic_conflict_caution_gold`
+  - `contested_handshake_name_fallback_negative`
+- Those fixtures now require:
+  - `semantic_role_arbitration_surface_rescan_guidance` at the semantic stage
+  - `intent_role_arbitration_surface_rescan_guidance` at the intent stage
+  - `rescan_guidance` category plus signal-specific related ids such as `XCTRL` or `XVALID`
+- Result:
+  - the new replay guidance is no longer protected only by unit tests
+  - tracked corpus regressions now prove the realistic semantic-conflict and blocked-handshake cases surface the same bounded rescan story end-to-end
+
+### Validation
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-19 (Non-decisive semantic arbitration now emits replayable rescan guidance)
 
 ### Improved: contested semantic-role arbitration now routes into the bounded local rescan loop
