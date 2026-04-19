@@ -22,22 +22,22 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `21d6bad`
-- latest_commit_brief_message: `test(kg): lock semantic arbitration rescan guidance`
-- note: current in-flight slice routes fallback-only semantic-role consensus warnings into the same bounded replay-plan machinery used by other evidence-level semantic rescans
+- latest_commit_hash: `e4aa175`
+- latest_commit_brief_message: `feat(validation): route fallback semantic roles into rescans`
+- note: current in-flight slice routes alias-dependent semantic-consensus warnings into the same bounded replay-plan machinery used by other evidence-level semantic rescans
 
 ## Recent commit chain (last 5)
+- `e4aa175` feat(validation): route fallback semantic roles into rescans
 - `21d6bad` test(kg): lock semantic arbitration rescan guidance
 - `71ad856` feat(validation): route semantic arbitration into rescans
 - `4821b0a` docs(rescan): document replay-scope review surfaces
 - `4dfb4b3` feat(rescan): expose replay scope in review surfaces
-- `d2a16d8` feat(rescan): specialize recommended actions
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- branch is ahead of `origin/main` by two local commits (`71ad856`, `21d6bad`); do not push this slice unless the user asks or until another 25 local commits accumulate from the last push at `4821b0a`
+- branch is ahead of `origin/main` by three local commits (`71ad856`, `21d6bad`, `e4aa175`); do not push this slice unless the user asks or until another 25 local commits accumulate from the last push at `4821b0a`
 - the README/SESSION_BOOTSTRAP handoff has been re-executed from the repo entrypoint and the referenced continuity docs have been reread
-- the current in-flight edit adds consensus-specific `rescan_guidance` for fallback-only resolved semantic roles and projects it through `project-validation` as an `EvidenceIR -> SemanticIR -> IntentIR? -> validate` replay plan
+- the current in-flight edit adds alias-consensus-specific `rescan_guidance` for alias-dependent resolved semantic roles and projects it through `project-validation` as an `EvidenceIR -> SemanticIR -> IntentIR? -> validate` replay plan
 - the active in-flight slice strengthens tracked KG-quality coverage for the new semantic-arbitration replay guidance:
   - representative contested-semantic fixtures now require `semantic_role_arbitration_surface_rescan_guidance` / `intent_role_arbitration_surface_rescan_guidance`
   - the locked cases cover plain visual conflict, cross-modality conflict, prior-guided caution, and blocked handshake-name fallback

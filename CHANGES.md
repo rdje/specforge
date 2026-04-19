@@ -1,5 +1,30 @@
 # CHANGES
 
+## 2026-04-19 (Alias-dependent semantic consensus now emits replayable rescan guidance)
+
+### Improved: alias-grounded role meaning now advertises the next bounded evidence replay
+- Validation already surfaced when `SemanticIR` or `IntentIR` carried resolved semantic-role consensus that still depended only on alias-grounded evidence.
+- That was truthful, but it still left an avoidable gap:
+  - reviewers could see which signal ids were weaker
+  - the replay planner still had no typed next move for trying to strengthen those roles from current-document evidence
+  - alias-grounded meaning looked more static than it should
+- This slice routes that state into the same conservative replay machinery already used for other semantic evidence gaps:
+  - `validate` now emits `semantic_alias_dependent_semantic_consensus_surface_rescan_guidance` / `intent_alias_dependent_semantic_consensus_surface_rescan_guidance`
+  - those findings stay in `rescan_guidance` and carry the same alias-dependent signal ids already reported by the consensus finding
+  - `project-validation` maps them onto the local `EvidenceIR -> SemanticIR -> IntentIR? -> validate` NLP replay lane
+  - the recommended action is phrased in terms of gaining direct or corroborating non-alias semantic-role consensus, not merely rerunning extraction blindly
+- The tracked KG fixture `alias_dependent_handshake_completion_caveat` now also requires those new findings so the alias-grounded handshake case is benchmark-locked end-to-end.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge validate_semantic_ir_reports_alias_dependent_semantic_consensus` -> passed
+- `cargo test -p specforge validate_intent_ir_reports_alias_dependent_semantic_consensus` -> passed
+- `cargo test -p specforge alias_dependent_semantic_consensus_rescan_guidance` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_ci.sh` -> passed with `381` Rust tests and the mdBook build
+- `bash scripts/run_docs_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-19 (Fallback semantic-role consensus now emits replayable rescan guidance)
 
 ### Improved: provisional semantic meaning now routes into the bounded replay loop

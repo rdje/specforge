@@ -43,6 +43,10 @@ const SEMANTIC_ROLE_CONSENSUS_SURFACE_RESCAN_GUIDANCE: &str =
     "semantic_role_consensus_surface_rescan_guidance";
 const INTENT_ROLE_CONSENSUS_SURFACE_RESCAN_GUIDANCE: &str =
     "intent_role_consensus_surface_rescan_guidance";
+const SEMANTIC_ALIAS_DEPENDENT_SEMANTIC_CONSENSUS_SURFACE_RESCAN_GUIDANCE: &str =
+    "semantic_alias_dependent_semantic_consensus_surface_rescan_guidance";
+const INTENT_ALIAS_DEPENDENT_SEMANTIC_CONSENSUS_SURFACE_RESCAN_GUIDANCE: &str =
+    "intent_alias_dependent_semantic_consensus_surface_rescan_guidance";
 
 macro_rules! println {
     () => {
@@ -275,6 +279,28 @@ fn push_semantic_role_consensus_rescan_guidance(
         "rescan_guidance",
         format!(
             "{} fallback-only semantic-role signal id(s) in {stage_label} should trigger targeted NLP rescans plus downstream rebuild because resolved role meaning still lacks observation-backed consensus",
+            related_ids.len()
+        ),
+        related_ids.to_vec(),
+    ));
+}
+
+fn push_alias_dependent_semantic_consensus_rescan_guidance(
+    findings: &mut Vec<ValidationFindingRecord>,
+    finding_id: &str,
+    stage_label: &str,
+    related_ids: &[String],
+) {
+    if related_ids.is_empty() {
+        return;
+    }
+
+    findings.push(finding(
+        finding_id,
+        ValidationFindingSeverity::Info,
+        "rescan_guidance",
+        format!(
+            "{} alias-dependent semantic-role signal id(s) in {stage_label} should trigger targeted NLP rescans plus downstream rebuild because resolved role meaning still depends only on alias-grounded evidence",
             related_ids.len()
         ),
         related_ids.to_vec(),
@@ -2947,6 +2973,16 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 .cloned()
                 .collect(),
         ));
+        push_alias_dependent_semantic_consensus_rescan_guidance(
+            &mut findings,
+            SEMANTIC_ALIAS_DEPENDENT_SEMANTIC_CONSENSUS_SURFACE_RESCAN_GUIDANCE,
+            "SemanticIR",
+            &alias_dependent_semantic_consensus_signal_names
+                .iter()
+                .take(8)
+                .cloned()
+                .collect::<Vec<_>>(),
+        );
     }
     if with_prior_guided_semantic_consensus > 0 {
         findings.push(finding(
@@ -4173,6 +4209,16 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 .cloned()
                 .collect(),
         ));
+        push_alias_dependent_semantic_consensus_rescan_guidance(
+            &mut findings,
+            INTENT_ALIAS_DEPENDENT_SEMANTIC_CONSENSUS_SURFACE_RESCAN_GUIDANCE,
+            "IntentIR",
+            &alias_dependent_semantic_consensus_signal_names
+                .iter()
+                .take(8)
+                .cloned()
+                .collect::<Vec<_>>(),
+        );
     }
     if with_prior_guided_semantic_consensus > 0 {
         findings.push(finding(
@@ -6010,6 +6056,18 @@ mod tests {
             .expect("expected alias-dependent semantic consensus finding");
         assert_eq!(
             finding.related_ids,
+            vec!["XACK".to_string(), "XREQ".to_string()]
+        );
+        let rescan_guidance = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id
+                    == SEMANTIC_ALIAS_DEPENDENT_SEMANTIC_CONSENSUS_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected alias-dependent semantic consensus rescan guidance");
+        assert_eq!(
+            rescan_guidance.related_ids,
             vec!["XACK".to_string(), "XREQ".to_string()]
         );
 
@@ -7981,6 +8039,18 @@ mod tests {
             .expect("expected alias-dependent semantic consensus finding");
         assert_eq!(
             finding.related_ids,
+            vec!["XACK".to_string(), "XREQ".to_string()]
+        );
+        let rescan_guidance = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id
+                    == INTENT_ALIAS_DEPENDENT_SEMANTIC_CONSENSUS_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected alias-dependent semantic consensus rescan guidance");
+        assert_eq!(
+            rescan_guidance.related_ids,
             vec!["XACK".to_string(), "XREQ".to_string()]
         );
 

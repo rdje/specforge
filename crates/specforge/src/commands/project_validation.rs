@@ -38,6 +38,10 @@ const SEMANTIC_ROLE_CONSENSUS_SURFACE_RESCAN_GUIDANCE: &str =
     "semantic_role_consensus_surface_rescan_guidance";
 const INTENT_ROLE_CONSENSUS_SURFACE_RESCAN_GUIDANCE: &str =
     "intent_role_consensus_surface_rescan_guidance";
+const SEMANTIC_ALIAS_DEPENDENT_SEMANTIC_CONSENSUS_SURFACE_RESCAN_GUIDANCE: &str =
+    "semantic_alias_dependent_semantic_consensus_surface_rescan_guidance";
+const INTENT_ALIAS_DEPENDENT_SEMANTIC_CONSENSUS_SURFACE_RESCAN_GUIDANCE: &str =
+    "intent_alias_dependent_semantic_consensus_surface_rescan_guidance";
 
 #[derive(Debug, Clone)]
 struct ProjectedArtifactSnapshot {
@@ -822,6 +826,10 @@ fn replay_inputs_for_rescan(
     if let Some(inputs) = semantic_role_consensus_replay_inputs(stage, snapshot, finding) {
         return inputs;
     }
+    if let Some(inputs) = alias_dependent_semantic_consensus_replay_inputs(stage, snapshot, finding)
+    {
+        return inputs;
+    }
     if let Some(inputs) = semantic_role_arbitration_replay_inputs(stage, snapshot, finding) {
         return inputs;
     }
@@ -879,6 +887,18 @@ fn semantic_role_consensus_replay_inputs(
     finding: &ValidationFindingRecord,
 ) -> Option<Vec<ProjectedReplayInput>> {
     if !is_semantic_role_consensus_rescan(stage, finding) {
+        return None;
+    }
+
+    evidence_nlp_replay_inputs_for_stage(stage, snapshot)
+}
+
+fn alias_dependent_semantic_consensus_replay_inputs(
+    stage: IrStage,
+    snapshot: &ProjectedArtifactSnapshot,
+    finding: &ValidationFindingRecord,
+) -> Option<Vec<ProjectedReplayInput>> {
+    if !is_alias_dependent_semantic_consensus_rescan(stage, finding) {
         return None;
     }
 
@@ -1192,10 +1212,27 @@ fn is_semantic_role_consensus_rescan(stage: IrStage, finding: &ValidationFinding
     )
 }
 
+fn is_alias_dependent_semantic_consensus_rescan(
+    stage: IrStage,
+    finding: &ValidationFindingRecord,
+) -> bool {
+    matches!(
+        (stage, finding.finding_id.as_str()),
+        (
+            IrStage::SemanticIr,
+            SEMANTIC_ALIAS_DEPENDENT_SEMANTIC_CONSENSUS_SURFACE_RESCAN_GUIDANCE
+        ) | (
+            IrStage::IntentIr,
+            INTENT_ALIAS_DEPENDENT_SEMANTIC_CONSENSUS_SURFACE_RESCAN_GUIDANCE
+        )
+    )
+}
+
 fn is_evidence_nlp_rebuild_rescan(stage: IrStage, finding: &ValidationFindingRecord) -> bool {
     is_temporal_rule_surface_rescan(stage, finding)
         || is_semantic_role_arbitration_rescan(stage, finding)
         || is_semantic_role_consensus_rescan(stage, finding)
+        || is_alias_dependent_semantic_consensus_rescan(stage, finding)
 }
 
 fn select_rescan_vlm_provider(
@@ -1325,6 +1362,20 @@ fn recommended_rescan_action(stage: IrStage, finding: &ValidationFindingRecord) 
             }
             IrStage::SourceIr | IrStage::EvidenceIr => unreachable!(
                 "semantic-role-consensus specialized action only applies to semantic/intent rescans"
+            ),
+        };
+    }
+
+    if is_alias_dependent_semantic_consensus_rescan(stage, finding) {
+        return match stage {
+            IrStage::SemanticIr => {
+                "run local NLP enrichment on EvidenceIR, rebuild SemanticIR, and validate whether the related signal ids gain direct or corroborating non-alias semantic-role consensus"
+            }
+            IrStage::IntentIr => {
+                "run local NLP enrichment on EvidenceIR, rebuild SemanticIR and IntentIR, and validate whether the related signal ids survive with direct or corroborating non-alias semantic-role consensus instead of alias-dependent carry-through"
+            }
+            IrStage::SourceIr | IrStage::EvidenceIr => unreachable!(
+                "alias-dependent semantic-consensus specialized action only applies to semantic/intent rescans"
             ),
         };
     }
@@ -2199,6 +2250,74 @@ mod tests {
     }
 
     #[test]
+    fn project_validation_collects_alias_dependent_semantic_consensus_rescan_guidance_for_semantic_stage()
+     {
+        let tempdir = tempdir().expect("tempdir");
+        let repo_root = tempdir.path();
+        let artifact_path = repo_root.join("generated/semantic_ir/doc/semantic_ir.json");
+        let evidence_ir_path = repo_root.join("generated/evidence_ir/doc/evidence_ir.json");
+        let snapshot = ProjectedArtifactSnapshot {
+            document_key: "doc".to_string(),
+            display_name: "Spec.pdf".to_string(),
+            stage: IrStage::SemanticIr,
+            artifact_path,
+            replay_inputs: vec![ProjectedReplayInput {
+                input_kind: "evidence_ir",
+                path: evidence_ir_path.clone(),
+            }],
+            report: ValidationReportRecord {
+                report_id: "validation_semantic_ir_test".to_string(),
+                validated_stage: IrStage::SemanticIr,
+                artifact_fingerprint: "fingerprint".to_string(),
+                summary:
+                    "SemanticIR validation with alias-dependent semantic-consensus rescan guidance"
+                        .to_string(),
+                overall_score: Some(84),
+                grade: Some("GOOD".to_string()),
+                metrics: Vec::new(),
+                findings: vec![ValidationFindingRecord {
+                    finding_id: SEMANTIC_ALIAS_DEPENDENT_SEMANTIC_CONSENSUS_SURFACE_RESCAN_GUIDANCE
+                        .to_string(),
+                    severity: ValidationFindingSeverity::Info,
+                    category: "rescan_guidance".to_string(),
+                    summary: "resolved role meaning still depends only on alias-grounded evidence"
+                        .to_string(),
+                    related_ids: vec!["XREQ".to_string()],
+                }],
+            },
+        };
+
+        let recommendations =
+            collect_rescan_recommendations(&[snapshot], repo_root, &test_rescan_vlm_policy());
+
+        assert_eq!(recommendations.len(), 1);
+        assert_eq!(
+            recommendations[0].replay_inputs,
+            vec![ProjectRescanReplayInput {
+                input_kind: "evidence_ir".to_string(),
+                path: "generated/evidence_ir/doc/evidence_ir.json".to_string(),
+            }]
+        );
+        assert_eq!(
+            recommendations[0].recommended_action,
+            "run local NLP enrichment on EvidenceIR, rebuild SemanticIR, and validate whether the related signal ids gain direct or corroborating non-alias semantic-role consensus"
+        );
+        assert_eq!(recommendations[0].recommended_commands.len(), 3);
+        assert_eq!(
+            recommendations[0].recommended_commands[0].intent,
+            "nlp_enrich_evidence_ir"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[1].intent,
+            "rebuild_semantic_ir"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[2].intent,
+            "validate_current_artifact"
+        );
+    }
+
+    #[test]
     fn project_validation_collects_temporal_rule_surface_rescan_guidance_for_intent_stage()
     -> Result<()> {
         let tempdir = tempdir()?;
@@ -2504,6 +2623,106 @@ mod tests {
         assert_eq!(
             recommendations[0].recommended_action,
             "run local NLP enrichment on EvidenceIR, rebuild SemanticIR and IntentIR, and validate whether the related signal ids survive with observation-backed semantic-role consensus instead of fallback-only role meaning"
+        );
+        assert_eq!(recommendations[0].recommended_commands.len(), 4);
+        assert_eq!(
+            recommendations[0].recommended_commands[0].intent,
+            "nlp_enrich_evidence_ir"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[1].intent,
+            "rebuild_semantic_ir"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[2].intent,
+            "rebuild_intent_ir"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[3].intent,
+            "validate_current_artifact"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn project_validation_collects_alias_dependent_semantic_consensus_rescan_guidance_for_intent_stage()
+    -> Result<()> {
+        let tempdir = tempdir()?;
+        let repo_root = fs::canonicalize(tempdir.path())?;
+        let source = repo_root.join("spec.md");
+        let source_artifact_base = repo_root.join("generated").join("source_ir");
+        let evidence_artifact_base = repo_root.join("generated").join("evidence_ir");
+        let semantic_artifact_base = repo_root.join("generated").join("semantic_ir");
+        fs::write(
+            &source,
+            "# Spec\nSignal XREQ is input width 1.\nSignal DATA is output width 32.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+
+        let snapshot = ProjectedArtifactSnapshot {
+            document_key: "doc".to_string(),
+            display_name: "Spec.pdf".to_string(),
+            stage: IrStage::IntentIr,
+            artifact_path: repo_root.join("generated/intent_ir/doc/intent_ir.json"),
+            replay_inputs: vec![ProjectedReplayInput {
+                input_kind: "semantic_ir",
+                path: semantic_ir.artifact_layout.semantic_ir_path.clone(),
+            }],
+            report: ValidationReportRecord {
+                report_id: "validation_intent_ir_test".to_string(),
+                validated_stage: IrStage::IntentIr,
+                artifact_fingerprint: "fingerprint".to_string(),
+                summary:
+                    "IntentIR validation with alias-dependent semantic-consensus rescan guidance"
+                        .to_string(),
+                overall_score: Some(78),
+                grade: Some("GOOD".to_string()),
+                metrics: Vec::new(),
+                findings: vec![ValidationFindingRecord {
+                    finding_id: INTENT_ALIAS_DEPENDENT_SEMANTIC_CONSENSUS_SURFACE_RESCAN_GUIDANCE
+                        .to_string(),
+                    severity: ValidationFindingSeverity::Info,
+                    category: "rescan_guidance".to_string(),
+                    summary: "resolved role meaning still depends only on alias-grounded evidence"
+                        .to_string(),
+                    related_ids: vec!["XREQ".to_string()],
+                }],
+            },
+        };
+
+        let recommendations =
+            collect_rescan_recommendations(&[snapshot], &repo_root, &test_rescan_vlm_policy());
+
+        assert_eq!(recommendations.len(), 1);
+        assert_eq!(
+            recommendations[0].replay_inputs,
+            vec![
+                ProjectRescanReplayInput {
+                    input_kind: "evidence_ir".to_string(),
+                    path: "generated/evidence_ir/spec/evidence_ir.json".to_string(),
+                },
+                ProjectRescanReplayInput {
+                    input_kind: "semantic_ir".to_string(),
+                    path: "generated/semantic_ir/spec/semantic_ir.json".to_string(),
+                },
+            ]
+        );
+        assert_eq!(
+            recommendations[0].recommended_action,
+            "run local NLP enrichment on EvidenceIR, rebuild SemanticIR and IntentIR, and validate whether the related signal ids survive with direct or corroborating non-alias semantic-role consensus instead of alias-dependent carry-through"
         );
         assert_eq!(recommendations[0].recommended_commands.len(), 4);
         assert_eq!(

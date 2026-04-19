@@ -7,6 +7,23 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-19 Alias-dependent semantic consensus should be replayable, not only inspectable
+- Alias-dependent consensus is weaker than ordinary observation-backed consensus in a very specific way:
+  - the role has converged
+  - but the surviving support still depends only on alias grounding
+  - direct signal mentions or corroborating non-alias modalities have not yet joined the proof
+- Leaving that state as only a warning would underspecify the operator workflow:
+  - the validator would say "this is weaker"
+  - but the replay planner would stay silent about the bounded current-document step that might strengthen it
+- The right response is the same conservative pattern already used for nearby semantic gaps:
+  - rerun local NLP enrichment on `EvidenceIR`
+  - rebuild the downstream canonical stage(s)
+  - review whether the same signal ids now gain stronger non-alias semantic-role support
+- This is still not an auto-healing story:
+  - alias-grounded meaning remains visible in the canonical artifacts
+  - the replay loop does not mutate truth or self-promote facts
+  - it only points reviewers toward the exact local evidence lane that could improve confidence
+
 ## 2026-04-19 Resolved semantic roles without consensus should be replay targets, not resting states
 - The non-decisive semantic-arbitration slice handled the case where multiple role candidates still compete.
 - The adjacent weak state is different:
