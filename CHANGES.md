@@ -1,5 +1,39 @@
 # CHANGES
 
+## 2026-04-19 (Negative-knowledge rescans now restart upstream)
+
+### Improved: semantic and intent negative-knowledge guidance now replay from the EvidenceIR boundary
+- The previous rescan-plan shape for negative-knowledge findings was too weak at the canonical stages:
+  - `semantic_negative_knowledge_rescan_guidance` only emitted `semantic -> validate`
+  - `intent_negative_knowledge_rescan_guidance` only emitted `intent -> validate`
+- That was objectively flimsy because those same-stage rebuilds do not create any new local corroboration:
+  - the negative-knowledge priors are consulted upstream through the evidence path
+  - the review question is whether the current document still reproduces the conflict/residual when replayed from the upstream extraction boundary
+  - replaying only the current stage mostly re-serializes already-lowered state
+- This slice tightens that replay plan for the canonical stages:
+  - semantic negative-knowledge guidance now emits `evidence -> semantic -> validate`
+  - intent negative-knowledge guidance now emits `evidence -> semantic -> intent -> validate`
+- The planner resolves those replay inputs from persisted upstream artifacts:
+  - for `SemanticIR`, load the tracked `EvidenceIR` and recover its `source_ir_path`
+  - for `IntentIR`, load the tracked `SemanticIR`, then the upstream `EvidenceIR`, then recover its `source_ir_path`
+- The behavior remains bounded and honest:
+  - no new command types were needed in `rescan-plan`
+  - no canonical truth is auto-mutated
+  - if the persisted upstream artifacts cannot be loaded, the planner falls back to the generic rebuild path instead of emitting an unusable recommendation
+- Updated the negative-knowledge projection regression to build real upstream artifacts and prove the stronger intent-stage replay plan now carries:
+  - `generated/source_ir/spec/source_ir.json`
+  - `generated/evidence_ir/spec/evidence_ir.json`
+  - `generated/semantic_ir/spec/semantic_ir.json`
+  - four total command hints instead of two
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge project_validation_collects_negative_knowledge_rescan_guidance` -> passed
+- `cargo test -p specforge project_validation_collects_temporal_rule_surface_rescan_guidance` -> passed
+- `bash scripts/run_ci.sh` -> passed with `373` Rust tests and the mdBook build
+- `bash scripts/run_docs_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-19 (Temporal-surface rescans now emit replayable NLP hints)
 
 ### Improved: temporal-rule-surface gaps now project executable local replay plans

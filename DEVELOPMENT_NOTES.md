@@ -7,6 +7,32 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-19 Negative-knowledge replay should not stop at the current canonical stage
+- The temporal replay slice exposed a neighboring weakness in the rescan planner:
+  - negative-knowledge guidance at `SemanticIR` and `IntentIR` was still mapped to same-stage rebuilds
+  - those rebuilds are structurally valid but operationally weak because they do not re-run the upstream extraction boundary where prior-memory influence is actually observed
+- The right replay boundary for these canonical negative-knowledge matches is the evidence stage, not the current artifact:
+  - the known-failure patterns are carried forward from evidence/semantic conflict surfaces and residual decisions
+  - reviewers need to know whether the current document still reproduces those surfaces when replayed upstream, not whether the final serializer can be rerun
+- That gives a stage-sensitive but deterministic plan:
+  - `SemanticIR` negative-knowledge guidance:
+    - recover the persisted `source_ir_path` from the tracked upstream `EvidenceIR`
+    - `evidence <source_ir>`
+    - `semantic <evidence_ir>`
+    - `validate <semantic_ir>`
+  - `IntentIR` negative-knowledge guidance:
+    - recover `semantic_ir -> evidence_ir -> source_ir`
+    - `evidence <source_ir>`
+    - `semantic <evidence_ir>`
+    - `intent <semantic_ir>`
+    - `validate <intent_ir>`
+- This is stronger than the generic stage rebuild without pretending to auto-fix truth:
+  - it replays the current document from the highest meaningful local boundary for this failure class
+  - it still does not mutate canonical truth or promote anything automatically
+  - it still leaves evidence review and arbitration as the gate on what survives
+- The planner deliberately degrades gracefully:
+  - if the persisted upstream artifacts cannot be loaded, recommendation generation falls back to the generic stage replay rather than dropping the recommendation entirely
+
 ## 2026-04-19 Temporal-surface rescan replay
 - The validator-side temporal-surface slice was only half-finished.
 - `validate` could already say:

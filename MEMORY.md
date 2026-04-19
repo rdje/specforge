@@ -22,28 +22,28 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `be55b7c`
-- latest_commit_brief_message: `feat(validate): name quality score drivers`
-- note: current in-flight slice turns temporal-rule-surface rescan guidance into executable local replay hints via `nlp-enrich -> semantic -> intent/validate`
+- latest_commit_hash: `a1b91af`
+- latest_commit_brief_message: `feat(rescan): route temporal gaps through nlp`
+- note: current in-flight slice strengthens semantic/intent negative-knowledge rescan guidance so replay restarts at `evidence -> semantic -> intent/validate` instead of same-stage rebuilds
 
 ## Recent commit chain (last 5)
+- `a1b91af` feat(rescan): route temporal gaps through nlp
 - `be55b7c` feat(validate): name quality score drivers
 - `e9b89bd` feat(validate): name actor port gaps
 - `9ece4b9` feat(validate): name evidence stranded ids
 - `ad65c39` feat(validate): name temporal surface inputs
-- `3b7dc32` feat(validate): name temporal gap rules
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- branch is ahead of `origin/main` by eighteen local commits (`1ae25f8`, `f8359fa`, `c17dda7`, `08de26a`, `f813461`, `eeb67a8`, `f8164d0`, `792c60e`, `cd79915`, `781353a`, `35c449b`, `29ec1f3`, `1f09f97`, `3b7dc32`, `ad65c39`, `9ece4b9`, `e9b89bd`, `be55b7c`); do not push again until 25 new local commits since the last push at `99808e9` or until the user explicitly asks
+- branch is ahead of `origin/main` by nineteen local commits (`1ae25f8`, `f8359fa`, `c17dda7`, `08de26a`, `f813461`, `eeb67a8`, `f8164d0`, `792c60e`, `cd79915`, `781353a`, `35c449b`, `29ec1f3`, `1f09f97`, `3b7dc32`, `ad65c39`, `9ece4b9`, `e9b89bd`, `be55b7c`, `a1b91af`); do not push again until 25 new local commits since the last push at `99808e9` or until the user explicitly asks
 - the README/SESSION_BOOTSTRAP handoff has been re-executed from the repo entrypoint and the referenced continuity docs have been reread
-- the active in-flight slice closes the temporal rescan loop:
-  - `semantic_temporal_rule_surface_rescan_guidance` and `intent_temporal_rule_surface_rescan_guidance` already exist in `validate`
-  - `project-validation` is being extended so those findings emit replayable local command hints rather than generic rebuild-only plans
-  - `rescan-plan` is being extended to whitelist and execute `nlp_enrich_evidence_ir` hints with local providers only
-  - validator related-id capping is being tightened so the sibling temporal findings stay aligned
-- validation for the in-flight slice has now passed through `cargo fmt --all`, `cargo test -p specforge temporal_rule_surface`, `cargo test -p specforge nlp_enrich_hint`, `bash scripts/run_ci.sh`, `bash scripts/run_docs_ci.sh`, and `git diff --check`
-- the current full local CI baseline for the in-flight slice is `373` Rust tests plus warning-deny rustdoc and the mdBook build
+- the active in-flight slice strengthens negative-knowledge replay planning at canonical stages:
+  - `semantic_negative_knowledge_rescan_guidance` and `intent_negative_knowledge_rescan_guidance` are being upgraded from same-stage rebuilds to upstream replay plans
+  - the planner now reloads persisted upstream artifacts to recover `source_ir -> evidence_ir -> semantic_ir` where needed
+  - `IntentIR` negative-knowledge replay should now emit `evidence -> semantic -> intent -> validate`
+  - the planner keeps a generic rebuild fallback when those persisted upstream artifacts are unavailable
+- validation for the in-flight slice has now passed through `cargo fmt --all`, `cargo test -p specforge project_validation_collects_negative_knowledge_rescan_guidance`, `cargo test -p specforge project_validation_collects_temporal_rule_surface_rescan_guidance`, `bash scripts/run_ci.sh`, `bash scripts/run_docs_ci.sh`, and `git diff --check`
+- the current full local CI baseline remains `373` Rust tests plus warning-deny rustdoc and the mdBook build
 - README sentinel remains intact after the slice: `Read SESSION_BOOTSTRAP.md and start from there.`
 - latest committed adapter hardening adds sticky conflict collapse for duplicate explicit top-port direction declarations
 - the committed regression declares top port `drive_data` once as output and once as input; expected behavior is unresolved top-port direction in both the top candidate and selected signal inventory, blocked renderability, and no emitted `.fsm` target text

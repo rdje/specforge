@@ -23,6 +23,9 @@ const VALIDATION_PROJECTION_START: &str = "<!-- validation_projection:start -->"
 const VALIDATION_PROJECTION_END: &str = "<!-- validation_projection:end -->";
 const EVIDENCE_VISUAL_MOTIF_CORROBORATION_GUIDANCE: &str =
     "evidence_visual_motif_corroboration_guidance";
+const SEMANTIC_NEGATIVE_KNOWLEDGE_RESCAN_GUIDANCE: &str =
+    "semantic_negative_knowledge_rescan_guidance";
+const INTENT_NEGATIVE_KNOWLEDGE_RESCAN_GUIDANCE: &str = "intent_negative_knowledge_rescan_guidance";
 const SEMANTIC_TEMPORAL_RULE_SURFACE_RESCAN_GUIDANCE: &str =
     "semantic_temporal_rule_surface_rescan_guidance";
 const INTENT_TEMPORAL_RULE_SURFACE_RESCAN_GUIDANCE: &str =
@@ -781,6 +784,13 @@ fn recommended_rescan_commands(
     rescan_vlm_policy: &RescanVlmHintPolicy,
     repo_root: &Path,
 ) -> Vec<ProjectRescanCommandHint> {
+    if is_negative_knowledge_rescan(stage, finding)
+        && let Some(commands) =
+            negative_knowledge_rescan_commands(stage, artifact_path, snapshot, repo_root)
+    {
+        return commands;
+    }
+
     if is_temporal_rule_surface_rescan(stage, finding)
         && let Some(commands) = temporal_rule_surface_rescan_commands(
             stage,
@@ -846,6 +856,50 @@ fn recommended_rescan_commands(
     commands
 }
 
+fn negative_knowledge_rescan_commands(
+    stage: IrStage,
+    artifact_path: &Path,
+    snapshot: &ProjectedArtifactSnapshot,
+    repo_root: &Path,
+) -> Option<Vec<ProjectRescanCommandHint>> {
+    let evidence_ir_path = evidence_input_for_snapshot_stage(stage, snapshot)?;
+    let source_ir_path = source_ir_input_for_negative_knowledge_rescan(stage, snapshot)?;
+    let mut commands = vec![specforge_command_hint(
+        "rebuild_evidence_ir",
+        vec![
+            "evidence".to_string(),
+            repo_relative_display(&source_ir_path, repo_root),
+        ],
+    )];
+    commands.push(specforge_command_hint(
+        "rebuild_semantic_ir",
+        vec![
+            "semantic".to_string(),
+            repo_relative_display(&evidence_ir_path, repo_root),
+        ],
+    ));
+
+    if stage == IrStage::IntentIr {
+        let semantic_ir_path = semantic_input_for_snapshot(snapshot)?;
+        commands.push(specforge_command_hint(
+            "rebuild_intent_ir",
+            vec![
+                "intent".to_string(),
+                repo_relative_display(&semantic_ir_path, repo_root),
+            ],
+        ));
+    }
+
+    commands.push(specforge_command_hint(
+        "validate_current_artifact",
+        vec![
+            "validate".to_string(),
+            repo_relative_display(artifact_path, repo_root),
+        ],
+    ));
+    Some(commands)
+}
+
 fn temporal_rule_surface_rescan_commands(
     stage: IrStage,
     artifact_path: &Path,
@@ -853,7 +907,7 @@ fn temporal_rule_surface_rescan_commands(
     rescan_vlm_policy: &RescanVlmHintPolicy,
     repo_root: &Path,
 ) -> Option<Vec<ProjectRescanCommandHint>> {
-    let evidence_ir_path = evidence_input_for_temporal_rule_surface_rescan(stage, snapshot)?;
+    let evidence_ir_path = evidence_input_for_snapshot_stage(stage, snapshot)?;
     let evidence_ir_display = repo_relative_display(&evidence_ir_path, repo_root);
     let mut commands = vec![nlp_enrich_evidence_command(
         &evidence_ir_path,
@@ -886,7 +940,7 @@ fn temporal_rule_surface_rescan_commands(
     Some(commands)
 }
 
-fn evidence_input_for_temporal_rule_surface_rescan(
+fn evidence_input_for_snapshot_stage(
     stage: IrStage,
     snapshot: &ProjectedArtifactSnapshot,
 ) -> Option<PathBuf> {
@@ -904,6 +958,16 @@ fn evidence_input_for_temporal_rule_surface_rescan(
         }
         IrStage::SourceIr | IrStage::EvidenceIr => None,
     }
+}
+
+fn source_ir_input_for_negative_knowledge_rescan(
+    stage: IrStage,
+    snapshot: &ProjectedArtifactSnapshot,
+) -> Option<PathBuf> {
+    let evidence_ir_path = evidence_input_for_snapshot_stage(stage, snapshot)?;
+    EvidenceIr::load_from_path(&evidence_ir_path)
+        .ok()
+        .map(|evidence_ir| evidence_ir.source_ir_path)
 }
 
 fn semantic_input_for_snapshot(snapshot: &ProjectedArtifactSnapshot) -> Option<PathBuf> {
@@ -939,6 +1003,16 @@ fn nlp_enrich_evidence_command(
 fn is_visual_motif_corroboration_rescan(stage: IrStage, finding: &ValidationFindingRecord) -> bool {
     stage == IrStage::EvidenceIr
         && finding.finding_id == EVIDENCE_VISUAL_MOTIF_CORROBORATION_GUIDANCE
+}
+
+fn is_negative_knowledge_rescan(stage: IrStage, finding: &ValidationFindingRecord) -> bool {
+    matches!(
+        (stage, finding.finding_id.as_str()),
+        (
+            IrStage::SemanticIr,
+            SEMANTIC_NEGATIVE_KNOWLEDGE_RESCAN_GUIDANCE
+        ) | (IrStage::IntentIr, INTENT_NEGATIVE_KNOWLEDGE_RESCAN_GUIDANCE)
+    )
 }
 
 fn is_temporal_rule_surface_rescan(stage: IrStage, finding: &ValidationFindingRecord) -> bool {
@@ -1394,17 +1468,37 @@ mod tests {
     #[test]
     fn project_validation_collects_negative_knowledge_rescan_guidance() -> Result<()> {
         let tempdir = tempdir()?;
-        let repo_root = tempdir.path();
-        let artifact_path = repo_root.join("generated/intent_ir/doc/intent_ir.json");
-        let semantic_ir_path = repo_root.join("generated/semantic_ir/doc/semantic_ir.json");
+        let repo_root = fs::canonicalize(tempdir.path())?;
+        let source = repo_root.join("spec.md");
+        let source_artifact_base = repo_root.join("generated").join("source_ir");
+        let evidence_artifact_base = repo_root.join("generated").join("evidence_ir");
+        let semantic_artifact_base = repo_root.join("generated").join("semantic_ir");
+        fs::write(
+            &source,
+            "# Spec\nSignal HREADY is input width 1.\nSignal DATA is output width 32.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+
         let snapshot = ProjectedArtifactSnapshot {
-            document_key: "doc".to_string(),
+            document_key: "spec".to_string(),
             display_name: "Spec.pdf".to_string(),
             stage: IrStage::IntentIr,
-            artifact_path: artifact_path.clone(),
+            artifact_path: repo_root.join("generated/intent_ir/spec/intent_ir.json"),
             replay_inputs: vec![ProjectedReplayInput {
                 input_kind: "semantic_ir",
-                path: semantic_ir_path,
+                path: semantic_ir.artifact_layout.semantic_ir_path.clone(),
             }],
             report: ValidationReportRecord {
                 report_id: "validation_intent_ir_test".to_string(),
@@ -1430,7 +1524,7 @@ mod tests {
         let snapshots = vec![snapshot];
 
         let mut recommendations =
-            collect_rescan_recommendations(&snapshots, repo_root, &test_rescan_vlm_policy());
+            collect_rescan_recommendations(&snapshots, &repo_root, &test_rescan_vlm_policy());
         assert_eq!(recommendations.len(), 1);
         assert_eq!(
             recommendations[0].related_ids,
@@ -1447,13 +1541,13 @@ mod tests {
             recommendations[0].replay_inputs,
             vec![ProjectRescanReplayInput {
                 input_kind: "semantic_ir".to_string(),
-                path: "generated/semantic_ir/doc/semantic_ir.json".to_string(),
+                path: "generated/semantic_ir/spec/semantic_ir.json".to_string(),
             }]
         );
-        assert_eq!(recommendations[0].recommended_commands.len(), 2);
+        assert_eq!(recommendations[0].recommended_commands.len(), 4);
         assert_eq!(
             recommendations[0].recommended_commands[0].intent,
-            "rebuild_intent_ir"
+            "rebuild_evidence_ir"
         );
         assert_eq!(
             recommendations[0].recommended_commands[0].args,
@@ -1462,12 +1556,42 @@ mod tests {
                 "--manifest-path".to_string(),
                 "Cargo.toml".to_string(),
                 "--".to_string(),
-                "intent".to_string(),
-                "generated/semantic_ir/doc/semantic_ir.json".to_string(),
+                "evidence".to_string(),
+                "generated/source_ir/spec/source_ir.json".to_string(),
             ]
         );
         assert_eq!(
             recommendations[0].recommended_commands[1].intent,
+            "rebuild_semantic_ir"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[1].args,
+            vec![
+                "run".to_string(),
+                "--manifest-path".to_string(),
+                "Cargo.toml".to_string(),
+                "--".to_string(),
+                "semantic".to_string(),
+                "generated/evidence_ir/spec/evidence_ir.json".to_string(),
+            ]
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[2].intent,
+            "rebuild_intent_ir"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[2].args,
+            vec![
+                "run".to_string(),
+                "--manifest-path".to_string(),
+                "Cargo.toml".to_string(),
+                "--".to_string(),
+                "intent".to_string(),
+                "generated/semantic_ir/spec/semantic_ir.json".to_string(),
+            ]
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[3].intent,
             "validate_current_artifact"
         );
         assert_eq!(recommendations[0].automation_status, "planned_not_executed");
@@ -1478,12 +1602,14 @@ mod tests {
             -1,
         ));
 
-        let snapshot_doc = render_validation_snapshot_doc(&snapshots, repo_root, &recommendations);
+        let snapshot_doc = render_validation_snapshot_doc(&snapshots, &repo_root, &recommendations);
         assert!(snapshot_doc.contains("## Targeted Rescan Recommendations"));
         assert!(snapshot_doc.contains("intent_ir_canonical_surface_corroboration"));
         assert!(snapshot_doc.contains("temporal_conflict_0001"));
         assert!(snapshot_doc.contains("recommended_commands"));
-        assert!(snapshot_doc.contains("generated/semantic_ir/doc/semantic_ir.json"));
+        assert!(snapshot_doc.contains("generated/source_ir/spec/source_ir.json"));
+        assert!(snapshot_doc.contains("generated/evidence_ir/spec/evidence_ir.json"));
+        assert!(snapshot_doc.contains("generated/semantic_ir/spec/semantic_ir.json"));
         assert!(snapshot_doc.contains(
             "- Rescan execution summaries: 1 total; 1 review required (possible improvement: 1, regression: 0, neutral change: 0); 0 no-change"
         ));
@@ -1502,10 +1628,10 @@ mod tests {
         assert!(snapshot_doc.contains("- finding_delta: added none; removed `finding_b`"));
 
         let live_projection =
-            render_live_status_projection(&snapshots, repo_root, &recommendations);
+            render_live_status_projection(&snapshots, &repo_root, &recommendations);
         assert!(live_projection.contains("- Targeted rescan queue:"));
         assert!(live_projection.contains("intent_ir_canonical_surface_corroboration"));
-        assert!(live_projection.contains("2 command hint(s)"));
+        assert!(live_projection.contains("4 command hint(s)"));
         assert!(live_projection.contains(
             "- Rescan execution summaries: 1 total; 1 review required (possible improvement: 1, regression: 0, neutral change: 0); 0 no-change"
         ));
@@ -1513,13 +1639,15 @@ mod tests {
             "verdict `possible_improvement_review_required`, promotion `not_promoted_review_required`, review `human_review_required`, score_delta `+5`, finding_count_delta `-1`"
         ));
 
-        let plan_path = write_validation_rescan_plan(repo_root, recommendations)?;
+        let plan_path = write_validation_rescan_plan(&repo_root, recommendations)?;
         let plan = fs::read_to_string(plan_path)?;
         assert!(plan.contains("\"schema_version\": 2"));
         assert!(plan.contains("\"recommendation_count\": 1"));
         assert!(plan.contains("\"corroboration_policy\""));
         assert!(plan.contains("\"replay_inputs\""));
         assert!(plan.contains("\"recommended_commands\""));
+        assert!(plan.contains("\"rebuild_evidence_ir\""));
+        assert!(plan.contains("\"rebuild_semantic_ir\""));
         assert!(plan.contains("\"rebuild_intent_ir\""));
 
         Ok(())
