@@ -7,6 +7,21 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-19 Rescan execution-state carry-over must key on the replay contract, not only the finding identity
+- Once replay planning became finding-aware, the old merge key for previous execution state became too optimistic.
+- The previous key only described "what finding is this?" and not "what exactly would we rerun?"
+- That creates a subtle continuity bug:
+  - an old recommendation can be marked `executed_validated_changed`
+  - the planner can later learn a stronger replay boundary for the same finding
+  - and the refreshed recommendation could still inherit the old execution summary even though the actual replay work has changed
+- The fix is to make the merge key reflect the replay contract itself:
+  - include normalized `replay_inputs`
+  - include the structured command plan, not just the finding metadata
+- This is the right boundary because execution summaries are about replaying a specific plan, not merely acknowledging a finding id.
+- Preserving the old state only remains correct when both are true:
+  - the recommendation still targets the same logical finding
+  - the recommendation still replays through the same typed input boundary and command sequence
+
 ## 2026-04-19 Rescan recommendations should describe the real replay boundary, not only execute it
 - The rescan planner had become operationally stronger than its own typed metadata.
 - After the recent replay slices:

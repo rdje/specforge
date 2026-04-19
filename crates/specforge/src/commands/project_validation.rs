@@ -681,6 +681,27 @@ fn rescan_recommendation_key(recommendation: &ProjectRescanRecommendation) -> St
     let mut related_ids = recommendation.related_ids.clone();
     related_ids.sort();
     related_ids.dedup();
+    let mut replay_inputs = recommendation
+        .replay_inputs
+        .iter()
+        .map(|input| format!("{}:{}", input.input_kind, input.path))
+        .collect::<Vec<_>>();
+    replay_inputs.sort();
+    replay_inputs.dedup();
+    let command_fingerprint = recommendation
+        .recommended_commands
+        .iter()
+        .map(|command| {
+            format!(
+                "{}\u{1d}{}\u{1d}{}\u{1d}{}",
+                command.intent,
+                command.executable,
+                command.working_directory,
+                command.args.join("\u{1f}")
+            )
+        })
+        .collect::<Vec<_>>()
+        .join("\u{1c}");
     [
         recommendation.document_key.as_str(),
         recommendation.stage.as_str(),
@@ -688,6 +709,8 @@ fn rescan_recommendation_key(recommendation: &ProjectRescanRecommendation) -> St
         recommendation.finding_id.as_str(),
         recommendation.extractor_lane.as_str(),
         &related_ids.join("\u{1f}"),
+        &replay_inputs.join("\u{1f}"),
+        &command_fingerprint,
     ]
     .join("\u{1e}")
 }
@@ -2104,6 +2127,107 @@ mod tests {
                 .promotion_status,
             RESCAN_PROMOTION_NOT_PROMOTED_REVIEW_REQUIRED
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn project_validation_does_not_preserve_execution_summary_when_replay_contract_changes()
+    -> Result<()> {
+        let tempdir = tempdir()?;
+        let repo_root = fs::canonicalize(tempdir.path())?;
+        let source = repo_root.join("spec.md");
+        let source_artifact_base = repo_root.join("generated").join("source_ir");
+        let evidence_artifact_base = repo_root.join("generated").join("evidence_ir");
+        let semantic_artifact_base = repo_root.join("generated").join("semantic_ir");
+        fs::write(
+            &source,
+            "# Spec\nSignal HREADY is input width 1.\nSignal DATA is output width 32.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+
+        let snapshot = ProjectedArtifactSnapshot {
+            document_key: "spec".to_string(),
+            display_name: "Spec.pdf".to_string(),
+            stage: IrStage::IntentIr,
+            artifact_path: repo_root.join("generated/intent_ir/spec/intent_ir.json"),
+            replay_inputs: vec![ProjectedReplayInput {
+                input_kind: "semantic_ir",
+                path: semantic_ir.artifact_layout.semantic_ir_path.clone(),
+            }],
+            report: ValidationReportRecord {
+                report_id: "validation_intent_ir_test".to_string(),
+                validated_stage: IrStage::IntentIr,
+                artifact_fingerprint: "fingerprint".to_string(),
+                summary: "IntentIR validation with rescan guidance".to_string(),
+                overall_score: Some(85),
+                grade: Some("GOOD".to_string()),
+                metrics: Vec::new(),
+                findings: vec![ValidationFindingRecord {
+                    finding_id: "intent_negative_knowledge_rescan_guidance".to_string(),
+                    severity: ValidationFindingSeverity::Info,
+                    category: "rescan_guidance".to_string(),
+                    summary: "known failure shape needs rescan".to_string(),
+                    related_ids: vec!["temporal_conflict_0001".to_string()],
+                }],
+            },
+        };
+        let snapshots = vec![snapshot];
+        let mut previous_recommendations =
+            collect_rescan_recommendations(&snapshots, &repo_root, &test_rescan_vlm_policy());
+        previous_recommendations[0].replay_inputs = vec![ProjectRescanReplayInput {
+            input_kind: "semantic_ir".to_string(),
+            path: "generated/semantic_ir/spec/semantic_ir.json".to_string(),
+        }];
+        previous_recommendations[0].recommended_commands = vec![
+            specforge_command_hint(
+                "rebuild_intent_ir",
+                vec![
+                    "intent".to_string(),
+                    "generated/semantic_ir/spec/semantic_ir.json".to_string(),
+                ],
+            ),
+            specforge_command_hint(
+                "validate_current_artifact",
+                vec![
+                    "validate".to_string(),
+                    "generated/intent_ir/spec/intent_ir.json".to_string(),
+                ],
+            ),
+        ];
+        previous_recommendations[0].automation_status = "executed_validated_changed".to_string();
+        previous_recommendations[0].execution_summary = Some(execution_summary(
+            "regression_review_required",
+            Some(-10),
+            1,
+        ));
+        write_validation_rescan_plan(&repo_root, previous_recommendations)?;
+
+        let previous_plan = read_existing_validation_rescan_plan(&repo_root)?;
+        let mut refreshed_recommendations =
+            collect_rescan_recommendations(&snapshots, &repo_root, &test_rescan_vlm_policy());
+        merge_previous_rescan_execution_state(
+            &mut refreshed_recommendations,
+            previous_plan.as_ref(),
+        );
+
+        assert_eq!(
+            refreshed_recommendations[0].automation_status,
+            "planned_not_executed"
+        );
+        assert!(refreshed_recommendations[0].execution_summary.is_none());
 
         Ok(())
     }

@@ -22,28 +22,27 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `ae92698`
-- latest_commit_brief_message: `feat(rescan): replay negative knowledge upstream`
-- note: current in-flight slice makes schema-v2 `replay_inputs` finding-aware so the recorded replay boundary matches the specialized rescan commands
+- latest_commit_hash: `d6e266d`
+- latest_commit_brief_message: `feat(rescan): align replay inputs with replay plan`
+- note: current in-flight slice tightens rescan execution-state merge keys so old execution summaries only survive when the replay contract still matches
 
 ## Recent commit chain (last 5)
+- `d6e266d` feat(rescan): align replay inputs with replay plan
 - `ae92698` feat(rescan): replay negative knowledge upstream
 - `a1b91af` feat(rescan): route temporal gaps through nlp
 - `be55b7c` feat(validate): name quality score drivers
 - `e9b89bd` feat(validate): name actor port gaps
-- `9ece4b9` feat(validate): name evidence stranded ids
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- branch is ahead of `origin/main` by twenty local commits (`1ae25f8`, `f8359fa`, `c17dda7`, `08de26a`, `f813461`, `eeb67a8`, `f8164d0`, `792c60e`, `cd79915`, `781353a`, `35c449b`, `29ec1f3`, `1f09f97`, `3b7dc32`, `ad65c39`, `9ece4b9`, `e9b89bd`, `be55b7c`, `a1b91af`, `ae92698`); do not push again until 25 new local commits since the last push at `99808e9` or until the user explicitly asks
+- branch is ahead of `origin/main` by twenty-one local commits (`1ae25f8`, `f8359fa`, `c17dda7`, `08de26a`, `f813461`, `eeb67a8`, `f8164d0`, `792c60e`, `cd79915`, `781353a`, `35c449b`, `29ec1f3`, `1f09f97`, `3b7dc32`, `ad65c39`, `9ece4b9`, `e9b89bd`, `be55b7c`, `a1b91af`, `ae92698`, `d6e266d`); do not push again until 25 new local commits since the last push at `99808e9` or until the user explicitly asks
 - the README/SESSION_BOOTSTRAP handoff has been re-executed from the repo entrypoint and the referenced continuity docs have been reread
-- the active in-flight slice tightens schema-v2 rescan metadata:
-  - `recommended_commands` for specialized replay paths were already finding-aware
-  - `replay_inputs` are now being made finding-aware too so the plan records the same upstream boundary the commands actually use
-  - negative-knowledge canonical rescans should now advertise `source_ir -> evidence_ir -> semantic_ir?`
-  - temporal-surface rescans should now advertise `evidence_ir -> semantic_ir?`
-- validation for the in-flight slice has now passed through `cargo fmt --all`, `cargo test -p specforge project_validation_collects_negative_knowledge_rescan_guidance`, `cargo test -p specforge project_validation_collects_temporal_rule_surface_rescan_guidance`, `bash scripts/run_ci.sh`, `bash scripts/run_docs_ci.sh`, and `git diff --check`
-- the current full local CI baseline remains `373` Rust tests plus warning-deny rustdoc and the mdBook build
+- the active in-flight slice tightens rescan execution-state continuity:
+  - previous execution summaries should only be preserved when the replay contract still matches
+  - the recommendation key is being widened to include `replay_inputs` plus the structured command plan
+  - this prevents a stale `executed_validated_*` status from attaching to a refreshed recommendation whose replay boundary has materially changed
+- validation for the in-flight slice has now passed through `cargo fmt --all`, `cargo test -p specforge project_validation_preserves_matching_rescan_execution_summary`, `cargo test -p specforge project_validation_does_not_preserve_execution_summary_when_replay_contract_changes`, `bash scripts/run_ci.sh`, `bash scripts/run_docs_ci.sh`, and `git diff --check`
+- the current full local CI baseline is `374` Rust tests plus warning-deny rustdoc and the mdBook build
 - README sentinel remains intact after the slice: `Read SESSION_BOOTSTRAP.md and start from there.`
 - latest committed adapter hardening adds sticky conflict collapse for duplicate explicit top-port direction declarations
 - the committed regression declares top port `drive_data` once as output and once as input; expected behavior is unresolved top-port direction in both the top candidate and selected signal inventory, blocked renderability, and no emitted `.fsm` target text

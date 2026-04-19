@@ -1,5 +1,33 @@
 # CHANGES
 
+## 2026-04-19 (Rescan execution state now follows the replay contract)
+
+### Improved: prior rescan execution summaries no longer carry across materially different replay plans
+- `project-validation` already preserves previous `rescan-plan` execution state when a refreshed recommendation still refers to the same logical work item.
+- The weakness was that the matching key only covered:
+  - document/stage/artifact
+  - finding id
+  - extractor lane
+  - related ids
+- That was too loose once replay planning became finding-aware:
+  - a recommendation could now change from a generic same-stage rebuild into a richer upstream replay plan
+  - but an older `executed_validated_*` state could still be merged onto the refreshed recommendation because the key ignored both `replay_inputs` and `recommended_commands`
+- This slice tightens that execution-state merge boundary:
+  - the recommendation key now fingerprints normalized `replay_inputs`
+  - and also fingerprints the structured command plan (`intent`, `executable`, `working_directory`, `args`)
+- Result:
+  - matching replay contracts still preserve execution summaries
+  - replay-contract changes now invalidate the old execution state and leave the refreshed recommendation at `planned_not_executed`
+- Added a direct regression that simulates an old intent negative-knowledge recommendation with the former generic `semantic_ir -> intent -> validate` contract and proves it no longer matches the current upstream replay contract.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge project_validation_preserves_matching_rescan_execution_summary` -> passed
+- `cargo test -p specforge project_validation_does_not_preserve_execution_summary_when_replay_contract_changes` -> passed
+- `bash scripts/run_ci.sh` -> passed with `374` Rust tests and the mdBook build
+- `bash scripts/run_docs_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-19 (Rescan replay inputs now match the real replay boundary)
 
 ### Improved: schema-v2 `replay_inputs` now surface the actual upstream artifacts used by specialized rescans
