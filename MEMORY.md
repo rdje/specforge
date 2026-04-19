@@ -22,26 +22,26 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `d6e266d`
-- latest_commit_brief_message: `feat(rescan): align replay inputs with replay plan`
-- note: current in-flight slice tightens rescan execution-state merge keys so old execution summaries only survive when the replay contract still matches
+- latest_commit_hash: `423a458`
+- latest_commit_brief_message: `feat(rescan): key execution state to replay contract`
+- note: current in-flight slice makes `recommended_action` finding-aware so the human-facing rescan summary matches the replay inputs and structured command plan
 
 ## Recent commit chain (last 5)
+- `423a458` feat(rescan): key execution state to replay contract
 - `d6e266d` feat(rescan): align replay inputs with replay plan
 - `ae92698` feat(rescan): replay negative knowledge upstream
 - `a1b91af` feat(rescan): route temporal gaps through nlp
 - `be55b7c` feat(validate): name quality score drivers
-- `e9b89bd` feat(validate): name actor port gaps
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- branch is ahead of `origin/main` by twenty-one local commits (`1ae25f8`, `f8359fa`, `c17dda7`, `08de26a`, `f813461`, `eeb67a8`, `f8164d0`, `792c60e`, `cd79915`, `781353a`, `35c449b`, `29ec1f3`, `1f09f97`, `3b7dc32`, `ad65c39`, `9ece4b9`, `e9b89bd`, `be55b7c`, `a1b91af`, `ae92698`, `d6e266d`); do not push again until 25 new local commits since the last push at `99808e9` or until the user explicitly asks
+- branch is ahead of `origin/main` by twenty-two local commits (`1ae25f8`, `f8359fa`, `c17dda7`, `08de26a`, `f813461`, `eeb67a8`, `f8164d0`, `792c60e`, `cd79915`, `781353a`, `35c449b`, `29ec1f3`, `1f09f97`, `3b7dc32`, `ad65c39`, `9ece4b9`, `e9b89bd`, `be55b7c`, `a1b91af`, `ae92698`, `d6e266d`, `423a458`); do not push again until 25 new local commits since the last push at `99808e9` or until the user explicitly asks
 - the README/SESSION_BOOTSTRAP handoff has been re-executed from the repo entrypoint and the referenced continuity docs have been reread
-- the active in-flight slice tightens rescan execution-state continuity:
-  - previous execution summaries should only be preserved when the replay contract still matches
-  - the recommendation key is being widened to include `replay_inputs` plus the structured command plan
-  - this prevents a stale `executed_validated_*` status from attaching to a refreshed recommendation whose replay boundary has materially changed
-- validation for the in-flight slice has now passed through `cargo fmt --all`, `cargo test -p specforge project_validation_preserves_matching_rescan_execution_summary`, `cargo test -p specforge project_validation_does_not_preserve_execution_summary_when_replay_contract_changes`, `bash scripts/run_ci.sh`, `bash scripts/run_docs_ci.sh`, and `git diff --check`
+- the active in-flight slice tightens rescan recommendation coherence:
+  - `recommended_action` is being made finding-aware instead of stage-generic
+  - negative-knowledge, temporal-surface, and visual corroboration rescans now describe the same replay boundary already carried by `replay_inputs` and `recommended_commands`
+  - this keeps markdown-facing status output aligned with the executable replay contract
+- validation for the in-flight slice has now passed through `cargo fmt --all`, `cargo test -p specforge project_validation_collects_negative_knowledge_rescan_guidance`, `cargo test -p specforge project_validation_collects_visual_motif_rescan_guidance`, `cargo test -p specforge project_validation_collects_temporal_rule_surface_rescan_guidance`, `bash scripts/run_ci.sh`, `bash scripts/run_docs_ci.sh`, and `git diff --check`
 - the current full local CI baseline is `374` Rust tests plus warning-deny rustdoc and the mdBook build
 - README sentinel remains intact after the slice: `Read SESSION_BOOTSTRAP.md and start from there.`
 - latest committed adapter hardening adds sticky conflict collapse for duplicate explicit top-port direction declarations

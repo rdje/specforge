@@ -770,7 +770,7 @@ fn collect_rescan_recommendations(
                 extractor_lane: extractor_lane_for_rescan(snapshot.stage).to_string(),
                 corroboration_policy:
                     "stronger_local_corroboration_required_before_canonical_promotion".to_string(),
-                recommended_action: recommended_rescan_action(snapshot.stage).to_string(),
+                recommended_action: recommended_rescan_action(snapshot.stage, finding).to_string(),
                 recommended_commands,
                 automation_status: "planned_not_executed".to_string(),
                 execution_summary: None,
@@ -1193,7 +1193,39 @@ fn extractor_lane_for_rescan(stage: IrStage) -> &'static str {
     }
 }
 
-fn recommended_rescan_action(stage: IrStage) -> &'static str {
+fn recommended_rescan_action(stage: IrStage, finding: &ValidationFindingRecord) -> &'static str {
+    if is_negative_knowledge_rescan(stage, finding) {
+        return match stage {
+            IrStage::SemanticIr => {
+                "restart from SourceIR through EvidenceIR and SemanticIR, then validate whether the related conflict or residual ids still reproduce from current-document evidence"
+            }
+            IrStage::IntentIr => {
+                "restart from SourceIR through EvidenceIR, SemanticIR, and IntentIR, then validate whether the related canonical conflict or residual ids still reproduce from current-document evidence"
+            }
+            IrStage::SourceIr | IrStage::EvidenceIr => unreachable!(
+                "negative-knowledge specialized action only applies to semantic/intent rescans"
+            ),
+        };
+    }
+
+    if is_temporal_rule_surface_rescan(stage, finding) {
+        return match stage {
+            IrStage::SemanticIr => {
+                "run local NLP enrichment on EvidenceIR, rebuild SemanticIR, and validate whether the related temporal source ids now lower into typed temporal rules"
+            }
+            IrStage::IntentIr => {
+                "run local NLP enrichment on EvidenceIR, rebuild SemanticIR and IntentIR, and validate whether the related temporal source ids survive as typed temporal rules without blind promotion"
+            }
+            IrStage::SourceIr | IrStage::EvidenceIr => unreachable!(
+                "temporal-rule-surface specialized action only applies to semantic/intent rescans"
+            ),
+        };
+    }
+
+    if is_visual_motif_corroboration_rescan(stage, finding) {
+        return "rerun local visual enrichment from SourceIR, rebuild EvidenceIR, and validate whether the related visual ids gain corroborated typed evidence";
+    }
+
     match stage {
         IrStage::SourceIr => {
             "reinspect source normalization around the related ids before downstream promotion"
@@ -1629,6 +1661,10 @@ mod tests {
             "intent_ir_canonical_surface_corroboration"
         );
         assert_eq!(
+            recommendations[0].recommended_action,
+            "restart from SourceIR through EvidenceIR, SemanticIR, and IntentIR, then validate whether the related canonical conflict or residual ids still reproduce from current-document evidence"
+        );
+        assert_eq!(
             recommendations[0].replay_inputs,
             vec![
                 ProjectRescanReplayInput {
@@ -1772,6 +1808,10 @@ mod tests {
             recommendations[0].corroboration_policy,
             "stronger_local_corroboration_required_before_canonical_promotion"
         );
+        assert_eq!(
+            recommendations[0].recommended_action,
+            "rerun local visual enrichment from SourceIR, rebuild EvidenceIR, and validate whether the related visual ids gain corroborated typed evidence"
+        );
         assert_eq!(recommendations[0].recommended_commands.len(), 3);
         assert_eq!(
             recommendations[0].recommended_commands[0].intent,
@@ -1849,6 +1889,10 @@ mod tests {
                 input_kind: "evidence_ir".to_string(),
                 path: "generated/evidence_ir/doc/evidence_ir.json".to_string(),
             }]
+        );
+        assert_eq!(
+            recommendations[0].recommended_action,
+            "run local NLP enrichment on EvidenceIR, rebuild SemanticIR, and validate whether the related temporal source ids now lower into typed temporal rules"
         );
         assert_eq!(recommendations[0].recommended_commands.len(), 3);
         assert_eq!(
@@ -1961,6 +2005,10 @@ mod tests {
                     path: "generated/semantic_ir/spec/semantic_ir.json".to_string(),
                 },
             ]
+        );
+        assert_eq!(
+            recommendations[0].recommended_action,
+            "run local NLP enrichment on EvidenceIR, rebuild SemanticIR and IntentIR, and validate whether the related temporal source ids survive as typed temporal rules without blind promotion"
         );
         assert_eq!(recommendations[0].recommended_commands.len(), 4);
         assert_eq!(

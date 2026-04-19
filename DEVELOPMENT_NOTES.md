@@ -7,6 +7,29 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-19 Human-facing rescan guidance must align with the replay contract
+- A rescan recommendation now has three distinct but related surfaces:
+  - `replay_inputs`: the typed upstream artifacts that define the replay boundary
+  - `recommended_commands`: the structured executable plan
+  - `recommended_action`: the sentence a human sees first in status docs and review output
+- Once `replay_inputs` and `recommended_commands` became finding-aware, keeping `recommended_action` stage-generic became a quality bug.
+- The issue was not execution correctness; the plan still ran.
+- The issue was contract drift:
+  - the typed fields could describe a precise upstream replay
+  - while the human-facing sentence still sounded like a generic same-stage rebuild
+- That mismatch is bad for trust and bad for future automation review because the first-line summary should not understate the actual replay boundary.
+- The right rule is:
+  - if a finding specializes the replay contract, it must also specialize the action text
+  - generic stage text is only correct for generic stage rescans
+- Current specialized action families:
+  - negative-knowledge guidance: replay from `SourceIR` through `EvidenceIR` and the affected canonical stage, then validate whether the conflict/residual still reproduces from current-document evidence
+  - temporal-rule-surface guidance: run local NLP enrichment on `EvidenceIR`, rebuild the downstream canonical stages, then validate whether typed temporal rules now appear
+  - visual corroboration guidance: rerun local visual enrichment from `SourceIR`, rebuild `EvidenceIR`, then validate whether the visual ids gain corroborated typed evidence
+- This keeps the recommendation internally coherent without granting it any extra authority:
+  - it still does not auto-fix truth
+  - it still does not mutate canonical records
+  - it still frames replay as a bounded evidence-gathering operation that arbitration must review
+
 ## 2026-04-19 Rescan execution-state carry-over must key on the replay contract, not only the finding identity
 - Once replay planning became finding-aware, the old merge key for previous execution state became too optimistic.
 - The previous key only described "what finding is this?" and not "what exactly would we rerun?"

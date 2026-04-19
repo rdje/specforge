@@ -1,5 +1,32 @@
 # CHANGES
 
+## 2026-04-19 (Rescan guidance text now matches the replay contract)
+
+### Improved: human-facing `recommended_action` text now specializes along with `replay_inputs` and command plans
+- The recent rescan slices made the recommendation payload operationally precise:
+  - `replay_inputs` now surface the actual upstream artifacts a replay needs
+  - `recommended_commands` now describe the structured replay plan to execute
+- But one field still lagged behind that stronger contract:
+  - `recommended_action` was still chosen only from the artifact stage
+  - so specialized rescans could carry the right command plan while still describing the work with a generic same-stage sentence
+- That was honest enough to execute, but weaker than it should be for human review because the markdown-facing summary did not fully explain the real replay boundary.
+- This slice makes the action text finding-aware in the same way the rest of the recommendation already is:
+  - negative-knowledge canonical rescans now explicitly say to replay from `SourceIR` through the downstream canonical stage before re-validating
+  - temporal-rule-surface gaps now explicitly say to run local NLP enrichment on `EvidenceIR` before rebuilding the canonical stages
+  - visual corroboration rescans now explicitly say to rerun local visual enrichment from `SourceIR` and rebuild `EvidenceIR`
+- Result:
+  - the human-facing summary now says the same thing as the typed replay contract
+  - snapshot docs, live status projections, and future automation all point at the same bounded rescan story
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge project_validation_collects_negative_knowledge_rescan_guidance` -> passed
+- `cargo test -p specforge project_validation_collects_visual_motif_rescan_guidance` -> passed
+- `cargo test -p specforge project_validation_collects_temporal_rule_surface_rescan_guidance` -> passed
+- `bash scripts/run_ci.sh` -> passed with `374` Rust tests, rustdoc, and the mdBook build
+- `bash scripts/run_docs_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-19 (Rescan execution state now follows the replay contract)
 
 ### Improved: prior rescan execution summaries no longer carry across materially different replay plans
