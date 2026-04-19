@@ -7,6 +7,22 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-19 Unbounded typed temporal rules should be replay targets, not just score dents
+- Once typed temporal rules already exist, the next weak state is no longer "did we lower anything at all?" but "did we lower enough timing structure to make the rule operationally useful?"
+- Missing `cycle_window` bounds is a good example:
+  - the rule exists
+  - the rule ids are stable and reviewable
+  - but the temporal meaning still lacks an explicit bound
+- Leaving that state as only a temporal-grounding warning underspecifies what the tool should suggest next.
+- The right bounded follow-up is familiar:
+  - rerun local NLP enrichment on `EvidenceIR`
+  - rebuild the downstream canonical stage(s)
+  - review whether the same temporal rule ids now carry explicit cycle windows
+- This keeps the temporal side aligned with the semantic replay story:
+  - weak but real canonical structure remains visible
+  - weak structure also advertises the local evidence lane that may strengthen it
+  - no canonical truth is auto-mutated just because replay exists
+
 ## 2026-04-19 Prior-guided final consensus should be replayable, not treated as fully self-sufficient
 - Prior-guided final semantic consensus is a different weak state from alias-dependence or fallback-only carry-through:
   - the role has converged

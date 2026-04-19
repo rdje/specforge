@@ -51,6 +51,10 @@ const SEMANTIC_PRIOR_GUIDED_SEMANTIC_CONSENSUS_SURFACE_RESCAN_GUIDANCE: &str =
     "semantic_prior_guided_semantic_consensus_surface_rescan_guidance";
 const INTENT_PRIOR_GUIDED_SEMANTIC_CONSENSUS_SURFACE_RESCAN_GUIDANCE: &str =
     "intent_prior_guided_semantic_consensus_surface_rescan_guidance";
+const SEMANTIC_TEMPORAL_CYCLE_WINDOW_SURFACE_RESCAN_GUIDANCE: &str =
+    "semantic_temporal_cycle_window_surface_rescan_guidance";
+const INTENT_TEMPORAL_CYCLE_WINDOW_SURFACE_RESCAN_GUIDANCE: &str =
+    "intent_temporal_cycle_window_surface_rescan_guidance";
 
 macro_rules! println {
     () => {
@@ -327,6 +331,28 @@ fn push_prior_guided_semantic_consensus_rescan_guidance(
         "rescan_guidance",
         format!(
             "{} prior-guided semantic-role signal id(s) in {stage_label} should trigger targeted NLP rescans plus downstream rebuild because resolved role meaning was strengthened by learned modality-reliability priors",
+            related_ids.len()
+        ),
+        related_ids.to_vec(),
+    ));
+}
+
+fn push_temporal_cycle_window_rescan_guidance(
+    findings: &mut Vec<ValidationFindingRecord>,
+    finding_id: &str,
+    stage_label: &str,
+    related_ids: &[String],
+) {
+    if related_ids.is_empty() {
+        return;
+    }
+
+    findings.push(finding(
+        finding_id,
+        ValidationFindingSeverity::Info,
+        "rescan_guidance",
+        format!(
+            "{} typed temporal rule id(s) in {stage_label} should trigger targeted NLP rescans plus downstream rebuild because the current rules still lack explicit cycle-window bounds",
             related_ids.len()
         ),
         related_ids.to_vec(),
@@ -3106,6 +3132,16 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 .cloned()
                 .collect(),
         ));
+        push_temporal_cycle_window_rescan_guidance(
+            &mut findings,
+            SEMANTIC_TEMPORAL_CYCLE_WINDOW_SURFACE_RESCAN_GUIDANCE,
+            "SemanticIR",
+            &temporal_rules_missing_cycle_window_rule_ids
+                .iter()
+                .take(8)
+                .cloned()
+                .collect::<Vec<_>>(),
+        );
     }
     if !ir.temporal_rules.is_empty()
         && !ir.actor_signal_relations.is_empty()
@@ -4353,6 +4389,16 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 .cloned()
                 .collect(),
         ));
+        push_temporal_cycle_window_rescan_guidance(
+            &mut findings,
+            INTENT_TEMPORAL_CYCLE_WINDOW_SURFACE_RESCAN_GUIDANCE,
+            "IntentIR",
+            &temporal_rules_missing_cycle_window_rule_ids
+                .iter()
+                .take(8)
+                .cloned()
+                .collect::<Vec<_>>(),
+        );
     }
     if !ir.temporal_rules.is_empty()
         && !ir.actor_signal_relations.is_empty()
@@ -7348,6 +7394,17 @@ mod tests {
                 .expect("expected semantic temporal-gap finding");
             assert_eq!(finding.related_ids, vec![expected_rule_id.clone()]);
         }
+        let semantic_rescan_guidance = semantic_report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == SEMANTIC_TEMPORAL_CYCLE_WINDOW_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected semantic temporal cycle-window rescan guidance");
+        assert_eq!(
+            semantic_rescan_guidance.related_ids,
+            vec![expected_rule_id.clone()]
+        );
 
         let intent_report = validate_intent_ir(&intent_ir, "temporal_gap_related_ids".to_string());
         assert_eq!(metric_value(&intent_report, "temporal_rules"), Some("1"));
@@ -7375,6 +7432,17 @@ mod tests {
                 .expect("expected intent temporal-gap finding");
             assert_eq!(finding.related_ids, vec![expected_rule_id.clone()]);
         }
+        let intent_rescan_guidance = intent_report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == INTENT_TEMPORAL_CYCLE_WINDOW_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected intent temporal cycle-window rescan guidance");
+        assert_eq!(
+            intent_rescan_guidance.related_ids,
+            vec![expected_rule_id.clone()]
+        );
 
         Ok(())
     }

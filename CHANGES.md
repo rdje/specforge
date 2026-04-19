@@ -1,5 +1,29 @@
 # CHANGES
 
+## 2026-04-19 (Temporal cycle-window gaps now emit replayable rescan guidance)
+
+### Improved: unbounded typed temporal rules now advertise the next bounded replay
+- Validation already reported when `SemanticIR` or `IntentIR` carried typed temporal rules but none of them had explicit `cycle_window` bounds.
+- That was honest, but still too passive:
+  - reviewers could see the affected temporal rule ids
+  - the replay planner had no typed next step for revisiting local timing language on those same rules
+  - unbounded rules looked like a score artifact instead of an explicit review surface
+- This slice turns that gap into the same bounded replay contract used elsewhere:
+  - `validate` now emits `semantic_temporal_cycle_window_surface_rescan_guidance` / `intent_temporal_cycle_window_surface_rescan_guidance`
+  - those findings stay in `rescan_guidance` and carry the same temporal rule ids already reported by the missing-cycle-window finding
+  - `project-validation` maps them onto the local `EvidenceIR -> SemanticIR -> IntentIR? -> validate` NLP replay lane
+  - the action text is explicit about recovering `cycle_window` bounds rather than merely rerunning extraction
+- The tracked KG fixture `temporal_prior_guided_cycle_window_without_prior_negative` now also requires those new findings, so the no-prior unbounded timing case is benchmark-locked.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge validate_semantic_and_intent_ir_report_temporal_gap_related_ids` -> passed
+- `cargo test -p specforge temporal_cycle_window_rescan_guidance` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_ci.sh` -> passed with `385` Rust tests and the mdBook build
+- `bash scripts/run_docs_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-19 (Prior-guided semantic consensus now emits replayable rescan guidance)
 
 ### Improved: learned-prior-assisted final role meaning now points back to current-document replay
