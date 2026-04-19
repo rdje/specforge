@@ -7,6 +7,21 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-19 Graph-uncovered canonical signals should be replay targets, not passive graph debt
+- Once canonical signal records exist and some actor-port graph coverage exists, missing graph direction on the remaining signals is a specific weak state:
+  - the signal ids are real
+  - the actor graph is not empty
+  - but the current canonical surface still lacks actor-relative direction on specific signals that should ideally be recoverable from better local evidence
+- Leaving that state as only a knowledge-graph warning underspecifies the next bounded action.
+- The right follow-up is the same conservative replay lane used for nearby evidence-strength gaps:
+  - rerun local NLP enrichment on `EvidenceIR`
+  - rebuild the downstream canonical stage(s)
+  - review whether the same signal ids now gain actor-relative graph direction coverage
+- This keeps the graph trust story coherent:
+  - graph gaps remain visible
+  - graph gaps also advertise the exact evidence-bound replay lane that may strengthen them
+  - no canonical truth is auto-mutated just because a replay path exists
+
 ## 2026-04-19 Actorless typed temporal rules should be replay targets, not just validator dents
 - Once a typed temporal rule exists and the actor graph also exists, missing actor-relative drive/sample grounding is a specific weak state:
   - the rule is real

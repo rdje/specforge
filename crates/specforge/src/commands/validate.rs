@@ -63,6 +63,10 @@ const SEMANTIC_TEMPORAL_ACTOR_GROUNDING_SURFACE_RESCAN_GUIDANCE: &str =
     "semantic_temporal_actor_grounding_surface_rescan_guidance";
 const INTENT_TEMPORAL_ACTOR_GROUNDING_SURFACE_RESCAN_GUIDANCE: &str =
     "intent_temporal_actor_grounding_surface_rescan_guidance";
+const SEMANTIC_GRAPH_DIRECTION_COVERAGE_SURFACE_RESCAN_GUIDANCE: &str =
+    "semantic_graph_direction_coverage_surface_rescan_guidance";
+const INTENT_GRAPH_DIRECTION_COVERAGE_SURFACE_RESCAN_GUIDANCE: &str =
+    "intent_graph_direction_coverage_surface_rescan_guidance";
 
 macro_rules! println {
     () => {
@@ -405,6 +409,28 @@ fn push_temporal_actor_grounding_rescan_guidance(
         "rescan_guidance",
         format!(
             "{} typed temporal rule id(s) in {stage_label} should trigger targeted NLP rescans plus downstream rebuild because the current rules still lack actor-relative drive/sample grounding",
+            related_ids.len()
+        ),
+        related_ids.to_vec(),
+    ));
+}
+
+fn push_graph_direction_coverage_rescan_guidance(
+    findings: &mut Vec<ValidationFindingRecord>,
+    finding_id: &str,
+    stage_label: &str,
+    related_ids: &[String],
+) {
+    if related_ids.is_empty() {
+        return;
+    }
+
+    findings.push(finding(
+        finding_id,
+        ValidationFindingSeverity::Info,
+        "rescan_guidance",
+        format!(
+            "{} signal id(s) in {stage_label} should trigger targeted NLP rescans plus downstream rebuild because the current canonical surface still lacks actor-relative graph direction coverage",
             related_ids.len()
         ),
         related_ids.to_vec(),
@@ -3127,6 +3153,16 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 .cloned()
                 .collect(),
         ));
+        push_graph_direction_coverage_rescan_guidance(
+            &mut findings,
+            SEMANTIC_GRAPH_DIRECTION_COVERAGE_SURFACE_RESCAN_GUIDANCE,
+            "SemanticIR",
+            &missing_graph_direction_signal_names
+                .iter()
+                .take(8)
+                .cloned()
+                .collect::<Vec<_>>(),
+        );
     }
     if !graph_direction_conflicts.is_empty() {
         findings.push(finding(
@@ -4403,6 +4439,16 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 .cloned()
                 .collect(),
         ));
+        push_graph_direction_coverage_rescan_guidance(
+            &mut findings,
+            INTENT_GRAPH_DIRECTION_COVERAGE_SURFACE_RESCAN_GUIDANCE,
+            "IntentIR",
+            &missing_graph_direction_signal_names
+                .iter()
+                .take(8)
+                .cloned()
+                .collect::<Vec<_>>(),
+        );
     }
     if !graph_direction_conflicts.is_empty() {
         findings.push(finding(
@@ -7249,6 +7295,14 @@ mod tests {
             .find(|finding| finding.finding_id == "intent_graph_direction_coverage_incomplete")
             .expect("expected intent graph-direction coverage finding");
         assert_eq!(finding.related_ids, vec!["PSEL".to_string()]);
+        let rescan_guidance = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == INTENT_GRAPH_DIRECTION_COVERAGE_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected intent graph-direction rescan guidance");
+        assert_eq!(rescan_guidance.related_ids, vec!["PSEL".to_string()]);
 
         Ok(())
     }
@@ -7337,6 +7391,14 @@ mod tests {
             .find(|finding| finding.finding_id == "semantic_graph_direction_coverage_incomplete")
             .expect("expected semantic graph-direction coverage finding");
         assert_eq!(finding.related_ids, vec!["PSEL".to_string()]);
+        let rescan_guidance = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == SEMANTIC_GRAPH_DIRECTION_COVERAGE_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected semantic graph-direction rescan guidance");
+        assert_eq!(rescan_guidance.related_ids, vec!["PSEL".to_string()]);
 
         Ok(())
     }

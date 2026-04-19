@@ -38,13 +38,24 @@
     },
     "validation": {
       "semantic": {
-        "finding_ids_include": ["semantic_graph_direction_coverage_incomplete"],
+        "finding_ids_include": [
+          "semantic_graph_direction_coverage_incomplete",
+          "semantic_graph_direction_coverage_surface_rescan_guidance"
+        ],
         "findings_include": [
           {
             "finding_id": "semantic_graph_direction_coverage_incomplete",
             "severity": "info",
             "category": "knowledge_graph",
             "summary_contains": "1 interface signal record(s) still lack graph-derived direction coverage",
+            "related_ids_include": ["PSEL"],
+            "related_ids_exclude": ["PREADY"]
+          },
+          {
+            "finding_id": "semantic_graph_direction_coverage_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "signal id(s)",
             "related_ids_include": ["PSEL"],
             "related_ids_exclude": ["PREADY"]
           }
@@ -57,13 +68,24 @@
         }
       },
       "intent": {
-        "finding_ids_include": ["intent_graph_direction_coverage_incomplete"],
+        "finding_ids_include": [
+          "intent_graph_direction_coverage_incomplete",
+          "intent_graph_direction_coverage_surface_rescan_guidance"
+        ],
         "findings_include": [
           {
             "finding_id": "intent_graph_direction_coverage_incomplete",
             "severity": "info",
             "category": "knowledge_graph",
             "summary_contains": "1 declared signal record(s) still lack graph-derived direction coverage",
+            "related_ids_include": ["PSEL"],
+            "related_ids_exclude": ["PREADY"]
+          },
+          {
+            "finding_id": "intent_graph_direction_coverage_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "signal id(s)",
             "related_ids_include": ["PSEL"],
             "related_ids_exclude": ["PREADY"]
           }
