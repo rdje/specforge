@@ -22,21 +22,25 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `3e501d7`
-- latest_commit_brief_message: `feat(validation): route temporal clock grounding into rescans`
-- note: latest landed slice routes clockless typed temporal-rule gaps into the same bounded replay-plan machinery used by other evidence-level rescans
+- latest_commit_hash: `9ec4803`
+- latest_commit_brief_message: `feat(validation): route temporal actor grounding into rescans`
+- note: latest landed slice routes actorless typed temporal-rule gaps into the same bounded replay-plan machinery used by other evidence-level rescans
 
 ## Recent commit chain (last 5)
+- `9ec4803` feat(validation): route temporal actor grounding into rescans
+- `a9fde1e` docs(memory): sync latest landed baseline
 - `3e501d7` feat(validation): route temporal clock grounding into rescans
 - `3e5657f` feat(validation): route temporal cycle windows into rescans
 - `cf3580e` feat(validation): route prior-guided consensus into rescans
-- `3516df6` feat(validation): route alias consensus into rescans
-- `e4aa175` feat(validation): route fallback semantic roles into rescans
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- branch is ahead of `origin/main` by seven local commits (`71ad856`, `21d6bad`, `e4aa175`, `3516df6`, `cf3580e`, `3e5657f`, `3e501d7`); do not push this slice unless the user asks or until another 25 local commits accumulate from the last push at `4821b0a`
+- branch is ahead of `origin/main` by nine local commits (`71ad856`, `21d6bad`, `e4aa175`, `3516df6`, `cf3580e`, `3e5657f`, `3e501d7`, `a9fde1e`, `9ec4803`); do not push this slice unless the user asks or until another 25 local commits accumulate from the last push at `4821b0a`
 - the README/SESSION_BOOTSTRAP handoff has been re-executed from the repo entrypoint and the referenced continuity docs have been reread
+- the latest landed slice adds temporal-actor-grounding-specific replay planning for typed canonical temporal rules that remain actorless:
+  - `validate` emits semantic/intent actor-grounding `rescan_guidance` findings alongside the existing missing-actor-grounding warning
+  - `project-validation` recognizes that guidance as the same local `EvidenceIR -> SemanticIR -> IntentIR? -> validate` replay lane used by other evidence-strength gaps
+  - a new tracked fixture `temporal_actor_grounding_surface_negative` locks the actorless-but-clocked temporal case so the benchmark does not depend only on unit coverage
 - the latest landed slice adds temporal-clock-grounding-specific replay planning for typed canonical temporal rules that remain clockless:
   - `project-validation` recognizes semantic/intent clock-grounding rescan guidance as the same local `EvidenceIR -> SemanticIR -> IntentIR? -> validate` replay lane used by other evidence-strength gaps
   - focused semantic/intent planner tests cover the new action text and replay-input recovery
@@ -46,8 +50,8 @@
   - representative contested-semantic fixtures now require `semantic_role_arbitration_surface_rescan_guidance` / `intent_role_arbitration_surface_rescan_guidance`
   - the locked cases cover plain visual conflict, cross-modality conflict, prior-guided caution, and blocked handshake-name fallback
   - this keeps the replay-guidance contract protected on realistic staged documents rather than only by unit tests
-- validation for the latest landed slice passed through `cargo test -p specforge validate_semantic_and_intent_ir_report_temporal_gap_related_ids`, `cargo test -p specforge temporal_clock_grounding_rescan_guidance`, `cargo test -p specforge kg_bench_runs_tracked_fixtures`, `bash scripts/run_ci.sh`, `bash scripts/run_docs_ci.sh`, and `git diff --check`
-- the current full local CI baseline is `387` Rust tests plus warning-deny rustdoc and the mdBook build
+- validation for the latest landed slice passed through `cargo test -p specforge validate_semantic_and_intent_ir_report_temporal_gap_related_ids`, `cargo test -p specforge temporal_actor_grounding_rescan_guidance`, `cargo test -p specforge kg_bench_runs_tracked_fixtures`, `bash scripts/run_ci.sh`, `bash scripts/run_docs_ci.sh`, and `git diff --check`
+- the current full local CI baseline is `389` Rust tests plus warning-deny rustdoc and the mdBook build
 - README sentinel remains intact after the slice: `Read SESSION_BOOTSTRAP.md and start from there.`
 - latest committed adapter hardening adds sticky conflict collapse for duplicate explicit top-port direction declarations
 - the committed regression declares top port `drive_data` once as output and once as input; expected behavior is unresolved top-port direction in both the top candidate and selected signal inventory, blocked renderability, and no emitted `.fsm` target text
