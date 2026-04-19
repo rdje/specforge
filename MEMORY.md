@@ -22,26 +22,26 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `a1b91af`
-- latest_commit_brief_message: `feat(rescan): route temporal gaps through nlp`
-- note: current in-flight slice strengthens semantic/intent negative-knowledge rescan guidance so replay restarts at `evidence -> semantic -> intent/validate` instead of same-stage rebuilds
+- latest_commit_hash: `ae92698`
+- latest_commit_brief_message: `feat(rescan): replay negative knowledge upstream`
+- note: current in-flight slice makes schema-v2 `replay_inputs` finding-aware so the recorded replay boundary matches the specialized rescan commands
 
 ## Recent commit chain (last 5)
+- `ae92698` feat(rescan): replay negative knowledge upstream
 - `a1b91af` feat(rescan): route temporal gaps through nlp
 - `be55b7c` feat(validate): name quality score drivers
 - `e9b89bd` feat(validate): name actor port gaps
 - `9ece4b9` feat(validate): name evidence stranded ids
-- `ad65c39` feat(validate): name temporal surface inputs
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- branch is ahead of `origin/main` by nineteen local commits (`1ae25f8`, `f8359fa`, `c17dda7`, `08de26a`, `f813461`, `eeb67a8`, `f8164d0`, `792c60e`, `cd79915`, `781353a`, `35c449b`, `29ec1f3`, `1f09f97`, `3b7dc32`, `ad65c39`, `9ece4b9`, `e9b89bd`, `be55b7c`, `a1b91af`); do not push again until 25 new local commits since the last push at `99808e9` or until the user explicitly asks
+- branch is ahead of `origin/main` by twenty local commits (`1ae25f8`, `f8359fa`, `c17dda7`, `08de26a`, `f813461`, `eeb67a8`, `f8164d0`, `792c60e`, `cd79915`, `781353a`, `35c449b`, `29ec1f3`, `1f09f97`, `3b7dc32`, `ad65c39`, `9ece4b9`, `e9b89bd`, `be55b7c`, `a1b91af`, `ae92698`); do not push again until 25 new local commits since the last push at `99808e9` or until the user explicitly asks
 - the README/SESSION_BOOTSTRAP handoff has been re-executed from the repo entrypoint and the referenced continuity docs have been reread
-- the active in-flight slice strengthens negative-knowledge replay planning at canonical stages:
-  - `semantic_negative_knowledge_rescan_guidance` and `intent_negative_knowledge_rescan_guidance` are being upgraded from same-stage rebuilds to upstream replay plans
-  - the planner now reloads persisted upstream artifacts to recover `source_ir -> evidence_ir -> semantic_ir` where needed
-  - `IntentIR` negative-knowledge replay should now emit `evidence -> semantic -> intent -> validate`
-  - the planner keeps a generic rebuild fallback when those persisted upstream artifacts are unavailable
+- the active in-flight slice tightens schema-v2 rescan metadata:
+  - `recommended_commands` for specialized replay paths were already finding-aware
+  - `replay_inputs` are now being made finding-aware too so the plan records the same upstream boundary the commands actually use
+  - negative-knowledge canonical rescans should now advertise `source_ir -> evidence_ir -> semantic_ir?`
+  - temporal-surface rescans should now advertise `evidence_ir -> semantic_ir?`
 - validation for the in-flight slice has now passed through `cargo fmt --all`, `cargo test -p specforge project_validation_collects_negative_knowledge_rescan_guidance`, `cargo test -p specforge project_validation_collects_temporal_rule_surface_rescan_guidance`, `bash scripts/run_ci.sh`, `bash scripts/run_docs_ci.sh`, and `git diff --check`
 - the current full local CI baseline remains `373` Rust tests plus warning-deny rustdoc and the mdBook build
 - README sentinel remains intact after the slice: `Read SESSION_BOOTSTRAP.md and start from there.`

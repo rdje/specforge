@@ -726,7 +726,8 @@ fn collect_rescan_recommendations(
             let mut related_ids = finding.related_ids.clone();
             related_ids.sort();
             related_ids.dedup();
-            let replay_inputs = recommendation_replay_inputs(snapshot, repo_root);
+            let replay_inputs =
+                recommendation_replay_inputs(snapshot.stage, snapshot, finding, repo_root);
             let recommended_commands = recommended_rescan_commands(
                 snapshot.stage,
                 &snapshot.artifact_path,
@@ -763,17 +764,84 @@ fn collect_rescan_recommendations(
 }
 
 fn recommendation_replay_inputs(
+    stage: IrStage,
     snapshot: &ProjectedArtifactSnapshot,
+    finding: &ValidationFindingRecord,
     repo_root: &Path,
 ) -> Vec<ProjectRescanReplayInput> {
-    snapshot
-        .replay_inputs
-        .iter()
+    replay_inputs_for_rescan(stage, snapshot, finding)
+        .into_iter()
         .map(|input| ProjectRescanReplayInput {
             input_kind: input.input_kind.to_string(),
             path: repo_relative_display(&input.path, repo_root),
         })
         .collect()
+}
+
+fn replay_inputs_for_rescan(
+    stage: IrStage,
+    snapshot: &ProjectedArtifactSnapshot,
+    finding: &ValidationFindingRecord,
+) -> Vec<ProjectedReplayInput> {
+    if let Some(inputs) = negative_knowledge_replay_inputs(stage, snapshot, finding) {
+        return inputs;
+    }
+    if let Some(inputs) = temporal_rule_surface_replay_inputs(stage, snapshot, finding) {
+        return inputs;
+    }
+    snapshot.replay_inputs.clone()
+}
+
+fn negative_knowledge_replay_inputs(
+    stage: IrStage,
+    snapshot: &ProjectedArtifactSnapshot,
+    finding: &ValidationFindingRecord,
+) -> Option<Vec<ProjectedReplayInput>> {
+    if !is_negative_knowledge_rescan(stage, finding) {
+        return None;
+    }
+
+    let evidence_ir_path = evidence_input_for_snapshot_stage(stage, snapshot)?;
+    let source_ir_path = source_ir_input_for_negative_knowledge_rescan(stage, snapshot)?;
+    let mut inputs = vec![
+        ProjectedReplayInput {
+            input_kind: "source_ir",
+            path: source_ir_path,
+        },
+        ProjectedReplayInput {
+            input_kind: "evidence_ir",
+            path: evidence_ir_path,
+        },
+    ];
+    if stage == IrStage::IntentIr {
+        inputs.push(ProjectedReplayInput {
+            input_kind: "semantic_ir",
+            path: semantic_input_for_snapshot(snapshot)?,
+        });
+    }
+    Some(inputs)
+}
+
+fn temporal_rule_surface_replay_inputs(
+    stage: IrStage,
+    snapshot: &ProjectedArtifactSnapshot,
+    finding: &ValidationFindingRecord,
+) -> Option<Vec<ProjectedReplayInput>> {
+    if !is_temporal_rule_surface_rescan(stage, finding) {
+        return None;
+    }
+
+    let mut inputs = vec![ProjectedReplayInput {
+        input_kind: "evidence_ir",
+        path: evidence_input_for_snapshot_stage(stage, snapshot)?,
+    }];
+    if stage == IrStage::IntentIr {
+        inputs.push(ProjectedReplayInput {
+            input_kind: "semantic_ir",
+            path: semantic_input_for_snapshot(snapshot)?,
+        });
+    }
+    Some(inputs)
 }
 
 fn recommended_rescan_commands(
@@ -1539,10 +1607,20 @@ mod tests {
         );
         assert_eq!(
             recommendations[0].replay_inputs,
-            vec![ProjectRescanReplayInput {
-                input_kind: "semantic_ir".to_string(),
-                path: "generated/semantic_ir/spec/semantic_ir.json".to_string(),
-            }]
+            vec![
+                ProjectRescanReplayInput {
+                    input_kind: "source_ir".to_string(),
+                    path: "generated/source_ir/spec/source_ir.json".to_string(),
+                },
+                ProjectRescanReplayInput {
+                    input_kind: "evidence_ir".to_string(),
+                    path: "generated/evidence_ir/spec/evidence_ir.json".to_string(),
+                },
+                ProjectRescanReplayInput {
+                    input_kind: "semantic_ir".to_string(),
+                    path: "generated/semantic_ir/spec/semantic_ir.json".to_string(),
+                }
+            ]
         );
         assert_eq!(recommendations[0].recommended_commands.len(), 4);
         assert_eq!(
@@ -1742,6 +1820,13 @@ mod tests {
             collect_rescan_recommendations(&[snapshot], repo_root, &test_rescan_vlm_policy());
 
         assert_eq!(recommendations.len(), 1);
+        assert_eq!(
+            recommendations[0].replay_inputs,
+            vec![ProjectRescanReplayInput {
+                input_kind: "evidence_ir".to_string(),
+                path: "generated/evidence_ir/doc/evidence_ir.json".to_string(),
+            }]
+        );
         assert_eq!(recommendations[0].recommended_commands.len(), 3);
         assert_eq!(
             recommendations[0].recommended_commands[0].intent,
@@ -1841,6 +1926,19 @@ mod tests {
             collect_rescan_recommendations(&[snapshot], &repo_root, &test_rescan_vlm_policy());
 
         assert_eq!(recommendations.len(), 1);
+        assert_eq!(
+            recommendations[0].replay_inputs,
+            vec![
+                ProjectRescanReplayInput {
+                    input_kind: "evidence_ir".to_string(),
+                    path: "generated/evidence_ir/spec/evidence_ir.json".to_string(),
+                },
+                ProjectRescanReplayInput {
+                    input_kind: "semantic_ir".to_string(),
+                    path: "generated/semantic_ir/spec/semantic_ir.json".to_string(),
+                },
+            ]
+        );
         assert_eq!(recommendations[0].recommended_commands.len(), 4);
         assert_eq!(
             recommendations[0].recommended_commands[0].intent,

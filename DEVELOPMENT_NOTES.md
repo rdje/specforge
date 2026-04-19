@@ -7,6 +7,24 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-19 Rescan recommendations should describe the real replay boundary, not only execute it
+- The rescan planner had become operationally stronger than its own typed metadata.
+- After the recent replay slices:
+  - `recommended_commands` for temporal-surface gaps already named upstream `evidence_ir` and `semantic_ir` inputs
+  - `recommended_commands` for canonical negative-knowledge guidance already restarted from the evidence boundary
+- But `replay_inputs` still came from the stage-default `ProjectedArtifactSnapshot` input:
+  - `IntentIR` negative-knowledge guidance still advertised only `semantic_ir`
+  - even though the replay plan already needed `source_ir`, `evidence_ir`, and `semantic_ir`
+- That mismatch is subtle but important because schema-v2 rescan plans are meant to be replay-oriented records, not only pretty command bundles.
+- The fix is to make replay-input selection finding-aware in the same way command selection already is:
+  - negative-knowledge guidance derives upstream `source_ir -> evidence_ir -> semantic_ir?`
+  - temporal-surface guidance derives `evidence_ir -> semantic_ir?`
+  - generic rescan guidance still falls back to the direct stage replay input
+- This keeps the plan self-describing for both humans and future automation:
+  - the typed input list now expresses the same boundary that the command list actually exercises
+  - execution stays unchanged
+  - the improvement is in truthfulness and downstream usability of the plan schema itself
+
 ## 2026-04-19 Negative-knowledge replay should not stop at the current canonical stage
 - The temporal replay slice exposed a neighboring weakness in the rescan planner:
   - negative-knowledge guidance at `SemanticIR` and `IntentIR` was still mapped to same-stage rebuilds

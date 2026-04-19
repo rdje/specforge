@@ -1,5 +1,33 @@
 # CHANGES
 
+## 2026-04-19 (Rescan replay inputs now match the real replay boundary)
+
+### Improved: schema-v2 `replay_inputs` now surface the actual upstream artifacts used by specialized rescans
+- The recent replay-planning slices made `recommended_commands` finding-aware:
+  - temporal-surface gaps now emit `nlp-enrich -> semantic -> intent? -> validate`
+  - semantic/intent negative-knowledge matches now emit upstream `evidence -> semantic -> intent? -> validate`
+- But the recommendation payload still had one weak spot:
+  - `recommended_commands` could name the right upstream replay path
+  - while `replay_inputs` still mostly reflected the artifact stage's default direct input
+  - so a schema-v2 rescan recommendation could be operationally correct but descriptively incomplete
+- This slice makes `replay_inputs` finding-aware too:
+  - semantic negative-knowledge guidance now lists `source_ir` and `evidence_ir`
+  - intent negative-knowledge guidance now lists `source_ir`, `evidence_ir`, and `semantic_ir`
+  - semantic temporal-surface guidance now lists `evidence_ir`
+  - intent temporal-surface guidance now lists `evidence_ir` and `semantic_ir`
+- That keeps the plan honest and self-describing:
+  - the typed replay inputs now match the actual commands we ask the executor or a human reviewer to run
+  - the schema-v2 plan remains a better future automation boundary because the replay contract is explicit even before command execution
+- Tightened the projection regressions to assert those richer replay inputs directly for the intent negative-knowledge and semantic/intent temporal-surface cases.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge project_validation_collects_negative_knowledge_rescan_guidance` -> passed
+- `cargo test -p specforge project_validation_collects_temporal_rule_surface_rescan_guidance` -> passed
+- `bash scripts/run_ci.sh` -> passed with `373` Rust tests and the mdBook build
+- `bash scripts/run_docs_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-19 (Negative-knowledge rescans now restart upstream)
 
 ### Improved: semantic and intent negative-knowledge guidance now replay from the EvidenceIR boundary
