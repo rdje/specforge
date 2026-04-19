@@ -7,6 +7,37 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-19 Temporal-surface rescan replay
+- The validator-side temporal-surface slice was only half-finished.
+- `validate` could already say:
+  - upstream timing/constraint ids are stranded below the typed temporal-rule surface
+  - reviewers should rescan locally before promoting anything canonical
+- But the project-level replay layer still reduced those findings to generic rebuild commands, which loses the key operational fact:
+  - the missing structure lives in `EvidenceIR`
+  - the right next move is targeted NLP enrichment on the evidence artifact
+  - only after that should `SemanticIR` and `IntentIR` be rebuilt
+- The rescan shape is therefore stage-sensitive but still deterministic:
+  - `SemanticIR` temporal-surface gap:
+    - `nlp-enrich <evidence_ir>`
+    - `semantic <evidence_ir>`
+    - `validate <semantic_ir>`
+  - `IntentIR` temporal-surface gap:
+    - recover the persisted `evidence_ir_path` by loading the referenced `SemanticIR`
+    - `nlp-enrich <evidence_ir>`
+    - `semantic <evidence_ir>`
+    - `intent <semantic_ir>`
+    - `validate <intent_ir>`
+- That extra lookup matters because `IntentIR` snapshots only persist `semantic_ir` as their replay input.
+- This keeps the replay plan honest:
+  - no hidden mutation of canonical truth
+  - no magical inference from the validation finding alone
+  - no dependency on remote providers for rescan automation
+- `rescan-plan` now enforces that boundary directly:
+  - it whitelists `nlp_enrich_evidence_ir`
+  - it parses the structured args instead of trusting an opaque shell command
+  - it keeps the replay lane local-only by rejecting `openai` as an execution provider
+- The validator was also tightened to reuse the same capped related-id slice for both sibling temporal findings so review payloads stay aligned even if many upstream ids are present.
+
 ## 2026-04-19 Intent quality-gap related IDs
 - After the actor-port slice, the only remaining non-honest empty `related_ids` surface was the aggregate IntentIR quality warning.
 - That finding was weaker than necessary because the validator already computes the exact score breakdown before emitting the warning.

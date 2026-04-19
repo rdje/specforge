@@ -1,5 +1,39 @@
 # CHANGES
 
+## 2026-04-19 (Temporal-surface rescans now emit replayable NLP hints)
+
+### Improved: temporal-rule-surface gaps now project executable local replay plans
+- The validator already knew when timing/constraint evidence existed but no typed temporal rules were materialized.
+- The unfinished follow-on was that this new `rescan_guidance` surface stopped at observation:
+  - `validate` could emit `semantic_temporal_rule_surface_rescan_guidance`
+  - `validate` could emit `intent_temporal_rule_surface_rescan_guidance`
+  - but `project-validation` still treated them like generic rebuilds instead of the stronger local replay they actually need
+- This slice closes that loop by projecting a typed rescan path for those findings:
+  - `nlp_enrich_evidence_ir`
+  - `rebuild_semantic_ir`
+  - `rebuild_intent_ir` when the stranded gap is observed at `IntentIR`
+  - `validate_current_artifact`
+- The plan stays local-first and bounded:
+  - the generated command hints only allow local VLM providers (`ollama`, `lmstudio`, or `skip`)
+  - `rescan-plan` now explicitly parses and whitelists `nlp-enrich` hints instead of treating them as opaque cargo invocations
+  - OpenAI-backed replay remains intentionally rejected for schema-v2 rescan execution
+- Tightened the validator so the sibling temporal findings use the same capped related-id set:
+  - `*_temporal_rule_surface_missing`
+  - `*_temporal_rule_surface_rescan_guidance`
+- Added direct coverage for:
+  - semantic-stage temporal rescan projection
+  - intent-stage temporal rescan projection that recovers the upstream `EvidenceIR` path from persisted `SemanticIR`
+  - rescan-plan parsing of local `nlp_enrich_evidence_ir` hints
+  - rejection of OpenAI `nlp_enrich_evidence_ir` hints
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge temporal_rule_surface` -> passed
+- `cargo test -p specforge nlp_enrich_hint` -> passed
+- `bash scripts/run_ci.sh` -> passed with `373` Rust tests and the mdBook build
+- `bash scripts/run_docs_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-19 (Intent quality warnings now name score drivers)
 
 ### Improved: low-quality IntentIR findings now surface deterministic score-component IDs

@@ -206,6 +206,28 @@ fn push_negative_knowledge_rescan_guidance(
     ));
 }
 
+fn push_temporal_rule_surface_rescan_guidance(
+    findings: &mut Vec<ValidationFindingRecord>,
+    finding_id: &str,
+    stage_label: &str,
+    related_ids: &[String],
+) {
+    if related_ids.is_empty() {
+        return;
+    }
+
+    findings.push(finding(
+        finding_id,
+        ValidationFindingSeverity::Info,
+        "rescan_guidance",
+        format!(
+            "{} temporal-source id(s) in {stage_label} should trigger targeted NLP rescans plus downstream rebuild because local timing/constraint evidence exists but no typed temporal rules were materialized",
+            related_ids.len()
+        ),
+        related_ids.to_vec(),
+    ));
+}
+
 fn evidence_structural_kg_missing_related_ids(ir: &EvidenceIr) -> Vec<String> {
     ir.signal_constraints
         .iter()
@@ -3003,18 +3025,25 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             || !ir.signal_constraints.is_empty()
             || !ir.conditional_rules.is_empty())
     {
+        let temporal_rule_surface_related_ids = temporal_rule_surface_input_ids
+            .iter()
+            .take(8)
+            .cloned()
+            .collect::<Vec<_>>();
         findings.push(finding(
             "semantic_temporal_rule_surface_missing",
             ValidationFindingSeverity::Info,
             "temporal_grounding",
             "semantic evidence includes timing/constraint records but no typed temporal rules were derived"
                 .to_string(),
-            temporal_rule_surface_input_ids
-                .iter()
-                .take(8)
-                .cloned()
-                .collect(),
+            temporal_rule_surface_related_ids.clone(),
         ));
+        push_temporal_rule_surface_rescan_guidance(
+            &mut findings,
+            "semantic_temporal_rule_surface_rescan_guidance",
+            "SemanticIR",
+            &temporal_rule_surface_related_ids,
+        );
     }
     if !ir.residual_decisions.is_empty() {
         findings.push(finding(
@@ -4203,18 +4232,25 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             || !ir.signal_constraints.is_empty()
             || !ir.conditional_rules.is_empty())
     {
+        let temporal_rule_surface_related_ids = temporal_rule_surface_input_ids
+            .iter()
+            .take(8)
+            .cloned()
+            .collect::<Vec<_>>();
         findings.push(finding(
             "intent_temporal_rule_surface_missing",
             ValidationFindingSeverity::Info,
             "temporal_grounding",
             "intent evidence includes timing/constraint records but no typed temporal rules were carried forward"
                 .to_string(),
-            temporal_rule_surface_input_ids
-                .iter()
-                .take(8)
-                .cloned()
-                .collect(),
+            temporal_rule_surface_related_ids.clone(),
         ));
+        push_temporal_rule_surface_rescan_guidance(
+            &mut findings,
+            "intent_temporal_rule_surface_rescan_guidance",
+            "IntentIR",
+            &temporal_rule_surface_related_ids,
+        );
     }
     if score < 90.0 {
         findings.push(finding(
@@ -7245,6 +7281,12 @@ mod tests {
             .find(|finding| finding.finding_id == "semantic_temporal_rule_surface_missing")
             .expect("expected semantic temporal-rule-surface-missing finding");
         assert_eq!(semantic_finding.related_ids, expected_related_ids);
+        let semantic_rescan_guidance = semantic_report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "semantic_temporal_rule_surface_rescan_guidance")
+            .expect("expected semantic temporal-rule-surface rescan guidance");
+        assert_eq!(semantic_rescan_guidance.related_ids, expected_related_ids);
 
         let intent_report =
             validate_intent_ir(&intent_ir, "temporal_rule_surface_missing".to_string());
@@ -7260,6 +7302,15 @@ mod tests {
             .expect("expected intent temporal-rule-surface-missing finding");
         assert_eq!(
             intent_finding.related_ids,
+            vec!["timing_hready_setup".to_string()]
+        );
+        let intent_rescan_guidance = intent_report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "intent_temporal_rule_surface_rescan_guidance")
+            .expect("expected intent temporal-rule-surface rescan guidance");
+        assert_eq!(
+            intent_rescan_guidance.related_ids,
             vec!["timing_hready_setup".to_string()]
         );
 

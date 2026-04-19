@@ -2,10 +2,10 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use crate::cli::{
-    EnrichArgs, EvidenceArgs, IngestArgs, IntentArgs, RescanPlanArgs, SemanticArgs, ValidateArgs,
-    VlmProviderArg,
+    EnrichArgs, EvidenceArgs, IngestArgs, IntentArgs, NlpEnrichArgs, RescanPlanArgs, SemanticArgs,
+    ValidateArgs, VlmProviderArg,
 };
-use crate::commands::{enrich, evidence, ingest, intent, semantic, validate};
+use crate::commands::{enrich, evidence, ingest, intent, nlp_enrich, semantic, validate};
 use crate::error::{AppError, Result};
 
 use super::project_validation::{
@@ -248,6 +248,11 @@ enum RescanInvocation {
         vlm_model: Option<String>,
         classify_only: bool,
     },
+    NlpEnrich {
+        evidence_ir: PathBuf,
+        vlm_provider: VlmProviderArg,
+        vlm_model: Option<String>,
+    },
     Evidence(PathBuf),
     Semantic(PathBuf),
     Intent(PathBuf),
@@ -407,6 +412,7 @@ fn parse_command_hint(command: &ProjectRescanCommandHint) -> Result<RescanInvoca
             Ok(RescanInvocation::Ingest(PathBuf::from(source)))
         }
         ("enrich_source_ir", args) => parse_enrich_command_hint_args(args),
+        ("nlp_enrich_evidence_ir", args) => parse_nlp_enrich_command_hint_args(args),
         ("rebuild_evidence_ir", [subcommand, source_ir]) if subcommand == "evidence" => {
             Ok(RescanInvocation::Evidence(PathBuf::from(source_ir)))
         }
@@ -521,6 +527,69 @@ fn parse_enrich_command_hint_args(args: &[String]) -> Result<RescanInvocation> {
     })
 }
 
+fn parse_nlp_enrich_command_hint_args(args: &[String]) -> Result<RescanInvocation> {
+    if args.len() < 2 || args[0] != "nlp-enrich" {
+        return Err(AppError::InvalidStageArtifact(format!(
+            "rescan-plan refuses malformed nlp-enrich command hint args {args:?}"
+        )));
+    }
+
+    let evidence_ir = PathBuf::from(&args[1]);
+    let mut vlm_provider = None;
+    let mut vlm_model = None;
+    let mut index = 2;
+    while index < args.len() {
+        match args[index].as_str() {
+            "--vlm-provider" => {
+                let Some(value) = args.get(index + 1) else {
+                    return Err(AppError::InvalidStageArtifact(
+                        "rescan-plan nlp-enrich hint is missing --vlm-provider value".to_string(),
+                    ));
+                };
+                if vlm_provider
+                    .replace(parse_local_rescan_vlm_provider(value)?)
+                    .is_some()
+                {
+                    return Err(AppError::InvalidStageArtifact(
+                        "rescan-plan nlp-enrich hint repeats --vlm-provider".to_string(),
+                    ));
+                }
+                index += 2;
+            }
+            "--vlm-model" => {
+                let Some(value) = args.get(index + 1) else {
+                    return Err(AppError::InvalidStageArtifact(
+                        "rescan-plan nlp-enrich hint is missing --vlm-model value".to_string(),
+                    ));
+                };
+                if vlm_model.replace(value.clone()).is_some() {
+                    return Err(AppError::InvalidStageArtifact(
+                        "rescan-plan nlp-enrich hint repeats --vlm-model".to_string(),
+                    ));
+                }
+                index += 2;
+            }
+            other => {
+                return Err(AppError::InvalidStageArtifact(format!(
+                    "rescan-plan refuses unsupported nlp-enrich hint arg `{other}` in {args:?}"
+                )));
+            }
+        }
+    }
+
+    let vlm_provider = vlm_provider.ok_or_else(|| {
+        AppError::InvalidStageArtifact(
+            "rescan-plan nlp-enrich hint requires explicit --vlm-provider".to_string(),
+        )
+    })?;
+
+    Ok(RescanInvocation::NlpEnrich {
+        evidence_ir,
+        vlm_provider,
+        vlm_model,
+    })
+}
+
 fn parse_local_rescan_vlm_provider(value: &str) -> Result<VlmProviderArg> {
     match value {
         "ollama" => Ok(VlmProviderArg::Ollama),
@@ -553,6 +622,18 @@ fn execute_invocation(invocation: RescanInvocation, prior_memory: &Path) -> Resu
             vlm_model,
             classify_only,
             dry_run: false,
+        }),
+        RescanInvocation::NlpEnrich {
+            evidence_ir,
+            vlm_provider,
+            vlm_model,
+        } => nlp_enrich::run(NlpEnrichArgs {
+            evidence_ir,
+            vlm_provider,
+            vlm_model,
+            dry_run: false,
+            max_sentences: 0,
+            grounding_signals: None,
         }),
         RescanInvocation::Evidence(source_ir) => evidence::run(EvidenceArgs {
             source_ir,
@@ -750,12 +831,53 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_parses_whitelisted_local_nlp_enrich_hint() -> Result<()> {
+        let command = command_hint(
+            "nlp_enrich_evidence_ir",
+            vec![
+                "nlp-enrich",
+                "generated/evidence_ir/doc/evidence_ir.json",
+                "--vlm-provider",
+                "ollama",
+                "--vlm-model",
+                "qwen2.5vl:7b",
+            ],
+        );
+
+        assert_eq!(
+            parse_command_hint(&command)?,
+            RescanInvocation::NlpEnrich {
+                evidence_ir: PathBuf::from("generated/evidence_ir/doc/evidence_ir.json"),
+                vlm_provider: VlmProviderArg::Ollama,
+                vlm_model: Some("qwen2.5vl:7b".to_string()),
+            }
+        );
+
+        Ok(())
+    }
+
+    #[test]
     fn rescan_plan_rejects_openai_enrich_hints() {
         let command = command_hint(
             "enrich_source_ir",
             vec![
                 "enrich",
                 "generated/source_ir/doc/source_ir.json",
+                "--vlm-provider",
+                "openai",
+            ],
+        );
+
+        assert!(parse_command_hint(&command).is_err());
+    }
+
+    #[test]
+    fn rescan_plan_rejects_openai_nlp_enrich_hints() {
+        let command = command_hint(
+            "nlp_enrich_evidence_ir",
+            vec![
+                "nlp-enrich",
+                "generated/evidence_ir/doc/evidence_ir.json",
                 "--vlm-provider",
                 "openai",
             ],

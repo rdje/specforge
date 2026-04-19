@@ -23,6 +23,10 @@ const VALIDATION_PROJECTION_START: &str = "<!-- validation_projection:start -->"
 const VALIDATION_PROJECTION_END: &str = "<!-- validation_projection:end -->";
 const EVIDENCE_VISUAL_MOTIF_CORROBORATION_GUIDANCE: &str =
     "evidence_visual_motif_corroboration_guidance";
+const SEMANTIC_TEMPORAL_RULE_SURFACE_RESCAN_GUIDANCE: &str =
+    "semantic_temporal_rule_surface_rescan_guidance";
+const INTENT_TEMPORAL_RULE_SURFACE_RESCAN_GUIDANCE: &str =
+    "intent_temporal_rule_surface_rescan_guidance";
 
 #[derive(Debug, Clone)]
 struct ProjectedArtifactSnapshot {
@@ -777,6 +781,18 @@ fn recommended_rescan_commands(
     rescan_vlm_policy: &RescanVlmHintPolicy,
     repo_root: &Path,
 ) -> Vec<ProjectRescanCommandHint> {
+    if is_temporal_rule_surface_rescan(stage, finding)
+        && let Some(commands) = temporal_rule_surface_rescan_commands(
+            stage,
+            artifact_path,
+            snapshot,
+            rescan_vlm_policy,
+            repo_root,
+        )
+    {
+        return commands;
+    }
+
     let mut commands = Vec::new();
     if is_visual_motif_corroboration_rescan(stage, finding)
         && let Some(input) = snapshot
@@ -830,9 +846,112 @@ fn recommended_rescan_commands(
     commands
 }
 
+fn temporal_rule_surface_rescan_commands(
+    stage: IrStage,
+    artifact_path: &Path,
+    snapshot: &ProjectedArtifactSnapshot,
+    rescan_vlm_policy: &RescanVlmHintPolicy,
+    repo_root: &Path,
+) -> Option<Vec<ProjectRescanCommandHint>> {
+    let evidence_ir_path = evidence_input_for_temporal_rule_surface_rescan(stage, snapshot)?;
+    let evidence_ir_display = repo_relative_display(&evidence_ir_path, repo_root);
+    let mut commands = vec![nlp_enrich_evidence_command(
+        &evidence_ir_path,
+        rescan_vlm_policy,
+        repo_root,
+    )];
+    commands.push(specforge_command_hint(
+        "rebuild_semantic_ir",
+        vec!["semantic".to_string(), evidence_ir_display],
+    ));
+
+    if stage == IrStage::IntentIr {
+        let semantic_ir_path = semantic_input_for_snapshot(snapshot)?;
+        commands.push(specforge_command_hint(
+            "rebuild_intent_ir",
+            vec![
+                "intent".to_string(),
+                repo_relative_display(&semantic_ir_path, repo_root),
+            ],
+        ));
+    }
+
+    commands.push(specforge_command_hint(
+        "validate_current_artifact",
+        vec![
+            "validate".to_string(),
+            repo_relative_display(artifact_path, repo_root),
+        ],
+    ));
+    Some(commands)
+}
+
+fn evidence_input_for_temporal_rule_surface_rescan(
+    stage: IrStage,
+    snapshot: &ProjectedArtifactSnapshot,
+) -> Option<PathBuf> {
+    match stage {
+        IrStage::SemanticIr => snapshot
+            .replay_inputs
+            .iter()
+            .find(|input| input.input_kind == "evidence_ir")
+            .map(|input| input.path.clone()),
+        IrStage::IntentIr => {
+            let semantic_ir_path = semantic_input_for_snapshot(snapshot)?;
+            SemanticIr::load_from_path(&semantic_ir_path)
+                .ok()
+                .map(|semantic_ir| semantic_ir.evidence_ir_path)
+        }
+        IrStage::SourceIr | IrStage::EvidenceIr => None,
+    }
+}
+
+fn semantic_input_for_snapshot(snapshot: &ProjectedArtifactSnapshot) -> Option<PathBuf> {
+    snapshot
+        .replay_inputs
+        .iter()
+        .find(|input| input.input_kind == "semantic_ir")
+        .map(|input| input.path.clone())
+}
+
+fn nlp_enrich_evidence_command(
+    evidence_ir_path: &Path,
+    rescan_vlm_policy: &RescanVlmHintPolicy,
+    repo_root: &Path,
+) -> ProjectRescanCommandHint {
+    let mut args = vec![
+        "nlp-enrich".to_string(),
+        repo_relative_display(evidence_ir_path, repo_root),
+        "--vlm-provider".to_string(),
+        rescan_vlm_provider_name(select_rescan_vlm_provider(
+            rescan_vlm_policy.provider,
+            doctor::local_vlm_default_model_present,
+        ))
+        .to_string(),
+    ];
+    if let Some(model) = rescan_vlm_policy.model.as_ref() {
+        args.push("--vlm-model".to_string());
+        args.push(model.clone());
+    }
+    specforge_command_hint("nlp_enrich_evidence_ir", args)
+}
+
 fn is_visual_motif_corroboration_rescan(stage: IrStage, finding: &ValidationFindingRecord) -> bool {
     stage == IrStage::EvidenceIr
         && finding.finding_id == EVIDENCE_VISUAL_MOTIF_CORROBORATION_GUIDANCE
+}
+
+fn is_temporal_rule_surface_rescan(stage: IrStage, finding: &ValidationFindingRecord) -> bool {
+    matches!(
+        (stage, finding.finding_id.as_str()),
+        (
+            IrStage::SemanticIr,
+            SEMANTIC_TEMPORAL_RULE_SURFACE_RESCAN_GUIDANCE
+        ) | (
+            IrStage::IntentIr,
+            INTENT_TEMPORAL_RULE_SURFACE_RESCAN_GUIDANCE
+        )
+    )
 }
 
 fn select_rescan_vlm_provider(
@@ -1454,6 +1573,200 @@ mod tests {
             recommendations[0].related_ids,
             vec!["visual_0001".to_string()]
         );
+    }
+
+    #[test]
+    fn project_validation_collects_temporal_rule_surface_rescan_guidance_for_semantic_stage() {
+        let tempdir = tempdir().expect("tempdir");
+        let repo_root = tempdir.path();
+        let artifact_path = repo_root.join("generated/semantic_ir/doc/semantic_ir.json");
+        let evidence_ir_path = repo_root.join("generated/evidence_ir/doc/evidence_ir.json");
+        let snapshot = ProjectedArtifactSnapshot {
+            document_key: "doc".to_string(),
+            display_name: "Spec.pdf".to_string(),
+            stage: IrStage::SemanticIr,
+            artifact_path,
+            replay_inputs: vec![ProjectedReplayInput {
+                input_kind: "evidence_ir",
+                path: evidence_ir_path.clone(),
+            }],
+            report: ValidationReportRecord {
+                report_id: "validation_semantic_ir_test".to_string(),
+                validated_stage: IrStage::SemanticIr,
+                artifact_fingerprint: "fingerprint".to_string(),
+                summary: "SemanticIR validation with temporal-rule-surface rescan guidance"
+                    .to_string(),
+                overall_score: Some(88),
+                grade: Some("GOOD".to_string()),
+                metrics: Vec::new(),
+                findings: vec![ValidationFindingRecord {
+                    finding_id: SEMANTIC_TEMPORAL_RULE_SURFACE_RESCAN_GUIDANCE.to_string(),
+                    severity: ValidationFindingSeverity::Info,
+                    category: "rescan_guidance".to_string(),
+                    summary: "timing evidence exists but no typed temporal rules were derived"
+                        .to_string(),
+                    related_ids: vec!["timing_hready_setup".to_string()],
+                }],
+            },
+        };
+
+        let recommendations =
+            collect_rescan_recommendations(&[snapshot], repo_root, &test_rescan_vlm_policy());
+
+        assert_eq!(recommendations.len(), 1);
+        assert_eq!(recommendations[0].recommended_commands.len(), 3);
+        assert_eq!(
+            recommendations[0].recommended_commands[0].intent,
+            "nlp_enrich_evidence_ir"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[0].args,
+            vec![
+                "run".to_string(),
+                "--manifest-path".to_string(),
+                "Cargo.toml".to_string(),
+                "--".to_string(),
+                "nlp-enrich".to_string(),
+                "generated/evidence_ir/doc/evidence_ir.json".to_string(),
+                "--vlm-provider".to_string(),
+                "ollama".to_string(),
+            ]
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[1].intent,
+            "rebuild_semantic_ir"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[1].args,
+            vec![
+                "run".to_string(),
+                "--manifest-path".to_string(),
+                "Cargo.toml".to_string(),
+                "--".to_string(),
+                "semantic".to_string(),
+                "generated/evidence_ir/doc/evidence_ir.json".to_string(),
+            ]
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[2].intent,
+            "validate_current_artifact"
+        );
+    }
+
+    #[test]
+    fn project_validation_collects_temporal_rule_surface_rescan_guidance_for_intent_stage()
+    -> Result<()> {
+        let tempdir = tempdir()?;
+        let repo_root = fs::canonicalize(tempdir.path())?;
+        let source = repo_root.join("spec.md");
+        let source_artifact_base = repo_root.join("generated").join("source_ir");
+        let evidence_artifact_base = repo_root.join("generated").join("evidence_ir");
+        let semantic_artifact_base = repo_root.join("generated").join("semantic_ir");
+        fs::write(
+            &source,
+            "# Spec\nSignal HREADY is input width 1.\nSignal DATA is output width 32.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+
+        let snapshot = ProjectedArtifactSnapshot {
+            document_key: "doc".to_string(),
+            display_name: "Spec.pdf".to_string(),
+            stage: IrStage::IntentIr,
+            artifact_path: repo_root.join("generated/intent_ir/doc/intent_ir.json"),
+            replay_inputs: vec![ProjectedReplayInput {
+                input_kind: "semantic_ir",
+                path: semantic_ir.artifact_layout.semantic_ir_path.clone(),
+            }],
+            report: ValidationReportRecord {
+                report_id: "validation_intent_ir_test".to_string(),
+                validated_stage: IrStage::IntentIr,
+                artifact_fingerprint: "fingerprint".to_string(),
+                summary: "IntentIR validation with temporal-rule-surface rescan guidance"
+                    .to_string(),
+                overall_score: Some(82),
+                grade: Some("GOOD".to_string()),
+                metrics: Vec::new(),
+                findings: vec![ValidationFindingRecord {
+                    finding_id: INTENT_TEMPORAL_RULE_SURFACE_RESCAN_GUIDANCE.to_string(),
+                    severity: ValidationFindingSeverity::Info,
+                    category: "rescan_guidance".to_string(),
+                    summary: "semantic timing evidence exists but no typed temporal rules survived"
+                        .to_string(),
+                    related_ids: vec!["timing_hready_setup".to_string()],
+                }],
+            },
+        };
+
+        let recommendations =
+            collect_rescan_recommendations(&[snapshot], &repo_root, &test_rescan_vlm_policy());
+
+        assert_eq!(recommendations.len(), 1);
+        assert_eq!(recommendations[0].recommended_commands.len(), 4);
+        assert_eq!(
+            recommendations[0].recommended_commands[0].intent,
+            "nlp_enrich_evidence_ir"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[0].args,
+            vec![
+                "run".to_string(),
+                "--manifest-path".to_string(),
+                "Cargo.toml".to_string(),
+                "--".to_string(),
+                "nlp-enrich".to_string(),
+                "generated/evidence_ir/spec/evidence_ir.json".to_string(),
+                "--vlm-provider".to_string(),
+                "ollama".to_string(),
+            ]
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[1].intent,
+            "rebuild_semantic_ir"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[1].args,
+            vec![
+                "run".to_string(),
+                "--manifest-path".to_string(),
+                "Cargo.toml".to_string(),
+                "--".to_string(),
+                "semantic".to_string(),
+                "generated/evidence_ir/spec/evidence_ir.json".to_string(),
+            ]
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[2].intent,
+            "rebuild_intent_ir"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[2].args,
+            vec![
+                "run".to_string(),
+                "--manifest-path".to_string(),
+                "Cargo.toml".to_string(),
+                "--".to_string(),
+                "intent".to_string(),
+                "generated/semantic_ir/spec/semantic_ir.json".to_string(),
+            ]
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[3].intent,
+            "validate_current_artifact"
+        );
+
+        Ok(())
     }
 
     #[test]
