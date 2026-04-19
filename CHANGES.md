@@ -1,5 +1,27 @@
 # CHANGES
 
+## 2026-04-19 (Alias-dependent handshake completion findings now name signals)
+
+### Improved: alias-dependent handshake-completion findings now carry canonical handshake signal IDs
+- The alias-dependent handshake-completion validation surface was still weaker than its sibling alias-dependent semantic-consensus finding:
+  - the validator knew the exact handshake signals
+  - the tracked fixture already modeled the caveat end to end
+  - but the `semantic_*` and `intent_*` handshake-completion findings still emitted empty `related_ids`
+- This slice tightens that review surface by deriving canonical signal names directly from `HandshakeComplete` predicates whose valid/ready signals rely on alias-dependent semantic consensus.
+- Upgraded the direct validator regression so it now proves both `SemanticIR` and `IntentIR` report `related_ids: ["XACK", "XREQ"]` for the alias-grounded handshake-completion path.
+- Upgraded the tracked fixture `alias_dependent_handshake_completion_caveat` so the end-to-end benchmark also locks the new payload for both validation stages.
+- This is an observability hardening slice:
+  - no temporal-rule derivation changed
+  - no canonical IR schema changed
+  - validation now exposes the exact canonical handshake signals already implicated by the carried rule
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge validate_semantic_and_intent_ir_report_alias_dependent_handshake_completion_related_ids` -> passed
+- `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality alias_dependent_handshake_completion_caveat` -> passed
+- `bash scripts/run_ci.sh` -> passed with `364` Rust tests and the mdBook build
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-04-19 (Prior-guided semantic related-id regression coverage)
 
 ### Improved: prior-guided semantic-role related IDs are now locked by a direct semantic+intent regression

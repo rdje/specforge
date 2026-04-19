@@ -7,6 +7,26 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-19 Alias-dependent handshake completion related IDs
+- The alias-dependent handshake-completion caution was structurally in the same family as the semantic-role related-id work we just finished:
+  - the canonical temporal rule already existed
+  - the residual/assumption surfaces already admitted that the grounding was weak
+  - the validator could count affected rules
+  - but the review-facing finding still did not name the implicated handshake signals
+- That was weaker than necessary because this particular caveat is much easier to audit when the warning names the exact alias-grounded `valid` / `ready` pair.
+- The right payload is canonical signal names, not temporal-rule ids:
+  - reviewers usually want to know which interface signals carry the weakly grounded handshake semantics
+  - the rule count metric still answers how many temporal rules are affected
+  - `related_ids` now answer which handshake signals make that caveat true
+- The validator helper mirrors the already-established semantic-layer logic:
+  - collect alias-dependent semantic-consensus signal names
+  - scan `HandshakeComplete` predicates across antecedents and consequents
+  - retain only the valid/ready signals that are alias-dependent
+  - surface those canonical signal names in the finding payload
+- Locking this at both proof layers matters:
+  - the direct validator regression ensures the payload is exercised without relying only on fixture harnesses
+  - the tracked fixture ensures the end-to-end benchmark plane also preserves the new observability contract
+
 ## 2026-04-19 Prior-guided semantic related-id parity
 - The prior semantic-role observability slice already exposed exact signal names for prior-guided arbitration and prior-guided consensus.
 - The remaining weakness was proof shape, not behavior shape:

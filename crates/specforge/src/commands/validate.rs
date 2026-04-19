@@ -794,6 +794,34 @@ fn temporal_rules_with_alias_dependent_handshake_completion_count(
         .count()
 }
 
+fn temporal_rules_with_alias_dependent_handshake_completion_signal_names(
+    temporal_rules: &[crate::ir::semantic::TemporalRuleRecord],
+    interfaces: &[crate::ir::semantic::InterfaceRecord],
+) -> Vec<String> {
+    let alias_dependent_signals = alias_dependent_semantic_consensus_signal_names(interfaces);
+    if alias_dependent_signals.is_empty() {
+        return Vec::new();
+    }
+
+    temporal_rules
+        .iter()
+        .flat_map(|rule| rule.antecedents.iter().chain(rule.consequents.iter()))
+        .filter_map(|predicate| match predicate {
+            crate::ir::semantic::TemporalPredicateRecord::HandshakeComplete {
+                valid_signal,
+                ready_signal,
+                ..
+            } => Some([valid_signal, ready_signal]),
+            _ => None,
+        })
+        .flat_map(|signals| signals.into_iter())
+        .filter(|signal_name| alias_dependent_signals.contains(*signal_name))
+        .cloned()
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect()
+}
+
 fn interface_signals_with_semantic_tags_count(
     interfaces: &[crate::ir::semantic::InterfaceRecord],
 ) -> usize {
@@ -2484,6 +2512,11 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             &ir.temporal_rules,
             &ir.interfaces,
         );
+    let alias_dependent_handshake_completion_signal_names =
+        temporal_rules_with_alias_dependent_handshake_completion_signal_names(
+            &ir.temporal_rules,
+            &ir.interfaces,
+        );
     let temporal_rules_with_multi_predicate_antecedents =
         temporal_rules_with_multi_predicate_antecedents_count(&ir.temporal_rules);
 
@@ -2795,7 +2828,11 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             format!(
                 "{temporal_rules_with_alias_dependent_handshake_completion} typed temporal rule(s) currently derive HandshakeComplete predicates from alias-dependent semantic role consensus"
             ),
-            Vec::new(),
+            alias_dependent_handshake_completion_signal_names
+                .iter()
+                .take(8)
+                .cloned()
+                .collect(),
         ));
     }
     if ir.temporal_rules.is_empty()
@@ -3631,6 +3668,11 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             &ir.temporal_rules,
             &ir.interfaces,
         );
+    let alias_dependent_handshake_completion_signal_names =
+        temporal_rules_with_alias_dependent_handshake_completion_signal_names(
+            &ir.temporal_rules,
+            &ir.interfaces,
+        );
     let temporal_rules_with_multi_predicate_antecedents =
         temporal_rules_with_multi_predicate_antecedents_count(&ir.temporal_rules);
 
@@ -3943,7 +3985,11 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             format!(
                 "{temporal_rules_with_alias_dependent_handshake_completion} typed temporal rule(s) currently derive HandshakeComplete predicates from alias-dependent semantic role consensus"
             ),
-            Vec::new(),
+            alias_dependent_handshake_completion_signal_names
+                .iter()
+                .take(8)
+                .cloned()
+                .collect(),
         ));
     }
     if ir.temporal_rules.is_empty()
@@ -7197,7 +7243,8 @@ mod tests {
     }
 
     #[test]
-    fn validate_intent_ir_reports_alias_dependent_handshake_completion() -> Result<()> {
+    fn validate_semantic_and_intent_ir_report_alias_dependent_handshake_completion_related_ids()
+    -> Result<()> {
         use crate::ir::evidence::EvidenceIr;
         use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
 
@@ -7259,21 +7306,51 @@ mod tests {
             &intent_artifact_base,
         )?;
 
-        let report = validate_intent_ir(
+        let semantic_report = validate_semantic_ir(
+            &semantic_ir,
+            "alias_dependent_handshake_completion".to_string(),
+        );
+        assert_eq!(
+            metric_value(
+                &semantic_report,
+                "temporal_rules_with_alias_dependent_handshake_completion"
+            ),
+            Some("1")
+        );
+        let semantic_finding = semantic_report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == "semantic_alias_dependent_handshake_completion_present"
+            })
+            .expect("expected semantic alias-dependent handshake completion finding");
+        assert_eq!(
+            semantic_finding.related_ids,
+            vec!["XACK".to_string(), "XREQ".to_string()]
+        );
+
+        let intent_report = validate_intent_ir(
             &intent_ir,
             "alias_dependent_handshake_completion".to_string(),
         );
         assert_eq!(
             metric_value(
-                &report,
+                &intent_report,
                 "temporal_rules_with_alias_dependent_handshake_completion"
             ),
             Some("1")
         );
-        assert!(has_finding(
-            &report,
-            "intent_alias_dependent_handshake_completion_present"
-        ));
+        let intent_finding = intent_report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == "intent_alias_dependent_handshake_completion_present"
+            })
+            .expect("expected intent alias-dependent handshake completion finding");
+        assert_eq!(
+            intent_finding.related_ids,
+            vec!["XACK".to_string(), "XREQ".to_string()]
+        );
 
         Ok(())
     }

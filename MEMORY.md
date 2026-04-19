@@ -22,26 +22,26 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `35c449b`
-- latest_commit_brief_message: `test(validate): lock semantic related ids`
-- note: current in-flight slice adds direct semantic+intent proof coverage for the prior-guided semantic related-id path
+- latest_commit_hash: `29ec1f3`
+- latest_commit_brief_message: `test(validate): lock prior-guided related ids`
+- note: current in-flight slice hardens alias-dependent handshake-completion findings so they name the canonical handshake signals directly
 
 ## Recent commit chain (last 5)
+- `29ec1f3` test(validate): lock prior-guided related ids
 - `35c449b` test(validate): lock semantic related ids
 - `781353a` feat(validate): name semantic arbitration signals
 - `cd79915` feat(validate): name compat direction lag
 - `792c60e` fix(validate): separate graph conflicts from gaps
-- `f8164d0` feat(validate): name graph coverage gaps
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- branch is ahead of `origin/main` by eleven local commits (`1ae25f8`, `f8359fa`, `c17dda7`, `08de26a`, `f813461`, `eeb67a8`, `f8164d0`, `792c60e`, `cd79915`, `781353a`, `35c449b`); do not push again until 25 new local commits since the last push at `99808e9` or until the user explicitly asks
+- branch is ahead of `origin/main` by twelve local commits (`1ae25f8`, `f8359fa`, `c17dda7`, `08de26a`, `f813461`, `eeb67a8`, `f8164d0`, `792c60e`, `cd79915`, `781353a`, `35c449b`, `29ec1f3`); do not push again until 25 new local commits since the last push at `99808e9` or until the user explicitly asks
 - the README/SESSION_BOOTSTRAP handoff has been re-executed from the repo entrypoint and the referenced continuity docs have been reread
-- the active in-flight slice finishes prior-guided semantic related-id parity with one direct semantic+intent regression:
-  - it writes real modality-reliability prior memory
-  - it rebuilds the contested `XCTRL` example through `IntentIR`
-  - it asserts both prior-guided arbitration and prior-guided consensus findings name `XCTRL` in `related_ids`
-- validation for the in-flight slice has passed through `cargo fmt --all`, `cargo test -p specforge validate_semantic_and_intent_ir_report_prior_guided_semantic_related_ids`, `bash scripts/run_ci.sh`, and `bash scripts/run_docs_ci.sh`
+- the active in-flight slice hardens alias-dependent handshake-completion observability:
+  - `semantic_alias_dependent_handshake_completion_present` and `intent_alias_dependent_handshake_completion_present` now name the canonical handshake signals instead of emitting empty `related_ids`
+  - the direct validator regression now proves both stages report `XACK` / `XREQ`
+  - the tracked fixture `alias_dependent_handshake_completion_caveat` now locks the same payload end to end
+- validation for the in-flight slice has passed through `cargo fmt --all`, `cargo test -p specforge validate_semantic_and_intent_ir_report_alias_dependent_handshake_completion_related_ids`, `cargo run -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality alias_dependent_handshake_completion_caveat`, `bash scripts/run_ci.sh`, and `bash scripts/run_docs_ci.sh`
 - the current full local CI baseline for the in-flight slice is `364` Rust tests plus warning-deny rustdoc and the mdBook build
 - README sentinel remains intact after the slice: `Read SESSION_BOOTSTRAP.md and start from there.`
 - latest committed adapter hardening adds sticky conflict collapse for duplicate explicit top-port direction declarations
