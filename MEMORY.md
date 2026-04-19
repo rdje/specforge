@@ -22,21 +22,26 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `8ce3a06`
-- latest_commit_brief_message: `feat(validation): route graph direction coverage into rescans`
-- note: latest landed slice routes graph-direction coverage gaps into the same bounded replay-plan machinery used by other evidence-level rescans
+- latest_commit_hash: `a28f634`
+- latest_commit_brief_message: `feat(validation): route connectivity endpoint gaps into rescans`
+- note: latest landed slice routes protocol connectivity endpoint gaps into the same bounded replay-plan machinery used by other evidence-level rescans while keeping infrastructure clock/reset sourcing on the dedicated system-contract note path
 
 ## Recent commit chain (last 5)
+- `a28f634` feat(validation): route connectivity endpoint gaps into rescans
+- `eb02080` docs(memory): sync latest landed baseline
 - `8ce3a06` feat(validation): route graph direction coverage into rescans
 - `71f8406` docs(memory): sync latest landed baseline
 - `9ec4803` feat(validation): route temporal actor grounding into rescans
-- `a9fde1e` docs(memory): sync latest landed baseline
-- `3e501d7` feat(validation): route temporal clock grounding into rescans
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- branch is ahead of `origin/main` by eleven local commits (`71ad856`, `21d6bad`, `e4aa175`, `3516df6`, `cf3580e`, `3e5657f`, `3e501d7`, `a9fde1e`, `9ec4803`, `71f8406`, `8ce3a06`); do not push this slice unless the user asks or until another 25 local commits accumulate from the last push at `4821b0a`
+- branch is ahead of `origin/main` by thirteen local commits (`71ad856`, `21d6bad`, `e4aa175`, `3516df6`, `cf3580e`, `3e5657f`, `3e501d7`, `a9fde1e`, `9ec4803`, `71f8406`, `8ce3a06`, `eb02080`, `a28f634`); do not push this slice unless the user asks or until another 25 local commits accumulate from the last push at `4821b0a`
 - the README/SESSION_BOOTSTRAP handoff has been re-executed from the repo entrypoint and the referenced continuity docs have been reread
+- the latest landed slice adds connectivity-endpoint-specific replay planning for protocol signals that remain producerless or consumerless:
+  - `validate` emits semantic/intent producer-gap and consumer-gap `rescan_guidance` findings alongside the existing missing-endpoint warnings
+  - `project-validation` recognizes those findings as the same local `EvidenceIR -> SemanticIR -> IntentIR? -> validate` replay lane used by other evidence-strength gaps
+  - the new tracked fixture `connectivity_endpoint_gaps_negative` locks both semantic and intent endpoint-gap guidance end to end
+  - infrastructure clock/reset sourcing remains intentionally excluded from this replay family and stays a dedicated `system_contract` note
 - the latest landed slice adds graph-direction-coverage-specific replay planning for canonical signals that remain graph-uncovered:
   - `validate` emits semantic/intent graph-direction `rescan_guidance` findings alongside the existing missing-coverage warning
   - `project-validation` recognizes that guidance as the same local `EvidenceIR -> SemanticIR -> IntentIR? -> validate` replay lane used by other evidence-strength gaps
@@ -50,12 +55,8 @@
   - focused semantic/intent planner tests cover the new action text and replay-input recovery
   - the tracked fixture `temporal_clock_grounding_surface_negative` now locks the missing-clock-grounding metric plus semantic/intent replay guidance on a genuinely clockless typed temporal rule
 - the previously landed slice added temporal-cycle-window-specific `rescan_guidance` for typed canonical temporal rules that remain unbounded and projected it through `project-validation` as an `EvidenceIR -> SemanticIR -> IntentIR? -> validate` replay plan
-- the active in-flight slice strengthens tracked KG-quality coverage for the new semantic-arbitration replay guidance:
-  - representative contested-semantic fixtures now require `semantic_role_arbitration_surface_rescan_guidance` / `intent_role_arbitration_surface_rescan_guidance`
-  - the locked cases cover plain visual conflict, cross-modality conflict, prior-guided caution, and blocked handshake-name fallback
-  - this keeps the replay-guidance contract protected on realistic staged documents rather than only by unit tests
-- validation for the latest landed slice passed through `cargo test -p specforge validate_intent_ir_reports_missing_graph_direction_related_ids`, `cargo test -p specforge validate_semantic_ir_reports_missing_graph_direction_related_ids`, `cargo test -p specforge graph_direction_coverage_rescan_guidance`, `cargo test -p specforge kg_bench_runs_tracked_fixtures`, `bash scripts/run_ci.sh`, `bash scripts/run_docs_ci.sh`, and `git diff --check`
-- the current full local CI baseline is `391` Rust tests plus warning-deny rustdoc and the mdBook build
+- validation for the latest landed slice passed through `cargo test -p specforge connectivity_endpoint_related_ids`, `cargo test -p specforge connectivity_missing_`, `cargo test -p specforge kg_bench_runs_tracked_fixtures`, `bash scripts/run_docs_ci.sh`, `bash scripts/run_ci.sh`, and `git diff --check`
+- the current full local CI baseline is `397` Rust tests plus warning-deny rustdoc and the mdBook build
 - README sentinel remains intact after the slice: `Read SESSION_BOOTSTRAP.md and start from there.`
 - latest committed adapter hardening adds sticky conflict collapse for duplicate explicit top-port direction declarations
 - the committed regression declares top port `drive_data` once as output and once as input; expected behavior is unresolved top-port direction in both the top candidate and selected signal inventory, blocked renderability, and no emitted `.fsm` target text
