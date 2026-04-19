@@ -1,5 +1,28 @@
 # CHANGES
 
+## 2026-04-19 (Temporal-gap findings now name rule ids)
+
+### Improved: temporal grounding gap findings now carry canonical temporal-rule IDs
+- Several temporal grounding findings were still count-only even though the validator already had the exact `TemporalRuleRecord.rule_id` set in hand:
+  - missing explicit clock / edge grounding
+  - missing cycle-window bounds
+  - missing actor-relative drive/sample grounding
+- This slice tightens those findings for both `SemanticIR` and `IntentIR` by surfacing the canonical rule ids that actually satisfy each gap condition instead of emitting empty `related_ids`.
+- Added a direct semantic+intent regression that rebuilds a single temporal rule lacking all three grounding surfaces and proves the following findings now report `related_ids: ["temporal_signal_constraint_sigcon_hready_stable"]`:
+  - `*_temporal_rules_missing_clock_grounding`
+  - `*_temporal_rules_missing_cycle_windows`
+  - `*_temporal_rules_missing_actor_grounding`
+- This is an observability hardening slice:
+  - no temporal-rule derivation changed
+  - no canonical IR schema changed
+  - validation now exposes the exact canonical rule ids it was already evaluating
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge validate_semantic_and_intent_ir_report_temporal_gap_related_ids` -> passed
+- `bash scripts/run_ci.sh` -> passed with `365` Rust tests and the mdBook build
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-04-19 (Alias-dependent handshake completion findings now name signals)
 
 ### Improved: alias-dependent handshake-completion findings now carry canonical handshake signal IDs

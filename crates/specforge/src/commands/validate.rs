@@ -666,8 +666,45 @@ fn temporal_rules_missing_clock_grounding_count(
 ) -> usize {
     temporal_rules
         .iter()
-        .filter(|rule| rule.clock_signal.is_none() || matches!(rule.edge, ClockEdge::Unknown))
+        .filter(|rule| temporal_rule_missing_clock_grounding(rule))
         .count()
+}
+
+fn temporal_rule_missing_clock_grounding(rule: &crate::ir::semantic::TemporalRuleRecord) -> bool {
+    rule.clock_signal.is_none() || matches!(rule.edge, ClockEdge::Unknown)
+}
+
+fn temporal_rule_has_actor_grounding(rule: &crate::ir::semantic::TemporalRuleRecord) -> bool {
+    rule.antecedents
+        .iter()
+        .chain(rule.consequents.iter())
+        .any(|predicate| {
+            matches!(
+                predicate,
+                crate::ir::semantic::TemporalPredicateRecord::ActorDrivesSignal { .. }
+                    | crate::ir::semantic::TemporalPredicateRecord::ActorMaintainsSignalStable { .. }
+                    | crate::ir::semantic::TemporalPredicateRecord::ActorSamplesSignal { .. }
+            )
+        })
+}
+
+fn temporal_rule_ids_matching(
+    temporal_rules: &[crate::ir::semantic::TemporalRuleRecord],
+    mut predicate: impl FnMut(&crate::ir::semantic::TemporalRuleRecord) -> bool,
+) -> Vec<String> {
+    temporal_rules
+        .iter()
+        .filter(|rule| predicate(rule))
+        .map(|rule| rule.rule_id.clone())
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect()
+}
+
+fn temporal_rules_missing_clock_grounding_rule_ids(
+    temporal_rules: &[crate::ir::semantic::TemporalRuleRecord],
+) -> Vec<String> {
+    temporal_rule_ids_matching(temporal_rules, temporal_rule_missing_clock_grounding)
 }
 
 fn initial_regular_states_count(
@@ -708,25 +745,27 @@ fn temporal_rules_with_cycle_window_count(
         .count()
 }
 
+fn temporal_rules_missing_cycle_window_rule_ids(
+    temporal_rules: &[crate::ir::semantic::TemporalRuleRecord],
+) -> Vec<String> {
+    temporal_rule_ids_matching(temporal_rules, |rule| rule.cycle_window.is_none())
+}
+
 fn temporal_rules_with_actor_grounding_count(
     temporal_rules: &[crate::ir::semantic::TemporalRuleRecord],
 ) -> usize {
     temporal_rules
         .iter()
-        .filter(|rule| {
-            rule.antecedents
-                .iter()
-                .chain(rule.consequents.iter())
-                .any(|predicate| {
-                    matches!(
-                        predicate,
-                        crate::ir::semantic::TemporalPredicateRecord::ActorDrivesSignal { .. }
-                            | crate::ir::semantic::TemporalPredicateRecord::ActorMaintainsSignalStable { .. }
-                            | crate::ir::semantic::TemporalPredicateRecord::ActorSamplesSignal { .. }
-                    )
-                })
-        })
+        .filter(|rule| temporal_rule_has_actor_grounding(rule))
         .count()
+}
+
+fn temporal_rules_missing_actor_grounding_rule_ids(
+    temporal_rules: &[crate::ir::semantic::TemporalRuleRecord],
+) -> Vec<String> {
+    temporal_rule_ids_matching(temporal_rules, |rule| {
+        !temporal_rule_has_actor_grounding(rule)
+    })
 }
 
 fn temporal_rules_with_handshake_completion_count(
@@ -2505,6 +2544,12 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         temporal_rules_with_cycle_window_count(&ir.temporal_rules);
     let temporal_rules_with_actor_grounding =
         temporal_rules_with_actor_grounding_count(&ir.temporal_rules);
+    let temporal_rules_missing_clock_grounding_rule_ids =
+        temporal_rules_missing_clock_grounding_rule_ids(&ir.temporal_rules);
+    let temporal_rules_missing_cycle_window_rule_ids =
+        temporal_rules_missing_cycle_window_rule_ids(&ir.temporal_rules);
+    let temporal_rules_missing_actor_grounding_rule_ids =
+        temporal_rules_missing_actor_grounding_rule_ids(&ir.temporal_rules);
     let temporal_rules_with_handshake_completion =
         temporal_rules_with_handshake_completion_count(&ir.temporal_rules);
     let temporal_rules_with_alias_dependent_handshake_completion =
@@ -2768,7 +2813,11 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             format!(
                 "{missing_temporal_clock_grounding} temporal rule(s) still lack explicit clock or edge grounding"
             ),
-            Vec::new(),
+            temporal_rules_missing_clock_grounding_rule_ids
+                .iter()
+                .take(8)
+                .cloned()
+                .collect(),
         ));
     }
     if !ir.temporal_rules.is_empty() && temporal_rules_with_cycle_window == 0 {
@@ -2778,7 +2827,11 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             "temporal_grounding",
             "typed temporal rules exist, but none currently carry explicit cycle-window bounds"
                 .to_string(),
-            Vec::new(),
+            temporal_rules_missing_cycle_window_rule_ids
+                .iter()
+                .take(8)
+                .cloned()
+                .collect(),
         ));
     }
     if !ir.temporal_rules.is_empty()
@@ -2791,7 +2844,11 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             "temporal_grounding",
             "typed temporal rules exist, but none currently carry actor-relative drive/sample grounding"
                 .to_string(),
-            Vec::new(),
+            temporal_rules_missing_actor_grounding_rule_ids
+                .iter()
+                .take(8)
+                .cloned()
+                .collect(),
         ));
     }
     if !ir.temporal_conflicts.is_empty() {
@@ -3661,6 +3718,12 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         temporal_rules_with_cycle_window_count(&ir.temporal_rules);
     let temporal_rules_with_actor_grounding =
         temporal_rules_with_actor_grounding_count(&ir.temporal_rules);
+    let temporal_rules_missing_clock_grounding_rule_ids =
+        temporal_rules_missing_clock_grounding_rule_ids(&ir.temporal_rules);
+    let temporal_rules_missing_cycle_window_rule_ids =
+        temporal_rules_missing_cycle_window_rule_ids(&ir.temporal_rules);
+    let temporal_rules_missing_actor_grounding_rule_ids =
+        temporal_rules_missing_actor_grounding_rule_ids(&ir.temporal_rules);
     let temporal_rules_with_handshake_completion =
         temporal_rules_with_handshake_completion_count(&ir.temporal_rules);
     let temporal_rules_with_alias_dependent_handshake_completion =
@@ -3925,7 +3988,11 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             format!(
                 "{missing_temporal_clock_grounding} temporal rule(s) still lack explicit clock or edge grounding"
             ),
-            Vec::new(),
+            temporal_rules_missing_clock_grounding_rule_ids
+                .iter()
+                .take(8)
+                .cloned()
+                .collect(),
         ));
     }
     if !ir.temporal_rules.is_empty() && temporal_rules_with_cycle_window == 0 {
@@ -3935,7 +4002,11 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             "temporal_grounding",
             "typed temporal rules exist, but none currently carry explicit cycle-window bounds"
                 .to_string(),
-            Vec::new(),
+            temporal_rules_missing_cycle_window_rule_ids
+                .iter()
+                .take(8)
+                .cloned()
+                .collect(),
         ));
     }
     if !ir.temporal_rules.is_empty()
@@ -3948,7 +4019,11 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             "temporal_grounding",
             "typed temporal rules exist, but none currently carry actor-relative drive/sample grounding"
                 .to_string(),
-            Vec::new(),
+            temporal_rules_missing_actor_grounding_rule_ids
+                .iter()
+                .take(8)
+                .cloned()
+                .collect(),
         ));
     }
     if !ir.temporal_conflicts.is_empty() {
@@ -6673,6 +6748,116 @@ mod tests {
             &report,
             "intent_temporal_rules_missing_clock_grounding"
         ));
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_semantic_and_intent_ir_report_temporal_gap_related_ids() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("temporal_gap_related_ids.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal HREADY is input width 1.\n\n",
+                "Signal HTRANS is output width 2.\n\n",
+                "The Manager drives HTRANS.\n\n",
+                "The Subordinate reads HTRANS.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_hready_stable".to_string(),
+            subject_signal: "HREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeStable,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "HREADY must remain stable.".to_string(),
+            supporting_statement_ids: vec!["stmt_temporal_gap".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let expected_rule_id = "temporal_signal_constraint_sigcon_hready_stable".to_string();
+
+        let semantic_report =
+            validate_semantic_ir(&semantic_ir, "temporal_gap_related_ids".to_string());
+        assert_eq!(metric_value(&semantic_report, "temporal_rules"), Some("1"));
+        assert_eq!(
+            metric_value(&semantic_report, "temporal_rules_with_cycle_window"),
+            Some("0")
+        );
+        assert_eq!(
+            metric_value(&semantic_report, "temporal_rules_with_actor_grounding"),
+            Some("0")
+        );
+        assert_eq!(
+            metric_value(&semantic_report, "temporal_rules_missing_clock_grounding"),
+            Some("1")
+        );
+        for finding_id in [
+            "semantic_temporal_rules_missing_clock_grounding",
+            "semantic_temporal_rules_missing_cycle_windows",
+            "semantic_temporal_rules_missing_actor_grounding",
+        ] {
+            let finding = semantic_report
+                .findings
+                .iter()
+                .find(|finding| finding.finding_id == finding_id)
+                .expect("expected semantic temporal-gap finding");
+            assert_eq!(finding.related_ids, vec![expected_rule_id.clone()]);
+        }
+
+        let intent_report = validate_intent_ir(&intent_ir, "temporal_gap_related_ids".to_string());
+        assert_eq!(metric_value(&intent_report, "temporal_rules"), Some("1"));
+        assert_eq!(
+            metric_value(&intent_report, "temporal_rules_with_cycle_window"),
+            Some("0")
+        );
+        assert_eq!(
+            metric_value(&intent_report, "temporal_rules_with_actor_grounding"),
+            Some("0")
+        );
+        assert_eq!(
+            metric_value(&intent_report, "temporal_rules_missing_clock_grounding"),
+            Some("1")
+        );
+        for finding_id in [
+            "intent_temporal_rules_missing_clock_grounding",
+            "intent_temporal_rules_missing_cycle_windows",
+            "intent_temporal_rules_missing_actor_grounding",
+        ] {
+            let finding = intent_report
+                .findings
+                .iter()
+                .find(|finding| finding.finding_id == finding_id)
+                .expect("expected intent temporal-gap finding");
+            assert_eq!(finding.related_ids, vec![expected_rule_id.clone()]);
+        }
 
         Ok(())
     }

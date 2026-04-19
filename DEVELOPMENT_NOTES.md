@@ -7,6 +7,31 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-19 Temporal grounding gap related IDs
+- The next observability weakness after the semantic-role work was in temporal grounding review surfaces.
+- Three validator findings already had crisp internal truth conditions but still surfaced only counts:
+  - temporal rules missing explicit clock or edge grounding
+  - temporal rules missing cycle-window bounds
+  - temporal rules missing actor-relative grounding
+- That was objectively weaker than necessary because the canonical temporal surface already carries stable `rule_id`s.
+- The right payload here is temporal-rule ids, not signal names:
+  - the gap belongs to a typed temporal rule record
+  - a single signal can participate in multiple temporal rules with different grounding quality
+  - reviewers need to know which exact canonical rule remains under-grounded
+- The helper refactor matters because these surfaces are sibling views over the same rule set:
+  - one predicate for missing clock grounding
+  - one predicate for actor-grounding presence
+  - one shared rule-id collector
+  - semantic and intent validation now consume the same deterministic rule-id selection logic
+- The direct regression is intentionally compact but high-signal:
+  - one temporal rule on `HREADY`
+  - no ambient clock declaration, so the rule stays clock-ungrounded
+  - no cycle phrase, so the rule stays cycle-window-free
+  - unrelated actor graph evidence exists only for `HTRANS`, so the rule stays actor-ungrounded while the document still has a non-empty KG
+- That shape proves the exact thing we care about:
+  - validation does not need to invent ids
+  - it can expose the precise canonical temporal rule already known to be under-grounded
+
 ## 2026-04-19 Alias-dependent handshake completion related IDs
 - The alias-dependent handshake-completion caution was structurally in the same family as the semantic-role related-id work we just finished:
   - the canonical temporal rule already existed
