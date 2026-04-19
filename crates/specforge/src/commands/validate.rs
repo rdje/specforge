@@ -205,6 +205,26 @@ fn push_negative_knowledge_rescan_guidance(
     ));
 }
 
+fn evidence_structural_kg_missing_related_ids(ir: &EvidenceIr) -> Vec<String> {
+    ir.signal_constraints
+        .iter()
+        .map(|constraint| constraint.constraint_id.clone())
+        .chain(ir.conditional_rules.iter().map(|rule| rule.rule_id.clone()))
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect()
+}
+
+fn evidence_normative_residual_statement_ids(ir: &EvidenceIr) -> Vec<String> {
+    ir.extracted_statements
+        .iter()
+        .filter(|statement| matches!(statement.class, StatementClass::NormativeStatement))
+        .map(|statement| statement.statement_id.clone())
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect()
+}
+
 fn load_prior_memory_for_validation(prior_memory_path: Option<&Path>) -> Option<CorpusMemory> {
     let prior_memory_path = prior_memory_path?;
     if !prior_memory_path.exists() {
@@ -1827,6 +1847,8 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
     );
 
     let normative_count = classes.get("normative_statement").copied().unwrap_or(0);
+    let structural_kg_missing_related_ids = evidence_structural_kg_missing_related_ids(ir);
+    let normative_residual_statement_ids = evidence_normative_residual_statement_ids(ir);
     let mut findings = Vec::new();
     if total == 0 {
         findings.push(finding(
@@ -1858,7 +1880,7 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             ValidationFindingSeverity::Warning,
             "knowledge_graph",
             "Behavioral evidence exists, but the structural actor-signal graph is still empty in EvidenceIR",
-            Vec::new(),
+            structural_kg_missing_related_ids,
         ));
     }
     if normative_count > 0 {
@@ -1869,7 +1891,7 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             format!(
                 "{normative_count} normative statements remain only partially structured in EvidenceIR"
             ),
-            Vec::new(),
+            normative_residual_statement_ids,
         ));
     }
     if !ir.signal_polarity_conflicts.is_empty() {
@@ -4441,9 +4463,9 @@ mod tests {
         SemanticGroundingStrength, SemanticIr,
     };
     use crate::ir::source::{
-        AutomationConfidence, SignalConstraintKind, SignalConstraintRecord, SourceIr,
-        StructuredTableCellRecord, StructuredTableRecord, TableKind, TimingConstraintRecord,
-        VisualAsset, VisualAssetKind,
+        AutomationConfidence, ConditionalRuleRecord, SignalConstraintKind, SignalConstraintRecord,
+        SourceIr, StructuredTableCellRecord, StructuredTableRecord, TableKind,
+        TimingConstraintRecord, VisualAsset, VisualAssetKind,
     };
 
     #[test]
@@ -5016,6 +5038,87 @@ mod tests {
         assert_eq!(
             metric_value(&report, "signal_semantic_hints_from_vlm_timing_annotations"),
             Some("1")
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_evidence_ir_reports_structural_kg_and_normative_related_ids() -> Result<()> {
+        use crate::ir::evidence::{EvidenceModality, ExtractedStatement, StatementClass};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("evidence_related_ids.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Channel\n",
+                "Signal HREADY is input width 1.\n\n",
+                "Signal HTRANS is output width 2.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_hready_asserted".to_string(),
+            subject_signal: "HREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "HREADY must be asserted.".to_string(),
+            supporting_statement_ids: vec!["stmt_signal_constraint".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.conditional_rules.push(ConditionalRuleRecord {
+            rule_id: "condrule_htrans_hold".to_string(),
+            antecedent_text: "when HREADY is LOW".to_string(),
+            consequent_signal: Some("HTRANS".to_string()),
+            consequent_action: "must not change".to_string(),
+            source_text: "When HREADY is LOW, HTRANS must not change.".to_string(),
+            supporting_statement_ids: vec!["stmt_conditional_rule".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.extracted_statements.push(ExtractedStatement {
+            statement_id: "stmt_normative_residual".to_string(),
+            class: StatementClass::NormativeStatement,
+            modality: EvidenceModality::Text,
+            text: "Transfers must preserve ordering.".to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+        });
+        evidence_ir.actor_signal_relations.clear();
+
+        let report = validate_evidence_ir(&evidence_ir, "evidence_related_ids".to_string());
+
+        let structural_finding = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "evidence_structural_kg_missing")
+            .expect("expected structural KG missing finding");
+        assert_eq!(
+            structural_finding.related_ids,
+            vec![
+                "condrule_htrans_hold".to_string(),
+                "sigcon_hready_asserted".to_string()
+            ]
+        );
+
+        let normative_finding = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "evidence_normative_residuals_remaining")
+            .expect("expected normative residual finding");
+        assert_eq!(
+            normative_finding.related_ids,
+            vec!["stmt_normative_residual".to_string()]
         );
 
         Ok(())

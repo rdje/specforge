@@ -7,6 +7,26 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-19 Evidence-side stranded-id related IDs
+- The semantic and intent validators had become noticeably more specific than the Evidence validator on a couple of basic review surfaces.
+- Two Evidence findings already had exact internal truth sources but were still reporting only counts:
+  - structural KG missing despite behavioral records
+  - normative residual statements still not lowered into stronger structure
+- The right payloads are different for the two findings:
+  - `evidence_structural_kg_missing` should name the stranded behavioral record ids because the review question is "which extracted behaviors failed to get graph structure?"
+  - `evidence_normative_residuals_remaining` should name the surviving statement ids because the review question is "which normative statements still need better structuring?"
+- This slice deliberately does not invent a new abstraction layer:
+  - read `constraint_id` from `SignalConstraintRecord`
+  - read `rule_id` from `ConditionalRuleRecord`
+  - read `statement_id` from `ExtractedStatement`
+  - deduplicate and surface those directly in `related_ids`
+- The direct regression is intentionally mixed:
+  - one signal constraint
+  - one conditional rule
+  - one normative-only extracted statement
+  - empty `actor_signal_relations`
+- That shape proves both Evidence-side findings now point at the exact stranded ids instead of leaving reviewers with only a count.
+
 ## 2026-04-19 Temporal-rule-surface-missing related IDs
 - After the temporal-gap slice, the next adjacent weakness was the "we have temporal evidence but no typed temporal rules" finding.
 - That surface is different from the temporal-gap findings:

@@ -22,26 +22,26 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `3b7dc32`
-- latest_commit_brief_message: `feat(validate): name temporal gap rules`
-- note: current in-flight slice hardens temporal-rule-surface-missing findings so they name the upstream temporal input ids directly
+- latest_commit_hash: `ad65c39`
+- latest_commit_brief_message: `feat(validate): name temporal surface inputs`
+- note: current in-flight slice hardens EvidenceIR review findings so they name stranded behavioral and normative ids directly
 
 ## Recent commit chain (last 5)
+- `ad65c39` feat(validate): name temporal surface inputs
 - `3b7dc32` feat(validate): name temporal gap rules
 - `1f09f97` feat(validate): name alias handshake caveats
 - `29ec1f3` test(validate): lock prior-guided related ids
 - `35c449b` test(validate): lock semantic related ids
-- `781353a` feat(validate): name semantic arbitration signals
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- branch is ahead of `origin/main` by fourteen local commits (`1ae25f8`, `f8359fa`, `c17dda7`, `08de26a`, `f813461`, `eeb67a8`, `f8164d0`, `792c60e`, `cd79915`, `781353a`, `35c449b`, `29ec1f3`, `1f09f97`, `3b7dc32`); do not push again until 25 new local commits since the last push at `99808e9` or until the user explicitly asks
+- branch is ahead of `origin/main` by fifteen local commits (`1ae25f8`, `f8359fa`, `c17dda7`, `08de26a`, `f813461`, `eeb67a8`, `f8164d0`, `792c60e`, `cd79915`, `781353a`, `35c449b`, `29ec1f3`, `1f09f97`, `3b7dc32`, `ad65c39`); do not push again until 25 new local commits since the last push at `99808e9` or until the user explicitly asks
 - the README/SESSION_BOOTSTRAP handoff has been re-executed from the repo entrypoint and the referenced continuity docs have been reread
-- the active in-flight slice hardens temporal-rule-surface-missing observability:
-  - `semantic_temporal_rule_surface_missing` and `intent_temporal_rule_surface_missing` now emit upstream timing/constraint ids instead of empty `related_ids`
-  - the new direct regression proves both stages name `timing_hready_setup`
-  - temporal observability now distinguishes cleanly between "typed rule exists but is under-grounded" and "temporal input exists but no typed rule was derived"
-- validation for the in-flight slice has passed through `cargo fmt --all`, `cargo test -p specforge validate_semantic_and_intent_ir_report_temporal_rule_surface_missing_related_ids`, `bash scripts/run_ci.sh`, and `bash scripts/run_docs_ci.sh`
+- the active in-flight slice hardens EvidenceIR review observability:
+  - `evidence_structural_kg_missing` now names the stranded behavioral record ids
+  - `evidence_normative_residuals_remaining` now names the surviving normative statement ids
+  - the new direct regression proves `condrule_htrans_hold`, `sigcon_hready_asserted`, and `stmt_normative_residual` surface exactly where they should
+- validation for the in-flight slice has passed through `cargo fmt --all`, `cargo test -p specforge validate_evidence_ir_reports_structural_kg_and_normative_related_ids`, `bash scripts/run_ci.sh`, and `bash scripts/run_docs_ci.sh`
 - the current full local CI baseline for the in-flight slice is `366` Rust tests plus warning-deny rustdoc and the mdBook build
 - README sentinel remains intact after the slice: `Read SESSION_BOOTSTRAP.md and start from there.`
 - latest committed adapter hardening adds sticky conflict collapse for duplicate explicit top-port direction declarations

@@ -1,5 +1,28 @@
 # CHANGES
 
+## 2026-04-19 (Evidence review findings now name stranded ids)
+
+### Improved: EvidenceIR structural-KG and normative-residual findings now carry concrete ids
+- Two Evidence-side review findings were still weaker than the recent semantic/intent validation surfaces:
+  - `evidence_structural_kg_missing` knew behavioral records existed but did not name them
+  - `evidence_normative_residuals_remaining` knew which statements were still normative-only but did not expose their ids
+- This slice tightens both surfaces:
+  - structural-KG-missing now emits the stranded behavioral record ids from `signal_constraints` and `conditional_rules`
+  - normative-residuals now emit the surviving `ExtractedStatement.statement_id` values for `NormativeStatement` records
+- Added a direct EvidenceIR regression that proves:
+  - `evidence_structural_kg_missing` reports `["condrule_htrans_hold", "sigcon_hready_asserted"]`
+  - `evidence_normative_residuals_remaining` reports `["stmt_normative_residual"]`
+- This is an observability hardening slice:
+  - no EvidenceIR extraction behavior changed
+  - no canonical IR schema changed
+  - validation now exposes the exact ids it was already counting
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge validate_evidence_ir_reports_structural_kg_and_normative_related_ids` -> passed
+- `bash scripts/run_ci.sh` -> passed with `366` Rust tests and the mdBook build
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-04-19 (Temporal-rule-surface-missing findings now name source ids)
 
 ### Improved: temporal-rule-surface-missing findings now carry upstream timing/constraint ids
