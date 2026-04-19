@@ -52,6 +52,7 @@ For visual-motif corroboration, that sequence now starts with a local VLM `enric
 By default, `--rescan-vlm-provider auto-local` prefers a ready local Ollama `qwen2.5vl:7b` model and falls back to a ready local LM Studio `qwen2.5vl:7b` model before emitting the install-guiding Ollama hint.
 Use `--rescan-vlm-provider ollama`, `--rescan-vlm-provider lmstudio`, or `--rescan-vlm-provider skip` to force the generated hint, and `--rescan-vlm-model <model>` to bake a model override into the plan.
 The command hints are there so `rescan-plan` and opt-in `converge --rescan-plan <plan>` runs can rebuild the right stage safely from machine-readable args instead of scraping a prose note.
+The compact live-status queue now also projects the replay-input kind chain plus a concise action summary for each pending recommendation, so the first review surface already tells operators what will be replayed.
 
 The plan still does not mutate IR, suppress findings, run rescans automatically, or promote facts from prior memory.
 It only tells downstream loops which current conflict or residual ids deserve targeted rechecking and stronger local corroboration.
@@ -66,7 +67,7 @@ cargo run --manifest-path Cargo.toml -- rescan-plan
 ```
 
 `rescan-plan` reads `generated/validation/rescan_plan.json`.
-By default it is a dry-run inspector: it reports pending `planned_not_executed` recommendations and prints the structured command hints that would be used.
+By default it is a dry-run inspector: it reports pending `planned_not_executed` recommendations and prints the replay inputs, recommended action, current automation status, and structured command hints that would be used.
 Use `--document-key <key>` to scope a multi-document plan to one document.
 
 To execute the current pending hints explicitly:

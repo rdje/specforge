@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-19 (Book and README now describe replay-scope-aware rescan review)
+
+### Improved: public docs now explain the richer rescan review surfaces
+- The last two rescan slices changed what operators actually see:
+  - `project-validation` live-status projections now show a replay-input kind chain plus a concise action summary
+  - `rescan-plan` dry-run output now shows `replay_inputs`, `recommended_action`, and `automation_status` before the command hints
+- Those were meaningful user-facing workflow changes, but the public documentation still described the older, thinner review surfaces.
+- This slice brings the docs back into sync:
+  - `README.md` now says the compact live queue exposes replay scope and the dry-run preview surfaces the full replay/action status
+  - the mdBook pages for `project-validation`, `rescan-plan`, validation, and generated artifacts now explain the same review behavior
+- Result:
+  - the public-facing book now matches the real operator workflow
+  - future sessions and external readers do not have to infer the replay-scope review model from code or internal continuity notes
+
+### Validation
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `375` Rust tests, rustdoc, and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-19 (Rescan review surfaces now show the real replay boundary)
 
 ### Improved: compact rescan projections and dry-run previews now expose replay inputs plus action text

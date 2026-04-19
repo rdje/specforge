@@ -98,6 +98,11 @@ An artifact can improve without the project snapshot being refreshed until `proj
 - `generated/validation/rescan_plan.json`
 
 That plan is a local replay queue for targeted rescans and stronger corroboration.
+Compact review surfaces now expose more of that queue directly:
+
+- the tracked live-status validation block shows each recommendation's replay-input kind chain plus a concise action summary
+- `rescan-plan` dry-run output prints full `replay_inputs`, `recommended_action`, and `automation_status` before any command hints
+
 Its execution summaries may contain `promotion_review`, but that field is only a review-requirement descriptor.
 It is not an approval artifact, and it does not authorize canonical IR mutation.
 

@@ -22,26 +22,26 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `d2a16d8`
-- latest_commit_brief_message: `feat(rescan): specialize recommended actions`
-- note: current in-flight slice lifts the richer replay contract into the compact live-status queue and `rescan-plan` dry-run renderer so operators can see replay scope without opening raw JSON
+- latest_commit_hash: `4dfb4b3`
+- latest_commit_brief_message: `feat(rescan): expose replay scope in review surfaces`
+- note: current in-flight slice syncs the public docs and mdBook so they describe the replay-scope-aware live queue and `rescan-plan` dry-run behavior
 
 ## Recent commit chain (last 5)
+- `4dfb4b3` feat(rescan): expose replay scope in review surfaces
 - `d2a16d8` feat(rescan): specialize recommended actions
 - `423a458` feat(rescan): key execution state to replay contract
 - `d6e266d` feat(rescan): align replay inputs with replay plan
 - `ae92698` feat(rescan): replay negative knowledge upstream
-- `a1b91af` feat(rescan): route temporal gaps through nlp
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- branch is ahead of `origin/main` by twenty-three local commits (`1ae25f8`, `f8359fa`, `c17dda7`, `08de26a`, `f813461`, `eeb67a8`, `f8164d0`, `792c60e`, `cd79915`, `781353a`, `35c449b`, `29ec1f3`, `1f09f97`, `3b7dc32`, `ad65c39`, `9ece4b9`, `e9b89bd`, `be55b7c`, `a1b91af`, `ae92698`, `d6e266d`, `423a458`, `d2a16d8`); do not push again until 25 new local commits since the last push at `99808e9` or until the user explicitly asks
+- branch is ahead of `origin/main` by twenty-four local commits (`1ae25f8`, `f8359fa`, `c17dda7`, `08de26a`, `f813461`, `eeb67a8`, `f8164d0`, `792c60e`, `cd79915`, `781353a`, `35c449b`, `29ec1f3`, `1f09f97`, `3b7dc32`, `ad65c39`, `9ece4b9`, `e9b89bd`, `be55b7c`, `a1b91af`, `ae92698`, `d6e266d`, `423a458`, `d2a16d8`, `4dfb4b3`); after one more local commit, push because the user requested pushes every 25 commits or on explicit request
 - the README/SESSION_BOOTSTRAP handoff has been re-executed from the repo entrypoint and the referenced continuity docs have been reread
-- the active in-flight slice tightens rescan review-surface honesty:
-  - the live-status targeted-rescan queue now exposes the replay-input kind chain and a concise action summary
-  - the `rescan-plan` dry-run renderer now shows full `replay_inputs`, `recommended_action`, and `automation_status` before command hints
-  - this lets operators understand replay scope from the first review surface instead of opening raw schema-v2 JSON
-- validation for the in-flight slice has now passed through `cargo fmt --all`, `cargo test -p specforge project_validation_collects_negative_knowledge_rescan_guidance`, `cargo test -p specforge rescan_plan_dry_run_render_surfaces_replay_boundary_and_action`, `bash scripts/run_ci.sh`, `bash scripts/run_docs_ci.sh`, and `git diff --check`
+- the active in-flight slice syncs the public documentation plane with the new review surfaces:
+  - `README.md` now explains that the compact live queue exposes replay-input kind chains plus action summaries
+  - the mdBook now explains that `rescan-plan` dry-run prints replay inputs, action text, and automation status before command hints
+  - the generated-artifacts reference now describes those compact review surfaces as part of the local replay queue contract
+- validation for the in-flight slice has now passed through `bash scripts/run_docs_ci.sh`, `bash scripts/run_ci.sh`, and `git diff --check`
 - the current full local CI baseline is `375` Rust tests plus warning-deny rustdoc and the mdBook build
 - README sentinel remains intact after the slice: `Read SESSION_BOOTSTRAP.md and start from there.`
 - latest committed adapter hardening adds sticky conflict collapse for duplicate explicit top-port direction declarations

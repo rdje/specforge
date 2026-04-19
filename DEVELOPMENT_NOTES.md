@@ -7,6 +7,22 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-19 Public docs must track operator-visible workflow changes, not only internal implementation
+- The recent rescan work changed two real user-facing surfaces:
+  - the compact validation queue in tracked live docs
+  - the `rescan-plan` dry-run inspector
+- That means the mdBook and README were no longer just "slightly behind"; they were describing a thinner operational surface than the product actually exposes.
+- This matters because the book is supposed to be the world-facing explanation of what SpecForge does and how it does it.
+- The right documentation boundary is:
+  - internal continuity docs explain why the slice exists and how it was validated
+  - the book and README explain the operator-visible contract that now exists
+- For this workflow, that public contract now includes:
+  - replay-scope-aware live review in `LIVE_ACHIEVEMENT_STATUS.md`
+  - replay-scope-aware `rescan-plan` dry-run output
+  - the fact that these are still review surfaces, not approval or truth-mutation surfaces
+- This is a useful reminder for future slices:
+  - when the product gains a new inspectable operator surface, update the public docs in the same lane rather than letting the book lag behind the implementation for multiple commits
+
 ## 2026-04-19 Rescan review surfaces should not force operators to open raw plan JSON
 - After the recent replay-contract work, the plan itself became substantially more informative:
   - `replay_inputs` names the real upstream artifact boundary
