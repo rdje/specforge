@@ -1,0 +1,104 @@
+{
+  "name": "interface_signal_conflict_negative",
+  "source": "source.md",
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["DATA"],
+      "interface_signal_conflicts": 2,
+      "interface_signal_conflicts_include": [
+        {
+          "signal_name": "DATA",
+          "conflict_kind": "direction_mismatch",
+          "observations_include": [
+            {
+              "value_text": "input"
+            },
+            {
+              "value_text": "output"
+            }
+          ]
+        },
+        {
+          "signal_name": "DATA",
+          "conflict_kind": "width_mismatch",
+          "observations_include": [
+            {
+              "value_text": "8"
+            },
+            {
+              "value_text": "16"
+            }
+          ]
+        }
+      ]
+    },
+    "intent": {
+      "signal_names_include": ["DATA"],
+      "interface_signal_conflicts": 2,
+      "interface_signal_conflicts_include": [
+        {
+          "signal_name": "DATA",
+          "conflict_kind": "direction_mismatch",
+          "observations_include": [
+            {
+              "value_text": "input"
+            },
+            {
+              "value_text": "output"
+            }
+          ]
+        },
+        {
+          "signal_name": "DATA",
+          "conflict_kind": "width_mismatch",
+          "observations_include": [
+            {
+              "value_text": "8"
+            },
+            {
+              "value_text": "16"
+            }
+          ]
+        }
+      ]
+    },
+    "validation": {
+      "semantic": {
+        "finding_ids_include": [
+          "semantic_interface_signal_conflicts_present",
+          "semantic_interface_signal_conflict_surface_rescan_guidance"
+        ],
+        "findings_include": [
+          {
+            "finding_id": "semantic_interface_signal_conflict_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "unresolved direction/width disagreement",
+            "related_ids_include": [
+              "interface_signal_conflict_0001",
+              "interface_signal_conflict_0002"
+            ]
+          }
+        ]
+      },
+      "intent": {
+        "finding_ids_include": [
+          "intent_interface_signal_conflicts_present",
+          "intent_interface_signal_conflict_surface_rescan_guidance"
+        ],
+        "findings_include": [
+          {
+            "finding_id": "intent_interface_signal_conflict_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "unresolved direction/width disagreement",
+            "related_ids_include": [
+              "interface_signal_conflict_0001",
+              "interface_signal_conflict_0002"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

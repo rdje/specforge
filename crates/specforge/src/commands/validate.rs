@@ -75,6 +75,10 @@ const SEMANTIC_CONNECTIVITY_MISSING_CONSUMER_SURFACE_RESCAN_GUIDANCE: &str =
     "semantic_connectivity_missing_consumer_surface_rescan_guidance";
 const INTENT_CONNECTIVITY_MISSING_CONSUMER_SURFACE_RESCAN_GUIDANCE: &str =
     "intent_connectivity_missing_consumer_surface_rescan_guidance";
+const SEMANTIC_INTERFACE_SIGNAL_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
+    "semantic_interface_signal_conflict_surface_rescan_guidance";
+const INTENT_INTERFACE_SIGNAL_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
+    "intent_interface_signal_conflict_surface_rescan_guidance";
 const SEMANTIC_SIGNAL_CONNECTIVITY_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
     "semantic_signal_connectivity_conflict_surface_rescan_guidance";
 const INTENT_SIGNAL_CONNECTIVITY_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
@@ -466,6 +470,28 @@ fn push_connectivity_gap_rescan_guidance(
         "rescan_guidance",
         format!(
             "{} signal id(s) in {stage_label} should trigger targeted NLP rescans plus downstream rebuild because the current connectivity graph still lacks resolved {gap_label} connectivity evidence",
+            related_ids.len()
+        ),
+        related_ids.to_vec(),
+    ));
+}
+
+fn push_interface_signal_conflict_rescan_guidance(
+    findings: &mut Vec<ValidationFindingRecord>,
+    finding_id: &str,
+    stage_label: &str,
+    related_ids: &[String],
+) {
+    if related_ids.is_empty() {
+        return;
+    }
+
+    findings.push(finding(
+        finding_id,
+        ValidationFindingSeverity::Info,
+        "rescan_guidance",
+        format!(
+            "{} interface conflict id(s) in {stage_label} should trigger targeted NLP rescans plus downstream rebuild because the current canonical interface surface still carries unresolved direction/width disagreement",
             related_ids.len()
         ),
         related_ids.to_vec(),
@@ -3055,6 +3081,11 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         );
     }
     if !ir.interface_signal_conflicts.is_empty() {
+        let interface_signal_conflict_related_ids = ir
+            .interface_signal_conflicts
+            .iter()
+            .map(|conflict| conflict.conflict_id.clone())
+            .collect::<Vec<_>>();
         findings.push(finding(
             "semantic_interface_signal_conflicts_present",
             ValidationFindingSeverity::Warning,
@@ -3063,11 +3094,14 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 "{} interface signal conflict(s) detected; conflicting direction/width evidence is still unresolved in the canonical interface surface",
                 ir.interface_signal_conflicts.len()
             ),
-            ir.interface_signal_conflicts
-                .iter()
-                .map(|conflict| conflict.conflict_id.clone())
-                .collect(),
+            interface_signal_conflict_related_ids.clone(),
         ));
+        push_interface_signal_conflict_rescan_guidance(
+            &mut findings,
+            SEMANTIC_INTERFACE_SIGNAL_CONFLICT_SURFACE_RESCAN_GUIDANCE,
+            "SemanticIR",
+            &interface_signal_conflict_related_ids,
+        );
     }
     if !ir.signal_polarity_conflicts.is_empty() {
         findings.push(finding(
@@ -4371,6 +4405,11 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         );
     }
     if !ir.interface_signal_conflicts.is_empty() {
+        let interface_signal_conflict_related_ids = ir
+            .interface_signal_conflicts
+            .iter()
+            .map(|conflict| conflict.conflict_id.clone())
+            .collect::<Vec<_>>();
         findings.push(finding(
             "intent_interface_signal_conflicts_present",
             ValidationFindingSeverity::Warning,
@@ -4379,11 +4418,14 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 "{} interface signal conflict(s) detected; conflicting direction/width evidence is still unresolved in the carried interface surface",
                 ir.interface_signal_conflicts.len()
             ),
-            ir.interface_signal_conflicts
-                .iter()
-                .map(|conflict| conflict.conflict_id.clone())
-                .collect(),
+            interface_signal_conflict_related_ids.clone(),
         ));
+        push_interface_signal_conflict_rescan_guidance(
+            &mut findings,
+            INTENT_INTERFACE_SIGNAL_CONFLICT_SURFACE_RESCAN_GUIDANCE,
+            "IntentIR",
+            &interface_signal_conflict_related_ids,
+        );
     }
     if !ir.signal_polarity_conflicts.is_empty() {
         findings.push(finding(
@@ -9725,6 +9767,100 @@ mod tests {
         assert_eq!(
             rescan_guidance.related_ids,
             vec!["signal_connectivity_conflict_0001".to_string()]
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_semantic_ir_reports_interface_signal_conflict_related_ids() -> Result<()> {
+        let (semantic_ir, _) = build_semantic_and_intent_from_markdown(
+            "semantic_interface_signal_conflict.md",
+            concat!(
+                "# Protocol\n",
+                "Signal DATA is input width 8.\n",
+                "\n",
+                "Signal DATA is output width 16.\n",
+            ),
+        )?;
+
+        let report = validate_semantic_ir(&semantic_ir, "interface_signal_conflicts".to_string());
+        assert_eq!(
+            metric_value(&report, "interface_signal_conflicts"),
+            Some("2")
+        );
+        let finding = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "semantic_interface_signal_conflicts_present")
+            .expect("expected semantic interface conflict finding");
+        assert_eq!(
+            finding.related_ids,
+            vec![
+                "interface_signal_conflict_0001".to_string(),
+                "interface_signal_conflict_0002".to_string(),
+            ]
+        );
+        let rescan_guidance = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == SEMANTIC_INTERFACE_SIGNAL_CONFLICT_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected semantic interface conflict rescan guidance");
+        assert_eq!(
+            rescan_guidance.related_ids,
+            vec![
+                "interface_signal_conflict_0001".to_string(),
+                "interface_signal_conflict_0002".to_string(),
+            ]
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_intent_ir_reports_interface_signal_conflict_related_ids() -> Result<()> {
+        let (_, intent_ir) = build_semantic_and_intent_from_markdown(
+            "intent_interface_signal_conflict.md",
+            concat!(
+                "# Protocol\n",
+                "Signal DATA is input width 8.\n",
+                "\n",
+                "Signal DATA is output width 16.\n",
+            ),
+        )?;
+
+        let report = validate_intent_ir(&intent_ir, "interface_signal_conflicts".to_string());
+        assert_eq!(
+            metric_value(&report, "interface_signal_conflicts"),
+            Some("2")
+        );
+        let finding = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "intent_interface_signal_conflicts_present")
+            .expect("expected intent interface conflict finding");
+        assert_eq!(
+            finding.related_ids,
+            vec![
+                "interface_signal_conflict_0001".to_string(),
+                "interface_signal_conflict_0002".to_string(),
+            ]
+        );
+        let rescan_guidance = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == INTENT_INTERFACE_SIGNAL_CONFLICT_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected intent interface conflict rescan guidance");
+        assert_eq!(
+            rescan_guidance.related_ids,
+            vec![
+                "interface_signal_conflict_0001".to_string(),
+                "interface_signal_conflict_0002".to_string(),
+            ]
         );
 
         Ok(())

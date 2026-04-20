@@ -7,6 +7,22 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-20 Interface conflicts should be replay targets, not only preserved warnings
+- Once an `interface_signal_conflict` exists, the weak state is no longer "did the canonical surface preserve disagreement?" but "does the product advertise the bounded current-document step that might reconcile it?"
+- The conflict ids are already stable and reviewable.
+- Leaving them as only warnings underspecifies the next action.
+- The right follow-up is the same conservative replay lane used for nearby structural evidence gaps:
+  - rerun local NLP enrichment on `EvidenceIR`
+  - rebuild the downstream canonical stage(s)
+  - review whether the same conflict ids collapse toward consistent direction and width declarations
+- This is still not an auto-fix story:
+  - the current interface disagreement remains explicit
+  - the replay planner only identifies the local evidence boundary and deterministic rebuild path
+  - no canonical truth is auto-mutated just because the replay path exists
+- This slice also pairs well with the existing negative-knowledge caution family:
+  - prior-memory caution still says "be careful with this interface-conflict archetype"
+  - conflict-specific replay guidance now also says "here is the bounded local step to try on this exact preserved disagreement"
+
 ## 2026-04-20 Signal-connectivity conflicts should be replay targets, not only preserved warnings
 - Once a `signal_connectivity_conflict` exists, the weak state is no longer "did the graph preserve ambiguity?" but "does the product advertise the bounded current-document step that might disambiguate it?"
 - The conflict ids are already stable and reviewable.

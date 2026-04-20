@@ -1,5 +1,26 @@
 # CHANGES
 
+## 2026-04-20 (Interface conflicts now emit replayable rescan guidance)
+
+### Improved: preserved direction/width disagreement now advertises the next bounded replay
+- Validation already reported when `SemanticIR` or `IntentIR` carried `interface_signal_conflicts` such as direction or width mismatches.
+- That was honest, but still too passive:
+  - reviewers could see the preserved conflict ids
+  - the replay planner had no typed next step for revisiting local declaration evidence on those same conflicts
+  - interface disagreement looked like a static warning instead of an explicit replay target
+- This slice turns that weak state into the same bounded replay contract used for nearby evidence-strength gaps:
+  - `validate` now emits `semantic_interface_signal_conflict_surface_rescan_guidance` / `intent_interface_signal_conflict_surface_rescan_guidance`
+  - those findings stay in `rescan_guidance` and carry the same conflict ids already reported by the interface-conflict finding
+  - `project-validation` maps them onto the local `EvidenceIR -> SemanticIR -> IntentIR? -> validate` NLP replay lane
+  - the action text is explicit about collapsing the related conflict ids toward consistent direction/width declarations rather than merely rerunning extraction
+  - the tracked fixtures `interface_signal_conflict_negative` and `negative_knowledge_prior_guided_interface_conflict_caution_gold` now require the new semantic/intent replay guidance so the disagreement case is benchmark-locked both with and without prior-memory caution
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge interface_signal_conflict` -> passed
+- `cargo test -p specforge signal_connectivity_conflict_rescan_guidance` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+
 ## 2026-04-20 (Signal-connectivity conflicts now emit replayable rescan guidance)
 
 ### Improved: preserved producer-ambiguity conflicts now advertise the next bounded replay
