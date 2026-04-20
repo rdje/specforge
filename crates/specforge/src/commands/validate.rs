@@ -63,6 +63,10 @@ const SEMANTIC_TEMPORAL_ACTOR_GROUNDING_SURFACE_RESCAN_GUIDANCE: &str =
     "semantic_temporal_actor_grounding_surface_rescan_guidance";
 const INTENT_TEMPORAL_ACTOR_GROUNDING_SURFACE_RESCAN_GUIDANCE: &str =
     "intent_temporal_actor_grounding_surface_rescan_guidance";
+const SEMANTIC_TEMPORAL_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
+    "semantic_temporal_conflict_surface_rescan_guidance";
+const INTENT_TEMPORAL_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
+    "intent_temporal_conflict_surface_rescan_guidance";
 const SEMANTIC_GRAPH_DIRECTION_COVERAGE_SURFACE_RESCAN_GUIDANCE: &str =
     "semantic_graph_direction_coverage_surface_rescan_guidance";
 const INTENT_GRAPH_DIRECTION_COVERAGE_SURFACE_RESCAN_GUIDANCE: &str =
@@ -425,6 +429,28 @@ fn push_temporal_actor_grounding_rescan_guidance(
         "rescan_guidance",
         format!(
             "{} typed temporal rule id(s) in {stage_label} should trigger targeted NLP rescans plus downstream rebuild because the current rules still lack actor-relative drive/sample grounding",
+            related_ids.len()
+        ),
+        related_ids.to_vec(),
+    ));
+}
+
+fn push_temporal_conflict_rescan_guidance(
+    findings: &mut Vec<ValidationFindingRecord>,
+    finding_id: &str,
+    stage_label: &str,
+    related_ids: &[String],
+) {
+    if related_ids.is_empty() {
+        return;
+    }
+
+    findings.push(finding(
+        finding_id,
+        ValidationFindingSeverity::Info,
+        "rescan_guidance",
+        format!(
+            "{} temporal conflict id(s) in {stage_label} should trigger targeted NLP rescans plus downstream rebuild because the current typed timing surface still carries contradictory value obligations",
             related_ids.len()
         ),
         related_ids.to_vec(),
@@ -3390,6 +3416,11 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         );
     }
     if !ir.temporal_conflicts.is_empty() {
+        let temporal_conflict_related_ids = ir
+            .temporal_conflicts
+            .iter()
+            .map(|conflict| conflict.conflict_id.clone())
+            .collect::<Vec<_>>();
         findings.push(finding(
             "semantic_temporal_conflicts_present",
             ValidationFindingSeverity::Warning,
@@ -3398,11 +3429,14 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 "{} typed temporal conflict(s) detected across contradictory value obligations",
                 ir.temporal_conflicts.len()
             ),
-            ir.temporal_conflicts
-                .iter()
-                .map(|conflict| conflict.conflict_id.clone())
-                .collect(),
+            temporal_conflict_related_ids.clone(),
         ));
+        push_temporal_conflict_rescan_guidance(
+            &mut findings,
+            SEMANTIC_TEMPORAL_CONFLICT_SURFACE_RESCAN_GUIDANCE,
+            "SemanticIR",
+            &temporal_conflict_related_ids,
+        );
     }
     if !ir.regular_states.is_empty() && initial_regular_states != 1 {
         findings.push(finding(
@@ -4715,6 +4749,11 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         );
     }
     if !ir.temporal_conflicts.is_empty() {
+        let temporal_conflict_related_ids = ir
+            .temporal_conflicts
+            .iter()
+            .map(|conflict| conflict.conflict_id.clone())
+            .collect::<Vec<_>>();
         findings.push(finding(
             "intent_temporal_conflicts_present",
             ValidationFindingSeverity::Warning,
@@ -4723,11 +4762,14 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 "{} typed temporal conflict(s) detected across contradictory value obligations",
                 ir.temporal_conflicts.len()
             ),
-            ir.temporal_conflicts
-                .iter()
-                .map(|conflict| conflict.conflict_id.clone())
-                .collect(),
+            temporal_conflict_related_ids.clone(),
         ));
+        push_temporal_conflict_rescan_guidance(
+            &mut findings,
+            INTENT_TEMPORAL_CONFLICT_SURFACE_RESCAN_GUIDANCE,
+            "IntentIR",
+            &temporal_conflict_related_ids,
+        );
     }
     if !ir.regular_states.is_empty() && initial_regular_states != 1 {
         findings.push(finding(
@@ -9395,6 +9437,176 @@ mod tests {
         assert_eq!(metric_value(&report, "temporal_rules"), Some("2"));
         assert_eq!(metric_value(&report, "temporal_conflicts"), Some("1"));
         assert!(has_finding(&report, "intent_temporal_conflicts_present"));
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_semantic_ir_reports_temporal_conflict_related_ids() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("semantic_temporal_conflict.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal HREADY is input width 1.\n\n",
+                "Signal PREADY is output width 1.\n\n",
+                "Clock clk.\n\n",
+                "The Completer drives PREADY.\n\n",
+                "The Requester reads PREADY.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pready_high".to_string(),
+            subject_signal: "PREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeHigh,
+            target_value: None,
+            condition_text: Some("when HREADY is LOW".to_string()),
+            negated: false,
+            source_text: "PREADY must be HIGH when HREADY is LOW.".to_string(),
+            supporting_statement_ids: vec!["stmt_pready_high".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pready_low".to_string(),
+            subject_signal: "PREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeLow,
+            target_value: None,
+            condition_text: Some("when HREADY is LOW".to_string()),
+            negated: false,
+            source_text: "PREADY must be LOW when HREADY is LOW.".to_string(),
+            supporting_statement_ids: vec!["stmt_pready_low".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let report = validate_semantic_ir(&semantic_ir, "temporal_conflicts".to_string());
+        assert_eq!(metric_value(&report, "temporal_conflicts"), Some("1"));
+        let finding = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "semantic_temporal_conflicts_present")
+            .expect("expected semantic temporal conflict finding");
+        assert_eq!(
+            finding.related_ids,
+            vec!["temporal_conflict_0001".to_string()]
+        );
+        let rescan_guidance = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == SEMANTIC_TEMPORAL_CONFLICT_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected semantic temporal conflict rescan guidance");
+        assert_eq!(
+            rescan_guidance.related_ids,
+            vec!["temporal_conflict_0001".to_string()]
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_intent_ir_reports_temporal_conflict_related_ids() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("intent_temporal_conflict.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal HREADY is input width 1.\n\n",
+                "Signal PREADY is output width 1.\n\n",
+                "Clock clk.\n\n",
+                "The Completer drives PREADY.\n\n",
+                "The Requester reads PREADY.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pready_high".to_string(),
+            subject_signal: "PREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeHigh,
+            target_value: None,
+            condition_text: Some("when HREADY is LOW".to_string()),
+            negated: false,
+            source_text: "PREADY must be HIGH when HREADY is LOW.".to_string(),
+            supporting_statement_ids: vec!["stmt_pready_high".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pready_low".to_string(),
+            subject_signal: "PREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeLow,
+            target_value: None,
+            condition_text: Some("when HREADY is LOW".to_string()),
+            negated: false,
+            source_text: "PREADY must be LOW when HREADY is LOW.".to_string(),
+            supporting_statement_ids: vec!["stmt_pready_low".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let report = validate_intent_ir(&intent_ir, "temporal_conflicts".to_string());
+        assert_eq!(metric_value(&report, "temporal_conflicts"), Some("1"));
+        let finding = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "intent_temporal_conflicts_present")
+            .expect("expected intent temporal conflict finding");
+        assert_eq!(
+            finding.related_ids,
+            vec!["temporal_conflict_0001".to_string()]
+        );
+        let rescan_guidance = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == INTENT_TEMPORAL_CONFLICT_SURFACE_RESCAN_GUIDANCE)
+            .expect("expected intent temporal conflict rescan guidance");
+        assert_eq!(
+            rescan_guidance.related_ids,
+            vec!["temporal_conflict_0001".to_string()]
+        );
 
         Ok(())
     }

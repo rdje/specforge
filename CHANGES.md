@@ -1,5 +1,26 @@
 # CHANGES
 
+## 2026-04-20 (Temporal conflicts now emit replayable rescan guidance)
+
+### Improved: preserved timing contradictions now advertise the next bounded replay
+- Validation already reported when `SemanticIR` or `IntentIR` carried `temporal_conflicts` such as contradictory `HIGH` / `LOW` obligations under the same grounded timing context.
+- That was honest, but still too passive:
+  - reviewers could see the preserved conflict ids
+  - the replay planner had no typed next step for revisiting local timing evidence on those same contradictions
+  - temporal contradiction looked like a static warning instead of an explicit replay target
+- This slice turns that weak state into the same bounded replay contract used for nearby evidence-strength gaps:
+  - `validate` now emits `semantic_temporal_conflict_surface_rescan_guidance` / `intent_temporal_conflict_surface_rescan_guidance`
+  - those findings stay in `rescan_guidance` and carry the same conflict ids already reported by the temporal-conflict finding
+  - `project-validation` maps them onto the local `EvidenceIR -> SemanticIR -> IntentIR? -> validate` NLP replay lane
+  - the action text is explicit about collapsing the related conflict ids toward a single locally corroborated timing obligation rather than merely rerunning extraction
+  - the tracked fixtures `temporal_conflict_negative` and `negative_knowledge_prior_guided_temporal_conflict_caution_gold` now require the new semantic/intent replay guidance so the contradiction case is benchmark-locked both with and without prior-memory caution
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge temporal_conflict` -> passed
+- `cargo test -p specforge project_validation_collects_temporal_conflict_rescan_guidance` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+
 ## 2026-04-20 (Interface conflicts now emit replayable rescan guidance)
 
 ### Improved: preserved direction/width disagreement now advertises the next bounded replay

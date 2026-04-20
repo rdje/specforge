@@ -58,6 +58,10 @@ const SEMANTIC_TEMPORAL_ACTOR_GROUNDING_SURFACE_RESCAN_GUIDANCE: &str =
     "semantic_temporal_actor_grounding_surface_rescan_guidance";
 const INTENT_TEMPORAL_ACTOR_GROUNDING_SURFACE_RESCAN_GUIDANCE: &str =
     "intent_temporal_actor_grounding_surface_rescan_guidance";
+const SEMANTIC_TEMPORAL_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
+    "semantic_temporal_conflict_surface_rescan_guidance";
+const INTENT_TEMPORAL_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
+    "intent_temporal_conflict_surface_rescan_guidance";
 const SEMANTIC_GRAPH_DIRECTION_COVERAGE_SURFACE_RESCAN_GUIDANCE: &str =
     "semantic_graph_direction_coverage_surface_rescan_guidance";
 const INTENT_GRAPH_DIRECTION_COVERAGE_SURFACE_RESCAN_GUIDANCE: &str =
@@ -875,6 +879,9 @@ fn replay_inputs_for_rescan(
     if let Some(inputs) = interface_signal_conflict_replay_inputs(stage, snapshot, finding) {
         return inputs;
     }
+    if let Some(inputs) = temporal_conflict_replay_inputs(stage, snapshot, finding) {
+        return inputs;
+    }
     if let Some(inputs) = signal_connectivity_conflict_replay_inputs(stage, snapshot, finding) {
         return inputs;
     }
@@ -1009,6 +1016,18 @@ fn interface_signal_conflict_replay_inputs(
     finding: &ValidationFindingRecord,
 ) -> Option<Vec<ProjectedReplayInput>> {
     if !is_interface_signal_conflict_rescan(stage, finding) {
+        return None;
+    }
+
+    evidence_nlp_replay_inputs_for_stage(stage, snapshot)
+}
+
+fn temporal_conflict_replay_inputs(
+    stage: IrStage,
+    snapshot: &ProjectedArtifactSnapshot,
+    finding: &ValidationFindingRecord,
+) -> Option<Vec<ProjectedReplayInput>> {
+    if !is_temporal_conflict_rescan(stage, finding) {
         return None;
     }
 
@@ -1463,6 +1482,19 @@ fn is_interface_signal_conflict_rescan(stage: IrStage, finding: &ValidationFindi
     )
 }
 
+fn is_temporal_conflict_rescan(stage: IrStage, finding: &ValidationFindingRecord) -> bool {
+    matches!(
+        (stage, finding.finding_id.as_str()),
+        (
+            IrStage::SemanticIr,
+            SEMANTIC_TEMPORAL_CONFLICT_SURFACE_RESCAN_GUIDANCE
+        ) | (
+            IrStage::IntentIr,
+            INTENT_TEMPORAL_CONFLICT_SURFACE_RESCAN_GUIDANCE
+        )
+    )
+}
+
 fn is_temporal_cycle_window_rescan(stage: IrStage, finding: &ValidationFindingRecord) -> bool {
     matches!(
         (stage, finding.finding_id.as_str()),
@@ -1524,6 +1556,7 @@ fn is_evidence_nlp_rebuild_rescan(stage: IrStage, finding: &ValidationFindingRec
         || is_connectivity_missing_producer_rescan(stage, finding)
         || is_connectivity_missing_consumer_rescan(stage, finding)
         || is_interface_signal_conflict_rescan(stage, finding)
+        || is_temporal_conflict_rescan(stage, finding)
         || is_signal_connectivity_conflict_rescan(stage, finding)
         || is_graph_direction_coverage_rescan(stage, finding)
         || is_temporal_actor_grounding_rescan(stage, finding)
@@ -1728,6 +1761,20 @@ fn recommended_rescan_action(stage: IrStage, finding: &ValidationFindingRecord) 
             }
             IrStage::SourceIr | IrStage::EvidenceIr => unreachable!(
                 "interface-signal-conflict specialized action only applies to semantic/intent rescans"
+            ),
+        };
+    }
+
+    if is_temporal_conflict_rescan(stage, finding) {
+        return match stage {
+            IrStage::SemanticIr => {
+                "run local NLP enrichment on EvidenceIR, rebuild SemanticIR, and validate whether the related temporal conflict ids collapse toward a single locally corroborated timing obligation"
+            }
+            IrStage::IntentIr => {
+                "run local NLP enrichment on EvidenceIR, rebuild SemanticIR and IntentIR, and validate whether the related temporal conflict ids survive with a single locally corroborated timing obligation instead of contradictory value obligations"
+            }
+            IrStage::SourceIr | IrStage::EvidenceIr => unreachable!(
+                "temporal-conflict specialized action only applies to semantic/intent rescans"
             ),
         };
     }
@@ -3346,6 +3393,70 @@ mod tests {
     }
 
     #[test]
+    fn project_validation_collects_temporal_conflict_rescan_guidance_for_semantic_stage() {
+        let tempdir = tempdir().expect("tempdir");
+        let repo_root = tempdir.path();
+        let artifact_path = repo_root.join("generated/semantic_ir/doc/semantic_ir.json");
+        let evidence_ir_path = repo_root.join("generated/evidence_ir/doc/evidence_ir.json");
+        let snapshot = ProjectedArtifactSnapshot {
+            document_key: "doc".to_string(),
+            display_name: "Spec.pdf".to_string(),
+            stage: IrStage::SemanticIr,
+            artifact_path,
+            replay_inputs: vec![ProjectedReplayInput {
+                input_kind: "evidence_ir",
+                path: evidence_ir_path.clone(),
+            }],
+            report: ValidationReportRecord {
+                report_id: "validation_semantic_ir_test".to_string(),
+                validated_stage: IrStage::SemanticIr,
+                artifact_fingerprint: "fingerprint".to_string(),
+                summary: "SemanticIR validation with temporal-conflict rescan guidance".to_string(),
+                overall_score: Some(75),
+                grade: Some("GOOD".to_string()),
+                metrics: Vec::new(),
+                findings: vec![ValidationFindingRecord {
+                    finding_id: SEMANTIC_TEMPORAL_CONFLICT_SURFACE_RESCAN_GUIDANCE.to_string(),
+                    severity: ValidationFindingSeverity::Info,
+                    category: "rescan_guidance".to_string(),
+                    summary: "typed timing surface still carries contradictory value obligations"
+                        .to_string(),
+                    related_ids: vec!["temporal_conflict_0001".to_string()],
+                }],
+            },
+        };
+
+        let recommendations =
+            collect_rescan_recommendations(&[snapshot], repo_root, &test_rescan_vlm_policy());
+
+        assert_eq!(recommendations.len(), 1);
+        assert_eq!(
+            recommendations[0].replay_inputs,
+            vec![ProjectRescanReplayInput {
+                input_kind: "evidence_ir".to_string(),
+                path: "generated/evidence_ir/doc/evidence_ir.json".to_string(),
+            }]
+        );
+        assert_eq!(
+            recommendations[0].recommended_action,
+            "run local NLP enrichment on EvidenceIR, rebuild SemanticIR, and validate whether the related temporal conflict ids collapse toward a single locally corroborated timing obligation"
+        );
+        assert_eq!(recommendations[0].recommended_commands.len(), 3);
+        assert_eq!(
+            recommendations[0].recommended_commands[0].intent,
+            "nlp_enrich_evidence_ir"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[1].intent,
+            "rebuild_semantic_ir"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[2].intent,
+            "validate_current_artifact"
+        );
+    }
+
+    #[test]
     fn project_validation_collects_temporal_rule_surface_rescan_guidance_for_intent_stage()
     -> Result<()> {
         let tempdir = tempdir()?;
@@ -4647,6 +4758,137 @@ mod tests {
         assert_eq!(
             recommendations[0].recommended_action,
             "run local NLP enrichment on EvidenceIR, rebuild SemanticIR and IntentIR, and validate whether the related interface conflict ids survive with consistent direction/width declarations instead of unresolved interface-shape ambiguity"
+        );
+        assert_eq!(recommendations[0].recommended_commands.len(), 4);
+        assert_eq!(
+            recommendations[0].recommended_commands[0].intent,
+            "nlp_enrich_evidence_ir"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[1].intent,
+            "rebuild_semantic_ir"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[2].intent,
+            "rebuild_intent_ir"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[3].intent,
+            "validate_current_artifact"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn project_validation_collects_temporal_conflict_rescan_guidance_for_intent_stage() -> Result<()>
+    {
+        let tempdir = tempdir()?;
+        let repo_root = fs::canonicalize(tempdir.path())?;
+        let source = repo_root.join("spec.md");
+        let source_artifact_base = repo_root.join("generated").join("source_ir");
+        let evidence_artifact_base = repo_root.join("generated").join("evidence_ir");
+        let semantic_artifact_base = repo_root.join("generated").join("semantic_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal HREADY is input width 1.\n\n",
+                "Signal PREADY is output width 1.\n\n",
+                "Clock clk.\n\n",
+                "The Completer drives PREADY.\n\n",
+                "The Requester reads PREADY.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir
+            .signal_constraints
+            .push(crate::ir::source::SignalConstraintRecord {
+                constraint_id: "sigcon_pready_high".to_string(),
+                subject_signal: "PREADY".to_string(),
+                constraint_kind: crate::ir::source::SignalConstraintKind::MustBeHigh,
+                target_value: None,
+                condition_text: Some("when HREADY is LOW".to_string()),
+                negated: false,
+                source_text: "PREADY must be HIGH when HREADY is LOW.".to_string(),
+                supporting_statement_ids: vec!["stmt_pready_high".to_string()],
+                automation_confidence: crate::ir::source::AutomationConfidence::Medium,
+            });
+        evidence_ir
+            .signal_constraints
+            .push(crate::ir::source::SignalConstraintRecord {
+                constraint_id: "sigcon_pready_low".to_string(),
+                subject_signal: "PREADY".to_string(),
+                constraint_kind: crate::ir::source::SignalConstraintKind::MustBeLow,
+                target_value: None,
+                condition_text: Some("when HREADY is LOW".to_string()),
+                negated: false,
+                source_text: "PREADY must be LOW when HREADY is LOW.".to_string(),
+                supporting_statement_ids: vec!["stmt_pready_low".to_string()],
+                automation_confidence: crate::ir::source::AutomationConfidence::Medium,
+            });
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+
+        let snapshot = ProjectedArtifactSnapshot {
+            document_key: "doc".to_string(),
+            display_name: "Spec.pdf".to_string(),
+            stage: IrStage::IntentIr,
+            artifact_path: repo_root.join("generated/intent_ir/doc/intent_ir.json"),
+            replay_inputs: vec![ProjectedReplayInput {
+                input_kind: "semantic_ir",
+                path: semantic_ir.artifact_layout.semantic_ir_path.clone(),
+            }],
+            report: ValidationReportRecord {
+                report_id: "validation_intent_ir_test".to_string(),
+                validated_stage: IrStage::IntentIr,
+                artifact_fingerprint: "fingerprint".to_string(),
+                summary: "IntentIR validation with temporal-conflict rescan guidance".to_string(),
+                overall_score: Some(70),
+                grade: Some("GOOD".to_string()),
+                metrics: Vec::new(),
+                findings: vec![ValidationFindingRecord {
+                    finding_id: INTENT_TEMPORAL_CONFLICT_SURFACE_RESCAN_GUIDANCE.to_string(),
+                    severity: ValidationFindingSeverity::Info,
+                    category: "rescan_guidance".to_string(),
+                    summary: "typed timing surface still carries contradictory value obligations"
+                        .to_string(),
+                    related_ids: vec!["temporal_conflict_0001".to_string()],
+                }],
+            },
+        };
+
+        let recommendations =
+            collect_rescan_recommendations(&[snapshot], &repo_root, &test_rescan_vlm_policy());
+
+        assert_eq!(recommendations.len(), 1);
+        assert_eq!(
+            recommendations[0].replay_inputs,
+            vec![
+                ProjectRescanReplayInput {
+                    input_kind: "evidence_ir".to_string(),
+                    path: "generated/evidence_ir/spec/evidence_ir.json".to_string(),
+                },
+                ProjectRescanReplayInput {
+                    input_kind: "semantic_ir".to_string(),
+                    path: "generated/semantic_ir/spec/semantic_ir.json".to_string(),
+                },
+            ]
+        );
+        assert_eq!(
+            recommendations[0].recommended_action,
+            "run local NLP enrichment on EvidenceIR, rebuild SemanticIR and IntentIR, and validate whether the related temporal conflict ids survive with a single locally corroborated timing obligation instead of contradictory value obligations"
         );
         assert_eq!(recommendations[0].recommended_commands.len(), 4);
         assert_eq!(

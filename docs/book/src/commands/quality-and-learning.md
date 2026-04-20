@@ -56,6 +56,7 @@ Graph-direction coverage guidance now feeds it too, so already-canonical but sti
 Protocol connectivity endpoint guidance now feeds it too, so already-canonical signals that still have only a producer side or only a consumer side can be replayed for missing endpoint recovery through the same local pipeline.
 Infrastructure clock/reset sourcing is intentionally not in that replay family; it stays a system-contract note when the protocol document does not name a concrete producer.
 Interface-signal conflict guidance now feeds it too, so preserved direction/width conflict ids can be replayed for stronger local interface-shape disambiguation through the same local pipeline.
+Temporal-conflict guidance now feeds it too, so preserved contradiction ids can be replayed for stronger local timing corroboration through the same local pipeline.
 Signal-connectivity conflict guidance now feeds it too, so preserved producer-ambiguity conflict ids can be replayed for stronger local disambiguation through the same local pipeline.
 Temporal actor-grounding guidance now feeds it too, so already-typed but still-actorless temporal rules can be replayed for explicit actor-relative drive/sample recovery through the same local pipeline.
 Temporal clock-grounding guidance now feeds it too, so already-typed but still-clockless temporal rules can be replayed for explicit clock or edge recovery through the same local pipeline.
