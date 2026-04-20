@@ -75,6 +75,10 @@ const SEMANTIC_CONNECTIVITY_MISSING_CONSUMER_SURFACE_RESCAN_GUIDANCE: &str =
     "semantic_connectivity_missing_consumer_surface_rescan_guidance";
 const INTENT_CONNECTIVITY_MISSING_CONSUMER_SURFACE_RESCAN_GUIDANCE: &str =
     "intent_connectivity_missing_consumer_surface_rescan_guidance";
+const SEMANTIC_SIGNAL_CONNECTIVITY_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
+    "semantic_signal_connectivity_conflict_surface_rescan_guidance";
+const INTENT_SIGNAL_CONNECTIVITY_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
+    "intent_signal_connectivity_conflict_surface_rescan_guidance";
 
 macro_rules! println {
     () => {
@@ -462,6 +466,28 @@ fn push_connectivity_gap_rescan_guidance(
         "rescan_guidance",
         format!(
             "{} signal id(s) in {stage_label} should trigger targeted NLP rescans plus downstream rebuild because the current connectivity graph still lacks resolved {gap_label} connectivity evidence",
+            related_ids.len()
+        ),
+        related_ids.to_vec(),
+    ));
+}
+
+fn push_signal_connectivity_conflict_rescan_guidance(
+    findings: &mut Vec<ValidationFindingRecord>,
+    finding_id: &str,
+    stage_label: &str,
+    related_ids: &[String],
+) {
+    if related_ids.is_empty() {
+        return;
+    }
+
+    findings.push(finding(
+        finding_id,
+        ValidationFindingSeverity::Info,
+        "rescan_guidance",
+        format!(
+            "{} connectivity conflict id(s) in {stage_label} should trigger targeted NLP rescans plus downstream rebuild because the current structural graph still carries unresolved producer ambiguity",
             related_ids.len()
         ),
         related_ids.to_vec(),
@@ -2928,6 +2954,11 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         temporal_rules_with_multi_predicate_antecedents_count(&ir.temporal_rules);
     let actor_signal_relation_related_ids =
         actor_signal_relation_related_ids(&ir.actor_signal_relations);
+    let signal_connectivity_conflict_related_ids = ir
+        .signal_connectivity_conflicts
+        .iter()
+        .map(|conflict| conflict.conflict_id.clone())
+        .collect::<Vec<_>>();
 
     let mut findings = Vec::new();
     if !ir.actor_signal_relations.is_empty() && ir.actor_ports.is_empty() {
@@ -3014,11 +3045,14 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 "{} signal connectivity conflict(s) detected; the structural KG still has unresolved producer ambiguity",
                 ir.signal_connectivity_conflicts.len()
             ),
-            ir.signal_connectivity_conflicts
-                .iter()
-                .map(|conflict| conflict.conflict_id.clone())
-                .collect(),
+            signal_connectivity_conflict_related_ids.clone(),
         ));
+        push_signal_connectivity_conflict_rescan_guidance(
+            &mut findings,
+            SEMANTIC_SIGNAL_CONNECTIVITY_CONFLICT_SURFACE_RESCAN_GUIDANCE,
+            "SemanticIR",
+            &signal_connectivity_conflict_related_ids,
+        );
     }
     if !ir.interface_signal_conflicts.is_empty() {
         findings.push(finding(
@@ -4236,6 +4270,11 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         temporal_rules_with_multi_predicate_antecedents_count(&ir.temporal_rules);
     let actor_signal_relation_related_ids =
         actor_signal_relation_related_ids(&ir.actor_signal_relations);
+    let signal_connectivity_conflict_related_ids = ir
+        .signal_connectivity_conflicts
+        .iter()
+        .map(|conflict| conflict.conflict_id.clone())
+        .collect::<Vec<_>>();
 
     let mut findings = Vec::new();
     if !ir.actor_signal_relations.is_empty() && ir.actor_ports.is_empty() {
@@ -4322,11 +4361,14 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 "{} signal connectivity conflict(s) detected; the carried structural KG still has unresolved producer ambiguity",
                 ir.signal_connectivity_conflicts.len()
             ),
-            ir.signal_connectivity_conflicts
-                .iter()
-                .map(|conflict| conflict.conflict_id.clone())
-                .collect(),
+            signal_connectivity_conflict_related_ids.clone(),
         ));
+        push_signal_connectivity_conflict_rescan_guidance(
+            &mut findings,
+            INTENT_SIGNAL_CONNECTIVITY_CONFLICT_SURFACE_RESCAN_GUIDANCE,
+            "IntentIR",
+            &signal_connectivity_conflict_related_ids,
+        );
     }
     if !ir.interface_signal_conflicts.is_empty() {
         findings.push(finding(
@@ -9600,38 +9642,63 @@ mod tests {
     }
 
     #[test]
-    fn validate_intent_ir_flags_signal_connectivity_conflicts() -> Result<()> {
-        let tempdir = tempdir()?;
-        let source = tempdir.path().join("spec.md");
-        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
-        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
-        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
-        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
-        fs::write(
-            &source,
+    fn validate_semantic_ir_reports_signal_connectivity_conflict_related_ids() -> Result<()> {
+        let (semantic_ir, _) = build_semantic_and_intent_from_markdown(
+            "semantic_signal_connectivity_conflict.md",
             concat!(
                 "# Protocol\n",
-                "Signal PREADY is output width 1.\n\n",
-                "The Completer drives PREADY.\n\n",
+                "Signal PREADY is output width 1.\n",
+                "\n",
+                "The Completer drives PREADY.\n",
+                "\n",
                 "The Monitor drives PREADY.\n",
             ),
         )?;
 
-        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
-        let evidence_ir = EvidenceIr::build(
-            &source_ir.artifact_layout.source_ir_path,
-            &evidence_artifact_base,
-        )?;
-        evidence_ir.write_to_disk()?;
-        let semantic_ir = SemanticIr::build(
-            &evidence_ir.artifact_layout.evidence_ir_path,
-            &semantic_artifact_base,
-        )?;
-        semantic_ir.write_to_disk()?;
-        let intent_ir = IntentIr::build(
-            &semantic_ir.artifact_layout.semantic_ir_path,
-            &intent_artifact_base,
+        let report = validate_semantic_ir(
+            &semantic_ir,
+            "semantic_signal_connectivity_conflicts".to_string(),
+        );
+        assert_eq!(
+            metric_value(&report, "signal_connectivity_conflicts"),
+            Some("1")
+        );
+        let finding = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "semantic_signal_connectivity_conflicts_present")
+            .expect("expected semantic signal-connectivity conflict finding");
+        assert_eq!(
+            finding.related_ids,
+            vec!["signal_connectivity_conflict_0001".to_string()]
+        );
+        let rescan_guidance = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == SEMANTIC_SIGNAL_CONNECTIVITY_CONFLICT_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected semantic signal-connectivity conflict rescan guidance");
+        assert_eq!(
+            rescan_guidance.related_ids,
+            vec!["signal_connectivity_conflict_0001".to_string()]
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_intent_ir_reports_signal_connectivity_conflict_related_ids() -> Result<()> {
+        let (_, intent_ir) = build_semantic_and_intent_from_markdown(
+            "intent_signal_connectivity_conflict.md",
+            concat!(
+                "# Protocol\n",
+                "Signal PREADY is output width 1.\n",
+                "\n",
+                "The Completer drives PREADY.\n",
+                "\n",
+                "The Monitor drives PREADY.\n",
+            ),
         )?;
 
         let report = validate_intent_ir(&intent_ir, "signal_connectivity_conflicts".to_string());
@@ -9639,10 +9706,26 @@ mod tests {
             metric_value(&report, "signal_connectivity_conflicts"),
             Some("1")
         );
-        assert!(has_finding(
-            &report,
-            "intent_signal_connectivity_conflicts_present"
-        ));
+        let finding = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "intent_signal_connectivity_conflicts_present")
+            .expect("expected intent signal-connectivity conflict finding");
+        assert_eq!(
+            finding.related_ids,
+            vec!["signal_connectivity_conflict_0001".to_string()]
+        );
+        let rescan_guidance = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == INTENT_SIGNAL_CONNECTIVITY_CONFLICT_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected intent signal-connectivity conflict rescan guidance");
+        assert_eq!(
+            rescan_guidance.related_ids,
+            vec!["signal_connectivity_conflict_0001".to_string()]
+        );
 
         Ok(())
     }

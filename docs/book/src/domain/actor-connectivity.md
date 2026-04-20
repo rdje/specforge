@@ -162,6 +162,9 @@ That conflict can then be carried through:
 
 This makes structural uncertainty visible to users and downstream consumers.
 
+Those conflicts are now replay surfaces too.
+When unresolved producer ambiguity survives into `SemanticIR` or `IntentIR`, validation emits `semantic_signal_connectivity_conflict_surface_rescan_guidance` so the preserved conflict ids can drive the same bounded local replay lane used for other evidence-strength gaps.
+
 ## Missing endpoints
 
 The graph can also be incomplete without being contradictory.

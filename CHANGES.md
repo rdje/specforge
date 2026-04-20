@@ -1,5 +1,28 @@
 # CHANGES
 
+## 2026-04-20 (Signal-connectivity conflicts now emit replayable rescan guidance)
+
+### Improved: preserved producer-ambiguity conflicts now advertise the next bounded replay
+- Validation already reported when `SemanticIR` or `IntentIR` carried `signal_connectivity_conflicts` such as multi-producer ambiguity.
+- That was honest, but still too passive:
+  - reviewers could see the preserved conflict ids
+  - the replay planner had no typed next step for revisiting local actor/role evidence on those same conflicts
+  - producer ambiguity looked like a static warning instead of an explicit replay target
+- This slice turns that weak state into the same bounded replay contract used for nearby evidence-strength gaps:
+  - `validate` now emits `semantic_signal_connectivity_conflict_surface_rescan_guidance` / `intent_signal_connectivity_conflict_surface_rescan_guidance`
+  - those findings stay in `rescan_guidance` and carry the same conflict ids already reported by the connectivity-conflict finding
+  - `project-validation` maps them onto the local `EvidenceIR -> SemanticIR -> IntentIR? -> validate` NLP replay lane
+  - the action text is explicit about collapsing the related conflict ids toward single-producer connectivity rather than merely rerunning extraction
+  - the tracked fixtures `multi_producer_conflict_negative` and `negative_knowledge_prior_guided_connectivity_conflict_caution_gold` now require the new semantic/intent replay guidance so the ambiguity case is benchmark-locked both with and without prior-memory caution
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge signal_connectivity_conflict` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `400` Rust tests and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-19 (Connectivity endpoint gaps now emit replayable rescan guidance)
 
 ### Improved: producerless and consumerless protocol signals now advertise the next bounded replay

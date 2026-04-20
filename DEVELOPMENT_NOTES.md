@@ -7,6 +7,22 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-20 Signal-connectivity conflicts should be replay targets, not only preserved warnings
+- Once a `signal_connectivity_conflict` exists, the weak state is no longer "did the graph preserve ambiguity?" but "does the product advertise the bounded current-document step that might disambiguate it?"
+- The conflict ids are already stable and reviewable.
+- Leaving them as only warnings underspecifies the next action.
+- The right follow-up is the same conservative replay lane used for nearby structural evidence gaps:
+  - rerun local NLP enrichment on `EvidenceIR`
+  - rebuild the downstream canonical stage(s)
+  - review whether the same conflict ids collapse toward single-producer connectivity
+- This is still not an auto-fix story:
+  - the current structural ambiguity remains explicit
+  - the replay planner only identifies the local evidence boundary and deterministic rebuild path
+  - no canonical truth is auto-mutated just because the replay path exists
+- This slice also pairs well with the existing negative-knowledge caution family:
+  - prior-memory caution still says "be careful with this conflict archetype"
+  - conflict-specific replay guidance now also says "here is the bounded local step to try on this exact preserved ambiguity"
+
 ## 2026-04-19 Protocol connectivity endpoint gaps should be replay targets, not passive structural debt
 - Once a protocol `signal_connectivity` record exists, the next weak state is often not a conflict but an incomplete endpoint:
   - a producer is missing

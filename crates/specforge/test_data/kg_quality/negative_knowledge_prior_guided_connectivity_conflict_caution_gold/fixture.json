@@ -39,10 +39,18 @@
       "semantic": {
         "finding_ids_include": [
           "semantic_signal_connectivity_conflicts_present",
+          "semantic_signal_connectivity_conflict_surface_rescan_guidance",
           "semantic_negative_knowledge_prior_matches",
           "semantic_negative_knowledge_rescan_guidance"
         ],
         "findings_include": [
+          {
+            "finding_id": "semantic_signal_connectivity_conflict_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "unresolved producer ambiguity",
+            "related_ids_include": ["signal_connectivity_conflict_0001"]
+          },
           {
             "finding_id": "semantic_negative_knowledge_prior_matches",
             "severity": "info",
@@ -68,10 +76,18 @@
       "intent": {
         "finding_ids_include": [
           "intent_signal_connectivity_conflicts_present",
+          "intent_signal_connectivity_conflict_surface_rescan_guidance",
           "intent_negative_knowledge_prior_matches",
           "intent_negative_knowledge_rescan_guidance"
         ],
         "findings_include": [
+          {
+            "finding_id": "intent_signal_connectivity_conflict_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "unresolved producer ambiguity",
+            "related_ids_include": ["signal_connectivity_conflict_0001"]
+          },
           {
             "finding_id": "intent_negative_knowledge_prior_matches",
             "severity": "info",

@@ -25,12 +25,32 @@
     "validation": {
       "semantic": {
         "finding_ids_include": [
-          "semantic_signal_connectivity_conflicts_present"
+          "semantic_signal_connectivity_conflicts_present",
+          "semantic_signal_connectivity_conflict_surface_rescan_guidance"
+        ],
+        "findings_include": [
+          {
+            "finding_id": "semantic_signal_connectivity_conflict_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "unresolved producer ambiguity",
+            "related_ids_include": ["signal_connectivity_conflict_0001"]
+          }
         ]
       },
       "intent": {
         "finding_ids_include": [
-          "intent_signal_connectivity_conflicts_present"
+          "intent_signal_connectivity_conflicts_present",
+          "intent_signal_connectivity_conflict_surface_rescan_guidance"
+        ],
+        "findings_include": [
+          {
+            "finding_id": "intent_signal_connectivity_conflict_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "unresolved producer ambiguity",
+            "related_ids_include": ["signal_connectivity_conflict_0001"]
+          }
         ]
       }
     }
