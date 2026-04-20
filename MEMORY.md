@@ -22,21 +22,26 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `9e13079`
-- latest_commit_brief_message: `feat(validation): route interface conflicts into rescans`
-- note: latest landed slice routes preserved interface-signal conflict ids into the same bounded replay-plan machinery used by other evidence-level rescans
+- latest_commit_hash: `bd3a5fc`
+- latest_commit_brief_message: `feat(validation): route temporal conflicts into rescans`
+- note: latest landed slice routes preserved temporal-conflict ids into the same bounded replay-plan machinery used by other evidence-level rescans
 
 ## Recent commit chain (last 5)
+- `bd3a5fc` feat(validation): route temporal conflicts into rescans
+- `63551fd` docs(memory): sync latest landed baseline
 - `9e13079` feat(validation): route interface conflicts into rescans
 - `7c1a372` feat(validation): route connectivity conflicts into rescans
 - `c0474e4` docs(memory): sync latest landed baseline
-- `a28f634` feat(validation): route connectivity endpoint gaps into rescans
 - `eb02080` docs(memory): sync latest landed baseline
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- branch is ahead of `origin/main` by seventeen local commits (`71ad856`, `21d6bad`, `e4aa175`, `3516df6`, `cf3580e`, `3e5657f`, `3e501d7`, `a9fde1e`, `9ec4803`, `71f8406`, `8ce3a06`, `eb02080`, `a28f634`, `c0474e4`, `7c1a372`, `9e13079`); do not push this slice unless the user asks or until another 25 local commits accumulate from the last push at `4821b0a`
+- branch is ahead of `origin/main` by nineteen local commits (`71ad856`, `21d6bad`, `e4aa175`, `3516df6`, `cf3580e`, `3e5657f`, `3e501d7`, `a9fde1e`, `9ec4803`, `71f8406`, `8ce3a06`, `eb02080`, `a28f634`, `c0474e4`, `7c1a372`, `9e13079`, `63551fd`, `bd3a5fc`); do not push this slice unless the user asks or until another 25 local commits accumulate from the last push at `4821b0a`
 - the README/SESSION_BOOTSTRAP handoff has been re-executed from the repo entrypoint and the referenced continuity docs have been reread
+- the latest landed slice adds temporal-conflict-specific replay planning for preserved contradictory timing obligations:
+  - `validate` emits semantic/intent temporal-conflict `rescan_guidance` findings alongside the existing conflict warning
+  - `project-validation` recognizes that guidance as the same local `EvidenceIR -> SemanticIR -> IntentIR? -> validate` replay lane used by other evidence-strength gaps
+  - the tracked fixtures `temporal_conflict_negative` and `negative_knowledge_prior_guided_temporal_conflict_caution_gold` now both require the new replay guidance so the contradiction case is locked with and without prior-memory caution
 - the latest landed slice adds interface-conflict-specific replay planning for preserved direction/width disagreement:
   - `validate` emits semantic/intent interface-signal-conflict `rescan_guidance` findings alongside the existing conflict warning
   - `project-validation` recognizes that guidance as the same local `EvidenceIR -> SemanticIR -> IntentIR? -> validate` replay lane used by other evidence-strength gaps
@@ -63,8 +68,8 @@
   - focused semantic/intent planner tests cover the new action text and replay-input recovery
   - the tracked fixture `temporal_clock_grounding_surface_negative` now locks the missing-clock-grounding metric plus semantic/intent replay guidance on a genuinely clockless typed temporal rule
 - the previously landed slice added temporal-cycle-window-specific `rescan_guidance` for typed canonical temporal rules that remain unbounded and projected it through `project-validation` as an `EvidenceIR -> SemanticIR -> IntentIR? -> validate` replay plan
-- validation for the latest landed slice passed through `cargo test -p specforge interface_signal_conflict`, `cargo test -p specforge signal_connectivity_conflict_rescan_guidance`, `cargo test -p specforge kg_bench_runs_tracked_fixtures`, `bash scripts/run_docs_ci.sh`, `bash scripts/run_ci.sh`, and `git diff --check`
-- the current full local CI baseline is `404` Rust tests plus warning-deny rustdoc and the mdBook build
+- validation for the latest landed slice passed through `cargo test -p specforge temporal_conflict`, `cargo test -p specforge project_validation_collects_temporal_conflict_rescan_guidance`, `cargo test -p specforge kg_bench_runs_tracked_fixtures`, `bash scripts/run_docs_ci.sh`, `bash scripts/run_ci.sh`, and `git diff --check`
+- the current full local CI baseline is `408` Rust tests plus warning-deny rustdoc and the mdBook build
 - README sentinel remains intact after the slice: `Read SESSION_BOOTSTRAP.md and start from there.`
 - latest committed adapter hardening adds sticky conflict collapse for duplicate explicit top-port direction declarations
 - the committed regression declares top port `drive_data` once as output and once as input; expected behavior is unresolved top-port direction in both the top candidate and selected signal inventory, blocked renderability, and no emitted `.fsm` target text
