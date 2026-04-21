@@ -66,6 +66,10 @@ const SEMANTIC_GRAPH_DIRECTION_COVERAGE_SURFACE_RESCAN_GUIDANCE: &str =
     "semantic_graph_direction_coverage_surface_rescan_guidance";
 const INTENT_GRAPH_DIRECTION_COVERAGE_SURFACE_RESCAN_GUIDANCE: &str =
     "intent_graph_direction_coverage_surface_rescan_guidance";
+const SEMANTIC_GRAPH_DIRECTION_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
+    "semantic_graph_direction_conflict_surface_rescan_guidance";
+const INTENT_GRAPH_DIRECTION_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
+    "intent_graph_direction_conflict_surface_rescan_guidance";
 const SEMANTIC_CONNECTIVITY_MISSING_PRODUCER_SURFACE_RESCAN_GUIDANCE: &str =
     "semantic_connectivity_missing_producer_surface_rescan_guidance";
 const INTENT_CONNECTIVITY_MISSING_PRODUCER_SURFACE_RESCAN_GUIDANCE: &str =
@@ -892,6 +896,9 @@ fn replay_inputs_for_rescan(
     if let Some(inputs) = signal_connectivity_conflict_replay_inputs(stage, snapshot, finding) {
         return inputs;
     }
+    if let Some(inputs) = graph_direction_conflict_replay_inputs(stage, snapshot, finding) {
+        return inputs;
+    }
     if let Some(inputs) = graph_direction_coverage_replay_inputs(stage, snapshot, finding) {
         return inputs;
     }
@@ -1071,6 +1078,18 @@ fn graph_direction_coverage_replay_inputs(
     finding: &ValidationFindingRecord,
 ) -> Option<Vec<ProjectedReplayInput>> {
     if !is_graph_direction_coverage_rescan(stage, finding) {
+        return None;
+    }
+
+    evidence_nlp_replay_inputs_for_stage(stage, snapshot)
+}
+
+fn graph_direction_conflict_replay_inputs(
+    stage: IrStage,
+    snapshot: &ProjectedArtifactSnapshot,
+    finding: &ValidationFindingRecord,
+) -> Option<Vec<ProjectedReplayInput>> {
+    if !is_graph_direction_conflict_rescan(stage, finding) {
         return None;
     }
 
@@ -1579,6 +1598,19 @@ fn is_graph_direction_coverage_rescan(stage: IrStage, finding: &ValidationFindin
     )
 }
 
+fn is_graph_direction_conflict_rescan(stage: IrStage, finding: &ValidationFindingRecord) -> bool {
+    matches!(
+        (stage, finding.finding_id.as_str()),
+        (
+            IrStage::SemanticIr,
+            SEMANTIC_GRAPH_DIRECTION_CONFLICT_SURFACE_RESCAN_GUIDANCE
+        ) | (
+            IrStage::IntentIr,
+            INTENT_GRAPH_DIRECTION_CONFLICT_SURFACE_RESCAN_GUIDANCE
+        )
+    )
+}
+
 fn is_evidence_nlp_rebuild_rescan(stage: IrStage, finding: &ValidationFindingRecord) -> bool {
     is_temporal_rule_surface_rescan(stage, finding)
         || is_semantic_role_arbitration_rescan(stage, finding)
@@ -1591,6 +1623,7 @@ fn is_evidence_nlp_rebuild_rescan(stage: IrStage, finding: &ValidationFindingRec
         || is_temporal_conflict_rescan(stage, finding)
         || is_signal_polarity_conflict_rescan(stage, finding)
         || is_signal_connectivity_conflict_rescan(stage, finding)
+        || is_graph_direction_conflict_rescan(stage, finding)
         || is_graph_direction_coverage_rescan(stage, finding)
         || is_temporal_actor_grounding_rescan(stage, finding)
         || is_temporal_clock_grounding_rescan(stage, finding)
@@ -1836,6 +1869,20 @@ fn recommended_rescan_action(stage: IrStage, finding: &ValidationFindingRecord) 
             }
             IrStage::SourceIr | IrStage::EvidenceIr => unreachable!(
                 "signal-connectivity-conflict specialized action only applies to semantic/intent rescans"
+            ),
+        };
+    }
+
+    if is_graph_direction_conflict_rescan(stage, finding) {
+        return match stage {
+            IrStage::SemanticIr => {
+                "run local NLP enrichment on EvidenceIR, rebuild SemanticIR, and validate whether the related graph-direction conflict ids collapse toward one actor-relative direction per actor-signal edge"
+            }
+            IrStage::IntentIr => {
+                "run local NLP enrichment on EvidenceIR, rebuild SemanticIR and IntentIR, and validate whether the related graph-direction conflict ids survive with one actor-relative direction per actor-signal edge instead of unresolved same-actor direction disagreement"
+            }
+            IrStage::SourceIr | IrStage::EvidenceIr => unreachable!(
+                "graph-direction-conflict specialized action only applies to semantic/intent rescans"
             ),
         };
     }
@@ -3168,6 +3215,73 @@ mod tests {
     }
 
     #[test]
+    fn project_validation_collects_graph_direction_conflict_rescan_guidance_for_semantic_stage() {
+        let tempdir = tempdir().expect("tempdir");
+        let repo_root = tempdir.path();
+        let artifact_path = repo_root.join("generated/semantic_ir/doc/semantic_ir.json");
+        let evidence_ir_path = repo_root.join("generated/evidence_ir/doc/evidence_ir.json");
+        let snapshot = ProjectedArtifactSnapshot {
+            document_key: "doc".to_string(),
+            display_name: "Spec.pdf".to_string(),
+            stage: IrStage::SemanticIr,
+            artifact_path,
+            replay_inputs: vec![ProjectedReplayInput {
+                input_kind: "evidence_ir",
+                path: evidence_ir_path.clone(),
+            }],
+            report: ValidationReportRecord {
+                report_id: "validation_semantic_ir_test".to_string(),
+                validated_stage: IrStage::SemanticIr,
+                artifact_fingerprint: "fingerprint".to_string(),
+                summary: "SemanticIR validation with graph-direction conflict rescan guidance"
+                    .to_string(),
+                overall_score: Some(78),
+                grade: Some("GOOD".to_string()),
+                metrics: Vec::new(),
+                findings: vec![ValidationFindingRecord {
+                    finding_id: SEMANTIC_GRAPH_DIRECTION_CONFLICT_SURFACE_RESCAN_GUIDANCE
+                        .to_string(),
+                    severity: ValidationFindingSeverity::Info,
+                    category: "rescan_guidance".to_string(),
+                    summary:
+                        "actor-relative graph still carries unresolved same-actor direction disagreement"
+                            .to_string(),
+                    related_ids: vec!["graph_direction_conflict:actor_completer:PREADY".to_string()],
+                }],
+            },
+        };
+
+        let recommendations =
+            collect_rescan_recommendations(&[snapshot], repo_root, &test_rescan_vlm_policy());
+
+        assert_eq!(recommendations.len(), 1);
+        assert_eq!(
+            recommendations[0].replay_inputs,
+            vec![ProjectRescanReplayInput {
+                input_kind: "evidence_ir".to_string(),
+                path: "generated/evidence_ir/doc/evidence_ir.json".to_string(),
+            }]
+        );
+        assert_eq!(
+            recommendations[0].recommended_action,
+            "run local NLP enrichment on EvidenceIR, rebuild SemanticIR, and validate whether the related graph-direction conflict ids collapse toward one actor-relative direction per actor-signal edge"
+        );
+        assert_eq!(recommendations[0].recommended_commands.len(), 3);
+        assert_eq!(
+            recommendations[0].recommended_commands[0].intent,
+            "nlp_enrich_evidence_ir"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[1].intent,
+            "rebuild_semantic_ir"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[2].intent,
+            "validate_current_artifact"
+        );
+    }
+
+    #[test]
     fn project_validation_collects_connectivity_missing_producer_rescan_guidance_for_semantic_stage()
      {
         let tempdir = tempdir().expect("tempdir");
@@ -4471,6 +4585,128 @@ mod tests {
         assert_eq!(
             recommendations[0].recommended_action,
             "run local NLP enrichment on EvidenceIR, rebuild SemanticIR and IntentIR, and validate whether the related signal ids survive with actor-relative graph direction coverage instead of remaining graph-uncovered"
+        );
+        assert_eq!(recommendations[0].recommended_commands.len(), 4);
+        assert_eq!(
+            recommendations[0].recommended_commands[0].intent,
+            "nlp_enrich_evidence_ir"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[1].intent,
+            "rebuild_semantic_ir"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[2].intent,
+            "rebuild_intent_ir"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[3].intent,
+            "validate_current_artifact"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn project_validation_collects_graph_direction_conflict_rescan_guidance_for_intent_stage()
+    -> Result<()> {
+        let tempdir = tempdir()?;
+        let repo_root = fs::canonicalize(tempdir.path())?;
+        let source = repo_root.join("spec.md");
+        let source_artifact_base = repo_root.join("generated").join("source_ir");
+        let evidence_artifact_base = repo_root.join("generated").join("evidence_ir");
+        let semantic_artifact_base = repo_root.join("generated").join("semantic_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal PREADY is output width 1.\n",
+                "\n",
+                "Signal PADDR is input width 32.\n",
+                "\n",
+                "The Completer drives PREADY.\n",
+                "\n",
+                "The Requester reads PREADY.\n",
+                "\n",
+                "The Requester drives PADDR.\n",
+                "\n",
+                "The Completer samples PADDR.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let mut semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        let conflicting_port = semantic_ir
+            .actor_ports
+            .iter()
+            .find(|port| port.actor_name == "Completer" && port.signal_name == "PREADY")
+            .cloned()
+            .expect("Completer PREADY actor port should exist");
+        let mut conflicting_port = conflicting_port;
+        conflicting_port.direction = crate::ir::semantic::ActorRelativeDirection::Input;
+        semantic_ir.actor_ports.push(conflicting_port);
+        semantic_ir.write_to_disk()?;
+
+        let snapshot = ProjectedArtifactSnapshot {
+            document_key: "doc".to_string(),
+            display_name: "Spec.pdf".to_string(),
+            stage: IrStage::IntentIr,
+            artifact_path: repo_root.join("generated/intent_ir/doc/intent_ir.json"),
+            replay_inputs: vec![ProjectedReplayInput {
+                input_kind: "semantic_ir",
+                path: semantic_ir.artifact_layout.semantic_ir_path.clone(),
+            }],
+            report: ValidationReportRecord {
+                report_id: "validation_intent_ir_test".to_string(),
+                validated_stage: IrStage::IntentIr,
+                artifact_fingerprint: "fingerprint".to_string(),
+                summary: "IntentIR validation with graph-direction conflict rescan guidance"
+                    .to_string(),
+                overall_score: Some(72),
+                grade: Some("GOOD".to_string()),
+                metrics: Vec::new(),
+                findings: vec![ValidationFindingRecord {
+                    finding_id: INTENT_GRAPH_DIRECTION_CONFLICT_SURFACE_RESCAN_GUIDANCE
+                        .to_string(),
+                    severity: ValidationFindingSeverity::Info,
+                    category: "rescan_guidance".to_string(),
+                    summary:
+                        "actor-relative graph still carries unresolved same-actor direction disagreement"
+                            .to_string(),
+                    related_ids: vec!["graph_direction_conflict:actor_completer:PREADY".to_string()],
+                }],
+            },
+        };
+
+        let recommendations =
+            collect_rescan_recommendations(&[snapshot], &repo_root, &test_rescan_vlm_policy());
+
+        assert_eq!(recommendations.len(), 1);
+        assert_eq!(
+            recommendations[0].replay_inputs,
+            vec![
+                ProjectRescanReplayInput {
+                    input_kind: "evidence_ir".to_string(),
+                    path: "generated/evidence_ir/spec/evidence_ir.json".to_string(),
+                },
+                ProjectRescanReplayInput {
+                    input_kind: "semantic_ir".to_string(),
+                    path: "generated/semantic_ir/spec/semantic_ir.json".to_string(),
+                },
+            ]
+        );
+        assert_eq!(
+            recommendations[0].recommended_action,
+            "run local NLP enrichment on EvidenceIR, rebuild SemanticIR and IntentIR, and validate whether the related graph-direction conflict ids survive with one actor-relative direction per actor-signal edge instead of unresolved same-actor direction disagreement"
         );
         assert_eq!(recommendations[0].recommended_commands.len(), 4);
         assert_eq!(

@@ -7,6 +7,23 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-21 Graph-direction self-conflicts should be replay targets, not only preserved warnings
+- Once a same-actor `graph_direction_conflict` exists, the weak state is no longer "did the canonical surface refuse to fake direction coverage?" but "does the product advertise the bounded current-document step that might reconcile it?"
+- The actor-aware conflict ids are already stable and reviewable.
+- Leaving them as only warnings underspecifies the next action.
+- The right follow-up is the same conservative replay lane used for nearby evidence-strength gaps:
+  - rerun local NLP enrichment on `EvidenceIR`
+  - rebuild the downstream canonical stage(s)
+  - review whether the same actor-signal conflict ids collapse toward one actor-relative direction per edge
+- This is still not an auto-fix story:
+  - the current direction disagreement remains explicit
+  - the replay planner only identifies the local evidence boundary and deterministic rebuild path
+  - no canonical truth is auto-mutated just because the replay path exists
+- The important distinction from the generic graph-coverage gap stays intact:
+  - coverage-gap replay means "the graph still has no usable direction for these signals"
+  - self-conflict replay means "the graph has actor-relative evidence, but the same actor still contradicts itself"
+- That split matters because it keeps the review surface honest and makes the next operator action sharper.
+
 ## 2026-04-21 Signal-polarity conflicts should be replay targets and learnable caution surfaces
 - Once a `signal_polarity_conflict` exists, the weak state is no longer "did the canonical surface preserve the disagreement?" but "does the product advertise the bounded current-document step that might reconcile it?"
 - The conflict ids are already stable and reviewable.

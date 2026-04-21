@@ -72,6 +72,10 @@ const SEMANTIC_GRAPH_DIRECTION_COVERAGE_SURFACE_RESCAN_GUIDANCE: &str =
     "semantic_graph_direction_coverage_surface_rescan_guidance";
 const INTENT_GRAPH_DIRECTION_COVERAGE_SURFACE_RESCAN_GUIDANCE: &str =
     "intent_graph_direction_coverage_surface_rescan_guidance";
+const SEMANTIC_GRAPH_DIRECTION_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
+    "semantic_graph_direction_conflict_surface_rescan_guidance";
+const INTENT_GRAPH_DIRECTION_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
+    "intent_graph_direction_conflict_surface_rescan_guidance";
 const SEMANTIC_CONNECTIVITY_MISSING_PRODUCER_SURFACE_RESCAN_GUIDANCE: &str =
     "semantic_connectivity_missing_producer_surface_rescan_guidance";
 const INTENT_CONNECTIVITY_MISSING_PRODUCER_SURFACE_RESCAN_GUIDANCE: &str =
@@ -478,6 +482,28 @@ fn push_graph_direction_coverage_rescan_guidance(
         "rescan_guidance",
         format!(
             "{} signal id(s) in {stage_label} should trigger targeted NLP rescans plus downstream rebuild because the current canonical surface still lacks actor-relative graph direction coverage",
+            related_ids.len()
+        ),
+        related_ids.to_vec(),
+    ));
+}
+
+fn push_graph_direction_conflict_rescan_guidance(
+    findings: &mut Vec<ValidationFindingRecord>,
+    finding_id: &str,
+    stage_label: &str,
+    related_ids: &[String],
+) {
+    if related_ids.is_empty() {
+        return;
+    }
+
+    findings.push(finding(
+        finding_id,
+        ValidationFindingSeverity::Info,
+        "rescan_guidance",
+        format!(
+            "{} graph-direction conflict id(s) in {stage_label} should trigger targeted NLP rescans plus downstream rebuild because the current actor-relative graph still carries unresolved same-actor direction disagreement",
             related_ids.len()
         ),
         related_ids.to_vec(),
@@ -3387,8 +3413,14 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 graph_direction_conflicts.len(),
                 graph_direction_summary.conflicts.len()
             ),
-            graph_direction_conflict_related_ids,
+            graph_direction_conflict_related_ids.clone(),
         ));
+        push_graph_direction_conflict_rescan_guidance(
+            &mut findings,
+            SEMANTIC_GRAPH_DIRECTION_CONFLICT_SURFACE_RESCAN_GUIDANCE,
+            "SemanticIR",
+            &graph_direction_conflict_related_ids,
+        );
     }
     if missing_compat_direction_count > 0 {
         findings.push(finding(
@@ -4727,8 +4759,14 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 graph_direction_conflicts.len(),
                 graph_direction_summary.conflicts.len()
             ),
-            graph_direction_conflict_related_ids,
+            graph_direction_conflict_related_ids.clone(),
         ));
+        push_graph_direction_conflict_rescan_guidance(
+            &mut findings,
+            INTENT_GRAPH_DIRECTION_CONFLICT_SURFACE_RESCAN_GUIDANCE,
+            "IntentIR",
+            &graph_direction_conflict_related_ids,
+        );
     }
     if !graph_backed_missing_compat_direction_signal_names.is_empty() {
         findings.push(finding(
@@ -7635,6 +7673,17 @@ mod tests {
             finding.related_ids,
             vec!["graph_direction_conflict:actor_completer:PREADY".to_string()]
         );
+        let rescan_guidance = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == INTENT_GRAPH_DIRECTION_CONFLICT_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected intent graph-direction conflict rescan guidance");
+        assert_eq!(
+            rescan_guidance.related_ids,
+            vec!["graph_direction_conflict:actor_completer:PREADY".to_string()]
+        );
         assert!(
             !has_finding(&report, "intent_graph_direction_coverage_incomplete"),
             "same-actor graph conflicts should report via the conflict surface rather than the generic coverage-gap finding"
@@ -7729,6 +7778,17 @@ mod tests {
             .expect("expected semantic graph-direction conflict finding");
         assert_eq!(
             finding.related_ids,
+            vec!["graph_direction_conflict:actor_completer:PREADY".to_string()]
+        );
+        let rescan_guidance = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == SEMANTIC_GRAPH_DIRECTION_CONFLICT_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected semantic graph-direction conflict rescan guidance");
+        assert_eq!(
+            rescan_guidance.related_ids,
             vec!["graph_direction_conflict:actor_completer:PREADY".to_string()]
         );
         assert!(

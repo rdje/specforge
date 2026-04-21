@@ -1,5 +1,28 @@
 # CHANGES
 
+## 2026-04-21 (Graph-direction self-conflicts now emit replayable rescan guidance)
+
+### Improved: preserved same-actor direction disagreement now advertises the next bounded replay
+- Validation already reported when `SemanticIR` or `IntentIR` carried same-actor `graph_direction_conflicts`.
+- That was honest, but still too passive:
+  - reviewers could see the preserved actor-aware conflict ids
+  - the replay planner had no typed next step for revisiting local actor/role language on those same contradictions
+  - graph-direction self-conflict looked like a static warning instead of an explicit replay target
+- This slice turns that weak state into the same bounded replay contract used for nearby evidence-strength gaps:
+  - `validate` now emits `semantic_graph_direction_conflict_surface_rescan_guidance` / `intent_graph_direction_conflict_surface_rescan_guidance`
+  - those findings stay in `rescan_guidance` and carry the same actor-aware conflict ids already reported by the graph-direction-conflict finding
+  - `project-validation` maps them onto the local `EvidenceIR -> SemanticIR -> IntentIR? -> validate` NLP replay lane
+  - the action text is explicit about collapsing the related conflict ids toward one actor-relative direction per actor-signal edge instead of merely rerunning extraction
+  - the tracked fixture `graph_direction_same_actor_conflict_negative` now requires the new semantic/intent replay guidance so the disagreement case is benchmark-locked end to end
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge project_validation_collects_graph_direction_conflict_rescan_guidance` -> passed
+- `cargo test -p specforge conflicting_same_actor_graph_direction` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_ci.sh` -> passed with `416` Rust tests and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-21 (Signal-polarity conflicts now emit replayable rescan guidance and learnable caution)
 
 ### Improved: preserved polarity disagreement now advertises the next bounded replay
