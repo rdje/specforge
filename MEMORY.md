@@ -22,25 +22,25 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `c6005a4`
-- latest_commit_brief_message: `feat(validation): route graph-direction conflicts into rescans`
-- note: latest landed slice routes preserved same-actor graph-direction conflicts into the bounded replay-plan machinery used by other evidence-level rescans
+- latest_commit_hash: `86b71e8`
+- latest_commit_brief_message: `feat(validation): route semantic conflicts into rescans`
+- note: latest landed slice routes preserved signal-semantic conflicts into the bounded replay-plan machinery used by other evidence-level rescans
 
 ## Recent commit chain (last 5)
+- `86b71e8` feat(validation): route semantic conflicts into rescans
+- `3687576` docs(memory): sync graph-direction replay baseline
 - `c6005a4` feat(validation): route graph-direction conflicts into rescans
 - `a94c73f` docs(memory): sync polarity replay baseline
 - `13dc139` feat(validation): route polarity conflicts into rescans
-- `5501cd9` docs(memory): sync latest landed baseline
-- `bd3a5fc` feat(validation): route temporal conflicts into rescans
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- branch now includes local commits through `c6005a4` and remains below the 25-commit auto-push threshold from the last push at `4821b0a`; do not push unless the user asks
+- branch now includes local commits through `86b71e8` and remains below the 25-commit auto-push threshold from the last push at `4821b0a`; do not push unless the user asks
 - the README/SESSION_BOOTSTRAP handoff has been re-executed from the repo entrypoint and the referenced continuity docs have been reread
-- the latest landed slice routes preserved same-actor graph-direction conflicts into the bounded replay lane:
-  - `validate` now emits `semantic_graph_direction_conflict_surface_rescan_guidance` / `intent_graph_direction_conflict_surface_rescan_guidance` alongside the existing graph-direction conflict warning
+- the latest landed slice routes preserved signal-semantic conflicts into the bounded replay lane:
+  - `validate` now emits `semantic_signal_semantic_conflict_surface_rescan_guidance` / `intent_signal_semantic_conflict_surface_rescan_guidance` alongside the existing semantic-conflict warning
   - `project-validation` now recognizes those findings as the same local `EvidenceIR -> SemanticIR -> IntentIR? -> validate` replay lane used by other evidence-strength gaps
-  - the tracked fixture `graph_direction_same_actor_conflict_negative` now requires the new semantic/intent replay guidance with actor-aware conflict ids such as `graph_direction_conflict:actor_completer:PREADY`
+  - the tracked fixtures `cross_modality_semantic_conflict_negative` and `negative_knowledge_prior_guided_semantic_conflict_caution_gold` now require the new semantic/intent replay guidance with exact `semantic_conflict_*` ids
 - the feature commit touched:
   - `README.md`
   - `CHANGES.md`
@@ -49,9 +49,14 @@
   - `RUST_CODEBASE_ANALYSIS.md`
   - `crates/specforge/src/commands/project_validation.rs`
   - `crates/specforge/src/commands/validate.rs`
-  - `crates/specforge/test_data/kg_quality/graph_direction_same_actor_conflict_negative/fixture.json`
+  - `crates/specforge/test_data/kg_quality/cross_modality_semantic_conflict_negative/fixture.json`
+  - `crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_semantic_conflict_caution_gold/fixture.json`
   - `docs/book/src/commands/quality-and-learning.md`
   - `docs/book/src/quality/validation.md`
+- the latest landed slice routes preserved same-actor graph-direction conflicts into the bounded replay lane:
+  - `validate` now emits `semantic_graph_direction_conflict_surface_rescan_guidance` / `intent_graph_direction_conflict_surface_rescan_guidance` alongside the existing graph-direction conflict warning
+  - `project-validation` now recognizes those findings as the same local `EvidenceIR -> SemanticIR -> IntentIR? -> validate` replay lane used by other evidence-strength gaps
+  - the tracked fixture `graph_direction_same_actor_conflict_negative` now requires the new semantic/intent replay guidance with actor-aware conflict ids such as `graph_direction_conflict:actor_completer:PREADY`
 - the latest landed slice adds signal-polarity-conflict-specific replay planning for preserved active-level disagreement:
   - `validate` emits semantic/intent signal-polarity-conflict `rescan_guidance` findings alongside the existing carried polarity-conflict warning
   - `project-validation` recognizes that guidance as the same local `EvidenceIR -> SemanticIR -> IntentIR? -> validate` replay lane used by other evidence-strength gaps
@@ -91,14 +96,14 @@
   - focused semantic/intent planner tests cover the new action text and replay-input recovery
   - the tracked fixture `temporal_clock_grounding_surface_negative` now locks the missing-clock-grounding metric plus semantic/intent replay guidance on a genuinely clockless typed temporal rule
 - the previously landed slice added temporal-cycle-window-specific `rescan_guidance` for typed canonical temporal rules that remain unbounded and projected it through `project-validation` as an `EvidenceIR -> SemanticIR -> IntentIR? -> validate` replay plan
-- validation for the latest landed graph-direction replay slice passed through:
+- validation for the latest landed signal-semantic replay slice passed through:
   - `cargo fmt --all`
-  - `cargo test -p specforge project_validation_collects_graph_direction_conflict_rescan_guidance`
-  - `cargo test -p specforge conflicting_same_actor_graph_direction`
+  - `cargo test -p specforge signal_semantic_conflict`
+  - `cargo test -p specforge project_validation_collects_signal_semantic_conflict_rescan_guidance`
   - `cargo test -p specforge kg_bench_runs_tracked_fixtures`
   - `bash scripts/run_ci.sh`
   - `git diff --check`
-- the current full local CI baseline is `416` Rust tests plus warning-deny rustdoc and the mdBook build; the tracked KG-quality suite still contains `98` fixtures
+- the current full local CI baseline is `418` Rust tests plus warning-deny rustdoc and the mdBook build; the tracked KG-quality suite still contains `98` fixtures
 - README sentinel remains intact after the slice: `Read SESSION_BOOTSTRAP.md and start from there.`
 - current post-feature state:
   - only `MEMORY.md` remains modified in the working tree for the docs-only continuity sync commit
