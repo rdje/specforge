@@ -7,6 +7,24 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-21 Named diagram-style generic edge positions should not lag behind either diagram labels or named edge prose
+- The temporal model had already become coherent in two neighboring directions:
+  - unit-first diagram labels such as `tick T3` and `posedge T4`
+  - named generic-edge prose such as `within 2 HCLK edges` and `the third edge of HCLK`
+- But one explicit family still sat awkwardly in the middle:
+  - `HCLK edge T3`
+  - `edge T3 of HCLK`
+- Those are still locally explicit timing phrases.
+- They should not lose their typed window or local clock grounding merely because the count is written as a diagram position token instead of as an ordinal word.
+- The right fix is still narrow:
+  - support only explicit known-clock generic-edge diagram positions
+  - preserve both the exact `cycle_window` and the named `clock_signal`
+  - do not widen arbitrary `edge T3` language into temporal truth when no current-document clock is named
+- This keeps the temporal model consistent:
+  - diagram-style positions and named generic-edge prose now meet cleanly
+  - local clock text stays first-class
+  - validation no longer reports a missing window or missing clock for phrases that already name both
+
 ## 2026-04-21 Plural `edge(s) of <clock>` phrasing should ground the same local clock as singular forms
 - After the named bounded-edge slice, phrases like `within 2 edges of HCLK` were in another partial state:
   - the bounded `cycle_window` could already be recovered

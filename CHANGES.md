@@ -1,5 +1,42 @@
 # CHANGES
 
+## 2026-04-21 (Named diagram-style generic edge positions now recover bounded windows)
+
+### Improved: named diagram-style generic edge wording now joins the explicit temporal model
+- `crates/specforge/src/ir/semantic.rs` now recovers exact bounded windows from the explicit known-clock diagram-style generic-edge family:
+  - `HCLK edge T3`
+  - `edge T3 of HCLK`
+  - `clock edge T4 of HCLK`
+- This closes another half-modeled temporal corner:
+  - unit-first diagram labels like `tick T3` and `posedge T4` were already first-class
+  - named bounded/ordinal generic-edge prose like `within 2 HCLK edges` and `the third edge of HCLK` was already first-class
+  - but the explicit diagram-style generic-edge bridge between them still lagged
+- The widening stays bounded and honest:
+  - only explicit known-clock generic-edge diagram positions are accepted
+  - arbitrary `edge T3` wording without a known local clock still does not become timing truth
+  - the same slice now preserves `clock_signal = HCLK` for those phrases instead of only recovering a window
+
+### Added: regression coverage for named diagram-style edge positions
+- Added parser-level coverage proving:
+  - `HCLK edge T3` now becomes `cycle_window = 3..3`
+  - `edge T4 of HCLK` now becomes `cycle_window = 4..4`
+  - both forms now preserve `clock_signal = HCLK`
+- Added end-to-end semantic coverage proving `PREADY must be asserted on edge T3 of HCLK` now preserves:
+  - `clock_signal = HCLK`
+  - `edge = rising`
+  - `cycle_window = 3..3`
+- Added validator coverage proving that same named diagram-style edge phrasing no longer triggers either `intent_temporal_rules_missing_clock_grounding` or `intent_temporal_rules_missing_cycle_windows`
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge named_diagram_edge` -> passed
+- `cargo test -p specforge named_generic_edge_diagram_position` -> passed
+- `cargo test -p specforge cycle_window` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-21 (Plural `edge(s) of <clock>` phrases now ground the local clock)
 
 ### Improved: plural `edge(s) of <clock>` wording now preserves explicit local clock grounding
