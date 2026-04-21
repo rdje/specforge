@@ -81,6 +81,21 @@
 - Focused benchmark coverage and focused `clock_edge_of_clock` unit coverage passed for this slice.
 - The current local CI baseline remains `467` Rust tests plus warning-deny rustdoc and the mdBook build, and the tracked KG-quality suite now contains `104` fixtures.
 
+## Session update (2026-04-22 trailing edge-word timing symmetry lock)
+- Continued from commit `9db08cf`, tightening the same trailing shorthand-edge benchmark family again without widening the temporal model or adding a new fixture family.
+- The prior slice already benchmark-locked token shorthand symmetry:
+  - `within 2 posedges of HCLK`
+  - `within 2 negedges of HCLK`
+- But the closely parallel word-based rising-edge form was still only implied by local parser and semantic logic:
+  - `within 2 rising edges of HCLK`
+- This slice makes that neighboring form explicit at all three useful levels:
+  - direct semantic regression now proves `PSEL must be asserted within 2 rising edges of HCLK.` preserves `clock_signal = HCLK`, `edge = rising`, and `cycle_window.max_cycles = 2`
+  - direct validator regression now proves the resulting intent rule stays fully grounded instead of surfacing missing-clock or missing-window debt
+  - the existing tracked fixture `trailing_shorthand_edge_timing_gold` now carries the same bounded word-edge rule so the phrase is benchmark-locked end to end through `SemanticIR`, `IntentIR`, and validation
+- The tracked benchmark surface size remains `105` fixtures because this is a hardening pass inside an existing family, not a new family.
+- Focused temporal tests, tracked KG fixtures, docs CI, full local CI, and whitespace checks all passed for this slice.
+- The current full local CI baseline is now `471` Rust tests plus warning-deny rustdoc and the mdBook build.
+
 ## Session update (2026-04-21 trailing shorthand-edge tracked fixture coverage)
 - Continued from commit `f7f9921`, raising the neighboring trailing shorthand-edge family into the tracked benchmark corpus instead of leaving it only in unit coverage.
 - The first benchmark pass exposed a real semantic bug rather than just a missing fixture:

@@ -9184,6 +9184,79 @@ mod tests {
     }
 
     #[test]
+    fn validate_intent_ir_does_not_flag_temporal_rules_missing_clock_grounding_for_trailing_of_word_edge_text()
+    -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir
+            .path()
+            .join("temporal_trailing_of_word_edge_text.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal HCLK is input width 1.\n\n",
+                "Signal PSEL is input width 1.\n\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_psel_within_two_rising_edges_of_hclk".to_string(),
+            subject_signal: "PSEL".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PSEL must be asserted within 2 rising edges of HCLK.".to_string(),
+            supporting_statement_ids: vec!["stmt_within_two_rising_edges_of_hclk".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let report = validate_intent_ir(&intent_ir, "temporal_grounding".to_string());
+        assert_eq!(metric_value(&report, "temporal_rules"), Some("1"));
+        assert_eq!(
+            metric_value(&report, "temporal_rules_with_cycle_window"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&report, "temporal_rules_missing_clock_grounding"),
+            Some("0")
+        );
+        assert!(!has_finding(
+            &report,
+            "intent_temporal_rules_missing_clock_grounding"
+        ));
+        assert!(!has_finding(
+            &report,
+            "intent_temporal_rules_missing_cycle_windows"
+        ));
+
+        Ok(())
+    }
+
+    #[test]
     fn validate_intent_ir_does_not_flag_temporal_rules_missing_grounding_for_clock_edge_of_clock_text()
     -> Result<()> {
         use crate::ir::evidence::EvidenceIr;

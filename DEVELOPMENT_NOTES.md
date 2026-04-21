@@ -7,6 +7,25 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Bounded edge-word timing should be locked as explicitly as the token shorthand
+- The existing trailing shorthand-edge family had become strong for token forms:
+  - `within 2 posedges of HCLK`
+  - `within 2 negedges of HCLK`
+- But the closely related spelled-out rising-edge form:
+  - `within 2 rising edges of HCLK`
+  was still only locally implied by the parser helpers and nearby regression logic.
+- That is not wrong, but it is weaker than the benchmark contract we want.
+- If the project claims this temporal family is part of the trusted typed timing surface, the bounded word-based variant should be benchmark-locked too.
+- The right move is still narrow:
+  - do not add a new fixture family
+  - deepen `trailing_shorthand_edge_timing_gold`
+  - add one direct semantic regression
+  - add one direct validator regression
+- That keeps the coverage honest without inflating the tracked corpus:
+  - shorthand token forms remain covered
+  - the parallel word-based rising-edge form is now covered too
+  - the tracked KG fixture count stays flat because this is hardening inside an existing family
+
 ## 2026-04-21 Plural shorthand-edge hardening should prove the rising-side twin too
 - The previous slice fixed the real semantics bug for plural shorthand-edge wording.
 - But the direct end-to-end proof was still asymmetric.

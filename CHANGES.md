@@ -1,5 +1,36 @@
 # CHANGES
 
+## 2026-04-22 (Trailing edge-word timing is now symmetry-locked too)
+
+### Improved: the existing trailing shorthand-edge benchmark now proves bounded word-based rising-edge prose as well
+- Extended `crates/specforge/test_data/kg_quality/trailing_shorthand_edge_timing_gold/` with:
+  - `PSEL must be asserted within 2 rising edges of HCLK.`
+- The existing tracked fixture now locks four complementary forms together:
+  - exact singular rising shorthand: `the third posedge of HCLK`
+  - bounded plural rising shorthand token form: `within 2 posedges of HCLK`
+  - bounded plural falling shorthand token form: `within 2 negedges of HCLK`
+  - bounded word-based rising-edge form: `within 2 rising edges of HCLK`
+- This keeps the same temporal family symmetric under regression instead of leaving the spelled-out rising-edge form only implied by shared parser logic.
+
+### Added: focused semantic and validator coverage for bounded word-edge timing
+- `crates/specforge/src/ir/semantic.rs` now has a direct regression proving `PSEL must be asserted within 2 rising edges of HCLK.` preserves:
+  - `clock_signal = HCLK`
+  - `edge = rising`
+  - `cycle_window.max_cycles = 2`
+- `crates/specforge/src/commands/validate.rs` now proves that bounded word-edge phrasing stays fully grounded through intent validation:
+  - `temporal_rules = 1`
+  - `temporal_rules_with_cycle_window = 1`
+  - `temporal_rules_missing_clock_grounding = 0`
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge trailing_of_shorthand_edge` -> passed
+- `cargo test -p specforge validate_intent_ir_does_not_flag_temporal_rules_missing_clock_grounding_for_trailing_of_word_edge_text` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-21 (Plural shorthand-edge timing is now symmetry-locked)
 
 ### Improved: the trailing shorthand-edge benchmark now proves plural `posedges` as well as plural `negedges`

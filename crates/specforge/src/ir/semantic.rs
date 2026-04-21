@@ -14478,7 +14478,7 @@ mod tests {
     }
 
     #[test]
-    fn derives_rising_edge_from_plural_shorthand_edge_text() -> Result<()> {
+    fn derives_rising_edge_from_trailing_of_shorthand_edge_text() -> Result<()> {
         use crate::ir::evidence::EvidenceIr;
         use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
 
@@ -14535,6 +14535,72 @@ mod tests {
             .cycle_window
             .as_ref()
             .expect("expected cycle window to be derived from 'within 2 posedges of HCLK'");
+        assert_eq!(cycle_window.min_cycles, None);
+        assert_eq!(cycle_window.max_cycles, Some(2));
+        assert_eq!(rule.clock_signal.as_deref(), Some("HCLK"));
+        assert_eq!(rule.edge, super::ClockEdge::Rising);
+
+        Ok(())
+    }
+
+    #[test]
+    fn derives_rising_edge_from_trailing_of_word_edge_text() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir
+            .path()
+            .join("temporal_trailing_of_word_edge_rising.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal HCLK is input width 1.\n\n",
+                "Signal PSEL is input width 1.\n\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_psel_within_two_rising_edges_of_hclk".to_string(),
+            subject_signal: "PSEL".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PSEL must be asserted within 2 rising edges of HCLK.".to_string(),
+            supporting_statement_ids: vec!["stmt_within_two_rising_edges_of_hclk".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| {
+                rule.rule_id
+                    == "temporal_signal_constraint_sigcon_psel_within_two_rising_edges_of_hclk"
+            })
+            .expect("expected temporal rule derived from word-edge timing constraint");
+        let cycle_window = rule
+            .cycle_window
+            .as_ref()
+            .expect("expected cycle window to be derived from 'within 2 rising edges of HCLK'");
         assert_eq!(cycle_window.min_cycles, None);
         assert_eq!(cycle_window.max_cycles, Some(2));
         assert_eq!(rule.clock_signal.as_deref(), Some("HCLK"));

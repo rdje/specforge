@@ -35,13 +35,24 @@
         "source_text": "PENABLE must be asserted within 2 posedges of HCLK.",
         "supporting_statement_ids": ["stmt_within_two_posedges_of_hclk"],
         "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_psel_within_two_rising_edges_of_hclk",
+        "subject_signal": "PSEL",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "PSEL must be asserted within 2 rising edges of HCLK.",
+        "supporting_statement_ids": ["stmt_within_two_rising_edges_of_hclk"],
+        "automation_confidence": "medium"
       }
     ]
   },
   "expectations": {
     "semantic": {
-      "signal_names_include": ["PREADY", "PENABLE", "PSLVERR"],
-      "temporal_rule_count": 3,
+      "signal_names_include": ["PREADY", "PENABLE", "PSLVERR", "PSEL"],
+      "temporal_rule_count": 4,
       "temporal_rules_include": [
         {
           "source_text": "PREADY must be asserted on the third posedge of HCLK.",
@@ -92,6 +103,24 @@
             {
               "kind": "signal_value",
               "signal_name": "PSLVERR",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PSEL must be asserted within 2 rising edges of HCLK.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": null,
+            "max_cycles": 2
+          },
+          "supporting_statement_ids_include": ["stmt_within_two_rising_edges_of_hclk"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PSEL",
               "value": "ASSERTED",
               "phase": "post_tick"
             }
@@ -100,8 +129,8 @@
       ]
     },
     "intent": {
-      "signal_names_include": ["PREADY", "PENABLE", "PSLVERR"],
-      "temporal_rule_count": 3,
+      "signal_names_include": ["PREADY", "PENABLE", "PSLVERR", "PSEL"],
+      "temporal_rule_count": 4,
       "temporal_rules_include": [
         {
           "source_text": "PREADY must be asserted on the third posedge of HCLK.",
@@ -152,6 +181,24 @@
             {
               "kind": "signal_value",
               "signal_name": "PSLVERR",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PSEL must be asserted within 2 rising edges of HCLK.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": null,
+            "max_cycles": 2
+          },
+          "supporting_statement_ids_include": ["stmt_within_two_rising_edges_of_hclk"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PSEL",
               "value": "ASSERTED",
               "phase": "post_tick"
             }
@@ -162,15 +209,15 @@
     "validation": {
       "semantic": {
         "metric_values": {
-          "temporal_rules": "3",
-          "temporal_rules_with_cycle_window": "3",
+          "temporal_rules": "4",
+          "temporal_rules_with_cycle_window": "4",
           "temporal_rules_missing_clock_grounding": "0"
         }
       },
       "intent": {
         "metric_values": {
-          "temporal_rules": "3",
-          "temporal_rules_with_cycle_window": "3",
+          "temporal_rules": "4",
+          "temporal_rules_with_cycle_window": "4",
           "temporal_rules_missing_clock_grounding": "0"
         }
       }
