@@ -23,6 +23,8 @@ const VALIDATION_PROJECTION_START: &str = "<!-- validation_projection:start -->"
 const VALIDATION_PROJECTION_END: &str = "<!-- validation_projection:end -->";
 const EVIDENCE_VISUAL_MOTIF_CORROBORATION_GUIDANCE: &str =
     "evidence_visual_motif_corroboration_guidance";
+const EVIDENCE_MISSING_VLM_OBSERVATIONS_SURFACE_RESCAN_GUIDANCE: &str =
+    "evidence_missing_vlm_observations_surface_rescan_guidance";
 const EVIDENCE_SIGNAL_POLARITY_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
     "evidence_signal_polarity_conflict_surface_rescan_guidance";
 const EVIDENCE_STRUCTURAL_KG_MISSING_SURFACE_RESCAN_GUIDANCE: &str =
@@ -880,6 +882,10 @@ fn replay_inputs_for_rescan(
     snapshot: &ProjectedArtifactSnapshot,
     finding: &ValidationFindingRecord,
 ) -> Vec<ProjectedReplayInput> {
+    if let Some(inputs) = evidence_missing_vlm_observations_replay_inputs(stage, snapshot, finding)
+    {
+        return inputs;
+    }
     if let Some(inputs) = evidence_structural_kg_missing_replay_inputs(stage, snapshot, finding) {
         return inputs;
     }
@@ -992,6 +998,23 @@ fn evidence_signal_semantic_conflict_replay_inputs(
         input_kind: "evidence_ir",
         path: snapshot.artifact_path.clone(),
     }])
+}
+
+fn evidence_missing_vlm_observations_replay_inputs(
+    stage: IrStage,
+    snapshot: &ProjectedArtifactSnapshot,
+    finding: &ValidationFindingRecord,
+) -> Option<Vec<ProjectedReplayInput>> {
+    if !is_evidence_missing_vlm_observations_rescan(stage, finding) {
+        return None;
+    }
+
+    snapshot
+        .replay_inputs
+        .iter()
+        .find(|input| input.input_kind == "source_ir")
+        .cloned()
+        .map(|input| vec![input])
 }
 
 fn evidence_structural_kg_missing_replay_inputs(
@@ -1310,7 +1333,8 @@ fn recommended_rescan_commands(
     }
 
     let mut commands = Vec::new();
-    if is_visual_motif_corroboration_rescan(stage, finding)
+    if (is_visual_motif_corroboration_rescan(stage, finding)
+        || is_evidence_missing_vlm_observations_rescan(stage, finding))
         && let Some(input) = snapshot
             .replay_inputs
             .iter()
@@ -1526,6 +1550,14 @@ fn nlp_enrich_evidence_command(
 fn is_visual_motif_corroboration_rescan(stage: IrStage, finding: &ValidationFindingRecord) -> bool {
     stage == IrStage::EvidenceIr
         && finding.finding_id == EVIDENCE_VISUAL_MOTIF_CORROBORATION_GUIDANCE
+}
+
+fn is_evidence_missing_vlm_observations_rescan(
+    stage: IrStage,
+    finding: &ValidationFindingRecord,
+) -> bool {
+    stage == IrStage::EvidenceIr
+        && finding.finding_id == EVIDENCE_MISSING_VLM_OBSERVATIONS_SURFACE_RESCAN_GUIDANCE
 }
 
 fn is_evidence_signal_semantic_conflict_rescan(
@@ -2151,6 +2183,10 @@ fn recommended_rescan_action(stage: IrStage, finding: &ValidationFindingRecord) 
                 "temporal-clock-grounding specialized action only applies to semantic/intent rescans"
             ),
         };
+    }
+
+    if is_evidence_missing_vlm_observations_rescan(stage, finding) {
+        return "rerun local visual enrichment from SourceIR, rebuild EvidenceIR, and validate whether the related visual ids gain timing/state observations instead of remaining VLM-unenriched";
     }
 
     if is_visual_motif_corroboration_rescan(stage, finding) {
@@ -3218,6 +3254,91 @@ mod tests {
         assert_eq!(
             recommendations[0].recommended_commands[2].intent,
             "validate_current_artifact"
+        );
+    }
+
+    #[test]
+    fn project_validation_collects_evidence_missing_vlm_observations_rescan_guidance() {
+        let tempdir = tempdir().expect("tempdir");
+        let repo_root = tempdir.path();
+        let snapshot = ProjectedArtifactSnapshot {
+            document_key: "doc".to_string(),
+            display_name: "Spec.pdf".to_string(),
+            stage: IrStage::EvidenceIr,
+            artifact_path: repo_root.join("generated/evidence_ir/doc/evidence_ir.json"),
+            replay_inputs: vec![ProjectedReplayInput {
+                input_kind: "source_ir",
+                path: repo_root.join("generated/source_ir/doc/source_ir.json"),
+            }],
+            report: ValidationReportRecord {
+                report_id: "validation_evidence_ir_test".to_string(),
+                validated_stage: IrStage::EvidenceIr,
+                artifact_fingerprint: "fingerprint".to_string(),
+                summary: "EvidenceIR validation with missing-VLM rescan guidance".to_string(),
+                overall_score: None,
+                grade: None,
+                metrics: Vec::new(),
+                findings: vec![ValidationFindingRecord {
+                    finding_id: EVIDENCE_MISSING_VLM_OBSERVATIONS_SURFACE_RESCAN_GUIDANCE
+                        .to_string(),
+                    severity: ValidationFindingSeverity::Info,
+                    category: "rescan_guidance".to_string(),
+                    summary:
+                        "EvidenceIR still carries visual evidence ids without timing/state observations"
+                            .to_string(),
+                    related_ids: vec!["visual_0001".to_string()],
+                }],
+            },
+        };
+
+        let recommendations =
+            collect_rescan_recommendations(&[snapshot], repo_root, &test_rescan_vlm_policy());
+
+        assert_eq!(recommendations.len(), 1);
+        assert_eq!(
+            recommendations[0].extractor_lane,
+            "evidence_ir_multimodal_semantic_corroboration"
+        );
+        assert_eq!(
+            recommendations[0].recommended_action,
+            "rerun local visual enrichment from SourceIR, rebuild EvidenceIR, and validate whether the related visual ids gain timing/state observations instead of remaining VLM-unenriched"
+        );
+        assert_eq!(
+            recommendations[0].replay_inputs,
+            vec![ProjectRescanReplayInput {
+                input_kind: "source_ir".to_string(),
+                path: "generated/source_ir/doc/source_ir.json".to_string(),
+            }]
+        );
+        assert_eq!(recommendations[0].recommended_commands.len(), 3);
+        assert_eq!(
+            recommendations[0].recommended_commands[0].intent,
+            "enrich_source_ir"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[0].args,
+            vec![
+                "run".to_string(),
+                "--manifest-path".to_string(),
+                "Cargo.toml".to_string(),
+                "--".to_string(),
+                "enrich".to_string(),
+                "generated/source_ir/doc/source_ir.json".to_string(),
+                "--vlm-provider".to_string(),
+                "ollama".to_string(),
+            ]
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[1].intent,
+            "rebuild_evidence_ir"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[2].intent,
+            "validate_current_artifact"
+        );
+        assert_eq!(
+            recommendations[0].related_ids,
+            vec!["visual_0001".to_string()]
         );
     }
 

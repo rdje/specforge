@@ -7,6 +7,24 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-21 Evidence-stage missing VLM observations should be replay targets too
+- Once `EvidenceIR` still carries visual evidence but no timing/state extraction, the weak state is no longer just "did validation notice the gap?" but "does the product advertise the bounded local step that might fill it?"
+- The stranded visual evidence ids are already stable and reviewable at that stage.
+- Leaving them as only warnings underspecifies the next action.
+- The right follow-up is a source-side visual replay, not an evidence-local NLP replay:
+  - rerun local visual enrichment on the current `SourceIR`
+  - rebuild the current `EvidenceIR`
+  - revalidate whether the same visual ids gain timing/state observations
+- This is still not an auto-fix story:
+  - the current visual gap remains explicit
+  - the replay planner only identifies the local visual boundary and bounded rebuild path
+  - no canonical truth is auto-mutated just because the replay path exists
+- The important distinction is scope:
+  - missing-VLM replay is a local `enrich -> evidence -> validate` loop
+  - evidence-stage NLP replay remains the local `nlp-enrich -> validate` loop
+  - canonical-stage replay remains the downstream `EvidenceIR -> SemanticIR -> IntentIR? -> validate` loop
+- That split matters because it keeps the planner honest about whether the missing information is visual, textual, or already canonical.
+
 ## 2026-04-21 Evidence-stage structural-KG gaps should be replay targets too
 - Once `EvidenceIR` still carries behavioral records but no actor-signal graph, the weak state is no longer just "did validation notice the graph is empty?" but "does the product advertise the bounded local step that might ground those same records structurally?"
 - The stranded `constraint_id` / `rule_id` values are already stable and reviewable at that stage.

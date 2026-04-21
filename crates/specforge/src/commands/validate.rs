@@ -98,6 +98,8 @@ const INTENT_SIGNAL_POLARITY_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
     "intent_signal_polarity_conflict_surface_rescan_guidance";
 const EVIDENCE_SIGNAL_POLARITY_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
     "evidence_signal_polarity_conflict_surface_rescan_guidance";
+const EVIDENCE_MISSING_VLM_OBSERVATIONS_SURFACE_RESCAN_GUIDANCE: &str =
+    "evidence_missing_vlm_observations_surface_rescan_guidance";
 const EVIDENCE_STRUCTURAL_KG_MISSING_SURFACE_RESCAN_GUIDANCE: &str =
     "evidence_structural_kg_missing_surface_rescan_guidance";
 const EVIDENCE_NORMATIVE_RESIDUAL_SURFACE_RESCAN_GUIDANCE: &str =
@@ -670,11 +672,41 @@ fn push_structural_kg_missing_rescan_guidance(
     ));
 }
 
+fn push_missing_vlm_observations_rescan_guidance(
+    findings: &mut Vec<ValidationFindingRecord>,
+    finding_id: &str,
+    stage_label: &str,
+    related_ids: &[String],
+) {
+    if related_ids.is_empty() {
+        return;
+    }
+
+    findings.push(finding(
+        finding_id,
+        ValidationFindingSeverity::Info,
+        "rescan_guidance",
+        format!(
+            "{stage_label} still carries visual evidence ids without timing/state observations; this should trigger targeted local visual enrichment plus bounded replay to see whether those same ids gain extracted timing/state observations"
+        ),
+        related_ids.to_vec(),
+    ));
+}
+
 fn evidence_structural_kg_missing_related_ids(ir: &EvidenceIr) -> Vec<String> {
     ir.signal_constraints
         .iter()
         .map(|constraint| constraint.constraint_id.clone())
         .chain(ir.conditional_rules.iter().map(|rule| rule.rule_id.clone()))
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect()
+}
+
+fn evidence_missing_vlm_observation_related_ids(ir: &EvidenceIr) -> Vec<String> {
+    ir.visual_evidence
+        .iter()
+        .map(|item| item.evidence_id.clone())
         .collect::<BTreeSet<_>>()
         .into_iter()
         .collect()
@@ -2396,6 +2428,7 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
     );
 
     let normative_count = classes.get("normative_statement").copied().unwrap_or(0);
+    let missing_vlm_observation_related_ids = evidence_missing_vlm_observation_related_ids(ir);
     let structural_kg_missing_related_ids = evidence_structural_kg_missing_related_ids(ir);
     let normative_residual_statement_ids = evidence_normative_residual_statement_ids(ir);
     let mut findings = Vec::new();
@@ -2414,12 +2447,14 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             ValidationFindingSeverity::Warning,
             "visual_enrichment",
             "Visual evidence is present, but no VLM timing/state observations were injected into EvidenceIR",
-            ir.visual_evidence
-                .iter()
-                .map(|item| item.evidence_id.clone())
-                .take(6)
-                .collect(),
+            missing_vlm_observation_related_ids.clone(),
         ));
+        push_missing_vlm_observations_rescan_guidance(
+            &mut findings,
+            EVIDENCE_MISSING_VLM_OBSERVATIONS_SURFACE_RESCAN_GUIDANCE,
+            "EvidenceIR",
+            &missing_vlm_observation_related_ids,
+        );
     }
     if ir.actor_signal_relations.is_empty()
         && (!ir.signal_constraints.is_empty() || !ir.conditional_rules.is_empty())
@@ -6273,6 +6308,60 @@ mod tests {
             &report,
             "evidence_negative_knowledge_rescan_guidance"
         ));
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_evidence_ir_reports_missing_vlm_observation_related_ids() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("visual_gap.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        fs::write(&source, "# Figures\n\nSignal XREQ is output width 1.\n")?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.visual_assets.push(VisualAsset {
+            asset_id: "asset_cycle_trace".to_string(),
+            asset_kind: VisualAssetKind::Diagram,
+            page_id: Some("page_0001".to_string()),
+            image_path: None,
+            caption_text: Some("XREQ cycle trace".to_string()),
+            caption_source_path: None,
+            source_ref: None,
+            placeholder_text: None,
+            note: None,
+            diagram_kind: crate::ir::source::DiagramKind::Unknown,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        let report = validate_evidence_ir(&evidence_ir, "evidence_missing_vlm".to_string());
+
+        let missing_vlm_finding = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "evidence_missing_vlm_observations")
+            .expect("expected missing VLM observations finding");
+        assert_eq!(
+            missing_vlm_finding.related_ids,
+            vec!["visual_0001".to_string()]
+        );
+
+        let missing_vlm_rescan_guidance = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == EVIDENCE_MISSING_VLM_OBSERVATIONS_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected missing VLM observations rescan guidance");
+        assert_eq!(
+            missing_vlm_rescan_guidance.related_ids,
+            vec!["visual_0001".to_string()]
+        );
 
         Ok(())
     }

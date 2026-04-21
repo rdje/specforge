@@ -1,0 +1,45 @@
+{
+  "name": "evidence_missing_vlm_observations_surface_negative",
+  "source": "source.md",
+  "source_ir_patch": {
+    "visual_assets": [
+      {
+        "asset_id": "asset_cycle_trace",
+        "asset_kind": "diagram",
+        "page_id": "page_0001",
+        "image_path": null,
+        "caption_text": "XREQ cycle trace",
+        "caption_source_path": null,
+        "source_ref": null,
+        "placeholder_text": null,
+        "note": null,
+        "diagram_kind": "unknown"
+      }
+    ]
+  },
+  "expectations": {
+    "validation": {
+      "evidence": {
+        "finding_ids_include": [
+          "evidence_missing_vlm_observations",
+          "evidence_missing_vlm_observations_surface_rescan_guidance"
+        ],
+        "findings_include": [
+          {
+            "finding_id": "evidence_missing_vlm_observations_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "visual evidence ids without timing/state observations",
+            "related_ids_include": ["visual_0001"]
+          }
+        ],
+        "metric_values": {
+          "visual_evidence_total": "1",
+          "timing_diagram_extractions": "0",
+          "state_machine_extractions": "0",
+          "visual_evidence_ambiguous": "1"
+        }
+      }
+    }
+  }
+}
