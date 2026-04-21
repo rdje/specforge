@@ -8498,6 +8498,8 @@ mod tests {
                 "Signal HCLK is input width 1.\n\n",
                 "Signal PREADY is input width 1.\n\n",
                 "Signal PWAKEUP is input width 1.\n\n",
+                "Signal PSEL is input width 1.\n\n",
+                "Signal PWRITE is input width 1.\n\n",
             ),
         )?;
 
@@ -8577,6 +8579,8 @@ mod tests {
                 "Signal HCLK is input width 1.\n\n",
                 "Signal PREADY is input width 1.\n\n",
                 "Signal PWAKEUP is input width 1.\n\n",
+                "Signal PSEL is input width 1.\n\n",
+                "Signal PWRITE is input width 1.\n\n",
             ),
         )?;
 
@@ -8608,6 +8612,28 @@ mod tests {
             supporting_statement_ids: vec!["stmt_hclk_negedge".to_string()],
             automation_confidence: AutomationConfidence::Medium,
         });
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_psel_hclk_rising_edge".to_string(),
+            subject_signal: "PSEL".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PSEL must be asserted on HCLK rising edge.".to_string(),
+            supporting_statement_ids: vec!["stmt_hclk_rising_edge".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pwrite_hclk_falling_edge".to_string(),
+            subject_signal: "PWRITE".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PWRITE must be asserted on HCLK falling edge.".to_string(),
+            supporting_statement_ids: vec!["stmt_hclk_falling_edge".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
         evidence_ir.write_to_disk()?;
         let semantic_ir = SemanticIr::build(
             &evidence_ir.artifact_layout.evidence_ir_path,
@@ -8620,7 +8646,7 @@ mod tests {
         )?;
 
         let report = validate_intent_ir(&intent_ir, "temporal_grounding".to_string());
-        assert_eq!(metric_value(&report, "temporal_rules"), Some("2"));
+        assert_eq!(metric_value(&report, "temporal_rules"), Some("4"));
         assert_eq!(
             metric_value(&report, "temporal_rules_missing_clock_grounding"),
             Some("0")

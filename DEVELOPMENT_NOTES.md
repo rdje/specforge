@@ -7,6 +7,21 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Signal-leading clock coverage should be lexically self-contained too
+- The previous slice made the signal-leading clock family symmetric in edge direction:
+  - semantic coverage now proves `HCLK rising edge` and `HCLK falling edge`
+  - validator coverage now proves `HCLK posedge` and `HCLK negedge`
+- But the direct proof was still lexically split across the two lanes:
+  - semantic coverage only carried word-based `rising/falling edge`
+  - validator coverage only carried token-based `posedge/negedge`
+- That is not a correctness bug, but it is still an avoidable proof split inside one finished temporal family.
+- The right move stays narrow:
+  - do not widen the parser
+  - do not add a new fixture family
+  - widen the existing semantic regression to also prove `HCLK posedge` and `HCLK negedge`
+  - widen the existing validator regression to also prove `HCLK rising edge` and `HCLK falling edge`
+- That keeps the signal-leading family lexically honest end to end without creating a new roadmap row or inflating the benchmark corpus.
+
 ## 2026-04-22 Signal-leading clock coverage should be symmetric too
 - The signal-leading clock family was already clearly supported:
   - semantic coverage proved `HCLK rising edge`

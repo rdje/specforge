@@ -4,6 +4,19 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-22 signal-leading clock lexical hardening)
+- Continued from commit `d237f12`, still tightening the temporal proof surface rather than widening the parser, semantic model, or tracked fixture corpus.
+- The signal-leading clock family was already symmetric in edge direction after the previous slice:
+  - `HCLK rising edge` and `HCLK falling edge` at the semantic layer
+  - `HCLK posedge` and `HCLK negedge` at the validator layer
+- But the direct proof was still lexically split across those two lanes.
+- This slice makes the family lexically self-contained in both places:
+  - `crates/specforge/src/ir/semantic.rs` now also proves token-form `HCLK posedge` / `HCLK negedge` beside the existing word-form pair
+  - `crates/specforge/src/commands/validate.rs` now also proves word-form `HCLK rising edge` / `HCLK falling edge` beside the existing token-form pair
+- The tracked KG-quality suite stays flat because this is reliability hardening inside an existing temporal family, not a new benchmark family or capability row.
+- Focused semantic and validator coverage, docs CI, full local CI, and whitespace checks passed for this slice.
+- The current full local CI baseline remains `473` Rust tests plus warning-deny rustdoc and the mdBook build.
+
 ## Session update (2026-04-22 signal-leading clock symmetry hardening)
 - Continued from commit `235197f`, still tightening the temporal proof surface rather than widening the parser, semantic model, or tracked fixture corpus.
 - The signal-leading clock family already had direct proof on the rising side:

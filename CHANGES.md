@@ -1,5 +1,28 @@
 # CHANGES
 
+## 2026-04-22 (Signal-leading clock coverage is now lexically self-contained too)
+
+### Improved: the direct signal-leading proof lane now carries both edge-word and edge-token forms
+- `crates/specforge/src/ir/semantic.rs` now widens the existing signal-leading semantic regression so it proves all four direct local-clock variants:
+  - `PREADY must be asserted on HCLK rising edge.`
+  - `PWAKEUP must be asserted on HCLK falling edge.`
+  - `PSEL must be asserted on HCLK posedge.`
+  - `PWRITE must be asserted on HCLK negedge.`
+- `crates/specforge/src/commands/validate.rs` now widens the existing signal-leading validator regression so it proves the same family across the complementary lexical pair:
+  - `PREADY must be asserted on HCLK posedge.`
+  - `PWAKEUP must be asserted on HCLK negedge.`
+  - `PSEL must be asserted on HCLK rising edge.`
+  - `PWRITE must be asserted on HCLK falling edge.`
+- This does not widen the temporal model or add tracked fixtures. It removes the last lexical proof split inside the existing signal-leading clock family.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge derives_explicit_clock_signal_from_signal_leading_edge_text` -> passed
+- `cargo test -p specforge validate_intent_ir_does_not_flag_temporal_rules_missing_clock_grounding_for_signal_leading_clock_text` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-22 (Signal-leading clock coverage is now falling-side complete too)
 
 ### Improved: the direct signal-leading clock proof lane now carries both edge directions

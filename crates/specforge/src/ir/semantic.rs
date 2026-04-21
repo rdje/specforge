@@ -14984,6 +14984,8 @@ mod tests {
                 "Signal HCLK is input width 1.\n\n",
                 "Signal PREADY is input width 1.\n\n",
                 "Signal PWAKEUP is input width 1.\n\n",
+                "Signal PSEL is input width 1.\n\n",
+                "Signal PWRITE is input width 1.\n\n",
                 "Clock clk.\n",
             ),
         )?;
@@ -15077,6 +15079,8 @@ mod tests {
                 "Signal HCLK is input width 1.\n\n",
                 "Signal PREADY is input width 1.\n\n",
                 "Signal PWAKEUP is input width 1.\n\n",
+                "Signal PSEL is input width 1.\n\n",
+                "Signal PWRITE is input width 1.\n\n",
                 "Clock clk.\n",
             ),
         )?;
@@ -15109,6 +15113,28 @@ mod tests {
             supporting_statement_ids: vec!["stmt_hclk_falling_edge".to_string()],
             automation_confidence: AutomationConfidence::Medium,
         });
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_psel_hclk_posedge".to_string(),
+            subject_signal: "PSEL".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PSEL must be asserted on HCLK posedge.".to_string(),
+            supporting_statement_ids: vec!["stmt_hclk_posedge".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pwrite_hclk_negedge".to_string(),
+            subject_signal: "PWRITE".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PWRITE must be asserted on HCLK negedge.".to_string(),
+            supporting_statement_ids: vec!["stmt_hclk_negedge".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
         evidence_ir.write_to_disk()?;
 
         let semantic_ir = SemanticIr::build(
@@ -15135,6 +15161,22 @@ mod tests {
             .expect("expected temporal rule derived from signal-leading falling-edge constraint");
         assert_eq!(falling_rule.clock_signal.as_deref(), Some("HCLK"));
         assert_eq!(falling_rule.edge, super::ClockEdge::Falling);
+
+        let posedge_rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| rule.rule_id == "temporal_signal_constraint_sigcon_psel_hclk_posedge")
+            .expect("expected temporal rule derived from signal-leading posedge constraint");
+        assert_eq!(posedge_rule.clock_signal.as_deref(), Some("HCLK"));
+        assert_eq!(posedge_rule.edge, super::ClockEdge::Rising);
+
+        let negedge_rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| rule.rule_id == "temporal_signal_constraint_sigcon_pwrite_hclk_negedge")
+            .expect("expected temporal rule derived from signal-leading negedge constraint");
+        assert_eq!(negedge_rule.clock_signal.as_deref(), Some("HCLK"));
+        assert_eq!(negedge_rule.edge, super::ClockEdge::Falling);
 
         Ok(())
     }
