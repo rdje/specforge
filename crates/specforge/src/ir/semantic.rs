@@ -8173,12 +8173,12 @@ fn extract_cycle_window_from_timing_constraint(
 ) -> Option<CycleWindowRecord> {
     extract_cycle_window_from_text(description)
         .or_else(|| {
-            let unit_mentions_cycles = timing
+            let unit_mentions_cycle_like_units = timing
                 .unit
                 .as_deref()
-                .map(|unit| unit.to_ascii_lowercase().contains("cycle"))
+                .map(unit_mentions_cycle_like_unit)
                 .unwrap_or(false);
-            if !unit_mentions_cycles {
+            if !unit_mentions_cycle_like_units {
                 return None;
             }
 
@@ -8216,6 +8216,15 @@ fn extract_cycle_window_from_timing_constraint(
                 )
             })
         })
+}
+
+fn unit_mentions_cycle_like_unit(unit: &str) -> bool {
+    let normalized = unit.to_ascii_lowercase();
+    let tokens = normalized
+        .split(|ch: char| !ch.is_ascii_alphanumeric())
+        .filter(|token| !token.is_empty())
+        .collect::<Vec<_>>();
+    contains_cycle_like_unit(&tokens)
 }
 
 fn dedup_temporal_rules(rules: Vec<TemporalRuleRecord>) -> Vec<TemporalRuleRecord> {
@@ -8517,10 +8526,7 @@ fn extract_cycle_window_from_text(text: &str) -> Option<CycleWindowRecord> {
         else {
             continue;
         };
-        if tokens[and_index + 2..]
-            .iter()
-            .any(|token| *token == "cycle" || *token == "cycles")
-        {
+        if contains_cycle_like_unit(&tokens[and_index + 2..tokens.len().min(and_index + 6)]) {
             return Some(CycleWindowRecord {
                 min_cycles: Some(min_cycles),
                 max_cycles: Some(max_cycles),
@@ -8536,11 +8542,7 @@ fn extract_cycle_window_from_text(text: &str) -> Option<CycleWindowRecord> {
         else {
             continue;
         };
-        let trailing_mentions_cycles = tokens[index + 2..]
-            .iter()
-            .take(3)
-            .any(|token| *token == "cycle" || *token == "cycles");
-        if !trailing_mentions_cycles {
+        if !contains_cycle_like_unit(&tokens[index + 2..tokens.len().min(index + 6)]) {
             continue;
         }
 
@@ -8572,11 +8574,7 @@ fn extract_cycle_window_from_text(text: &str) -> Option<CycleWindowRecord> {
             let Some(count) = parse_cycle_count_value(tokens[index + 2]) else {
                 continue;
             };
-            if tokens[index + 3..]
-                .iter()
-                .take(3)
-                .any(|token| *token == "cycle" || *token == "cycles")
-            {
+            if contains_cycle_like_unit(&tokens[index + 3..tokens.len().min(index + 7)]) {
                 return Some(CycleWindowRecord {
                     min_cycles: Some(count),
                     max_cycles: None,
@@ -8587,11 +8585,7 @@ fn extract_cycle_window_from_text(text: &str) -> Option<CycleWindowRecord> {
             let Some(count) = parse_cycle_count_value(tokens[index + 2]) else {
                 continue;
             };
-            if tokens[index + 3..]
-                .iter()
-                .take(3)
-                .any(|token| *token == "cycle" || *token == "cycles")
-            {
+            if contains_cycle_like_unit(&tokens[index + 3..tokens.len().min(index + 7)]) {
                 return Some(CycleWindowRecord {
                     min_cycles: None,
                     max_cycles: Some(count),
@@ -8609,11 +8603,7 @@ fn extract_cycle_window_from_text(text: &str) -> Option<CycleWindowRecord> {
             else {
                 continue;
             };
-            if tokens[index + 4..]
-                .iter()
-                .take(3)
-                .any(|token| *token == "cycle" || *token == "cycles")
-            {
+            if contains_cycle_like_unit(&tokens[index + 4..tokens.len().min(index + 8)]) {
                 return Some(CycleWindowRecord {
                     min_cycles: None,
                     max_cycles: Some(count),
@@ -8660,6 +8650,9 @@ fn extract_cycle_window_from_text(text: &str) -> Option<CycleWindowRecord> {
         ["next", "rising", "edge"].as_slice(),
         ["following", "rising", "edge"].as_slice(),
         ["subsequent", "rising", "edge"].as_slice(),
+        ["next", "falling", "edge"].as_slice(),
+        ["following", "falling", "edge"].as_slice(),
+        ["subsequent", "falling", "edge"].as_slice(),
     ];
     if single_cycle_phrases
         .iter()
@@ -8675,11 +8668,15 @@ fn extract_cycle_window_from_text(text: &str) -> Option<CycleWindowRecord> {
 }
 
 fn contains_cycle_like_unit(tokens: &[&str]) -> bool {
-    tokens
-        .iter()
-        .any(|token| matches!(*token, "cycle" | "cycles" | "tick" | "ticks"))
-        || contains_token_phrase(tokens, &["rising", "edge"])
+    tokens.iter().any(|token| {
+        matches!(
+            *token,
+            "cycle" | "cycles" | "tick" | "ticks" | "posedge" | "posedges" | "negedge" | "negedges"
+        )
+    }) || contains_token_phrase(tokens, &["rising", "edge"])
         || contains_token_phrase(tokens, &["rising", "edges"])
+        || contains_token_phrase(tokens, &["falling", "edge"])
+        || contains_token_phrase(tokens, &["falling", "edges"])
 }
 
 fn parse_explicit_cycle_position_count(tokens: &[&str], start_index: usize) -> Option<u32> {
@@ -9851,7 +9848,10 @@ fn canonicalize_existing_path(path: &Path) -> Result<PathBuf> {
 
 #[cfg(test)]
 mod tests {
-    use std::{collections::HashMap, fs};
+    use std::{
+        collections::{BTreeSet, HashMap},
+        fs,
+    };
 
     use tempfile::tempdir;
 
@@ -13045,6 +13045,27 @@ mod tests {
     }
 
     #[test]
+    fn extracts_quantified_tick_and_edge_cycle_window_phrases() {
+        let bounded_ticks =
+            super::extract_cycle_window_from_text("The receiver must respond within 2 ticks.")
+                .expect("expected cycle window from 'within 2 ticks'");
+        assert_eq!(bounded_ticks.min_cycles, None);
+        assert_eq!(bounded_ticks.max_cycles, Some(2));
+
+        let falling_edges =
+            super::extract_cycle_window_from_text("DATA is sampled after 3 falling edges.")
+                .expect("expected cycle window from 'after 3 falling edges'");
+        assert_eq!(falling_edges.min_cycles, Some(3));
+        assert_eq!(falling_edges.max_cycles, Some(3));
+
+        let next_falling =
+            super::extract_cycle_window_from_text("DATA is sampled on the next falling edge.")
+                .expect("expected cycle window from 'next falling edge'");
+        assert_eq!(next_falling.min_cycles, Some(1));
+        assert_eq!(next_falling.max_cycles, Some(1));
+    }
+
+    #[test]
     fn extracts_zero_cycle_window_from_same_cycle_phrases() {
         let same_cycle = super::extract_cycle_window_from_text(
             "Both TVALID and TREADY can be asserted in the same ACLK cycle.",
@@ -13308,6 +13329,95 @@ mod tests {
         assert_eq!(cycle_window.max_cycles, Some(3));
 
         Ok(())
+    }
+
+    #[test]
+    fn derives_quantified_tick_cycle_window_from_constraint_text() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("temporal_tick_window.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal PREADY is input width 1.\n\n",
+                "Clock clk.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pready_within_ticks".to_string(),
+            subject_signal: "PREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PREADY must be asserted within 2 ticks.".to_string(),
+            supporting_statement_ids: vec!["stmt_within_ticks".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| rule.rule_id == "temporal_signal_constraint_sigcon_pready_within_ticks")
+            .expect("expected temporal rule derived from quantified tick constraint");
+        let cycle_window = rule
+            .cycle_window
+            .as_ref()
+            .expect("expected cycle window to be derived from 'within 2 ticks'");
+        assert_eq!(cycle_window.min_cycles, None);
+        assert_eq!(cycle_window.max_cycles, Some(2));
+
+        Ok(())
+    }
+
+    #[test]
+    fn derives_cycle_window_from_timing_constraint_tick_units() {
+        use crate::ir::source::TimingConstraintRecord;
+
+        let cycle_window = super::extract_cycle_window_from_timing_constraint(
+            &TimingConstraintRecord {
+                constraint_id: "timing_tick_window".to_string(),
+                parameter_name: "TWAIT".to_string(),
+                min_value: None,
+                typ_value: Some("2".to_string()),
+                max_value: None,
+                unit: Some("ticks".to_string()),
+                description: Some("Wait-state latency".to_string()),
+                supporting_statement_ids: vec!["stmt_tick_unit".to_string()],
+                automation_confidence: AutomationConfidence::Medium,
+            },
+            "Wait-state latency",
+            &BTreeSet::new(),
+            &BTreeSet::new(),
+            false,
+            false,
+            None,
+        )
+        .expect("expected cycle window from tick-based timing constraint units");
+
+        assert_eq!(cycle_window.min_cycles, Some(2));
+        assert_eq!(cycle_window.max_cycles, Some(2));
     }
 
     #[test]

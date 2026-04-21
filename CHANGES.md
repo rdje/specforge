@@ -1,5 +1,34 @@
 # CHANGES
 
+## 2026-04-21 (Temporal parser now recognizes quantified tick and edge units)
+
+### Improved: built-in cycle-window recovery now treats counted tick and edge language like counted cycle language
+- `crates/specforge/src/ir/semantic.rs` now recognizes quantitative tick and edge phrasing such as:
+  - `within 2 ticks`
+  - `after 3 falling edges`
+  - `next falling edge`
+- The quantitative branches now reuse the same cycle-like unit detector instead of hardcoding `cycle` / `cycles` in each branch, so bounded `tick`, `rising edge`, and `falling edge` language lands on the same typed `CycleWindowRecord` surface.
+- Structured timing-constraint units now use that same cycle-like unit detector too, so numeric timing records with units like `ticks` no longer get stranded behind a cycle-only gate.
+- Prior-guided timing recovery remains bounded and honest:
+  - explicit local tick/edge language is handled directly by the built-in parser
+  - learned-only idioms such as `one beat later` still remain prior-guided fallback, not built-in truth
+
+### Added: regression coverage for quantified tick and edge timing language
+- Added direct parser coverage for:
+  - `within 2 ticks`
+  - `after 3 falling edges`
+  - `next falling edge`
+- Added end-to-end `SemanticIR` temporal-rule derivation coverage for `PREADY must be asserted within 2 ticks`.
+- Added direct timing-constraint-unit coverage proving `TimingConstraintRecord { typ_value: 2, unit: ticks }` now recovers a bounded `cycle_window`.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge cycle_window` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-21 (Temporal parser now recognizes explicit later and ordinal edge phrases)
 
 ### Improved: built-in cycle-window recovery now covers more real protocol timing language

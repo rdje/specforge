@@ -7,6 +7,29 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-21 Quantified tick and edge language should use the same bounded timing path as quantified cycle language
+- The built-in temporal parser had already grown beyond raw `cycle` numerics:
+  - same-cycle language
+  - idiomatic one-cycle `next tick` / `next rising edge`
+  - explicit later and ordinal edge phrasing
+- But the quantitative branches were still inconsistent:
+  - `within 2 cycles` worked
+  - `within 2 ticks` did not
+  - `after 3 falling edges` did not
+  - numeric `TimingConstraintRecord` units like `ticks` were also stranded behind a cycle-only gate
+- That was the wrong shape for an explicit clock-tick model.
+- Once `tick` and `edge` are already first-class timing units elsewhere in the same parser, the counted branches should not silently demote them back to non-temporal prose.
+- The right implementation is not more one-off regex-like matching.
+- The right implementation is to make the quantitative branches reuse the same cycle-like-unit detector:
+  - `cycle` / `cycles`
+  - `tick` / `ticks`
+  - `rising edge` / `falling edge`
+  - tokenized `posedge` / `negedge` spellings when they appear as units
+- That keeps the temporal model coherent:
+  - explicit local counted timing language becomes direct typed truth
+  - learned temporal priors remain fallback-only for phrases whose timing meaning is not locally obvious from the built-in unit model
+  - structured numeric timing units and prose timing phrases converge on the same `CycleWindowRecord` surface instead of fragmenting by source path
+
 ## 2026-04-21 Built-in temporal timing language should cover explicit later and ordinal edge phrasing
 - The clock-tick model was already recognizing numeric windows such as `within 2 cycles`, idiomatic one-cycle language such as `next tick`, and zero-cycle language such as `same cycle`.
 - That still left a very real local-language gap:
