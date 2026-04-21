@@ -19,17 +19,18 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `91fa3f1`
-- latest_commit_brief_message: `fix(temporal): preserve plural shorthand edge semantics`
-- note: the latest committed baseline fixes plural shorthand-edge edge grounding so `posedges` / `negedges` preserve explicit edge semantics, and it also lands tracked KG-quality coverage for trailing shorthand-edge timing
+- latest_commit_hash: `d327ca8`
+- latest_commit_brief_message: `test(temporal): lock plural shorthand-edge symmetry`
+- note: the latest committed baseline hardens the existing trailing shorthand-edge benchmark family so plural rising shorthand is now directly proven alongside the already-landed plural falling shorthand
 
 ## Recent commit chain (last 6)
+- `d327ca8` test(temporal): lock plural shorthand-edge symmetry
+- `58d0333` docs(memory): sync plural shorthand-edge baseline
 - `91fa3f1` fix(temporal): preserve plural shorthand edge semantics
 - `f7f9921` docs(memory): sync clock-edge fixture baseline
 - `6d56ae9` test(kg-bench): add clock-edge timing fixture
 - `3fc7e1a` docs(memory): sync clock-edge-of-clock baseline
 - `2bb624b` test(temporal): lock clock-edge-of-clock phrasing
-- `35960c7` docs(memory): sync trailing shorthand-edge baseline
 - `328c30e` feat(temporal): ground trailing shorthand edge clocks
 - `6477b08` docs(memory): sync unit-first diagram baseline
 - `54e0519` feat(temporal): ground unit-first diagram positions
@@ -59,33 +60,34 @@
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 23` of `origin/main`
-- push policy remains local-only for now; do not push in this slice
+- branch state before the next commit: `ahead 25` of `origin/main`
+- push after the continuity commit to satisfy the `25`-commit local threshold rule
 - modified tracked files:
   - `MEMORY.md`
+  - `MEMORY.md`
 - the feature slice is committed; only the required continuity refresh commit remains
-- do not push after this slice unless the user asks or the branch reaches the threshold again
+- `LIVE_ACHIEVEMENT_STATUS.md` stays unchanged for this slice
 
 ## Latest landed slice
 - outcome:
-  - `explicit_clock_edge_from_text()` now recognizes plural `posedges` and `negedges`, so plural shorthand-edge timing no longer silently falls back to `edge = rising`
-  - `crates/specforge/src/ir/semantic.rs` now has focused regression coverage proving `PSLVERR must be asserted within 2 negedges of HCLK.` preserves `clock_signal = HCLK`, `edge = falling`, and `cycle_window.max_cycles = 2`
-  - the new tracked fixture `crates/specforge/test_data/kg_quality/trailing_shorthand_edge_timing_gold/` benchmark-locks both:
-    - `PREADY must be asserted on the third posedge of HCLK.`
-    - `PSLVERR must be asserted within 2 negedges of HCLK.`
-  - the live docs now reflect both the semantic bug fix and the new benchmark coverage
+  - the existing tracked fixture `trailing_shorthand_edge_timing_gold` now also proves bounded plural rising shorthand through `PENABLE must be asserted within 2 posedges of HCLK.`
+  - focused semantic coverage now directly proves plural rising shorthand preserves `clock_signal = HCLK`, `edge = rising`, and `cycle_window.max_cycles = 2`
+  - validator coverage now keeps plural rising and plural falling shorthand rules grounded together in the same intent-stage report
+  - this is a reliability-hardening pass inside an existing temporal fixture family, so the tracker remains unchanged and the tracked KG fixture count stays at `105`
 - verification passed:
   - `cargo fmt --all`
-  - `cargo test -p specforge kg_bench_runs_tracked_fixtures`
   - `cargo test -p specforge trailing_of_shorthand_edge`
+  - `cargo test -p specforge derives_rising_edge_from_plural_shorthand_edge_text`
+  - `cargo test -p specforge kg_bench_runs_tracked_fixtures`
   - `bash scripts/run_docs_ci.sh`
   - `bash scripts/run_ci.sh`
   - `git diff --check`
+- tracker effect: unchanged
 - current tracked KG-quality suite size after the feature commit: `105` fixtures
-- current full local CI baseline after the feature commit: `468` Rust tests plus warning-deny rustdoc and the mdBook build
+- current full local CI baseline after the feature commit: `469` Rust tests plus warning-deny rustdoc and the mdBook build
 
 ## Next exact steps
 - write the continuity commit message into `git_message_brief.txt`
 - stage only `MEMORY.md`
 - commit the continuity refresh with `git commit -F git_message_brief.txt`
-- truncate `git_message_brief.txt` back to `0` bytes and verify the post-conditions
+- truncate `git_message_brief.txt` back to `0` bytes, verify the post-conditions, then push `main`
