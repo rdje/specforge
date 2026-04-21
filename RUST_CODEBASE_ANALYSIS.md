@@ -126,6 +126,21 @@
 - The tracked benchmark surface size remains `105` fixtures because this is another hardening pass inside the same fixture family.
 - Focused extraction, semantic, validator, tracked KG fixture checks, docs CI, full local CI, and whitespace checks passed for this slice.
 - The current full local CI baseline remains `472` Rust tests plus warning-deny rustdoc and the mdBook build.
+
+## Session update (2026-04-22 ordinal rising edge-word benchmark lock)
+- Continued from commit `cb24e3b`, still tightening the same trailing shorthand-edge family rather than widening the temporal model or spawning a new benchmark family.
+- The prior slice benchmark-locked the exact falling-side ordinal word-edge form:
+  - `the third falling edge of HCLK`
+- After that, the exact word-based ordinal pair was symmetric in direct semantic and validator proof, but still asymmetric at the tracked fixture level:
+  - `the third rising edge of HCLK` remained unit-locked
+  - `the third falling edge of HCLK` was fixture-locked
+- This slice closes that last benchmark asymmetry:
+  - the trailing `of <clock>` local-clock extraction regression now also covers `the third rising edge of HCLK`
+  - the existing tracked fixture `trailing_shorthand_edge_timing_gold` now carries `PGRANT must be asserted on the third rising edge of HCLK.`
+  - both `SemanticIR` and `IntentIR` now lock the full seven-rule temporal family end to end, including exact ordinal word-edge rules on both sides
+- The tracked benchmark surface size remains `105` fixtures because this is another hardening pass inside the same fixture family.
+- Focused extraction, ordinal semantic/validator checks, tracked KG fixture checks, docs CI, full local CI, and whitespace checks passed for this slice.
+- The current full local CI baseline remains `472` Rust tests plus warning-deny rustdoc and the mdBook build.
 ## Session update (2026-04-21 trailing shorthand-edge tracked fixture coverage)
 - Continued from commit `f7f9921`, raising the neighboring trailing shorthand-edge family into the tracked benchmark corpus instead of leaving it only in unit coverage.
 - The first benchmark pass exposed a real semantic bug rather than just a missing fixture:

@@ -13,3 +13,5 @@ Signal PSEL is input width 1.
 Signal PWRITE is input width 1.
 
 Signal PWAKEUP is input width 1.
+
+Signal PGRANT is input width 1.

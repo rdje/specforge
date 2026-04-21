@@ -7,6 +7,21 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Exact ordinal edge-word timing should be benchmark-locked on the rising side too
+- The previous slice closed the exact falling-side ordinal gap:
+  - `the third falling edge of HCLK`
+- After that, the exact word-based ordinal pair was symmetric in unit coverage, but still asymmetric at the tracked benchmark layer:
+  - `the third rising edge of HCLK` was still only unit-locked
+  - `the third falling edge of HCLK` was now benchmark-locked
+- That is small, but it is exactly the kind of asymmetry that ages badly.
+- If the benchmark family is meant to represent the honest public contract for this phrasing lane, the exact ordinal rising-side twin should be there too.
+- The right move stays narrow:
+  - do not create a new fixture family
+  - deepen `trailing_shorthand_edge_timing_gold` once more
+  - add the exact rising-side word-edge phrase to the tracked fixture
+  - extend the trailing `of <clock>` local-clock extraction regression so the benchmark addition is mirrored by the nearby helper-level proof
+- That keeps the corpus compact while making the full exact ordinal word-edge pair explicit end to end.
+
 ## 2026-04-22 Exact ordinal edge-word timing should be symmetric on the falling side too
 - The previous slice closed the bounded falling-side word-edge gap:
   - `within 2 falling edges of HCLK`

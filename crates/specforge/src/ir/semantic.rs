@@ -13695,6 +13695,14 @@ mod tests {
         );
         assert_eq!(
             super::explicit_clock_signal_from_text(
+                "DATA is sampled on the third rising edge of HCLK.",
+                &known_signals,
+            )
+            .as_deref(),
+            Some("HCLK")
+        );
+        assert_eq!(
+            super::explicit_clock_signal_from_text(
                 "DATA must stabilize within 2 posedges of HCLK.",
                 &known_signals,
             )
