@@ -22,21 +22,36 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `13dc139`
-- latest_commit_brief_message: `feat(validation): route polarity conflicts into rescans`
-- note: latest landed slice routes preserved polarity-conflict ids into the same bounded replay-plan machinery used by other evidence-level rescans and extends negative-knowledge caution to polarity-conflict archetypes
+- latest_commit_hash: `c6005a4`
+- latest_commit_brief_message: `feat(validation): route graph-direction conflicts into rescans`
+- note: latest landed slice routes preserved same-actor graph-direction conflicts into the bounded replay-plan machinery used by other evidence-level rescans
 
 ## Recent commit chain (last 5)
+- `c6005a4` feat(validation): route graph-direction conflicts into rescans
+- `a94c73f` docs(memory): sync polarity replay baseline
 - `13dc139` feat(validation): route polarity conflicts into rescans
 - `5501cd9` docs(memory): sync latest landed baseline
 - `bd3a5fc` feat(validation): route temporal conflicts into rescans
-- `63551fd` docs(memory): sync latest landed baseline
-- `9e13079` feat(validation): route interface conflicts into rescans
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- branch now includes local feature commit `13dc139` and remains below the 25-commit auto-push threshold from the last push at `4821b0a`; do not push unless the user asks
+- branch now includes local commits through `c6005a4` and remains below the 25-commit auto-push threshold from the last push at `4821b0a`; do not push unless the user asks
 - the README/SESSION_BOOTSTRAP handoff has been re-executed from the repo entrypoint and the referenced continuity docs have been reread
+- the latest landed slice routes preserved same-actor graph-direction conflicts into the bounded replay lane:
+  - `validate` now emits `semantic_graph_direction_conflict_surface_rescan_guidance` / `intent_graph_direction_conflict_surface_rescan_guidance` alongside the existing graph-direction conflict warning
+  - `project-validation` now recognizes those findings as the same local `EvidenceIR -> SemanticIR -> IntentIR? -> validate` replay lane used by other evidence-strength gaps
+  - the tracked fixture `graph_direction_same_actor_conflict_negative` now requires the new semantic/intent replay guidance with actor-aware conflict ids such as `graph_direction_conflict:actor_completer:PREADY`
+- the feature commit touched:
+  - `README.md`
+  - `CHANGES.md`
+  - `DEVELOPMENT_NOTES.md`
+  - `LIVE_ACHIEVEMENT_STATUS.md`
+  - `RUST_CODEBASE_ANALYSIS.md`
+  - `crates/specforge/src/commands/project_validation.rs`
+  - `crates/specforge/src/commands/validate.rs`
+  - `crates/specforge/test_data/kg_quality/graph_direction_same_actor_conflict_negative/fixture.json`
+  - `docs/book/src/commands/quality-and-learning.md`
+  - `docs/book/src/quality/validation.md`
 - the latest landed slice adds signal-polarity-conflict-specific replay planning for preserved active-level disagreement:
   - `validate` emits semantic/intent signal-polarity-conflict `rescan_guidance` findings alongside the existing carried polarity-conflict warning
   - `project-validation` recognizes that guidance as the same local `EvidenceIR -> SemanticIR -> IntentIR? -> validate` replay lane used by other evidence-strength gaps
@@ -76,9 +91,18 @@
   - focused semantic/intent planner tests cover the new action text and replay-input recovery
   - the tracked fixture `temporal_clock_grounding_surface_negative` now locks the missing-clock-grounding metric plus semantic/intent replay guidance on a genuinely clockless typed temporal rule
 - the previously landed slice added temporal-cycle-window-specific `rescan_guidance` for typed canonical temporal rules that remain unbounded and projected it through `project-validation` as an `EvidenceIR -> SemanticIR -> IntentIR? -> validate` replay plan
-- validation for the latest landed slice passed through `cargo fmt --all`, `cargo test -p specforge signal_polarity_conflict`, `cargo test -p specforge negative_knowledge_polarity`, `cargo test -p specforge project_validation_collects_signal_polarity_conflict_rescan_guidance`, `cargo test -p specforge kg_bench_runs_tracked_fixtures`, `bash scripts/run_docs_ci.sh`, `bash scripts/run_ci.sh`, and `git diff --check`
-- the current full local CI baseline is `414` Rust tests plus warning-deny rustdoc and the mdBook build; the tracked KG-quality suite now contains `98` fixtures
+- validation for the latest landed graph-direction replay slice passed through:
+  - `cargo fmt --all`
+  - `cargo test -p specforge project_validation_collects_graph_direction_conflict_rescan_guidance`
+  - `cargo test -p specforge conflicting_same_actor_graph_direction`
+  - `cargo test -p specforge kg_bench_runs_tracked_fixtures`
+  - `bash scripts/run_ci.sh`
+  - `git diff --check`
+- the current full local CI baseline is `416` Rust tests plus warning-deny rustdoc and the mdBook build; the tracked KG-quality suite still contains `98` fixtures
 - README sentinel remains intact after the slice: `Read SESSION_BOOTSTRAP.md and start from there.`
+- current post-feature state:
+  - only `MEMORY.md` remains modified in the working tree for the docs-only continuity sync commit
+  - after that commit, rerun the `git_message_brief.txt` post-conditions check and keep the branch local unless the user explicitly asks to push
 - latest committed adapter hardening adds sticky conflict collapse for duplicate explicit top-port direction declarations
 - the committed regression declares top port `drive_data` once as output and once as input; expected behavior is unresolved top-port direction in both the top candidate and selected signal inventory, blocked renderability, and no emitted `.fsm` target text
 - focused validation, the full adapter test module, docs CI, and full local CI passed for commit `6282875`; full local CI reported formatting, warning-deny Clippy, `340` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
