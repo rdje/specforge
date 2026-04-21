@@ -7,6 +7,23 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Exact shorthand-edge timing should be symmetric on the falling token side too
+- The previous slice benchmark-locked the exact ordinal word-edge pair:
+  - `the third rising edge of HCLK`
+  - `the third falling edge of HCLK`
+- After that, the trailing `of <clock>` family was still carrying one small but real asymmetry in the shorthand-token lane:
+  - we already benchmark-locked `the third posedge of HCLK`
+  - we did not yet benchmark-lock `the third negedge of HCLK`
+- That matters because the shorthand token family is a first-class part of the trusted temporal surface, not just an alias for the spelled-out word-edge family.
+- If the benchmark contract claims the family is symmetric, the exact falling token twin should be explicit rather than inferred from parser generality or nearby unit tests.
+- The right move stays narrow:
+  - do not create a new fixture family
+  - deepen `trailing_shorthand_edge_timing_gold` once more
+  - extend the trailing `of <clock>` extraction regression to include `the third negedge of HCLK`
+  - add one direct semantic regression for exact falling shorthand-token timing
+  - widen the existing trailing shorthand-edge validator regression so the exact falling token form stays grounded alongside the already-locked bounded token pair
+- That keeps the tracked corpus compact while making the full exact shorthand token pair explicit end to end.
+
 ## 2026-04-22 Exact ordinal edge-word timing should be benchmark-locked on the rising side too
 - The previous slice closed the exact falling-side ordinal gap:
   - `the third falling edge of HCLK`

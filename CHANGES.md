@@ -1,5 +1,42 @@
 # CHANGES
 
+## 2026-04-22 (Exact shorthand-edge timing is now symmetry-locked on the falling token side too)
+
+### Improved: the existing trailing shorthand-edge benchmark now proves exact ordinal falling shorthand-token prose as well
+- Extended `crates/specforge/test_data/kg_quality/trailing_shorthand_edge_timing_gold/` with:
+  - `PLOCK must be asserted on the third negedge of HCLK.`
+- The existing tracked fixture now locks eight complementary forms together:
+  - exact singular rising shorthand token: `the third posedge of HCLK`
+  - exact singular falling shorthand token: `the third negedge of HCLK`
+  - bounded plural rising shorthand token form: `within 2 posedges of HCLK`
+  - bounded plural falling shorthand token form: `within 2 negedges of HCLK`
+  - bounded word-based rising-edge form: `within 2 rising edges of HCLK`
+  - bounded word-based falling-edge form: `within 2 falling edges of HCLK`
+  - exact ordinal word-based falling-edge form: `the third falling edge of HCLK`
+  - exact ordinal word-based rising-edge form: `the third rising edge of HCLK`
+- This closes the last exact shorthand-token asymmetry inside the trailing `of <clock>` timing family instead of leaving the falling-side token twin implied only by nearby logic.
+
+### Added: focused extraction, semantic, and validator coverage for exact falling shorthand-token timing
+- `crates/specforge/src/ir/semantic.rs` now also proves trailing `of <clock>` local-clock extraction for:
+  - `the third negedge of HCLK`
+- A new direct semantic regression now proves:
+  - `PLOCK must be asserted on the third negedge of HCLK.`
+  preserves:
+  - `clock_signal = HCLK`
+  - `edge = falling`
+  - `cycle_window = 3..3`
+- `crates/specforge/src/commands/validate.rs` now widens the existing trailing shorthand-edge validator regression so exact falling shorthand-token timing stays grounded alongside the already-locked bounded token pair.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge extracts_trailing_of_shorthand_edge_clock_phrases` -> passed
+- `cargo test -p specforge derives_exact_falling_edge_from_trailing_of_shorthand_edge_text` -> passed
+- `cargo test -p specforge validate_intent_ir_does_not_flag_temporal_rules_missing_clock_grounding_for_trailing_of_shorthand_edge_text` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-22 (Ordinal edge-word timing is now benchmark-locked on the rising side too)
 
 ### Improved: the existing trailing shorthand-edge benchmark now proves exact ordinal rising-edge prose as well

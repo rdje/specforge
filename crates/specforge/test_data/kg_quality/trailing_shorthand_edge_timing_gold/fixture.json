@@ -15,6 +15,17 @@
         "automation_confidence": "medium"
       },
       {
+        "constraint_id": "sigcon_plock_third_negedge_of_hclk",
+        "subject_signal": "PLOCK",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "PLOCK must be asserted on the third negedge of HCLK.",
+        "supporting_statement_ids": ["stmt_third_negedge_of_hclk"],
+        "automation_confidence": "medium"
+      },
+      {
         "constraint_id": "sigcon_pslverr_within_two_negedges_of_hclk",
         "subject_signal": "PSLVERR",
         "constraint_kind": { "kind": "must_be_asserted" },
@@ -84,8 +95,8 @@
   },
   "expectations": {
     "semantic": {
-      "signal_names_include": ["PREADY", "PENABLE", "PSLVERR", "PSEL", "PWRITE", "PWAKEUP", "PGRANT"],
-      "temporal_rule_count": 7,
+      "signal_names_include": ["PREADY", "PLOCK", "PENABLE", "PSLVERR", "PSEL", "PWRITE", "PWAKEUP", "PGRANT"],
+      "temporal_rule_count": 8,
       "temporal_rules_include": [
         {
           "source_text": "PREADY must be asserted on the third posedge of HCLK.",
@@ -100,6 +111,24 @@
             {
               "kind": "signal_value",
               "signal_name": "PREADY",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PLOCK must be asserted on the third negedge of HCLK.",
+          "clock_signal": "HCLK",
+          "edge": "falling",
+          "cycle_window": {
+            "min_cycles": 3,
+            "max_cycles": 3
+          },
+          "supporting_statement_ids_include": ["stmt_third_negedge_of_hclk"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PLOCK",
               "value": "ASSERTED",
               "phase": "post_tick"
             }
@@ -216,8 +245,8 @@
       ]
     },
     "intent": {
-      "signal_names_include": ["PREADY", "PENABLE", "PSLVERR", "PSEL", "PWRITE", "PWAKEUP", "PGRANT"],
-      "temporal_rule_count": 7,
+      "signal_names_include": ["PREADY", "PLOCK", "PENABLE", "PSLVERR", "PSEL", "PWRITE", "PWAKEUP", "PGRANT"],
+      "temporal_rule_count": 8,
       "temporal_rules_include": [
         {
           "source_text": "PREADY must be asserted on the third posedge of HCLK.",
@@ -232,6 +261,24 @@
             {
               "kind": "signal_value",
               "signal_name": "PREADY",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PLOCK must be asserted on the third negedge of HCLK.",
+          "clock_signal": "HCLK",
+          "edge": "falling",
+          "cycle_window": {
+            "min_cycles": 3,
+            "max_cycles": 3
+          },
+          "supporting_statement_ids_include": ["stmt_third_negedge_of_hclk"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PLOCK",
               "value": "ASSERTED",
               "phase": "post_tick"
             }
@@ -350,15 +397,15 @@
     "validation": {
       "semantic": {
         "metric_values": {
-          "temporal_rules": "7",
-          "temporal_rules_with_cycle_window": "7",
+          "temporal_rules": "8",
+          "temporal_rules_with_cycle_window": "8",
           "temporal_rules_missing_clock_grounding": "0"
         }
       },
       "intent": {
         "metric_values": {
-          "temporal_rules": "7",
-          "temporal_rules_with_cycle_window": "7",
+          "temporal_rules": "8",
+          "temporal_rules_with_cycle_window": "8",
           "temporal_rules_missing_clock_grounding": "0"
         }
       }

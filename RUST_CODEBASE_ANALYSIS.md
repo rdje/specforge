@@ -127,6 +127,23 @@
 - Focused extraction, semantic, validator, tracked KG fixture checks, docs CI, full local CI, and whitespace checks passed for this slice.
 - The current full local CI baseline remains `472` Rust tests plus warning-deny rustdoc and the mdBook build.
 
+## Session update (2026-04-22 exact falling shorthand-token benchmark lock)
+- Continued from commit `628c124`, still deepening the existing trailing shorthand-edge family rather than widening the temporal model or creating a new benchmark family.
+- The previous slice benchmark-locked the exact ordinal word-edge pair:
+  - `the third rising edge of HCLK`
+  - `the third falling edge of HCLK`
+- After that, one exact shorthand-token asymmetry remained:
+  - `the third posedge of HCLK` was already fixture-locked
+  - `the third negedge of HCLK` was still only implied by nearby parser and semantic logic
+- This slice closes that last exact shorthand-token gap:
+  - the trailing `of <clock>` local-clock extraction regression now also covers `the third negedge of HCLK`
+  - a new direct semantic regression now proves `PLOCK must be asserted on the third negedge of HCLK.` preserves `clock_signal = HCLK`, `edge = falling`, and `cycle_window = 3..3`
+  - the existing trailing shorthand-edge validator regression now proves the exact falling token form stays grounded alongside the already-locked bounded token pair
+  - the existing tracked fixture `trailing_shorthand_edge_timing_gold` now carries `PLOCK must be asserted on the third negedge of HCLK.`
+- The tracked benchmark surface size remains `105` fixtures because this is another hardening pass inside the same fixture family.
+- Focused extraction, semantic, validator, tracked KG fixture checks, docs CI, full local CI, and whitespace checks passed for this slice.
+- The current full local CI baseline is now `473` Rust tests plus warning-deny rustdoc and the mdBook build.
+
 ## Session update (2026-04-22 ordinal rising edge-word benchmark lock)
 - Continued from commit `cb24e3b`, still tightening the same trailing shorthand-edge family rather than widening the temporal model or spawning a new benchmark family.
 - The prior slice benchmark-locked the exact falling-side ordinal word-edge form:
