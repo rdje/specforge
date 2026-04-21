@@ -7,6 +7,32 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-21 Generic clock-edge phrasing should not lag behind explicit cycle/tick and shorthand-edge language
+- After the recent temporal slices, the model already understood:
+  - `next cycle`
+  - `next tick`
+  - `next rising edge`
+  - `next posedge`
+  - `next HCLK rising edge`
+- But one neighboring phrasing family still lagged:
+  - `next clock edge`
+  - `within 2 clock edges`
+  - `next HCLK edge`
+  - `edge of HCLK`
+- That is a real semantic gap, not just wording trivia.
+- In specifications, `clock edge` is still explicit timing language.
+- If the sentence explicitly names `HCLK`, the typed rule should be able to preserve both:
+  - the local `clock_signal`
+  - the bounded one-cycle window
+- The fix stays bounded and honest:
+  - generic `edge` is only accepted when it is attached to an explicit clock phrase
+  - support is limited to `clock edge`, `<clock> edge`, and `edge of <clock>`
+  - the parser still does not treat arbitrary uses of the word `edge` as timing truth
+- That keeps the temporal model consistent:
+  - explicit clock-edge prose now sits beside explicit cycle/tick language
+  - local clock naming still wins over default-clock fallback
+  - generic clock-edge phrases inherit rising-edge grounding only when the clock itself is explicit
+
 ## 2026-04-21 Named one-cycle clock phrases should recover the same bounded window as unnamed one-cycle phrases
 - After the named clock grounding slices, phrases like `next HCLK rising edge` were in an awkward partial state:
   - `clock_signal` could be grounded locally

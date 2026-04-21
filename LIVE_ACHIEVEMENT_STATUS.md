@@ -147,6 +147,7 @@
 - Signal-leading local clock phrases now ground `clock_signal` in typed temporal rules: Done
 - Named local cycle/tick phrases now fully ground typed temporal rules: Done
 - Named one-cycle clock phrases now recover `cycle_window` in typed temporal rules: Done
+- Generic clock-edge phrases now recover bounded windows in typed temporal rules: Done
 - Actor-grounded drive predicates in typed temporal rules implemented: Done
 - Actor-grounded stability predicates in typed temporal rules implemented: Done
 - Multi-predicate temporal antecedents preserved in typed temporal rules: Done

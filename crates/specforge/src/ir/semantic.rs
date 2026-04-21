@@ -8283,6 +8283,14 @@ fn explicit_clock_signal_from_text(text: &str, known_signals: &BTreeSet<String>)
             format!("falling edge {signal_lower}"),
             format!("{signal_lower} rising edge"),
             format!("{signal_lower} falling edge"),
+            format!("edge of {signal_lower}"),
+            format!("edge of the {signal_lower}"),
+            format!("{signal_lower} edge"),
+            format!("{signal_lower} edges"),
+            format!("clock edge of {signal_lower}"),
+            format!("clock edge of the {signal_lower}"),
+            format!("{signal_lower} clock edge"),
+            format!("{signal_lower} clock edges"),
             format!("{signal_lower} cycle"),
             format!("{signal_lower} cycles"),
             format!("{signal_lower} tick"),
@@ -8729,6 +8737,9 @@ fn extract_cycle_window_from_text(text: &str) -> Option<CycleWindowRecord> {
         ["next", "tick"].as_slice(),
         ["following", "tick"].as_slice(),
         ["subsequent", "tick"].as_slice(),
+        ["next", "clock", "edge"].as_slice(),
+        ["following", "clock", "edge"].as_slice(),
+        ["subsequent", "clock", "edge"].as_slice(),
         ["next", "rising", "edge"].as_slice(),
         ["following", "rising", "edge"].as_slice(),
         ["subsequent", "rising", "edge"].as_slice(),
@@ -8774,14 +8785,24 @@ fn extract_cycle_window_from_text_with_known_signals(
             .map(|signal| signal.to_ascii_lowercase())
             .collect::<BTreeSet<_>>();
 
-        for index in 0..tokens.len().saturating_sub(2) {
+        for index in 0..tokens.len() {
+            if matches!(tokens[index], "same" | "this" | "current")
+                && (named_cycle_like_unit_len(&tokens, index + 1, &known_signal_tokens).is_some()
+                    || edge_of_known_signal_unit_len(&tokens, index + 1, &known_signal_tokens)
+                        .is_some())
+            {
+                return Some(CycleWindowRecord {
+                    min_cycles: Some(0),
+                    max_cycles: Some(0),
+                });
+            }
+
             if !matches!(tokens[index], "next" | "following" | "subsequent") {
                 continue;
             }
-            if !known_signal_tokens.contains(tokens[index + 1]) {
-                continue;
-            }
-            if diagram_position_cycle_like_unit_len(&tokens, index + 2).is_some() {
+            if named_cycle_like_unit_len(&tokens, index + 1, &known_signal_tokens).is_some()
+                || edge_of_known_signal_unit_len(&tokens, index + 1, &known_signal_tokens).is_some()
+            {
                 return Some(CycleWindowRecord {
                     min_cycles: Some(1),
                     max_cycles: Some(1),
@@ -8791,6 +8812,47 @@ fn extract_cycle_window_from_text_with_known_signals(
 
         None
     })
+}
+
+fn named_cycle_like_unit_len(
+    tokens: &[&str],
+    start_index: usize,
+    known_signal_tokens: &BTreeSet<String>,
+) -> Option<usize> {
+    let signal_token = tokens.get(start_index).copied()?;
+    if !known_signal_tokens.contains(signal_token) {
+        return None;
+    }
+
+    if let Some(unit_len) = diagram_position_cycle_like_unit_len(tokens, start_index + 1) {
+        return Some(1 + unit_len);
+    }
+
+    if tokens.get(start_index + 1) == Some(&"edge") {
+        return Some(2);
+    }
+
+    None
+}
+
+fn edge_of_known_signal_unit_len(
+    tokens: &[&str],
+    start_index: usize,
+    known_signal_tokens: &BTreeSet<String>,
+) -> Option<usize> {
+    if tokens.get(start_index) != Some(&"edge") || tokens.get(start_index + 1) != Some(&"of") {
+        return None;
+    }
+
+    let signal_index = if tokens.get(start_index + 2) == Some(&"the") {
+        start_index + 3
+    } else {
+        start_index + 2
+    };
+    let signal_token = tokens.get(signal_index).copied()?;
+    known_signal_tokens
+        .contains(signal_token)
+        .then_some(signal_index - start_index + 1)
 }
 
 fn contains_cycle_like_unit(tokens: &[&str]) -> bool {
@@ -8803,11 +8865,14 @@ fn contains_cycle_like_unit(tokens: &[&str]) -> bool {
         || contains_token_phrase(tokens, &["rising", "edges"])
         || contains_token_phrase(tokens, &["falling", "edge"])
         || contains_token_phrase(tokens, &["falling", "edges"])
+        || contains_token_phrase(tokens, &["clock", "edge"])
+        || contains_token_phrase(tokens, &["clock", "edges"])
 }
 
 fn diagram_position_cycle_like_unit_len(tokens: &[&str], index: usize) -> Option<usize> {
     match tokens.get(index).copied()? {
         "cycle" | "tick" | "posedge" | "negedge" => Some(1),
+        "clock" if matches!(tokens.get(index + 1), Some(&"edge") | Some(&"edges")) => Some(2),
         "rising" | "falling" if tokens.get(index + 1) == Some(&"edge") => Some(2),
         _ => None,
     }
@@ -13248,6 +13313,21 @@ mod tests {
     }
 
     #[test]
+    fn extracts_generic_clock_edge_cycle_window_phrases() {
+        let next_clock_edge =
+            super::extract_cycle_window_from_text("DATA is sampled on the next clock edge.")
+                .expect("expected cycle window from 'next clock edge'");
+        assert_eq!(next_clock_edge.min_cycles, Some(1));
+        assert_eq!(next_clock_edge.max_cycles, Some(1));
+
+        let bounded_clock_edges =
+            super::extract_cycle_window_from_text("DATA must stabilize within 2 clock edges.")
+                .expect("expected cycle window from 'within 2 clock edges'");
+        assert_eq!(bounded_clock_edges.min_cycles, None);
+        assert_eq!(bounded_clock_edges.max_cycles, Some(2));
+    }
+
+    #[test]
     fn derives_single_cycle_window_from_next_tick_constraint_text() -> Result<()> {
         use crate::ir::evidence::EvidenceIr;
         use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
@@ -13484,6 +13564,67 @@ mod tests {
         assert_eq!(cycle_window.min_cycles, Some(1));
         assert_eq!(cycle_window.max_cycles, Some(1));
         assert_eq!(rule.clock_signal.as_deref(), Some("ACLK"));
+        assert_eq!(rule.edge, super::ClockEdge::Rising);
+
+        Ok(())
+    }
+
+    #[test]
+    fn derives_single_cycle_window_from_named_next_clock_edge_text() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("temporal_named_next_clock_edge.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal HCLK is input width 1.\n\n",
+                "Signal PREADY is input width 1.\n\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pready_next_hclk_edge".to_string(),
+            subject_signal: "PREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PREADY must be asserted on the next HCLK edge.".to_string(),
+            supporting_statement_ids: vec!["stmt_next_hclk_edge".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| rule.rule_id == "temporal_signal_constraint_sigcon_pready_next_hclk_edge")
+            .expect("expected temporal rule derived from named next-edge constraint");
+        let cycle_window = rule
+            .cycle_window
+            .as_ref()
+            .expect("expected cycle window to be derived from 'next HCLK edge'");
+        assert_eq!(cycle_window.min_cycles, Some(1));
+        assert_eq!(cycle_window.max_cycles, Some(1));
+        assert_eq!(rule.clock_signal.as_deref(), Some("HCLK"));
         assert_eq!(rule.edge, super::ClockEdge::Rising);
 
         Ok(())

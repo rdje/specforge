@@ -1,5 +1,41 @@
 # CHANGES
 
+## 2026-04-21 (Generic clock-edge phrases now recover bounded temporal windows)
+
+### Improved: generic clock-edge phrasing now joins the explicit temporal model
+- `crates/specforge/src/ir/semantic.rs` now treats bounded clock-edge phrasing as first-class timing language instead of only trusting the more explicit `rising edge` / `falling edge` / `posedge` / `negedge` family.
+- That now covers:
+  - `next clock edge`
+  - `within 2 clock edges`
+  - `next HCLK edge`
+  - `same edge of HCLK`
+- This closes another honest asymmetry in the clock model:
+  - explicit local clock-edge naming like `next HCLK edge` should not preserve `clock_signal = HCLK` while still losing the bounded timing window
+  - generic `clock edge` prose should not be weaker than the neighboring `cycle` / `tick` / shorthand-edge forms when the phrasing is still explicit timing language
+- The widening stays bounded:
+  - generic `edge` only becomes timing structure when it is tied to an explicit clock phrase such as `clock edge`, `<clock> edge`, or `edge of <clock>`
+  - the parser is still not widened into arbitrary edge-word guessing
+
+### Added: regression coverage for generic clock-edge temporal phrasing
+- Added direct parser coverage proving:
+  - `next clock edge` now becomes `cycle_window = 1..1`
+  - `within 2 clock edges` now becomes `cycle_window.max_cycles = 2`
+- Added end-to-end semantic coverage proving `PREADY must be asserted on the next HCLK edge` now preserves:
+  - `clock_signal = HCLK`
+  - `edge = rising`
+  - `cycle_window = 1..1`
+- Added validator coverage proving that same named next-edge phrasing no longer triggers either `intent_temporal_rules_missing_cycle_windows` or `intent_temporal_rules_missing_clock_grounding`.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge generic_clock_edge` -> passed
+- `cargo test -p specforge named_next_edge_text` -> passed
+- `cargo test -p specforge cycle_window` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-21 (Named one-cycle clock phrases now recover `cycle_window`)
 
 ### Improved: relative one-cycle phrasing now works even when a local clock name sits between `next` and the timing unit
