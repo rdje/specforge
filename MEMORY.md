@@ -19,22 +19,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `f782b64`
-- latest_commit_brief_message: `test(temporal): lock trailing edge-word timing symmetry`
-- note: the latest committed baseline deepens the existing trailing shorthand-edge fixture family so bounded word-based rising-edge prose is benchmark-locked alongside the already-landed token shorthand forms
+- latest_commit_hash: `b46b341`
+- latest_commit_brief_message: `test(temporal): lock trailing falling edge-word symmetry`
+- note: the latest committed baseline deepens the existing trailing shorthand-edge fixture family so bounded word-based falling-edge prose is benchmark-locked alongside the already-landed rising-side twin and token shorthand forms
 
 ## Recent commit chain (last 6)
+- `b46b341` test(temporal): lock trailing falling edge-word symmetry
+- `3859295` docs(memory): sync trailing edge-word baseline
 - `f782b64` test(temporal): lock trailing edge-word timing symmetry
 - `9db08cf` docs(memory): sync shorthand-edge symmetry baseline
 - `d327ca8` test(temporal): lock plural shorthand-edge symmetry
 - `58d0333` docs(memory): sync plural shorthand-edge baseline
-- `91fa3f1` fix(temporal): preserve plural shorthand edge semantics
-- `f7f9921` docs(memory): sync clock-edge fixture baseline
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 1` of `origin/main`
+- branch state before the next commit: `ahead 3` of `origin/main`
 - modified tracked files:
 - `MEMORY.md`
 - the feature slice is committed; only the required continuity refresh commit remains
@@ -42,21 +42,22 @@
 
 ## Latest landed slice
 - outcome:
-  - the existing tracked fixture `trailing_shorthand_edge_timing_gold` now also proves bounded word-based rising-edge timing through `PSEL must be asserted within 2 rising edges of HCLK.`
-  - focused semantic coverage now directly proves that spelled-out rising-edge phrasing preserves `clock_signal = HCLK`, `edge = rising`, and `cycle_window.max_cycles = 2`
-  - focused validator coverage now proves the resulting intent rule stays fully grounded instead of surfacing missing-clock or missing-window debt
-  - the tracked KG fixture count stays at `105` because this is a hardening pass inside an existing temporal fixture family, not a new fixture family
+  - the existing tracked fixture `trailing_shorthand_edge_timing_gold` now also proves bounded word-based falling-edge timing through `PWRITE must be asserted within 2 falling edges of HCLK.`
+  - the explicit local-clock extraction regression for trailing `of <clock>` edge phrasing now covers `within 2 falling edges of HCLK`
+  - focused semantic coverage now directly proves the falling-side word-edge phrase preserves `clock_signal = HCLK`, `edge = falling`, and `cycle_window.max_cycles = 2`
+  - the existing validator regression for trailing word-edge timing now proves both rising and falling word-edge rules stay fully grounded together
+  - the tracked KG fixture count stays at `105` because this is another hardening pass inside the same temporal fixture family, not a new fixture family
 - verification passed:
   - `cargo fmt --all`
-  - `cargo test -p specforge derives_rising_edge_from_trailing_of_word_edge_text`
+  - `cargo test -p specforge derives_falling_edge_from_trailing_of_word_edge_text`
   - `cargo test -p specforge validate_intent_ir_does_not_flag_temporal_rules_missing_clock_grounding_for_trailing_of_word_edge_text`
-  - `cargo test -p specforge trailing_of_shorthand_edge`
+  - `cargo test -p specforge trailing_of_word_edge`
   - `cargo test -p specforge kg_bench_runs_tracked_fixtures`
   - `bash scripts/run_docs_ci.sh`
   - `bash scripts/run_ci.sh`
-- `git diff --check`
+  - `git diff --check`
 - current full local CI baseline after the feature commit:
-  - `471` Rust tests plus warning-deny rustdoc and the mdBook build
+  - `472` Rust tests plus warning-deny rustdoc and the mdBook build
 - tracker effect:
   - unchanged, because this is reliability hardening inside an existing temporal capability row
 - current tracked KG-quality suite size after the feature commit:
