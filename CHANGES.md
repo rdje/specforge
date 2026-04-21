@@ -1,5 +1,36 @@
 # CHANGES
 
+## 2026-04-21 (Plural `edge(s) of <clock>` phrases now ground the local clock)
+
+### Improved: plural `edge(s) of <clock>` wording now preserves explicit local clock grounding
+- `crates/specforge/src/ir/semantic.rs` now recognizes the remaining plural explicit-clock patterns that were still lagging:
+  - `within 2 edges of HCLK`
+  - `between 1 and 2 edges of HCLK`
+  - `within 2 clock edges of HCLK`
+- This closes a clock-grounding asymmetry:
+  - the named generic-edge slice could already recover a bounded `cycle_window` for these phrases
+  - but plural `edge(s) of <clock>` wording could still miss `clock_signal = HCLK` because the explicit local clock detector only matched singular `edge of HCLK`
+- The fix stays narrow:
+  - only explicit plural `edge(s) of <known clock>` / `clock edge(s) of <known clock>` forms are added
+  - there is still no widening into arbitrary `edge` guessing
+
+### Added: regression coverage for plural edge-of-clock grounding
+- Added semantic coverage proving `PREADY must be asserted within 2 edges of HCLK` now preserves:
+  - `clock_signal = HCLK`
+  - `edge = rising`
+  - `cycle_window.max_cycles = 2`
+- Added validator coverage proving that same plural edge-of-clock phrasing no longer triggers either `intent_temporal_rules_missing_clock_grounding` or `intent_temporal_rules_missing_cycle_windows`.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge plural_edge_of_clock` -> passed
+- `cargo test -p specforge missing_clock_grounding_for_plural_edge_of_clock_text` -> passed
+- `cargo test -p specforge cycle_window` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-21 (Named quantified and ordinal clock-edge phrases now recover bounded windows)
 
 ### Improved: explicit named clock-edge phrasing now covers bounded and ordinal windows too

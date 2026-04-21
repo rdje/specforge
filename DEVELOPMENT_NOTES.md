@@ -7,6 +7,20 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-21 Plural `edge(s) of <clock>` phrasing should ground the same local clock as singular forms
+- After the named bounded-edge slice, phrases like `within 2 edges of HCLK` were in another partial state:
+  - the bounded `cycle_window` could already be recovered
+  - but `clock_signal = HCLK` could still be lost because the explicit local clock detector only matched singular `edge of HCLK`
+- That is the wrong shape of truth.
+- Once the sentence explicitly names the clock in a bounded timing phrase, the canonical temporal rule should preserve that local clock signal too.
+- The right fix is tiny and bounded:
+  - extend the explicit local clock detector for plural `edges of <clock>` and `clock edges of <clock>`
+  - do not widen the parser to infer timing from arbitrary edge wording
+- That keeps the temporal model coherent:
+  - named edge-of-clock windows keep their local clock
+  - singular and plural explicit edge-of-clock forms now behave the same way
+  - validation no longer reports missing clock grounding for a phrase that already names the clock explicitly
+
 ## 2026-04-21 Named quantified and ordinal generic edge phrasing should not lag behind named cycle/tick language
 - After the generic clock-edge slice, the model could already handle:
   - `next clock edge`

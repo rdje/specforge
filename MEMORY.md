@@ -19,11 +19,12 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `43c654a`
-- latest_commit_brief_message: `feat(temporal): recover named bounded clock-edge windows`
+- latest_commit_hash: `8e6bcb4`
+- latest_commit_brief_message: `docs(memory): sync named edge-window baseline`
 - note: the latest committed baseline captures the named bounded/ordinal clock-edge slice where phrases like `within 2 HCLK edges` and `on the third edge of HCLK` now preserve local clock grounding and recover bounded windows
 
 ## Recent commit chain (last 6)
+- `8e6bcb4` docs(memory): sync named edge-window baseline
 - `43c654a` feat(temporal): recover named bounded clock-edge windows
 - `a84a60d` docs(memory): sync generic clock-edge baseline
 - `46c3870` feat(temporal): recover generic clock-edge windows
@@ -47,33 +48,45 @@
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 9` of `origin/main`
+- branch state before the next commit: `ahead 10` of `origin/main`
 - push policy remains local-only for now; do not push in this slice
 - modified tracked files:
+  - `CHANGES.md`
+  - `DEVELOPMENT_NOTES.md`
+  - `LIVE_ACHIEVEMENT_STATUS.md`
   - `MEMORY.md`
-- the feature slice is already committed; only the required continuity refresh commit remains
+  - `README.md`
+  - `RUST_CODEBASE_ANALYSIS.md`
+  - `crates/specforge/src/commands/validate.rs`
+  - `crates/specforge/src/ir/semantic.rs`
+  - `docs/book/src/domain/temporal-semantics.md`
+- the current slice is implemented and fully validated in the worktree but not committed yet
 - do not push after this slice unless the user asks or the branch reaches the threshold again
 
 ## Latest landed slice
 - outcome:
-  - named quantified and ordinal generic-edge phrasing now joins the bounded temporal model, so phrases like `within 2 HCLK edges`, `after 3 HCLK edges`, and `on the third edge of HCLK` no longer lag behind neighboring named cycle/tick or explicit clock-edge language
-  - `within 2 HCLK edges` now preserves `clock_signal = HCLK`, inherits rising-edge grounding, and recovers `cycle_window.max_cycles = 2`
-  - `on the third edge of HCLK` now preserves `clock_signal = HCLK`, inherits rising-edge grounding, and recovers `cycle_window = 3..3`
-  - the widening stays bounded to the known-signal-aware temporal path, so arbitrary standalone uses of `edge` still do not become timing truth
+  - plural `edge(s) of <clock>` phrasing now preserves explicit local clock grounding, so phrases like `within 2 edges of HCLK` or `within 2 clock edges of HCLK` no longer lag behind singular `edge of HCLK`
+  - `within 2 edges of HCLK` now preserves `clock_signal = HCLK`, inherits rising-edge grounding, and keeps the already recovered `cycle_window.max_cycles = 2`
+  - singular and plural explicit edge-of-clock phrasing now behave the same way in typed temporal rules
+  - the widening stays bounded to explicit plural `edge(s) of <known clock>` patterns; arbitrary edge wording still does not become timing truth
 - verification passed for the in-flight slice:
   - `cargo fmt --all`
-  - `cargo test -p specforge named_quantified_edge`
-  - `cargo test -p specforge edge_of_clock`
-  - `cargo test -p specforge named_next_edge_text`
+  - `cargo test -p specforge plural_edge_of_clock`
+  - `cargo test -p specforge missing_clock_grounding_for_plural_edge_of_clock_text`
   - `cargo test -p specforge cycle_window`
   - `cargo test -p specforge kg_bench_runs_tracked_fixtures`
   - `bash scripts/run_docs_ci.sh`
   - `bash scripts/run_ci.sh`
   - `git diff --check`
-- current full local CI baseline after the in-flight changes: `453` Rust tests plus warning-deny rustdoc and the mdBook build
+- current full local CI baseline after the in-flight changes: `455` Rust tests plus warning-deny rustdoc and the mdBook build
 - current tracked KG-quality suite size: `103` fixtures
 
 ## Next exact steps
+- write the feature commit message into `git_message_brief.txt`
+- stage only the intended tracked files for the plural edge-of-clock grounding slice
+- commit the feature with `git commit -F git_message_brief.txt`
+- truncate `git_message_brief.txt` back to `0` bytes
+- refresh `MEMORY.md` again so it points at the newly created feature commit hash/message
 - write the continuity commit message into `git_message_brief.txt`
 - stage only `MEMORY.md`
 - commit the continuity refresh with `git commit -F git_message_brief.txt`
