@@ -19,11 +19,13 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `2bb624b`
-- latest_commit_brief_message: `test(temporal): lock clock-edge-of-clock phrasing`
-- note: the latest committed baseline regression-locks generic `clock edge(s) of <clock>` phrasing end to end, so forms like `clock edge T4 of HCLK` and `within 2 clock edges of HCLK` are now explicitly proven from parser through validator
+- latest_commit_hash: `6d56ae9`
+- latest_commit_brief_message: `test(kg-bench): add clock-edge timing fixture`
+- note: the latest committed baseline adds a tracked KG-quality fixture for generic `clock edge(s) of <clock>` timing, so that phrasing family is now locked at the benchmark level as well as in unit coverage
 
 ## Recent commit chain (last 6)
+- `6d56ae9` test(kg-bench): add clock-edge timing fixture
+- `3fc7e1a` docs(memory): sync clock-edge-of-clock baseline
 - `2bb624b` test(temporal): lock clock-edge-of-clock phrasing
 - `35960c7` docs(memory): sync trailing shorthand-edge baseline
 - `328c30e` feat(temporal): ground trailing shorthand edge clocks
@@ -55,7 +57,7 @@
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 19` of `origin/main`
+- branch state before the next commit: `ahead 21` of `origin/main`
 - push policy remains local-only for now; do not push in this slice
 - modified tracked files:
   - `MEMORY.md`
@@ -64,20 +66,14 @@
 
 ## Latest landed slice
 - outcome:
-  - parser coverage now proves `clock edge T4 of HCLK` and `within 2 clock edges of HCLK` preserve both the expected bounded `cycle_window` and `clock_signal = HCLK`
-  - semantic coverage now proves `PREADY must be asserted on clock edge T4 of HCLK` preserves `clock_signal = HCLK`, `edge = rising`, and `cycle_window = 4..4`
-  - validator coverage now proves that same generic clock-edge-of-clock phrasing stays out of both missing-clock and missing-window warning paths
-  - the capability itself is unchanged; this slice removes an end-to-end regression blind spot around already-supported bounded timing language
+  - the new tracked fixture `clock_edge_of_clock_timing_gold` locks generic `clock edge(s) of <clock>` timing at the benchmark level
+  - the fixture proves exact `clock edge T4 of HCLK` timing and bounded `within 2 clock edges of HCLK` timing together in one reviewable corpus artifact
+  - validation expectations in that same fixture prove the grounded shape directly: no missing clock grounding, no missing cycle window, and both rules present
 - verification passed:
-  - `cargo fmt --all`
-  - `cargo test -p specforge clock_edge_of_clock`
-  - `cargo test -p specforge cycle_window`
   - `cargo test -p specforge kg_bench_runs_tracked_fixtures`
-  - `bash scripts/run_docs_ci.sh`
-  - `bash scripts/run_ci.sh`
-  - `git diff --check`
-- current full local CI baseline after the latest landed slice: `467` Rust tests plus warning-deny rustdoc and the mdBook build
-- current tracked KG-quality suite size: `103` fixtures
+  - `cargo test -p specforge clock_edge_of_clock`
+- current full local CI baseline after the latest landed slice remains `467` Rust tests plus warning-deny rustdoc and the mdBook build
+- current tracked KG-quality suite size after the latest landed slice: `104` fixtures
 
 ## Next exact steps
 - write the continuity commit message into `git_message_brief.txt`
