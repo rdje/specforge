@@ -7,6 +7,24 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Bounded edge-word timing should be symmetric on the falling side too
+- The previous slice benchmark-locked the spelled-out rising-edge form:
+  - `within 2 rising edges of HCLK`
+- That was useful, but still left a quiet asymmetry next to the already-landed token forms:
+  - `within 2 posedges of HCLK`
+  - `within 2 negedges of HCLK`
+- If the word-based edge family is part of the trusted temporal surface, the falling-side twin should be explicit too:
+  - `within 2 falling edges of HCLK`
+- The right move stays narrow:
+  - do not add a new fixture family
+  - deepen `trailing_shorthand_edge_timing_gold` again
+  - add one direct semantic regression for the falling word-edge form
+  - widen the existing word-edge validator regression so it proves both rising and falling prose stay grounded together
+- That keeps the temporal contract honest without inflating the tracked corpus:
+  - the fixture family stays the same
+  - the benchmark count stays flat
+  - the word-based rising/falling pair is now locked the same way the token shorthand pair already was
+
 ## 2026-04-22 Bounded edge-word timing should be locked as explicitly as the token shorthand
 - The existing trailing shorthand-edge family had become strong for token forms:
   - `within 2 posedges of HCLK`

@@ -13717,6 +13717,14 @@ mod tests {
             .as_deref(),
             Some("HCLK")
         );
+        assert_eq!(
+            super::explicit_clock_signal_from_text(
+                "DATA must stabilize within 2 falling edges of HCLK.",
+                &known_signals,
+            )
+            .as_deref(),
+            Some("HCLK")
+        );
     }
 
     #[test]
@@ -14605,6 +14613,72 @@ mod tests {
         assert_eq!(cycle_window.max_cycles, Some(2));
         assert_eq!(rule.clock_signal.as_deref(), Some("HCLK"));
         assert_eq!(rule.edge, super::ClockEdge::Rising);
+
+        Ok(())
+    }
+
+    #[test]
+    fn derives_falling_edge_from_trailing_of_word_edge_text() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir
+            .path()
+            .join("temporal_trailing_of_word_edge_falling.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal HCLK is input width 1.\n\n",
+                "Signal PWRITE is input width 1.\n\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pwrite_within_two_falling_edges_of_hclk".to_string(),
+            subject_signal: "PWRITE".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PWRITE must be asserted within 2 falling edges of HCLK.".to_string(),
+            supporting_statement_ids: vec!["stmt_within_two_falling_edges_of_hclk".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| {
+                rule.rule_id
+                    == "temporal_signal_constraint_sigcon_pwrite_within_two_falling_edges_of_hclk"
+            })
+            .expect("expected temporal rule derived from word-edge timing constraint");
+        let cycle_window = rule
+            .cycle_window
+            .as_ref()
+            .expect("expected cycle window to be derived from 'within 2 falling edges of HCLK'");
+        assert_eq!(cycle_window.min_cycles, None);
+        assert_eq!(cycle_window.max_cycles, Some(2));
+        assert_eq!(rule.clock_signal.as_deref(), Some("HCLK"));
+        assert_eq!(rule.edge, super::ClockEdge::Falling);
 
         Ok(())
     }

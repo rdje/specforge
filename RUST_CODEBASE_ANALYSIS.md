@@ -96,6 +96,21 @@
 - Focused temporal tests, tracked KG fixtures, docs CI, full local CI, and whitespace checks all passed for this slice.
 - The current full local CI baseline is now `471` Rust tests plus warning-deny rustdoc and the mdBook build.
 
+## Session update (2026-04-22 trailing falling edge-word symmetry lock)
+- Continued from commit `3859295`, keeping the same trailing shorthand-edge family honest without widening truth or creating a new fixture family.
+- The prior slice benchmark-locked the word-based rising-side phrase:
+  - `within 2 rising edges of HCLK`
+- But the falling-side twin was still only implied by generic parser helpers and neighboring token-form coverage:
+  - `within 2 falling edges of HCLK`
+- This slice makes that twin explicit at the same useful levels:
+  - the explicit local-clock extraction regression for trailing `of <clock>` edge phrasing now covers `within 2 falling edges of HCLK`
+  - direct semantic coverage now proves `PWRITE must be asserted within 2 falling edges of HCLK.` preserves `clock_signal = HCLK`, `edge = falling`, and `cycle_window.max_cycles = 2`
+- the existing validator regression for trailing word-edge timing now proves both rising and falling word-edge rules stay fully grounded together
+- the existing tracked fixture `trailing_shorthand_edge_timing_gold` now also carries the falling-side word-edge rule, so both `SemanticIR` and `IntentIR` lock the full five-rule temporal family end to end
+- The tracked benchmark surface size remains `105` fixtures because this is another hardening pass inside an existing family, not a new family.
+- Focused temporal tests, tracked KG fixtures, docs CI, full local CI, and whitespace checks passed for this slice.
+- The current full local CI baseline is now `472` Rust tests plus warning-deny rustdoc and the mdBook build.
+
 ## Session update (2026-04-21 trailing shorthand-edge tracked fixture coverage)
 - Continued from commit `f7f9921`, raising the neighboring trailing shorthand-edge family into the tracked benchmark corpus instead of leaving it only in unit coverage.
 - The first benchmark pass exposed a real semantic bug rather than just a missing fixture:
