@@ -1,5 +1,37 @@
 # CHANGES
 
+## 2026-04-21 (Temporal rules now ground signal-leading clock phrases)
+
+### Improved: signal-leading clock phrases now preserve local `clock_signal` grounding too
+- `crates/specforge/src/ir/semantic.rs` now recognizes signal-leading local clock phrases as explicit clock-signal grounding for typed temporal rules.
+- That now covers both prose-style and shorthand ordering:
+  - `HCLK rising edge`
+  - `HCLK falling edge`
+  - `HCLK posedge`
+  - `HCLK negedge`
+- This closes the next local-language gap in the clock model:
+  - `rising edge of HCLK` was already grounded by the previous slice
+  - but common signal-leading variants like `HCLK rising edge` and `HCLK posedge` still fell back to the default clock or to `None`
+- The override remains bounded:
+  - only explicit local timing phrases that actually name a clock signal are trusted
+  - default-clock fallback still applies when the current sentence does not name a clock
+
+### Added: regression coverage for signal-leading clock grounding
+- Added semantic coverage proving `PREADY must be asserted on HCLK rising edge` now preserves:
+  - `clock_signal = HCLK`
+  - `edge = rising`
+- Added validator coverage proving `PREADY must be asserted on HCLK posedge` no longer trips `temporal_rules_missing_clock_grounding` even without a separate default clock declaration.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge signal_leading_rising_edge_text` -> passed
+- `cargo test -p specforge signal_leading_clock_text` -> passed
+- `cargo test -p specforge cycle_window` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-21 (Temporal rules now preserve explicit local clock names from timing text)
 
 ### Improved: explicit local timing text now grounds the clock signal itself

@@ -7,6 +7,22 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-21 Signal-leading clock phrases should ground the same local clock model too
+- The explicit local clock-grounding slice fixed `rising edge of HCLK`.
+- But a neighboring real-world phrasing family still lagged:
+  - `HCLK rising edge`
+  - `HCLK falling edge`
+  - `HCLK posedge`
+  - `HCLK negedge`
+- Those forms are still locally explicit.
+- They should not fall back to the document default clock just because the signal name comes first.
+- The right fix is not broader guessing.
+- The right fix is to extend the same bounded explicit-pattern detector so it accepts both edge-leading and signal-leading clock order.
+- That keeps the model coherent:
+  - local timing text still wins over default clock fallback
+  - both prose-like and HDL-like edge orderings stay first-class
+  - validation can treat `HCLK posedge` as honest local grounding rather than as a missing-clock artifact
+
 ## 2026-04-21 Explicit local clock names in timing prose should override the default document clock
 - The previous temporal slices had already made the clock-tick model much stronger:
   - explicit windows like `two cycles later`

@@ -144,6 +144,7 @@
 - Built-in temporal parser now recognizes posedge/negedge shorthand and diagram-style positions: Done
 - Built-in temporal parser now preserves explicit shorthand edge grounding in typed temporal rules: Done
 - Explicit local clock names in timing text now ground `clock_signal` in typed temporal rules: Done
+- Signal-leading local clock phrases now ground `clock_signal` in typed temporal rules: Done
 - Actor-grounded drive predicates in typed temporal rules implemented: Done
 - Actor-grounded stability predicates in typed temporal rules implemented: Done
 - Multi-predicate temporal antecedents preserved in typed temporal rules: Done

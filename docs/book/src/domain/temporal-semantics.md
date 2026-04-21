@@ -42,6 +42,7 @@ When the current sentence names a local clock explicitly, that local name should
 Examples:
 
 - `on the third rising edge of HCLK` should preserve `clock_signal = HCLK`
+- `on HCLK rising edge` should preserve `clock_signal = HCLK`
 - `in the same ACLK cycle` should preserve `clock_signal = ACLK`
 - if the text does not name a clock, the document default clock can still fill the gap
 
