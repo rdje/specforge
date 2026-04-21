@@ -50,32 +50,41 @@
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 13` of `origin/main`
+- branch state before the next commit: `ahead 14` of `origin/main`
 - push policy remains local-only for now; do not push in this slice
 - modified tracked files:
+  - `CHANGES.md`
+  - `DEVELOPMENT_NOTES.md`
+  - `LIVE_ACHIEVEMENT_STATUS.md`
   - `MEMORY.md`
+  - `README.md`
+  - `RUST_CODEBASE_ANALYSIS.md`
+  - `crates/specforge/src/commands/validate.rs`
+  - `crates/specforge/src/ir/semantic.rs`
+  - `docs/book/src/domain/temporal-semantics.md`
 - the feature slice is already committed; only the required continuity refresh commit remains
 - do not push after this slice unless the user asks or the branch reaches the threshold again
 
 ## Latest landed slice
 - outcome:
-  - named diagram-style generic-edge timing now recovers exact bounded windows for explicit known-clock phrases such as `HCLK edge T3`, `edge T3 of HCLK`, and `clock edge T4 of HCLK`
-  - those same phrases now preserve the local `clock_signal` instead of only the numeric window
-  - the widening stays bounded to explicit known-clock generic-edge diagram positions; arbitrary `edge T3` wording still does not become timing truth
+  - unit-first diagram-position timing such as `tick T3 of HCLK`, `posedge T4 of HCLK`, and `rising edge T5 of HCLK` now preserves the local `clock_signal`
+  - the exact bounded `cycle_window` path for those phrases stays unchanged; this slice completes the local clock grounding instead of changing the timing window semantics
+  - the widening stays bounded to explicit unit-first diagram positions that end in `of <known clock>`; arbitrary unit-first timing text still does not become a clock guess
 - verification passed:
   - `cargo fmt --all`
-  - `cargo test -p specforge named_diagram_edge`
-  - `cargo test -p specforge named_generic_edge_diagram_position`
+  - `cargo test -p specforge unit_first_diagram_position`
+  - `cargo test -p specforge extracts_unit_first_diagram_position_of_clock_phrases`
   - `cargo test -p specforge cycle_window`
   - `cargo test -p specforge kg_bench_runs_tracked_fixtures`
   - `bash scripts/run_docs_ci.sh`
   - `bash scripts/run_ci.sh`
   - `git diff --check`
-- current full local CI baseline after the latest landed slice: `458` Rust tests plus warning-deny rustdoc and the mdBook build
+- current full local CI baseline after the latest landed slice: `461` Rust tests plus warning-deny rustdoc and the mdBook build
 - current tracked KG-quality suite size: `103` fixtures
 
 ## Next exact steps
-- write the continuity commit message into `git_message_brief.txt`
-- stage only `MEMORY.md`
-- commit the continuity refresh with `git commit -F git_message_brief.txt`
+- write the feature commit message into `git_message_brief.txt`
+- stage only the intended tracked files for the feature slice
+- commit the feature slice with `git commit -F git_message_brief.txt`
 - truncate `git_message_brief.txt` back to `0` bytes and verify the post-conditions
+- refresh `MEMORY.md` to the new feature-commit baseline, then land the required memory-only continuity commit

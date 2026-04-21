@@ -75,6 +75,7 @@ Examples:
 - named bounded or ordinal edge language such as `within 2 HCLK edges` or `on the third edge of HCLK` can also become bounded `cycle_window` structure
 - plural edge-of-clock language such as `within 2 edges of HCLK` can now preserve the local `clock_signal` too instead of only the window
 - named diagram-style generic-edge language such as `HCLK edge T3` or `edge T3 of HCLK` can now become exact bounded windows while preserving the local `clock_signal`
+- unit-first diagram-position language such as `tick T3 of HCLK` or `posedge T4 of HCLK` can now preserve the local `clock_signal` too instead of only the window
 - next-edge language such as `next falling edge` can become `min_cycles = 1`, `max_cycles = 1`
 - shorthand edge language such as `next posedge` or `next negedge` can become `min_cycles = 1`, `max_cycles = 1`, while also preserving the named clock edge as `rising` or `falling`
 - bounded tick language such as `within 2 ticks` can become `max_cycles = 2`

@@ -1,5 +1,39 @@
 # CHANGES
 
+## 2026-04-21 (Unit-first diagram positions now ground the local clock)
+
+### Improved: unit-first diagram-position wording with trailing `of <clock>` now preserves explicit local clock grounding
+- `crates/specforge/src/ir/semantic.rs` now preserves `clock_signal` for the remaining unit-first diagram-position family:
+  - `tick T3 of HCLK`
+  - `posedge T4 of HCLK`
+  - `rising edge T5 of HCLK`
+- This closes another half-grounded temporal state:
+  - the parser already knew the exact window for those phrases
+  - but the explicit local clock detector could still miss `clock_signal = HCLK` because the clock name came after the diagram-position token
+- The fix stays bounded:
+  - only explicit unit-first diagram positions that end in `of <known clock>` are added
+  - arbitrary `tick T3 of ...` or `posedge T4 of ...` text without a known current-document clock still does not become timing truth
+
+### Added: regression coverage for unit-first diagram-position clock grounding
+- Added parser-level coverage proving:
+  - `tick T3 of HCLK`, `posedge T4 of HCLK`, and `rising edge T5 of HCLK` still recover exact bounded windows
+  - those same forms now also preserve `clock_signal = HCLK`
+- Added end-to-end semantic coverage proving `PREADY must be asserted on posedge T4 of HCLK` now preserves:
+  - `clock_signal = HCLK`
+  - `edge = rising`
+  - `cycle_window = 4..4`
+- Added validator coverage proving that same unit-first diagram-position phrasing no longer triggers `intent_temporal_rules_missing_clock_grounding`
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge unit_first_diagram_position` -> passed
+- `cargo test -p specforge extracts_unit_first_diagram_position_of_clock_phrases` -> passed
+- `cargo test -p specforge cycle_window` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-21 (Named diagram-style generic edge positions now recover bounded windows)
 
 ### Improved: named diagram-style generic edge wording now joins the explicit temporal model

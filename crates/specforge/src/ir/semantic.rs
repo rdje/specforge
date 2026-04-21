@@ -8278,7 +8278,9 @@ fn explicit_clock_signal_from_text(text: &str, known_signals: &BTreeSet<String>)
 
     for index in 0..tokens.len() {
         if let Some((_, signal_token)) =
-            parse_named_generic_edge_diagram_position(&tokens, index, &known_signal_tokens)
+            parse_named_cycle_like_diagram_position(&tokens, index, &known_signal_tokens).or_else(
+                || parse_named_generic_edge_diagram_position(&tokens, index, &known_signal_tokens),
+            )
             && let Some(signal_name) = known_signals
                 .iter()
                 .find(|signal| signal.eq_ignore_ascii_case(signal_token))
@@ -9082,6 +9084,31 @@ fn parse_named_generic_edge_diagram_position<'a>(
     }
 
     let unit_len = generic_edge_unit_len(tokens, start_index)?;
+    let count_index = start_index + unit_len;
+    let count = tokens
+        .get(count_index)
+        .copied()
+        .and_then(parse_diagram_cycle_count_value)?;
+    if tokens.get(count_index + 1) != Some(&"of") {
+        return None;
+    }
+    let signal_index = if tokens.get(count_index + 2) == Some(&"the") {
+        count_index + 3
+    } else {
+        count_index + 2
+    };
+    let signal_token = tokens.get(signal_index).copied()?;
+    known_signal_tokens
+        .contains(signal_token)
+        .then_some((count, signal_token))
+}
+
+fn parse_named_cycle_like_diagram_position<'a>(
+    tokens: &'a [&'a str],
+    start_index: usize,
+    known_signal_tokens: &BTreeSet<String>,
+) -> Option<(u32, &'a str)> {
+    let unit_len = diagram_position_cycle_like_unit_len(tokens, start_index)?;
     let count_index = start_index + unit_len;
     let count = tokens
         .get(count_index)
@@ -13593,6 +13620,54 @@ mod tests {
     }
 
     #[test]
+    fn extracts_unit_first_diagram_position_of_clock_phrases() {
+        let known_signals = BTreeSet::from(["HCLK".to_string()]);
+
+        let tick_t3_of_hclk =
+            super::extract_cycle_window_from_text("DATA is sampled at tick T3 of HCLK.")
+                .expect("expected cycle window from 'tick T3 of HCLK'");
+        assert_eq!(tick_t3_of_hclk.min_cycles, Some(3));
+        assert_eq!(tick_t3_of_hclk.max_cycles, Some(3));
+
+        let posedge_t4_of_hclk =
+            super::extract_cycle_window_from_text("DATA is sampled on posedge T4 of HCLK.")
+                .expect("expected cycle window from 'posedge T4 of HCLK'");
+        assert_eq!(posedge_t4_of_hclk.min_cycles, Some(4));
+        assert_eq!(posedge_t4_of_hclk.max_cycles, Some(4));
+
+        let rising_edge_t5_of_hclk =
+            super::extract_cycle_window_from_text("DATA is sampled on rising edge T5 of HCLK.")
+                .expect("expected cycle window from 'rising edge T5 of HCLK'");
+        assert_eq!(rising_edge_t5_of_hclk.min_cycles, Some(5));
+        assert_eq!(rising_edge_t5_of_hclk.max_cycles, Some(5));
+
+        assert_eq!(
+            super::explicit_clock_signal_from_text(
+                "DATA is sampled at tick T3 of HCLK.",
+                &known_signals,
+            )
+            .as_deref(),
+            Some("HCLK")
+        );
+        assert_eq!(
+            super::explicit_clock_signal_from_text(
+                "DATA is sampled on posedge T4 of HCLK.",
+                &known_signals,
+            )
+            .as_deref(),
+            Some("HCLK")
+        );
+        assert_eq!(
+            super::explicit_clock_signal_from_text(
+                "DATA is sampled on rising edge T5 of HCLK.",
+                &known_signals,
+            )
+            .as_deref(),
+            Some("HCLK")
+        );
+    }
+
+    #[test]
     fn extracts_zero_cycle_window_from_same_cycle_phrases() {
         let same_cycle = super::extract_cycle_window_from_text(
             "Both TVALID and TREADY can be asserted in the same ACLK cycle.",
@@ -14176,6 +14251,71 @@ mod tests {
             .expect("expected cycle window to be derived from 'edge T3 of HCLK'");
         assert_eq!(cycle_window.min_cycles, Some(3));
         assert_eq!(cycle_window.max_cycles, Some(3));
+        assert_eq!(rule.clock_signal.as_deref(), Some("HCLK"));
+        assert_eq!(rule.edge, super::ClockEdge::Rising);
+
+        Ok(())
+    }
+
+    #[test]
+    fn derives_local_clock_from_unit_first_diagram_position_text() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir
+            .path()
+            .join("temporal_unit_first_diagram_position.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal HCLK is input width 1.\n\n",
+                "Signal PREADY is input width 1.\n\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pready_posedge_t4_of_hclk".to_string(),
+            subject_signal: "PREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PREADY must be asserted on posedge T4 of HCLK.".to_string(),
+            supporting_statement_ids: vec!["stmt_posedge_t4_of_hclk".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| {
+                rule.rule_id == "temporal_signal_constraint_sigcon_pready_posedge_t4_of_hclk"
+            })
+            .expect("expected temporal rule derived from unit-first diagram-position constraint");
+        let cycle_window = rule
+            .cycle_window
+            .as_ref()
+            .expect("expected cycle window to be derived from 'posedge T4 of HCLK'");
+        assert_eq!(cycle_window.min_cycles, Some(4));
+        assert_eq!(cycle_window.max_cycles, Some(4));
         assert_eq!(rule.clock_signal.as_deref(), Some("HCLK"));
         assert_eq!(rule.edge, super::ClockEdge::Rising);
 

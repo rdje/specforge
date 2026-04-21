@@ -7,6 +7,24 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-21 Unit-first diagram positions should keep the named local clock too
+- The temporal layer already knew something important about phrases like:
+  - `tick T3 of HCLK`
+  - `posedge T4 of HCLK`
+  - `rising edge T5 of HCLK`
+- It already recovered the exact bounded window.
+- But it still under-modeled the same sentence by dropping `clock_signal = HCLK`.
+- That is another half-grounded truth state.
+- If the phrase explicitly ends in `of HCLK`, the canonical temporal rule should keep that local clock name instead of falling back to the document default or to `None`.
+- The right fix is bounded:
+  - reuse the existing unit-first diagram-position parser shape
+  - only add a local-clock detector for `... of <known clock>`
+  - do not widen arbitrary unit-first timing text into clock guesses
+- This keeps the explicit clock-tick model coherent:
+  - exact diagram-position windows stay intact
+  - local clock text stays first-class even when it comes after the position token
+  - validation no longer flags a missing clock for a phrase that explicitly names one
+
 ## 2026-04-21 Named diagram-style generic edge positions should not lag behind either diagram labels or named edge prose
 - The temporal model had already become coherent in two neighboring directions:
   - unit-first diagram labels such as `tick T3` and `posedge T4`

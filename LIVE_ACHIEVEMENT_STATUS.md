@@ -151,6 +151,7 @@
 - Named quantified and ordinal clock-edge phrases now recover bounded windows in typed temporal rules: Done
 - Plural `edge(s) of <clock>` phrases now ground `clock_signal` in typed temporal rules: Done
 - Named diagram-style generic edge positions now recover bounded windows in typed temporal rules: Done
+- Unit-first diagram positions with trailing `of <clock>` now ground `clock_signal` in typed temporal rules: Done
 - Actor-grounded drive predicates in typed temporal rules implemented: Done
 - Actor-grounded stability predicates in typed temporal rules implemented: Done
 - Multi-predicate temporal antecedents preserved in typed temporal rules: Done
