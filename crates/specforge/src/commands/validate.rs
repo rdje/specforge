@@ -16,6 +16,7 @@ use crate::ir::prior_memory::{
     interface_signal_conflict_negative_knowledge_pattern,
     residual_decision_negative_knowledge_pattern,
     signal_connectivity_conflict_negative_knowledge_pattern,
+    signal_polarity_conflict_negative_knowledge_pattern,
     signal_semantic_conflict_negative_knowledge_pattern,
     temporal_value_conflict_negative_knowledge_pattern,
 };
@@ -87,6 +88,10 @@ const SEMANTIC_SIGNAL_CONNECTIVITY_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
     "semantic_signal_connectivity_conflict_surface_rescan_guidance";
 const INTENT_SIGNAL_CONNECTIVITY_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
     "intent_signal_connectivity_conflict_surface_rescan_guidance";
+const SEMANTIC_SIGNAL_POLARITY_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
+    "semantic_signal_polarity_conflict_surface_rescan_guidance";
+const INTENT_SIGNAL_POLARITY_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
+    "intent_signal_polarity_conflict_surface_rescan_guidance";
 
 macro_rules! println {
     () => {
@@ -546,6 +551,28 @@ fn push_signal_connectivity_conflict_rescan_guidance(
     ));
 }
 
+fn push_signal_polarity_conflict_rescan_guidance(
+    findings: &mut Vec<ValidationFindingRecord>,
+    finding_id: &str,
+    stage_label: &str,
+    related_ids: &[String],
+) {
+    if related_ids.is_empty() {
+        return;
+    }
+
+    findings.push(finding(
+        finding_id,
+        ValidationFindingSeverity::Info,
+        "rescan_guidance",
+        format!(
+            "{} polarity conflict id(s) in {stage_label} should trigger targeted NLP rescans plus downstream rebuild because the current canonical polarity surface still carries unresolved active-level disagreement",
+            related_ids.len()
+        ),
+        related_ids.to_vec(),
+    ));
+}
+
 fn evidence_structural_kg_missing_related_ids(ir: &EvidenceIr) -> Vec<String> {
     ir.signal_constraints
         .iter()
@@ -650,6 +677,16 @@ fn evidence_negative_knowledge_prior_matches(ir: &EvidenceIr) -> Vec<String> {
                 )
                 .then(|| conflict.conflict_id.clone())
         })
+        .chain(ir.signal_polarity_conflicts.iter().filter_map(|conflict| {
+            let pattern = signal_polarity_conflict_negative_knowledge_pattern(conflict)?;
+            corpus_memory
+                .negative_knowledge_pattern_is_known(
+                    Some(protocol_family),
+                    NegativeKnowledgeKind::SignalPolarityConflict,
+                    &pattern,
+                )
+                .then(|| conflict.conflict_id.clone())
+        }))
         .collect()
 }
 
@@ -673,17 +710,22 @@ fn push_negative_knowledge_match(
     }
 }
 
+struct CarriedNegativeKnowledgeSurfaces<'a> {
+    signal_semantic_conflicts: &'a [SignalSemanticConflictRecord],
+    temporal_conflicts: &'a [TemporalConflictRecord],
+    signal_polarity_conflicts: &'a [crate::ir::evidence::SignalPolarityConflictRecord],
+    interface_signal_conflicts: &'a [InterfaceSignalConflictRecord],
+    signal_connectivity_conflicts: &'a [SignalConnectivityConflictRecord],
+    residual_decisions: &'a [ResidualDecisionPacket],
+}
+
 fn negative_knowledge_prior_matches_for_carried_surfaces(
     corpus_memory: &CorpusMemory,
     protocol_family: ProtocolFamily,
-    signal_semantic_conflicts: &[SignalSemanticConflictRecord],
-    temporal_conflicts: &[TemporalConflictRecord],
-    interface_signal_conflicts: &[InterfaceSignalConflictRecord],
-    signal_connectivity_conflicts: &[SignalConnectivityConflictRecord],
-    residual_decisions: &[ResidualDecisionPacket],
+    surfaces: CarriedNegativeKnowledgeSurfaces<'_>,
 ) -> Vec<String> {
     let mut matches = Vec::new();
-    for conflict in signal_semantic_conflicts {
+    for conflict in surfaces.signal_semantic_conflicts {
         push_negative_knowledge_match(
             &mut matches,
             corpus_memory,
@@ -693,7 +735,7 @@ fn negative_knowledge_prior_matches_for_carried_surfaces(
             &conflict.conflict_id,
         );
     }
-    for conflict in temporal_conflicts {
+    for conflict in surfaces.temporal_conflicts {
         push_negative_knowledge_match(
             &mut matches,
             corpus_memory,
@@ -703,7 +745,17 @@ fn negative_knowledge_prior_matches_for_carried_surfaces(
             &conflict.conflict_id,
         );
     }
-    for conflict in interface_signal_conflicts {
+    for conflict in surfaces.signal_polarity_conflicts {
+        push_negative_knowledge_match(
+            &mut matches,
+            corpus_memory,
+            protocol_family,
+            NegativeKnowledgeKind::SignalPolarityConflict,
+            signal_polarity_conflict_negative_knowledge_pattern(conflict),
+            &conflict.conflict_id,
+        );
+    }
+    for conflict in surfaces.interface_signal_conflicts {
         push_negative_knowledge_match(
             &mut matches,
             corpus_memory,
@@ -713,7 +765,7 @@ fn negative_knowledge_prior_matches_for_carried_surfaces(
             &conflict.conflict_id,
         );
     }
-    for conflict in signal_connectivity_conflicts {
+    for conflict in surfaces.signal_connectivity_conflicts {
         push_negative_knowledge_match(
             &mut matches,
             corpus_memory,
@@ -723,7 +775,7 @@ fn negative_knowledge_prior_matches_for_carried_surfaces(
             &conflict.conflict_id,
         );
     }
-    for residual in residual_decisions {
+    for residual in surfaces.residual_decisions {
         push_negative_knowledge_match(
             &mut matches,
             corpus_memory,
@@ -753,11 +805,14 @@ fn semantic_negative_knowledge_prior_matches(ir: &SemanticIr) -> Vec<String> {
     negative_knowledge_prior_matches_for_carried_surfaces(
         &corpus_memory,
         protocol_family,
-        &ir.signal_semantic_conflicts,
-        &ir.temporal_conflicts,
-        &ir.interface_signal_conflicts,
-        &ir.signal_connectivity_conflicts,
-        &ir.residual_decisions,
+        CarriedNegativeKnowledgeSurfaces {
+            signal_semantic_conflicts: &ir.signal_semantic_conflicts,
+            temporal_conflicts: &ir.temporal_conflicts,
+            signal_polarity_conflicts: &ir.signal_polarity_conflicts,
+            interface_signal_conflicts: &ir.interface_signal_conflicts,
+            signal_connectivity_conflicts: &ir.signal_connectivity_conflicts,
+            residual_decisions: &ir.residual_decisions,
+        },
     )
 }
 
@@ -781,11 +836,14 @@ fn intent_negative_knowledge_prior_matches(ir: &IntentIr) -> Vec<String> {
     negative_knowledge_prior_matches_for_carried_surfaces(
         &corpus_memory,
         protocol_family,
-        &ir.signal_semantic_conflicts,
-        &ir.temporal_conflicts,
-        &ir.interface_signal_conflicts,
-        &ir.signal_connectivity_conflicts,
-        &ir.residual_decisions,
+        CarriedNegativeKnowledgeSurfaces {
+            signal_semantic_conflicts: &ir.signal_semantic_conflicts,
+            temporal_conflicts: &ir.temporal_conflicts,
+            signal_polarity_conflicts: &ir.signal_polarity_conflicts,
+            interface_signal_conflicts: &ir.interface_signal_conflicts,
+            signal_connectivity_conflicts: &ir.signal_connectivity_conflicts,
+            residual_decisions: &ir.residual_decisions,
+        },
     )
 }
 
@@ -3130,6 +3188,11 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         );
     }
     if !ir.signal_polarity_conflicts.is_empty() {
+        let signal_polarity_conflict_related_ids = ir
+            .signal_polarity_conflicts
+            .iter()
+            .map(|conflict| conflict.conflict_id.clone())
+            .collect::<Vec<_>>();
         findings.push(finding(
             "semantic_signal_polarity_conflicts_present",
             ValidationFindingSeverity::Warning,
@@ -3138,11 +3201,14 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 "{} signal polarity conflict(s) remain unresolved in the carried canonical semantic surface",
                 ir.signal_polarity_conflicts.len()
             ),
-            ir.signal_polarity_conflicts
-                .iter()
-                .map(|conflict| conflict.conflict_id.clone())
-                .collect(),
+            signal_polarity_conflict_related_ids.clone(),
         ));
+        push_signal_polarity_conflict_rescan_guidance(
+            &mut findings,
+            SEMANTIC_SIGNAL_POLARITY_CONFLICT_SURFACE_RESCAN_GUIDANCE,
+            "SemanticIR",
+            &signal_polarity_conflict_related_ids,
+        );
     }
     if !ir.signal_semantic_conflicts.is_empty() {
         findings.push(finding(
@@ -4462,6 +4528,11 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         );
     }
     if !ir.signal_polarity_conflicts.is_empty() {
+        let signal_polarity_conflict_related_ids = ir
+            .signal_polarity_conflicts
+            .iter()
+            .map(|conflict| conflict.conflict_id.clone())
+            .collect::<Vec<_>>();
         findings.push(finding(
             "intent_signal_polarity_conflicts_present",
             ValidationFindingSeverity::Warning,
@@ -4470,11 +4541,14 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 "{} signal polarity conflict(s) remain unresolved in the carried canonical intent surface",
                 ir.signal_polarity_conflicts.len()
             ),
-            ir.signal_polarity_conflicts
-                .iter()
-                .map(|conflict| conflict.conflict_id.clone())
-                .collect(),
+            signal_polarity_conflict_related_ids.clone(),
         ));
+        push_signal_polarity_conflict_rescan_guidance(
+            &mut findings,
+            INTENT_SIGNAL_POLARITY_CONFLICT_SURFACE_RESCAN_GUIDANCE,
+            "IntentIR",
+            &signal_polarity_conflict_related_ids,
+        );
     }
     if !ir.signal_semantic_conflicts.is_empty() {
         findings.push(finding(
@@ -5990,6 +6064,104 @@ mod tests {
         assert!(has_finding(
             &report,
             "evidence_signal_semantic_conflicts_present"
+        ));
+        assert!(has_finding(
+            &report,
+            "evidence_negative_knowledge_prior_matches"
+        ));
+        assert!(has_finding(
+            &report,
+            "evidence_negative_knowledge_rescan_guidance"
+        ));
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_evidence_ir_surfaces_negative_knowledge_polarity_prior_matches() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("polarity_conflict_with_prior.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let prior_memory_path = tempdir.path().join("corpus_memory.json");
+        fs::write(
+            &source,
+            concat!(
+                "# Reset\n\n",
+                "Signal PRESETN is input width 1.\n\n",
+                "PRESETN is active HIGH.\n",
+            ),
+        )?;
+
+        let corpus_memory = corpus_memory_with_negative_knowledge(
+            vec![NegativeKnowledgePriorRecord {
+                prior_id: "negative_knowledge_prior_0001".to_string(),
+                knowledge_kind: NegativeKnowledgeKind::SignalPolarityConflict,
+                normalized_pattern:
+                    "signal_polarity_conflict:prose_statement:active_high|signal_description_table:active_low"
+                        .to_string(),
+                protocol_family: ProtocolFamily::Unknown,
+                support_count: 2,
+                supporting_document_keys: vec!["seed_doc".to_string()],
+                strongest_automation_confidence: AutomationConfidence::Medium,
+            }],
+            tempdir.path().join("seed_intent_ir.json"),
+        );
+        fs::write(
+            &prior_memory_path,
+            serde_json::to_string_pretty(&corpus_memory)?,
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_reset_desc_conflict".to_string(),
+            asset_id: "asset_reset_desc_conflict".to_string(),
+            page_id: None,
+            caption_text: Some("Reset signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("PRESETN", false),
+                make_table_cell("Active low reset.", false),
+            ]],
+            row_count: 1,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build_with_prior_memory(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+            Some(&prior_memory_path),
+        )?;
+        let report = validate_evidence_ir(
+            &evidence_ir,
+            "negative_knowledge_polarity_matches".to_string(),
+        );
+
+        assert_eq!(
+            metric_value(&report, "signal_polarity_conflicts"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&report, "negative_knowledge_prior_matches"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&report, "negative_knowledge_rescan_recommendations"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&report, "negative_knowledge_corroboration_requirements"),
+            Some("1")
+        );
+        assert!(has_finding(
+            &report,
+            "evidence_signal_polarity_conflicts_present"
         ));
         assert!(has_finding(
             &report,
@@ -9607,6 +9779,313 @@ mod tests {
             rescan_guidance.related_ids,
             vec!["temporal_conflict_0001".to_string()]
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_semantic_ir_reports_signal_polarity_conflict_related_ids() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("semantic_polarity_conflict.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Reset\n\n",
+                "Signal PRESETN is input width 1.\n\n",
+                "PRESETN is active HIGH.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_reset_desc_conflict".to_string(),
+            asset_id: "asset_reset_desc_conflict".to_string(),
+            page_id: None,
+            caption_text: Some("Reset signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("PRESETN", false),
+                make_table_cell("Active low reset.", false),
+            ]],
+            row_count: 1,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let report = validate_semantic_ir(&semantic_ir, "polarity_conflicts".to_string());
+        assert_eq!(
+            metric_value(&report, "signal_polarity_conflicts"),
+            Some("1")
+        );
+        let finding = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "semantic_signal_polarity_conflicts_present")
+            .expect("expected semantic polarity conflict finding");
+        assert_eq!(
+            finding.related_ids,
+            vec!["polarity_conflict_0001".to_string()]
+        );
+        let rescan_guidance = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == SEMANTIC_SIGNAL_POLARITY_CONFLICT_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected semantic polarity conflict rescan guidance");
+        assert_eq!(
+            rescan_guidance.related_ids,
+            vec!["polarity_conflict_0001".to_string()]
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_intent_ir_reports_signal_polarity_conflict_related_ids() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("intent_polarity_conflict.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Reset\n\n",
+                "Signal PRESETN is input width 1.\n\n",
+                "PRESETN is active HIGH.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_reset_desc_conflict".to_string(),
+            asset_id: "asset_reset_desc_conflict".to_string(),
+            page_id: None,
+            caption_text: Some("Reset signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("PRESETN", false),
+                make_table_cell("Active low reset.", false),
+            ]],
+            row_count: 1,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let report = validate_intent_ir(&intent_ir, "polarity_conflicts".to_string());
+        assert_eq!(
+            metric_value(&report, "signal_polarity_conflicts"),
+            Some("1")
+        );
+        let finding = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "intent_signal_polarity_conflicts_present")
+            .expect("expected intent polarity conflict finding");
+        assert_eq!(
+            finding.related_ids,
+            vec!["polarity_conflict_0001".to_string()]
+        );
+        let rescan_guidance = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == INTENT_SIGNAL_POLARITY_CONFLICT_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected intent polarity conflict rescan guidance");
+        assert_eq!(
+            rescan_guidance.related_ids,
+            vec!["polarity_conflict_0001".to_string()]
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_semantic_and_intent_ir_surface_negative_knowledge_polarity_matches() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("polarity_conflict_with_prior.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        let prior_memory_path = tempdir.path().join("corpus_memory.json");
+        fs::write(
+            &source,
+            concat!(
+                "# Reset\n\n",
+                "Signal PRESETN is input width 1.\n\n",
+                "PRESETN is active HIGH.\n",
+            ),
+        )?;
+
+        let corpus_memory = corpus_memory_with_negative_knowledge(
+            vec![NegativeKnowledgePriorRecord {
+                prior_id: "negative_knowledge_prior_0001".to_string(),
+                knowledge_kind: NegativeKnowledgeKind::SignalPolarityConflict,
+                normalized_pattern:
+                    "signal_polarity_conflict:prose_statement:active_high|signal_description_table:active_low"
+                        .to_string(),
+                protocol_family: ProtocolFamily::Unknown,
+                support_count: 2,
+                supporting_document_keys: vec!["seed_doc".to_string()],
+                strongest_automation_confidence: AutomationConfidence::Medium,
+            }],
+            tempdir.path().join("seed_intent_ir.json"),
+        );
+        fs::write(
+            &prior_memory_path,
+            serde_json::to_string_pretty(&corpus_memory)?,
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_reset_desc_conflict".to_string(),
+            asset_id: "asset_reset_desc_conflict".to_string(),
+            page_id: None,
+            caption_text: Some("Reset signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("PRESETN", false),
+                make_table_cell("Active low reset.", false),
+            ]],
+            row_count: 1,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build_with_prior_memory(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+            Some(&prior_memory_path),
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+
+        let semantic_report = validate_semantic_ir(
+            &semantic_ir,
+            "semantic_negative_knowledge_polarity_matches".to_string(),
+        );
+        assert_eq!(
+            metric_value(&semantic_report, "signal_polarity_conflicts"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&semantic_report, "negative_knowledge_prior_matches"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(
+                &semantic_report,
+                "negative_knowledge_rescan_recommendations"
+            ),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(
+                &semantic_report,
+                "negative_knowledge_corroboration_requirements"
+            ),
+            Some("1")
+        );
+        assert!(has_finding(
+            &semantic_report,
+            "semantic_signal_polarity_conflicts_present"
+        ));
+        assert!(has_finding(
+            &semantic_report,
+            "semantic_negative_knowledge_prior_matches"
+        ));
+        assert!(has_finding(
+            &semantic_report,
+            "semantic_negative_knowledge_rescan_guidance"
+        ));
+
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+        let intent_report = validate_intent_ir(
+            &intent_ir,
+            "intent_negative_knowledge_polarity_matches".to_string(),
+        );
+        assert_eq!(
+            metric_value(&intent_report, "signal_polarity_conflicts"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&intent_report, "negative_knowledge_prior_matches"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&intent_report, "negative_knowledge_rescan_recommendations"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(
+                &intent_report,
+                "negative_knowledge_corroboration_requirements"
+            ),
+            Some("1")
+        );
+        assert!(has_finding(
+            &intent_report,
+            "intent_signal_polarity_conflicts_present"
+        ));
+        assert!(has_finding(
+            &intent_report,
+            "intent_negative_knowledge_prior_matches"
+        ));
+        assert!(has_finding(
+            &intent_report,
+            "intent_negative_knowledge_rescan_guidance"
+        ));
 
         Ok(())
     }

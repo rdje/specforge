@@ -1,0 +1,208 @@
+{
+  "name": "negative_knowledge_prior_guided_polarity_conflict_caution_gold",
+  "source": "source.md",
+  "prior_memory_patch": {
+    "negative_knowledge_priors": [
+      {
+        "prior_id": "negative_knowledge_prior_0001",
+        "knowledge_kind": "signal_polarity_conflict",
+        "normalized_pattern": "signal_polarity_conflict:prose_statement:active_high|signal_description_table:active_low",
+        "protocol_family": "unknown",
+        "support_count": 2,
+        "supporting_document_keys": ["seed_doc_1", "seed_doc_2"],
+        "strongest_automation_confidence": "medium"
+      }
+    ]
+  },
+  "source_ir_patch": {
+    "structured_tables": [
+      {
+        "table_id": "table_reset_desc_conflict",
+        "asset_id": "asset_reset_desc_conflict",
+        "page_id": "page_0001",
+        "caption_text": "Reset signal descriptions",
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            {
+              "text": "Signal",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Description",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            }
+          ]
+        ],
+        "body_rows": [
+          [
+            {
+              "text": "PRESETN",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Active low reset.",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ]
+        ],
+        "row_count": 1,
+        "col_count": 2
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["PRESETN"],
+      "signal_polarity_conflicts": 1,
+      "signal_polarity_conflicts_include": [
+        {
+          "signal_name": "PRESETN",
+          "observations_include": [
+            {
+              "polarity": "active_high",
+              "source_kind": "prose_statement"
+            },
+            {
+              "polarity": "active_low",
+              "source_kind": "signal_description_table"
+            }
+          ]
+        }
+      ]
+    },
+    "intent": {
+      "signal_names_include": ["PRESETN"],
+      "signal_polarity_conflicts": 1,
+      "signal_polarity_conflicts_include": [
+        {
+          "signal_name": "PRESETN",
+          "observations_include": [
+            {
+              "polarity": "active_high",
+              "source_kind": "prose_statement"
+            },
+            {
+              "polarity": "active_low",
+              "source_kind": "signal_description_table"
+            }
+          ]
+        }
+      ]
+    },
+    "validation": {
+      "evidence": {
+        "finding_ids_include": [
+          "evidence_signal_polarity_conflicts_present",
+          "evidence_negative_knowledge_prior_matches",
+          "evidence_negative_knowledge_rescan_guidance"
+        ],
+        "findings_include": [
+          {
+            "finding_id": "evidence_negative_knowledge_prior_matches",
+            "severity": "info",
+            "category": "negative_knowledge",
+            "summary_contains": "match prior negative knowledge",
+            "related_ids_include": ["polarity_conflict_0001"]
+          },
+          {
+            "finding_id": "evidence_negative_knowledge_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "prior memory did not suppress or rewrite current evidence",
+            "related_ids_include": ["polarity_conflict_0001"]
+          }
+        ],
+        "metric_values": {
+          "signal_polarity_conflicts": "1",
+          "negative_knowledge_prior_matches": "1",
+          "negative_knowledge_rescan_recommendations": "1",
+          "negative_knowledge_corroboration_requirements": "1"
+        }
+      },
+      "semantic": {
+        "finding_ids_include": [
+          "semantic_signal_polarity_conflicts_present",
+          "semantic_signal_polarity_conflict_surface_rescan_guidance",
+          "semantic_negative_knowledge_prior_matches",
+          "semantic_negative_knowledge_rescan_guidance"
+        ],
+        "findings_include": [
+          {
+            "finding_id": "semantic_signal_polarity_conflict_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "active-level disagreement",
+            "related_ids_include": ["polarity_conflict_0001"]
+          },
+          {
+            "finding_id": "semantic_negative_knowledge_prior_matches",
+            "severity": "info",
+            "category": "negative_knowledge",
+            "summary_contains": "match prior negative knowledge",
+            "related_ids_include": ["polarity_conflict_0001"]
+          },
+          {
+            "finding_id": "semantic_negative_knowledge_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "prior memory did not suppress or rewrite current evidence",
+            "related_ids_include": ["polarity_conflict_0001"]
+          }
+        ],
+        "metric_values": {
+          "signal_polarity_conflicts": "1",
+          "negative_knowledge_prior_matches": "1",
+          "negative_knowledge_rescan_recommendations": "1",
+          "negative_knowledge_corroboration_requirements": "1"
+        }
+      },
+      "intent": {
+        "finding_ids_include": [
+          "intent_signal_polarity_conflicts_present",
+          "intent_signal_polarity_conflict_surface_rescan_guidance",
+          "intent_negative_knowledge_prior_matches",
+          "intent_negative_knowledge_rescan_guidance"
+        ],
+        "findings_include": [
+          {
+            "finding_id": "intent_signal_polarity_conflict_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "active-level disagreement",
+            "related_ids_include": ["polarity_conflict_0001"]
+          },
+          {
+            "finding_id": "intent_negative_knowledge_prior_matches",
+            "severity": "info",
+            "category": "negative_knowledge",
+            "summary_contains": "match prior negative knowledge",
+            "related_ids_include": ["polarity_conflict_0001"]
+          },
+          {
+            "finding_id": "intent_negative_knowledge_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "prior memory did not suppress or rewrite current evidence",
+            "related_ids_include": ["polarity_conflict_0001"]
+          }
+        ],
+        "metric_values": {
+          "signal_polarity_conflicts": "1",
+          "negative_knowledge_prior_matches": "1",
+          "negative_knowledge_rescan_recommendations": "1",
+          "negative_knowledge_corroboration_requirements": "1"
+        }
+      }
+    }
+  }
+}

@@ -94,13 +94,37 @@
         }
       },
       "semantic": {
-        "finding_ids_include": ["semantic_signal_polarity_conflicts_present"],
+        "finding_ids_include": [
+          "semantic_signal_polarity_conflicts_present",
+          "semantic_signal_polarity_conflict_surface_rescan_guidance"
+        ],
+        "findings_include": [
+          {
+            "finding_id": "semantic_signal_polarity_conflict_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "active-level disagreement",
+            "related_ids_include": ["polarity_conflict_0001"]
+          }
+        ],
         "metric_values": {
           "signal_polarity_conflicts": "1"
         }
       },
       "intent": {
-        "finding_ids_include": ["intent_signal_polarity_conflicts_present"],
+        "finding_ids_include": [
+          "intent_signal_polarity_conflicts_present",
+          "intent_signal_polarity_conflict_surface_rescan_guidance"
+        ],
+        "findings_include": [
+          {
+            "finding_id": "intent_signal_polarity_conflict_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "active-level disagreement",
+            "related_ids_include": ["polarity_conflict_0001"]
+          }
+        ],
         "metric_values": {
           "signal_polarity_conflicts": "1"
         }

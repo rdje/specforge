@@ -1,5 +1,36 @@
 # CHANGES
 
+## 2026-04-21 (Signal-polarity conflicts now emit replayable rescan guidance and learnable caution)
+
+### Improved: preserved polarity disagreement now advertises the next bounded replay
+- Validation already reported when `SemanticIR` or `IntentIR` carried `signal_polarity_conflicts` such as prose-vs-table active-level disagreement.
+- That was honest, but still too passive:
+  - reviewers could see the preserved conflict ids
+  - the replay planner had no typed next step for revisiting local polarity evidence on those same conflicts
+  - polarity disagreement looked like a static warning instead of an explicit replay target
+- This slice turns that weak state into the same bounded replay contract used for nearby evidence-strength gaps:
+  - `validate` now emits `semantic_signal_polarity_conflict_surface_rescan_guidance` / `intent_signal_polarity_conflict_surface_rescan_guidance`
+  - those findings stay in `rescan_guidance` and carry the same conflict ids already reported by the polarity-conflict finding
+  - `project-validation` maps them onto the local `EvidenceIR -> SemanticIR -> IntentIR? -> validate` NLP replay lane
+  - the action text is explicit about collapsing the related conflict ids toward a single locally corroborated active-level interpretation rather than merely rerunning extraction
+  - the tracked fixture `control_polarity_conflict_negative` now requires the new semantic/intent replay guidance so the disagreement case is benchmark-locked even without prior-memory caution
+
+### Improved: negative-knowledge caution now remembers polarity-conflict archetypes too
+- `CorpusMemory` negative-knowledge priors can now carry `signal_polarity_conflict` patterns.
+- `learn-priors` now harvests those patterns from validated `IntentIR` polarity conflicts.
+- `validate` now matches those learned patterns in `EvidenceIR`, `SemanticIR`, and `IntentIR`, surfacing the existing advisory `*_negative_knowledge_prior_matches` and `*_negative_knowledge_rescan_guidance` findings without mutating current-document truth.
+- The new tracked fixture `negative_knowledge_prior_guided_polarity_conflict_caution_gold` locks that caution path end to end, including exact related ids for the evidence-stage prior match and the semantic/intent replay guidance.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge signal_polarity_conflict` -> passed
+- `cargo test -p specforge negative_knowledge_polarity` -> passed
+- `cargo test -p specforge project_validation_collects_signal_polarity_conflict_rescan_guidance` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `414` Rust tests and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-20 (Temporal conflicts now emit replayable rescan guidance)
 
 ### Improved: preserved timing contradictions now advertise the next bounded replay

@@ -17,6 +17,7 @@ use crate::ir::prior_memory::{
     is_meaningful_prior_phrase, normalize_actor_term, normalize_prior_phrase,
     normalize_table_header_signature, residual_decision_negative_knowledge_pattern,
     signal_connectivity_conflict_negative_knowledge_pattern,
+    signal_polarity_conflict_negative_knowledge_pattern,
     signal_semantic_conflict_negative_knowledge_pattern,
     temporal_value_conflict_negative_knowledge_pattern,
 };
@@ -865,6 +866,22 @@ fn harvest_negative_knowledge_priors(
         );
     }
 
+    for conflict in &intent_ir.signal_polarity_conflicts {
+        let Some(normalized_pattern) =
+            signal_polarity_conflict_negative_knowledge_pattern(conflict)
+        else {
+            continue;
+        };
+        harvest_negative_knowledge_pattern(
+            NegativeKnowledgeKind::SignalPolarityConflict,
+            normalized_pattern,
+            conflict.automation_confidence,
+            &intent_ir.document_identity.document_key,
+            protocol_family,
+            negative_knowledge_priors,
+        );
+    }
+
     for conflict in &intent_ir.interface_signal_conflicts {
         let Some(normalized_pattern) =
             interface_signal_conflict_negative_knowledge_pattern(conflict)
@@ -1312,6 +1329,7 @@ fn parse_visual_asset_kind(value: &str) -> VisualAssetKind {
 
 fn parse_negative_knowledge_kind(value: &str) -> NegativeKnowledgeKind {
     match value {
+        "signal_polarity_conflict" => NegativeKnowledgeKind::SignalPolarityConflict,
         "temporal_value_conflict" => NegativeKnowledgeKind::TemporalValueConflict,
         "interface_signal_conflict" => NegativeKnowledgeKind::InterfaceSignalConflict,
         "signal_connectivity_conflict" => NegativeKnowledgeKind::SignalConnectivityConflict,

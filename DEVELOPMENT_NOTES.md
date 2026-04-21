@@ -7,6 +7,26 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-21 Signal-polarity conflicts should be replay targets and learnable caution surfaces
+- Once a `signal_polarity_conflict` exists, the weak state is no longer "did the canonical surface preserve the disagreement?" but "does the product advertise the bounded current-document step that might reconcile it?"
+- The conflict ids are already stable and reviewable.
+- Leaving them as only warnings underspecifies the next action.
+- The right follow-up is the same conservative replay lane used for nearby evidence-strength gaps:
+  - rerun local NLP enrichment on `EvidenceIR`
+  - rebuild the downstream canonical stage(s)
+  - review whether the same conflict ids collapse toward one locally corroborated active-level interpretation
+- This is still not an auto-fix story:
+  - the current polarity disagreement remains explicit
+  - the replay planner only identifies the local evidence boundary and deterministic rebuild path
+  - no canonical truth is auto-mutated just because the replay path exists
+- Polarity conflicts also fit the negative-knowledge plane cleanly:
+  - the recurring archetype is the evidence-shape disagreement itself, not the final truth
+  - learned caution can therefore remember "this active-level disagreement shape has been unreliable before" without importing facts from prior PDFs
+  - that caution should remain advisory and replay-oriented, never truth-authoring
+- This keeps the learning story honest:
+  - what grows over time is the reusable caution pattern inventory
+  - what stays local is the actual active-high vs active-low decision for the current document
+
 ## 2026-04-20 Temporal conflicts should be replay targets, not only preserved warnings
 - Once a `temporal_conflict` exists, the weak state is no longer "did the typed timing surface preserve contradiction?" but "does the product advertise the bounded current-document step that might reconcile it?"
 - The conflict ids are already stable and reviewable.

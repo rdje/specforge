@@ -3,7 +3,9 @@ use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};
 
-use crate::ir::evidence::{SignalSemanticConflictRecord, SignalSemanticHintSourceKind};
+use crate::ir::evidence::{
+    SignalPolarityConflictRecord, SignalSemanticConflictRecord, SignalSemanticHintSourceKind,
+};
 use crate::ir::semantic::{
     CycleWindowRecord, InterfaceSignalConflictRecord, InterfaceSignalSemanticRole,
     SemanticGroundingStrength, SignalConnectivityConflictRecord, TemporalConflictRecord, TickPhase,
@@ -534,6 +536,25 @@ pub fn temporal_value_conflict_negative_knowledge_pattern(
     })
 }
 
+pub fn signal_polarity_conflict_negative_knowledge_pattern(
+    conflict: &SignalPolarityConflictRecord,
+) -> Option<String> {
+    let mut signatures = conflict
+        .observations
+        .iter()
+        .map(|observation| {
+            format!(
+                "{}:{}",
+                observation.source_kind.as_str(),
+                observation.polarity.as_str()
+            )
+        })
+        .collect::<Vec<_>>();
+    signatures.sort();
+    signatures.dedup();
+    (signatures.len() >= 2).then(|| format!("signal_polarity_conflict:{}", signatures.join("|")))
+}
+
 pub fn interface_signal_conflict_negative_knowledge_pattern(
     conflict: &InterfaceSignalConflictRecord,
 ) -> Option<String> {
@@ -1002,6 +1023,7 @@ pub struct VisualMotifPriorRecord {
 #[serde(rename_all = "snake_case")]
 pub enum NegativeKnowledgeKind {
     SignalSemanticConflict,
+    SignalPolarityConflict,
     TemporalValueConflict,
     InterfaceSignalConflict,
     SignalConnectivityConflict,
@@ -1012,6 +1034,7 @@ impl NegativeKnowledgeKind {
     pub fn as_str(self) -> &'static str {
         match self {
             Self::SignalSemanticConflict => "signal_semantic_conflict",
+            Self::SignalPolarityConflict => "signal_polarity_conflict",
             Self::TemporalValueConflict => "temporal_value_conflict",
             Self::InterfaceSignalConflict => "interface_signal_conflict",
             Self::SignalConnectivityConflict => "signal_connectivity_conflict",
