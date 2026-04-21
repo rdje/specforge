@@ -96,6 +96,8 @@ const SEMANTIC_SIGNAL_POLARITY_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
     "semantic_signal_polarity_conflict_surface_rescan_guidance";
 const INTENT_SIGNAL_POLARITY_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
     "intent_signal_polarity_conflict_surface_rescan_guidance";
+const EVIDENCE_SIGNAL_POLARITY_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
+    "evidence_signal_polarity_conflict_surface_rescan_guidance";
 const EVIDENCE_SIGNAL_SEMANTIC_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
     "evidence_signal_semantic_conflict_surface_rescan_guidance";
 const SEMANTIC_SIGNAL_SEMANTIC_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
@@ -598,7 +600,7 @@ fn push_signal_polarity_conflict_rescan_guidance(
         ValidationFindingSeverity::Info,
         "rescan_guidance",
         format!(
-            "{} polarity conflict id(s) in {stage_label} should trigger targeted NLP rescans plus downstream rebuild because the current canonical polarity surface still carries unresolved active-level disagreement",
+            "{} polarity conflict id(s) in {stage_label} should trigger targeted NLP rescans plus bounded local replay because the current polarity surface still carries unresolved active-level disagreement",
             related_ids.len()
         ),
         related_ids.to_vec(),
@@ -2396,6 +2398,11 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         ));
     }
     if !ir.signal_polarity_conflicts.is_empty() {
+        let signal_polarity_conflict_related_ids = ir
+            .signal_polarity_conflicts
+            .iter()
+            .map(|conflict| conflict.conflict_id.clone())
+            .collect::<Vec<_>>();
         findings.push(finding(
             "evidence_signal_polarity_conflicts_present",
             ValidationFindingSeverity::Warning,
@@ -2404,11 +2411,14 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
                 "{} signal polarity conflict(s) detected across polarity evidence; asserted/deasserted constraints stayed polarity-neutral rather than forcing a wrong refinement",
                 ir.signal_polarity_conflicts.len()
             ),
-            ir.signal_polarity_conflicts
-                .iter()
-                .map(|conflict| conflict.conflict_id.clone())
-                .collect(),
+            signal_polarity_conflict_related_ids.clone(),
         ));
+        push_signal_polarity_conflict_rescan_guidance(
+            &mut findings,
+            EVIDENCE_SIGNAL_POLARITY_CONFLICT_SURFACE_RESCAN_GUIDANCE,
+            "EvidenceIR",
+            &signal_polarity_conflict_related_ids,
+        );
     }
     if !ir.signal_semantic_conflicts.is_empty() {
         let signal_semantic_conflict_related_ids = ir
@@ -5622,6 +5632,17 @@ mod tests {
             &report,
             "evidence_signal_polarity_conflicts_present"
         ));
+        let conflict_rescan_guidance = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == EVIDENCE_SIGNAL_POLARITY_CONFLICT_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected evidence polarity-conflict rescan guidance");
+        assert_eq!(
+            conflict_rescan_guidance.related_ids,
+            vec!["polarity_conflict_0001".to_string()]
+        );
 
         Ok(())
     }
@@ -6259,6 +6280,17 @@ mod tests {
             &report,
             "evidence_signal_polarity_conflicts_present"
         ));
+        let conflict_rescan_guidance = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == EVIDENCE_SIGNAL_POLARITY_CONFLICT_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected evidence polarity-conflict rescan guidance");
+        assert_eq!(
+            conflict_rescan_guidance.related_ids,
+            vec!["polarity_conflict_0001".to_string()]
+        );
         assert!(has_finding(
             &report,
             "evidence_negative_knowledge_prior_matches"

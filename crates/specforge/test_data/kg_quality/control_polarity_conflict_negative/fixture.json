@@ -88,7 +88,19 @@
     },
     "validation": {
       "evidence": {
-        "finding_ids_include": ["evidence_signal_polarity_conflicts_present"],
+        "finding_ids_include": [
+          "evidence_signal_polarity_conflicts_present",
+          "evidence_signal_polarity_conflict_surface_rescan_guidance"
+        ],
+        "findings_include": [
+          {
+            "finding_id": "evidence_signal_polarity_conflict_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "active-level disagreement",
+            "related_ids_include": ["polarity_conflict_0001"]
+          }
+        ],
         "metric_values": {
           "signal_polarity_conflicts": "1"
         }

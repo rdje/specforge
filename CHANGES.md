@@ -1,5 +1,29 @@
 # CHANGES
 
+## 2026-04-21 (Evidence-stage signal-polarity conflicts now emit replayable rescan guidance)
+
+### Improved: preserved evidence-stage active-level disagreement now advertises the next bounded replay
+- Validation already reported when `EvidenceIR` carried `signal_polarity_conflicts`.
+- That was honest, but still too passive:
+  - reviewers could see the preserved `polarity_conflict_*` ids
+  - the replay planner had no evidence-local next step for revisiting those same contradictions
+  - the disagreement looked like a passive upstream warning instead of an explicit replay target
+- This slice turns that weak state into a bounded evidence-local replay contract:
+  - `validate` now emits `evidence_signal_polarity_conflict_surface_rescan_guidance`
+  - that finding stays in `rescan_guidance` and carries the same `polarity_conflict_*` ids already reported by the evidence-stage conflict finding
+  - `project-validation` maps it onto a local `nlp-enrich -> validate` replay lane against the current `EvidenceIR` artifact
+  - the action text is explicit about collapsing the related conflict ids toward one locally corroborated active-level interpretation before any downstream canonical rebuild is considered
+  - the tracked fixtures `control_polarity_conflict_negative` and `negative_knowledge_prior_guided_polarity_conflict_caution_gold` now require the new evidence-stage replay guidance as well
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge validate_evidence_ir_flags_signal_polarity_conflicts` -> passed
+- `cargo test -p specforge project_validation_collects_evidence_signal_polarity_conflict_rescan_guidance` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `420` Rust tests and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-21 (Evidence-stage signal-semantic conflicts now emit replayable rescan guidance)
 
 ### Improved: preserved evidence-stage role disagreement now advertises the next bounded replay

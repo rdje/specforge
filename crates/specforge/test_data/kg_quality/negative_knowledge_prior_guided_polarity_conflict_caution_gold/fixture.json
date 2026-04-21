@@ -103,10 +103,18 @@
       "evidence": {
         "finding_ids_include": [
           "evidence_signal_polarity_conflicts_present",
+          "evidence_signal_polarity_conflict_surface_rescan_guidance",
           "evidence_negative_knowledge_prior_matches",
           "evidence_negative_knowledge_rescan_guidance"
         ],
         "findings_include": [
+          {
+            "finding_id": "evidence_signal_polarity_conflict_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "active-level disagreement",
+            "related_ids_include": ["polarity_conflict_0001"]
+          },
           {
             "finding_id": "evidence_negative_knowledge_prior_matches",
             "severity": "info",
