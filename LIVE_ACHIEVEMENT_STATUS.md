@@ -67,6 +67,7 @@
 - Evidence-stage normative residuals now emit replayable rescan guidance: Done
 - Evidence-stage signal-polarity conflicts now emit replayable rescan guidance: Done
 - Evidence-stage signal-semantic conflicts now emit replayable rescan guidance: Done
+- Evidence-stage negative-knowledge caution now feeds replay planning: Done
 - Carried signal-semantic conflicts now emit replayable rescan guidance: Done
 - Carried graph-direction self-conflicts now emit replayable rescan guidance: Done
 - Negative-knowledge priors now include signal-polarity conflict archetypes: Done

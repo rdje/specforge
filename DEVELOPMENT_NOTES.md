@@ -7,6 +7,22 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-21 Evidence-stage negative-knowledge caution should feed replay planning too
+- If validation emits `evidence_negative_knowledge_rescan_guidance` but `project-validation` ignores it, the product is only half honest:
+  - the caution is visible to a human reviewer
+  - but the bounded next replay step is missing from the machine-readable plan
+- Evidence-stage negative knowledge should not be forced into the semantic/intent replay lanes by default.
+- The matching caution is still attached to EvidenceIR-local conflict or residual ids, so the right follow-up is narrower:
+  - restart from the current `SourceIR`
+  - rebuild the current `EvidenceIR`
+  - revalidate whether those same local ids still reproduce from current-document evidence
+- That keeps the planner honest about stage ownership:
+  - evidence-stage caution stays upstream
+  - semantic/intent negative-knowledge caution can still use the deeper canonical rebuild lanes
+  - no current-document truth is rewritten just because prior memory recognized a familiar bad shape
+- The important implementation detail is not just the stage matcher.
+- The replay-input helper also has to accept a current `EvidenceIR` artifact directly, because evidence-stage replay derives `source_ir` from the persisted `EvidenceIR`, not from downstream semantic replay metadata.
+
 ## 2026-04-21 Actor-port gaps should be replay targets too
 - Once `SemanticIR` or `IntentIR` already carries `actor_signal_relations` but no `actor_ports`, the weak state is no longer just "did validation notice the missing port synthesis?" but "does the product advertise the bounded local step that might recover those same actor-relative ports?"
 - The stranded `asr_*` relation ids are already stable and reviewable at that stage.

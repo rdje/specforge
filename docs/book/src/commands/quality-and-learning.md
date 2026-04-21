@@ -62,6 +62,7 @@ Evidence-stage structural-KG guidance now feeds it too, but through a narrower e
 Evidence-stage normative-residual guidance now feeds it too, but through a narrower evidence-local `nlp-enrich -> validate` loop before any downstream canonical rebuild is attempted.
 Evidence-stage signal-polarity-conflict guidance now feeds it too, but through a narrower evidence-local `nlp-enrich -> validate` loop before any downstream canonical rebuild is attempted.
 Evidence-stage signal-semantic-conflict guidance now feeds it too, but through a narrower evidence-local `nlp-enrich -> validate` loop before any downstream canonical rebuild is attempted.
+Evidence-stage negative-knowledge guidance now feeds it too, but through a bounded `SourceIR -> EvidenceIR -> validate` replay loop so learned caution can demand stronger current-document corroboration without pretending the conflict or residual has already escaped into canonical stages.
 Protocol connectivity endpoint guidance now feeds it too, so already-canonical signals that still have only a producer side or only a consumer side can be replayed for missing endpoint recovery through the same local pipeline.
 Infrastructure clock/reset sourcing is intentionally not in that replay family; it stays a system-contract note when the protocol document does not name a concrete producer.
 Interface-signal conflict guidance now feeds it too, so preserved direction/width conflict ids can be replayed for stronger local interface-shape disambiguation through the same local pipeline.

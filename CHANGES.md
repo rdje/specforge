@@ -1,5 +1,29 @@
 # CHANGES
 
+## 2026-04-21 (Evidence-stage negative-knowledge caution now feeds replay planning)
+
+### Improved: EvidenceIR caution is now a real replay target instead of a planner dead end
+- Validation already emitted `evidence_negative_knowledge_rescan_guidance` when current EvidenceIR conflict or residual shapes matched learned caution patterns.
+- That was honest, but still too passive:
+  - reviewers could see the caution-linked ids
+  - the replay planner ignored that evidence-stage finding entirely
+  - the product said "be careful here" without a typed bounded next step
+- This slice closes that gap without widening truth:
+  - `project-validation` now consumes `evidence_negative_knowledge_rescan_guidance`
+  - the replay contract is EvidenceIR-local in scope, not canonical-stage by implication: `SourceIR -> EvidenceIR -> validate`
+  - the action text now says "related evidence conflict or residual ids" instead of implying those caution targets already escaped into downstream canonical stages
+  - `evidence_input_for_snapshot_stage()` now accepts current EvidenceIR artifacts directly, so evidence-stage replay inputs can be derived from the persisted artifact path instead of requiring downstream replay metadata
+  - the new regression `project_validation_collects_evidence_negative_knowledge_rescan_guidance` locks the replay inputs, action summary, and command hints for this narrower caution lane
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge project_validation_collects_negative_knowledge_rescan_guidance` -> passed
+- `cargo test -p specforge project_validation_collects_evidence_negative_knowledge_rescan_guidance` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-21 (Actor-port gaps now emit replayable rescan guidance)
 
 ### Improved: relation-only actor graph remnants now advertise the next bounded replay

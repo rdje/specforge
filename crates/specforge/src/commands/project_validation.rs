@@ -35,6 +35,8 @@ const EVIDENCE_NORMATIVE_RESIDUAL_SURFACE_RESCAN_GUIDANCE: &str =
     "evidence_normative_residual_surface_rescan_guidance";
 const EVIDENCE_SIGNAL_SEMANTIC_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
     "evidence_signal_semantic_conflict_surface_rescan_guidance";
+const EVIDENCE_NEGATIVE_KNOWLEDGE_RESCAN_GUIDANCE: &str =
+    "evidence_negative_knowledge_rescan_guidance";
 const SEMANTIC_NEGATIVE_KNOWLEDGE_RESCAN_GUIDANCE: &str =
     "semantic_negative_knowledge_rescan_guidance";
 const INTENT_NEGATIVE_KNOWLEDGE_RESCAN_GUIDANCE: &str = "intent_negative_knowledge_rescan_guidance";
@@ -1448,13 +1450,15 @@ fn negative_knowledge_rescan_commands(
             repo_relative_display(&source_ir_path, repo_root),
         ],
     )];
-    commands.push(specforge_command_hint(
-        "rebuild_semantic_ir",
-        vec![
-            "semantic".to_string(),
-            repo_relative_display(&evidence_ir_path, repo_root),
-        ],
-    ));
+    if stage != IrStage::EvidenceIr {
+        commands.push(specforge_command_hint(
+            "rebuild_semantic_ir",
+            vec![
+                "semantic".to_string(),
+                repo_relative_display(&evidence_ir_path, repo_root),
+            ],
+        ));
+    }
 
     if stage == IrStage::IntentIr {
         let semantic_ir_path = semantic_input_for_snapshot(snapshot)?;
@@ -1570,6 +1574,8 @@ fn evidence_input_for_snapshot_stage(
     snapshot: &ProjectedArtifactSnapshot,
 ) -> Option<PathBuf> {
     match stage {
+        IrStage::SourceIr => None,
+        IrStage::EvidenceIr => Some(snapshot.artifact_path.clone()),
         IrStage::SemanticIr => snapshot
             .replay_inputs
             .iter()
@@ -1581,7 +1587,6 @@ fn evidence_input_for_snapshot_stage(
                 .ok()
                 .map(|semantic_ir| semantic_ir.evidence_ir_path)
         }
-        IrStage::SourceIr | IrStage::EvidenceIr => None,
     }
 }
 
@@ -1682,6 +1687,9 @@ fn is_negative_knowledge_rescan(stage: IrStage, finding: &ValidationFindingRecor
     matches!(
         (stage, finding.finding_id.as_str()),
         (
+            IrStage::EvidenceIr,
+            EVIDENCE_NEGATIVE_KNOWLEDGE_RESCAN_GUIDANCE
+        ) | (
             IrStage::SemanticIr,
             SEMANTIC_NEGATIVE_KNOWLEDGE_RESCAN_GUIDANCE
         ) | (IrStage::IntentIr, INTENT_NEGATIVE_KNOWLEDGE_RESCAN_GUIDANCE)
@@ -2043,14 +2051,17 @@ fn recommended_rescan_action(stage: IrStage, finding: &ValidationFindingRecord) 
 
     if is_negative_knowledge_rescan(stage, finding) {
         return match stage {
+            IrStage::EvidenceIr => {
+                "restart from SourceIR through EvidenceIR, then validate whether the related evidence conflict or residual ids still reproduce from current-document evidence"
+            }
             IrStage::SemanticIr => {
                 "restart from SourceIR through EvidenceIR and SemanticIR, then validate whether the related conflict or residual ids still reproduce from current-document evidence"
             }
             IrStage::IntentIr => {
                 "restart from SourceIR through EvidenceIR, SemanticIR, and IntentIR, then validate whether the related canonical conflict or residual ids still reproduce from current-document evidence"
             }
-            IrStage::SourceIr | IrStage::EvidenceIr => unreachable!(
-                "negative-knowledge specialized action only applies to semantic/intent rescans"
+            IrStage::SourceIr => unreachable!(
+                "negative-knowledge specialized action only applies to evidence/semantic/intent rescans"
             ),
         };
     }
@@ -2920,6 +2931,122 @@ mod tests {
         assert!(plan.contains("\"rebuild_evidence_ir\""));
         assert!(plan.contains("\"rebuild_semantic_ir\""));
         assert!(plan.contains("\"rebuild_intent_ir\""));
+
+        Ok(())
+    }
+
+    #[test]
+    fn project_validation_collects_evidence_negative_knowledge_rescan_guidance() -> Result<()> {
+        let tempdir = tempdir()?;
+        let repo_root = fs::canonicalize(tempdir.path())?;
+        let source = repo_root.join("spec.md");
+        let source_artifact_base = repo_root.join("generated").join("source_ir");
+        let evidence_artifact_base = repo_root.join("generated").join("evidence_ir");
+        fs::write(
+            &source,
+            "# Spec\nSignal HREADY is input width 1.\nSignal DATA is output width 32.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+
+        let snapshot = ProjectedArtifactSnapshot {
+            document_key: "spec".to_string(),
+            display_name: "Spec.pdf".to_string(),
+            stage: IrStage::EvidenceIr,
+            artifact_path: evidence_ir.artifact_layout.evidence_ir_path.clone(),
+            replay_inputs: Vec::new(),
+            report: ValidationReportRecord {
+                report_id: "validation_evidence_ir_test".to_string(),
+                validated_stage: IrStage::EvidenceIr,
+                artifact_fingerprint: "fingerprint".to_string(),
+                summary: "EvidenceIR validation with rescan guidance".to_string(),
+                overall_score: Some(85),
+                grade: Some("GOOD".to_string()),
+                metrics: Vec::new(),
+                findings: vec![ValidationFindingRecord {
+                    finding_id: "evidence_negative_knowledge_rescan_guidance".to_string(),
+                    severity: ValidationFindingSeverity::Info,
+                    category: "rescan_guidance".to_string(),
+                    summary: "known failure shape needs evidence replay".to_string(),
+                    related_ids: vec![
+                        "semantic_conflict_0002".to_string(),
+                        "semantic_conflict_0001".to_string(),
+                        "semantic_conflict_0001".to_string(),
+                    ],
+                }],
+            },
+        };
+        let snapshots = vec![snapshot];
+
+        let recommendations =
+            collect_rescan_recommendations(&snapshots, &repo_root, &test_rescan_vlm_policy());
+        assert_eq!(recommendations.len(), 1);
+        assert_eq!(
+            recommendations[0].related_ids,
+            vec![
+                "semantic_conflict_0001".to_string(),
+                "semantic_conflict_0002".to_string(),
+            ]
+        );
+        assert_eq!(
+            recommendations[0].extractor_lane,
+            "evidence_ir_multimodal_semantic_corroboration"
+        );
+        assert_eq!(
+            recommendations[0].recommended_action,
+            "restart from SourceIR through EvidenceIR, then validate whether the related evidence conflict or residual ids still reproduce from current-document evidence"
+        );
+        assert_eq!(
+            recommendations[0].replay_inputs,
+            vec![
+                ProjectRescanReplayInput {
+                    input_kind: "source_ir".to_string(),
+                    path: "generated/source_ir/spec/source_ir.json".to_string(),
+                },
+                ProjectRescanReplayInput {
+                    input_kind: "evidence_ir".to_string(),
+                    path: "generated/evidence_ir/spec/evidence_ir.json".to_string(),
+                },
+            ]
+        );
+        assert_eq!(recommendations[0].recommended_commands.len(), 2);
+        assert_eq!(
+            recommendations[0].recommended_commands[0].intent,
+            "rebuild_evidence_ir"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[0].args,
+            vec![
+                "run".to_string(),
+                "--manifest-path".to_string(),
+                "Cargo.toml".to_string(),
+                "--".to_string(),
+                "evidence".to_string(),
+                "generated/source_ir/spec/source_ir.json".to_string(),
+            ]
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[1].intent,
+            "validate_current_artifact"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[1].args,
+            vec![
+                "run".to_string(),
+                "--manifest-path".to_string(),
+                "Cargo.toml".to_string(),
+                "--".to_string(),
+                "validate".to_string(),
+                "generated/evidence_ir/spec/evidence_ir.json".to_string(),
+            ]
+        );
+        assert_eq!(recommendations[0].automation_status, "planned_not_executed");
 
         Ok(())
     }

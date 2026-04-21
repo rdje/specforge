@@ -19,64 +19,70 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `356c258`
-- latest_commit_brief_message: `feat(validation): route actor-port gaps into rescans`
-- note: the latest landed slice routes relation-only canonical graph remnants into the bounded `EvidenceIR -> SemanticIR -> IntentIR? -> validate` replay lane and adds tracked fixture coverage for actor-port gaps
+- latest_commit_hash: `29d97ef`
+- latest_commit_brief_message: `docs(memory): sync actor-port replay baseline`
+- note: the latest committed baseline closes the actor-port-gap replay slice and its continuity refresh
 
 ## Recent commit chain (last 6)
+- `29d97ef` docs(memory): sync actor-port replay baseline
 - `356c258` feat(validation): route actor-port gaps into rescans
 - `5505790` docs(memory): sync source VLM replay baseline
 - `d7884cc` feat(validation): route source VLM gaps into rescans
 - `f18d02a` docs(memory): sync evidence VLM replay baseline
 - `ffc075f` feat(validation): route evidence VLM gaps into rescans
-- `fca8c73` docs(memory): sync evidence structural KG replay baseline
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the continuity commit: `ahead 13` of `origin/main`
+- branch state before the next commit: `ahead 14` of `origin/main`
 - push policy remains local-only for now; do not push in this slice
-- feature slice is committed; only the required `MEMORY.md` continuity refresh remains before the repo returns to a clean state
-
-## Latest landed slice
-- outcome:
-  - `validate` now emits `semantic_actor_port_gap_surface_rescan_guidance` / `intent_actor_port_gap_surface_rescan_guidance`
-  - the new guidance carries exact `asr_*` actor-signal relation ids already reported by `semantic_actor_ports_missing` / `intent_actor_ports_missing`
-  - `project-validation` routes that guidance through the bounded `EvidenceIR -> SemanticIR -> IntentIR? -> validate` NLP replay lane
-  - `kg-bench` now accepts `semantic_ir_patch.clear_actor_ports`
-  - the new tracked fixture `actor_port_gap_surface_negative` locks the relation-present, actor-port-missing canonical shape end to end
-- tracked files in the feature commit:
+- modified tracked files:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
-  - `MEMORY.md`
   - `README.md`
   - `RUST_CODEBASE_ANALYSIS.md`
-  - `crates/specforge/src/commands/kg_bench.rs`
   - `crates/specforge/src/commands/project_validation.rs`
-  - `crates/specforge/src/commands/validate.rs`
-  - `crates/specforge/test_data/kg_quality/actor_port_gap_surface_negative/source.md`
-  - `crates/specforge/test_data/kg_quality/actor_port_gap_surface_negative/fixture.json`
   - `docs/book/src/commands/quality-and-learning.md`
   - `docs/book/src/quality/validation.md`
-- verification passed for the landed slice:
+- `MEMORY.md` is being refreshed now as the required pre-commit continuity checkpoint for the current slice
+- do not push after this slice; even after the feature and docs commits the branch will remain below the user's `25`-commit auto-push threshold
+
+## Current completed slice awaiting commit
+- outcome:
+  - `project-validation` now consumes `evidence_negative_knowledge_rescan_guidance` instead of dropping it
+  - evidence-stage learned caution now replays through the bounded `SourceIR -> EvidenceIR -> validate` lane
+  - the planner action text is now explicit that the target ids are evidence-stage conflict/residual ids, not already-canonical surfaces
+  - `evidence_input_for_snapshot_stage()` now accepts current `EvidenceIR` artifacts directly so replay inputs can be derived from persisted evidence artifacts
+  - the new regression `project_validation_collects_evidence_negative_knowledge_rescan_guidance` locks the replay inputs, action text, and command hints for this narrower caution lane
+- verification passed for the current slice:
   - `cargo fmt --all`
-  - `cargo test -p specforge validate_semantic_and_intent_ir_report_actor_port_gap_related_ids`
-  - `cargo test -p specforge project_validation_collects_actor_port_gap_rescan_guidance`
+  - `cargo test -p specforge project_validation_collects_negative_knowledge_rescan_guidance`
+  - `cargo test -p specforge project_validation_collects_evidence_negative_knowledge_rescan_guidance`
   - `cargo test -p specforge kg_bench_runs_tracked_fixtures`
   - `bash scripts/run_docs_ci.sh`
   - `bash scripts/run_ci.sh`
   - `git diff --check`
-- current full local CI baseline: `428` Rust tests plus warning-deny rustdoc and the mdBook build
+- current full local CI baseline: `429` Rust tests plus warning-deny rustdoc and the mdBook build
 - current tracked KG-quality suite size: `103` fixtures
 
 ## Next exact steps
-- write the docs-only continuity commit message into `git_message_brief.txt`
-- stage only `MEMORY.md`
-- commit the continuity refresh with `git commit -F git_message_brief.txt`
+- write the feature commit message into `git_message_brief.txt`
+- stage only the intended tracked feature files:
+  - `CHANGES.md`
+  - `DEVELOPMENT_NOTES.md`
+  - `LIVE_ACHIEVEMENT_STATUS.md`
+  - `README.md`
+  - `RUST_CODEBASE_ANALYSIS.md`
+  - `MEMORY.md`
+  - `crates/specforge/src/commands/project_validation.rs`
+  - `docs/book/src/commands/quality-and-learning.md`
+  - `docs/book/src/quality/validation.md`
+- commit the feature slice with `git commit -F git_message_brief.txt`
 - truncate `git_message_brief.txt` back to `0` bytes and verify it remains untracked
+- refresh `MEMORY.md` again so it reflects the newly created feature commit hash/message
+- commit that continuity refresh as the required docs/memory follow-up commit
 - verify post-conditions:
   - `git ls-files --error-unmatch git_message_brief.txt` fails
   - `wc -c git_message_brief.txt` reports `0`
   - `git status --short --branch` is clean except for the expected branch-ahead marker
-- do not push after this slice; the branch will still be below the user's `25`-commit auto-push threshold
