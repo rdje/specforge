@@ -19,11 +19,12 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `e78e7ed`
-- latest_commit_brief_message: `feat(temporal): ground signal-leading clock phrases`
-- note: the latest committed baseline preserves signal-leading local clock phrases like `HCLK rising edge` and `HCLK posedge` as canonical `clock_signal` grounding in typed temporal rules
+- latest_commit_hash: `237fae3`
+- latest_commit_brief_message: `docs(memory): sync signal-leading clock baseline`
+- note: the latest committed baseline captures the signal-leading clock-grounding slice, including `HCLK rising edge` / `HCLK posedge` as canonical `clock_signal` grounding
 
 ## Recent commit chain (last 6)
+- `237fae3` docs(memory): sync signal-leading clock baseline
 - `e78e7ed` feat(temporal): ground signal-leading clock phrases
 - `9278b18` docs(memory): sync explicit clock grounding baseline
 - `20852a8` feat(temporal): ground explicit clock names from text
@@ -39,34 +40,43 @@
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 1` of `origin/main`
+- branch state before the next commit: `ahead 2` of `origin/main`
 - push policy remains local-only for now; do not push in this slice
 - modified tracked files:
+  - `CHANGES.md`
+  - `DEVELOPMENT_NOTES.md`
+  - `LIVE_ACHIEVEMENT_STATUS.md`
   - `MEMORY.md`
-- the feature slice is already committed; only the required continuity refresh commit remains
+  - `README.md`
+  - `RUST_CODEBASE_ANALYSIS.md`
+  - `crates/specforge/src/commands/validate.rs`
+  - `crates/specforge/src/ir/semantic.rs`
+  - `docs/book/src/domain/temporal-semantics.md`
+- the current feature slice is implemented, documented, and validated locally; the next step is the feature commit, followed by the required continuity refresh commit
 - do not push after this slice unless the user asks or the branch reaches the threshold again
 
 ## Latest landed slice
 - outcome:
-  - signal-leading local clock phrases now ground `clock_signal` too, not just edge-leading phrases
-  - `HCLK rising edge` now preserves `clock_signal = HCLK`
-  - `HCLK posedge` now counts as fully grounded local clock text for validation purposes
-  - the explicit local clock detector now covers both prose-style and shorthand signal-leading edge order without widening into fuzzy clock guessing
+  - named local cycle/tick phrases now become fully grounded temporal rules when the sentence explicitly names the clock signal
+  - `same ACLK cycle` now preserves `clock_signal = ACLK`, `edge = rising`, and `cycle_window = 0..0`
+  - named cycle/tick text no longer triggers `temporal_rules_missing_clock_grounding` just because the document lacks a separate `Clock ...` declaration
+  - the local clock grounding model is now consistent across named edges and named cycle/tick phrasing
 - verification passed for the in-flight slice:
   - `cargo fmt --all`
-  - `cargo test -p specforge signal_leading_rising_edge_text`
-  - `cargo test -p specforge signal_leading_clock_text`
+  - `cargo test -p specforge named_cycle_text`
   - `cargo test -p specforge cycle_window`
   - `cargo test -p specforge kg_bench_runs_tracked_fixtures`
   - `bash scripts/run_docs_ci.sh`
   - `bash scripts/run_ci.sh`
   - `git diff --check`
-- current full local CI baseline after the in-flight changes: `443` Rust tests plus warning-deny rustdoc and the mdBook build
+- current full local CI baseline after the in-flight changes: `445` Rust tests plus warning-deny rustdoc and the mdBook build
 - current tracked KG-quality suite size: `103` fixtures
 
 ## Next exact steps
-- write the continuity commit message into `git_message_brief.txt`
-- stage only `MEMORY.md`
-- commit the continuity refresh with `git commit -F git_message_brief.txt`
+- write the feature commit message into `git_message_brief.txt`
+- stage only the intended tracked files for the named local cycle/tick grounding slice
+- commit the feature slice with `git commit -F git_message_brief.txt`
 - truncate `git_message_brief.txt` back to `0` bytes and verify it remains untracked
+- refresh `MEMORY.md` so it points at the newly created feature commit
+- commit the continuity refresh with `git commit -F git_message_brief.txt`
 - truncate `git_message_brief.txt` back to `0` bytes and verify the worktree is clean except for the expected branch marker

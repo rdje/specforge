@@ -7,6 +7,26 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-21 Named local clock cycle/tick phrasing should be fully grounded, not half grounded
+- After the last clock-grounding slices, the model could already preserve:
+  - `rising edge of HCLK`
+  - `HCLK rising edge`
+  - `HCLK posedge`
+- But cycle/tick phrasing still had an asymmetry:
+  - `same ACLK cycle` could preserve `clock_signal = ACLK`
+  - yet without a separate `Clock ...` declaration the same rule still kept `edge = unknown`
+- That is weaker than the existing default-clock behavior.
+- When the document has a default clock, plain `same cycle` already inherits a rising-edge temporal anchor.
+- So when the sentence explicitly names `ACLK` or `HCLK` and uses `cycle` / `tick`, the local named clock should get that same bounded default-edge treatment.
+- The implementation stays conservative:
+  - explicit edge text still wins when present
+  - local named clock cycle/tick phrasing now falls back to `rising`
+  - we are not inventing a clock when the sentence does not name one
+- This keeps the clock-tick model consistent:
+  - named edge phrases are fully grounded
+  - named cycle/tick phrases are now fully grounded too
+  - validation no longer treats explicit local clock-cycle wording as a missing-grounding artifact
+
 ## 2026-04-21 Signal-leading clock phrases should ground the same local clock model too
 - The explicit local clock-grounding slice fixed `rising edge of HCLK`.
 - But a neighboring real-world phrasing family still lagged:

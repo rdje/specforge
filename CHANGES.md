@@ -1,5 +1,36 @@
 # CHANGES
 
+## 2026-04-21 (Named clock cycle/tick phrases now fully ground temporal rules)
+
+### Improved: named cycle/tick timing now contributes both local `clock_signal` and default edge grounding
+- `crates/specforge/src/ir/semantic.rs` now treats named clock cycle/tick phrases as fully grounded local clock-tick timing when the sentence explicitly names the clock signal.
+- That means phrases like:
+  - `same ACLK cycle`
+  - `within 2 HCLK cycles`
+  - `next PCLK tick`
+  no longer stop at `clock_signal = <named clock>` while leaving `edge = unknown`
+- They now inherit the same bounded rising-edge default already used for default-clock timing, but only when the current sentence explicitly names the clock signal.
+- This closes an important half-grounded state:
+  - named local clock text was already enough to recover the clock signal
+  - but cycle/tick wording without an explicit edge still looked under-grounded to validation when no `Clock ...` declaration existed
+  - the typed temporal model now treats explicit local clock cycle/tick phrasing the same way it already treated document-default cycle/tick phrasing
+
+### Added: regression coverage for named cycle/tick grounding
+- Added semantic coverage proving `TVALID must be asserted in the same ACLK cycle` now preserves:
+  - `clock_signal = ACLK`
+  - `edge = rising`
+  - `cycle_window = 0..0`
+- Added validator coverage proving named local cycle text no longer triggers `temporal_rules_missing_clock_grounding` even without a separate default clock declaration.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge named_cycle_text` -> passed
+- `cargo test -p specforge cycle_window` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-21 (Temporal rules now ground signal-leading clock phrases)
 
 ### Improved: signal-leading clock phrases now preserve local `clock_signal` grounding too

@@ -43,7 +43,7 @@ Examples:
 
 - `on the third rising edge of HCLK` should preserve `clock_signal = HCLK`
 - `on HCLK rising edge` should preserve `clock_signal = HCLK`
-- `in the same ACLK cycle` should preserve `clock_signal = ACLK`
+- `in the same ACLK cycle` should preserve `clock_signal = ACLK` and inherit the same bounded default rising-edge anchoring used for default-clock cycle timing
 - if the text does not name a clock, the document default clock can still fill the gap
 
 ## Predicates

@@ -145,6 +145,7 @@
 - Built-in temporal parser now preserves explicit shorthand edge grounding in typed temporal rules: Done
 - Explicit local clock names in timing text now ground `clock_signal` in typed temporal rules: Done
 - Signal-leading local clock phrases now ground `clock_signal` in typed temporal rules: Done
+- Named local cycle/tick phrases now fully ground typed temporal rules: Done
 - Actor-grounded drive predicates in typed temporal rules implemented: Done
 - Actor-grounded stability predicates in typed temporal rules implemented: Done
 - Multi-predicate temporal antecedents preserved in typed temporal rules: Done

@@ -7102,11 +7102,18 @@ fn build_temporal_rules(
         let actor_grounded = temporal_predicates_are_actor_grounded(&antecedents, &consequents);
         let handshake_completion =
             temporal_predicates_have_handshake_completion(&antecedents, &consequents);
+        let explicit_clock_signal =
+            explicit_clock_signal_from_text(&constraint.source_text, &known_signals);
         rules.push(TemporalRuleRecord {
             rule_id: format!("temporal_signal_constraint_{}", constraint.constraint_id),
-            clock_signal: explicit_clock_signal_from_text(&constraint.source_text, &known_signals)
+            clock_signal: explicit_clock_signal
+                .clone()
                 .or_else(|| default_clock.clone()),
-            edge: explicit_clock_edge_from_text(&constraint.source_text).unwrap_or(default_edge),
+            edge: grounded_temporal_edge(
+                &constraint.source_text,
+                explicit_clock_signal.as_deref(),
+                default_edge,
+            ),
             antecedents,
             consequents,
             cycle_window: resolve_cycle_window_from_text(
@@ -7142,11 +7149,18 @@ fn build_temporal_rules(
         let actor_grounded = temporal_predicates_are_actor_grounded(&antecedents, &consequents);
         let handshake_completion =
             temporal_predicates_have_handshake_completion(&antecedents, &consequents);
+        let explicit_clock_signal =
+            explicit_clock_signal_from_text(&rule.source_text, &known_signals);
         rules.push(TemporalRuleRecord {
             rule_id: format!("temporal_conditional_rule_{}", rule.rule_id),
-            clock_signal: explicit_clock_signal_from_text(&rule.source_text, &known_signals)
+            clock_signal: explicit_clock_signal
+                .clone()
                 .or_else(|| default_clock.clone()),
-            edge: explicit_clock_edge_from_text(&rule.source_text).unwrap_or(default_edge),
+            edge: grounded_temporal_edge(
+                &rule.source_text,
+                explicit_clock_signal.as_deref(),
+                default_edge,
+            ),
             antecedents,
             consequents,
             cycle_window: resolve_cycle_window_from_text(
@@ -8117,7 +8131,13 @@ fn temporal_rule_from_timing_constraint(
 ) -> Option<TemporalRuleRecord> {
     let signal_name = find_known_signal_name(description, known_signals)?;
     let description_lower = description.to_ascii_lowercase();
-    let edge = explicit_clock_edge_from_text(description).unwrap_or(ClockEdge::Unknown);
+    let explicit_clock_signal = explicit_clock_signal_from_text(description, known_signals);
+    let default_edge = if default_clock.is_some() {
+        ClockEdge::Rising
+    } else {
+        ClockEdge::Unknown
+    };
+    let edge = grounded_temporal_edge(description, explicit_clock_signal.as_deref(), default_edge);
     if !description_lower.contains("sampled") && !description_lower.contains("captured") {
         return None;
     }
@@ -8139,8 +8159,7 @@ fn temporal_rule_from_timing_constraint(
 
     Some(TemporalRuleRecord {
         rule_id: format!("temporal_timing_{}", timing.constraint_id),
-        clock_signal: explicit_clock_signal_from_text(description, known_signals)
-            .or_else(|| default_clock.map(str::to_string)),
+        clock_signal: explicit_clock_signal.or_else(|| default_clock.map(str::to_string)),
         edge,
         antecedents: Vec::new(),
         consequents,
@@ -8230,6 +8249,20 @@ fn explicit_clock_edge_from_text(text: &str) -> Option<ClockEdge> {
     } else {
         None
     }
+}
+
+fn grounded_temporal_edge(
+    text: &str,
+    explicit_clock_signal: Option<&str>,
+    default_edge: ClockEdge,
+) -> ClockEdge {
+    explicit_clock_edge_from_text(text).unwrap_or_else(|| {
+        if explicit_clock_signal.is_some() {
+            ClockEdge::Rising
+        } else {
+            default_edge
+        }
+    })
 }
 
 fn explicit_clock_signal_from_text(text: &str, known_signals: &BTreeSet<String>) -> Option<String> {
@@ -13292,6 +13325,67 @@ mod tests {
             .expect("expected cycle window to be derived from 'same ACLK cycle'");
         assert_eq!(cycle_window.min_cycles, Some(0));
         assert_eq!(cycle_window.max_cycles, Some(0));
+
+        Ok(())
+    }
+
+    #[test]
+    fn derives_local_clock_and_edge_from_named_cycle_text() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("temporal_named_cycle_clock.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal ACLK is input width 1.\n\n",
+                "Signal TVALID is input width 1.\n\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_tvalid_same_aclk_cycle".to_string(),
+            subject_signal: "TVALID".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "TVALID must be asserted in the same ACLK cycle.".to_string(),
+            supporting_statement_ids: vec!["stmt_same_aclk_cycle".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| rule.rule_id == "temporal_signal_constraint_sigcon_tvalid_same_aclk_cycle")
+            .expect("expected temporal rule derived from named-cycle constraint");
+        let cycle_window = rule
+            .cycle_window
+            .as_ref()
+            .expect("expected cycle window to be derived from 'same ACLK cycle'");
+        assert_eq!(cycle_window.min_cycles, Some(0));
+        assert_eq!(cycle_window.max_cycles, Some(0));
+        assert_eq!(rule.clock_signal.as_deref(), Some("ACLK"));
+        assert_eq!(rule.edge, super::ClockEdge::Rising);
 
         Ok(())
     }
