@@ -79,6 +79,8 @@ struct SemanticIrPatch {
     #[serde(default)]
     actor_ports_append: Vec<ActorPortRecord>,
     #[serde(default)]
+    clear_actor_ports: bool,
+    #[serde(default)]
     clear_signal_direction_hints: Vec<String>,
 }
 
@@ -655,6 +657,9 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
         &semantic_ir_root,
     )?;
     if let Some(patch) = fixture.semantic_ir_patch.as_ref() {
+        if patch.clear_actor_ports {
+            semantic_ir.actor_ports.clear();
+        }
         semantic_ir
             .actor_ports
             .extend(patch.actor_ports_append.iter().cloned());

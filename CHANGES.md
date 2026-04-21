@@ -1,5 +1,29 @@
 # CHANGES
 
+## 2026-04-21 (Actor-port gaps now emit replayable rescan guidance)
+
+### Improved: relation-only actor graph remnants now advertise the next bounded replay
+- Validation already reported when `SemanticIR` or `IntentIR` carried `actor_signal_relations` but no `actor_ports`.
+- That was honest, but still too passive:
+  - reviewers could see the stranded `asr_*` relation ids
+  - the replay planner had no typed next step for revisiting those same actor-relative graph remnants
+  - the gap looked like static canonical graph debt instead of an explicit replay target
+- This slice turns that weak state into the same bounded replay contract used by nearby canonical graph gaps:
+  - `validate` now emits `semantic_actor_port_gap_surface_rescan_guidance` / `intent_actor_port_gap_surface_rescan_guidance`
+  - those findings stay in `rescan_guidance` and carry the same actor-signal relation ids already reported by `semantic_actor_ports_missing` / `intent_actor_ports_missing`
+  - `project-validation` maps them onto the local `EvidenceIR -> SemanticIR -> IntentIR? -> validate` NLP replay lane
+  - the action text is explicit about collapsing the related actor-signal relation ids into actor-relative port direction records instead of leaving them as relation-only graph evidence
+  - `kg-bench` now supports `semantic_ir_patch.clear_actor_ports`, and the new tracked fixture `actor_port_gap_surface_negative` locks the replay guidance against a relation-present, actor-port-missing canonical artifact
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge validate_semantic_and_intent_ir_report_actor_port_gap_related_ids` -> passed
+- `cargo test -p specforge project_validation_collects_actor_port_gap_rescan_guidance` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `428` Rust tests and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-21 (Source-stage missing VLM enrichment now emits replayable rescan guidance)
 
 ### Improved: classified SourceIR timing/state diagrams without VLM enrichment now advertise the next bounded replay

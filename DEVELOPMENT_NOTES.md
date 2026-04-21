@@ -7,6 +7,24 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-21 Actor-port gaps should be replay targets too
+- Once `SemanticIR` or `IntentIR` already carries `actor_signal_relations` but no `actor_ports`, the weak state is no longer just "did validation notice the missing port synthesis?" but "does the product advertise the bounded local step that might recover those same actor-relative ports?"
+- The stranded `asr_*` relation ids are already stable and reviewable at that stage.
+- Leaving them as only errors underspecifies the next action.
+- The right follow-up is the same bounded canonical replay lane used for nearby graph gaps:
+  - rerun local NLP enrichment on the current `EvidenceIR`
+  - rebuild the current canonical stage(s)
+  - review whether the same actor-signal relation ids now collapse into actor-relative port direction records instead of remaining relation-only graph evidence
+- This is still not an auto-fix story:
+  - the current graph gap remains explicit
+  - the replay planner only identifies the local evidence boundary and deterministic rebuild path
+  - no canonical truth is auto-mutated just because the replay path exists
+- This slice also exposed a benchmark-harness gap:
+  - `kg-bench` could append canonical actor ports
+  - it could not clear them to model a relation-present, actor-port-missing canonical artifact
+  - so the harness now accepts `semantic_ir_patch.clear_actor_ports`, which keeps the actor-port replay surface benchmarkable instead of unit-test-only
+- That split matters because actor-relative graph completeness should be benchmarkable as a negative shape, not only asserted as a happy-path gold surface.
+
 ## 2026-04-21 Source-stage missing VLM enrichment should be replay targets too
 - Once `SourceIR` already knows a diagram is timing/state-like but still carries no VLM enrichment, the weak state is no longer just "did validation notice the missing enrichment?" but "does the product advertise the bounded local step that might fill it?"
 - The stranded asset ids are already stable and reviewable at that stage.

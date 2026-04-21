@@ -60,6 +60,7 @@
 - KG benchmark harness can now assert canonical signal-polarity conflict shape directly: Done
 - KG benchmark harness can now assert canonical resolved signal polarity directly: Done
 - Carried signal-polarity conflicts now emit replayable rescan guidance: Done
+- Carried actor-port gaps now emit replayable rescan guidance: Done
 - Source-stage missing VLM enrichment now emits replayable rescan guidance: Done
 - Evidence-stage missing VLM observations now emit replayable rescan guidance: Done
 - Evidence-stage structural-KG gaps now emit replayable rescan guidance: Done

@@ -1,0 +1,93 @@
+{
+  "name": "actor_port_gap_surface_negative",
+  "source": "source.md",
+  "semantic_ir_patch": {
+    "clear_actor_ports": true
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["PREADY"],
+      "actor_signal_relations_include": [
+        {
+          "actor_name": "Completer",
+          "signal_name": "PREADY",
+          "relation": "drives"
+        },
+        {
+          "actor_name": "Requester",
+          "signal_name": "PREADY",
+          "relation": "reads"
+        }
+      ]
+    },
+    "intent": {
+      "signal_names_include": ["PREADY"],
+      "actor_signal_relations_include": [
+        {
+          "actor_name": "Completer",
+          "signal_name": "PREADY",
+          "relation": "drives"
+        },
+        {
+          "actor_name": "Requester",
+          "signal_name": "PREADY",
+          "relation": "reads"
+        }
+      ]
+    },
+    "validation": {
+      "semantic": {
+        "finding_ids_include": [
+          "semantic_actor_ports_missing",
+          "semantic_actor_port_gap_surface_rescan_guidance"
+        ],
+        "findings_include": [
+          {
+            "finding_id": "semantic_actor_ports_missing",
+            "severity": "error",
+            "category": "knowledge_graph",
+            "summary_contains": "failed to synthesize actor-relative ports",
+            "related_ids_include": ["asr_0001", "asr_0002"]
+          },
+          {
+            "finding_id": "semantic_actor_port_gap_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "actor-signal relation ids without actor-relative ports",
+            "related_ids_include": ["asr_0001", "asr_0002"]
+          }
+        ],
+        "metric_values": {
+          "actor_signal_relations": "2",
+          "actor_ports": "0"
+        }
+      },
+      "intent": {
+        "finding_ids_include": [
+          "intent_actor_ports_missing",
+          "intent_actor_port_gap_surface_rescan_guidance"
+        ],
+        "findings_include": [
+          {
+            "finding_id": "intent_actor_ports_missing",
+            "severity": "error",
+            "category": "knowledge_graph",
+            "summary_contains": "no actor-relative ports",
+            "related_ids_include": ["asr_0001", "asr_0002"]
+          },
+          {
+            "finding_id": "intent_actor_port_gap_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "actor-signal relation ids without actor-relative ports",
+            "related_ids_include": ["asr_0001", "asr_0002"]
+          }
+        ],
+        "metric_values": {
+          "actor_signal_relations": "2",
+          "actor_ports": "0"
+        }
+      }
+    }
+  }
+}

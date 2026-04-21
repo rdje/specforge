@@ -72,6 +72,10 @@ const SEMANTIC_GRAPH_DIRECTION_COVERAGE_SURFACE_RESCAN_GUIDANCE: &str =
     "semantic_graph_direction_coverage_surface_rescan_guidance";
 const INTENT_GRAPH_DIRECTION_COVERAGE_SURFACE_RESCAN_GUIDANCE: &str =
     "intent_graph_direction_coverage_surface_rescan_guidance";
+const SEMANTIC_ACTOR_PORT_GAP_SURFACE_RESCAN_GUIDANCE: &str =
+    "semantic_actor_port_gap_surface_rescan_guidance";
+const INTENT_ACTOR_PORT_GAP_SURFACE_RESCAN_GUIDANCE: &str =
+    "intent_actor_port_gap_surface_rescan_guidance";
 const SEMANTIC_GRAPH_DIRECTION_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
     "semantic_graph_direction_conflict_surface_rescan_guidance";
 const INTENT_GRAPH_DIRECTION_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
@@ -588,6 +592,27 @@ fn push_signal_connectivity_conflict_rescan_guidance(
         format!(
             "{} connectivity conflict id(s) in {stage_label} should trigger targeted NLP rescans plus downstream rebuild because the current structural graph still carries unresolved producer ambiguity",
             related_ids.len()
+        ),
+        related_ids.to_vec(),
+    ));
+}
+
+fn push_actor_port_gap_rescan_guidance(
+    findings: &mut Vec<ValidationFindingRecord>,
+    finding_id: &str,
+    stage_label: &str,
+    related_ids: &[String],
+) {
+    if related_ids.is_empty() {
+        return;
+    }
+
+    findings.push(finding(
+        finding_id,
+        ValidationFindingSeverity::Info,
+        "rescan_guidance",
+        format!(
+            "{stage_label} still carries actor-signal relation ids without actor-relative ports; this should trigger targeted NLP rescans plus bounded local replay to see whether those same relation ids collapse into actor-port direction records"
         ),
         related_ids.to_vec(),
     ));
@@ -3267,17 +3292,24 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
 
     let mut findings = Vec::new();
     if !ir.actor_signal_relations.is_empty() && ir.actor_ports.is_empty() {
+        let actor_port_gap_related_ids = actor_signal_relation_related_ids
+            .iter()
+            .take(8)
+            .cloned()
+            .collect::<Vec<_>>();
         findings.push(finding(
             "semantic_actor_ports_missing",
             ValidationFindingSeverity::Error,
             "knowledge_graph",
             "SemanticIR carries actor-signal relations but failed to synthesize actor-relative ports",
-            actor_signal_relation_related_ids
-                .iter()
-                .take(8)
-                .cloned()
-                .collect(),
+            actor_port_gap_related_ids.clone(),
         ));
+        push_actor_port_gap_rescan_guidance(
+            &mut findings,
+            SEMANTIC_ACTOR_PORT_GAP_SURFACE_RESCAN_GUIDANCE,
+            "SemanticIR",
+            &actor_port_gap_related_ids,
+        );
     }
     if !missing_producer_signals.is_empty() {
         findings.push(finding(
@@ -4621,17 +4653,24 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
 
     let mut findings = Vec::new();
     if !ir.actor_signal_relations.is_empty() && ir.actor_ports.is_empty() {
+        let actor_port_gap_related_ids = actor_signal_relation_related_ids
+            .iter()
+            .take(8)
+            .cloned()
+            .collect::<Vec<_>>();
         findings.push(finding(
             "intent_actor_ports_missing",
             ValidationFindingSeverity::Error,
             "knowledge_graph",
             "IntentIR carries actor-signal relations but no actor-relative ports",
-            actor_signal_relation_related_ids
-                .iter()
-                .take(8)
-                .cloned()
-                .collect(),
+            actor_port_gap_related_ids.clone(),
         ));
+        push_actor_port_gap_rescan_guidance(
+            &mut findings,
+            INTENT_ACTOR_PORT_GAP_SURFACE_RESCAN_GUIDANCE,
+            "IntentIR",
+            &actor_port_gap_related_ids,
+        );
     }
     if !missing_producer_signals.is_empty() {
         findings.push(finding(
@@ -8602,6 +8641,12 @@ mod tests {
             .find(|finding| finding.finding_id == "semantic_actor_ports_missing")
             .expect("expected semantic actor-port gap finding");
         assert_eq!(semantic_finding.related_ids, expected_related_ids);
+        let semantic_rescan_guidance = semantic_report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == SEMANTIC_ACTOR_PORT_GAP_SURFACE_RESCAN_GUIDANCE)
+            .expect("expected semantic actor-port gap rescan guidance");
+        assert_eq!(semantic_rescan_guidance.related_ids, expected_related_ids);
 
         let intent_ir = IntentIr::build(
             &semantic_ir.artifact_layout.semantic_ir_path,
@@ -8615,6 +8660,12 @@ mod tests {
             .find(|finding| finding.finding_id == "intent_actor_ports_missing")
             .expect("expected intent actor-port gap finding");
         assert_eq!(intent_finding.related_ids, expected_related_ids);
+        let intent_rescan_guidance = intent_report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == INTENT_ACTOR_PORT_GAP_SURFACE_RESCAN_GUIDANCE)
+            .expect("expected intent actor-port gap rescan guidance");
+        assert_eq!(intent_rescan_guidance.related_ids, expected_related_ids);
 
         Ok(())
     }
