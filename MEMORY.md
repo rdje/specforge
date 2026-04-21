@@ -22,29 +22,30 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `cb3c08b`
-- latest_commit_brief_message: `docs(memory): sync evidence normative residual replay baseline`
-- note: latest committed baseline syncs the evidence-stage normative-residual replay slice and its continuity state
+- latest_commit_hash: `8a03e21`
+- latest_commit_brief_message: `feat(validation): route evidence structural KG gaps into rescans`
+- note: latest landed slice routes stranded evidence-stage behavioral ids into a bounded evidence-local replay plan
 
 ## Recent commit chain (last 5)
+- `8a03e21` feat(validation): route evidence structural KG gaps into rescans
 - `cb3c08b` docs(memory): sync evidence normative residual replay baseline
 - `cf48188` feat(validation): route evidence normative residuals into rescans
 - `02f862e` docs(memory): sync evidence polarity replay baseline
 - `913d536` feat(validation): route evidence polarity conflicts into rescans
-- `50f3ada` docs(memory): sync evidence semantic replay baseline
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- branch now includes local commits through `cb3c08b` on top of `origin/main`; stay local unless the user asks to push or the 25-commit threshold is reached again
+- branch now includes local commits through `8a03e21` on top of `origin/main`; stay local unless the user asks to push or the 25-commit threshold is reached again
 - the README/SESSION_BOOTSTRAP handoff has been re-executed from the repo entrypoint and the referenced continuity docs have been reread
-- current in-flight slice adds evidence-stage structural-KG replay guidance:
+- the latest landed slice closes the matching evidence-stage structural-KG replay gap:
   - `validate` now emits `evidence_structural_kg_missing_surface_rescan_guidance` alongside `evidence_structural_kg_missing`
   - `project-validation` now recognizes that finding as a narrower evidence-local `nlp-enrich -> validate` replay lane keyed by the stranded behavioral ids
   - the new tracked fixture `evidence_structural_kg_missing_surface_negative` locks that replay surface in the KG benchmark suite
-  - touched files currently in flight:
+  - the feature commit touched:
     - `CHANGES.md`
     - `DEVELOPMENT_NOTES.md`
     - `LIVE_ACHIEVEMENT_STATUS.md`
+    - `MEMORY.md`
     - `README.md`
     - `RUST_CODEBASE_ANALYSIS.md`
     - `crates/specforge/src/commands/project_validation.rs`
@@ -53,7 +54,7 @@
     - `crates/specforge/test_data/kg_quality/evidence_structural_kg_missing_surface_negative/fixture.json`
     - `docs/book/src/commands/quality-and-learning.md`
     - `docs/book/src/quality/validation.md`
-  - verification already passed for the in-flight slice:
+  - verification passed for the landed slice:
     - `cargo fmt --all`
     - `cargo test -p specforge validate_evidence_ir_reports_structural_kg_and_normative_related_ids`
     - `cargo test -p specforge project_validation_collects_evidence_structural_kg_missing_rescan_guidance`
