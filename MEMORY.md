@@ -19,40 +19,39 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `5505790`
-- latest_commit_brief_message: `docs(memory): sync source VLM replay baseline`
-- note: the latest landed slice routes SourceIR timing/state diagram asset ids without VLM enrichment into a bounded local `enrich -> validate` replay lane
+- latest_commit_hash: `356c258`
+- latest_commit_brief_message: `feat(validation): route actor-port gaps into rescans`
+- note: the latest landed slice routes relation-only canonical graph remnants into the bounded `EvidenceIR -> SemanticIR -> IntentIR? -> validate` replay lane and adds tracked fixture coverage for actor-port gaps
 
 ## Recent commit chain (last 6)
+- `356c258` feat(validation): route actor-port gaps into rescans
 - `5505790` docs(memory): sync source VLM replay baseline
 - `d7884cc` feat(validation): route source VLM gaps into rescans
 - `f18d02a` docs(memory): sync evidence VLM replay baseline
 - `ffc075f` feat(validation): route evidence VLM gaps into rescans
 - `fca8c73` docs(memory): sync evidence structural KG replay baseline
-- `8a03e21` feat(validation): route evidence structural KG gaps into rescans
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 12` of `origin/main`
-- push policy remains local-only for this slice; do not push
-- working tree currently contains one completed-but-uncommitted actor-port replay-guidance slice
+- branch state before the continuity commit: `ahead 13` of `origin/main`
+- push policy remains local-only for now; do not push in this slice
+- feature slice is committed; only the required `MEMORY.md` continuity refresh remains before the repo returns to a clean state
 
-## Current in-flight slice (pre-commit)
-- objective: make relation-only actor graph remnants a first-class replay target instead of leaving them as passive canonical graph debt
-- implementation now in flight:
-  - `validate` emits `semantic_actor_port_gap_surface_rescan_guidance` / `intent_actor_port_gap_surface_rescan_guidance`
+## Latest landed slice
+- outcome:
+  - `validate` now emits `semantic_actor_port_gap_surface_rescan_guidance` / `intent_actor_port_gap_surface_rescan_guidance`
   - the new guidance carries exact `asr_*` actor-signal relation ids already reported by `semantic_actor_ports_missing` / `intent_actor_ports_missing`
   - `project-validation` routes that guidance through the bounded `EvidenceIR -> SemanticIR -> IntentIR? -> validate` NLP replay lane
   - `kg-bench` now accepts `semantic_ir_patch.clear_actor_ports`
   - the new tracked fixture `actor_port_gap_surface_negative` locks the relation-present, actor-port-missing canonical shape end to end
-- touched tracked files for the feature slice:
+- tracked files in the feature commit:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
+  - `MEMORY.md`
   - `README.md`
   - `RUST_CODEBASE_ANALYSIS.md`
-  - `MEMORY.md`
   - `crates/specforge/src/commands/kg_bench.rs`
   - `crates/specforge/src/commands/project_validation.rs`
   - `crates/specforge/src/commands/validate.rs`
@@ -60,9 +59,7 @@
   - `crates/specforge/test_data/kg_quality/actor_port_gap_surface_negative/fixture.json`
   - `docs/book/src/commands/quality-and-learning.md`
   - `docs/book/src/quality/validation.md`
-
-## Validation status for the in-flight slice
-- passed:
+- verification passed for the landed slice:
   - `cargo fmt --all`
   - `cargo test -p specforge validate_semantic_and_intent_ir_report_actor_port_gap_related_ids`
   - `cargo test -p specforge project_validation_collects_actor_port_gap_rescan_guidance`
@@ -74,12 +71,10 @@
 - current tracked KG-quality suite size: `103` fixtures
 
 ## Next exact steps
-- write the feature commit message into `git_message_brief.txt`
-- stage only the intended tracked feature-slice files
-- commit the feature slice with `git commit -F git_message_brief.txt`
+- write the docs-only continuity commit message into `git_message_brief.txt`
+- stage only `MEMORY.md`
+- commit the continuity refresh with `git commit -F git_message_brief.txt`
 - truncate `git_message_brief.txt` back to `0` bytes and verify it remains untracked
-- update `MEMORY.md` so it records the newly created feature commit hash/message as the latest committed baseline
-- commit that continuity refresh as the required docs-only follow-up
 - verify post-conditions:
   - `git ls-files --error-unmatch git_message_brief.txt` fails
   - `wc -c git_message_brief.txt` reports `0`
