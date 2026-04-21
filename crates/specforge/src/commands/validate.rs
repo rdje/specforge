@@ -98,6 +98,8 @@ const INTENT_SIGNAL_POLARITY_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
     "intent_signal_polarity_conflict_surface_rescan_guidance";
 const EVIDENCE_SIGNAL_POLARITY_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
     "evidence_signal_polarity_conflict_surface_rescan_guidance";
+const EVIDENCE_NORMATIVE_RESIDUAL_SURFACE_RESCAN_GUIDANCE: &str =
+    "evidence_normative_residual_surface_rescan_guidance";
 const EVIDENCE_SIGNAL_SEMANTIC_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
     "evidence_signal_semantic_conflict_surface_rescan_guidance";
 const SEMANTIC_SIGNAL_SEMANTIC_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
@@ -619,6 +621,27 @@ fn push_signal_semantic_conflict_rescan_guidance(
         "rescan_guidance",
         format!(
             "{stage_label} still carries unresolved semantic-role conflict ids; this should trigger targeted NLP rescans plus bounded local replay to see whether those same conflict ids collapse toward one locally corroborated role meaning"
+        ),
+        related_ids.to_vec(),
+    ));
+}
+
+fn push_normative_residual_rescan_guidance(
+    findings: &mut Vec<ValidationFindingRecord>,
+    finding_id: &str,
+    stage_label: &str,
+    related_ids: &[String],
+) {
+    if related_ids.is_empty() {
+        return;
+    }
+
+    findings.push(finding(
+        finding_id,
+        ValidationFindingSeverity::Info,
+        "rescan_guidance",
+        format!(
+            "{stage_label} still carries partially structured normative statement ids; this should trigger targeted NLP rescans plus bounded local replay to see whether those same statement ids collapse into typed constraints, rules, or structured evidence"
         ),
         related_ids.to_vec(),
     ));
@@ -2394,8 +2417,14 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             format!(
                 "{normative_count} normative statements remain only partially structured in EvidenceIR"
             ),
-            normative_residual_statement_ids,
+            normative_residual_statement_ids.clone(),
         ));
+        push_normative_residual_rescan_guidance(
+            &mut findings,
+            EVIDENCE_NORMATIVE_RESIDUAL_SURFACE_RESCAN_GUIDANCE,
+            "EvidenceIR",
+            &normative_residual_statement_ids,
+        );
     }
     if !ir.signal_polarity_conflicts.is_empty() {
         let signal_polarity_conflict_related_ids = ir
@@ -5980,6 +6009,17 @@ mod tests {
             .expect("expected normative residual finding");
         assert_eq!(
             normative_finding.related_ids,
+            vec!["stmt_normative_residual".to_string()]
+        );
+        let normative_rescan_guidance = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == EVIDENCE_NORMATIVE_RESIDUAL_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected normative residual rescan guidance");
+        assert_eq!(
+            normative_rescan_guidance.related_ids,
             vec!["stmt_normative_residual".to_string()]
         );
 

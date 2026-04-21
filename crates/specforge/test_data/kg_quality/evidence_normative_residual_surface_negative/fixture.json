@@ -1,0 +1,31 @@
+{
+  "name": "evidence_normative_residual_surface_negative",
+  "source": "source.md",
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["HREADY"]
+    },
+    "intent": {
+      "signal_names_include": ["HREADY"]
+    },
+    "validation": {
+      "evidence": {
+        "finding_ids_include": [
+          "evidence_normative_residuals_remaining",
+          "evidence_normative_residual_surface_rescan_guidance"
+        ],
+        "findings_include": [
+          {
+            "finding_id": "evidence_normative_residual_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "partially structured normative statement ids"
+          }
+        ],
+        "metric_values": {
+          "normative_statements": "1"
+        }
+      }
+    }
+  }
+}

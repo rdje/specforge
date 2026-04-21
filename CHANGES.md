@@ -1,5 +1,29 @@
 # CHANGES
 
+## 2026-04-21 (Evidence-stage normative residuals now emit replayable rescan guidance)
+
+### Improved: partially structured EvidenceIR normative statements now advertise the next bounded replay
+- Validation already reported when `EvidenceIR` still carried partially structured normative statements.
+- That was honest, but still too passive:
+  - reviewers could see the preserved statement ids
+  - the replay planner had no evidence-local next step for revisiting those same unstructured obligations
+  - the residual looked like passive extraction debt instead of an explicit replay target
+- This slice turns that weak state into a bounded evidence-local replay contract:
+  - `validate` now emits `evidence_normative_residual_surface_rescan_guidance`
+  - that finding stays in `rescan_guidance` and carries the same statement ids already reported by `evidence_normative_residuals_remaining`
+  - `project-validation` maps it onto a local `nlp-enrich -> validate` replay lane against the current `EvidenceIR` artifact
+  - the action text is explicit about collapsing the related statement ids into typed constraints, rules, or structured evidence before any downstream canonical rebuild is considered
+  - the new tracked fixture `evidence_normative_residual_surface_negative` now requires the new evidence-stage replay guidance so the benchmark locks that follow-up contract too
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge validate_evidence_ir_reports_structural_kg_and_normative_related_ids` -> passed
+- `cargo test -p specforge project_validation_collects_evidence_normative_residual_rescan_guidance` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `421` Rust tests and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-21 (Evidence-stage signal-polarity conflicts now emit replayable rescan guidance)
 
 ### Improved: preserved evidence-stage active-level disagreement now advertises the next bounded replay

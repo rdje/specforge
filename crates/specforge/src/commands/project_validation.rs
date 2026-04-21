@@ -25,6 +25,8 @@ const EVIDENCE_VISUAL_MOTIF_CORROBORATION_GUIDANCE: &str =
     "evidence_visual_motif_corroboration_guidance";
 const EVIDENCE_SIGNAL_POLARITY_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
     "evidence_signal_polarity_conflict_surface_rescan_guidance";
+const EVIDENCE_NORMATIVE_RESIDUAL_SURFACE_RESCAN_GUIDANCE: &str =
+    "evidence_normative_residual_surface_rescan_guidance";
 const EVIDENCE_SIGNAL_SEMANTIC_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
     "evidence_signal_semantic_conflict_surface_rescan_guidance";
 const SEMANTIC_NEGATIVE_KNOWLEDGE_RESCAN_GUIDANCE: &str =
@@ -876,6 +878,9 @@ fn replay_inputs_for_rescan(
     snapshot: &ProjectedArtifactSnapshot,
     finding: &ValidationFindingRecord,
 ) -> Vec<ProjectedReplayInput> {
+    if let Some(inputs) = evidence_normative_residual_replay_inputs(stage, snapshot, finding) {
+        return inputs;
+    }
     if let Some(inputs) = evidence_signal_polarity_conflict_replay_inputs(stage, snapshot, finding)
     {
         return inputs;
@@ -975,6 +980,21 @@ fn evidence_signal_semantic_conflict_replay_inputs(
     finding: &ValidationFindingRecord,
 ) -> Option<Vec<ProjectedReplayInput>> {
     if !is_evidence_signal_semantic_conflict_rescan(stage, finding) {
+        return None;
+    }
+
+    Some(vec![ProjectedReplayInput {
+        input_kind: "evidence_ir",
+        path: snapshot.artifact_path.clone(),
+    }])
+}
+
+fn evidence_normative_residual_replay_inputs(
+    stage: IrStage,
+    snapshot: &ProjectedArtifactSnapshot,
+    finding: &ValidationFindingRecord,
+) -> Option<Vec<ProjectedReplayInput>> {
+    if !is_evidence_normative_residual_rescan(stage, finding) {
         return None;
     }
 
@@ -1218,30 +1238,28 @@ fn recommended_rescan_commands(
     rescan_vlm_policy: &RescanVlmHintPolicy,
     repo_root: &Path,
 ) -> Vec<ProjectRescanCommandHint> {
+    if is_evidence_normative_residual_rescan(stage, finding) {
+        return evidence_local_nlp_validate_rescan_commands(
+            artifact_path,
+            rescan_vlm_policy,
+            repo_root,
+        );
+    }
+
     if is_evidence_signal_polarity_conflict_rescan(stage, finding) {
-        return vec![
-            nlp_enrich_evidence_command(artifact_path, rescan_vlm_policy, repo_root),
-            specforge_command_hint(
-                "validate_current_artifact",
-                vec![
-                    "validate".to_string(),
-                    repo_relative_display(artifact_path, repo_root),
-                ],
-            ),
-        ];
+        return evidence_local_nlp_validate_rescan_commands(
+            artifact_path,
+            rescan_vlm_policy,
+            repo_root,
+        );
     }
 
     if is_evidence_signal_semantic_conflict_rescan(stage, finding) {
-        return vec![
-            nlp_enrich_evidence_command(artifact_path, rescan_vlm_policy, repo_root),
-            specforge_command_hint(
-                "validate_current_artifact",
-                vec![
-                    "validate".to_string(),
-                    repo_relative_display(artifact_path, repo_root),
-                ],
-            ),
-        ];
+        return evidence_local_nlp_validate_rescan_commands(
+            artifact_path,
+            rescan_vlm_policy,
+            repo_root,
+        );
     }
 
     if is_negative_knowledge_rescan(stage, finding)
@@ -1360,6 +1378,23 @@ fn negative_knowledge_rescan_commands(
     Some(commands)
 }
 
+fn evidence_local_nlp_validate_rescan_commands(
+    artifact_path: &Path,
+    rescan_vlm_policy: &RescanVlmHintPolicy,
+    repo_root: &Path,
+) -> Vec<ProjectRescanCommandHint> {
+    vec![
+        nlp_enrich_evidence_command(artifact_path, rescan_vlm_policy, repo_root),
+        specforge_command_hint(
+            "validate_current_artifact",
+            vec![
+                "validate".to_string(),
+                repo_relative_display(artifact_path, repo_root),
+            ],
+        ),
+    ]
+}
+
 fn evidence_nlp_rebuild_rescan_commands(
     stage: IrStage,
     artifact_path: &Path,
@@ -1471,6 +1506,14 @@ fn is_evidence_signal_semantic_conflict_rescan(
 ) -> bool {
     stage == IrStage::EvidenceIr
         && finding.finding_id == EVIDENCE_SIGNAL_SEMANTIC_CONFLICT_SURFACE_RESCAN_GUIDANCE
+}
+
+fn is_evidence_normative_residual_rescan(
+    stage: IrStage,
+    finding: &ValidationFindingRecord,
+) -> bool {
+    stage == IrStage::EvidenceIr
+        && finding.finding_id == EVIDENCE_NORMATIVE_RESIDUAL_SURFACE_RESCAN_GUIDANCE
 }
 
 fn is_evidence_signal_polarity_conflict_rescan(
@@ -2076,6 +2119,10 @@ fn recommended_rescan_action(stage: IrStage, finding: &ValidationFindingRecord) 
 
     if is_visual_motif_corroboration_rescan(stage, finding) {
         return "rerun local visual enrichment from SourceIR, rebuild EvidenceIR, and validate whether the related visual ids gain corroborated typed evidence";
+    }
+
+    if is_evidence_normative_residual_rescan(stage, finding) {
+        return "run local NLP enrichment on EvidenceIR and validate whether the related normative residual statement ids collapse into typed constraints, rules, or structured evidence instead of remaining only partially structured";
     }
 
     if is_evidence_signal_polarity_conflict_rescan(stage, finding) {
@@ -2892,6 +2939,74 @@ mod tests {
         assert_eq!(
             recommendations[0].related_ids,
             vec!["polarity_conflict_0001".to_string()]
+        );
+    }
+
+    #[test]
+    fn project_validation_collects_evidence_normative_residual_rescan_guidance() {
+        let tempdir = tempdir().expect("tempdir");
+        let repo_root = tempdir.path();
+        let snapshot = ProjectedArtifactSnapshot {
+            document_key: "doc".to_string(),
+            display_name: "Spec.pdf".to_string(),
+            stage: IrStage::EvidenceIr,
+            artifact_path: repo_root.join("generated/evidence_ir/doc/evidence_ir.json"),
+            replay_inputs: vec![ProjectedReplayInput {
+                input_kind: "source_ir",
+                path: repo_root.join("generated/source_ir/doc/source_ir.json"),
+            }],
+            report: ValidationReportRecord {
+                report_id: "validation_evidence_ir_test".to_string(),
+                validated_stage: IrStage::EvidenceIr,
+                artifact_fingerprint: "fingerprint".to_string(),
+                summary: "EvidenceIR validation with normative-residual rescan guidance"
+                    .to_string(),
+                overall_score: None,
+                grade: None,
+                metrics: Vec::new(),
+                findings: vec![ValidationFindingRecord {
+                    finding_id: EVIDENCE_NORMATIVE_RESIDUAL_SURFACE_RESCAN_GUIDANCE.to_string(),
+                    severity: ValidationFindingSeverity::Info,
+                    category: "rescan_guidance".to_string(),
+                    summary:
+                        "EvidenceIR still carries partially structured normative statement ids"
+                            .to_string(),
+                    related_ids: vec!["stmt_normative_residual".to_string()],
+                }],
+            },
+        };
+
+        let recommendations =
+            collect_rescan_recommendations(&[snapshot], repo_root, &test_rescan_vlm_policy());
+
+        assert_eq!(recommendations.len(), 1);
+        assert_eq!(
+            recommendations[0].extractor_lane,
+            "evidence_ir_multimodal_semantic_corroboration"
+        );
+        assert_eq!(
+            recommendations[0].recommended_action,
+            "run local NLP enrichment on EvidenceIR and validate whether the related normative residual statement ids collapse into typed constraints, rules, or structured evidence instead of remaining only partially structured"
+        );
+        assert_eq!(
+            recommendations[0].replay_inputs,
+            vec![ProjectRescanReplayInput {
+                input_kind: "evidence_ir".to_string(),
+                path: "generated/evidence_ir/doc/evidence_ir.json".to_string(),
+            }]
+        );
+        assert_eq!(recommendations[0].recommended_commands.len(), 2);
+        assert_eq!(
+            recommendations[0].recommended_commands[0].intent,
+            "nlp_enrich_evidence_ir"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[1].intent,
+            "validate_current_artifact"
+        );
+        assert_eq!(
+            recommendations[0].related_ids,
+            vec!["stmt_normative_residual".to_string()]
         );
     }
 
