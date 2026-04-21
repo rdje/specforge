@@ -7104,7 +7104,8 @@ fn build_temporal_rules(
             temporal_predicates_have_handshake_completion(&antecedents, &consequents);
         rules.push(TemporalRuleRecord {
             rule_id: format!("temporal_signal_constraint_{}", constraint.constraint_id),
-            clock_signal: default_clock.clone(),
+            clock_signal: explicit_clock_signal_from_text(&constraint.source_text, &known_signals)
+                .or_else(|| default_clock.clone()),
             edge: explicit_clock_edge_from_text(&constraint.source_text).unwrap_or(default_edge),
             antecedents,
             consequents,
@@ -7143,7 +7144,8 @@ fn build_temporal_rules(
             temporal_predicates_have_handshake_completion(&antecedents, &consequents);
         rules.push(TemporalRuleRecord {
             rule_id: format!("temporal_conditional_rule_{}", rule.rule_id),
-            clock_signal: default_clock.clone(),
+            clock_signal: explicit_clock_signal_from_text(&rule.source_text, &known_signals)
+                .or_else(|| default_clock.clone()),
             edge: explicit_clock_edge_from_text(&rule.source_text).unwrap_or(default_edge),
             antecedents,
             consequents,
@@ -8137,7 +8139,8 @@ fn temporal_rule_from_timing_constraint(
 
     Some(TemporalRuleRecord {
         rule_id: format!("temporal_timing_{}", timing.constraint_id),
-        clock_signal: default_clock.map(str::to_string),
+        clock_signal: explicit_clock_signal_from_text(description, known_signals)
+            .or_else(|| default_clock.map(str::to_string)),
         edge,
         antecedents: Vec::new(),
         consequents,
@@ -8227,6 +8230,35 @@ fn explicit_clock_edge_from_text(text: &str) -> Option<ClockEdge> {
     } else {
         None
     }
+}
+
+fn explicit_clock_signal_from_text(text: &str, known_signals: &BTreeSet<String>) -> Option<String> {
+    let lowered = text.to_ascii_lowercase();
+
+    for signal in known_signals {
+        let signal_lower = signal.to_ascii_lowercase();
+        let explicit_patterns = [
+            format!("posedge {signal_lower}"),
+            format!("negedge {signal_lower}"),
+            format!("rising edge of {signal_lower}"),
+            format!("rising edge of the {signal_lower}"),
+            format!("falling edge of {signal_lower}"),
+            format!("falling edge of the {signal_lower}"),
+            format!("{signal_lower} cycle"),
+            format!("{signal_lower} cycles"),
+            format!("{signal_lower} tick"),
+            format!("{signal_lower} ticks"),
+        ];
+
+        if explicit_patterns
+            .iter()
+            .any(|pattern| contains_phrase(&lowered, pattern))
+        {
+            return Some(signal.clone());
+        }
+    }
+
+    None
 }
 
 fn unit_mentions_cycle_like_unit(unit: &str) -> bool {
@@ -13335,9 +13367,10 @@ mod tests {
             &source,
             concat!(
                 "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
                 "Signal HCLK is input width 1.\n\n",
                 "Signal PREADY is input width 1.\n\n",
-                "Clock HCLK.\n",
+                "Clock clk.\n",
             ),
         )?;
 
@@ -13378,6 +13411,8 @@ mod tests {
             .expect("expected cycle window to be derived from 'the third rising edge'");
         assert_eq!(cycle_window.min_cycles, Some(3));
         assert_eq!(cycle_window.max_cycles, Some(3));
+        assert_eq!(rule.clock_signal.as_deref(), Some("HCLK"));
+        assert_eq!(rule.edge, super::ClockEdge::Rising);
 
         Ok(())
     }

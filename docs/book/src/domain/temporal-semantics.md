@@ -36,6 +36,15 @@ Temporal predicates carry a tick phase:
 
 This lets the IR say not only which condition holds, but where it sits relative to the modeled clock tick.
 
+Temporal rules also carry an optional clock signal.
+When the current sentence names a local clock explicitly, that local name should win over a document-wide default clock.
+
+Examples:
+
+- `on the third rising edge of HCLK` should preserve `clock_signal = HCLK`
+- `in the same ACLK cycle` should preserve `clock_signal = ACLK`
+- if the text does not name a clock, the document default clock can still fill the gap
+
 ## Predicates
 
 Current temporal predicates include:

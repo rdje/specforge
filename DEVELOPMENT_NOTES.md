@@ -7,6 +7,28 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-21 Explicit local clock names in timing prose should override the default document clock
+- The previous temporal slices had already made the clock-tick model much stronger:
+  - explicit windows like `two cycles later`
+  - shorthand edges like `next negedge`
+  - diagram-style positions like `tick T3`
+- But one canonical grounding gap still remained:
+  - `on the third rising edge of HCLK` could recover `cycle_window = 3..3`
+  - and could recover `edge = rising`
+  - yet the temporal rule still kept whichever default clock the document declared globally
+- That is not good enough for a typed semantic world model.
+- If the local sentence names `HCLK`, the canonical temporal rule should preserve `HCLK`.
+- The correct precedence is:
+  - explicit local clock name in current timing text first
+  - default document clock only when the local text does not name a clock
+- This also improves the validator surface:
+  - a rule can now be fully grounded from local text alone when both the edge and the clock signal are explicit
+  - a missing `Clock ...` declaration no longer forces `temporal_rules_missing_clock_grounding` when the timing sentence already names the clock directly
+- The implementation stays bounded:
+  - only explicit local patterns such as `rising edge of HCLK`, `posedge HCLK`, or `ACLK cycle` are trusted
+  - this is not a fuzzy clock guesser
+  - it is just preserving local timing truth that the parser already knew how to partially read
+
 ## 2026-04-21 Symbolic edge shorthand should ground the temporal edge itself, not only the cycle window
 - The previous temporal slice correctly widened shorthand timing recall:
   - `next posedge`

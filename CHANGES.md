@@ -1,5 +1,35 @@
 # CHANGES
 
+## 2026-04-21 (Temporal rules now preserve explicit local clock names from timing text)
+
+### Improved: explicit local timing text now grounds the clock signal itself
+- `crates/specforge/src/ir/semantic.rs` now treats explicit local clock names in timing prose as first-class temporal grounding instead of always inheriting the document default clock.
+- The same bounded override now applies across signal-constraint, conditional-rule, and timing-constraint temporal synthesis:
+  - `on the third rising edge of HCLK` now preserves `clock_signal = HCLK`
+  - `same ACLK cycle` can now preserve `clock_signal = ACLK`
+  - if no explicit local clock name is present, the existing default clock fallback still applies
+- This closes a real typed-model gap:
+  - the parser already recovered explicit windows and edges from named-clock prose
+  - but the canonical temporal rule could still serialize the wrong clock source when a different default document clock existed
+  - rules with explicit local clock names can now also count as fully grounded even when the document has no separate `Clock ...` declaration
+
+### Added: regression coverage for explicit local clock grounding
+- Strengthened ordinal-edge temporal derivation coverage so `PREADY must be asserted on the third rising edge of HCLK` now proves:
+  - `clock_signal = HCLK`
+  - `edge = rising`
+  - `cycle_window = 3..3`
+- Added validator coverage proving explicit local clock text is enough to avoid `temporal_rules_missing_clock_grounding` even without a separate default clock declaration.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge ordinal_rising_edge_constraint_text` -> passed
+- `cargo test -p specforge explicit_clock_text` -> passed
+- `cargo test -p specforge cycle_window` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-21 (Temporal shorthand edge grounding now preserves explicit edge semantics)
 
 ### Improved: symbolic edge shorthand now grounds the temporal rule edge, not just the cycle window
