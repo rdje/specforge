@@ -7,6 +7,25 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-21 Named quantified and ordinal generic edge phrasing should not lag behind named cycle/tick language
+- After the generic clock-edge slice, the model could already handle:
+  - `next clock edge`
+  - `within 2 clock edges`
+  - `next HCLK edge`
+- But a neighboring named-edge family still lagged:
+  - `within 2 HCLK edges`
+  - `after 3 HCLK edges`
+  - `on the third edge of HCLK`
+- That was another partial-truth problem.
+- The sentence already names the clock locally.
+- The timing intent is still explicit.
+- So the typed model should not preserve `clock_signal = HCLK` while dropping the bounded or ordinal window only because the wording uses a plain named `edge` form.
+- The right fix is still the bounded known-signal-aware path, not the raw parser.
+- That keeps the safety boundary intact:
+  - plain `edge` without an explicit local clock still does not become timing truth
+  - named local generic-edge windows now match the surrounding named cycle/tick and named next-edge support
+  - ordinal `edge of HCLK` language now becomes an exact bounded window instead of under-modeled prose
+
 ## 2026-04-21 Generic clock-edge phrasing should not lag behind explicit cycle/tick and shorthand-edge language
 - After the recent temporal slices, the model already understood:
   - `next cycle`

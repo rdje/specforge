@@ -1,5 +1,39 @@
 # CHANGES
 
+## 2026-04-21 (Named quantified and ordinal clock-edge phrases now recover bounded windows)
+
+### Improved: explicit named clock-edge phrasing now covers bounded and ordinal windows too
+- `crates/specforge/src/ir/semantic.rs` now extends the known-signal-aware temporal resolver so explicit named generic-edge phrasing no longer drops bounded timing structure.
+- That now covers phrases like:
+  - `within 2 HCLK edges`
+  - `after 3 HCLK edges`
+  - `on the third edge of HCLK`
+  - `between 1 and 2 edges of HCLK`
+- This closes the next temporal asymmetry:
+  - `next HCLK edge` was already first-class after the prior slice
+  - but quantified or ordinal named-edge forms were still weaker than neighboring `cycle`, `tick`, `clock edge`, or `rising edge` language
+- The widening stays bounded:
+  - this support only lives in the known-signal-aware temporal resolver
+  - generic `edge` still becomes timing structure only when attached to an explicit local clock signal
+  - the raw parser still does not guess timing from arbitrary uses of the word `edge`
+
+### Added: regression coverage for named bounded/ordinal edge phrasing
+- Added semantic coverage proving:
+  - `PREADY must be asserted within 2 HCLK edges` now preserves `clock_signal = HCLK`, `edge = rising`, and `cycle_window.max_cycles = 2`
+  - `PREADY must be asserted on the third edge of HCLK` now preserves `clock_signal = HCLK`, `edge = rising`, and `cycle_window = 3..3`
+- Added validator coverage proving the named bounded-edge case no longer triggers either `intent_temporal_rules_missing_cycle_windows` or `intent_temporal_rules_missing_clock_grounding`.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge named_quantified_edge` -> passed
+- `cargo test -p specforge edge_of_clock` -> passed
+- `cargo test -p specforge named_next_edge_text` -> passed
+- `cargo test -p specforge cycle_window` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-21 (Generic clock-edge phrases now recover bounded temporal windows)
 
 ### Improved: generic clock-edge phrasing now joins the explicit temporal model

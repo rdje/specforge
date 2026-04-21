@@ -8810,6 +8810,140 @@ fn extract_cycle_window_from_text_with_known_signals(
             }
         }
 
+        for index in 0..tokens.len() {
+            if tokens[index] != "between" {
+                continue;
+            }
+            let Some(min_cycles) = tokens
+                .get(index + 1)
+                .copied()
+                .and_then(parse_cycle_count_value)
+            else {
+                continue;
+            };
+            let and_index = if tokens.get(index + 2) == Some(&"and") {
+                index + 2
+            } else {
+                continue;
+            };
+            let Some(max_cycles) = tokens
+                .get(and_index + 1)
+                .copied()
+                .and_then(parse_cycle_count_value)
+            else {
+                continue;
+            };
+            if contains_named_generic_edge_unit(
+                &tokens[and_index + 2..tokens.len().min(and_index + 8)],
+                &known_signal_tokens,
+            ) {
+                return Some(CycleWindowRecord {
+                    min_cycles: Some(min_cycles),
+                    max_cycles: Some(max_cycles),
+                });
+            }
+        }
+
+        for index in 0..tokens.len() {
+            let Some(count) = tokens
+                .get(index + 1)
+                .copied()
+                .and_then(parse_cycle_count_value)
+            else {
+                continue;
+            };
+            if !contains_named_generic_edge_unit(
+                &tokens[index + 2..tokens.len().min(index + 8)],
+                &known_signal_tokens,
+            ) {
+                continue;
+            }
+
+            match tokens[index] {
+                "within" => {
+                    return Some(CycleWindowRecord {
+                        min_cycles: None,
+                        max_cycles: Some(count),
+                    });
+                }
+                "after" | "for" => {
+                    return Some(CycleWindowRecord {
+                        min_cycles: Some(count),
+                        max_cycles: Some(count),
+                    });
+                }
+                _ => {}
+            }
+        }
+
+        for index in 0..tokens.len().saturating_sub(2) {
+            if tokens[index] == "at" && tokens[index + 1] == "least" {
+                let Some(count) = parse_cycle_count_value(tokens[index + 2]) else {
+                    continue;
+                };
+                if contains_named_generic_edge_unit(
+                    &tokens[index + 3..tokens.len().min(index + 9)],
+                    &known_signal_tokens,
+                ) {
+                    return Some(CycleWindowRecord {
+                        min_cycles: Some(count),
+                        max_cycles: None,
+                    });
+                }
+            }
+            if tokens[index] == "at" && tokens[index + 1] == "most" {
+                let Some(count) = parse_cycle_count_value(tokens[index + 2]) else {
+                    continue;
+                };
+                if contains_named_generic_edge_unit(
+                    &tokens[index + 3..tokens.len().min(index + 9)],
+                    &known_signal_tokens,
+                ) {
+                    return Some(CycleWindowRecord {
+                        min_cycles: None,
+                        max_cycles: Some(count),
+                    });
+                }
+            }
+            if tokens[index] == "no"
+                && tokens[index + 1] == "more"
+                && tokens.get(index + 2) == Some(&"than")
+            {
+                let Some(count) = tokens
+                    .get(index + 3)
+                    .copied()
+                    .and_then(parse_cycle_count_value)
+                else {
+                    continue;
+                };
+                if contains_named_generic_edge_unit(
+                    &tokens[index + 4..tokens.len().min(index + 10)],
+                    &known_signal_tokens,
+                ) {
+                    return Some(CycleWindowRecord {
+                        min_cycles: None,
+                        max_cycles: Some(count),
+                    });
+                }
+            }
+        }
+
+        for index in 0..tokens.len() {
+            if !matches!(tokens[index], "at" | "during" | "on") {
+                continue;
+            }
+            if let Some(count) = parse_explicit_named_generic_edge_position_count(
+                &tokens,
+                index + 1,
+                &known_signal_tokens,
+            ) {
+                return Some(CycleWindowRecord {
+                    min_cycles: Some(count),
+                    max_cycles: Some(count),
+                });
+            }
+        }
+
         None
     })
 }
@@ -8840,7 +8974,9 @@ fn edge_of_known_signal_unit_len(
     start_index: usize,
     known_signal_tokens: &BTreeSet<String>,
 ) -> Option<usize> {
-    if tokens.get(start_index) != Some(&"edge") || tokens.get(start_index + 1) != Some(&"of") {
+    if !matches!(tokens.get(start_index), Some(&"edge") | Some(&"edges"))
+        || tokens.get(start_index + 1) != Some(&"of")
+    {
         return None;
     }
 
@@ -8853,6 +8989,56 @@ fn edge_of_known_signal_unit_len(
     known_signal_tokens
         .contains(signal_token)
         .then_some(signal_index - start_index + 1)
+}
+
+fn contains_named_generic_edge_unit(
+    tokens: &[&str],
+    known_signal_tokens: &BTreeSet<String>,
+) -> bool {
+    for index in 0..tokens.len() {
+        if named_generic_edge_unit_len(tokens, index, known_signal_tokens).is_some()
+            || edge_of_known_signal_unit_len(tokens, index, known_signal_tokens).is_some()
+        {
+            return true;
+        }
+    }
+
+    false
+}
+
+fn named_generic_edge_unit_len(
+    tokens: &[&str],
+    start_index: usize,
+    known_signal_tokens: &BTreeSet<String>,
+) -> Option<usize> {
+    let signal_token = tokens.get(start_index).copied()?;
+    if !known_signal_tokens.contains(signal_token) {
+        return None;
+    }
+
+    if matches!(tokens.get(start_index + 1), Some(&"edge") | Some(&"edges")) {
+        return Some(2);
+    }
+
+    None
+}
+
+fn parse_explicit_named_generic_edge_position_count(
+    tokens: &[&str],
+    start_index: usize,
+    known_signal_tokens: &BTreeSet<String>,
+) -> Option<u32> {
+    let count_index = match tokens.get(start_index).copied() {
+        Some("the" | "a" | "an") => start_index + 1,
+        Some(_) => start_index,
+        None => return None,
+    };
+    let count = tokens
+        .get(count_index)
+        .copied()
+        .and_then(parse_cycle_count_value)?;
+    let lookahead = &tokens[count_index + 1..tokens.len().min(count_index + 7)];
+    contains_named_generic_edge_unit(lookahead, known_signal_tokens).then_some(count)
 }
 
 fn contains_cycle_like_unit(tokens: &[&str]) -> bool {
@@ -13624,6 +13810,132 @@ mod tests {
             .expect("expected cycle window to be derived from 'next HCLK edge'");
         assert_eq!(cycle_window.min_cycles, Some(1));
         assert_eq!(cycle_window.max_cycles, Some(1));
+        assert_eq!(rule.clock_signal.as_deref(), Some("HCLK"));
+        assert_eq!(rule.edge, super::ClockEdge::Rising);
+
+        Ok(())
+    }
+
+    #[test]
+    fn derives_bounded_cycle_window_from_named_quantified_edge_text() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("temporal_named_quantified_edge.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal HCLK is input width 1.\n\n",
+                "Signal PREADY is input width 1.\n\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pready_within_two_hclk_edges".to_string(),
+            subject_signal: "PREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PREADY must be asserted within 2 HCLK edges.".to_string(),
+            supporting_statement_ids: vec!["stmt_within_two_hclk_edges".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| {
+                rule.rule_id == "temporal_signal_constraint_sigcon_pready_within_two_hclk_edges"
+            })
+            .expect("expected temporal rule derived from named quantified-edge constraint");
+        let cycle_window = rule
+            .cycle_window
+            .as_ref()
+            .expect("expected cycle window to be derived from 'within 2 HCLK edges'");
+        assert_eq!(cycle_window.min_cycles, None);
+        assert_eq!(cycle_window.max_cycles, Some(2));
+        assert_eq!(rule.clock_signal.as_deref(), Some("HCLK"));
+        assert_eq!(rule.edge, super::ClockEdge::Rising);
+
+        Ok(())
+    }
+
+    #[test]
+    fn derives_exact_cycle_window_from_named_edge_of_clock_text() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("temporal_named_edge_of_clock.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal HCLK is input width 1.\n\n",
+                "Signal PREADY is input width 1.\n\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pready_third_edge_of_hclk".to_string(),
+            subject_signal: "PREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PREADY must be asserted on the third edge of HCLK.".to_string(),
+            supporting_statement_ids: vec!["stmt_third_edge_of_hclk".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| {
+                rule.rule_id == "temporal_signal_constraint_sigcon_pready_third_edge_of_hclk"
+            })
+            .expect("expected temporal rule derived from named edge-of-clock constraint");
+        let cycle_window = rule
+            .cycle_window
+            .as_ref()
+            .expect("expected cycle window to be derived from 'the third edge of HCLK'");
+        assert_eq!(cycle_window.min_cycles, Some(3));
+        assert_eq!(cycle_window.max_cycles, Some(3));
         assert_eq!(rule.clock_signal.as_deref(), Some("HCLK"));
         assert_eq!(rule.edge, super::ClockEdge::Rising);
 
