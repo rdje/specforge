@@ -19,11 +19,12 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `eb78219`
-- latest_commit_brief_message: `docs(memory): sync symbolic temporal parsing baseline`
-- note: the latest committed baseline captures the shorthand-edge and diagram-position temporal parsing slice, including `posedge` / `negedge` cycle-window recovery and unit-first diagram labels like `tick T3` and `posedge T4`
+- latest_commit_hash: `c1670e4`
+- latest_commit_brief_message: `feat(temporal): ground shorthand edge timing`
+- note: the latest committed baseline preserves explicit `posedge` / `negedge` edge semantics in typed temporal rules instead of silently flattening shorthand edge language to the default clock edge
 
 ## Recent commit chain (last 6)
+- `c1670e4` feat(temporal): ground shorthand edge timing
 - `eb78219` docs(memory): sync symbolic temporal parsing baseline
 - `111cda2` feat(temporal): parse symbolic edge and diagram positions
 - `581cc6c` docs(memory): sync quantified temporal parsing baseline
@@ -34,19 +35,11 @@
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 22` of `origin/main`
+- branch state before the next commit: `ahead 23` of `origin/main`
 - push policy remains local-only for now; do not push in this slice
 - modified tracked files:
-  - `CHANGES.md`
-  - `DEVELOPMENT_NOTES.md`
-  - `LIVE_ACHIEVEMENT_STATUS.md`
   - `MEMORY.md`
-  - `README.md`
-  - `RUST_CODEBASE_ANALYSIS.md`
-  - `crates/specforge/src/commands/validate.rs`
-  - `crates/specforge/src/ir/semantic.rs`
-  - `docs/book/src/domain/temporal-semantics.md`
-- the current feature slice is implemented, documented, and validated locally; the next step is the feature commit, followed by the required continuity refresh commit
+- the feature slice is already committed; only the required continuity refresh commit remains
 - do not push after this slice; even after the feature and docs commits the branch will remain below the user's `25`-commit auto-push threshold
 
 ## Latest landed slice
@@ -69,10 +62,11 @@
 - current tracked KG-quality suite size: `103` fixtures
 
 ## Next exact steps
-- write the feature commit message into `git_message_brief.txt`
-- stage only the intended tracked files for the shorthand-edge grounding slice
-- commit the feature slice with `git commit -F git_message_brief.txt`
-- truncate `git_message_brief.txt` back to `0` bytes and verify it remains untracked
-- refresh `MEMORY.md` so it points at the newly created feature commit
+- write the continuity commit message into `git_message_brief.txt`
+- stage only `MEMORY.md`
 - commit the continuity refresh with `git commit -F git_message_brief.txt`
-- truncate `git_message_brief.txt` back to `0` bytes and verify the worktree is clean except for the expected branch-ahead marker
+- truncate `git_message_brief.txt` back to `0` bytes and verify it remains untracked
+- verify post-conditions:
+  - `git ls-files --error-unmatch git_message_brief.txt` fails
+  - `wc -c git_message_brief.txt` reports `0`
+  - `git status --short --branch` is clean except for the expected branch-ahead marker
