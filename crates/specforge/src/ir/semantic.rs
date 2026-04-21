@@ -13725,6 +13725,14 @@ mod tests {
             .as_deref(),
             Some("HCLK")
         );
+        assert_eq!(
+            super::explicit_clock_signal_from_text(
+                "DATA is sampled on the third falling edge of HCLK.",
+                &known_signals,
+            )
+            .as_deref(),
+            Some("HCLK")
+        );
     }
 
     #[test]
@@ -14875,7 +14883,7 @@ mod tests {
     }
 
     #[test]
-    fn derives_exact_cycle_window_from_ordinal_rising_edge_constraint_text() -> Result<()> {
+    fn derives_exact_cycle_window_from_ordinal_edge_constraint_text() -> Result<()> {
         use crate::ir::evidence::EvidenceIr;
         use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
 
@@ -14892,6 +14900,7 @@ mod tests {
                 "Signal clk is input width 1.\n\n",
                 "Signal HCLK is input width 1.\n\n",
                 "Signal PREADY is input width 1.\n\n",
+                "Signal PWAKEUP is input width 1.\n\n",
                 "Clock clk.\n",
             ),
         )?;
@@ -14911,6 +14920,17 @@ mod tests {
             negated: false,
             source_text: "PREADY must be asserted on the third rising edge of HCLK.".to_string(),
             supporting_statement_ids: vec!["stmt_third_rising_edge".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pwakeup_third_falling_edge".to_string(),
+            subject_signal: "PWAKEUP".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PWAKEUP must be asserted on the third falling edge of HCLK.".to_string(),
+            supporting_statement_ids: vec!["stmt_third_falling_edge".to_string()],
             automation_confidence: AutomationConfidence::Medium,
         });
         evidence_ir.write_to_disk()?;
@@ -14935,6 +14955,22 @@ mod tests {
         assert_eq!(cycle_window.max_cycles, Some(3));
         assert_eq!(rule.clock_signal.as_deref(), Some("HCLK"));
         assert_eq!(rule.edge, super::ClockEdge::Rising);
+
+        let falling_rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| {
+                rule.rule_id == "temporal_signal_constraint_sigcon_pwakeup_third_falling_edge"
+            })
+            .expect("expected temporal rule derived from ordinal falling-edge constraint");
+        let falling_cycle_window = falling_rule
+            .cycle_window
+            .as_ref()
+            .expect("expected cycle window to be derived from 'the third falling edge'");
+        assert_eq!(falling_cycle_window.min_cycles, Some(3));
+        assert_eq!(falling_cycle_window.max_cycles, Some(3));
+        assert_eq!(falling_rule.clock_signal.as_deref(), Some("HCLK"));
+        assert_eq!(falling_rule.edge, super::ClockEdge::Falling);
 
         Ok(())
     }

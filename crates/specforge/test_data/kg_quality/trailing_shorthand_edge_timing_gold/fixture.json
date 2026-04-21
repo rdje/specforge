@@ -57,13 +57,24 @@
         "source_text": "PWRITE must be asserted within 2 falling edges of HCLK.",
         "supporting_statement_ids": ["stmt_within_two_falling_edges_of_hclk"],
         "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_pwakeup_third_falling_edge",
+        "subject_signal": "PWAKEUP",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "PWAKEUP must be asserted on the third falling edge of HCLK.",
+        "supporting_statement_ids": ["stmt_third_falling_edge"],
+        "automation_confidence": "medium"
       }
     ]
   },
   "expectations": {
     "semantic": {
-      "signal_names_include": ["PREADY", "PENABLE", "PSLVERR", "PSEL", "PWRITE"],
-      "temporal_rule_count": 5,
+      "signal_names_include": ["PREADY", "PENABLE", "PSLVERR", "PSEL", "PWRITE", "PWAKEUP"],
+      "temporal_rule_count": 6,
       "temporal_rules_include": [
         {
           "source_text": "PREADY must be asserted on the third posedge of HCLK.",
@@ -150,6 +161,24 @@
             {
               "kind": "signal_value",
               "signal_name": "PWRITE",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PWAKEUP must be asserted on the third falling edge of HCLK.",
+          "clock_signal": "HCLK",
+          "edge": "falling",
+          "cycle_window": {
+            "min_cycles": 3,
+            "max_cycles": 3
+          },
+          "supporting_statement_ids_include": ["stmt_third_falling_edge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PWAKEUP",
               "value": "ASSERTED",
               "phase": "post_tick"
             }
@@ -158,8 +187,8 @@
       ]
     },
     "intent": {
-      "signal_names_include": ["PREADY", "PENABLE", "PSLVERR", "PSEL", "PWRITE"],
-      "temporal_rule_count": 5,
+      "signal_names_include": ["PREADY", "PENABLE", "PSLVERR", "PSEL", "PWRITE", "PWAKEUP"],
+      "temporal_rule_count": 6,
       "temporal_rules_include": [
         {
           "source_text": "PREADY must be asserted on the third posedge of HCLK.",
@@ -246,6 +275,24 @@
             {
               "kind": "signal_value",
               "signal_name": "PWRITE",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PWAKEUP must be asserted on the third falling edge of HCLK.",
+          "clock_signal": "HCLK",
+          "edge": "falling",
+          "cycle_window": {
+            "min_cycles": 3,
+            "max_cycles": 3
+          },
+          "supporting_statement_ids_include": ["stmt_third_falling_edge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PWAKEUP",
               "value": "ASSERTED",
               "phase": "post_tick"
             }
@@ -256,15 +303,15 @@
     "validation": {
       "semantic": {
         "metric_values": {
-          "temporal_rules": "5",
-          "temporal_rules_with_cycle_window": "5",
+          "temporal_rules": "6",
+          "temporal_rules_with_cycle_window": "6",
           "temporal_rules_missing_clock_grounding": "0"
         }
       },
       "intent": {
         "metric_values": {
-          "temporal_rules": "5",
-          "temporal_rules_with_cycle_window": "5",
+          "temporal_rules": "6",
+          "temporal_rules_with_cycle_window": "6",
           "temporal_rules_missing_clock_grounding": "0"
         }
       }

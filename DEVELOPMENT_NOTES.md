@@ -7,6 +7,21 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Exact ordinal edge-word timing should be symmetric on the falling side too
+- The previous slice closed the bounded falling-side word-edge gap:
+  - `within 2 falling edges of HCLK`
+- But the exact ordinal family was still asymmetric:
+  - we already directly proved `the third rising edge of HCLK`
+  - we did not yet directly prove `the third falling edge of HCLK`
+- That matters because exact and bounded phrasing are both part of the trusted temporal surface.
+- If one side is benchmark-locked and the twin is only implied by parser generality, the contract is weaker than it looks.
+- The right move stays narrow:
+  - do not add a new fixture family
+  - deepen `trailing_shorthand_edge_timing_gold` again
+  - widen the existing ordinal semantic regression so it proves rising and falling exact word-edge timing together
+  - widen the existing explicit-clock validator regression so both rules stay grounded together
+- That keeps the benchmark corpus compact while making the exact ordinal pair explicit rather than assumed.
+
 ## 2026-04-22 Bounded edge-word timing should be symmetric on the falling side too
 - The previous slice benchmark-locked the spelled-out rising-edge form:
   - `within 2 rising edges of HCLK`

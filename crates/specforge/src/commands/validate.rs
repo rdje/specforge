@@ -8497,6 +8497,7 @@ mod tests {
                 "# Protocol\n",
                 "Signal HCLK is input width 1.\n\n",
                 "Signal PREADY is input width 1.\n\n",
+                "Signal PWAKEUP is input width 1.\n\n",
             ),
         )?;
 
@@ -8517,6 +8518,17 @@ mod tests {
             supporting_statement_ids: vec!["stmt_third_rising_edge".to_string()],
             automation_confidence: AutomationConfidence::Medium,
         });
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pwakeup_third_falling_edge".to_string(),
+            subject_signal: "PWAKEUP".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PWAKEUP must be asserted on the third falling edge of HCLK.".to_string(),
+            supporting_statement_ids: vec!["stmt_third_falling_edge".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
         evidence_ir.write_to_disk()?;
         let semantic_ir = SemanticIr::build(
             &evidence_ir.artifact_layout.evidence_ir_path,
@@ -8529,10 +8541,10 @@ mod tests {
         )?;
 
         let report = validate_intent_ir(&intent_ir, "temporal_grounding".to_string());
-        assert_eq!(metric_value(&report, "temporal_rules"), Some("1"));
+        assert_eq!(metric_value(&report, "temporal_rules"), Some("2"));
         assert_eq!(
             metric_value(&report, "temporal_rules_with_cycle_window"),
-            Some("1")
+            Some("2")
         );
         assert_eq!(
             metric_value(&report, "temporal_rules_missing_clock_grounding"),

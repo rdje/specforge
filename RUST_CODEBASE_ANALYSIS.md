@@ -111,6 +111,21 @@
 - Focused temporal tests, tracked KG fixtures, docs CI, full local CI, and whitespace checks passed for this slice.
 - The current full local CI baseline is now `472` Rust tests plus warning-deny rustdoc and the mdBook build.
 
+## Session update (2026-04-22 ordinal falling edge-word symmetry lock)
+- Continued from commit `9cf8a28`, still tightening the same trailing shorthand-edge family rather than widening the temporal model or creating a new fixture family.
+- The prior slice closed the bounded falling-side word-edge gap:
+  - `within 2 falling edges of HCLK`
+- But the exact ordinal family was still asymmetric:
+  - `the third rising edge of HCLK` already had direct semantic and validator proof
+  - `the third falling edge of HCLK` did not
+- This slice makes that exact falling-side twin explicit at the same useful levels:
+  - the trailing `of <clock>` local-clock extraction regression now covers `the third falling edge of HCLK`
+  - the existing ordinal semantic regression now proves both `third rising edge` and `third falling edge` rules survive typed lowering with `cycle_window = 3..3`
+  - the existing explicit-clock validator regression now proves both exact ordinal word-edge rules stay fully grounded together
+- the existing tracked fixture `trailing_shorthand_edge_timing_gold` now also carries `PWAKEUP must be asserted on the third falling edge of HCLK.`, so both `SemanticIR` and `IntentIR` lock the full six-rule temporal family end to end
+- The tracked benchmark surface size remains `105` fixtures because this is another hardening pass inside the same fixture family.
+- Focused extraction, semantic, validator, tracked KG fixture checks, docs CI, full local CI, and whitespace checks passed for this slice.
+- The current full local CI baseline remains `472` Rust tests plus warning-deny rustdoc and the mdBook build.
 ## Session update (2026-04-21 trailing shorthand-edge tracked fixture coverage)
 - Continued from commit `f7f9921`, raising the neighboring trailing shorthand-edge family into the tracked benchmark corpus instead of leaving it only in unit coverage.
 - The first benchmark pass exposed a real semantic bug rather than just a missing fixture:
