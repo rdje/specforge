@@ -70,6 +70,7 @@ Examples:
 
 - same-cycle language can become `min_cycles = 0`, `max_cycles = 0`
 - next-cycle language can become `min_cycles = 1`, `max_cycles = 1`
+- named next-cycle language such as `next ACLK cycle` or `next HCLK rising edge` can become `min_cycles = 1`, `max_cycles = 1` too
 - next-edge language such as `next falling edge` can become `min_cycles = 1`, `max_cycles = 1`
 - shorthand edge language such as `next posedge` or `next negedge` can become `min_cycles = 1`, `max_cycles = 1`, while also preserving the named clock edge as `rising` or `falling`
 - bounded tick language such as `within 2 ticks` can become `max_cycles = 2`

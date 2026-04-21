@@ -8187,7 +8187,7 @@ fn extract_cycle_window_from_timing_constraint(
     handshake_completion: bool,
     prior_guidance: Option<&SemanticPriorGuidance>,
 ) -> Option<CycleWindowRecord> {
-    extract_cycle_window_from_text(description)
+    extract_cycle_window_from_text_with_known_signals(description, known_signals)
         .or_else(|| {
             let unit_mentions_cycle_like_units = timing
                 .unit
@@ -8755,6 +8755,44 @@ fn extract_cycle_window_from_text(text: &str) -> Option<CycleWindowRecord> {
     None
 }
 
+fn extract_cycle_window_from_text_with_known_signals(
+    text: &str,
+    known_signals: &BTreeSet<String>,
+) -> Option<CycleWindowRecord> {
+    extract_cycle_window_from_text(text).or_else(|| {
+        let normalized = text.to_ascii_lowercase();
+        let tokens = normalized
+            .split(|ch: char| !ch.is_ascii_alphanumeric())
+            .filter(|token| !token.is_empty())
+            .collect::<Vec<_>>();
+        if tokens.len() < 3 {
+            return None;
+        }
+
+        let known_signal_tokens = known_signals
+            .iter()
+            .map(|signal| signal.to_ascii_lowercase())
+            .collect::<BTreeSet<_>>();
+
+        for index in 0..tokens.len().saturating_sub(2) {
+            if !matches!(tokens[index], "next" | "following" | "subsequent") {
+                continue;
+            }
+            if !known_signal_tokens.contains(tokens[index + 1]) {
+                continue;
+            }
+            if diagram_position_cycle_like_unit_len(&tokens, index + 2).is_some() {
+                return Some(CycleWindowRecord {
+                    min_cycles: Some(1),
+                    max_cycles: Some(1),
+                });
+            }
+        }
+
+        None
+    })
+}
+
 fn contains_cycle_like_unit(tokens: &[&str]) -> bool {
     tokens.iter().any(|token| {
         matches!(
@@ -8797,7 +8835,7 @@ fn resolve_cycle_window_from_text(
     handshake_completion: bool,
     prior_guidance: Option<&SemanticPriorGuidance>,
 ) -> Option<CycleWindowRecord> {
-    extract_cycle_window_from_text(text).or_else(|| {
+    extract_cycle_window_from_text_with_known_signals(text, signal_names).or_else(|| {
         prior_guidance.and_then(|guidance| {
             guidance.corpus_memory.temporal_cycle_window_in_text(
                 Some(guidance.protocol_family),
@@ -13384,6 +13422,67 @@ mod tests {
             .expect("expected cycle window to be derived from 'same ACLK cycle'");
         assert_eq!(cycle_window.min_cycles, Some(0));
         assert_eq!(cycle_window.max_cycles, Some(0));
+        assert_eq!(rule.clock_signal.as_deref(), Some("ACLK"));
+        assert_eq!(rule.edge, super::ClockEdge::Rising);
+
+        Ok(())
+    }
+
+    #[test]
+    fn derives_single_cycle_window_from_named_next_cycle_text() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("temporal_named_next_cycle.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal ACLK is input width 1.\n\n",
+                "Signal PREADY is input width 1.\n\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pready_next_aclk_cycle".to_string(),
+            subject_signal: "PREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PREADY must be asserted on the next ACLK cycle.".to_string(),
+            supporting_statement_ids: vec!["stmt_next_aclk_cycle".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| rule.rule_id == "temporal_signal_constraint_sigcon_pready_next_aclk_cycle")
+            .expect("expected temporal rule derived from named next-cycle constraint");
+        let cycle_window = rule
+            .cycle_window
+            .as_ref()
+            .expect("expected cycle window to be derived from 'next ACLK cycle'");
+        assert_eq!(cycle_window.min_cycles, Some(1));
+        assert_eq!(cycle_window.max_cycles, Some(1));
         assert_eq!(rule.clock_signal.as_deref(), Some("ACLK"));
         assert_eq!(rule.edge, super::ClockEdge::Rising);
 

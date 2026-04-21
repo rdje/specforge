@@ -1,5 +1,38 @@
 # CHANGES
 
+## 2026-04-21 (Named one-cycle clock phrases now recover `cycle_window`)
+
+### Improved: relative one-cycle phrasing now works even when a local clock name sits between `next` and the timing unit
+- `crates/specforge/src/ir/semantic.rs` now recovers bounded one-cycle windows from named local clock phrasing such as:
+  - `next ACLK cycle`
+  - `next PCLK tick`
+  - `next HCLK rising edge`
+  - `next HCLK posedge`
+- This closes the next clock-tick asymmetry:
+  - plain `next cycle`, `next tick`, `next rising edge`, and `next posedge` were already first-class
+  - named local clock variants still grounded `clock_signal` and edge but could miss the `cycle_window`
+- The fix stays bounded:
+  - the extra one-cycle recovery path only runs inside the known-signal-aware temporal resolver
+  - it requires an actual known signal name between the relative phrase and the timing unit
+  - the raw parser is not widened into arbitrary token-skipping heuristics
+
+### Added: regression coverage for named one-cycle clock phrasing
+- Added semantic coverage proving `PREADY must be asserted on the next ACLK cycle` now preserves:
+  - `clock_signal = ACLK`
+  - `edge = rising`
+  - `cycle_window = 1..1`
+- Added validator coverage proving `PREADY must be asserted on the next HCLK rising edge` no longer triggers `intent_temporal_rules_missing_cycle_windows`.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge named_next_cycle_text` -> passed
+- `cargo test -p specforge named_next_clock_text` -> passed
+- `cargo test -p specforge cycle_window` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-21 (Named clock cycle/tick phrases now fully ground temporal rules)
 
 ### Improved: named cycle/tick timing now contributes both local `clock_signal` and default edge grounding

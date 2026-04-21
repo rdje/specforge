@@ -7,6 +7,24 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-21 Named one-cycle clock phrases should recover the same bounded window as unnamed one-cycle phrases
+- After the named clock grounding slices, phrases like `next HCLK rising edge` were in an awkward partial state:
+  - `clock_signal` could be grounded locally
+  - `edge` could be grounded locally
+  - but the `cycle_window` could still lag because the raw one-cycle parser only recognized `next rising edge`, not `next HCLK rising edge`
+- That is exactly the kind of partial truth the typed model should iron out.
+- The local clock name should not destroy a timing fact we already know how to recover without the name.
+- The right place for the fix is not the raw parser.
+- The right place is the known-signal-aware temporal resolver, where we can safely allow:
+  - `next <known-clock> cycle`
+  - `next <known-clock> tick`
+  - `next <known-clock> rising edge`
+  - `next <known-clock> posedge`
+- That keeps the recovery bounded and honest:
+  - no arbitrary token skipping in the raw text parser
+  - no dependence on undeclared signal names
+  - only current-document known-signal timing phrases get the widened one-cycle rule
+
 ## 2026-04-21 Named local clock cycle/tick phrasing should be fully grounded, not half grounded
 - After the last clock-grounding slices, the model could already preserve:
   - `rising edge of HCLK`
