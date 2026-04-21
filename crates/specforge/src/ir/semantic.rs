@@ -7105,7 +7105,7 @@ fn build_temporal_rules(
         rules.push(TemporalRuleRecord {
             rule_id: format!("temporal_signal_constraint_{}", constraint.constraint_id),
             clock_signal: default_clock.clone(),
-            edge: default_edge,
+            edge: explicit_clock_edge_from_text(&constraint.source_text).unwrap_or(default_edge),
             antecedents,
             consequents,
             cycle_window: resolve_cycle_window_from_text(
@@ -7144,7 +7144,7 @@ fn build_temporal_rules(
         rules.push(TemporalRuleRecord {
             rule_id: format!("temporal_conditional_rule_{}", rule.rule_id),
             clock_signal: default_clock.clone(),
-            edge: default_edge,
+            edge: explicit_clock_edge_from_text(&rule.source_text).unwrap_or(default_edge),
             antecedents,
             consequents,
             cycle_window: resolve_cycle_window_from_text(
@@ -8115,13 +8115,7 @@ fn temporal_rule_from_timing_constraint(
 ) -> Option<TemporalRuleRecord> {
     let signal_name = find_known_signal_name(description, known_signals)?;
     let description_lower = description.to_ascii_lowercase();
-    let edge = if description_lower.contains("falling edge") {
-        ClockEdge::Falling
-    } else if description_lower.contains("rising edge") || description_lower.contains("posedge") {
-        ClockEdge::Rising
-    } else {
-        ClockEdge::Unknown
-    };
+    let edge = explicit_clock_edge_from_text(description).unwrap_or(ClockEdge::Unknown);
     if !description_lower.contains("sampled") && !description_lower.contains("captured") {
         return None;
     }
@@ -8216,6 +8210,23 @@ fn extract_cycle_window_from_timing_constraint(
                 )
             })
         })
+}
+
+fn explicit_clock_edge_from_text(text: &str) -> Option<ClockEdge> {
+    let lowered = text.to_ascii_lowercase();
+    if contains_phrase(&lowered, "falling edge")
+        || contains_phrase(&lowered, "falling edges")
+        || contains_phrase(&lowered, "negedge")
+    {
+        Some(ClockEdge::Falling)
+    } else if contains_phrase(&lowered, "rising edge")
+        || contains_phrase(&lowered, "rising edges")
+        || contains_phrase(&lowered, "posedge")
+    {
+        Some(ClockEdge::Rising)
+    } else {
+        None
+    }
 }
 
 fn unit_mentions_cycle_like_unit(unit: &str) -> bool {
@@ -13487,6 +13498,68 @@ mod tests {
             .expect("expected cycle window to be derived from 'next posedge'");
         assert_eq!(cycle_window.min_cycles, Some(1));
         assert_eq!(cycle_window.max_cycles, Some(1));
+        assert_eq!(rule.edge, super::ClockEdge::Rising);
+
+        Ok(())
+    }
+
+    #[test]
+    fn derives_negedge_cycle_window_from_constraint_text() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("temporal_negedge.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal PREADY is input width 1.\n\n",
+                "Clock clk.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pready_next_negedge".to_string(),
+            subject_signal: "PREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PREADY must be asserted on the next negedge.".to_string(),
+            supporting_statement_ids: vec!["stmt_next_negedge".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| rule.rule_id == "temporal_signal_constraint_sigcon_pready_next_negedge")
+            .expect("expected temporal rule derived from next-negedge constraint");
+        let cycle_window = rule
+            .cycle_window
+            .as_ref()
+            .expect("expected cycle window to be derived from 'next negedge'");
+        assert_eq!(cycle_window.min_cycles, Some(1));
+        assert_eq!(cycle_window.max_cycles, Some(1));
+        assert_eq!(rule.edge, super::ClockEdge::Falling);
 
         Ok(())
     }

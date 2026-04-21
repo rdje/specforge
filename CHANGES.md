@@ -1,5 +1,35 @@
 # CHANGES
 
+## 2026-04-21 (Temporal shorthand edge grounding now preserves explicit edge semantics)
+
+### Improved: symbolic edge shorthand now grounds the temporal rule edge, not just the cycle window
+- `crates/specforge/src/ir/semantic.rs` now treats explicit shorthand edge language as first-class clock-edge grounding for signal-constraint and timing-derived temporal rules:
+  - `next posedge` now preserves `edge = rising`
+  - `next negedge` now preserves `edge = falling`
+- This closes a real temporal-model gap:
+  - bounded `cycle_window` recovery for shorthand edges was already working
+  - but signal-constraint temporal rules were still silently inheriting the default clock edge instead of honoring the local shorthand
+  - that meant `next negedge` could validate as "grounded" while still carrying the wrong edge semantics
+- The fix is shared instead of one-off:
+  - explicit edge detection is now reused across timing-constraint and signal-constraint temporal-rule derivation
+  - conditional rules with explicit shorthand edge language inherit the same edge-grounding behavior too
+
+### Added: regression coverage for shorthand edge grounding
+- Added end-to-end `SemanticIR` temporal-rule derivation coverage for:
+  - `PREADY must be asserted on the next negedge`
+- Strengthened the existing shorthand-edge regression so `PREADY must be asserted on the next posedge` now also proves the recovered rule edge, not only the `cycle_window`.
+- Added validator coverage proving `next negedge` no longer looks like a temporal rule with missing clock grounding.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge negedge_cycle_window` -> passed
+- `cargo test -p specforge temporal_rules_missing_clock_grounding` -> passed
+- `cargo test -p specforge cycle_window` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-21 (Temporal parser now recognizes posedge/negedge shorthand and diagram-style positions)
 
 ### Improved: built-in cycle-window recovery now covers symbolic edge shorthand and unit-first diagram labels

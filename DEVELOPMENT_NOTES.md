@@ -7,6 +7,30 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-21 Symbolic edge shorthand should ground the temporal edge itself, not only the cycle window
+- The previous temporal slice correctly widened shorthand timing recall:
+  - `next posedge`
+  - `next negedge`
+  - `tick T3`
+  - `posedge T4`
+- But one semantic inconsistency remained after that landing:
+  - direct `cycle_window` recovery from `next negedge` worked
+  - validator-level clock grounding also looked "good enough" because the rule edge was not `unknown`
+  - yet signal-constraint temporal rules were still inheriting the default clock edge from the document clock model
+  - so `next negedge` could still end up serialized as `edge = rising`
+- That is exactly the kind of partial success we do not want in the typed world model:
+  - the timing phrase is locally explicit
+  - the temporal rule must preserve that explicit edge meaning
+  - we should not silently flatten it back to the default edge just because the document also has a default clock
+- The right fix is a shared edge-grounding helper:
+  - detect explicit `rising edge` / `falling edge`
+  - detect symbolic `posedge` / `negedge`
+  - let signal constraints, conditional rules, and timing constraints all reuse the same local edge detector before falling back to the default clock edge
+- That keeps the temporal model coherent:
+  - local shorthand timing remains first-class truth
+  - default clock-edge fallback remains only a fallback
+  - "grounded" no longer means "some edge happened to be present"; it means the rule preserves the edge the source text actually named
+
 ## 2026-04-21 Symbolic edge shorthand and unit-first diagram labels should participate in the same clock-tick model
 - The current temporal parser had become much more coherent:
   - counted cycle language
