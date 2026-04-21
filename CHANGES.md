@@ -1,5 +1,38 @@
 # CHANGES
 
+## 2026-04-21 (Generic `clock edge(s) of <clock>` phrasing is now regression-locked end to end)
+
+### Improved: documented `clock edge(s) of <clock>` support is now proven through the semantic and validation layers too
+- `crates/specforge/src/ir/semantic.rs` already knew how to recover the generic clock-edge-of-clock family:
+  - `clock edge T4 of HCLK`
+  - `within 2 clock edges of HCLK`
+- This slice closes a quality gap rather than widening capability:
+  - the support was already described in the docs and already present in the parser helpers
+  - but it was not locked end to end the way the neighboring temporal phrasing families were
+- The model boundary stays the same:
+  - explicit `clock edge(s) of <known clock>` phrasing remains accepted
+  - arbitrary edge wording still does not become timing truth
+
+### Added: parser, semantic, and validator regression coverage for generic clock-edge-of-clock phrasing
+- Added parser-level coverage proving:
+  - `clock edge T4 of HCLK` still becomes `cycle_window = 4..4`
+  - `within 2 clock edges of HCLK` still becomes `cycle_window.max_cycles = 2`
+  - both forms preserve `clock_signal = HCLK`
+- Added end-to-end semantic coverage proving `PREADY must be asserted on clock edge T4 of HCLK` preserves:
+  - `clock_signal = HCLK`
+  - `edge = rising`
+  - `cycle_window = 4..4`
+- Added validator coverage proving that same phrasing does not trigger either `intent_temporal_rules_missing_clock_grounding` or `intent_temporal_rules_missing_cycle_windows`
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge clock_edge_of_clock` -> passed
+- `cargo test -p specforge cycle_window` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-21 (Trailing `of <clock>` shorthand edge phrases now ground the local clock)
 
 ### Improved: shorthand edge phrases with trailing `of <clock>` now preserve explicit local clock grounding

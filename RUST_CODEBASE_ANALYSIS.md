@@ -58,6 +58,16 @@
 - Focused parser, semantic, validator, tracked KG fixture, docs CI, full local CI, and whitespace checks all passed for this slice.
 - The current local CI baseline is `461` Rust tests plus warning-deny rustdoc and the mdBook build, and the tracked KG-quality suite remains `103` fixtures.
 
+## Session update (2026-04-21 generic clock-edge-of-clock regression lock)
+- Continued from commit `35960c7`, tightening a quality seam without widening the temporal model.
+- Generic `clock edge(s) of <clock>` phrasing such as `clock edge T4 of HCLK` and `within 2 clock edges of HCLK` was already supported by the bounded parser helpers and already described in the docs, but it was not yet regression-locked through the semantic and validation layers the way neighboring temporal phrasing families were.
+- This slice keeps the model unchanged and makes the contract explicit:
+  - parser coverage now proves those forms still recover the expected bounded `cycle_window`
+  - semantic coverage now proves `clock_signal = HCLK`, `edge = rising`, and the bounded window survive together into typed temporal rules
+  - validator coverage now proves that same phrasing no longer relies on undocumented helper behavior and stays out of both missing-clock and missing-window warning paths
+- Focused parser, semantic, validator, tracked KG fixture, docs CI, full local CI, and whitespace checks passed for this slice.
+- The current local CI baseline is `467` Rust tests plus warning-deny rustdoc and the mdBook build, and the tracked KG-quality suite remains `103` fixtures.
+
 ## Session update (2026-04-21 trailing-`of <clock>` shorthand-edge grounding)
 - Continued from commit `6477b08`, closing another half-grounded temporal corner without widening truth.
 - `extract_cycle_window_from_text()` and `explicit_clock_edge_from_text()` already knew how to recover bounded windows and explicit edge kind from phrases like `the third posedge of HCLK` or `within 2 negedges of HCLK`, but `explicit_clock_signal_from_text()` could still drop the locally named clock unless the phrase used the diagram-position `... T4 of HCLK` family.

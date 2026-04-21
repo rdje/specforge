@@ -7,6 +7,24 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-21 Generic `clock edge(s) of <clock>` phrasing should be regression-locked the same way neighboring temporal families already are
+- After the recent temporal slices, support for generic clock-edge-of-clock wording was already real:
+  - `clock edge T4 of HCLK`
+  - `within 2 clock edges of HCLK`
+- But that support still had a quality asymmetry.
+- The parser helpers and docs already described it.
+- The end-to-end semantic and validator regressions did not.
+- That is exactly the sort of silent fragility we should squeeze out.
+- If a phrasing family is part of the canonical temporal contract, it should be proven through:
+  - parser recovery
+  - typed semantic lowering
+  - validator non-regression for clock grounding and bounded windows
+- The right move is not to widen the model.
+- The right move is to lock the existing behavior:
+  - keep the support explicit and bounded to local `clock edge(s) of <known clock>` wording
+  - prove `clock_signal`, `edge`, and `cycle_window` survive together end to end
+  - keep arbitrary edge prose outside the trusted timing surface
+
 ## 2026-04-21 Trailing `of <clock>` shorthand-edge phrasing should keep the named local clock too
 - After the unit-first diagram-position slice, a neighboring shorthand-edge family was still under-modeled:
   - `on the third posedge of HCLK`
