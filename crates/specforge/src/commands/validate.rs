@@ -98,6 +98,8 @@ const INTENT_SIGNAL_POLARITY_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
     "intent_signal_polarity_conflict_surface_rescan_guidance";
 const EVIDENCE_SIGNAL_POLARITY_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
     "evidence_signal_polarity_conflict_surface_rescan_guidance";
+const EVIDENCE_STRUCTURAL_KG_MISSING_SURFACE_RESCAN_GUIDANCE: &str =
+    "evidence_structural_kg_missing_surface_rescan_guidance";
 const EVIDENCE_NORMATIVE_RESIDUAL_SURFACE_RESCAN_GUIDANCE: &str =
     "evidence_normative_residual_surface_rescan_guidance";
 const EVIDENCE_SIGNAL_SEMANTIC_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
@@ -642,6 +644,27 @@ fn push_normative_residual_rescan_guidance(
         "rescan_guidance",
         format!(
             "{stage_label} still carries partially structured normative statement ids; this should trigger targeted NLP rescans plus bounded local replay to see whether those same statement ids collapse into typed constraints, rules, or structured evidence"
+        ),
+        related_ids.to_vec(),
+    ));
+}
+
+fn push_structural_kg_missing_rescan_guidance(
+    findings: &mut Vec<ValidationFindingRecord>,
+    finding_id: &str,
+    stage_label: &str,
+    related_ids: &[String],
+) {
+    if related_ids.is_empty() {
+        return;
+    }
+
+    findings.push(finding(
+        finding_id,
+        ValidationFindingSeverity::Info,
+        "rescan_guidance",
+        format!(
+            "{stage_label} still lacks actor-signal graph grounding for behavioral evidence ids; this should trigger targeted NLP rescans plus bounded local replay to see whether those same ids collapse into actor-grounded graph relations"
         ),
         related_ids.to_vec(),
     ));
@@ -2406,8 +2429,14 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             ValidationFindingSeverity::Warning,
             "knowledge_graph",
             "Behavioral evidence exists, but the structural actor-signal graph is still empty in EvidenceIR",
-            structural_kg_missing_related_ids,
+            structural_kg_missing_related_ids.clone(),
         ));
+        push_structural_kg_missing_rescan_guidance(
+            &mut findings,
+            EVIDENCE_STRUCTURAL_KG_MISSING_SURFACE_RESCAN_GUIDANCE,
+            "EvidenceIR",
+            &structural_kg_missing_related_ids,
+        );
     }
     if normative_count > 0 {
         findings.push(finding(
@@ -5996,6 +6025,20 @@ mod tests {
             .expect("expected structural KG missing finding");
         assert_eq!(
             structural_finding.related_ids,
+            vec![
+                "condrule_htrans_hold".to_string(),
+                "sigcon_hready_asserted".to_string()
+            ]
+        );
+        let structural_rescan_guidance = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == EVIDENCE_STRUCTURAL_KG_MISSING_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected structural KG missing rescan guidance");
+        assert_eq!(
+            structural_rescan_guidance.related_ids,
             vec![
                 "condrule_htrans_hold".to_string(),
                 "sigcon_hready_asserted".to_string()

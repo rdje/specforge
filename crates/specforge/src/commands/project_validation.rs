@@ -25,6 +25,8 @@ const EVIDENCE_VISUAL_MOTIF_CORROBORATION_GUIDANCE: &str =
     "evidence_visual_motif_corroboration_guidance";
 const EVIDENCE_SIGNAL_POLARITY_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
     "evidence_signal_polarity_conflict_surface_rescan_guidance";
+const EVIDENCE_STRUCTURAL_KG_MISSING_SURFACE_RESCAN_GUIDANCE: &str =
+    "evidence_structural_kg_missing_surface_rescan_guidance";
 const EVIDENCE_NORMATIVE_RESIDUAL_SURFACE_RESCAN_GUIDANCE: &str =
     "evidence_normative_residual_surface_rescan_guidance";
 const EVIDENCE_SIGNAL_SEMANTIC_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
@@ -878,6 +880,9 @@ fn replay_inputs_for_rescan(
     snapshot: &ProjectedArtifactSnapshot,
     finding: &ValidationFindingRecord,
 ) -> Vec<ProjectedReplayInput> {
+    if let Some(inputs) = evidence_structural_kg_missing_replay_inputs(stage, snapshot, finding) {
+        return inputs;
+    }
     if let Some(inputs) = evidence_normative_residual_replay_inputs(stage, snapshot, finding) {
         return inputs;
     }
@@ -980,6 +985,21 @@ fn evidence_signal_semantic_conflict_replay_inputs(
     finding: &ValidationFindingRecord,
 ) -> Option<Vec<ProjectedReplayInput>> {
     if !is_evidence_signal_semantic_conflict_rescan(stage, finding) {
+        return None;
+    }
+
+    Some(vec![ProjectedReplayInput {
+        input_kind: "evidence_ir",
+        path: snapshot.artifact_path.clone(),
+    }])
+}
+
+fn evidence_structural_kg_missing_replay_inputs(
+    stage: IrStage,
+    snapshot: &ProjectedArtifactSnapshot,
+    finding: &ValidationFindingRecord,
+) -> Option<Vec<ProjectedReplayInput>> {
+    if !is_evidence_structural_kg_missing_rescan(stage, finding) {
         return None;
     }
 
@@ -1238,6 +1258,14 @@ fn recommended_rescan_commands(
     rescan_vlm_policy: &RescanVlmHintPolicy,
     repo_root: &Path,
 ) -> Vec<ProjectRescanCommandHint> {
+    if is_evidence_structural_kg_missing_rescan(stage, finding) {
+        return evidence_local_nlp_validate_rescan_commands(
+            artifact_path,
+            rescan_vlm_policy,
+            repo_root,
+        );
+    }
+
     if is_evidence_normative_residual_rescan(stage, finding) {
         return evidence_local_nlp_validate_rescan_commands(
             artifact_path,
@@ -1506,6 +1534,14 @@ fn is_evidence_signal_semantic_conflict_rescan(
 ) -> bool {
     stage == IrStage::EvidenceIr
         && finding.finding_id == EVIDENCE_SIGNAL_SEMANTIC_CONFLICT_SURFACE_RESCAN_GUIDANCE
+}
+
+fn is_evidence_structural_kg_missing_rescan(
+    stage: IrStage,
+    finding: &ValidationFindingRecord,
+) -> bool {
+    stage == IrStage::EvidenceIr
+        && finding.finding_id == EVIDENCE_STRUCTURAL_KG_MISSING_SURFACE_RESCAN_GUIDANCE
 }
 
 fn is_evidence_normative_residual_rescan(
@@ -2119,6 +2155,10 @@ fn recommended_rescan_action(stage: IrStage, finding: &ValidationFindingRecord) 
 
     if is_visual_motif_corroboration_rescan(stage, finding) {
         return "rerun local visual enrichment from SourceIR, rebuild EvidenceIR, and validate whether the related visual ids gain corroborated typed evidence";
+    }
+
+    if is_evidence_structural_kg_missing_rescan(stage, finding) {
+        return "run local NLP enrichment on EvidenceIR and validate whether the related behavioral evidence ids collapse into actor-grounded graph relations instead of remaining structurally ungrounded";
     }
 
     if is_evidence_normative_residual_rescan(stage, finding) {
@@ -2858,6 +2898,88 @@ mod tests {
         assert_eq!(
             recommendations[0].related_ids,
             vec!["semantic_conflict_0001".to_string()]
+        );
+    }
+
+    #[test]
+    fn project_validation_collects_evidence_structural_kg_missing_rescan_guidance() {
+        let tempdir = tempdir().expect("tempdir");
+        let repo_root = tempdir.path();
+        let snapshot = ProjectedArtifactSnapshot {
+            document_key: "doc".to_string(),
+            display_name: "Spec.pdf".to_string(),
+            stage: IrStage::EvidenceIr,
+            artifact_path: repo_root.join("generated/evidence_ir/doc/evidence_ir.json"),
+            replay_inputs: vec![ProjectedReplayInput {
+                input_kind: "source_ir",
+                path: repo_root.join("generated/source_ir/doc/source_ir.json"),
+            }],
+            report: ValidationReportRecord {
+                report_id: "validation_evidence_ir_test".to_string(),
+                validated_stage: IrStage::EvidenceIr,
+                artifact_fingerprint: "fingerprint".to_string(),
+                summary: "EvidenceIR validation with structural-KG-missing rescan guidance"
+                    .to_string(),
+                overall_score: None,
+                grade: None,
+                metrics: Vec::new(),
+                findings: vec![ValidationFindingRecord {
+                    finding_id: EVIDENCE_STRUCTURAL_KG_MISSING_SURFACE_RESCAN_GUIDANCE
+                        .to_string(),
+                    severity: ValidationFindingSeverity::Info,
+                    category: "rescan_guidance".to_string(),
+                    summary:
+                        "EvidenceIR still lacks actor-signal graph grounding for behavioral evidence ids"
+                            .to_string(),
+                    related_ids: vec!["sigcon_hready_asserted".to_string()],
+                }],
+            },
+        };
+
+        let recommendations =
+            collect_rescan_recommendations(&[snapshot], repo_root, &test_rescan_vlm_policy());
+
+        assert_eq!(recommendations.len(), 1);
+        assert_eq!(
+            recommendations[0].extractor_lane,
+            "evidence_ir_multimodal_semantic_corroboration"
+        );
+        assert_eq!(
+            recommendations[0].recommended_action,
+            "run local NLP enrichment on EvidenceIR and validate whether the related behavioral evidence ids collapse into actor-grounded graph relations instead of remaining structurally ungrounded"
+        );
+        assert_eq!(
+            recommendations[0].replay_inputs,
+            vec![ProjectRescanReplayInput {
+                input_kind: "evidence_ir".to_string(),
+                path: "generated/evidence_ir/doc/evidence_ir.json".to_string(),
+            }]
+        );
+        assert_eq!(recommendations[0].recommended_commands.len(), 2);
+        assert_eq!(
+            recommendations[0].recommended_commands[0].intent,
+            "nlp_enrich_evidence_ir"
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[0].args,
+            vec![
+                "run".to_string(),
+                "--manifest-path".to_string(),
+                "Cargo.toml".to_string(),
+                "--".to_string(),
+                "nlp-enrich".to_string(),
+                "generated/evidence_ir/doc/evidence_ir.json".to_string(),
+                "--vlm-provider".to_string(),
+                "ollama".to_string(),
+            ]
+        );
+        assert_eq!(
+            recommendations[0].recommended_commands[1].intent,
+            "validate_current_artifact"
+        );
+        assert_eq!(
+            recommendations[0].related_ids,
+            vec!["sigcon_hready_asserted".to_string()]
         );
     }
 

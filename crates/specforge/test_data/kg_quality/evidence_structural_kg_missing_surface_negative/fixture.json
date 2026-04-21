@@ -1,0 +1,42 @@
+{
+  "name": "evidence_structural_kg_missing_surface_negative",
+  "source": "source.md",
+  "evidence_ir_patch": {
+    "signal_constraints": [
+      {
+        "constraint_id": "sigcon_hready_asserted",
+        "subject_signal": "HREADY",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "HREADY must be asserted.",
+        "supporting_statement_ids": ["stmt_signal_constraint"],
+        "automation_confidence": "medium"
+      }
+    ]
+  },
+  "expectations": {
+    "validation": {
+      "evidence": {
+        "finding_ids_include": [
+          "evidence_structural_kg_missing",
+          "evidence_structural_kg_missing_surface_rescan_guidance"
+        ],
+        "findings_include": [
+          {
+            "finding_id": "evidence_structural_kg_missing_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "actor-signal graph grounding for behavioral evidence ids",
+            "related_ids_include": ["sigcon_hready_asserted"]
+          }
+        ],
+        "metric_values": {
+          "signal_constraints": "1",
+          "actor_signal_relations": "0"
+        }
+      }
+    }
+  }
+}

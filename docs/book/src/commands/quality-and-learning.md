@@ -55,6 +55,7 @@ Prior-guided semantic consensus findings now feed it as well, so meaning that co
 Graph-direction coverage guidance now feeds it too, so already-canonical but still graph-uncovered signals can be replayed for actor-relative direction recovery through the same local pipeline.
 Graph-direction self-conflict guidance now feeds it too, so preserved actor-aware conflict ids can be replayed for stronger same-actor direction disambiguation through the same local pipeline.
 Signal-semantic-conflict guidance now feeds it too, so preserved `semantic_conflict_*` ids can be replayed for stronger role disambiguation through that same local pipeline.
+Evidence-stage structural-KG guidance now feeds it too, but through a narrower evidence-local `nlp-enrich -> validate` loop before any downstream canonical rebuild is attempted.
 Evidence-stage normative-residual guidance now feeds it too, but through a narrower evidence-local `nlp-enrich -> validate` loop before any downstream canonical rebuild is attempted.
 Evidence-stage signal-polarity-conflict guidance now feeds it too, but through a narrower evidence-local `nlp-enrich -> validate` loop before any downstream canonical rebuild is attempted.
 Evidence-stage signal-semantic-conflict guidance now feeds it too, but through a narrower evidence-local `nlp-enrich -> validate` loop before any downstream canonical rebuild is attempted.

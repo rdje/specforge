@@ -1,5 +1,29 @@
 # CHANGES
 
+## 2026-04-21 (Evidence-stage structural-KG gaps now emit replayable rescan guidance)
+
+### Improved: stranded EvidenceIR behavioral records now advertise the next bounded replay
+- Validation already reported when `EvidenceIR` carried behavioral records but no structural actor-signal graph.
+- That was honest, but still too passive:
+  - reviewers could see the stranded behavioral ids
+  - the replay planner had no evidence-local next step for revisiting those same ungrounded records
+  - the gap looked like passive extraction debt instead of an explicit replay target
+- This slice turns that weak state into a bounded evidence-local replay contract:
+  - `validate` now emits `evidence_structural_kg_missing_surface_rescan_guidance`
+  - that finding stays in `rescan_guidance` and carries the same behavioral ids already reported by `evidence_structural_kg_missing`
+  - `project-validation` maps it onto a local `nlp-enrich -> validate` replay lane against the current `EvidenceIR` artifact
+  - the action text is explicit about collapsing the related behavioral ids into actor-grounded graph relations before any downstream canonical rebuild is considered
+  - the new tracked fixture `evidence_structural_kg_missing_surface_negative` now requires the new evidence-stage replay guidance so the benchmark locks that follow-up contract too
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge validate_evidence_ir_reports_structural_kg_and_normative_related_ids` -> passed
+- `cargo test -p specforge project_validation_collects_evidence_structural_kg_missing_rescan_guidance` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `422` Rust tests and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-21 (Evidence-stage normative residuals now emit replayable rescan guidance)
 
 ### Improved: partially structured EvidenceIR normative statements now advertise the next bounded replay

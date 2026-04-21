@@ -7,6 +7,23 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-21 Evidence-stage structural-KG gaps should be replay targets too
+- Once `EvidenceIR` still carries behavioral records but no actor-signal graph, the weak state is no longer just "did validation notice the graph is empty?" but "does the product advertise the bounded local step that might ground those same records structurally?"
+- The stranded `constraint_id` / `rule_id` values are already stable and reviewable at that stage.
+- Leaving them as only warnings underspecifies the next action.
+- The right follow-up is narrower than the canonical-stage lanes:
+  - rerun local NLP enrichment on the current `EvidenceIR`
+  - revalidate the current `EvidenceIR`
+  - review whether the same behavioral ids collapse into actor-grounded graph relations before any downstream canonical rebuild is considered
+- This is still not an auto-fix story:
+  - the current graph gap remains explicit
+  - the replay planner only identifies the local evidence boundary and bounded rescan step
+  - no canonical truth is auto-mutated just because the replay path exists
+- The important distinction is scope:
+  - evidence-stage replay is a local `nlp-enrich -> validate` loop
+  - canonical-stage replay remains the downstream `EvidenceIR -> SemanticIR -> IntentIR? -> validate` loop
+- That split matters because it keeps the planner honest about where the missing graph grounding currently lives.
+
 ## 2026-04-21 Evidence-stage normative residuals should be replay targets too
 - Once `EvidenceIR` still carries partially structured normative statements, the weak state is no longer just "did validation notice the residual?" but "does the product advertise the bounded local step that might structure it better?"
 - The residual statement ids are already stable and reviewable at that stage.
