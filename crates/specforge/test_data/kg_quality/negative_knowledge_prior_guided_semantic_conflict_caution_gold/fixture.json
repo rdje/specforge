@@ -56,10 +56,19 @@
     "validation": {
       "evidence": {
         "finding_ids_include": [
+          "evidence_signal_semantic_conflicts_present",
+          "evidence_signal_semantic_conflict_surface_rescan_guidance",
           "evidence_negative_knowledge_prior_matches",
           "evidence_negative_knowledge_rescan_guidance"
         ],
         "findings_include": [
+          {
+            "finding_id": "evidence_signal_semantic_conflict_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "still carries unresolved semantic-role conflict ids",
+            "related_ids_include": ["semantic_conflict_0001"]
+          },
           {
             "finding_id": "evidence_negative_knowledge_prior_matches",
             "severity": "info",

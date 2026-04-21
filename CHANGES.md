@@ -1,5 +1,28 @@
 # CHANGES
 
+## 2026-04-21 (Evidence-stage signal-semantic conflicts now emit replayable rescan guidance)
+
+### Improved: preserved evidence-stage role disagreement now advertises the next bounded replay
+- Validation already reported when `EvidenceIR` carried `signal_semantic_conflicts`.
+- That was honest, but still too passive:
+  - reviewers could see the preserved `semantic_conflict_*` ids
+  - the replay planner had no evidence-local next step for revisiting those same contradictions
+  - the disagreement looked like a passive upstream warning instead of an explicit replay target
+- This slice turns that weak state into a bounded evidence-local replay contract:
+  - `validate` now emits `evidence_signal_semantic_conflict_surface_rescan_guidance`
+  - that finding stays in `rescan_guidance` and carries the same `semantic_conflict_*` ids already reported by the evidence-stage conflict finding
+  - `project-validation` maps it onto a local `nlp-enrich -> validate` replay lane against the current `EvidenceIR` artifact
+  - the action text is explicit about collapsing the related conflict ids toward one locally corroborated role meaning instead of merely rerunning extraction blindly
+  - the tracked fixtures `cross_modality_semantic_conflict_negative` and `negative_knowledge_prior_guided_semantic_conflict_caution_gold` now require the new evidence-stage replay guidance as well
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge validate_evidence_ir_flags_signal_semantic_conflicts` -> passed
+- `cargo test -p specforge project_validation_collects_evidence_signal_semantic_conflict_rescan_guidance` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_ci.sh` -> passed with `419` Rust tests and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-21 (Signal-semantic conflicts now emit replayable rescan guidance)
 
 ### Improved: preserved semantic-role disagreement now advertises the next bounded replay

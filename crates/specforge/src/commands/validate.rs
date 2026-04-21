@@ -96,6 +96,8 @@ const SEMANTIC_SIGNAL_POLARITY_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
     "semantic_signal_polarity_conflict_surface_rescan_guidance";
 const INTENT_SIGNAL_POLARITY_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
     "intent_signal_polarity_conflict_surface_rescan_guidance";
+const EVIDENCE_SIGNAL_SEMANTIC_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
+    "evidence_signal_semantic_conflict_surface_rescan_guidance";
 const SEMANTIC_SIGNAL_SEMANTIC_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
     "semantic_signal_semantic_conflict_surface_rescan_guidance";
 const INTENT_SIGNAL_SEMANTIC_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
@@ -614,7 +616,7 @@ fn push_signal_semantic_conflict_rescan_guidance(
         ValidationFindingSeverity::Info,
         "rescan_guidance",
         format!(
-            "{stage_label} still carries unresolved semantic-role conflict ids; this should trigger targeted NLP rescans plus downstream rebuild to see whether those same conflict ids collapse toward one locally corroborated role meaning"
+            "{stage_label} still carries unresolved semantic-role conflict ids; this should trigger targeted NLP rescans plus bounded local replay to see whether those same conflict ids collapse toward one locally corroborated role meaning"
         ),
         related_ids.to_vec(),
     ));
@@ -2409,6 +2411,11 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         ));
     }
     if !ir.signal_semantic_conflicts.is_empty() {
+        let signal_semantic_conflict_related_ids = ir
+            .signal_semantic_conflicts
+            .iter()
+            .map(|conflict| conflict.conflict_id.clone())
+            .collect::<Vec<_>>();
         findings.push(finding(
             "evidence_signal_semantic_conflicts_present",
             ValidationFindingSeverity::Warning,
@@ -2417,11 +2424,14 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
                 "{} signal semantic conflict(s) detected; meaning-based role evidence currently assigns incompatible roles to the same signal",
                 ir.signal_semantic_conflicts.len()
             ),
-            ir.signal_semantic_conflicts
-                .iter()
-                .map(|conflict| conflict.conflict_id.clone())
-                .collect(),
+            signal_semantic_conflict_related_ids.clone(),
         ));
+        push_signal_semantic_conflict_rescan_guidance(
+            &mut findings,
+            EVIDENCE_SIGNAL_SEMANTIC_CONFLICT_SURFACE_RESCAN_GUIDANCE,
+            "EvidenceIR",
+            &signal_semantic_conflict_related_ids,
+        );
     }
     if !negative_knowledge_prior_matches.is_empty() {
         findings.push(finding(
@@ -6008,6 +6018,17 @@ mod tests {
             &report,
             "evidence_signal_semantic_conflicts_present"
         ));
+        let conflict_rescan_guidance = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == EVIDENCE_SIGNAL_SEMANTIC_CONFLICT_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected evidence signal-conflict rescan guidance");
+        assert_eq!(
+            conflict_rescan_guidance.related_ids,
+            vec!["semantic_conflict_0001".to_string()]
+        );
         assert_eq!(
             metric_value(&report, "negative_knowledge_prior_matches"),
             Some("0")
