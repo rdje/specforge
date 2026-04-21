@@ -19,45 +19,44 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `d237f12`
-- latest_commit_brief_message: `docs(memory): sync signal-leading clock baseline`
-- note: the latest committed baseline records the previous slice where the signal-leading clock family became edge-symmetric across the semantic and validator proof lanes
+- latest_commit_hash: `97b4310`
+- latest_commit_brief_message: `test(temporal): lock signal-leading lexical symmetry`
+- note: the latest committed baseline makes the signal-leading clock family lexically self-contained by proving both word-form and token-form local clock phrasing in the direct semantic and validator lanes
 
 ## Recent commit chain (last 6)
+- `97b4310` test(temporal): lock signal-leading lexical symmetry
 - `d237f12` docs(memory): sync signal-leading clock baseline
 - `5de896c` test(temporal): lock signal-leading clock symmetry
 - `235197f` docs(memory): sync word-edge validator baseline
 - `2461c63` test(temporal): lock word-edge validator family
 - `7ec2155` docs(memory): sync shorthand validator baseline
-- `610bfde` test(temporal): lock exact shorthand validator symmetry
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 16` of `origin/main`
+- branch state before the next commit: `ahead 17` of `origin/main`
 - modified tracked files:
-- `CHANGES.md`
-- `DEVELOPMENT_NOTES.md`
 - `MEMORY.md`
-- `RUST_CODEBASE_ANALYSIS.md`
-- `crates/specforge/src/commands/validate.rs`
-- `crates/specforge/src/ir/semantic.rs`
-- the next feature slice is in progress; no new commit has been created yet in this slice
+- the feature slice is committed; only the required continuity refresh commit remains
 - `LIVE_ACHIEVEMENT_STATUS.md` stays unchanged for this slice
 
-## Current in-flight slice
-- objective:
-  - make the signal-leading clock proof surface lexically self-contained without widening the model
-- planned code changes:
-  - `crates/specforge/src/ir/semantic.rs`
-    - widen the existing signal-leading semantic regression so it proves both word-form and token-form local clock phrasing
-  - `crates/specforge/src/commands/validate.rs`
-    - widen the existing signal-leading validator regression so it proves both token-form and word-form local clock phrasing
+## Latest landed slice
+- outcome:
+  - `crates/specforge/src/ir/semantic.rs` now widens the existing signal-leading semantic regression so it proves all four direct local-clock variants:
+    - `PREADY must be asserted on HCLK rising edge.`
+    - `PWAKEUP must be asserted on HCLK falling edge.`
+    - `PSEL must be asserted on HCLK posedge.`
+    - `PWRITE must be asserted on HCLK negedge.`
+  - `crates/specforge/src/commands/validate.rs` now widens the existing signal-leading validator regression so it proves the complementary lexical pair too:
+    - `PREADY must be asserted on HCLK posedge.`
+    - `PWAKEUP must be asserted on HCLK negedge.`
+    - `PSEL must be asserted on HCLK rising edge.`
+    - `PWRITE must be asserted on HCLK falling edge.`
 - tracker effect:
   - unchanged, because this is reliability hardening inside an already-done temporal capability row
-- current tracked KG-quality suite size before validation:
+- current tracked KG-quality suite size after the feature commit:
   - still `105` fixtures, because this slice does not add or change tracked fixtures
-- verification status:
+- verification passed:
   - `cargo fmt --all` passed
   - `cargo test -p specforge derives_explicit_clock_signal_from_signal_leading_edge_text` passed
   - `cargo test -p specforge validate_intent_ir_does_not_flag_temporal_rules_missing_clock_grounding_for_signal_leading_clock_text` passed
@@ -68,7 +67,8 @@
   - `473` Rust tests plus warning-deny rustdoc and the mdBook build
 
 ## Next exact steps
-- write the feature commit message into `git_message_brief.txt`
-- stage only the intended tracked files for the feature commit
-- create the feature commit, truncate `git_message_brief.txt`, and verify post-conditions
-- refresh `MEMORY.md` to the new committed baseline, create the required continuity commit, and do not push because the branch will remain below the `25`-commit threshold
+- write the continuity commit message into `git_message_brief.txt`
+- stage only `MEMORY.md`
+- create the required continuity commit for the refreshed baseline
+- truncate `git_message_brief.txt` back to `0` bytes and verify the post-conditions
+- do not push after the continuity commit because the branch will remain below the `25`-commit threshold
