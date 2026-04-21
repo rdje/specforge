@@ -19,43 +19,36 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `29d97ef`
-- latest_commit_brief_message: `docs(memory): sync actor-port replay baseline`
-- note: the latest committed baseline closes the actor-port-gap replay slice and its continuity refresh
+- latest_commit_hash: `9255110`
+- latest_commit_brief_message: `feat(validation): plan evidence caution rescans`
+- note: the latest committed baseline makes evidence-stage negative-knowledge caution a real replay-planning consumer instead of a planner dead end
 
 ## Recent commit chain (last 6)
+- `9255110` feat(validation): plan evidence caution rescans
 - `29d97ef` docs(memory): sync actor-port replay baseline
 - `356c258` feat(validation): route actor-port gaps into rescans
 - `5505790` docs(memory): sync source VLM replay baseline
 - `d7884cc` feat(validation): route source VLM gaps into rescans
 - `f18d02a` docs(memory): sync evidence VLM replay baseline
-- `ffc075f` feat(validation): route evidence VLM gaps into rescans
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 14` of `origin/main`
+- branch state before the next commit: `ahead 15` of `origin/main`
 - push policy remains local-only for now; do not push in this slice
 - modified tracked files:
-  - `CHANGES.md`
-  - `DEVELOPMENT_NOTES.md`
-  - `LIVE_ACHIEVEMENT_STATUS.md`
-  - `README.md`
-  - `RUST_CODEBASE_ANALYSIS.md`
-  - `crates/specforge/src/commands/project_validation.rs`
-  - `docs/book/src/commands/quality-and-learning.md`
-  - `docs/book/src/quality/validation.md`
-- `MEMORY.md` is being refreshed now as the required pre-commit continuity checkpoint for the current slice
+  - `MEMORY.md`
+- the feature slice is already committed; only the required continuity refresh commit remains
 - do not push after this slice; even after the feature and docs commits the branch will remain below the user's `25`-commit auto-push threshold
 
-## Current completed slice awaiting commit
+## Latest landed slice
 - outcome:
   - `project-validation` now consumes `evidence_negative_knowledge_rescan_guidance` instead of dropping it
   - evidence-stage learned caution now replays through the bounded `SourceIR -> EvidenceIR -> validate` lane
   - the planner action text is now explicit that the target ids are evidence-stage conflict/residual ids, not already-canonical surfaces
   - `evidence_input_for_snapshot_stage()` now accepts current `EvidenceIR` artifacts directly so replay inputs can be derived from persisted evidence artifacts
   - the new regression `project_validation_collects_evidence_negative_knowledge_rescan_guidance` locks the replay inputs, action text, and command hints for this narrower caution lane
-- verification passed for the current slice:
+- verification passed for the landed slice:
   - `cargo fmt --all`
   - `cargo test -p specforge project_validation_collects_negative_knowledge_rescan_guidance`
   - `cargo test -p specforge project_validation_collects_evidence_negative_knowledge_rescan_guidance`
@@ -67,21 +60,10 @@
 - current tracked KG-quality suite size: `103` fixtures
 
 ## Next exact steps
-- write the feature commit message into `git_message_brief.txt`
-- stage only the intended tracked feature files:
-  - `CHANGES.md`
-  - `DEVELOPMENT_NOTES.md`
-  - `LIVE_ACHIEVEMENT_STATUS.md`
-  - `README.md`
-  - `RUST_CODEBASE_ANALYSIS.md`
-  - `MEMORY.md`
-  - `crates/specforge/src/commands/project_validation.rs`
-  - `docs/book/src/commands/quality-and-learning.md`
-  - `docs/book/src/quality/validation.md`
-- commit the feature slice with `git commit -F git_message_brief.txt`
+- write the docs/continuity commit message into `git_message_brief.txt`
+- stage only `MEMORY.md`
+- commit the continuity refresh with `git commit -F git_message_brief.txt`
 - truncate `git_message_brief.txt` back to `0` bytes and verify it remains untracked
-- refresh `MEMORY.md` again so it reflects the newly created feature commit hash/message
-- commit that continuity refresh as the required docs/memory follow-up commit
 - verify post-conditions:
   - `git ls-files --error-unmatch git_message_brief.txt` fails
   - `wc -c git_message_brief.txt` reports `0`
