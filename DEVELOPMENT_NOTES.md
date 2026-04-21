@@ -7,6 +7,26 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-21 Trailing `of <clock>` shorthand-edge phrasing should keep the named local clock too
+- After the unit-first diagram-position slice, a neighboring shorthand-edge family was still under-modeled:
+  - `on the third posedge of HCLK`
+  - `within 2 negedges of HCLK`
+  - `within 2 rising edges of HCLK`
+- Those sentences already carried real temporal structure:
+  - the parser could recover the edge kind
+  - the parser could recover the bounded window
+- But the same rules could still drop `clock_signal = HCLK`.
+- That is the wrong truth shape.
+- If the sentence explicitly ends with `of HCLK`, the canonical temporal rule should preserve that local clock instead of falling back to the document default or to `None`.
+- The right fix is still bounded:
+  - extend the explicit local clock detector for shorthand edge families with trailing `of <known clock>`
+  - reuse the same known-clock boundary already used by nearby timing slices
+  - do not widen arbitrary shorthand edge text into clock guesses when no current-document clock is known
+- This keeps the explicit clock-tick model coherent:
+  - ordinary shorthand-edge prose now matches the already-landed diagram-position `... T4 of HCLK` forms
+  - explicit edge kind, bounded timing, and local clock grounding stay aligned in one typed rule
+  - validation no longer flags a missing clock for a phrase that already names one explicitly
+
 ## 2026-04-21 Unit-first diagram positions should keep the named local clock too
 - The temporal layer already knew something important about phrases like:
   - `tick T3 of HCLK`

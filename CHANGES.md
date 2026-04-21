@@ -1,5 +1,41 @@
 # CHANGES
 
+## 2026-04-21 (Trailing `of <clock>` shorthand edge phrases now ground the local clock)
+
+### Improved: shorthand edge phrases with trailing `of <clock>` now preserve explicit local clock grounding
+- `crates/specforge/src/ir/semantic.rs` now recognizes the remaining non-diagram shorthand-edge family that was still half grounded:
+  - `on the third posedge of HCLK`
+  - `within 2 negedges of HCLK`
+  - `within 2 rising edges of HCLK`
+- This closes the next honest temporal asymmetry:
+  - the parser already knew the edge and bounded window for these phrases
+  - but the local clock detector still lagged unless the wording used the diagram-position `... T4 of HCLK` family
+- The widening stays bounded:
+  - only explicit trailing `of <known clock>` phrasing is added
+  - support is limited to shorthand edge families already accepted as timing language
+  - arbitrary `posedge of ...` wording without a known current-document clock still does not become timing truth
+
+### Added: regression coverage for trailing `of <clock>` shorthand-edge grounding
+- Added parser-level coverage proving:
+  - `third posedge of HCLK`
+  - `within 2 negedges of HCLK`
+  - `within 2 rising edges of HCLK`
+  now preserve `clock_signal = HCLK`
+- Added end-to-end semantic coverage proving `PREADY must be asserted on the third posedge of HCLK` now preserves:
+  - `clock_signal = HCLK`
+  - `edge = rising`
+  - `cycle_window = 3..3`
+- Added validator coverage proving `PREADY must be asserted within 2 negedges of HCLK` no longer triggers either `intent_temporal_rules_missing_clock_grounding` or `intent_temporal_rules_missing_cycle_windows`
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge trailing_of_shorthand_edge` -> passed
+- `cargo test -p specforge cycle_window` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-21 (Unit-first diagram positions now ground the local clock)
 
 ### Improved: unit-first diagram-position wording with trailing `of <clock>` now preserves explicit local clock grounding

@@ -8293,14 +8293,26 @@ fn explicit_clock_signal_from_text(text: &str, known_signals: &BTreeSet<String>)
         let signal_lower = signal.to_ascii_lowercase();
         let explicit_patterns = [
             format!("posedge {signal_lower}"),
+            format!("posedge of {signal_lower}"),
+            format!("posedge of the {signal_lower}"),
+            format!("posedges of {signal_lower}"),
+            format!("posedges of the {signal_lower}"),
             format!("negedge {signal_lower}"),
+            format!("negedge of {signal_lower}"),
+            format!("negedge of the {signal_lower}"),
+            format!("negedges of {signal_lower}"),
+            format!("negedges of the {signal_lower}"),
             format!("{signal_lower} posedge"),
             format!("{signal_lower} negedge"),
             format!("rising edge of {signal_lower}"),
             format!("rising edge of the {signal_lower}"),
+            format!("rising edges of {signal_lower}"),
+            format!("rising edges of the {signal_lower}"),
             format!("rising edge {signal_lower}"),
             format!("falling edge of {signal_lower}"),
             format!("falling edge of the {signal_lower}"),
+            format!("falling edges of {signal_lower}"),
+            format!("falling edges of the {signal_lower}"),
             format!("falling edge {signal_lower}"),
             format!("{signal_lower} rising edge"),
             format!("{signal_lower} falling edge"),
@@ -13668,6 +13680,36 @@ mod tests {
     }
 
     #[test]
+    fn extracts_trailing_of_shorthand_edge_clock_phrases() {
+        let known_signals = BTreeSet::from(["HCLK".to_string()]);
+
+        assert_eq!(
+            super::explicit_clock_signal_from_text(
+                "DATA is sampled on the third posedge of HCLK.",
+                &known_signals,
+            )
+            .as_deref(),
+            Some("HCLK")
+        );
+        assert_eq!(
+            super::explicit_clock_signal_from_text(
+                "DATA must stabilize within 2 negedges of HCLK.",
+                &known_signals,
+            )
+            .as_deref(),
+            Some("HCLK")
+        );
+        assert_eq!(
+            super::explicit_clock_signal_from_text(
+                "DATA must stabilize within 2 rising edges of HCLK.",
+                &known_signals,
+            )
+            .as_deref(),
+            Some("HCLK")
+        );
+    }
+
+    #[test]
     fn extracts_zero_cycle_window_from_same_cycle_phrases() {
         let same_cycle = super::extract_cycle_window_from_text(
             "Both TVALID and TREADY can be asserted in the same ACLK cycle.",
@@ -14316,6 +14358,71 @@ mod tests {
             .expect("expected cycle window to be derived from 'posedge T4 of HCLK'");
         assert_eq!(cycle_window.min_cycles, Some(4));
         assert_eq!(cycle_window.max_cycles, Some(4));
+        assert_eq!(rule.clock_signal.as_deref(), Some("HCLK"));
+        assert_eq!(rule.edge, super::ClockEdge::Rising);
+
+        Ok(())
+    }
+
+    #[test]
+    fn derives_local_clock_from_trailing_of_shorthand_edge_text() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir
+            .path()
+            .join("temporal_trailing_of_shorthand_edge_clock.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal HCLK is input width 1.\n\n",
+                "Signal PREADY is input width 1.\n\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pready_third_posedge_of_hclk".to_string(),
+            subject_signal: "PREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PREADY must be asserted on the third posedge of HCLK.".to_string(),
+            supporting_statement_ids: vec!["stmt_third_posedge_of_hclk".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| {
+                rule.rule_id == "temporal_signal_constraint_sigcon_pready_third_posedge_of_hclk"
+            })
+            .expect("expected temporal rule derived from trailing-of shorthand-edge constraint");
+        let cycle_window = rule
+            .cycle_window
+            .as_ref()
+            .expect("expected cycle window to be derived from 'third posedge of HCLK'");
+        assert_eq!(cycle_window.min_cycles, Some(3));
+        assert_eq!(cycle_window.max_cycles, Some(3));
         assert_eq!(rule.clock_signal.as_deref(), Some("HCLK"));
         assert_eq!(rule.edge, super::ClockEdge::Rising);
 
