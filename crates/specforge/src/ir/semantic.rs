@@ -8469,9 +8469,9 @@ fn extract_cycle_window_from_text(text: &str) -> Option<CycleWindowRecord> {
     }
 
     for index in 0..tokens.len() {
-        if tokens[index] == "cycle"
+        if let Some(unit_token_len) = diagram_position_cycle_like_unit_len(&tokens, index)
             && let Some(count) = tokens
-                .get(index + 1)
+                .get(index + unit_token_len)
                 .copied()
                 .and_then(parse_diagram_cycle_count_value)
         {
@@ -8653,6 +8653,12 @@ fn extract_cycle_window_from_text(text: &str) -> Option<CycleWindowRecord> {
         ["next", "falling", "edge"].as_slice(),
         ["following", "falling", "edge"].as_slice(),
         ["subsequent", "falling", "edge"].as_slice(),
+        ["next", "posedge"].as_slice(),
+        ["following", "posedge"].as_slice(),
+        ["subsequent", "posedge"].as_slice(),
+        ["next", "negedge"].as_slice(),
+        ["following", "negedge"].as_slice(),
+        ["subsequent", "negedge"].as_slice(),
     ];
     if single_cycle_phrases
         .iter()
@@ -8677,6 +8683,14 @@ fn contains_cycle_like_unit(tokens: &[&str]) -> bool {
         || contains_token_phrase(tokens, &["rising", "edges"])
         || contains_token_phrase(tokens, &["falling", "edge"])
         || contains_token_phrase(tokens, &["falling", "edges"])
+}
+
+fn diagram_position_cycle_like_unit_len(tokens: &[&str], index: usize) -> Option<usize> {
+    match tokens.get(index).copied()? {
+        "cycle" | "tick" | "posedge" | "negedge" => Some(1),
+        "rising" | "falling" if tokens.get(index + 1) == Some(&"edge") => Some(2),
+        _ => None,
+    }
 }
 
 fn parse_explicit_cycle_position_count(tokens: &[&str], start_index: usize) -> Option<u32> {
@@ -13066,6 +13080,32 @@ mod tests {
     }
 
     #[test]
+    fn extracts_posedge_negedge_and_diagram_position_cycle_window_phrases() {
+        let next_posedge =
+            super::extract_cycle_window_from_text("DATA is sampled on the next posedge.")
+                .expect("expected cycle window from 'next posedge'");
+        assert_eq!(next_posedge.min_cycles, Some(1));
+        assert_eq!(next_posedge.max_cycles, Some(1));
+
+        let next_negedge =
+            super::extract_cycle_window_from_text("DATA is sampled on the next negedge.")
+                .expect("expected cycle window from 'next negedge'");
+        assert_eq!(next_negedge.min_cycles, Some(1));
+        assert_eq!(next_negedge.max_cycles, Some(1));
+
+        let tick_t3 =
+            super::extract_cycle_window_from_text("The receiver samples DATA at tick T3.")
+                .expect("expected cycle window from 'tick T3'");
+        assert_eq!(tick_t3.min_cycles, Some(3));
+        assert_eq!(tick_t3.max_cycles, Some(3));
+
+        let posedge_t4 = super::extract_cycle_window_from_text("DATA is sampled on posedge T4.")
+            .expect("expected cycle window from 'posedge T4'");
+        assert_eq!(posedge_t4.min_cycles, Some(4));
+        assert_eq!(posedge_t4.max_cycles, Some(4));
+    }
+
+    #[test]
     fn extracts_zero_cycle_window_from_same_cycle_phrases() {
         let same_cycle = super::extract_cycle_window_from_text(
             "Both TVALID and TREADY can be asserted in the same ACLK cycle.",
@@ -13387,6 +13427,126 @@ mod tests {
             .expect("expected cycle window to be derived from 'within 2 ticks'");
         assert_eq!(cycle_window.min_cycles, None);
         assert_eq!(cycle_window.max_cycles, Some(2));
+
+        Ok(())
+    }
+
+    #[test]
+    fn derives_posedge_cycle_window_from_constraint_text() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("temporal_posedge.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal PREADY is input width 1.\n\n",
+                "Clock clk.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pready_next_posedge".to_string(),
+            subject_signal: "PREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PREADY must be asserted on the next posedge.".to_string(),
+            supporting_statement_ids: vec!["stmt_next_posedge".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| rule.rule_id == "temporal_signal_constraint_sigcon_pready_next_posedge")
+            .expect("expected temporal rule derived from next-posedge constraint");
+        let cycle_window = rule
+            .cycle_window
+            .as_ref()
+            .expect("expected cycle window to be derived from 'next posedge'");
+        assert_eq!(cycle_window.min_cycles, Some(1));
+        assert_eq!(cycle_window.max_cycles, Some(1));
+
+        Ok(())
+    }
+
+    #[test]
+    fn derives_diagram_style_tick_position_cycle_window_from_constraint_text() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("temporal_tick_t3.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal PREADY is input width 1.\n\n",
+                "Clock clk.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pready_tick_t3".to_string(),
+            subject_signal: "PREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PREADY must be asserted at tick T3.".to_string(),
+            supporting_statement_ids: vec!["stmt_tick_t3".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| rule.rule_id == "temporal_signal_constraint_sigcon_pready_tick_t3")
+            .expect("expected temporal rule derived from tick-T3 constraint");
+        let cycle_window = rule
+            .cycle_window
+            .as_ref()
+            .expect("expected cycle window to be derived from 'tick T3'");
+        assert_eq!(cycle_window.min_cycles, Some(3));
+        assert_eq!(cycle_window.max_cycles, Some(3));
 
         Ok(())
     }

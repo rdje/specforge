@@ -7,6 +7,28 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-21 Symbolic edge shorthand and unit-first diagram labels should participate in the same clock-tick model
+- The current temporal parser had become much more coherent:
+  - counted cycle language
+  - counted tick and edge language
+  - ordinal edge language
+  - same/current/next timing idioms
+- But one asymmetry remained:
+  - `next rising edge` worked
+  - `next posedge` did not
+  - `at cycle T3` worked
+  - `at tick T3` or `on posedge T4` did not
+- Those are not exotic learned idioms.
+- They are standard shorthand spellings for the same clock-tick concepts the parser already models explicitly.
+- So the right move is not to push them into prior memory.
+- The right move is to make the built-in parser consistent:
+  - recognize `posedge` / `negedge` idioms anywhere the parser already recognizes `rising edge` / `falling edge`
+  - let unit-first diagram labels like `tick T3` and `posedge T4` use the same direct positional path currently used by `cycle T3`
+- This keeps the temporal model honest and compact:
+  - shorthand stays current-document truth
+  - diagram-like position labels stay explicit bounded timing
+  - learned priors remain reserved for phrases whose timing meaning is not already obvious from the local unit vocabulary
+
 ## 2026-04-21 Quantified tick and edge language should use the same bounded timing path as quantified cycle language
 - The built-in temporal parser had already grown beyond raw `cycle` numerics:
   - same-cycle language

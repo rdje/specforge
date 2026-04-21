@@ -61,8 +61,10 @@ Examples:
 - same-cycle language can become `min_cycles = 0`, `max_cycles = 0`
 - next-cycle language can become `min_cycles = 1`, `max_cycles = 1`
 - next-edge language such as `next falling edge` can become `min_cycles = 1`, `max_cycles = 1`
+- shorthand edge language such as `next posedge` can become `min_cycles = 1`, `max_cycles = 1`
 - bounded tick language such as `within 2 ticks` can become `max_cycles = 2`
 - bounded edge language such as `after 3 falling edges` can become `min_cycles = 3`, `max_cycles = 3`
+- diagram-style position language such as `tick T3` or `posedge T4` can become exact bounded windows too
 - explicit later language such as `two cycles later` can become `min_cycles = 2`, `max_cycles = 2`
 - ordinal edge language such as `on the third rising edge` can become `min_cycles = 3`, `max_cycles = 3`
 - bounded language such as `within 2 cycles` can become `max_cycles = 2`

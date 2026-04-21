@@ -1,5 +1,40 @@
 # CHANGES
 
+## 2026-04-21 (Temporal parser now recognizes posedge/negedge shorthand and diagram-style positions)
+
+### Improved: built-in cycle-window recovery now covers symbolic edge shorthand and unit-first diagram labels
+- `crates/specforge/src/ir/semantic.rs` now recognizes shorthand edge idioms such as:
+  - `next posedge`
+  - `next negedge`
+- It also now recognizes unit-first diagram-style positions such as:
+  - `tick T3`
+  - `posedge T4`
+- This closes the last obvious asymmetry in the current clock-tick parser:
+  - `rising edge` / `falling edge` were already first-class timing units
+  - counted `tick` / `edge` language had already become first-class in the prior slice
+  - but common symbolic edge shorthand and unit-first diagram labels were still slipping past the built-in timing path
+- The new support stays bounded and local:
+  - current-document shorthand now maps directly onto the typed `CycleWindowRecord` surface
+  - learned-only temporal idioms such as `one beat later` still remain prior-guided fallback, not built-in truth
+
+### Added: regression coverage for shorthand edge and diagram-style position language
+- Added direct parser coverage for:
+  - `next posedge`
+  - `next negedge`
+  - `tick T3`
+  - `posedge T4`
+- Added end-to-end `SemanticIR` temporal-rule derivation coverage for:
+  - `PREADY must be asserted on the next posedge`
+  - `PREADY must be asserted at tick T3`
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge cycle_window` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-21 (Temporal parser now recognizes quantified tick and edge units)
 
 ### Improved: built-in cycle-window recovery now treats counted tick and edge language like counted cycle language

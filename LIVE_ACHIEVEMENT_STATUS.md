@@ -141,6 +141,7 @@
 - Cycle-window recovery for typed temporal rules, including idiomatic one-cycle phrases like `next cycle` / `next tick`, implemented: Done
 - Built-in temporal parser now recognizes explicit later and ordinal edge phrases: Done
 - Built-in temporal parser now recognizes quantified tick and edge units: Done
+- Built-in temporal parser now recognizes posedge/negedge shorthand and diagram-style positions: Done
 - Actor-grounded drive predicates in typed temporal rules implemented: Done
 - Actor-grounded stability predicates in typed temporal rules implemented: Done
 - Multi-predicate temporal antecedents preserved in typed temporal rules: Done
