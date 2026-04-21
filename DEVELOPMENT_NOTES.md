@@ -7,6 +7,21 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Exact shorthand-edge validator coverage should be symmetric too
+- The previous slice closed the benchmark and semantic asymmetry for the exact shorthand-token pair:
+  - `the third posedge of HCLK`
+  - `the third negedge of HCLK`
+- After that, the direct intent-stage validator lane was still slightly uneven:
+  - bounded shorthand tokens were covered on both sides
+  - exact falling shorthand token was covered
+  - exact rising shorthand token was only indirectly protected by the benchmark fixture and semantic regression
+- That is not a correctness bug, but it is still an avoidable proof asymmetry.
+- The right move stays very small:
+  - do not touch the fixture family
+  - do not widen the temporal parser
+  - just widen the existing trailing shorthand-edge validator regression so the exact rising shorthand token sits beside the exact falling shorthand token in the same direct proof lane
+- That keeps the direct validator contract honest without creating redundant fixtures or new temporal capability rows.
+
 ## 2026-04-22 Exact shorthand-edge timing should be symmetric on the falling token side too
 - The previous slice benchmark-locked the exact ordinal word-edge pair:
   - `the third rising edge of HCLK`

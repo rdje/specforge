@@ -1,5 +1,28 @@
 # CHANGES
 
+## 2026-04-22 (Exact shorthand-edge validator coverage is now symmetry-locked too)
+
+### Improved: the direct intent-stage validator lane now proves the full exact shorthand-token pair
+- `crates/specforge/src/commands/validate.rs` now widens the existing trailing shorthand-edge validator regression so it carries:
+  - `PGRANT must be asserted on the third posedge of HCLK.`
+  - `PLOCK must be asserted on the third negedge of HCLK.`
+- That same direct validator lane already covered the bounded shorthand-token pair:
+  - `within 2 posedges of HCLK`
+  - `within 2 negedges of HCLK`
+- The result is a cleaner symmetry story at the validator level:
+  - bounded rising token: covered
+  - bounded falling token: covered
+  - exact rising token: covered
+  - exact falling token: covered
+- This does not widen the temporal model or the benchmark corpus. It hardens the direct validator proof so the exact shorthand-token pair is no longer split across semantic-only and fixture-only evidence.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge validate_intent_ir_does_not_flag_temporal_rules_missing_clock_grounding_for_trailing_of_shorthand_edge_text` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-22 (Exact shorthand-edge timing is now symmetry-locked on the falling token side too)
 
 ### Improved: the existing trailing shorthand-edge benchmark now proves exact ordinal falling shorthand-token prose as well

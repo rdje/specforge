@@ -127,6 +127,22 @@
 - Focused extraction, semantic, validator, tracked KG fixture checks, docs CI, full local CI, and whitespace checks passed for this slice.
 - The current full local CI baseline remains `472` Rust tests plus warning-deny rustdoc and the mdBook build.
 
+## Session update (2026-04-22 exact shorthand-token validator symmetry lock)
+- Continued from commit `2f20610`, still hardening the same trailing shorthand-edge family rather than widening the temporal model or adding new benchmark corpus.
+- The previous slice closed the benchmark and semantic asymmetry for the exact shorthand-token pair:
+  - `the third posedge of HCLK`
+  - `the third negedge of HCLK`
+- After that, the direct intent-stage validator lane was still slightly uneven:
+  - bounded `posedges` / `negedges` were both covered
+  - exact `negedge` was covered
+  - exact `posedge` was only indirectly protected by the tracked fixture and nearby semantic regression
+- This slice closes that remaining validator asymmetry:
+  - the existing `validate_intent_ir_does_not_flag_temporal_rules_missing_clock_grounding_for_trailing_of_shorthand_edge_text` regression now also carries `PGRANT must be asserted on the third posedge of HCLK.`
+  - the same direct validator lane now proves all four shorthand-token corners together: bounded rising, bounded falling, exact rising, and exact falling
+- The tracked benchmark surface size remains `105` fixtures because this is validator hardening inside an existing temporal family, not a new corpus addition.
+- Focused validator coverage, docs CI, full local CI, and whitespace checks passed for this slice.
+- The current full local CI baseline remains `473` Rust tests plus warning-deny rustdoc and the mdBook build.
+
 ## Session update (2026-04-22 exact falling shorthand-token benchmark lock)
 - Continued from commit `628c124`, still deepening the existing trailing shorthand-edge family rather than widening the temporal model or creating a new benchmark family.
 - The previous slice benchmark-locked the exact ordinal word-edge pair:
