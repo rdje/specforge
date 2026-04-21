@@ -54,6 +54,7 @@ Alias-dependent semantic consensus findings now feed it too, so meaning that sti
 Prior-guided semantic consensus findings now feed it as well, so meaning that converged with learned-prior help can be replayed for stronger current-document corroboration through the same local pipeline.
 Graph-direction coverage guidance now feeds it too, so already-canonical but still graph-uncovered signals can be replayed for actor-relative direction recovery through the same local pipeline.
 Graph-direction self-conflict guidance now feeds it too, so preserved actor-aware conflict ids can be replayed for stronger same-actor direction disambiguation through the same local pipeline.
+Signal-semantic-conflict guidance now feeds it too, so preserved `semantic_conflict_*` ids can be replayed for stronger role disambiguation through that same local pipeline.
 Protocol connectivity endpoint guidance now feeds it too, so already-canonical signals that still have only a producer side or only a consumer side can be replayed for missing endpoint recovery through the same local pipeline.
 Infrastructure clock/reset sourcing is intentionally not in that replay family; it stays a system-contract note when the protocol document does not name a concrete producer.
 Interface-signal conflict guidance now feeds it too, so preserved direction/width conflict ids can be replayed for stronger local interface-shape disambiguation through the same local pipeline.

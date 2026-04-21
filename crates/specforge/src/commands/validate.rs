@@ -96,6 +96,10 @@ const SEMANTIC_SIGNAL_POLARITY_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
     "semantic_signal_polarity_conflict_surface_rescan_guidance";
 const INTENT_SIGNAL_POLARITY_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
     "intent_signal_polarity_conflict_surface_rescan_guidance";
+const SEMANTIC_SIGNAL_SEMANTIC_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
+    "semantic_signal_semantic_conflict_surface_rescan_guidance";
+const INTENT_SIGNAL_SEMANTIC_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
+    "intent_signal_semantic_conflict_surface_rescan_guidance";
 
 macro_rules! println {
     () => {
@@ -594,6 +598,23 @@ fn push_signal_polarity_conflict_rescan_guidance(
         format!(
             "{} polarity conflict id(s) in {stage_label} should trigger targeted NLP rescans plus downstream rebuild because the current canonical polarity surface still carries unresolved active-level disagreement",
             related_ids.len()
+        ),
+        related_ids.to_vec(),
+    ));
+}
+
+fn push_signal_semantic_conflict_rescan_guidance(
+    findings: &mut Vec<ValidationFindingRecord>,
+    finding_id: &str,
+    stage_label: &str,
+    related_ids: &[String],
+) {
+    findings.push(finding(
+        finding_id,
+        ValidationFindingSeverity::Info,
+        "rescan_guidance",
+        format!(
+            "{stage_label} still carries unresolved semantic-role conflict ids; this should trigger targeted NLP rescans plus downstream rebuild to see whether those same conflict ids collapse toward one locally corroborated role meaning"
         ),
         related_ids.to_vec(),
     ));
@@ -3237,6 +3258,11 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         );
     }
     if !ir.signal_semantic_conflicts.is_empty() {
+        let signal_semantic_conflict_related_ids = ir
+            .signal_semantic_conflicts
+            .iter()
+            .map(|conflict| conflict.conflict_id.clone())
+            .collect::<Vec<_>>();
         findings.push(finding(
             "semantic_signal_semantic_conflicts_present",
             ValidationFindingSeverity::Warning,
@@ -3245,11 +3271,14 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 "{} semantic-role conflict(s) remain unresolved in the carried canonical semantic surface",
                 ir.signal_semantic_conflicts.len()
             ),
-            ir.signal_semantic_conflicts
-                .iter()
-                .map(|conflict| conflict.conflict_id.clone())
-                .collect(),
+            signal_semantic_conflict_related_ids.clone(),
         ));
+        push_signal_semantic_conflict_rescan_guidance(
+            &mut findings,
+            SEMANTIC_SIGNAL_SEMANTIC_CONFLICT_SURFACE_RESCAN_GUIDANCE,
+            "SemanticIR",
+            &signal_semantic_conflict_related_ids,
+        );
     }
     if with_non_decisive_semantic_arbitration > 0 {
         findings.push(finding(
@@ -4583,6 +4612,11 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         );
     }
     if !ir.signal_semantic_conflicts.is_empty() {
+        let signal_semantic_conflict_related_ids = ir
+            .signal_semantic_conflicts
+            .iter()
+            .map(|conflict| conflict.conflict_id.clone())
+            .collect::<Vec<_>>();
         findings.push(finding(
             "intent_signal_semantic_conflicts_present",
             ValidationFindingSeverity::Warning,
@@ -4591,11 +4625,14 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 "{} semantic-role conflict(s) remain unresolved in the carried canonical intent surface",
                 ir.signal_semantic_conflicts.len()
             ),
-            ir.signal_semantic_conflicts
-                .iter()
-                .map(|conflict| conflict.conflict_id.clone())
-                .collect(),
+            signal_semantic_conflict_related_ids.clone(),
         ));
+        push_signal_semantic_conflict_rescan_guidance(
+            &mut findings,
+            INTENT_SIGNAL_SEMANTIC_CONFLICT_SURFACE_RESCAN_GUIDANCE,
+            "IntentIR",
+            &signal_semantic_conflict_related_ids,
+        );
     }
     if with_non_decisive_semantic_arbitration > 0 {
         findings.push(finding(
@@ -6303,6 +6340,17 @@ mod tests {
             .find(|finding| finding.finding_id == SEMANTIC_ROLE_ARBITRATION_SURFACE_RESCAN_GUIDANCE)
             .expect("expected semantic-role-arbitration rescan guidance");
         assert_eq!(rescan_guidance.related_ids, vec!["XCTRL".to_string()]);
+        let conflict_rescan_guidance = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == SEMANTIC_SIGNAL_SEMANTIC_CONFLICT_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected semantic signal-conflict rescan guidance");
+        assert_eq!(
+            conflict_rescan_guidance.related_ids,
+            vec!["semantic_conflict_0001".to_string()]
+        );
 
         Ok(())
     }
@@ -10682,6 +10730,17 @@ mod tests {
             &report,
             "intent_signal_semantic_conflicts_present"
         ));
+        let conflict_rescan_guidance = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == INTENT_SIGNAL_SEMANTIC_CONFLICT_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected intent signal-conflict rescan guidance");
+        assert_eq!(
+            conflict_rescan_guidance.related_ids,
+            vec!["semantic_conflict_0001".to_string()]
+        );
 
         Ok(())
     }

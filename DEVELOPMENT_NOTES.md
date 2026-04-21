@@ -7,6 +7,23 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-21 Signal-semantic conflicts should be replay targets, not only preserved warnings
+- Once a `signal_semantic_conflict` exists, the weak state is no longer "did the canonical surface preserve disagreement?" but "does the product advertise the bounded current-document step that might reconcile it?"
+- The `semantic_conflict_*` ids are already stable and reviewable.
+- Leaving them as only warnings underspecifies the next action.
+- The right follow-up is the same conservative replay lane used for nearby evidence-strength gaps:
+  - rerun local NLP enrichment on `EvidenceIR`
+  - rebuild the downstream canonical stage(s)
+  - review whether the same semantic-conflict ids collapse toward one locally corroborated role meaning
+- This is still not an auto-fix story:
+  - the current semantic-role disagreement remains explicit
+  - the replay planner only identifies the local evidence boundary and deterministic rebuild path
+  - no canonical truth is auto-mutated just because the replay path exists
+- The important distinction from the broader arbitration surface stays intact:
+  - arbitration replay remains the signal-level "these candidates are still contested" lane
+  - semantic-conflict replay is the conflict-id lane for typed incompatible-role evidence that still survives into canonical IR
+- That split matters because it keeps the review surface precise without weakening the more general arbitration story.
+
 ## 2026-04-21 Graph-direction self-conflicts should be replay targets, not only preserved warnings
 - Once a same-actor `graph_direction_conflict` exists, the weak state is no longer "did the canonical surface refuse to fake direction coverage?" but "does the product advertise the bounded current-document step that might reconcile it?"
 - The actor-aware conflict ids are already stable and reviewable.

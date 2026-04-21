@@ -1,5 +1,28 @@
 # CHANGES
 
+## 2026-04-21 (Signal-semantic conflicts now emit replayable rescan guidance)
+
+### Improved: preserved semantic-role disagreement now advertises the next bounded replay
+- Validation already reported when `SemanticIR` or `IntentIR` carried `signal_semantic_conflicts`.
+- That was honest, but still too passive:
+  - reviewers could see the preserved `semantic_conflict_*` ids
+  - the replay planner had no conflict-id-specific next step for revisiting local role evidence on those same contradictions
+  - semantic-role disagreement looked like a static warning instead of an explicit replay target
+- This slice turns that weak state into the same bounded replay contract used for nearby evidence-strength gaps:
+  - `validate` now emits `semantic_signal_semantic_conflict_surface_rescan_guidance` / `intent_signal_semantic_conflict_surface_rescan_guidance`
+  - those findings stay in `rescan_guidance` and carry the same `semantic_conflict_*` ids already reported by the semantic-conflict finding
+  - `project-validation` maps them onto the local `EvidenceIR -> SemanticIR -> IntentIR? -> validate` NLP replay lane
+  - the action text is explicit about collapsing the related conflict ids toward one locally corroborated role meaning instead of merely rerunning extraction
+  - the tracked fixtures `cross_modality_semantic_conflict_negative` and `negative_knowledge_prior_guided_semantic_conflict_caution_gold` now require the new semantic/intent replay guidance so the disagreement case is benchmark-locked both with and without prior-memory caution
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge signal_semantic_conflict` -> passed
+- `cargo test -p specforge project_validation_collects_signal_semantic_conflict_rescan_guidance` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_ci.sh` -> passed with `418` Rust tests and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-21 (Graph-direction self-conflicts now emit replayable rescan guidance)
 
 ### Improved: preserved same-actor direction disagreement now advertises the next bounded replay
