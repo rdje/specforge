@@ -1,5 +1,30 @@
 # CHANGES
 
+## 2026-04-21 (Source-stage missing VLM enrichment now emits replayable rescan guidance)
+
+### Improved: classified SourceIR timing/state diagrams without VLM enrichment now advertise the next bounded replay
+- Validation already reported when `SourceIR` carried timing/state diagrams that were still missing VLM enrichment.
+- That was honest, but still too passive:
+  - reviewers could see the stranded diagram asset ids
+  - the replay planner had no source-stage next step for revisiting those same visuals
+  - the gap looked like passive ingest-side enrichment debt instead of an explicit replay target
+- This slice turns that weak state into a bounded source-stage replay contract:
+  - `validate` now emits `source_vlm_enrichment_missing_surface_rescan_guidance`
+  - that finding stays in `rescan_guidance` and carries the same asset ids already reported by `source_vlm_enrichment_missing`
+  - `project-validation` maps it onto a local `enrich -> validate` replay lane against the current `SourceIR` artifact
+  - the extractor lane is now explicit too: `source_ir_visual_enrichment_rescan`
+  - `kg-bench` now supports `validation.source`, so tracked fixtures can lock SourceIR validation surfaces directly
+  - the new tracked fixture `source_vlm_enrichment_surface_negative` now requires the new source-stage replay guidance so the benchmark locks that follow-up contract too
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge validate_source_ir_reports_missing_vlm_enrichment_related_ids` -> passed
+- `cargo test -p specforge project_validation_collects_source_vlm_enrichment_missing_rescan_guidance` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `426` Rust tests and the mdBook build
+- `git diff --check` -> passed
+
 ## 2026-04-21 (Evidence-stage missing VLM observations now emit replayable rescan guidance)
 
 ### Improved: visual evidence without extracted timing/state observations now advertises the next bounded replay

@@ -446,6 +446,8 @@ struct ExpectedStateTransition {
 #[derive(Debug, Default, Deserialize)]
 struct ValidationExpectations {
     #[serde(default)]
+    source: Option<ValidationStageExpectations>,
+    #[serde(default)]
     evidence: Option<ValidationStageExpectations>,
     #[serde(default)]
     semantic: Option<ValidationStageExpectations>,
@@ -590,6 +592,25 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
             .extend(patch.document_sections.iter().cloned());
     }
     source_ir.write_to_disk()?;
+    let source_report = if fixture
+        .expectations
+        .validation
+        .as_ref()
+        .and_then(|expectations| expectations.source.as_ref())
+        .is_some()
+    {
+        validate::run_quiet(ValidateArgs {
+            artifact: source_ir.artifact_layout.source_ir_path.clone(),
+        })?;
+        let reloaded = source::SourceIr::load_from_path(&source_ir.artifact_layout.source_ir_path)?;
+        Some(latest_validation_report(
+            &reloaded.validation_reports,
+            "SourceIR",
+            &source_ir.artifact_layout.source_ir_path,
+        )?)
+    } else {
+        None
+    };
     let mut evidence_ir = EvidenceIr::build_with_prior_memory(
         &source_ir.artifact_layout.source_ir_path,
         &evidence_ir_root,
@@ -699,6 +720,15 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
     };
 
     let mut failures = Vec::new();
+    if let Some(expectations) = fixture
+        .expectations
+        .validation
+        .as_ref()
+        .and_then(|expectations| expectations.source.as_ref())
+        && let Some(report) = source_report.as_ref()
+    {
+        evaluate_validation_expectations("validation.source", expectations, report, &mut failures);
+    }
     if let Some(expectations) = fixture.expectations.evidence.as_ref() {
         evaluate_evidence_expectations("evidence", expectations, &evidence_ir, &mut failures);
     }

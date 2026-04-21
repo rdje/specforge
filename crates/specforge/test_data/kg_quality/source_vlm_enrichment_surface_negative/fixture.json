@@ -1,0 +1,44 @@
+{
+  "name": "source_vlm_enrichment_surface_negative",
+  "source": "source.md",
+  "source_ir_patch": {
+    "visual_assets": [
+      {
+        "asset_id": "asset_timing_0001",
+        "asset_kind": "diagram",
+        "page_id": "page_0001",
+        "image_path": null,
+        "caption_text": "XREQ timing",
+        "caption_source_path": null,
+        "source_ref": null,
+        "placeholder_text": null,
+        "note": null,
+        "diagram_kind": "timing_diagram"
+      }
+    ]
+  },
+  "expectations": {
+    "validation": {
+      "source": {
+        "finding_ids_include": [
+          "source_vlm_enrichment_missing",
+          "source_vlm_enrichment_missing_surface_rescan_guidance"
+        ],
+        "findings_include": [
+          {
+            "finding_id": "source_vlm_enrichment_missing_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "timing/state diagram asset ids without VLM enrichment",
+            "related_ids_include": ["asset_timing_0001"]
+          }
+        ],
+        "metric_values": {
+          "visual_assets": "1",
+          "figures_ready_for_vlm": "1",
+          "figures_already_enriched": "0"
+        }
+      }
+    }
+  }
+}

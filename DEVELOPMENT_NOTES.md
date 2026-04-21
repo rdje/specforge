@@ -7,6 +7,24 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-21 Source-stage missing VLM enrichment should be replay targets too
+- Once `SourceIR` already knows a diagram is timing/state-like but still carries no VLM enrichment, the weak state is no longer just "did validation notice the missing enrichment?" but "does the product advertise the bounded local step that might fill it?"
+- The stranded asset ids are already stable and reviewable at that stage.
+- Leaving them as only warnings underspecifies the next action.
+- The right follow-up is a source-stage visual replay:
+  - rerun local visual enrichment on the current `SourceIR`
+  - revalidate the current `SourceIR`
+  - review whether the same asset ids gain VLM enrichment instead of staying visually known but semantically unextracted
+- This is still not an auto-fix story:
+  - the current SourceIR visual gap remains explicit
+  - the replay planner only identifies the local visual boundary and bounded replay step
+  - no downstream evidence or canonical truth is auto-mutated just because the replay path exists
+- This slice also exposed a benchmark-harness gap:
+  - `kg-bench` could assert evidence/semantic/intent validation surfaces directly
+  - it could not assert SourceIR validation surfaces directly
+  - so the harness now accepts `validation.source` too, which keeps SourceIR replay guidance benchmarkable instead of unit-test-only
+- That split matters because SourceIR visual debt should be reviewable and replayable before it disappears into a later-stage symptom.
+
 ## 2026-04-21 Evidence-stage missing VLM observations should be replay targets too
 - Once `EvidenceIR` still carries visual evidence but no timing/state extraction, the weak state is no longer just "did validation notice the gap?" but "does the product advertise the bounded local step that might fill it?"
 - The stranded visual evidence ids are already stable and reviewable at that stage.

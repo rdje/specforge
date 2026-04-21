@@ -106,6 +106,8 @@ const EVIDENCE_NORMATIVE_RESIDUAL_SURFACE_RESCAN_GUIDANCE: &str =
     "evidence_normative_residual_surface_rescan_guidance";
 const EVIDENCE_SIGNAL_SEMANTIC_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
     "evidence_signal_semantic_conflict_surface_rescan_guidance";
+const SOURCE_VLM_ENRICHMENT_MISSING_SURFACE_RESCAN_GUIDANCE: &str =
+    "source_vlm_enrichment_missing_surface_rescan_guidance";
 const SEMANTIC_SIGNAL_SEMANTIC_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
     "semantic_signal_semantic_conflict_surface_rescan_guidance";
 const INTENT_SIGNAL_SEMANTIC_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
@@ -693,11 +695,47 @@ fn push_missing_vlm_observations_rescan_guidance(
     ));
 }
 
+fn push_source_vlm_enrichment_missing_rescan_guidance(
+    findings: &mut Vec<ValidationFindingRecord>,
+    finding_id: &str,
+    stage_label: &str,
+    related_ids: &[String],
+) {
+    if related_ids.is_empty() {
+        return;
+    }
+
+    findings.push(finding(
+        finding_id,
+        ValidationFindingSeverity::Info,
+        "rescan_guidance",
+        format!(
+            "{stage_label} still carries timing/state diagram asset ids without VLM enrichment; this should trigger targeted local visual enrichment plus bounded replay to see whether those same asset ids gain extracted observations"
+        ),
+        related_ids.to_vec(),
+    ));
+}
+
 fn evidence_structural_kg_missing_related_ids(ir: &EvidenceIr) -> Vec<String> {
     ir.signal_constraints
         .iter()
         .map(|constraint| constraint.constraint_id.clone())
         .chain(ir.conditional_rules.iter().map(|rule| rule.rule_id.clone()))
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect()
+}
+
+fn source_vlm_enrichment_missing_related_ids(ir: &SourceIr) -> Vec<String> {
+    ir.visual_assets
+        .iter()
+        .filter(|asset| {
+            matches!(
+                asset.diagram_kind,
+                DiagramKind::TimingDiagram | DiagramKind::StateMachineDiagram
+            )
+        })
+        .map(|asset| asset.asset_id.clone())
         .collect::<BTreeSet<_>>()
         .into_iter()
         .collect()
@@ -2143,6 +2181,7 @@ fn validate_source_ir(ir: &SourceIr, artifact_fingerprint: String) -> Validation
     println!("  count: {}", ir.residual_decisions.len());
 
     let figures_ready_for_vlm = timing_count + state_count;
+    let source_vlm_enrichment_missing_related_ids = source_vlm_enrichment_missing_related_ids(ir);
     let mut findings = Vec::new();
     if figures_ready_for_vlm > 0 && vlm_enriched == 0 {
         findings.push(finding(
@@ -2152,18 +2191,14 @@ fn validate_source_ir(ir: &SourceIr, artifact_fingerprint: String) -> Validation
             format!(
                 "{figures_ready_for_vlm} classified timing/state diagrams are still missing VLM enrichment"
             ),
-            ir.visual_assets
-                .iter()
-                .filter(|asset| {
-                    matches!(
-                        asset.diagram_kind,
-                        DiagramKind::TimingDiagram | DiagramKind::StateMachineDiagram
-                    )
-                })
-                .map(|asset| asset.asset_id.clone())
-                .take(6)
-                .collect(),
+            source_vlm_enrichment_missing_related_ids.clone(),
         ));
+        push_source_vlm_enrichment_missing_rescan_guidance(
+            &mut findings,
+            SOURCE_VLM_ENRICHMENT_MISSING_SURFACE_RESCAN_GUIDANCE,
+            "SourceIR",
+            &source_vlm_enrichment_missing_related_ids,
+        );
     }
     if unknown_count > 0 {
         findings.push(finding(
@@ -5407,9 +5442,9 @@ mod tests {
         SemanticGroundingStrength, SemanticIr,
     };
     use crate::ir::source::{
-        AutomationConfidence, ConditionalRuleRecord, SignalConstraintKind, SignalConstraintRecord,
-        SourceIr, StructuredTableCellRecord, StructuredTableRecord, TableKind,
-        TimingConstraintRecord, VisualAsset, VisualAssetKind,
+        AutomationConfidence, ConditionalRuleRecord, DiagramKind, SignalConstraintKind,
+        SignalConstraintRecord, SourceIr, StructuredTableCellRecord, StructuredTableRecord,
+        TableKind, TimingConstraintRecord, VisualAsset, VisualAssetKind,
     };
 
     #[test]
@@ -5648,6 +5683,54 @@ mod tests {
         assert!(
             validation_report_path_for(&artifact_path)?.exists(),
             "expected stage-local validation_report.json sidecar to exist"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_source_ir_reports_missing_vlm_enrichment_related_ids() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("visual_gap.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Visual Gap\n\nSignal XREQ is output width 1.\n")?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.visual_assets.push(VisualAsset {
+            asset_id: "asset_timing_0001".to_string(),
+            asset_kind: VisualAssetKind::Diagram,
+            page_id: Some("page_0001".to_string()),
+            image_path: None,
+            caption_text: Some("XREQ timing".to_string()),
+            caption_source_path: None,
+            source_ref: None,
+            placeholder_text: None,
+            note: None,
+            diagram_kind: DiagramKind::TimingDiagram,
+        });
+
+        let report = validate_source_ir(&source_ir, "source_vlm_gap".to_string());
+
+        let missing_vlm_finding = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "source_vlm_enrichment_missing")
+            .expect("expected source VLM enrichment missing finding");
+        assert_eq!(
+            missing_vlm_finding.related_ids,
+            vec!["asset_timing_0001".to_string()]
+        );
+
+        let missing_vlm_rescan_guidance = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == SOURCE_VLM_ENRICHMENT_MISSING_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected source VLM enrichment rescan guidance");
+        assert_eq!(
+            missing_vlm_rescan_guidance.related_ids,
+            vec!["asset_timing_0001".to_string()]
         );
 
         Ok(())
