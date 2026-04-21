@@ -127,6 +127,18 @@
 - Focused extraction, semantic, validator, tracked KG fixture checks, docs CI, full local CI, and whitespace checks passed for this slice.
 - The current full local CI baseline remains `472` Rust tests plus warning-deny rustdoc and the mdBook build.
 
+## Session update (2026-04-22 word-edge validator family completion)
+- Continued from commit `7ec2155`, still hardening the temporal proof surface rather than widening the temporal model or adding benchmark corpus.
+- The spelled-out trailing word-edge family was already supported and benchmark-locked, but its direct validator proof was still split:
+  - exact `third rising edge` / `third falling edge` lived in the broader `explicit_clock_text` regression
+  - bounded `within 2 rising edges` / `within 2 falling edges` lived in the `trailing_of_word_edge` regression
+- This slice makes that validator story self-contained:
+  - `validate_intent_ir_does_not_flag_temporal_rules_missing_clock_grounding_for_trailing_of_word_edge_text` now also carries the exact rising/falling word-edge pair
+  - the same direct validator lane now proves all four trailing word-edge corners together: exact rising, exact falling, bounded rising, and bounded falling
+- The tracked benchmark surface size remains `105` fixtures because this is validator hardening inside an existing temporal family, not a new corpus addition.
+- Focused validator coverage, docs CI, full local CI, and whitespace checks passed for this slice.
+- The current full local CI baseline remains `473` Rust tests plus warning-deny rustdoc and the mdBook build.
+
 ## Session update (2026-04-22 exact shorthand-token validator symmetry lock)
 - Continued from commit `2f20610`, still hardening the same trailing shorthand-edge family rather than widening the temporal model or adding new benchmark corpus.
 - The previous slice closed the benchmark and semantic asymmetry for the exact shorthand-token pair:

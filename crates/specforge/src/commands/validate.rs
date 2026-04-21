@@ -9238,6 +9238,8 @@ mod tests {
             concat!(
                 "# Protocol\n",
                 "Signal HCLK is input width 1.\n\n",
+                "Signal PREADY is input width 1.\n\n",
+                "Signal PWAKEUP is input width 1.\n\n",
                 "Signal PSEL is input width 1.\n\n",
                 "Signal PWRITE is input width 1.\n\n",
             ),
@@ -9249,6 +9251,28 @@ mod tests {
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
         )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pready_third_rising_edge".to_string(),
+            subject_signal: "PREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PREADY must be asserted on the third rising edge of HCLK.".to_string(),
+            supporting_statement_ids: vec!["stmt_third_rising_edge".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pwakeup_third_falling_edge".to_string(),
+            subject_signal: "PWAKEUP".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PWAKEUP must be asserted on the third falling edge of HCLK.".to_string(),
+            supporting_statement_ids: vec!["stmt_third_falling_edge".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
         evidence_ir.signal_constraints.push(SignalConstraintRecord {
             constraint_id: "sigcon_psel_within_two_rising_edges_of_hclk".to_string(),
             subject_signal: "PSEL".to_string(),
@@ -9283,10 +9307,10 @@ mod tests {
         )?;
 
         let report = validate_intent_ir(&intent_ir, "temporal_grounding".to_string());
-        assert_eq!(metric_value(&report, "temporal_rules"), Some("2"));
+        assert_eq!(metric_value(&report, "temporal_rules"), Some("4"));
         assert_eq!(
             metric_value(&report, "temporal_rules_with_cycle_window"),
-            Some("2")
+            Some("4")
         );
         assert_eq!(
             metric_value(&report, "temporal_rules_missing_clock_grounding"),

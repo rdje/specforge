@@ -7,6 +7,21 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Word-edge validator coverage should be family-complete too
+- The spelled-out trailing word-edge family is already in good shape across the stack:
+  - exact rising/falling word-edge timing is benchmark-locked
+  - exact rising/falling word-edge timing has direct semantic proof
+  - bounded rising/falling word-edge timing has direct semantic and validator proof
+- But the direct intent-stage validator proof was still split across two lanes:
+  - exact word-edge timing lived in the broader `explicit_clock_text` regression
+  - bounded word-edge timing lived in `validate_intent_ir_does_not_flag_temporal_rules_missing_clock_grounding_for_trailing_of_word_edge_text`
+- That is not a behavioral bug, but it is an avoidable proof split inside one temporal family.
+- The right move stays narrow:
+  - do not touch the fixture family
+  - do not widen the parser or semantic layer
+  - widen the existing trailing word-edge validator regression so it proves exact and bounded rising/falling word-edge timing together
+- That keeps the direct validator contract for the trailing word-edge family self-contained without creating a new roadmap row.
+
 ## 2026-04-22 Exact shorthand-edge validator coverage should be symmetric too
 - The previous slice closed the benchmark and semantic asymmetry for the exact shorthand-token pair:
   - `the third posedge of HCLK`

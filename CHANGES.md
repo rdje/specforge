@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-04-22 (Word-edge validator coverage is now family-complete too)
+
+### Improved: the direct intent-stage validator lane now proves the full trailing word-edge family
+- `crates/specforge/src/commands/validate.rs` now widens the existing trailing word-edge validator regression so it carries:
+  - `PREADY must be asserted on the third rising edge of HCLK.`
+  - `PWAKEUP must be asserted on the third falling edge of HCLK.`
+  - `PSEL must be asserted within 2 rising edges of HCLK.`
+  - `PWRITE must be asserted within 2 falling edges of HCLK.`
+- That keeps the spelled-out edge family self-contained in one direct validator lane instead of splitting:
+  - exact word-edge timing into the broader `explicit_clock_text` proof lane
+  - bounded word-edge timing into the `trailing_of_word_edge` proof lane
+- This does not widen the temporal model or add new fixtures. It makes the direct validator contract for the trailing word-edge family internally consistent.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge validate_intent_ir_does_not_flag_temporal_rules_missing_clock_grounding_for_trailing_of_word_edge_text` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-22 (Exact shorthand-edge validator coverage is now symmetry-locked too)
 
 ### Improved: the direct intent-stage validator lane now proves the full exact shorthand-token pair
