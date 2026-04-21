@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-22 (Named local cycle timing is now benchmark-locked too)
+
+### Improved: the tracked KG corpus now proves named local cycle grounding end to end
+- Added `crates/specforge/test_data/kg_quality/named_cycle_timing_gold/` so the tracked benchmark corpus now locks:
+  - `TVALID must be asserted in the same ACLK cycle.`
+- The new fixture proves that phrase through both `SemanticIR` and `IntentIR`, with:
+  - `clock_signal = ACLK`
+  - `edge = rising`
+  - `cycle_window = 0..0`
+  - `temporal_rules_missing_clock_grounding = 0`
+- This does not widen the temporal model. It raises the already-landed named local cycle timing family into the tracked KG-quality corpus.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-22 (Signal-leading clock timing is now benchmark-locked too)
 
 ### Improved: the tracked KG corpus now proves the full signal-leading local-clock family

@@ -4,6 +4,19 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-22 named local cycle benchmark lock)
+- Continued from commit `1867e39`, still hardening the temporal proof surface rather than widening the parser, semantic model, or validation planner.
+- The named local cycle family was already directly proved in unit coverage:
+  - `same ACLK cycle` preserved `clock_signal = ACLK`
+  - the same rule preserved `edge = rising`
+  - the same rule preserved `cycle_window = 0..0`
+- But that family was still missing from the tracked KG-quality benchmark corpus.
+- This slice adds `crates/specforge/test_data/kg_quality/named_cycle_timing_gold/`, a compact tracked fixture that locks `TVALID must be asserted in the same ACLK cycle.` through both `SemanticIR` and `IntentIR`, with `temporal_rules_missing_clock_grounding = 0`.
+- The tracked KG-quality suite grows by one fixture family because this is a corpus-surface hardening slice, not another unit-level proof refinement.
+- Focused tracked-fixture coverage, docs CI, full local CI, and whitespace checks passed for this slice.
+- The current full local CI baseline remains `473` Rust tests plus warning-deny rustdoc and the mdBook build.
+- The tracked KG-quality suite is now `107` fixtures.
+
 ## Session update (2026-04-22 signal-leading clock benchmark lock)
 - Continued from commit `c55b858`, still hardening the temporal proof surface rather than widening the parser, semantic model, or validation planner.
 - The signal-leading clock family was already directly proved in unit coverage after the previous slices:

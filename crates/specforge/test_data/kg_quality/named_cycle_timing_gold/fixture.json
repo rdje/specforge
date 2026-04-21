@@ -1,0 +1,85 @@
+{
+  "name": "named_cycle_timing_gold",
+  "source": "source.md",
+  "evidence_ir_patch": {
+    "signal_constraints": [
+      {
+        "constraint_id": "sigcon_tvalid_same_aclk_cycle",
+        "subject_signal": "TVALID",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "TVALID must be asserted in the same ACLK cycle.",
+        "supporting_statement_ids": ["stmt_same_aclk_cycle"],
+        "automation_confidence": "medium"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["TVALID"],
+      "temporal_rule_count": 1,
+      "temporal_rules_include": [
+        {
+          "source_text": "TVALID must be asserted in the same ACLK cycle.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 0,
+            "max_cycles": 0
+          },
+          "supporting_statement_ids_include": ["stmt_same_aclk_cycle"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "TVALID",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        }
+      ]
+    },
+    "intent": {
+      "signal_names_include": ["TVALID"],
+      "temporal_rule_count": 1,
+      "temporal_rules_include": [
+        {
+          "source_text": "TVALID must be asserted in the same ACLK cycle.",
+          "clock_signal": "ACLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 0,
+            "max_cycles": 0
+          },
+          "supporting_statement_ids_include": ["stmt_same_aclk_cycle"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "TVALID",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        }
+      ]
+    },
+    "validation": {
+      "semantic": {
+        "metric_values": {
+          "temporal_rules": "1",
+          "temporal_rules_with_cycle_window": "1",
+          "temporal_rules_missing_clock_grounding": "0"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "temporal_rules": "1",
+          "temporal_rules_with_cycle_window": "1",
+          "temporal_rules_missing_clock_grounding": "0"
+        }
+      }
+    }
+  }
+}

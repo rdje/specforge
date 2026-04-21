@@ -7,6 +7,20 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Named local cycle timing should be benchmark-locked too
+- The named local cycle family is already proved directly in the codebase:
+  - semantic coverage proves `same ACLK cycle` grounds `clock_signal = ACLK`, `edge = rising`, and `cycle_window = 0..0`
+  - validator coverage proves the resulting intent rule stays out of the missing-clock-grounding path
+- But that family was still absent from the tracked KG-quality corpus.
+- That meant a small but real public-surface asymmetry:
+  - signal-leading local clock timing was benchmark-locked
+  - named local cycle timing was only unit-locked
+- The right move stays narrow:
+  - do not widen the parser or temporal model
+  - do not create a new capability row
+  - add one compact tracked fixture family that locks `TVALID must be asserted in the same ACLK cycle.` through both `SemanticIR` and `IntentIR`
+- That keeps the benchmark corpus aligned with the already-landed unit-proof surface and makes the local-cycle grounding contract visible in the tracked review corpus.
+
 ## 2026-04-22 Signal-leading clock timing should be benchmark-locked too
 - The signal-leading clock family is now in strong shape at the unit level:
   - semantic coverage proves both edge-word and edge-token forms
