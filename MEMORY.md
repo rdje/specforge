@@ -19,44 +19,35 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `628c124`
-- latest_commit_brief_message: `docs(memory): sync ordinal rising-edge baseline`
-- note: the latest committed baseline captures the previous feature slice where the existing trailing shorthand-edge fixture family was deepened so exact ordinal rising-edge prose is benchmark-locked alongside the already-landed exact falling-edge and bounded edge-word forms
+- latest_commit_hash: `91d05ef`
+- latest_commit_brief_message: `test(temporal): lock exact falling shorthand edge`
+- note: the latest committed baseline closes the last exact shorthand-token asymmetry inside the trailing `of <clock>` temporal family by benchmark-locking `the third negedge of HCLK` alongside the already-landed exact `posedge`, bounded token, and exact word-edge forms
 
 ## Recent commit chain (last 6)
+- `91d05ef` test(temporal): lock exact falling shorthand edge
 - `628c124` docs(memory): sync ordinal rising-edge baseline
 - `6cbf11f` test(temporal): lock ordinal rising edge benchmark
 - `cb24e3b` docs(memory): sync ordinal falling-edge baseline
 - `b7c0a0e` test(temporal): lock ordinal falling edge symmetry
 - `9cf8a28` docs(memory): sync trailing falling edge-word baseline
-- `b46b341` test(temporal): lock trailing falling edge-word symmetry
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 8` of `origin/main`
+- branch state before the next commit: `ahead 9` of `origin/main`
 - modified tracked files:
-- `CHANGES.md`
-- `DEVELOPMENT_NOTES.md`
-- `RUST_CODEBASE_ANALYSIS.md`
-- `crates/specforge/src/commands/validate.rs`
-- `crates/specforge/src/ir/semantic.rs`
-- `crates/specforge/test_data/kg_quality/trailing_shorthand_edge_timing_gold/fixture.json`
-- `crates/specforge/test_data/kg_quality/trailing_shorthand_edge_timing_gold/source.md`
 - `MEMORY.md`
-- the exact falling shorthand-token reliability slice is implemented locally, verified, and awaiting the feature commit
+- the feature slice is committed; only the required continuity refresh commit remains
 - `LIVE_ACHIEVEMENT_STATUS.md` stays unchanged for this slice
 
-## Current in-flight slice
-- goal:
-  - close the last exact shorthand-token asymmetry inside the trailing `of <clock>` temporal family by benchmark-locking `the third negedge of HCLK`
-- implemented locally so far:
+## Latest landed slice
+- outcome:
   - `crates/specforge/src/ir/semantic.rs` now extracts `HCLK` from `the third negedge of HCLK` and adds a direct semantic regression proving `PLOCK must be asserted on the third negedge of HCLK.` lowers to `clock_signal = HCLK`, `edge = falling`, `cycle_window = 3..3`
   - `crates/specforge/src/commands/validate.rs` now widens the existing trailing shorthand-edge validator regression so the exact falling shorthand-token form stays grounded alongside the already-locked bounded token pair
   - `crates/specforge/test_data/kg_quality/trailing_shorthand_edge_timing_gold/` now carries `PLOCK must be asserted on the third negedge of HCLK.`, lifting the tracked fixture family from `7` to `8` temporal rules without adding a new fixture family
-- expected tracker effect:
+- tracker effect:
   - unchanged, because this is reliability hardening inside an already-done temporal capability row
-- expected tracked KG-quality suite size after the feature commit:
+- current tracked KG-quality suite size after the feature commit:
   - still `105` fixtures, because the existing trailing shorthand-edge family is being deepened rather than expanded with a new fixture family
 - verification passed:
   - `cargo fmt --all`
@@ -67,13 +58,12 @@
   - `bash scripts/run_docs_ci.sh`
   - `bash scripts/run_ci.sh`
   - `git diff --check`
-- current full local CI baseline after verification:
+- current full local CI baseline after the feature commit:
   - `473` Rust tests plus warning-deny rustdoc and the mdBook build
 
 ## Next exact steps
-- write the feature commit message into `git_message_brief.txt`
-- stage only the intended tracked feature files and commit with `git commit -F git_message_brief.txt`
-- truncate `git_message_brief.txt` back to `0` bytes and verify the post-conditions
-- refresh `MEMORY.md` so it points at the new feature commit hash/message
+- write the continuity commit message into `git_message_brief.txt`
+- stage only `MEMORY.md`
 - create the required continuity commit for the refreshed `MEMORY.md`
+- truncate `git_message_brief.txt` back to `0` bytes and verify the post-conditions
 - do not push after the continuity commit unless the user asks or the branch reaches the `25`-commit threshold again
