@@ -19,11 +19,13 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `54e0519`
-- latest_commit_brief_message: `feat(temporal): ground unit-first diagram positions`
-- note: the latest committed baseline captures the unit-first diagram-position grounding slice where phrases like `tick T3 of HCLK` and `posedge T4 of HCLK` now preserve the local `clock_signal` without changing their exact bounded timing windows
+- latest_commit_hash: `328c30e`
+- latest_commit_brief_message: `feat(temporal): ground trailing shorthand edge clocks`
+- note: the latest committed baseline closes the remaining trailing-`of <clock>` shorthand-edge grounding gap, so phrases like `third posedge of HCLK` and `2 negedges of HCLK` now preserve the local `clock_signal` instead of staying half grounded
 
 ## Recent commit chain (last 6)
+- `328c30e` feat(temporal): ground trailing shorthand edge clocks
+- `6477b08` docs(memory): sync unit-first diagram baseline
 - `54e0519` feat(temporal): ground unit-first diagram positions
 - `c63dd66` feat(temporal): recover named diagram-edge positions
 - `d7557f8` feat(temporal): ground plural edge-of-clock phrases
@@ -51,7 +53,7 @@
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 15` of `origin/main`
+- branch state before the next commit: `ahead 17` of `origin/main`
 - push policy remains local-only for now; do not push in this slice
 - modified tracked files:
   - `MEMORY.md`
@@ -60,19 +62,18 @@
 
 ## Latest landed slice
 - outcome:
-  - unit-first diagram-position timing such as `tick T3 of HCLK`, `posedge T4 of HCLK`, and `rising edge T5 of HCLK` now preserves the local `clock_signal`
-  - the exact bounded `cycle_window` path for those phrases stays unchanged; this slice completes the local clock grounding instead of changing the timing window semantics
-  - the widening stays bounded to explicit unit-first diagram positions that end in `of <known clock>`; arbitrary unit-first timing text still does not become a clock guess
+  - shorthand-edge timing such as `third posedge of HCLK`, `2 negedges of HCLK`, and `2 rising edges of HCLK` now preserves the local `clock_signal`
+  - the parser already knew the explicit edge and bounded window for those phrases; this slice closes the remaining clock-grounding gap instead of widening timing semantics
+  - the widening stays bounded to explicit trailing `of <known clock>` shorthand-edge phrasing; arbitrary shorthand edge text still does not become a clock guess
 - verification passed:
   - `cargo fmt --all`
-  - `cargo test -p specforge unit_first_diagram_position`
-  - `cargo test -p specforge extracts_unit_first_diagram_position_of_clock_phrases`
+  - `cargo test -p specforge trailing_of_shorthand_edge`
   - `cargo test -p specforge cycle_window`
   - `cargo test -p specforge kg_bench_runs_tracked_fixtures`
   - `bash scripts/run_docs_ci.sh`
   - `bash scripts/run_ci.sh`
   - `git diff --check`
-- current full local CI baseline after the latest landed slice: `461` Rust tests plus warning-deny rustdoc and the mdBook build
+- current full local CI baseline after the latest landed slice: `464` Rust tests plus warning-deny rustdoc and the mdBook build
 - current tracked KG-quality suite size: `103` fixtures
 
 ## Next exact steps
