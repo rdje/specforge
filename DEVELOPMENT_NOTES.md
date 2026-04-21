@@ -7,6 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Signal-leading clock coverage should be symmetric too
+- The signal-leading clock family was already clearly supported:
+  - semantic coverage proved `HCLK rising edge`
+  - validator coverage proved `HCLK posedge`
+- But the direct proof lanes were still both rising-only.
+- That is not a behavior bug, but it is an avoidable asymmetry in a family we already consider done.
+- The right move stays narrow:
+  - do not widen the parser
+  - do not add a new fixture family
+  - widen the existing semantic regression with `HCLK falling edge`
+  - widen the existing validator regression with `HCLK negedge`
+- That keeps the signal-leading family honest on both edge directions without creating a new roadmap row or redundant corpus surface.
+
 ## 2026-04-22 Word-edge validator coverage should be family-complete too
 - The spelled-out trailing word-edge family is already in good shape across the stack:
   - exact rising/falling word-edge timing is benchmark-locked

@@ -15059,7 +15059,7 @@ mod tests {
     }
 
     #[test]
-    fn derives_explicit_clock_signal_from_signal_leading_rising_edge_text() -> Result<()> {
+    fn derives_explicit_clock_signal_from_signal_leading_edge_text() -> Result<()> {
         use crate::ir::evidence::EvidenceIr;
         use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
 
@@ -15076,6 +15076,7 @@ mod tests {
                 "Signal clk is input width 1.\n\n",
                 "Signal HCLK is input width 1.\n\n",
                 "Signal PREADY is input width 1.\n\n",
+                "Signal PWAKEUP is input width 1.\n\n",
                 "Clock clk.\n",
             ),
         )?;
@@ -15097,6 +15098,17 @@ mod tests {
             supporting_statement_ids: vec!["stmt_hclk_rising_edge".to_string()],
             automation_confidence: AutomationConfidence::Medium,
         });
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pwakeup_hclk_falling_edge".to_string(),
+            subject_signal: "PWAKEUP".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PWAKEUP must be asserted on HCLK falling edge.".to_string(),
+            supporting_statement_ids: vec!["stmt_hclk_falling_edge".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
         evidence_ir.write_to_disk()?;
 
         let semantic_ir = SemanticIr::build(
@@ -15113,6 +15125,16 @@ mod tests {
             .expect("expected temporal rule derived from signal-leading edge constraint");
         assert_eq!(rule.clock_signal.as_deref(), Some("HCLK"));
         assert_eq!(rule.edge, super::ClockEdge::Rising);
+
+        let falling_rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| {
+                rule.rule_id == "temporal_signal_constraint_sigcon_pwakeup_hclk_falling_edge"
+            })
+            .expect("expected temporal rule derived from signal-leading falling-edge constraint");
+        assert_eq!(falling_rule.clock_signal.as_deref(), Some("HCLK"));
+        assert_eq!(falling_rule.edge, super::ClockEdge::Falling);
 
         Ok(())
     }

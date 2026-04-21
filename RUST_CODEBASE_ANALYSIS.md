@@ -4,6 +4,19 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-22 signal-leading clock symmetry hardening)
+- Continued from commit `235197f`, still tightening the temporal proof surface rather than widening the parser, semantic model, or tracked fixture corpus.
+- The signal-leading clock family already had direct proof on the rising side:
+  - `HCLK rising edge` at the semantic layer
+  - `HCLK posedge` at the validator layer
+- But the falling-side twins were still only implied by shared parser logic.
+- This slice makes the family internally symmetric in its direct proof lanes:
+  - `crates/specforge/src/ir/semantic.rs` now proves `PWAKEUP must be asserted on HCLK falling edge.` preserves `clock_signal = HCLK` and `edge = falling` beside the existing rising-side rule
+  - `crates/specforge/src/commands/validate.rs` now proves `PWAKEUP must be asserted on HCLK negedge.` stays fully grounded beside the existing `HCLK posedge` rule
+- The tracked KG-quality suite stays flat because this is reliability hardening inside an existing temporal family, not a new benchmark family or capability row.
+- Focused semantic and validator coverage, docs CI, full local CI, and whitespace checks passed for this slice.
+- The current full local CI baseline remains `473` Rust tests plus warning-deny rustdoc and the mdBook build.
+
 ## Executive summary
 - the repository now contains a single active `specforge` crate and CLI with an executable surface of:
   - `inspect`
