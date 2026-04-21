@@ -7,6 +7,22 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-21 Built-in temporal timing language should cover explicit later and ordinal edge phrasing
+- The clock-tick model was already recognizing numeric windows such as `within 2 cycles`, idiomatic one-cycle language such as `next tick`, and zero-cycle language such as `same cycle`.
+- That still left a very real local-language gap:
+  - specs often say `two cycles later`
+  - timing prose around clocking often says `on the third rising edge of HCLK`
+- Those phrases should not be forced through the learned-prior path because they are not corpus-only idioms.
+- They are ordinary bounded temporal language and should map directly onto the typed `CycleWindowRecord` surface when the local text contains an actual cycle/tick/edge unit.
+- The implementation needs to stay honest while expanding recall:
+  - support ordinal words and ordinal numerals such as `third` / `3rd`
+  - keep direct diagram-style position parsing conservative instead of treating every `on third ...` phrase as temporal
+  - require explicit cycle/tick/edge language when widening beyond the old numeric/direct parser
+  - preserve `one beat later` as prior-guided-only so learned temporal memory still has a clear bounded fallback role
+- This slice therefore extends the built-in parser only where the local sentence already names a cycle-like unit, then proves the result at both levels:
+  - direct parser extraction
+  - end-to-end `SemanticIR` temporal-rule derivation from real signal constraints
+
 ## 2026-04-21 Evidence-stage negative-knowledge caution should feed replay planning too
 - If validation emits `evidence_negative_knowledge_rescan_guidance` but `project-validation` ignores it, the product is only half honest:
   - the caution is visible to a human reviewer

@@ -60,6 +60,8 @@ Examples:
 
 - same-cycle language can become `min_cycles = 0`, `max_cycles = 0`
 - next-cycle language can become `min_cycles = 1`, `max_cycles = 1`
+- explicit later language such as `two cycles later` can become `min_cycles = 2`, `max_cycles = 2`
+- ordinal edge language such as `on the third rising edge` can become `min_cycles = 3`, `max_cycles = 3`
 - bounded language such as `within 2 cycles` can become `max_cycles = 2`
 
 Cycle windows are useful because an unbounded temporal statement is weaker than one with explicit timing.

@@ -1,5 +1,34 @@
 # CHANGES
 
+## 2026-04-21 (Temporal parser now recognizes explicit later and ordinal edge phrases)
+
+### Improved: built-in cycle-window recovery now covers more real protocol timing language
+- `crates/specforge/src/ir/semantic.rs` now recognizes bounded later phrases such as `two cycles later` and ordinal edge phrases such as `on the third rising edge of HCLK`.
+- The new timing forms land on the same typed `CycleWindowRecord` surface already used for `within 2 cycles`, `next tick`, and `same cycle`, so downstream `SemanticIR` / `IntentIR` temporal rules stay on one explicit clock-tick model instead of growing one-off heuristics.
+- Ordinal parsing is intentionally bounded:
+  - cardinal timing language still supports numeric and word forms
+  - ordinal timing language now supports bounded numeric/word ordinals such as `3rd` and `third`
+  - direct diagram-style `on T3` parsing stays conservative instead of widening positional matches everywhere
+- Prior-guided timing recovery remains fallback-only:
+  - local phrases like `one beat later` still do not become built-in timing truth
+  - a validated temporal prior can still recover that pattern when current-document wording matches a learned prior exactly
+
+### Added: regression coverage for explicit later and ordinal timing language
+- Added direct parser coverage for:
+  - `two cycles later`
+  - `on the third rising edge of HCLK`
+- Added end-to-end temporal-rule derivation coverage in `SemanticIR` for:
+  - `PREADY must be asserted two cycles later`
+  - `PREADY must be asserted on the third rising edge of HCLK`
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge cycle_window` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-21 (Evidence-stage negative-knowledge caution now feeds replay planning)
 
 ### Improved: EvidenceIR caution is now a real replay target instead of a planner dead end

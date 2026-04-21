@@ -8483,6 +8483,15 @@ fn extract_cycle_window_from_text(text: &str) -> Option<CycleWindowRecord> {
                 max_cycles: Some(count),
             });
         }
+
+        if matches!(tokens[index], "at" | "during" | "on")
+            && let Some(count) = parse_explicit_cycle_position_count(&tokens, index + 1)
+        {
+            return Some(CycleWindowRecord {
+                min_cycles: Some(count),
+                max_cycles: Some(count),
+            });
+        }
     }
 
     for index in 0..tokens.len() {
@@ -8614,16 +8623,25 @@ fn extract_cycle_window_from_text(text: &str) -> Option<CycleWindowRecord> {
     }
 
     for index in 0..tokens.len() {
+        let Some(count) = tokens.get(index).copied().and_then(parse_cycle_count_value) else {
+            continue;
+        };
+        let lookahead = &tokens[index + 1..tokens.len().min(index + 5)];
+        if contains_cycle_like_unit(lookahead) && lookahead.contains(&"later") {
+            return Some(CycleWindowRecord {
+                min_cycles: Some(count),
+                max_cycles: Some(count),
+            });
+        }
+    }
+
+    for index in 0..tokens.len() {
         if !matches!(tokens[index], "same" | "this" | "current") {
             continue;
         }
 
         let lookahead = &tokens[index + 1..tokens.len().min(index + 4)];
-        if lookahead
-            .iter()
-            .any(|token| matches!(*token, "cycle" | "cycles" | "tick" | "ticks"))
-            || contains_token_phrase(lookahead, &["rising", "edge"])
-        {
+        if contains_cycle_like_unit(lookahead) {
             return Some(CycleWindowRecord {
                 min_cycles: Some(0),
                 max_cycles: Some(0),
@@ -8654,6 +8672,28 @@ fn extract_cycle_window_from_text(text: &str) -> Option<CycleWindowRecord> {
     }
 
     None
+}
+
+fn contains_cycle_like_unit(tokens: &[&str]) -> bool {
+    tokens
+        .iter()
+        .any(|token| matches!(*token, "cycle" | "cycles" | "tick" | "ticks"))
+        || contains_token_phrase(tokens, &["rising", "edge"])
+        || contains_token_phrase(tokens, &["rising", "edges"])
+}
+
+fn parse_explicit_cycle_position_count(tokens: &[&str], start_index: usize) -> Option<u32> {
+    let count_index = match tokens.get(start_index).copied() {
+        Some("the" | "a" | "an") => start_index + 1,
+        Some(_) => start_index,
+        None => return None,
+    };
+    let count = tokens
+        .get(count_index)
+        .copied()
+        .and_then(parse_cycle_count_value)?;
+    let lookahead = &tokens[count_index + 1..tokens.len().min(count_index + 5)];
+    contains_cycle_like_unit(lookahead).then_some(count)
 }
 
 fn resolve_cycle_window_from_text(
@@ -8723,6 +8763,10 @@ fn contains_token_phrase(tokens: &[&str], phrase: &[&str]) -> bool {
 }
 
 fn parse_cycle_count_value(token: &str) -> Option<u32> {
+    parse_cardinal_cycle_count_value(token).or_else(|| parse_ordinal_cycle_count_value(token))
+}
+
+fn parse_cardinal_cycle_count_value(token: &str) -> Option<u32> {
     parse_u32_token(token).or(match token {
         "one" => Some(1),
         "two" => Some(2),
@@ -8738,12 +8782,37 @@ fn parse_cycle_count_value(token: &str) -> Option<u32> {
     })
 }
 
+fn parse_ordinal_cycle_count_value(token: &str) -> Option<u32> {
+    for suffix in ["st", "nd", "rd", "th"] {
+        if let Some(prefix) = token.strip_suffix(suffix)
+            && !prefix.is_empty()
+            && let Some(value) = parse_u32_token(prefix)
+        {
+            return Some(value);
+        }
+    }
+
+    match token {
+        "first" => Some(1),
+        "second" => Some(2),
+        "third" => Some(3),
+        "fourth" => Some(4),
+        "fifth" => Some(5),
+        "sixth" => Some(6),
+        "seventh" => Some(7),
+        "eighth" => Some(8),
+        "ninth" => Some(9),
+        "tenth" => Some(10),
+        _ => None,
+    }
+}
+
 fn parse_diagram_cycle_count_value(token: &str) -> Option<u32> {
-    parse_cycle_count_value(token).or_else(|| {
+    parse_cardinal_cycle_count_value(token).or_else(|| {
         token
             .strip_prefix('t')
             .filter(|suffix| !suffix.is_empty())
-            .and_then(parse_cycle_count_value)
+            .and_then(parse_cardinal_cycle_count_value)
     })
 }
 
@@ -12960,6 +13029,22 @@ mod tests {
     }
 
     #[test]
+    fn extracts_exact_cycle_window_from_later_and_ordinal_edge_phrases() {
+        let later_phrase =
+            super::extract_cycle_window_from_text("The response must arrive two cycles later.")
+                .expect("expected cycle window from 'two cycles later'");
+        assert_eq!(later_phrase.min_cycles, Some(2));
+        assert_eq!(later_phrase.max_cycles, Some(2));
+
+        let ordinal_edge = super::extract_cycle_window_from_text(
+            "DATA is sampled on the third rising edge of HCLK.",
+        )
+        .expect("expected cycle window from 'on the third rising edge'");
+        assert_eq!(ordinal_edge.min_cycles, Some(3));
+        assert_eq!(ordinal_edge.max_cycles, Some(3));
+    }
+
+    #[test]
     fn extracts_zero_cycle_window_from_same_cycle_phrases() {
         let same_cycle = super::extract_cycle_window_from_text(
             "Both TVALID and TREADY can be asserted in the same ACLK cycle.",
@@ -13097,6 +13182,130 @@ mod tests {
             .expect("expected cycle window to be derived from 'same ACLK cycle'");
         assert_eq!(cycle_window.min_cycles, Some(0));
         assert_eq!(cycle_window.max_cycles, Some(0));
+
+        Ok(())
+    }
+
+    #[test]
+    fn derives_exact_cycle_window_from_later_phrase_constraint_text() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("temporal_later_phrase.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal PREADY is input width 1.\n\n",
+                "Clock clk.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pready_two_cycles_later".to_string(),
+            subject_signal: "PREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PREADY must be asserted two cycles later.".to_string(),
+            supporting_statement_ids: vec!["stmt_two_cycles_later".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| {
+                rule.rule_id == "temporal_signal_constraint_sigcon_pready_two_cycles_later"
+            })
+            .expect("expected temporal rule derived from later-phrase constraint");
+        let cycle_window = rule
+            .cycle_window
+            .as_ref()
+            .expect("expected cycle window to be derived from 'two cycles later'");
+        assert_eq!(cycle_window.min_cycles, Some(2));
+        assert_eq!(cycle_window.max_cycles, Some(2));
+
+        Ok(())
+    }
+
+    #[test]
+    fn derives_exact_cycle_window_from_ordinal_rising_edge_constraint_text() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("temporal_ordinal_edge.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal HCLK is input width 1.\n\n",
+                "Signal PREADY is input width 1.\n\n",
+                "Clock HCLK.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pready_third_rising_edge".to_string(),
+            subject_signal: "PREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PREADY must be asserted on the third rising edge of HCLK.".to_string(),
+            supporting_statement_ids: vec!["stmt_third_rising_edge".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| {
+                rule.rule_id == "temporal_signal_constraint_sigcon_pready_third_rising_edge"
+            })
+            .expect("expected temporal rule derived from ordinal-edge constraint");
+        let cycle_window = rule
+            .cycle_window
+            .as_ref()
+            .expect("expected cycle window to be derived from 'the third rising edge'");
+        assert_eq!(cycle_window.min_cycles, Some(3));
+        assert_eq!(cycle_window.max_cycles, Some(3));
 
         Ok(())
     }
