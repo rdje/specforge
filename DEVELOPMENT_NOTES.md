@@ -7,6 +7,45 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-21 Plural shorthand-edge phrasing should keep the explicit edge kind too
+- The new trailing shorthand-edge benchmark fixture immediately exposed a real semantic bug.
+- Phrases like:
+  - `within 2 negedges of HCLK`
+  - `within 2 posedges of HCLK`
+  were already partly understood:
+  - the parser recovered the bounded `cycle_window`
+  - the local clock detector preserved `clock_signal = HCLK`
+- But the edge detector still only matched singular shorthand tokens:
+  - `posedge`
+  - `negedge`
+- That meant plural shorthand-edge timing could silently fall back to the default edge, usually `rising`.
+- That is the wrong truth shape.
+- If the sentence explicitly says `negedges`, the canonical temporal rule should preserve `edge = falling`.
+- The right fix stays narrow:
+  - teach `explicit_clock_edge_from_text()` about plural `posedges` and `negedges`
+  - add a focused regression proving `within 2 negedges of HCLK` now stays `falling`
+  - keep the tracked benchmark fixture strict enough to catch the same bug again later
+
+## 2026-04-21 Trailing shorthand-edge timing should be benchmark-locked too, not left only in unit coverage
+- The trailing shorthand-edge family is already a real part of the temporal model:
+  - `on the third posedge of HCLK`
+  - `within 2 negedges of HCLK`
+- Parser, semantic, and validator unit coverage already prove that those phrases keep:
+  - the explicit local `clock_signal`
+  - the explicit edge kind
+  - the expected exact or bounded `cycle_window`
+- But the tracked KG-quality corpus still did not exercise that family.
+- That left a quiet quality asymmetry:
+  - generic `clock edge(s) of <clock>` phrasing was now benchmark-locked
+  - trailing shorthand-edge phrasing was still only locally proven
+- The right next step is a small explicit tracked fixture:
+  - one exact rising-edge rule like `the third posedge of HCLK`
+  - one bounded falling-edge rule like `within 2 negedges of HCLK`
+- That keeps the temporal contract honest at corpus level too:
+  - both `SemanticIR` and `IntentIR` are checked
+  - both edge kinds are represented
+  - validation metrics prove the rules are fully grounded rather than merely present
+
 ## 2026-04-21 Generic `clock edge(s) of <clock>` phrasing should be benchmark-locked too, not only unit-locked
 - After the last slice, generic clock-edge-of-clock phrasing was proven in parser, semantic, and validator unit coverage.
 - That was good, but still a bit too local.

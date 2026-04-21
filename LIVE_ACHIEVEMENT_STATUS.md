@@ -76,6 +76,7 @@
 - KG benchmark harness now includes AXI write-response timing coverage: Done
 - KG benchmark harness now includes AXI write-response ID stability coverage: Done
 - KG benchmark harness now includes generic `clock edge(s) of <clock>` timing coverage: Done
+- KG benchmark harness now includes trailing shorthand-edge timing coverage: Done
 - KG benchmark harness now includes AXI read-address timing coverage: Done
 - KG benchmark harness now includes AXI read-address ID stability coverage: Done
 - KG benchmark harness now includes AXI write-address ID stability coverage: Done
@@ -144,6 +145,7 @@
 - Built-in temporal parser now recognizes quantified tick and edge units: Done
 - Built-in temporal parser now recognizes posedge/negedge shorthand and diagram-style positions: Done
 - Built-in temporal parser now preserves explicit shorthand edge grounding in typed temporal rules: Done
+- Plural shorthand-edge phrases now preserve explicit edge semantics in typed temporal rules: Done
 - Explicit local clock names in timing text now ground `clock_signal` in typed temporal rules: Done
 - Signal-leading local clock phrases now ground `clock_signal` in typed temporal rules: Done
 - Named local cycle/tick phrases now fully ground typed temporal rules: Done

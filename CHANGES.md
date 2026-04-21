@@ -1,5 +1,49 @@
 # CHANGES
 
+## 2026-04-21 (Plural shorthand-edge timing now preserves explicit edge semantics)
+
+### Fixed: plural `posedge` / `negedge` wording no longer falls back to the default edge
+- `crates/specforge/src/ir/semantic.rs` had a narrow but real edge-grounding gap:
+  - singular `posedge` / `negedge` phrasing preserved the explicit edge kind
+  - plural `posedges` / `negedges` phrasing still preserved the local `clock_signal` and `cycle_window`
+  - but the edge detector only recognized the singular tokens, so plural shorthand-edge timing could silently fall back to `edge = rising`
+- The fix is small and bounded:
+  - `explicit_clock_edge_from_text()` now recognizes plural `posedges` and `negedges`
+  - the temporal model now keeps `edge = falling` for phrases like `within 2 negedges of HCLK`
+  - nearby rising-edge plural phrasing now stays symmetric too
+
+### Added: regression coverage for plural shorthand-edge edge semantics
+- Added focused semantic coverage proving `PSLVERR must be asserted within 2 negedges of HCLK.` now preserves:
+  - `clock_signal = HCLK`
+  - `edge = falling`
+  - `cycle_window.max_cycles = 2`
+
+### Added: tracked fixture coverage for trailing shorthand-edge timing phrasing
+- Added a new tracked KG-quality fixture at `crates/specforge/test_data/kg_quality/trailing_shorthand_edge_timing_gold/` covering:
+  - `PREADY must be asserted on the third posedge of HCLK.`
+  - `PSLVERR must be asserted within 2 negedges of HCLK.`
+- This raises the newer trailing shorthand-edge family into the same benchmark lane now used for the neighboring temporal phrasing families:
+  - parser and semantic/validator unit coverage already existed
+  - now the same phrasing family is also locked through the tracked fixture harness used for project-quality regression checks
+
+### Added: benchmark expectations for exact rising-edge and bounded falling-edge shorthand timing
+- The new tracked fixture proves that both `SemanticIR` and `IntentIR` preserve:
+  - `clock_signal = HCLK`
+  - `edge = rising` with `cycle_window = 3..3` for `the third posedge of HCLK`
+  - `edge = falling` with `cycle_window.max_cycles = 2` for `within 2 negedges of HCLK`
+- The validation expectations in that same fixture also prove:
+  - `temporal_rules = 2`
+  - `temporal_rules_with_cycle_window = 2`
+  - `temporal_rules_missing_clock_grounding = 0`
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `cargo test -p specforge trailing_of_shorthand_edge` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-21 (KG benchmark now includes generic `clock edge(s) of <clock>` timing coverage)
 
 ### Added: tracked fixture coverage for generic clock-edge-of-clock timing phrasing
