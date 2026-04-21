@@ -1,5 +1,33 @@
 # CHANGES
 
+## 2026-04-21 (Plural shorthand-edge timing is now symmetry-locked)
+
+### Improved: the trailing shorthand-edge benchmark now proves plural `posedges` as well as plural `negedges`
+- Extended `crates/specforge/test_data/kg_quality/trailing_shorthand_edge_timing_gold/` with:
+  - `PENABLE must be asserted within 2 posedges of HCLK.`
+- The existing tracked fixture now locks three complementary forms together:
+  - exact singular rising shorthand: `the third posedge of HCLK`
+  - bounded plural rising shorthand: `within 2 posedges of HCLK`
+  - bounded plural falling shorthand: `within 2 negedges of HCLK`
+- This keeps the plural shorthand-edge family symmetric under regression instead of leaving the rising-side plural path only implied by shared detector logic.
+
+### Added: focused semantic and validator coverage for plural rising shorthand timing
+- `crates/specforge/src/ir/semantic.rs` now has a focused regression proving `PENABLE must be asserted within 2 posedges of HCLK.` preserves:
+  - `clock_signal = HCLK`
+  - `edge = rising`
+  - `cycle_window.max_cycles = 2`
+- `crates/specforge/src/commands/validate.rs` now proves both plural shorthand-edge rules stay grounded together in one intent-stage validation pass:
+  - `within 2 posedges of HCLK`
+  - `within 2 negedges of HCLK`
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge trailing_of_shorthand_edge` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-21 (Plural shorthand-edge timing now preserves explicit edge semantics)
 
 ### Fixed: plural `posedge` / `negedge` wording no longer falls back to the default edge

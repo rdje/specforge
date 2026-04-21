@@ -99,6 +99,16 @@
 - Focused benchmark coverage, focused `trailing_of_shorthand_edge` unit coverage, docs CI, full local CI, and whitespace checks passed for this slice.
 - The current local CI baseline is now `468` Rust tests plus warning-deny rustdoc and the mdBook build, and the tracked KG-quality suite now contains `105` fixtures.
 
+## Session update (2026-04-21 plural shorthand-edge symmetry lock)
+- Continued from commit `58d0333`, tightening the same temporal family without widening the model or adding a new benchmark family.
+- The prior slice fixed plural shorthand-edge semantics in code and directly proved the falling-side plural form, but the rising-side plural twin was still only implied by shared detector logic.
+- This slice makes that symmetry explicit:
+  - `trailing_shorthand_edge_timing_gold` now also carries `PENABLE must be asserted within 2 posedges of HCLK.`
+  - focused semantic regression now proves plural rising shorthand preserves `clock_signal = HCLK`, `edge = rising`, and `cycle_window.max_cycles = 2`
+  - validator coverage now proves plural rising and plural falling shorthand rules stay grounded together in one intent-stage report
+- The tracked benchmark surface size is unchanged at `105` fixtures because this is a hardening pass inside an existing fixture family, not a new benchmark family.
+- The current local CI baseline is now `469` Rust tests plus warning-deny rustdoc and the mdBook build.
+
 ## Session update (2026-04-21 trailing-`of <clock>` shorthand-edge grounding)
 - Continued from commit `6477b08`, closing another half-grounded temporal corner without widening truth.
 - `extract_cycle_window_from_text()` and `explicit_clock_edge_from_text()` already knew how to recover bounded windows and explicit edge kind from phrases like `the third posedge of HCLK` or `within 2 negedges of HCLK`, but `explicit_clock_signal_from_text()` could still drop the locally named clock unless the phrase used the diagram-position `... T4 of HCLK` family.

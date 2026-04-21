@@ -7,6 +7,21 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-21 Plural shorthand-edge hardening should prove the rising-side twin too
+- The previous slice fixed the real semantics bug for plural shorthand-edge wording.
+- But the direct end-to-end proof was still asymmetric.
+- We had explicit canonical proof for:
+  - `within 2 negedges of HCLK`
+- We did not yet have the same direct benchmark-grade proof for:
+  - `within 2 posedges of HCLK`
+- That is worth tightening because rising-side shorthand can look "obviously safe" while still only being implicitly covered by shared logic.
+- The right move is not another new fixture family.
+- The right move is to deepen the existing trailing shorthand-edge fixture so it proves:
+  - exact singular rising shorthand
+  - bounded plural rising shorthand
+  - bounded plural falling shorthand
+- That gives us stronger symmetry without inflating the benchmark corpus with redundant fixture families.
+
 ## 2026-04-21 Plural shorthand-edge phrasing should keep the explicit edge kind too
 - The new trailing shorthand-edge benchmark fixture immediately exposed a real semantic bug.
 - Phrases like:
