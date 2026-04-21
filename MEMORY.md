@@ -19,11 +19,13 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `328c30e`
-- latest_commit_brief_message: `feat(temporal): ground trailing shorthand edge clocks`
-- note: the latest committed baseline closes the remaining trailing-`of <clock>` shorthand-edge grounding gap, so phrases like `third posedge of HCLK` and `2 negedges of HCLK` now preserve the local `clock_signal` instead of staying half grounded
+- latest_commit_hash: `2bb624b`
+- latest_commit_brief_message: `test(temporal): lock clock-edge-of-clock phrasing`
+- note: the latest committed baseline regression-locks generic `clock edge(s) of <clock>` phrasing end to end, so forms like `clock edge T4 of HCLK` and `within 2 clock edges of HCLK` are now explicitly proven from parser through validator
 
 ## Recent commit chain (last 6)
+- `2bb624b` test(temporal): lock clock-edge-of-clock phrasing
+- `35960c7` docs(memory): sync trailing shorthand-edge baseline
 - `328c30e` feat(temporal): ground trailing shorthand edge clocks
 - `6477b08` docs(memory): sync unit-first diagram baseline
 - `54e0519` feat(temporal): ground unit-first diagram positions
@@ -53,7 +55,7 @@
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 17` of `origin/main`
+- branch state before the next commit: `ahead 19` of `origin/main`
 - push policy remains local-only for now; do not push in this slice
 - modified tracked files:
   - `MEMORY.md`
@@ -62,18 +64,19 @@
 
 ## Latest landed slice
 - outcome:
-  - shorthand-edge timing such as `third posedge of HCLK`, `2 negedges of HCLK`, and `2 rising edges of HCLK` now preserves the local `clock_signal`
-  - the parser already knew the explicit edge and bounded window for those phrases; this slice closes the remaining clock-grounding gap instead of widening timing semantics
-  - the widening stays bounded to explicit trailing `of <known clock>` shorthand-edge phrasing; arbitrary shorthand edge text still does not become a clock guess
+  - parser coverage now proves `clock edge T4 of HCLK` and `within 2 clock edges of HCLK` preserve both the expected bounded `cycle_window` and `clock_signal = HCLK`
+  - semantic coverage now proves `PREADY must be asserted on clock edge T4 of HCLK` preserves `clock_signal = HCLK`, `edge = rising`, and `cycle_window = 4..4`
+  - validator coverage now proves that same generic clock-edge-of-clock phrasing stays out of both missing-clock and missing-window warning paths
+  - the capability itself is unchanged; this slice removes an end-to-end regression blind spot around already-supported bounded timing language
 - verification passed:
   - `cargo fmt --all`
-  - `cargo test -p specforge trailing_of_shorthand_edge`
+  - `cargo test -p specforge clock_edge_of_clock`
   - `cargo test -p specforge cycle_window`
   - `cargo test -p specforge kg_bench_runs_tracked_fixtures`
   - `bash scripts/run_docs_ci.sh`
   - `bash scripts/run_ci.sh`
   - `git diff --check`
-- current full local CI baseline after the latest landed slice: `464` Rust tests plus warning-deny rustdoc and the mdBook build
+- current full local CI baseline after the latest landed slice: `467` Rust tests plus warning-deny rustdoc and the mdBook build
 - current tracked KG-quality suite size: `103` fixtures
 
 ## Next exact steps
