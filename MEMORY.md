@@ -19,11 +19,12 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `53ab31b`
-- latest_commit_brief_message: `docs(memory): sync shorthand edge grounding baseline`
-- note: the latest committed baseline captures the shorthand-edge grounding slice, including explicit `posedge` / `negedge` edge semantics in typed temporal rules
+- latest_commit_hash: `20852a8`
+- latest_commit_brief_message: `feat(temporal): ground explicit clock names from text`
+- note: the latest committed baseline preserves explicit local clock names from timing prose as canonical `clock_signal` grounding in typed temporal rules
 
 ## Recent commit chain (last 6)
+- `20852a8` feat(temporal): ground explicit clock names from text
 - `53ab31b` docs(memory): sync shorthand edge grounding baseline
 - `c1670e4` feat(temporal): ground shorthand edge timing
 - `eb78219` docs(memory): sync symbolic temporal parsing baseline
@@ -36,20 +37,12 @@
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 24` of `origin/main`
+- branch state before the next commit: `ahead 25` of `origin/main`
 - push policy remains local-only for now; do not push in this slice
 - modified tracked files:
-  - `CHANGES.md`
-  - `DEVELOPMENT_NOTES.md`
-  - `LIVE_ACHIEVEMENT_STATUS.md`
   - `MEMORY.md`
-  - `README.md`
-  - `RUST_CODEBASE_ANALYSIS.md`
-  - `crates/specforge/src/commands/validate.rs`
-  - `crates/specforge/src/ir/semantic.rs`
-  - `docs/book/src/domain/temporal-semantics.md`
-- the current feature slice is implemented, documented, and validated locally; the next step is the feature commit, followed by the required continuity refresh commit
-- this slice will cross the user's `25`-commit auto-push threshold after the two required commits, so push after the continuity refresh commit
+- the feature slice is already committed; only the required continuity refresh commit remains
+- the branch has now reached the user's `25`-commit auto-push threshold, so push after the continuity refresh commit
 
 ## Latest landed slice
 - outcome:
@@ -70,10 +63,8 @@
 - current tracked KG-quality suite size: `103` fixtures
 
 ## Next exact steps
-- write the feature commit message into `git_message_brief.txt`
-- stage only the intended tracked files for the explicit local clock-grounding slice
-- commit the feature slice with `git commit -F git_message_brief.txt`
-- truncate `git_message_brief.txt` back to `0` bytes and verify it remains untracked
-- refresh `MEMORY.md` so it points at the newly created feature commit
+- write the continuity commit message into `git_message_brief.txt`
+- stage only `MEMORY.md`
 - commit the continuity refresh with `git commit -F git_message_brief.txt`
+- truncate `git_message_brief.txt` back to `0` bytes and verify it remains untracked
 - truncate `git_message_brief.txt` back to `0` bytes, verify the worktree is clean except for the expected branch-ahead marker, then push because the branch will be past the user's `25`-commit threshold
