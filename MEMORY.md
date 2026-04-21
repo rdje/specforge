@@ -19,11 +19,12 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `78e51b0`
-- latest_commit_brief_message: `docs(memory): sync named next-clock window baseline`
-- note: the latest committed baseline captures the named next-clock window slice where phrases like `next ACLK cycle` and `next HCLK rising edge` preserve local clock grounding and recover `cycle_window = 1..1`
+- latest_commit_hash: `46c3870`
+- latest_commit_brief_message: `feat(temporal): recover generic clock-edge windows`
+- note: the latest committed baseline captures the generic clock-edge slice where phrases like `next clock edge`, `within 2 clock edges`, and `next HCLK edge` now participate in bounded temporal recovery without widening arbitrary `edge` guessing
 
 ## Recent commit chain (last 6)
+- `46c3870` feat(temporal): recover generic clock-edge windows
 - `78e51b0` docs(memory): sync named next-clock window baseline
 - `71b321d` feat(temporal): recover named one-cycle clock windows
 - `543c650` docs(memory): sync named cycle grounding baseline
@@ -44,19 +45,11 @@
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 6` of `origin/main`
+- branch state before the next commit: `ahead 7` of `origin/main`
 - push policy remains local-only for now; do not push in this slice
 - modified tracked files:
-  - `CHANGES.md`
-  - `DEVELOPMENT_NOTES.md`
-  - `LIVE_ACHIEVEMENT_STATUS.md`
   - `MEMORY.md`
-  - `README.md`
-  - `RUST_CODEBASE_ANALYSIS.md`
-  - `crates/specforge/src/commands/validate.rs`
-  - `crates/specforge/src/ir/semantic.rs`
-  - `docs/book/src/domain/temporal-semantics.md`
-- the current slice is implemented and fully validated in the worktree but not committed yet
+- the feature slice is already committed; only the required continuity refresh commit remains
 - do not push after this slice unless the user asks or the branch reaches the threshold again
 
 ## Latest landed slice
@@ -78,11 +71,6 @@
 - current tracked KG-quality suite size: `103` fixtures
 
 ## Next exact steps
-- write the feature commit message into `git_message_brief.txt`
-- stage only the intended tracked files for the generic clock-edge temporal slice
-- commit the feature with `git commit -F git_message_brief.txt`
-- truncate `git_message_brief.txt` back to `0` bytes
-- refresh `MEMORY.md` again so it points at the newly created feature commit hash/message
 - write the continuity commit message into `git_message_brief.txt`
 - stage only `MEMORY.md`
 - commit the continuity refresh with `git commit -F git_message_brief.txt`
