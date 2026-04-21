@@ -22,11 +22,13 @@
 - if `fsmgen` behavior looks wrong, file a local tracked bug report using `FSMGEN-BUG-####` instead of patching the submodule
 
 ## Latest committed baseline
-- latest_commit_hash: `cf26816`
-- latest_commit_brief_message: `feat(validation): route evidence semantic conflicts into rescans`
-- note: latest landed slice routes preserved evidence-stage signal-semantic conflicts into a bounded evidence-local replay plan
+- latest_commit_hash: `913d536`
+- latest_commit_brief_message: `feat(validation): route evidence polarity conflicts into rescans`
+- note: latest landed slice routes preserved evidence-stage signal-polarity conflicts into a bounded evidence-local replay plan
 
 ## Recent commit chain (last 5)
+- `913d536` feat(validation): route evidence polarity conflicts into rescans
+- `50f3ada` docs(memory): sync evidence semantic replay baseline
 - `cf26816` feat(validation): route evidence semantic conflicts into rescans
 - `dbce48e` docs(memory): sync semantic replay baseline
 - `86b71e8` feat(validation): route semantic conflicts into rescans
@@ -35,12 +37,12 @@
 
 ## Current repository state
 - active workspace member: `crates/specforge`
-- branch now includes local commit `cf26816` on top of `origin/main`; stay local unless the user asks to push or the 25-commit threshold is reached again
+- branch now includes local commits through `913d536` on top of `origin/main`; stay local unless the user asks to push or the 25-commit threshold is reached again
 - the README/SESSION_BOOTSTRAP handoff has been re-executed from the repo entrypoint and the referenced continuity docs have been reread
-- the latest landed slice routes preserved evidence-stage signal-semantic conflicts into a bounded replay lane:
-  - `validate` now emits `evidence_signal_semantic_conflict_surface_rescan_guidance` alongside the existing evidence-stage semantic-conflict warning
-  - `project-validation` now recognizes that finding as a narrower evidence-local `nlp-enrich -> validate` replay lane keyed by exact `semantic_conflict_*` ids
-  - the tracked fixtures `cross_modality_semantic_conflict_negative` and `negative_knowledge_prior_guided_semantic_conflict_caution_gold` now require the new evidence-stage replay guidance as well
+- the latest landed slice closes the matching evidence-stage polarity replay gap:
+  - `validate` now emits `evidence_signal_polarity_conflict_surface_rescan_guidance` alongside the existing evidence-stage polarity-conflict warning
+  - `project-validation` now recognizes that finding as a narrower evidence-local `nlp-enrich -> validate` replay lane keyed by exact `polarity_conflict_*` ids
+  - the tracked fixtures `control_polarity_conflict_negative` and `negative_knowledge_prior_guided_polarity_conflict_caution_gold` now require the new evidence-stage replay guidance as well
 - the feature commit touched:
   - `README.md`
   - `CHANGES.md`
@@ -49,10 +51,14 @@
   - `RUST_CODEBASE_ANALYSIS.md`
   - `crates/specforge/src/commands/project_validation.rs`
   - `crates/specforge/src/commands/validate.rs`
-  - `crates/specforge/test_data/kg_quality/cross_modality_semantic_conflict_negative/fixture.json`
-  - `crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_semantic_conflict_caution_gold/fixture.json`
+  - `crates/specforge/test_data/kg_quality/control_polarity_conflict_negative/fixture.json`
+  - `crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_polarity_conflict_caution_gold/fixture.json`
   - `docs/book/src/commands/quality-and-learning.md`
   - `docs/book/src/quality/validation.md`
+- the previously landed slice routes preserved evidence-stage signal-semantic conflicts into a bounded replay lane:
+  - `validate` now emits `evidence_signal_semantic_conflict_surface_rescan_guidance` alongside the existing evidence-stage semantic-conflict warning
+  - `project-validation` now recognizes that finding as a narrower evidence-local `nlp-enrich -> validate` replay lane keyed by exact `semantic_conflict_*` ids
+  - the tracked fixtures `cross_modality_semantic_conflict_negative` and `negative_knowledge_prior_guided_semantic_conflict_caution_gold` now require the new evidence-stage replay guidance as well
 - the latest landed slice routes preserved signal-semantic conflicts into the bounded replay lane:
   - `validate` now emits `semantic_signal_semantic_conflict_surface_rescan_guidance` / `intent_signal_semantic_conflict_surface_rescan_guidance` alongside the existing semantic-conflict warning
   - `project-validation` now recognizes those findings as the same local `EvidenceIR -> SemanticIR -> IntentIR? -> validate` replay lane used by other evidence-strength gaps
@@ -100,18 +106,20 @@
   - focused semantic/intent planner tests cover the new action text and replay-input recovery
   - the tracked fixture `temporal_clock_grounding_surface_negative` now locks the missing-clock-grounding metric plus semantic/intent replay guidance on a genuinely clockless typed temporal rule
 - the previously landed slice added temporal-cycle-window-specific `rescan_guidance` for typed canonical temporal rules that remain unbounded and projected it through `project-validation` as an `EvidenceIR -> SemanticIR -> IntentIR? -> validate` replay plan
-- validation for the latest landed evidence-stage semantic replay slice passed through:
+- validation completed for the current evidence-stage polarity replay slice:
   - `cargo fmt --all`
-  - `cargo test -p specforge validate_evidence_ir_flags_signal_semantic_conflicts`
-  - `cargo test -p specforge project_validation_collects_evidence_signal_semantic_conflict_rescan_guidance`
+  - `cargo test -p specforge validate_evidence_ir_flags_signal_polarity_conflicts`
+  - `cargo test -p specforge project_validation_collects_evidence_signal_polarity_conflict_rescan_guidance`
   - `cargo test -p specforge kg_bench_runs_tracked_fixtures`
+  - `bash scripts/run_docs_ci.sh`
   - `bash scripts/run_ci.sh`
   - `git diff --check`
-- the current full local CI baseline is `419` Rust tests plus warning-deny rustdoc and the mdBook build; the tracked KG-quality suite still contains `98` fixtures
+- the current full local CI baseline is `420` Rust tests plus warning-deny rustdoc and the mdBook build; the tracked KG-quality suite still contains `98` fixtures
 - README sentinel remains intact after the slice: `Read SESSION_BOOTSTRAP.md and start from there.`
 - current post-feature state:
   - only `MEMORY.md` remains modified in the working tree for the docs-only continuity sync commit
-  - after that commit, rerun the `git_message_brief.txt` post-conditions check and keep the branch local unless the user explicitly asks to push
+  - commit the continuity sync via `git_message_brief.txt`, clear the message file, and verify the post-conditions
+  - keep the branch local unless the user explicitly asks to push
 - latest committed adapter hardening adds sticky conflict collapse for duplicate explicit top-port direction declarations
 - the committed regression declares top port `drive_data` once as output and once as input; expected behavior is unresolved top-port direction in both the top candidate and selected signal inventory, blocked renderability, and no emitted `.fsm` target text
 - focused validation, the full adapter test module, docs CI, and full local CI passed for commit `6282875`; full local CI reported formatting, warning-deny Clippy, `340` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build
