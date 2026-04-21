@@ -19,11 +19,13 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `6d56ae9`
-- latest_commit_brief_message: `test(kg-bench): add clock-edge timing fixture`
-- note: the latest committed baseline adds a tracked KG-quality fixture for generic `clock edge(s) of <clock>` timing, so that phrasing family is now locked at the benchmark level as well as in unit coverage
+- latest_commit_hash: `91fa3f1`
+- latest_commit_brief_message: `fix(temporal): preserve plural shorthand edge semantics`
+- note: the latest committed baseline fixes plural shorthand-edge edge grounding so `posedges` / `negedges` preserve explicit edge semantics, and it also lands tracked KG-quality coverage for trailing shorthand-edge timing
 
 ## Recent commit chain (last 6)
+- `91fa3f1` fix(temporal): preserve plural shorthand edge semantics
+- `f7f9921` docs(memory): sync clock-edge fixture baseline
 - `6d56ae9` test(kg-bench): add clock-edge timing fixture
 - `3fc7e1a` docs(memory): sync clock-edge-of-clock baseline
 - `2bb624b` test(temporal): lock clock-edge-of-clock phrasing
@@ -57,23 +59,30 @@
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 21` of `origin/main`
+- branch state before the next commit: `ahead 23` of `origin/main`
 - push policy remains local-only for now; do not push in this slice
 - modified tracked files:
   - `MEMORY.md`
-- the feature slice is already committed; only the required continuity refresh commit remains
+- the feature slice is committed; only the required continuity refresh commit remains
 - do not push after this slice unless the user asks or the branch reaches the threshold again
 
 ## Latest landed slice
 - outcome:
-  - the new tracked fixture `clock_edge_of_clock_timing_gold` locks generic `clock edge(s) of <clock>` timing at the benchmark level
-  - the fixture proves exact `clock edge T4 of HCLK` timing and bounded `within 2 clock edges of HCLK` timing together in one reviewable corpus artifact
-  - validation expectations in that same fixture prove the grounded shape directly: no missing clock grounding, no missing cycle window, and both rules present
+  - `explicit_clock_edge_from_text()` now recognizes plural `posedges` and `negedges`, so plural shorthand-edge timing no longer silently falls back to `edge = rising`
+  - `crates/specforge/src/ir/semantic.rs` now has focused regression coverage proving `PSLVERR must be asserted within 2 negedges of HCLK.` preserves `clock_signal = HCLK`, `edge = falling`, and `cycle_window.max_cycles = 2`
+  - the new tracked fixture `crates/specforge/test_data/kg_quality/trailing_shorthand_edge_timing_gold/` benchmark-locks both:
+    - `PREADY must be asserted on the third posedge of HCLK.`
+    - `PSLVERR must be asserted within 2 negedges of HCLK.`
+  - the live docs now reflect both the semantic bug fix and the new benchmark coverage
 - verification passed:
+  - `cargo fmt --all`
   - `cargo test -p specforge kg_bench_runs_tracked_fixtures`
-  - `cargo test -p specforge clock_edge_of_clock`
-- current full local CI baseline after the latest landed slice remains `467` Rust tests plus warning-deny rustdoc and the mdBook build
-- current tracked KG-quality suite size after the latest landed slice: `104` fixtures
+  - `cargo test -p specforge trailing_of_shorthand_edge`
+  - `bash scripts/run_docs_ci.sh`
+  - `bash scripts/run_ci.sh`
+  - `git diff --check`
+- current tracked KG-quality suite size after the feature commit: `105` fixtures
+- current full local CI baseline after the feature commit: `468` Rust tests plus warning-deny rustdoc and the mdBook build
 
 ## Next exact steps
 - write the continuity commit message into `git_message_brief.txt`
