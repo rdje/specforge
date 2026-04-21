@@ -68,6 +68,18 @@
 - Focused parser, semantic, validator, tracked KG fixture, docs CI, full local CI, and whitespace checks passed for this slice.
 - The current local CI baseline is `467` Rust tests plus warning-deny rustdoc and the mdBook build, and the tracked KG-quality suite remains `103` fixtures.
 
+## Session update (2026-04-21 generic clock-edge-of-clock tracked fixture coverage)
+- Continued from commit `3fc7e1a`, raising the same temporal family into the tracked benchmark corpus instead of leaving it only in unit coverage.
+- Added `crates/specforge/test_data/kg_quality/clock_edge_of_clock_timing_gold/`, a minimal tracked fixture that locks both:
+  - exact diagram-style generic clock-edge timing: `clock edge T4 of HCLK`
+  - bounded generic clock-edge-of-clock timing: `within 2 clock edges of HCLK`
+- That fixture now proves, at the KG benchmark level, that both `SemanticIR` and `IntentIR` preserve:
+  - `clock_signal = HCLK`
+  - `edge = rising`
+  - the expected exact or bounded `cycle_window`
+- The validation expectations in the same fixture also prove the grounded shape directly instead of only relying on rule presence.
+- Focused benchmark coverage and focused `clock_edge_of_clock` unit coverage passed for this slice.
+- The current local CI baseline remains `467` Rust tests plus warning-deny rustdoc and the mdBook build, and the tracked KG-quality suite now contains `104` fixtures.
 ## Session update (2026-04-21 trailing-`of <clock>` shorthand-edge grounding)
 - Continued from commit `6477b08`, closing another half-grounded temporal corner without widening truth.
 - `extract_cycle_window_from_text()` and `explicit_clock_edge_from_text()` already knew how to recover bounded windows and explicit edge kind from phrases like `the third posedge of HCLK` or `within 2 negedges of HCLK`, but `explicit_clock_signal_from_text()` could still drop the locally named clock unless the phrase used the diagram-position `... T4 of HCLK` family.

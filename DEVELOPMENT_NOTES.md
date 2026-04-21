@@ -7,6 +7,21 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-21 Generic `clock edge(s) of <clock>` phrasing should be benchmark-locked too, not only unit-locked
+- After the last slice, generic clock-edge-of-clock phrasing was proven in parser, semantic, and validator unit coverage.
+- That was good, but still a bit too local.
+- For this project, the stronger contract lives in tracked KG fixtures too.
+- If a temporal phrasing family is important enough to document and unit-test, it is usually important enough to keep in the benchmark corpus.
+- The right next step is a small, explicit tracked fixture:
+  - one exact-position rule like `clock edge T4 of HCLK`
+  - one bounded rule like `within 2 clock edges of HCLK`
+- That keeps the coverage honest:
+  - exact and bounded variants are both exercised
+  - both `SemanticIR` and `IntentIR` are checked
+  - validation metrics prove the rules are grounded rather than merely present
+- This is not about widening capability.
+- It is about moving an already-supported temporal family into the higher-value regression lane.
+
 ## 2026-04-21 Generic `clock edge(s) of <clock>` phrasing should be regression-locked the same way neighboring temporal families already are
 - After the recent temporal slices, support for generic clock-edge-of-clock wording was already real:
   - `clock edge T4 of HCLK`

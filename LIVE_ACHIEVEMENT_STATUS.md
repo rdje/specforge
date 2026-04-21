@@ -75,6 +75,7 @@
 - KG benchmark harness can now assert canonical semantic grounding-strength shape directly: Done
 - KG benchmark harness now includes AXI write-response timing coverage: Done
 - KG benchmark harness now includes AXI write-response ID stability coverage: Done
+- KG benchmark harness now includes generic `clock edge(s) of <clock>` timing coverage: Done
 - KG benchmark harness now includes AXI read-address timing coverage: Done
 - KG benchmark harness now includes AXI read-address ID stability coverage: Done
 - KG benchmark harness now includes AXI write-address ID stability coverage: Done

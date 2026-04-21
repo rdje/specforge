@@ -1,5 +1,31 @@
 # CHANGES
 
+## 2026-04-21 (KG benchmark now includes generic `clock edge(s) of <clock>` timing coverage)
+
+### Added: tracked fixture coverage for generic clock-edge-of-clock timing phrasing
+- Added a new tracked KG-quality fixture at `crates/specforge/test_data/kg_quality/clock_edge_of_clock_timing_gold/` covering:
+  - `PREADY must be asserted on clock edge T4 of HCLK.`
+  - `PSLVERR must be asserted within 2 clock edges of HCLK.`
+- This strengthens the temporal contract at the benchmark level:
+  - parser coverage already existed
+  - semantic and validator unit coverage already existed
+  - now the same phrasing family is also locked through the tracked fixture harness used for project-quality regression checks
+
+### Added: benchmark expectations for exact and bounded generic clock-edge-of-clock timing
+- The new tracked fixture proves that both `SemanticIR` and `IntentIR` preserve:
+  - `clock_signal = HCLK`
+  - `edge = rising`
+  - `cycle_window = 4..4` for `clock edge T4 of HCLK`
+  - `cycle_window.max_cycles = 2` for `within 2 clock edges of HCLK`
+- The validation expectations in that same fixture also prove:
+  - `temporal_rules = 2`
+  - `temporal_rules_with_cycle_window = 2`
+  - `temporal_rules_missing_clock_grounding = 0`
+
+### Validation
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `cargo test -p specforge clock_edge_of_clock` -> passed
+
 ## 2026-04-21 (Generic `clock edge(s) of <clock>` phrasing is now regression-locked end to end)
 
 ### Improved: documented `clock edge(s) of <clock>` support is now proven through the semantic and validation layers too
