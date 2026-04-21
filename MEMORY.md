@@ -19,22 +19,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `b7c0a0e`
-- latest_commit_brief_message: `test(temporal): lock ordinal falling edge symmetry`
-- note: the latest committed baseline deepens the existing trailing shorthand-edge fixture family so exact ordinal falling-edge prose is benchmark-locked alongside the already-landed exact rising-edge and bounded word-edge forms
+- latest_commit_hash: `6cbf11f`
+- latest_commit_brief_message: `test(temporal): lock ordinal rising edge benchmark`
+- note: the latest committed baseline deepens the existing trailing shorthand-edge fixture family so exact ordinal rising-edge prose is benchmark-locked alongside the already-landed exact falling-edge and bounded edge-word forms
 
 ## Recent commit chain (last 6)
+- `6cbf11f` test(temporal): lock ordinal rising edge benchmark
+- `cb24e3b` docs(memory): sync ordinal falling-edge baseline
 - `b7c0a0e` test(temporal): lock ordinal falling edge symmetry
 - `9cf8a28` docs(memory): sync trailing falling edge-word baseline
 - `b46b341` test(temporal): lock trailing falling edge-word symmetry
 - `3859295` docs(memory): sync trailing edge-word baseline
-- `f782b64` test(temporal): lock trailing edge-word timing symmetry
-- `9db08cf` docs(memory): sync shorthand-edge symmetry baseline
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 5` of `origin/main`
+- branch state before the next commit: `ahead 7` of `origin/main`
 - modified tracked files:
 - `MEMORY.md`
 - the feature slice is committed; only the required continuity refresh commit remains
@@ -42,17 +42,15 @@
 
 ## Latest landed slice
 - outcome:
-  - the existing tracked fixture `trailing_shorthand_edge_timing_gold` now also proves exact ordinal falling-edge timing through `PWAKEUP must be asserted on the third falling edge of HCLK.`
-  - the trailing `of <clock>` local-clock extraction regression now covers `the third falling edge of HCLK`
-  - the existing ordinal semantic regression now proves both exact ordinal word-edge twins survive typed lowering with `cycle_window = 3..3`
-  - the existing explicit-clock validator regression now proves both exact ordinal word-edge rules stay fully grounded together
+  - the existing tracked fixture `trailing_shorthand_edge_timing_gold` now also proves exact ordinal rising-edge timing through `PGRANT must be asserted on the third rising edge of HCLK.`
+  - the trailing `of <clock>` local-clock extraction regression now covers `the third rising edge of HCLK`
+  - both `SemanticIR` and `IntentIR` now lock the full seven-rule temporal family end to end, including exact ordinal word-edge rules on both sides
   - the tracked KG fixture count stays at `105` because this is another hardening pass inside the same temporal fixture family, not a new fixture family
 - verification passed:
   - `cargo fmt --all`
   - `cargo test -p specforge extracts_trailing_of_shorthand_edge_clock_phrases`
   - `cargo test -p specforge derives_exact_cycle_window_from_ordinal_edge_constraint_text`
   - `cargo test -p specforge validate_intent_ir_does_not_flag_temporal_rules_missing_clock_grounding_for_explicit_clock_text`
-  - `cargo test -p specforge ordinal_edge_constraint_text`
   - `cargo test -p specforge kg_bench_runs_tracked_fixtures`
   - `bash scripts/run_docs_ci.sh`
   - `bash scripts/run_ci.sh`
