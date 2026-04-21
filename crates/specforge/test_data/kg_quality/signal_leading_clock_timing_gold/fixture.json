@@ -1,0 +1,194 @@
+{
+  "name": "signal_leading_clock_timing_gold",
+  "source": "source.md",
+  "evidence_ir_patch": {
+    "signal_constraints": [
+      {
+        "constraint_id": "sigcon_pready_hclk_rising_edge",
+        "subject_signal": "PREADY",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "PREADY must be asserted on HCLK rising edge.",
+        "supporting_statement_ids": ["stmt_hclk_rising_edge"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_pwakeup_hclk_falling_edge",
+        "subject_signal": "PWAKEUP",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "PWAKEUP must be asserted on HCLK falling edge.",
+        "supporting_statement_ids": ["stmt_hclk_falling_edge"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_psel_hclk_posedge",
+        "subject_signal": "PSEL",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "PSEL must be asserted on HCLK posedge.",
+        "supporting_statement_ids": ["stmt_hclk_posedge"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_pwrite_hclk_negedge",
+        "subject_signal": "PWRITE",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "PWRITE must be asserted on HCLK negedge.",
+        "supporting_statement_ids": ["stmt_hclk_negedge"],
+        "automation_confidence": "medium"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["PREADY", "PWAKEUP", "PSEL", "PWRITE"],
+      "temporal_rule_count": 4,
+      "temporal_rules_include": [
+        {
+          "source_text": "PREADY must be asserted on HCLK rising edge.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_hclk_rising_edge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PREADY",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PWAKEUP must be asserted on HCLK falling edge.",
+          "clock_signal": "HCLK",
+          "edge": "falling",
+          "supporting_statement_ids_include": ["stmt_hclk_falling_edge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PWAKEUP",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PSEL must be asserted on HCLK posedge.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_hclk_posedge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PSEL",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PWRITE must be asserted on HCLK negedge.",
+          "clock_signal": "HCLK",
+          "edge": "falling",
+          "supporting_statement_ids_include": ["stmt_hclk_negedge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PWRITE",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        }
+      ]
+    },
+    "intent": {
+      "signal_names_include": ["PREADY", "PWAKEUP", "PSEL", "PWRITE"],
+      "temporal_rule_count": 4,
+      "temporal_rules_include": [
+        {
+          "source_text": "PREADY must be asserted on HCLK rising edge.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_hclk_rising_edge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PREADY",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PWAKEUP must be asserted on HCLK falling edge.",
+          "clock_signal": "HCLK",
+          "edge": "falling",
+          "supporting_statement_ids_include": ["stmt_hclk_falling_edge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PWAKEUP",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PSEL must be asserted on HCLK posedge.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_hclk_posedge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PSEL",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PWRITE must be asserted on HCLK negedge.",
+          "clock_signal": "HCLK",
+          "edge": "falling",
+          "supporting_statement_ids_include": ["stmt_hclk_negedge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PWRITE",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        }
+      ]
+    },
+    "validation": {
+      "semantic": {
+        "metric_values": {
+          "temporal_rules": "4",
+          "temporal_rules_with_cycle_window": "0",
+          "temporal_rules_missing_clock_grounding": "0"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "temporal_rules": "4",
+          "temporal_rules_with_cycle_window": "0",
+          "temporal_rules_missing_clock_grounding": "0"
+        }
+      }
+    }
+  }
+}

@@ -7,6 +7,18 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Signal-leading clock timing should be benchmark-locked too
+- The signal-leading clock family is now in strong shape at the unit level:
+  - semantic coverage proves both edge-word and edge-token forms
+  - validator coverage proves both edge-word and edge-token forms
+- But it is still not represented in the tracked KG-quality corpus.
+- That means the family is locally well proved yet still absent from the public benchmark surface we use to protect stable extraction behavior over time.
+- The right move stays narrow:
+  - do not widen the parser or temporal model
+  - do not add a new capability row
+  - add one compact tracked fixture family that locks the four direct signal-leading local-clock forms end to end
+- That keeps the corpus honest and brings the benchmark surface into line with the already-landed unit proof surface.
+
 ## 2026-04-22 Signal-leading clock coverage should be lexically self-contained too
 - The previous slice made the signal-leading clock family symmetric in edge direction:
   - semantic coverage now proves `HCLK rising edge` and `HCLK falling edge`

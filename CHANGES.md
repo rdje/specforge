@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-04-22 (Signal-leading clock timing is now benchmark-locked too)
+
+### Improved: the tracked KG corpus now proves the full signal-leading local-clock family
+- Added `crates/specforge/test_data/kg_quality/signal_leading_clock_timing_gold/` so the tracked benchmark corpus now locks:
+  - `PREADY must be asserted on HCLK rising edge.`
+  - `PWAKEUP must be asserted on HCLK falling edge.`
+  - `PSEL must be asserted on HCLK posedge.`
+  - `PWRITE must be asserted on HCLK negedge.`
+- The new fixture proves those four forms through both `SemanticIR` and `IntentIR`, with:
+  - `clock_signal = HCLK`
+  - the correct preserved edge kind
+  - `temporal_rules_missing_clock_grounding = 0`
+- This does not widen the temporal model. It raises the already-landed signal-leading clock family into the tracked KG-quality corpus so the public benchmark surface matches the direct unit-proof surface.
+
+### Validation
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-22 (Signal-leading clock coverage is now lexically self-contained too)
 
 ### Improved: the direct signal-leading proof lane now carries both edge-word and edge-token forms
