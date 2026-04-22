@@ -4,7 +4,7 @@ resolver = "2"
 
 [workspace.package]
 edition = "2024"
-rust-version = "1.89"
+rust-version = "1.95"
 
 [workspace.dependencies]
 clap = { version = "4.5", features = ["derive"] }

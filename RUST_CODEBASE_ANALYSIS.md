@@ -4,6 +4,12 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-22 MSRV/toolchain alignment)
+- Continued from commit `4719d62`, this slice does not change Rust architecture or the staged IR model, but it does update the repo’s current toolchain contract.
+- The workspace `rust-version`, the hosted CI toolchain install, and the user-facing getting-started docs had still been pinned to Rust `1.89` even though the active compiler baseline had moved to `1.95`.
+- This slice raises the declared workspace MSRV to `1.95`, moves `.github/workflows/ci.yml` to Rust `1.95.0`, and updates the mdBook getting-started docs to the same version so the project advertises one consistent Rust floor.
+- Local `run_ci.sh` and whitespace checks passed after the alignment update.
+
 ## Session update (2026-04-22 named local zero-cycle lexical benchmark hardening)
 - Continued from commit `7ad8e6d`, still hardening the temporal proof surface rather than widening the parser, semantic model, or validation planner.
 - The named local zero-cycle family was already part of the parser/extraction design surface:

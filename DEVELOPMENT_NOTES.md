@@ -7,6 +7,21 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 MSRV is aligned to Rust 1.95 now
+- The repo’s declared minimum Rust version had fallen behind the actual toolchain bump:
+  - the workspace `Cargo.toml` still declared `rust-version = "1.89"`
+  - the GitHub Actions workflow still installed Rust `1.89.0`
+  - the public getting-started docs still told users to bring Rust `1.89.0`
+- That mismatch was the real risk:
+  - local development could move onto `1.95`
+  - while Cargo metadata, hosted CI, and user-facing docs still advertised `1.89`
+  - which would make support boundaries harder to reason about later
+- The right fix stayed narrow and explicit:
+  - raise the workspace `rust-version` to `1.95`
+  - update the hosted CI workflow to `1.95.0`
+  - update the public getting-started docs to the same floor
+- That leaves the repo with one clear Rust baseline instead of three competing ones.
+
 ## 2026-04-22 Named local zero-cycle benchmark lexical coverage is hardened now
 - The named local zero-cycle family was already part of the repo’s temporal extraction surface:
   - `same ACLK cycle`

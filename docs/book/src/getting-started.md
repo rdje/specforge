@@ -4,7 +4,7 @@ This chapter is the shortest path from clone to useful output.
 
 ## What you need
 
-- Rust `1.89.0`
+- Rust `1.95.0`
 - a working Docling Python runtime for PDF ingest
 - a local multimodal model path:
   - Ollama is the default

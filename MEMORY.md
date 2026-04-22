@@ -19,43 +19,50 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `9e45c1f`
-- latest_commit_brief_message: `test(kg-bench): harden named zero-cycle lexical coverage`
-- note: the latest committed baseline records the named local zero-cycle lexical benchmark hardening checkpoint together with the full-CI root-cause cleanup that restored `run_ci.sh`
+- latest_commit_hash: `4719d62`
+- latest_commit_brief_message: `docs(memory): sync named zero-cycle lexical baseline`
+- note: the latest committed baseline records the continuity refresh immediately after the named local zero-cycle lexical benchmark hardening checkpoint
 
 ## Recent commit chain (last 6)
+- `4719d62` docs(memory): sync named zero-cycle lexical baseline
 - `9e45c1f` test(kg-bench): harden named zero-cycle lexical coverage
 - `7ad8e6d` docs(memory): sync named one-cycle lexical baseline
 - `bce577b` test(kg-bench): harden named one-cycle lexical coverage
 - `0175a30` docs(memory): sync default explicit-edge baseline
 - `1a8ac65` test(kg-bench): harden default explicit-edge lexical coverage
-- `3663e53` docs(memory): sync generic clock-edge baseline
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 17` of `origin/main`
+- branch state before the next commit: `ahead 18` of `origin/main`
 - modified tracked files:
+- `Cargo.toml`
+- `.github/workflows/ci.yml`
+- `docs/book/src/getting-started.md`
+- `CHANGES.md`
+- `DEVELOPMENT_NOTES.md`
 - `MEMORY.md`
-- the feature slice is committed and only the continuity refresh remains
+- `RUST_CODEBASE_ANALYSIS.md`
+- the MSRV alignment slice is in progress and ready for verification
 
 ## Current in-flight slice
 - objective:
-  - preserve the latest committed baseline after landing the named local zero-cycle lexical benchmark hardening slice and the full-CI root-cause cleanup
+  - align the declared workspace MSRV, hosted CI toolchain, and public getting-started docs to Rust `1.95` after the toolchain bump
 - tracker effect:
-  - no live-status row change is expected in this continuity-only commit
+  - no live-status row change is expected in this maintenance slice
 - current tracked KG-quality suite size in the latest committed baseline:
   - `125` fixtures
 - verification status:
-  - feature commit `9e45c1f` is complete
-  - `cargo fmt --all` passed
-  - `cargo test -p specforge kg_bench_runs_tracked_fixtures` passed
-  - `bash scripts/run_docs_ci.sh` passed
+  - metadata and tracked-doc updates are staged in the worktree
   - `bash scripts/run_ci.sh` passed
   - `git diff --check` passed
 - current known local CI baseline:
   - `473` Rust tests plus warning-deny rustdoc and the mdBook build
 
 ## Next exact steps
+- run `bash scripts/run_ci.sh`
+- run `git diff --check`
+- commit the feature slice
+- refresh `MEMORY.md` again so the latest committed baseline points at that new feature commit
 - create the continuity commit
 - do not push because the branch will remain below the `25`-commit threshold

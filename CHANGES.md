@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-04-22 (MSRV is now aligned to Rust 1.95)
+
+### Improved: the declared Rust floor now matches the bumped toolchain baseline
+- Updated the workspace `rust-version` in `Cargo.toml` from `1.89` to `1.95`.
+- Updated `.github/workflows/ci.yml` so the hosted CI toolchain now installs Rust `1.95.0`.
+- Updated `docs/book/src/getting-started.md` so the user-facing setup docs now advertise Rust `1.95.0`.
+- This keeps the declared MSRV, the CI environment, and the public getting-started surface aligned after the toolchain bump.
+
+### Validation
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-22 (Named local zero-cycle benchmark coverage now proves the full lexical lane)
 
 ### Improved: the tracked KG corpus now proves follow-on named zero-cycle phrasing inside the existing family
