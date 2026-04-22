@@ -86,6 +86,7 @@
 - KG benchmark harness now includes unit-first diagram-position timing coverage: Done
 - KG benchmark harness now includes tick-unit timing coverage: Done
 - KG benchmark harness now includes shorthand next-edge timing coverage: Done
+- KG benchmark harness now includes explicit later-phrase timing coverage: Done
 - KG benchmark harness now includes AXI read-address timing coverage: Done
 - KG benchmark harness now includes AXI read-address ID stability coverage: Done
 - KG benchmark harness now includes AXI write-address ID stability coverage: Done
