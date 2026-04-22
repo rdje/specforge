@@ -19,40 +19,35 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `eaee035`
-- latest_commit_brief_message: `docs(memory): sync later-phrase fixture baseline`
-- note: the latest committed baseline records the latest continuity checkpoint after the later-phrase benchmark slice
+- latest_commit_hash: `d90db84`
+- latest_commit_brief_message: `test(kg-bench): add next-tick timing fixture`
+- note: the latest committed baseline records the slice where idiomatic next-tick timing entered the tracked KG-quality corpus
 
 ## Recent commit chain (last 6)
+- `d90db84` test(kg-bench): add next-tick timing fixture
 - `eaee035` docs(memory): sync later-phrase fixture baseline
 - `dc62db6` test(kg-bench): add later-phrase timing fixture
 - `55df3a3` docs(memory): sync shorthand next-edge fixture baseline
 - `d60d1e3` test(kg-bench): add shorthand next-edge timing fixture
 - `2804882` docs(memory): sync tick-unit fixture baseline
-- `08f3858` test(kg-bench): add tick-unit timing fixture
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 12` of `origin/main`
+- branch state before the next commit: `ahead 13` of `origin/main`
 - modified tracked files:
 - `MEMORY.md`
-- `CHANGES.md`
-- `DEVELOPMENT_NOTES.md`
-- `LIVE_ACHIEVEMENT_STATUS.md`
-- `RUST_CODEBASE_ANALYSIS.md`
-- `crates/specforge/test_data/kg_quality/next_tick_timing_gold/fixture.json`
-- `crates/specforge/test_data/kg_quality/next_tick_timing_gold/source.md`
-- the new slice is now in flight locally and has not been validated or committed yet
+- the feature slice is committed; only the required continuity refresh remains before the repo returns to a clean post-slice state
 
 ## Current in-flight slice
 - objective:
-  - raise the already-landed idiomatic next-tick temporal family into the tracked KG-quality benchmark corpus
+  - complete the mandatory post-feature continuity refresh for the next-tick benchmark slice
 - tracker effect:
-  - move `KG benchmark harness now includes idiomatic next-tick timing coverage` to `Done`
+  - no further tracker change is expected in the continuity commit; the feature commit already moved `KG benchmark harness now includes idiomatic next-tick timing coverage` to `Done`
 - current tracked KG-quality suite size after validation:
   - `116` fixtures
 - verification status:
+  - feature commit `d90db84` already landed cleanly
   - `cargo fmt --all` passed
   - `cargo test -p specforge kg_bench_runs_tracked_fixtures` passed
   - `bash scripts/run_docs_ci.sh` passed
@@ -62,6 +57,7 @@
   - `473` Rust tests plus warning-deny rustdoc and the mdBook build
 
 ## Next exact steps
-- create the feature commit for the next-tick benchmark fixture slice
-- refresh `MEMORY.md` again for the required continuity commit
+- write the continuity commit message into `git_message_brief.txt`
+- stage only `MEMORY.md`
+- create the required continuity commit, truncate `git_message_brief.txt`, and verify post-conditions again
 - do not push because the branch remains below the `25`-commit threshold
