@@ -1,5 +1,26 @@
 # CHANGES
 
+## 2026-04-22 (Named one-cycle benchmark coverage now proves the full lexical lane)
+
+### Improved: the tracked KG corpus now proves follow-on named one-cycle phrasing inside the existing family
+- Expanded `crates/specforge/test_data/kg_quality/named_next_clock_timing_gold/` so the tracked benchmark corpus now locks:
+  - `PREADY must be asserted on the next ACLK cycle.`
+  - `PENABLE must be asserted on the following HCLK edge.`
+  - `PSEL must be asserted on the subsequent HCLK rising edge.`
+- The expanded fixture proves those forms through both `SemanticIR` and `IntentIR`, with:
+  - preserved local `clock_signal`
+  - `edge = rising`
+  - `cycle_window = 1..1`
+  - `temporal_rules_missing_clock_grounding = 0`
+- This does not widen the temporal model or add a new benchmark family. It hardens the already-landed named one-cycle local-clock surface so the tracked corpus now covers the full supported lexical lane.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-22 (Default-clock explicit edge benchmark coverage now proves the full lexical lane)
 
 ### Improved: the tracked KG corpus now proves follow-on explicit edge phrasing inside the existing default-clock family

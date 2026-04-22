@@ -4,6 +4,19 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-22 named one-cycle lexical benchmark hardening)
+- Continued from commit `0175a30`, still hardening the temporal proof surface rather than widening the parser, semantic model, or validation planner.
+- The named one-cycle local-clock family was already part of the parser/extraction design surface:
+  - `next ACLK cycle`
+  - `following HCLK edge`
+  - `subsequent HCLK rising edge`
+- But the tracked KG-quality benchmark corpus only locked canonical `next` spellings across that family.
+- This slice deepens `crates/specforge/test_data/kg_quality/named_next_clock_timing_gold/` so the existing fixture family now proves all three supported one-cycle lexical spellings through both `SemanticIR` and `IntentIR`, with `temporal_rules_with_cycle_window = 3` and `temporal_rules_missing_clock_grounding = 0`.
+- The tracked KG-quality suite size stays flat because this is a lexical hardening pass inside an already-landed benchmark family, not a new corpus family.
+- Focused tracked-fixture coverage, docs CI, full local CI, and whitespace checks passed for this slice.
+- The current full local CI baseline remains `473` Rust tests plus warning-deny rustdoc and the mdBook build.
+- The tracked KG-quality suite remains `125` fixtures.
+
 ## Session update (2026-04-22 default-clock explicit edge lexical benchmark hardening)
 - Continued from commit `3663e53`, still hardening the temporal proof surface rather than widening the parser, semantic model, or validation planner.
 - The default-clock explicit edge family was already part of the parser/extraction design surface:

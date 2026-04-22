@@ -15,25 +15,25 @@
         "automation_confidence": "medium"
       },
       {
-        "constraint_id": "sigcon_penable_next_hclk_edge",
+        "constraint_id": "sigcon_penable_following_hclk_edge",
         "subject_signal": "PENABLE",
         "constraint_kind": { "kind": "must_be_asserted" },
         "target_value": null,
         "condition_text": null,
         "negated": false,
-        "source_text": "PENABLE must be asserted on the next HCLK edge.",
-        "supporting_statement_ids": ["stmt_next_hclk_edge"],
+        "source_text": "PENABLE must be asserted on the following HCLK edge.",
+        "supporting_statement_ids": ["stmt_following_hclk_edge"],
         "automation_confidence": "medium"
       },
       {
-        "constraint_id": "sigcon_psel_next_hclk_rising_edge",
+        "constraint_id": "sigcon_psel_subsequent_hclk_rising_edge",
         "subject_signal": "PSEL",
         "constraint_kind": { "kind": "must_be_asserted" },
         "target_value": null,
         "condition_text": null,
         "negated": false,
-        "source_text": "PSEL must be asserted on the next HCLK rising edge.",
-        "supporting_statement_ids": ["stmt_next_hclk_rising_edge"],
+        "source_text": "PSEL must be asserted on the subsequent HCLK rising edge.",
+        "supporting_statement_ids": ["stmt_subsequent_hclk_rising_edge"],
         "automation_confidence": "medium"
       }
     ]
@@ -62,14 +62,14 @@
           ]
         },
         {
-          "source_text": "PENABLE must be asserted on the next HCLK edge.",
+          "source_text": "PENABLE must be asserted on the following HCLK edge.",
           "clock_signal": "HCLK",
           "edge": "rising",
           "cycle_window": {
             "min_cycles": 1,
             "max_cycles": 1
           },
-          "supporting_statement_ids_include": ["stmt_next_hclk_edge"],
+          "supporting_statement_ids_include": ["stmt_following_hclk_edge"],
           "consequents_include": [
             {
               "kind": "signal_value",
@@ -80,14 +80,14 @@
           ]
         },
         {
-          "source_text": "PSEL must be asserted on the next HCLK rising edge.",
+          "source_text": "PSEL must be asserted on the subsequent HCLK rising edge.",
           "clock_signal": "HCLK",
           "edge": "rising",
           "cycle_window": {
             "min_cycles": 1,
             "max_cycles": 1
           },
-          "supporting_statement_ids_include": ["stmt_next_hclk_rising_edge"],
+          "supporting_statement_ids_include": ["stmt_subsequent_hclk_rising_edge"],
           "consequents_include": [
             {
               "kind": "signal_value",
@@ -122,14 +122,14 @@
           ]
         },
         {
-          "source_text": "PENABLE must be asserted on the next HCLK edge.",
+          "source_text": "PENABLE must be asserted on the following HCLK edge.",
           "clock_signal": "HCLK",
           "edge": "rising",
           "cycle_window": {
             "min_cycles": 1,
             "max_cycles": 1
           },
-          "supporting_statement_ids_include": ["stmt_next_hclk_edge"],
+          "supporting_statement_ids_include": ["stmt_following_hclk_edge"],
           "consequents_include": [
             {
               "kind": "signal_value",
@@ -140,14 +140,14 @@
           ]
         },
         {
-          "source_text": "PSEL must be asserted on the next HCLK rising edge.",
+          "source_text": "PSEL must be asserted on the subsequent HCLK rising edge.",
           "clock_signal": "HCLK",
           "edge": "rising",
           "cycle_window": {
             "min_cycles": 1,
             "max_cycles": 1
           },
-          "supporting_statement_ids_include": ["stmt_next_hclk_rising_edge"],
+          "supporting_statement_ids_include": ["stmt_subsequent_hclk_rising_edge"],
           "consequents_include": [
             {
               "kind": "signal_value",

@@ -7,6 +7,22 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Named one-cycle benchmark lexical coverage is hardened now
+- The named one-cycle local-clock family was already part of the repo’s temporal extraction surface:
+  - `next ACLK cycle`
+  - `following HCLK edge`
+  - `subsequent HCLK rising edge`
+- But the tracked KG-quality corpus had only been proving the canonical `next` spellings across that family.
+- That left a lexical asymmetry inside an already-done benchmark family:
+  - next-tick timing now proves the full `next` / `following` / `subsequent` lane
+  - generic clock-edge timing now proves that same one-cycle lexical lane
+  - named one-cycle local-clock timing still only proved `next` spellings even though the parser already supported the wider surface
+- The right move stayed at the root of that asymmetry:
+  - do not widen the parser or temporal model
+  - do not create another tiny tracker row for a capability that already exists
+  - deepen the existing `named_next_clock_timing_gold` fixture so it proves the full named one-cycle lexical lane through both `SemanticIR` and `IntentIR`
+- That now keeps the benchmark corpus aligned with the parser’s supported named local-clock aliases and makes the existing family harder to regress silently.
+
 ## 2026-04-22 Default-clock explicit edge benchmark lexical coverage is hardened now
 - The default-clock explicit edge family was already part of the repo’s temporal extraction surface:
   - `next rising edge`

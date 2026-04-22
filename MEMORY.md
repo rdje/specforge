@@ -19,35 +19,39 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `1a8ac65`
-- latest_commit_brief_message: `test(kg-bench): harden default explicit-edge lexical coverage`
-- note: the latest committed baseline records the default-clock explicit-edge lexical benchmark hardening checkpoint
+- latest_commit_hash: `0175a30`
+- latest_commit_brief_message: `docs(memory): sync default explicit-edge baseline`
+- note: the latest committed baseline records the continuity refresh immediately after the default-clock explicit-edge lexical benchmark hardening checkpoint
 
 ## Recent commit chain (last 6)
+- `0175a30` docs(memory): sync default explicit-edge baseline
 - `1a8ac65` test(kg-bench): harden default explicit-edge lexical coverage
 - `3663e53` docs(memory): sync generic clock-edge baseline
 - `1dc4960` test(kg-bench): harden generic clock-edge lexical coverage
-- `65f7748` docs(memory): sync shorthand next-edge baseline
 - `a7fdb93` test(kg-bench): harden shorthand next-edge lexical coverage
 - `efbebe8` docs(memory): sync next-tick lexical baseline
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 13` of `origin/main`
+- branch state before the next commit: `ahead 14` of `origin/main`
 - modified tracked files:
+- `CHANGES.md`
+- `DEVELOPMENT_NOTES.md`
 - `MEMORY.md`
-- the feature slice is committed and only the continuity refresh remains
+- `RUST_CODEBASE_ANALYSIS.md`
+- `crates/specforge/test_data/kg_quality/named_next_clock_timing_gold/fixture.json`
+- the named one-cycle lexical hardening slice is in progress and ready for verification
 
 ## Current in-flight slice
 - objective:
-  - preserve the latest committed baseline after landing the default-clock explicit-edge lexical benchmark hardening slice
+  - harden the named one-cycle local-clock benchmark family so the tracked corpus proves the supported `next` / `following` / `subsequent` lexical lane instead of only canonical `next` spellings
 - tracker effect:
-  - no live-status row change is expected in this continuity-only commit
+  - no live-status row change is expected in this reliability-hardening slice
 - current tracked KG-quality suite size in the latest committed baseline:
   - `125` fixtures
 - verification status:
-  - feature commit `1a8ac65` is complete
+  - fixture and tracked-doc updates are staged in the worktree
   - `cargo fmt --all` passed
   - `cargo test -p specforge kg_bench_runs_tracked_fixtures` passed
   - `bash scripts/run_docs_ci.sh` passed
@@ -57,5 +61,7 @@
   - `473` Rust tests plus warning-deny rustdoc and the mdBook build
 
 ## Next exact steps
-- create the continuity commit that records that new baseline
+- commit the feature slice
+- refresh `MEMORY.md` again so the latest committed baseline points at that new feature commit
+- create the continuity commit
 - do not push because the branch will remain below the `25`-commit threshold
