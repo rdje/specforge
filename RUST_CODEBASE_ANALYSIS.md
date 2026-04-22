@@ -4,6 +4,20 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-22 clock-edge-of-clock signal-leading exact hardening)
+- Continued from commit `65943a0`, still hardening the temporal proof surface rather than widening the parser, semantic model, or validation planner.
+- The `clock edge(s) of <clock>` family was already part of the parser and extraction design surface:
+  - `clock edge T4 of HCLK`
+  - `within 2 clock edges of HCLK`
+  - `HCLK clock edge T5`
+- But the tracked KG-quality benchmark corpus and the direct clock-edge-of-clock tests still only locked the trailing exact spelling and the trailing bounded spelling.
+- This slice deepens `crates/specforge/test_data/kg_quality/clock_edge_of_clock_timing_gold/` so the existing fixture family now proves the signal-leading exact `clock edge` spelling through both `SemanticIR` and `IntentIR`, with `temporal_rules_with_cycle_window = 3` and `temporal_rules_missing_clock_grounding = 0`.
+- It also expands the direct semantic and validator regressions so clock-edge-of-clock variants are protected outside the benchmark harness.
+- The tracked KG-quality suite size stays flat because this is a lexical hardening pass inside an already-landed benchmark family, not a new corpus family.
+- Focused semantic regression coverage, validator coverage, tracked-fixture coverage, docs CI, full local CI, and whitespace checks passed for this slice.
+- The current full local CI baseline remains `476` Rust tests plus warning-deny rustdoc and the mdBook build.
+- The tracked KG-quality suite remains `125` fixtures.
+
 ## Session update (2026-04-22 named quantified signal-leading ordinal hardening)
 - Continued from commit `9f46e35`, still hardening the temporal proof surface rather than widening the parser, semantic model, or validation planner.
 - The named quantified and ordinal generic-edge family was already part of the parser and extraction design surface:

@@ -1,5 +1,26 @@
 # CHANGES
 
+## 2026-04-22 (Clock-edge-of-clock benchmark coverage now proves the signal-leading exact lane)
+
+### Improved: the tracked KG corpus now proves the signal-leading exact `clock edge` spelling inside the existing family
+- Expanded `crates/specforge/test_data/kg_quality/clock_edge_of_clock_timing_gold/` so the tracked benchmark corpus now also locks:
+  - `PENABLE must be asserted on HCLK clock edge T5.`
+- The expanded fixture now proves the `clock edge(s) of <clock>` family through both `SemanticIR` and `IntentIR`, including:
+  - `clock edge T4 of HCLK`
+  - `within 2 clock edges of HCLK`
+  - `HCLK clock edge T5`
+- Added direct semantic and validator coverage for the signal-leading exact `clock edge` variant so regressions in that lane fail outside the benchmark harness too.
+- This does not widen the temporal model or add a new benchmark family. It hardens the already-landed `clock edge(s) of <clock>` surface so the tracked corpus and direct tests now cover the supported signal-leading exact lane.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge derives_clock_edge_of_clock_variants` -> passed
+- `cargo test -p specforge validate_intent_ir_does_not_flag_temporal_rules_missing_grounding_for_clock_edge_of_clock_variants` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-22 (Named quantified benchmark coverage now proves the signal-leading ordinal lane)
 
 ### Improved: the tracked KG corpus now proves the signal-leading ordinal named-edge spelling inside the existing family

@@ -7,6 +7,21 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Clock-edge-of-clock signal-leading exact coverage is hardened now
+- The `clock edge(s) of <clock>` family was already part of the parser and extraction surface:
+  - `clock edge T4 of HCLK`
+  - `within 2 clock edges of HCLK`
+  - `HCLK clock edge T5`
+- But the tracked KG-quality corpus and the direct semantic plus validator tests still only locked the trailing exact spelling and the trailing bounded spelling.
+- That left the family under-proved in one specific way:
+  - the signal-leading exact `HCLK clock edge ...` lane could regress without a tracked corpus failure or a direct local proof
+- The right fix stayed at the root of that asymmetry:
+  - do not widen the parser or temporal model
+  - do not create another tiny benchmark family for a capability that already exists
+  - deepen the existing `clock_edge_of_clock_timing_gold` fixture so it proves the remaining supported signal-leading exact spelling through both `SemanticIR` and `IntentIR`
+  - add direct semantic and validator assertions so the signal-leading exact lane is guarded before and alongside the tracked benchmark harness
+- That now keeps the benchmark corpus and direct regressions aligned with the parser’s supported `clock edge(s) of <clock>` surface.
+
 ## 2026-04-22 Named quantified signal-leading ordinal coverage is hardened now
 - The named quantified and ordinal generic-edge family was already part of the parser and extraction surface:
   - `within 2 HCLK edges`
