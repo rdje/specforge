@@ -19,40 +19,35 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `2b6d848`
-- latest_commit_brief_message: `docs(memory): sync bounded-cycle fixture baseline`
-- note: the latest committed baseline records the latest continuity checkpoint after the generic bounded-cycle slice
+- latest_commit_hash: `e14da0c`
+- latest_commit_brief_message: `test(kg-bench): add range-cycle timing fixture`
+- note: the latest committed baseline records the latest benchmark checkpoint after the generic range-cycle slice
 
 ## Recent commit chain (last 6)
+- `e14da0c` test(kg-bench): add range-cycle timing fixture
 - `2b6d848` docs(memory): sync bounded-cycle fixture baseline
 - `769d121` test(kg-bench): add bounded-cycle timing fixture
 - `5316b79` docs(memory): sync generic next-cycle fixture baseline
 - `575b174` test(kg-bench): add generic next-cycle timing fixture
 - `5410478` docs(memory): sync zero-cycle fixture baseline
-- `8613510` test(kg-bench): add zero-cycle timing fixture
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 22` of `origin/main`
+- branch state before the next commit: `ahead 23` of `origin/main`
 - modified tracked files:
-- `CHANGES.md`
-- `DEVELOPMENT_NOTES.md`
-- `LIVE_ACHIEVEMENT_STATUS.md`
 - `MEMORY.md`
-- `RUST_CODEBASE_ANALYSIS.md`
-- `crates/specforge/test_data/kg_quality/generic_range_cycle_timing_gold/fixture.json`
-- `crates/specforge/test_data/kg_quality/generic_range_cycle_timing_gold/source.md`
-- the new slice is verified locally and ready for the feature commit workflow
+- the feature slice is committed and only the continuity refresh remains before the worktree returns to clean
 
 ## Current in-flight slice
 - objective:
-  - raise the already-landed generic range and one-sided cycle family into the tracked KG-quality benchmark corpus
+  - preserve the latest committed baseline after landing the generic range-cycle benchmark slice
 - tracker effect:
-  - move `KG benchmark harness now includes generic range cycle timing coverage` to `Done`
-- current tracked KG-quality suite size in the verified worktree:
+  - no additional tracker change is expected in this continuity-only commit
+- current tracked KG-quality suite size in the latest committed baseline:
   - `121` fixtures
 - verification status:
+  - feature commit `e14da0c` is complete
   - `cargo fmt --all` passed
   - `cargo test -p specforge kg_bench_runs_tracked_fixtures` passed
   - `bash scripts/run_docs_ci.sh` passed
@@ -62,7 +57,7 @@
   - `473` Rust tests plus warning-deny rustdoc and the mdBook build
 
 ## Next exact steps
-- create the feature commit for the generic range-cycle benchmark fixture slice
-- refresh `MEMORY.md` again for the required continuity commit
 - create the continuity commit that records the feature-commit baseline
+- verify that `git_message_brief.txt` is truncated back to `0` bytes and remains untracked
+- verify that the worktree is clean after the continuity commit
 - do not push because the branch remains below the `25`-commit threshold
