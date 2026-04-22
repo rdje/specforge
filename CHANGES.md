@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-04-22 (Named diagram-edge benchmark coverage now proves the full lexical lane)
+
+### Improved: the tracked KG corpus now proves both named generic-edge diagram spellings inside the existing family
+- Expanded `crates/specforge/test_data/kg_quality/named_diagram_edge_timing_gold/` so the tracked benchmark corpus now also locks:
+  - `PENABLE must be asserted on HCLK edge T4.`
+- The expanded fixture now proves the named diagram-edge family through both `SemanticIR` and `IntentIR`, including:
+  - `edge T3 of HCLK`
+  - `HCLK edge T4`
+- Added direct semantic and validator coverage for those named diagram-edge variants so regressions in the signal-leading lane fail outside the benchmark harness too.
+- This does not widen the temporal model or add a new benchmark family. It hardens the already-landed named diagram-edge surface so the tracked corpus and direct tests now cover the full supported lexical lane.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge derives_named_diagram_edge_variants` -> passed
+- `cargo test -p specforge validate_intent_ir_does_not_flag_temporal_rules_missing_grounding_for_named_diagram_edge_variants` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-22 (Unit-first diagram-position benchmark coverage now proves the full lexical lane)
 
 ### Improved: the tracked KG corpus now proves follow-on unit-first local-clock phrasing inside the existing family

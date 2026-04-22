@@ -7,6 +7,20 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Named diagram-edge lexical coverage is hardened now
+- The named generic-edge diagram family was already part of the parser and extraction surface:
+  - `edge T3 of HCLK`
+  - `HCLK edge T4`
+- But the tracked KG-quality corpus and the direct semantic plus validator tests still only locked the trailing `edge ... of HCLK` spelling.
+- That left the named diagram-edge family under-proved in one specific way:
+  - the signal-leading `HCLK edge ...` lane could regress without a tracked corpus failure or a direct local proof
+- The right fix stayed at the root of that asymmetry:
+  - do not widen the parser or temporal model
+  - do not create another tiny benchmark family for a capability that already exists
+  - deepen the existing `named_diagram_edge_timing_gold` fixture so it proves the remaining supported named diagram-edge spelling through both `SemanticIR` and `IntentIR`
+  - add direct semantic and validator assertions so the signal-leading named diagram-edge lane is guarded before and alongside the tracked benchmark harness
+- That now keeps the benchmark corpus and direct regressions aligned with the parser’s supported named generic-edge diagram surface.
+
 ## 2026-04-22 Unit-first diagram-position lexical coverage is hardened now
 - The unit-first local-clock diagram family was already part of the parser and extraction surface:
   - `tick T3 of HCLK`

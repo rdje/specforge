@@ -4,6 +4,19 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-22 named diagram-edge hardening)
+- Continued from commit `1629861`, still hardening the temporal proof surface rather than widening the parser, semantic model, or validation planner.
+- The named generic-edge diagram family was already part of the parser and extraction design surface:
+  - `edge T3 of HCLK`
+  - `HCLK edge T4`
+- But the tracked KG-quality benchmark corpus and the direct named diagram-edge tests still only locked the trailing `edge ... of HCLK` spelling.
+- This slice deepens `crates/specforge/test_data/kg_quality/named_diagram_edge_timing_gold/` so the existing fixture family now proves the signal-leading named generic-edge spelling through both `SemanticIR` and `IntentIR`, with `temporal_rules_with_cycle_window = 2` and `temporal_rules_missing_clock_grounding = 0`.
+- It also expands the direct semantic and validator regressions so named diagram-edge variants are protected outside the benchmark harness.
+- The tracked KG-quality suite size stays flat because this is a lexical hardening pass inside an already-landed benchmark family, not a new corpus family.
+- Focused semantic regression coverage, validator coverage, tracked-fixture coverage, docs CI, full local CI, and whitespace checks passed for this slice.
+- The current full local CI baseline remains `476` Rust tests plus warning-deny rustdoc and the mdBook build.
+- The tracked KG-quality suite remains `125` fixtures.
+
 ## Session update (2026-04-22 unit-first diagram-position hardening)
 - Continued from commit `3185061`, still hardening the temporal proof surface rather than widening the parser, semantic model, or validation planner.
 - The unit-first local-clock diagram family was already part of the parser and extraction design surface:

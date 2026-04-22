@@ -14522,7 +14522,7 @@ mod tests {
     }
 
     #[test]
-    fn derives_exact_cycle_window_from_named_diagram_edge_text() -> Result<()> {
+    fn derives_named_diagram_edge_variants() -> Result<()> {
         use crate::ir::evidence::EvidenceIr;
         use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
 
@@ -14538,6 +14538,7 @@ mod tests {
                 "# Protocol\n",
                 "Signal HCLK is input width 1.\n\n",
                 "Signal PREADY is input width 1.\n\n",
+                "Signal PENABLE is input width 1.\n\n",
             ),
         )?;
 
@@ -14558,6 +14559,17 @@ mod tests {
             supporting_statement_ids: vec!["stmt_edge_t3_of_hclk".to_string()],
             automation_confidence: AutomationConfidence::Medium,
         });
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_penable_hclk_edge_t4".to_string(),
+            subject_signal: "PENABLE".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PENABLE must be asserted on HCLK edge T4.".to_string(),
+            supporting_statement_ids: vec!["stmt_hclk_edge_t4".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
         evidence_ir.write_to_disk()?;
 
         let semantic_ir = SemanticIr::build(
@@ -14565,19 +14577,35 @@ mod tests {
             &semantic_artifact_base,
         )?;
 
-        let rule = semantic_ir
+        let trailing_rule = semantic_ir
             .temporal_rules
             .iter()
             .find(|rule| rule.rule_id == "temporal_signal_constraint_sigcon_pready_edge_t3_of_hclk")
             .expect("expected temporal rule derived from named diagram-edge constraint");
-        let cycle_window = rule
+        let trailing_window = trailing_rule
             .cycle_window
             .as_ref()
             .expect("expected cycle window to be derived from 'edge T3 of HCLK'");
-        assert_eq!(cycle_window.min_cycles, Some(3));
-        assert_eq!(cycle_window.max_cycles, Some(3));
-        assert_eq!(rule.clock_signal.as_deref(), Some("HCLK"));
-        assert_eq!(rule.edge, super::ClockEdge::Rising);
+        assert_eq!(trailing_window.min_cycles, Some(3));
+        assert_eq!(trailing_window.max_cycles, Some(3));
+        assert_eq!(trailing_rule.clock_signal.as_deref(), Some("HCLK"));
+        assert_eq!(trailing_rule.edge, super::ClockEdge::Rising);
+
+        let signal_leading_rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| rule.rule_id == "temporal_signal_constraint_sigcon_penable_hclk_edge_t4")
+            .expect(
+                "expected temporal rule derived from signal-leading named diagram-edge constraint",
+            );
+        let signal_leading_window = signal_leading_rule
+            .cycle_window
+            .as_ref()
+            .expect("expected cycle window to be derived from 'HCLK edge T4'");
+        assert_eq!(signal_leading_window.min_cycles, Some(4));
+        assert_eq!(signal_leading_window.max_cycles, Some(4));
+        assert_eq!(signal_leading_rule.clock_signal.as_deref(), Some("HCLK"));
+        assert_eq!(signal_leading_rule.edge, super::ClockEdge::Rising);
 
         Ok(())
     }
