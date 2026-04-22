@@ -19,40 +19,35 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `081299b`
-- latest_commit_brief_message: `docs(memory): sync default next-edge fixture baseline`
-- note: the latest committed baseline records the continuity checkpoint immediately after the default-clock explicit next-edge benchmark slice
+- latest_commit_hash: `283148e`
+- latest_commit_brief_message: `test(kg-bench): add quantified-edge timing fixture`
+- note: the latest committed baseline records the default-clock quantified-edge benchmark checkpoint
 
 ## Recent commit chain (last 6)
+- `283148e` test(kg-bench): add quantified-edge timing fixture
 - `081299b` docs(memory): sync default next-edge fixture baseline
 - `ab08b25` test(kg-bench): add default next-edge timing fixture
 - `6509fb9` docs(memory): sync exact-cycle fixture baseline
 - `81ab3af` test(kg-bench): add exact-cycle timing fixture
 - `dd61578` docs(memory): sync range-cycle fixture baseline
-- `e14da0c` test(kg-bench): add range-cycle timing fixture
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 2` of `origin/main`
+- branch state before the next commit: `ahead 3` of `origin/main`
 - modified tracked files:
-- `CHANGES.md`
-- `DEVELOPMENT_NOTES.md`
 - `MEMORY.md`
-- `LIVE_ACHIEVEMENT_STATUS.md`
-- `RUST_CODEBASE_ANALYSIS.md`
-- `crates/specforge/test_data/kg_quality/default_clock_quantified_edge_timing_gold/fixture.json`
-- `crates/specforge/test_data/kg_quality/default_clock_quantified_edge_timing_gold/source.md`
-- the feature slice is verified and ready to commit
+- the feature slice is committed and only the continuity refresh remains
 
 ## Current in-flight slice
 - objective:
-  - benchmark-lock the already-supported default-clock quantified and ordinal edge family in the tracked KG corpus
+  - preserve the latest committed baseline after landing the default-clock quantified-edge benchmark slice
 - tracker effect:
-  - add one `Done` row for default-clock quantified and ordinal edge timing coverage
+  - no additional tracker change is expected in this continuity-only commit
 - current tracked KG-quality suite size in the latest committed baseline:
-  - `123` fixtures
+  - `124` fixtures
 - verification status:
+  - feature commit `283148e` is complete
   - `cargo fmt --all` passed
   - `cargo test -p specforge kg_bench_runs_tracked_fixtures` passed
   - `bash scripts/run_docs_ci.sh` passed
@@ -62,7 +57,5 @@
   - `473` Rust tests plus warning-deny rustdoc and the mdBook build
 
 ## Next exact steps
-- commit the feature slice with synced tracked docs
-- refresh `MEMORY.md` again so it points at the new feature commit baseline
 - create the continuity commit that records that new baseline
 - do not push because the branch will remain below the `25`-commit threshold
