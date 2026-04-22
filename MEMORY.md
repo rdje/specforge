@@ -19,36 +19,31 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `ec0c155`
-- latest_commit_brief_message: `docs(memory): sync clock-edge-of-clock baseline`
-- note: the latest committed baseline records the continuity refresh immediately after the clock-edge-of-clock hardening checkpoint that expanded the tracked and direct proof lane to cover the supported signal-leading exact `HCLK clock edge T5` form alongside the existing trailing exact `clock edge T4 of HCLK` and bounded `within 2 clock edges of HCLK` spellings
+- latest_commit_hash: `9118ab4`
+- latest_commit_brief_message: `test(temporal): harden next-tick direct coverage`
+- note: the latest committed baseline records the next-tick direct hardening checkpoint that brought the extractor, semantic, and validator proof lanes into alignment with the existing benchmark family for the supported `next`, `following`, and `subsequent tick` spellings
 
 ## Recent commit chain (last 6)
+- `9118ab4` test(temporal): harden next-tick direct coverage
 - `ec0c155` docs(memory): sync clock-edge-of-clock baseline
 - `37cf085` test(temporal): harden clock-edge-of-clock coverage
 - `65943a0` docs(memory): sync named quantified baseline
 - `c269c8a` test(temporal): harden named quantified coverage
 - `9f46e35` docs(memory): sync named diagram-edge baseline
-- `07006f5` test(temporal): harden named diagram-edge coverage
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 10` of `origin/main`
+- branch state before the next commit: `ahead 11` of `origin/main`
 - modified tracked files:
-- `CHANGES.md`
-- `DEVELOPMENT_NOTES.md`
 - `MEMORY.md`
-- `RUST_CODEBASE_ANALYSIS.md`
-- `crates/specforge/src/commands/validate.rs`
-- `crates/specforge/src/ir/semantic.rs`
-- the next-tick direct lexical hardening slice is ready to commit once this continuity refresh is staged
+- the feature slice is committed and only the continuity refresh remains
 
 ## Current in-flight slice
 - objective:
-  - harden the direct next-tick proof lane so the extractor, semantic, and validator regressions explicitly prove the supported `next`, `following`, and `subsequent tick` spellings that the tracked benchmark family already expects
+  - preserve the latest committed baseline after landing the next-tick direct lexical hardening slice
 - tracker effect:
-  - no live-status row change is expected because this is a reliability hardening pass inside the already-done idiomatic next-tick benchmark family
+  - no live-status row change is expected in this continuity-only commit because the underlying feature slice was a reliability hardening pass inside the already-done idiomatic next-tick benchmark family
 - current tracked KG-quality suite size in the latest committed baseline:
   - `125` fixtures
 - verification status:
@@ -64,7 +59,6 @@
   - `477` Rust tests plus warning-deny rustdoc and the mdBook build
 
 ## Next exact steps
-- create the feature commit for the next-tick direct lexical hardening slice
-- truncate `git_message_brief.txt` back to `0` bytes and confirm it remains untracked after that commit
-- refresh `MEMORY.md` so it points at the newly created feature-commit baseline
 - create the continuity commit
+- truncate `git_message_brief.txt` back to `0` bytes and confirm it remains untracked after that commit
+- leave the branch unpushed because it remains below the `25`-commit threshold
