@@ -7,6 +7,20 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Tick-unit timing should be benchmark-locked too
+- The generic tick-unit family is already directly proved in the codebase:
+  - semantic coverage proves `within 2 ticks`
+  - semantic coverage proves `tick T3`
+- But that family was still absent from the tracked KG-quality corpus.
+- That left a public-surface asymmetry:
+  - edge-based timing families were benchmark-locked across several phrasings
+  - bare tick-unit timing was still only unit-locked
+- The right move stays narrow:
+  - do not widen the parser or temporal model
+  - do not add a new semantic capability row
+  - add one compact tracked fixture family that locks the already-proved generic tick-unit forms through both `SemanticIR` and `IntentIR`
+- That keeps the benchmark corpus aligned with the direct proof surface and makes the default-clock tick-unit contract visible in the tracked review corpus.
+
 ## 2026-04-22 Plural edge-of-clock timing should be benchmark-locked too
 - The plural edge-of-clock family is already directly proved in the codebase:
   - semantic coverage proves `within 2 edges of HCLK`
