@@ -19,38 +19,31 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `1277f37`
-- latest_commit_brief_message: `docs(memory): sync named zero-cycle edge baseline`
-- note: the latest committed baseline records the continuity refresh immediately after the named zero-cycle edge hardening checkpoint that expanded the named local zero-cycle proof lane to cover current HCLK clock-edge and falling-edge forms across semantic, validator, and benchmark checks
+- latest_commit_hash: `02233ae`
+- latest_commit_brief_message: `test(temporal): harden named one-cycle edge coverage`
+- note: the latest committed baseline records the named one-cycle edge hardening checkpoint that expanded the tracked and direct proof lane to cover explicit named `clock edge` and falling-edge one-cycle forms across semantic, validator, and benchmark checks
 
 ## Recent commit chain (last 6)
+- `02233ae` test(temporal): harden named one-cycle edge coverage
 - `1277f37` docs(memory): sync named zero-cycle edge baseline
 - `bebccb2` test(temporal): harden named zero-cycle edge coverage
 - `8f4378b` docs(memory): sync default zero-cycle edge baseline
 - `dee64f5` test(temporal): harden default zero-cycle edge coverage
 - `4e2dc71` docs(memory): sync default zero-cycle lexical baseline
-- `ce35d8a` test(kg-bench): harden default zero-cycle lexical coverage
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `in sync with origin/main`
+- branch state before the next commit: `ahead 1` of `origin/main`
 - modified tracked files:
-- `CHANGES.md`
-- `DEVELOPMENT_NOTES.md`
-- `RUST_CODEBASE_ANALYSIS.md`
-- `crates/specforge/src/commands/validate.rs`
-- `crates/specforge/src/ir/semantic.rs`
-- `crates/specforge/test_data/kg_quality/named_next_clock_timing_gold/fixture.json`
-- `crates/specforge/test_data/kg_quality/named_next_clock_timing_gold/source.md`
 - `MEMORY.md`
-- the named one-cycle edge hardening slice is ready to commit once this continuity refresh is staged
+- the feature slice is committed and only the continuity refresh remains
 
 ## Current in-flight slice
 - objective:
-  - harden the named one-cycle proof lane so the tracked benchmark family and direct regressions also prove explicit named `clock edge` and falling-edge one-cycle variants
+  - preserve the latest committed baseline after landing the named one-cycle edge hardening slice
 - tracker effect:
-  - no live-status row change is expected because this is a reliability hardening pass inside the already-done named one-cycle benchmark family
+  - no live-status row change is expected in this continuity-only commit
 - current tracked KG-quality suite size in the latest committed baseline:
   - `125` fixtures
 - verification status:
@@ -65,7 +58,6 @@
   - `476` Rust tests plus warning-deny rustdoc and the mdBook build
 
 ## Next exact steps
-- create the feature commit for the named one-cycle edge hardening slice
-- truncate `git_message_brief.txt` back to `0` bytes and confirm it remains untracked after that commit
-- refresh `MEMORY.md` so it points at the newly created feature-commit baseline
 - create the continuity commit
+- truncate `git_message_brief.txt` back to `0` bytes and confirm it remains untracked after that commit
+- leave the branch unpushed after the slice because it will still be below the `25`-commit auto-push threshold
