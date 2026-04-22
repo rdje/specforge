@@ -1,0 +1,226 @@
+{
+  "name": "generic_range_cycle_timing_gold",
+  "source": "source.md",
+  "evidence_ir_patch": {
+    "signal_constraints": [
+      {
+        "constraint_id": "sigcon_pready_at_least_two_cycles",
+        "subject_signal": "PREADY",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "PREADY must be asserted after at least 2 cycles.",
+        "supporting_statement_ids": ["stmt_at_least_two_cycles"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_penable_at_most_three_cycles",
+        "subject_signal": "PENABLE",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "PENABLE must be asserted after at most 3 cycles.",
+        "supporting_statement_ids": ["stmt_at_most_three_cycles"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_psel_between_one_and_three_cycles",
+        "subject_signal": "PSEL",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "PSEL must be asserted after between 1 and 3 cycles.",
+        "supporting_statement_ids": ["stmt_between_one_and_three_cycles"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_pwrite_no_more_than_two_cycles",
+        "subject_signal": "PWRITE",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "PWRITE must be asserted after no more than 2 cycles.",
+        "supporting_statement_ids": ["stmt_no_more_than_two_cycles"],
+        "automation_confidence": "medium"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["PREADY", "PENABLE", "PSEL", "PWRITE"],
+      "temporal_rule_count": 4,
+      "temporal_rules_include": [
+        {
+          "source_text": "PREADY must be asserted after at least 2 cycles.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 2,
+            "max_cycles": null
+          },
+          "supporting_statement_ids_include": ["stmt_at_least_two_cycles"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PREADY",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PENABLE must be asserted after at most 3 cycles.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": null,
+            "max_cycles": 3
+          },
+          "supporting_statement_ids_include": ["stmt_at_most_three_cycles"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PENABLE",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PSEL must be asserted after between 1 and 3 cycles.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 3
+          },
+          "supporting_statement_ids_include": ["stmt_between_one_and_three_cycles"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PSEL",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PWRITE must be asserted after no more than 2 cycles.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": null,
+            "max_cycles": 2
+          },
+          "supporting_statement_ids_include": ["stmt_no_more_than_two_cycles"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PWRITE",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        }
+      ]
+    },
+    "intent": {
+      "signal_names_include": ["PREADY", "PENABLE", "PSEL", "PWRITE"],
+      "temporal_rule_count": 4,
+      "temporal_rules_include": [
+        {
+          "source_text": "PREADY must be asserted after at least 2 cycles.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 2,
+            "max_cycles": null
+          },
+          "supporting_statement_ids_include": ["stmt_at_least_two_cycles"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PREADY",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PENABLE must be asserted after at most 3 cycles.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": null,
+            "max_cycles": 3
+          },
+          "supporting_statement_ids_include": ["stmt_at_most_three_cycles"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PENABLE",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PSEL must be asserted after between 1 and 3 cycles.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 3
+          },
+          "supporting_statement_ids_include": ["stmt_between_one_and_three_cycles"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PSEL",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PWRITE must be asserted after no more than 2 cycles.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": null,
+            "max_cycles": 2
+          },
+          "supporting_statement_ids_include": ["stmt_no_more_than_two_cycles"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PWRITE",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        }
+      ]
+    },
+    "validation": {
+      "semantic": {
+        "metric_values": {
+          "temporal_rules": "4",
+          "temporal_rules_with_cycle_window": "4",
+          "temporal_rules_missing_clock_grounding": "0"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "temporal_rules": "4",
+          "temporal_rules_with_cycle_window": "4",
+          "temporal_rules_missing_clock_grounding": "0"
+        }
+      }
+    }
+  }
+}

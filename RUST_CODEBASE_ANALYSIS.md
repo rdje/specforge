@@ -4,6 +4,20 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-22 generic range-cycle benchmark lock)
+- Continued from commit `2b6d848`, still hardening the temporal proof surface rather than widening the parser, semantic model, or validation planner.
+- The generic range and one-sided cycle family was already part of the parser/extraction design surface:
+  - `at least N cycles`
+  - `at most N cycles`
+  - `between N and M cycles`
+  - `no more than N cycles`
+- But that family was still missing from the tracked KG-quality benchmark corpus.
+- This slice adds `crates/specforge/test_data/kg_quality/generic_range_cycle_timing_gold/`, a compact tracked fixture that locks the generic range-cycle family through both `SemanticIR` and `IntentIR`, with `temporal_rules_with_cycle_window = 4` and `temporal_rules_missing_clock_grounding = 0`.
+- The tracked KG-quality suite grows by one fixture family because this is a corpus-surface hardening slice, not another unit-level proof refinement.
+- Focused tracked-fixture coverage, docs CI, full local CI, and whitespace checks passed for this slice.
+- The current full local CI baseline remains `473` Rust tests plus warning-deny rustdoc and the mdBook build.
+- The tracked KG-quality suite is now `121` fixtures.
+
 ## Session update (2026-04-22 generic bounded-cycle benchmark lock)
 - Continued from commit `5316b79`, still hardening the temporal proof surface rather than widening the parser, semantic model, or validation planner.
 - The generic bounded-cycle family was already directly proved in semantic coverage:

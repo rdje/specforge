@@ -1,5 +1,27 @@
 # CHANGES
 
+## 2026-04-22 (Generic range cycle timing is now benchmark-locked too)
+
+### Improved: the tracked KG corpus now proves bare range and one-sided cycle timing end to end
+- Added `crates/specforge/test_data/kg_quality/generic_range_cycle_timing_gold/` so the tracked benchmark corpus now locks:
+  - `PREADY must be asserted after at least 2 cycles.`
+  - `PENABLE must be asserted after at most 3 cycles.`
+  - `PSEL must be asserted after between 1 and 3 cycles.`
+  - `PWRITE must be asserted after no more than 2 cycles.`
+- The new fixture proves those forms through both `SemanticIR` and `IntentIR`, with:
+  - default-clock grounding to `clock_signal = HCLK`
+  - `edge = rising`
+  - the expected min/max `cycle_window` bounds for each phrase
+  - `temporal_rules_missing_clock_grounding = 0`
+- This does not widen the temporal model. It raises the already-landed generic range and one-sided cycle family into the tracked KG-quality corpus.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-22 (Generic bounded cycle timing is now benchmark-locked too)
 
 ### Improved: the tracked KG corpus now proves bare bounded cycle timing end to end
