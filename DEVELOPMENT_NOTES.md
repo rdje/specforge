@@ -7,6 +7,21 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Named local zero-cycle edge coverage is hardened now
+- After the earlier named zero-cycle lexical hardening pass, one narrower asymmetry still remained inside that same family:
+  - the named-unit parser path already accepted zero-cycle forms like `current HCLK clock edge`
+  - the named temporal edge grounding path already preserved explicit falling-side semantics for `current HCLK falling edge`
+  - but the tracked `named_cycle_timing_gold` family still only proved `same ACLK cycle`, `this HCLK tick`, and `current HCLK edge`
+- That left the named local zero-cycle edge lane under-proved in two specific ways:
+  - generic named `clock edge` phrasing with the explicit `clock` token could regress without a tracked corpus failure
+  - explicit named falling-edge phrasing could regress back toward default rising behavior without a direct local proof
+- The right fix stayed at the root of that asymmetry:
+  - do not widen the parser or temporal model
+  - do not create another small benchmark family for a capability that already exists
+  - deepen the existing `named_cycle_timing_gold` fixture so it proves the remaining named generic-edge and falling-edge zero-cycle forms through both `SemanticIR` and `IntentIR`
+  - add direct semantic and validator assertions so the named edge lane is guarded before and alongside the tracked benchmark harness
+- That now keeps the benchmark corpus and direct regressions aligned with the parser’s supported named local zero-cycle edge surface.
+
 ## 2026-04-22 Default-clock zero-cycle edge coverage is hardened now
 - After the previous zero-cycle lexical hardening pass, one real asymmetry still remained inside the same benchmark family:
   - the parser already recognized `same` / `this` / `current` against cycle-like units that include generic `clock edge`

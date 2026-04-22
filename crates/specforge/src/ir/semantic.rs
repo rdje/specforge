@@ -14017,6 +14017,105 @@ mod tests {
     }
 
     #[test]
+    fn derives_named_zero_cycle_edge_variants() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir
+            .path()
+            .join("temporal_named_zero_cycle_edge_variants.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal HCLK is input width 1.\n\n",
+                "Signal PSLVERR is input width 1.\n\n",
+                "Signal PSTRB is input width 1.\n\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pslverr_current_hclk_clock_edge".to_string(),
+            subject_signal: "PSLVERR".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PSLVERR must be asserted on the current HCLK clock edge.".to_string(),
+            supporting_statement_ids: vec!["stmt_current_hclk_clock_edge".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_pstrb_current_hclk_falling_edge".to_string(),
+            subject_signal: "PSTRB".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PSTRB must be asserted on the current HCLK falling edge.".to_string(),
+            supporting_statement_ids: vec!["stmt_current_hclk_falling_edge".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let current_clock_edge_rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| {
+                rule.rule_id == "temporal_signal_constraint_sigcon_pslverr_current_hclk_clock_edge"
+            })
+            .expect("expected temporal rule derived from named current clock-edge constraint");
+        let current_clock_edge_window = current_clock_edge_rule
+            .cycle_window
+            .as_ref()
+            .expect("expected cycle window from 'current HCLK clock edge'");
+        assert_eq!(current_clock_edge_window.min_cycles, Some(0));
+        assert_eq!(current_clock_edge_window.max_cycles, Some(0));
+        assert_eq!(
+            current_clock_edge_rule.clock_signal.as_deref(),
+            Some("HCLK")
+        );
+        assert_eq!(current_clock_edge_rule.edge, super::ClockEdge::Rising);
+
+        let current_falling_edge_rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| {
+                rule.rule_id == "temporal_signal_constraint_sigcon_pstrb_current_hclk_falling_edge"
+            })
+            .expect("expected temporal rule derived from named current falling-edge constraint");
+        let current_falling_edge_window = current_falling_edge_rule
+            .cycle_window
+            .as_ref()
+            .expect("expected cycle window from 'current HCLK falling edge'");
+        assert_eq!(current_falling_edge_window.min_cycles, Some(0));
+        assert_eq!(current_falling_edge_window.max_cycles, Some(0));
+        assert_eq!(
+            current_falling_edge_rule.clock_signal.as_deref(),
+            Some("HCLK")
+        );
+        assert_eq!(current_falling_edge_rule.edge, super::ClockEdge::Falling);
+
+        Ok(())
+    }
+
+    #[test]
     fn derives_single_cycle_window_from_named_next_cycle_text() -> Result<()> {
         use crate::ir::evidence::EvidenceIr;
         use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};

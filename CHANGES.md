@@ -1,5 +1,29 @@
 # CHANGES
 
+## 2026-04-22 (Named local zero-cycle benchmark coverage now proves the full edge lane)
+
+### Improved: the tracked KG corpus now proves generic and falling named zero-cycle edge phrasing inside the existing family
+- Expanded `crates/specforge/test_data/kg_quality/named_cycle_timing_gold/` so the tracked benchmark corpus now also locks:
+  - `PSLVERR must be asserted on the current HCLK clock edge.`
+  - `PSTRB must be asserted on the current HCLK falling edge.`
+- The expanded fixture now proves the named local zero-cycle family through both `SemanticIR` and `IntentIR`, including:
+  - `same ACLK cycle`
+  - `this HCLK tick`
+  - `current HCLK edge`
+  - `current HCLK clock edge`
+  - `current HCLK falling edge`
+- Added direct semantic and validator coverage for the named falling-edge lane so named zero-cycle edge regressions fail before or alongside the benchmark harness stage.
+- This does not widen the temporal model or add a new benchmark family. It hardens the already-landed named local zero-cycle surface so the tracked corpus and direct tests now cover the full supported edge lane.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge derives_named_zero_cycle_edge_variants` -> passed
+- `cargo test -p specforge validate_intent_ir_does_not_flag_temporal_rules_missing_clock_grounding_for_named_cycle_text` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-22 (Default-clock zero-cycle benchmark coverage now proves the full edge lane)
 
 ### Improved: the tracked KG corpus now proves generic and falling zero-cycle edge phrasing inside the existing family

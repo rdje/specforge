@@ -4,6 +4,22 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-22 named local zero-cycle edge hardening)
+- Continued from commit `8f4378b`, still hardening the temporal proof surface rather than widening the parser, semantic model, or validation planner.
+- The named local zero-cycle family was already part of the parser/extraction design surface:
+  - `same ACLK cycle`
+  - `this HCLK tick`
+  - `current HCLK edge`
+  - `current HCLK clock edge`
+  - `current HCLK falling edge`
+- But the tracked KG-quality benchmark corpus and the direct named zero-cycle tests still only locked the cycle/tick subset plus one rising-edge form.
+- This slice deepens `crates/specforge/test_data/kg_quality/named_cycle_timing_gold/` so the existing fixture family now proves the remaining named generic-edge and falling-edge zero-cycle spellings through both `SemanticIR` and `IntentIR`, with `temporal_rules_with_cycle_window = 5` and `temporal_rules_missing_clock_grounding = 0`.
+- It also adds direct semantic and validator regressions so named zero-cycle falling-edge grounding is protected outside the benchmark harness.
+- The tracked KG-quality suite size stays flat because this is a lexical hardening pass inside an already-landed benchmark family, not a new corpus family.
+- Focused semantic regression coverage, validator coverage, tracked-fixture coverage, docs CI, full local CI, and whitespace checks passed for this slice.
+- The current full local CI baseline remains `473` Rust tests plus warning-deny rustdoc and the mdBook build.
+- The tracked KG-quality suite remains `125` fixtures.
+
 ## Session update (2026-04-22 default-clock zero-cycle edge hardening)
 - Continued from commit `4e2dc71`, still hardening the temporal proof surface rather than widening the parser, semantic model, or validation planner.
 - The default-clock zero-cycle family was already part of the parser/extraction design surface:

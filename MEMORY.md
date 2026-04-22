@@ -19,44 +19,55 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `dee64f5`
-- latest_commit_brief_message: `test(temporal): harden default zero-cycle edge coverage`
-- note: the latest committed baseline records the zero-cycle edge hardening checkpoint that expanded the default-clock zero-cycle proof lane to cover generic current clock edges and explicit current falling edges in both direct and benchmark tests
+- latest_commit_hash: `8f4378b`
+- latest_commit_brief_message: `docs(memory): sync default zero-cycle edge baseline`
+- note: the latest committed baseline records the post-default-zero-cycle-edge continuity checkpoint immediately after the default-clock zero-cycle edge hardening slice landed
 
 ## Recent commit chain (last 6)
+- `8f4378b` docs(memory): sync default zero-cycle edge baseline
 - `dee64f5` test(temporal): harden default zero-cycle edge coverage
 - `4e2dc71` docs(memory): sync default zero-cycle lexical baseline
 - `ce35d8a` test(kg-bench): harden default zero-cycle lexical coverage
 - `755055a` docs(memory): sync msrv baseline
 - `c739c95` build(msrv): raise rust floor to 1.95
-- `4719d62` docs(memory): sync named zero-cycle lexical baseline
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 23` of `origin/main`
+- branch state before the next commit: `ahead 24` of `origin/main`
 - modified tracked files:
+- `CHANGES.md`
+- `DEVELOPMENT_NOTES.md`
 - `MEMORY.md`
-- the feature slice is committed and only the continuity refresh remains
+- `RUST_CODEBASE_ANALYSIS.md`
+- `crates/specforge/src/commands/validate.rs`
+- `crates/specforge/src/ir/semantic.rs`
+- `crates/specforge/test_data/kg_quality/named_cycle_timing_gold/fixture.json`
+- `crates/specforge/test_data/kg_quality/named_cycle_timing_gold/source.md`
+- the named local zero-cycle edge hardening slice is verified locally and ready for the feature commit
 
 ## Current in-flight slice
 - objective:
-  - preserve the latest committed baseline after landing the default-clock zero-cycle edge hardening slice
+  - harden the tracked named local zero-cycle family so it proves the full supported named edge lane
 - tracker effect:
-  - no live-status row change is expected in this continuity-only commit
+  - no live-status row change is expected because this deepens an existing benchmark family rather than closing a new roadmap row
 - current tracked KG-quality suite size in the latest committed baseline:
   - `125` fixtures
 - verification status:
   - `cargo fmt --all` passed
-  - `cargo test -p specforge extracts_zero_cycle_window_from_same_cycle_phrases` passed
+  - `cargo test -p specforge derives_named_zero_cycle_edge_variants` passed
+  - `cargo test -p specforge validate_intent_ir_does_not_flag_temporal_rules_missing_clock_grounding_for_named_cycle_text` passed
   - `cargo test -p specforge kg_bench_runs_tracked_fixtures` passed
   - `bash scripts/run_docs_ci.sh` passed
   - `bash scripts/run_ci.sh` passed
   - `git diff --check` passed
 - current known local CI baseline:
-  - `473` Rust tests plus warning-deny rustdoc and the mdBook build
+  - `474` Rust tests plus warning-deny rustdoc and the mdBook build
 
 ## Next exact steps
+- stage the verified named zero-cycle edge benchmark, semantic, validator, and live-doc updates for the feature commit
+- create the feature commit for named local zero-cycle edge hardening
+- truncate `git_message_brief.txt` back to `0` bytes and confirm it remains untracked
+- refresh `MEMORY.md` so it records the new feature commit as the latest committed baseline
 - create the continuity commit
-- truncate `git_message_brief.txt` back to `0` bytes and confirm it remains untracked after that commit
-- do not push because the branch will remain below the `25`-commit threshold after the two-commit slice
+- push after the slice because the branch will cross the `25`-commit threshold
