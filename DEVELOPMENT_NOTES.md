@@ -7,6 +7,21 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Default-clock zero-cycle edge coverage is hardened now
+- After the previous zero-cycle lexical hardening pass, one real asymmetry still remained inside the same benchmark family:
+  - the parser already recognized `same` / `this` / `current` against cycle-like units that include generic `clock edge`
+  - the temporal edge extractor already preserved explicit falling-side semantics for phrases like `falling edge`
+  - but the tracked `zero_cycle_timing_gold` family still only proved cycle/tick phrasing plus a single rising-edge form
+- That left the default-clock zero-cycle edge lane under-proved in two specific ways:
+  - generic zero-cycle `current clock edge` phrasing could regress without a tracked corpus failure
+  - explicit zero-cycle falling-edge phrasing could regress back toward default rising behavior without a direct benchmark guard
+- The right fix again stayed at the root of the asymmetry:
+  - do not widen the parser or temporal model
+  - do not add another tiny benchmark family for a capability that already exists
+  - deepen the existing `zero_cycle_timing_gold` fixture so it proves the remaining generic-edge and falling-edge zero-cycle forms through both `SemanticIR` and `IntentIR`
+  - add direct extraction assertions in `semantic.rs` so the parser-level zero-cycle edge lane is guarded even before the end-to-end benchmark comparison
+- That now keeps the benchmark corpus and direct extraction regressions aligned with the parser’s supported default-clock zero-cycle edge surface.
+
 ## 2026-04-22 Default-clock zero-cycle benchmark lexical coverage is hardened now
 - The default-clock zero-cycle family was already part of the repo’s temporal extraction surface:
   - `same cycle`

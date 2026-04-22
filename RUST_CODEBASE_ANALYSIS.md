@@ -4,6 +4,23 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-22 default-clock zero-cycle edge hardening)
+- Continued from commit `4e2dc71`, still hardening the temporal proof surface rather than widening the parser, semantic model, or validation planner.
+- The default-clock zero-cycle family was already part of the parser/extraction design surface:
+  - `same cycle`
+  - `same tick`
+  - `this tick`
+  - `current clock edge`
+  - `current rising edge`
+  - `current falling edge`
+- But the tracked KG-quality benchmark corpus and the direct zero-cycle extraction test still only locked the cycle/tick subset plus one rising-edge form.
+- This slice deepens `crates/specforge/test_data/kg_quality/zero_cycle_timing_gold/` so the existing fixture family now proves the remaining generic-edge and falling-edge zero-cycle spellings through both `SemanticIR` and `IntentIR`, with `temporal_rules_with_cycle_window = 6` and `temporal_rules_missing_clock_grounding = 0`.
+- It also extends the direct semantic extraction regression in `semantic.rs` so `current clock edge` and `current falling edge` stay covered at the parser layer instead of only through the end-to-end benchmark harness.
+- The tracked KG-quality suite size stays flat because this is a lexical hardening pass inside an already-landed benchmark family, not a new corpus family.
+- Focused semantic regression coverage, tracked-fixture coverage, docs CI, full local CI, and whitespace checks passed for this slice.
+- The current full local CI baseline remains `473` Rust tests plus warning-deny rustdoc and the mdBook build.
+- The tracked KG-quality suite remains `125` fixtures.
+
 ## Session update (2026-04-22 default-clock zero-cycle lexical benchmark hardening)
 - Continued from commit `755055a`, still hardening the temporal proof surface rather than widening the parser, semantic model, or validation planner.
 - The default-clock zero-cycle family was already part of the parser/extraction design surface:

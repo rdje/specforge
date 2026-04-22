@@ -1,5 +1,29 @@
 # CHANGES
 
+## 2026-04-22 (Default-clock zero-cycle benchmark coverage now proves the full edge lane)
+
+### Improved: the tracked KG corpus now proves generic and falling zero-cycle edge phrasing inside the existing family
+- Expanded `crates/specforge/test_data/kg_quality/zero_cycle_timing_gold/` so the tracked benchmark corpus now also locks:
+  - `PSLVERR must be asserted on the current clock edge.`
+  - `PSTRB must be asserted on the current falling edge.`
+- The expanded fixture now proves the default-clock zero-cycle family through both `SemanticIR` and `IntentIR`, including:
+  - `same cycle`
+  - `same tick`
+  - `this tick`
+  - `current clock edge`
+  - `current rising edge`
+  - `current falling edge`
+- Added direct extraction coverage in `crates/specforge/src/ir/semantic.rs` for `current clock edge` and `current falling edge` so zero-cycle edge regressions fail before the benchmark harness stage.
+- This does not widen the temporal model or add a new benchmark family. It hardens the already-landed default-clock zero-cycle surface so the tracked corpus and direct parser tests now cover the full supported edge lane.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge extracts_zero_cycle_window_from_same_cycle_phrases` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-22 (Default-clock zero-cycle benchmark coverage now proves the full lexical lane)
 
 ### Improved: the tracked KG corpus now proves follow-on default-clock zero-cycle phrasing inside the existing family

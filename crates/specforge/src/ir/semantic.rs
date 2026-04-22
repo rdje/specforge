@@ -13806,6 +13806,18 @@ mod tests {
                 .expect("expected cycle window from 'current rising edge'");
         assert_eq!(current_edge.min_cycles, Some(0));
         assert_eq!(current_edge.max_cycles, Some(0));
+
+        let current_clock_edge =
+            super::extract_cycle_window_from_text("VALID is sampled on the current clock edge.")
+                .expect("expected cycle window from 'current clock edge'");
+        assert_eq!(current_clock_edge.min_cycles, Some(0));
+        assert_eq!(current_clock_edge.max_cycles, Some(0));
+
+        let current_falling_edge =
+            super::extract_cycle_window_from_text("VALID is sampled on the current falling edge.")
+                .expect("expected cycle window from 'current falling edge'");
+        assert_eq!(current_falling_edge.min_cycles, Some(0));
+        assert_eq!(current_falling_edge.max_cycles, Some(0));
     }
 
     #[test]

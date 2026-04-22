@@ -10,4 +10,8 @@ Signal PSEL is input width 1.
 
 Signal PWRITE is input width 1.
 
+Signal PSLVERR is input width 1.
+
+Signal PSTRB is input width 1.
+
 Clock HCLK.
