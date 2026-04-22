@@ -7,6 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Next-tick timing should be benchmark-locked too
+- The idiomatic bare next-tick family is already directly proved in the codebase:
+  - semantic coverage proves `next tick`
+- But that family was still absent from the tracked KG-quality corpus.
+- That left a public-surface asymmetry:
+  - named one-cycle timing, shorthand next-edge timing, and tick-unit timing were benchmark-locked
+  - idiomatic bare next-tick timing was still only unit-locked
+- The right move stays narrow:
+  - do not widen the parser or temporal model
+  - do not add a new semantic capability row
+  - add one compact tracked fixture family that locks the already-proved idiomatic next-tick form through both `SemanticIR` and `IntentIR`
+- That keeps the benchmark corpus aligned with the direct proof surface and makes the default-clock next-tick contract visible in the tracked review corpus.
+
 ## 2026-04-22 Later-phrase timing should be benchmark-locked too
 - The explicit later-phrase family is already directly proved in the codebase:
   - semantic coverage proves `two cycles later`

@@ -1,0 +1,85 @@
+{
+  "name": "next_tick_timing_gold",
+  "source": "source.md",
+  "evidence_ir_patch": {
+    "signal_constraints": [
+      {
+        "constraint_id": "sigcon_pready_next_tick",
+        "subject_signal": "PREADY",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "PREADY must be asserted on the next tick.",
+        "supporting_statement_ids": ["stmt_next_tick"],
+        "automation_confidence": "medium"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["PREADY"],
+      "temporal_rule_count": 1,
+      "temporal_rules_include": [
+        {
+          "source_text": "PREADY must be asserted on the next tick.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_next_tick"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PREADY",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        }
+      ]
+    },
+    "intent": {
+      "signal_names_include": ["PREADY"],
+      "temporal_rule_count": 1,
+      "temporal_rules_include": [
+        {
+          "source_text": "PREADY must be asserted on the next tick.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_next_tick"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PREADY",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        }
+      ]
+    },
+    "validation": {
+      "semantic": {
+        "metric_values": {
+          "temporal_rules": "1",
+          "temporal_rules_with_cycle_window": "1",
+          "temporal_rules_missing_clock_grounding": "0"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "temporal_rules": "1",
+          "temporal_rules_with_cycle_window": "1",
+          "temporal_rules_missing_clock_grounding": "0"
+        }
+      }
+    }
+  }
+}
