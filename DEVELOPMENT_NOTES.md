@@ -7,6 +7,25 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Default-clock zero-cycle benchmark lexical coverage is hardened now
+- The default-clock zero-cycle family was already part of the repo’s temporal extraction surface:
+  - `same cycle`
+  - `same tick`
+  - `this tick`
+  - `current rising edge`
+- But the tracked KG-quality corpus had only been proving two canonical forms:
+  - `same tick`
+  - `current rising edge`
+- That left a lexical asymmetry inside an already-done benchmark family:
+  - the parser already recognized `same`, `this`, and `current` zero-cycle anchors when paired with cycle-like units
+  - the tracked corpus still under-proved the default-clock zero-cycle surface it was meant to guard
+  - which meant a regression in `same cycle` or `this tick` could slip through even though those phrases were already first-class supported input
+- The right fix stayed at the root of that asymmetry:
+  - do not widen the parser or temporal model
+  - do not create another tiny tracker row for a capability that already exists
+  - deepen the existing `zero_cycle_timing_gold` fixture so it proves the full default-clock zero-cycle lexical lane through both `SemanticIR` and `IntentIR`
+- That now keeps the benchmark corpus aligned with the parser’s supported default-clock zero-cycle aliases and makes the existing family harder to regress silently.
+
 ## 2026-04-22 MSRV is aligned to Rust 1.95 now
 - The repo’s declared minimum Rust version had fallen behind the actual toolchain bump:
   - the workspace `Cargo.toml` still declared `rust-version = "1.89"`

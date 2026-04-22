@@ -1,5 +1,27 @@
 # CHANGES
 
+## 2026-04-22 (Default-clock zero-cycle benchmark coverage now proves the full lexical lane)
+
+### Improved: the tracked KG corpus now proves follow-on default-clock zero-cycle phrasing inside the existing family
+- Expanded `crates/specforge/test_data/kg_quality/zero_cycle_timing_gold/` so the tracked benchmark corpus now locks:
+  - `PREADY must be asserted in the same cycle.`
+  - `PENABLE must be asserted in the same tick.`
+  - `PSEL must be asserted on this tick.`
+  - `PWRITE must be asserted on the current rising edge.`
+- The expanded fixture proves those forms through both `SemanticIR` and `IntentIR`, with:
+  - default-clock grounding to `clock_signal = HCLK`
+  - `edge = rising`
+  - `cycle_window = 0..0`
+  - `temporal_rules_missing_clock_grounding = 0`
+- This does not widen the temporal model or add a new benchmark family. It hardens the already-landed default-clock zero-cycle surface so the tracked corpus now covers the full supported lexical lane.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-22 (MSRV is now aligned to Rust 1.95)
 
 ### Improved: the declared Rust floor now matches the bumped toolchain baseline
