@@ -19,38 +19,31 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `3185061`
-- latest_commit_brief_message: `docs(memory): sync named one-cycle edge baseline`
-- note: the latest committed baseline records the continuity refresh immediately after the named one-cycle edge hardening checkpoint that expanded the tracked and direct proof lane to cover explicit named `clock edge` and falling-edge one-cycle forms across semantic, validator, and benchmark checks
+- latest_commit_hash: `53ba2f6`
+- latest_commit_brief_message: `test(temporal): harden unit-first diagram coverage`
+- note: the latest committed baseline records the unit-first diagram-position hardening checkpoint that expanded the tracked and direct proof lane to cover `tick T3 of HCLK` and `rising edge T5 of HCLK` alongside the canonical `posedge T4 of HCLK` form
 
 ## Recent commit chain (last 6)
+- `53ba2f6` test(temporal): harden unit-first diagram coverage
 - `3185061` docs(memory): sync named one-cycle edge baseline
 - `02233ae` test(temporal): harden named one-cycle edge coverage
 - `1277f37` docs(memory): sync named zero-cycle edge baseline
 - `bebccb2` test(temporal): harden named zero-cycle edge coverage
 - `8f4378b` docs(memory): sync default zero-cycle edge baseline
-- `dee64f5` test(temporal): harden default zero-cycle edge coverage
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 2` of `origin/main`
+- branch state before the next commit: `ahead 3` of `origin/main`
 - modified tracked files:
-- `CHANGES.md`
-- `DEVELOPMENT_NOTES.md`
 - `MEMORY.md`
-- `RUST_CODEBASE_ANALYSIS.md`
-- `crates/specforge/src/commands/validate.rs`
-- `crates/specforge/src/ir/semantic.rs`
-- `crates/specforge/test_data/kg_quality/unit_first_diagram_position_timing_gold/fixture.json`
-- `crates/specforge/test_data/kg_quality/unit_first_diagram_position_timing_gold/source.md`
-- the unit-first diagram-position hardening slice is ready to commit once this continuity refresh is staged
+- the feature slice is committed and only the continuity refresh remains
 
 ## Current in-flight slice
 - objective:
-  - harden the unit-first diagram-position proof lane so the tracked benchmark family and direct regressions also prove the supported `tick` and edge-word local-clock variants
+  - preserve the latest committed baseline after landing the unit-first diagram-position hardening slice
 - tracker effect:
-  - no live-status row change is expected because this is a reliability hardening pass inside the already-done unit-first diagram-position benchmark family
+  - no live-status row change is expected in this continuity-only commit
 - current tracked KG-quality suite size in the latest committed baseline:
   - `125` fixtures
 - verification status:
@@ -65,7 +58,6 @@
   - `476` Rust tests plus warning-deny rustdoc and the mdBook build
 
 ## Next exact steps
-- create the feature commit for the unit-first diagram-position hardening slice
-- truncate `git_message_brief.txt` back to `0` bytes and confirm it remains untracked after that commit
-- refresh `MEMORY.md` so it points at the newly created feature-commit baseline
 - create the continuity commit
+- truncate `git_message_brief.txt` back to `0` bytes and confirm it remains untracked after that commit
+- leave the branch unpushed after the slice because it will still be below the `25`-commit auto-push threshold
