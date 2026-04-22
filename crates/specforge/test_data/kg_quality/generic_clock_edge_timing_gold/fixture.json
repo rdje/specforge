@@ -15,6 +15,28 @@
         "automation_confidence": "medium"
       },
       {
+        "constraint_id": "sigcon_psel_following_clock_edge",
+        "subject_signal": "PSEL",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "PSEL must be asserted on the following clock edge.",
+        "supporting_statement_ids": ["stmt_following_clock_edge"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_pwrite_subsequent_clock_edge",
+        "subject_signal": "PWRITE",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "PWRITE must be asserted on the subsequent clock edge.",
+        "supporting_statement_ids": ["stmt_subsequent_clock_edge"],
+        "automation_confidence": "medium"
+      },
+      {
         "constraint_id": "sigcon_penable_within_two_clock_edges",
         "subject_signal": "PENABLE",
         "constraint_kind": { "kind": "must_be_asserted" },
@@ -29,8 +51,8 @@
   },
   "expectations": {
     "semantic": {
-      "signal_names_include": ["PREADY", "PENABLE"],
-      "temporal_rule_count": 2,
+      "signal_names_include": ["PREADY", "PENABLE", "PSEL", "PWRITE"],
+      "temporal_rule_count": 4,
       "temporal_rules_include": [
         {
           "source_text": "PREADY must be asserted on the next clock edge.",
@@ -45,6 +67,42 @@
             {
               "kind": "signal_value",
               "signal_name": "PREADY",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PSEL must be asserted on the following clock edge.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_following_clock_edge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PSEL",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PWRITE must be asserted on the subsequent clock edge.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_subsequent_clock_edge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PWRITE",
               "value": "ASSERTED",
               "phase": "post_tick"
             }
@@ -71,8 +129,8 @@
       ]
     },
     "intent": {
-      "signal_names_include": ["PREADY", "PENABLE"],
-      "temporal_rule_count": 2,
+      "signal_names_include": ["PREADY", "PENABLE", "PSEL", "PWRITE"],
+      "temporal_rule_count": 4,
       "temporal_rules_include": [
         {
           "source_text": "PREADY must be asserted on the next clock edge.",
@@ -87,6 +145,42 @@
             {
               "kind": "signal_value",
               "signal_name": "PREADY",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PSEL must be asserted on the following clock edge.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_following_clock_edge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PSEL",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PWRITE must be asserted on the subsequent clock edge.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_subsequent_clock_edge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PWRITE",
               "value": "ASSERTED",
               "phase": "post_tick"
             }
@@ -115,15 +209,15 @@
     "validation": {
       "semantic": {
         "metric_values": {
-          "temporal_rules": "2",
-          "temporal_rules_with_cycle_window": "2",
+          "temporal_rules": "4",
+          "temporal_rules_with_cycle_window": "4",
           "temporal_rules_missing_clock_grounding": "0"
         }
       },
       "intent": {
         "metric_values": {
-          "temporal_rules": "2",
-          "temporal_rules_with_cycle_window": "2",
+          "temporal_rules": "4",
+          "temporal_rules_with_cycle_window": "4",
           "temporal_rules_missing_clock_grounding": "0"
         }
       }

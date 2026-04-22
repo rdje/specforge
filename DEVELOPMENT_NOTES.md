@@ -7,6 +7,22 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Generic clock-edge benchmark lexical coverage is hardened now
+- The generic clock-edge family was already part of the repo’s temporal extraction surface:
+  - `next clock edge`
+  - `following clock edge`
+  - `subsequent clock edge`
+- But the tracked KG-quality corpus had only been proving the canonical `next clock edge` phrase plus the bounded `within N clock edges` form.
+- That left a lexical asymmetry inside an already-done benchmark family:
+  - generic next-cycle timing now proves the full `next` / `following` / `subsequent` lane
+  - next-tick timing now proves that same lane
+  - generic clock-edge timing still only proved the `next` spelling even though the parser supported the wider one-cycle surface
+- The right move stayed at the root of that asymmetry:
+  - do not widen the parser or temporal model
+  - do not create another tiny tracker row for a capability that already exists
+  - deepen the existing `generic_clock_edge_timing_gold` fixture so it proves the full one-cycle generic clock-edge lexical lane through both `SemanticIR` and `IntentIR`
+- That now keeps the benchmark corpus aligned with the parser’s supported generic clock-edge aliases and makes the existing family harder to regress silently.
+
 ## 2026-04-22 Shorthand next-edge benchmark lexical coverage is hardened now
 - The shorthand next-edge family was already part of the repo’s temporal extraction surface:
   - `next posedge`

@@ -19,35 +19,40 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `a7fdb93`
-- latest_commit_brief_message: `test(kg-bench): harden shorthand next-edge lexical coverage`
-- note: the latest committed baseline records the shorthand next-edge lexical benchmark hardening checkpoint
+- latest_commit_hash: `65f7748`
+- latest_commit_brief_message: `docs(memory): sync shorthand next-edge baseline`
+- note: the latest committed baseline records the continuity refresh after the shorthand next-edge lexical benchmark hardening checkpoint
 
 ## Recent commit chain (last 6)
+- `65f7748` docs(memory): sync shorthand next-edge baseline
 - `a7fdb93` test(kg-bench): harden shorthand next-edge lexical coverage
 - `efbebe8` docs(memory): sync next-tick lexical baseline
 - `ca16df7` test(kg-bench): harden next-tick lexical coverage
 - `f8626f1` docs(memory): sync later-edge fixture baseline
 - `67bca73` test(kg-bench): add later-edge timing fixture
-- `b640021` docs(memory): sync quantified-edge fixture baseline
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 9` of `origin/main`
+- branch state before the next commit: `ahead 10` of `origin/main`
 - modified tracked files:
+- `CHANGES.md`
+- `DEVELOPMENT_NOTES.md`
 - `MEMORY.md`
-- the feature slice is committed and only the continuity refresh remains
+- `RUST_CODEBASE_ANALYSIS.md`
+- `crates/specforge/test_data/kg_quality/generic_clock_edge_timing_gold/fixture.json`
+- `crates/specforge/test_data/kg_quality/generic_clock_edge_timing_gold/source.md`
+- the generic clock-edge lexical hardening slice is ready for the feature commit after this continuity refresh
 
 ## Current in-flight slice
 - objective:
-  - preserve the latest committed baseline after landing the shorthand next-edge lexical benchmark hardening slice
+  - harden the existing `generic_clock_edge_timing_gold` benchmark family so it proves `next`, `following`, and `subsequent` generic clock-edge aliases together
 - tracker effect:
-  - no live-status row change is expected in this continuity-only commit
+  - no live-status row change is expected because this is reliability hardening inside an already-done benchmark family
 - current tracked KG-quality suite size in the latest committed baseline:
   - `125` fixtures
 - verification status:
-  - feature commit `a7fdb93` is complete
+  - feature commit is not created yet
   - `cargo fmt --all` passed
   - `cargo test -p specforge kg_bench_runs_tracked_fixtures` passed
   - `bash scripts/run_docs_ci.sh` passed
@@ -57,5 +62,7 @@
   - `473` Rust tests plus warning-deny rustdoc and the mdBook build
 
 ## Next exact steps
-- create the continuity commit that records that new baseline
+- stage the hardened generic clock-edge fixture plus synced docs and create the feature commit
+- refresh `MEMORY.md` again so it records that new feature baseline
+- create the continuity commit after the feature commit lands
 - do not push because the branch will remain below the `25`-commit threshold

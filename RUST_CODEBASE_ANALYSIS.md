@@ -4,6 +4,20 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-22 generic clock-edge lexical benchmark hardening)
+- Continued from commit `65f7748`, still hardening the temporal proof surface rather than widening the parser, semantic model, or validation planner.
+- The generic clock-edge family was already part of the parser/extraction design surface:
+  - `next clock edge`
+  - `following clock edge`
+  - `subsequent clock edge`
+  - `within N clock edges`
+- But the tracked KG-quality benchmark corpus only locked the canonical `next clock edge` spelling plus the bounded variant.
+- This slice deepens `crates/specforge/test_data/kg_quality/generic_clock_edge_timing_gold/` so the existing fixture family now proves all three supported one-cycle spellings plus the bounded form through both `SemanticIR` and `IntentIR`, with `temporal_rules_with_cycle_window = 4` and `temporal_rules_missing_clock_grounding = 0`.
+- The tracked KG-quality suite size stays flat because this is a lexical hardening pass inside an already-landed benchmark family, not a new corpus family.
+- Focused tracked-fixture coverage, docs CI, full local CI, and whitespace checks passed for this slice.
+- The current full local CI baseline remains `473` Rust tests plus warning-deny rustdoc and the mdBook build.
+- The tracked KG-quality suite remains `125` fixtures.
+
 ## Session update (2026-04-22 shorthand next-edge lexical benchmark hardening)
 - Continued from commit `efbebe8`, still hardening the temporal proof surface rather than widening the parser, semantic model, or validation planner.
 - The shorthand next-edge family was already part of the parser/extraction design surface:

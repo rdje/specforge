@@ -6,4 +6,8 @@ Signal PREADY is input width 1.
 
 Signal PENABLE is input width 1.
 
+Signal PSEL is input width 1.
+
+Signal PWRITE is input width 1.
+
 Clock HCLK.
