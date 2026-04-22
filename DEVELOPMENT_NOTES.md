@@ -7,6 +7,21 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Named quantified and ordinal clock-edge timing should be benchmark-locked too
+- The named quantified and ordinal edge family is already directly proved in the codebase:
+  - semantic coverage proves `within 2 HCLK edges`
+  - semantic coverage proves `the third edge of HCLK`
+  - validator coverage already proves the quantified side stays out of the missing-cycle-window and missing-clock-grounding paths
+- But that family was still absent from the tracked KG-quality corpus.
+- That left a public-surface asymmetry:
+  - generic `clock edge(s) of <clock>` timing was benchmark-locked
+  - named quantified and ordinal edge timing was still only unit-locked
+- The right move stays narrow:
+  - do not widen the parser or temporal model
+  - do not add a new capability row
+  - add one compact tracked fixture family that locks the already-proved named bounded and exact edge forms through both `SemanticIR` and `IntentIR`
+- That keeps the benchmark corpus aligned with the direct proof surface and makes the named bounded/exact edge contract visible in the tracked review corpus.
+
 ## 2026-04-22 Named one-cycle clock timing should be benchmark-locked too
 - The named one-cycle family is already directly proved in the codebase:
   - semantic coverage proves `next ACLK cycle`
