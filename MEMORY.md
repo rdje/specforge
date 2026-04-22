@@ -19,39 +19,35 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `0175a30`
-- latest_commit_brief_message: `docs(memory): sync default explicit-edge baseline`
-- note: the latest committed baseline records the continuity refresh immediately after the default-clock explicit-edge lexical benchmark hardening checkpoint
+- latest_commit_hash: `bce577b`
+- latest_commit_brief_message: `test(kg-bench): harden named one-cycle lexical coverage`
+- note: the latest committed baseline records the named one-cycle lexical benchmark hardening checkpoint
 
 ## Recent commit chain (last 6)
+- `bce577b` test(kg-bench): harden named one-cycle lexical coverage
 - `0175a30` docs(memory): sync default explicit-edge baseline
 - `1a8ac65` test(kg-bench): harden default explicit-edge lexical coverage
 - `3663e53` docs(memory): sync generic clock-edge baseline
 - `1dc4960` test(kg-bench): harden generic clock-edge lexical coverage
 - `a7fdb93` test(kg-bench): harden shorthand next-edge lexical coverage
-- `efbebe8` docs(memory): sync next-tick lexical baseline
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 14` of `origin/main`
+- branch state before the next commit: `ahead 15` of `origin/main`
 - modified tracked files:
-- `CHANGES.md`
-- `DEVELOPMENT_NOTES.md`
 - `MEMORY.md`
-- `RUST_CODEBASE_ANALYSIS.md`
-- `crates/specforge/test_data/kg_quality/named_next_clock_timing_gold/fixture.json`
-- the named one-cycle lexical hardening slice is in progress and ready for verification
+- the feature slice is committed and only the continuity refresh remains
 
 ## Current in-flight slice
 - objective:
-  - harden the named one-cycle local-clock benchmark family so the tracked corpus proves the supported `next` / `following` / `subsequent` lexical lane instead of only canonical `next` spellings
+  - preserve the latest committed baseline after landing the named one-cycle lexical benchmark hardening slice
 - tracker effect:
-  - no live-status row change is expected in this reliability-hardening slice
+  - no live-status row change is expected in this continuity-only commit
 - current tracked KG-quality suite size in the latest committed baseline:
   - `125` fixtures
 - verification status:
-  - fixture and tracked-doc updates are staged in the worktree
+  - feature commit `bce577b` is complete
   - `cargo fmt --all` passed
   - `cargo test -p specforge kg_bench_runs_tracked_fixtures` passed
   - `bash scripts/run_docs_ci.sh` passed
@@ -61,7 +57,5 @@
   - `473` Rust tests plus warning-deny rustdoc and the mdBook build
 
 ## Next exact steps
-- commit the feature slice
-- refresh `MEMORY.md` again so the latest committed baseline points at that new feature commit
 - create the continuity commit
 - do not push because the branch will remain below the `25`-commit threshold
