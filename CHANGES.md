@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-04-22 (Default-clock later-edge timing is now benchmark-locked too)
+
+### Improved: the tracked KG corpus now proves default-clock later-edge timing end to end
+- Added `crates/specforge/test_data/kg_quality/default_clock_later_edge_timing_gold/` so the tracked benchmark corpus now locks:
+  - `PREADY must be asserted after 3 rising edges.`
+  - `PWAKEUP must be asserted after 3 falling edges.`
+- The new fixture proves those forms through both `SemanticIR` and `IntentIR`, with:
+  - default-clock grounding to `clock_signal = HCLK`
+  - preserved explicit `edge = rising` / `edge = falling`
+  - `cycle_window = 3..3`
+  - `temporal_rules_missing_clock_grounding = 0`
+- This does not widen the temporal model. It raises the already-landed default-clock later-edge family into the tracked KG-quality corpus.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-22 (Default-clock quantified edge timing is now benchmark-locked too)
 
 ### Improved: the tracked KG corpus now proves default-clock quantified and ordinal edge timing end to end
