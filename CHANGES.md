@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-22 (Generic bounded cycle timing is now benchmark-locked too)
+
+### Improved: the tracked KG corpus now proves bare bounded cycle timing end to end
+- Added `crates/specforge/test_data/kg_quality/generic_bounded_cycle_timing_gold/` so the tracked benchmark corpus now locks:
+  - `PREADY must be asserted within 2 cycles.`
+- The new fixture proves that form through both `SemanticIR` and `IntentIR`, with:
+  - default-clock grounding to `clock_signal = HCLK`
+  - `edge = rising`
+  - `cycle_window.max_cycles = 2`
+  - `temporal_rules_missing_clock_grounding = 0`
+- This does not widen the temporal model. It raises the already-landed generic bounded cycle family into the tracked KG-quality corpus.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-22 (Generic next-cycle timing is now benchmark-locked too)
 
 ### Improved: the tracked KG corpus now proves bare next-cycle timing end to end

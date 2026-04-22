@@ -4,6 +4,17 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-22 generic bounded-cycle benchmark lock)
+- Continued from commit `5316b79`, still hardening the temporal proof surface rather than widening the parser, semantic model, or validation planner.
+- The generic bounded-cycle family was already directly proved in semantic coverage:
+  - `within 2 cycles` recovered the expected bounded window
+- But that family was still missing from the tracked KG-quality benchmark corpus.
+- This slice adds `crates/specforge/test_data/kg_quality/generic_bounded_cycle_timing_gold/`, a compact tracked fixture that locks the generic bounded-cycle family through both `SemanticIR` and `IntentIR`, with `temporal_rules_with_cycle_window = 1` and `temporal_rules_missing_clock_grounding = 0`.
+- The tracked KG-quality suite grows by one fixture family because this is a corpus-surface hardening slice, not another unit-level proof refinement.
+- Focused tracked-fixture coverage, docs CI, full local CI, and whitespace checks passed for this slice.
+- The current full local CI baseline remains `473` Rust tests plus warning-deny rustdoc and the mdBook build.
+- The tracked KG-quality suite is now `120` fixtures.
+
 ## Session update (2026-04-22 generic next-cycle benchmark lock)
 - Continued from commit `5410478`, still hardening the temporal proof surface rather than widening the parser, semantic model, or validation planner.
 - The generic next-cycle family was already directly proved in semantic coverage:
