@@ -7,6 +7,20 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Default-clock generic clock-edge timing is benchmark-locked now
+- The bare generic clock-edge family was already directly proved in the codebase:
+  - parser coverage proves `next clock edge`
+  - parser coverage proves `within 2 clock edges`
+- But that family had still been absent from the tracked KG-quality corpus.
+- That had left a public-surface asymmetry:
+  - named `clock edge(s) of <clock>` timing was benchmark-locked
+  - default-clock generic `clock edge(s)` timing was still only parser-locked
+- The right move stayed narrow:
+  - do not widen the parser or temporal model
+  - do not add a new semantic capability row
+  - add one compact tracked fixture family that locks the already-landed default-clock generic clock-edge forms through both `SemanticIR` and `IntentIR`
+- That now keeps the benchmark corpus aligned with the direct proof surface and makes the default-clock generic clock-edge contract visible in the tracked review corpus.
+
 ## 2026-04-22 Next-tick timing should be benchmark-locked too
 - The idiomatic bare next-tick family is already directly proved in the codebase:
   - semantic coverage proves `next tick`

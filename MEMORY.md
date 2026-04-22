@@ -19,35 +19,40 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `d90db84`
-- latest_commit_brief_message: `test(kg-bench): add next-tick timing fixture`
-- note: the latest committed baseline records the slice where idiomatic next-tick timing entered the tracked KG-quality corpus
+- latest_commit_hash: `fee7c02`
+- latest_commit_brief_message: `docs(memory): sync next-tick fixture baseline`
+- note: the latest committed baseline records the latest continuity checkpoint after the next-tick benchmark slice
 
 ## Recent commit chain (last 6)
+- `fee7c02` docs(memory): sync next-tick fixture baseline
 - `d90db84` test(kg-bench): add next-tick timing fixture
 - `eaee035` docs(memory): sync later-phrase fixture baseline
 - `dc62db6` test(kg-bench): add later-phrase timing fixture
 - `55df3a3` docs(memory): sync shorthand next-edge fixture baseline
 - `d60d1e3` test(kg-bench): add shorthand next-edge timing fixture
-- `2804882` docs(memory): sync tick-unit fixture baseline
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 13` of `origin/main`
+- branch state before the next commit: `ahead 14` of `origin/main`
 - modified tracked files:
 - `MEMORY.md`
-- the feature slice is committed; only the required continuity refresh remains before the repo returns to a clean post-slice state
+- `CHANGES.md`
+- `DEVELOPMENT_NOTES.md`
+- `LIVE_ACHIEVEMENT_STATUS.md`
+- `RUST_CODEBASE_ANALYSIS.md`
+- `crates/specforge/test_data/kg_quality/generic_clock_edge_timing_gold/fixture.json`
+- `crates/specforge/test_data/kg_quality/generic_clock_edge_timing_gold/source.md`
+- the new slice is verified locally and ready for the feature commit workflow
 
 ## Current in-flight slice
 - objective:
-  - complete the mandatory post-feature continuity refresh for the next-tick benchmark slice
+  - raise the already-landed default-clock generic clock-edge family into the tracked KG-quality benchmark corpus
 - tracker effect:
-  - no further tracker change is expected in the continuity commit; the feature commit already moved `KG benchmark harness now includes idiomatic next-tick timing coverage` to `Done`
-- current tracked KG-quality suite size after validation:
-  - `116` fixtures
+  - move `KG benchmark harness now includes default-clock generic clock-edge timing coverage` to `Done`
+- current tracked KG-quality suite size in the verified worktree:
+  - `117` fixtures
 - verification status:
-  - feature commit `d90db84` already landed cleanly
   - `cargo fmt --all` passed
   - `cargo test -p specforge kg_bench_runs_tracked_fixtures` passed
   - `bash scripts/run_docs_ci.sh` passed
@@ -57,7 +62,7 @@
   - `473` Rust tests plus warning-deny rustdoc and the mdBook build
 
 ## Next exact steps
-- write the continuity commit message into `git_message_brief.txt`
-- stage only `MEMORY.md`
-- create the required continuity commit, truncate `git_message_brief.txt`, and verify post-conditions again
+- create the feature commit for the default-clock generic clock-edge benchmark fixture slice
+- refresh `MEMORY.md` again for the required continuity commit
+- create the continuity commit that records the feature-commit baseline
 - do not push because the branch remains below the `25`-commit threshold
