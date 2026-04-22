@@ -7,6 +7,32 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Named local zero-cycle benchmark lexical coverage is hardened now
+- The named local zero-cycle family was already part of the repo’s temporal extraction surface:
+  - `same ACLK cycle`
+  - `this HCLK tick`
+  - `current HCLK edge`
+- But the tracked KG-quality corpus had only been proving the canonical `same ACLK cycle` spelling.
+- That left a lexical asymmetry inside an already-done benchmark family:
+  - default-clock zero-cycle timing already proved multiple lexical shapes inside its tracked family
+  - named one-cycle local-clock timing now proves the full `next` / `following` / `subsequent` lane
+  - named local zero-cycle timing still only proved one canonical spelling even though the parser already supported the wider `same` / `this` / `current` surface
+- The right move stayed at the root of that asymmetry:
+  - do not widen the parser or temporal model
+  - do not create another tiny tracker row for a capability that already exists
+  - deepen the existing `named_cycle_timing_gold` fixture so it proves the full named zero-cycle lexical lane through both `SemanticIR` and `IntentIR`
+- That now keeps the benchmark corpus aligned with the parser’s supported named zero-cycle aliases and makes the existing family harder to regress silently.
+- While verifying that lexical hardening slice, the broader root cause blocking `bash scripts/run_ci.sh` turned out to be newly enforced clippy failures that were unrelated to the timing fixture itself:
+  - percentage calculations in `validate.rs` were using manual guarded division patterns
+  - `evidence.rs` still used an explicit span counter loop
+  - `semantic.rs` still had a `loop`/`break` shape clippy now wants as `while let`, plus a map iteration that should consume values directly
+  - `source.rs` still carried manual `Default` impls for enums that can now be derived
+- The right fix there was also root-cause oriented:
+  - keep the full verification gate intact
+  - update those sites to the current clippy-preferred forms
+  - rerun the complete docs and CI lane until the repo was green again
+- That leaves this slice as both a benchmark-hardening improvement and a restored full-CI baseline, which is a better outcome than quietly accepting a broken `run_ci.sh`.
+
 ## 2026-04-22 Named one-cycle benchmark lexical coverage is hardened now
 - The named one-cycle local-clock family was already part of the repo’s temporal extraction surface:
   - `next ACLK cycle`

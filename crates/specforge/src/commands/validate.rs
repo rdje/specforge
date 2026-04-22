@@ -2341,11 +2341,11 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
     }
     println!("  total_statements: {total}");
     for (class, count) in sorted_by_value(&classes) {
-        let pct = if total > 0 { count * 100 / total } else { 0 };
+        let pct = percentage_or_zero(*count, total);
         println!("  {class}: {count} ({pct}%)");
     }
     let non_fact = total - classes.get("source_fact").copied().unwrap_or(0);
-    let nlp_coverage = if total > 0 { non_fact * 100 / total } else { 0 };
+    let nlp_coverage = percentage_or_zero(non_fact, total);
     println!("  nlp_coverage (non-source_fact): {nlp_coverage}%");
     println!();
 
@@ -2945,36 +2945,12 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         })
         .count();
     println!("  total_signal_records: {total_signals}");
-    let dir_pct = if total_signals > 0 {
-        with_direction * 100 / total_signals
-    } else {
-        0
-    };
-    let w_pct = if total_signals > 0 {
-        with_width * 100 / total_signals
-    } else {
-        0
-    };
-    let ft_pct = if total_signals > 0 {
-        fully_typed * 100 / total_signals
-    } else {
-        0
-    };
-    let graph_dir_pct = if total_signals > 0 {
-        with_graph_direction * 100 / total_signals
-    } else {
-        0
-    };
-    let compat_dir_pct = if total_signals > 0 {
-        with_compat_direction_hint * 100 / total_signals
-    } else {
-        0
-    };
-    let table_support_pct = if total_signals > 0 {
-        with_table_support * 100 / total_signals
-    } else {
-        0
-    };
+    let dir_pct = percentage_or_zero(with_direction, total_signals);
+    let w_pct = percentage_or_zero(with_width, total_signals);
+    let ft_pct = percentage_or_zero(fully_typed, total_signals);
+    let graph_dir_pct = percentage_or_zero(with_graph_direction, total_signals);
+    let compat_dir_pct = percentage_or_zero(with_compat_direction_hint, total_signals);
+    let table_support_pct = percentage_or_zero(with_table_support, total_signals);
     println!("  with_resolved_direction: {with_direction} ({dir_pct}%)");
     println!("  with_graph_direction: {with_graph_direction} ({graph_dir_pct}%)");
     println!(
@@ -4243,31 +4219,11 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         Some(InfrastructureTopologyKind::ResetTreeTargets),
     );
     let initial_regular_states = initial_regular_states_count(&ir.regular_states);
-    let dir_pct = if declared_count > 0 {
-        with_direction * 100 / declared_count
-    } else {
-        0
-    };
-    let w_pct = if declared_count > 0 {
-        with_width * 100 / declared_count
-    } else {
-        0
-    };
-    let graph_dir_pct = if declared_count > 0 {
-        with_graph_direction * 100 / declared_count
-    } else {
-        0
-    };
-    let compat_dir_pct = if declared_count > 0 {
-        with_compat_direction_hint * 100 / declared_count
-    } else {
-        0
-    };
-    let table_support_pct = if declared_count > 0 {
-        with_table_support * 100 / declared_count
-    } else {
-        0
-    };
+    let dir_pct = percentage_or_zero(with_direction, declared_count);
+    let w_pct = percentage_or_zero(with_width, declared_count);
+    let graph_dir_pct = percentage_or_zero(with_graph_direction, declared_count);
+    let compat_dir_pct = percentage_or_zero(with_compat_direction_hint, declared_count);
+    let table_support_pct = percentage_or_zero(with_table_support, declared_count);
     println!("  declared_signal_records: {declared_count}");
     println!("  heuristic_signal_records (excluded from coverage): {heuristic_signals}");
     println!("  with_resolved_direction: {with_direction} ({dir_pct}%)");
@@ -5453,6 +5409,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     };
     print_validation_findings(&report);
     report
+}
+
+fn percentage_or_zero(count: usize, total: usize) -> usize {
+    count.saturating_mul(100).checked_div(total).unwrap_or(0)
 }
 
 fn sorted_by_value<'a>(map: &'a HashMap<&str, usize>) -> Vec<(&'a &'a str, &'a usize)> {

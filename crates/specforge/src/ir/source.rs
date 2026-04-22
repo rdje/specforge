@@ -196,7 +196,7 @@ pub struct ContentElementRecord {
 
 /// Classification of a structured table's purpose, inferred from its header cells at ingest time.
 /// Downstream stages (EvidenceIR, SemanticIR) use this to apply table-type-specific extraction.
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum TableKind {
     /// Signal name + direction/width columns (AHB manager/subordinate signal tables).
@@ -209,13 +209,8 @@ pub enum TableKind {
     TimingParameter,
     /// Feature/property + mandatory/optional/prohibited columns.
     FeatureMatrix,
+    #[default]
     Unknown,
-}
-
-impl Default for TableKind {
-    fn default() -> Self {
-        Self::Unknown
-    }
 }
 
 /// Section kind as heuristically classified from the heading title at ingest time.
@@ -846,7 +841,7 @@ pub enum VisualAssetKind {
 /// Semantic classification of a visual asset's diagram type.
 /// Set from caption text heuristics at ingest time (zero VLM deps).
 /// Used to route VLM enrichment calls at the `specforge enrich` step.
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum DiagramKind {
     /// Waveform on horizontal time axis — the most normative content in chip specs.
@@ -862,13 +857,8 @@ pub enum DiagramKind {
     /// Flow chart with diamond decision nodes.
     FlowChart,
     /// Cannot be determined from caption text alone; requires VLM.
+    #[default]
     Unknown,
-}
-
-impl Default for DiagramKind {
-    fn default() -> Self {
-        Self::Unknown
-    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]

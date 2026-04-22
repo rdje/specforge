@@ -1,5 +1,27 @@
 # CHANGES
 
+## 2026-04-22 (Named local zero-cycle benchmark coverage now proves the full lexical lane)
+
+### Improved: the tracked KG corpus now proves follow-on named zero-cycle phrasing inside the existing family
+- Expanded `crates/specforge/test_data/kg_quality/named_cycle_timing_gold/` so the tracked benchmark corpus now locks:
+  - `TVALID must be asserted in the same ACLK cycle.`
+  - `TREADY must be asserted on this HCLK tick.`
+  - `PSEL must be asserted on the current HCLK edge.`
+- The expanded fixture proves those forms through both `SemanticIR` and `IntentIR`, with:
+  - preserved local `clock_signal`
+  - `edge = rising`
+  - `cycle_window = 0..0`
+  - `temporal_rules_missing_clock_grounding = 0`
+- This does not widen the temporal model or add a new benchmark family. It hardens the already-landed named local zero-cycle surface so the tracked corpus now covers the full supported lexical lane.
+- The slice also restored the repo’s full standard CI lane by fixing current clippy-rooted failures in `crates/specforge/src/commands/validate.rs`, `crates/specforge/src/ir/evidence.rs`, `crates/specforge/src/ir/semantic.rs`, and `crates/specforge/src/ir/source.rs` instead of weakening verification.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-22 (Named one-cycle benchmark coverage now proves the full lexical lane)
 
 ### Improved: the tracked KG corpus now proves follow-on named one-cycle phrasing inside the existing family

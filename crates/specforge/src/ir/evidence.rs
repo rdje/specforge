@@ -281,13 +281,11 @@ impl EvidenceIr {
         let mut caption_support: HashMap<String, Vec<String>> = HashMap::new();
         let mut reference_support: HashMap<String, Vec<ReferenceSupport>> = HashMap::new();
 
-        let mut span_counter = 1usize;
         let mut link_counter = 1usize;
         let mut statement_counter = 1usize;
 
-        for block in &parsed_markdown.blocks {
+        for (span_counter, block) in (1usize..).zip(parsed_markdown.blocks.iter()) {
             let span_id = format!("span_{span_counter:04}");
-            span_counter += 1;
 
             let section_index = section_index_for_line(&section_anchors, block.line_start);
             let caption_asset_id = caption_key_to_asset_id

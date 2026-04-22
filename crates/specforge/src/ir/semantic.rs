@@ -5476,13 +5476,10 @@ impl<'a> ControlExpressionParser<'a> {
         operators: &[(&str, ControlBinaryOperator)],
     ) -> Option<ControlExpressionRecord> {
         let mut expression = next_parser(self)?;
-        loop {
-            let Some((_, operator)) = operators
-                .iter()
-                .find(|(token, _)| self.peek().is_some_and(|next| next == *token))
-            else {
-                break;
-            };
+        while let Some((_, operator)) = operators
+            .iter()
+            .find(|(token, _)| self.peek().is_some_and(|next| next == *token))
+        {
             self.index += 1;
             let right = next_parser(self)?;
             expression = ControlExpressionRecord::Binary {
@@ -8422,8 +8419,8 @@ fn build_temporal_conflicts(
     }
 
     accumulators
-        .into_iter()
-        .flat_map(|(_, entry)| temporal_conflict_records_from_accumulator(entry))
+        .into_values()
+        .flat_map(temporal_conflict_records_from_accumulator)
         .enumerate()
         .map(|(index, emission)| TemporalConflictRecord {
             conflict_id: format!("temporal_conflict_{:04}", index + 1),
