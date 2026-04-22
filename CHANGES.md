@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-22 (Named diagram-edge timing is now benchmark-locked too)
+
+### Improved: the tracked KG corpus now proves named diagram-edge timing end to end
+- Added `crates/specforge/test_data/kg_quality/named_diagram_edge_timing_gold/` so the tracked benchmark corpus now locks:
+  - `PREADY must be asserted on edge T3 of HCLK.`
+- The new fixture proves that form through both `SemanticIR` and `IntentIR`, with:
+  - preserved local `clock_signal = HCLK`
+  - `edge = rising`
+  - `cycle_window = 3..3`
+  - `temporal_rules_missing_clock_grounding = 0`
+- This does not widen the temporal model. It raises the already-landed named diagram-edge family into the tracked KG-quality corpus.
+
+### Validation
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-22 (Named quantified and ordinal clock-edge timing is now benchmark-locked too)
 
 ### Improved: the tracked KG corpus now proves named bounded and exact edge timing end to end

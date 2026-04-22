@@ -81,6 +81,7 @@
 - KG benchmark harness now includes named local cycle timing coverage: Done
 - KG benchmark harness now includes named one-cycle clock timing coverage: Done
 - KG benchmark harness now includes named quantified and ordinal clock-edge timing coverage: Done
+- KG benchmark harness now includes named diagram-edge timing coverage: Done
 - KG benchmark harness now includes AXI read-address timing coverage: Done
 - KG benchmark harness now includes AXI read-address ID stability coverage: Done
 - KG benchmark harness now includes AXI write-address ID stability coverage: Done

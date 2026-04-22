@@ -4,6 +4,17 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-22 named diagram-edge benchmark lock)
+- Continued from commit `b40ccbb`, still hardening the temporal proof surface rather than widening the parser, semantic model, or validation planner.
+- The named diagram-edge family was already directly proved in unit coverage:
+  - `edge T3 of HCLK` preserved `clock_signal = HCLK`, `edge = rising`, and `cycle_window = 3..3`
+- But that family was still missing from the tracked KG-quality benchmark corpus.
+- This slice adds `crates/specforge/test_data/kg_quality/named_diagram_edge_timing_gold/`, a compact tracked fixture that locks the named diagram-edge family through both `SemanticIR` and `IntentIR`, with `temporal_rules_with_cycle_window = 1` and `temporal_rules_missing_clock_grounding = 0`.
+- The tracked KG-quality suite grows by one fixture family because this is a corpus-surface hardening slice, not another unit-level proof refinement.
+- Focused tracked-fixture coverage, docs CI, full local CI, and whitespace checks passed for this slice.
+- The current full local CI baseline remains `473` Rust tests plus warning-deny rustdoc and the mdBook build.
+- The tracked KG-quality suite is now `110` fixtures.
+
 ## Session update (2026-04-22 named quantified-edge benchmark lock)
 - Continued from commit `93ef907`, still hardening the temporal proof surface rather than widening the parser, semantic model, or validation planner.
 - The named quantified and ordinal edge family was already directly proved in unit coverage:

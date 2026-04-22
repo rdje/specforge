@@ -7,6 +7,20 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Named diagram-edge timing should be benchmark-locked too
+- The named diagram-edge family is already directly proved in the codebase:
+  - semantic coverage proves `edge T3 of HCLK`
+  - validator coverage proves that same form stays out of the missing-grounding path
+- But that family was still absent from the tracked KG-quality corpus.
+- That left a small public-surface asymmetry:
+  - generic `clock edge T4 of HCLK` timing was benchmark-locked
+  - named `edge T3 of HCLK` timing was still only unit-locked
+- The right move stays narrow:
+  - do not widen the parser or temporal model
+  - do not add a new capability row
+  - add one compact tracked fixture family that locks the already-proved named diagram-edge form through both `SemanticIR` and `IntentIR`
+- That keeps the benchmark corpus aligned with the direct proof surface and makes the named diagram-edge contract visible in the tracked review corpus.
+
 ## 2026-04-22 Named quantified and ordinal clock-edge timing should be benchmark-locked too
 - The named quantified and ordinal edge family is already directly proved in the codebase:
   - semantic coverage proves `within 2 HCLK edges`
