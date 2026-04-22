@@ -19,40 +19,35 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `5410478`
-- latest_commit_brief_message: `docs(memory): sync zero-cycle fixture baseline`
-- note: the latest committed baseline records the latest continuity checkpoint after the default-clock zero-cycle slice
+- latest_commit_hash: `575b174`
+- latest_commit_brief_message: `test(kg-bench): add generic next-cycle timing fixture`
+- note: the latest committed baseline records the latest benchmark checkpoint after the generic next-cycle slice
 
 ## Recent commit chain (last 6)
+- `575b174` test(kg-bench): add generic next-cycle timing fixture
 - `5410478` docs(memory): sync zero-cycle fixture baseline
 - `8613510` test(kg-bench): add zero-cycle timing fixture
 - `ac2eea8` docs(memory): sync default-clock clock-edge fixture baseline
 - `1f30163` test(kg-bench): add default-clock clock-edge timing fixture
 - `fee7c02` docs(memory): sync next-tick fixture baseline
-- `d90db84` test(kg-bench): add next-tick timing fixture
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 18` of `origin/main`
+- branch state before the next commit: `ahead 19` of `origin/main`
 - modified tracked files:
-- `CHANGES.md`
-- `DEVELOPMENT_NOTES.md`
-- `LIVE_ACHIEVEMENT_STATUS.md`
 - `MEMORY.md`
-- `RUST_CODEBASE_ANALYSIS.md`
-- `crates/specforge/test_data/kg_quality/generic_next_cycle_timing_gold/fixture.json`
-- `crates/specforge/test_data/kg_quality/generic_next_cycle_timing_gold/source.md`
-- the new slice is verified locally and ready for the feature commit workflow
+- the feature slice is committed and only the continuity refresh remains before the worktree returns to clean
 
 ## Current in-flight slice
 - objective:
-  - raise the already-landed generic next-cycle family into the tracked KG-quality benchmark corpus
+  - preserve the latest committed baseline after landing the generic next-cycle benchmark slice
 - tracker effect:
-  - move `KG benchmark harness now includes generic next-cycle timing coverage` to `Done`
-- current tracked KG-quality suite size in the verified worktree:
+  - no additional tracker change is expected in this continuity-only commit
+- current tracked KG-quality suite size in the latest committed baseline:
   - `119` fixtures
 - verification status:
+  - feature commit `575b174` is complete
   - `cargo fmt --all` passed
   - `cargo test -p specforge kg_bench_runs_tracked_fixtures` passed
   - `bash scripts/run_docs_ci.sh` passed
@@ -62,7 +57,7 @@
   - `473` Rust tests plus warning-deny rustdoc and the mdBook build
 
 ## Next exact steps
-- create the feature commit for the generic next-cycle benchmark fixture slice
-- refresh `MEMORY.md` again for the required continuity commit
 - create the continuity commit that records the feature-commit baseline
+- verify that `git_message_brief.txt` is truncated back to `0` bytes and remains untracked
+- verify that the worktree is clean after the continuity commit
 - do not push because the branch remains below the `25`-commit threshold
