@@ -24,13 +24,57 @@
         "source_text": "PWAKEUP must be asserted on the next falling edge.",
         "supporting_statement_ids": ["stmt_next_falling_edge"],
         "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_psel_following_rising_edge",
+        "subject_signal": "PSEL",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "PSEL must be asserted on the following rising edge.",
+        "supporting_statement_ids": ["stmt_following_rising_edge"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_pwrite_following_falling_edge",
+        "subject_signal": "PWRITE",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "PWRITE must be asserted on the following falling edge.",
+        "supporting_statement_ids": ["stmt_following_falling_edge"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_pslverr_subsequent_rising_edge",
+        "subject_signal": "PSLVERR",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "PSLVERR must be asserted on the subsequent rising edge.",
+        "supporting_statement_ids": ["stmt_subsequent_rising_edge"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_pstrb_subsequent_falling_edge",
+        "subject_signal": "PSTRB",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "PSTRB must be asserted on the subsequent falling edge.",
+        "supporting_statement_ids": ["stmt_subsequent_falling_edge"],
+        "automation_confidence": "medium"
       }
     ]
   },
   "expectations": {
     "semantic": {
-      "signal_names_include": ["PREADY", "PWAKEUP"],
-      "temporal_rule_count": 2,
+      "signal_names_include": ["PREADY", "PWAKEUP", "PSEL", "PWRITE", "PSLVERR", "PSTRB"],
+      "temporal_rule_count": 6,
       "temporal_rules_include": [
         {
           "source_text": "PREADY must be asserted on the next rising edge.",
@@ -63,6 +107,78 @@
             {
               "kind": "signal_value",
               "signal_name": "PWAKEUP",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PSEL must be asserted on the following rising edge.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_following_rising_edge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PSEL",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PWRITE must be asserted on the following falling edge.",
+          "clock_signal": "HCLK",
+          "edge": "falling",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_following_falling_edge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PWRITE",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PSLVERR must be asserted on the subsequent rising edge.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_subsequent_rising_edge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PSLVERR",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PSTRB must be asserted on the subsequent falling edge.",
+          "clock_signal": "HCLK",
+          "edge": "falling",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_subsequent_falling_edge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PSTRB",
               "value": "ASSERTED",
               "phase": "post_tick"
             }
@@ -71,8 +187,8 @@
       ]
     },
     "intent": {
-      "signal_names_include": ["PREADY", "PWAKEUP"],
-      "temporal_rule_count": 2,
+      "signal_names_include": ["PREADY", "PWAKEUP", "PSEL", "PWRITE", "PSLVERR", "PSTRB"],
+      "temporal_rule_count": 6,
       "temporal_rules_include": [
         {
           "source_text": "PREADY must be asserted on the next rising edge.",
@@ -105,6 +221,78 @@
             {
               "kind": "signal_value",
               "signal_name": "PWAKEUP",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PSEL must be asserted on the following rising edge.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_following_rising_edge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PSEL",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PWRITE must be asserted on the following falling edge.",
+          "clock_signal": "HCLK",
+          "edge": "falling",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_following_falling_edge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PWRITE",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PSLVERR must be asserted on the subsequent rising edge.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_subsequent_rising_edge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PSLVERR",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PSTRB must be asserted on the subsequent falling edge.",
+          "clock_signal": "HCLK",
+          "edge": "falling",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_subsequent_falling_edge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PSTRB",
               "value": "ASSERTED",
               "phase": "post_tick"
             }
@@ -115,15 +303,15 @@
     "validation": {
       "semantic": {
         "metric_values": {
-          "temporal_rules": "2",
-          "temporal_rules_with_cycle_window": "2",
+          "temporal_rules": "6",
+          "temporal_rules_with_cycle_window": "6",
           "temporal_rules_missing_clock_grounding": "0"
         }
       },
       "intent": {
         "metric_values": {
-          "temporal_rules": "2",
-          "temporal_rules_with_cycle_window": "2",
+          "temporal_rules": "6",
+          "temporal_rules_with_cycle_window": "6",
           "temporal_rules_missing_clock_grounding": "0"
         }
       }

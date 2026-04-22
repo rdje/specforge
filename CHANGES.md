@@ -1,5 +1,29 @@
 # CHANGES
 
+## 2026-04-22 (Default-clock explicit edge benchmark coverage now proves the full lexical lane)
+
+### Improved: the tracked KG corpus now proves follow-on explicit edge phrasing inside the existing default-clock family
+- Expanded `crates/specforge/test_data/kg_quality/default_clock_explicit_next_edge_timing_gold/` so the tracked benchmark corpus now locks:
+  - `PREADY must be asserted on the next rising edge.`
+  - `PWAKEUP must be asserted on the next falling edge.`
+  - `PSEL must be asserted on the following rising edge.`
+  - `PWRITE must be asserted on the following falling edge.`
+  - `PSLVERR must be asserted on the subsequent rising edge.`
+  - `PSTRB must be asserted on the subsequent falling edge.`
+- The expanded fixture proves those forms through both `SemanticIR` and `IntentIR`, with:
+  - default-clock grounding to `clock_signal = HCLK`
+  - preserved explicit `edge = rising` / `edge = falling`
+  - `cycle_window = 1..1`
+  - `temporal_rules_missing_clock_grounding = 0`
+- This does not widen the temporal model or add a new benchmark family. It hardens the already-landed default-clock explicit-edge surface so the tracked corpus now covers the full supported lexical lane.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-22 (Generic clock-edge benchmark coverage now proves the full lexical lane)
 
 ### Improved: the tracked KG corpus now proves follow-on generic clock-edge phrasing inside the existing family
