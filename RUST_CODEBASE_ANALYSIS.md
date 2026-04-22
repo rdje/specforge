@@ -4,6 +4,21 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-22 generic next-cycle direct lexical hardening)
+- Continued from commit `cbb4036`, still hardening the temporal proof surface rather than widening the parser, semantic model, or validation planner.
+- The generic next-cycle family was already part of the parser and extraction design surface:
+  - `next cycle`
+  - `next clock cycle`
+  - `following cycle`
+  - `subsequent cycle`
+- The tracked KG-quality benchmark corpus already locked those spellings inside `crates/specforge/test_data/kg_quality/generic_next_cycle_timing_gold/`.
+- But the direct proof lane still only locked the canonical extractor spelling and had no semantic or validator regression for the full lexical quartet.
+- This slice expands the direct extractor regression, semantic regression, and validator regression so the supported generic next-cycle lexical surface is protected before and alongside the benchmark harness.
+- The tracked KG-quality suite size stays flat because this is a direct-lane hardening pass inside an already-landed benchmark family, not a new corpus family.
+- Focused extractor coverage, focused semantic coverage, focused validator coverage, tracked-fixture coverage, docs CI, full local CI, and whitespace checks passed for this slice.
+- The current full local CI baseline rises to `479` Rust tests plus warning-deny rustdoc and the mdBook build.
+- The tracked KG-quality suite remains `125` fixtures.
+
 ## Session update (2026-04-22 next-tick direct lexical hardening)
 - Continued from commit `ec0c155`, still hardening the temporal proof surface rather than widening the parser, semantic model, or validation planner.
 - The next-tick family was already part of the parser and extraction design surface:
