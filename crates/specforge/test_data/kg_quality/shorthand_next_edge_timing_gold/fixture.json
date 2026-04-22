@@ -24,13 +24,57 @@
         "source_text": "PENABLE must be asserted on the next negedge.",
         "supporting_statement_ids": ["stmt_next_negedge"],
         "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_psel_following_posedge",
+        "subject_signal": "PSEL",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "PSEL must be asserted on the following posedge.",
+        "supporting_statement_ids": ["stmt_following_posedge"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_pwrite_following_negedge",
+        "subject_signal": "PWRITE",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "PWRITE must be asserted on the following negedge.",
+        "supporting_statement_ids": ["stmt_following_negedge"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_pslverr_subsequent_posedge",
+        "subject_signal": "PSLVERR",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "PSLVERR must be asserted on the subsequent posedge.",
+        "supporting_statement_ids": ["stmt_subsequent_posedge"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_pstrb_subsequent_negedge",
+        "subject_signal": "PSTRB",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "PSTRB must be asserted on the subsequent negedge.",
+        "supporting_statement_ids": ["stmt_subsequent_negedge"],
+        "automation_confidence": "medium"
       }
     ]
   },
   "expectations": {
     "semantic": {
-      "signal_names_include": ["PREADY", "PENABLE"],
-      "temporal_rule_count": 2,
+      "signal_names_include": ["PREADY", "PENABLE", "PSEL", "PWRITE", "PSLVERR", "PSTRB"],
+      "temporal_rule_count": 6,
       "temporal_rules_include": [
         {
           "source_text": "PREADY must be asserted on the next posedge.",
@@ -63,6 +107,78 @@
             {
               "kind": "signal_value",
               "signal_name": "PENABLE",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PSEL must be asserted on the following posedge.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_following_posedge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PSEL",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PWRITE must be asserted on the following negedge.",
+          "clock_signal": "HCLK",
+          "edge": "falling",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_following_negedge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PWRITE",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PSLVERR must be asserted on the subsequent posedge.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_subsequent_posedge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PSLVERR",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PSTRB must be asserted on the subsequent negedge.",
+          "clock_signal": "HCLK",
+          "edge": "falling",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_subsequent_negedge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PSTRB",
               "value": "ASSERTED",
               "phase": "post_tick"
             }
@@ -71,8 +187,8 @@
       ]
     },
     "intent": {
-      "signal_names_include": ["PREADY", "PENABLE"],
-      "temporal_rule_count": 2,
+      "signal_names_include": ["PREADY", "PENABLE", "PSEL", "PWRITE", "PSLVERR", "PSTRB"],
+      "temporal_rule_count": 6,
       "temporal_rules_include": [
         {
           "source_text": "PREADY must be asserted on the next posedge.",
@@ -105,6 +221,78 @@
             {
               "kind": "signal_value",
               "signal_name": "PENABLE",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PSEL must be asserted on the following posedge.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_following_posedge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PSEL",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PWRITE must be asserted on the following negedge.",
+          "clock_signal": "HCLK",
+          "edge": "falling",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_following_negedge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PWRITE",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PSLVERR must be asserted on the subsequent posedge.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_subsequent_posedge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PSLVERR",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PSTRB must be asserted on the subsequent negedge.",
+          "clock_signal": "HCLK",
+          "edge": "falling",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_subsequent_negedge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PSTRB",
               "value": "ASSERTED",
               "phase": "post_tick"
             }
@@ -115,15 +303,15 @@
     "validation": {
       "semantic": {
         "metric_values": {
-          "temporal_rules": "2",
-          "temporal_rules_with_cycle_window": "2",
+          "temporal_rules": "6",
+          "temporal_rules_with_cycle_window": "6",
           "temporal_rules_missing_clock_grounding": "0"
         }
       },
       "intent": {
         "metric_values": {
-          "temporal_rules": "2",
-          "temporal_rules_with_cycle_window": "2",
+          "temporal_rules": "6",
+          "temporal_rules_with_cycle_window": "6",
           "temporal_rules_missing_clock_grounding": "0"
         }
       }
