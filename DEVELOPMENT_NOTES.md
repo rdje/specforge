@@ -7,6 +7,21 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Named one-cycle edge coverage is hardened now
+- After the earlier named one-cycle lexical hardening pass, one smaller asymmetry still remained inside the same family:
+  - the named-unit parser path already accepted explicit forms like `next HCLK clock edge`
+  - named one-cycle grounding already preserved explicit falling-side semantics for phrases like `following HCLK falling edge`
+  - but the tracked `named_next_clock_timing_gold` family still only proved `next ACLK cycle`, `following HCLK edge`, and `subsequent HCLK rising edge`
+- That left the named one-cycle edge lane under-proved in two specific ways:
+  - explicit named `clock edge` phrasing could regress without a tracked corpus failure
+  - explicit named falling-edge phrasing could regress back toward default rising behavior without a direct local proof
+- The right fix stayed at the root of that asymmetry:
+  - do not widen the parser or temporal model
+  - do not create another small benchmark family for a capability that already exists
+  - deepen the existing `named_next_clock_timing_gold` fixture so it proves the remaining named generic-edge and falling-edge one-cycle forms through both `SemanticIR` and `IntentIR`
+  - add direct semantic and validator assertions so the named one-cycle edge lane is guarded before and alongside the tracked benchmark harness
+- That now keeps the benchmark corpus and direct regressions aligned with the parser’s supported named one-cycle edge surface.
+
 ## 2026-04-22 Named local zero-cycle edge coverage is hardened now
 - After the earlier named zero-cycle lexical hardening pass, one narrower asymmetry still remained inside that same family:
   - the named-unit parser path already accepted zero-cycle forms like `current HCLK clock edge`

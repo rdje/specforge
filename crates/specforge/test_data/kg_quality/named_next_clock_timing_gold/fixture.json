@@ -35,13 +35,35 @@
         "source_text": "PSEL must be asserted on the subsequent HCLK rising edge.",
         "supporting_statement_ids": ["stmt_subsequent_hclk_rising_edge"],
         "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_pslverr_next_hclk_clock_edge",
+        "subject_signal": "PSLVERR",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "PSLVERR must be asserted on the next HCLK clock edge.",
+        "supporting_statement_ids": ["stmt_next_hclk_clock_edge"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_pstrb_following_hclk_falling_edge",
+        "subject_signal": "PSTRB",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "PSTRB must be asserted on the following HCLK falling edge.",
+        "supporting_statement_ids": ["stmt_following_hclk_falling_edge"],
+        "automation_confidence": "medium"
       }
     ]
   },
   "expectations": {
     "semantic": {
-      "signal_names_include": ["PREADY", "PENABLE", "PSEL"],
-      "temporal_rule_count": 3,
+      "signal_names_include": ["PREADY", "PENABLE", "PSEL", "PSLVERR", "PSTRB"],
+      "temporal_rule_count": 5,
       "temporal_rules_include": [
         {
           "source_text": "PREADY must be asserted on the next ACLK cycle.",
@@ -92,6 +114,42 @@
             {
               "kind": "signal_value",
               "signal_name": "PSEL",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PSLVERR must be asserted on the next HCLK clock edge.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_next_hclk_clock_edge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PSLVERR",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PSTRB must be asserted on the following HCLK falling edge.",
+          "clock_signal": "HCLK",
+          "edge": "falling",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_following_hclk_falling_edge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PSTRB",
               "value": "ASSERTED",
               "phase": "post_tick"
             }
@@ -100,8 +158,8 @@
       ]
     },
     "intent": {
-      "signal_names_include": ["PREADY", "PENABLE", "PSEL"],
-      "temporal_rule_count": 3,
+      "signal_names_include": ["PREADY", "PENABLE", "PSEL", "PSLVERR", "PSTRB"],
+      "temporal_rule_count": 5,
       "temporal_rules_include": [
         {
           "source_text": "PREADY must be asserted on the next ACLK cycle.",
@@ -152,6 +210,42 @@
             {
               "kind": "signal_value",
               "signal_name": "PSEL",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PSLVERR must be asserted on the next HCLK clock edge.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_next_hclk_clock_edge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PSLVERR",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PSTRB must be asserted on the following HCLK falling edge.",
+          "clock_signal": "HCLK",
+          "edge": "falling",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_following_hclk_falling_edge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PSTRB",
               "value": "ASSERTED",
               "phase": "post_tick"
             }
@@ -162,15 +256,15 @@
     "validation": {
       "semantic": {
         "metric_values": {
-          "temporal_rules": "3",
-          "temporal_rules_with_cycle_window": "3",
+          "temporal_rules": "5",
+          "temporal_rules_with_cycle_window": "5",
           "temporal_rules_missing_clock_grounding": "0"
         }
       },
       "intent": {
         "metric_values": {
-          "temporal_rules": "3",
-          "temporal_rules_with_cycle_window": "3",
+          "temporal_rules": "5",
+          "temporal_rules_with_cycle_window": "5",
           "temporal_rules_missing_clock_grounding": "0"
         }
       }
