@@ -88,6 +88,7 @@
 - KG benchmark harness now includes shorthand next-edge timing coverage: Done
 - KG benchmark harness now includes explicit later-phrase timing coverage: Done
 - KG benchmark harness now includes idiomatic next-tick timing coverage: Done
+- KG benchmark harness now includes generic next-cycle timing coverage: Done
 - KG benchmark harness now includes default-clock generic clock-edge timing coverage: Done
 - KG benchmark harness now includes default-clock zero-cycle timing coverage: Done
 - KG benchmark harness now includes AXI read-address timing coverage: Done

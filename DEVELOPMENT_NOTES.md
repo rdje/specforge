@@ -7,6 +7,22 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Generic next-cycle timing is benchmark-locked now
+- The bare next-cycle family was already directly proved in the codebase:
+  - semantic coverage proves `next cycle`
+  - semantic coverage proves `next clock cycle`
+  - the built-in clock-tick parser also recognizes `following cycle` and `subsequent cycle`
+- But that family had still been absent from the tracked KG-quality corpus.
+- That had left a public-surface asymmetry:
+  - idiomatic `next tick` timing was benchmark-locked
+  - protocol-specific next-cycle timing was benchmark-locked
+  - bare generic next-cycle timing was still only unit-locked
+- The right move stayed narrow:
+  - do not widen the parser or temporal model
+  - do not add a new semantic capability row
+  - add one compact tracked fixture family that locks the already-landed generic next-cycle forms through both `SemanticIR` and `IntentIR`
+- That now keeps the benchmark corpus aligned with the direct proof surface and makes the generic next-cycle contract visible in the tracked review corpus.
+
 ## 2026-04-22 Default-clock zero-cycle timing is benchmark-locked now
 - The bare zero-cycle family was already directly proved in the codebase:
   - semantic coverage proves `same tick`
