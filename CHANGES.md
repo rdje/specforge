@@ -1,5 +1,26 @@
 # CHANGES
 
+## 2026-04-22 (Named quantified benchmark coverage now proves the signal-leading ordinal lane)
+
+### Improved: the tracked KG corpus now proves the signal-leading ordinal named-edge spelling inside the existing family
+- Expanded `crates/specforge/test_data/kg_quality/named_quantified_edge_timing_gold/` so the tracked benchmark corpus now also locks:
+  - `PSEL must be asserted on the third HCLK edge.`
+- The expanded fixture now proves the named quantified and ordinal family through both `SemanticIR` and `IntentIR`, including:
+  - `within 2 HCLK edges`
+  - `third edge of HCLK`
+  - `third HCLK edge`
+- Added direct semantic and validator coverage for the signal-leading ordinal named-edge variant so regressions in that lane fail outside the benchmark harness too.
+- This does not widen the temporal model or add a new benchmark family. It hardens the already-landed named quantified-edge surface so the tracked corpus and direct tests now cover the supported signal-leading ordinal lane.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge derives_named_quantified_edge_variants` -> passed
+- `cargo test -p specforge validate_intent_ir_does_not_flag_temporal_rules_missing_cycle_windows_for_named_quantified_edge_variants` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-22 (Named diagram-edge benchmark coverage now proves the full lexical lane)
 
 ### Improved: the tracked KG corpus now proves both named generic-edge diagram spellings inside the existing family

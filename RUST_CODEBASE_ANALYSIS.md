@@ -4,6 +4,20 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-22 named quantified signal-leading ordinal hardening)
+- Continued from commit `9f46e35`, still hardening the temporal proof surface rather than widening the parser, semantic model, or validation planner.
+- The named quantified and ordinal generic-edge family was already part of the parser and extraction design surface:
+  - `within 2 HCLK edges`
+  - `third edge of HCLK`
+  - `third HCLK edge`
+- But the tracked KG-quality benchmark corpus and the direct named quantified tests still only locked the signal-leading bounded form and the trailing ordinal spelling.
+- This slice deepens `crates/specforge/test_data/kg_quality/named_quantified_edge_timing_gold/` so the existing fixture family now proves the signal-leading ordinal named-edge spelling through both `SemanticIR` and `IntentIR`, with `temporal_rules_with_cycle_window = 3` and `temporal_rules_missing_clock_grounding = 0`.
+- It also expands the direct semantic and validator regressions so named quantified-edge variants are protected outside the benchmark harness.
+- The tracked KG-quality suite size stays flat because this is a lexical hardening pass inside an already-landed benchmark family, not a new corpus family.
+- Focused semantic regression coverage, validator coverage, tracked-fixture coverage, docs CI, full local CI, and whitespace checks passed for this slice.
+- The current full local CI baseline remains `476` Rust tests plus warning-deny rustdoc and the mdBook build.
+- The tracked KG-quality suite remains `125` fixtures.
+
 ## Session update (2026-04-22 named diagram-edge hardening)
 - Continued from commit `1629861`, still hardening the temporal proof surface rather than widening the parser, semantic model, or validation planner.
 - The named generic-edge diagram family was already part of the parser and extraction design surface:

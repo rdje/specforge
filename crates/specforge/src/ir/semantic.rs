@@ -14333,7 +14333,7 @@ mod tests {
     }
 
     #[test]
-    fn derives_bounded_cycle_window_from_named_quantified_edge_text() -> Result<()> {
+    fn derives_named_quantified_edge_variants() -> Result<()> {
         use crate::ir::evidence::EvidenceIr;
         use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
 
@@ -14349,6 +14349,7 @@ mod tests {
                 "# Protocol\n",
                 "Signal HCLK is input width 1.\n\n",
                 "Signal PREADY is input width 1.\n\n",
+                "Signal PSEL is input width 1.\n\n",
             ),
         )?;
 
@@ -14369,6 +14370,17 @@ mod tests {
             supporting_statement_ids: vec!["stmt_within_two_hclk_edges".to_string()],
             automation_confidence: AutomationConfidence::Medium,
         });
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_psel_third_hclk_edge".to_string(),
+            subject_signal: "PSEL".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PSEL must be asserted on the third HCLK edge.".to_string(),
+            supporting_statement_ids: vec!["stmt_third_hclk_edge".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
         evidence_ir.write_to_disk()?;
 
         let semantic_ir = SemanticIr::build(
@@ -14376,21 +14388,37 @@ mod tests {
             &semantic_artifact_base,
         )?;
 
-        let rule = semantic_ir
+        let bounded_rule = semantic_ir
             .temporal_rules
             .iter()
             .find(|rule| {
                 rule.rule_id == "temporal_signal_constraint_sigcon_pready_within_two_hclk_edges"
             })
             .expect("expected temporal rule derived from named quantified-edge constraint");
-        let cycle_window = rule
+        let bounded_window = bounded_rule
             .cycle_window
             .as_ref()
             .expect("expected cycle window to be derived from 'within 2 HCLK edges'");
-        assert_eq!(cycle_window.min_cycles, None);
-        assert_eq!(cycle_window.max_cycles, Some(2));
-        assert_eq!(rule.clock_signal.as_deref(), Some("HCLK"));
-        assert_eq!(rule.edge, super::ClockEdge::Rising);
+        assert_eq!(bounded_window.min_cycles, None);
+        assert_eq!(bounded_window.max_cycles, Some(2));
+        assert_eq!(bounded_rule.clock_signal.as_deref(), Some("HCLK"));
+        assert_eq!(bounded_rule.edge, super::ClockEdge::Rising);
+
+        let ordinal_rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| rule.rule_id == "temporal_signal_constraint_sigcon_psel_third_hclk_edge")
+            .expect(
+                "expected temporal rule derived from signal-leading named ordinal edge constraint",
+            );
+        let ordinal_window = ordinal_rule
+            .cycle_window
+            .as_ref()
+            .expect("expected cycle window to be derived from 'the third HCLK edge'");
+        assert_eq!(ordinal_window.min_cycles, Some(3));
+        assert_eq!(ordinal_window.max_cycles, Some(3));
+        assert_eq!(ordinal_rule.clock_signal.as_deref(), Some("HCLK"));
+        assert_eq!(ordinal_rule.edge, super::ClockEdge::Rising);
 
         Ok(())
     }
