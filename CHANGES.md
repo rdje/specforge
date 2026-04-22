@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-04-22 (Named one-cycle clock timing is now benchmark-locked too)
+
+### Improved: the tracked KG corpus now proves named one-cycle timing end to end
+- Added `crates/specforge/test_data/kg_quality/named_next_clock_timing_gold/` so the tracked benchmark corpus now locks:
+  - `PREADY must be asserted on the next ACLK cycle.`
+  - `PENABLE must be asserted on the next HCLK edge.`
+  - `PSEL must be asserted on the next HCLK rising edge.`
+- The new fixture proves those forms through both `SemanticIR` and `IntentIR`, with:
+  - preserved local `clock_signal`
+  - `edge = rising`
+  - `cycle_window = 1..1`
+  - `temporal_rules_missing_clock_grounding = 0`
+- This does not widen the temporal model. It raises the already-landed named one-cycle timing family into the tracked KG-quality corpus.
+
+### Validation
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-22 (Named local cycle timing is now benchmark-locked too)
 
 ### Improved: the tracked KG corpus now proves named local cycle grounding end to end

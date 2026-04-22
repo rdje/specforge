@@ -7,6 +7,21 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Named one-cycle clock timing should be benchmark-locked too
+- The named one-cycle family is already directly proved in the codebase:
+  - semantic coverage proves `next ACLK cycle`
+  - semantic coverage proves `next HCLK edge`
+  - validator coverage proves `next HCLK rising edge`
+- But that family was still absent from the tracked KG-quality corpus.
+- That left a small public-surface asymmetry:
+  - named local same-cycle timing was benchmark-locked
+  - named local next-cycle and next-edge timing was still only unit-locked
+- The right move stays narrow:
+  - do not widen the parser or temporal model
+  - do not add a new capability row
+  - add one compact tracked fixture family that locks the already-proved named one-cycle forms through both `SemanticIR` and `IntentIR`
+- That keeps the benchmark corpus aligned with the direct proof surface and makes the one-cycle local-clock contract visible in the tracked review corpus.
+
 ## 2026-04-22 Named local cycle timing should be benchmark-locked too
 - The named local cycle family is already proved directly in the codebase:
   - semantic coverage proves `same ACLK cycle` grounds `clock_signal = ACLK`, `edge = rising`, and `cycle_window = 0..0`
