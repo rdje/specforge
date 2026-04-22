@@ -7,6 +7,21 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Generic exact cycle timing is benchmark-locked now
+- The generic exact-cycle family was already part of the repo’s temporal extraction surface:
+  - `after N cycles`
+  - `for N cycles`
+- But that family had still been absent from the tracked KG-quality corpus.
+- That had left a public-surface asymmetry:
+  - generic bounded cycle timing was benchmark-locked
+  - generic range and one-sided cycle timing was benchmark-locked
+  - generic exact-cycle timing was still only parser-documented and partially unit-covered
+- The right move stayed narrow:
+  - do not widen the parser or temporal model
+  - do not add a new semantic capability row
+  - add one compact tracked fixture family that locks the already-landed generic exact-cycle forms through both `SemanticIR` and `IntentIR`
+- That now keeps the benchmark corpus aligned with the direct proof surface and makes the generic exact-cycle contract visible in the tracked review corpus.
+
 ## 2026-04-22 Generic range cycle timing is benchmark-locked now
 - The generic range and one-sided cycle family was already described in the repo’s extraction notes:
   - `at least N cycles`
