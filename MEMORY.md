@@ -34,20 +34,26 @@
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 3` of `origin/main`
+- branch state before the next commit: `ahead 4` of `origin/main`
 - modified tracked files:
+- `CHANGES.md`
+- `DEVELOPMENT_NOTES.md`
+- `LIVE_ACHIEVEMENT_STATUS.md`
 - `MEMORY.md`
-- the feature slice is committed; only the required continuity refresh remains before the repo returns to a clean post-slice state
+- `RUST_CODEBASE_ANALYSIS.md`
+- `crates/specforge/test_data/kg_quality/plural_edge_of_clock_timing_gold/fixture.json`
+- `crates/specforge/test_data/kg_quality/plural_edge_of_clock_timing_gold/source.md`
+- the new slice is now in flight locally and has not been validated or committed yet
 
 ## Current in-flight slice
 - objective:
-  - complete the mandatory post-feature continuity refresh for the unit-first diagram-position benchmark slice
+  - raise the already-landed plural edge-of-clock temporal family into the tracked KG-quality benchmark corpus
 - tracker effect:
-  - no further tracker change is expected in the continuity commit; the feature commit already moved `KG benchmark harness now includes unit-first diagram-position timing coverage` to `Done`
+  - move `KG benchmark harness now includes plural \`edge(s) of <clock>\` timing coverage` to `Done`
 - current tracked KG-quality suite size after validation:
-  - `111` fixtures
+  - `112` fixtures
 - verification status:
-  - feature commit `2767149` already landed cleanly
+  - `cargo fmt --all` passed
   - `cargo test -p specforge kg_bench_runs_tracked_fixtures` passed
   - `bash scripts/run_docs_ci.sh` passed
   - `bash scripts/run_ci.sh` passed
@@ -56,7 +62,6 @@
   - `473` Rust tests plus warning-deny rustdoc and the mdBook build
 
 ## Next exact steps
-- write the continuity commit message into `git_message_brief.txt`
-- stage only `MEMORY.md`
-- create the required continuity commit, truncate `git_message_brief.txt`, and verify post-conditions again
+- create the feature commit for the plural edge-of-clock benchmark fixture slice
+- refresh `MEMORY.md` again for the required continuity commit
 - do not push because the branch remains below the `25`-commit threshold

@@ -7,6 +7,20 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Plural edge-of-clock timing should be benchmark-locked too
+- The plural edge-of-clock family is already directly proved in the codebase:
+  - semantic coverage proves `within 2 edges of HCLK`
+  - validator coverage proves that same form stays out of the missing-grounding path
+- But that family was still absent from the tracked KG-quality corpus.
+- That left a small public-surface asymmetry:
+  - generic `clock edge(s) of <clock>` timing was benchmark-locked
+  - plural bare `edges of HCLK` timing was still only unit-locked
+- The right move stays narrow:
+  - do not widen the parser or temporal model
+  - do not add a new capability row
+  - add one compact tracked fixture family that locks the already-proved plural edge-of-clock form through both `SemanticIR` and `IntentIR`
+- That keeps the benchmark corpus aligned with the direct proof surface and makes the plural edge-of-clock contract visible in the tracked review corpus.
+
 ## 2026-04-22 Unit-first diagram-position timing should be benchmark-locked too
 - The unit-first diagram-position family is already directly proved in the codebase:
   - semantic coverage proves `posedge T4 of HCLK`

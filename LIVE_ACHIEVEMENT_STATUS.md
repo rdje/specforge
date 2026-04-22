@@ -76,6 +76,7 @@
 - KG benchmark harness now includes AXI write-response timing coverage: Done
 - KG benchmark harness now includes AXI write-response ID stability coverage: Done
 - KG benchmark harness now includes generic `clock edge(s) of <clock>` timing coverage: Done
+- KG benchmark harness now includes plural `edge(s) of <clock>` timing coverage: Done
 - KG benchmark harness now includes trailing shorthand-edge timing coverage: Done
 - KG benchmark harness now includes signal-leading clock timing coverage: Done
 - KG benchmark harness now includes named local cycle timing coverage: Done
