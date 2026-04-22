@@ -4,6 +4,20 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-22 next-tick direct lexical hardening)
+- Continued from commit `ec0c155`, still hardening the temporal proof surface rather than widening the parser, semantic model, or validation planner.
+- The next-tick family was already part of the parser and extraction design surface:
+  - `next tick`
+  - `following tick`
+  - `subsequent tick`
+- The tracked KG-quality benchmark corpus already locked those spellings inside `crates/specforge/test_data/kg_quality/next_tick_timing_gold/`.
+- But the direct proof lane still only locked the canonical semantic path and had no validator regression for the full lexical trio.
+- This slice expands the direct extractor regression, semantic regression, and validator regression so the supported next-tick lexical surface is protected before and alongside the benchmark harness.
+- The tracked KG-quality suite size stays flat because this is a direct-lane hardening pass inside an already-landed benchmark family, not a new corpus family.
+- Focused extractor coverage, focused semantic coverage, focused validator coverage, tracked-fixture coverage, docs CI, full local CI, and whitespace checks passed for this slice.
+- The current full local CI baseline rises to `477` Rust tests plus warning-deny rustdoc and the mdBook build.
+- The tracked KG-quality suite remains `125` fixtures.
+
 ## Session update (2026-04-22 clock-edge-of-clock signal-leading exact hardening)
 - Continued from commit `65943a0`, still hardening the temporal proof surface rather than widening the parser, semantic model, or validation planner.
 - The `clock edge(s) of <clock>` family was already part of the parser and extraction design surface:

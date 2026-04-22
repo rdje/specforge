@@ -7,6 +7,22 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Next-tick direct lexical coverage is hardened now
+- The one-cycle `tick` family was already part of the parser and extraction surface:
+  - `next tick`
+  - `following tick`
+  - `subsequent tick`
+- The tracked KG-quality corpus already locked those spellings inside `next_tick_timing_gold`.
+- But the direct proof surface still lagged behind in two specific ways:
+  - the extractor regression only locked the canonical `next tick` spelling
+  - there was no direct validator regression proving that the same lexical lane still preserved both one-cycle recovery and default-clock grounding
+- The right fix stayed at the root of that asymmetry:
+  - do not widen the parser or temporal model
+  - do not create another benchmark family for a capability that is already tracked
+  - deepen the direct extractor and semantic tests so they prove the same `next` / `following` / `subsequent tick` trio the benchmark family already expects
+  - add a direct validator regression so the IntentIR lane also locks `cycle_window = 1..1` and `clock_signal = HCLK` for that trio
+- That now keeps the direct and tracked proof lanes aligned for the supported next-tick lexical surface.
+
 ## 2026-04-22 Clock-edge-of-clock signal-leading exact coverage is hardened now
 - The `clock edge(s) of <clock>` family was already part of the parser and extraction surface:
   - `clock edge T4 of HCLK`

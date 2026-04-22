@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-04-22 (Next-tick direct coverage now proves the full lexical lane)
+
+### Improved: the direct proof surface now matches the already-tracked next-tick benchmark family
+- The tracked corpus in `crates/specforge/test_data/kg_quality/next_tick_timing_gold/` already locked the supported next-tick one-cycle spellings:
+  - `next tick`
+  - `following tick`
+  - `subsequent tick`
+- Expanded direct extraction, semantic, and validator coverage so those same spellings now fail locally before the heavier KG fixture lane runs.
+- This does not widen the temporal model or add a new benchmark family. It hardens the already-landed next-tick surface so the direct proof lane stays aligned with the tracked benchmark contract.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge extracts_single_cycle_window_from_idiomatic_clock_tick_phrases` -> passed
+- `cargo test -p specforge derives_next_tick_variants` -> passed
+- `cargo test -p specforge validate_intent_ir_does_not_flag_temporal_rules_missing_cycle_windows_for_next_tick_variants` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-22 (Clock-edge-of-clock benchmark coverage now proves the signal-leading exact lane)
 
 ### Improved: the tracked KG corpus now proves the signal-leading exact `clock edge` spelling inside the existing family

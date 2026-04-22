@@ -13522,6 +13522,20 @@ mod tests {
         assert_eq!(next_tick.min_cycles, Some(1));
         assert_eq!(next_tick.max_cycles, Some(1));
 
+        let following_tick = super::extract_cycle_window_from_text(
+            "The receiver samples DATA on the following tick.",
+        )
+        .expect("expected cycle window from 'following tick'");
+        assert_eq!(following_tick.min_cycles, Some(1));
+        assert_eq!(following_tick.max_cycles, Some(1));
+
+        let subsequent_tick = super::extract_cycle_window_from_text(
+            "The receiver samples DATA on the subsequent tick.",
+        )
+        .expect("expected cycle window from 'subsequent tick'");
+        assert_eq!(subsequent_tick.min_cycles, Some(1));
+        assert_eq!(subsequent_tick.max_cycles, Some(1));
+
         let next_edge =
             super::extract_cycle_window_from_text("VALID is sampled on the next rising edge.")
                 .expect("expected cycle window from 'next rising edge'");
@@ -13836,7 +13850,7 @@ mod tests {
     }
 
     #[test]
-    fn derives_single_cycle_window_from_next_tick_constraint_text() -> Result<()> {
+    fn derives_next_tick_variants() -> Result<()> {
         use crate::ir::evidence::EvidenceIr;
         use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
 
@@ -13850,9 +13864,11 @@ mod tests {
             &source,
             concat!(
                 "# Protocol\n",
-                "Signal clk is input width 1.\n\n",
+                "Signal HCLK is input width 1.\n\n",
                 "Signal PREADY is input width 1.\n\n",
-                "Clock clk.\n",
+                "Signal PENABLE is input width 1.\n\n",
+                "Signal PSEL is input width 1.\n\n",
+                "Clock HCLK.\n",
             ),
         )?;
 
@@ -13873,6 +13889,28 @@ mod tests {
             supporting_statement_ids: vec!["stmt_next_tick".to_string()],
             automation_confidence: AutomationConfidence::Medium,
         });
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_penable_following_tick".to_string(),
+            subject_signal: "PENABLE".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PENABLE must be asserted on the following tick.".to_string(),
+            supporting_statement_ids: vec!["stmt_following_tick".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_psel_subsequent_tick".to_string(),
+            subject_signal: "PSEL".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PSEL must be asserted on the subsequent tick.".to_string(),
+            supporting_statement_ids: vec!["stmt_subsequent_tick".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
         evidence_ir.write_to_disk()?;
 
         let semantic_ir = SemanticIr::build(
@@ -13880,17 +13918,47 @@ mod tests {
             &semantic_artifact_base,
         )?;
 
-        let rule = semantic_ir
+        let next_tick_rule = semantic_ir
             .temporal_rules
             .iter()
             .find(|rule| rule.rule_id == "temporal_signal_constraint_sigcon_pready_next_tick")
             .expect("expected temporal rule derived from next-tick constraint");
-        let cycle_window = rule
+        let next_tick_window = next_tick_rule
             .cycle_window
             .as_ref()
             .expect("expected cycle window to be derived from 'next tick'");
-        assert_eq!(cycle_window.min_cycles, Some(1));
-        assert_eq!(cycle_window.max_cycles, Some(1));
+        assert_eq!(next_tick_window.min_cycles, Some(1));
+        assert_eq!(next_tick_window.max_cycles, Some(1));
+        assert_eq!(next_tick_rule.clock_signal.as_deref(), Some("HCLK"));
+        assert_eq!(next_tick_rule.edge, super::ClockEdge::Rising);
+
+        let following_tick_rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| rule.rule_id == "temporal_signal_constraint_sigcon_penable_following_tick")
+            .expect("expected temporal rule derived from following-tick constraint");
+        let following_tick_window = following_tick_rule
+            .cycle_window
+            .as_ref()
+            .expect("expected cycle window to be derived from 'following tick'");
+        assert_eq!(following_tick_window.min_cycles, Some(1));
+        assert_eq!(following_tick_window.max_cycles, Some(1));
+        assert_eq!(following_tick_rule.clock_signal.as_deref(), Some("HCLK"));
+        assert_eq!(following_tick_rule.edge, super::ClockEdge::Rising);
+
+        let subsequent_tick_rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| rule.rule_id == "temporal_signal_constraint_sigcon_psel_subsequent_tick")
+            .expect("expected temporal rule derived from subsequent-tick constraint");
+        let subsequent_tick_window = subsequent_tick_rule
+            .cycle_window
+            .as_ref()
+            .expect("expected cycle window to be derived from 'subsequent tick'");
+        assert_eq!(subsequent_tick_window.min_cycles, Some(1));
+        assert_eq!(subsequent_tick_window.max_cycles, Some(1));
+        assert_eq!(subsequent_tick_rule.clock_signal.as_deref(), Some("HCLK"));
+        assert_eq!(subsequent_tick_rule.edge, super::ClockEdge::Rising);
 
         Ok(())
     }
