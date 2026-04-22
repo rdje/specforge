@@ -19,11 +19,12 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `4719d62`
-- latest_commit_brief_message: `docs(memory): sync named zero-cycle lexical baseline`
-- note: the latest committed baseline records the continuity refresh immediately after the named local zero-cycle lexical benchmark hardening checkpoint
+- latest_commit_hash: `c739c95`
+- latest_commit_brief_message: `build(msrv): raise rust floor to 1.95`
+- note: the latest committed baseline records the MSRV alignment checkpoint that raised the declared Rust floor, hosted CI toolchain, and getting-started docs to `1.95`
 
 ## Recent commit chain (last 6)
+- `c739c95` build(msrv): raise rust floor to 1.95
 - `4719d62` docs(memory): sync named zero-cycle lexical baseline
 - `9e45c1f` test(kg-bench): harden named zero-cycle lexical coverage
 - `7ad8e6d` docs(memory): sync named one-cycle lexical baseline
@@ -34,35 +35,25 @@
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 18` of `origin/main`
+- branch state before the next commit: `ahead 19` of `origin/main`
 - modified tracked files:
-- `Cargo.toml`
-- `.github/workflows/ci.yml`
-- `docs/book/src/getting-started.md`
-- `CHANGES.md`
-- `DEVELOPMENT_NOTES.md`
 - `MEMORY.md`
-- `RUST_CODEBASE_ANALYSIS.md`
-- the MSRV alignment slice is in progress and ready for verification
+- the feature slice is committed and only the continuity refresh remains
 
 ## Current in-flight slice
 - objective:
-  - align the declared workspace MSRV, hosted CI toolchain, and public getting-started docs to Rust `1.95` after the toolchain bump
+  - preserve the latest committed baseline after landing the Rust `1.95` MSRV alignment slice
 - tracker effect:
-  - no live-status row change is expected in this maintenance slice
+  - no live-status row change is expected in this continuity-only commit
 - current tracked KG-quality suite size in the latest committed baseline:
   - `125` fixtures
 - verification status:
-  - metadata and tracked-doc updates are staged in the worktree
+  - feature commit `c739c95` is complete
   - `bash scripts/run_ci.sh` passed
   - `git diff --check` passed
 - current known local CI baseline:
   - `473` Rust tests plus warning-deny rustdoc and the mdBook build
 
 ## Next exact steps
-- run `bash scripts/run_ci.sh`
-- run `git diff --check`
-- commit the feature slice
-- refresh `MEMORY.md` again so the latest committed baseline points at that new feature commit
 - create the continuity commit
 - do not push because the branch will remain below the `25`-commit threshold
