@@ -7,6 +7,23 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Unit-first diagram-position lexical coverage is hardened now
+- The unit-first local-clock diagram family was already part of the parser and extraction surface:
+  - `tick T3 of HCLK`
+  - `posedge T4 of HCLK`
+  - `rising edge T5 of HCLK`
+- But the tracked KG-quality corpus and the direct semantic plus validator tests still only locked the canonical token form:
+  - `posedge T4 of HCLK`
+- That left the unit-first family under-proved in two specific ways:
+  - the `tick ... of HCLK` lane could regress without a tracked corpus failure
+  - the edge-word variant `rising edge T5 of HCLK` could regress without a direct local proof
+- The right fix stayed at the root of that asymmetry:
+  - do not widen the parser or temporal model
+  - do not create another tiny benchmark family for a capability that already exists
+  - deepen the existing `unit_first_diagram_position_timing_gold` fixture so it proves the remaining supported unit-first local-clock spellings through both `SemanticIR` and `IntentIR`
+  - add direct semantic and validator assertions so the unit-first `tick` and edge-word lanes are guarded before and alongside the tracked benchmark harness
+- That now keeps the benchmark corpus and direct regressions aligned with the parser’s supported unit-first diagram-position surface.
+
 ## 2026-04-22 Named one-cycle edge coverage is hardened now
 - After the earlier named one-cycle lexical hardening pass, one smaller asymmetry still remained inside the same family:
   - the named-unit parser path already accepted explicit forms like `next HCLK clock edge`

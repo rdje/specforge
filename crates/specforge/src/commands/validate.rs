@@ -9124,7 +9124,7 @@ mod tests {
     }
 
     #[test]
-    fn validate_intent_ir_does_not_flag_temporal_rules_missing_clock_grounding_for_unit_first_diagram_position_text()
+    fn validate_intent_ir_does_not_flag_temporal_rules_missing_clock_grounding_for_unit_first_diagram_position_variants()
     -> Result<()> {
         use crate::ir::evidence::EvidenceIr;
         use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
@@ -9142,7 +9142,9 @@ mod tests {
             concat!(
                 "# Protocol\n",
                 "Signal HCLK is input width 1.\n\n",
+                "Signal PENABLE is input width 1.\n\n",
                 "Signal PREADY is input width 1.\n\n",
+                "Signal PSEL is input width 1.\n\n",
             ),
         )?;
 
@@ -9153,6 +9155,17 @@ mod tests {
             &evidence_artifact_base,
         )?;
         evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_penable_tick_t3_of_hclk".to_string(),
+            subject_signal: "PENABLE".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PENABLE must be asserted at tick T3 of HCLK.".to_string(),
+            supporting_statement_ids: vec!["stmt_tick_t3_of_hclk".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
             constraint_id: "sigcon_pready_posedge_t4_of_hclk".to_string(),
             subject_signal: "PREADY".to_string(),
             constraint_kind: SignalConstraintKind::MustBeAsserted,
@@ -9161,6 +9174,17 @@ mod tests {
             negated: false,
             source_text: "PREADY must be asserted on posedge T4 of HCLK.".to_string(),
             supporting_statement_ids: vec!["stmt_posedge_t4_of_hclk".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_psel_rising_edge_t5_of_hclk".to_string(),
+            subject_signal: "PSEL".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PSEL must be asserted on rising edge T5 of HCLK.".to_string(),
+            supporting_statement_ids: vec!["stmt_rising_edge_t5_of_hclk".to_string()],
             automation_confidence: AutomationConfidence::Medium,
         });
         evidence_ir.write_to_disk()?;
@@ -9175,10 +9199,10 @@ mod tests {
         )?;
 
         let report = validate_intent_ir(&intent_ir, "temporal_grounding".to_string());
-        assert_eq!(metric_value(&report, "temporal_rules"), Some("1"));
+        assert_eq!(metric_value(&report, "temporal_rules"), Some("3"));
         assert_eq!(
             metric_value(&report, "temporal_rules_with_cycle_window"),
-            Some("1")
+            Some("3")
         );
         assert_eq!(
             metric_value(&report, "temporal_rules_missing_clock_grounding"),

@@ -14583,7 +14583,7 @@ mod tests {
     }
 
     #[test]
-    fn derives_local_clock_from_unit_first_diagram_position_text() -> Result<()> {
+    fn derives_unit_first_diagram_position_variants() -> Result<()> {
         use crate::ir::evidence::EvidenceIr;
         use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
 
@@ -14600,7 +14600,9 @@ mod tests {
             concat!(
                 "# Protocol\n",
                 "Signal HCLK is input width 1.\n\n",
+                "Signal PENABLE is input width 1.\n\n",
                 "Signal PREADY is input width 1.\n\n",
+                "Signal PSEL is input width 1.\n\n",
             ),
         )?;
 
@@ -14610,6 +14612,17 @@ mod tests {
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
         )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_penable_tick_t3_of_hclk".to_string(),
+            subject_signal: "PENABLE".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PENABLE must be asserted at tick T3 of HCLK.".to_string(),
+            supporting_statement_ids: vec!["stmt_tick_t3_of_hclk".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
         evidence_ir.signal_constraints.push(SignalConstraintRecord {
             constraint_id: "sigcon_pready_posedge_t4_of_hclk".to_string(),
             subject_signal: "PREADY".to_string(),
@@ -14621,6 +14634,17 @@ mod tests {
             supporting_statement_ids: vec!["stmt_posedge_t4_of_hclk".to_string()],
             automation_confidence: AutomationConfidence::Medium,
         });
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_psel_rising_edge_t5_of_hclk".to_string(),
+            subject_signal: "PSEL".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "PSEL must be asserted on rising edge T5 of HCLK.".to_string(),
+            supporting_statement_ids: vec!["stmt_rising_edge_t5_of_hclk".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
         evidence_ir.write_to_disk()?;
 
         let semantic_ir = SemanticIr::build(
@@ -14628,21 +14652,53 @@ mod tests {
             &semantic_artifact_base,
         )?;
 
-        let rule = semantic_ir
+        let tick_rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| {
+                rule.rule_id == "temporal_signal_constraint_sigcon_penable_tick_t3_of_hclk"
+            })
+            .expect("expected temporal rule derived from unit-first tick-position constraint");
+        let tick_window = tick_rule
+            .cycle_window
+            .as_ref()
+            .expect("expected cycle window to be derived from 'tick T3 of HCLK'");
+        assert_eq!(tick_window.min_cycles, Some(3));
+        assert_eq!(tick_window.max_cycles, Some(3));
+        assert_eq!(tick_rule.clock_signal.as_deref(), Some("HCLK"));
+        assert_eq!(tick_rule.edge, super::ClockEdge::Rising);
+
+        let posedge_rule = semantic_ir
             .temporal_rules
             .iter()
             .find(|rule| {
                 rule.rule_id == "temporal_signal_constraint_sigcon_pready_posedge_t4_of_hclk"
             })
             .expect("expected temporal rule derived from unit-first diagram-position constraint");
-        let cycle_window = rule
+        let posedge_window = posedge_rule
             .cycle_window
             .as_ref()
             .expect("expected cycle window to be derived from 'posedge T4 of HCLK'");
-        assert_eq!(cycle_window.min_cycles, Some(4));
-        assert_eq!(cycle_window.max_cycles, Some(4));
-        assert_eq!(rule.clock_signal.as_deref(), Some("HCLK"));
-        assert_eq!(rule.edge, super::ClockEdge::Rising);
+        assert_eq!(posedge_window.min_cycles, Some(4));
+        assert_eq!(posedge_window.max_cycles, Some(4));
+        assert_eq!(posedge_rule.clock_signal.as_deref(), Some("HCLK"));
+        assert_eq!(posedge_rule.edge, super::ClockEdge::Rising);
+
+        let rising_edge_rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| {
+                rule.rule_id == "temporal_signal_constraint_sigcon_psel_rising_edge_t5_of_hclk"
+            })
+            .expect("expected temporal rule derived from unit-first rising-edge constraint");
+        let rising_edge_window = rising_edge_rule
+            .cycle_window
+            .as_ref()
+            .expect("expected cycle window to be derived from 'rising edge T5 of HCLK'");
+        assert_eq!(rising_edge_window.min_cycles, Some(5));
+        assert_eq!(rising_edge_window.max_cycles, Some(5));
+        assert_eq!(rising_edge_rule.clock_signal.as_deref(), Some("HCLK"));
+        assert_eq!(rising_edge_rule.edge, super::ClockEdge::Rising);
 
         Ok(())
     }
