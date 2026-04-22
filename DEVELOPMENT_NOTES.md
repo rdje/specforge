@@ -7,6 +7,21 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Shorthand next-edge timing should be benchmark-locked too
+- The bare shorthand next-edge family is already directly proved in the codebase:
+  - semantic coverage proves `next posedge`
+  - semantic coverage proves `next negedge`
+  - validator coverage already proves the grounded negedge side stays out of the missing-grounding path
+- But that family was still absent from the tracked KG-quality corpus.
+- That left a public-surface asymmetry:
+  - named and trailing shorthand-edge families were benchmark-locked
+  - bare one-cycle shorthand-edge timing was still only unit-locked
+- The right move stays narrow:
+  - do not widen the parser or temporal model
+  - do not add a new semantic capability row
+  - add one compact tracked fixture family that locks the already-proved shorthand next-edge forms through both `SemanticIR` and `IntentIR`
+- That keeps the benchmark corpus aligned with the direct proof surface and makes the default-clock shorthand next-edge contract visible in the tracked review corpus.
+
 ## 2026-04-22 Tick-unit timing should be benchmark-locked too
 - The generic tick-unit family is already directly proved in the codebase:
   - semantic coverage proves `within 2 ticks`
