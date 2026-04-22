@@ -7,6 +7,22 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Next-tick benchmark lexical coverage is hardened now
+- The idiomatic next-tick family was already part of the repo’s temporal extraction surface:
+  - `next tick`
+  - `following tick`
+  - `subsequent tick`
+- But the tracked KG-quality corpus had only been proving the canonical `next tick` phrase.
+- That left a lexical asymmetry inside an already-done benchmark family:
+  - generic next-cycle timing already proved `next`, `following`, and `subsequent` variants together
+  - next-tick timing only proved the `next` spelling
+  - the parser claimed more surface area than the tracked corpus actually locked
+- The right move stayed at the root of that asymmetry:
+  - do not widen the parser or temporal model
+  - do not create another tiny tracker row for a capability that already exists
+  - deepen the existing `next_tick_timing_gold` fixture so it proves the full one-cycle tick lexical lane through both `SemanticIR` and `IntentIR`
+- That now keeps the benchmark corpus aligned with the parser’s supported tick aliases and makes the existing next-tick family harder to regress silently.
+
 ## 2026-04-22 Default-clock later-edge timing is benchmark-locked now
 - The default-clock later-edge family was already part of the repo’s temporal extraction surface:
   - `after N rising edges`

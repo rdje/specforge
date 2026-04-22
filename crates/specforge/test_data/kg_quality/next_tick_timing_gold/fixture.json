@@ -13,13 +13,35 @@
         "source_text": "PREADY must be asserted on the next tick.",
         "supporting_statement_ids": ["stmt_next_tick"],
         "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_penable_following_tick",
+        "subject_signal": "PENABLE",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "PENABLE must be asserted on the following tick.",
+        "supporting_statement_ids": ["stmt_following_tick"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_psel_subsequent_tick",
+        "subject_signal": "PSEL",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "PSEL must be asserted on the subsequent tick.",
+        "supporting_statement_ids": ["stmt_subsequent_tick"],
+        "automation_confidence": "medium"
       }
     ]
   },
   "expectations": {
     "semantic": {
-      "signal_names_include": ["PREADY"],
-      "temporal_rule_count": 1,
+      "signal_names_include": ["PREADY", "PENABLE", "PSEL"],
+      "temporal_rule_count": 3,
       "temporal_rules_include": [
         {
           "source_text": "PREADY must be asserted on the next tick.",
@@ -38,12 +60,48 @@
               "phase": "post_tick"
             }
           ]
+        },
+        {
+          "source_text": "PENABLE must be asserted on the following tick.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_following_tick"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PENABLE",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PSEL must be asserted on the subsequent tick.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_subsequent_tick"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PSEL",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
         }
       ]
     },
     "intent": {
-      "signal_names_include": ["PREADY"],
-      "temporal_rule_count": 1,
+      "signal_names_include": ["PREADY", "PENABLE", "PSEL"],
+      "temporal_rule_count": 3,
       "temporal_rules_include": [
         {
           "source_text": "PREADY must be asserted on the next tick.",
@@ -58,6 +116,42 @@
             {
               "kind": "signal_value",
               "signal_name": "PREADY",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PENABLE must be asserted on the following tick.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_following_tick"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PENABLE",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PSEL must be asserted on the subsequent tick.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_subsequent_tick"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PSEL",
               "value": "ASSERTED",
               "phase": "post_tick"
             }
@@ -68,15 +162,15 @@
     "validation": {
       "semantic": {
         "metric_values": {
-          "temporal_rules": "1",
-          "temporal_rules_with_cycle_window": "1",
+          "temporal_rules": "3",
+          "temporal_rules_with_cycle_window": "3",
           "temporal_rules_missing_clock_grounding": "0"
         }
       },
       "intent": {
         "metric_values": {
-          "temporal_rules": "1",
-          "temporal_rules_with_cycle_window": "1",
+          "temporal_rules": "3",
+          "temporal_rules_with_cycle_window": "3",
           "temporal_rules_missing_clock_grounding": "0"
         }
       }

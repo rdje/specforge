@@ -1,5 +1,26 @@
 # CHANGES
 
+## 2026-04-22 (Next-tick benchmark coverage now proves the full lexical lane)
+
+### Improved: the tracked KG corpus now proves follow-on tick phrasing inside the existing next-tick family
+- Expanded `crates/specforge/test_data/kg_quality/next_tick_timing_gold/` so the tracked benchmark corpus now locks:
+  - `PREADY must be asserted on the next tick.`
+  - `PENABLE must be asserted on the following tick.`
+  - `PSEL must be asserted on the subsequent tick.`
+- The expanded fixture proves those forms through both `SemanticIR` and `IntentIR`, with:
+  - default-clock grounding to `clock_signal = HCLK`
+  - `edge = rising`
+  - `cycle_window = 1..1`
+  - `temporal_rules_missing_clock_grounding = 0`
+- This does not widen the temporal model or add a new benchmark family. It hardens the already-landed next-tick surface so the tracked corpus now covers the same lexical symmetry already supported for one-cycle timing.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-22 (Default-clock later-edge timing is now benchmark-locked too)
 
 ### Improved: the tracked KG corpus now proves default-clock later-edge timing end to end
