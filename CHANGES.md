@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-22 (Unit-first diagram-position timing is now benchmark-locked too)
+
+### Improved: the tracked KG corpus now proves unit-first diagram-position timing end to end
+- Added `crates/specforge/test_data/kg_quality/unit_first_diagram_position_timing_gold/` so the tracked benchmark corpus now locks:
+  - `PREADY must be asserted on posedge T4 of HCLK.`
+- The new fixture proves that form through both `SemanticIR` and `IntentIR`, with:
+  - preserved local `clock_signal = HCLK`
+  - `edge = rising`
+  - `cycle_window = 4..4`
+  - `temporal_rules_missing_clock_grounding = 0`
+- This does not widen the temporal model. It raises the already-landed unit-first diagram-position family into the tracked KG-quality corpus.
+
+### Validation
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-22 (Named diagram-edge timing is now benchmark-locked too)
 
 ### Improved: the tracked KG corpus now proves named diagram-edge timing end to end

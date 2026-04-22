@@ -7,6 +7,20 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Unit-first diagram-position timing should be benchmark-locked too
+- The unit-first diagram-position family is already directly proved in the codebase:
+  - semantic coverage proves `posedge T4 of HCLK`
+  - validator coverage proves that same form stays out of the missing-grounding path
+- But that family was still absent from the tracked KG-quality corpus.
+- That left a public-surface asymmetry:
+  - named `edge T3 of HCLK` timing was benchmark-locked
+  - unit-first `posedge T4 of HCLK` timing was still only unit-locked
+- The right move stays narrow:
+  - do not widen the parser or temporal model
+  - do not add a new capability row
+  - add one compact tracked fixture family that locks the already-proved unit-first diagram-position form through both `SemanticIR` and `IntentIR`
+- That keeps the benchmark corpus aligned with the direct proof surface and makes the unit-first diagram-position contract visible in the tracked review corpus.
+
 ## 2026-04-22 Named diagram-edge timing should be benchmark-locked too
 - The named diagram-edge family is already directly proved in the codebase:
   - semantic coverage proves `edge T3 of HCLK`
