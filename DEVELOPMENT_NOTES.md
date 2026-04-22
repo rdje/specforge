@@ -7,6 +7,21 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Default-clock explicit next-edge timing is benchmark-locked now
+- The default-clock explicit next-edge family was already part of the repo’s temporal extraction surface:
+  - `next rising edge`
+  - `next falling edge`
+- But that family had still been absent from the tracked KG-quality corpus.
+- That had left a public-surface asymmetry:
+  - shorthand `next posedge` / `next negedge` timing was benchmark-locked
+  - default-clock generic `next clock edge` timing was benchmark-locked
+  - default-clock explicit word-form next-edge timing was still only unit-locked
+- The right move stayed narrow:
+  - do not widen the parser or temporal model
+  - do not add a new semantic capability row
+  - add one compact tracked fixture family that locks the already-landed default-clock explicit next-edge forms through both `SemanticIR` and `IntentIR`
+- That now keeps the benchmark corpus aligned with the direct proof surface and makes the default-clock explicit next-edge contract visible in the tracked review corpus.
+
 ## 2026-04-22 Generic exact cycle timing is benchmark-locked now
 - The generic exact-cycle family was already part of the repo’s temporal extraction surface:
   - `after N cycles`

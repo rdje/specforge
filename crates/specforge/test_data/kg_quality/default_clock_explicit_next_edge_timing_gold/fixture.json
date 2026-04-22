@@ -1,0 +1,132 @@
+{
+  "name": "default_clock_explicit_next_edge_timing_gold",
+  "source": "source.md",
+  "evidence_ir_patch": {
+    "signal_constraints": [
+      {
+        "constraint_id": "sigcon_pready_next_rising_edge",
+        "subject_signal": "PREADY",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "PREADY must be asserted on the next rising edge.",
+        "supporting_statement_ids": ["stmt_next_rising_edge"],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "sigcon_pwakeup_next_falling_edge",
+        "subject_signal": "PWAKEUP",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "PWAKEUP must be asserted on the next falling edge.",
+        "supporting_statement_ids": ["stmt_next_falling_edge"],
+        "automation_confidence": "medium"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["PREADY", "PWAKEUP"],
+      "temporal_rule_count": 2,
+      "temporal_rules_include": [
+        {
+          "source_text": "PREADY must be asserted on the next rising edge.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_next_rising_edge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PREADY",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PWAKEUP must be asserted on the next falling edge.",
+          "clock_signal": "HCLK",
+          "edge": "falling",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_next_falling_edge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PWAKEUP",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        }
+      ]
+    },
+    "intent": {
+      "signal_names_include": ["PREADY", "PWAKEUP"],
+      "temporal_rule_count": 2,
+      "temporal_rules_include": [
+        {
+          "source_text": "PREADY must be asserted on the next rising edge.",
+          "clock_signal": "HCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_next_rising_edge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PREADY",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        },
+        {
+          "source_text": "PWAKEUP must be asserted on the next falling edge.",
+          "clock_signal": "HCLK",
+          "edge": "falling",
+          "cycle_window": {
+            "min_cycles": 1,
+            "max_cycles": 1
+          },
+          "supporting_statement_ids_include": ["stmt_next_falling_edge"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PWAKEUP",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        }
+      ]
+    },
+    "validation": {
+      "semantic": {
+        "metric_values": {
+          "temporal_rules": "2",
+          "temporal_rules_with_cycle_window": "2",
+          "temporal_rules_missing_clock_grounding": "0"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "temporal_rules": "2",
+          "temporal_rules_with_cycle_window": "2",
+          "temporal_rules_missing_clock_grounding": "0"
+        }
+      }
+    }
+  }
+}

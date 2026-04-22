@@ -19,35 +19,40 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `81ab3af`
-- latest_commit_brief_message: `test(kg-bench): add exact-cycle timing fixture`
-- note: the latest committed baseline records the generic exact-cycle benchmark checkpoint
+- latest_commit_hash: `6509fb9`
+- latest_commit_brief_message: `docs(memory): sync exact-cycle fixture baseline`
+- note: the latest committed baseline records the continuity checkpoint immediately after the generic exact-cycle benchmark slice
 
 ## Recent commit chain (last 6)
+- `6509fb9` docs(memory): sync exact-cycle fixture baseline
 - `81ab3af` test(kg-bench): add exact-cycle timing fixture
 - `dd61578` docs(memory): sync range-cycle fixture baseline
 - `e14da0c` test(kg-bench): add range-cycle timing fixture
 - `2b6d848` docs(memory): sync bounded-cycle fixture baseline
 - `769d121` test(kg-bench): add bounded-cycle timing fixture
-- `5316b79` docs(memory): sync generic next-cycle fixture baseline
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 25` of `origin/main`
+- branch state before the next commit: `in sync` with `origin/main`
 - modified tracked files:
+- `CHANGES.md`
+- `DEVELOPMENT_NOTES.md`
 - `MEMORY.md`
-- the feature slice is committed and only the continuity refresh remains
+- `LIVE_ACHIEVEMENT_STATUS.md`
+- `RUST_CODEBASE_ANALYSIS.md`
+- `crates/specforge/test_data/kg_quality/default_clock_explicit_next_edge_timing_gold/fixture.json`
+- `crates/specforge/test_data/kg_quality/default_clock_explicit_next_edge_timing_gold/source.md`
+- the feature slice is verified and ready to commit
 
 ## Current in-flight slice
 - objective:
-  - preserve the latest committed baseline after landing the generic exact-cycle benchmark slice
+  - benchmark-lock the already-supported default-clock explicit next-edge family in the tracked KG corpus
 - tracker effect:
-  - no additional tracker change is expected in this continuity-only commit
+  - add one `Done` row for default-clock explicit next-edge timing coverage
 - current tracked KG-quality suite size in the latest committed baseline:
   - `122` fixtures
 - verification status:
-  - feature commit `81ab3af` is complete
   - `cargo fmt --all` passed
   - `cargo test -p specforge kg_bench_runs_tracked_fixtures` passed
   - `bash scripts/run_docs_ci.sh` passed
@@ -57,7 +62,7 @@
   - `473` Rust tests plus warning-deny rustdoc and the mdBook build
 
 ## Next exact steps
+- commit the feature slice with synced tracked docs
+- refresh `MEMORY.md` again so it points at the new feature commit baseline
 - create the continuity commit that records that new baseline
-- verify that `git_message_brief.txt` is truncated back to `0` bytes and remains untracked
-- verify that the worktree is clean after the continuity commit
-- push because the branch has now reached the `25`-commit threshold
+- do not push because the branch will remain below the `25`-commit threshold
