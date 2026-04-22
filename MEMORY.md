@@ -19,36 +19,31 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `cbb4036`
-- latest_commit_brief_message: `docs(memory): sync next-tick baseline`
-- note: the latest committed baseline records the continuity refresh immediately after the next-tick direct hardening checkpoint that brought the extractor, semantic, and validator proof lanes into alignment with the existing benchmark family for the supported `next`, `following`, and `subsequent tick` spellings
+- latest_commit_hash: `0e8468e`
+- latest_commit_brief_message: `test(temporal): harden generic next-cycle coverage`
+- note: the latest committed baseline records the generic next-cycle direct hardening checkpoint that brought the extractor, semantic, and validator proof lanes into alignment with the existing benchmark family for the supported `next cycle`, `next clock cycle`, `following cycle`, and `subsequent cycle` spellings
 
 ## Recent commit chain (last 6)
+- `0e8468e` test(temporal): harden generic next-cycle coverage
 - `cbb4036` docs(memory): sync next-tick baseline
 - `9118ab4` test(temporal): harden next-tick direct coverage
 - `ec0c155` docs(memory): sync clock-edge-of-clock baseline
 - `37cf085` test(temporal): harden clock-edge-of-clock coverage
 - `65943a0` docs(memory): sync named quantified baseline
-- `c269c8a` test(temporal): harden named quantified coverage
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 12` of `origin/main`
+- branch state before the next commit: `ahead 13` of `origin/main`
 - modified tracked files:
-- `CHANGES.md`
-- `DEVELOPMENT_NOTES.md`
 - `MEMORY.md`
-- `RUST_CODEBASE_ANALYSIS.md`
-- `crates/specforge/src/commands/validate.rs`
-- `crates/specforge/src/ir/semantic.rs`
-- the generic next-cycle direct lexical hardening slice is ready to commit once this continuity refresh is staged
+- the feature slice is committed and only the continuity refresh remains
 
 ## Current in-flight slice
 - objective:
-  - harden the direct generic next-cycle proof lane so the extractor, semantic, and validator regressions explicitly prove the supported `next`, `next clock`, `following`, and `subsequent cycle` spellings that the tracked benchmark family already expects
+  - preserve the latest committed baseline after landing the generic next-cycle direct lexical hardening slice
 - tracker effect:
-  - no live-status row change is expected because this is a reliability hardening pass inside the already-done generic next-cycle benchmark family
+  - no live-status row change is expected in this continuity-only commit because the underlying feature slice was a reliability hardening pass inside the already-done generic next-cycle benchmark family
 - current tracked KG-quality suite size in the latest committed baseline:
   - `125` fixtures
 - verification status:
@@ -64,7 +59,6 @@
   - `479` Rust tests plus warning-deny rustdoc and the mdBook build
 
 ## Next exact steps
-- create the feature commit for the generic next-cycle direct lexical hardening slice
-- truncate `git_message_brief.txt` back to `0` bytes and confirm it remains untracked after that commit
-- refresh `MEMORY.md` so it points at the newly created feature-commit baseline
 - create the continuity commit
+- truncate `git_message_brief.txt` back to `0` bytes and confirm it remains untracked after that commit
+- leave the branch unpushed because it remains below the `25`-commit threshold
