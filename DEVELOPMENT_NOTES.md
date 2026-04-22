@@ -7,6 +7,20 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-22 Default-clock zero-cycle timing is benchmark-locked now
+- The bare zero-cycle family was already directly proved in the codebase:
+  - semantic coverage proves `same tick`
+  - semantic coverage proves `current rising edge`
+- But that family had still been absent from the tracked KG-quality corpus.
+- That had left a public-surface asymmetry:
+  - named local cycle timing was benchmark-locked
+  - default-clock zero-cycle timing was still only unit-locked
+- The right move stayed narrow:
+  - do not widen the parser or temporal model
+  - do not add a new semantic capability row
+  - add one compact tracked fixture family that locks the already-landed default-clock zero-cycle forms through both `SemanticIR` and `IntentIR`
+- That now keeps the benchmark corpus aligned with the direct proof surface and makes the default-clock zero-cycle contract visible in the tracked review corpus.
+
 ## 2026-04-22 Default-clock generic clock-edge timing is benchmark-locked now
 - The bare generic clock-edge family was already directly proved in the codebase:
   - parser coverage proves `next clock edge`
