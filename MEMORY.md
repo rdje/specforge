@@ -19,42 +19,33 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `2b4658a`
-- latest_commit_brief_message: `docs(memory): sync generic next-cycle baseline`
-- note: the latest committed baseline records the post-slice continuity refresh after the generic next-cycle direct hardening checkpoint; the current task starts from that committed continuity state and is landing a new VLM timing-evaluation hardening slice
+- latest_commit_hash: `428ecb0`
+- latest_commit_brief_message: `fix(semantic): reject indexed VLM timing-value labels`
+- note: the latest committed baseline records the indexed VLM timing-annotation hardening slice that keeps labels like `XREQ[0] HIGH` and `XREQ[3:0] asserted` from becoming fake timing constraints while locking the edge case through both a direct semantic regression and a tracked KG negative fixture
 
 ## Recent commit chain (last 6)
+- `428ecb0` fix(semantic): reject indexed VLM timing-value labels
 - `2b4658a` docs(memory): sync generic next-cycle baseline
 - `0e8468e` test(temporal): harden generic next-cycle coverage
 - `cbb4036` docs(memory): sync next-tick baseline
 - `9118ab4` test(temporal): harden next-tick direct coverage
 - `ec0c155` docs(memory): sync clock-edge-of-clock baseline
-- `37cf085` test(temporal): harden clock-edge-of-clock coverage
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 14` of `origin/main`
+- branch state before the next commit: `ahead 15` of `origin/main`
 - modified tracked files:
-- `CHANGES.md`
-- `DEVELOPMENT_NOTES.md`
-- `LIVE_ACHIEVEMENT_STATUS.md`
 - `MEMORY.md`
-- `ROADMAP.md`
-- `RUST_CODEBASE_ANALYSIS.md`
-- `crates/specforge/src/ir/semantic.rs`
-- added tracked fixture family:
-  - `crates/specforge/test_data/kg_quality/vlm_timing_indexed_signal_value_annotation_negative/source.md`
-  - `crates/specforge/test_data/kg_quality/vlm_timing_indexed_signal_value_annotation_negative/fixture.json`
-- the feature slice is implemented and verified; the remaining work is the commit workflow plus the post-commit continuity refresh
+- the feature slice is committed; only the post-commit continuity refresh remains
 
 ## Current in-flight slice
 - objective:
-  - harden VLM timing evaluation so indexed signal-value labels like `XREQ[0] HIGH` and `XREQ[3:0] asserted` stay low-value timing-diagram noise instead of becoming fake `TimingConstraintRecord`s
+  - preserve the latest committed baseline after landing the indexed VLM timing-value label hardening slice
 - tracker effect:
-  - one live-status row is expected to change because the tracked KG benchmark matrix will now explicitly lock indexed signal-value VLM timing-annotation rejection as its own hardened negative edge case
+  - no live-status row change is expected in this continuity-only commit because the underlying feature commit already recorded the new indexed VLM timing-annotation negative-fixture row
 - current tracked KG-quality suite size in the latest committed baseline:
-  - `126` fixtures after adding the new tracked negative fixture family
+  - `126` fixtures
 - verification status:
   - `cargo fmt --all` passed
   - `cargo test -p specforge vlm_timing_diagram_observation_rejects_indexed_signal_value_labels` passed
@@ -66,8 +57,6 @@
   - `480` Rust tests plus warning-deny rustdoc and the mdBook build
 
 ## Next exact steps
-- create the feature commit for the indexed VLM timing-annotation hardening slice
+- create the continuity commit
 - truncate `git_message_brief.txt` back to `0` bytes and confirm it remains untracked after that commit
-- refresh `MEMORY.md` again so it records the newly-created feature commit hash/message
-- create the continuity commit for that memory refresh
 - leave the branch unpushed because it remains below the `25`-commit threshold
