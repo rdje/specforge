@@ -1,0 +1,56 @@
+{
+  "name": "vlm_timing_cycle_qualified_signal_value_annotation_negative",
+  "source": "source.md",
+  "source_ir_patch": {
+    "visual_assets": [
+      {
+        "asset_id": "visual_0001",
+        "asset_kind": "diagram",
+        "page_id": "page_0001",
+        "image_path": null,
+        "caption_text": "Figure 4-1c Cycle-qualified request timing overview",
+        "caption_source_path": null,
+        "source_ref": null,
+        "placeholder_text": null,
+        "note": "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"T0\",\"state\":\"LOW\"},{\"cycle\":\"T1\",\"state\":\"HIGH\"}]}],\"annotations\":[\"XREQ HIGH at T1\",\"XREQ LOW during T0\",\"XREQ asserted on T1\",\"XREQ deasserted in T0\"]}",
+        "diagram_kind": "timing_diagram"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["XREQ"],
+      "temporal_rule_count": 2,
+      "temporal_conflicts": 0
+    },
+    "intent": {
+      "signal_names_include": ["XREQ"],
+      "temporal_rule_count": 2,
+      "temporal_conflicts": 0
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "timing_diagram_extractions": "1",
+          "signal_semantic_hints_from_vlm_timing_annotations": "0"
+        }
+      },
+      "semantic": {
+        "metric_values": {
+          "timing_constraints": "0",
+          "temporal_rules": "2",
+          "temporal_conflicts": "0",
+          "signal_constraints": "2"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "timing_constraints": "0",
+          "temporal_rules": "2",
+          "temporal_conflicts": "0",
+          "signal_constraints": "2"
+        }
+      }
+    }
+  }
+}

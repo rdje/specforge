@@ -7,6 +7,27 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-29 Cycle-qualified VLM timing-value label rejection is hardened now
+- `R15e` still explicitly called for richer timing-annotation negative fixtures beyond the first low-value label, motion-only annotation, and waveform-motion state filters.
+- The current VLM timing parser already rejected:
+  - bare sample/index labels like `T0`, `Addr 1`, and `XREQ[0]`
+  - bare signal-value labels like `XREQ HIGH` and `XREQ asserted`
+  - motion-only prose like `XREQ rises, remains stable, then falls`
+- But there was still a real hole between the second and third guards:
+  - cycle-qualified signal-value labels like `XREQ HIGH at T1`, `XREQ LOW during T0`, or `XREQ asserted on T1` could pass through as fake `TimingConstraintRecord` descriptions because the old signal-value filter only accepted the exact two-token `SIGNAL VALUE` shape.
+- The right fix stayed at the parser boundary instead of downstream cleanup:
+  - do not special-case this later in `SemanticIR`
+  - do not rely on validation to mop up fake timing constraints after they are already emitted
+  - teach the existing signal-value label filter to recognize trailing cycle-marker-only tails and still classify them as low-value label noise
+- The hardening lands in two proof lanes:
+  - a direct `SemanticIR` regression proving cycle-qualified signal-value labels do not become timing constraints while concrete LOW/HIGH waveform samples still survive as `SignalConstraintRecord`s
+  - a tracked KG negative fixture `vlm_timing_cycle_qualified_signal_value_annotation_negative` proving the same behavior through `SemanticIR`, `IntentIR`, and validation metrics
+- This advances the evaluation lane honestly:
+  - no parser widening
+  - no semantic-model widening
+  - no benchmark-family explosion
+  - just a tighter negative filter for another real richer timing-annotation edge case the roadmap explicitly called out
+
 ## 2026-04-29 Indexed VLM timing-value label rejection is hardened now
 - `R15e` still explicitly called for richer timing-annotation negative fixtures beyond the first low-value label, motion-only annotation, and waveform-motion state filters.
 - The current VLM timing parser already rejected:

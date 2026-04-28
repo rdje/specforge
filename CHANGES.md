@@ -1,5 +1,28 @@
 # CHANGES
 
+## 2026-04-29 (Cycle-qualified VLM timing-value labels no longer leak into fake timing constraints)
+
+### Improved: richer VLM timing-annotation negatives now stay at the root cause boundary
+- The timing-diagram parser already rejected:
+  - bare sample/index labels like `T0`, `Addr 1`, `XREQ[0]`, and `XREQ<1>`
+  - bare signal-value labels like `XREQ HIGH` and `XREQ asserted`
+- But there was still a real hole around cycle-qualified signal-value annotation labels such as:
+  - `XREQ HIGH at T1`
+  - `XREQ LOW during T0`
+  - `XREQ asserted on T1`
+  - `XREQ deasserted in T0`
+- Those strings are still low-value waveform labels, not real timing constraints. Treating them as constraints would create fake VLM timing records instead of preserving only the concrete waveform samples.
+- Tightened the VLM timing-annotation filter so signal-value labels remain rejected even when they carry only a trailing cycle marker like `T1`, `at T1`, `on T1`, `during T0`, or `in T0`.
+- Added a direct `SemanticIR` regression plus a tracked KG negative fixture in `crates/specforge/test_data/kg_quality/vlm_timing_cycle_qualified_signal_value_annotation_negative/` so the edge case is locked both locally and end to end.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge vlm_timing_diagram_observation_rejects_cycle_qualified_signal_value_labels` -> passed
+- `cargo test -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-29 (Indexed VLM timing-value labels no longer leak into fake timing constraints)
 
 ### Improved: richer VLM timing-annotation negatives now stay at the root cause boundary

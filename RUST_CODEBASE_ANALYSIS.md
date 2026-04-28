@@ -4,6 +4,35 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-29 cycle-qualified VLM timing-value label hardening)
+- Continued from commit `b175d83`, still hardening the graph/temporal evaluation surface rather than widening adapters or semantic schemas.
+- The relevant Rust seam remains `parse_timing_diagram_observation(...)` in `crates/specforge/src/ir/semantic.rs`, where VLM timing annotations are promoted into `TimingConstraintRecord`s unless one of the low-value label filters rejects them first.
+- The prior slices had already covered three adjacent noise classes:
+  - bare timing/sample/index labels
+  - indexed/ranged signal-value labels
+  - motion-only waveform prose and waveform-motion states
+- But the signal-value filter still had a precise parser-shape blind spot:
+  - it treated bare `SIGNAL VALUE` annotations as low-value noise
+  - but once the same label carried only a trailing cycle marker like `at T1`, `on T1`, or `during T0`, the filter stopped matching and the annotation could leak through as a fake timing constraint
+- This slice closes that parser-gap at the root by extending `is_signal_value_annotation_label(...)` so it still recognizes low-value signal-value annotations when the only trailing tokens form a cycle marker label:
+  - `T1`
+  - `at T1`
+  - `on T1`
+  - `during T0`
+  - `in T0`
+- The safety profile stays aligned with the project’s broader design:
+  - the change is local to VLM timing-annotation rejection
+  - it does not invent new canonical truth
+  - it preserves the concrete waveform samples as `SignalConstraintRecord`s
+  - it only prevents low-value VLM labels from being mis-upgraded into `TimingConstraintRecord`s
+- Proof coverage now exists in both lanes that matter:
+  - a direct semantic regression for the parser/filter seam
+  - a tracked KG negative fixture for end-to-end validation
+- The tracked KG-quality suite rises by one fixture because this is another new evaluation-family edge case, not just a direct-lane hardening pass.
+- Focused semantic regression coverage, tracked-fixture coverage, docs CI, full local CI, and whitespace checks passed for this slice.
+- The current full local CI baseline rises to `481` Rust tests plus warning-deny rustdoc and the mdBook build.
+- The tracked KG-quality suite now stands at `127` fixtures.
+
 ## Session update (2026-04-29 indexed VLM timing-value label hardening)
 - Continued from the current graph/temporal/eval hardening track rather than widening adapters or semantic schemas.
 - The relevant Rust seam lives in `crates/specforge/src/ir/semantic.rs` inside `parse_timing_diagram_observation(...)`, where VLM timing annotations are promoted into `TimingConstraintRecord`s unless one of the low-value label filters rejects them first.
