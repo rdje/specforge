@@ -9519,12 +9519,13 @@ fn is_signal_value_annotation_label(text: &str, known_signal_names: &HashSet<Str
         return false;
     }
 
-    let Some(signal_name) = parse_identifier(
-        signal_token
-            .trim_end_matches('.')
-            .trim_end_matches(':')
-            .trim_end_matches(','),
-    ) else {
+    let signal_token = signal_token
+        .trim_end_matches('.')
+        .trim_end_matches(':')
+        .trim_end_matches(',');
+    let Some(signal_name) = parse_identifier(signal_token)
+        .or_else(|| parse_indexed_signal_annotation_base(signal_token))
+    else {
         return false;
     };
     if !known_signal_names
@@ -9550,6 +9551,31 @@ fn is_signal_value_annotation_label(text: &str, known_signal_names: &HashSet<Str
             None
         ))
     )
+}
+
+fn parse_indexed_signal_annotation_base(signal_token: &str) -> Option<String> {
+    for (open_delimiter, close_delimiter) in [('[', ']'), ('<', '>')] {
+        let Some((prefix_text, index_with_delimiter)) = signal_token.split_once(open_delimiter)
+        else {
+            continue;
+        };
+        let Some(index_text) = index_with_delimiter.strip_suffix(close_delimiter) else {
+            continue;
+        };
+        let prefix = prefix_text.trim();
+        let index = index_text.trim();
+        if prefix.is_empty() || index.is_empty() || index.contains(open_delimiter) {
+            continue;
+        }
+        if !is_waveform_index_token(index) {
+            continue;
+        }
+        if let Some(signal_name) = parse_identifier(prefix) {
+            return Some(signal_name);
+        }
+    }
+
+    None
 }
 
 fn push_signal_constraints_from_timing_diagram_observation(
@@ -11929,6 +11955,80 @@ mod tests {
             semantic_ir.timing_constraints.is_empty(),
             "label-only timing annotations must not become timing constraints: {:?}",
             semantic_ir.timing_constraints
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn vlm_timing_diagram_observation_rejects_indexed_signal_value_labels() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("timing_indexed_value_noise_spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(&source, "# Timing\nSignal XREQ is input width 1.\n")?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.visual_assets.push(VisualAsset {
+            asset_id: "picture_0004b".to_string(),
+            asset_kind: VisualAssetKind::Diagram,
+            page_id: Some("page_0001".to_string()),
+            image_path: None,
+            caption_text: Some("Figure 3-3b Transfer timing".to_string()),
+            caption_source_path: None,
+            source_ref: None,
+            placeholder_text: None,
+            note: Some(
+                "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"T0\",\"state\":\"LOW\"},{\"cycle\":\"T1\",\"state\":\"HIGH\"}]}],\"annotations\":[\"XREQ[0] HIGH\",\"XREQ<1> LOW\",\"XREQ[3:0] asserted\",\"XREQ[7:4] deasserted\"]}"
+                    .to_string(),
+            ),
+            diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        assert!(
+            semantic_ir.timing_constraints.is_empty(),
+            "indexed signal-value timing annotations must not become timing constraints: {:?}",
+            semantic_ir.timing_constraints
+        );
+        let vlm_constraints = semantic_ir
+            .signal_constraints
+            .iter()
+            .filter(|constraint| constraint.constraint_id.starts_with("vlm_signal_value_"))
+            .collect::<Vec<_>>();
+        assert_eq!(
+            vlm_constraints.len(),
+            2,
+            "only the concrete LOW/HIGH waveform samples should survive as VLM-authored signal constraints: {vlm_constraints:?}"
+        );
+        assert!(
+            vlm_constraints.iter().any(|constraint| {
+                constraint.subject_signal == "XREQ"
+                    && matches!(constraint.constraint_kind, SignalConstraintKind::MustBeLow)
+                    && constraint.source_text.contains("cycle T0")
+            }),
+            "expected LOW sample at T0 to survive"
+        );
+        assert!(
+            vlm_constraints.iter().any(|constraint| {
+                constraint.subject_signal == "XREQ"
+                    && matches!(constraint.constraint_kind, SignalConstraintKind::MustBeHigh)
+                    && constraint.source_text.contains("cycle T1")
+            }),
+            "expected HIGH sample at T1 to survive"
         );
 
         Ok(())

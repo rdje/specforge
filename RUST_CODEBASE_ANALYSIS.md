@@ -4,6 +4,26 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-29 indexed VLM timing-value label hardening)
+- Continued from the current graph/temporal/eval hardening track rather than widening adapters or semantic schemas.
+- The relevant Rust seam lives in `crates/specforge/src/ir/semantic.rs` inside `parse_timing_diagram_observation(...)`, where VLM timing annotations are promoted into `TimingConstraintRecord`s unless one of the low-value label filters rejects them first.
+- The existing filter stack already handled three neighboring classes well:
+  - bare timing/sample/index labels (`T0`, `Addr 1`, `XREQ[0]`)
+  - bare signal-value labels (`XREQ HIGH`, `XREQ asserted`)
+  - motion-only waveform prose and waveform-motion states
+- But it still left a narrow parser-gap between the first two classes:
+  - indexed/ranged signal-value labels like `XREQ[0] HIGH` or `XREQ[3:0] asserted`
+  - those strings are not real timing constraints, but the old filter path treated the indexed token as an unknown identifier and let the whole annotation survive as a fake timing constraint description
+- This slice closes that parser-gap at the root by teaching the signal-value label filter to normalize indexed/ranged signal tokens back to their known base signal when the bracket/range payload is itself just a compact waveform index.
+- The safety profile stays aligned with the project’s broader design:
+  - the change is local to VLM timing-annotation rejection
+  - it does not invent new canonical truth
+  - it preserves the concrete waveform samples as `SignalConstraintRecord`s
+  - it only prevents low-value VLM labels from being mis-upgraded into `TimingConstraintRecord`s
+- Proof coverage now exists in both lanes that matter:
+  - a direct semantic regression for the parser/filter seam
+  - a tracked KG negative fixture for end-to-end validation
+- The tracked KG-quality suite rises by one fixture because this is a new evaluation-family edge case, not just a direct-lane hardening pass.
 ## Session update (2026-04-22 generic next-cycle direct lexical hardening)
 - Continued from commit `cbb4036`, still hardening the temporal proof surface rather than widening the parser, semantic model, or validation planner.
 - The generic next-cycle family was already part of the parser and extraction design surface:

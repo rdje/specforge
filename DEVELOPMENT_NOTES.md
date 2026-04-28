@@ -7,6 +7,27 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-29 Indexed VLM timing-value label rejection is hardened now
+- `R15e` still explicitly called for richer timing-annotation negative fixtures beyond the first low-value label, motion-only annotation, and waveform-motion state filters.
+- The current VLM timing parser already rejected:
+  - bare index/sample labels like `XREQ[0]`, `XREQ<1>`, and `XREQ[3:0]`
+  - bare signal-value labels like `XREQ HIGH` and `XREQ asserted`
+  - motion-only prose like `XREQ rises, remains stable, then falls`
+- But there was still a real hole between those guards:
+  - indexed signal-value labels like `XREQ[0] HIGH` or `XREQ[3:0] asserted` could pass through as fake `TimingConstraintRecord` descriptions because the signal token stopped parsing once the bracketed/ranged suffix was attached.
+- The right fix stayed at the parser boundary instead of downstream cleanup:
+  - do not special-case this later in `SemanticIR`
+  - do not rely on validation to mop up fake timing constraints after they are already emitted
+  - teach the existing signal-value label filter to recognize indexed/ranged signal tokens and map them back to a known base signal before deciding whether the annotation is low-value noise
+- The hardening lands in two proof lanes:
+  - a direct `SemanticIR` regression proving indexed/ranged signal-value labels do not become timing constraints while concrete LOW/HIGH waveform samples still survive as `SignalConstraintRecord`s
+  - a tracked KG negative fixture `vlm_timing_indexed_signal_value_annotation_negative` proving the same behavior through `SemanticIR`, `IntentIR`, and validation metrics
+- This advances the evaluation lane honestly:
+  - no parser widening
+  - no semantic-model widening
+  - no benchmark-family explosion
+  - just a tighter negative filter for a real richer timing-annotation edge case the roadmap explicitly called out
+
 ## 2026-04-22 Generic next-cycle direct lexical coverage is hardened now
 - The generic one-cycle `cycle` family was already part of the parser and extraction surface:
   - `next cycle`

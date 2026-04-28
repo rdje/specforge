@@ -256,6 +256,7 @@
 - Clock/reset protocol-document scope boundary documented as contract semantics, not physical tree construction: Done
 - KG benchmark harness now locks field-table misclassification rejection: Done
 - KG benchmark harness now locks spurious VLM timing-annotation sample/index-label, motion-only annotation, and waveform-motion state rejection: Done
+- KG benchmark harness now locks indexed signal-value VLM timing-annotation rejection: Done
 - KG benchmark harness now locks active-low VLM timing polarity equivalence: Done
 - KG benchmark harness now locks active-low VLM reset-release polarity equivalence: Done
 - KG benchmark harness now locks VLM state-machine multiple-initial and missing-initial cardinality warnings: Done
