@@ -4,6 +4,15 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-29 `.fsm` parametric signal width provenance)
+- Continued from commit `c52f07a` by tightening width provenance for direct/module signal inventories.
+- The root cause was that non-top `InterfaceSignalRecord.width_hint` values were collapsed through `WidthHint::as_numeric()`, so symbolic widths such as `DATA_WIDTH` were indistinguishable from absent width evidence by the time `.fsm` renderability ran.
+- `SignalInventoryEvidence` and `FsmSignalCandidate` now carry `parametric_width_hint` alongside numeric width and width-conflict state.
+- `register_renderable_signal(...)` now blocks symbolic signal widths with a parametric-width diagnostic before emitting missing-width guidance, and system-contract width checks use the same priority.
+- `build_top_signal_inventory(...)` now preserves parametric top width text in selected artifacts too, matching the already-conservative top-public-IO blocker.
+- A new regression locks the direct-root case where `DATA_IN` is declared with `DATA_WIDTH`; adapter coverage now has `62` tests.
+- Full local verification for this slice: `506` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-29 `.fsm` flat direction conflict provenance)
 - Continued from commit `a9a322e` by tightening another renderability boundary in the adapter signal inventory.
 - The root cause was that flat canonical direction conflicts existed in `SignalInventoryEvidence.direction_hint_conflicted` but were dropped when projecting `FsmSignalCandidate`.

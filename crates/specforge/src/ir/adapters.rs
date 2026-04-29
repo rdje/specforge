@@ -230,32 +230,44 @@ fn validate_system_signal_renderability(
         }
     }
 
-    match signal.width_hint {
-        Some(1) => {}
-        Some(width) => {
-            push_unique_message(
-                blocking_reasons,
-                &format!(
-                    "Canonical {} signal `{}` must be 1-bit for the first standalone `.fsm` system-contract slice, but width {} was provided.",
-                    role_name, signal_name, width
-                ),
-            );
-            required_canonical_enrichments
-                .insert("keep first-slice system-contract signals explicitly 1-bit".to_string());
-        }
-        None => {
-            if signal.width_hint_conflicted {
+    if signal.width_hint_conflicted {
+        push_unique_message(
+            blocking_reasons,
+            &format!(
+                "Canonical {role_name} signal `{signal_name}` has conflicting width evidence, so standalone `.fsm` lowering cannot prove it is 1-bit."
+            ),
+        );
+        required_canonical_enrichments.insert(
+            "resolve conflicting canonical system-signal width evidence before lowering `.fsm` system contracts"
+                .to_string(),
+        );
+    } else if let Some(parametric_width) = signal.parametric_width_hint.as_deref() {
+        push_unique_message(
+            blocking_reasons,
+            &format!(
+                "Canonical {role_name} signal `{signal_name}` uses parametric width `{parametric_width}`; the active `.fsm` adapter slice requires numeric system-signal width evidence."
+            ),
+        );
+        required_canonical_enrichments.insert(
+            "resolve parametric canonical system-signal widths to numeric widths before lowering `.fsm` system contracts"
+                .to_string(),
+        );
+    } else {
+        match signal.width_hint {
+            Some(1) => {}
+            Some(width) => {
                 push_unique_message(
                     blocking_reasons,
                     &format!(
-                        "Canonical {role_name} signal `{signal_name}` has conflicting width evidence, so standalone `.fsm` lowering cannot prove it is 1-bit."
+                        "Canonical {} signal `{}` must be 1-bit for the first standalone `.fsm` system-contract slice, but width {} was provided.",
+                        role_name, signal_name, width
                     ),
                 );
                 required_canonical_enrichments.insert(
-                    "resolve conflicting canonical system-signal width evidence before lowering `.fsm` system contracts"
-                        .to_string(),
+                    "keep first-slice system-contract signals explicitly 1-bit".to_string(),
                 );
-            } else {
+            }
+            None => {
                 push_unique_message(
                     blocking_reasons,
                     &format!(
@@ -548,6 +560,8 @@ pub struct FsmSignalCandidate {
     pub graph_direction_hint_conflicted: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub width_hint: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub parametric_width_hint: Option<String>,
     #[serde(default, skip_serializing_if = "is_false")]
     pub width_hint_conflicted: bool,
     pub supporting_canonical_ids: Vec<String>,
@@ -1280,6 +1294,13 @@ fn build_signal_inventory_map_from_surface(
                 "interface",
                 signal.automation_confidence,
             );
+            if let Some(WidthHint::Parametric(parametric_width)) = signal.width_hint.as_ref() {
+                register_parametric_width_hint(
+                    &mut inventory,
+                    &signal.signal_name,
+                    parametric_width,
+                );
+            }
         }
     }
 
@@ -1326,6 +1347,7 @@ fn inventory_to_signal_candidates(
             graph_direction_hint: evidence.graph_direction_hint,
             graph_direction_hint_conflicted: evidence.graph_direction_hint_conflicted,
             width_hint: evidence.width_hint,
+            parametric_width_hint: evidence.parametric_width_hint,
             width_hint_conflicted: evidence.width_hint_conflicted,
             supporting_canonical_ids: evidence.supporting_canonical_ids.into_iter().collect(),
             mention_categories: evidence.mention_categories.into_iter().collect(),
@@ -2294,6 +2316,13 @@ fn build_top_signal_inventory(
                     .width_hint
                     .as_ref()
                     .and_then(|w| w.as_numeric()),
+                parametric_width_hint: resolved_port.width_hint.as_ref().and_then(|width| {
+                    if let WidthHint::Parametric(parametric_width) = width {
+                        Some(parametric_width.clone())
+                    } else {
+                        None
+                    }
+                }),
                 width_hint_conflicted: widths
                     .get(&raw_port.port_name)
                     .is_some_and(|evidence| evidence.width_conflicted),
@@ -4617,6 +4646,17 @@ fn register_graph_backed_canonical_signal_with_supporting_ids<I>(
     );
 }
 
+fn register_parametric_width_hint(
+    inventory: &mut BTreeMap<String, SignalInventoryEvidence>,
+    signal_name: &str,
+    parametric_width: &str,
+) {
+    let entry = inventory.entry(signal_name.to_string()).or_default();
+    if entry.parametric_width_hint.is_none() {
+        entry.parametric_width_hint = Some(parametric_width.to_string());
+    }
+}
+
 #[expect(
     clippy::too_many_arguments,
     reason = "signal inventory registration keeps direction, width, provenance, confidence, and graph/compat split explicit"
@@ -4853,31 +4893,46 @@ fn register_renderable_signal(
         return None;
     }
 
+    if signal.width_hint_conflicted {
+        push_unique_message(
+            blocking_reasons,
+            &format!(
+                "Signal `{signal_name}` has conflicting width evidence required for `.fsm` emission."
+            ),
+        );
+        required_canonical_enrichments.insert(
+            "resolve conflicting canonical signal width evidence before lowering `.fsm`"
+                .to_string(),
+        );
+        return None;
+    }
+
+    if let Some(parametric_width) = signal.parametric_width_hint.as_deref() {
+        push_unique_message(
+            blocking_reasons,
+            &format!(
+                "Signal `{signal_name}` uses parametric width `{parametric_width}`; the active `.fsm` adapter slice requires numeric signal width evidence."
+            ),
+        );
+        required_canonical_enrichments.insert(
+            "resolve parametric canonical signal widths to numeric widths before lowering `.fsm`"
+                .to_string(),
+        );
+        return None;
+    }
+
     let Some(width_hint) = signal.width_hint else {
-        if signal.width_hint_conflicted {
-            push_unique_message(
-                blocking_reasons,
-                &format!(
-                    "Signal `{signal_name}` has conflicting width evidence required for `.fsm` emission."
-                ),
-            );
-            required_canonical_enrichments.insert(
-                "resolve conflicting canonical signal width evidence before lowering `.fsm`"
-                    .to_string(),
-            );
-        } else {
-            push_unique_message(
-                blocking_reasons,
-                &format!(
-                    "Signal `{}` is missing a canonical width hint required for `.fsm` emission.",
-                    signal_name
-                ),
-            );
-            required_canonical_enrichments.insert(
-                "promote a canonical interface inventory with stable signal names, directions, and widths"
-                    .to_string(),
-            );
-        }
+        push_unique_message(
+            blocking_reasons,
+            &format!(
+                "Signal `{}` is missing a canonical width hint required for `.fsm` emission.",
+                signal_name
+            ),
+        );
+        required_canonical_enrichments.insert(
+            "promote a canonical interface inventory with stable signal names, directions, and widths"
+                .to_string(),
+        );
         return None;
     };
 
@@ -5832,6 +5887,7 @@ struct SignalInventoryEvidence {
     graph_direction_hint: Option<InterfaceSignalDirection>,
     graph_direction_hint_conflicted: bool,
     width_hint: Option<u32>,
+    parametric_width_hint: Option<String>,
     width_hint_conflicted: bool,
     supporting_canonical_ids: BTreeSet<String>,
     mention_categories: BTreeSet<String>,
@@ -5846,6 +5902,7 @@ impl Default for SignalInventoryEvidence {
             graph_direction_hint: None,
             graph_direction_hint_conflicted: false,
             width_hint: None,
+            parametric_width_hint: None,
             width_hint_conflicted: false,
             supporting_canonical_ids: BTreeSet::new(),
             mention_categories: BTreeSet::new(),
@@ -7531,6 +7588,45 @@ mod tests {
                 .residual_decisions
                 .iter()
                 .all(|packet| packet.packet_id != "fsm_adapter_dt_action_graph")
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn standalone_dt_blocks_parametric_signal_width_with_diagnostic() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "parametric_signal_width.md",
+            "# Parametric Signal Width\nSignal DATA_IN is input width DATA_WIDTH.\n\nSignal DATA_OUT is output width 8.\n\nBlock route_data: DATA_OUT = DATA_IN.\n",
+        )?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let data_in = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "DATA_IN")
+            .expect("DATA_IN should stay in signal inventory");
+
+        assert_eq!(data_in.width_hint, None);
+        assert_eq!(data_in.parametric_width_hint.as_deref(), Some("DATA_WIDTH"));
+        assert!(!data_in.width_hint_conflicted);
+        assert!(!fsm.renderability.is_renderable);
+        assert!(
+            fsm.renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason.contains("parametric width `DATA_WIDTH`"))
         );
 
         Ok(())

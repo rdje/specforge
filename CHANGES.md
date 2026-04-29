@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-29 (`.fsm` parametric signal widths stay explicit)
+
+### Fixed: non-top parametric widths no longer look like missing width evidence
+- `FsmSignalCandidate` now preserves `parametric_width_hint` for canonical direct/module signal inventory entries whose width is symbolic.
+- `.fsm` renderability now blocks parametric signal widths with a specific diagnostic before falling back to generic missing-width guidance.
+- Numeric graph recovery can no longer silently mask a symbolic canonical width for the active `.fsm` slice, matching the conservative top-public-IO width policy.
+- Selected top signal inventory now also carries parametric width text when a top port is blocked for symbolic public IO width evidence.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml standalone_dt_blocks_parametric_signal_width_with_diagnostic -- --nocapture` -> failed before the fix, then passed
+- `cargo test --manifest-path Cargo.toml top_composition_blocks_parametric_top_port_width_for_fsm_public_io -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml ir::adapters::tests -- --nocapture` -> passed with `62` adapter tests
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `506` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-29 (`.fsm` flat direction conflicts stay blocking)
 
 ### Fixed: graph recovery no longer overrides contradictory canonical direction hints

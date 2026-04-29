@@ -7,6 +7,18 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-29 `.fsm` parametric signal widths stay explicit
+- Continued from commit `c52f07a` by closing the non-top counterpart to the top-public-IO parametric width gate.
+- The root cause was another projection loss:
+  - `InterfaceSignalRecord.width_hint` can carry `WidthHint::Parametric(...)`
+  - direct/module adapter inventory converted widths to `Option<u32>` before building `SignalInventoryEvidence`
+  - renderability therefore saw symbolic widths as missing numeric evidence, and later numeric graph recovery could hide the symbolic declaration
+- `SignalInventoryEvidence` and `FsmSignalCandidate` now preserve a `parametric_width_hint` string beside the numeric width and width-conflict fields.
+- `register_renderable_signal(...)` and system-contract validation now report parametric width evidence before the generic missing-width blocker.
+- Selected top signal inventory also projects parametric width text from blocked top ports, keeping the selected artifact honest with the existing top-width renderability diagnostic.
+- A new regression first reproduced the missing-width diagnostic for `DATA_IN width DATA_WIDTH`, then passed once the adapter artifact and blocker preserved `DATA_WIDTH`; the full adapter suite is green with `62` tests.
+- Full local CI with `506` Rust tests and the full `127/127` tracked KG fixture suite passed after the parametric width-provenance gate landed.
+
 ## 2026-04-29 `.fsm` flat direction conflicts stay renderability-blocking
 - Continued from commit `a9a322e` by closing the flat-direction sibling of the graph and width conflict-provenance work.
 - The root cause was a projection gap:
