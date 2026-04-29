@@ -7,6 +7,18 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-29 `.fsm` top boundary width now consumes top actor graph evidence
+- The previous top-boundary actor-port slice recovered direction but left a sibling shape hole:
+  - a top port declared as output with no width could be paired with a matching top actor port carrying width 8
+  - renderability would succeed
+  - but emitted `.fsm` public IO could still collapse to an implicit 1-bit port because top actor-port width was ignored
+- The fix extends the same top actor-port merge point to width evidence and reuses the existing top-boundary width conflict policy.
+- The boundary stays conservative:
+  - only already-declared top ports are updated
+  - only actor ports whose actor matches the explicit top name can contribute shape
+  - conflicting explicit top-port width versus top actor-port width collapses to unresolved and blocks lowering
+- This keeps the adapter aligned with canonical graph evidence without inventing top ports or widening backend syntax.
+
 ## 2026-04-29 `.fsm` top boundary direction now consumes top actor graph evidence
 - The next bounded `R15` adapter consumer was the explicit top-root boundary:
   - child module ports already recovered from matching module actor ports

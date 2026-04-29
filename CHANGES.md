@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-04-29 (`.fsm` top boundary width now recovers from top actor graph)
+
+### Improved: top actor-port graph shape now preserves top-boundary width too
+- Matching top actor ports now merge both direction and width evidence into explicit top-root boundary analysis.
+- A direction-only top port can now render with the graph-backed actor-port width instead of silently degrading to an implicit 1-bit `.fsm` public port.
+- Conflicting explicit top-port width versus top actor-port graph width remains blocking: the adapter collapses the resolved top width to unresolved instead of choosing a convenient side.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge top_composition_recovers_top_port_width_from_actor_ports` -> passed
+- `cargo test -p specforge top_composition_blocks_conflicting_top_actor_port_width` -> passed
+- `cargo test -p specforge ir::adapters::tests` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-29 (`.fsm` top boundary ports recover from top actor graph)
 
 ### Improved: explicit top roots no longer need flat top-port directions when the actor graph already resolves them

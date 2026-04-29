@@ -19,22 +19,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `307f967`
-- latest_commit_brief_message: `fix(doctor): tolerate cold local model load`
-- note: the latest committed baseline records the runtime doctor cold-load tolerance slice for local Ollama and LM Studio probes
+- latest_commit_hash: `096438d`
+- latest_commit_brief_message: `fix(adapter): recover top ports from actor graph`
+- note: the latest committed baseline records explicit `.fsm` top-root boundary direction recovery from matching top actor-port graph evidence
 
 ## Recent commit chain (last 6)
+- `096438d` fix(adapter): recover top ports from actor graph
 - `307f967` fix(doctor): tolerate cold local model load
 - `e24a371` docs(memory): sync cycle-qualified timing-label baseline
 - `d29b2ae` fix(semantic): reject cycle-qualified signal-value labels
 - `b175d83` docs(memory): sync indexed timing-label baseline
 - `428ecb0` fix(semantic): reject indexed VLM timing-value labels
-- `2b4658a` docs(memory): sync generic next-cycle baseline
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 19` of `origin/main`
+- branch state before the next commit: `ahead 20` of `origin/main`
 - modified tracked files:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -45,23 +45,23 @@
 
 ## Current in-flight slice
 - objective:
-  - move the explicit `.fsm` top-root boundary direction consumer one step further away from flat `direction_hint` by letting matching top actor-port graph evidence recover width-only top port direction
+  - preserve top actor-port graph width at explicit `.fsm` top boundaries so direction-only top ports do not silently render as implicit 1-bit public IO
 - tracker effect:
-  - add a Done row for top actor-port boundary direction recovery; broader `Actor-relative direction model` remains In Progress
+  - add a Done row for top actor-port boundary width recovery; broader `Actor-relative direction model` remains In Progress
 - current tracked KG-quality suite size in the latest committed baseline:
   - `127` fixtures
 - verification status:
   - `cargo fmt --all` passed
-  - `cargo test -p specforge top_composition_recovers_top_port_direction_from_actor_ports` passed
-  - `cargo test -p specforge top_composition_blocks_conflicting_top_actor_port_direction` passed
+  - `cargo test -p specforge top_composition_recovers_top_port_width_from_actor_ports` passed
+  - `cargo test -p specforge top_composition_blocks_conflicting_top_actor_port_width` passed
   - `cargo test -p specforge ir::adapters::tests` passed
   - `bash scripts/run_docs_ci.sh` passed
   - `bash scripts/run_ci.sh` passed
   - `git diff --check` passed
 - current known local CI baseline:
-  - `485` Rust tests plus warning-deny rustdoc and the mdBook build
+  - `487` Rust tests plus warning-deny rustdoc and the mdBook build
 
 ## Next exact steps
-- commit the top actor-port boundary direction recovery slice
+- commit the top actor-port boundary width recovery slice
 - truncate `git_message_brief.txt` back to `0` bytes and confirm it remains untracked after that commit
 - leave the branch unpushed unless it reaches the `25`-commit threshold
