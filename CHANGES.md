@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-04-29 (`.fsm` selected top width provenance stays visible)
+
+### Fixed: recovered top-boundary width sources no longer collapse to plain top-port provenance
+- Selected `.fsm` top signal inventory now carries recovered width source categories from top actor-port and top-link topology evidence.
+- Top actor-port width recovery records `actor_port_width` on the selected `FsmSignalCandidate`.
+- Child-link/topology width recovery records `module_topology_link` on the selected `FsmSignalCandidate`.
+- Renderability and emitted `.fsm` text are unchanged; this makes blocked/renderable artifacts more honest for downstream debugging and future adapters.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml top_composition_recovers_top_port_width_from_actor_ports -- --nocapture` -> failed before the fix, then passed
+- `cargo test --manifest-path Cargo.toml top_composition_recovers_top_port_width_from_child_link_topology -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml top_composition -- --nocapture` -> passed with `27` top-composition tests
+- `cargo test --manifest-path Cargo.toml ir::adapters::tests -- --nocapture` -> passed with `66` adapter tests
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `510` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-29 (`.fsm` top system-contract distribution is regression-locked)
 
 ### Added: top links now prove child system-contract ports remain usable endpoints

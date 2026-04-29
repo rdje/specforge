@@ -7,6 +7,15 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-29 `.fsm` selected top width provenance stays visible
+- Continued from commit `e92fe35` by tightening selected top inventory provenance, not renderability semantics.
+- Root cause: `TopPortWidthEvidence` tracked resolved/conflicted width state but no source category, so `build_top_signal_inventory(...)` always serialized `mention_categories = ["top_port"]` even when width came from actor-port graph or child-link topology.
+- `TopPortWidthEvidence` now carries `mention_categories`; merge sites tag duplicate top declarations as `top_port`, actor-port width recovery as `actor_port_width`, and child-link topology recovery as `module_topology_link`.
+- `build_top_signal_inventory(...)` merges those categories into selected `FsmSignalCandidate`.
+- Regression first failed for actor-port width recovery, then passed; child-link topology assertion locks the sibling lane.
+- Focused top-composition and full adapter suites are green with `66` adapter tests.
+- Full local CI with `510` Rust tests and the full `127/127` tracked KG fixture suite passed after the selected top width-provenance projection landed.
+
 ## 2026-04-29 `.fsm` top system-contract distribution is regression-locked
 - Continued from commit `4846128` with a coverage-hardening slice for the top-composition consumer of materialized system-contract ports.
 - The new regression builds a `?top:name` root where:

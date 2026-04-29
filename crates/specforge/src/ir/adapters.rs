@@ -763,6 +763,7 @@ impl TopPortDirectionEvidence {
 struct TopPortWidthEvidence {
     width_hint: Option<WidthHint>,
     width_conflicted: bool,
+    mention_categories: BTreeSet<String>,
 }
 
 impl TopPortWidthEvidence {
@@ -770,6 +771,7 @@ impl TopPortWidthEvidence {
         Self {
             width_hint,
             width_conflicted: false,
+            mention_categories: BTreeSet::new(),
         }
     }
 }
@@ -2329,6 +2331,11 @@ fn build_top_signal_inventory(
                 } else {
                     None
                 };
+            let mut mention_categories = BTreeSet::from(["top_port".to_string()]);
+            if let Some(width_evidence) = widths.get(&raw_port.port_name) {
+                mention_categories.extend(width_evidence.mention_categories.iter().cloned());
+            }
+
             FsmSignalCandidate {
                 signal_name: resolved_port.port_name.clone(),
                 direction_hint: declared_direction,
@@ -2352,7 +2359,7 @@ fn build_top_signal_inventory(
                     .get(&raw_port.port_name)
                     .is_some_and(|evidence| evidence.width_conflicted),
                 supporting_canonical_ids: resolved_port.supporting_statement_ids.clone(),
-                mention_categories: vec!["top_port".to_string()],
+                mention_categories: mention_categories.into_iter().collect(),
                 automation_confidence: resolved_port.automation_confidence,
             }
         })
@@ -2469,6 +2476,7 @@ fn analyze_top_renderability(
                     width_evidence,
                     &port.port_name,
                     width_hint,
+                    "top_port",
                     &format!("Duplicate top port declaration `{}`", port.port_name),
                     &mut blocking_reasons,
                     &mut required_canonical_enrichments,
@@ -2870,6 +2878,7 @@ fn merge_top_port_width_evidence_from_child_endpoint(
         width_evidence,
         top_port_name,
         WidthHint::Numeric(width_hint),
+        "module_topology_link",
         &format!(
             "Top link {child_endpoint_role} `{}`",
             render_top_link_endpoint(child_endpoint)
@@ -2996,6 +3005,7 @@ fn merge_top_port_evidence_from_actor_ports(
             width_evidence,
             &port.signal_name,
             width_hint,
+            "actor_port_width",
             &format!(
                 "Top actor-port graph `{}.{}`",
                 port.actor_name, port.signal_name
@@ -3093,10 +3103,15 @@ fn merge_top_port_width_evidence(
     width_evidence: &mut TopPortWidthEvidence,
     port_name: &str,
     width_hint: WidthHint,
+    mention_category: &str,
     evidence_description: &str,
     blocking_reasons: &mut Vec<String>,
     required_canonical_enrichments: &mut BTreeSet<String>,
 ) {
+    width_evidence
+        .mention_categories
+        .insert(mention_category.to_string());
+
     if width_evidence.width_conflicted {
         return;
     }
@@ -8635,6 +8650,12 @@ mod tests {
             Some(8)
         );
         assert_eq!(signal_inventory_port.width_hint, Some(8));
+        assert!(
+            signal_inventory_port
+                .mention_categories
+                .iter()
+                .any(|category| category == "actor_port_width")
+        );
         assert!(emitted_text.contains("ext_data>8"));
 
         Ok(())
@@ -9749,6 +9770,12 @@ mod tests {
             Some(8)
         );
         assert_eq!(signal_inventory_port.width_hint, Some(8));
+        assert!(
+            signal_inventory_port
+                .mention_categories
+                .iter()
+                .any(|category| category == "module_topology_link")
+        );
         assert!(fsm.renderability.is_renderable);
         assert!(emitted_text.contains("result_data>8"));
         assert!(emitted_text.contains("/producer.output_data/result_data/"));

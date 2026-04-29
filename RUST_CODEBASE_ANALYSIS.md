@@ -4,6 +4,15 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-29 `.fsm` selected top width provenance)
+- Continued from commit `e92fe35` by tightening artifact provenance for recovered selected top widths.
+- The root cause was that `TopPortWidthEvidence` carried resolved/conflicted width state but no source category, and `build_top_signal_inventory(...)` always rebuilt selected top `mention_categories` as plain `top_port`.
+- `TopPortWidthEvidence` now carries mention categories through its merge path, tagging duplicate top declarations as `top_port`, actor-port width evidence as `actor_port_width`, and child/top-link topology evidence as `module_topology_link`.
+- Selected `FsmSignalCandidate` entries now merge those categories, so recovered top-boundary width evidence remains visible in adapter artifacts without changing renderability or emitted `.fsm` text.
+- The actor-port provenance assertion failed before the fix and now passes; a sibling child-link topology assertion locks the other recovered-width lane.
+- Focused top-composition coverage passed with `27` tests, and the full adapter suite passed with `66` tests.
+- Full local verification for this slice: `510` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-29 `.fsm` top system-contract endpoint coverage)
 - Continued from commit `4846128` by locking the top-composition consumer of materialized child system-contract ports.
 - The new regression proves a child module with only `SystemContractRecord` clock/reset facts still exposes `controller.clk` and `controller.rst_n` as emitted child endpoints for top-link analysis.
