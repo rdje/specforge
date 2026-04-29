@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-30 `.fsm` renderable top-root ports keep top-link width provenance
+- Continued from commit `fb4f050` by closing the width sibling of the renderable top-root top-link provenance surface.
+- `FsmRenderableTopRoot.ports` already receives `resolved_ports`; this regression proves that recovered explicit top-link width, topology support IDs, and high confidence survive into `renderable_document.top_root.ports`.
+- The assertion lives in the existing child-link top-port width recovery test, so it checks the final `?top:datapath` document model used by `render_fsm_source_document(...)` without changing emitted text.
+- This complements the prior explicit top-link direction assertion: topology recovery now proves both direction and width provenance at the final renderable-document boundary.
+- Full local CI with `511` Rust tests and the full `127/127` tracked KG fixture suite passed after the regression landed.
+
 ## 2026-04-30 `.fsm` renderable top-root ports keep top-link provenance
 - Continued from commit `e705a95` by closing the topology sibling of the renderable top-root provenance surface.
 - `FsmRenderableTopRoot.ports` already receives `resolved_ports`; this regression proves that recovered explicit top-link direction, topology support IDs, and high confidence survive into `renderable_document.top_root.ports`.

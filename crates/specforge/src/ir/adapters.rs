@@ -10194,6 +10194,17 @@ mod tests {
             .iter()
             .find(|port| port.port_name == "result_data")
             .expect("recovered top port should stay visible");
+        let renderable_top_port = fsm
+            .renderable_document
+            .as_ref()
+            .and_then(|document| document.top_root.as_ref())
+            .and_then(|top_root| {
+                top_root
+                    .ports
+                    .iter()
+                    .find(|port| port.port_name == "result_data")
+            })
+            .expect("recovered top port should be present in renderable top root");
         let signal_inventory_port = fsm
             .signal_inventory
             .iter()
@@ -10214,6 +10225,22 @@ mod tests {
         );
         assert_eq!(
             recovered_port.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert_eq!(
+            renderable_top_port
+                .width_hint
+                .as_ref()
+                .and_then(|width| width.as_numeric()),
+            Some(8)
+        );
+        assert!(
+            topology_support_ids
+                .iter()
+                .any(|id| renderable_top_port.supporting_statement_ids.contains(id))
+        );
+        assert_eq!(
+            renderable_top_port.automation_confidence,
             AutomationConfidence::High
         );
         assert_eq!(signal_inventory_port.width_hint, Some(8));
