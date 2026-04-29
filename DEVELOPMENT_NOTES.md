@@ -7,6 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-29 `.fsm` direct control-input width now consumes actor graph shape
+- The next direct-root shape hole sat next to the already-completed target-actor/control-read direction work:
+  - selected actor ports define the root's output perspective
+  - control reads can recover input direction for signals consumed by that root
+  - but if a consumed input lost its flat width, the adapter still blocked even when another actor-port record already carried the numeric signal width
+- Width is signal shape, not actor perspective, so it is safe to merge independently from direction as long as the signal already exists in the direct inventory.
+- The fix adds a width-only actor-port overlay for direct roots:
+  - it ignores actor-port direction entirely
+  - it only touches already-inventoried signals
+  - it records provenance as `actor_port_width`, not `actor_port`, so tests can prove external actors did not define the selected root's direction
+  - conflicting actor-port widths still collapse through the existing width-conflict policy and block lowering
+- This keeps the adapter graph-backed without reopening the external-actor direction leak that earlier target-actor slices closed.
+
 ## 2026-04-29 `.fsm` child module width now consumes top-link topology evidence
 - The next bounded adapter seam was the sibling of child direction recovery:
   - explicit top links already told the adapter whether a child endpoint behaves as an input or output

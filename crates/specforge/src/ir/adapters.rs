@@ -886,6 +886,8 @@ fn build_signal_inventory(intent_ir: &IntentIr) -> Vec<FsmSignalCandidate> {
         overlay_system_contract_signal_inventory(&mut inventory, system_contract);
     }
 
+    overlay_actor_port_width_inventory(&mut inventory, intent_ir.actor_ports.as_slice());
+
     let output_targets = collect_direct_output_targets(intent_ir);
     if let Some(actor_name) = select_direct_actor_name(
         intent_ir.actor_ports.as_slice(),
@@ -1566,15 +1568,7 @@ fn overlay_actor_port_inventory_for_actor(
             .width_hint
             .as_ref()
             .and_then(|width| width.as_numeric());
-        let supporting_ids = if port.source_statement_ids.is_empty() {
-            vec![format!(
-                "actor_port:{}:{}",
-                document_key(&port.actor_name),
-                document_key(&port.signal_name)
-            )]
-        } else {
-            port.source_statement_ids.clone()
-        };
+        let supporting_ids = actor_port_supporting_ids(port);
 
         register_graph_backed_canonical_signal_with_supporting_ids(
             inventory,
@@ -1585,6 +1579,45 @@ fn overlay_actor_port_inventory_for_actor(
             "actor_port",
             port.automation_confidence,
         );
+    }
+}
+
+fn overlay_actor_port_width_inventory(
+    inventory: &mut BTreeMap<String, SignalInventoryEvidence>,
+    actor_ports: &[ActorPortRecord],
+) {
+    for port in actor_ports {
+        if !inventory.contains_key(&port.signal_name) {
+            continue;
+        }
+        let Some(width_hint) = port
+            .width_hint
+            .as_ref()
+            .and_then(|width| width.as_numeric())
+        else {
+            continue;
+        };
+        register_graph_backed_canonical_signal_with_supporting_ids(
+            inventory,
+            &port.signal_name,
+            None,
+            Some(width_hint),
+            actor_port_supporting_ids(port),
+            "actor_port_width",
+            port.automation_confidence,
+        );
+    }
+}
+
+fn actor_port_supporting_ids(port: &ActorPortRecord) -> Vec<String> {
+    if port.source_statement_ids.is_empty() {
+        vec![format!(
+            "actor_port:{}:{}",
+            document_key(&port.actor_name),
+            document_key(&port.signal_name)
+        )]
+    } else {
+        port.source_statement_ids.clone()
     }
 }
 
@@ -6042,6 +6075,135 @@ mod tests {
         assert!(fsm.renderability.is_renderable);
         assert!(emitted_text.contains("(DATA_OUT = DATA_IN)"));
         assert!(emitted_text.contains("(<DATA_IN==8'0"));
+
+        Ok(())
+    }
+
+    #[test]
+    fn standalone_dt_recovers_control_input_width_from_actor_port_graph() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_explicit_control_intent_ir(tempdir.path())?;
+        clear_direct_signal_shape_hints(&mut intent_ir, &["DATA_IN"]);
+        intent_ir.actor_ports = vec![
+            actor_port("controller", "DATA_OUT", ActorRelativeDirection::Output),
+            actor_port("controller", "ZERO_FLAG", ActorRelativeDirection::Output),
+            actor_port_with_numeric_width(
+                "environment",
+                "DATA_IN",
+                ActorRelativeDirection::Output,
+                8,
+            ),
+            actor_port("monitor", "DATA_OUT", ActorRelativeDirection::Input),
+            actor_port("monitor", "ZERO_FLAG", ActorRelativeDirection::Input),
+        ];
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+        adapter.write_to_disk()?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "renderable");
+        let emitted_target_path = adapter
+            .artifact_layout
+            .emitted_target_path
+            .as_ref()
+            .expect("control-input-width-backed standalone adapter should emit target text");
+        let emitted_text = fs::read_to_string(emitted_target_path)?;
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let data_in = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "DATA_IN")
+            .expect("DATA_IN should stay in the direct signal inventory");
+
+        assert_eq!(data_in.direction_hint, None);
+        assert_eq!(
+            data_in.graph_direction_hint,
+            Some(InterfaceSignalDirection::Input)
+        );
+        assert_eq!(data_in.width_hint, Some(8));
+        assert!(
+            data_in
+                .mention_categories
+                .iter()
+                .any(|category| category == "direct_control_input")
+        );
+        assert!(
+            data_in
+                .mention_categories
+                .iter()
+                .any(|category| category == "actor_port_width")
+        );
+        assert!(
+            !data_in
+                .mention_categories
+                .iter()
+                .any(|category| category == "actor_port"),
+            "external actor width must not import the external actor's direction"
+        );
+        assert!(fsm.renderability.is_renderable);
+        assert!(emitted_text.contains("(DATA_IN 8)"));
+        assert!(emitted_text.contains("(<DATA_IN==8'0"));
+
+        Ok(())
+    }
+
+    #[test]
+    fn standalone_dt_blocks_conflicting_control_input_actor_port_widths() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_explicit_control_intent_ir(tempdir.path())?;
+        clear_direct_signal_shape_hints(&mut intent_ir, &["DATA_IN"]);
+        intent_ir.actor_ports = vec![
+            actor_port("controller", "DATA_OUT", ActorRelativeDirection::Output),
+            actor_port("controller", "ZERO_FLAG", ActorRelativeDirection::Output),
+            actor_port_with_numeric_width(
+                "environment",
+                "DATA_IN",
+                ActorRelativeDirection::Output,
+                8,
+            ),
+            actor_port_with_numeric_width("trace", "DATA_IN", ActorRelativeDirection::Input, 16),
+        ];
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let data_in = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "DATA_IN")
+            .expect("DATA_IN should stay in the direct signal inventory");
+
+        assert_eq!(data_in.width_hint, None);
+        assert_eq!(
+            data_in.graph_direction_hint,
+            Some(InterfaceSignalDirection::Input)
+        );
+        assert!(
+            data_in
+                .mention_categories
+                .iter()
+                .any(|category| category == "actor_port_width")
+        );
+        assert!(!fsm.renderability.is_renderable);
+        assert!(
+            fsm.renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason.contains("missing a canonical width hint"))
+        );
 
         Ok(())
     }

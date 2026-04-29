@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-04-29 (`.fsm` direct control-input width now recovers from actor graph)
+
+### Improved: actor-port width evidence can now complete graph-backed direct control inputs
+- Direct `.fsm` roots can now recover a missing numeric width for a control-read input from existing `IntentIR.actor_ports` width evidence, even when that actor is not the selected target actor for direction.
+- The recovery uses a dedicated `actor_port_width` inventory category so external actor ports can contribute signal shape without importing their actor-relative direction into the selected root perspective.
+- Conflicting actor-port widths for the same direct signal still collapse the resolved width to unresolved and keep lowering blocked.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge standalone_dt_recovers_control_input_width_from_actor_port_graph` first failed before the fix, then passed
+- `cargo test -p specforge standalone_dt_blocks_conflicting_control_input_actor_port_widths` -> passed
+- `cargo test -p specforge ir::adapters::tests` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-29 (`.fsm` child port width now recovers from top-link topology)
 
 ### Improved: top-link topology now carries top-boundary width into child module ports
