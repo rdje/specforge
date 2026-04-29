@@ -4,6 +4,16 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-29 `.fsm` selected top support-ID provenance)
+- Continued from commit `0d2c9df` by tightening selected top support-ID projection after the recovered category lanes landed.
+- The root cause was that selected top inventory merged recovered direction/width source categories but left `supporting_canonical_ids` tied to `resolved_port.supporting_statement_ids` only.
+- `TopPortDirectionEvidence` and `TopPortWidthEvidence` now carry support IDs in the same evidence ledgers that carry recovered/conflicted state and mention categories.
+- Actor-port top direction/width recovery contributes actor-port support IDs; top-link direction and child-endpoint width recovery contribute explicit top-link support IDs with a link-id fallback.
+- `build_top_signal_inventory(...)` now merges explicit top-port support IDs, graph-direction evidence support IDs, and width evidence support IDs into selected `FsmSignalCandidate`.
+- The change is artifact-shape only: renderability, conflict behavior, and emitted `.fsm` text remain unchanged.
+- Actor-port direction and child-link width support-ID assertions failed before the fix and now pass; focused top-composition coverage passed with `27` tests, and the full adapter suite passed with `66` tests.
+- Full local verification for this slice: `510` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-29 `.fsm` selected top direction provenance)
 - Continued from commit `8783350` by tightening selected top direction provenance after the width-source category fix.
 - The root cause was that `TopPortDirectionEvidence` tracked resolved/conflicted graph-backed direction state but no source category, so selected top inventory could expose `graph_direction_hint` without carrying whether the graph evidence came from top actor ports or explicit top-link topology.

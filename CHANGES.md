@@ -1,5 +1,28 @@
 # CHANGES
 
+## 2026-04-29 (`.fsm` selected top support IDs follow recovered evidence)
+
+### Fixed: recovered top-boundary evidence now carries its supporting canonical IDs
+- Selected `.fsm` top signal inventory now merges supporting canonical IDs from recovered top-boundary direction and width evidence.
+- Top actor-port direction/width recovery carries the actor-port support ID into the selected `FsmSignalCandidate`.
+- Top-link direction and child-endpoint width recovery carry the explicit top-link support ID into the selected `FsmSignalCandidate`.
+- Renderability and emitted `.fsm` text are unchanged; selected artifacts now preserve both source category and replayable support IDs for recovered top evidence.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml top_composition_recovers_top_port_direction_from_actor_ports -- --nocapture` -> failed before the fix, then passed
+- `cargo test --manifest-path Cargo.toml top_composition_recovers_top_port_width_from_child_link_topology -- --nocapture` -> failed before the fix, then passed
+- `cargo test --manifest-path Cargo.toml top_composition_recovers_top_port_width_from_actor_ports -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml top_composition_preserves_recovered_top_port_direction_when_still_blocked -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml top_composition_recovers_top_port_direction_from_link_topology -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml top_composition -- --nocapture` -> passed with `27` top-composition tests
+- `cargo test --manifest-path Cargo.toml ir::adapters::tests -- --nocapture` -> passed with `66` adapter tests
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `510` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-29 (`.fsm` selected top direction provenance stays visible)
 
 ### Fixed: recovered top-boundary direction sources now stay visible in selected inventory

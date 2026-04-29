@@ -7,6 +7,16 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-29 `.fsm` selected top support IDs follow recovered evidence
+- Continued from commit `0d2c9df` by closing the support-ID sibling of the selected top direction/width provenance slices.
+- Root cause: `build_top_signal_inventory(...)` merged recovered source categories into selected top `mention_categories`, but still serialized `supporting_canonical_ids` from only the resolved explicit top port.
+- `TopPortDirectionEvidence` and `TopPortWidthEvidence` now carry `supporting_canonical_ids` beside their recovered/conflicted state and mention categories.
+- Top actor-port direction/width recovery stores `actor_port_supporting_ids(...)`; top-link direction and child-endpoint width recovery store explicit top-link support IDs, falling back to `link_id` when needed.
+- `build_top_signal_inventory(...)` now merges the explicit top-port IDs, graph-direction evidence IDs, and width evidence IDs into selected `FsmSignalCandidate`.
+- Actor-port direction and child-link width support-ID assertions failed before the fix and now pass; sibling actor-width and blocked-topology direction assertions lock the adjacent lanes.
+- Focused top-composition and full adapter suites are green with `66` adapter tests.
+- Full local CI with `510` Rust tests and the full `127/127` tracked KG fixture suite passed after the selected top support-ID projection landed.
+
 ## 2026-04-29 `.fsm` selected top direction provenance stays visible
 - Continued from commit `8783350` by closing the direction-side sibling of the selected top width provenance slice.
 - Root cause: selected top direction recovery kept separate graph-backed direction state, but `TopPortDirectionEvidence` did not carry source categories; `build_top_signal_inventory(...)` therefore could expose `graph_direction_hint` without saying whether it came from actor-port graph evidence or top-link topology.

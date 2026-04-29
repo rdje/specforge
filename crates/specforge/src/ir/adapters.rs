@@ -749,6 +749,7 @@ struct TopPortDirectionEvidence {
     direction_hint: Option<InterfaceSignalDirection>,
     direction_conflicted: bool,
     mention_categories: BTreeSet<String>,
+    supporting_canonical_ids: BTreeSet<String>,
 }
 
 impl TopPortDirectionEvidence {
@@ -757,6 +758,7 @@ impl TopPortDirectionEvidence {
             direction_hint,
             direction_conflicted: false,
             mention_categories: BTreeSet::new(),
+            supporting_canonical_ids: BTreeSet::new(),
         }
     }
 }
@@ -766,6 +768,7 @@ struct TopPortWidthEvidence {
     width_hint: Option<WidthHint>,
     width_conflicted: bool,
     mention_categories: BTreeSet<String>,
+    supporting_canonical_ids: BTreeSet<String>,
 }
 
 impl TopPortWidthEvidence {
@@ -774,8 +777,31 @@ impl TopPortWidthEvidence {
             width_hint,
             width_conflicted: false,
             mention_categories: BTreeSet::new(),
+            supporting_canonical_ids: BTreeSet::new(),
         }
     }
+}
+
+#[derive(Debug, Clone)]
+struct TopPortDirectionRecovery {
+    direction_hint: InterfaceSignalDirection,
+    supporting_canonical_ids: Vec<String>,
+    evidence_description: String,
+}
+
+#[derive(Debug, Clone)]
+struct TopPortWidthRecovery {
+    width_hint: WidthHint,
+    mention_category: &'static str,
+    supporting_canonical_ids: Vec<String>,
+    evidence_description: String,
+}
+
+#[derive(Debug, Clone)]
+struct TopPortEvidenceProvenance {
+    mention_category: &'static str,
+    supporting_canonical_ids: Vec<String>,
+    evidence_description: String,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -1709,6 +1735,14 @@ fn topology_width_for_key(
         .and_then(|evidence| evidence.width_hint)
 }
 
+fn explicit_top_link_supporting_ids(link: &ExplicitTopLinkRecord) -> Vec<String> {
+    if link.supporting_statement_ids.is_empty() {
+        vec![link.link_id.clone()]
+    } else {
+        link.supporting_statement_ids.clone()
+    }
+}
+
 fn record_module_topology_port_direction(
     directions: &mut BTreeMap<String, Vec<ModuleTopologyPortDirection>>,
     child_modules: &BTreeMap<String, String>,
@@ -1723,11 +1757,7 @@ fn record_module_topology_port_direction(
     let Some(module_name) = child_modules.get(instance_name) else {
         return;
     };
-    let supporting_canonical_ids = if link.supporting_statement_ids.is_empty() {
-        vec![link.link_id.clone()]
-    } else {
-        link.supporting_statement_ids.clone()
-    };
+    let supporting_canonical_ids = explicit_top_link_supporting_ids(link);
 
     directions
         .entry(module_name.clone())
@@ -2340,6 +2370,16 @@ fn build_top_signal_inventory(
             if let Some(width_evidence) = widths.get(&raw_port.port_name) {
                 mention_categories.extend(width_evidence.mention_categories.iter().cloned());
             }
+            let mut supporting_canonical_ids =
+                BTreeSet::from_iter(resolved_port.supporting_statement_ids.iter().cloned());
+            if let Some(graph_evidence) = graph_evidence {
+                supporting_canonical_ids
+                    .extend(graph_evidence.supporting_canonical_ids.iter().cloned());
+            }
+            if let Some(width_evidence) = widths.get(&raw_port.port_name) {
+                supporting_canonical_ids
+                    .extend(width_evidence.supporting_canonical_ids.iter().cloned());
+            }
 
             FsmSignalCandidate {
                 signal_name: resolved_port.port_name.clone(),
@@ -2363,7 +2403,7 @@ fn build_top_signal_inventory(
                 width_hint_conflicted: widths
                     .get(&raw_port.port_name)
                     .is_some_and(|evidence| evidence.width_conflicted),
-                supporting_canonical_ids: resolved_port.supporting_statement_ids.clone(),
+                supporting_canonical_ids: supporting_canonical_ids.into_iter().collect(),
                 mention_categories: mention_categories.into_iter().collect(),
                 automation_confidence: resolved_port.automation_confidence,
             }
@@ -2480,9 +2520,15 @@ fn analyze_top_renderability(
                 merge_top_port_width_evidence(
                     width_evidence,
                     &port.port_name,
-                    width_hint,
-                    "top_port",
-                    &format!("Duplicate top port declaration `{}`", port.port_name),
+                    TopPortWidthRecovery {
+                        width_hint,
+                        mention_category: "top_port",
+                        supporting_canonical_ids: port.supporting_statement_ids.clone(),
+                        evidence_description: format!(
+                            "Duplicate top port declaration `{}`",
+                            port.port_name
+                        ),
+                    },
                     &mut blocking_reasons,
                     &mut required_canonical_enrichments,
                 );
@@ -2518,11 +2564,14 @@ fn analyze_top_renderability(
                 &mut top_port_directions,
                 &mut graph_top_port_directions,
                 &link.source.signal_name,
-                InterfaceSignalDirection::Input,
-                &format!(
-                    "Top link source `{}`",
-                    render_top_link_endpoint(&link.source)
-                ),
+                TopPortDirectionRecovery {
+                    direction_hint: InterfaceSignalDirection::Input,
+                    supporting_canonical_ids: explicit_top_link_supporting_ids(link),
+                    evidence_description: format!(
+                        "Top link source `{}`",
+                        render_top_link_endpoint(&link.source)
+                    ),
+                },
                 &mut blocking_reasons,
                 &mut required_canonical_enrichments,
             );
@@ -2532,11 +2581,14 @@ fn analyze_top_renderability(
                 &mut top_port_directions,
                 &mut graph_top_port_directions,
                 &link.target.signal_name,
-                InterfaceSignalDirection::Output,
-                &format!(
-                    "Top link target `{}`",
-                    render_top_link_endpoint(&link.target)
-                ),
+                TopPortDirectionRecovery {
+                    direction_hint: InterfaceSignalDirection::Output,
+                    supporting_canonical_ids: explicit_top_link_supporting_ids(link),
+                    evidence_description: format!(
+                        "Top link target `{}`",
+                        render_top_link_endpoint(&link.target)
+                    ),
+                },
                 &mut blocking_reasons,
                 &mut required_canonical_enrichments,
             );
@@ -2833,7 +2885,14 @@ fn merge_top_port_width_evidence_from_child_links(
             merge_top_port_width_evidence_from_child_endpoint(
                 &link.source.signal_name,
                 &link.target,
-                "target",
+                TopPortEvidenceProvenance {
+                    mention_category: "module_topology_link",
+                    supporting_canonical_ids: explicit_top_link_supporting_ids(link),
+                    evidence_description: format!(
+                        "Top link target `{}`",
+                        render_top_link_endpoint(&link.target)
+                    ),
+                },
                 child_ports_by_instance,
                 top_port_widths,
                 blocking_reasons,
@@ -2844,7 +2903,14 @@ fn merge_top_port_width_evidence_from_child_links(
             merge_top_port_width_evidence_from_child_endpoint(
                 &link.target.signal_name,
                 &link.source,
-                "source",
+                TopPortEvidenceProvenance {
+                    mention_category: "module_topology_link",
+                    supporting_canonical_ids: explicit_top_link_supporting_ids(link),
+                    evidence_description: format!(
+                        "Top link source `{}`",
+                        render_top_link_endpoint(&link.source)
+                    ),
+                },
                 child_ports_by_instance,
                 top_port_widths,
                 blocking_reasons,
@@ -2857,7 +2923,7 @@ fn merge_top_port_width_evidence_from_child_links(
 fn merge_top_port_width_evidence_from_child_endpoint(
     top_port_name: &str,
     child_endpoint: &ExplicitTopLinkEndpoint,
-    child_endpoint_role: &str,
+    provenance: TopPortEvidenceProvenance,
     child_ports_by_instance: &BTreeMap<String, BTreeMap<String, RenderableEndpointPort>>,
     top_port_widths: &mut BTreeMap<String, TopPortWidthEvidence>,
     blocking_reasons: &mut Vec<String>,
@@ -2882,12 +2948,12 @@ fn merge_top_port_width_evidence_from_child_endpoint(
     merge_top_port_width_evidence(
         width_evidence,
         top_port_name,
-        WidthHint::Numeric(width_hint),
-        "module_topology_link",
-        &format!(
-            "Top link {child_endpoint_role} `{}`",
-            render_top_link_endpoint(child_endpoint)
-        ),
+        TopPortWidthRecovery {
+            width_hint: WidthHint::Numeric(width_hint),
+            mention_category: provenance.mention_category,
+            supporting_canonical_ids: provenance.supporting_canonical_ids,
+            evidence_description: provenance.evidence_description,
+        },
         blocking_reasons,
         required_canonical_enrichments,
     );
@@ -2978,6 +3044,7 @@ fn merge_top_port_evidence_from_actor_ports(
             continue;
         };
 
+        let supporting_ids = actor_port_supporting_ids(port);
         if let Some(direction_hint) = actor_relative_direction_to_interface_hint(port.direction)
             && let Some(direction_evidence) = top_port_directions.get_mut(&port.signal_name)
         {
@@ -2987,6 +3054,9 @@ fn merge_top_port_evidence_from_actor_ports(
             graph_direction_evidence
                 .mention_categories
                 .insert("actor_port".to_string());
+            graph_direction_evidence
+                .supporting_canonical_ids
+                .extend(supporting_ids.iter().cloned());
             merge_top_port_direction_hint(graph_direction_evidence, direction_hint);
             merge_top_port_direction_evidence(
                 direction_evidence,
@@ -3010,12 +3080,15 @@ fn merge_top_port_evidence_from_actor_ports(
         merge_top_port_width_evidence(
             width_evidence,
             &port.signal_name,
-            width_hint,
-            "actor_port_width",
-            &format!(
-                "Top actor-port graph `{}.{}`",
-                port.actor_name, port.signal_name
-            ),
+            TopPortWidthRecovery {
+                width_hint,
+                mention_category: "actor_port_width",
+                supporting_canonical_ids: supporting_ids,
+                evidence_description: format!(
+                    "Top actor-port graph `{}.{}`",
+                    port.actor_name, port.signal_name
+                ),
+            },
             blocking_reasons,
             required_canonical_enrichments,
         );
@@ -3026,8 +3099,7 @@ fn merge_top_port_direction_from_link(
     top_port_directions: &mut BTreeMap<String, TopPortDirectionEvidence>,
     graph_top_port_directions: &mut BTreeMap<String, TopPortDirectionEvidence>,
     port_name: &str,
-    direction_hint: InterfaceSignalDirection,
-    endpoint_description: &str,
+    recovery: TopPortDirectionRecovery,
     blocking_reasons: &mut Vec<String>,
     required_canonical_enrichments: &mut BTreeSet<String>,
 ) {
@@ -3044,13 +3116,16 @@ fn merge_top_port_direction_from_link(
     graph_direction_evidence
         .mention_categories
         .insert("module_topology_link".to_string());
-    merge_top_port_direction_hint(graph_direction_evidence, direction_hint);
+    graph_direction_evidence
+        .supporting_canonical_ids
+        .extend(recovery.supporting_canonical_ids);
+    merge_top_port_direction_hint(graph_direction_evidence, recovery.direction_hint);
 
     merge_top_port_direction_evidence(
         direction_evidence,
         port_name,
-        direction_hint,
-        endpoint_description,
+        recovery.direction_hint,
+        &recovery.evidence_description,
         blocking_reasons,
         required_canonical_enrichments,
     );
@@ -3109,29 +3184,31 @@ fn merge_top_port_direction_hint(
 fn merge_top_port_width_evidence(
     width_evidence: &mut TopPortWidthEvidence,
     port_name: &str,
-    width_hint: WidthHint,
-    mention_category: &str,
-    evidence_description: &str,
+    recovery: TopPortWidthRecovery,
     blocking_reasons: &mut Vec<String>,
     required_canonical_enrichments: &mut BTreeSet<String>,
 ) {
     width_evidence
         .mention_categories
-        .insert(mention_category.to_string());
+        .insert(recovery.mention_category.to_string());
+    width_evidence
+        .supporting_canonical_ids
+        .extend(recovery.supporting_canonical_ids);
 
     if width_evidence.width_conflicted {
         return;
     }
 
     match width_evidence.width_hint.as_ref() {
-        None => width_evidence.width_hint = Some(width_hint),
-        Some(existing) if existing == &width_hint => {}
+        None => width_evidence.width_hint = Some(recovery.width_hint),
+        Some(existing) if existing == &recovery.width_hint => {}
         Some(existing) => {
             push_unique_message(
                 blocking_reasons,
                 &format!(
-                    "{evidence_description} implies top port `{port_name}` has width `{}`, but existing top-boundary width evidence is `{}`.",
-                    render_top_port_width_hint(&width_hint),
+                    "{} implies top port `{port_name}` has width `{}`, but existing top-boundary width evidence is `{}`.",
+                    recovery.evidence_description,
+                    render_top_port_width_hint(&recovery.width_hint),
                     render_top_port_width_hint(existing),
                 ),
             );
@@ -8465,6 +8542,14 @@ mod tests {
             raw_port.width_hint.as_ref().and_then(|w| w.as_numeric()),
             Some(8)
         );
+        let topology_support_ids = explicit_top
+            .links
+            .iter()
+            .find(|link| {
+                link.target.instance_name.is_none() && link.target.signal_name == "result_data"
+            })
+            .map(super::explicit_top_link_supporting_ids)
+            .expect("topology link into result_data should be present");
 
         let artifact_base = tempdir.path().join("generated").join("adapters");
         let adapter = AdapterArtifact::build(
@@ -8512,6 +8597,11 @@ mod tests {
                 .mention_categories
                 .iter()
                 .any(|category| category == "module_topology_link")
+        );
+        assert!(
+            topology_support_ids
+                .iter()
+                .any(|id| signal_inventory_port.supporting_canonical_ids.contains(id))
         );
         assert!(emitted_text.contains("result_data>8"));
 
@@ -8591,6 +8681,12 @@ mod tests {
                 .mention_categories
                 .iter()
                 .any(|category| category == "actor_port")
+        );
+        assert!(
+            signal_inventory_port
+                .supporting_canonical_ids
+                .iter()
+                .any(|id| id == "graph_wrapper_ext_data")
         );
         assert!(emitted_text.contains("ext_data>8"));
 
@@ -8674,6 +8770,12 @@ mod tests {
                 .mention_categories
                 .iter()
                 .any(|category| category == "actor_port_width")
+        );
+        assert!(
+            signal_inventory_port
+                .supporting_canonical_ids
+                .iter()
+                .any(|id| id == "graph_wrapper_ext_data")
         );
         assert!(emitted_text.contains("ext_data>8"));
 
@@ -8941,6 +9043,17 @@ mod tests {
             "width_only_top_port_missing_child.md",
             "# Blocked Composition With Recovered Port\nTop datapath.\n\nTop datapath port result_data is width 8.\n\nTop datapath child consumer uses module missing_module.\n\nTop datapath link consumer.result_data -> result_data.\n",
         )?;
+        let topology_support_ids = intent_ir
+            .explicit_tops
+            .iter()
+            .find(|top| top.top_name == "datapath")
+            .and_then(|top| {
+                top.links.iter().find(|link| {
+                    link.target.instance_name.is_none() && link.target.signal_name == "result_data"
+                })
+            })
+            .map(super::explicit_top_link_supporting_ids)
+            .expect("topology link into result_data should be present");
         let artifact_base = tempdir.path().join("generated").join("adapters");
 
         let adapter = AdapterArtifact::build(
@@ -8982,6 +9095,11 @@ mod tests {
                 .mention_categories
                 .iter()
                 .any(|category| category == "module_topology_link")
+        );
+        assert!(
+            topology_support_ids
+                .iter()
+                .any(|id| signal_inventory_port.supporting_canonical_ids.contains(id))
         );
         assert!(
             fsm.renderability
@@ -9754,6 +9872,17 @@ mod tests {
             "top_port_width_from_child_link.md",
             "# Top Port Width From Child Link\nTop datapath.\n\nTop datapath port result_data is output.\n\nTop datapath child producer uses module producer_core.\n\nTop datapath link producer.output_data -> result_data.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n",
         )?;
+        let topology_support_ids = intent_ir
+            .explicit_tops
+            .iter()
+            .find(|top| top.top_name == "datapath")
+            .and_then(|top| {
+                top.links.iter().find(|link| {
+                    link.target.instance_name.is_none() && link.target.signal_name == "result_data"
+                })
+            })
+            .map(super::explicit_top_link_supporting_ids)
+            .expect("topology link into result_data should be present");
 
         let artifact_base = tempdir.path().join("generated").join("adapters");
         let adapter = AdapterArtifact::build(
@@ -9800,6 +9929,11 @@ mod tests {
                 .mention_categories
                 .iter()
                 .any(|category| category == "module_topology_link")
+        );
+        assert!(
+            topology_support_ids
+                .iter()
+                .any(|id| signal_inventory_port.supporting_canonical_ids.contains(id))
         );
         assert!(fsm.renderability.is_renderable);
         assert!(emitted_text.contains("result_data>8"));
