@@ -7,6 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-29 `.fsm` top boundary direction now consumes top actor graph evidence
+- The next bounded `R15` adapter consumer was the explicit top-root boundary:
+  - child module ports already recovered from matching module actor ports
+  - top boundary ports already recovered from explicit top-link topology
+  - but a width-only top port still stayed blocked when the only available direction fact lived in `IntentIR.actor_ports` for the explicit top name
+- The root cause was that `build_top_candidates` passed module renderability context into top analysis, but not the actor-port graph.
+- The fix is intentionally narrow:
+  - only actor ports whose `actor_name` matches `ExplicitTopRecord.top_name` are considered
+  - only already-declared top ports are updated
+  - only `Input` / `Output` actor-relative directions map into `.fsm` top boundary roles
+  - contradictory explicit top-port direction and top actor-port graph direction collapse to unresolved state and keep lowering blocked
+- This continues the graph-first adapter program without widening backend targets or mutating canonical `IntentIR`.
+
 ## 2026-04-29 Runtime doctor cold-load false negatives are hardened now
 - The README execution pass exposed a concrete operator-facing weakness in `specforge doctor --strict`:
   - `/api/tags` could succeed

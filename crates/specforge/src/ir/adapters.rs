@@ -1627,12 +1627,19 @@ fn build_top_candidates(
     intent_ir
         .explicit_tops
         .iter()
-        .map(|top| build_top_candidate(top, &module_candidates_by_name))
+        .map(|top| {
+            build_top_candidate(
+                top,
+                intent_ir.actor_ports.as_slice(),
+                &module_candidates_by_name,
+            )
+        })
         .collect()
 }
 
 fn build_top_candidate(
     top: &ExplicitTopRecord,
+    actor_ports: &[ActorPortRecord],
     module_candidates_by_name: &BTreeMap<String, &FsmExplicitModuleCandidate>,
 ) -> FsmTopCandidate {
     let children = top
@@ -1657,7 +1664,8 @@ fn build_top_candidate(
             }
         })
         .collect::<Vec<_>>();
-    let analysis = analyze_top_renderability(top, &children, module_candidates_by_name);
+    let analysis =
+        analyze_top_renderability(top, &children, actor_ports, module_candidates_by_name);
 
     FsmTopCandidate {
         top_name: top.top_name.clone(),
@@ -1992,6 +2000,7 @@ fn renderable_modules_for_top(
 fn analyze_top_renderability(
     top: &ExplicitTopRecord,
     children: &[FsmTopChildCandidate],
+    actor_ports: &[ActorPortRecord],
     module_candidates_by_name: &BTreeMap<String, &FsmExplicitModuleCandidate>,
 ) -> TopRenderabilityAnalysis {
     let mut blocking_reasons = Vec::new();
@@ -2079,6 +2088,14 @@ fn analyze_top_renderability(
             );
         }
     }
+
+    merge_top_port_directions_from_actor_ports(
+        top,
+        actor_ports,
+        &mut top_port_directions,
+        &mut blocking_reasons,
+        &mut required_canonical_enrichments,
+    );
 
     for link in &top.links {
         if link.source.instance_name.is_none() {
@@ -2353,6 +2370,38 @@ fn analyze_top_renderability(
         renderability,
         resolved_ports,
         renderable_top,
+    }
+}
+
+fn merge_top_port_directions_from_actor_ports(
+    top: &ExplicitTopRecord,
+    actor_ports: &[ActorPortRecord],
+    top_port_directions: &mut BTreeMap<String, TopPortDirectionEvidence>,
+    blocking_reasons: &mut Vec<String>,
+    required_canonical_enrichments: &mut BTreeSet<String>,
+) {
+    for port in actor_ports
+        .iter()
+        .filter(|port| port.actor_name.eq_ignore_ascii_case(&top.top_name))
+    {
+        let Some(direction_evidence) = top_port_directions.get_mut(&port.signal_name) else {
+            continue;
+        };
+        let Some(direction_hint) = actor_relative_direction_to_interface_hint(port.direction)
+        else {
+            continue;
+        };
+        merge_top_port_direction_evidence(
+            direction_evidence,
+            &port.signal_name,
+            direction_hint,
+            &format!(
+                "Top actor-port graph `{}.{}`",
+                port.actor_name, port.signal_name
+            ),
+            blocking_reasons,
+            required_canonical_enrichments,
+        );
     }
 }
 
@@ -7119,6 +7168,78 @@ mod tests {
     }
 
     #[test]
+    fn top_composition_recovers_top_port_direction_from_actor_ports() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "top_actor_port_direction.md",
+            "# Top Actor Port Direction\nTop wrapper.\n\nTop wrapper port ext_data is width 8.\n\nTop wrapper child producer uses module producer_core.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n",
+        )?;
+        let raw_top = intent_ir
+            .explicit_tops
+            .iter()
+            .find(|top| top.top_name == "wrapper")
+            .expect("explicit top should be present");
+        let raw_port = raw_top
+            .ports
+            .iter()
+            .find(|port| port.port_name == "ext_data")
+            .expect("width-only top port should be preserved");
+        assert_eq!(raw_port.direction_hint, None);
+
+        intent_ir.actor_ports = vec![actor_port(
+            "wrapper",
+            "ext_data",
+            ActorRelativeDirection::Output,
+        )];
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+        adapter.write_to_disk()?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "renderable");
+        let emitted_target_path = adapter
+            .artifact_layout
+            .emitted_target_path
+            .as_ref()
+            .expect("top-actor-backed top should emit target text");
+        let emitted_text = fs::read_to_string(emitted_target_path)?;
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let top_candidate = fsm
+            .top_candidates
+            .iter()
+            .find(|top| top.top_name == "wrapper")
+            .expect("top candidate should be present");
+        let recovered_port = top_candidate
+            .ports
+            .iter()
+            .find(|port| port.port_name == "ext_data")
+            .expect("recovered top port should be present");
+        let signal_inventory_port = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "ext_data")
+            .expect("recovered top port should stay in selected top inventory");
+
+        assert_eq!(
+            recovered_port.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert_eq!(
+            signal_inventory_port.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert!(emitted_text.contains("ext_data>8"));
+
+        Ok(())
+    }
+
+    #[test]
     fn top_composition_preserves_recovered_top_port_direction_when_still_blocked() -> Result<()> {
         let tempdir = tempdir()?;
         let intent_ir = build_intent_ir_from_markdown(
@@ -7167,6 +7288,55 @@ mod tests {
                 .iter()
                 .any(|reason| reason.contains("missing explicit module `missing_module`"))
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn top_composition_blocks_conflicting_top_actor_port_direction() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "conflicting_top_actor_port_direction.md",
+            "# Conflicting Top Actor Port Direction\nTop wrapper.\n\nTop wrapper port ext_data is input width 8.\n\nTop wrapper child producer uses module producer_core.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n",
+        )?;
+        intent_ir.actor_ports = vec![actor_port(
+            "wrapper",
+            "ext_data",
+            ActorRelativeDirection::Output,
+        )];
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let top_candidate = fsm
+            .top_candidates
+            .iter()
+            .find(|top| top.top_name == "wrapper")
+            .expect("top candidate should be present");
+        let recovered_port = top_candidate
+            .ports
+            .iter()
+            .find(|port| port.port_name == "ext_data")
+            .expect("conflicting top port should stay visible");
+
+        assert_eq!(recovered_port.direction_hint, None);
+        assert!(
+            top_candidate
+                .renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason.contains("Top actor-port graph `wrapper.ext_data`"))
+        );
+        assert!(!fsm.renderability.is_renderable);
 
         Ok(())
     }

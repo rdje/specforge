@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-04-29 (`.fsm` top boundary ports recover from top actor graph)
+
+### Improved: explicit top roots no longer need flat top-port directions when the actor graph already resolves them
+- Top-root `.fsm` analysis now merges `IntentIR.actor_ports` for the explicit `top_name` into top boundary port direction evidence.
+- A width-only top port can now become renderable when the top actor graph says the top-level actor drives or reads that port, even if no flat `ExplicitTopPortRecord.direction_hint` was present.
+- Conflicting explicit top-port direction versus top actor-port graph direction remains blocking: the adapter collapses that port direction to unresolved rather than letting either surface silently win.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge top_composition_recovers_top_port_direction_from_actor_ports` -> passed
+- `cargo test -p specforge top_composition_blocks_conflicting_top_actor_port_direction` -> passed
+- `cargo test -p specforge ir::adapters::tests` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-29 (Runtime doctor now tolerates cold local model load)
 
 ### Improved: local provider readiness no longer requires manual prewarming
