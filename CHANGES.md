@@ -1,5 +1,28 @@
 # CHANGES
 
+## 2026-04-29 (`.fsm` actor-port parametric widths stay explicit)
+
+### Fixed: symbolic actor-port widths no longer degrade to missing width diagnostics
+- Actor-port overlays now preserve `WidthHint::Parametric(...)` as `.fsm` signal-inventory `parametric_width_hint` when no numeric width evidence is already known.
+- Canonical signal parametric widths remain strict while graph-backed actor-port parametric widths are recovery evidence, so explicit numeric widths stay authoritative.
+- `.fsm` renderability now reports symbolic actor-port width evidence explicitly instead of falling through to the generic missing numeric-width blocker.
+- A regression proves a widthless `DATA_IN` with actor-port `DATA_WIDTH` blocks with a parametric-width diagnostic, while a companion guard proves explicit numeric `DATA_IN width 16` is not poisoned by a symbolic actor-port width.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml standalone_dt_blocks_parametric_actor_port_width_with_diagnostic -- --nocapture` -> failed before the fix, then passed
+- `cargo test --manifest-path Cargo.toml standalone_dt_keeps_explicit_numeric_width_over_actor_parametric_width -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml standalone_dt_blocks_parametric_signal_width_with_diagnostic -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml standalone_dt_recovers_control_input_width_from_actor_port_graph -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml standalone_explicit_module_recovers_control_input_width_from_actor_port_graph -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml top_composition_recovers_top_port_width_from_actor_ports -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml ir::adapters::tests -- --nocapture` -> passed with `64` adapter tests
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `508` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-29 (`.fsm` parametric signal widths stay explicit)
 
 ### Fixed: non-top parametric widths no longer look like missing width evidence

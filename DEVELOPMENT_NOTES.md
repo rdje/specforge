@@ -7,6 +7,21 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-29 `.fsm` actor-port parametric widths stay explicit
+- Continued from commit `d22ae1f` by closing the graph-backed actor-port counterpart to the canonical parametric-width provenance gate.
+- The root cause was a policy mismatch in the width overlays:
+  - canonical interface signal widths now preserve `WidthHint::Parametric(...)`
+  - actor-port graph overlays still projected only `WidthHint::as_numeric()`
+  - symbolic actor-port width evidence therefore disappeared before `FsmSignalCandidate` and renderability diagnostics could distinguish it from absent width evidence
+- The fix splits the two policies explicitly:
+  - canonical parametric widths remain strict signal declarations and are preserved even when they make the active `.fsm` slice unrenderable
+  - graph-backed actor-port parametric widths are recovered width evidence and only populate `parametric_width_hint` when no numeric width evidence or width conflict is already known
+  - actor-port overlays process numeric width evidence before recovered symbolic width evidence, preventing order-dependent symbolic poisoning of already numeric inventory entries
+- A focused regression first reproduced the blocked artifact with `DATA_IN` losing actor-port `DATA_WIDTH`, then passed after the recovered parametric width reached `FsmSignalCandidate.parametric_width_hint`.
+- A companion guard proves explicit numeric `DATA_IN width 16` remains renderable and does not retain actor-port `DATA_WIDTH` as a blocker.
+- Existing numeric actor-port width recovery for standalone direct roots, explicit modules, and top-boundary ports remains green, and the full adapter suite now covers `64` tests.
+- Full local CI with `508` Rust tests and the full `127/127` tracked KG fixture suite passed after the actor-port parametric width-provenance gate landed.
+
 ## 2026-04-29 `.fsm` parametric signal widths stay explicit
 - Continued from commit `c52f07a` by closing the non-top counterpart to the top-public-IO parametric width gate.
 - The root cause was another projection loss:

@@ -4,6 +4,15 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-29 `.fsm` actor-port parametric width provenance)
+- Continued from commit `d22ae1f` by applying the parametric-width provenance split to actor-port graph overlays.
+- The root cause was that actor-port inventory overlays still converted width evidence through `WidthHint::as_numeric()`, dropping symbolic graph widths such as `DATA_WIDTH` before `FsmSignalCandidate` projection.
+- The adapter now uses a separate recovered-parametric-width registration path for actor ports: symbolic actor-port widths are preserved only when the inventory has no numeric width and no width conflict, while canonical parametric signal declarations keep their stricter always-visible behavior.
+- Actor-port overlays now register numeric width evidence before recovered symbolic width evidence, which keeps numeric recovery authoritative and avoids order-dependent symbolic blockers.
+- Renderability now reports actor-port parametric width evidence as a parametric-width blocker instead of a missing-width fallback.
+- Focused coverage locks the blocked symbolic actor-port case, the explicit-numeric-over-symbolic actor-port guard, existing numeric actor-port recovery lanes, and the full adapter suite now has `64` tests.
+- Full local verification for this slice: `508` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-29 `.fsm` parametric signal width provenance)
 - Continued from commit `c52f07a` by tightening width provenance for direct/module signal inventories.
 - The root cause was that non-top `InterfaceSignalRecord.width_hint` values were collapsed through `WidthHint::as_numeric()`, so symbolic widths such as `DATA_WIDTH` were indistinguishable from absent width evidence by the time `.fsm` renderability ran.

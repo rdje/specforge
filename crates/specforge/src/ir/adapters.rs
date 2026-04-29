@@ -1820,6 +1820,22 @@ fn overlay_actor_port_inventory_for_actor(
             port.automation_confidence,
         );
     }
+
+    for port in actor_ports
+        .iter()
+        .filter(|port| port.actor_name.eq_ignore_ascii_case(actor_name))
+    {
+        if !allow_new_signals && !inventory.contains_key(&port.signal_name) {
+            continue;
+        }
+        if let Some(WidthHint::Parametric(parametric_width)) = port.width_hint.as_ref() {
+            register_recovered_parametric_width_hint(
+                inventory,
+                &port.signal_name,
+                parametric_width,
+            );
+        }
+    }
 }
 
 fn overlay_actor_port_width_inventory(
@@ -1846,6 +1862,19 @@ fn overlay_actor_port_width_inventory(
             "actor_port_width",
             port.automation_confidence,
         );
+    }
+
+    for port in actor_ports {
+        if !inventory.contains_key(&port.signal_name) {
+            continue;
+        }
+        if let Some(WidthHint::Parametric(parametric_width)) = port.width_hint.as_ref() {
+            register_recovered_parametric_width_hint(
+                inventory,
+                &port.signal_name,
+                parametric_width,
+            );
+        }
     }
 }
 
@@ -4657,6 +4686,20 @@ fn register_parametric_width_hint(
     }
 }
 
+fn register_recovered_parametric_width_hint(
+    inventory: &mut BTreeMap<String, SignalInventoryEvidence>,
+    signal_name: &str,
+    parametric_width: &str,
+) {
+    let entry = inventory.entry(signal_name.to_string()).or_default();
+    if entry.width_hint.is_none()
+        && !entry.width_hint_conflicted
+        && entry.parametric_width_hint.is_none()
+    {
+        entry.parametric_width_hint = Some(parametric_width.to_string());
+    }
+}
+
 #[expect(
     clippy::too_many_arguments,
     reason = "signal inventory registration keeps direction, width, provenance, confidence, and graph/compat split explicit"
@@ -6223,6 +6266,17 @@ mod tests {
         port
     }
 
+    fn actor_port_with_parametric_width(
+        actor_name: &str,
+        signal_name: &str,
+        direction: ActorRelativeDirection,
+        width: &str,
+    ) -> ActorPortRecord {
+        let mut port = actor_port(actor_name, signal_name, direction);
+        port.width_hint = Some(WidthHint::Parametric(width.to_string()));
+        port
+    }
+
     fn clear_explicit_module_direction_hints(intent_ir: &mut IntentIr) {
         for module in &mut intent_ir.explicit_modules {
             for interface in &mut module.interfaces {
@@ -7628,6 +7682,97 @@ mod tests {
                 .iter()
                 .any(|reason| reason.contains("parametric width `DATA_WIDTH`"))
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn standalone_dt_blocks_parametric_actor_port_width_with_diagnostic() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "parametric_actor_port_width.md",
+            "# Parametric Actor Port Width\nSignal DATA_IN is input.\n\nSignal DATA_OUT is output width 8.\n\nBlock route_data: DATA_OUT = DATA_IN.\n",
+        )?;
+        intent_ir.actor_ports = vec![
+            actor_port_with_parametric_width(
+                "controller",
+                "DATA_IN",
+                ActorRelativeDirection::Input,
+                "DATA_WIDTH",
+            ),
+            actor_port("controller", "DATA_OUT", ActorRelativeDirection::Output),
+        ];
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let data_in = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "DATA_IN")
+            .expect("DATA_IN should stay in signal inventory");
+
+        assert_eq!(data_in.width_hint, None);
+        assert_eq!(data_in.parametric_width_hint.as_deref(), Some("DATA_WIDTH"));
+        assert!(!data_in.width_hint_conflicted);
+        assert!(!fsm.renderability.is_renderable);
+        assert!(
+            fsm.renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason.contains("parametric width `DATA_WIDTH`"))
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn standalone_dt_keeps_explicit_numeric_width_over_actor_parametric_width() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "numeric_width_with_parametric_actor_port.md",
+            "# Numeric Width With Parametric Actor Port\nSignal DATA_IN is input width 16.\n\nSignal DATA_OUT is output width 8.\n\nBlock route_data: DATA_OUT = DATA_IN.\n",
+        )?;
+        intent_ir.actor_ports = vec![
+            actor_port_with_parametric_width(
+                "controller",
+                "DATA_IN",
+                ActorRelativeDirection::Input,
+                "DATA_WIDTH",
+            ),
+            actor_port("controller", "DATA_OUT", ActorRelativeDirection::Output),
+        ];
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "renderable");
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let data_in = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "DATA_IN")
+            .expect("DATA_IN should stay in signal inventory");
+
+        assert_eq!(data_in.width_hint, Some(16));
+        assert_eq!(data_in.parametric_width_hint, None);
+        assert!(!data_in.width_hint_conflicted);
+        assert!(fsm.renderability.is_renderable);
 
         Ok(())
     }
