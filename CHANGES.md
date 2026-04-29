@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-29 (Semantic compat-direction lag is graph-scoped)
+
+### Fixed: semantic validation no longer treats graph-resolved directions as incomplete
+- `specforge validate` now mirrors the graph-first direction contract at the `SemanticIR` compatibility surface.
+- Graph-resolved signals whose flat compatibility `direction_hint` is absent now report `semantic_compat_direction_hints_lag_graph`, matching the actual state: actor-relative graph truth exists, and only the flat compatibility projection is lagging.
+- `semantic_compat_direction_hints_incomplete` remains available for signals that lack both a flat compatibility hint and non-conflicted actor-relative graph coverage, so genuinely unresolved direction evidence is still visible.
+- Updated the tracked `compat_direction_hints_lag_graph_negative` fixture and the `kg-bench` fixture-seed test expectations to lock the split.
+
+### Validation
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo test --manifest-path Cargo.toml validate_semantic_ir_reports_graph_backed_compat_direction_lag_related_ids -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml validate_semantic_ir_keeps_incomplete_direction_finding_without_graph_coverage -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml validate_intent_ir_scores_direction_from_graph_before_compat_hints -- --nocapture` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality compat_direction_hints_lag_graph_negative` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `500` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-29 (README bootstrap and corpus-KB fixture projection refresh)
 
 ### Updated: live continuity now matches the executable fixture baseline

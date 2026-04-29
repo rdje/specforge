@@ -7,6 +7,22 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-29 Semantic compat-direction lag now follows graph-first semantics
+- The next graph-first validation seam was the semantic compatibility-direction finding:
+  - `with_resolved_direction` already counted actor-relative graph directions before flat compatibility hints
+  - but `semantic_compat_direction_hints_incomplete` still treated graph-resolved, flat-hint-missing signals as generally incomplete
+  - that made the diagnostic wording disagree with the canonical truth source
+- The fix splits the two cases instead of dropping either one:
+  - graph-backed missing flat hints now emit `semantic_compat_direction_hints_lag_graph`
+  - signals with neither flat compatibility direction nor non-conflicted actor-relative graph coverage still emit `semantic_compat_direction_hints_incomplete`
+  - graph-conflicted signals remain owned by the graph-direction conflict surface rather than being counted as ordinary compatibility lag
+- This keeps the metric role clear:
+  - `with_resolved_direction` is the graph-first coverage number
+  - `with_compat_direction_hint` is still a flat-projection diagnostic
+  - compatibility lag is only a lag when graph truth already exists
+- The existing tracked fixture `compat_direction_hints_lag_graph_negative` now locks the semantic-stage finding ID to `semantic_compat_direction_hints_lag_graph`, and a new unit test preserves the no-graph fallback to `semantic_compat_direction_hints_incomplete`.
+- Verification covered the focused semantic/intent validation tests, the focused fixture, full local CI with `500` Rust tests, and the full `127/127` tracked KG fixture suite.
+
 ## 2026-04-29 README bootstrap restart found stale continuity and corpus projections
 - The README handoff still points through `SESSION_BOOTSTRAP.md`: read the referenced markdown surfaces, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` only if needed, then continue roadmap work.
 - Re-running that path confirmed the latest architecture remains the staged, provenance-first `IntentIR` pipeline with adapters downstream; no new Rust architecture pivot appeared during the code survey.

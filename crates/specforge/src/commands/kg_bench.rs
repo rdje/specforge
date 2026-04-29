@@ -2856,13 +2856,13 @@ mod tests {
                 "expectations": {
                     "validation": {
                         "semantic": {
-                            "finding_ids_include": ["semantic_compat_direction_hints_incomplete"],
+                            "finding_ids_include": ["semantic_compat_direction_hints_lag_graph"],
                             "findings_include": [
                                 {
-                                    "finding_id": "semantic_compat_direction_hints_incomplete",
+                                    "finding_id": "semantic_compat_direction_hints_lag_graph",
                                     "severity": "info",
                                     "category": "compatibility_surface",
-                                    "summary_contains": "2 interface signal record(s) still lack flat compatibility direction hints",
+                                    "summary_contains": "2 interface signal record(s) still lack flat compatibility direction hints even though actor-relative ports exist",
                                     "related_ids_include": ["PADDR", "PREADY"]
                                 }
                             ],

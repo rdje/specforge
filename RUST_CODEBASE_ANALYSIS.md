@@ -4,6 +4,17 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-29 semantic compat-direction validation split)
+- Continued from commit `ce6d875` by tightening a validation-only graph-first seam rather than changing IR construction or adapter lowering.
+- The root cause was a semantic-stage diagnostic mismatch: `validate_semantic_ir(...)` already counted actor-relative graph directions as resolved direction coverage, but still reported graph-resolved flat-hint gaps under `semantic_compat_direction_hints_incomplete`.
+- `crates/specforge/src/commands/validate.rs` now separates graph-backed flat-hint lag from genuinely unresolved direction evidence:
+  - `semantic_compat_direction_hints_lag_graph` is emitted only when non-conflicted actor-relative graph coverage exists and the flat compatibility `direction_hint` is missing
+  - `semantic_compat_direction_hints_incomplete` is retained for signals with no flat hint and no non-conflicted graph coverage
+  - graph-conflicted signals stay on the graph-direction conflict surface instead of being reclassified as ordinary compatibility lag
+- `crates/specforge/src/commands/kg_bench.rs` and `crates/specforge/test_data/kg_quality/compat_direction_hints_lag_graph_negative/fixture.json` were updated so the tracked fixture locks the new semantic-stage finding ID.
+- This does not change the live protocol validation projection, but it narrows one remaining direct compatibility-hint consumer in validation and keeps future graph-first work from chasing a misleading incomplete-direction finding.
+- Full local verification for this slice: `500` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-29 README/bootstrap restart and corpus-KB projection refresh)
 - Re-executed the README handoff path through `SESSION_BOOTSTRAP.md`, the root continuity docs, the canonical mdBook, corpus-KB pages, FSMGEN feedback, and the active Rust crate layout.
 - The codebase survey still matches the documented architecture: one Rust workspace member, `specforge` CLI, staged `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR`, downstream adapters, and active truthfulness surfaces in `semantic.rs`, `validate.rs`, `adapters.rs`, `project_validation.rs`, and `kg_bench.rs`.
