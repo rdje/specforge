@@ -4,6 +4,15 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-29 `.fsm` selected top inventory graph-backed direction provenance)
+- Continued from commit `65fcf4b` with another graph-first consumer cleanup, this time in the `.fsm` adapter top-surface projection.
+- The root cause was that `select_fsm_surface(...)` rebuilt selected top `signal_inventory` from already-resolved top ports. Directions recovered from top-link topology or top actor ports therefore appeared as flat compatibility `direction_hint` values in `fsm.signal_inventory`.
+- `FsmTopCandidate` now carries the top-surface `signal_inventory` computed during `analyze_top_renderability(...)`, while both raw top declarations and resolved top ports are available.
+- `build_top_signal_inventory(...)` now keeps explicit raw top-port directions as flat compatibility hints, but stores directions recovered for width-only raw top ports in `graph_direction_hint`.
+- The emitted/renderable top root still uses resolved top ports, so `.fsm` text remains renderable; the artifact inventory simply stops misclassifying recovered graph/topology evidence as an original flat declaration.
+- Focused top-link, top actor-port, blocked top, full top-composition, and full adapter tests passed for this slice.
+- Full local verification for this slice: `500` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-29 semantic compat-direction validation split)
 - Continued from commit `ce6d875` by tightening a validation-only graph-first seam rather than changing IR construction or adapter lowering.
 - The root cause was a semantic-stage diagnostic mismatch: `validate_semantic_ir(...)` already counted actor-relative graph directions as resolved direction coverage, but still reported graph-resolved flat-hint gaps under `semantic_compat_direction_hints_incomplete`.

@@ -610,6 +610,8 @@ pub struct FsmTopCandidate {
     pub top_name: String,
     pub declaration_order: u32,
     #[serde(default)]
+    pub signal_inventory: Vec<FsmSignalCandidate>,
+    #[serde(default)]
     pub ports: Vec<ExplicitTopPortRecord>,
     #[serde(default)]
     pub children: Vec<FsmTopChildCandidate>,
@@ -682,6 +684,7 @@ struct SelectedFsmSurface {
 #[derive(Debug, Clone)]
 struct TopRenderabilityAnalysis {
     renderability: FsmRenderability,
+    signal_inventory: Vec<FsmSignalCandidate>,
     resolved_ports: Vec<ExplicitTopPortRecord>,
     renderable_top: Option<FsmRenderableTopRoot>,
 }
@@ -1925,6 +1928,7 @@ fn build_top_candidate(
     FsmTopCandidate {
         top_name: top.top_name.clone(),
         declaration_order: top.declaration_order,
+        signal_inventory: analysis.signal_inventory,
         ports: analysis.resolved_ports,
         children,
         links: top.links.clone(),
@@ -2086,7 +2090,7 @@ fn select_fsm_surface(
         return SelectedFsmSurface {
             root_name: top_candidate.top_name.clone(),
             root_kind_decision: build_top_root_kind_decision(top_candidate),
-            signal_inventory: build_top_signal_inventory(&top_candidate.ports),
+            signal_inventory: top_candidate.signal_inventory.clone(),
             system_contract: None,
             init_assignments: Vec::new(),
             decision_tree_candidates: Vec::new(),
@@ -2113,7 +2117,7 @@ fn select_fsm_surface(
                 automation_confidence: AutomationConfidence::Low,
                 rationale: "the current IntentIR carries multiple explicit top candidates, so broader-root lowering stays blocked until one canonical top is selected".to_string(),
             },
-            signal_inventory: build_top_signal_inventory(&first_top.ports),
+            signal_inventory: first_top.signal_inventory.clone(),
             system_contract: None,
             init_assignments: Vec::new(),
             decision_tree_candidates: Vec::new(),
@@ -2205,18 +2209,33 @@ fn build_top_root_kind_decision(top_candidate: &FsmTopCandidate) -> FsmRootKindD
     }
 }
 
-fn build_top_signal_inventory(ports: &[ExplicitTopPortRecord]) -> Vec<FsmSignalCandidate> {
-    ports
+fn build_top_signal_inventory(
+    raw_ports: &[ExplicitTopPortRecord],
+    resolved_ports: &[ExplicitTopPortRecord],
+) -> Vec<FsmSignalCandidate> {
+    raw_ports
         .iter()
-        .map(|port| FsmSignalCandidate {
-            signal_name: port.port_name.clone(),
-            direction_hint: port.direction_hint,
-            graph_direction_hint: None,
+        .zip(resolved_ports.iter())
+        .map(|(raw_port, resolved_port)| FsmSignalCandidate {
+            signal_name: resolved_port.port_name.clone(),
+            direction_hint: if raw_port.direction_hint == resolved_port.direction_hint {
+                raw_port.direction_hint
+            } else {
+                None
+            },
+            graph_direction_hint: if raw_port.direction_hint.is_none() {
+                resolved_port.direction_hint
+            } else {
+                None
+            },
             graph_direction_hint_conflicted: false,
-            width_hint: port.width_hint.as_ref().and_then(|w| w.as_numeric()),
-            supporting_canonical_ids: port.supporting_statement_ids.clone(),
+            width_hint: resolved_port
+                .width_hint
+                .as_ref()
+                .and_then(|w| w.as_numeric()),
+            supporting_canonical_ids: resolved_port.supporting_statement_ids.clone(),
             mention_categories: vec!["top_port".to_string()],
-            automation_confidence: port.automation_confidence,
+            automation_confidence: resolved_port.automation_confidence,
         })
         .collect()
 }
@@ -2630,9 +2649,11 @@ fn analyze_top_renderability(
         children: renderable_children,
         links: top.links.clone(),
     });
+    let signal_inventory = build_top_signal_inventory(&top.ports, &resolved_ports);
 
     TopRenderabilityAnalysis {
         renderability,
+        signal_inventory,
         resolved_ports,
         renderable_top,
     }
@@ -7791,8 +7812,9 @@ mod tests {
             recovered_port.direction_hint,
             Some(InterfaceSignalDirection::Output)
         );
+        assert_eq!(signal_inventory_port.direction_hint, None);
         assert_eq!(
-            signal_inventory_port.direction_hint,
+            signal_inventory_port.graph_direction_hint,
             Some(InterfaceSignalDirection::Output)
         );
         assert!(emitted_text.contains("result_data>8"));
@@ -7863,8 +7885,9 @@ mod tests {
             recovered_port.direction_hint,
             Some(InterfaceSignalDirection::Output)
         );
+        assert_eq!(signal_inventory_port.direction_hint, None);
         assert_eq!(
-            signal_inventory_port.direction_hint,
+            signal_inventory_port.graph_direction_hint,
             Some(InterfaceSignalDirection::Output)
         );
         assert!(emitted_text.contains("ext_data>8"));
@@ -7988,8 +8011,9 @@ mod tests {
             recovered_port.direction_hint,
             Some(InterfaceSignalDirection::Output)
         );
+        assert_eq!(signal_inventory_port.direction_hint, None);
         assert_eq!(
-            signal_inventory_port.direction_hint,
+            signal_inventory_port.graph_direction_hint,
             Some(InterfaceSignalDirection::Output)
         );
         assert!(

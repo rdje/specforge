@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-29 (`.fsm` top signal inventory preserves graph-backed direction provenance)
+
+### Improved: recovered top-boundary directions no longer flatten into compatibility hints
+- Selected `.fsm` top surfaces now keep top-port directions recovered from explicit top-link topology or matching top actor ports in `graph_direction_hint` instead of writing them back as flat `direction_hint` values in `fsm.signal_inventory`.
+- Renderable top ports still carry the resolved direction needed to emit `.fsm` top port tokens, so generated top output remains unchanged.
+- Explicit top-port declarations still remain compatibility `direction_hint` evidence; only directions recovered from graph/topology context are projected as graph-backed inventory evidence.
+- Blocked top candidates also preserve the recovered graph-backed direction in selected signal inventory, which keeps debugging context without pretending the flat top declaration was complete.
+
+### Validation
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo test --manifest-path Cargo.toml top_composition_recovers_top_port_direction_from_link_topology -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml top_composition_recovers_top_port_direction_from_actor_ports -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml top_composition_preserves_recovered_top_port_direction_when_still_blocked -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml top_composition -- --nocapture` -> passed with `23` top-composition tests
+- `cargo test --manifest-path Cargo.toml ir::adapters::tests -- --nocapture` -> passed with `56` adapter tests
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `500` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-29 (Semantic compat-direction lag is graph-scoped)
 
 ### Fixed: semantic validation no longer treats graph-resolved directions as incomplete

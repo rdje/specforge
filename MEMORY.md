@@ -19,43 +19,42 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `ce6d875`
-- latest_commit_brief_message: `Docs: refresh bootstrap corpus projections`
-- note: the latest committed baseline refreshed README/bootstrap continuity and corpus-KB fixture projections to the executable `127/127` KG fixture baseline
+- latest_commit_hash: `65fcf4b`
+- latest_commit_brief_message: `fix(validate): split semantic compat direction lag`
+- note: the latest committed baseline split semantic compatibility-direction reporting into graph-backed lag vs genuinely unresolved direction coverage
 
 ## Recent commit chain (last 6)
+- `65fcf4b` fix(validate): split semantic compat direction lag
 - `ce6d875` Docs: refresh bootstrap corpus projections
 - `d4f53bb` fix(adapter): recover transitive topology widths
 - `3598999` test: harden sibling width and source env isolation
 - `b7274bb` fix(adapter): recover child widths from sibling links
 - `b462600` fix(adapter): recover top widths from child links
-- `e9a91dd` fix(adapter): recover module input widths from actor graph
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 4` of `origin/main`
+- branch state before the next commit: `ahead 5` of `origin/main`
 - modified tracked files:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `MEMORY.md`
   - `RUST_CODEBASE_ANALYSIS.md`
-  - `crates/specforge/src/commands/kg_bench.rs`
-  - `crates/specforge/src/commands/validate.rs`
-  - `crates/specforge/test_data/kg_quality/compat_direction_hints_lag_graph_negative/fixture.json`
+  - `crates/specforge/src/ir/adapters.rs`
 
 ## Current in-flight slice
 - objective:
-  - split semantic validation compatibility-direction reporting so graph-resolved missing flat hints are `semantic_compat_direction_hints_lag_graph`, while signals with neither flat hint nor non-conflicted graph coverage remain `semantic_compat_direction_hints_incomplete`
+  - preserve recovered `.fsm` top-boundary directions as graph-backed selected signal-inventory hints instead of flattening top-link/top-actor recovery into flat compatibility `direction_hint`
 - tracker effect:
-  - added a `Done` live-status row for semantic validation distinguishing graph-backed compatibility lag from unresolved direction coverage
+  - added a `Done` live-status row for selected top signal inventory preserving recovered top-boundary directions as graph-backed hints
 - verification status:
   - `cargo fmt --manifest-path Cargo.toml` passed
-  - `cargo test --manifest-path Cargo.toml validate_semantic_ir_reports_graph_backed_compat_direction_lag_related_ids -- --nocapture` passed
-  - `cargo test --manifest-path Cargo.toml validate_semantic_ir_keeps_incomplete_direction_finding_without_graph_coverage -- --nocapture` passed
-  - `cargo test --manifest-path Cargo.toml validate_intent_ir_scores_direction_from_graph_before_compat_hints -- --nocapture` passed
-  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench --fixtures-root crates/specforge/test_data/kg_quality compat_direction_hints_lag_graph_negative` passed
+  - `cargo test --manifest-path Cargo.toml top_composition_recovers_top_port_direction_from_link_topology -- --nocapture` passed
+  - `cargo test --manifest-path Cargo.toml top_composition_recovers_top_port_direction_from_actor_ports -- --nocapture` passed
+  - `cargo test --manifest-path Cargo.toml top_composition_preserves_recovered_top_port_direction_when_still_blocked -- --nocapture` passed
+  - `cargo test --manifest-path Cargo.toml top_composition -- --nocapture` passed with `23` top-composition tests
+  - `cargo test --manifest-path Cargo.toml ir::adapters::tests -- --nocapture` passed with `56` adapter tests
   - `bash scripts/run_docs_ci.sh` passed
   - `bash scripts/run_ci.sh` passed with `500` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `127` fixtures and `0` failures
@@ -64,6 +63,6 @@
 
 ## Next exact steps
 - run final `git diff --check` plus status review
-- commit the semantic compatibility-direction validation split
+- commit the selected top signal-inventory graph-backed direction provenance slice
 - truncate `git_message_brief.txt` back to `0` bytes and confirm it remains untracked after that commit
-- leave the branch unpushed; after this commit it should be `ahead 5`, below the `25`-commit push threshold
+- leave the branch unpushed; after this commit it should be `ahead 6`, below the `25`-commit push threshold

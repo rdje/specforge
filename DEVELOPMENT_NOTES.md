@@ -7,6 +7,20 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-29 `.fsm` selected top signal inventory keeps recovered directions graph-backed
+- The next adapter provenance seam was in selected top surfaces:
+  - top renderability could recover width-only top-boundary directions from top-link topology or matching top actor ports
+  - the renderable top port needed that resolved direction to emit `.fsm`
+  - but `fsm.signal_inventory` rebuilt from the resolved top ports and stored the recovered direction in flat `direction_hint`
+- That collapsed graph/topology evidence back into compatibility evidence and made adapter artifacts look as if the original top declaration carried a direction.
+- The fix gives `FsmTopCandidate` its own selected `signal_inventory` built while both raw and resolved top ports are still available:
+  - raw explicit top-port directions stay in flat `direction_hint`
+  - recovered directions from raw width-only ports are stored in `graph_direction_hint`
+  - resolved top ports remain unchanged for actual `.fsm` rendering
+- This keeps renderability, blocked-artifact debugging, and selected-surface signal inventory aligned without inventing a backend-wide top-port provenance schema.
+- Focused top-link, top-actor, blocked-top, full top-composition, and full adapter tests now lock the split.
+- Full local CI with `500` Rust tests and the full `127/127` tracked KG fixture suite passed after the projection change.
+
 ## 2026-04-29 Semantic compat-direction lag now follows graph-first semantics
 - The next graph-first validation seam was the semantic compatibility-direction finding:
   - `with_resolved_direction` already counted actor-relative graph directions before flat compatibility hints
