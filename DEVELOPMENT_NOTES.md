@@ -7,6 +7,15 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-29 `.fsm` resolved top ports keep recovered provenance
+- Continued from commit `30e6a50` by closing the sibling top-candidate port surface after selected top inventory began preserving recovered confidence.
+- Root cause: `analyze_top_renderability(...)` wrote recovered direction/width values into `analysis.resolved_ports`, but left each `ExplicitTopPortRecord.supporting_statement_ids` and `automation_confidence` tied to the raw explicit top port.
+- `merge_resolved_top_port_provenance(...)` now folds graph-direction evidence and width evidence into the cloned resolved top port before it is exposed through `FsmTopCandidate.ports` and `renderable_top.ports`.
+- The helper merges supporting IDs through a `BTreeSet` and folds confidence with `max_automation_confidence(...)`, matching selected inventory policy.
+- Actor-port and top-link direction/width tests now assert that recovered top ports carry the same support IDs and high confidence that selected inventory already carried.
+- The actor-port direction assertion failed before the fix because `graph_wrapper_ext_data` was missing from the recovered top port; it now passes along with the sibling topology/width lanes.
+- Full local CI with `510` Rust tests and the full `127/127` tracked KG fixture suite passed after resolved top-port provenance landed.
+
 ## 2026-04-29 `.fsm` selected top confidence follows recovered evidence
 - Continued from commit `75b580a` by closing the confidence sibling of the selected top category/support-ID provenance slices.
 - Root cause: `build_top_signal_inventory(...)` now merged recovered source categories and support IDs, but still serialized `automation_confidence` from only the resolved explicit top port.

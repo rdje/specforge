@@ -2882,6 +2882,12 @@ fn analyze_top_renderability(
             resolved_port.width_hint = top_port_widths
                 .get(&port.port_name)
                 .and_then(|width| width.width_hint.clone());
+            merge_resolved_top_port_provenance(
+                &mut resolved_port,
+                top_port_directions.get(&port.port_name),
+                graph_top_port_directions.get(&port.port_name),
+                top_port_widths.get(&port.port_name),
+            );
             resolved_port
         })
         .collect::<Vec<_>>();
@@ -2910,6 +2916,34 @@ fn analyze_top_renderability(
         resolved_ports,
         renderable_top,
     }
+}
+
+fn merge_resolved_top_port_provenance(
+    resolved_port: &mut ExplicitTopPortRecord,
+    direction_evidence: Option<&TopPortDirectionEvidence>,
+    graph_direction_evidence: Option<&TopPortDirectionEvidence>,
+    width_evidence: Option<&TopPortWidthEvidence>,
+) {
+    let mut supporting_statement_ids =
+        BTreeSet::from_iter(resolved_port.supporting_statement_ids.iter().cloned());
+    let mut automation_confidence = resolved_port.automation_confidence;
+
+    for evidence in [direction_evidence, graph_direction_evidence]
+        .into_iter()
+        .flatten()
+    {
+        supporting_statement_ids.extend(evidence.supporting_canonical_ids.iter().cloned());
+        automation_confidence =
+            max_automation_confidence(automation_confidence, evidence.automation_confidence);
+    }
+    if let Some(width_evidence) = width_evidence {
+        supporting_statement_ids.extend(width_evidence.supporting_canonical_ids.iter().cloned());
+        automation_confidence =
+            max_automation_confidence(automation_confidence, width_evidence.automation_confidence);
+    }
+
+    resolved_port.supporting_statement_ids = supporting_statement_ids.into_iter().collect();
+    resolved_port.automation_confidence = automation_confidence;
 }
 
 fn merge_top_port_width_evidence_from_child_links(
@@ -8655,6 +8689,15 @@ mod tests {
             recovered_port.direction_hint,
             Some(InterfaceSignalDirection::Output)
         );
+        assert!(
+            topology_support_ids
+                .iter()
+                .any(|id| recovered_port.supporting_statement_ids.contains(id))
+        );
+        assert_eq!(
+            recovered_port.automation_confidence,
+            AutomationConfidence::High
+        );
         assert_eq!(signal_inventory_port.direction_hint, None);
         assert_eq!(
             signal_inventory_port.graph_direction_hint,
@@ -8745,6 +8788,16 @@ mod tests {
         assert_eq!(
             recovered_port.direction_hint,
             Some(InterfaceSignalDirection::Output)
+        );
+        assert!(
+            recovered_port
+                .supporting_statement_ids
+                .iter()
+                .any(|id| id == "graph_wrapper_ext_data")
+        );
+        assert_eq!(
+            recovered_port.automation_confidence,
+            AutomationConfidence::High
         );
         assert_eq!(signal_inventory_port.direction_hint, None);
         assert_eq!(
@@ -8845,6 +8898,16 @@ mod tests {
                 .as_ref()
                 .and_then(|width| width.as_numeric()),
             Some(8)
+        );
+        assert!(
+            recovered_port
+                .supporting_statement_ids
+                .iter()
+                .any(|id| id == "graph_wrapper_ext_data")
+        );
+        assert_eq!(
+            recovered_port.automation_confidence,
+            AutomationConfidence::High
         );
         assert_eq!(signal_inventory_port.width_hint, Some(8));
         assert!(
@@ -10025,6 +10088,15 @@ mod tests {
                 .as_ref()
                 .and_then(|width| width.as_numeric()),
             Some(8)
+        );
+        assert!(
+            topology_support_ids
+                .iter()
+                .any(|id| recovered_port.supporting_statement_ids.contains(id))
+        );
+        assert_eq!(
+            recovered_port.automation_confidence,
+            AutomationConfidence::High
         );
         assert_eq!(signal_inventory_port.width_hint, Some(8));
         assert!(

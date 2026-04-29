@@ -4,6 +4,15 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-29 `.fsm` resolved top-port provenance)
+- Continued from commit `30e6a50` by tightening the resolved top-port artifact surface after selected top inventory began carrying recovered confidence.
+- The root cause was that `analysis.resolved_ports` cloned raw explicit top ports, replaced direction/width hints with recovered evidence, but did not merge recovered supporting IDs or automation confidence into the `ExplicitTopPortRecord`.
+- Added `merge_resolved_top_port_provenance(...)`, which merges graph-direction and width-evidence supporting IDs and max-folds their confidence into the resolved port.
+- The same resolved vector feeds `FsmTopCandidate.ports` and `renderable_top.ports`, so both artifact surfaces now match the selected inventory provenance story.
+- The change is artifact-shape only: renderability, conflict behavior, and emitted `.fsm` text remain unchanged.
+- The actor-port direction assertion failed before the fix because the recovered top port did not carry `graph_wrapper_ext_data`; focused sibling lanes and the full adapter suite now pass with `66` tests.
+- Full local verification for this slice: `510` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-29 `.fsm` selected top confidence provenance)
 - Continued from commit `75b580a` by tightening selected top automation-confidence projection after recovered categories and support IDs were preserved.
 - The root cause was that selected top inventory still used `resolved_port.automation_confidence` after merging recovered direction/width provenance from actor ports and top links.

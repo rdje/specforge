@@ -1,5 +1,27 @@
 # CHANGES
 
+## 2026-04-29 (`.fsm` resolved top ports keep recovered provenance)
+
+### Fixed: recovered top-boundary evidence now reaches resolved top-port records
+- `FsmTopCandidate.ports` and `renderable_top.ports` now merge recovered top-boundary supporting IDs and automation confidence from actor-port graph and explicit top-link topology evidence.
+- The resolved top-port provenance merge reuses the same direction and width evidence ledgers that feed selected top signal inventory.
+- Actor-port direction/width recovery now leaves graph support IDs and high confidence visible on the recovered top port itself.
+- Top-link direction and child-endpoint width recovery now leave explicit top-link support IDs and high confidence visible on the recovered top port itself.
+- Renderability and emitted `.fsm` text are unchanged; this is an adapter-artifact honesty fix for the top-candidate port surface.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::top_composition_recovers_top_port_direction_from_actor_ports -- --exact --nocapture` -> failed before the fix because the recovered top port missed `graph_wrapper_ext_data`, then passed
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::top_composition_recovers_top_port_direction_from_link_topology -- --exact --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::top_composition_recovers_top_port_width_from_actor_ports -- --exact --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::top_composition_recovers_top_port_width_from_child_link_topology -- --exact --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests -- --nocapture` -> passed with `66` adapter tests
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `510` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-29 (`.fsm` selected top confidence follows recovered evidence)
 
 ### Fixed: recovered top-boundary evidence now raises selected inventory confidence
