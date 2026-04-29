@@ -7,6 +7,21 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-29 `.fsm` sibling child-link source-width coverage and SourceIR test isolation
+- The sibling child-link width implementation was intentionally symmetric:
+  - source child endpoints can consume target child endpoint widths
+  - target child endpoints can consume source child endpoint widths
+  - both use the explicit module signal-width map built before topology evidence is emitted
+- The first slice had a positive test for width flowing from source child output to target child input plus a conflict test.
+- This coverage slice adds the mirror positive case: a widthless source child output linked to a widthful target child input must recover the numeric width and render.
+- No production adapter path changed; this is a regression lock against accidentally making child-to-child width propagation one-way in a future topology refactor.
+- Full CI then exposed an unrelated but real test-harness isolation gap:
+  - `ir::source::tests` used a private `ENV_LOCK`
+  - `ir::source::docling_backend::tests` used the shared `test_support::env_var_lock()`
+  - Rust could therefore run SourceIR PDF helper tests while Docling runtime tests temporarily narrowed `PATH`
+  - the stub shell helper then failed to find `dirname`, `mkdir`, and `cat`
+- The SourceIR tests now use the shared environment lock, matching the Docling backend tests and serializing all process-global environment mutation across both modules.
+
 ## 2026-04-29 `.fsm` child module width now consumes sibling child-link topology evidence
 - The top-boundary/child bidirectional width work left one adjacent topology seam:
   - explicit child-to-child top links already establish output/input direction for both child endpoints

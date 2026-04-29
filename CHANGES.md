@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-04-29 (`.fsm` sibling child-link source width coverage and SourceIR test isolation)
+
+### Hardened: sibling child-link width recovery is now locked in both directions
+- Added focused adapter coverage for recovering a widthless source child output from the connected target child input's numeric width.
+- This complements the existing target-child recovery case and proves child-to-child topology width evidence is direction-symmetric across explicit top links.
+- While rerunning full CI, fixed a real SourceIR/Docling test-isolation bug: PDF materialization tests now use the shared environment mutex instead of a private SourceIR-only lock, preventing parallel PATH mutations from hiding shell tools used by the stub backend.
+- No production lowering behavior or live status row changed in this slice.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge top_composition_recovers_source_child_width_from_sibling_child_link_topology` -> passed on first run
+- `cargo test -p specforge ir::adapters::tests` -> passed with `55` adapter tests
+- `bash scripts/run_ci.sh` first exposed the SourceIR/Docling PATH-isolation race, then the focused SourceIR and Docling runtime tests passed after the shared-lock fix
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed on rerun with `498` Rust tests plus warning-deny rustdoc and mdBook validation
+- `git diff --check` -> passed
+
 ## 2026-04-29 (`.fsm` child port width now recovers from sibling child links)
 
 ### Improved: child-to-child top links now propagate numeric endpoint width

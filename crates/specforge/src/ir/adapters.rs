@@ -8451,6 +8451,63 @@ mod tests {
     }
 
     #[test]
+    fn top_composition_recovers_source_child_width_from_sibling_child_link_topology() -> Result<()>
+    {
+        let tempdir = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "source_child_width_from_sibling_child_link.md",
+            "# Source Child Width From Sibling Child Link\nTop datapath.\n\nTop datapath port result_data is output width 8.\n\nTop datapath child producer uses module producer_core.\n\nTop datapath child consumer uses module consumer_core.\n\nTop datapath link producer.output_data -> consumer.input_data.\n\nTop datapath link consumer.result_data -> result_data.\n\nModule producer_core signal output_data is output.\n\nModule producer_core block produce: output_data = 8'3.\n\nModule consumer_core signal input_data is input width 8.\n\nModule consumer_core signal result_data is output width 8.\n\nModule consumer_core block route: result_data = input_data.\n",
+        )?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+        adapter.write_to_disk()?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "renderable");
+        let emitted_target_path = adapter
+            .artifact_layout
+            .emitted_target_path
+            .as_ref()
+            .expect("source-child-width-backed top adapter should emit target text");
+        let emitted_text = fs::read_to_string(emitted_target_path)?;
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let producer = fsm
+            .module_candidates
+            .iter()
+            .find(|candidate| candidate.module_name == "producer_core")
+            .expect("producer module candidate should exist");
+        let output_data = producer
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "output_data")
+            .expect("producer output_data should stay in the module inventory");
+
+        assert_eq!(
+            output_data.graph_direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert_eq!(output_data.width_hint, Some(8));
+        assert!(
+            output_data
+                .mention_categories
+                .iter()
+                .any(|category| category == "module_topology_link")
+        );
+        assert!(producer.renderability.is_renderable);
+        assert!(fsm.renderability.is_renderable);
+        assert!(emitted_text.contains("(output_data 8)"));
+        assert!(emitted_text.contains("/producer.output_data/consumer.input_data/"));
+        assert!(emitted_text.contains("/consumer.result_data/result_data/"));
+
+        Ok(())
+    }
+
+    #[test]
     fn top_composition_blocks_conflicting_sibling_child_link_widths() -> Result<()> {
         let tempdir = tempdir()?;
         let intent_ir = build_intent_ir_from_markdown(

@@ -1054,16 +1054,14 @@ mod tests {
     use std::env;
     use std::fs;
     use std::path::Path;
-    use std::sync::Mutex;
 
     use tempfile::tempdir;
 
     use crate::error::Result;
     use crate::ir::IrStage;
+    use crate::test_support::env_var_lock;
 
     use super::{NormalizationBackend, SourceIr, SourceKind, document_key, stable_stem};
-
-    static ENV_LOCK: Mutex<()> = Mutex::new(());
 
     struct EnvVarGuard {
         key: &'static str,
@@ -1073,7 +1071,7 @@ mod tests {
     impl EnvVarGuard {
         fn set_path(key: &'static str, value: &Path) -> Self {
             let original = env::var_os(key);
-            // SAFETY: tests serialize environment mutation with ENV_LOCK.
+            // SAFETY: tests serialize environment mutation with env_var_lock().
             unsafe { env::set_var(key, value) };
             Self { key, original }
         }
@@ -1083,11 +1081,11 @@ mod tests {
         fn drop(&mut self) {
             match &self.original {
                 Some(value) => {
-                    // SAFETY: tests serialize environment mutation with ENV_LOCK.
+                    // SAFETY: tests serialize environment mutation with env_var_lock().
                     unsafe { env::set_var(self.key, value) };
                 }
                 None => {
-                    // SAFETY: tests serialize environment mutation with ENV_LOCK.
+                    // SAFETY: tests serialize environment mutation with env_var_lock().
                     unsafe { env::remove_var(self.key) };
                 }
             }
@@ -1248,7 +1246,7 @@ mod tests {
 
     #[test]
     fn pdf_source_ir_materialization_uses_backend_helper_and_writes_manifests() -> Result<()> {
-        let _env_lock = ENV_LOCK.lock().expect("environment mutex poisoned");
+        let _env_lock = env_var_lock();
         let tempdir = tempdir()?;
         let source = tempdir.path().join("bus_spec.pdf");
         let artifact_base = tempdir.path().join("generated").join("source_ir");
@@ -1384,7 +1382,7 @@ EOF
 
     #[test]
     fn pdf_source_ir_materialization_replaces_stale_normalized_artifacts() -> Result<()> {
-        let _env_lock = ENV_LOCK.lock().expect("environment mutex poisoned");
+        let _env_lock = env_var_lock();
         let tempdir = tempdir()?;
         let source = tempdir.path().join("bus_spec.pdf");
         let artifact_base = tempdir.path().join("generated").join("source_ir");
@@ -1478,7 +1476,7 @@ EOF
 
     #[test]
     fn pdf_source_ir_failed_materialization_keeps_existing_normalized_artifacts() -> Result<()> {
-        let _env_lock = ENV_LOCK.lock().expect("environment mutex poisoned");
+        let _env_lock = env_var_lock();
         let tempdir = tempdir()?;
         let source = tempdir.path().join("bus_spec.pdf");
         let artifact_base = tempdir.path().join("generated").join("source_ir");
