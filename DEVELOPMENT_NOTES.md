@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-29 `.fsm` system contracts materialize clock/reset signals
+- Continued from commit `7bab72c` by closing the remaining system-contract shape-recovery edge.
+- The root cause was an adapter-local guard in `overlay_system_contract_signal(...)`:
+  - system contracts already carry canonical clock/reset names and roles
+  - the overlay only registered input/1-bit evidence when those names were already present in signal inventory
+  - an otherwise complete sequential `IntentIR` with `system_contract` but no flat `clk` / `rst_n` interface records therefore blocked as if the system contract referenced undeclared signals
+- `overlay_system_contract_signal(...)` now always uses the canonical signal registration path. Existing entries still merge through the same conflict-aware direction/width logic, while absent entries are materialized with `system_contract_signal` provenance.
+- The regression mutates a valid sequential `IntentIR` to remove flat `clk` / `rst_n` signal records while preserving `SystemContractRecord`; it failed before the guard removal and now emits the expected `(+system ...)` block.
+- Existing system-contract shape recovery and conflict tests remain green, and the full adapter suite now covers `65` tests.
+- Full local CI with `509` Rust tests and the full `127/127` tracked KG fixture suite passed after the system-contract materialization gate landed.
+
 ## 2026-04-29 `.fsm` actor-port parametric widths stay explicit
 - Continued from commit `d22ae1f` by closing the graph-backed actor-port counterpart to the canonical parametric-width provenance gate.
 - The root cause was a policy mismatch in the width overlays:

@@ -4,6 +4,14 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-29 `.fsm` system-contract signal materialization)
+- Continued from commit `7bab72c` by tightening the system-contract-to-signal-inventory boundary.
+- The root cause was that `overlay_system_contract_signal(...)` returned early unless the clock/reset signal already existed in inventory, despite `SystemContractRecord` being canonical evidence for those signal roles.
+- The overlay now always calls the conflict-aware canonical registration helper, so absent system clock/reset signals are materialized as input, 1-bit `system_contract_signal` entries and existing contradictory evidence still blocks through the existing merge logic.
+- The new regression removes flat `clk` / `rst_n` signal records from a sequential `IntentIR` while retaining the system contract, proving the adapter can still emit `(+system ...)` without inventing any non-contract facts.
+- Focused system-contract recovery/conflict tests and the full adapter suite passed; adapter coverage now has `65` tests.
+- Full local verification for this slice: `509` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-29 `.fsm` actor-port parametric width provenance)
 - Continued from commit `d22ae1f` by applying the parametric-width provenance split to actor-port graph overlays.
 - The root cause was that actor-port inventory overlays still converted width evidence through `WidthHint::as_numeric()`, dropping symbolic graph widths such as `DATA_WIDTH` before `FsmSignalCandidate` projection.

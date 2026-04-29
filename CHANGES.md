@@ -1,5 +1,27 @@
 # CHANGES
 
+## 2026-04-29 (`.fsm` system contracts materialize clock/reset signals)
+
+### Fixed: canonical system contracts can now supply clock/reset inventory entries
+- `.fsm` system-contract overlays no longer require clock/reset signals to already exist in direct/module signal inventory before registering them.
+- A canonical `SystemContractRecord` now materializes its clock and reset as input, 1-bit `system_contract_signal` evidence when the flat interface surface lacks those entries.
+- Existing conflict behavior remains intact: contradictory flat direction or width evidence still poisons the merged clock/reset signal and blocks lowering.
+- A regression deletes the flat `clk` / `rst_n` records from a sequential `IntentIR` while keeping the system contract, then proves the adapter emits the `(+system ...)` block and keeps the materialized signals in `fsm.signal_inventory`.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml standalone_sequential_dt_materializes_system_signals_from_system_contract -- --nocapture` -> failed before the fix, then passed
+- `cargo test --manifest-path Cargo.toml standalone_sequential_dt_recovers_system_signals_from_system_contract -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml standalone_sequential_dt_blocks_conflicting_system_contract_signal_direction -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml standalone_sequential_dt_blocks_conflicting_system_contract_signal_width -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml standalone_explicit_module_recovers_system_signals_from_system_contract -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml ir::adapters::tests -- --nocapture` -> passed with `65` adapter tests
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `509` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-29 (`.fsm` actor-port parametric widths stay explicit)
 
 ### Fixed: symbolic actor-port widths no longer degrade to missing width diagnostics
