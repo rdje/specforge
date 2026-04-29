@@ -8932,6 +8932,75 @@ mod tests {
     }
 
     #[test]
+    fn top_root_kind_confidence_follows_recovered_top_port_evidence() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "top_root_kind_recovered_confidence.md",
+            "# Top Root Kind Recovered Confidence\nTop wrapper.\n\nTop wrapper port ext_data is width 8.\n",
+        )?;
+        {
+            let raw_top = intent_ir
+                .explicit_tops
+                .iter_mut()
+                .find(|top| top.top_name == "wrapper")
+                .expect("explicit top should be present");
+            let raw_port = raw_top
+                .ports
+                .iter_mut()
+                .find(|port| port.port_name == "ext_data")
+                .expect("width-only top port should be preserved");
+            assert_eq!(raw_port.direction_hint, None);
+            assert_eq!(
+                raw_port
+                    .width_hint
+                    .as_ref()
+                    .and_then(|width| width.as_numeric()),
+                Some(8)
+            );
+            raw_port.automation_confidence = AutomationConfidence::Low;
+        }
+
+        intent_ir.actor_ports = vec![actor_port(
+            "wrapper",
+            "ext_data",
+            ActorRelativeDirection::Output,
+        )];
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let top_candidate = fsm
+            .top_candidates
+            .iter()
+            .find(|top| top.top_name == "wrapper")
+            .expect("top candidate should be present");
+        let recovered_port = top_candidate
+            .ports
+            .iter()
+            .find(|port| port.port_name == "ext_data")
+            .expect("recovered top port should be present");
+
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Top);
+        assert_eq!(
+            recovered_port.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::High
+        );
+
+        Ok(())
+    }
+
+    #[test]
     fn top_composition_recovers_top_system_port_widths_from_child_system_contract() -> Result<()> {
         let tempdir = tempdir()?;
         let intent_ir = build_intent_ir_from_markdown(

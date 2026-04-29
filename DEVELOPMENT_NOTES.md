@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-29 `.fsm` top-root decision confidence follows recovery
+- Continued from commit `224e908` with a regression-only slice for the root-kind decision consumer of recovered top-port confidence.
+- The previous slice made `FsmTopCandidate.ports` carry recovered support IDs and confidence; this test locks that `build_top_root_kind_decision(...)` consumes the recovered port confidence rather than the raw low-confidence top-port declaration.
+- The fixture is intentionally minimal: one explicit top, one width-only public top port with `AutomationConfidence::Low`, no children, no links, and one high-confidence matching actor-port record.
+- That keeps child/link confidence out of the fold, so `fsm.root_kind_decision.automation_confidence == High` proves the top-root decision follows recovered top-port evidence specifically.
+- Full local CI with `511` Rust tests and the full `127/127` tracked KG fixture suite passed after the regression landed.
+
 ## 2026-04-29 `.fsm` resolved top ports keep recovered provenance
 - Continued from commit `30e6a50` by closing the sibling top-candidate port surface after selected top inventory began preserving recovered confidence.
 - Root cause: `analyze_top_renderability(...)` wrote recovered direction/width values into `analysis.resolved_ports`, but left each `ExplicitTopPortRecord.supporting_statement_ids` and `automation_confidence` tied to the raw explicit top port.

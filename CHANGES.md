@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-29 (`.fsm` top-root decision confidence follows recovery)
+
+### Added: root-kind confidence regression now isolates recovered top-port evidence
+- Added a focused top-composition regression where the only explicit top port starts with low automation confidence and actor-port graph recovery supplies high-confidence direction evidence.
+- The test proves the selected `?top:name` root-kind decision folds the recovered top-port confidence through `FsmTopCandidate.ports`.
+- The scenario intentionally avoids child/link confidence so the root decision cannot pass by borrowing confidence from unrelated top-composition records.
+- This locks the resolved-port provenance behavior from the previous slice at its root-kind decision consumer.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::top_root_kind_confidence_follows_recovered_top_port_evidence -- --exact --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests -- --nocapture` -> passed with `67` adapter tests
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `511` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-29 (`.fsm` resolved top ports keep recovered provenance)
 
 ### Fixed: recovered top-boundary evidence now reaches resolved top-port records

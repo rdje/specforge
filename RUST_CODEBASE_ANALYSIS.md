@@ -4,6 +4,13 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-29 `.fsm` top-root confidence regression)
+- Continued from commit `224e908` by locking the root-kind decision consumer of recovered top-port confidence.
+- The production path was already corrected by resolved top-port provenance merging; this slice adds a minimal top-only regression so future refactors cannot accidentally make `build_top_root_kind_decision(...)` fold raw top-port confidence again.
+- The fixture keeps children and links absent, sets the raw explicit top port to low confidence, and lets high-confidence actor-port recovery supply the direction evidence.
+- `fsm.root_kind_decision.automation_confidence == High` now proves the selected `?top:name` decision follows recovered top-port evidence through `FsmTopCandidate.ports`.
+- Adapter coverage increased to `67` tests; full local verification for this slice: `511` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-29 `.fsm` resolved top-port provenance)
 - Continued from commit `30e6a50` by tightening the resolved top-port artifact surface after selected top inventory began carrying recovered confidence.
 - The root cause was that `analysis.resolved_ports` cloned raw explicit top ports, replaced direction/width hints with recovered evidence, but did not merge recovered supporting IDs or automation confidence into the `ExplicitTopPortRecord`.
