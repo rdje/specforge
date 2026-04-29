@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-04-29 (`.fsm` top port width now recovers from child-link topology)
+
+### Improved: child endpoint widths now carry back to top boundary ports
+- Explicit top-root `.fsm` candidates can now recover a missing numeric width for a top boundary port from the connected child module endpoint in an explicit top link.
+- The recovery is the mirror of child-port width recovery: width evidence can flow across a top link in either direction, but only when the opposite endpoint is already declared and renderable.
+- Conflicting child endpoint widths for the same widthless top port still collapse the top-port width to unresolved and block top lowering.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge top_composition_recovers_top_port_width_from_child_link_topology` first failed before the fix, then passed
+- `cargo test -p specforge top_composition_blocks_conflicting_top_port_widths_from_child_links` -> passed
+- `cargo test -p specforge ir::adapters::tests` -> passed with `52` adapter tests
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `495` Rust tests plus warning-deny rustdoc and mdBook validation
+- `git diff --check` -> passed
+
 ## 2026-04-29 (`.fsm` module control-input width now recovers from actor graph)
 
 ### Improved: explicit modules now share actor-port width evidence without importing external direction

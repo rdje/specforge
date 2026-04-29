@@ -2331,6 +2331,15 @@ fn analyze_top_renderability(
         });
     }
 
+    merge_top_port_width_evidence_from_child_links(
+        top,
+        &child_ports_by_instance,
+        &mut top_port_widths,
+        &mut blocking_reasons,
+        &mut required_canonical_enrichments,
+    );
+    refresh_top_ports_by_name_widths(&mut top_ports_by_name, &top_port_widths);
+
     for link in &top.links {
         let Some((source_port, source_is_top)) =
             resolve_top_link_endpoint(&link.source, &top_ports_by_name, &child_ports_by_instance)
@@ -2455,6 +2464,89 @@ fn analyze_top_renderability(
         renderability,
         resolved_ports,
         renderable_top,
+    }
+}
+
+fn merge_top_port_width_evidence_from_child_links(
+    top: &ExplicitTopRecord,
+    child_ports_by_instance: &BTreeMap<String, BTreeMap<String, RenderableEndpointPort>>,
+    top_port_widths: &mut BTreeMap<String, TopPortWidthEvidence>,
+    blocking_reasons: &mut Vec<String>,
+    required_canonical_enrichments: &mut BTreeSet<String>,
+) {
+    for link in &top.links {
+        if link.source.instance_name.is_none() && link.target.instance_name.is_some() {
+            merge_top_port_width_evidence_from_child_endpoint(
+                &link.source.signal_name,
+                &link.target,
+                "target",
+                child_ports_by_instance,
+                top_port_widths,
+                blocking_reasons,
+                required_canonical_enrichments,
+            );
+        }
+        if link.target.instance_name.is_none() && link.source.instance_name.is_some() {
+            merge_top_port_width_evidence_from_child_endpoint(
+                &link.target.signal_name,
+                &link.source,
+                "source",
+                child_ports_by_instance,
+                top_port_widths,
+                blocking_reasons,
+                required_canonical_enrichments,
+            );
+        }
+    }
+}
+
+fn merge_top_port_width_evidence_from_child_endpoint(
+    top_port_name: &str,
+    child_endpoint: &ExplicitTopLinkEndpoint,
+    child_endpoint_role: &str,
+    child_ports_by_instance: &BTreeMap<String, BTreeMap<String, RenderableEndpointPort>>,
+    top_port_widths: &mut BTreeMap<String, TopPortWidthEvidence>,
+    blocking_reasons: &mut Vec<String>,
+    required_canonical_enrichments: &mut BTreeSet<String>,
+) {
+    let Some(instance_name) = child_endpoint.instance_name.as_deref() else {
+        return;
+    };
+    let Some(child_port) = child_ports_by_instance
+        .get(instance_name)
+        .and_then(|ports| ports.get(&child_endpoint.signal_name))
+    else {
+        return;
+    };
+    let Some(width_hint) = child_port.width_hint else {
+        return;
+    };
+    let Some(width_evidence) = top_port_widths.get_mut(top_port_name) else {
+        return;
+    };
+
+    merge_top_port_width_evidence(
+        width_evidence,
+        top_port_name,
+        WidthHint::Numeric(width_hint),
+        &format!(
+            "Top link {child_endpoint_role} `{}`",
+            render_top_link_endpoint(child_endpoint)
+        ),
+        blocking_reasons,
+        required_canonical_enrichments,
+    );
+}
+
+fn refresh_top_ports_by_name_widths(
+    top_ports_by_name: &mut BTreeMap<String, RenderableEndpointPort>,
+    top_port_widths: &BTreeMap<String, TopPortWidthEvidence>,
+) {
+    for (port_name, port) in top_ports_by_name {
+        port.width_hint = top_port_widths
+            .get(port_name)
+            .and_then(|width| width.width_hint.as_ref())
+            .and_then(WidthHint::as_numeric);
     }
 }
 
@@ -8236,6 +8328,118 @@ mod tests {
         assert!(emitted_text.contains("(+size"));
         assert!(emitted_text.contains("(output_data 8)"));
         assert!(emitted_text.contains("/producer.output_data/result_data/"));
+
+        Ok(())
+    }
+
+    #[test]
+    fn top_composition_recovers_top_port_width_from_child_link_topology() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "top_port_width_from_child_link.md",
+            "# Top Port Width From Child Link\nTop datapath.\n\nTop datapath port result_data is output.\n\nTop datapath child producer uses module producer_core.\n\nTop datapath link producer.output_data -> result_data.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n",
+        )?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+        adapter.write_to_disk()?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "renderable");
+        let emitted_target_path = adapter
+            .artifact_layout
+            .emitted_target_path
+            .as_ref()
+            .expect("child-width-backed top adapter should emit target text");
+        let emitted_text = fs::read_to_string(emitted_target_path)?;
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let top_candidate = fsm
+            .top_candidates
+            .iter()
+            .find(|top| top.top_name == "datapath")
+            .expect("top candidate should be present");
+        let recovered_port = top_candidate
+            .ports
+            .iter()
+            .find(|port| port.port_name == "result_data")
+            .expect("recovered top port should stay visible");
+        let signal_inventory_port = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "result_data")
+            .expect("recovered top port should stay in selected top inventory");
+
+        assert_eq!(
+            recovered_port
+                .width_hint
+                .as_ref()
+                .and_then(|width| width.as_numeric()),
+            Some(8)
+        );
+        assert_eq!(signal_inventory_port.width_hint, Some(8));
+        assert!(fsm.renderability.is_renderable);
+        assert!(emitted_text.contains("result_data>8"));
+        assert!(emitted_text.contains("/producer.output_data/result_data/"));
+
+        Ok(())
+    }
+
+    #[test]
+    fn top_composition_blocks_conflicting_top_port_widths_from_child_links() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "conflicting_top_port_width_from_child_links.md",
+            "# Conflicting Top Port Width From Child Links\nTop datapath.\n\nTop datapath port result_data is output.\n\nTop datapath child producer8 uses module producer8_core.\n\nTop datapath child producer16 uses module producer16_core.\n\nTop datapath link producer8.output_data -> result_data.\n\nTop datapath link producer16.output_data -> result_data.\n\nModule producer8_core signal output_data is output width 8.\n\nModule producer8_core block produce: output_data = 8'3.\n\nModule producer16_core signal output_data is output width 16.\n\nModule producer16_core block produce: output_data = 16'3.\n",
+        )?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let top_candidate = fsm
+            .top_candidates
+            .iter()
+            .find(|top| top.top_name == "datapath")
+            .expect("top candidate should be present");
+        let recovered_port = top_candidate
+            .ports
+            .iter()
+            .find(|port| port.port_name == "result_data")
+            .expect("conflicting top port should stay visible");
+        let signal_inventory_port = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "result_data")
+            .expect("conflicting top port should stay in selected top inventory");
+
+        assert_eq!(recovered_port.width_hint, None);
+        assert_eq!(signal_inventory_port.width_hint, None);
+        assert!(
+            top_candidate
+                .renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason.contains("Top link source `producer16.output_data`"))
+        );
+        assert!(
+            top_candidate
+                .renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason.contains("has width `16`"))
+        );
+        assert!(!fsm.renderability.is_renderable);
 
         Ok(())
     }

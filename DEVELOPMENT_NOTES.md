@@ -7,6 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-29 `.fsm` top boundary width now consumes child-link topology evidence
+- The child-width topology slice exposed the reverse asymmetry:
+  - explicit top links could recover top boundary direction
+  - child module endpoints already carried numeric widths
+  - but a widthless top port linked to a widthful child endpoint still rendered as widthless
+- The fix merges child endpoint numeric width evidence into existing top boundary port width evidence before final top-link validation and selected top inventory projection.
+- The safety boundary stays narrow:
+  - only links between a top boundary endpoint and a resolved child endpoint participate
+  - child-child links do not invent top widths
+  - unresolved child modules are ignored here and continue to block through the existing missing-child path
+  - contradictory child endpoint widths collapse the top port width and block lowering
+- This completes the obvious bidirectional numeric-width flow across first-slice top links without introducing parametric width rendering or multi-driver resolution.
+
 ## 2026-04-29 `.fsm` explicit module control-input width now consumes actor graph shape
 - The direct-root actor-port width overlay exposed the matching explicit-module seam:
   - module-local control reads could recover input direction
