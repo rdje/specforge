@@ -19,22 +19,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `661f019e5d32cdb82af84f22d321d685f399bfb0`
-- latest_commit_brief_message: `test(adapter): lock actor-port renderable width`
-- note: the latest committed baseline locks matching top actor-port recovered top-boundary width support IDs and automation confidence at the renderable top-root port surface
+- latest_commit_hash: `ade21cc8e76f29cd24ea018d4731d5302a55032f`
+- latest_commit_brief_message: `test(adapter): lock system-port renderable widths`
+- note: the latest committed baseline locks child system-contract recovered top-boundary width support IDs and automation confidence at the renderable top-root port surface
 
 ## Recent commit chain (last 6)
+- `ade21cc` test(adapter): lock system-port renderable widths
 - `661f019` test(adapter): lock actor-port renderable width
 - `b9bd0a9` test(adapter): lock top-link renderable width
 - `fb4f050` test(adapter): lock top-link renderable provenance
 - `e705a95` test(adapter): lock renderable top provenance
 - `78ed684` test(adapter): lock top root recovery confidence
-- `224e908` fix(adapter): preserve resolved top provenance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 1` of `origin/main`
+- branch state before the next commit: `ahead 2` of `origin/main`
 - modified tracked files:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -45,9 +45,9 @@
 
 ## Current in-flight slice
 - objective:
-  - lock child system-contract recovered top-port width support IDs and automation confidence at the final renderable top-root port surface
+  - lock child system-contract recovered top-port width categories, support IDs, and automation confidence at the selected top signal-inventory surface
 - tracker effect:
-  - refined the renderable top-root port provenance `Done` row so it explicitly covers actor-port direction/width, top-link direction/width, and child system-contract width evidence
+  - added a selected top signal-inventory `Done` row for child system-contract recovered top-boundary width provenance
 - verification status:
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::top_composition_recovers_top_system_port_widths_from_child_system_contract -- --exact --nocapture` passed
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests -- --nocapture` passed with `67` adapter tests
@@ -62,6 +62,6 @@
 
 ## Next exact steps
 - rerun final lightweight formatting, docs, and whitespace checks after validation-doc updates
-- commit the renderable top-root system-port width provenance regression slice
+- commit the selected top signal-inventory system-port width provenance regression slice
 - truncate `git_message_brief.txt` back to `0` bytes and confirm it remains untracked after that commit
-- leave the branch unpushed; after this commit it should be `ahead 2`, below the `25`-commit push threshold
+- leave the branch unpushed; after this commit it should be `ahead 3`, below the `25`-commit push threshold

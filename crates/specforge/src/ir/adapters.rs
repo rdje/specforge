@@ -9182,6 +9182,23 @@ mod tests {
         assert!(top_candidate.renderability.is_renderable);
         assert_eq!(top_clk.width_hint, Some(1));
         assert_eq!(top_rst_n.width_hint, Some(1));
+        for (top_signal, topology_support_ids) in [
+            (top_clk, &clk_topology_support_ids),
+            (top_rst_n, &rst_topology_support_ids),
+        ] {
+            assert!(
+                top_signal
+                    .mention_categories
+                    .iter()
+                    .any(|category| category == "module_topology_link")
+            );
+            assert!(
+                topology_support_ids
+                    .iter()
+                    .any(|id| top_signal.supporting_canonical_ids.contains(id))
+            );
+            assert_eq!(top_signal.automation_confidence, AutomationConfidence::High);
+        }
         assert_eq!(
             renderable_clk
                 .width_hint

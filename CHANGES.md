@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-30 (`.fsm` selected top inventory keeps system-port width provenance)
+
+### Added: child-system-contract selected top-port widths are regression-locked
+- Extended the top system-contract distribution regression to assert selected top `fsm.signal_inventory` carries recovered 1-bit width provenance for public `clk` / `rst_n` ports.
+- The test now proves the selected top signal entries retain `module_topology_link`, top-link supporting IDs, and high automation confidence for widths recovered from child system-contract endpoints.
+- This complements the renderable top-root system-port lock: the selected top inventory and final renderable document now both expose the same child-system-contract width provenance.
+- No production behavior changed; the existing selected top inventory merge already carried this evidence.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::top_composition_recovers_top_system_port_widths_from_child_system_contract -- --exact --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests -- --nocapture` -> passed with `67` adapter tests
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `511` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-30 (`.fsm` renderable top-root ports keep system-port width provenance)
 
 ### Added: child-system-contract renderable top-port widths are regression-locked

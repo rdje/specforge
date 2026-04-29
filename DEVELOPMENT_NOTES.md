@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-30 `.fsm` selected top inventory keeps system-port width provenance
+- Continued from commit `ade21cc` by locking the selected top inventory sibling of the child-system-contract width provenance surface.
+- `build_top_signal_inventory(...)` already merges width-evidence categories, supporting IDs, and confidence; this regression proves that selected top `clk` and `rst_n` entries keep `module_topology_link`, top-link support IDs, and high confidence when their widths come from child system-contract endpoints.
+- The assertion lives in the existing top system-contract distribution test, so it checks the selected `fsm.signal_inventory` surface and the final renderable `?top:soc` document model in one path without changing emitted text.
+- This completes the immediate selected-inventory/renderable-document pair for child-system-contract top-width recovery.
+- Full local CI with `511` Rust tests and the full `127/127` tracked KG fixture suite passed after the regression landed.
+
 ## 2026-04-30 `.fsm` renderable top-root ports keep system-port width provenance
 - Continued from commit `661f019` by closing the child-system-contract endpoint sibling of the renderable top-root width provenance surface.
 - `FsmRenderableTopRoot.ports` already receives `resolved_ports`; this regression proves that clock/reset widths recovered through explicit top links into child system-contract endpoints survive into `renderable_document.top_root.ports`.
