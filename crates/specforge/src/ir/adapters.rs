@@ -192,17 +192,30 @@ fn validate_system_signal_renderability(
             );
         }
         None => {
-            push_unique_message(
-                blocking_reasons,
-                &format!(
-                    "Canonical {} signal `{}` is missing a direction hint required for standalone `.fsm` lowering.",
-                    role_name, signal_name
-                ),
-            );
-            required_canonical_enrichments.insert(
-                "promote a canonical interface inventory with stable signal names, directions, and widths"
-                    .to_string(),
-            );
+            if signal.graph_direction_hint_conflicted {
+                push_unique_message(
+                    blocking_reasons,
+                    &format!(
+                        "Canonical {role_name} signal `{signal_name}` has conflicting graph-backed direction evidence, so standalone `.fsm` lowering cannot choose an input role."
+                    ),
+                );
+                required_canonical_enrichments.insert(
+                    "resolve conflicting actor-relative graph direction evidence before lowering `.fsm` system contracts"
+                        .to_string(),
+                );
+            } else {
+                push_unique_message(
+                    blocking_reasons,
+                    &format!(
+                        "Canonical {} signal `{}` is missing a direction hint required for standalone `.fsm` lowering.",
+                        role_name, signal_name
+                    ),
+                );
+                required_canonical_enrichments.insert(
+                    "promote a canonical interface inventory with stable signal names, directions, and widths"
+                        .to_string(),
+                );
+            }
         }
     }
 
@@ -2431,16 +2444,30 @@ fn analyze_top_renderability(
             continue;
         };
         let Some(direction_hint) = direction_evidence.direction_hint else {
-            push_unique_message(
-                &mut blocking_reasons,
-                &format!(
-                    "Top port `{}` is missing a direction hint or unambiguous top-link direction recovery.",
-                    port.port_name
-                ),
-            );
-            required_canonical_enrichments.insert(
-                "recover each top boundary port direction from explicit declaration or unambiguous top-link topology before lowering `?top:name`".to_string(),
-            );
+            if direction_evidence.direction_conflicted {
+                push_unique_message(
+                    &mut blocking_reasons,
+                    &format!(
+                        "Top port `{}` has conflicting top-boundary direction evidence.",
+                        port.port_name
+                    ),
+                );
+                required_canonical_enrichments.insert(
+                    "resolve conflicting top boundary port direction evidence before lowering `?top:name`"
+                        .to_string(),
+                );
+            } else {
+                push_unique_message(
+                    &mut blocking_reasons,
+                    &format!(
+                        "Top port `{}` is missing a direction hint or unambiguous top-link direction recovery.",
+                        port.port_name
+                    ),
+                );
+                required_canonical_enrichments.insert(
+                    "recover each top boundary port direction from explicit declaration or unambiguous top-link topology before lowering `?top:name`".to_string(),
+                );
+            }
             continue;
         };
         top_ports_by_name.insert(
@@ -4666,17 +4693,30 @@ fn register_renderable_signal(
     };
 
     let Some(direction_hint) = preferred_signal_direction_hint(signal) else {
-        push_unique_message(
-            blocking_reasons,
-            &format!(
-                "Signal `{}` is missing a canonical direction hint required for `.fsm` emission.",
-                signal_name
-            ),
-        );
-        required_canonical_enrichments.insert(
-            "promote a canonical interface inventory with stable signal names, directions, and widths"
-                .to_string(),
-        );
+        if signal.graph_direction_hint_conflicted {
+            push_unique_message(
+                blocking_reasons,
+                &format!(
+                    "Signal `{signal_name}` has conflicting graph-backed direction evidence required for `.fsm` emission."
+                ),
+            );
+            required_canonical_enrichments.insert(
+                "resolve conflicting actor-relative graph direction evidence before lowering `.fsm`"
+                    .to_string(),
+            );
+        } else {
+            push_unique_message(
+                blocking_reasons,
+                &format!(
+                    "Signal `{}` is missing a canonical direction hint required for `.fsm` emission.",
+                    signal_name
+                ),
+            );
+            required_canonical_enrichments.insert(
+                "promote a canonical interface inventory with stable signal names, directions, and widths"
+                    .to_string(),
+            );
+        }
         return None;
     };
 
@@ -6625,6 +6665,7 @@ mod tests {
 
         assert_eq!(data_out.direction_hint, None);
         assert_eq!(data_out.graph_direction_hint, None);
+        assert!(data_out.graph_direction_hint_conflicted);
         assert!(
             data_out
                 .mention_categories
@@ -6635,7 +6676,7 @@ mod tests {
             fsm.renderability
                 .blocking_reasons
                 .iter()
-                .any(|reason| reason.contains("missing a canonical direction hint"))
+                .any(|reason| reason.contains("conflicting graph-backed direction evidence"))
         );
 
         Ok(())
@@ -7680,6 +7721,7 @@ mod tests {
 
         assert_eq!(data_in.direction_hint, None);
         assert_eq!(data_in.graph_direction_hint, None);
+        assert!(data_in.graph_direction_hint_conflicted);
         assert!(
             data_in
                 .mention_categories
@@ -7698,7 +7740,7 @@ mod tests {
                 .renderability
                 .blocking_reasons
                 .iter()
-                .any(|reason| reason.contains("missing a canonical direction hint"))
+                .any(|reason| reason.contains("conflicting graph-backed direction evidence"))
         );
         assert!(!fsm.renderability.is_renderable);
 
@@ -9031,6 +9073,7 @@ mod tests {
 
         assert_eq!(output_data.direction_hint, None);
         assert_eq!(output_data.graph_direction_hint, None);
+        assert!(output_data.graph_direction_hint_conflicted);
         assert!(
             output_data
                 .mention_categories
@@ -9043,7 +9086,7 @@ mod tests {
                 .renderability
                 .blocking_reasons
                 .iter()
-                .any(|reason| reason.contains("missing a canonical direction hint"))
+                .any(|reason| reason.contains("conflicting graph-backed direction evidence"))
         );
         assert!(!fsm.renderability.is_renderable);
 
@@ -9098,7 +9141,7 @@ mod tests {
                 .renderability
                 .blocking_reasons
                 .iter()
-                .any(|reason| reason.contains("missing a canonical direction hint"))
+                .any(|reason| reason.contains("conflicting graph-backed direction evidence"))
         );
         assert!(!fsm.renderability.is_renderable);
 

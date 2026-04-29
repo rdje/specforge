@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-29 `.fsm` renderability diagnostics distinguish graph direction conflicts
+- After the selected-inventory conflict work, one adjacent root-cause signal was still too blunt:
+  - graph-conflicted inventory entries correctly blocked rendering through `preferred_signal_direction_hint(...)`
+  - but renderability diagnostics still described those blocked signals as missing canonical direction hints
+  - this made contradictory graph/topology evidence look like absent flat declarations
+- `register_renderable_signal(...)` now branches on `graph_direction_hint_conflicted` before emitting the generic missing-direction blocker.
+- `validate_system_signal_renderability(...)` applies the same distinction for clock/reset system-contract signals that are present but graph-conflicted.
+- `analyze_top_renderability(...)` now distinguishes conflicted top-boundary direction evidence from genuinely missing top-port direction recovery in the final top-port materialization pass.
+- The change is diagnostic and guidance-only: renderability remains blocked, no target text is emitted, and no direction is guessed.
+- Focused direct, explicit-module, child-topology, top actor-port conflict tests, the full adapter test slice, full local CI, and the full `127/127` tracked KG fixture suite now lock the root-cause wording.
+
 ## 2026-04-29 `.fsm` selected top signal inventory keeps graph conflicts sticky
 - The graph-backed selected top inventory slice exposed a narrower conflict-provenance seam:
   - explicit top declarations correctly stayed flat when no graph recovery was involved

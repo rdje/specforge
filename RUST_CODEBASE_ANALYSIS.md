@@ -4,6 +4,15 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-29 `.fsm` graph-conflict renderability diagnostics)
+- Continued from commit `72d47f0` by cleaning up a diagnostic consumer rather than changing adapter renderability semantics.
+- The root cause was that `preferred_signal_direction_hint(...)` intentionally returns `None` for graph-conflicted signals, but downstream renderability checks treated every `None` as a missing direction hint.
+- `register_renderable_signal(...)` now emits a graph-conflict-specific blocker when `FsmSignalCandidate.graph_direction_hint_conflicted` is set, preserving the generic missing-direction message only for genuinely absent direction evidence.
+- `validate_system_signal_renderability(...)` mirrors that split for system-contract clock/reset checks, and top renderability now identifies conflicted top-boundary direction evidence separately from missing top-port recovery.
+- Regression assertions now confirm graph-conflicted direct, module, and child-topology inventory entries retain the sticky conflict bit and expose conflict wording in blocking reasons.
+- Focused conflict tests plus the full adapter test slice passed for this change.
+- Full local verification for this slice: `500` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-29 `.fsm` selected top inventory graph-conflict stickiness)
 - Continued from commit `f2618b4` by tightening the selected top inventory projection that had just stopped flattening recovered graph/topology directions into compatibility hints.
 - The root cause was that selected top inventory only compared raw and resolved top-port directions. When explicit flat top direction evidence conflicted with graph/topology evidence, renderability correctly collapsed the resolved top port to `None`, but `fsm.signal_inventory` did not preserve the explicit declaration side or mark the graph conflict.

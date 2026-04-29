@@ -1,5 +1,26 @@
 # CHANGES
 
+## 2026-04-29 (`.fsm` graph-direction conflicts get explicit renderability diagnostics)
+
+### Improved: graph conflicts no longer look like missing direction hints
+- `.fsm` renderability now reports conflicting graph-backed direction evidence separately from genuinely absent direction evidence.
+- Direct roots, explicit module roots, child-link topology recovery, top actor-port recovery, and standalone system-contract checks keep the same conservative blocking behavior but now point at the graph conflict root cause.
+- Top-boundary analysis now also emits a conflict-specific blocker when combined explicit/topology direction evidence is poisoned, instead of adding only the generic missing top-port direction message.
+- Regression coverage now asserts that graph-conflicted inventory entries keep `graph_direction_hint_conflicted = true` and surface conflict wording in renderability blockers.
+
+### Validation
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo test --manifest-path Cargo.toml standalone_dt_keeps_conflicting_actor_port_direction_unresolved -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml standalone_explicit_module_blocks_conflicting_module_control_read_direction -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml top_composition_blocks_conflicting_child_link_topology_directions -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml top_composition_blocks_conflicting_actor_port_directions -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml ir::adapters::tests -- --nocapture` -> passed with `56` adapter tests
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `500` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-29 (`.fsm` top signal inventory keeps graph conflicts sticky)
 
 ### Fixed: selected top inventory now preserves explicit direction while marking conflicting graph evidence
