@@ -15,13 +15,14 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 
 - source: `kg-bench fixtures`
 - selected_family_labels: `actor connectivity`, `semantic role arbitration`, `negative knowledge`, `truthfulness negatives and cautions`, `residuals and caveats`
-- fixtures_total: `51`
-- fixtures_passed: `51`
+- fixtures_total: `64`
+- fixtures_passed: `64`
 - fixtures_failed: `0`
 
 | fixture | status | matched families | path |
 | --- | --- | --- | --- |
 | `actor_boundary_residual` | `pass` | `actor connectivity`, `residuals and caveats`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/actor_boundary_residual/fixture.json` |
+| `actor_port_gap_surface_negative` | `pass` | `actor connectivity`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/actor_port_gap_surface_negative/fixture.json` |
 | `actor_ports_gold` | `pass` | `actor connectivity` | `crates/specforge/test_data/kg_quality/actor_ports_gold/fixture.json` |
 | `actor_taxonomy_prior_guided_section_direction_gold` | `pass` | `actor connectivity` | `crates/specforge/test_data/kg_quality/actor_taxonomy_prior_guided_section_direction_gold/fixture.json` |
 | `actor_taxonomy_prior_guided_section_direction_without_prior_negative` | `pass` | `actor connectivity`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/actor_taxonomy_prior_guided_section_direction_without_prior_negative/fixture.json` |
@@ -34,17 +35,23 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `clock_reset_contract_scope_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/clock_reset_contract_scope_negative/fixture.json` |
 | `clock_reset_generic_advice_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/clock_reset_generic_advice_negative/fixture.json` |
 | `compat_direction_hints_lag_graph_negative` | `pass` | `actor connectivity`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/compat_direction_hints_lag_graph_negative/fixture.json` |
+| `connectivity_endpoint_gaps_negative` | `pass` | `actor connectivity`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/connectivity_endpoint_gaps_negative/fixture.json` |
 | `contested_handshake_name_fallback_negative` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/contested_handshake_name_fallback_negative/fixture.json` |
 | `control_polarity_conflict_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/control_polarity_conflict_negative/fixture.json` |
 | `cross_modality_semantic_conflict_negative` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/cross_modality_semantic_conflict_negative/fixture.json` |
 | `cross_modality_semantic_grounding_gold` | `pass` | `semantic role arbitration` | `crates/specforge/test_data/kg_quality/cross_modality_semantic_grounding_gold/fixture.json` |
 | `detached_mixed_control_polarity_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/detached_mixed_control_polarity_negative/fixture.json` |
+| `evidence_missing_vlm_observations_surface_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/evidence_missing_vlm_observations_surface_negative/fixture.json` |
+| `evidence_normative_residual_surface_negative` | `pass` | `residuals and caveats`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/evidence_normative_residual_surface_negative/fixture.json` |
+| `evidence_structural_kg_missing_surface_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/evidence_structural_kg_missing_surface_negative/fixture.json` |
 | `graph_direction_coverage_incomplete_negative` | `pass` | `actor connectivity`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/graph_direction_coverage_incomplete_negative/fixture.json` |
 | `graph_direction_same_actor_conflict_negative` | `pass` | `actor connectivity`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/graph_direction_same_actor_conflict_negative/fixture.json` |
+| `interface_signal_conflict_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/interface_signal_conflict_negative/fixture.json` |
 | `multi_producer_conflict_negative` | `pass` | `actor connectivity`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/multi_producer_conflict_negative/fixture.json` |
 | `name_only_semantic_noise_negative` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/name_only_semantic_noise_negative/fixture.json` |
 | `negative_knowledge_prior_guided_connectivity_conflict_caution_gold` | `pass` | `actor connectivity`, `negative knowledge`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_connectivity_conflict_caution_gold/fixture.json` |
 | `negative_knowledge_prior_guided_interface_conflict_caution_gold` | `pass` | `negative knowledge`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_interface_conflict_caution_gold/fixture.json` |
+| `negative_knowledge_prior_guided_polarity_conflict_caution_gold` | `pass` | `negative knowledge`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_polarity_conflict_caution_gold/fixture.json` |
 | `negative_knowledge_prior_guided_residual_caution_gold` | `pass` | `negative knowledge`, `residuals and caveats`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_residual_caution_gold/fixture.json` |
 | `negative_knowledge_prior_guided_semantic_conflict_caution_gold` | `pass` | `negative knowledge`, `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_semantic_conflict_caution_gold/fixture.json` |
 | `negative_knowledge_prior_guided_temporal_conflict_caution_gold` | `pass` | `negative knowledge`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_temporal_conflict_caution_gold/fixture.json` |
@@ -55,9 +62,13 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `semantic_prior_guided_phrase_without_prior_negative` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/semantic_prior_guided_phrase_without_prior_negative/fixture.json` |
 | `signal_table_inventory_authority_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/signal_table_inventory_authority_negative/fixture.json` |
 | `source_column_bogus_actor_attribution_negative` | `pass` | `actor connectivity`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/source_column_bogus_actor_attribution_negative/fixture.json` |
+| `source_vlm_enrichment_surface_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/source_vlm_enrichment_surface_negative/fixture.json` |
 | `table_misclassification_field_table_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/table_misclassification_field_table_negative/fixture.json` |
 | `table_shape_prior_guided_signal_table_without_prior_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/table_shape_prior_guided_signal_table_without_prior_negative/fixture.json` |
 | `table_shape_prior_guided_timing_table_without_prior_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/table_shape_prior_guided_timing_table_without_prior_negative/fixture.json` |
+| `temporal_actor_grounding_surface_negative` | `pass` | `actor connectivity`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/temporal_actor_grounding_surface_negative/fixture.json` |
+| `temporal_clock_grounding_surface_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/temporal_clock_grounding_surface_negative/fixture.json` |
+| `temporal_conflict_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/temporal_conflict_negative/fixture.json` |
 | `temporal_prior_guided_cycle_window_without_prior_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/temporal_prior_guided_cycle_window_without_prior_negative/fixture.json` |
 | `visual_motif_prior_guided_diagram_classification_without_prior_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/visual_motif_prior_guided_diagram_classification_without_prior_negative/fixture.json` |
 | `visual_semantic_prior_guided_caption_gold` | `pass` | `semantic role arbitration` | `crates/specforge/test_data/kg_quality/visual_semantic_prior_guided_caption_gold/fixture.json` |
@@ -67,6 +78,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `vlm_state_machine_missing_initial_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/vlm_state_machine_missing_initial_negative/fixture.json` |
 | `vlm_state_machine_multiple_initial_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/vlm_state_machine_multiple_initial_negative/fixture.json` |
 | `vlm_state_machine_undeclared_transition_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/vlm_state_machine_undeclared_transition_negative/fixture.json` |
+| `vlm_timing_cycle_qualified_signal_value_annotation_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/vlm_timing_cycle_qualified_signal_value_annotation_negative/fixture.json` |
+| `vlm_timing_indexed_signal_value_annotation_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/vlm_timing_indexed_signal_value_annotation_negative/fixture.json` |
 | `vlm_timing_motion_annotation_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/vlm_timing_motion_annotation_negative/fixture.json` |
 | `vlm_timing_name_only_semantic_noise_negative` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/vlm_timing_name_only_semantic_noise_negative/fixture.json` |
 | `vlm_timing_semantic_grounding_gold` | `pass` | `semantic role arbitration` | `crates/specforge/test_data/kg_quality/vlm_timing_semantic_grounding_gold/fixture.json` |

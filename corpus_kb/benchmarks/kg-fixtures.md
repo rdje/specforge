@@ -13,8 +13,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 <!-- corpus_kb_kg_fixtures:start -->
 <!-- This block is refreshed by `specforge corpus-kb`. -->
 
-- fixtures_total: `92`
-- fixtures_passed: `92`
+- fixtures_total: `127`
+- fixtures_passed: `127`
 - fixtures_failed: `0`
 
 ### Fixture Family Summary
@@ -23,22 +23,28 @@ Fixtures can appear in more than one family because protocol semantics, modality
 | family | fixtures | passed | failed |
 | --- | ---: | ---: | ---: |
 | VLM state machines | `5` | `5` | `0` |
-| VLM timing diagrams | `7` | `7` | `0` |
-| actor connectivity | `15` | `15` | `0` |
-| infrastructure semantics | `5` | `5` | `0` |
-| multimodal visual grounding | `19` | `19` | `0` |
-| negative knowledge | `5` | `5` | `0` |
-| polarity semantics | `7` | `7` | `0` |
+| VLM timing diagrams | `9` | `9` | `0` |
+| actor connectivity | `18` | `18` | `0` |
+| infrastructure semantics | `14` | `14` | `0` |
+| multimodal visual grounding | `23` | `23` | `0` |
+| negative knowledge | `6` | `6` | `0` |
+| polarity semantics | `8` | `8` | `0` |
 | protocol-family AMBA/APB/AHB/AXI | `36` | `36` | `0` |
-| residuals and caveats | `3` | `3` | `0` |
+| residuals and caveats | `4` | `4` | `0` |
 | semantic role arbitration | `17` | `17` | `0` |
 | table extraction and hygiene | `9` | `9` | `0` |
-| temporal semantics | `42` | `42` | `0` |
-| truthfulness negatives and cautions | `39` | `39` | `0` |
-| typed prior memory | `21` | `21` | `0` |
+| temporal semantics | `69` | `69` | `0` |
+| truthfulness negatives and cautions | `52` | `52` | `0` |
+| typed prior memory | `22` | `22` | `0` |
 
 ### actor_boundary_residual
 - fixture_path: `crates/specforge/test_data/kg_quality/actor_boundary_residual/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### actor_port_gap_surface_negative
+- fixture_path: `crates/specforge/test_data/kg_quality/actor_port_gap_surface_negative/fixture.json`
 - status: `pass`
 - failures:
   - none
@@ -277,6 +283,12 @@ Fixtures can appear in more than one family because protocol semantics, modality
 - failures:
   - none
 
+### clock_edge_of_clock_timing_gold
+- fixture_path: `crates/specforge/test_data/kg_quality/clock_edge_of_clock_timing_gold/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
 ### clock_reset_contract_scope_negative
 - fixture_path: `crates/specforge/test_data/kg_quality/clock_reset_contract_scope_negative/fixture.json`
 - status: `pass`
@@ -297,6 +309,12 @@ Fixtures can appear in more than one family because protocol semantics, modality
 
 ### compat_direction_hints_lag_graph_negative
 - fixture_path: `crates/specforge/test_data/kg_quality/compat_direction_hints_lag_graph_negative/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### connectivity_endpoint_gaps_negative
+- fixture_path: `crates/specforge/test_data/kg_quality/connectivity_endpoint_gaps_negative/fixture.json`
 - status: `pass`
 - failures:
   - none
@@ -325,8 +343,74 @@ Fixtures can appear in more than one family because protocol semantics, modality
 - failures:
   - none
 
+### default_clock_explicit_next_edge_timing_gold
+- fixture_path: `crates/specforge/test_data/kg_quality/default_clock_explicit_next_edge_timing_gold/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### default_clock_later_edge_timing_gold
+- fixture_path: `crates/specforge/test_data/kg_quality/default_clock_later_edge_timing_gold/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### default_clock_quantified_edge_timing_gold
+- fixture_path: `crates/specforge/test_data/kg_quality/default_clock_quantified_edge_timing_gold/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
 ### detached_mixed_control_polarity_negative
 - fixture_path: `crates/specforge/test_data/kg_quality/detached_mixed_control_polarity_negative/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### evidence_missing_vlm_observations_surface_negative
+- fixture_path: `crates/specforge/test_data/kg_quality/evidence_missing_vlm_observations_surface_negative/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### evidence_normative_residual_surface_negative
+- fixture_path: `crates/specforge/test_data/kg_quality/evidence_normative_residual_surface_negative/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### evidence_structural_kg_missing_surface_negative
+- fixture_path: `crates/specforge/test_data/kg_quality/evidence_structural_kg_missing_surface_negative/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### generic_bounded_cycle_timing_gold
+- fixture_path: `crates/specforge/test_data/kg_quality/generic_bounded_cycle_timing_gold/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### generic_clock_edge_timing_gold
+- fixture_path: `crates/specforge/test_data/kg_quality/generic_clock_edge_timing_gold/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### generic_exact_cycle_timing_gold
+- fixture_path: `crates/specforge/test_data/kg_quality/generic_exact_cycle_timing_gold/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### generic_next_cycle_timing_gold
+- fixture_path: `crates/specforge/test_data/kg_quality/generic_next_cycle_timing_gold/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### generic_range_cycle_timing_gold
+- fixture_path: `crates/specforge/test_data/kg_quality/generic_range_cycle_timing_gold/fixture.json`
 - status: `pass`
 - failures:
   - none
@@ -339,6 +423,18 @@ Fixtures can appear in more than one family because protocol semantics, modality
 
 ### graph_direction_same_actor_conflict_negative
 - fixture_path: `crates/specforge/test_data/kg_quality/graph_direction_same_actor_conflict_negative/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### interface_signal_conflict_negative
+- fixture_path: `crates/specforge/test_data/kg_quality/interface_signal_conflict_negative/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### later_phrase_timing_gold
+- fixture_path: `crates/specforge/test_data/kg_quality/later_phrase_timing_gold/fixture.json`
 - status: `pass`
 - failures:
   - none
@@ -367,6 +463,30 @@ Fixtures can appear in more than one family because protocol semantics, modality
 - failures:
   - none
 
+### named_cycle_timing_gold
+- fixture_path: `crates/specforge/test_data/kg_quality/named_cycle_timing_gold/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### named_diagram_edge_timing_gold
+- fixture_path: `crates/specforge/test_data/kg_quality/named_diagram_edge_timing_gold/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### named_next_clock_timing_gold
+- fixture_path: `crates/specforge/test_data/kg_quality/named_next_clock_timing_gold/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### named_quantified_edge_timing_gold
+- fixture_path: `crates/specforge/test_data/kg_quality/named_quantified_edge_timing_gold/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
 ### negative_knowledge_prior_guided_connectivity_conflict_caution_gold
 - fixture_path: `crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_connectivity_conflict_caution_gold/fixture.json`
 - status: `pass`
@@ -375,6 +495,12 @@ Fixtures can appear in more than one family because protocol semantics, modality
 
 ### negative_knowledge_prior_guided_interface_conflict_caution_gold
 - fixture_path: `crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_interface_conflict_caution_gold/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### negative_knowledge_prior_guided_polarity_conflict_caution_gold
+- fixture_path: `crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_polarity_conflict_caution_gold/fixture.json`
 - status: `pass`
 - failures:
   - none
@@ -397,8 +523,20 @@ Fixtures can appear in more than one family because protocol semantics, modality
 - failures:
   - none
 
+### next_tick_timing_gold
+- fixture_path: `crates/specforge/test_data/kg_quality/next_tick_timing_gold/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
 ### non_reset_control_polarity_gold
 - fixture_path: `crates/specforge/test_data/kg_quality/non_reset_control_polarity_gold/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### plural_edge_of_clock_timing_gold
+- fixture_path: `crates/specforge/test_data/kg_quality/plural_edge_of_clock_timing_gold/fixture.json`
 - status: `pass`
 - failures:
   - none
@@ -433,6 +571,18 @@ Fixtures can appear in more than one family because protocol semantics, modality
 - failures:
   - none
 
+### shorthand_next_edge_timing_gold
+- fixture_path: `crates/specforge/test_data/kg_quality/shorthand_next_edge_timing_gold/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### signal_leading_clock_timing_gold
+- fixture_path: `crates/specforge/test_data/kg_quality/signal_leading_clock_timing_gold/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
 ### signal_table_inventory_authority_negative
 - fixture_path: `crates/specforge/test_data/kg_quality/signal_table_inventory_authority_negative/fixture.json`
 - status: `pass`
@@ -441,6 +591,12 @@ Fixtures can appear in more than one family because protocol semantics, modality
 
 ### source_column_bogus_actor_attribution_negative
 - fixture_path: `crates/specforge/test_data/kg_quality/source_column_bogus_actor_attribution_negative/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### source_vlm_enrichment_surface_negative
+- fixture_path: `crates/specforge/test_data/kg_quality/source_vlm_enrichment_surface_negative/fixture.json`
 - status: `pass`
 - failures:
   - none
@@ -475,6 +631,24 @@ Fixtures can appear in more than one family because protocol semantics, modality
 - failures:
   - none
 
+### temporal_actor_grounding_surface_negative
+- fixture_path: `crates/specforge/test_data/kg_quality/temporal_actor_grounding_surface_negative/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### temporal_clock_grounding_surface_negative
+- fixture_path: `crates/specforge/test_data/kg_quality/temporal_clock_grounding_surface_negative/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### temporal_conflict_negative
+- fixture_path: `crates/specforge/test_data/kg_quality/temporal_conflict_negative/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
 ### temporal_prior_guided_cycle_window_gold
 - fixture_path: `crates/specforge/test_data/kg_quality/temporal_prior_guided_cycle_window_gold/fixture.json`
 - status: `pass`
@@ -483,6 +657,24 @@ Fixtures can appear in more than one family because protocol semantics, modality
 
 ### temporal_prior_guided_cycle_window_without_prior_negative
 - fixture_path: `crates/specforge/test_data/kg_quality/temporal_prior_guided_cycle_window_without_prior_negative/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### tick_unit_timing_gold
+- fixture_path: `crates/specforge/test_data/kg_quality/tick_unit_timing_gold/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### trailing_shorthand_edge_timing_gold
+- fixture_path: `crates/specforge/test_data/kg_quality/trailing_shorthand_edge_timing_gold/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### unit_first_diagram_position_timing_gold
+- fixture_path: `crates/specforge/test_data/kg_quality/unit_first_diagram_position_timing_gold/fixture.json`
 - status: `pass`
 - failures:
   - none
@@ -559,6 +751,18 @@ Fixtures can appear in more than one family because protocol semantics, modality
 - failures:
   - none
 
+### vlm_timing_cycle_qualified_signal_value_annotation_negative
+- fixture_path: `crates/specforge/test_data/kg_quality/vlm_timing_cycle_qualified_signal_value_annotation_negative/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### vlm_timing_indexed_signal_value_annotation_negative
+- fixture_path: `crates/specforge/test_data/kg_quality/vlm_timing_indexed_signal_value_annotation_negative/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
 ### vlm_timing_motion_annotation_negative
 - fixture_path: `crates/specforge/test_data/kg_quality/vlm_timing_motion_annotation_negative/fixture.json`
 - status: `pass`
@@ -585,6 +789,12 @@ Fixtures can appear in more than one family because protocol semantics, modality
 
 ### vlm_timing_waveform_motion_negative
 - fixture_path: `crates/specforge/test_data/kg_quality/vlm_timing_waveform_motion_negative/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### zero_cycle_timing_gold
+- fixture_path: `crates/specforge/test_data/kg_quality/zero_cycle_timing_gold/fixture.json`
 - status: `pass`
 - failures:
   - none

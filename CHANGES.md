@@ -1,5 +1,28 @@
 # CHANGES
 
+## 2026-04-29 (README bootstrap and corpus-KB fixture projection refresh)
+
+### Updated: live continuity now matches the executable fixture baseline
+- Re-ran the README handoff path through `SESSION_BOOTSTRAP.md`, the mdBook, corpus-KB pages, FSMGEN feedback, and the active Rust codebase surfaces.
+- Refreshed managed corpus-KB fixture projections from the actual `kg-bench` run so the benchmark page now reports `127/127` passing fixtures instead of the stale `92/92` projection.
+- Updated continuity analysis to reflect the current `31` Rust source files, `77,934` Rust source lines, `499` Rust tests, and latest committed baseline `d4f53bb`.
+- No production Rust behavior changed in this slice.
+
+### Validation
+- `rustc --version` -> `rustc 1.95.0`
+- `cargo --version` -> `cargo 1.95.0`
+- `cargo run --manifest-path Cargo.toml -p specforge -- --help` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- inspect README.md` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- ingest README.md` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- evidence generated/source_ir/readme/source_ir.json` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- validate generated/intent_ir/readme/intent_ir.json` -> passed with the expected README-as-source `30/100 NEEDS IMPROVEMENT` artifact-quality result
+- `cargo run --manifest-path Cargo.toml -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --target fsm` -> passed and blocked honestly with residuals
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+- `bash scripts/run_ci.sh` -> passed with `499` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+
 ## 2026-04-29 (`.fsm` child port width now recovers through transitive top-link topology)
 
 ### Improved: explicit top-link widths now close over the endpoint graph

@@ -15,8 +15,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 
 - source: `kg-bench fixtures`
 - selected_family_labels: `typed prior memory`
-- fixtures_total: `21`
-- fixtures_passed: `21`
+- fixtures_total: `22`
+- fixtures_passed: `22`
 - fixtures_failed: `0`
 
 | fixture | status | matched families | path |
@@ -25,6 +25,7 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `actor_taxonomy_prior_guided_section_direction_without_prior_negative` | `pass` | `typed prior memory` | `crates/specforge/test_data/kg_quality/actor_taxonomy_prior_guided_section_direction_without_prior_negative/fixture.json` |
 | `negative_knowledge_prior_guided_connectivity_conflict_caution_gold` | `pass` | `typed prior memory` | `crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_connectivity_conflict_caution_gold/fixture.json` |
 | `negative_knowledge_prior_guided_interface_conflict_caution_gold` | `pass` | `typed prior memory` | `crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_interface_conflict_caution_gold/fixture.json` |
+| `negative_knowledge_prior_guided_polarity_conflict_caution_gold` | `pass` | `typed prior memory` | `crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_polarity_conflict_caution_gold/fixture.json` |
 | `negative_knowledge_prior_guided_residual_caution_gold` | `pass` | `typed prior memory` | `crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_residual_caution_gold/fixture.json` |
 | `negative_knowledge_prior_guided_semantic_conflict_caution_gold` | `pass` | `typed prior memory` | `crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_semantic_conflict_caution_gold/fixture.json` |
 | `negative_knowledge_prior_guided_temporal_conflict_caution_gold` | `pass` | `typed prior memory` | `crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_temporal_conflict_caution_gold/fixture.json` |

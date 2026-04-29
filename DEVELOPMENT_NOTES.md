@@ -7,6 +7,15 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-29 README bootstrap restart found stale continuity and corpus projections
+- The README handoff still points through `SESSION_BOOTSTRAP.md`: read the referenced markdown surfaces, analyze the Rust codebase, update `RUST_CODEBASE_ANALYSIS.md` only if needed, then continue roadmap work.
+- Re-running that path confirmed the latest architecture remains the staged, provenance-first `IntentIR` pipeline with adapters downstream; no new Rust architecture pivot appeared during the code survey.
+- Two concrete continuity mismatches did need fixing:
+  - `MEMORY.md` still described the transitive top-link width slice as in flight even though commit `d4f53bb` had already landed it.
+  - `corpus_kb/benchmarks/kg-fixtures.md` still projected `92/92` fixtures while the executable `kg-bench` command now proves `127/127`.
+- The right fix was to refresh the managed corpus-KB projection from the executable fixture harness and sync the live continuity docs, not to hand-edit generated fixture rows.
+- The current Rust surface observed during the restart is `31` source files and `77,934` Rust source lines under `crates/specforge/src`, with `499` Rust tests passing through the canonical local CI path.
+
 ## 2026-04-29 `.fsm` child module width now consumes transitive top-link topology evidence
 - The sibling child-link recovery slice still had a deeper topology shape hole:
   - child module port width recovery was one-hop

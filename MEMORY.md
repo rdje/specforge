@@ -19,51 +19,61 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `3598999`
-- latest_commit_brief_message: `test: harden sibling width and source env isolation`
-- note: the latest committed baseline locks mirror sibling child-link source-width coverage and fixes SourceIR/Docling shared environment isolation
+- latest_commit_hash: `d4f53bb`
+- latest_commit_brief_message: `fix(adapter): recover transitive topology widths`
+- note: the latest committed baseline locks fixed-point explicit top-link endpoint-width propagation across transitive child/top topology paths
 
 ## Recent commit chain (last 6)
+- `d4f53bb` fix(adapter): recover transitive topology widths
 - `3598999` test: harden sibling width and source env isolation
 - `b7274bb` fix(adapter): recover child widths from sibling links
 - `b462600` fix(adapter): recover top widths from child links
 - `e9a91dd` fix(adapter): recover module input widths from actor graph
 - `7b266d2` fix(adapter): recover direct input widths from actor graph
-- `abc3405` fix(adapter): recover child widths from top links
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 2` of `origin/main`
+- branch state before the next commit: `ahead 3` of `origin/main`
 - modified tracked files:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
   - `MEMORY.md`
   - `RUST_CODEBASE_ANALYSIS.md`
-  - `LIVE_ACHIEVEMENT_STATUS.md`
-  - `crates/specforge/src/ir/adapters.rs`
+  - `corpus_kb/benchmarks/kg-fixtures.md`
+  - `corpus_kb/infra/kg-fixtures.md`
+  - `corpus_kb/patterns/kg-fixtures.md`
+  - `corpus_kb/prior_candidates/kg-fixture-candidates.json`
+  - `corpus_kb/prior_candidates/kg-fixture-candidates.md`
+  - `corpus_kb/prior_memory/kg-fixtures.md`
+  - `corpus_kb/timing/kg-fixtures.md`
+  - `corpus_kb/visuals/kg-fixtures.md`
 
 ## Current in-flight slice
 - objective:
-  - recover child module port widths through transitive explicit top-link topology by computing a fixed-point endpoint-width graph before module topology overlays
+  - restart and execute the README/SESSION_BOOTSTRAP context path, analyze the Rust codebase, and sync stale continuity plus corpus-KB managed projections discovered during the pass
 - tracker effect:
-  - add a live-status Done row for explicit top-link numeric endpoint-width propagation through the top-link graph
-- current tracked KG-quality suite size in the latest committed baseline:
+  - no product-status row change; this is a continuity/projection refresh, not a new Rust behavior slice
+- current tracked KG-quality suite size verified in this slice:
   - `127` fixtures
 - verification status:
-  - `cargo fmt --all` passed
-  - `cargo test -p specforge top_composition_recovers_child_width_through_transitive_topology` first failed before the fix, then passed
-  - `cargo test -p specforge top_composition` passed with `23` topology tests
-  - `cargo test -p specforge ir::adapters::tests` passed with `56` adapter tests
+  - `rustc --version` passed with `rustc 1.95.0`
+  - `cargo --version` passed with `cargo 1.95.0`
+  - `cargo run --manifest-path Cargo.toml -p specforge -- --help` passed
+  - `cargo run --manifest-path Cargo.toml -p specforge -- inspect README.md` passed
+  - staged README pipeline passed through `ingest`, `evidence`, `semantic`, `intent`, `validate`, and `adapt --target fsm`
+  - README-derived `IntentIR` validation scored `30/100 NEEDS IMPROVEMENT`, which is expected for project documentation rather than a hardware protocol spec
+  - README-derived `.fsm` adapter lowering blocked honestly with residuals
   - `bash scripts/run_docs_ci.sh` passed
+  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `127` fixtures and `0` failures
+  - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` refreshed managed corpus-KB fixture projections to `127/127`
   - `bash scripts/run_ci.sh` passed with `499` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
-  - `cargo fmt --all -- --check` passed
-  - `git diff --check` passed
 - current known local CI baseline:
   - `499` Rust tests plus warning-deny Clippy/rustdoc and the mdBook build
 
 ## Next exact steps
-- run the final stale-doc scan after these doc status updates
-- commit the transitive top-link endpoint-width recovery slice
+- review the continuity/corpus-KB projection diff
+- run final formatting/diff/stale-doc checks after these doc status updates
+- commit the README/bootstrap continuity and corpus-KB projection refresh
 - truncate `git_message_brief.txt` back to `0` bytes and confirm it remains untracked after that commit
-- leave the branch unpushed; after this commit it should be `ahead 3`, below the `25`-commit push threshold
+- leave the branch unpushed; after this commit it should be `ahead 4`, below the `25`-commit push threshold

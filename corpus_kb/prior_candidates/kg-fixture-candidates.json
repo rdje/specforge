@@ -36,12 +36,13 @@
       "candidate_kind": "negative_knowledge_prior",
       "target_schema": "CorpusMemory.negative_knowledge_priors",
       "readiness": "caution_surface_review_ready",
-      "supporting_fixture_count": 5,
-      "positive_fixture_count": 5,
-      "guard_fixture_count": 5,
+      "supporting_fixture_count": 6,
+      "positive_fixture_count": 6,
+      "guard_fixture_count": 6,
       "supporting_fixtures": [
         "negative_knowledge_prior_guided_connectivity_conflict_caution_gold",
         "negative_knowledge_prior_guided_interface_conflict_caution_gold",
+        "negative_knowledge_prior_guided_polarity_conflict_caution_gold",
         "negative_knowledge_prior_guided_residual_caution_gold",
         "negative_knowledge_prior_guided_semantic_conflict_caution_gold",
         "negative_knowledge_prior_guided_temporal_conflict_caution_gold"
@@ -49,6 +50,7 @@
       "positive_fixtures": [
         "negative_knowledge_prior_guided_connectivity_conflict_caution_gold",
         "negative_knowledge_prior_guided_interface_conflict_caution_gold",
+        "negative_knowledge_prior_guided_polarity_conflict_caution_gold",
         "negative_knowledge_prior_guided_residual_caution_gold",
         "negative_knowledge_prior_guided_semantic_conflict_caution_gold",
         "negative_knowledge_prior_guided_temporal_conflict_caution_gold"
@@ -56,6 +58,7 @@
       "guard_fixtures": [
         "negative_knowledge_prior_guided_connectivity_conflict_caution_gold",
         "negative_knowledge_prior_guided_interface_conflict_caution_gold",
+        "negative_knowledge_prior_guided_polarity_conflict_caution_gold",
         "negative_knowledge_prior_guided_residual_caution_gold",
         "negative_knowledge_prior_guided_semantic_conflict_caution_gold",
         "negative_knowledge_prior_guided_temporal_conflict_caution_gold"

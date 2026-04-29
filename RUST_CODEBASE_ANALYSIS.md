@@ -4,6 +4,18 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-29 README/bootstrap restart and corpus-KB projection refresh)
+- Re-executed the README handoff path through `SESSION_BOOTSTRAP.md`, the root continuity docs, the canonical mdBook, corpus-KB pages, FSMGEN feedback, and the active Rust crate layout.
+- The codebase survey still matches the documented architecture: one Rust workspace member, `specforge` CLI, staged `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR`, downstream adapters, and active truthfulness surfaces in `semantic.rs`, `validate.rs`, `adapters.rs`, `project_validation.rs`, and `kg_bench.rs`.
+- The top `.fsm` adapter code confirms the latest committed topology slice: explicit top endpoint widths are seeded from declared top ports and child module signals, propagated through links to a fixed point, and kept conservative by locking declared widths and collapsing propagated conflicts.
+- The restart uncovered documentation drift rather than production-code drift:
+  - `MEMORY.md` still pointed at commit `3598999` and described the transitive topology slice as in flight even though `d4f53bb` already landed it.
+  - the corpus-KB benchmark projection was stale at `92/92` fixtures while the executable `kg-bench` command now proves `127/127`.
+- The managed corpus-KB fixture pages were refreshed through `specforge corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality`, keeping review projections tied to executable fixture output instead of manual edits.
+- Current implementation size after the restart: `31` Rust source files and `77,934` lines under `crates/specforge/src`.
+- Current local verification baseline: `499` Rust tests, `127/127` KG fixtures, warning-deny Clippy/rustdoc, and mdBook validation.
+- No new architectural pivot is needed from this restart; the next roadmap work should continue the existing graph-first/actor-relative adapter and validation direction rather than widening backend scope.
+
 ## Session update (2026-04-29 `.fsm` transitive top-link width recovery)
 - Continued from commit `3598999` by turning the adjacent one-hop topology-width recoveries into a bounded explicit-top endpoint-width closure.
 - The root cause was that `collect_module_topology_port_directions(...)` recovered child widths from directly connected top or sibling child endpoints, but did not make newly recovered endpoint widths visible to other links in the same top composition.
@@ -2349,8 +2361,8 @@
 
 ## Testing implications
 - current full local CI path: `bash scripts/run_ci.sh`
-- current active Rust surface after the README/bootstrap refresh: `31` Rust source files and `77,759` total lines under `crates/specforge/src`
-- current Rust test count observed through the canonical local CI path after the latest slice: 498 library tests, 0 binary tests, and 0 doc tests, all passing under warning-deny Clippy/rustdoc plus the mdBook build
+- current active Rust surface after the README/bootstrap refresh: `31` Rust source files and `77,934` total lines under `crates/specforge/src`
+- current Rust test count observed through the canonical local CI path after the latest slice: 499 library tests, 0 binary tests, and 0 doc tests, all passing under warning-deny Clippy/rustdoc plus the mdBook build
 - current tracked KG-quality fixture count: 127
 - current tests cover:
   - source-kind detection
@@ -2394,8 +2406,22 @@
   - future adapter targets beyond the current `.fsm` slice
 
 ## Latest validation completed in this refresh
+- `rustc --version`
+  - passed with `rustc 1.95.0 (59807616e 2026-04-14)`
+- `cargo --version`
+  - passed with `cargo 1.95.0 (f2d3ce0bd 2026-03-21)`
+- README staged pipeline smoke:
+  - `inspect`, `ingest`, `evidence`, `semantic`, `intent`, `validate`, and `adapt --target fsm` all completed for `README.md`
+  - the README-derived `IntentIR` validation correctly scored as `30/100 NEEDS IMPROVEMENT` because README is project documentation, not a protocol spec with declared hardware inventory
+  - `.fsm` adapter lowering blocked honestly with residuals instead of emitting invented target text
+- `bash scripts/run_docs_ci.sh`
+  - passed and rebuilt the mdBook into `generated/mdbook/specforge`
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench`
+  - passed with `127` fixtures and `0` failures
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality`
+  - refreshed managed corpus-KB fixture projection pages to `127/127`
 - `bash scripts/run_ci.sh`
-  - first exposed the SourceIR/Docling PATH-isolation race, then passed on rerun with `498` Rust tests, `0` failures, `0` binary tests, `0` doc tests, warning-deny Clippy/rustdoc, and a successful mdBook build after the shared environment-lock fix
+  - passed with `499` Rust tests, `0` failures, `0` binary tests, `0` doc tests, warning-deny Clippy/rustdoc, and a successful mdBook build
 
 ## Session update (2026-04-19 README bootstrap analysis refresh)
 - Re-executed the README handoff path through `SESSION_BOOTSTRAP.md`, reread the linked continuity and user-facing markdown surfaces, and resurveyed the active Rust crate layout directly from disk.
