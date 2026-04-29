@@ -7,6 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-29 `.fsm` child module width now consumes top-link topology evidence
+- The next bounded adapter seam was the sibling of child direction recovery:
+  - explicit top links already told the adapter whether a child endpoint behaves as an input or output
+  - a top-boundary endpoint on the other side of the same link could already carry numeric width
+  - but that width was not fed into the child module inventory, so a widthless child output could stay blocked even though the composition graph already carried the shape
+- The fix extends `ModuleTopologyPortDirection` with optional numeric width evidence learned only from the opposite top-boundary endpoint.
+- The recovery is intentionally narrow:
+  - child-child links still do not invent widths
+  - parametric top widths remain deferred because the current `.fsm` adapter only renders numeric widths
+  - only already-declared child module ports can consume topology width evidence
+  - conflicting explicit child width versus topology width collapses to unresolved and blocks lowering
+- This keeps top composition shape recovery graph-first while preserving the adapter's "no guessing" boundary.
+
 ## 2026-04-29 `.fsm` top boundary width now consumes top actor graph evidence
 - The previous top-boundary actor-port slice recovered direction but left a sibling shape hole:
   - a top port declared as output with no width could be paired with a matching top actor port carrying width 8

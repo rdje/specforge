@@ -4,6 +4,14 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-29 `.fsm` child topology width recovery)
+- Continued the graph/topology-first adapter thread from commit `bba3a59`.
+- The root cause was another shape-evidence asymmetry: explicit top-link topology could recover child module port direction, and the opposite top-boundary endpoint could already carry numeric width, but that width was not fed into the child module signal inventory.
+- A widthless child output linked to an 8-bit top output therefore stayed blocked as widthless even though the composition graph already had enough numeric shape to render the child module honestly.
+- `ModuleTopologyPortDirection` now carries optional numeric width evidence, sourced only from the opposite top-boundary endpoint on a top link.
+- Child-child links still do not invent widths, parametric top widths remain deferred, and contradictory explicit child width versus topology width collapses to unresolved through the existing signal-inventory conflict behavior.
+- Focused adapter coverage now proves topology-backed child-width recovery and conflicting topology-width blocking.
+
 ## Session update (2026-04-29 `.fsm` top boundary actor-port width recovery)
 - Continued the graph-first top-boundary adapter thread from commit `096438d`.
 - The root cause was a shape/provenance mismatch: top actor-port graph evidence could now recover direction, but matching actor-port width was still ignored by explicit top-root analysis.
@@ -2294,8 +2302,8 @@
 
 ## Testing implications
 - current full local CI path: `bash scripts/run_ci.sh`
-- current active Rust surface after the README/bootstrap refresh: `31` Rust source files and `76,871` total lines under `crates/specforge/src`
-- current Rust test count observed through the canonical local CI path after the latest slice: 487 library tests, 0 binary tests, and 0 doc tests, all passing under warning-deny Clippy/rustdoc plus the mdBook build
+- current active Rust surface after the README/bootstrap refresh: `31` Rust source files and `77,027` total lines under `crates/specforge/src`
+- current Rust test count observed through the canonical local CI path after the latest slice: 489 library tests, 0 binary tests, and 0 doc tests, all passing under warning-deny Clippy/rustdoc plus the mdBook build
 - current tracked KG-quality fixture count: 127
 - current tests cover:
   - source-kind detection
@@ -2325,7 +2333,7 @@
   - markdown/table/list marker alias rejection for Form 2 alias learning
   - actor-signal relation extraction from prose and table roles
   - AMBA `Source` / `Driver` / `Destination` signal-direction handling
-  - `.fsm` adapter renderability, including graph-backed top-composition child direction recovery, unambiguous standalone direct direction recovery, sticky actor-port direction/width conflict blocking, graph-backed sequential system-contract direction recovery, graph-only direct-context filtering, top-link boundary direction recovery, top actor-port boundary direction/width recovery, and conflict/ambiguity blocking
+  - `.fsm` adapter renderability, including graph-backed top-composition child direction recovery, top-link child width recovery, unambiguous standalone direct direction recovery, sticky actor-port direction/width conflict blocking, graph-backed sequential system-contract direction recovery, graph-only direct-context filtering, top-link boundary direction recovery, top actor-port boundary direction/width recovery, and conflict/ambiguity blocking
   - `specforge validate` for all four IR stages
   - project-level validation projection and schema-v2 rescan-plan generation
   - schema-v2 `rescan-plan` normalization, whitelisted execution, execution summaries, and no-promotion review gates
@@ -2339,11 +2347,11 @@
 
 ## Latest validation completed in this refresh
 - `bash scripts/run_ci.sh`
-  - passed; Rust test suite reported 487 passed tests under warning-deny CI, 0 failures, 0 binary tests, 0 doc tests, rustdoc completed under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build completed successfully
+  - passed; Rust test suite reported 489 passed tests under warning-deny CI, 0 failures, 0 binary tests, 0 doc tests, rustdoc completed under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build completed successfully
 
 ## Session update (2026-04-19 README bootstrap analysis refresh)
 - Re-executed the README handoff path through `SESSION_BOOTSTRAP.md`, reread the linked continuity and user-facing markdown surfaces, and resurveyed the active Rust crate layout directly from disk.
-- The current Rust implementation now spans `31` source files and `76,871` lines under `crates/specforge/src`, with the tracked KG fixture suite at `127` and the canonical local CI path at `487` passing Rust tests plus warning-deny rustdoc and mdBook validation.
+- The current Rust implementation now spans `31` source files and `77,027` lines under `crates/specforge/src`, with the tracked KG fixture suite at `127` and the canonical local CI path at `489` passing Rust tests plus warning-deny rustdoc and mdBook validation.
 - The bootstrap pass did not reveal a new architectural pivot or an unlogged product-surface drift; the recent graph-direction validation work is already represented in the live docs.
 - The meaningful action from this refresh is simply keeping the bootstrap analysis truthful, so future resumed sessions start from current numbers instead of stale ones.
 
