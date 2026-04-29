@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-29 (`.fsm` top system-contract distribution is regression-locked)
+
+### Added: top links now prove child system-contract ports remain usable endpoints
+- Added a top-composition regression where widthless public `clk` / `rst_n` top ports drive a child module whose clock/reset ports exist only through its canonical `SystemContractRecord`.
+- The test proves top-link width recovery pulls `1`-bit evidence from the child system-contract endpoints into selected top public IO.
+- The child module inventory is also checked for materialized `system_contract_signal` provenance, locking the consumer path opened by the prior system-contract materialization slice.
+- The emitted `.fsm` text now has coverage for bare 1-bit input top ports plus `/clk/controller.clk/` and `/rst_n/controller.rst_n/` wiring into the child system block.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml top_composition_recovers_top_system_port_widths_from_child_system_contract -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml top_composition -- --nocapture` -> passed with `27` top-composition tests
+- `cargo test --manifest-path Cargo.toml ir::adapters::tests -- --nocapture` -> passed with `66` adapter tests
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `510` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-29 (`.fsm` system contracts materialize clock/reset signals)
 
 ### Fixed: canonical system contracts can now supply clock/reset inventory entries

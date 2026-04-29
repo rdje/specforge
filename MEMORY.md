@@ -19,22 +19,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `7bab72c0c95d173aa01e19555a24c0e6b4f10a0c`
-- latest_commit_brief_message: `fix(adapter): preserve actor parametric widths`
-- note: the latest committed baseline preserves graph-backed actor-port parametric width provenance in `.fsm` adapter signal candidates without letting symbolic recovery evidence override explicit numeric width evidence
+- latest_commit_hash: `4846128fe7d758fb644727d384471fb4ac40b477`
+- latest_commit_brief_message: `fix(adapter): materialize system contract signals`
+- note: the latest committed baseline lets canonical `.fsm` system contracts materialize missing clock/reset signal-inventory entries as input, 1-bit `system_contract_signal` evidence
 
 ## Recent commit chain (last 6)
+- `4846128` fix(adapter): materialize system contract signals
 - `7bab72c` fix(adapter): preserve actor parametric widths
 - `d22ae1f` fix(adapter): preserve parametric width evidence
 - `c52f07a` fix(adapter): preserve flat direction conflicts
 - `a9a322e` fix(adapter): require emitted child top-link ports
 - `b9f9c27` fix(adapter): gate top public IO widths
-- `af3962a` fix(adapter): surface width conflicts
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 14` of `origin/main`
+- branch state before the next commit: `ahead 15` of `origin/main`
 - modified tracked files:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -45,27 +45,24 @@
 
 ## Current in-flight slice
 - objective:
-  - let canonical `.fsm` system contracts materialize missing clock/reset signal-inventory entries as input, 1-bit `system_contract_signal` evidence
+  - regression-lock explicit top-root clock/reset distribution into child system-contract endpoints and top-width recovery from those endpoints
 - tracker effect:
-  - added a `Done` live-status row for standalone sequential system contracts materializing clock/reset inventory when flat interface records are absent
+  - added a `Done` live-status row for explicit top-root clock/reset top-link distribution into child system-contract endpoints
 - verification status:
-  - `cargo test --manifest-path Cargo.toml standalone_sequential_dt_materializes_system_signals_from_system_contract -- --nocapture` failed before the fix, then passed
-  - `cargo test --manifest-path Cargo.toml standalone_sequential_dt_recovers_system_signals_from_system_contract -- --nocapture` passed
-  - `cargo test --manifest-path Cargo.toml standalone_sequential_dt_blocks_conflicting_system_contract_signal_direction -- --nocapture` passed
-  - `cargo test --manifest-path Cargo.toml standalone_sequential_dt_blocks_conflicting_system_contract_signal_width -- --nocapture` passed
-  - `cargo test --manifest-path Cargo.toml standalone_explicit_module_recovers_system_signals_from_system_contract -- --nocapture` passed
-  - `cargo test --manifest-path Cargo.toml ir::adapters::tests -- --nocapture` passed with `65` adapter tests
+  - `cargo test --manifest-path Cargo.toml top_composition_recovers_top_system_port_widths_from_child_system_contract -- --nocapture` passed
+  - `cargo test --manifest-path Cargo.toml top_composition -- --nocapture` passed with `27` top-composition tests
+  - `cargo test --manifest-path Cargo.toml ir::adapters::tests -- --nocapture` passed with `66` adapter tests
   - `cargo fmt --manifest-path Cargo.toml` passed
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `git diff --check` passed
   - `bash scripts/run_docs_ci.sh` passed
-  - `bash scripts/run_ci.sh` passed with `509` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `bash scripts/run_ci.sh` passed with `510` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `127` fixtures and `0` failures
 - current known local CI baseline:
-  - `509` Rust tests plus warning-deny Clippy/rustdoc and the mdBook build
+  - `510` Rust tests plus warning-deny Clippy/rustdoc and the mdBook build
 
 ## Next exact steps
 - rerun final lightweight formatting, docs, and whitespace checks after validation-doc updates
-- commit the system-contract signal materialization slice
+- commit the top system-contract distribution regression slice
 - truncate `git_message_brief.txt` back to `0` bytes and confirm it remains untracked after that commit
-- leave the branch unpushed; after this commit it should be `ahead 15`, below the `25`-commit push threshold
+- leave the branch unpushed; after this commit it should be `ahead 16`, below the `25`-commit push threshold

@@ -8641,6 +8641,85 @@ mod tests {
     }
 
     #[test]
+    fn top_composition_recovers_top_system_port_widths_from_child_system_contract() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "top_system_contract_distribution.md",
+            "# Top System Contract Distribution\nTop soc.\n\nTop soc port clk is input.\n\nTop soc port rst_n is input.\n\nTop soc port result_data is output width 8.\n\nTop soc child controller uses module controller_core.\n\nTop soc link clk -> controller.clk.\n\nTop soc link rst_n -> controller.rst_n.\n\nTop soc link controller.ACC -> result_data.\n\nModule controller_core signal ACC is output width 8.\n\nModule controller_core Clock clk.\n\nModule controller_core Reset rst_n is asynchronous active low.\n\nModule controller_core Init ACC = 8'0.\n\nModule controller_core Block tick: ACC <- 8'1.\n",
+        )?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+        adapter.write_to_disk()?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "renderable");
+        let emitted_target_path = adapter
+            .artifact_layout
+            .emitted_target_path
+            .as_ref()
+            .expect("top with distributed system contract should emit target text");
+        let emitted_text = fs::read_to_string(emitted_target_path)?;
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let top_candidate = fsm
+            .top_candidates
+            .iter()
+            .find(|top| top.top_name == "soc")
+            .expect("top candidate should be present");
+        let controller = fsm
+            .module_candidates
+            .iter()
+            .find(|module| module.module_name == "controller_core")
+            .expect("controller module candidate should exist");
+        let top_clk = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "clk")
+            .expect("top clock should stay in selected top inventory");
+        let top_rst_n = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "rst_n")
+            .expect("top reset should stay in selected top inventory");
+        let child_clk = controller
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "clk")
+            .expect("child clock should be materialized in module inventory");
+        let child_rst_n = controller
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "rst_n")
+            .expect("child reset should be materialized in module inventory");
+
+        assert!(top_candidate.renderability.is_renderable);
+        assert_eq!(top_clk.width_hint, Some(1));
+        assert_eq!(top_rst_n.width_hint, Some(1));
+        for signal in [child_clk, child_rst_n] {
+            assert_eq!(signal.direction_hint, Some(InterfaceSignalDirection::Input));
+            assert_eq!(signal.width_hint, Some(1));
+            assert!(
+                signal
+                    .mention_categories
+                    .iter()
+                    .any(|category| category == "system_contract_signal")
+            );
+        }
+        assert!(emitted_text.contains("    clk\n"));
+        assert!(emitted_text.contains("    rst_n\n"));
+        assert!(emitted_text.contains("/clk/controller.clk/"));
+        assert!(emitted_text.contains("/rst_n/controller.rst_n/"));
+        assert!(emitted_text.contains("(clock clk)"));
+        assert!(emitted_text.contains("(asreset rst_n)"));
+
+        Ok(())
+    }
+
+    #[test]
     fn top_composition_blocks_widthless_top_port_without_width_recovery() -> Result<()> {
         let tempdir = tempdir()?;
         let intent_ir = build_intent_ir_from_markdown(

@@ -7,6 +7,18 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-29 `.fsm` top system-contract distribution is regression-locked
+- Continued from commit `4846128` with a coverage-hardening slice for the top-composition consumer of materialized system-contract ports.
+- The new regression builds a `?top:name` root where:
+  - public top ports `clk` and `rst_n` are declared as input but widthless
+  - child module `controller_core` has no flat `clk` / `rst_n` signal declarations
+  - the child module still has a canonical `SystemContractRecord` from `Clock clk` and `Reset rst_n`
+  - explicit top links wire `clk -> controller.clk` and `rst_n -> controller.rst_n`
+- This locks three adjacent behaviors in one path: child system-contract ports are materialized as emitted child endpoints, top-link topology recovers the public top widths from those endpoints, and 1-bit input top ports render with `.fsm` bare-name syntax.
+- No production behavior changed in this slice; it makes the previous system-contract materialization work harder to regress through the composition layer.
+- Focused top-system, full top-composition, and full adapter suites are green with `66` adapter tests.
+- Full local CI with `510` Rust tests and the full `127/127` tracked KG fixture suite passed after the top system-contract distribution regression landed.
+
 ## 2026-04-29 `.fsm` system contracts materialize clock/reset signals
 - Continued from commit `7bab72c` by closing the remaining system-contract shape-recovery edge.
 - The root cause was an adapter-local guard in `overlay_system_contract_signal(...)`:

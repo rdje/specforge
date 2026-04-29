@@ -4,6 +4,14 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-29 `.fsm` top system-contract endpoint coverage)
+- Continued from commit `4846128` by locking the top-composition consumer of materialized child system-contract ports.
+- The new regression proves a child module with only `SystemContractRecord` clock/reset facts still exposes `controller.clk` and `controller.rst_n` as emitted child endpoints for top-link analysis.
+- Widthless public top `clk` / `rst_n` inputs now have explicit coverage for recovering 1-bit widths from those child endpoints and rendering as bare 1-bit input public IO.
+- This is a coverage-hardening slice: production behavior from the previous system-contract materialization change already made the path work, and the new test prevents future endpoint or top-width recovery refactors from silently breaking it.
+- Focused top-composition coverage passed with `27` tests, and the full adapter suite passed with `66` tests.
+- Full local verification for this slice: `510` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-29 `.fsm` system-contract signal materialization)
 - Continued from commit `7bab72c` by tightening the system-contract-to-signal-inventory boundary.
 - The root cause was that `overlay_system_contract_signal(...)` returned early unless the clock/reset signal already existed in inventory, despite `SystemContractRecord` being canonical evidence for those signal roles.
