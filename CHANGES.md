@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-29 (`.fsm` flat direction conflicts stay blocking)
+
+### Fixed: graph recovery no longer overrides contradictory canonical direction hints
+- `FsmSignalCandidate` now preserves `direction_hint_conflicted`, matching the existing graph-direction and width conflict provenance fields.
+- `.fsm` renderability now blocks render-critical signals with conflicting flat canonical direction evidence before considering graph-backed recovery hints.
+- System-contract clock/reset checks now report conflicting canonical direction evidence distinctly instead of calling it a missing direction hint.
+- A regression now proves an unambiguous actor-port graph cannot make `DATA_OUT` renderable when duplicate canonical signal declarations disagree on its flat direction.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml standalone_dt_blocks_conflicting_flat_direction_even_with_actor_graph -- --nocapture` -> failed before the fix, then passed
+- `cargo test --manifest-path Cargo.toml standalone_sequential_dt_blocks_conflicting_system_contract_signal_direction -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml ir::adapters::tests -- --nocapture` -> passed with `61` adapter tests
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `505` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-29 (`.fsm` top links require emitted child ports)
 
 ### Fixed: top wiring can no longer target advisory-only child inventory entries

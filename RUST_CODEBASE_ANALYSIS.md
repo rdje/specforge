@@ -4,6 +4,15 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-29 `.fsm` flat direction conflict provenance)
+- Continued from commit `a9a322e` by tightening another renderability boundary in the adapter signal inventory.
+- The root cause was that flat canonical direction conflicts existed in `SignalInventoryEvidence.direction_hint_conflicted` but were dropped when projecting `FsmSignalCandidate`.
+- Because `preferred_signal_direction_hint(...)` only knew about graph-direction conflicts, an unambiguous actor-port graph could still provide a renderable direction for a signal whose explicit canonical declarations disagreed.
+- `FsmSignalCandidate` now preserves `direction_hint_conflicted`, and renderability checks block conflicting flat direction evidence before accepting graph recovery or reporting generic missing-direction diagnostics.
+- System-contract diagnostics now also distinguish conflicting canonical direction evidence from missing clock/reset direction evidence.
+- A new regression locks the unsafe case: duplicate flat `DATA_OUT` directions plus an unambiguous `controller.DATA_OUT` actor-port graph now stays blocked instead of rendering. Adapter coverage now has `61` tests.
+- Full local verification for this slice: `505` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-29 `.fsm` top-link child endpoint emission gate)
 - Continued from commit `b9f9c27` by tightening the child side of top-composition renderability.
 - The root cause was a mismatch between analysis and rendering: top-link resolution used `FsmSignalCandidate` inventory entries, but `render_fsm_module(...)` only emits actual child signal surfaces from `FsmRenderableModule.size_entries` plus system-contract ports.

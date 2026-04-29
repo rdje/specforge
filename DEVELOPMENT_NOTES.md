@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-29 `.fsm` flat direction conflicts stay renderability-blocking
+- Continued from commit `a9a322e` by closing the flat-direction sibling of the graph and width conflict-provenance work.
+- The root cause was a projection gap:
+  - `SignalInventoryEvidence` tracked `direction_hint_conflicted` when duplicate canonical signal declarations disagreed
+  - `FsmSignalCandidate` did not serialize or expose that flat conflict bit
+  - `preferred_signal_direction_hint(...)` could therefore accept a graph-backed direction and render a signal whose explicit canonical direction evidence was already poisoned
+- `FsmSignalCandidate` now carries `direction_hint_conflicted` with the same default/skip-false artifact shape used for graph and width conflict flags.
+- `preferred_signal_direction_hint(...)`, `register_renderable_signal(...)`, and system-contract validation now treat flat canonical direction conflicts as blockers before falling back to graph-backed recovery or missing-direction diagnostics.
+- A new regression first reproduced a renderable standalone DT despite conflicting `DATA_OUT` flat declarations plus an unambiguous actor-port graph, then passed after the flat conflict bit reached renderability; the full adapter suite is green with `61` tests.
+- Full local CI with `505` Rust tests and the full `127/127` tracked KG fixture suite passed after the flat direction-conflict provenance gate landed.
+
 ## 2026-04-29 `.fsm` top links resolve against emitted child ports
 - The top-public-IO width gate exposed the child-side mirror:
   - `renderable_ports_for_module_candidate(...)` exposed every graph-resolved `FsmSignalCandidate` from the child signal inventory

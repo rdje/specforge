@@ -192,7 +192,18 @@ fn validate_system_signal_renderability(
             );
         }
         None => {
-            if signal.graph_direction_hint_conflicted {
+            if signal.direction_hint_conflicted {
+                push_unique_message(
+                    blocking_reasons,
+                    &format!(
+                        "Canonical {role_name} signal `{signal_name}` has conflicting canonical direction evidence, so standalone `.fsm` lowering cannot choose an input role."
+                    ),
+                );
+                required_canonical_enrichments.insert(
+                    "resolve conflicting canonical system-signal direction evidence before lowering `.fsm` system contracts"
+                        .to_string(),
+                );
+            } else if signal.graph_direction_hint_conflicted {
                 push_unique_message(
                     blocking_reasons,
                     &format!(
@@ -529,6 +540,8 @@ pub struct FsmSignalCandidate {
     pub signal_name: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub direction_hint: Option<InterfaceSignalDirection>,
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub direction_hint_conflicted: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub graph_direction_hint: Option<InterfaceSignalDirection>,
     #[serde(default, skip_serializing_if = "is_false")]
@@ -1309,6 +1322,7 @@ fn inventory_to_signal_candidates(
         .map(|(signal_name, evidence)| FsmSignalCandidate {
             signal_name,
             direction_hint: evidence.direction_hint,
+            direction_hint_conflicted: evidence.direction_hint_conflicted,
             graph_direction_hint: evidence.graph_direction_hint,
             graph_direction_hint_conflicted: evidence.graph_direction_hint_conflicted,
             width_hint: evidence.width_hint,
@@ -1327,7 +1341,7 @@ fn is_false(value: &bool) -> bool {
 fn preferred_signal_direction_hint(
     signal: &FsmSignalCandidate,
 ) -> Option<InterfaceSignalDirection> {
-    if signal.graph_direction_hint_conflicted {
+    if signal.direction_hint_conflicted || signal.graph_direction_hint_conflicted {
         return None;
     }
     signal.graph_direction_hint.or(signal.direction_hint)
@@ -2271,6 +2285,9 @@ fn build_top_signal_inventory(
             FsmSignalCandidate {
                 signal_name: resolved_port.port_name.clone(),
                 direction_hint: declared_direction,
+                direction_hint_conflicted: declared_directions
+                    .get(&raw_port.port_name)
+                    .is_some_and(|evidence| evidence.direction_conflicted),
                 graph_direction_hint,
                 graph_direction_hint_conflicted: graph_direction_conflicted,
                 width_hint: resolved_port
@@ -4783,7 +4800,18 @@ fn register_renderable_signal(
     };
 
     let Some(direction_hint) = preferred_signal_direction_hint(signal) else {
-        if signal.graph_direction_hint_conflicted {
+        if signal.direction_hint_conflicted {
+            push_unique_message(
+                blocking_reasons,
+                &format!(
+                    "Signal `{signal_name}` has conflicting canonical direction evidence required for `.fsm` emission."
+                ),
+            );
+            required_canonical_enrichments.insert(
+                "resolve conflicting canonical signal direction evidence before lowering `.fsm`"
+                    .to_string(),
+            );
+        } else if signal.graph_direction_hint_conflicted {
             push_unique_message(
                 blocking_reasons,
                 &format!(
@@ -6797,6 +6825,71 @@ mod tests {
     }
 
     #[test]
+    fn standalone_dt_blocks_conflicting_flat_direction_even_with_actor_graph() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_explicit_control_intent_ir(tempdir.path())?;
+        let interface = intent_ir
+            .interfaces
+            .iter_mut()
+            .find(|interface| {
+                interface
+                    .signal_records
+                    .iter()
+                    .any(|signal| signal.signal_name == "DATA_OUT")
+            })
+            .expect("control interface should contain DATA_OUT");
+        let mut conflicting_data_out = interface
+            .signal_records
+            .iter()
+            .find(|signal| signal.signal_name == "DATA_OUT")
+            .expect("DATA_OUT declaration should exist")
+            .clone();
+        conflicting_data_out.direction_hint = Some(InterfaceSignalDirection::Input);
+        conflicting_data_out
+            .supporting_statement_ids
+            .push("duplicate_flat_DATA_OUT_input".to_string());
+        interface.signal_records.push(conflicting_data_out);
+        intent_ir.actor_ports = vec![
+            actor_port("controller", "DATA_IN", ActorRelativeDirection::Input),
+            actor_port("controller", "DATA_OUT", ActorRelativeDirection::Output),
+            actor_port("controller", "ZERO_FLAG", ActorRelativeDirection::Output),
+        ];
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let data_out = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "DATA_OUT")
+            .expect("DATA_OUT should remain in signal inventory");
+
+        assert_eq!(data_out.direction_hint, None);
+        assert!(data_out.direction_hint_conflicted);
+        assert_eq!(
+            data_out.graph_direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert!(!fsm.renderability.is_renderable);
+        assert!(
+            fsm.renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason.contains("conflicting canonical direction evidence"))
+        );
+
+        Ok(())
+    }
+
+    #[test]
     fn standalone_dt_keeps_conflicting_actor_port_width_unresolved() -> Result<()> {
         let tempdir = tempdir()?;
         let mut intent_ir = build_explicit_control_intent_ir(tempdir.path())?;
@@ -7147,18 +7240,16 @@ mod tests {
             .expect("clock should remain in the signal inventory");
 
         assert_eq!(clk.direction_hint, None);
+        assert!(clk.direction_hint_conflicted);
         assert!(
             clk.mention_categories
                 .iter()
                 .any(|category| category == "system_contract_signal")
         );
         assert!(!fsm.renderability.is_renderable);
-        assert!(
-            fsm.renderability
-                .blocking_reasons
-                .iter()
-                .any(|reason| reason.contains("clock signal `clk` is missing a direction hint"))
-        );
+        assert!(fsm.renderability.blocking_reasons.iter().any(|reason| {
+            reason.contains("clock signal `clk` has conflicting canonical direction evidence")
+        }));
         assert!(
             adapter
                 .residual_decisions
