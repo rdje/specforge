@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-30 `.fsm` renderable top-root ports keep system-port width provenance
+- Continued from commit `661f019` by closing the child-system-contract endpoint sibling of the renderable top-root width provenance surface.
+- `FsmRenderableTopRoot.ports` already receives `resolved_ports`; this regression proves that clock/reset widths recovered through explicit top links into child system-contract endpoints survive into `renderable_document.top_root.ports`.
+- The assertion lives in the existing top system-contract distribution test, so it checks the final `?top:soc` document model for public `clk` and `rst_n` width, supporting IDs, and high confidence without changing emitted text.
+- This complements the actor-port and top-link renderable width assertions: recovered top-boundary width evidence now has final renderable-document coverage for actor ports, ordinary child links, and child system-contract endpoints.
+- Full local CI with `511` Rust tests and the full `127/127` tracked KG fixture suite passed after the regression landed.
+
 ## 2026-04-30 `.fsm` renderable top-root ports keep actor-port width provenance
 - Continued from commit `b9bd0a9` by closing the actor-port width sibling of the renderable top-root provenance surface.
 - `FsmRenderableTopRoot.ports` already receives `resolved_ports`; this regression proves that recovered top actor-port width, `graph_wrapper_ext_data`, and high confidence survive into `renderable_document.top_root.ports`.

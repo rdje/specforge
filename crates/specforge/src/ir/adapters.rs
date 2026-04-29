@@ -9085,6 +9085,37 @@ mod tests {
             "top_system_contract_distribution.md",
             "# Top System Contract Distribution\nTop soc.\n\nTop soc port clk is input.\n\nTop soc port rst_n is input.\n\nTop soc port result_data is output width 8.\n\nTop soc child controller uses module controller_core.\n\nTop soc link clk -> controller.clk.\n\nTop soc link rst_n -> controller.rst_n.\n\nTop soc link controller.ACC -> result_data.\n\nModule controller_core signal ACC is output width 8.\n\nModule controller_core Clock clk.\n\nModule controller_core Reset rst_n is asynchronous active low.\n\nModule controller_core Init ACC = 8'0.\n\nModule controller_core Block tick: ACC <- 8'1.\n",
         )?;
+        let (clk_topology_support_ids, rst_topology_support_ids) = {
+            let explicit_top = intent_ir
+                .explicit_tops
+                .iter()
+                .find(|top| top.top_name == "soc")
+                .expect("explicit top should be present");
+            let clk_link = explicit_top
+                .links
+                .iter()
+                .find(|link| {
+                    link.source.instance_name.is_none()
+                        && link.source.signal_name == "clk"
+                        && link.target.instance_name.as_deref() == Some("controller")
+                        && link.target.signal_name == "clk"
+                })
+                .expect("clock topology link should be present");
+            let rst_link = explicit_top
+                .links
+                .iter()
+                .find(|link| {
+                    link.source.instance_name.is_none()
+                        && link.source.signal_name == "rst_n"
+                        && link.target.instance_name.as_deref() == Some("controller")
+                        && link.target.signal_name == "rst_n"
+                })
+                .expect("reset topology link should be present");
+            (
+                super::explicit_top_link_supporting_ids(clk_link),
+                super::explicit_top_link_supporting_ids(rst_link),
+            )
+        };
 
         let artifact_base = tempdir.path().join("generated").join("adapters");
         let adapter = AdapterArtifact::build(
@@ -9122,6 +9153,21 @@ mod tests {
             .iter()
             .find(|signal| signal.signal_name == "rst_n")
             .expect("top reset should stay in selected top inventory");
+        let renderable_top = fsm
+            .renderable_document
+            .as_ref()
+            .and_then(|document| document.top_root.as_ref())
+            .expect("renderable top root should be present");
+        let renderable_clk = renderable_top
+            .ports
+            .iter()
+            .find(|port| port.port_name == "clk")
+            .expect("renderable clock top port should be present");
+        let renderable_rst_n = renderable_top
+            .ports
+            .iter()
+            .find(|port| port.port_name == "rst_n")
+            .expect("renderable reset top port should be present");
         let child_clk = controller
             .signal_inventory
             .iter()
@@ -9136,6 +9182,38 @@ mod tests {
         assert!(top_candidate.renderability.is_renderable);
         assert_eq!(top_clk.width_hint, Some(1));
         assert_eq!(top_rst_n.width_hint, Some(1));
+        assert_eq!(
+            renderable_clk
+                .width_hint
+                .as_ref()
+                .and_then(|width| width.as_numeric()),
+            Some(1)
+        );
+        assert!(
+            clk_topology_support_ids
+                .iter()
+                .any(|id| renderable_clk.supporting_statement_ids.contains(id))
+        );
+        assert_eq!(
+            renderable_clk.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert_eq!(
+            renderable_rst_n
+                .width_hint
+                .as_ref()
+                .and_then(|width| width.as_numeric()),
+            Some(1)
+        );
+        assert!(
+            rst_topology_support_ids
+                .iter()
+                .any(|id| renderable_rst_n.supporting_statement_ids.contains(id))
+        );
+        assert_eq!(
+            renderable_rst_n.automation_confidence,
+            AutomationConfidence::High
+        );
         for signal in [child_clk, child_rst_n] {
             assert_eq!(signal.direction_hint, Some(InterfaceSignalDirection::Input));
             assert_eq!(signal.width_hint, Some(1));

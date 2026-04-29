@@ -4,6 +4,13 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-30 `.fsm` renderable top-root system-port width provenance)
+- Continued from commit `661f019` by locking the child-system-contract endpoint sibling of the renderable top-root width provenance surface.
+- The production path already cloned resolved top ports into `FsmRenderableTopRoot.ports`; this slice proves that top-link recovered clock/reset width, support IDs, and confidence survive into `renderable_document.top_root.ports`.
+- The focused assertion extends the existing top system-contract distribution test, so it covers the final `?top:soc` top-root document model consumed by `.fsm` text rendering.
+- This is a regression-only artifact-surface slice: renderability, conflict behavior, and emitted `.fsm` text remain unchanged.
+- Adapter coverage remains at `67` tests; full local verification for this slice: `511` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-30 `.fsm` renderable top-root actor-port width provenance)
 - Continued from commit `b9bd0a9` by locking the actor-port width sibling of the renderable top-root provenance surface.
 - The production path already cloned resolved top ports into `FsmRenderableTopRoot.ports`; this slice proves that actor-port-recovered width, support IDs, and confidence survive into `renderable_document.top_root.ports`.
