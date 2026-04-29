@@ -1302,7 +1302,10 @@ fn preferred_signal_direction_hint(
 }
 
 fn build_module_candidates(intent_ir: &IntentIr) -> Vec<FsmExplicitModuleCandidate> {
-    let topology_directions = collect_module_topology_port_directions(&intent_ir.explicit_tops);
+    let topology_directions = collect_module_topology_port_directions(
+        &intent_ir.explicit_tops,
+        &intent_ir.explicit_modules,
+    );
     intent_ir
         .explicit_modules
         .iter()
@@ -1387,8 +1390,10 @@ struct ModuleTopologyPortDirection {
 
 fn collect_module_topology_port_directions(
     explicit_tops: &[ExplicitTopRecord],
+    explicit_modules: &[ExplicitModuleRecord],
 ) -> BTreeMap<String, Vec<ModuleTopologyPortDirection>> {
     let mut directions = BTreeMap::<String, Vec<ModuleTopologyPortDirection>>::new();
+    let module_signal_widths = collect_explicit_module_signal_numeric_widths(explicit_modules);
 
     for top in explicit_tops {
         let child_modules = top
@@ -1410,7 +1415,11 @@ fn collect_module_topology_port_directions(
                     .copied()
                     .flatten()
             } else {
-                None
+                module_signal_numeric_width_for_endpoint(
+                    &link.target,
+                    &child_modules,
+                    &module_signal_widths,
+                )
             };
             record_module_topology_port_direction(
                 &mut directions,
@@ -1426,7 +1435,11 @@ fn collect_module_topology_port_directions(
                     .copied()
                     .flatten()
             } else {
-                None
+                module_signal_numeric_width_for_endpoint(
+                    &link.source,
+                    &child_modules,
+                    &module_signal_widths,
+                )
             };
             record_module_topology_port_direction(
                 &mut directions,
@@ -1440,6 +1453,55 @@ fn collect_module_topology_port_directions(
     }
 
     directions
+}
+
+fn collect_explicit_module_signal_numeric_widths(
+    explicit_modules: &[ExplicitModuleRecord],
+) -> BTreeMap<(String, String), Option<u32>> {
+    let mut widths = BTreeMap::<(String, String), Option<u32>>::new();
+    let mut conflicted = BTreeSet::new();
+
+    for module in explicit_modules {
+        for interface in &module.interfaces {
+            for signal in &interface.signal_records {
+                let key = (module.module_name.clone(), signal.signal_name.clone());
+                if conflicted.contains(&key) {
+                    continue;
+                }
+                let Some(width_hint) = signal.width_hint.as_ref().and_then(WidthHint::as_numeric)
+                else {
+                    widths.entry(key).or_insert(None);
+                    continue;
+                };
+
+                match widths.get(&key).copied().flatten() {
+                    Some(existing) if existing != width_hint => {
+                        widths.insert(key.clone(), None);
+                        conflicted.insert(key);
+                    }
+                    Some(_) => {}
+                    None => {
+                        widths.insert(key, Some(width_hint));
+                    }
+                }
+            }
+        }
+    }
+
+    widths
+}
+
+fn module_signal_numeric_width_for_endpoint(
+    endpoint: &ExplicitTopLinkEndpoint,
+    child_modules: &BTreeMap<String, String>,
+    module_signal_widths: &BTreeMap<(String, String), Option<u32>>,
+) -> Option<u32> {
+    let instance_name = endpoint.instance_name.as_deref()?;
+    let module_name = child_modules.get(instance_name)?;
+    module_signal_widths
+        .get(&(module_name.clone(), endpoint.signal_name.clone()))
+        .copied()
+        .flatten()
 }
 
 fn collect_top_port_numeric_widths(top: &ExplicitTopRecord) -> BTreeMap<String, Option<u32>> {
@@ -8328,6 +8390,118 @@ mod tests {
         assert!(emitted_text.contains("(+size"));
         assert!(emitted_text.contains("(output_data 8)"));
         assert!(emitted_text.contains("/producer.output_data/result_data/"));
+
+        Ok(())
+    }
+
+    #[test]
+    fn top_composition_recovers_child_width_from_sibling_child_link_topology() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "child_width_from_sibling_child_link.md",
+            "# Child Width From Sibling Child Link\nTop datapath.\n\nTop datapath port result_data is output width 8.\n\nTop datapath child producer uses module producer_core.\n\nTop datapath child consumer uses module consumer_core.\n\nTop datapath link producer.output_data -> consumer.input_data.\n\nTop datapath link consumer.result_data -> result_data.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n\nModule consumer_core signal input_data is input.\n\nModule consumer_core signal result_data is output width 8.\n\nModule consumer_core block route: result_data = input_data.\n",
+        )?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+        adapter.write_to_disk()?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "renderable");
+        let emitted_target_path = adapter
+            .artifact_layout
+            .emitted_target_path
+            .as_ref()
+            .expect("child-child-width-backed top adapter should emit target text");
+        let emitted_text = fs::read_to_string(emitted_target_path)?;
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let consumer = fsm
+            .module_candidates
+            .iter()
+            .find(|candidate| candidate.module_name == "consumer_core")
+            .expect("consumer module candidate should exist");
+        let input_data = consumer
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "input_data")
+            .expect("consumer input_data should stay in the module inventory");
+
+        assert_eq!(
+            input_data.graph_direction_hint,
+            Some(InterfaceSignalDirection::Input)
+        );
+        assert_eq!(input_data.width_hint, Some(8));
+        assert!(
+            input_data
+                .mention_categories
+                .iter()
+                .any(|category| category == "module_topology_link")
+        );
+        assert!(consumer.renderability.is_renderable);
+        assert!(fsm.renderability.is_renderable);
+        assert!(emitted_text.contains("(input_data 8)"));
+        assert!(emitted_text.contains("/producer.output_data/consumer.input_data/"));
+        assert!(emitted_text.contains("/consumer.result_data/result_data/"));
+
+        Ok(())
+    }
+
+    #[test]
+    fn top_composition_blocks_conflicting_sibling_child_link_widths() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "conflicting_sibling_child_link_widths.md",
+            "# Conflicting Sibling Child Link Widths\nTop datapath.\n\nTop datapath port result_data is output width 8.\n\nTop datapath child producer8 uses module producer8_core.\n\nTop datapath child producer16 uses module producer16_core.\n\nTop datapath child consumer uses module consumer_core.\n\nTop datapath link producer8.output_data -> consumer.input_data.\n\nTop datapath link producer16.output_data -> consumer.input_data.\n\nTop datapath link consumer.result_data -> result_data.\n\nModule producer8_core signal output_data is output width 8.\n\nModule producer8_core block produce: output_data = 8'3.\n\nModule producer16_core signal output_data is output width 16.\n\nModule producer16_core block produce: output_data = 16'3.\n\nModule consumer_core signal input_data is input.\n\nModule consumer_core signal result_data is output width 8.\n\nModule consumer_core block route: result_data = input_data.\n",
+        )?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let consumer = fsm
+            .module_candidates
+            .iter()
+            .find(|candidate| candidate.module_name == "consumer_core")
+            .expect("consumer module candidate should exist");
+        let input_data = consumer
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "input_data")
+            .expect("consumer input_data should stay in the module inventory");
+
+        assert_eq!(input_data.width_hint, None);
+        assert!(
+            input_data
+                .mention_categories
+                .iter()
+                .any(|category| category == "module_topology_link")
+        );
+        assert!(!consumer.renderability.is_renderable);
+        assert!(
+            consumer
+                .renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason.contains("missing a canonical width hint"))
+        );
+        assert!(
+            fsm.renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason.contains("explicit module `consumer_core`"))
+        );
+        assert!(!fsm.renderability.is_renderable);
 
         Ok(())
     }

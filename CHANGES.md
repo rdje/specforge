@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-04-29 (`.fsm` child port width now recovers from sibling child links)
+
+### Improved: child-to-child top links now propagate numeric endpoint width
+- Explicit top-link topology can now recover a missing child module port width from the opposite child endpoint when both endpoints are child instances.
+- The recovery uses the already-declared explicit module signal widths, so it does not depend on top-boundary ports and does not invent undeclared module signals.
+- Conflicting sibling child endpoint widths for the same missing child port still collapse the resolved width to unresolved and keep top/module lowering blocked.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge top_composition_recovers_child_width_from_sibling_child_link_topology` first failed before the fix, then passed
+- `cargo test -p specforge top_composition_blocks_conflicting_sibling_child_link_widths` -> passed
+- `cargo test -p specforge ir::adapters::tests` -> passed with `54` adapter tests
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `497` Rust tests plus warning-deny rustdoc and mdBook validation
+- `git diff --check` -> passed
+
 ## 2026-04-29 (`.fsm` top port width now recovers from child-link topology)
 
 ### Improved: child endpoint widths now carry back to top boundary ports

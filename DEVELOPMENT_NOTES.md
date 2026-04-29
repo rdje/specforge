@@ -7,6 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-29 `.fsm` child module width now consumes sibling child-link topology evidence
+- The top-boundary/child bidirectional width work left one adjacent topology seam:
+  - explicit child-to-child top links already establish output/input direction for both child endpoints
+  - either child module endpoint may already declare a numeric width
+  - but a widthless sibling endpoint could not consume that numeric shape because topology width recovery only looked at top-boundary endpoints
+- `collect_module_topology_port_directions(...)` now receives explicit module records and builds a numeric module-signal width map before emitting per-module topology evidence.
+- The recovery stays bounded:
+  - only declared child module endpoints contribute width
+  - parametric or absent widths remain deferred
+  - conflicting duplicate module widths are not used as recovery evidence
+  - contradictory sibling-derived widths collapse through the existing module inventory width-conflict path and block lowering
+- This closes the obvious child-child hole without widening the `.fsm` renderer or weakening width compatibility checks.
+
 ## 2026-04-29 `.fsm` top boundary width now consumes child-link topology evidence
 - The child-width topology slice exposed the reverse asymmetry:
   - explicit top links could recover top boundary direction
