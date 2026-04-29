@@ -1,5 +1,26 @@
 # CHANGES
 
+## 2026-04-29 (`.fsm` selected top direction provenance stays visible)
+
+### Fixed: recovered top-boundary direction sources now stay visible in selected inventory
+- Selected `.fsm` top signal inventory now carries recovered direction source categories from top actor-port and top-link topology evidence.
+- Top actor-port direction recovery records `actor_port` on the selected `FsmSignalCandidate`.
+- Top-link direction recovery records `module_topology_link` even when the top remains blocked before child endpoint width recovery can run.
+- Renderability and emitted `.fsm` text are unchanged; the selected artifact now distinguishes graph-backed direction provenance the same way it already does for recovered widths.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml top_composition_recovers_top_port_direction_from_actor_ports -- --nocapture` -> failed before the fix, then passed
+- `cargo test --manifest-path Cargo.toml top_composition_preserves_recovered_top_port_direction_when_still_blocked -- --nocapture` -> failed before the fix, then passed
+- `cargo test --manifest-path Cargo.toml top_composition_recovers_top_port_direction_from_link_topology -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml top_composition -- --nocapture` -> passed with `27` top-composition tests
+- `cargo test --manifest-path Cargo.toml ir::adapters::tests -- --nocapture` -> passed with `66` adapter tests
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `510` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-29 (`.fsm` selected top width provenance stays visible)
 
 ### Fixed: recovered top-boundary width sources no longer collapse to plain top-port provenance

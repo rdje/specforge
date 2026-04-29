@@ -4,6 +4,15 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-29 `.fsm` selected top direction provenance)
+- Continued from commit `8783350` by tightening selected top direction provenance after the width-source category fix.
+- The root cause was that `TopPortDirectionEvidence` tracked resolved/conflicted graph-backed direction state but no source category, so selected top inventory could expose `graph_direction_hint` without carrying whether the graph evidence came from top actor ports or explicit top-link topology.
+- `TopPortDirectionEvidence` now carries `mention_categories` for graph-side recovery evidence.
+- Top actor-port direction recovery records `actor_port`, top-link direction recovery records `module_topology_link`, and `build_top_signal_inventory(...)` projects those categories into selected `FsmSignalCandidate` entries.
+- The fix is artifact-shape only: renderability, conflict behavior, and emitted `.fsm` text remain unchanged.
+- Actor-port and blocked top-link topology provenance assertions failed before the fix and now pass; focused top-composition coverage passed with `27` tests, and the full adapter suite passed with `66` tests.
+- Full local verification for this slice: `510` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-29 `.fsm` selected top width provenance)
 - Continued from commit `e92fe35` by tightening artifact provenance for recovered selected top widths.
 - The root cause was that `TopPortWidthEvidence` carried resolved/conflicted width state but no source category, and `build_top_signal_inventory(...)` always rebuilt selected top `mention_categories` as plain `top_port`.

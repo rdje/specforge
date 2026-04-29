@@ -744,10 +744,11 @@ struct TopRenderabilityAnalysis {
     renderable_top: Option<FsmRenderableTopRoot>,
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 struct TopPortDirectionEvidence {
     direction_hint: Option<InterfaceSignalDirection>,
     direction_conflicted: bool,
+    mention_categories: BTreeSet<String>,
 }
 
 impl TopPortDirectionEvidence {
@@ -755,6 +756,7 @@ impl TopPortDirectionEvidence {
         Self {
             direction_hint,
             direction_conflicted: false,
+            mention_categories: BTreeSet::new(),
         }
     }
 }
@@ -2332,6 +2334,9 @@ fn build_top_signal_inventory(
                     None
                 };
             let mut mention_categories = BTreeSet::from(["top_port".to_string()]);
+            if let Some(graph_evidence) = graph_evidence {
+                mention_categories.extend(graph_evidence.mention_categories.iter().cloned());
+            }
             if let Some(width_evidence) = widths.get(&raw_port.port_name) {
                 mention_categories.extend(width_evidence.mention_categories.iter().cloned());
             }
@@ -2976,12 +2981,13 @@ fn merge_top_port_evidence_from_actor_ports(
         if let Some(direction_hint) = actor_relative_direction_to_interface_hint(port.direction)
             && let Some(direction_evidence) = top_port_directions.get_mut(&port.signal_name)
         {
-            merge_top_port_direction_hint(
-                graph_top_port_directions
-                    .entry(port.signal_name.clone())
-                    .or_insert_with(|| TopPortDirectionEvidence::new(None)),
-                direction_hint,
-            );
+            let graph_direction_evidence = graph_top_port_directions
+                .entry(port.signal_name.clone())
+                .or_insert_with(|| TopPortDirectionEvidence::new(None));
+            graph_direction_evidence
+                .mention_categories
+                .insert("actor_port".to_string());
+            merge_top_port_direction_hint(graph_direction_evidence, direction_hint);
             merge_top_port_direction_evidence(
                 direction_evidence,
                 &port.signal_name,
@@ -3032,12 +3038,13 @@ fn merge_top_port_direction_from_link(
         return;
     }
 
-    merge_top_port_direction_hint(
-        graph_top_port_directions
-            .entry(port_name.to_string())
-            .or_insert_with(|| TopPortDirectionEvidence::new(None)),
-        direction_hint,
-    );
+    let graph_direction_evidence = graph_top_port_directions
+        .entry(port_name.to_string())
+        .or_insert_with(|| TopPortDirectionEvidence::new(None));
+    graph_direction_evidence
+        .mention_categories
+        .insert("module_topology_link".to_string());
+    merge_top_port_direction_hint(graph_direction_evidence, direction_hint);
 
     merge_top_port_direction_evidence(
         direction_evidence,
@@ -8500,6 +8507,12 @@ mod tests {
             signal_inventory_port.graph_direction_hint,
             Some(InterfaceSignalDirection::Output)
         );
+        assert!(
+            signal_inventory_port
+                .mention_categories
+                .iter()
+                .any(|category| category == "module_topology_link")
+        );
         assert!(emitted_text.contains("result_data>8"));
 
         Ok(())
@@ -8572,6 +8585,12 @@ mod tests {
         assert_eq!(
             signal_inventory_port.graph_direction_hint,
             Some(InterfaceSignalDirection::Output)
+        );
+        assert!(
+            signal_inventory_port
+                .mention_categories
+                .iter()
+                .any(|category| category == "actor_port")
         );
         assert!(emitted_text.contains("ext_data>8"));
 
@@ -8957,6 +8976,12 @@ mod tests {
         assert_eq!(
             signal_inventory_port.graph_direction_hint,
             Some(InterfaceSignalDirection::Output)
+        );
+        assert!(
+            signal_inventory_port
+                .mention_categories
+                .iter()
+                .any(|category| category == "module_topology_link")
         );
         assert!(
             fsm.renderability

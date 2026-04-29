@@ -19,22 +19,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `e92fe3546e7bec865b39fe9ed2f7c88d8e7b9881`
-- latest_commit_brief_message: `test(adapter): lock top system contract distribution`
-- note: the latest committed baseline regression-locks explicit top-root clock/reset distribution into child system-contract endpoints and top-width recovery from those endpoints
+- latest_commit_hash: `8783350d20cdcc6efac928f032cb4a721a4752fd`
+- latest_commit_brief_message: `fix(adapter): preserve top width provenance`
+- note: the latest committed baseline keeps recovered selected top width provenance categories visible for actor-port and top-link topology evidence
 
 ## Recent commit chain (last 6)
+- `8783350` fix(adapter): preserve top width provenance
 - `e92fe35` test(adapter): lock top system contract distribution
 - `4846128` fix(adapter): materialize system contract signals
 - `7bab72c` fix(adapter): preserve actor parametric widths
 - `d22ae1f` fix(adapter): preserve parametric width evidence
 - `c52f07a` fix(adapter): preserve flat direction conflicts
-- `a9a322e` fix(adapter): require emitted child top-link ports
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 16` of `origin/main`
+- branch state before the next commit: `ahead 17` of `origin/main`
 - modified tracked files:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -45,12 +45,13 @@
 
 ## Current in-flight slice
 - objective:
-  - preserve selected top signal-inventory width provenance categories when top-boundary widths are recovered from actor-port graph or child-link topology evidence
+  - preserve selected top signal-inventory direction provenance categories when top-boundary directions are recovered from actor-port graph or top-link topology evidence
 - tracker effect:
-  - added a `Done` live-status row for recovered selected top width provenance categories from actor-port and top-link topology evidence
+  - added a `Done` live-status row for recovered selected top direction provenance categories from actor-port and top-link topology evidence
 - verification status:
-  - `cargo test --manifest-path Cargo.toml top_composition_recovers_top_port_width_from_actor_ports -- --nocapture` failed before the fix, then passed
-  - `cargo test --manifest-path Cargo.toml top_composition_recovers_top_port_width_from_child_link_topology -- --nocapture` passed
+  - `cargo test --manifest-path Cargo.toml top_composition_recovers_top_port_direction_from_actor_ports -- --nocapture` failed before the fix, then passed
+  - `cargo test --manifest-path Cargo.toml top_composition_preserves_recovered_top_port_direction_when_still_blocked -- --nocapture` failed before the fix, then passed
+  - `cargo test --manifest-path Cargo.toml top_composition_recovers_top_port_direction_from_link_topology -- --nocapture` passed
   - `cargo test --manifest-path Cargo.toml top_composition -- --nocapture` passed with `27` top-composition tests
   - `cargo test --manifest-path Cargo.toml ir::adapters::tests -- --nocapture` passed with `66` adapter tests
   - `cargo fmt --manifest-path Cargo.toml` passed
@@ -64,6 +65,6 @@
 
 ## Next exact steps
 - rerun final lightweight formatting, docs, and whitespace checks after validation-doc updates
-- commit the selected top width provenance slice
+- commit the selected top direction provenance slice
 - truncate `git_message_brief.txt` back to `0` bytes and confirm it remains untracked after that commit
-- leave the branch unpushed; after this commit it should be `ahead 17`, below the `25`-commit push threshold
+- leave the branch unpushed; after this commit it should be `ahead 18`, below the `25`-commit push threshold

@@ -7,6 +7,15 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-29 `.fsm` selected top direction provenance stays visible
+- Continued from commit `8783350` by closing the direction-side sibling of the selected top width provenance slice.
+- Root cause: selected top direction recovery kept separate graph-backed direction state, but `TopPortDirectionEvidence` did not carry source categories; `build_top_signal_inventory(...)` therefore could expose `graph_direction_hint` without saying whether it came from actor-port graph evidence or top-link topology.
+- `TopPortDirectionEvidence` now carries `mention_categories` for graph-backed recovery evidence.
+- Top actor-port direction recovery tags graph evidence as `actor_port`; top-link direction recovery tags graph evidence as `module_topology_link`.
+- `build_top_signal_inventory(...)` merges those graph direction categories beside top-port and width categories, preserving provenance in renderable and blocked selected artifacts without changing `.fsm` emission.
+- Actor-port and blocked top-link provenance assertions failed before the fix and now pass; focused top-composition and full adapter suites are green with `66` adapter tests.
+- Full local CI with `510` Rust tests and the full `127/127` tracked KG fixture suite passed after the selected top direction-provenance projection landed.
+
 ## 2026-04-29 `.fsm` selected top width provenance stays visible
 - Continued from commit `e92fe35` by tightening selected top inventory provenance, not renderability semantics.
 - Root cause: `TopPortWidthEvidence` tracked resolved/conflicted width state but no source category, so `build_top_signal_inventory(...)` always serialized `mention_categories = ["top_port"]` even when width came from actor-port graph or child-link topology.
