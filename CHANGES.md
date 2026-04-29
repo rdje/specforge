@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-29 (`.fsm` child port width now recovers through transitive top-link topology)
+
+### Improved: explicit top-link widths now close over the endpoint graph
+- Explicit top-link topology now computes a fixed-point numeric width closure across top ports and child module endpoints before module topology evidence is emitted.
+- A top-boundary width recovered into one child endpoint can now flow through a sibling child link and recover another child endpoint in the same explicit top composition.
+- Declared endpoint widths remain authoritative, while peer-link compatibility evidence is still fed into child module inventories so contradictory child/top widths collapse to unresolved instead of being silently accepted.
+- Added a live-status tracker row for fixed-point explicit top-link width propagation.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge top_composition_recovers_child_width_through_transitive_topology` first failed before the fix, then passed
+- `cargo test -p specforge top_composition` -> passed with `23` topology tests
+- `cargo test -p specforge ir::adapters::tests` -> passed with `56` adapter tests
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `499` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo fmt --all -- --check` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-29 (`.fsm` sibling child-link source width coverage and SourceIR test isolation)
 
 ### Hardened: sibling child-link width recovery is now locked in both directions

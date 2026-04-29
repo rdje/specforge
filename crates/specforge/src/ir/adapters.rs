@@ -1388,6 +1388,22 @@ struct ModuleTopologyPortDirection {
     automation_confidence: AutomationConfidence,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+enum TopologyEndpointWidthKey {
+    TopPort(String),
+    ModuleSignal {
+        module_name: String,
+        signal_name: String,
+    },
+}
+
+#[derive(Debug, Clone, Copy, Default)]
+struct TopologyEndpointWidthEvidence {
+    width_hint: Option<u32>,
+    locked_declared_width: bool,
+    conflicted: bool,
+}
+
 fn collect_module_topology_port_directions(
     explicit_tops: &[ExplicitTopRecord],
     explicit_modules: &[ExplicitModuleRecord],
@@ -1406,21 +1422,18 @@ fn collect_module_topology_port_directions(
                 )
             })
             .collect::<BTreeMap<_, _>>();
-        let top_port_widths = collect_top_port_numeric_widths(top);
+        let endpoint_widths =
+            collect_topology_endpoint_widths(top, &child_modules, &module_signal_widths);
 
         for link in &top.links {
-            let source_width_hint = if link.target.instance_name.is_none() {
-                top_port_widths
-                    .get(&link.target.signal_name)
-                    .copied()
-                    .flatten()
-            } else {
-                module_signal_numeric_width_for_endpoint(
-                    &link.target,
-                    &child_modules,
-                    &module_signal_widths,
-                )
-            };
+            // Module inventories need the peer width as compatibility evidence; this preserves
+            // declared child/top width conflicts while still using fixed-point recovered widths.
+            let source_width_hint = topology_link_peer_width_for_endpoint(
+                &link.source,
+                &link.target,
+                &child_modules,
+                &endpoint_widths,
+            );
             record_module_topology_port_direction(
                 &mut directions,
                 &child_modules,
@@ -1429,18 +1442,12 @@ fn collect_module_topology_port_directions(
                 source_width_hint,
                 link,
             );
-            let target_width_hint = if link.source.instance_name.is_none() {
-                top_port_widths
-                    .get(&link.source.signal_name)
-                    .copied()
-                    .flatten()
-            } else {
-                module_signal_numeric_width_for_endpoint(
-                    &link.source,
-                    &child_modules,
-                    &module_signal_widths,
-                )
-            };
+            let target_width_hint = topology_link_peer_width_for_endpoint(
+                &link.target,
+                &link.source,
+                &child_modules,
+                &endpoint_widths,
+            );
             record_module_topology_port_direction(
                 &mut directions,
                 &child_modules,
@@ -1457,33 +1464,17 @@ fn collect_module_topology_port_directions(
 
 fn collect_explicit_module_signal_numeric_widths(
     explicit_modules: &[ExplicitModuleRecord],
-) -> BTreeMap<(String, String), Option<u32>> {
-    let mut widths = BTreeMap::<(String, String), Option<u32>>::new();
-    let mut conflicted = BTreeSet::new();
+) -> BTreeMap<(String, String), TopologyEndpointWidthEvidence> {
+    let mut widths = BTreeMap::<(String, String), TopologyEndpointWidthEvidence>::new();
 
     for module in explicit_modules {
         for interface in &module.interfaces {
             for signal in &interface.signal_records {
                 let key = (module.module_name.clone(), signal.signal_name.clone());
-                if conflicted.contains(&key) {
-                    continue;
-                }
-                let Some(width_hint) = signal.width_hint.as_ref().and_then(WidthHint::as_numeric)
-                else {
-                    widths.entry(key).or_insert(None);
-                    continue;
-                };
-
-                match widths.get(&key).copied().flatten() {
-                    Some(existing) if existing != width_hint => {
-                        widths.insert(key.clone(), None);
-                        conflicted.insert(key);
-                    }
-                    Some(_) => {}
-                    None => {
-                        widths.insert(key, Some(width_hint));
-                    }
-                }
+                merge_declared_topology_width(
+                    widths.entry(key).or_default(),
+                    signal.width_hint.as_ref().and_then(WidthHint::as_numeric),
+                );
             }
         }
     }
@@ -1491,45 +1482,163 @@ fn collect_explicit_module_signal_numeric_widths(
     widths
 }
 
-fn module_signal_numeric_width_for_endpoint(
-    endpoint: &ExplicitTopLinkEndpoint,
+fn collect_topology_endpoint_widths(
+    top: &ExplicitTopRecord,
     child_modules: &BTreeMap<String, String>,
-    module_signal_widths: &BTreeMap<(String, String), Option<u32>>,
-) -> Option<u32> {
-    let instance_name = endpoint.instance_name.as_deref()?;
-    let module_name = child_modules.get(instance_name)?;
-    module_signal_widths
-        .get(&(module_name.clone(), endpoint.signal_name.clone()))
-        .copied()
-        .flatten()
-}
-
-fn collect_top_port_numeric_widths(top: &ExplicitTopRecord) -> BTreeMap<String, Option<u32>> {
-    let mut widths = BTreeMap::<String, Option<u32>>::new();
-    let mut conflicted = BTreeSet::new();
+    module_signal_widths: &BTreeMap<(String, String), TopologyEndpointWidthEvidence>,
+) -> BTreeMap<TopologyEndpointWidthKey, TopologyEndpointWidthEvidence> {
+    let mut endpoint_widths =
+        BTreeMap::<TopologyEndpointWidthKey, TopologyEndpointWidthEvidence>::new();
 
     for port in &top.ports {
-        if conflicted.contains(&port.port_name) {
-            continue;
-        }
-        let Some(width_hint) = port.width_hint.as_ref().and_then(WidthHint::as_numeric) else {
-            widths.entry(port.port_name.clone()).or_insert(None);
-            continue;
-        };
+        merge_declared_topology_width(
+            endpoint_widths
+                .entry(TopologyEndpointWidthKey::TopPort(port.port_name.clone()))
+                .or_default(),
+            port.width_hint.as_ref().and_then(WidthHint::as_numeric),
+        );
+    }
 
-        match widths.get(&port.port_name).copied().flatten() {
-            Some(existing) if existing != width_hint => {
-                widths.insert(port.port_name.clone(), None);
-                conflicted.insert(port.port_name.clone());
-            }
-            Some(_) => {}
-            None => {
-                widths.insert(port.port_name.clone(), Some(width_hint));
-            }
+    for ((module_name, signal_name), width) in module_signal_widths {
+        endpoint_widths.insert(
+            TopologyEndpointWidthKey::ModuleSignal {
+                module_name: module_name.clone(),
+                signal_name: signal_name.clone(),
+            },
+            *width,
+        );
+    }
+
+    for link in &top.links {
+        if let Some(key) = topology_endpoint_width_key(&link.source, child_modules) {
+            endpoint_widths.entry(key).or_default();
+        }
+        if let Some(key) = topology_endpoint_width_key(&link.target, child_modules) {
+            endpoint_widths.entry(key).or_default();
         }
     }
 
-    widths
+    loop {
+        let mut changed = false;
+        for link in &top.links {
+            let Some(source_key) = topology_endpoint_width_key(&link.source, child_modules) else {
+                continue;
+            };
+            let Some(target_key) = topology_endpoint_width_key(&link.target, child_modules) else {
+                continue;
+            };
+            if let Some(source_width) = topology_width_for_key(&source_key, &endpoint_widths) {
+                changed |= merge_propagated_topology_width(
+                    endpoint_widths.entry(target_key.clone()).or_default(),
+                    source_width,
+                );
+            }
+            if let Some(target_width) = topology_width_for_key(&target_key, &endpoint_widths) {
+                changed |= merge_propagated_topology_width(
+                    endpoint_widths.entry(source_key.clone()).or_default(),
+                    target_width,
+                );
+            }
+        }
+        if !changed {
+            break;
+        }
+    }
+
+    endpoint_widths
+}
+
+fn merge_declared_topology_width(
+    evidence: &mut TopologyEndpointWidthEvidence,
+    incoming_width: Option<u32>,
+) {
+    if evidence.conflicted {
+        return;
+    }
+    let Some(incoming_width) = incoming_width else {
+        return;
+    };
+    match evidence.width_hint {
+        Some(existing) if existing != incoming_width => {
+            evidence.width_hint = None;
+            evidence.locked_declared_width = true;
+            evidence.conflicted = true;
+        }
+        Some(_) => {
+            evidence.locked_declared_width = true;
+        }
+        None => {
+            evidence.width_hint = Some(incoming_width);
+            evidence.locked_declared_width = true;
+        }
+    }
+}
+
+fn merge_propagated_topology_width(
+    evidence: &mut TopologyEndpointWidthEvidence,
+    incoming_width: u32,
+) -> bool {
+    if evidence.locked_declared_width || evidence.conflicted {
+        return false;
+    }
+    match evidence.width_hint {
+        Some(existing) if existing == incoming_width => false,
+        Some(_) => {
+            evidence.width_hint = None;
+            evidence.conflicted = true;
+            true
+        }
+        None => {
+            evidence.width_hint = Some(incoming_width);
+            true
+        }
+    }
+}
+
+fn topology_endpoint_width_key(
+    endpoint: &ExplicitTopLinkEndpoint,
+    child_modules: &BTreeMap<String, String>,
+) -> Option<TopologyEndpointWidthKey> {
+    if let Some(instance_name) = endpoint.instance_name.as_deref() {
+        return child_modules.get(instance_name).map(|module_name| {
+            TopologyEndpointWidthKey::ModuleSignal {
+                module_name: module_name.clone(),
+                signal_name: endpoint.signal_name.clone(),
+            }
+        });
+    }
+    Some(TopologyEndpointWidthKey::TopPort(
+        endpoint.signal_name.clone(),
+    ))
+}
+
+fn topology_width_for_endpoint(
+    endpoint: &ExplicitTopLinkEndpoint,
+    child_modules: &BTreeMap<String, String>,
+    endpoint_widths: &BTreeMap<TopologyEndpointWidthKey, TopologyEndpointWidthEvidence>,
+) -> Option<u32> {
+    let key = topology_endpoint_width_key(endpoint, child_modules)?;
+    topology_width_for_key(&key, endpoint_widths)
+}
+
+fn topology_link_peer_width_for_endpoint(
+    endpoint: &ExplicitTopLinkEndpoint,
+    peer: &ExplicitTopLinkEndpoint,
+    child_modules: &BTreeMap<String, String>,
+    endpoint_widths: &BTreeMap<TopologyEndpointWidthKey, TopologyEndpointWidthEvidence>,
+) -> Option<u32> {
+    endpoint.instance_name.as_ref()?;
+    topology_width_for_endpoint(peer, child_modules, endpoint_widths)
+}
+
+fn topology_width_for_key(
+    key: &TopologyEndpointWidthKey,
+    endpoint_widths: &BTreeMap<TopologyEndpointWidthKey, TopologyEndpointWidthEvidence>,
+) -> Option<u32> {
+    endpoint_widths
+        .get(key)
+        .filter(|evidence| !evidence.conflicted)
+        .and_then(|evidence| evidence.width_hint)
 }
 
 fn record_module_topology_port_direction(
@@ -8502,6 +8611,72 @@ mod tests {
         assert!(fsm.renderability.is_renderable);
         assert!(emitted_text.contains("(output_data 8)"));
         assert!(emitted_text.contains("/producer.output_data/consumer.input_data/"));
+        assert!(emitted_text.contains("/consumer.result_data/result_data/"));
+
+        Ok(())
+    }
+
+    #[test]
+    fn top_composition_recovers_child_width_through_transitive_topology() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "child_width_through_transitive_topology.md",
+            "# Child Width Through Transitive Topology\nTop datapath.\n\nTop datapath port result_data is output width 8.\n\nTop datapath child producer uses module producer_core.\n\nTop datapath child consumer uses module consumer_core.\n\nTop datapath link producer.output_data -> consumer.input_data.\n\nTop datapath link producer.output_data -> result_data.\n\nTop datapath link consumer.result_data -> result_data.\n\nModule producer_core signal output_data is output.\n\nModule producer_core block produce: output_data = 8'3.\n\nModule consumer_core signal input_data is input.\n\nModule consumer_core signal result_data is output width 8.\n\nModule consumer_core block route: result_data = input_data.\n",
+        )?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+        adapter.write_to_disk()?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "renderable");
+        let emitted_target_path = adapter
+            .artifact_layout
+            .emitted_target_path
+            .as_ref()
+            .expect("transitive-topology-width-backed top adapter should emit target text");
+        let emitted_text = fs::read_to_string(emitted_target_path)?;
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let producer = fsm
+            .module_candidates
+            .iter()
+            .find(|candidate| candidate.module_name == "producer_core")
+            .expect("producer module candidate should exist");
+        let consumer = fsm
+            .module_candidates
+            .iter()
+            .find(|candidate| candidate.module_name == "consumer_core")
+            .expect("consumer module candidate should exist");
+        let output_data = producer
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "output_data")
+            .expect("producer output_data should stay in the module inventory");
+        let input_data = consumer
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "input_data")
+            .expect("consumer input_data should stay in the module inventory");
+
+        assert_eq!(output_data.width_hint, Some(8));
+        assert_eq!(input_data.width_hint, Some(8));
+        assert!([output_data, input_data].iter().all(|signal| {
+            signal
+                .mention_categories
+                .iter()
+                .any(|category| category == "module_topology_link")
+        }));
+        assert!(producer.renderability.is_renderable);
+        assert!(consumer.renderability.is_renderable);
+        assert!(fsm.renderability.is_renderable);
+        assert!(emitted_text.contains("(output_data 8)"));
+        assert!(emitted_text.contains("(input_data 8)"));
+        assert!(emitted_text.contains("/producer.output_data/consumer.input_data/"));
+        assert!(emitted_text.contains("/producer.output_data/result_data/"));
         assert!(emitted_text.contains("/consumer.result_data/result_data/"));
 
         Ok(())

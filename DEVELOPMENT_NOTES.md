@@ -7,6 +7,24 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-29 `.fsm` child module width now consumes transitive top-link topology evidence
+- The sibling child-link recovery slice still had a deeper topology shape hole:
+  - child module port width recovery was one-hop
+  - it could consume the directly opposite endpoint width on a link
+  - but it could not reuse a width that had just been recovered elsewhere in the same explicit top graph
+- The concrete failing shape was:
+  - a top boundary port declares width 8
+  - that width reaches a widthless producer child output through one link
+  - the producer output also links to a widthless consumer child input
+  - the consumer input stayed widthless because the recovered producer width was not available as graph evidence
+- The fix builds an explicit-top endpoint-width graph:
+  - top ports and module signals seed declared numeric widths
+  - declared widths are locked and never overwritten by propagation
+  - links repeatedly propagate non-conflicted numeric widths until the top graph reaches a fixed point
+  - propagated disagreement marks the endpoint conflicted and removes the inferred width
+- Child module topology overlays still use the connected peer's resolved width as compatibility evidence.
+- That last point preserves the existing safety contract: if a child explicitly declares width 16 and links to an 8-bit top port, the module inventory sees contradictory topology evidence and remains blocked instead of silently rendering the child as 16-bit.
+
 ## 2026-04-29 `.fsm` sibling child-link source-width coverage and SourceIR test isolation
 - The sibling child-link width implementation was intentionally symmetric:
   - source child endpoints can consume target child endpoint widths

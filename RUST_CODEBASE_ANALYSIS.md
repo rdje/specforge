@@ -4,6 +4,16 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-29 `.fsm` transitive top-link width recovery)
+- Continued from commit `3598999` by turning the adjacent one-hop topology-width recoveries into a bounded explicit-top endpoint-width closure.
+- The root cause was that `collect_module_topology_port_directions(...)` recovered child widths from directly connected top or sibling child endpoints, but did not make newly recovered endpoint widths visible to other links in the same top composition.
+- `crates/specforge/src/ir/adapters.rs` now models top ports and child module signals as endpoint-width keys, seeds declared numeric widths, and iterates links to a fixed point before emitting module topology overlays.
+- Declared endpoint widths remain locked; propagated conflicts collapse inferred width evidence instead of choosing a convenient side.
+- Module inventories still receive the connected peer's resolved width as link-compatibility evidence, preserving the previous blocking behavior for contradictory child/top declarations.
+- Focused coverage now proves the formerly blocked transitive recovery path, and the topology suite proves sibling/top conflicts still block honestly.
+- Current adapter implementation size after this slice: `9,143` lines in `crates/specforge/src/ir/adapters.rs`.
+- Full local CI baseline for this slice: `499` Rust tests plus warning-deny Clippy/rustdoc and the mdBook build.
+
 ## Session update (2026-04-29 `.fsm` sibling child-link source-width coverage and SourceIR test isolation)
 - Continued from commit `b7274bb` with a focused coverage-hardening pass instead of changing production topology behavior.
 - The previous slice made child-to-child width propagation symmetric in code, but only the target-child recovery direction had positive coverage.

@@ -19,51 +19,51 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `b7274bb`
-- latest_commit_brief_message: `fix(adapter): recover child widths from sibling links`
-- note: the latest committed baseline records child module port width recovery from connected sibling child endpoints
+- latest_commit_hash: `3598999`
+- latest_commit_brief_message: `test: harden sibling width and source env isolation`
+- note: the latest committed baseline locks mirror sibling child-link source-width coverage and fixes SourceIR/Docling shared environment isolation
 
 ## Recent commit chain (last 6)
+- `3598999` test: harden sibling width and source env isolation
 - `b7274bb` fix(adapter): recover child widths from sibling links
 - `b462600` fix(adapter): recover top widths from child links
 - `e9a91dd` fix(adapter): recover module input widths from actor graph
 - `7b266d2` fix(adapter): recover direct input widths from actor graph
 - `abc3405` fix(adapter): recover child widths from top links
-- `bba3a59` fix(adapter): recover top port widths from actor graph
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 1` of `origin/main`
+- branch state before the next commit: `ahead 2` of `origin/main`
 - modified tracked files:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
   - `MEMORY.md`
   - `RUST_CODEBASE_ANALYSIS.md`
+  - `LIVE_ACHIEVEMENT_STATUS.md`
   - `crates/specforge/src/ir/adapters.rs`
-  - `crates/specforge/src/ir/source.rs`
 
 ## Current in-flight slice
 - objective:
-  - lock the source-child mirror of sibling child-link width recovery with focused adapter coverage and fix the SourceIR/Docling shared environment-lock gap exposed by full CI
+  - recover child module port widths through transitive explicit top-link topology by computing a fixed-point endpoint-width graph before module topology overlays
 - tracker effect:
-  - no live-status row changes; the previous sibling child-link width recovery Done row remains the current tracker state
+  - add a live-status Done row for explicit top-link numeric endpoint-width propagation through the top-link graph
 - current tracked KG-quality suite size in the latest committed baseline:
   - `127` fixtures
 - verification status:
   - `cargo fmt --all` passed
-  - `cargo test -p specforge top_composition_recovers_source_child_width_from_sibling_child_link_topology` passed on first run
-  - `cargo test -p specforge ir::adapters::tests` passed with `55` adapter tests
-  - `bash scripts/run_ci.sh` first failed in `pdf_source_ir_materialization_uses_backend_helper_and_writes_manifests` because parallel PATH mutation hid `dirname`, `mkdir`, and `cat` from the stub shell helper
-  - `cargo test -p specforge pdf_source_ir_materialization_uses_backend_helper_and_writes_manifests` passed after switching SourceIR PDF tests to the shared `env_var_lock()`
-  - `cargo test -p specforge inspect_docling_runtime_prefers` passed after the same shared-lock fix
+  - `cargo test -p specforge top_composition_recovers_child_width_through_transitive_topology` first failed before the fix, then passed
+  - `cargo test -p specforge top_composition` passed with `23` topology tests
+  - `cargo test -p specforge ir::adapters::tests` passed with `56` adapter tests
   - `bash scripts/run_docs_ci.sh` passed
-  - `bash scripts/run_ci.sh` passed on rerun
+  - `bash scripts/run_ci.sh` passed with `499` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `cargo fmt --all -- --check` passed
   - `git diff --check` passed
 - current known local CI baseline:
-  - `498` Rust tests plus warning-deny rustdoc and the mdBook build
+  - `499` Rust tests plus warning-deny Clippy/rustdoc and the mdBook build
 
 ## Next exact steps
-- commit the sibling child-link source-width coverage and SourceIR test-isolation slice
+- run the final stale-doc scan after these doc status updates
+- commit the transitive top-link endpoint-width recovery slice
 - truncate `git_message_brief.txt` back to `0` bytes and confirm it remains untracked after that commit
-- leave the branch unpushed unless it reaches the `25`-commit threshold
+- leave the branch unpushed; after this commit it should be `ahead 3`, below the `25`-commit push threshold

@@ -162,6 +162,7 @@
 - `.fsm` standalone sequential system-contract direction recovery from graph-backed actor ports is regression-locked: Done
 - `.fsm` explicit top-root lowering now recovers missing top boundary port widths from connected child module endpoint widths in explicit top-link topology: Done
 - `.fsm` explicit top-link topology now recovers missing child module port widths from connected sibling child module endpoint widths: Done
+- `.fsm` explicit top-link topology now propagates numeric child/top endpoint widths through the explicit top-link graph before module lowering: Done
 - `.fsm` explicit top-link topology now recovers missing child module port widths from the opposite numeric top-boundary endpoint: Done
 - `.fsm` explicit top-root lowering now recovers width-only top boundary port directions from explicit top-link topology: Done
 - `.fsm` explicit top-root lowering now recovers width-only top boundary port directions from matching top actor ports: Done
