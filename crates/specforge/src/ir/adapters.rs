@@ -750,15 +750,20 @@ struct TopPortDirectionEvidence {
     direction_conflicted: bool,
     mention_categories: BTreeSet<String>,
     supporting_canonical_ids: BTreeSet<String>,
+    automation_confidence: AutomationConfidence,
 }
 
 impl TopPortDirectionEvidence {
-    fn new(direction_hint: Option<InterfaceSignalDirection>) -> Self {
+    fn new(
+        direction_hint: Option<InterfaceSignalDirection>,
+        automation_confidence: AutomationConfidence,
+    ) -> Self {
         Self {
             direction_hint,
             direction_conflicted: false,
             mention_categories: BTreeSet::new(),
             supporting_canonical_ids: BTreeSet::new(),
+            automation_confidence,
         }
     }
 }
@@ -769,15 +774,17 @@ struct TopPortWidthEvidence {
     width_conflicted: bool,
     mention_categories: BTreeSet<String>,
     supporting_canonical_ids: BTreeSet<String>,
+    automation_confidence: AutomationConfidence,
 }
 
 impl TopPortWidthEvidence {
-    fn new(width_hint: Option<WidthHint>) -> Self {
+    fn new(width_hint: Option<WidthHint>, automation_confidence: AutomationConfidence) -> Self {
         Self {
             width_hint,
             width_conflicted: false,
             mention_categories: BTreeSet::new(),
             supporting_canonical_ids: BTreeSet::new(),
+            automation_confidence,
         }
     }
 }
@@ -786,6 +793,7 @@ impl TopPortWidthEvidence {
 struct TopPortDirectionRecovery {
     direction_hint: InterfaceSignalDirection,
     supporting_canonical_ids: Vec<String>,
+    automation_confidence: AutomationConfidence,
     evidence_description: String,
 }
 
@@ -794,6 +802,7 @@ struct TopPortWidthRecovery {
     width_hint: WidthHint,
     mention_category: &'static str,
     supporting_canonical_ids: Vec<String>,
+    automation_confidence: AutomationConfidence,
     evidence_description: String,
 }
 
@@ -801,6 +810,7 @@ struct TopPortWidthRecovery {
 struct TopPortEvidenceProvenance {
     mention_category: &'static str,
     supporting_canonical_ids: Vec<String>,
+    automation_confidence: AutomationConfidence,
     evidence_description: String,
 }
 
@@ -2344,11 +2354,12 @@ fn build_top_signal_inventory(
         .iter()
         .zip(resolved_ports.iter())
         .map(|(raw_port, resolved_port)| {
-            let declared_direction = declared_directions
-                .get(&raw_port.port_name)
+            let declared_direction_evidence = declared_directions.get(&raw_port.port_name);
+            let declared_direction = declared_direction_evidence
                 .filter(|evidence| !evidence.direction_conflicted)
                 .and_then(|evidence| evidence.direction_hint);
             let graph_evidence = graph_directions.get(&raw_port.port_name);
+            let width_evidence = widths.get(&raw_port.port_name);
             let graph_direction = graph_evidence
                 .filter(|evidence| !evidence.direction_conflicted)
                 .and_then(|evidence| evidence.direction_hint);
@@ -2367,7 +2378,7 @@ fn build_top_signal_inventory(
             if let Some(graph_evidence) = graph_evidence {
                 mention_categories.extend(graph_evidence.mention_categories.iter().cloned());
             }
-            if let Some(width_evidence) = widths.get(&raw_port.port_name) {
+            if let Some(width_evidence) = width_evidence {
                 mention_categories.extend(width_evidence.mention_categories.iter().cloned());
             }
             let mut supporting_canonical_ids =
@@ -2376,9 +2387,28 @@ fn build_top_signal_inventory(
                 supporting_canonical_ids
                     .extend(graph_evidence.supporting_canonical_ids.iter().cloned());
             }
-            if let Some(width_evidence) = widths.get(&raw_port.port_name) {
+            if let Some(width_evidence) = width_evidence {
                 supporting_canonical_ids
                     .extend(width_evidence.supporting_canonical_ids.iter().cloned());
+            }
+            let mut automation_confidence = resolved_port.automation_confidence;
+            if let Some(declared_direction_evidence) = declared_direction_evidence {
+                automation_confidence = max_automation_confidence(
+                    automation_confidence,
+                    declared_direction_evidence.automation_confidence,
+                );
+            }
+            if let Some(graph_evidence) = graph_evidence {
+                automation_confidence = max_automation_confidence(
+                    automation_confidence,
+                    graph_evidence.automation_confidence,
+                );
+            }
+            if let Some(width_evidence) = width_evidence {
+                automation_confidence = max_automation_confidence(
+                    automation_confidence,
+                    width_evidence.automation_confidence,
+                );
             }
 
             FsmSignalCandidate {
@@ -2405,7 +2435,7 @@ fn build_top_signal_inventory(
                     .is_some_and(|evidence| evidence.width_conflicted),
                 supporting_canonical_ids: supporting_canonical_ids.into_iter().collect(),
                 mention_categories: mention_categories.into_iter().collect(),
-                automation_confidence: resolved_port.automation_confidence,
+                automation_confidence,
             }
         })
         .collect()
@@ -2504,6 +2534,7 @@ fn analyze_top_renderability(
                     direction_evidence,
                     &port.port_name,
                     direction_hint,
+                    port.automation_confidence,
                     &format!("Duplicate top port declaration `{}`", port.port_name),
                     &mut blocking_reasons,
                     &mut required_canonical_enrichments,
@@ -2512,7 +2543,7 @@ fn analyze_top_renderability(
         } else {
             declared_top_port_directions.insert(
                 port.port_name.clone(),
-                TopPortDirectionEvidence::new(port.direction_hint),
+                TopPortDirectionEvidence::new(port.direction_hint, port.automation_confidence),
             );
         }
         if let Some(width_evidence) = top_port_widths.get_mut(&port.port_name) {
@@ -2524,6 +2555,7 @@ fn analyze_top_renderability(
                         width_hint,
                         mention_category: "top_port",
                         supporting_canonical_ids: port.supporting_statement_ids.clone(),
+                        automation_confidence: port.automation_confidence,
                         evidence_description: format!(
                             "Duplicate top port declaration `{}`",
                             port.port_name
@@ -2536,7 +2568,7 @@ fn analyze_top_renderability(
         } else {
             top_port_widths.insert(
                 port.port_name.clone(),
-                TopPortWidthEvidence::new(port.width_hint.clone()),
+                TopPortWidthEvidence::new(port.width_hint.clone(), port.automation_confidence),
             );
         }
     }
@@ -2545,7 +2577,12 @@ fn analyze_top_renderability(
     let mut graph_top_port_directions = top
         .ports
         .iter()
-        .map(|port| (port.port_name.clone(), TopPortDirectionEvidence::new(None)))
+        .map(|port| {
+            (
+                port.port_name.clone(),
+                TopPortDirectionEvidence::new(None, AutomationConfidence::Low),
+            )
+        })
         .collect::<BTreeMap<_, _>>();
 
     merge_top_port_evidence_from_actor_ports(
@@ -2567,6 +2604,7 @@ fn analyze_top_renderability(
                 TopPortDirectionRecovery {
                     direction_hint: InterfaceSignalDirection::Input,
                     supporting_canonical_ids: explicit_top_link_supporting_ids(link),
+                    automation_confidence: link.automation_confidence,
                     evidence_description: format!(
                         "Top link source `{}`",
                         render_top_link_endpoint(&link.source)
@@ -2584,6 +2622,7 @@ fn analyze_top_renderability(
                 TopPortDirectionRecovery {
                     direction_hint: InterfaceSignalDirection::Output,
                     supporting_canonical_ids: explicit_top_link_supporting_ids(link),
+                    automation_confidence: link.automation_confidence,
                     evidence_description: format!(
                         "Top link target `{}`",
                         render_top_link_endpoint(&link.target)
@@ -2888,6 +2927,7 @@ fn merge_top_port_width_evidence_from_child_links(
                 TopPortEvidenceProvenance {
                     mention_category: "module_topology_link",
                     supporting_canonical_ids: explicit_top_link_supporting_ids(link),
+                    automation_confidence: link.automation_confidence,
                     evidence_description: format!(
                         "Top link target `{}`",
                         render_top_link_endpoint(&link.target)
@@ -2906,6 +2946,7 @@ fn merge_top_port_width_evidence_from_child_links(
                 TopPortEvidenceProvenance {
                     mention_category: "module_topology_link",
                     supporting_canonical_ids: explicit_top_link_supporting_ids(link),
+                    automation_confidence: link.automation_confidence,
                     evidence_description: format!(
                         "Top link source `{}`",
                         render_top_link_endpoint(&link.source)
@@ -2952,6 +2993,7 @@ fn merge_top_port_width_evidence_from_child_endpoint(
             width_hint: WidthHint::Numeric(width_hint),
             mention_category: provenance.mention_category,
             supporting_canonical_ids: provenance.supporting_canonical_ids,
+            automation_confidence: provenance.automation_confidence,
             evidence_description: provenance.evidence_description,
         },
         blocking_reasons,
@@ -3050,18 +3092,23 @@ fn merge_top_port_evidence_from_actor_ports(
         {
             let graph_direction_evidence = graph_top_port_directions
                 .entry(port.signal_name.clone())
-                .or_insert_with(|| TopPortDirectionEvidence::new(None));
+                .or_insert_with(|| TopPortDirectionEvidence::new(None, AutomationConfidence::Low));
             graph_direction_evidence
                 .mention_categories
                 .insert("actor_port".to_string());
             graph_direction_evidence
                 .supporting_canonical_ids
                 .extend(supporting_ids.iter().cloned());
+            graph_direction_evidence.automation_confidence = max_automation_confidence(
+                graph_direction_evidence.automation_confidence,
+                port.automation_confidence,
+            );
             merge_top_port_direction_hint(graph_direction_evidence, direction_hint);
             merge_top_port_direction_evidence(
                 direction_evidence,
                 &port.signal_name,
                 direction_hint,
+                port.automation_confidence,
                 &format!(
                     "Top actor-port graph `{}.{}`",
                     port.actor_name, port.signal_name
@@ -3084,6 +3131,7 @@ fn merge_top_port_evidence_from_actor_ports(
                 width_hint,
                 mention_category: "actor_port_width",
                 supporting_canonical_ids: supporting_ids,
+                automation_confidence: port.automation_confidence,
                 evidence_description: format!(
                     "Top actor-port graph `{}.{}`",
                     port.actor_name, port.signal_name
@@ -3112,19 +3160,24 @@ fn merge_top_port_direction_from_link(
 
     let graph_direction_evidence = graph_top_port_directions
         .entry(port_name.to_string())
-        .or_insert_with(|| TopPortDirectionEvidence::new(None));
+        .or_insert_with(|| TopPortDirectionEvidence::new(None, AutomationConfidence::Low));
     graph_direction_evidence
         .mention_categories
         .insert("module_topology_link".to_string());
     graph_direction_evidence
         .supporting_canonical_ids
         .extend(recovery.supporting_canonical_ids);
+    graph_direction_evidence.automation_confidence = max_automation_confidence(
+        graph_direction_evidence.automation_confidence,
+        recovery.automation_confidence,
+    );
     merge_top_port_direction_hint(graph_direction_evidence, recovery.direction_hint);
 
     merge_top_port_direction_evidence(
         direction_evidence,
         port_name,
         recovery.direction_hint,
+        recovery.automation_confidence,
         &recovery.evidence_description,
         blocking_reasons,
         required_canonical_enrichments,
@@ -3135,10 +3188,16 @@ fn merge_top_port_direction_evidence(
     direction_evidence: &mut TopPortDirectionEvidence,
     port_name: &str,
     direction_hint: InterfaceSignalDirection,
+    automation_confidence: AutomationConfidence,
     evidence_description: &str,
     blocking_reasons: &mut Vec<String>,
     required_canonical_enrichments: &mut BTreeSet<String>,
 ) {
+    direction_evidence.automation_confidence = max_automation_confidence(
+        direction_evidence.automation_confidence,
+        automation_confidence,
+    );
+
     if direction_evidence.direction_conflicted {
         return;
     }
@@ -3194,6 +3253,10 @@ fn merge_top_port_width_evidence(
     width_evidence
         .supporting_canonical_ids
         .extend(recovery.supporting_canonical_ids);
+    width_evidence.automation_confidence = max_automation_confidence(
+        width_evidence.automation_confidence,
+        recovery.automation_confidence,
+    );
 
     if width_evidence.width_conflicted {
         return;
@@ -8525,31 +8588,36 @@ mod tests {
     #[test]
     fn top_composition_recovers_top_port_direction_from_link_topology() -> Result<()> {
         let tempdir = tempdir()?;
-        let intent_ir = build_width_only_top_port_composition_intent_ir(tempdir.path())?;
-        let explicit_top = intent_ir
-            .explicit_tops
-            .iter()
-            .find(|top| top.top_name == "datapath")
-            .expect("explicit top should be present");
-        let raw_port = explicit_top
-            .ports
-            .iter()
-            .find(|port| port.port_name == "result_data")
-            .expect("width-only top port should be preserved");
+        let mut intent_ir = build_width_only_top_port_composition_intent_ir(tempdir.path())?;
+        let topology_support_ids = {
+            let explicit_top = intent_ir
+                .explicit_tops
+                .iter_mut()
+                .find(|top| top.top_name == "datapath")
+                .expect("explicit top should be present");
+            let raw_port = explicit_top
+                .ports
+                .iter_mut()
+                .find(|port| port.port_name == "result_data")
+                .expect("width-only top port should be preserved");
 
-        assert_eq!(raw_port.direction_hint, None);
-        assert_eq!(
-            raw_port.width_hint.as_ref().and_then(|w| w.as_numeric()),
-            Some(8)
-        );
-        let topology_support_ids = explicit_top
-            .links
-            .iter()
-            .find(|link| {
-                link.target.instance_name.is_none() && link.target.signal_name == "result_data"
-            })
-            .map(super::explicit_top_link_supporting_ids)
-            .expect("topology link into result_data should be present");
+            assert_eq!(raw_port.direction_hint, None);
+            assert_eq!(
+                raw_port.width_hint.as_ref().and_then(|w| w.as_numeric()),
+                Some(8)
+            );
+            raw_port.automation_confidence = AutomationConfidence::Low;
+            let topology_link = explicit_top
+                .links
+                .iter_mut()
+                .find(|link| {
+                    link.target.instance_name.is_none() && link.target.signal_name == "result_data"
+                })
+                .expect("topology link into result_data should be present");
+            topology_link.automation_confidence = AutomationConfidence::High;
+            super::explicit_top_link_supporting_ids(topology_link)
+        };
+        intent_ir.write_to_disk()?;
 
         let artifact_base = tempdir.path().join("generated").join("adapters");
         let adapter = AdapterArtifact::build(
@@ -8603,6 +8671,10 @@ mod tests {
                 .iter()
                 .any(|id| signal_inventory_port.supporting_canonical_ids.contains(id))
         );
+        assert_eq!(
+            signal_inventory_port.automation_confidence,
+            AutomationConfidence::High
+        );
         assert!(emitted_text.contains("result_data>8"));
 
         Ok(())
@@ -8616,17 +8688,20 @@ mod tests {
             "top_actor_port_direction.md",
             "# Top Actor Port Direction\nTop wrapper.\n\nTop wrapper port ext_data is width 8.\n\nTop wrapper child producer uses module producer_core.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n",
         )?;
-        let raw_top = intent_ir
-            .explicit_tops
-            .iter()
-            .find(|top| top.top_name == "wrapper")
-            .expect("explicit top should be present");
-        let raw_port = raw_top
-            .ports
-            .iter()
-            .find(|port| port.port_name == "ext_data")
-            .expect("width-only top port should be preserved");
-        assert_eq!(raw_port.direction_hint, None);
+        {
+            let raw_top = intent_ir
+                .explicit_tops
+                .iter_mut()
+                .find(|top| top.top_name == "wrapper")
+                .expect("explicit top should be present");
+            let raw_port = raw_top
+                .ports
+                .iter_mut()
+                .find(|port| port.port_name == "ext_data")
+                .expect("width-only top port should be preserved");
+            assert_eq!(raw_port.direction_hint, None);
+            raw_port.automation_confidence = AutomationConfidence::Low;
+        }
 
         intent_ir.actor_ports = vec![actor_port(
             "wrapper",
@@ -8688,6 +8763,10 @@ mod tests {
                 .iter()
                 .any(|id| id == "graph_wrapper_ext_data")
         );
+        assert_eq!(
+            signal_inventory_port.automation_confidence,
+            AutomationConfidence::High
+        );
         assert!(emitted_text.contains("ext_data>8"));
 
         Ok(())
@@ -8701,21 +8780,24 @@ mod tests {
             "top_actor_port_width.md",
             "# Top Actor Port Width\nTop wrapper.\n\nTop wrapper port ext_data is output.\n\nTop wrapper child producer uses module producer_core.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n",
         )?;
-        let raw_top = intent_ir
-            .explicit_tops
-            .iter()
-            .find(|top| top.top_name == "wrapper")
-            .expect("explicit top should be present");
-        let raw_port = raw_top
-            .ports
-            .iter()
-            .find(|port| port.port_name == "ext_data")
-            .expect("widthless top port should be preserved");
-        assert_eq!(
-            raw_port.direction_hint,
-            Some(InterfaceSignalDirection::Output)
-        );
-        assert_eq!(raw_port.width_hint, None);
+        {
+            let raw_top = intent_ir
+                .explicit_tops
+                .iter_mut()
+                .find(|top| top.top_name == "wrapper")
+                .expect("explicit top should be present");
+            let raw_port = raw_top
+                .ports
+                .iter_mut()
+                .find(|port| port.port_name == "ext_data")
+                .expect("widthless top port should be preserved");
+            assert_eq!(
+                raw_port.direction_hint,
+                Some(InterfaceSignalDirection::Output)
+            );
+            assert_eq!(raw_port.width_hint, None);
+            raw_port.automation_confidence = AutomationConfidence::Low;
+        }
 
         intent_ir.actor_ports = vec![actor_port_with_numeric_width(
             "wrapper",
@@ -8776,6 +8858,10 @@ mod tests {
                 .supporting_canonical_ids
                 .iter()
                 .any(|id| id == "graph_wrapper_ext_data")
+        );
+        assert_eq!(
+            signal_inventory_port.automation_confidence,
+            AutomationConfidence::High
         );
         assert!(emitted_text.contains("ext_data>8"));
 
@@ -9867,22 +9953,39 @@ mod tests {
     #[test]
     fn top_composition_recovers_top_port_width_from_child_link_topology() -> Result<()> {
         let tempdir = tempdir()?;
-        let intent_ir = build_intent_ir_from_markdown(
+        let mut intent_ir = build_intent_ir_from_markdown(
             tempdir.path(),
             "top_port_width_from_child_link.md",
             "# Top Port Width From Child Link\nTop datapath.\n\nTop datapath port result_data is output.\n\nTop datapath child producer uses module producer_core.\n\nTop datapath link producer.output_data -> result_data.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n",
         )?;
-        let topology_support_ids = intent_ir
-            .explicit_tops
-            .iter()
-            .find(|top| top.top_name == "datapath")
-            .and_then(|top| {
-                top.links.iter().find(|link| {
+        let topology_support_ids = {
+            let explicit_top = intent_ir
+                .explicit_tops
+                .iter_mut()
+                .find(|top| top.top_name == "datapath")
+                .expect("explicit top should be present");
+            let raw_port = explicit_top
+                .ports
+                .iter_mut()
+                .find(|port| port.port_name == "result_data")
+                .expect("widthless top port should be preserved");
+            assert_eq!(
+                raw_port.direction_hint,
+                Some(InterfaceSignalDirection::Output)
+            );
+            assert_eq!(raw_port.width_hint, None);
+            raw_port.automation_confidence = AutomationConfidence::Low;
+            let topology_link = explicit_top
+                .links
+                .iter_mut()
+                .find(|link| {
                     link.target.instance_name.is_none() && link.target.signal_name == "result_data"
                 })
-            })
-            .map(super::explicit_top_link_supporting_ids)
-            .expect("topology link into result_data should be present");
+                .expect("topology link into result_data should be present");
+            topology_link.automation_confidence = AutomationConfidence::High;
+            super::explicit_top_link_supporting_ids(topology_link)
+        };
+        intent_ir.write_to_disk()?;
 
         let artifact_base = tempdir.path().join("generated").join("adapters");
         let adapter = AdapterArtifact::build(
@@ -9934,6 +10037,10 @@ mod tests {
             topology_support_ids
                 .iter()
                 .any(|id| signal_inventory_port.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            signal_inventory_port.automation_confidence,
+            AutomationConfidence::High
         );
         assert!(fsm.renderability.is_renderable);
         assert!(emitted_text.contains("result_data>8"));

@@ -19,22 +19,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `0d2c9df029bfd7dfd5ace952b2afb672b10b8c50`
-- latest_commit_brief_message: `fix(adapter): preserve top direction provenance`
-- note: the latest committed baseline keeps recovered selected top direction provenance categories visible for actor-port and top-link topology evidence
+- latest_commit_hash: `75b580a4b09962a00be9a70b36732b608f972e22`
+- latest_commit_brief_message: `fix(adapter): preserve top support ids`
+- note: the latest committed baseline keeps recovered selected top support IDs visible for actor-port and top-link topology evidence
 
 ## Recent commit chain (last 6)
+- `75b580a` fix(adapter): preserve top support ids
 - `0d2c9df` fix(adapter): preserve top direction provenance
 - `8783350` fix(adapter): preserve top width provenance
 - `e92fe35` test(adapter): lock top system contract distribution
 - `4846128` fix(adapter): materialize system contract signals
 - `7bab72c` fix(adapter): preserve actor parametric widths
-- `d22ae1f` fix(adapter): preserve parametric width evidence
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 18` of `origin/main`
+- branch state before the next commit: `ahead 19` of `origin/main`
 - modified tracked files:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -45,17 +45,15 @@
 
 ## Current in-flight slice
 - objective:
-  - preserve selected top signal-inventory supporting canonical IDs when top-boundary direction/width evidence is recovered from actor-port graph or top-link topology evidence
+  - preserve selected top signal-inventory automation confidence when top-boundary direction/width evidence is recovered from actor-port graph or top-link topology evidence
 - tracker effect:
-  - added a `Done` live-status row for selected top supporting canonical IDs from recovered top-boundary direction/width evidence
+  - added a `Done` live-status row for selected top automation confidence from recovered top-boundary direction/width evidence
 - verification status:
-  - `cargo test --manifest-path Cargo.toml top_composition_recovers_top_port_direction_from_actor_ports -- --nocapture` failed before the fix, then passed
-  - `cargo test --manifest-path Cargo.toml top_composition_recovers_top_port_width_from_child_link_topology -- --nocapture` failed before the fix, then passed
-  - `cargo test --manifest-path Cargo.toml top_composition_recovers_top_port_width_from_actor_ports -- --nocapture` passed
-  - `cargo test --manifest-path Cargo.toml top_composition_preserves_recovered_top_port_direction_when_still_blocked -- --nocapture` passed
-  - `cargo test --manifest-path Cargo.toml top_composition_recovers_top_port_direction_from_link_topology -- --nocapture` passed
-  - `cargo test --manifest-path Cargo.toml top_composition -- --nocapture` passed with `27` top-composition tests
-  - `cargo test --manifest-path Cargo.toml ir::adapters::tests -- --nocapture` passed with `66` adapter tests
+  - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::top_composition_recovers_top_port_direction_from_actor_ports -- --exact --nocapture` failed before the fix with selected inventory confidence `Low` instead of `High`, then passed
+  - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::top_composition_recovers_top_port_direction_from_link_topology -- --exact --nocapture` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::top_composition_recovers_top_port_width_from_actor_ports -- --exact --nocapture` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::top_composition_recovers_top_port_width_from_child_link_topology -- --exact --nocapture` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests -- --nocapture` passed with `66` adapter tests
   - `cargo fmt --manifest-path Cargo.toml` passed
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `git diff --check` passed
@@ -67,6 +65,6 @@
 
 ## Next exact steps
 - rerun final lightweight formatting, docs, and whitespace checks after validation-doc updates
-- commit the selected top support-ID provenance slice
+- commit the selected top confidence-provenance slice
 - truncate `git_message_brief.txt` back to `0` bytes and confirm it remains untracked after that commit
-- leave the branch unpushed; after this commit it should be `ahead 19`, below the `25`-commit push threshold
+- leave the branch unpushed; after this commit it should be `ahead 20`, below the `25`-commit push threshold

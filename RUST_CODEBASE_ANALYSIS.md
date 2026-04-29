@@ -4,6 +4,16 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-29 `.fsm` selected top confidence provenance)
+- Continued from commit `75b580a` by tightening selected top automation-confidence projection after recovered categories and support IDs were preserved.
+- The root cause was that selected top inventory still used `resolved_port.automation_confidence` after merging recovered direction/width provenance from actor ports and top links.
+- `TopPortDirectionEvidence` and `TopPortWidthEvidence` now carry `AutomationConfidence` through the same ledgers that carry recovered/conflicted state, source categories, and supporting canonical IDs.
+- Actor-port top direction/width recovery contributes actor-port confidence; top-link direction and child-endpoint width recovery contribute explicit top-link confidence.
+- `build_top_signal_inventory(...)` now max-folds explicit/declaration, graph-direction, and width-evidence confidence into the selected `FsmSignalCandidate`.
+- The change is artifact-shape only: renderability, conflict behavior, and emitted `.fsm` text remain unchanged.
+- The actor-port direction confidence assertion failed before the fix and now passes; sibling topology direction and actor/topology width assertions passed after the implementation. The full adapter suite passed with `66` tests.
+- Full local verification for this slice: `510` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-29 `.fsm` selected top support-ID provenance)
 - Continued from commit `0d2c9df` by tightening selected top support-ID projection after the recovered category lanes landed.
 - The root cause was that selected top inventory merged recovered direction/width source categories but left `supporting_canonical_ids` tied to `resolved_port.supporting_statement_ids` only.
