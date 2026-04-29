@@ -7,6 +7,20 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-29 `.fsm` top public IO widths are renderability-gated
+- The top-boundary width recovery work closed many positive paths, but it left one unsafe fallback:
+  - `analyze_top_renderability(...)` used recovered top-port directions to decide whether a top public IO could render
+  - `render_top_port_token(...)` treats absent numeric width as implicit 1-bit syntax
+  - a direction-only or parametric top port could therefore emit `.fsm` text even though the active adapter slice cannot prove a numeric public IO width
+- `validate_top_port_width_renderability(...)` now runs after actor-port and child-link width recovery, so all known graph/topology evidence gets a chance to complete the port first.
+- The validator blocks three non-renderable states explicitly:
+  - missing numeric top width evidence
+  - conflicting top-boundary width evidence
+  - parametric width evidence, because the current `.fsm` adapter only renders numeric widths
+- Existing recovery paths remain renderable: explicit numeric widths, top actor-port widths, and child-link-derived top widths still pass.
+- Two regressions first reproduced the silent-rendering bug, then passed after the shared validator landed; the focused top-composition and full adapter suites are green.
+- Full local CI with `503` Rust tests and the full `127/127` tracked KG fixture suite passed after the top-public-IO width gate landed.
+
 ## 2026-04-29 `.fsm` width conflicts preserve provenance through renderability
 - The graph-direction diagnostic split exposed the width analogue:
   - `SignalInventoryEvidence` already tracked `width_hint_conflicted`

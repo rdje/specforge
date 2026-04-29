@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-04-29 (`.fsm` top public IO widths must be explicit numeric evidence)
+
+### Fixed: top ports no longer silently degrade missing widths to implicit 1-bit syntax
+- Explicit top-root renderability now validates every public top port after actor-port and top-link width recovery have run.
+- Missing top-boundary width evidence now blocks `.fsm` emission instead of letting `render_top_port_token(...)` print an implicit 1-bit port.
+- Parametric top-boundary widths also block the active `.fsm` slice, matching the adapter-wide numeric-width-only rendering contract.
+- Existing recovery lanes stay intact: explicit numeric top widths, matching top actor-port widths, and child-link topology widths still make top public IO renderable.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml top_composition_blocks_widthless_top_port_without_width_recovery -- --nocapture` -> failed before the fix, then passed
+- `cargo test --manifest-path Cargo.toml top_composition_blocks_parametric_top_port_width_for_fsm_public_io -- --nocapture` -> failed before the fix, then passed
+- `cargo test --manifest-path Cargo.toml top_composition -- --nocapture` -> passed with `25` top-composition tests
+- `cargo test --manifest-path Cargo.toml ir::adapters::tests -- --nocapture` -> passed with `59` adapter tests
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `503` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-29 (`.fsm` width conflicts get explicit artifact provenance and diagnostics)
 
 ### Improved: conflicting width evidence no longer looks like a missing width

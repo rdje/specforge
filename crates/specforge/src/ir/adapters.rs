@@ -2601,6 +2601,12 @@ fn analyze_top_renderability(
         &mut required_canonical_enrichments,
     );
     refresh_top_ports_by_name_widths(&mut top_ports_by_name, &top_port_widths);
+    validate_top_port_width_renderability(
+        top,
+        &top_port_widths,
+        &mut blocking_reasons,
+        &mut required_canonical_enrichments,
+    );
 
     for link in &top.links {
         let Some((source_port, source_is_top)) =
@@ -2817,6 +2823,62 @@ fn refresh_top_ports_by_name_widths(
             .get(port_name)
             .and_then(|width| width.width_hint.as_ref())
             .and_then(WidthHint::as_numeric);
+    }
+}
+
+fn validate_top_port_width_renderability(
+    top: &ExplicitTopRecord,
+    top_port_widths: &BTreeMap<String, TopPortWidthEvidence>,
+    blocking_reasons: &mut Vec<String>,
+    required_canonical_enrichments: &mut BTreeSet<String>,
+) {
+    for port in &top.ports {
+        let width_evidence = top_port_widths.get(&port.port_name);
+        if width_evidence.is_some_and(|evidence| evidence.width_conflicted) {
+            push_unique_message(
+                blocking_reasons,
+                &format!(
+                    "Top port `{}` has conflicting top-boundary width evidence required for `.fsm` public IO emission.",
+                    port.port_name
+                ),
+            );
+            required_canonical_enrichments.insert(
+                "resolve conflicting top boundary port width evidence before lowering `?top:name`"
+                    .to_string(),
+            );
+            continue;
+        }
+
+        match width_evidence.and_then(|evidence| evidence.width_hint.as_ref()) {
+            Some(width_hint) if width_hint.as_numeric().is_some() => {}
+            Some(width_hint) => {
+                push_unique_message(
+                    blocking_reasons,
+                    &format!(
+                        "Top port `{}` uses parametric width `{}`; the active `.fsm` adapter slice requires numeric public IO width evidence.",
+                        port.port_name,
+                        render_top_port_width_hint(width_hint)
+                    ),
+                );
+                required_canonical_enrichments.insert(
+                    "resolve parametric top boundary widths to numeric widths before lowering `?top:name`"
+                        .to_string(),
+                );
+            }
+            None => {
+                push_unique_message(
+                    blocking_reasons,
+                    &format!(
+                        "Top port `{}` is missing numeric width evidence required for `.fsm` public IO emission.",
+                        port.port_name
+                    ),
+                );
+                required_canonical_enrichments.insert(
+                    "recover each top boundary port width from explicit declaration, actor-port graph, or top-link topology before lowering `?top:name`"
+                        .to_string(),
+                );
+            }
+        }
     }
 }
 
@@ -8165,6 +8227,127 @@ mod tests {
         );
         assert_eq!(signal_inventory_port.width_hint, Some(8));
         assert!(emitted_text.contains("ext_data>8"));
+
+        Ok(())
+    }
+
+    #[test]
+    fn top_composition_blocks_widthless_top_port_without_width_recovery() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "widthless_top_port_without_recovery.md",
+            "# Widthless Top Port Without Recovery\nTop wrapper.\n\nTop wrapper port ext_data is output.\n\nTop wrapper child producer uses module producer_core.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n",
+        )?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let top_candidate = fsm
+            .top_candidates
+            .iter()
+            .find(|top| top.top_name == "wrapper")
+            .expect("top candidate should be present");
+        let recovered_port = top_candidate
+            .ports
+            .iter()
+            .find(|port| port.port_name == "ext_data")
+            .expect("widthless top port should stay visible");
+        let signal_inventory_port = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "ext_data")
+            .expect("widthless top port should stay in selected top inventory");
+
+        assert_eq!(
+            recovered_port.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert_eq!(recovered_port.width_hint, None);
+        assert_eq!(signal_inventory_port.width_hint, None);
+        assert!(!signal_inventory_port.width_hint_conflicted);
+        assert!(
+            top_candidate
+                .renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason.contains("missing numeric width evidence"))
+        );
+        assert!(!fsm.renderability.is_renderable);
+
+        Ok(())
+    }
+
+    #[test]
+    fn top_composition_blocks_parametric_top_port_width_for_fsm_public_io() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "parametric_top_port_width.md",
+            "# Parametric Top Port Width\nTop wrapper.\n\nTop wrapper port ext_data is output width DATA_WIDTH.\n\nTop wrapper child producer uses module producer_core.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n",
+        )?;
+        let raw_top = intent_ir
+            .explicit_tops
+            .iter()
+            .find(|top| top.top_name == "wrapper")
+            .expect("explicit top should be present");
+        let raw_port = raw_top
+            .ports
+            .iter()
+            .find(|port| port.port_name == "ext_data")
+            .expect("parametric top port should be preserved");
+        assert_eq!(
+            raw_port.width_hint,
+            Some(WidthHint::Parametric("DATA_WIDTH".to_string()))
+        );
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let top_candidate = fsm
+            .top_candidates
+            .iter()
+            .find(|top| top.top_name == "wrapper")
+            .expect("top candidate should be present");
+        let recovered_port = top_candidate
+            .ports
+            .iter()
+            .find(|port| port.port_name == "ext_data")
+            .expect("parametric top port should stay visible");
+        let signal_inventory_port = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "ext_data")
+            .expect("parametric top port should stay in selected top inventory");
+
+        assert_eq!(
+            recovered_port.width_hint,
+            Some(WidthHint::Parametric("DATA_WIDTH".to_string()))
+        );
+        assert_eq!(signal_inventory_port.width_hint, None);
+        assert!(!signal_inventory_port.width_hint_conflicted);
+        assert!(
+            top_candidate
+                .renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason.contains("parametric width `DATA_WIDTH`"))
+        );
+        assert!(!fsm.renderability.is_renderable);
 
         Ok(())
     }

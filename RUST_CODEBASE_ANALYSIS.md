@@ -4,6 +4,14 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-29 `.fsm` top public IO width renderability gate)
+- Continued from commit `af3962a` by tightening a top-composition safety seam adjacent to the width-conflict work.
+- The root cause was that top renderability validated direction recovery but did not require a numeric public IO width before `render_top_port_token(...)` ran. Because that renderer prints widthless top inputs/outputs as implicit 1-bit ports, a direction-only or parametric top port could emit misleading `.fsm` text.
+- `analyze_top_renderability(...)` now calls `validate_top_port_width_renderability(...)` after top actor-port and child-link width recovery, so valid recovery paths still complete before the gate fires.
+- The new gate blocks missing, conflicted, and parametric top-boundary width evidence for public IO emission while preserving explicit numeric, top actor-port, and child-link topology recovery paths.
+- Two focused regressions first reproduced the unsafe renderability result, then passed after the validator landed. Top-composition coverage now has `25` tests, and the full adapter suite now has `59` tests.
+- Full local verification for this slice: `503` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-29 `.fsm` width-conflict artifact provenance and diagnostics)
 - Continued from commit `b6255cf` by applying the same conflict-vs-missing renderability split to width evidence.
 - The root cause was a projection gap: `SignalInventoryEvidence` carried `width_hint_conflicted`, but `FsmSignalCandidate` only serialized the resolved numeric `width_hint`. Once a width conflict collapsed to `None`, downstream diagnostics could not distinguish conflict from absence.
