@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-30 (`.fsm` renderable top-root ports keep actor-port width provenance)
+
+### Added: actor-port-recovered renderable top-port widths are regression-locked
+- Extended the top actor-port width recovery regression to assert `renderable_document.top_root.ports` carries recovered width, supporting IDs, and automation confidence.
+- This closes the actor-port width sibling of the prior actor-port direction renderable lock: matching top actor-port evidence now proves both direction and width provenance at the final renderable-document boundary.
+- The test proves a recovered `graph_wrapper_ext_data` support ID and high confidence survive into the renderable `?top:wrapper` document model before text emission.
+- No production behavior changed; the prior resolved-port provenance merge already feeds the renderable top-root port vector.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::top_composition_recovers_top_port_width_from_actor_ports -- --exact --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests -- --nocapture` -> passed with `67` adapter tests
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `511` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-30 (`.fsm` renderable top-root ports keep top-link width provenance)
 
 ### Added: topology-recovered renderable top-port widths are regression-locked
