@@ -7,6 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-29 `.fsm` explicit module control-input width now consumes actor graph shape
+- The direct-root actor-port width overlay exposed the matching explicit-module seam:
+  - module-local control reads could recover input direction
+  - external actor-port graph evidence could carry the consumed signal's numeric width
+  - but `build_module_candidate(...)` only consumed width from the module actor itself, so a widthless module input still blocked
+- The fix reuses the same width-only actor-port overlay for explicit module inventories before module renderability analysis.
+- The safety boundary is unchanged:
+  - external actor-port direction is ignored
+  - only already-inventoried module signals receive width evidence
+  - provenance stays under `actor_port_width`
+  - contradictory actor-port widths collapse through the existing width conflict behavior and block lowering
+- This mirrors the direct-root fix without reopening actor-relative direction ambiguity inside explicit module candidates.
+
 ## 2026-04-29 `.fsm` direct control-input width now consumes actor graph shape
 - The next direct-root shape hole sat next to the already-completed target-actor/control-read direction work:
   - selected actor ports define the root's output perspective

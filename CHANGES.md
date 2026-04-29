@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-04-29 (`.fsm` module control-input width now recovers from actor graph)
+
+### Improved: explicit modules now share actor-port width evidence without importing external direction
+- Explicit-module `.fsm` candidates can now recover a missing numeric width for module-local control-read inputs from existing `IntentIR.actor_ports` width evidence.
+- The recovery reuses the width-only `actor_port_width` category, so external actor ports can contribute signal shape without defining the module actor's direction perspective.
+- Conflicting actor-port widths for the same module input still collapse the resolved width to unresolved and keep module/top lowering blocked.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge standalone_explicit_module_recovers_control_input_width_from_actor_port_graph` first failed before the fix, then passed
+- `cargo test -p specforge standalone_explicit_module_blocks_conflicting_control_input_actor_port_widths` -> passed
+- `cargo test -p specforge ir::adapters::tests` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `493` Rust tests plus warning-deny rustdoc and mdBook validation
+- `git diff --check` -> passed
+
 ## 2026-04-29 (`.fsm` direct control-input width now recovers from actor graph)
 
 ### Improved: actor-port width evidence can now complete graph-backed direct control inputs
