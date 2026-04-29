@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-04-29 (`.fsm` top links require emitted child ports)
+
+### Fixed: top wiring can no longer target advisory-only child inventory entries
+- Explicit top-link endpoint resolution now exposes child ports from the rendered child module surface (`+size` entries plus system-contract ports), not from the broader advisory signal inventory.
+- A child signal that is declared in canonical inventory but never emitted by the child `.fsm` module now blocks top lowering instead of producing a `?toplink` reference to a phantom child port.
+- Missing top-link diagnostics now distinguish absent explicit top ports from child endpoints that do not resolve to emitted child ports on a renderable child module.
+- Existing child-link recovery remains intact because topology-recovered child ports that are used by rendered control still appear in the child module's emitted size surface.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml top_composition_blocks_link_to_unemitted_child_port -- --nocapture` -> failed before the fix, then passed
+- `cargo test --manifest-path Cargo.toml top_composition -- --nocapture` -> passed with `26` top-composition tests
+- `cargo test --manifest-path Cargo.toml ir::adapters::tests -- --nocapture` -> passed with `60` adapter tests
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `504` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-29 (`.fsm` top public IO widths must be explicit numeric evidence)
 
 ### Fixed: top ports no longer silently degrade missing widths to implicit 1-bit syntax

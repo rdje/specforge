@@ -2614,13 +2614,10 @@ fn analyze_top_renderability(
         else {
             push_unique_message(
                 &mut blocking_reasons,
-                &format!(
-                    "Top link source `{}` does not resolve to an explicit top port or child interface signal.",
-                    render_top_link_endpoint(&link.source)
-                ),
+                &missing_top_link_endpoint_message("source", &link.source),
             );
             required_canonical_enrichments.insert(
-                "declare every top-link source endpoint explicitly before lowering `?top:name`"
+                "declare and emit every top-link source endpoint before lowering `?top:name`"
                     .to_string(),
             );
             continue;
@@ -2630,13 +2627,10 @@ fn analyze_top_renderability(
         else {
             push_unique_message(
                 &mut blocking_reasons,
-                &format!(
-                    "Top link target `{}` does not resolve to an explicit top port or child interface signal.",
-                    render_top_link_endpoint(&link.target)
-                ),
+                &missing_top_link_endpoint_message("target", &link.target),
             );
             required_canonical_enrichments.insert(
-                "declare every top-link target endpoint explicitly before lowering `?top:name`"
+                "declare and emit every top-link target endpoint before lowering `?top:name`"
                     .to_string(),
             );
             continue;
@@ -3068,23 +3062,25 @@ fn render_top_port_width_hint(width_hint: &WidthHint) -> String {
 fn renderable_ports_for_module_candidate(
     candidate: &FsmExplicitModuleCandidate,
 ) -> BTreeMap<String, RenderableEndpointPort> {
-    let mut ports = candidate
-        .signal_inventory
+    let Some(module) = candidate.renderable_module.as_ref() else {
+        return BTreeMap::new();
+    };
+
+    let mut ports = module
+        .size_entries
         .iter()
-        .filter_map(|signal| {
-            preferred_signal_direction_hint(signal).map(|direction_hint| {
-                (
-                    signal.signal_name.clone(),
-                    RenderableEndpointPort {
-                        direction_hint,
-                        width_hint: signal.width_hint,
-                    },
-                )
-            })
+        .map(|entry| {
+            (
+                entry.signal_name.clone(),
+                RenderableEndpointPort {
+                    direction_hint: entry.direction_hint,
+                    width_hint: Some(entry.width),
+                },
+            )
         })
         .collect::<BTreeMap<_, _>>();
 
-    if let Some(system_contract) = candidate.system_contract.as_ref() {
+    if let Some(system_contract) = module.system_contract.as_ref() {
         ports
             .entry(system_contract.clock_signal.clone())
             .or_insert(RenderableEndpointPort {
@@ -3100,6 +3096,17 @@ fn renderable_ports_for_module_candidate(
     }
 
     ports
+}
+
+fn missing_top_link_endpoint_message(role: &str, endpoint: &ExplicitTopLinkEndpoint) -> String {
+    let endpoint_text = render_top_link_endpoint(endpoint);
+    if endpoint.instance_name.is_some() {
+        format!(
+            "Top link {role} `{endpoint_text}` does not resolve to an emitted child port on a renderable child module."
+        )
+    } else {
+        format!("Top link {role} `{endpoint_text}` does not resolve to an explicit top port.")
+    }
 }
 
 fn resolve_top_link_endpoint(
@@ -8346,6 +8353,59 @@ mod tests {
                 .blocking_reasons
                 .iter()
                 .any(|reason| reason.contains("parametric width `DATA_WIDTH`"))
+        );
+        assert!(!fsm.renderability.is_renderable);
+
+        Ok(())
+    }
+
+    #[test]
+    fn top_composition_blocks_link_to_unemitted_child_port() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "link_to_unemitted_child_port.md",
+            "# Link To Unemitted Child Port\nTop datapath.\n\nTop datapath port result_data is output width 8.\n\nTop datapath child producer uses module producer_core.\n\nTop datapath link producer.side_data -> result_data.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core signal side_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n",
+        )?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let producer = fsm
+            .module_candidates
+            .iter()
+            .find(|candidate| candidate.module_name == "producer_core")
+            .expect("producer module candidate should exist");
+        let top_candidate = fsm
+            .top_candidates
+            .iter()
+            .find(|top| top.top_name == "datapath")
+            .expect("top candidate should be present");
+
+        assert!(producer.renderability.is_renderable);
+        assert!(producer.renderable_module.is_some());
+        assert!(
+            producer
+                .renderable_module
+                .as_ref()
+                .expect("producer should have a renderable module")
+                .size_entries
+                .iter()
+                .all(|entry| entry.signal_name != "side_data")
+        );
+        assert!(
+            top_candidate
+                .renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason.contains("does not resolve to an emitted child port"))
         );
         assert!(!fsm.renderability.is_renderable);
 

@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-29 `.fsm` top links resolve against emitted child ports
+- The top-public-IO width gate exposed the child-side mirror:
+  - `renderable_ports_for_module_candidate(...)` exposed every graph-resolved `FsmSignalCandidate` from the child signal inventory
+  - `render_fsm_module(...)` only emits `+size` entries and system-contract ports as actual child module signal surfaces
+  - a top link could therefore point at `producer.side_data` even when `side_data` was merely declared in inventory and never emitted by the child `.fsm` text
+- The fix makes child endpoint resolution derive from `candidate.renderable_module.size_entries` plus the rendered system contract, not from advisory inventory.
+- Missing endpoint diagnostics now say whether the missing endpoint was an explicit top port or an emitted child port.
+- Existing positive topology recovery remains safe because recovered child ports that participate in rendered control still become size entries before top analysis consumes them.
+- The new regression first reproduced a renderable top with a phantom child endpoint, then passed after endpoint exposure was narrowed; focused top-composition and full adapter suites are green.
+- Full local CI with `504` Rust tests and the full `127/127` tracked KG fixture suite passed after the emitted-child-port endpoint gate landed.
+
 ## 2026-04-29 `.fsm` top public IO widths are renderability-gated
 - The top-boundary width recovery work closed many positive paths, but it left one unsafe fallback:
   - `analyze_top_renderability(...)` used recovered top-port directions to decide whether a top public IO could render

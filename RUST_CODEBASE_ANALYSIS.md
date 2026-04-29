@@ -4,6 +4,14 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-29 `.fsm` top-link child endpoint emission gate)
+- Continued from commit `b9f9c27` by tightening the child side of top-composition renderability.
+- The root cause was a mismatch between analysis and rendering: top-link resolution used `FsmSignalCandidate` inventory entries, but `render_fsm_module(...)` only emits actual child signal surfaces from `FsmRenderableModule.size_entries` plus system-contract ports.
+- `renderable_ports_for_module_candidate(...)` now derives child-link-visible ports from the emitted child module surface instead of advisory inventory.
+- Missing top-link endpoint diagnostics now distinguish explicit top-port absence from child endpoints that do not resolve to emitted ports on renderable child modules.
+- A new regression proves a top link to a declared-but-unemitted child signal stays blocked; top-composition coverage now has `26` tests, and the full adapter suite now has `60` tests.
+- Full local verification for this slice: `504` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-29 `.fsm` top public IO width renderability gate)
 - Continued from commit `af3962a` by tightening a top-composition safety seam adjacent to the width-conflict work.
 - The root cause was that top renderability validated direction recovery but did not require a numeric public IO width before `render_top_port_token(...)` ran. Because that renderer prints widthless top inputs/outputs as implicit 1-bit ports, a direction-only or parametric top port could emit misleading `.fsm` text.
