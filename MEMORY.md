@@ -19,22 +19,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `78ed68447ab0d1128ad5ffd9ca8e8e7b953a6805`
-- latest_commit_brief_message: `test(adapter): lock top root recovery confidence`
-- note: the latest committed baseline locks the selected top root-kind decision confidence to recovered top-port evidence instead of the raw low-confidence declaration
+- latest_commit_hash: `e705a95ea77c2f0d67b447b4417dd378800ea7f3`
+- latest_commit_brief_message: `test(adapter): lock renderable top provenance`
+- note: the latest committed baseline locks actor-port recovered top-boundary support IDs and automation confidence at the renderable top-root port surface
 
 ## Recent commit chain (last 6)
+- `e705a95` test(adapter): lock renderable top provenance
 - `78ed684` test(adapter): lock top root recovery confidence
 - `224e908` fix(adapter): preserve resolved top provenance
 - `30e6a50` fix(adapter): preserve top recovery confidence
 - `75b580a` fix(adapter): preserve top support ids
 - `0d2c9df` fix(adapter): preserve top direction provenance
-- `8783350` fix(adapter): preserve top width provenance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 22` of `origin/main`
+- branch state before the next commit: `ahead 23` of `origin/main`
 - modified tracked files:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -45,11 +45,11 @@
 
 ## Current in-flight slice
 - objective:
-  - lock renderable top-root ports to recovered top-boundary support IDs and automation confidence in the final renderable document model
+  - lock explicit top-link topology recovered support IDs and automation confidence at the final renderable top-root port surface
 - tracker effect:
-  - added a `Done` live-status row for renderable top-root ports preserving recovered support IDs and automation confidence
+  - refined the renderable top-root port provenance `Done` row so it explicitly covers actor-port and top-link topology evidence
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::top_composition_recovers_top_port_direction_from_actor_ports -- --exact --nocapture` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::top_composition_recovers_top_port_direction_from_link_topology -- --exact --nocapture` passed
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests -- --nocapture` passed with `67` adapter tests
   - `cargo fmt --manifest-path Cargo.toml` passed
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
@@ -62,6 +62,6 @@
 
 ## Next exact steps
 - rerun final lightweight formatting, docs, and whitespace checks after validation-doc updates
-- commit the renderable top-root provenance regression slice
+- commit the renderable top-root top-link provenance regression slice
 - truncate `git_message_brief.txt` back to `0` bytes and confirm it remains untracked after that commit
-- leave the branch unpushed; after this commit it should be `ahead 23`, below the `25`-commit push threshold
+- leave the branch unpushed; after this commit it should be `ahead 24`, below the `25`-commit push threshold

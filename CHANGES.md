@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-30 (`.fsm` renderable top-root ports keep top-link provenance)
+
+### Added: topology-recovered renderable top ports are regression-locked
+- Extended the explicit top-link direction recovery regression to assert `renderable_document.top_root.ports` carries recovered direction, supporting IDs, and automation confidence.
+- This closes the sibling artifact-surface proof after the actor-port renderable top-root lock: both actor-port graph evidence and explicit top-link topology evidence now have direct renderable-document coverage.
+- The test proves high-confidence `module_topology_link` support from the `consumer.result_data -> result_data` top link survives into the final `?top:datapath` document model before text emission.
+- No production behavior changed; the prior resolved-port provenance merge already feeds the renderable top-root port vector.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::top_composition_recovers_top_port_direction_from_link_topology -- --exact --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests -- --nocapture` -> passed with `67` adapter tests
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `511` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-29 (`.fsm` renderable top-root ports keep recovered provenance)
 
 ### Added: renderable top-root port provenance is regression-locked

@@ -4,6 +4,13 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-30 `.fsm` renderable top-root top-link provenance)
+- Continued from commit `e705a95` by locking the explicit top-link topology sibling of the renderable top-root provenance surface.
+- The production path already cloned resolved top ports into `FsmRenderableTopRoot.ports`; this slice proves that topology-recovered direction, support IDs, and confidence survive into `renderable_document.top_root.ports`.
+- The focused assertion extends the existing explicit top-link recovery test, so it covers the final top-root document model consumed by `.fsm` text rendering.
+- This is a regression-only artifact-surface slice: renderability, conflict behavior, and emitted `.fsm` text remain unchanged.
+- Adapter coverage remains at `67` tests; full local verification for this slice: `511` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-29 `.fsm` renderable top-root port provenance)
 - Continued from commit `78ed684` by locking the renderable-document consumer of recovered top-port provenance.
 - The production path already cloned resolved top ports into `FsmRenderableTopRoot.ports`; this slice proves that the recovered actor-port direction, support ID, and confidence survive into `renderable_document.top_root.ports`.
