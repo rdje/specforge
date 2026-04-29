@@ -4,6 +4,15 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-29 `.fsm` selected top inventory graph-conflict stickiness)
+- Continued from commit `f2618b4` by tightening the selected top inventory projection that had just stopped flattening recovered graph/topology directions into compatibility hints.
+- The root cause was that selected top inventory only compared raw and resolved top-port directions. When explicit flat top direction evidence conflicted with graph/topology evidence, renderability correctly collapsed the resolved top port to `None`, but `fsm.signal_inventory` did not preserve the explicit declaration side or mark the graph conflict.
+- `analyze_top_renderability(...)` now keeps declared top-port direction evidence separate from graph/topology top-boundary direction evidence while still feeding combined evidence into the renderability blocker.
+- `merge_top_port_direction_hint(...)` centralizes the direction-evidence mutation so the graph-only ledger and combined ledger share the same sticky conflict behavior without double-emitting diagnostics.
+- `build_top_signal_inventory(...)` now projects selected top signals like module/direct signals: explicit top declarations stay in `direction_hint`, graph-only recovery stays in `graph_direction_hint`, and graph-vs-explicit disagreement sets `graph_direction_hint_conflicted` while leaving rendering blocked.
+- Focused graph-vs-flat conflict tests, full top-composition coverage, and the full adapter test slice passed for this change.
+- Full local verification for this slice: `500` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-29 `.fsm` selected top inventory graph-backed direction provenance)
 - Continued from commit `65fcf4b` with another graph-first consumer cleanup, this time in the `.fsm` adapter top-surface projection.
 - The root cause was that `select_fsm_surface(...)` rebuilt selected top `signal_inventory` from already-resolved top ports. Directions recovered from top-link topology or top actor ports therefore appeared as flat compatibility `direction_hint` values in `fsm.signal_inventory`.

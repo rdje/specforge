@@ -7,6 +7,23 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-29 `.fsm` selected top signal inventory keeps graph conflicts sticky
+- The graph-backed selected top inventory slice exposed a narrower conflict-provenance seam:
+  - explicit top declarations correctly stayed flat when no graph recovery was involved
+  - recovered topology/actor-port directions correctly moved to `graph_direction_hint`
+  - but graph evidence that contradicted an explicit top direction only left the resolved top port unresolved; selected `fsm.signal_inventory` lost the explicit side and did not mark the graph conflict
+- That made blocked top artifacts less useful than module/direct artifacts, where flat declarations remain visible and contradictory graph evidence sets `graph_direction_hint_conflicted`.
+- `analyze_top_renderability(...)` now keeps two top-boundary direction ledgers:
+  - declared top-port evidence, including duplicate explicit declaration conflicts
+  - graph/topology evidence from top actor ports and top links
+- Renderability still consumes the combined evidence and still blocks when the ledgers disagree.
+- `build_top_signal_inventory(...)` receives both ledgers and projects the selected inventory with the same conflict policy used elsewhere:
+  - explicit top directions stay in `direction_hint`
+  - unambiguous graph-only recovery stays in `graph_direction_hint`
+  - graph-vs-explicit disagreement clears the graph hint and sets `graph_direction_hint_conflicted`
+  - duplicate explicit conflicts keep flat direction unresolved rather than pretending the graph side caused the conflict
+- Focused conflict tests, full top-composition coverage, the full adapter test slice, full local CI, and the full `127/127` tracked KG fixture suite now lock this behavior.
+
 ## 2026-04-29 `.fsm` selected top signal inventory keeps recovered directions graph-backed
 - The next adapter provenance seam was in selected top surfaces:
   - top renderability could recover width-only top-boundary directions from top-link topology or matching top actor ports

@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-04-29 (`.fsm` top signal inventory keeps graph conflicts sticky)
+
+### Fixed: selected top inventory now preserves explicit direction while marking conflicting graph evidence
+- Selected `.fsm` top signal inventories now keep explicit top-port declarations in flat `direction_hint` even when top-link topology or matching top actor-port graph evidence disagrees.
+- Conflicting graph/topology recovery is now exposed through `graph_direction_hint_conflicted = true` with no graph hint, matching the module/direct inventory conflict contract.
+- Renderability remains conservative: the recovered top candidate port direction still collapses to `None` and no `.fsm` target text is emitted until the top-boundary conflict is resolved.
+- Duplicate explicit top declaration conflicts remain separate from graph conflicts and still collapse the flat direction evidence to unresolved.
+
+### Validation
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo test --manifest-path Cargo.toml top_composition_blocks_conflicting_top_actor_port_direction -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml top_composition_keeps_conflicting_top_port_direction_unresolved -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml top_composition -- --nocapture` -> passed with `23` top-composition tests
+- `cargo test --manifest-path Cargo.toml ir::adapters::tests -- --nocapture` -> passed with `56` adapter tests
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `500` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-29 (`.fsm` top signal inventory preserves graph-backed direction provenance)
 
 ### Improved: recovered top-boundary directions no longer flatten into compatibility hints

@@ -2212,30 +2212,45 @@ fn build_top_root_kind_decision(top_candidate: &FsmTopCandidate) -> FsmRootKindD
 fn build_top_signal_inventory(
     raw_ports: &[ExplicitTopPortRecord],
     resolved_ports: &[ExplicitTopPortRecord],
+    declared_directions: &BTreeMap<String, TopPortDirectionEvidence>,
+    graph_directions: &BTreeMap<String, TopPortDirectionEvidence>,
 ) -> Vec<FsmSignalCandidate> {
     raw_ports
         .iter()
         .zip(resolved_ports.iter())
-        .map(|(raw_port, resolved_port)| FsmSignalCandidate {
-            signal_name: resolved_port.port_name.clone(),
-            direction_hint: if raw_port.direction_hint == resolved_port.direction_hint {
-                raw_port.direction_hint
-            } else {
-                None
-            },
-            graph_direction_hint: if raw_port.direction_hint.is_none() {
-                resolved_port.direction_hint
-            } else {
-                None
-            },
-            graph_direction_hint_conflicted: false,
-            width_hint: resolved_port
-                .width_hint
-                .as_ref()
-                .and_then(|w| w.as_numeric()),
-            supporting_canonical_ids: resolved_port.supporting_statement_ids.clone(),
-            mention_categories: vec!["top_port".to_string()],
-            automation_confidence: resolved_port.automation_confidence,
+        .map(|(raw_port, resolved_port)| {
+            let declared_direction = declared_directions
+                .get(&raw_port.port_name)
+                .filter(|evidence| !evidence.direction_conflicted)
+                .and_then(|evidence| evidence.direction_hint);
+            let graph_evidence = graph_directions.get(&raw_port.port_name);
+            let graph_direction = graph_evidence
+                .filter(|evidence| !evidence.direction_conflicted)
+                .and_then(|evidence| evidence.direction_hint);
+            let graph_direction_conflicted = graph_evidence
+                .is_some_and(|evidence| evidence.direction_conflicted)
+                || declared_direction
+                    .zip(graph_direction)
+                    .is_some_and(|(declared, graph)| declared != graph);
+            let graph_direction_hint =
+                if declared_direction.is_none() && !graph_direction_conflicted {
+                    graph_direction
+                } else {
+                    None
+                };
+            FsmSignalCandidate {
+                signal_name: resolved_port.port_name.clone(),
+                direction_hint: declared_direction,
+                graph_direction_hint,
+                graph_direction_hint_conflicted: graph_direction_conflicted,
+                width_hint: resolved_port
+                    .width_hint
+                    .as_ref()
+                    .and_then(|w| w.as_numeric()),
+                supporting_canonical_ids: resolved_port.supporting_statement_ids.clone(),
+                mention_categories: vec!["top_port".to_string()],
+                automation_confidence: resolved_port.automation_confidence,
+            }
         })
         .collect()
 }
@@ -2311,7 +2326,7 @@ fn analyze_top_renderability(
     }
 
     let mut seen_top_ports = BTreeSet::new();
-    let mut top_port_directions = BTreeMap::<String, TopPortDirectionEvidence>::new();
+    let mut declared_top_port_directions = BTreeMap::<String, TopPortDirectionEvidence>::new();
     let mut top_port_widths = BTreeMap::<String, TopPortWidthEvidence>::new();
     let mut top_ports_by_name = BTreeMap::new();
     for port in &top.ports {
@@ -2327,7 +2342,7 @@ fn analyze_top_renderability(
                 "deduplicate explicit top-port records before lowering `?top:name`".to_string(),
             );
         }
-        if let Some(direction_evidence) = top_port_directions.get_mut(&port.port_name) {
+        if let Some(direction_evidence) = declared_top_port_directions.get_mut(&port.port_name) {
             if let Some(direction_hint) = port.direction_hint {
                 merge_top_port_direction_evidence(
                     direction_evidence,
@@ -2339,7 +2354,7 @@ fn analyze_top_renderability(
                 );
             }
         } else {
-            top_port_directions.insert(
+            declared_top_port_directions.insert(
                 port.port_name.clone(),
                 TopPortDirectionEvidence::new(port.direction_hint),
             );
@@ -2363,10 +2378,18 @@ fn analyze_top_renderability(
         }
     }
 
+    let mut top_port_directions = declared_top_port_directions.clone();
+    let mut graph_top_port_directions = top
+        .ports
+        .iter()
+        .map(|port| (port.port_name.clone(), TopPortDirectionEvidence::new(None)))
+        .collect::<BTreeMap<_, _>>();
+
     merge_top_port_evidence_from_actor_ports(
         top,
         actor_ports,
         &mut top_port_directions,
+        &mut graph_top_port_directions,
         &mut top_port_widths,
         &mut blocking_reasons,
         &mut required_canonical_enrichments,
@@ -2376,6 +2399,7 @@ fn analyze_top_renderability(
         if link.source.instance_name.is_none() {
             merge_top_port_direction_from_link(
                 &mut top_port_directions,
+                &mut graph_top_port_directions,
                 &link.source.signal_name,
                 InterfaceSignalDirection::Input,
                 &format!(
@@ -2389,6 +2413,7 @@ fn analyze_top_renderability(
         if link.target.instance_name.is_none() {
             merge_top_port_direction_from_link(
                 &mut top_port_directions,
+                &mut graph_top_port_directions,
                 &link.target.signal_name,
                 InterfaceSignalDirection::Output,
                 &format!(
@@ -2649,7 +2674,12 @@ fn analyze_top_renderability(
         children: renderable_children,
         links: top.links.clone(),
     });
-    let signal_inventory = build_top_signal_inventory(&top.ports, &resolved_ports);
+    let signal_inventory = build_top_signal_inventory(
+        &top.ports,
+        &resolved_ports,
+        &declared_top_port_directions,
+        &graph_top_port_directions,
+    );
 
     TopRenderabilityAnalysis {
         renderability,
@@ -2746,6 +2776,7 @@ fn merge_top_port_evidence_from_actor_ports(
     top: &ExplicitTopRecord,
     actor_ports: &[ActorPortRecord],
     top_port_directions: &mut BTreeMap<String, TopPortDirectionEvidence>,
+    graph_top_port_directions: &mut BTreeMap<String, TopPortDirectionEvidence>,
     top_port_widths: &mut BTreeMap<String, TopPortWidthEvidence>,
     blocking_reasons: &mut Vec<String>,
     required_canonical_enrichments: &mut BTreeSet<String>,
@@ -2761,6 +2792,12 @@ fn merge_top_port_evidence_from_actor_ports(
         if let Some(direction_hint) = actor_relative_direction_to_interface_hint(port.direction)
             && let Some(direction_evidence) = top_port_directions.get_mut(&port.signal_name)
         {
+            merge_top_port_direction_hint(
+                graph_top_port_directions
+                    .entry(port.signal_name.clone())
+                    .or_insert_with(|| TopPortDirectionEvidence::new(None)),
+                direction_hint,
+            );
             merge_top_port_direction_evidence(
                 direction_evidence,
                 &port.signal_name,
@@ -2796,6 +2833,7 @@ fn merge_top_port_evidence_from_actor_ports(
 
 fn merge_top_port_direction_from_link(
     top_port_directions: &mut BTreeMap<String, TopPortDirectionEvidence>,
+    graph_top_port_directions: &mut BTreeMap<String, TopPortDirectionEvidence>,
     port_name: &str,
     direction_hint: InterfaceSignalDirection,
     endpoint_description: &str,
@@ -2808,6 +2846,13 @@ fn merge_top_port_direction_from_link(
     if direction_evidence.direction_conflicted {
         return;
     }
+
+    merge_top_port_direction_hint(
+        graph_top_port_directions
+            .entry(port_name.to_string())
+            .or_insert_with(|| TopPortDirectionEvidence::new(None)),
+        direction_hint,
+    );
 
     merge_top_port_direction_evidence(
         direction_evidence,
@@ -2831,24 +2876,40 @@ fn merge_top_port_direction_evidence(
         return;
     }
 
+    if let Some(existing) = merge_top_port_direction_hint(direction_evidence, direction_hint) {
+        push_unique_message(
+            blocking_reasons,
+            &format!(
+                "{evidence_description} implies top port `{port_name}` is `{}`, but existing top-boundary direction evidence is `{}`.",
+                direction_hint.as_str(),
+                existing.as_str()
+            ),
+        );
+        required_canonical_enrichments.insert(
+            "resolve conflicting top boundary port direction evidence before lowering `?top:name`"
+                .to_string(),
+        );
+    }
+}
+
+fn merge_top_port_direction_hint(
+    direction_evidence: &mut TopPortDirectionEvidence,
+    direction_hint: InterfaceSignalDirection,
+) -> Option<InterfaceSignalDirection> {
+    if direction_evidence.direction_conflicted {
+        return None;
+    }
+
     match direction_evidence.direction_hint {
-        None => direction_evidence.direction_hint = Some(direction_hint),
-        Some(existing) if existing == direction_hint => {}
+        None => {
+            direction_evidence.direction_hint = Some(direction_hint);
+            None
+        }
+        Some(existing) if existing == direction_hint => None,
         Some(existing) => {
-            push_unique_message(
-                blocking_reasons,
-                &format!(
-                    "{evidence_description} implies top port `{port_name}` is `{}`, but existing top-boundary direction evidence is `{}`.",
-                    direction_hint.as_str(),
-                    existing.as_str()
-                ),
-            );
-            required_canonical_enrichments.insert(
-                "resolve conflicting top boundary port direction evidence before lowering `?top:name`"
-                    .to_string(),
-            );
             direction_evidence.direction_hint = None;
             direction_evidence.direction_conflicted = true;
+            Some(existing)
         }
     }
 }
@@ -8061,8 +8122,19 @@ mod tests {
             .iter()
             .find(|port| port.port_name == "ext_data")
             .expect("conflicting top port should stay visible");
+        let signal_inventory_port = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "ext_data")
+            .expect("conflicting top port should stay in selected top inventory");
 
         assert_eq!(recovered_port.direction_hint, None);
+        assert_eq!(
+            signal_inventory_port.direction_hint,
+            Some(InterfaceSignalDirection::Input)
+        );
+        assert_eq!(signal_inventory_port.graph_direction_hint, None);
+        assert!(signal_inventory_port.graph_direction_hint_conflicted);
         assert!(
             top_candidate
                 .renderability
@@ -8172,7 +8244,12 @@ mod tests {
             .expect("conflicting top port should stay in selected top inventory");
 
         assert_eq!(recovered_port.direction_hint, None);
-        assert_eq!(signal_inventory_port.direction_hint, None);
+        assert_eq!(
+            signal_inventory_port.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert_eq!(signal_inventory_port.graph_direction_hint, None);
+        assert!(signal_inventory_port.graph_direction_hint_conflicted);
         assert!(
             top_candidate
                 .renderability
