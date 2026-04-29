@@ -4,6 +4,13 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-29 `.fsm` renderable top-root port provenance)
+- Continued from commit `78ed684` by locking the renderable-document consumer of recovered top-port provenance.
+- The production path already cloned resolved top ports into `FsmRenderableTopRoot.ports`; this slice proves that the recovered actor-port direction, support ID, and confidence survive into `renderable_document.top_root.ports`.
+- The focused assertion extends the existing renderable actor-port recovery test, so it covers the final top-root document model consumed by `.fsm` text rendering.
+- This is a regression-only artifact-surface slice: renderability, conflict behavior, and emitted `.fsm` text remain unchanged.
+- Adapter coverage remains at `67` tests; full local verification for this slice: `511` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-29 `.fsm` top-root confidence regression)
 - Continued from commit `224e908` by locking the root-kind decision consumer of recovered top-port confidence.
 - The production path was already corrected by resolved top-port provenance merging; this slice adds a minimal top-only regression so future refactors cannot accidentally make `build_top_root_kind_decision(...)` fold raw top-port confidence again.

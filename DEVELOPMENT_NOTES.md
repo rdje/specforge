@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-29 `.fsm` renderable top-root ports keep recovered provenance
+- Continued from commit `78ed684` by locking the renderable-document consumer of recovered top-port provenance.
+- `FsmRenderableTopRoot.ports` already receives `resolved_ports`; this regression proves that recovered actor-port direction, `graph_wrapper_ext_data`, and high confidence survive into `renderable_document.top_root.ports`.
+- The assertion lives in the existing renderable top actor-port recovery test, so it checks the final `?top:name` document model used by `render_fsm_source_document(...)` without changing emitted text.
+- This complements the selected inventory, resolved top-port, and root-kind confidence locks by covering the last renderable top-root port surface.
+- Full local CI with `511` Rust tests and the full `127/127` tracked KG fixture suite passed after the regression landed.
+
 ## 2026-04-29 `.fsm` top-root decision confidence follows recovery
 - Continued from commit `224e908` with a regression-only slice for the root-kind decision consumer of recovered top-port confidence.
 - The previous slice made `FsmTopCandidate.ports` carry recovered support IDs and confidence; this test locks that `build_top_root_kind_decision(...)` consumes the recovered port confidence rather than the raw low-confidence top-port declaration.

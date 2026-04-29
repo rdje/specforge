@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-29 (`.fsm` renderable top-root ports keep recovered provenance)
+
+### Added: renderable top-root port provenance is regression-locked
+- Extended the top actor-port direction recovery regression to assert `renderable_document.top_root.ports` carries recovered direction, supporting IDs, and automation confidence.
+- This locks the final renderable top-root artifact surface, not only `FsmTopCandidate.ports` and selected signal inventory.
+- The test proves a recovered `graph_wrapper_ext_data` support ID and high confidence survive into the renderable `?top:name` document model before text emission.
+- No production behavior changed; the prior resolved-port provenance merge already feeds this surface.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::top_composition_recovers_top_port_direction_from_actor_ports -- --exact --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests -- --nocapture` -> passed with `67` adapter tests
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `511` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-29 (`.fsm` top-root decision confidence follows recovery)
 
 ### Added: root-kind confidence regression now isolates recovered top-port evidence
