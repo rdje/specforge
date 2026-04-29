@@ -9,6 +9,7 @@ If `doctor --strict` fails:
 - Docling ingest may not really be runnable
 - the chosen local provider may not actually be serving
 - the default local model may be missing
+- if the model is present but the chat probe times out, inspect the reported provider detail; a timeout now means the provider could not answer within the cold-load-tolerant probe window, not just that the model had not been prewarmed
 
 Fix the runtime before blaming the IR pipeline.
 

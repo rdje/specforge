@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-04-29 (Runtime doctor now tolerates cold local model load)
+
+### Improved: local provider readiness no longer requires manual prewarming
+- `specforge doctor --strict` still proves local provider readiness through the OpenAI-compatible chat-completions endpoint, but the local chat probe now allows a cold Ollama or LM Studio model load to finish before declaring the runtime unusable.
+- GET probe failures now preserve curl failure context instead of collapsing connection or sandbox failures into a misleading empty-response parse error.
+- This keeps the readiness check strict while avoiding the false-negative path observed when `/api/tags` was healthy, the default model was visible, and the first chat request only needed a few extra seconds to load `qwen2.5vl:7b`.
+
+### Validation
+- `cargo fmt --all` -> passed
+- `cargo test -p specforge commands::doctor` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- doctor` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+- `git diff --check` -> passed
+
 ## 2026-04-29 (Cycle-qualified VLM timing-value labels no longer leak into fake timing constraints)
 
 ### Improved: richer VLM timing-annotation negatives now stay at the root cause boundary

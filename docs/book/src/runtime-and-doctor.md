@@ -26,6 +26,9 @@ In practice that means:
 - LM Studio `/v1/models`
 - LM Studio `/v1/chat/completions`
 
+The local chat-completions probes are strict, but they are cold-load tolerant.
+If the model is present but not yet loaded, `doctor` gives the local provider a longer chat-probe window so a healthy Ollama or LM Studio runtime can load the model and answer instead of failing only because the first request was cold.
+
 ## Docling runtime resolution order
 
 For PDF ingest, `specforge` resolves Python in this order:

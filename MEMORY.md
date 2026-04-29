@@ -19,44 +19,51 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `d29b2ae`
-- latest_commit_brief_message: `fix(semantic): reject cycle-qualified signal-value labels`
-- note: the latest committed baseline records the cycle-qualified VLM timing-annotation hardening slice that keeps labels like `XREQ HIGH at T1` and `XREQ asserted on T1` from becoming fake timing constraints while locking the edge case through both a direct semantic regression and a tracked KG negative fixture
+- latest_commit_hash: `e24a371`
+- latest_commit_brief_message: `docs(memory): sync cycle-qualified timing-label baseline`
+- note: the latest committed baseline records the continuity refresh after landing the cycle-qualified VLM timing-annotation hardening slice
 
 ## Recent commit chain (last 6)
+- `e24a371` docs(memory): sync cycle-qualified timing-label baseline
 - `d29b2ae` fix(semantic): reject cycle-qualified signal-value labels
 - `b175d83` docs(memory): sync indexed timing-label baseline
 - `428ecb0` fix(semantic): reject indexed VLM timing-value labels
 - `2b4658a` docs(memory): sync generic next-cycle baseline
 - `0e8468e` test(temporal): harden generic next-cycle coverage
-- `cbb4036` docs(memory): sync next-tick baseline
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 17` of `origin/main`
+- branch state before the next commit: `ahead 18` of `origin/main`
 - modified tracked files:
-- `MEMORY.md`
-- the feature slice is committed; only the post-commit continuity refresh remains
+  - `README.md`
+  - `CHANGES.md`
+  - `DEVELOPMENT_NOTES.md`
+  - `LIVE_ACHIEVEMENT_STATUS.md`
+  - `MEMORY.md`
+  - `RUST_CODEBASE_ANALYSIS.md`
+  - `crates/specforge/src/commands/doctor.rs`
+  - `docs/book/src/runtime-and-doctor.md`
+  - `docs/book/src/reference/troubleshooting.md`
 
 ## Current in-flight slice
 - objective:
-  - preserve the latest committed baseline after landing the cycle-qualified VLM timing-value label hardening slice
+  - harden `specforge doctor --strict` so a healthy local Ollama or LM Studio provider no longer false-negatives only because the default model is cold and needs more than the old 5-second chat probe to load
 - tracker effect:
-  - no live-status row change is expected in this continuity-only commit because the underlying feature commit already recorded the new cycle-qualified VLM timing-annotation negative-fixture row
+  - no status-state change is expected; the existing Done doctor rows now note cold-load-tolerant local chat probes
 - current tracked KG-quality suite size in the latest committed baseline:
   - `127` fixtures
 - verification status:
   - `cargo fmt --all` passed
-  - `cargo test -p specforge vlm_timing_diagram_observation_rejects_cycle_qualified_signal_value_labels` passed
-  - `cargo test -p specforge kg_bench_runs_tracked_fixtures` passed
+  - `cargo test -p specforge commands::doctor` passed
+  - `cargo run --manifest-path Cargo.toml -p specforge -- doctor` passed
   - `bash scripts/run_docs_ci.sh` passed
   - `bash scripts/run_ci.sh` passed
   - `git diff --check` passed
 - current known local CI baseline:
-  - `481` Rust tests plus warning-deny rustdoc and the mdBook build
+  - `483` Rust tests plus warning-deny rustdoc and the mdBook build
 
 ## Next exact steps
-- create the continuity commit
+- commit the doctor cold-load tolerance slice
 - truncate `git_message_brief.txt` back to `0` bytes and confirm it remains untracked after that commit
-- leave the branch unpushed because it remains below the `25`-commit threshold
+- leave the branch unpushed unless it reaches the `25`-commit threshold

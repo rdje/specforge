@@ -16,6 +16,8 @@ const OLLAMA_TAGS_URL: &str = "http://localhost:11434/api/tags";
 const OLLAMA_CHAT_URL: &str = "http://localhost:11434/v1/chat/completions";
 const LMSTUDIO_MODELS_URL: &str = "http://localhost:1234/v1/models";
 const LMSTUDIO_CHAT_URL: &str = "http://localhost:1234/v1/chat/completions";
+const LOCAL_GET_PROBE_TIMEOUT_SECONDS: u64 = 2;
+const LOCAL_CHAT_PROBE_TIMEOUT_SECONDS: u64 = 30;
 
 pub fn run(args: DoctorArgs) -> Result<()> {
     let docling = inspect_docling_runtime()?;
@@ -198,15 +200,17 @@ impl OllamaRuntimeDiagnosis {
 }
 
 fn inspect_ollama_runtime() -> Result<OllamaRuntimeDiagnosis> {
-    let tags_response = run_ollama_tags_probe()?;
     let (tags_reachable, default_model_present, visible_models, tags_detail) =
-        match parse_ollama_tags_response(&tags_response) {
-            Ok(summary) => (
-                true,
-                summary.default_model_present,
-                summary.visible_models,
-                None,
-            ),
+        match run_ollama_tags_probe()? {
+            Ok(tags_response) => match parse_ollama_tags_response(&tags_response) {
+                Ok(summary) => (
+                    true,
+                    summary.default_model_present,
+                    summary.visible_models,
+                    None,
+                ),
+                Err(detail) => (false, false, 0usize, Some(detail)),
+            },
             Err(detail) => (false, false, 0usize, Some(detail)),
         };
 
@@ -287,15 +291,19 @@ impl LmStudioRuntimeDiagnosis {
 }
 
 fn inspect_lmstudio_runtime() -> Result<LmStudioRuntimeDiagnosis> {
-    let models_response = run_get_probe(LMSTUDIO_MODELS_URL)?;
     let (models_reachable, default_model_present, visible_models, models_detail) =
-        match parse_openai_models_response(&models_response, DEFAULT_LOCAL_MODEL) {
-            Ok(summary) => (
-                true,
-                summary.default_model_present,
-                summary.visible_models,
-                None,
-            ),
+        match run_get_probe(LMSTUDIO_MODELS_URL)? {
+            Ok(models_response) => {
+                match parse_openai_models_response(&models_response, DEFAULT_LOCAL_MODEL) {
+                    Ok(summary) => (
+                        true,
+                        summary.default_model_present,
+                        summary.visible_models,
+                        None,
+                    ),
+                    Err(detail) => (false, false, 0usize, Some(detail)),
+                }
+            }
             Err(detail) => (false, false, 0usize, Some(detail)),
         };
 
@@ -342,31 +350,40 @@ pub(crate) fn local_vlm_default_model_present(provider: VlmProviderArg) -> bool 
     match provider {
         VlmProviderArg::Ollama => run_ollama_tags_probe()
             .ok()
+            .and_then(|response| response.ok())
             .and_then(|response| parse_ollama_tags_response(&response).ok())
             .is_some_and(|summary| summary.default_model_present),
         VlmProviderArg::LmStudio => run_get_probe(LMSTUDIO_MODELS_URL)
             .ok()
+            .and_then(|response| response.ok())
             .and_then(|response| parse_openai_models_response(&response, DEFAULT_LOCAL_MODEL).ok())
             .is_some_and(|summary| summary.default_model_present),
         VlmProviderArg::OpenAi | VlmProviderArg::Skip => false,
     }
 }
 
-fn run_ollama_tags_probe() -> Result<String> {
+fn run_ollama_tags_probe() -> Result<std::result::Result<String, String>> {
     run_get_probe(OLLAMA_TAGS_URL)
 }
 
-fn run_get_probe(url: &str) -> Result<String> {
+fn run_get_probe(url: &str) -> Result<std::result::Result<String, String>> {
     let output = Command::new("curl")
         .arg("-s")
         .arg("--max-time")
-        .arg("2")
+        .arg(LOCAL_GET_PROBE_TIMEOUT_SECONDS.to_string())
         .arg(url)
         .output()?;
     if !output.status.success() {
-        return Ok(String::new());
+        return Ok(Err(format_curl_probe_failure(
+            &output.stderr,
+            output.status.code(),
+            LOCAL_GET_PROBE_TIMEOUT_SECONDS,
+            url,
+        )));
     }
-    Ok(String::from_utf8_lossy(&output.stdout).trim().to_string())
+    Ok(Ok(String::from_utf8_lossy(&output.stdout)
+        .trim()
+        .to_string()))
 }
 
 fn run_ollama_chat_probe() -> Result<std::result::Result<String, String>> {
@@ -389,7 +406,7 @@ fn run_openai_chat_probe(
     let output = Command::new("curl")
         .arg("-s")
         .arg("--max-time")
-        .arg("5")
+        .arg(LOCAL_CHAT_PROBE_TIMEOUT_SECONDS.to_string())
         .arg("-o")
         .arg(&response_path)
         .arg("-w")
@@ -404,12 +421,12 @@ fn run_openai_chat_probe(
         .output()?;
 
     if !output.status.success() {
-        let stderr = String::from_utf8_lossy(&output.stderr).trim().to_string();
-        return Ok(Err(if stderr.is_empty() {
-            format!("curl exited with {:?}", output.status.code())
-        } else {
-            stderr
-        }));
+        return Ok(Err(format_curl_probe_failure(
+            &output.stderr,
+            output.status.code(),
+            LOCAL_CHAT_PROBE_TIMEOUT_SECONDS,
+            api_url,
+        )));
     }
 
     let http_code = String::from_utf8_lossy(&output.stdout).trim().to_string();
@@ -425,6 +442,24 @@ fn run_openai_chat_probe(
         Ok(summary) => Ok(Ok(summary.assistant_content)),
         Err(detail) => Ok(Err(detail)),
     }
+}
+
+fn format_curl_probe_failure(
+    stderr: &[u8],
+    status_code: Option<i32>,
+    timeout_seconds: u64,
+    api_url: &str,
+) -> String {
+    let stderr = String::from_utf8_lossy(stderr).trim().to_string();
+    if !stderr.is_empty() {
+        return stderr;
+    }
+
+    if status_code == Some(28) {
+        return format!("curl timed out after {timeout_seconds}s while probing `{api_url}`");
+    }
+
+    format!("curl exited with {status_code:?} while probing `{api_url}`")
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -571,8 +606,9 @@ fn yes_no(value: bool) -> &'static str {
 #[cfg(test)]
 mod tests {
     use super::{
-        DEFAULT_LOCAL_MODEL, parse_ollama_tags_response, parse_openai_chat_response,
-        parse_openai_models_response, truncate_for_display,
+        DEFAULT_LOCAL_MODEL, LOCAL_CHAT_PROBE_TIMEOUT_SECONDS, format_curl_probe_failure,
+        parse_ollama_tags_response, parse_openai_chat_response, parse_openai_models_response,
+        truncate_for_display,
     };
 
     #[test]
@@ -642,5 +678,30 @@ mod tests {
     fn truncate_for_display_appends_ellipsis_when_needed() {
         assert_eq!(truncate_for_display("abcdef", 3), "abc…");
         assert_eq!(truncate_for_display("abc", 3), "abc");
+    }
+
+    #[test]
+    fn format_curl_probe_failure_reports_timeout_context() {
+        let detail = format_curl_probe_failure(
+            b"",
+            Some(28),
+            LOCAL_CHAT_PROBE_TIMEOUT_SECONDS,
+            "http://localhost:11434/v1/chat/completions",
+        );
+
+        assert!(detail.contains("timed out after 30s"));
+        assert!(detail.contains("http://localhost:11434/v1/chat/completions"));
+    }
+
+    #[test]
+    fn format_curl_probe_failure_preserves_stderr() {
+        let detail = format_curl_probe_failure(
+            b"connection refused",
+            Some(7),
+            LOCAL_CHAT_PROBE_TIMEOUT_SECONDS,
+            "http://localhost:11434/api/tags",
+        );
+
+        assert_eq!(detail, "connection refused");
     }
 }

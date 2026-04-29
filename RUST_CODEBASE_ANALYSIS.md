@@ -4,6 +4,20 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-29 runtime doctor cold-load tolerance)
+- Picked the next bounded task from the README execution findings rather than widening adapter scope: `specforge doctor --strict` could false-negative a healthy local Ollama when the first chat probe canceled during cold model load.
+- The root cause was in `crates/specforge/src/commands/doctor.rs`:
+  - tag/model-list probes were healthy
+  - the OpenAI-compatible chat probe remained the correct proof of real provider usability
+  - but the previous 5-second chat timeout was shorter than a realistic first `qwen2.5vl:7b` local runner load
+- The fix keeps the readiness boundary strict:
+  - local chat probes still require a real `/v1/chat/completions` response
+  - the timeout is now cold-load tolerant
+  - curl timeout/connection failures are surfaced directly instead of being flattened into empty-response parse diagnostics
+- This does not change the IR architecture, provider defaults, or canonical artifact shape.
+- It improves the project’s local-first operator seam so README/bootstrap runs can rely on `doctor --strict` without manual model prewarming.
+- Focused doctor-unit coverage now locks the cold-load timeout margin and curl failure-detail formatting; the full local CI baseline now reports `483` passing Rust tests plus warning-deny rustdoc and the mdBook build.
+
 ## Session update (2026-04-29 cycle-qualified VLM timing-value label hardening)
 - Continued from commit `b175d83`, still hardening the graph/temporal evaluation surface rather than widening adapters or semantic schemas.
 - The relevant Rust seam remains `parse_timing_diagram_observation(...)` in `crates/specforge/src/ir/semantic.rs`, where VLM timing annotations are promoted into `TimingConstraintRecord`s unless one of the low-value label filters rejects them first.
@@ -2261,9 +2275,9 @@
 
 ## Testing implications
 - current full local CI path: `bash scripts/run_ci.sh`
-- current active Rust surface after the README/bootstrap refresh: `31` Rust source files and `62,689` total lines under `crates/specforge/src`
-- current Rust test count observed through the canonical local CI path after the latest slice: 357 library tests, 0 binary tests, and 0 doc tests, all passing under warning-deny Clippy/rustdoc plus the mdBook build
-- current tracked KG-quality fixture count: 90
+- current active Rust surface after the README/bootstrap refresh: `31` Rust source files and `76,542` total lines under `crates/specforge/src`
+- current Rust test count observed through the canonical local CI path after the latest slice: 483 library tests, 0 binary tests, and 0 doc tests, all passing under warning-deny Clippy/rustdoc plus the mdBook build
+- current tracked KG-quality fixture count: 127
 - current tests cover:
   - source-kind detection
   - deterministic source key naming
@@ -2306,11 +2320,11 @@
 
 ## Latest validation completed in this refresh
 - `bash scripts/run_ci.sh`
-  - passed; Rust test suite reported 357 passed tests under warning-deny CI, 0 failures, 0 binary tests, 0 doc tests, rustdoc completed under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build completed successfully
+  - passed; Rust test suite reported 483 passed tests under warning-deny CI, 0 failures, 0 binary tests, 0 doc tests, rustdoc completed under `RUSTDOCFLAGS="-D warnings"`, and the mdBook build completed successfully
 
 ## Session update (2026-04-19 README bootstrap analysis refresh)
 - Re-executed the README handoff path through `SESSION_BOOTSTRAP.md`, reread the linked continuity and user-facing markdown surfaces, and resurveyed the active Rust crate layout directly from disk.
-- The current Rust implementation now spans `31` source files and `62,689` lines under `crates/specforge/src`, with the tracked KG fixture suite at `90` and the canonical local CI path at `357` passing Rust tests plus warning-deny rustdoc and mdBook validation.
+- The current Rust implementation now spans `31` source files and `76,542` lines under `crates/specforge/src`, with the tracked KG fixture suite at `127` and the canonical local CI path at `483` passing Rust tests plus warning-deny rustdoc and mdBook validation.
 - The bootstrap pass did not reveal a new architectural pivot or an unlogged product-surface drift; the recent graph-direction validation work is already represented in the live docs.
 - The meaningful action from this refresh is simply keeping the bootstrap analysis truthful, so future resumed sessions start from current numbers instead of stale ones.
 

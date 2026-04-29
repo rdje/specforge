@@ -7,6 +7,23 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-29 Runtime doctor cold-load false negatives are hardened now
+- The README execution pass exposed a concrete operator-facing weakness in `specforge doctor --strict`:
+  - `/api/tags` could succeed
+  - the default local `qwen2.5vl:7b` model could be visible
+  - the first `/v1/chat/completions` request could still fail only because the model was cold and the previous 5-second curl deadline canceled the request while Ollama was still loading the runner
+- The right fix is not to skip the chat probe or treat model presence as enough readiness.
+- The right fix is to keep the strict chat-completions proof but make the local chat probe cold-load tolerant, because `converge` and `nlp-enrich` need the provider to answer real chat requests, not just list tags.
+- The implementation now:
+  - keeps fast GET probes for tag/model-list checks
+  - gives local chat probes a 30-second window for first-load latency
+  - reports curl timeout or connection details explicitly instead of allowing GET failures to degrade into a misleading empty-response parser error
+- This is a runtime-readiness hardening slice, not an IR semantics change:
+  - no canonical artifact schema changes
+  - no provider default changes
+  - no weakening of strict readiness
+  - just better alignment between the local-first operator path and real cold model behavior
+
 ## 2026-04-29 Cycle-qualified VLM timing-value label rejection is hardened now
 - `R15e` still explicitly called for richer timing-annotation negative fixtures beyond the first low-value label, motion-only annotation, and waveform-motion state filters.
 - The current VLM timing parser already rejected:
