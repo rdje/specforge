@@ -233,17 +233,30 @@ fn validate_system_signal_renderability(
                 .insert("keep first-slice system-contract signals explicitly 1-bit".to_string());
         }
         None => {
-            push_unique_message(
-                blocking_reasons,
-                &format!(
-                    "Canonical {} signal `{}` is missing a width hint required for standalone `.fsm` lowering.",
-                    role_name, signal_name
-                ),
-            );
-            required_canonical_enrichments.insert(
-                "promote a canonical interface inventory with stable signal names, directions, and widths"
-                    .to_string(),
-            );
+            if signal.width_hint_conflicted {
+                push_unique_message(
+                    blocking_reasons,
+                    &format!(
+                        "Canonical {role_name} signal `{signal_name}` has conflicting width evidence, so standalone `.fsm` lowering cannot prove it is 1-bit."
+                    ),
+                );
+                required_canonical_enrichments.insert(
+                    "resolve conflicting canonical system-signal width evidence before lowering `.fsm` system contracts"
+                        .to_string(),
+                );
+            } else {
+                push_unique_message(
+                    blocking_reasons,
+                    &format!(
+                        "Canonical {} signal `{}` is missing a width hint required for standalone `.fsm` lowering.",
+                        role_name, signal_name
+                    ),
+                );
+                required_canonical_enrichments.insert(
+                    "promote a canonical interface inventory with stable signal names, directions, and widths"
+                        .to_string(),
+                );
+            }
         }
     }
 }
@@ -522,6 +535,8 @@ pub struct FsmSignalCandidate {
     pub graph_direction_hint_conflicted: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub width_hint: Option<u32>,
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub width_hint_conflicted: bool,
     pub supporting_canonical_ids: Vec<String>,
     pub mention_categories: Vec<String>,
     pub automation_confidence: AutomationConfidence,
@@ -1297,6 +1312,7 @@ fn inventory_to_signal_candidates(
             graph_direction_hint: evidence.graph_direction_hint,
             graph_direction_hint_conflicted: evidence.graph_direction_hint_conflicted,
             width_hint: evidence.width_hint,
+            width_hint_conflicted: evidence.width_hint_conflicted,
             supporting_canonical_ids: evidence.supporting_canonical_ids.into_iter().collect(),
             mention_categories: evidence.mention_categories.into_iter().collect(),
             automation_confidence: evidence.automation_confidence,
@@ -2227,6 +2243,7 @@ fn build_top_signal_inventory(
     resolved_ports: &[ExplicitTopPortRecord],
     declared_directions: &BTreeMap<String, TopPortDirectionEvidence>,
     graph_directions: &BTreeMap<String, TopPortDirectionEvidence>,
+    widths: &BTreeMap<String, TopPortWidthEvidence>,
 ) -> Vec<FsmSignalCandidate> {
     raw_ports
         .iter()
@@ -2260,6 +2277,9 @@ fn build_top_signal_inventory(
                     .width_hint
                     .as_ref()
                     .and_then(|w| w.as_numeric()),
+                width_hint_conflicted: widths
+                    .get(&raw_port.port_name)
+                    .is_some_and(|evidence| evidence.width_conflicted),
                 supporting_canonical_ids: resolved_port.supporting_statement_ids.clone(),
                 mention_categories: vec!["top_port".to_string()],
                 automation_confidence: resolved_port.automation_confidence,
@@ -2706,6 +2726,7 @@ fn analyze_top_renderability(
         &resolved_ports,
         &declared_top_port_directions,
         &graph_top_port_directions,
+        &top_port_widths,
     );
 
     TopRenderabilityAnalysis {
@@ -4736,17 +4757,30 @@ fn register_renderable_signal(
     }
 
     let Some(width_hint) = signal.width_hint else {
-        push_unique_message(
-            blocking_reasons,
-            &format!(
-                "Signal `{}` is missing a canonical width hint required for `.fsm` emission.",
-                signal_name
-            ),
-        );
-        required_canonical_enrichments.insert(
-            "promote a canonical interface inventory with stable signal names, directions, and widths"
-                .to_string(),
-        );
+        if signal.width_hint_conflicted {
+            push_unique_message(
+                blocking_reasons,
+                &format!(
+                    "Signal `{signal_name}` has conflicting width evidence required for `.fsm` emission."
+                ),
+            );
+            required_canonical_enrichments.insert(
+                "resolve conflicting canonical signal width evidence before lowering `.fsm`"
+                    .to_string(),
+            );
+        } else {
+            push_unique_message(
+                blocking_reasons,
+                &format!(
+                    "Signal `{}` is missing a canonical width hint required for `.fsm` emission.",
+                    signal_name
+                ),
+            );
+            required_canonical_enrichments.insert(
+                "promote a canonical interface inventory with stable signal names, directions, and widths"
+                    .to_string(),
+            );
+        }
         return None;
     };
 
@@ -6091,6 +6125,16 @@ mod tests {
         }
     }
 
+    fn set_direct_signal_width_hint(intent_ir: &mut IntentIr, signal_name: &str, width: u32) {
+        for interface in &mut intent_ir.interfaces {
+            for signal in &mut interface.signal_records {
+                if signal.signal_name == signal_name {
+                    signal.width_hint = Some(WidthHint::Numeric(width));
+                }
+            }
+        }
+    }
+
     fn build_missing_child_module_top_intent_ir(base: &Path) -> Result<IntentIr> {
         build_intent_ir_from_markdown(
             base,
@@ -6573,6 +6617,7 @@ mod tests {
             .expect("DATA_IN should stay in the direct signal inventory");
 
         assert_eq!(data_in.width_hint, None);
+        assert!(data_in.width_hint_conflicted);
         assert_eq!(
             data_in.graph_direction_hint,
             Some(InterfaceSignalDirection::Input)
@@ -6588,7 +6633,7 @@ mod tests {
             fsm.renderability
                 .blocking_reasons
                 .iter()
-                .any(|reason| reason.contains("missing a canonical width hint"))
+                .any(|reason| reason.contains("conflicting width evidence"))
         );
 
         Ok(())
@@ -6735,6 +6780,7 @@ mod tests {
             Some(InterfaceSignalDirection::Output)
         );
         assert_eq!(data_out.width_hint, None);
+        assert!(data_out.width_hint_conflicted);
         assert!(
             data_out
                 .mention_categories
@@ -6745,7 +6791,7 @@ mod tests {
             fsm.renderability
                 .blocking_reasons
                 .iter()
-                .any(|reason| reason.contains("missing a canonical width hint"))
+                .any(|reason| reason.contains("conflicting width evidence"))
         );
 
         Ok(())
@@ -7043,6 +7089,53 @@ mod tests {
                 .blocking_reasons
                 .iter()
                 .any(|reason| reason.contains("clock signal `clk` is missing a direction hint"))
+        );
+        assert!(
+            adapter
+                .residual_decisions
+                .iter()
+                .any(|packet| packet.packet_id == "fsm_adapter_system_contract")
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn standalone_sequential_dt_blocks_conflicting_system_contract_signal_width() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_explicit_sequential_control_intent_ir(tempdir.path())?;
+        set_direct_signal_width_hint(&mut intent_ir, "clk", 2);
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let clk = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "clk")
+            .expect("clock should remain in the signal inventory");
+
+        assert_eq!(clk.width_hint, None);
+        assert!(clk.width_hint_conflicted);
+        assert!(
+            clk.mention_categories
+                .iter()
+                .any(|category| category == "system_contract_signal")
+        );
+        assert!(!fsm.renderability.is_renderable);
+        assert!(
+            fsm.renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason.contains("clock signal `clk` has conflicting width evidence"))
         );
         assert!(
             adapter
@@ -7659,6 +7752,7 @@ mod tests {
             .expect("DATA_IN should stay in the module inventory");
 
         assert_eq!(data_in.width_hint, None);
+        assert!(data_in.width_hint_conflicted);
         assert_eq!(
             data_in.graph_direction_hint,
             Some(InterfaceSignalDirection::Input)
@@ -7675,7 +7769,7 @@ mod tests {
                 .renderability
                 .blocking_reasons
                 .iter()
-                .any(|reason| reason.contains("missing a canonical width hint"))
+                .any(|reason| reason.contains("conflicting width evidence"))
         );
         assert!(!fsm.renderability.is_renderable);
 
@@ -8856,6 +8950,7 @@ mod tests {
             .expect("consumer input_data should stay in the module inventory");
 
         assert_eq!(input_data.width_hint, None);
+        assert!(input_data.width_hint_conflicted);
         assert!(
             input_data
                 .mention_categories
@@ -8868,7 +8963,7 @@ mod tests {
                 .renderability
                 .blocking_reasons
                 .iter()
-                .any(|reason| reason.contains("missing a canonical width hint"))
+                .any(|reason| reason.contains("conflicting width evidence"))
         );
         assert!(
             fsm.renderability
@@ -8974,6 +9069,7 @@ mod tests {
 
         assert_eq!(recovered_port.width_hint, None);
         assert_eq!(signal_inventory_port.width_hint, None);
+        assert!(signal_inventory_port.width_hint_conflicted);
         assert!(
             top_candidate
                 .renderability
@@ -9024,6 +9120,7 @@ mod tests {
             .expect("producer output_data should stay in the module inventory");
 
         assert_eq!(output_data.width_hint, None);
+        assert!(output_data.width_hint_conflicted);
         assert!(
             output_data
                 .mention_categories
@@ -9036,7 +9133,7 @@ mod tests {
                 .renderability
                 .blocking_reasons
                 .iter()
-                .any(|reason| reason.contains("missing a canonical width hint"))
+                .any(|reason| reason.contains("conflicting width evidence"))
         );
         assert!(!fsm.renderability.is_renderable);
 

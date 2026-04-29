@@ -4,6 +4,15 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-29 `.fsm` width-conflict artifact provenance and diagnostics)
+- Continued from commit `b6255cf` by applying the same conflict-vs-missing renderability split to width evidence.
+- The root cause was a projection gap: `SignalInventoryEvidence` carried `width_hint_conflicted`, but `FsmSignalCandidate` only serialized the resolved numeric `width_hint`. Once a width conflict collapsed to `None`, downstream diagnostics could not distinguish conflict from absence.
+- `FsmSignalCandidate` now has a defaulted `width_hint_conflicted` flag. Direct/module inventory projection copies it from `SignalInventoryEvidence`, and selected top inventory projects it from `TopPortWidthEvidence`.
+- `register_renderable_signal(...)` and `validate_system_signal_renderability(...)` now emit conflicting-width blockers before the generic missing-width guidance, while still refusing to render any conflicted width.
+- A new system-contract width conflict regression complements existing direct, explicit-module, top-boundary, and child-topology width conflict coverage.
+- Focused width-conflict tests plus the full adapter test slice passed for this change.
+- Full local verification for this slice: `501` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-29 `.fsm` graph-conflict renderability diagnostics)
 - Continued from commit `72d47f0` by cleaning up a diagnostic consumer rather than changing adapter renderability semantics.
 - The root cause was that `preferred_signal_direction_hint(...)` intentionally returns `None` for graph-conflicted signals, but downstream renderability checks treated every `None` as a missing direction hint.

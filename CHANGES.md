@@ -1,5 +1,28 @@
 # CHANGES
 
+## 2026-04-29 (`.fsm` width conflicts get explicit artifact provenance and diagnostics)
+
+### Improved: conflicting width evidence no longer looks like a missing width
+- `FsmSignalCandidate` now preserves `width_hint_conflicted` in serialized adapter artifacts, matching the existing graph-direction conflict bit.
+- Direct roots, explicit module roots, child-link topology overlays, actor-port width overlays, and system-contract clock/reset checks now report conflicting width evidence separately from genuinely absent width hints.
+- Selected top signal inventory also carries the width-conflict bit when top-boundary width evidence is poisoned by duplicate declarations, top actor ports, or child-link topology.
+- Rendering remains conservative: conflicted widths still block `.fsm` output and no fallback width is guessed.
+
+### Validation
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo test --manifest-path Cargo.toml standalone_dt_blocks_conflicting_control_input_actor_port_widths -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml standalone_dt_keeps_conflicting_actor_port_width_unresolved -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml standalone_explicit_module_blocks_conflicting_control_input_actor_port_widths -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml standalone_sequential_dt_blocks_conflicting_system_contract_signal_width -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml top_composition_blocks_conflicting_top_port_widths_from_child_links -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml top_composition_blocks_conflicting_child_topology_widths -- --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml ir::adapters::tests -- --nocapture` -> passed with `57` adapter tests
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `501` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-29 (`.fsm` graph-direction conflicts get explicit renderability diagnostics)
 
 ### Improved: graph conflicts no longer look like missing direction hints

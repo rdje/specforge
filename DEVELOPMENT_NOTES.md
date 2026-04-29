@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-29 `.fsm` width conflicts preserve provenance through renderability
+- The graph-direction diagnostic split exposed the width analogue:
+  - `SignalInventoryEvidence` already tracked `width_hint_conflicted`
+  - `FsmSignalCandidate` dropped that bit when the adapter artifact was serialized
+  - renderability therefore reported graph/actor/topology width conflicts as missing canonical widths
+- `FsmSignalCandidate` now carries `width_hint_conflicted` with a default/skip-false serde shape, so old artifacts remain readable and new blocked artifacts retain the root cause.
+- `inventory_to_signal_candidates(...)` and `build_top_signal_inventory(...)` now project the width-conflict bit from direct/module evidence and top-boundary evidence respectively.
+- `register_renderable_signal(...)` and `validate_system_signal_renderability(...)` now branch on width conflicts before falling back to the generic missing-width blocker.
+- Focused direct, explicit-module, system-contract, top-boundary, and child-topology width conflict tests plus the full adapter suite now lock the behavior.
+- Full local CI with `501` Rust tests and the full `127/127` tracked KG fixture suite passed after the projection change.
+
 ## 2026-04-29 `.fsm` renderability diagnostics distinguish graph direction conflicts
 - After the selected-inventory conflict work, one adjacent root-cause signal was still too blunt:
   - graph-conflicted inventory entries correctly blocked rendering through `preferred_signal_direction_hint(...)`
