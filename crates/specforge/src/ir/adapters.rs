@@ -9138,6 +9138,16 @@ mod tests {
             .iter()
             .find(|top| top.top_name == "soc")
             .expect("top candidate should be present");
+        let recovered_clk = top_candidate
+            .ports
+            .iter()
+            .find(|port| port.port_name == "clk")
+            .expect("recovered clock top port should be present");
+        let recovered_rst_n = top_candidate
+            .ports
+            .iter()
+            .find(|port| port.port_name == "rst_n")
+            .expect("recovered reset top port should be present");
         let controller = fsm
             .module_candidates
             .iter()
@@ -9180,6 +9190,27 @@ mod tests {
             .expect("child reset should be materialized in module inventory");
 
         assert!(top_candidate.renderability.is_renderable);
+        for (recovered_port, topology_support_ids) in [
+            (recovered_clk, &clk_topology_support_ids),
+            (recovered_rst_n, &rst_topology_support_ids),
+        ] {
+            assert_eq!(
+                recovered_port
+                    .width_hint
+                    .as_ref()
+                    .and_then(|width| width.as_numeric()),
+                Some(1)
+            );
+            assert!(
+                topology_support_ids
+                    .iter()
+                    .any(|id| recovered_port.supporting_statement_ids.contains(id))
+            );
+            assert_eq!(
+                recovered_port.automation_confidence,
+                AutomationConfidence::High
+            );
+        }
         assert_eq!(top_clk.width_hint, Some(1));
         assert_eq!(top_rst_n.width_hint, Some(1));
         for (top_signal, topology_support_ids) in [

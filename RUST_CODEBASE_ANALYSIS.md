@@ -4,6 +4,13 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-30 `.fsm` resolved top system-port width provenance)
+- Continued from commit `8beb670` by locking the resolved top-candidate port sibling of the child-system-contract width provenance surface.
+- The production path already merged top width evidence into `FsmTopCandidate.ports`; this slice proves that child-system-contract endpoint recovery leaves top-link support IDs and high confidence visible on resolved top `clk` / `rst_n`.
+- The focused assertion extends the existing top system-contract distribution test, so it covers resolved top ports, selected top inventory, and the renderable `?top:soc` document model together.
+- This is a regression-only artifact-surface slice: renderability, conflict behavior, and emitted `.fsm` text remain unchanged.
+- Adapter coverage remains at `67` tests; full local verification for this slice: `511` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-30 `.fsm` selected top system-port width provenance)
 - Continued from commit `ade21cc` by locking the selected top inventory sibling of the child-system-contract width provenance surface.
 - The production path already merged top width evidence into `FsmSignalCandidate` entries; this slice proves that child-system-contract endpoint recovery leaves `module_topology_link`, top-link support IDs, and high confidence visible on selected top `clk` / `rst_n`.
