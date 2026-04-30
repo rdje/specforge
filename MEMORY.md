@@ -19,22 +19,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `5c715d60a07bd49c3b002b278015c14225b9a69e`
-- latest_commit_brief_message: `test(adapter): lock standalone system provenance`
-- note: the latest committed baseline locks standalone sequential and explicit-module system-contract clock/reset signal support IDs and automation confidence
+- latest_commit_hash: `240b5cce28c32fe44197a6a0a8d44177b697166c`
+- latest_commit_brief_message: `test(adapter): lock renderable system provenance`
+- note: the latest committed baseline locks standalone renderable-module and source-document system-contract support IDs and automation confidence
 
 ## Recent commit chain (last 6)
+- `240b5cc` test(adapter): lock renderable system provenance
 - `5c715d6` test(adapter): lock standalone system provenance
 - `2a1114e` test(adapter): lock child system endpoint provenance
 - `57ac516` test(adapter): lock resolved system-port widths
 - `8beb670` test(adapter): lock selected system-port provenance
 - `ade21cc` test(adapter): lock system-port renderable widths
-- `661f019` test(adapter): lock actor-port renderable width
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 6` of `origin/main`
+- branch state before the next commit: `ahead 7` of `origin/main`
 - modified tracked files:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -45,11 +45,11 @@
 
 ## Current in-flight slice
 - objective:
-  - lock standalone renderable-module and source-document system-contract support IDs and automation confidence
+  - lock top-composition child renderable-module and source-document system-contract support IDs and automation confidence
 - tracker effect:
-  - added a standalone renderable system-contract provenance `Done` row for final artifact boundaries
+  - added a child renderable system-contract provenance `Done` row for top-composition final artifact boundaries
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge system_signals_from_system_contract -- --nocapture` passed with `3` focused system-contract tests
+  - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::top_composition_recovers_top_system_port_widths_from_child_system_contract -- --exact --nocapture` passed
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests -- --nocapture` passed with `67` adapter tests
   - `cargo fmt --manifest-path Cargo.toml` passed
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
@@ -62,6 +62,6 @@
 
 ## Next exact steps
 - rerun final lightweight formatting, docs, and whitespace checks after validation-doc updates
-- commit the standalone renderable system-contract provenance regression slice
+- commit the child renderable system-contract provenance regression slice
 - truncate `git_message_brief.txt` back to `0` bytes and confirm it remains untracked after that commit
-- leave the branch unpushed; after this commit it should be `ahead 7`, below the `25`-commit push threshold
+- leave the branch unpushed; after this commit it should be `ahead 8`, below the `25`-commit push threshold

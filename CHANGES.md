@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-30 (`.fsm` child renderable system contracts keep provenance)
+
+### Added: child renderable system-contract provenance is regression-locked
+- Extended the top system-contract distribution regression to assert the child `controller_core` renderable module keeps system-contract support IDs and high automation confidence.
+- The same test now asserts the renderable source-document child direct root keeps that contract provenance, covering the emitted child module boundary inside a top-composition artifact.
+- This complements the child signal-inventory endpoint lock: child `clk` / `rst_n` entries and the renderable child module system contract now both preserve the evidence that makes the distributed system block safe to render.
+- No production behavior changed; explicit module renderability already cloned the canonical child `SystemContractRecord` into renderable modules.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::top_composition_recovers_top_system_port_widths_from_child_system_contract -- --exact --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests -- --nocapture` -> passed with `67` adapter tests
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `511` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-30 (`.fsm` standalone renderable system contracts keep provenance)
 
 ### Added: standalone renderable system-contract provenance is regression-locked

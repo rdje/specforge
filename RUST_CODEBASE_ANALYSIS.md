@@ -4,6 +4,13 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-30 `.fsm` child renderable system-contract provenance)
+- Continued from commit `240b5cc` by locking the top-composition child renderable module system-contract surface.
+- The production path already cloned child `SystemContractRecord` values into explicit module renderable modules; this slice proves the child `controller_core` renderable module keeps support IDs and high confidence alongside the child clock/reset signal inventory.
+- The same assertion now covers `renderable_document.direct_roots[*].module`, so the final source-document boundary used for emitted child roots preserves the child system-block evidence.
+- This is a regression-only artifact-boundary slice: renderability, conflict behavior, and emitted `.fsm` text remain unchanged.
+- Adapter coverage remains at `67` tests; full local verification for this slice: `511` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-30 `.fsm` standalone renderable system-contract provenance)
 - Continued from commit `5c715d6` by locking the final renderable standalone system-contract surfaces.
 - The production path already cloned `SystemContractRecord` into renderable modules; this slice proves that support IDs and high confidence survive in both `fsm.renderable_module` and `renderable_document.direct_roots[*].module`.

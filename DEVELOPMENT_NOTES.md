@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-30 `.fsm` child renderable system contracts keep provenance
+- Continued from commit `240b5cc` by locking the top-composition child renderable-module consumer of system-contract provenance.
+- The top system-contract distribution regression already proved child `controller_core.clk` / `rst_n` signal inventory entries keep support IDs and confidence; this extension proves `controller_core`'s `FsmRenderableModule.system_contract` keeps the same contract support IDs and high confidence.
+- The assertion also checks the `renderable_document.direct_roots` child module, so the final renderable source-document boundary preserves the contract evidence used to emit the child `(+system ...)` block.
+- This keeps the child endpoint/renderable-module story aligned with the standalone renderable system-contract lock without changing emitted `.fsm` text.
+- Adapter coverage remains at `67` tests; full local CI with `511` Rust tests and the full `127/127` tracked KG fixture suite passed after the regression landed.
+
 ## 2026-04-30 `.fsm` standalone renderable system contracts keep provenance
 - Continued from commit `5c715d6` by locking the renderable-module consumer of standalone system-contract provenance.
 - `analyze_dt_root_renderability(...)` and `analyze_fsm_root_renderability(...)` already clone the canonical `SystemContractRecord` into `FsmRenderableModule`; this regression proves that support IDs and high confidence survive into both `fsm.renderable_module` and the renderable source-document direct root.

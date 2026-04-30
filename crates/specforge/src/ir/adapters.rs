@@ -9336,6 +9336,21 @@ mod tests {
             .iter()
             .find(|signal| signal.signal_name == "rst_n")
             .expect("child reset should be materialized in module inventory");
+        let child_renderable_module = controller
+            .renderable_module
+            .as_ref()
+            .expect("child renderable module should be present");
+        let renderable_child_document_module = fsm
+            .renderable_document
+            .as_ref()
+            .and_then(|document| {
+                document
+                    .direct_roots
+                    .iter()
+                    .find(|root| root.module_name == "controller_core")
+            })
+            .map(|root| &root.module)
+            .expect("renderable source document should contain child module root");
 
         assert!(top_candidate.renderability.is_renderable);
         for (recovered_port, topology_support_ids) in [
@@ -9426,6 +9441,14 @@ mod tests {
             );
             assert_eq!(signal.automation_confidence, AutomationConfidence::High);
         }
+        assert_renderable_system_contract_provenance(
+            child_renderable_module,
+            &child_system_contract_support_ids,
+        );
+        assert_renderable_system_contract_provenance(
+            renderable_child_document_module,
+            &child_system_contract_support_ids,
+        );
         assert!(emitted_text.contains("    clk\n"));
         assert!(emitted_text.contains("    rst_n\n"));
         assert!(emitted_text.contains("/clk/controller.clk/"));
