@@ -9116,6 +9116,21 @@ mod tests {
                 super::explicit_top_link_supporting_ids(rst_link),
             )
         };
+        let child_system_contract_support_ids = {
+            let child_system_contract = intent_ir
+                .explicit_modules
+                .iter()
+                .find(|module| module.module_name == "controller_core")
+                .and_then(|module| module.system_contract.as_ref())
+                .expect("controller module system contract should be present");
+            assert_eq!(child_system_contract.clock_signal, "clk");
+            assert_eq!(child_system_contract.reset_signal, "rst_n");
+            assert!(
+                !child_system_contract.supporting_statement_ids.is_empty(),
+                "system contract should carry concrete support IDs"
+            );
+            child_system_contract.supporting_statement_ids.clone()
+        };
 
         let artifact_base = tempdir.path().join("generated").join("adapters");
         let adapter = AdapterArtifact::build(
@@ -9271,6 +9286,12 @@ mod tests {
                     .iter()
                     .any(|category| category == "system_contract_signal")
             );
+            assert!(
+                child_system_contract_support_ids
+                    .iter()
+                    .any(|id| signal.supporting_canonical_ids.contains(id))
+            );
+            assert_eq!(signal.automation_confidence, AutomationConfidence::High);
         }
         assert!(emitted_text.contains("    clk\n"));
         assert!(emitted_text.contains("    rst_n\n"));

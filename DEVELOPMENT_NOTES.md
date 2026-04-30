@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-30 `.fsm` child system endpoints keep contract provenance
+- Continued from commit `57ac516` by locking the child module endpoint side of the system-contract provenance chain.
+- `overlay_system_contract_signal(...)` already copies `SystemContractRecord.supporting_statement_ids` and confidence into `FsmSignalCandidate`; this regression proves `controller_core.clk` and `controller_core.rst_n` keep those IDs and high confidence when they are materialized solely from the child system contract.
+- The assertion lives in the existing top system-contract distribution test, so it proves the child endpoints are contract-backed before the same fixture checks resolved top ports, selected top inventory, and final renderable top-root ports.
+- This completes the immediate child-endpoint-through-top-boundary evidence chain for system-contract width recovery without changing emitted `.fsm` text.
+- Full local CI with `511` Rust tests and the full `127/127` tracked KG fixture suite passed after the regression landed.
+
 ## 2026-04-30 `.fsm` resolved top ports keep system-port width provenance
 - Continued from commit `8beb670` by locking the resolved top-candidate port sibling of the child-system-contract width provenance surface.
 - `merge_resolved_top_port_provenance(...)` already folds width-evidence support IDs and confidence into `FsmTopCandidate.ports`; this regression proves that resolved top `clk` and `rst_n` entries keep the explicit top-link support IDs and high confidence when their widths come from child system-contract endpoints.

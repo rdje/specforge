@@ -4,6 +4,13 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-30 `.fsm` child system endpoint provenance)
+- Continued from commit `57ac516` by locking the child module endpoint side of the system-contract provenance chain.
+- The production path already copied `SystemContractRecord` support IDs and confidence into materialized child clock/reset `FsmSignalCandidate` entries; this slice proves those values stay visible on `controller_core.clk` and `controller_core.rst_n`.
+- The focused assertion extends the existing top system-contract distribution test, so it now covers child endpoint provenance before resolved top ports, selected top inventory, and the renderable `?top:soc` document model consume it.
+- This is a regression-only artifact-surface slice: renderability, conflict behavior, and emitted `.fsm` text remain unchanged.
+- Adapter coverage remains at `67` tests; full local verification for this slice: `511` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-30 `.fsm` resolved top system-port width provenance)
 - Continued from commit `8beb670` by locking the resolved top-candidate port sibling of the child-system-contract width provenance surface.
 - The production path already merged top width evidence into `FsmTopCandidate.ports`; this slice proves that child-system-contract endpoint recovery leaves top-link support IDs and high confidence visible on resolved top `clk` / `rst_n`.
