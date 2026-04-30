@@ -4,6 +4,13 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-30 `.fsm` renderable top-link provenance)
+- Continued from commit `4f2bf49` by locking the final renderable top-root link surface for explicit topology evidence.
+- `FsmRenderableTopRoot.links` already clones the explicit top links when top renderability succeeds; this slice proves the clone preserves link support IDs and high automation confidence.
+- The assertion extends the isolated top-link confidence fixture, so public top-port and child declaration confidence remain low while the child-to-child link carries the high-confidence evidence.
+- This is a regression-only artifact-boundary slice: renderability, endpoint validation, and emitted `.fsm` text remain unchanged.
+- Adapter coverage remains at `69` tests; full local verification for this slice: `513` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-30 `.fsm` top-link root-kind confidence)
 - Continued from commit `9795e3e` by locking the explicit topology-link confidence path in the top-root decision fold.
 - `build_top_root_kind_decision(...)` already folds `FsmTopCandidate.links[*].automation_confidence`; this slice adds a regression where the only high-confidence evidence is a child-to-child top link.

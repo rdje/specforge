@@ -187,6 +187,7 @@
 - `.fsm` top root-kind decision confidence now follows recovered top-boundary evidence instead of raw low-confidence top-port declarations: Done
 - `.fsm` top root-kind decision confidence now follows high-confidence explicit top-child declarations when top-boundary evidence stays low confidence: Done
 - `.fsm` top root-kind decision confidence now follows high-confidence explicit top-link topology when top-port and child evidence stay low confidence: Done
+- `.fsm` renderable top-root links now preserve explicit top-link supporting IDs and automation confidence before `?toplink:wiring` emission: Done
 - `.fsm` renderable top-root ports now preserve recovered top-boundary direction/width supporting IDs and automation confidence from actor-port direction/width, top-link direction/width, and child system-contract width evidence: Done
 - `.fsm` renderability diagnostics now distinguish graph-direction conflicts from missing direction hints: Done
 - `.fsm` adapter signal inventory now preserves width-conflict provenance and reports conflicted widths distinctly: Done

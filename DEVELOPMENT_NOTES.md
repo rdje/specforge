@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-30 `.fsm` renderable top links keep topology provenance
+- Continued from commit `4f2bf49` by locking the final renderable-document consumer of explicit top-link provenance.
+- Extended `top_root_kind_confidence_follows_top_link_evidence` so the same isolated child-to-child topology link proves both selected top-candidate and renderable top-root link records keep support IDs and high confidence.
+- `FsmRenderableTopRoot.links` already receives `top.links.clone()` after renderability succeeds; this regression keeps that clone from becoming a silent provenance drop in future refactors.
+- This complements the root-kind confidence assertion: the explicit top-link evidence now remains visible at both the decision fold and final `(?toplink:wiring ...)` document boundary.
+- Adapter coverage remains at `69` tests; full local CI with `513` Rust tests and the full `127/127` tracked KG fixture suite passed after the regression landed.
+
 ## 2026-04-30 `.fsm` top root-kind confidence follows topology links
 - Continued from commit `9795e3e` by locking the explicit top-link lane in the top-root decision confidence fold.
 - Added `top_root_kind_confidence_follows_top_link_evidence`, a minimal top-composition fixture where the public top port and both child declarations are downgraded to low confidence while a child-to-child topology link stays high confidence.

@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-30 (`.fsm` renderable top links keep topology provenance)
+
+### Added: renderable top-root link provenance is regression-locked
+- Extended the topology-link root-kind confidence regression to assert the child-to-child `FsmTopCandidate.links` entry keeps explicit top-link support IDs and high automation confidence.
+- The same test now checks `FsmRenderableTopRoot.links`, proving the final renderable top document carries the topology evidence that drives `(?toplink:wiring ...)` emission.
+- The fixture still keeps public top-port and child declaration confidence low, so this locks link evidence without relying on recovered top-boundary or child-declaration confidence.
+- No production behavior changed; top renderability already clones explicit top links into the renderable top root.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::top_root_kind_confidence_follows_top_link_evidence -- --exact --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests -- --nocapture` -> passed with `69` adapter tests
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `513` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-30 (`.fsm` top root-kind confidence follows topology links)
 
 ### Added: top-link confidence now feeds root-kind confidence coverage

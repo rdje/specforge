@@ -9299,7 +9299,7 @@ mod tests {
             "top_root_kind_link_confidence.md",
             "# Top Root Kind Link Confidence\nTop datapath.\n\nTop datapath port status is output width 1.\n\nTop datapath child producer uses module producer_core.\n\nTop datapath child consumer uses module consumer_core.\n\nTop datapath link producer.output_data -> consumer.input_data.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n\nModule consumer_core signal input_data is input width 8.\n\nModule consumer_core signal result_data is output width 8.\n\nModule consumer_core block route: result_data = input_data.\n",
         )?;
-        {
+        let link_support_ids = {
             let raw_top = intent_ir
                 .explicit_tops
                 .iter_mut()
@@ -9330,8 +9330,13 @@ mod tests {
                 raw_link.source.instance_name.is_some() && raw_link.target.instance_name.is_some(),
                 "fixture should isolate root-kind confidence from top-boundary recovery"
             );
+            assert!(
+                !raw_link.supporting_statement_ids.is_empty(),
+                "top link should carry concrete support IDs"
+            );
             raw_link.automation_confidence = AutomationConfidence::High;
-        }
+            super::explicit_top_link_supporting_ids(raw_link)
+        };
         intent_ir.write_to_disk()?;
 
         let artifact_base = tempdir.path().join("generated").join("adapters");
@@ -9362,6 +9367,21 @@ mod tests {
                     && link.target.signal_name == "input_data"
             })
             .expect("child-to-child top link should be present");
+        let renderable_top = fsm
+            .renderable_document
+            .as_ref()
+            .and_then(|document| document.top_root.as_ref())
+            .expect("renderable top root should be present");
+        let renderable_link = renderable_top
+            .links
+            .iter()
+            .find(|link| {
+                link.source.instance_name.as_deref() == Some("producer")
+                    && link.source.signal_name == "output_data"
+                    && link.target.instance_name.as_deref() == Some("consumer")
+                    && link.target.signal_name == "input_data"
+            })
+            .expect("child-to-child top link should be present in renderable top root");
 
         assert!(top_candidate.renderability.is_renderable);
         assert_eq!(
@@ -9377,6 +9397,20 @@ mod tests {
         assert_eq!(
             recovered_link.automation_confidence,
             AutomationConfidence::High
+        );
+        assert!(
+            link_support_ids
+                .iter()
+                .any(|id| recovered_link.supporting_statement_ids.contains(id))
+        );
+        assert_eq!(
+            renderable_link.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert!(
+            link_support_ids
+                .iter()
+                .any(|id| renderable_link.supporting_statement_ids.contains(id))
         );
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Top);
         assert_eq!(
