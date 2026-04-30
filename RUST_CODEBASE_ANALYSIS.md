@@ -4,6 +4,13 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-30 `.fsm` reused FSM child roots)
+- Continued from commit `f2e714d` by locking `renderable_modules_for_top(...)` de-duplication for structured FSM child modules, not only DT child modules.
+- The new regression instantiates the same `controller_core` FSM module twice under one top and proves both renderable children remain `FsmRootKind::Fsm` while `FsmRenderableSourceDocument.direct_roots` emits one shared `controller_core` `?fsm:name` root.
+- The emitted text assertion counts exactly one `(?fsm:controller_core` root while preserving both `(?fsmc:first controller_core)` and `(?fsmc:second controller_core)` child instances.
+- This is a regression-only artifact-boundary slice: no renderability, topology recovery, or source-document modeling behavior changed.
+- Adapter coverage increases to `73` tests; full local verification for this slice: `517` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-30 `.fsm` top documents with FSM children)
 - Continued from commit `17435fd` by locking the mixed child-root-kind branch in renderable top source documents.
 - The adapter already allowed top children to resolve as either `FsmRootKind::Dt` or `FsmRootKind::Fsm`; the new regression proves that a structured `controller_core` FSM child remains `Fsm` in `FsmTopChildCandidate`, `FsmRenderableTopRoot.children`, and `FsmRenderableSourceDocument.direct_roots`.

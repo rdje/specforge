@@ -9001,6 +9001,79 @@ mod tests {
     }
 
     #[test]
+    fn renderable_top_document_deduplicates_reused_fsm_child_roots() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "top_with_reused_fsm_child.md",
+            "# Top With Reused FSM Child\nTop wrapper.\n\nTop wrapper port clk is input width 1.\n\nTop wrapper port rst_n is input width 1.\n\nTop wrapper port GO is input width 1.\n\nTop wrapper port DONE is input width 1.\n\nTop wrapper port DATA_IN is input width 8.\n\nTop wrapper port ACC_A is output width 8.\n\nTop wrapper port ACC_B is output width 8.\n\nTop wrapper child first uses module controller_core.\n\nTop wrapper child second uses module controller_core.\n\nTop wrapper link clk -> first.clk.\n\nTop wrapper link rst_n -> first.rst_n.\n\nTop wrapper link GO -> first.GO.\n\nTop wrapper link DONE -> first.DONE.\n\nTop wrapper link DATA_IN -> first.DATA_IN.\n\nTop wrapper link first.ACC -> ACC_A.\n\nTop wrapper link clk -> second.clk.\n\nTop wrapper link rst_n -> second.rst_n.\n\nTop wrapper link GO -> second.GO.\n\nTop wrapper link DONE -> second.DONE.\n\nTop wrapper link DATA_IN -> second.DATA_IN.\n\nTop wrapper link second.ACC -> ACC_B.\n\nModule controller_core Signal clk is input width 1.\n\nModule controller_core Signal rst_n is input width 1.\n\nModule controller_core Signal GO is input width 1.\n\nModule controller_core Signal DONE is input width 1.\n\nModule controller_core Signal DATA_IN is input width 8.\n\nModule controller_core Signal ACC is output width 8.\n\nModule controller_core Clock clk.\n\nModule controller_core Reset rst_n is asynchronous active low.\n\nModule controller_core Init ACC = 8'0.\n\nModule controller_core State idle is initial.\n\nModule controller_core State busy.\n\nModule controller_core Block idle: ACC <- DATA_IN.\n\nModule controller_core Transition idle -> busy when GO.\n\nModule controller_core Block busy: ACC <- DATA_IN.\n\nModule controller_core Transition busy -> idle when DONE.\n",
+        )?;
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+        adapter.write_to_disk()?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "renderable");
+        let emitted_target_path = adapter
+            .artifact_layout
+            .emitted_target_path
+            .as_ref()
+            .expect("renderable top with reused FSM child should emit target text");
+        let emitted_text = fs::read_to_string(emitted_target_path)?;
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let top_candidate = fsm
+            .top_candidates
+            .iter()
+            .find(|top| top.top_name == "wrapper")
+            .expect("top candidate should be present");
+        let renderable_top = fsm
+            .renderable_document
+            .as_ref()
+            .and_then(|document| document.top_root.as_ref())
+            .expect("renderable top root should be present");
+        let direct_roots = fsm
+            .renderable_document
+            .as_ref()
+            .map(|document| document.direct_roots.as_slice())
+            .expect("renderable source document should be present");
+
+        assert!(top_candidate.renderability.is_renderable);
+        assert_eq!(top_candidate.children.len(), 2);
+        assert!(
+            top_candidate
+                .children
+                .iter()
+                .all(|child| child.source_module_name == "controller_core"
+                    && child.resolved_root_kind == Some(FsmRootKind::Fsm))
+        );
+        assert_eq!(renderable_top.children.len(), 2);
+        assert!(
+            renderable_top
+                .children
+                .iter()
+                .all(|child| child.source_module_name == "controller_core"
+                    && child.child_root_kind == FsmRootKind::Fsm)
+        );
+        assert_eq!(direct_roots.len(), 1);
+        let controller_root = direct_roots
+            .iter()
+            .find(|root| root.module_name == "controller_core")
+            .expect("shared FSM child direct root should be present once");
+        assert_eq!(controller_root.root_kind, FsmRootKind::Fsm);
+        assert!(!controller_root.module.states.is_empty());
+        assert!(controller_root.module.system_contract.is_some());
+        assert_eq!(emitted_text.matches("(?fsm:controller_core").count(), 1);
+        assert!(emitted_text.contains("(?fsmc:first controller_core)"));
+        assert!(emitted_text.contains("(?fsmc:second controller_core)"));
+
+        Ok(())
+    }
+
+    #[test]
     fn top_composition_recovers_top_port_direction_from_link_topology() -> Result<()> {
         let tempdir = tempdir()?;
         let mut intent_ir = build_width_only_top_port_composition_intent_ir(tempdir.path())?;

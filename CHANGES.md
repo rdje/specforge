@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-30 (`.fsm` reused FSM child modules share renderable roots)
+
+### Added: reused FSM child modules de-duplicate renderable direct roots
+- Added a renderable top-composition regression where two child instances both use the same structured FSM child module.
+- The test proves both `?fsmc` child instances remain in the renderable top root while `renderable_document.direct_roots` emits the shared `controller_core` `?fsm:name` module exactly once.
+- The fixture checks the shared FSM direct root keeps state content and system-contract content, so the de-duplication proof covers real structured-FSM payload rather than only child-reference text.
+- No production behavior changed; this locks the existing `renderable_modules_for_top(...)` de-duplication path for FSM child roots.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::renderable_top_document_deduplicates_reused_fsm_child_roots -- --exact --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests -- --nocapture` -> passed with `73` adapter tests
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `517` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-30 (`.fsm` top documents preserve FSM child roots)
 
 ### Added: top composition with FSM child roots is regression-locked

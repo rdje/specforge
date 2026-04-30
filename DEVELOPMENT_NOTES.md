@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-30 `.fsm` reused FSM child modules share renderable roots
+- Continued from commit `f2e714d` by combining the reused-child direct-root de-duplication seam with the newly locked FSM-child root-kind seam.
+- Added `renderable_top_document_deduplicates_reused_fsm_child_roots`, where top `wrapper` instantiates `controller_core` twice as structured FSM children and wires both instances through explicit top links.
+- The renderable top root keeps both `first` and `second` as `FsmRootKind::Fsm` child references, while `renderable_document.direct_roots` contains exactly one shared `controller_core` `FsmRootKind::Fsm` direct root.
+- The emitted text assertion checks one `(?fsm:controller_core` root plus both `(?fsmc:first controller_core)` and `(?fsmc:second controller_core)`, and the model assertion checks state/system payload survived under the shared root.
+- Adapter coverage increases to `73` tests; full local CI with `517` Rust tests and the full `127/127` tracked KG fixture suite passed after the regression landed.
+
 ## 2026-04-30 `.fsm` top documents preserve FSM child roots
 - Continued from commit `17435fd` by moving one seam deeper than top/direct-root ordering: mixed child root kinds inside renderable top source documents.
 - Added `renderable_top_document_preserves_fsm_child_root_kind`, where `wrapper` instantiates a structured `controller_core` FSM child and wires clock/reset, inputs, and outputs through explicit top links.
