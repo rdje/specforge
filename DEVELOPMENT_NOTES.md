@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-30 `.fsm` mixed child root order stays stable
+- Continued from commit `67a4d84` by covering the mixed-root sibling after the all-FSM and reused-FSM child-root regressions.
+- Added `renderable_top_document_preserves_mixed_child_root_order_and_kind`, where top `wrapper` instantiates DT `producer_core` first and structured FSM `controller_core` second.
+- The regression checks `FsmRenderableTopRoot.children` and `renderable_document.direct_roots` together, proving order and root kind stay aligned across the model boundary: `producer`/`?dtc` then `controller`/`?fsmc`, with direct roots `producer_core`/`?dt:name` then `controller_core`/`?fsm:name`.
+- The emitted text assertion checks top-before-direct-root ordering plus the mixed child spellings and the DT-to-FSM top link, keeping final `.fsm` output aligned with the renderable model.
+- Adapter coverage increases to `74` tests; full local CI with `518` Rust tests and the full `127/127` tracked KG fixture suite passed after the regression landed.
+
 ## 2026-04-30 `.fsm` reused FSM child modules share renderable roots
 - Continued from commit `f2e714d` by combining the reused-child direct-root de-duplication seam with the newly locked FSM-child root-kind seam.
 - Added `renderable_top_document_deduplicates_reused_fsm_child_roots`, where top `wrapper` instantiates `controller_core` twice as structured FSM children and wires both instances through explicit top links.

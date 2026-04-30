@@ -4,6 +4,13 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-30 `.fsm` mixed child root order)
+- Continued from commit `67a4d84` by locking mixed DT/FSM child ordering in renderable top source documents.
+- The adapter already traverses top children in declaration order and clones each renderable child module into `FsmRenderableSourceDocument.direct_roots`; the new regression proves that this order survives when the first child is `FsmRootKind::Dt` and the second is `FsmRootKind::Fsm`.
+- The emitted text assertion covers `(?dtc:producer producer_core)`, `(?fsmc:controller controller_core)`, top-before-direct-root emission, and direct-root order `(?dt:producer_core` before `(?fsm:controller_core`.
+- This is a regression-only artifact-boundary slice: no renderability, topology recovery, or source-document modeling behavior changed.
+- Adapter coverage increases to `74` tests; full local verification for this slice: `518` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-30 `.fsm` reused FSM child roots)
 - Continued from commit `f2e714d` by locking `renderable_modules_for_top(...)` de-duplication for structured FSM child modules, not only DT child modules.
 - The new regression instantiates the same `controller_core` FSM module twice under one top and proves both renderable children remain `FsmRootKind::Fsm` while `FsmRenderableSourceDocument.direct_roots` emits one shared `controller_core` `?fsm:name` root.

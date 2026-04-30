@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-30 (`.fsm` mixed child root order stays stable)
+
+### Added: mixed DT/FSM top child roots are regression-locked
+- Added a renderable top-composition regression where one top instantiates a DT child followed by a structured FSM child.
+- The test proves `FsmRenderableTopRoot.children` preserves child order and root kind as `producer`/`?dtc` then `controller`/`?fsmc`.
+- The same fixture proves `renderable_document.direct_roots` preserves direct-root order and kind as `producer_core`/`?dt:name` then `controller_core`/`?fsm:name`, with final emitted text matching that order.
+- No production behavior changed; this locks mixed child-root ordering across `renderable_modules_for_top(...)` and source-document text emission.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::renderable_top_document_preserves_mixed_child_root_order_and_kind -- --exact --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests -- --nocapture` -> passed with `74` adapter tests
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `518` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-30 (`.fsm` reused FSM child modules share renderable roots)
 
 ### Added: reused FSM child modules de-duplicate renderable direct roots
