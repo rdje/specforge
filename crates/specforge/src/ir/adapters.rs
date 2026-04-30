@@ -8795,6 +8795,99 @@ mod tests {
     }
 
     #[test]
+    fn renderable_top_document_deduplicates_reused_child_module_roots() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "reused_child_module_top.md",
+            "# Reused Child Module Top\nTop pipe.\n\nTop pipe port result_data is output width 8.\n\nTop pipe child first uses module stage_core.\n\nTop pipe child second uses module stage_core.\n\nTop pipe link first.output_data -> second.input_data.\n\nTop pipe link second.output_data -> result_data.\n\nModule stage_core signal input_data is input width 8.\n\nModule stage_core signal output_data is output width 8.\n\nModule stage_core block route: output_data = input_data.\n",
+        )?;
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+        adapter.write_to_disk()?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "renderable");
+        let emitted_target_path = adapter
+            .artifact_layout
+            .emitted_target_path
+            .as_ref()
+            .expect("renderable reused-child top should emit target text");
+        let emitted_text = fs::read_to_string(emitted_target_path)?;
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let top_candidate = fsm
+            .top_candidates
+            .iter()
+            .find(|top| top.top_name == "pipe")
+            .expect("top candidate should be present");
+        let renderable_top = fsm
+            .renderable_document
+            .as_ref()
+            .and_then(|document| document.top_root.as_ref())
+            .expect("renderable top root should be present");
+        let direct_roots = fsm
+            .renderable_document
+            .as_ref()
+            .map(|document| document.direct_roots.as_slice())
+            .expect("renderable source document should be present");
+
+        assert!(top_candidate.renderability.is_renderable);
+        assert_eq!(top_candidate.children.len(), 2);
+        assert!(
+            top_candidate
+                .children
+                .iter()
+                .all(|child| child.source_module_name == "stage_core")
+        );
+        assert_eq!(renderable_top.children.len(), 2);
+        assert!(
+            renderable_top
+                .children
+                .iter()
+                .any(|child| child.instance_name == "first"
+                    && child.source_module_name == "stage_core"
+                    && child.child_root_kind == FsmRootKind::Dt)
+        );
+        assert!(
+            renderable_top
+                .children
+                .iter()
+                .any(|child| child.instance_name == "second"
+                    && child.source_module_name == "stage_core"
+                    && child.child_root_kind == FsmRootKind::Dt)
+        );
+        assert_eq!(direct_roots.len(), 1);
+        let stage_root = direct_roots
+            .iter()
+            .find(|root| root.module_name == "stage_core")
+            .expect("shared stage module direct root should be present once");
+        assert_eq!(stage_root.root_kind, FsmRootKind::Dt);
+        assert!(
+            stage_root
+                .module
+                .size_entries
+                .iter()
+                .any(|entry| entry.signal_name == "input_data")
+        );
+        assert!(
+            stage_root
+                .module
+                .size_entries
+                .iter()
+                .any(|entry| entry.signal_name == "output_data")
+        );
+        assert_eq!(emitted_text.matches("(?dt:stage_core").count(), 1);
+        assert!(emitted_text.contains("(?dtc:first stage_core)"));
+        assert!(emitted_text.contains("(?dtc:second stage_core)"));
+
+        Ok(())
+    }
+
+    #[test]
     fn top_composition_recovers_top_port_direction_from_link_topology() -> Result<()> {
         let tempdir = tempdir()?;
         let mut intent_ir = build_width_only_top_port_composition_intent_ir(tempdir.path())?;

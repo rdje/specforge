@@ -4,6 +4,13 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-30 `.fsm` reused child direct-root de-duplication)
+- Continued from commit `80c81c5` by locking the reused-child branch in the final renderable source-document direct-root model.
+- `renderable_modules_for_top(...)` intentionally de-duplicates child source modules after top renderability succeeds; this prevents repeated child instances from duplicating identical direct module roots in emitted source documents.
+- The new regression instantiates `stage_core` twice, proves both renderable top children remain present, and proves `direct_roots` emits one shared `stage_core` `?dt:name` root with the expected size-entry surface.
+- The emitted text assertion counts exactly one `(?dt:stage_core` root while preserving both `(?dtc:first stage_core)` and `(?dtc:second stage_core)` child instances.
+- Adapter coverage increases to `70` tests; full local verification for this slice: `514` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-30 `.fsm` renderable top direct roots)
 - Continued from commit `68c54a0` by locking the final source-document direct-root list produced for explicit top composition.
 - `renderable_modules_for_top(...)` already traverses top children, de-duplicates source modules, and clones each renderable child module into `FsmRenderableSourceDocument.direct_roots`.

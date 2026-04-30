@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-30 (`.fsm` reused child modules share renderable roots)
+
+### Added: reused top child modules de-duplicate renderable direct roots
+- Added a top-composition regression with two child instances that both use the same `stage_core` module.
+- The test proves the renderable top root preserves both child instances while `renderable_document.direct_roots` emits the shared `stage_core` module exactly once.
+- The same fixture asserts the shared direct root stays `?dt:name` and keeps the child module size-entry surfaces consumed by the top links.
+- No production behavior changed; this locks the existing `renderable_modules_for_top(...)` de-duplication path.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::renderable_top_document_deduplicates_reused_child_module_roots -- --exact --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests -- --nocapture` -> passed with `70` adapter tests
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `514` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-30 (`.fsm` renderable top direct roots keep child modules)
 
 ### Added: renderable source-document child roots are regression-locked
