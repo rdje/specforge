@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-30 `.fsm` top source documents keep stable root order
+- Continued from commit `ec4f991` by locking the final text-emission boundary after the renderable top direct-root presence and de-duplication regressions.
+- Added `renderable_top_document_emits_top_before_child_direct_roots`, which reuses the explicit `datapath` top-composition fixture and checks emitted text ordering directly.
+- The invariant is `(?top:datapath` first, followed by `(?dt:producer_core` and then `(?dt:consumer_core`, matching the `FsmRenderableSourceDocument` model order consumed by `render_fsm_source_document(...)`.
+- This is intentionally a regression-only artifact-boundary slice: renderability, top-link validation, child direct-root modeling, and emitted syntax stay unchanged.
+- Adapter coverage increases to `71` tests; full local CI with `515` Rust tests and the full `127/127` tracked KG fixture suite passed after the regression landed.
+
 ## 2026-04-30 `.fsm` reused child modules share renderable roots
 - Continued from commit `80c81c5` by locking the de-duplication branch in `renderable_modules_for_top(...)`.
 - Added `renderable_top_document_deduplicates_reused_child_module_roots`, where top `pipe` instantiates `stage_core` twice and links the two instances through child endpoints.

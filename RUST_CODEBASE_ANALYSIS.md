@@ -4,6 +4,13 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-30 `.fsm` top source-document root order)
+- Continued from commit `ec4f991` by locking the final text renderer after the renderable source-document direct-root model was covered.
+- `render_fsm_source_document(...)` emits `FsmRenderableSourceDocument.top_root` first, then each child direct root in document order; the new regression proves the final `.fsm` text follows that contract for explicit top composition.
+- The fixture checks `(?top:datapath` precedes `(?dt:producer_core`, which precedes `(?dt:consumer_core`, so model order and emitted root order stay aligned.
+- This is a regression-only artifact-boundary slice: no renderability, topology recovery, or source-document modeling behavior changed.
+- Adapter coverage increases to `71` tests; full local verification for this slice: `515` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-30 `.fsm` reused child direct-root de-duplication)
 - Continued from commit `80c81c5` by locking the reused-child branch in the final renderable source-document direct-root model.
 - `renderable_modules_for_top(...)` intentionally de-duplicates child source modules after top renderability succeeds; this prevents repeated child instances from duplicating identical direct module roots in emitted source documents.

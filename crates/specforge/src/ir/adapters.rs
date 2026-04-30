@@ -8888,6 +8888,50 @@ mod tests {
     }
 
     #[test]
+    fn renderable_top_document_emits_top_before_child_direct_roots() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_explicit_top_composition_intent_ir(tempdir.path())?;
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+        adapter.write_to_disk()?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "renderable");
+        let emitted_target_path = adapter
+            .artifact_layout
+            .emitted_target_path
+            .as_ref()
+            .expect("renderable top should emit target text");
+        let emitted_text = fs::read_to_string(emitted_target_path)?;
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let renderable_document = fsm
+            .renderable_document
+            .as_ref()
+            .expect("renderable top should carry a source document");
+
+        assert!(renderable_document.top_root.is_some());
+        assert_eq!(renderable_document.direct_roots.len(), 2);
+        let top_index = emitted_text
+            .find("(?top:datapath")
+            .expect("emitted text should contain top root");
+        let producer_index = emitted_text
+            .find("(?dt:producer_core")
+            .expect("emitted text should contain producer child root");
+        let consumer_index = emitted_text
+            .find("(?dt:consumer_core")
+            .expect("emitted text should contain consumer child root");
+
+        assert!(top_index < producer_index);
+        assert!(producer_index < consumer_index);
+
+        Ok(())
+    }
+
+    #[test]
     fn top_composition_recovers_top_port_direction_from_link_topology() -> Result<()> {
         let tempdir = tempdir()?;
         let mut intent_ir = build_width_only_top_port_composition_intent_ir(tempdir.path())?;

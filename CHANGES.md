@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-04-30 (`.fsm` top source documents emit stable root order)
+
+### Added: renderable top source-document emission order is regression-locked
+- Added a top-composition regression proving emitted `.fsm` source documents keep the `?top:name` root before child direct module roots.
+- The test also locks child direct-root emission order for the existing `producer_core` then `consumer_core` top-composition fixture.
+- No production behavior changed; this protects `render_fsm_source_document(...)` after the recent direct-root presence and de-duplication regressions.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::renderable_top_document_emits_top_before_child_direct_roots -- --exact --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests -- --nocapture` -> passed with `71` adapter tests
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `515` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-30 (`.fsm` reused child modules share renderable roots)
 
 ### Added: reused top child modules de-duplicate renderable direct roots
