@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-30 (`.fsm` top root-kind confidence follows topology links)
+
+### Added: top-link confidence now feeds root-kind confidence coverage
+- Added a focused top-composition regression proving `build_top_root_kind_decision(...)` folds high-confidence explicit top-link evidence into the selected `?top:name` root-kind decision.
+- The fixture intentionally keeps the public top port and both child declarations at low confidence while the only child-to-child link stays high confidence, isolating the root-kind confidence source to `FsmTopCandidate.links`.
+- The link connects child endpoints only, so no recovered top-boundary port provenance can accidentally raise the public top-port confidence and mask the path being tested.
+- No production behavior changed; this completes direct regression coverage for the three confidence lanes folded by `build_top_root_kind_decision(...)`: ports, children, and links.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::top_root_kind_confidence_follows_top_link_evidence -- --exact --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests -- --nocapture` -> passed with `69` adapter tests
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `513` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-30 (`.fsm` top root-kind confidence follows child declarations)
 
 ### Added: top child declaration confidence now feeds root-kind confidence coverage

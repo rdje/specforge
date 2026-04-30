@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-30 `.fsm` top root-kind confidence follows topology links
+- Continued from commit `9795e3e` by locking the explicit top-link lane in the top-root decision confidence fold.
+- Added `top_root_kind_confidence_follows_top_link_evidence`, a minimal top-composition fixture where the public top port and both child declarations are downgraded to low confidence while a child-to-child topology link stays high confidence.
+- The link avoids the top boundary, so the recovered public top port remains low confidence and the resulting high `fsm.root_kind_decision.automation_confidence` proves `FsmTopCandidate.links` is the evidence source.
+- This complements the recovered top-port and child-declaration root-kind confidence regressions, covering all direct inputs to `build_top_root_kind_decision(...)`.
+- Adapter coverage increases to `69` tests; full local CI with `513` Rust tests and the full `127/127` tracked KG fixture suite passed after the regression landed.
+
 ## 2026-04-30 `.fsm` top root-kind confidence follows child declarations
 - Continued from commit `4053491` by locking the root-kind decision consumer of explicit top-child declaration confidence.
 - Added `top_root_kind_confidence_follows_child_declaration_evidence`, a minimal top-composition fixture with one low-confidence public top port, one high-confidence child declaration, and no links.

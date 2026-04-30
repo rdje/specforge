@@ -19,22 +19,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `4053491f96fa6f0aabd0d2cd8e8fd308d31c95cb`
-- latest_commit_brief_message: `test(adapter): lock top child provenance`
-- note: the latest committed baseline locks top-composition child declaration support IDs, automation confidence, and resolved child root kind
+- latest_commit_hash: `9795e3eaff0330b15e287807d887e91aae681e7a`
+- latest_commit_brief_message: `test(adapter): lock top child root confidence`
+- note: the latest committed baseline locks top root-kind decision confidence when high-confidence evidence comes from explicit top-child declarations
 
 ## Recent commit chain (last 6)
+- `9795e3e` test(adapter): lock top child root confidence
 - `4053491` test(adapter): lock top child provenance
 - `db40fdf` test(adapter): lock child renderable system provenance
 - `240b5cc` test(adapter): lock renderable system provenance
 - `5c715d6` test(adapter): lock standalone system provenance
 - `2a1114e` test(adapter): lock child system endpoint provenance
-- `57ac516` test(adapter): lock resolved system-port widths
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 9` of `origin/main`
+- branch state before the next commit: `ahead 10` of `origin/main`
 - modified tracked files:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -45,23 +45,23 @@
 
 ## Current in-flight slice
 - objective:
-  - lock top root-kind decision confidence when high-confidence evidence comes from explicit top-child declarations
+  - lock top root-kind decision confidence when high-confidence evidence comes from explicit top-link topology
 - tracker effect:
-  - added a top-root confidence `Done` row for high-confidence explicit top-child declarations
+  - added a top-root confidence `Done` row for high-confidence explicit top-link topology
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::top_root_kind_confidence_follows_child_declaration_evidence -- --exact --nocapture` passed
-  - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests -- --nocapture` passed with `68` adapter tests
+  - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::top_root_kind_confidence_follows_top_link_evidence -- --exact --nocapture` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests -- --nocapture` passed with `69` adapter tests
   - `cargo fmt --manifest-path Cargo.toml` passed
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `git diff --check` passed
   - `bash scripts/run_docs_ci.sh` passed
-  - `bash scripts/run_ci.sh` passed with `512` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `bash scripts/run_ci.sh` passed with `513` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `127` fixtures and `0` failures
 - current known local CI baseline:
-  - `512` Rust tests plus warning-deny Clippy/rustdoc and the mdBook build
+  - `513` Rust tests plus warning-deny Clippy/rustdoc and the mdBook build
 
 ## Next exact steps
 - rerun final lightweight formatting, docs, and whitespace checks after validation-doc updates
-- commit the top-child root-kind confidence regression slice
+- commit the top-link root-kind confidence regression slice
 - truncate `git_message_brief.txt` back to `0` bytes and confirm it remains untracked after that commit
-- leave the branch unpushed; after this commit it should be `ahead 10`, below the `25`-commit push threshold
+- leave the branch unpushed; after this commit it should be `ahead 11`, below the `25`-commit push threshold

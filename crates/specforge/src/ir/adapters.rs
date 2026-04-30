@@ -9292,6 +9292,102 @@ mod tests {
     }
 
     #[test]
+    fn top_root_kind_confidence_follows_top_link_evidence() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "top_root_kind_link_confidence.md",
+            "# Top Root Kind Link Confidence\nTop datapath.\n\nTop datapath port status is output width 1.\n\nTop datapath child producer uses module producer_core.\n\nTop datapath child consumer uses module consumer_core.\n\nTop datapath link producer.output_data -> consumer.input_data.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n\nModule consumer_core signal input_data is input width 8.\n\nModule consumer_core signal result_data is output width 8.\n\nModule consumer_core block route: result_data = input_data.\n",
+        )?;
+        {
+            let raw_top = intent_ir
+                .explicit_tops
+                .iter_mut()
+                .find(|top| top.top_name == "datapath")
+                .expect("explicit top should be present");
+            let raw_port = raw_top
+                .ports
+                .iter_mut()
+                .find(|port| port.port_name == "status")
+                .expect("top port should be present");
+            raw_port.automation_confidence = AutomationConfidence::Low;
+
+            for child in &mut raw_top.children {
+                child.automation_confidence = AutomationConfidence::Low;
+            }
+
+            let raw_link = raw_top
+                .links
+                .iter_mut()
+                .find(|link| {
+                    link.source.instance_name.as_deref() == Some("producer")
+                        && link.source.signal_name == "output_data"
+                        && link.target.instance_name.as_deref() == Some("consumer")
+                        && link.target.signal_name == "input_data"
+                })
+                .expect("child-to-child top link should be present");
+            assert!(
+                raw_link.source.instance_name.is_some() && raw_link.target.instance_name.is_some(),
+                "fixture should isolate root-kind confidence from top-boundary recovery"
+            );
+            raw_link.automation_confidence = AutomationConfidence::High;
+        }
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let top_candidate = fsm
+            .top_candidates
+            .iter()
+            .find(|top| top.top_name == "datapath")
+            .expect("top candidate should be present");
+        let recovered_port = top_candidate
+            .ports
+            .iter()
+            .find(|port| port.port_name == "status")
+            .expect("recovered top port should be present");
+        let recovered_link = top_candidate
+            .links
+            .iter()
+            .find(|link| {
+                link.source.instance_name.as_deref() == Some("producer")
+                    && link.source.signal_name == "output_data"
+                    && link.target.instance_name.as_deref() == Some("consumer")
+                    && link.target.signal_name == "input_data"
+            })
+            .expect("child-to-child top link should be present");
+
+        assert!(top_candidate.renderability.is_renderable);
+        assert_eq!(
+            recovered_port.automation_confidence,
+            AutomationConfidence::Low
+        );
+        assert!(
+            top_candidate
+                .children
+                .iter()
+                .all(|child| child.automation_confidence == AutomationConfidence::Low)
+        );
+        assert_eq!(
+            recovered_link.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Top);
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::High
+        );
+
+        Ok(())
+    }
+
+    #[test]
     fn top_composition_recovers_top_system_port_widths_from_child_system_contract() -> Result<()> {
         let tempdir = tempdir()?;
         let intent_ir = build_intent_ir_from_markdown(

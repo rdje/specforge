@@ -4,6 +4,13 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-30 `.fsm` top-link root-kind confidence)
+- Continued from commit `9795e3e` by locking the explicit topology-link confidence path in the top-root decision fold.
+- `build_top_root_kind_decision(...)` already folds `FsmTopCandidate.links[*].automation_confidence`; this slice adds a regression where the only high-confidence evidence is a child-to-child top link.
+- The fixture downgrades the public top port and child declarations to low confidence, and the link does not touch the top boundary, so recovered top-port provenance cannot mask the link path.
+- `fsm.root_kind_decision.automation_confidence == High` now directly covers the third confidence lane after recovered ports and child declarations.
+- Adapter coverage increases to `69` tests; full local verification for this slice: `513` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-30 `.fsm` top child root-kind confidence)
 - Continued from commit `4053491` by locking the top-root decision confidence path for explicit child declarations.
 - `build_top_root_kind_decision(...)` already folds `FsmTopCandidate.children[*].automation_confidence`; this slice adds a regression where the only high-confidence evidence is the child declaration.
