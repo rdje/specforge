@@ -19,22 +19,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `57ac516fcea2eaa295acbe8b29a9df05df0c0ca1`
-- latest_commit_brief_message: `test(adapter): lock resolved system-port widths`
-- note: the latest committed baseline locks child system-contract recovered top-boundary width support IDs and automation confidence at the resolved top-candidate port surface
+- latest_commit_hash: `2a1114e8ba43e7972724dba0ca4f114a1415b2a9`
+- latest_commit_brief_message: `test(adapter): lock child system endpoint provenance`
+- note: the latest committed baseline locks child module system-contract endpoint support IDs and automation confidence before top-link width recovery consumes them
 
 ## Recent commit chain (last 6)
+- `2a1114e` test(adapter): lock child system endpoint provenance
 - `57ac516` test(adapter): lock resolved system-port widths
 - `8beb670` test(adapter): lock selected system-port provenance
 - `ade21cc` test(adapter): lock system-port renderable widths
 - `661f019` test(adapter): lock actor-port renderable width
 - `b9bd0a9` test(adapter): lock top-link renderable width
-- `fb4f050` test(adapter): lock top-link renderable provenance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 4` of `origin/main`
+- branch state before the next commit: `ahead 5` of `origin/main`
 - modified tracked files:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -45,11 +45,11 @@
 
 ## Current in-flight slice
 - objective:
-  - lock child module system-contract endpoint support IDs and automation confidence before top-link width recovery consumes them
+  - lock standalone sequential and explicit-module system-contract signal support IDs and automation confidence
 - tracker effect:
-  - added a child module system-contract endpoint `Done` row for support/confidence preservation before top-link width recovery
+  - added a standalone system-contract provenance `Done` row for recovered/materialized clock/reset inventory entries
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::top_composition_recovers_top_system_port_widths_from_child_system_contract -- --exact --nocapture` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge system_signals_from_system_contract -- --nocapture` passed with `3` focused system-contract tests
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests -- --nocapture` passed with `67` adapter tests
   - `cargo fmt --manifest-path Cargo.toml` passed
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
@@ -62,6 +62,6 @@
 
 ## Next exact steps
 - rerun final lightweight formatting, docs, and whitespace checks after validation-doc updates
-- commit the child system-contract endpoint provenance regression slice
+- commit the standalone system-contract signal provenance regression slice
 - truncate `git_message_brief.txt` back to `0` bytes and confirm it remains untracked after that commit
-- leave the branch unpushed; after this commit it should be `ahead 5`, below the `25`-commit push threshold
+- leave the branch unpushed; after this commit it should be `ahead 6`, below the `25`-commit push threshold

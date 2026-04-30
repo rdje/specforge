@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-30 (`.fsm` standalone system signals keep contract provenance)
+
+### Added: standalone system-contract signal provenance is regression-locked
+- Extended the standalone sequential and explicit-module system-contract recovery regressions to assert recovered/materialized `clk` / `rst_n` inventory entries carry system-contract support IDs and high automation confidence.
+- The direct sequential tests now cover both shape recovery and materialization when flat signal records are missing; the explicit-module test covers module-local system-contract recovery.
+- This complements the child top-composition endpoint lock by protecting the direct standalone consumers of `overlay_system_contract_signal(...)` before renderability checks or emitted `.fsm` system blocks consume them.
+- No production behavior changed; `overlay_system_contract_signal(...)` already copied system-contract support IDs and confidence into the standalone signal inventory.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge system_signals_from_system_contract -- --nocapture` -> passed with `3` focused system-contract tests
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests -- --nocapture` -> passed with `67` adapter tests
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `511` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-30 (`.fsm` child system endpoints keep contract provenance)
 
 ### Added: child system-contract endpoint provenance is regression-locked

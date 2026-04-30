@@ -7476,6 +7476,19 @@ mod tests {
         let tempdir = tempdir()?;
         let mut intent_ir = build_explicit_sequential_control_intent_ir(tempdir.path())?;
         clear_direct_signal_shape_hints(&mut intent_ir, &["clk", "rst_n"]);
+        let system_contract_support_ids = {
+            let system_contract = intent_ir
+                .system_contract
+                .as_ref()
+                .expect("system contract should be present");
+            assert_eq!(system_contract.clock_signal, "clk");
+            assert_eq!(system_contract.reset_signal, "rst_n");
+            assert!(
+                !system_contract.supporting_statement_ids.is_empty(),
+                "system contract should carry concrete support IDs"
+            );
+            system_contract.supporting_statement_ids.clone()
+        };
         intent_ir.write_to_disk()?;
 
         let artifact_base = tempdir.path().join("generated").join("adapters");
@@ -7514,6 +7527,12 @@ mod tests {
                     .iter()
                     .any(|category| category == "system_contract_signal")
             );
+            assert!(
+                system_contract_support_ids
+                    .iter()
+                    .any(|id| signal.supporting_canonical_ids.contains(id))
+            );
+            assert_eq!(signal.automation_confidence, AutomationConfidence::High);
         }
         assert!(fsm.renderability.is_renderable);
         assert!(emitted_text.contains("(+system"));
@@ -7538,7 +7557,19 @@ mod tests {
             "# System Contract Only Sequential Control\nSignal DATA_IN is input width 8.\n\nSignal ACC is output width 8.\n\nClock clk.\n\nReset rst_n is asynchronous active low.\n\nInit ACC = 8'0.\n\nBlock accumulate: ACC <- DATA_IN.\n",
         )?;
         remove_direct_signal_records(&mut intent_ir, &["clk", "rst_n"]);
-        assert!(intent_ir.system_contract.is_some());
+        let system_contract_support_ids = {
+            let system_contract = intent_ir
+                .system_contract
+                .as_ref()
+                .expect("system contract should be present");
+            assert_eq!(system_contract.clock_signal, "clk");
+            assert_eq!(system_contract.reset_signal, "rst_n");
+            assert!(
+                !system_contract.supporting_statement_ids.is_empty(),
+                "system contract should carry concrete support IDs"
+            );
+            system_contract.supporting_statement_ids.clone()
+        };
         intent_ir.write_to_disk()?;
 
         let artifact_base = tempdir.path().join("generated").join("adapters");
@@ -7577,6 +7608,12 @@ mod tests {
                     .iter()
                     .any(|category| category == "system_contract_signal")
             );
+            assert!(
+                system_contract_support_ids
+                    .iter()
+                    .any(|id| signal.supporting_canonical_ids.contains(id))
+            );
+            assert_eq!(signal.automation_confidence, AutomationConfidence::High);
         }
         assert!(fsm.renderability.is_renderable);
         assert!(emitted_text.contains("(+system"));
@@ -8513,6 +8550,21 @@ mod tests {
         let tempdir = tempdir()?;
         let mut intent_ir = build_standalone_explicit_module_fsm_intent_ir(tempdir.path())?;
         clear_explicit_module_signal_shape_hints(&mut intent_ir, &["clk", "rst_n"]);
+        let system_contract_support_ids = {
+            let system_contract = intent_ir
+                .explicit_modules
+                .iter()
+                .find(|module| module.module_name == "controller")
+                .and_then(|module| module.system_contract.as_ref())
+                .expect("controller module system contract should be present");
+            assert_eq!(system_contract.clock_signal, "clk");
+            assert_eq!(system_contract.reset_signal, "rst_n");
+            assert!(
+                !system_contract.supporting_statement_ids.is_empty(),
+                "system contract should carry concrete support IDs"
+            );
+            system_contract.supporting_statement_ids.clone()
+        };
         intent_ir.write_to_disk()?;
 
         let artifact_base = tempdir.path().join("generated").join("adapters");
@@ -8556,6 +8608,12 @@ mod tests {
                     .iter()
                     .any(|category| category == "system_contract_signal")
             );
+            assert!(
+                system_contract_support_ids
+                    .iter()
+                    .any(|id| signal.supporting_canonical_ids.contains(id))
+            );
+            assert_eq!(signal.automation_confidence, AutomationConfidence::High);
         }
         assert!(module.renderability.is_renderable);
         assert!(fsm.renderability.is_renderable);

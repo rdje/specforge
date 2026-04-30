@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-30 `.fsm` standalone system signals keep contract provenance
+- Continued from commit `2a1114e` by locking the direct standalone consumers of system-contract signal materialization.
+- `overlay_system_contract_signal(...)` already copies `SystemContractRecord.supporting_statement_ids` and confidence into recovered `FsmSignalCandidate` entries; this regression proves standalone sequential `clk` / `rst_n` candidates keep those IDs and high confidence when shape hints are cleared or flat signal records are removed.
+- The same assertion now covers standalone explicit-module lowering, proving module-local `controller.clk` and `controller.rst_n` entries keep contract provenance after module interface shape hints are cleared.
+- This complements the top-composition child endpoint lock by covering the standalone direct and explicit-module paths that consume `SystemContractRecord` before renderability checks and `.fsm` system-block emission.
+- Adapter coverage remains at `67` tests; full local CI with `511` Rust tests and the full `127/127` tracked KG fixture suite passed after the regression landed.
+
 ## 2026-04-30 `.fsm` child system endpoints keep contract provenance
 - Continued from commit `57ac516` by locking the child module endpoint side of the system-contract provenance chain.
 - `overlay_system_contract_signal(...)` already copies `SystemContractRecord.supporting_statement_ids` and confidence into `FsmSignalCandidate`; this regression proves `controller_core.clk` and `controller_core.rst_n` keep those IDs and high confidence when they are materialized solely from the child system contract.

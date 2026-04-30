@@ -4,6 +4,13 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-30 `.fsm` standalone system signal provenance)
+- Continued from commit `2a1114e` by locking the direct standalone system-contract signal recovery surfaces.
+- The production path already copied `SystemContractRecord` support IDs and confidence into recovered/materialized standalone clock/reset `FsmSignalCandidate` entries; this slice proves those values stay visible on direct sequential `clk` / `rst_n` candidates when shape hints are cleared or flat signal records are absent.
+- The same invariant is now asserted for standalone explicit-module lowering, so `controller.clk` and `controller.rst_n` keep contract provenance even when module-local interface shape hints are cleared.
+- This is a regression-only artifact-surface slice: renderability, conflict behavior, and emitted `.fsm` text remain unchanged.
+- Adapter coverage remains at `67` tests; full local verification for this slice: `511` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-30 `.fsm` child system endpoint provenance)
 - Continued from commit `57ac516` by locking the child module endpoint side of the system-contract provenance chain.
 - The production path already copied `SystemContractRecord` support IDs and confidence into materialized child clock/reset `FsmSignalCandidate` entries; this slice proves those values stay visible on `controller_core.clk` and `controller_core.rst_n`.
