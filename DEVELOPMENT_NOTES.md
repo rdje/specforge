@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-30 `.fsm` top child declarations keep provenance
+- Continued from commit `db40fdf` by locking the explicit top-child declaration surface in the same system-contract distribution fixture.
+- `build_top_candidate(...)` already copies top-child support IDs and confidence into `FsmTopChildCandidate`; this regression proves `controller` keeps that declaration evidence and high confidence while resolving to the renderable `?dt:controller_core` child kind.
+- The assertion also checks `FsmRenderableTopRoot.children`, so the final renderable top model preserves the child root kind used by `(?dtc:controller controller_core)`.
+- This complements the child endpoint and child renderable system-contract locks: the top child declaration, child system-contract endpoints, and emitted child module boundary now all have adjacent artifact-surface coverage.
+- Adapter coverage remains at `67` tests; full local CI with `511` Rust tests and the full `127/127` tracked KG fixture suite passed after the regression landed.
+
 ## 2026-04-30 `.fsm` child renderable system contracts keep provenance
 - Continued from commit `240b5cc` by locking the top-composition child renderable-module consumer of system-contract provenance.
 - The top system-contract distribution regression already proved child `controller_core.clk` / `rst_n` signal inventory entries keep support IDs and confidence; this extension proves `controller_core`'s `FsmRenderableModule.system_contract` keeps the same contract support IDs and high confidence.

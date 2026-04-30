@@ -9249,6 +9249,24 @@ mod tests {
                 super::explicit_top_link_supporting_ids(rst_link),
             )
         };
+        let child_support_ids = {
+            let explicit_top = intent_ir
+                .explicit_tops
+                .iter()
+                .find(|top| top.top_name == "soc")
+                .expect("explicit top should be present");
+            let child = explicit_top
+                .children
+                .iter()
+                .find(|child| child.instance_name == "controller")
+                .expect("controller child should be present");
+            assert_eq!(child.source_module_name, "controller_core");
+            assert!(
+                !child.supporting_statement_ids.is_empty(),
+                "top child should carry concrete support IDs"
+            );
+            child.supporting_statement_ids.clone()
+        };
         let child_system_contract_support_ids = {
             let child_system_contract = intent_ir
                 .explicit_modules
@@ -9296,6 +9314,11 @@ mod tests {
             .iter()
             .find(|port| port.port_name == "rst_n")
             .expect("recovered reset top port should be present");
+        let recovered_child = top_candidate
+            .children
+            .iter()
+            .find(|child| child.instance_name == "controller")
+            .expect("controller child candidate should be present");
         let controller = fsm
             .module_candidates
             .iter()
@@ -9326,6 +9349,11 @@ mod tests {
             .iter()
             .find(|port| port.port_name == "rst_n")
             .expect("renderable reset top port should be present");
+        let renderable_child = renderable_top
+            .children
+            .iter()
+            .find(|child| child.instance_name == "controller")
+            .expect("renderable controller child should be present");
         let child_clk = controller
             .signal_inventory
             .iter()
@@ -9353,6 +9381,19 @@ mod tests {
             .expect("renderable source document should contain child module root");
 
         assert!(top_candidate.renderability.is_renderable);
+        assert_eq!(recovered_child.source_module_name, "controller_core");
+        assert_eq!(recovered_child.resolved_root_kind, Some(FsmRootKind::Dt));
+        assert!(
+            child_support_ids
+                .iter()
+                .any(|id| recovered_child.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            recovered_child.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert_eq!(renderable_child.source_module_name, "controller_core");
+        assert_eq!(renderable_child.child_root_kind, FsmRootKind::Dt);
         for (recovered_port, topology_support_ids) in [
             (recovered_clk, &clk_topology_support_ids),
             (recovered_rst_n, &rst_topology_support_ids),

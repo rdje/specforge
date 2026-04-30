@@ -4,6 +4,13 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-30 `.fsm` top child declaration provenance)
+- Continued from commit `db40fdf` by locking the top-child declaration artifact surface inside the system-contract distribution fixture.
+- The production path already copied `ExplicitTopChildRecord` support IDs and confidence into `FsmTopChildCandidate`; this slice proves the `controller` child keeps that evidence and resolves to `?dt:controller_core`.
+- The same assertion checks `FsmRenderableTopRoot.children`, so the final renderable top model preserves the child root kind used for `(?dtc:controller controller_core)` emission.
+- This is a regression-only artifact-boundary slice: renderability, conflict behavior, and emitted `.fsm` text remain unchanged.
+- Adapter coverage remains at `67` tests; full local verification for this slice: `511` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-30 `.fsm` child renderable system-contract provenance)
 - Continued from commit `240b5cc` by locking the top-composition child renderable module system-contract surface.
 - The production path already cloned child `SystemContractRecord` values into explicit module renderable modules; this slice proves the child `controller_core` renderable module keeps support IDs and high confidence alongside the child clock/reset signal inventory.
