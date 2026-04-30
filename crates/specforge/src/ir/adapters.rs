@@ -6159,7 +6159,7 @@ mod tests {
     use tempfile::tempdir;
 
     use crate::error::{AppError, Result};
-    use crate::ir::adapters::{AdapterArtifact, AdapterTarget, FsmRootKind};
+    use crate::ir::adapters::{AdapterArtifact, AdapterTarget, FsmRenderableModule, FsmRootKind};
     use crate::ir::evidence::EvidenceIr;
     use crate::ir::intent::IntentIr;
     use crate::ir::semantic::{
@@ -6520,6 +6520,27 @@ mod tests {
                 .signals
                 .retain(|signal_name| !signal_names.contains(&signal_name.as_str()));
         }
+    }
+
+    fn assert_renderable_system_contract_provenance(
+        module: &FsmRenderableModule,
+        system_contract_support_ids: &[String],
+    ) {
+        let system_contract = module
+            .system_contract
+            .as_ref()
+            .expect("renderable module should keep system contract");
+        assert_eq!(system_contract.clock_signal, "clk");
+        assert_eq!(system_contract.reset_signal, "rst_n");
+        assert!(
+            system_contract_support_ids
+                .iter()
+                .any(|id| system_contract.supporting_statement_ids.contains(id))
+        );
+        assert_eq!(
+            system_contract.automation_confidence,
+            AutomationConfidence::High
+        );
     }
 
     fn set_direct_signal_direction_hint(
@@ -7517,6 +7538,16 @@ mod tests {
             .iter()
             .find(|signal| signal.signal_name == "rst_n")
             .expect("reset should remain in the signal inventory");
+        let renderable_module = fsm
+            .renderable_module
+            .as_ref()
+            .expect("renderable module should be present");
+        let renderable_document_module = fsm
+            .renderable_document
+            .as_ref()
+            .and_then(|document| document.direct_roots.first())
+            .map(|root| &root.module)
+            .expect("renderable source document should contain direct root module");
 
         for signal in [clk, rst_n] {
             assert_eq!(signal.direction_hint, Some(InterfaceSignalDirection::Input));
@@ -7534,6 +7565,14 @@ mod tests {
             );
             assert_eq!(signal.automation_confidence, AutomationConfidence::High);
         }
+        assert_renderable_system_contract_provenance(
+            renderable_module,
+            &system_contract_support_ids,
+        );
+        assert_renderable_system_contract_provenance(
+            renderable_document_module,
+            &system_contract_support_ids,
+        );
         assert!(fsm.renderability.is_renderable);
         assert!(emitted_text.contains("(+system"));
         assert!(emitted_text.contains("(clock clk)"));
@@ -7598,6 +7637,16 @@ mod tests {
             .iter()
             .find(|signal| signal.signal_name == "rst_n")
             .expect("reset should be materialized in the signal inventory");
+        let renderable_module = fsm
+            .renderable_module
+            .as_ref()
+            .expect("renderable module should be present");
+        let renderable_document_module = fsm
+            .renderable_document
+            .as_ref()
+            .and_then(|document| document.direct_roots.first())
+            .map(|root| &root.module)
+            .expect("renderable source document should contain direct root module");
 
         for signal in [clk, rst_n] {
             assert_eq!(signal.direction_hint, Some(InterfaceSignalDirection::Input));
@@ -7615,6 +7664,14 @@ mod tests {
             );
             assert_eq!(signal.automation_confidence, AutomationConfidence::High);
         }
+        assert_renderable_system_contract_provenance(
+            renderable_module,
+            &system_contract_support_ids,
+        );
+        assert_renderable_system_contract_provenance(
+            renderable_document_module,
+            &system_contract_support_ids,
+        );
         assert!(fsm.renderability.is_renderable);
         assert!(emitted_text.contains("(+system"));
         assert!(emitted_text.contains("(clock clk)"));
@@ -8598,6 +8655,16 @@ mod tests {
             .iter()
             .find(|signal| signal.signal_name == "rst_n")
             .expect("reset should remain in the module inventory");
+        let renderable_module = fsm
+            .renderable_module
+            .as_ref()
+            .expect("renderable module should be present");
+        let renderable_document_module = fsm
+            .renderable_document
+            .as_ref()
+            .and_then(|document| document.direct_roots.first())
+            .map(|root| &root.module)
+            .expect("renderable source document should contain explicit module root");
 
         for signal in [clk, rst_n] {
             assert_eq!(signal.direction_hint, Some(InterfaceSignalDirection::Input));
@@ -8615,6 +8682,14 @@ mod tests {
             );
             assert_eq!(signal.automation_confidence, AutomationConfidence::High);
         }
+        assert_renderable_system_contract_provenance(
+            renderable_module,
+            &system_contract_support_ids,
+        );
+        assert_renderable_system_contract_provenance(
+            renderable_document_module,
+            &system_contract_support_ids,
+        );
         assert!(module.renderability.is_renderable);
         assert!(fsm.renderability.is_renderable);
         assert!(emitted_text.contains("(?fsm:controller"));

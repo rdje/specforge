@@ -4,6 +4,13 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-30 `.fsm` standalone renderable system-contract provenance)
+- Continued from commit `5c715d6` by locking the final renderable standalone system-contract surfaces.
+- The production path already cloned `SystemContractRecord` into renderable modules; this slice proves that support IDs and high confidence survive in both `fsm.renderable_module` and `renderable_document.direct_roots[*].module`.
+- The assertion covers direct sequential shape recovery, direct sequential materialization from system-contract-only clock/reset facts, and standalone explicit-module recovery.
+- This is a regression-only artifact-boundary slice: renderability, conflict behavior, and emitted `.fsm` text remain unchanged.
+- Adapter coverage remains at `67` tests; full local verification for this slice: `511` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-30 `.fsm` standalone system signal provenance)
 - Continued from commit `2a1114e` by locking the direct standalone system-contract signal recovery surfaces.
 - The production path already copied `SystemContractRecord` support IDs and confidence into recovered/materialized standalone clock/reset `FsmSignalCandidate` entries; this slice proves those values stay visible on direct sequential `clk` / `rst_n` candidates when shape hints are cleared or flat signal records are absent.

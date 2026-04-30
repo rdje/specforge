@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-30 `.fsm` standalone renderable system contracts keep provenance
+- Continued from commit `5c715d6` by locking the renderable-module consumer of standalone system-contract provenance.
+- `analyze_dt_root_renderability(...)` and `analyze_fsm_root_renderability(...)` already clone the canonical `SystemContractRecord` into `FsmRenderableModule`; this regression proves that support IDs and high confidence survive into both `fsm.renderable_module` and the renderable source-document direct root.
+- The assertion rides on the standalone sequential recovery/materialization tests and the standalone explicit-module recovery test, so both direct and module-selected renderable surfaces are covered without changing emitted `.fsm` text.
+- This closes the immediate standalone system-contract artifact chain: signal inventory and renderable module/source-document boundaries now both preserve the system-block evidence.
+- Adapter coverage remains at `67` tests; full local CI with `511` Rust tests and the full `127/127` tracked KG fixture suite passed after the regression landed.
+
 ## 2026-04-30 `.fsm` standalone system signals keep contract provenance
 - Continued from commit `2a1114e` by locking the direct standalone consumers of system-contract signal materialization.
 - `overlay_system_contract_signal(...)` already copies `SystemContractRecord.supporting_statement_ids` and confidence into recovered `FsmSignalCandidate` entries; this regression proves standalone sequential `clk` / `rst_n` candidates keep those IDs and high confidence when shape hints are cleared or flat signal records are removed.

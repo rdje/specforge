@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-30 (`.fsm` standalone renderable system contracts keep provenance)
+
+### Added: standalone renderable system-contract provenance is regression-locked
+- Extended the standalone sequential and explicit-module system-contract recovery regressions to assert `FsmRenderableModule.system_contract` keeps system-contract support IDs and high automation confidence.
+- The same tests now assert the renderable source-document direct-root module carries that contract provenance too, covering the final artifact boundary used by `.fsm` text emission.
+- This complements the standalone signal-inventory lock: recovered/materialized `clk` / `rst_n` entries and the renderable module system contract now both preserve the evidence that created the system block.
+- No production behavior changed; renderability already cloned the canonical `SystemContractRecord` into renderable modules.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge system_signals_from_system_contract -- --nocapture` -> passed with `3` focused system-contract tests
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests -- --nocapture` -> passed with `67` adapter tests
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `511` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-30 (`.fsm` standalone system signals keep contract provenance)
 
 ### Added: standalone system-contract signal provenance is regression-locked
