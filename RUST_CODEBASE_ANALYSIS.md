@@ -4,6 +4,13 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-30 `.fsm` top documents with FSM children)
+- Continued from commit `17435fd` by locking the mixed child-root-kind branch in renderable top source documents.
+- The adapter already allowed top children to resolve as either `FsmRootKind::Dt` or `FsmRootKind::Fsm`; the new regression proves that a structured `controller_core` FSM child remains `Fsm` in `FsmTopChildCandidate`, `FsmRenderableTopRoot.children`, and `FsmRenderableSourceDocument.direct_roots`.
+- The emitted text assertion covers both `(?fsmc:controller controller_core)` and the child `(?fsm:controller_core ...)` direct root, including system/state content, so top composition is no longer implicitly DT-only in regression coverage.
+- This is a regression-only artifact-boundary slice: no topology recovery, renderability, or source-document modeling behavior changed.
+- Adapter coverage increases to `72` tests; full local verification for this slice: `516` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-30 `.fsm` top source-document root order)
 - Continued from commit `ec4f991` by locking the final text renderer after the renderable source-document direct-root model was covered.
 - `render_fsm_source_document(...)` emits `FsmRenderableSourceDocument.top_root` first, then each child direct root in document order; the new regression proves the final `.fsm` text follows that contract for explicit top composition.

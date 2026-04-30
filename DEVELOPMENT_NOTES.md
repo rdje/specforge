@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-30 `.fsm` top documents preserve FSM child roots
+- Continued from commit `17435fd` by moving one seam deeper than top/direct-root ordering: mixed child root kinds inside renderable top source documents.
+- Added `renderable_top_document_preserves_fsm_child_root_kind`, where `wrapper` instantiates a structured `controller_core` FSM child and wires clock/reset, inputs, and outputs through explicit top links.
+- The regression proves the selected top child, renderable top child, and source-document direct root all keep `FsmRootKind::Fsm`, then checks the emitted `(?fsmc:controller controller_core)` and `(?fsm:controller_core ...)` roots.
+- This protects `render_top_child_kind(...)`, `renderable_modules_for_top(...)`, and source-document emission from drifting back to DT-only assumptions while leaving production behavior unchanged.
+- Adapter coverage increases to `72` tests; full local CI with `516` Rust tests and the full `127/127` tracked KG fixture suite passed after the regression landed.
+
 ## 2026-04-30 `.fsm` top source documents keep stable root order
 - Continued from commit `ec4f991` by locking the final text-emission boundary after the renderable top direct-root presence and de-duplication regressions.
 - Added `renderable_top_document_emits_top_before_child_direct_roots`, which reuses the explicit `datapath` top-composition fixture and checks emitted text ordering directly.

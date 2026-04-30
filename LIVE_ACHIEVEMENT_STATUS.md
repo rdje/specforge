@@ -191,6 +191,7 @@
 - `.fsm` renderable source-document direct roots now preserve top child module roots, order, root kind, and emitted child surfaces: Done
 - `.fsm` renderable source-document direct roots now de-duplicate reused child module roots while preserving each child instance: Done
 - `.fsm` renderable source-document text now emits `?top` roots before child direct roots with stable child root order: Done
+- `.fsm` renderable top source documents now preserve FSM child root kind through `?fsmc` child references and child `?fsm` direct roots: Done
 - `.fsm` renderable top-root ports now preserve recovered top-boundary direction/width supporting IDs and automation confidence from actor-port direction/width, top-link direction/width, and child system-contract width evidence: Done
 - `.fsm` renderability diagnostics now distinguish graph-direction conflicts from missing direction hints: Done
 - `.fsm` adapter signal inventory now preserves width-conflict provenance and reports conflicted widths distinctly: Done

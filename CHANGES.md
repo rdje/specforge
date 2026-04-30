@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-30 (`.fsm` top documents preserve FSM child roots)
+
+### Added: top composition with FSM child roots is regression-locked
+- Added a renderable top-composition regression where the top instantiates a structured FSM child module.
+- The test proves `FsmTopChildCandidate`, `FsmRenderableTopRoot.children`, and `renderable_document.direct_roots` all preserve `FsmRootKind::Fsm` for the child module.
+- The emitted `.fsm` text now has direct coverage for `(?fsmc:controller controller_core)` plus the child `(?fsm:controller_core ...)` direct root and its state/system content.
+- No production behavior changed; this locks an already-supported mixed `?top` + `?fsm` child artifact boundary.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::renderable_top_document_preserves_fsm_child_root_kind -- --exact --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests -- --nocapture` -> passed with `72` adapter tests
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `516` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-30 (`.fsm` top source documents emit stable root order)
 
 ### Added: renderable top source-document emission order is regression-locked

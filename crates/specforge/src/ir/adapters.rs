@@ -8932,6 +8932,75 @@ mod tests {
     }
 
     #[test]
+    fn renderable_top_document_preserves_fsm_child_root_kind() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "top_with_fsm_child.md",
+            "# Top With FSM Child\nTop wrapper.\n\nTop wrapper port clk is input width 1.\n\nTop wrapper port rst_n is input width 1.\n\nTop wrapper port GO is input width 1.\n\nTop wrapper port DONE is input width 1.\n\nTop wrapper port DATA_IN is input width 8.\n\nTop wrapper port ACC is output width 8.\n\nTop wrapper port TRACE is output width 1.\n\nTop wrapper child controller uses module controller_core.\n\nTop wrapper link clk -> controller.clk.\n\nTop wrapper link rst_n -> controller.rst_n.\n\nTop wrapper link GO -> controller.GO.\n\nTop wrapper link DONE -> controller.DONE.\n\nTop wrapper link DATA_IN -> controller.DATA_IN.\n\nTop wrapper link controller.ACC -> ACC.\n\nTop wrapper link controller.TRACE -> TRACE.\n\nModule controller_core Signal clk is input width 1.\n\nModule controller_core Signal rst_n is input width 1.\n\nModule controller_core Signal GO is input width 1.\n\nModule controller_core Signal DONE is input width 1.\n\nModule controller_core Signal DATA_IN is input width 8.\n\nModule controller_core Signal ACC is output width 8.\n\nModule controller_core Signal TRACE is output width 1.\n\nModule controller_core Clock clk.\n\nModule controller_core Reset rst_n is asynchronous active low.\n\nModule controller_core Init ACC = 8'0.\n\nModule controller_core State idle is initial.\n\nModule controller_core State busy.\n\nModule controller_core Block idle: ACC <- DATA_IN.\n\nModule controller_core Transition idle -> busy when GO.\n\nModule controller_core Block busy: ACC <- DATA_IN.\n\nModule controller_core Transition busy -> idle when DONE.\n\nModule controller_core Block trace when DONE: TRACE = 1.\n",
+        )?;
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+        adapter.write_to_disk()?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "renderable");
+        let emitted_target_path = adapter
+            .artifact_layout
+            .emitted_target_path
+            .as_ref()
+            .expect("renderable top with FSM child should emit target text");
+        let emitted_text = fs::read_to_string(emitted_target_path)?;
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let top_candidate = fsm
+            .top_candidates
+            .iter()
+            .find(|top| top.top_name == "wrapper")
+            .expect("top candidate should be present");
+        let child = top_candidate
+            .children
+            .iter()
+            .find(|child| child.instance_name == "controller")
+            .expect("controller child should be present");
+        let renderable_document = fsm
+            .renderable_document
+            .as_ref()
+            .expect("renderable top should carry a source document");
+        let renderable_child = renderable_document
+            .top_root
+            .as_ref()
+            .and_then(|top| {
+                top.children
+                    .iter()
+                    .find(|child| child.instance_name == "controller")
+            })
+            .expect("renderable top should preserve the FSM child");
+        let direct_root = renderable_document
+            .direct_roots
+            .iter()
+            .find(|root| root.module_name == "controller_core")
+            .expect("FSM child direct root should be present");
+
+        assert!(top_candidate.renderability.is_renderable);
+        assert_eq!(child.resolved_root_kind, Some(FsmRootKind::Fsm));
+        assert_eq!(renderable_child.child_root_kind, FsmRootKind::Fsm);
+        assert_eq!(direct_root.root_kind, FsmRootKind::Fsm);
+        assert!(!direct_root.module.states.is_empty());
+        assert!(emitted_text.contains("(?top:wrapper"));
+        assert!(emitted_text.contains("(?fsmc:controller controller_core)"));
+        assert!(emitted_text.contains("(?fsm:controller_core"));
+        assert!(emitted_text.contains("(+system"));
+        assert!(emitted_text.contains("\n  (idle\n"));
+        assert!(emitted_text.contains("\n  (busy\n"));
+
+        Ok(())
+    }
+
+    #[test]
     fn top_composition_recovers_top_port_direction_from_link_topology() -> Result<()> {
         let tempdir = tempdir()?;
         let mut intent_ir = build_width_only_top_port_composition_intent_ir(tempdir.path())?;
