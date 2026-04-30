@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-30 (`.fsm` renderable top direct roots keep child modules)
+
+### Added: renderable source-document child roots are regression-locked
+- Extended the main renderable top-composition regression to assert `renderable_document.direct_roots` contains the child module roots referenced by the top candidate.
+- The test now checks direct-root order, module names, root kinds, and emitted child module size-entry surfaces for `producer_core` and `consumer_core`.
+- This protects `renderable_modules_for_top(...)`, which de-duplicates top children by source module and copies each renderable child module into the final source-document model before `.fsm` text emission.
+- No production behavior changed; this locks the existing renderable document model rather than broadening top-composition lowering.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::builds_renderable_top_composition_fsm_adapter_artifact -- --exact --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests -- --nocapture` -> passed with `69` adapter tests
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `513` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-30 (`.fsm` renderable top links keep topology provenance)
 
 ### Added: renderable top-root link provenance is regression-locked

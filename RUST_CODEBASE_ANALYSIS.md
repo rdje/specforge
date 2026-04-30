@@ -4,6 +4,13 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-30 `.fsm` renderable top direct roots)
+- Continued from commit `68c54a0` by locking the final source-document direct-root list produced for explicit top composition.
+- `renderable_modules_for_top(...)` already traverses top children, de-duplicates source modules, and clones each renderable child module into `FsmRenderableSourceDocument.direct_roots`.
+- The main renderable top-composition regression now asserts the direct roots are `producer_core` then `consumer_core`, both with `FsmRootKind::Dt`, and that their renderable size-entry surfaces include the child ports consumed by top links.
+- This is a regression-only artifact-boundary slice: renderability, child endpoint validation, and emitted `.fsm` text remain unchanged.
+- Adapter coverage remains at `69` tests; full local verification for this slice: `513` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-30 `.fsm` renderable top-link provenance)
 - Continued from commit `4f2bf49` by locking the final renderable top-root link surface for explicit topology evidence.
 - `FsmRenderableTopRoot.links` already clones the explicit top links when top renderability succeeds; this slice proves the clone preserves link support IDs and high automation confidence.

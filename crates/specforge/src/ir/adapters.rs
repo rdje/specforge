@@ -8731,7 +8731,49 @@ mod tests {
         assert_eq!(fsm.module_candidates.len(), 2);
         assert!(fsm.renderability.is_renderable);
         assert!(fsm.renderable_module.is_none());
-        assert!(fsm.renderable_document.is_some());
+        let renderable_document = fsm
+            .renderable_document
+            .as_ref()
+            .expect("renderable top should carry a source document");
+        let direct_root_names = renderable_document
+            .direct_roots
+            .iter()
+            .map(|root| root.module_name.as_str())
+            .collect::<Vec<_>>();
+        assert_eq!(direct_root_names, vec!["producer_core", "consumer_core"]);
+        let producer_root = renderable_document
+            .direct_roots
+            .iter()
+            .find(|root| root.module_name == "producer_core")
+            .expect("producer child root should be present");
+        let consumer_root = renderable_document
+            .direct_roots
+            .iter()
+            .find(|root| root.module_name == "consumer_core")
+            .expect("consumer child root should be present");
+        assert_eq!(producer_root.root_kind, FsmRootKind::Dt);
+        assert_eq!(consumer_root.root_kind, FsmRootKind::Dt);
+        assert!(
+            producer_root
+                .module
+                .size_entries
+                .iter()
+                .any(|entry| entry.signal_name == "output_data")
+        );
+        assert!(
+            consumer_root
+                .module
+                .size_entries
+                .iter()
+                .any(|entry| entry.signal_name == "input_data")
+        );
+        assert!(
+            consumer_root
+                .module
+                .size_entries
+                .iter()
+                .any(|entry| entry.signal_name == "result_data")
+        );
         assert!(emitted_text.contains("(?top:datapath"));
         assert!(emitted_text.contains("(?ports:public_io"));
         assert!(emitted_text.contains("result_data>8"));

@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-30 `.fsm` renderable top direct roots keep child modules
+- Continued from commit `68c54a0` by locking the renderable source-document direct-root list for normal top composition.
+- Extended `builds_renderable_top_composition_fsm_adapter_artifact` to assert `renderable_document.direct_roots` contains `producer_core` and `consumer_core` in child traversal order, both as `?dt:name` roots.
+- The same assertions check the child modules' renderable size-entry surfaces, so the final source document model is tied to emitted child module content rather than only text contains checks.
+- This protects `renderable_modules_for_top(...)` against future refactors that might drop, reorder, or mis-kind child direct roots after top renderability succeeds.
+- Adapter coverage remains at `69` tests; full local CI with `513` Rust tests and the full `127/127` tracked KG fixture suite passed after the regression landed.
+
 ## 2026-04-30 `.fsm` renderable top links keep topology provenance
 - Continued from commit `4f2bf49` by locking the final renderable-document consumer of explicit top-link provenance.
 - Extended `top_root_kind_confidence_follows_top_link_evidence` so the same isolated child-to-child topology link proves both selected top-candidate and renderable top-root link records keep support IDs and high confidence.
