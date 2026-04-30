@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-04-30 `.fsm` top root-kind confidence follows child declarations
+- Continued from commit `4053491` by locking the root-kind decision consumer of explicit top-child declaration confidence.
+- Added `top_root_kind_confidence_follows_child_declaration_evidence`, a minimal top-composition fixture with one low-confidence public top port, one high-confidence child declaration, and no links.
+- The regression proves `FsmTopChildCandidate.automation_confidence` is folded by `build_top_root_kind_decision(...)`: the recovered top port stays low confidence while `fsm.root_kind_decision.automation_confidence` becomes high.
+- The child also resolves to `?dt:controller_core`, tying the confidence evidence to a renderable child declaration rather than a stray topology or actor-port recovery path.
+- Adapter coverage increases to `68` tests; full local CI with `512` Rust tests and the full `127/127` tracked KG fixture suite passed after the regression landed.
+
 ## 2026-04-30 `.fsm` top child declarations keep provenance
 - Continued from commit `db40fdf` by locking the explicit top-child declaration surface in the same system-contract distribution fixture.
 - `build_top_candidate(...)` already copies top-child support IDs and confidence into `FsmTopChildCandidate`; this regression proves `controller` keeps that declaration evidence and high confidence while resolving to the renderable `?dt:controller_core` child kind.

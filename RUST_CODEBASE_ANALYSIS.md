@@ -4,6 +4,13 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-04-30 `.fsm` top child root-kind confidence)
+- Continued from commit `4053491` by locking the top-root decision confidence path for explicit child declarations.
+- `build_top_root_kind_decision(...)` already folds `FsmTopCandidate.children[*].automation_confidence`; this slice adds a regression where the only high-confidence evidence is the child declaration.
+- The fixture keeps the public top port low confidence and leaves links empty, so `fsm.root_kind_decision.automation_confidence == High` proves the decision followed `FsmTopChildCandidate` evidence rather than recovered top-boundary or topology evidence.
+- The child resolves to `?dt:controller_core`, so the confidence source is tied to a real renderable child declaration.
+- Adapter coverage increases to `68` tests; full local verification for this slice: `512` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+
 ## Session update (2026-04-30 `.fsm` top child declaration provenance)
 - Continued from commit `db40fdf` by locking the top-child declaration artifact surface inside the system-contract distribution fixture.
 - The production path already copied `ExplicitTopChildRecord` support IDs and confidence into `FsmTopChildCandidate`; this slice proves the `controller` child keeps that evidence and resolves to `?dt:controller_core`.

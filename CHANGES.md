@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-04-30 (`.fsm` top root-kind confidence follows child declarations)
+
+### Added: top child declaration confidence now feeds root-kind confidence coverage
+- Added a focused top-composition regression proving `build_top_root_kind_decision(...)` folds high-confidence child declaration evidence into the selected `?top:name` root-kind decision.
+- The fixture intentionally downgrades the explicit public top port to low confidence, keeps the top child declaration high confidence, and has no links, so the resulting high root-kind confidence is isolated to `FsmTopChildCandidate` evidence.
+- The test also asserts the child resolves to the renderable `?dt:controller_core` kind while the recovered top port remains low confidence, guarding against accidental confidence leakage from unrelated top-boundary evidence.
+- No production behavior changed; this locks the existing confidence fold path after the adjacent top-child provenance and recovered top-port confidence regressions.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::top_root_kind_confidence_follows_child_declaration_evidence -- --exact --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests -- --nocapture` -> passed with `68` adapter tests
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `512` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures
+
 ## 2026-04-30 (`.fsm` top child declarations keep provenance)
 
 ### Added: top child declaration provenance is regression-locked

@@ -185,6 +185,7 @@
 - `.fsm` resolved top ports now preserve child system-contract recovered top-boundary width provenance: Done
 - `.fsm` child module system-contract endpoints now preserve supporting IDs and automation confidence before top-link width recovery consumes them: Done
 - `.fsm` top root-kind decision confidence now follows recovered top-boundary evidence instead of raw low-confidence top-port declarations: Done
+- `.fsm` top root-kind decision confidence now follows high-confidence explicit top-child declarations when top-boundary evidence stays low confidence: Done
 - `.fsm` renderable top-root ports now preserve recovered top-boundary direction/width supporting IDs and automation confidence from actor-port direction/width, top-link direction/width, and child system-contract width evidence: Done
 - `.fsm` renderability diagnostics now distinguish graph-direction conflicts from missing direction hints: Done
 - `.fsm` adapter signal inventory now preserves width-conflict provenance and reports conflicted widths distinctly: Done

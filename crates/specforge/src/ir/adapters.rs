@@ -9211,6 +9211,87 @@ mod tests {
     }
 
     #[test]
+    fn top_root_kind_confidence_follows_child_declaration_evidence() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "top_root_kind_child_confidence.md",
+            "# Top Root Kind Child Confidence\nTop wrapper.\n\nTop wrapper port done is output width 1.\n\nTop wrapper child controller uses module controller_core.\n\nModule controller_core signal DONE is output width 1.\n\nModule controller_core block drive_done: DONE = 1.\n",
+        )?;
+        {
+            let raw_top = intent_ir
+                .explicit_tops
+                .iter_mut()
+                .find(|top| top.top_name == "wrapper")
+                .expect("explicit top should be present");
+            assert!(
+                raw_top.links.is_empty(),
+                "fixture should isolate root-kind confidence to ports and children"
+            );
+            let raw_port = raw_top
+                .ports
+                .iter_mut()
+                .find(|port| port.port_name == "done")
+                .expect("top port should be present");
+            raw_port.automation_confidence = AutomationConfidence::Low;
+
+            let raw_child = raw_top
+                .children
+                .iter()
+                .find(|child| child.instance_name == "controller")
+                .expect("top child should be present");
+            assert_eq!(raw_child.automation_confidence, AutomationConfidence::High);
+            assert!(
+                !raw_child.supporting_statement_ids.is_empty(),
+                "top child should carry concrete support IDs"
+            );
+        }
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let top_candidate = fsm
+            .top_candidates
+            .iter()
+            .find(|top| top.top_name == "wrapper")
+            .expect("top candidate should be present");
+        let recovered_port = top_candidate
+            .ports
+            .iter()
+            .find(|port| port.port_name == "done")
+            .expect("recovered top port should be present");
+        let recovered_child = top_candidate
+            .children
+            .iter()
+            .find(|child| child.instance_name == "controller")
+            .expect("controller child should be present");
+
+        assert_eq!(top_candidate.links.len(), 0);
+        assert_eq!(
+            recovered_port.automation_confidence,
+            AutomationConfidence::Low
+        );
+        assert_eq!(
+            recovered_child.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert_eq!(recovered_child.resolved_root_kind, Some(FsmRootKind::Dt));
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Top);
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::High
+        );
+
+        Ok(())
+    }
+
+    #[test]
     fn top_composition_recovers_top_system_port_widths_from_child_system_contract() -> Result<()> {
         let tempdir = tempdir()?;
         let intent_ir = build_intent_ir_from_markdown(
