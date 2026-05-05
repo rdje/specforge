@@ -536,7 +536,10 @@ fn parse_enrich_command_hint_args(args: &[String]) -> Result<RescanInvocation> {
                         "rescan-plan enrich hint is missing --vlm-model value".to_string(),
                     ));
                 };
-                if vlm_model.replace(value.clone()).is_some() {
+                if vlm_model
+                    .replace(parse_vlm_model_hint_value(value, "enrich")?)
+                    .is_some()
+                {
                     return Err(AppError::InvalidStageArtifact(
                         "rescan-plan enrich hint repeats --vlm-model".to_string(),
                     ));
@@ -609,7 +612,10 @@ fn parse_nlp_enrich_command_hint_args(args: &[String]) -> Result<RescanInvocatio
                         "rescan-plan nlp-enrich hint is missing --vlm-model value".to_string(),
                     ));
                 };
-                if vlm_model.replace(value.clone()).is_some() {
+                if vlm_model
+                    .replace(parse_vlm_model_hint_value(value, "nlp-enrich")?)
+                    .is_some()
+                {
                     return Err(AppError::InvalidStageArtifact(
                         "rescan-plan nlp-enrich hint repeats --vlm-model".to_string(),
                     ));
@@ -635,6 +641,16 @@ fn parse_nlp_enrich_command_hint_args(args: &[String]) -> Result<RescanInvocatio
         vlm_provider,
         vlm_model,
     })
+}
+
+fn parse_vlm_model_hint_value(value: &str, hint_kind: &str) -> Result<String> {
+    if value.starts_with("--") {
+        return Err(AppError::InvalidStageArtifact(format!(
+            "rescan-plan {hint_kind} hint is missing --vlm-model value"
+        )));
+    }
+
+    Ok(value.to_string())
 }
 
 fn parse_local_rescan_vlm_provider(value: &str) -> Result<VlmProviderArg> {
@@ -1080,6 +1096,35 @@ mod tests {
             ],
         );
         assert!(parse_command_hint(&missing_nlp_model).is_err());
+    }
+
+    #[test]
+    fn rescan_plan_rejects_flag_shaped_model_values() {
+        let flag_shaped_enrich_model = command_hint(
+            "enrich_source_ir",
+            vec![
+                "enrich",
+                "generated/source_ir/doc/source_ir.json",
+                "--vlm-provider",
+                "ollama",
+                "--vlm-model",
+                "--classify-only",
+            ],
+        );
+        assert!(parse_command_hint(&flag_shaped_enrich_model).is_err());
+
+        let flag_shaped_nlp_model = command_hint(
+            "nlp_enrich_evidence_ir",
+            vec![
+                "nlp-enrich",
+                "generated/evidence_ir/doc/evidence_ir.json",
+                "--vlm-provider",
+                "ollama",
+                "--vlm-model",
+                "--vlm-provider",
+            ],
+        );
+        assert!(parse_command_hint(&flag_shaped_nlp_model).is_err());
     }
 
     #[test]

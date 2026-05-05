@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan flag-shaped model-value lock)
+
+### Fixed: replay model overrides no longer accept another flag as the model
+- Tightened `rescan-plan` replay command parsing so `--vlm-model` values that start with `--` are rejected.
+- Added coverage for source enrichment where `--classify-only` appears after `--vlm-model`.
+- Added coverage for NLP enrichment where another flag appears after `--vlm-model`.
+- This prevents truncated local replay hints from silently treating the next option as a model name.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_flag_shaped_model_values` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `536` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan explicit provider lock)
 
 ### Changed: missing local replay providers now have parser coverage

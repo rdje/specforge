@@ -126,7 +126,7 @@ For visual-motif corroboration, the replay sequence is `enrich_source_ir`, rebui
 The generated enrichment hint now uses a local provider policy: `auto-local` prefers ready Ollama and falls back to ready LM Studio, while explicit `ollama`, `lmstudio`, `skip`, and model overrides remain available on `project-validation`.
 `rescan-plan` is the first explicit consumer for that schema: it dry-runs by default, prints artifact path, extractor lane, replay inputs, related ids, and a readable action summary before the command hints, with empty fields rendered as explicit `none` values.
 With `--execute`, it dispatches only whitelisted local enrichment/stage rebuild/validate commands from the structured args rather than trusting shell text.
-Malformed provider options, including missing providers, repeated provider/model/classification flags, missing provider or model values, and unsupported args, are rejected before execution.
+Malformed provider options, including missing providers, repeated provider/model/classification flags, missing provider or model values, flag-shaped model values, and unsupported args, are rejected before execution.
 It can also scope a multi-document queue with `--document-key <key>`.
 Scoped queues still select only pending `planned_not_executed` recommendations; executed matches and missing document keys produce no pending dry-run work.
 Limits are applied after that pending/document filter, so unrelated documents cannot consume a scoped queue's limit.
