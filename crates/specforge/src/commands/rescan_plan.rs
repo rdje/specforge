@@ -981,13 +981,20 @@ mod tests {
         let rendered = render_dry_run_plan(&plan, &[0]);
 
         assert!(rendered.contains("rescan_queue:"));
+        assert!(rendered.contains("artifact_path: generated/intent_ir/doc/intent_ir.json"));
+        assert!(rendered.contains("extractor_lane: intent_ir_canonical_surface_corroboration"));
         assert!(rendered.contains(
             "replay_inputs: source_ir:generated/source_ir/doc/source_ir.json, evidence_ir:generated/evidence_ir/doc/evidence_ir.json, semantic_ir:generated/semantic_ir/doc/semantic_ir.json"
         ));
         assert!(rendered.contains(
             "recommended_action: restart from SourceIR through EvidenceIR, SemanticIR, and IntentIR"
         ));
+        assert!(rendered.contains("related_ids: temporal_conflict_0001"));
         assert!(rendered.contains("automation_status: planned_not_executed"));
+        assert!(rendered.contains("recommended_commands:"));
+        assert!(rendered.contains(
+            "  - validate_current_artifact: cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/doc/semantic_ir.json"
+        ));
     }
 
     #[test]

@@ -7,6 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan dry-run preview field lock
+- Batch slice 2/20 stays in the replay/rescan lane after the previous slice-10 command-lane lock.
+- `rescan-plan` already rendered the schema-v2 pending recommendation fields, but the dry-run renderer regression only asserted the queue, replay inputs, action text, and status.
+- The test now locks the full review-critical preview:
+  - `artifact_path`
+  - `extractor_lane`
+  - `replay_inputs`
+  - `recommended_action`
+  - `related_ids`
+  - `automation_status`
+  - `recommended_commands`
+- This is a test hardening slice, not a behavior change. Its purpose is to keep the human dry-run preview from drifting away from the machine-readable replay plan shape.
+
 ## 2026-05-05 N=20 batch continuity activation
 - Started a second automatic batch run with `requested_count = 20`.
 - The previous `N=10` batch is complete and pushed through `a15d861`.

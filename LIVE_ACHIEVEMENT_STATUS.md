@@ -26,6 +26,7 @@
 - `specforge validate` command created: Done
 - `specforge project-validation` command created: Done
 - `specforge rescan-plan` command created: Done
+- `specforge rescan-plan` dry-run preview fields are regression-locked: Done
 - `specforge kg-bench` command created: Done
 - `specforge learn-priors` command created: Done
 - `specforge corpus-kb` command created: Done

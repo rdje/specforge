@@ -1,5 +1,28 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan dry-run preview field lock)
+
+### Changed: dry-run preview regression now locks command-visible replay fields
+- Tightened the `rescan-plan` dry-run renderer regression.
+- The test now asserts that the pending-item preview includes:
+  - artifact path
+  - extractor lane
+  - replay inputs
+  - recommended action
+  - related ids
+  - automation status
+  - structured command hints
+- This keeps the human inspection surface aligned with schema-v2 replay records, so future rendering edits cannot silently hide the command lane or the ids needed for review.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_dry_run_render_surfaces_replay_boundary_and_action` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed after applying `cargo fmt`
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `523` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (N=20 batch continuity activation)
 
 ### Changed: active batch continuity now reflects the new run
