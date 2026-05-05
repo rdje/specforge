@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan lmstudio alias lock)
+
+### Changed: unhyphenated LM Studio provider hints are accepted
+- Added parser coverage proving local `lmstudio` provider hints parse as LM Studio replay invocations.
+- This keeps the accepted local provider spelling aligned with the existing `lm-studio` alias.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_parses_unhyphenated_lmstudio_provider_hint` -> passed (`1` test, `585` filtered out)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`586` Rust tests, warnings denied for Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`130` fixtures, `0` failures)
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan nlp classify-only rejection lock)
 
 ### Changed: nlp-enrich replay hints reject classify-only

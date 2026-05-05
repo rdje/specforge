@@ -1413,6 +1413,30 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_parses_unhyphenated_lmstudio_provider_hint() -> Result<()> {
+        let nlp_enrich = command_hint(
+            "nlp_enrich_evidence_ir",
+            vec![
+                "nlp-enrich",
+                "generated/evidence_ir/doc/evidence_ir.json",
+                "--vlm-provider",
+                "lmstudio",
+            ],
+        );
+
+        assert_eq!(
+            parse_command_hint(&nlp_enrich)?,
+            RescanInvocation::NlpEnrich {
+                evidence_ir: PathBuf::from("generated/evidence_ir/doc/evidence_ir.json"),
+                vlm_provider: VlmProviderArg::LmStudio,
+                vlm_model: None,
+            }
+        );
+
+        Ok(())
+    }
+
+    #[test]
     fn rescan_plan_rejects_malformed_local_provider_hints() {
         let duplicate_provider = command_hint(
             "enrich_source_ir",

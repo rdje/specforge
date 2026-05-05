@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan lmstudio alias)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` parser tests around accepted local LM Studio provider spellings.
+- No production parser code changed; the new regression proves the unhyphenated `lmstudio` value still maps to `VlmProviderArg::LmStudio`.
+- This keeps local replay provider aliases explicit and covered.
+
 ## Session update (2026-05-05 rescan-plan nlp classify-only rejection)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` parser tests around `nlp-enrich` replay flags.
 - No production parser code changed; the new regression proves `--classify-only` remains source-enrich-only and is rejected for evidence NLP replay hints.
