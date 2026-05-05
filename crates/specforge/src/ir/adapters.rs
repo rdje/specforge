@@ -8677,6 +8677,13 @@ mod tests {
                 "{signal_name} should be recovered from structured FSM control reads"
             );
             assert!(
+                signal.supporting_canonical_ids.iter().any(|id| {
+                    id.starts_with("control_branch_") || id.starts_with("transition_")
+                }),
+                "{signal_name} should retain canonical control-read support"
+            );
+            assert_eq!(signal.automation_confidence, AutomationConfidence::High);
+            assert!(
                 !signal
                     .mention_categories
                     .iter()
