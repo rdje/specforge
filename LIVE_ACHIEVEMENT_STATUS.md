@@ -71,6 +71,7 @@
 - Evidence-stage negative-knowledge caution now feeds replay planning: Done
 - Carried signal-semantic conflicts now emit replayable rescan guidance: Done
 - Carried graph-direction self-conflicts now emit replayable rescan guidance: Done
+- Validator tests preserve concurrent graph-direction conflict and coverage guidance payloads: Done
 - Project-validation replay planning preserves concurrent graph-direction conflict and coverage targets: Done
 - Project-validation replay planning preserves concurrent IntentIR graph-direction conflict and coverage targets: Done
 - Negative-knowledge priors now include signal-polarity conflict archetypes: Done

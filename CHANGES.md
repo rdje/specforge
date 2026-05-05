@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-05 (validator tests for paired graph-conflict guidance)
+
+### Changed: validator unit coverage now locks paired guidance payloads
+- Tightened the SemanticIR and IntentIR same-actor graph-direction conflict validator tests.
+- Each test now asserts both replay-guidance findings emitted by the validator:
+  - graph-direction coverage guidance keyed by `PREADY`
+  - graph-direction conflict guidance keyed by `graph_direction_conflict:actor_completer:PREADY`
+- This locks the validator layer directly, complementing the project-validation replay tests and the tracked KG fixture.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge conflicting_same_actor_graph_direction` -> passed with `3` tests
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `523` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+
 ## 2026-05-05 (KG fixture for graph-conflict rescan guidance)
 
 ### Changed: conflicted compatibility fixture now locks replay guidance

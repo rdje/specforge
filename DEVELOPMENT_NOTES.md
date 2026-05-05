@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 validator tests for paired graph-conflict guidance
+- Batch slice 8/10 tightens the direct validator unit layer for same-actor graph-direction conflicts.
+- The existing tests already proved the conflict-specific rescan guidance related id:
+  - `graph_direction_conflict:actor_completer:PREADY`
+- They now also assert the sibling graph-coverage rescan guidance related id:
+  - `PREADY`
+- This matters because the intended report shape contains two replay targets at once:
+  - the signal still lacks resolved graph direction coverage
+  - the actor-aware conflict id explains why the graph evidence cannot be credited
+- With this slice, the behavior is covered at three layers: direct validator unit tests, project-validation replay preservation tests, and the tracked KG fixture.
+
 ## 2026-05-05 KG fixture for graph-conflict rescan guidance
 - Batch slice 7/10 tightens the executable KG fixture for flat-hint-missing same-actor graph conflicts.
 - `compat_direction_hints_graph_conflict_incomplete_negative` already proved the core validator split:

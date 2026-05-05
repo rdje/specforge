@@ -8161,6 +8161,17 @@ mod tests {
             .find(|finding| finding.finding_id == "intent_graph_direction_coverage_incomplete")
             .expect("expected conflicted graph direction to remain a coverage gap");
         assert_eq!(coverage_finding.related_ids, vec!["PREADY".to_string()]);
+        let coverage_rescan_guidance = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == INTENT_GRAPH_DIRECTION_COVERAGE_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected intent graph-direction coverage rescan guidance");
+        assert_eq!(
+            coverage_rescan_guidance.related_ids,
+            vec!["PREADY".to_string()]
+        );
         let unresolved_compat_finding = report
             .findings
             .iter()
@@ -8279,6 +8290,17 @@ mod tests {
             .find(|finding| finding.finding_id == "semantic_graph_direction_coverage_incomplete")
             .expect("expected conflicted graph direction to remain a coverage gap");
         assert_eq!(coverage_finding.related_ids, vec!["PREADY".to_string()]);
+        let coverage_rescan_guidance = report
+            .findings
+            .iter()
+            .find(|finding| {
+                finding.finding_id == SEMANTIC_GRAPH_DIRECTION_COVERAGE_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected semantic graph-direction coverage rescan guidance");
+        assert_eq!(
+            coverage_rescan_guidance.related_ids,
+            vec!["PREADY".to_string()]
+        );
         let unresolved_compat_finding = report
             .findings
             .iter()

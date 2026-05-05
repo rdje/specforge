@@ -20,46 +20,45 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `21c4bcf87c2bc1a5ed499a4dbd50325c003f3049`
-- latest_commit_brief_message: `test(validation): preserve intent graph replay split`
-- note: the latest committed baseline is batch slice 6/10; it locks concurrent IntentIR graph-direction coverage and conflict replay recommendations
+- latest_commit_hash: `5d739ee12c16eddc4e16bfd93fab31c267904d41`
+- latest_commit_brief_message: `test(kg): lock graph conflict rescan payloads`
+- note: the latest committed baseline is batch slice 7/10; it locks both graph-coverage and graph-conflict rescan guidance payloads in the flat-hint-missing conflicted compatibility KG fixture
 
 ## Recent commit chain (last 6)
+- `5d739ee` test(kg): lock graph conflict rescan payloads
 - `21c4bcf` test(validation): preserve intent graph replay split
 - `7beb265` test(validation): preserve graph replay target split
 - `741267d` test(kg): lock flat-hint graph conflict boundary
 - `d6751ed` fix(validate): treat graph conflicts as unresolved direction
 - `3a84112` test(kg): lock mixed direction gap findings
-- `b487152` docs(workflow): document batch push policy
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 30` of `origin/main`
-- files in flight for slice 7:
+- branch state before the next commit: `ahead 31` of `origin/main`
+- files in flight for slice 8:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `MEMORY.md`
   - `ROADMAP.md`
   - `RUST_CODEBASE_ANALYSIS.md`
-  - `crates/specforge/test_data/kg_quality/compat_direction_hints_graph_conflict_incomplete_negative/fixture.json`
-  - `docs/book/src/quality/kg-bench.md`
+  - `crates/specforge/src/commands/validate.rs`
 
 ## Active N-slice batch
 - requested_count: `10`
-- completed_count: `6`
+- completed_count: `7`
 - push_policy: defer push until all `10` slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - tighten `compat_direction_hints_graph_conflict_incomplete_negative` so the KG fixture layer asserts the same replay split proven by the project-validation tests
-  - require both graph-direction coverage rescan guidance related to `PREADY` and graph-direction conflict rescan guidance related to `graph_direction_conflict:actor_completer:PREADY` at `SemanticIR` and `IntentIR`
+  - tighten SemanticIR and IntentIR validator unit tests for same-actor graph-direction conflicts
+  - assert both graph-direction coverage rescan guidance related to `PREADY` and graph-direction conflict rescan guidance related to `graph_direction_conflict:actor_completer:PREADY` in the same validation reports
 - tracker effect:
-  - add a Done row for KG fixture coverage of conflicted compatibility-gap rescan guidance
+  - add a Done row for validator unit coverage of concurrent graph-direction conflict and coverage guidance payloads
 - verification status:
-  - focused `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench compat_direction_hints_graph_conflict_incomplete_negative` passed with `1` fixture and `0` failures
+  - focused `cargo test --manifest-path Cargo.toml -p specforge conflicting_same_actor_graph_direction` passed with `3` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed
   - `bash scripts/run_ci.sh` passed with `523` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
@@ -71,4 +70,4 @@
   - `130/130` tracked KG fixtures
 
 ## Next exact steps
-- commit slice 7 without pushing
+- commit slice 8 without pushing

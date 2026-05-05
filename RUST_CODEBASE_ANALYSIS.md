@@ -4,6 +4,13 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 validator graph-conflict guidance assertions)
+- Strengthened `crates/specforge/src/commands/validate.rs` tests for same-actor graph-direction conflicts.
+- No production semantics changed; the validator tests now assert that the same report contains both replayable guidance payloads:
+  - coverage guidance related to the signal id `PREADY`
+  - conflict guidance related to `graph_direction_conflict:actor_completer:PREADY`
+- This closes the unit-test layer beneath the project-validation replay preservation tests and the KG fixture assertion, reducing risk that future validator edits drop the coverage guidance while preserving only the conflict-specific guidance.
+
 ## Session update (2026-05-05 graph-conflict guidance fixture)
 - Strengthened `compat_direction_hints_graph_conflict_incomplete_negative` in the tracked KG fixture set.
 - No Rust production code changed; the fixture now asserts both rescan-guidance findings that should accompany a flat-hint-missing graph conflict.
