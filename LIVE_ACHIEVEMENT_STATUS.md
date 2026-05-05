@@ -41,6 +41,7 @@
 - `specforge rescan-plan` missing replay model values are rejected: Done
 - `specforge rescan-plan` missing replay providers are rejected: Done
 - `specforge rescan-plan` flag-shaped replay model values are rejected: Done
+- `specforge rescan-plan` flag-shaped replay provider values are rejected: Done
 - `specforge kg-bench` command created: Done
 - `specforge learn-priors` command created: Done
 - `specforge corpus-kb` command created: Done

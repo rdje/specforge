@@ -1143,6 +1143,33 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_rejects_flag_shaped_provider_values() {
+        let flag_shaped_enrich_provider = command_hint(
+            "enrich_source_ir",
+            vec![
+                "enrich",
+                "generated/source_ir/doc/source_ir.json",
+                "--vlm-provider",
+                "--vlm-model",
+                "model-a",
+            ],
+        );
+        assert!(parse_command_hint(&flag_shaped_enrich_provider).is_err());
+
+        let flag_shaped_nlp_provider = command_hint(
+            "nlp_enrich_evidence_ir",
+            vec![
+                "nlp-enrich",
+                "generated/evidence_ir/doc/evidence_ir.json",
+                "--vlm-provider",
+                "--vlm-model",
+                "model-a",
+            ],
+        );
+        assert!(parse_command_hint(&flag_shaped_nlp_provider).is_err());
+    }
+
+    #[test]
     fn rescan_plan_rejects_openai_enrich_hints() {
         let command = command_hint(
             "enrich_source_ir",

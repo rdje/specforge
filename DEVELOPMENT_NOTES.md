@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan flag-shaped provider-value lock
+- Batch slice 17/20 adds the provider-side sibling to the flag-shaped model-value lock.
+- `parse_local_rescan_vlm_provider(...)` already rejected option tokens as unsupported providers.
+- Added `rescan_plan_rejects_flag_shaped_provider_values` for both enrich and NLP-enrich hints so a truncated `--vlm-provider --vlm-model ...` shape stays invalid.
+
 ## 2026-05-05 rescan-plan flag-shaped model-value lock
 - Batch slice 16/20 closes a parser ambiguity left by the missing-model-value tests.
 - Before this slice, `--vlm-model --classify-only` could treat `--classify-only` as the model string because the parser only checked that a next token existed.

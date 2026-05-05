@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan flag-shaped provider values)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` parser tests around local provider values.
+- No production parser code changed; option-token provider values are now directly covered for both enrich and NLP-enrich command hints.
+- This complements the model-value fix by locking both replay option value positions against flag swallowing.
+
 ## Session update (2026-05-05 rescan-plan flag-shaped model values)
 - Tightened `crates/specforge/src/commands/rescan_plan.rs` replay command parsing for local model overrides.
 - `parse_vlm_model_hint_value(...)` now rejects model values that begin with `--`, preventing a following option from being swallowed as the model name.

@@ -203,6 +203,7 @@
   - truncated local replay model overrides now have regression coverage proving missing `--vlm-model` values are rejected for enrich and NLP-enrich hints
   - local replay enrichment hints now have regression coverage proving explicit `--vlm-provider` policy is required for both enrich and NLP-enrich lanes
   - flag-shaped local replay model values are now rejected so options like `--classify-only` cannot be swallowed as a model name after `--vlm-model`
+  - flag-shaped local replay provider values now have regression coverage so option tokens cannot be swallowed as provider policy after `--vlm-provider`
   - validation-delta execution summaries now have regression coverage for sorted and deduplicated added/removed finding-id lists
   - score/grade presence-only validation changes now have regression coverage that keeps them neutral review-required signals rather than improvement/regression claims
   - mixed validation deltas that add and remove findings now have regression coverage proving added findings take regression-review precedence over removed-finding improvement hints
