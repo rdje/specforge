@@ -13,8 +13,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 <!-- corpus_kb_kg_fixtures:start -->
 <!-- This block is refreshed by `specforge corpus-kb`. -->
 
-- fixtures_total: `143`
-- fixtures_passed: `143`
+- fixtures_total: `144`
+- fixtures_passed: `144`
 - fixtures_failed: `0`
 
 ### Fixture Family Summary
@@ -26,7 +26,7 @@ Fixtures can appear in more than one family because protocol semantics, modality
 | VLM timing diagrams | `9` | `9` | `0` |
 | actor connectivity | `21` | `21` | `0` |
 | infrastructure semantics | `14` | `14` | `0` |
-| multimodal visual grounding | `23` | `23` | `0` |
+| multimodal visual grounding | `24` | `24` | `0` |
 | negative knowledge | `6` | `6` | `0` |
 | polarity semantics | `8` | `8` | `0` |
 | protocol-family AMBA/APB/AHB/AXI | `36` | `36` | `0` |
@@ -34,7 +34,7 @@ Fixtures can appear in more than one family because protocol semantics, modality
 | semantic role arbitration | `29` | `29` | `0` |
 | table extraction and hygiene | `10` | `10` | `0` |
 | temporal semantics | `69` | `69` | `0` |
-| truthfulness negatives and cautions | `65` | `65` | `0` |
+| truthfulness negatives and cautions | `66` | `66` | `0` |
 | typed prior memory | `30` | `30` | `0` |
 
 ### actor_boundary_residual
@@ -783,6 +783,12 @@ Fixtures can appear in more than one family because protocol semantics, modality
 
 ### visual_motif_prior_guided_diagram_classification_without_prior_negative
 - fixture_path: `crates/specforge/test_data/kg_quality/visual_motif_prior_guided_diagram_classification_without_prior_negative/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### visual_motif_prior_protocol_family_mismatch_negative
+- fixture_path: `crates/specforge/test_data/kg_quality/visual_motif_prior_protocol_family_mismatch_negative/fixture.json`
 - status: `pass`
 - failures:
   - none

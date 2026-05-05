@@ -15,8 +15,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 
 - source: `kg-bench fixtures`
 - selected_family_labels: `multimodal visual grounding`, `VLM state machines`, `VLM timing diagrams`
-- fixtures_total: `23`
-- fixtures_passed: `23`
+- fixtures_total: `24`
+- fixtures_passed: `24`
 - fixtures_failed: `0`
 
 | fixture | status | matched families | path |
@@ -27,6 +27,7 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `source_vlm_enrichment_surface_negative` | `pass` | `multimodal visual grounding` | `crates/specforge/test_data/kg_quality/source_vlm_enrichment_surface_negative/fixture.json` |
 | `visual_motif_prior_guided_diagram_classification_gold` | `pass` | `multimodal visual grounding` | `crates/specforge/test_data/kg_quality/visual_motif_prior_guided_diagram_classification_gold/fixture.json` |
 | `visual_motif_prior_guided_diagram_classification_without_prior_negative` | `pass` | `multimodal visual grounding` | `crates/specforge/test_data/kg_quality/visual_motif_prior_guided_diagram_classification_without_prior_negative/fixture.json` |
+| `visual_motif_prior_protocol_family_mismatch_negative` | `pass` | `multimodal visual grounding` | `crates/specforge/test_data/kg_quality/visual_motif_prior_protocol_family_mismatch_negative/fixture.json` |
 | `visual_semantic_prior_guided_caption_gold` | `pass` | `multimodal visual grounding` | `crates/specforge/test_data/kg_quality/visual_semantic_prior_guided_caption_gold/fixture.json` |
 | `visual_semantic_prior_guided_caption_without_prior_negative` | `pass` | `multimodal visual grounding` | `crates/specforge/test_data/kg_quality/visual_semantic_prior_guided_caption_without_prior_negative/fixture.json` |
 | `visual_sources_semantic_conflict_negative` | `pass` | `multimodal visual grounding` | `crates/specforge/test_data/kg_quality/visual_sources_semantic_conflict_negative/fixture.json` |

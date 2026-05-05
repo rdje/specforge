@@ -8465,7 +8465,7 @@ mod tests {
     #[test]
     fn visual_motif_priors_classify_unknown_captioned_visual_assets() -> Result<()> {
         let tempdir = tempdir()?;
-        let source = tempdir.path().join("visual_motif_prior.md");
+        let source = tempdir.path().join("axi_visual_motif_prior.md");
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
         let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
         let prior_memory_path = write_visual_motif_prior_memory(tempdir.path())?;

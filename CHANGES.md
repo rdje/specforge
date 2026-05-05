@@ -1,5 +1,26 @@
 # CHANGES
 
+## 2026-05-05 (visual-motif prior protocol-family guard)
+
+### Changed: visual motif priors no longer fall through to unrelated protocol families
+- Added a KG negative fixture proving an APB-only visual motif prior cannot classify an AXI-local unknown visual asset from a matching caption phrase.
+- Reused the exact-family plus AMBA-generic prior lookup policy for visual motif caption classification, matching the table-shape and semantic modality-prior family boundaries.
+- Updated the visual motif unit fixture to use an AXI-family source so AMBA-generic fallback remains explicitly covered without relying on unknown-family fallback.
+- Refreshed corpus-KB fixture and prior-candidate projections so visual-motif family-mismatch coverage is visible in the benchmark, visual, truthfulness, and review-only readiness surfaces.
+
+### Validation
+- pre-fix `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench visual_motif_prior_protocol_family_mismatch_negative visual_motif_prior_guided_diagram_classification_gold` reproduced APB visual-motif prior leakage into an AXI fixture
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench visual_motif_prior_protocol_family_mismatch_negative visual_motif_prior_guided_diagram_classification_gold table_shape_prior_protocol_family_mismatch_negative` -> passed (`3` fixtures, `0` failures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`144` fixtures, `0` failures)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- first `bash scripts/run_ci.sh` run caught stale unit-test setup for unknown-family visual motif fallback; test source was updated to infer AXI and keep AMBA-generic fallback covered
+- `cargo test --manifest-path Cargo.toml -p specforge visual_motif_priors_classify_unknown_captioned_visual_assets` -> passed (`1` test)
+- final `bash scripts/run_ci.sh` -> passed (`593` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`144` fixtures, `0` failures)
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (table-shape prior protocol-family guard)
 
 ### Changed: table-shape priors no longer fall through to unrelated protocol families

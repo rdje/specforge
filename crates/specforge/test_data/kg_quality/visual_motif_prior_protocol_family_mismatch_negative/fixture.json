@@ -1,0 +1,116 @@
+{
+  "name": "visual_motif_prior_protocol_family_mismatch_negative",
+  "source": "axi_source.md",
+  "prior_memory_patch": {
+    "visual_motif_priors": [
+      {
+        "prior_id": "visual_motif_prior_apb_cycle_trace",
+        "normalized_caption_phrase": "<signal> cycle trace",
+        "diagram_kind": "timing_diagram",
+        "asset_kind": "diagram",
+        "protocol_family": "amba_apb",
+        "support_count": 3,
+        "supporting_document_keys": ["seed_apb_1", "seed_apb_2", "seed_apb_3"],
+        "strongest_automation_confidence": "high"
+      }
+    ]
+  },
+  "source_ir_patch": {
+    "structured_tables": [
+      {
+        "table_id": "table_0001",
+        "asset_id": "table_0001",
+        "page_id": "page_0001",
+        "caption_text": "Interface signals",
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            {
+              "text": "Signal",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Direction",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Width",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            }
+          ]
+        ],
+        "body_rows": [
+          [
+            {
+              "text": "XREQ",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "output",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "1",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ]
+        ],
+        "row_count": 1,
+        "col_count": 3
+      }
+    ],
+    "visual_assets": [
+      {
+        "asset_id": "asset_cycle_trace",
+        "asset_kind": "diagram",
+        "page_id": "page_0001",
+        "image_path": null,
+        "caption_text": "XREQ cycle trace",
+        "caption_source_path": null,
+        "source_ref": null,
+        "placeholder_text": null,
+        "note": null,
+        "diagram_kind": "unknown"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["XREQ"],
+      "resolved_semantic_role_signal_names_exclude": ["XREQ"],
+      "semantic_candidate_signal_names_exclude": ["XREQ"]
+    },
+    "intent": {
+      "signal_names_include": ["XREQ"],
+      "resolved_semantic_role_signal_names_exclude": ["XREQ"],
+      "semantic_candidate_signal_names_exclude": ["XREQ"]
+    },
+    "validation": {
+      "evidence": {
+        "finding_ids_exclude": ["evidence_visual_motif_corroboration_guidance"],
+        "metric_values": {
+          "visual_evidence_total": "1",
+          "visual_classification_observations": "0",
+          "visual_evidence_normative": "0",
+          "visual_evidence_ambiguous": "1",
+          "visual_motif_corroboration_targets": "0",
+          "signal_semantic_hints": "0",
+          "signal_semantic_hints_from_visual_captions": "0"
+        }
+      }
+    }
+  }
+}

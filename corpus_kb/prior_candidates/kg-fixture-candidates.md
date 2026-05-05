@@ -27,7 +27,7 @@ Every machine-usable promotion must still pass through an explicit schema, KG-be
 | `semantic_phrase_prior` | `CorpusMemory.semantic_phrase_priors` | `8` | `semantic_prior_guided_phrase_gold`, `visual_semantic_prior_guided_caption_gold` | `semantic_prior_broad_phrase_negative`, `semantic_prior_conflicting_roles_negative`, `semantic_prior_guided_phrase_without_prior_negative`, `semantic_prior_phrase_mismatch_negative`, `semantic_prior_source_kind_mismatch_negative`, `visual_semantic_prior_guided_caption_without_prior_negative` | typed CorpusMemory schema; paired KG-bench gold/negative coverage; validated IntentIR harvest input; local-grounding semantic consumer |
 | `table_shape_prior` | `CorpusMemory.table_shape_priors` | `5` | `table_shape_prior_guided_signal_table_gold`, `table_shape_prior_guided_timing_table_gold` | `table_shape_prior_guided_signal_table_without_prior_negative`, `table_shape_prior_guided_timing_table_without_prior_negative`, `table_shape_prior_protocol_family_mismatch_negative` | typed CorpusMemory schema; paired KG-bench gold/negative coverage; validated SourceIR/IntentIR harvest chain; local table-kind consumer |
 | `temporal_phrase_prior` | `CorpusMemory.temporal_phrase_priors` | `2` | `temporal_prior_guided_cycle_window_gold` | `temporal_prior_guided_cycle_window_without_prior_negative` | typed CorpusMemory schema; paired KG-bench gold/negative coverage; validated IntentIR harvest input; local-grounding temporal consumer |
-| `visual_motif_prior` | `CorpusMemory.visual_motif_priors` | `2` | `visual_motif_prior_guided_diagram_classification_gold` | `visual_motif_prior_guided_diagram_classification_without_prior_negative` | typed CorpusMemory schema; paired KG-bench gold/negative coverage; validated IntentIR harvest input; VLM/multimodal corroboration gate |
+| `visual_motif_prior` | `CorpusMemory.visual_motif_priors` | `3` | `visual_motif_prior_guided_diagram_classification_gold` | `visual_motif_prior_guided_diagram_classification_without_prior_negative`, `visual_motif_prior_protocol_family_mismatch_negative` | typed CorpusMemory schema; paired KG-bench gold/negative coverage; validated IntentIR harvest input; VLM/multimodal corroboration gate |
 
 ### Readiness Summary
 Readiness is fixture-surface readiness only. It is not promotion approval and does not allow `CorpusMemory` or canonical IR mutation.
@@ -40,7 +40,7 @@ Readiness is fixture-surface readiness only. It is not promotion approval and do
 | `semantic_phrase_prior` | `fixture_paired_review_ready` | `8` | `2` | `6` | `review_only_no_corpus_memory_or_canonical_ir_mutation` |
 | `table_shape_prior` | `fixture_paired_review_ready` | `5` | `2` | `3` | `review_only_no_corpus_memory_or_canonical_ir_mutation` |
 | `temporal_phrase_prior` | `fixture_paired_review_ready` | `2` | `1` | `1` | `review_only_no_corpus_memory_or_canonical_ir_mutation` |
-| `visual_motif_prior` | `fixture_paired_review_ready` | `2` | `1` | `1` | `review_only_no_corpus_memory_or_canonical_ir_mutation` |
+| `visual_motif_prior` | `fixture_paired_review_ready` | `3` | `1` | `2` | `review_only_no_corpus_memory_or_canonical_ir_mutation` |
 
 ### Promotion Gate Review Matrix
 These gates describe the family-level implementation surface already visible to review. They are not approval records and do not grant mutation authority.

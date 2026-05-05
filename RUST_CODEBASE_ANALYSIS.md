@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 visual-motif prior protocol-family guard)
+- Hardened `crates/specforge/src/ir/prior_memory.rs` so visual motif caption lookup now shares the exact-family plus AMBA-generic search policy used by table-shape and semantic modality-reliability priors.
+- Added `visual_motif_prior_protocol_family_mismatch_negative`, which proved the prior broad fallback could let an APB caption motif classify an AXI-local unknown visual asset and emit visual-motif corroboration.
+- Updated the evidence-layer visual motif unit test source key to infer AXI, preserving intentional AMBA-generic fallback coverage while closing unknown-family fallback leakage.
+
 ## Session update (2026-05-05 table-shape prior protocol-family guard)
 - Hardened `crates/specforge/src/ir/prior_memory.rs` so table-shape prior lookup now shares the exact-family plus AMBA-generic search policy with semantic modality-reliability priors.
 - Added `table_shape_prior_protocol_family_mismatch_negative`, which proved the previous broad fallback could let an APB table-shape prior classify an AXI-local unknown table and mint resolved directions.

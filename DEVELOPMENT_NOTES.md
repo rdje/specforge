@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 visual-motif prior protocol-family guard
+- New batch slice 13/100 adds `visual_motif_prior_protocol_family_mismatch_negative` and hardens `CorpusMemory::diagram_kind_for_visual_caption`.
+- The fixture reproduced a family leak: an APB-only caption motif prior for `<signal> cycle trace` could classify an AXI-local unknown visual asset because visual motif lookup still used the broad any-family fallback.
+- Visual motif lookup now uses the same exact-family plus AMBA-generic helper as table-shape and semantic modality-reliability lookup, so unrelated concrete AMBA families no longer classify local visual assets.
+- The unit test for visual motif prior recovery now uses `axi_visual_motif_prior.md`, keeping AMBA-generic fallback covered for AXI-family documents without relying on unknown-family fallback.
+- The corpus-KB benchmark, visual-family, truthfulness, and prior-candidate readiness projections now count the visual-motif family-mismatch guard.
+
 ## 2026-05-05 table-shape prior protocol-family guard
 - New batch slice 12/100 adds `table_shape_prior_protocol_family_mismatch_negative` and hardens `CorpusMemory::table_kind_for_structured_table`.
 - The fixture reproduced a family leak: an APB-only `Name | Direction | Width` table-shape prior could classify an AXI-local unknown table through the broad prior-search fallback, producing resolved directions from unrelated prior memory.

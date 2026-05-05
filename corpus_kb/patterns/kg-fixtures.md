@@ -15,8 +15,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 
 - source: `kg-bench fixtures`
 - selected_family_labels: `actor connectivity`, `semantic role arbitration`, `negative knowledge`, `truthfulness negatives and cautions`, `residuals and caveats`
-- fixtures_total: `80`
-- fixtures_passed: `80`
+- fixtures_total: `81`
+- fixtures_passed: `81`
 - fixtures_failed: `0`
 
 | fixture | status | matched families | path |
@@ -87,6 +87,7 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `temporal_conflict_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/temporal_conflict_negative/fixture.json` |
 | `temporal_prior_guided_cycle_window_without_prior_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/temporal_prior_guided_cycle_window_without_prior_negative/fixture.json` |
 | `visual_motif_prior_guided_diagram_classification_without_prior_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/visual_motif_prior_guided_diagram_classification_without_prior_negative/fixture.json` |
+| `visual_motif_prior_protocol_family_mismatch_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/visual_motif_prior_protocol_family_mismatch_negative/fixture.json` |
 | `visual_semantic_prior_guided_caption_gold` | `pass` | `semantic role arbitration` | `crates/specforge/test_data/kg_quality/visual_semantic_prior_guided_caption_gold/fixture.json` |
 | `visual_semantic_prior_guided_caption_without_prior_negative` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/visual_semantic_prior_guided_caption_without_prior_negative/fixture.json` |
 | `visual_sources_semantic_conflict_negative` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/visual_sources_semantic_conflict_negative/fixture.json` |
