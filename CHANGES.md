@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` explicit-module flat/graph provenance lock)
+
+### Added: explicit-module flat/graph disagreement provenance coverage
+- Tightened `standalone_explicit_module_blocks_flat_graph_direction_disagreement` so blocked explicit-module `.fsm` lowering now proves interface and actor-port categories, graph support ID, and high automation confidence survive in the module signal inventory.
+- This is coverage-only over the existing adapter behavior: canonical module-local input evidence and graph-backed actor output evidence keep `.fsm` emission blocked when they disagree.
+- The slice keeps explicit-module flat/graph disagreement evidence auditable for review/rescan.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_explicit_module_blocks_flat_graph_direction_disagreement` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+
 ## 2026-05-05 (`.fsm` system width-conflict provenance lock)
 
 ### Added: sequential system width-conflict provenance coverage

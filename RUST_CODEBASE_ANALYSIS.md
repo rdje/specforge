@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` explicit-module flat/graph provenance lock)
+- Tightened `standalone_explicit_module_blocks_flat_graph_direction_disagreement` in `crates/specforge/src/ir/adapters.rs` so blocked module-local flat-vs-graph disagreement retains interface/actor-port categories, graph support ID, and automation confidence.
+- The adapter already blocked explicit-module renderability when canonical module direction disagreed with graph-backed actor direction; this regression now proves both evidence families remain inspectable.
+- This brings explicit-module disagreement provenance in line with the direct-root and system-contract flat/graph locks.
+
 ## Session update (2026-05-05 `.fsm` system width-conflict provenance lock)
 - Tightened `standalone_sequential_dt_blocks_conflicting_system_contract_signal_width` in `crates/specforge/src/ir/adapters.rs` so blocked system-contract width conflicts retain support IDs and automation confidence.
 - The adapter already kept contradictory canonical clock width evidence unresolved; this regression now proves the blocked inventory preserves the system-contract evidence trail.

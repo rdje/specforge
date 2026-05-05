@@ -9401,6 +9401,22 @@ mod tests {
             acc.graph_direction_hint,
             Some(InterfaceSignalDirection::Output)
         );
+        assert!(
+            acc.mention_categories
+                .iter()
+                .any(|category| category == "interface")
+        );
+        assert!(
+            acc.mention_categories
+                .iter()
+                .any(|category| category == "actor_port")
+        );
+        assert!(
+            acc.supporting_canonical_ids
+                .iter()
+                .any(|id| id == "graph_controller_ACC")
+        );
+        assert_eq!(acc.automation_confidence, AutomationConfidence::High);
         assert!(!module.renderability.is_renderable);
         assert!(module.renderability.blocking_reasons.iter().any(|reason| {
             reason.contains("conflicting canonical and graph-backed direction evidence")
