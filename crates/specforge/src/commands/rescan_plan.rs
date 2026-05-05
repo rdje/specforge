@@ -912,6 +912,44 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_parses_whitelisted_stage_command_hints() -> Result<()> {
+        let ingest = command_hint("rebuild_source_ir", vec!["ingest", "specs/doc.md"]);
+        assert_eq!(
+            parse_command_hint(&ingest)?,
+            RescanInvocation::Ingest(PathBuf::from("specs/doc.md"))
+        );
+
+        let evidence = command_hint(
+            "rebuild_evidence_ir",
+            vec!["evidence", "generated/source_ir/doc/source_ir.json"],
+        );
+        assert_eq!(
+            parse_command_hint(&evidence)?,
+            RescanInvocation::Evidence(PathBuf::from("generated/source_ir/doc/source_ir.json"))
+        );
+
+        let semantic = command_hint(
+            "rebuild_semantic_ir",
+            vec!["semantic", "generated/evidence_ir/doc/evidence_ir.json"],
+        );
+        assert_eq!(
+            parse_command_hint(&semantic)?,
+            RescanInvocation::Semantic(PathBuf::from("generated/evidence_ir/doc/evidence_ir.json"))
+        );
+
+        let validate = command_hint(
+            "validate_current_artifact",
+            vec!["validate", "generated/intent_ir/doc/intent_ir.json"],
+        );
+        assert_eq!(
+            parse_command_hint(&validate)?,
+            RescanInvocation::Validate(PathBuf::from("generated/intent_ir/doc/intent_ir.json"))
+        );
+
+        Ok(())
+    }
+
+    #[test]
     fn rescan_plan_rejects_command_intent_subcommand_mismatches() {
         let evidence_intent_with_semantic_subcommand = command_hint(
             "rebuild_evidence_ir",

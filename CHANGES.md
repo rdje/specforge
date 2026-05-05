@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan stage command parser lock)
+
+### Changed: whitelisted non-enrichment replay commands now have parser coverage
+- Added positive coverage for `rebuild_source_ir` command hints that dispatch to `ingest`.
+- Added positive coverage for `rebuild_evidence_ir`, `rebuild_semantic_ir`, and `validate_current_artifact` command hints.
+- This complements the intent/subcommand rejection tests by locking the accepted stage-command side of the executor allowlist.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_parses_whitelisted_stage_command_hints` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `541` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan unknown command-intent lock)
 
 ### Changed: unknown replay command intents now have parser coverage

@@ -207,6 +207,7 @@
   - unsupported local replay provider names now have regression coverage so arbitrary provider labels cannot enter executable replay policy
   - structured intent/subcommand mismatches now have regression coverage so executable replay hints cannot cross stage lanes
   - unknown structured replay command intents now have regression coverage so valid-looking command shapes still require an allowed intent lane
+  - whitelisted non-enrichment replay command parsing now has positive regression coverage for ingest, evidence, semantic, and validate lanes
   - validation-delta execution summaries now have regression coverage for sorted and deduplicated added/removed finding-id lists
   - score/grade presence-only validation changes now have regression coverage that keeps them neutral review-required signals rather than improvement/regression claims
   - mixed validation deltas that add and remove findings now have regression coverage proving added findings take regression-review precedence over removed-finding improvement hints

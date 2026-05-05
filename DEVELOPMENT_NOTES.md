@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan stage command parser lock
+- New batch slice 2/20 adds positive parser coverage for non-enrichment replay lanes.
+- `parse_command_hint(...)` already accepted `ingest`, `evidence`, `semantic`, and `validate` only when paired with their structured rescan intents.
+- Added `rescan_plan_parses_whitelisted_stage_command_hints` so the accepted side of that allowlist is explicit alongside the recent rejection coverage.
+
 ## 2026-05-05 rescan-plan unknown command-intent lock
 - Batch slice 20/20 adds focused coverage for unknown structured command intents.
 - `parse_command_hint(...)` already rejected unsupported `(intent, args)` combinations through its allowlist.
