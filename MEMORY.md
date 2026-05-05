@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `0c4d6fd9be935fe060871ad528562221fe904c60`
-- latest_commit_brief_message: `test(adapter): lock unemitted child link support`
+- latest_commit_hash: `b27d39ec9b32a76b016dba8581130360191b5611`
+- latest_commit_brief_message: `test(adapter): lock blocked top port recovery support`
 - note: new local `N=100` batch is active; push remains deferred until all 100 slices complete
 
 ## Recent commit chain (last 6)
+- `b27d39e` test(adapter): lock blocked top port recovery support
 - `0c4d6fd` test(adapter): lock unemitted child link support
 - `9079659` test(adapter): lock parametric top port support
 - `f1be8c5` test(adapter): lock widthless top port support
 - `5920c96` test(adapter): lock standalone undriven support
 - `ebdee00` test(adapter): lock structured undriven support
-- `adbc5bb` test(adapter): lock structured flat graph support
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 57]`
-- files in flight for new batch slice 58:
+- branch state before the next commit: `main...origin/main [ahead 58]`
+- files in flight for new batch slice 59:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -47,19 +47,19 @@
 
 ## Active N-slice batch
 - requested_count: `100`
-- completed_count: `57`
+- completed_count: `58`
 - push_policy: defer push until all `100` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - regression-lock blocked recovered top-port direction provenance
-  - prove blocked top-composition candidates and selected signal inventory preserve top-link support IDs and high automation confidence
-  - keep recovered top-boundary direction evidence auditable while a missing child module blocks `.fsm` emission
+  - regression-lock top actor-port direction conflict provenance
+  - prove blocked top-composition candidates and selected signal inventory preserve explicit top-port support IDs, graph actor-port support ID, and high automation confidence
+  - keep flat top-port and graph actor-port direction evidence auditable together while `.fsm` emission stays blocked
 - tracker effect:
-  - live-status tracker gains `.fsm blocked recovered top-port direction now regression-locks support IDs and automation confidence: Done`
+  - live-status tracker gains `.fsm top actor-port direction conflicts now regression-lock support IDs and automation confidence: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_preserves_recovered_top_port_direction_when_still_blocked` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_top_actor_port_direction` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed before and after the final `MEMORY.md` verification refresh
@@ -70,4 +70,4 @@
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- run final guards, commit slice 58 without pushing, and continue slice 59
+- run final guards, commit slice 59 without pushing, and continue slice 60

@@ -11354,6 +11354,17 @@ mod tests {
             "ext_data",
             ActorRelativeDirection::Output,
         )];
+        let top_port_support_ids = intent_ir
+            .explicit_tops
+            .iter()
+            .find(|top| top.top_name == "wrapper")
+            .and_then(|top| top.ports.iter().find(|port| port.port_name == "ext_data"))
+            .map(|port| port.supporting_statement_ids.clone())
+            .expect("top port should be present");
+        assert!(
+            !top_port_support_ids.is_empty(),
+            "top-port provenance should be present"
+        );
         intent_ir.write_to_disk()?;
 
         let artifact_base = tempdir.path().join("generated").join("adapters");
@@ -11383,6 +11394,21 @@ mod tests {
             .expect("conflicting top port should stay in selected top inventory");
 
         assert_eq!(recovered_port.direction_hint, None);
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| recovered_port.supporting_statement_ids.contains(id))
+        );
+        assert!(
+            recovered_port
+                .supporting_statement_ids
+                .iter()
+                .any(|id| id == "graph_wrapper_ext_data")
+        );
+        assert_eq!(
+            recovered_port.automation_confidence,
+            AutomationConfidence::High
+        );
         assert_eq!(
             signal_inventory_port.direction_hint,
             Some(InterfaceSignalDirection::Input)
@@ -11392,6 +11418,21 @@ mod tests {
             Some(InterfaceSignalDirection::Output)
         );
         assert!(!signal_inventory_port.graph_direction_hint_conflicted);
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| signal_inventory_port.supporting_canonical_ids.contains(id))
+        );
+        assert!(
+            signal_inventory_port
+                .supporting_canonical_ids
+                .iter()
+                .any(|id| id == "graph_wrapper_ext_data")
+        );
+        assert_eq!(
+            signal_inventory_port.automation_confidence,
+            AutomationConfidence::High
+        );
         assert!(
             top_candidate
                 .renderability
