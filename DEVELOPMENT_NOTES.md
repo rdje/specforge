@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan execute limit lock
+- New batch slice 16/40 adds `run_plan --execute --limit 1` coverage for bounded execution behavior.
+- No production execution code changed; selected work already executes while unselected pending recommendations stay `planned_not_executed` with no execution summary.
+- This keeps batch-limited rescan execution from accidentally consuming more queue items than requested.
+
 ## 2026-05-05 rescan-plan execute report no-change lock
 - New batch slice 15/40 adds `run_plan --execute` coverage for the returned no-change report surface.
 - No production execution code changed; validated-no-change executions already increment the in-memory no-change counter, avoid review-required counts, and carry the no-change promotion summary.

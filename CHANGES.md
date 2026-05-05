@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan execute limit lock)
+
+### Changed: execute limits preserve unselected pending work
+- Added `run_plan --execute --limit 1` coverage proving selected work executes while unselected pending recommendations remain `planned_not_executed` without an execution summary.
+- This protects bounded batch execution semantics for local rescan queues.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_execute_limit_leaves_unselected_pending_work` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `574` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan execute report no-change lock)
 
 ### Changed: execute report no-change summaries are regression-locked

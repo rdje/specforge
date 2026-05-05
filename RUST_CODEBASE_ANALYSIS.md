@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan execute limit)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` execute-mode tests around bounded queue execution.
+- No production execution code changed; the new regression proves `--execute --limit 1` updates only selected work and leaves unselected pending recommendations without execution summaries.
+- This keeps local replay batches bounded and auditable.
+
 ## Session update (2026-05-05 rescan-plan execute report no-change)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` execute-mode run-report tests around validated-no-change summaries.
 - No production execution code changed; the new regression proves returned reports increment no-change counters, avoid review-required totals, and carry the no-change promotion summary.
