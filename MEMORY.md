@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `410dab184e13829acb97ac3849714b9a5e9fd0cf`
-- latest_commit_brief_message: `test(rescan): lock selected dry-run rows`
+- latest_commit_hash: `5e7f3f1ce0fbddb3431cf81453279e5fde545c7a`
+- latest_commit_brief_message: `test(rescan): lock dry-run row order`
 - note: new local `N=20` batch is active; push remains deferred until all 20 slices complete
 
 ## Recent commit chain (last 6)
+- `5e7f3f1` test(rescan): lock dry-run row order
 - `410dab1` test(rescan): lock selected dry-run rows
 - `fa44295` test(rescan): lock empty dry-run queue
 - `0a8bcbd` test(rescan): lock scoped unlimited queues
 - `ee821d1` test(rescan): lock oversized queue limits
 - `ba5c8fa` test(rescan): lock dry-run command display
-- `1c0b88c` test(rescan): lock display trust boundary
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 11]`
-- files in flight for new batch slice 12:
+- branch state before the next commit: `main...origin/main [ahead 12]`
+- files in flight for new batch slice 13:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -47,27 +47,27 @@
 
 ## Active N-slice batch
 - requested_count: `20`
-- completed_count: `11`
+- completed_count: `12`
 - push_policy: defer push until all `20` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - lock `rescan-plan` dry-run rendering order against the selected index list
-  - prove selected recommendations render in caller-provided order
+  - lock `rescan-plan` dry-run rendering for related-id lists
+  - prove related IDs render in stored plan order
 - tracker effect:
-  - add a `Done` live-status row for selected-order dry-run rendering
+  - add a `Done` live-status row for related-id dry-run order preservation
 - verification status:
-  - focused test passed: `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_dry_run_render_preserves_selected_index_order` (`1` test)
+  - focused test passed: `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_dry_run_render_preserves_related_id_order` (`1` test)
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed
-  - `bash scripts/run_ci.sh` passed with `551` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `bash scripts/run_ci.sh` passed with `552` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `130/130` tracked KG fixtures
   - `git diff --check` passed
   - checkout-specific absolute path scan across tracked markdown passed
 - current known local CI baseline:
-  - `551` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `552` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `130/130` tracked KG fixtures
 
 ## Next exact steps
-- commit slice 12 without pushing, then continue slice 13
+- commit slice 13 without pushing, then continue slice 14

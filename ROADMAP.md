@@ -45,6 +45,7 @@
   - empty dry-run selections still render an explicit queue header
   - selected queue indices, not the whole raw plan, drive dry-run recommendation rows
   - selected recommendation order is preserved in dry-run previews
+  - related replay IDs render in plan order for review
   - execution parsing stays pinned to structured command fields and explicit allowlists
 - keep rescan queue selection deterministic for automated batches:
   - positive limits bound work without reordering it

@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan related-id render lock
+- New batch slice 13/20 adds dry-run render coverage for `related_ids` ordering.
+- No production rendering code changed; `render_string_list(...)` already preserves stored order when joining related IDs.
+- This keeps review-facing replay scope aligned with the plan record rather than reordering IDs invisibly.
+
 ## 2026-05-05 rescan-plan selected-order render lock
 - New batch slice 12/20 adds dry-run render coverage for selected index ordering.
 - No production rendering code changed; `render_dry_run_plan(...)` already preserves the caller-provided selected index order.

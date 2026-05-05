@@ -1602,6 +1602,22 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_dry_run_render_preserves_related_id_order() {
+        let mut plan = ProjectRescanPlanRecord {
+            schema_version: 2,
+            generated_by: "test".to_string(),
+            recommendation_count: 1,
+            recommendations: vec![recommendation("doc", PLANNED_NOT_EXECUTED)],
+        };
+        plan.recommendations[0].related_ids =
+            vec!["finding_z".to_string(), "finding_a".to_string()];
+
+        let rendered = render_dry_run_plan(&plan, &[0]);
+
+        assert!(rendered.contains("related_ids: finding_z, finding_a"));
+    }
+
+    #[test]
     fn rescan_plan_execution_status_tracks_validation_deltas() {
         let before = ProjectRescanValidationSnapshot {
             artifact_fingerprint: "aaa".to_string(),

@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan related-id render lock)
+
+### Changed: dry-run rendering preserves related-id order
+- Added render coverage proving `related_ids` are printed as a comma-separated list in stored order.
+- This keeps review-facing replay scope stable and readable without hidden sorting.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_dry_run_render_preserves_related_id_order` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `552` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan selected-order render lock)
 
 ### Changed: dry-run rendering preserves selected queue order
