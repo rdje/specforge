@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan score-rise arbitration lock
+- New batch slice 7/40 adds isolated arbitration coverage for validation score increases.
+- No production arbitration code changed; `arbitration_verdict(...)` already treats positive score deltas as possible-improvement review when no regression signal is present.
+- This keeps favorable score changes review-required instead of conflating them with automatic canonical promotion.
+
 ## 2026-05-05 rescan-plan score-drop arbitration lock
 - New batch slice 6/40 adds isolated arbitration coverage for validation score decreases.
 - No production arbitration code changed; `arbitration_verdict(...)` already treats negative score deltas as regression review.

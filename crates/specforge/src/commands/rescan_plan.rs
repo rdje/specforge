@@ -2108,6 +2108,34 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_arbitration_treats_score_increase_as_possible_improvement() {
+        let before = ProjectRescanValidationSnapshot {
+            artifact_fingerprint: "aaa".to_string(),
+            overall_score: Some(80),
+            grade: Some("GOOD".to_string()),
+            finding_count: 1,
+            finding_ids: vec!["finding_shared".to_string()],
+        };
+        let after = ProjectRescanValidationSnapshot {
+            artifact_fingerprint: "bbb".to_string(),
+            overall_score: Some(85),
+            ..before.clone()
+        };
+
+        let delta = validation_delta(&before, &after);
+
+        assert!(delta.score_changed);
+        assert_eq!(delta.score_delta, Some(5));
+        assert_eq!(delta.finding_count_delta, 0);
+        assert!(delta.added_findings.is_empty());
+        assert!(delta.removed_findings.is_empty());
+        assert_eq!(
+            arbitration_verdict(&delta),
+            ARBITRATION_POSSIBLE_IMPROVEMENT_REVIEW_REQUIRED
+        );
+    }
+
+    #[test]
     fn rescan_plan_score_label_formats_sparse_validation_scores() {
         assert_eq!(score_label(Some(91), Some("EXCELLENT")), "91/100 EXCELLENT");
         assert_eq!(score_label(Some(72), None), "72/100");

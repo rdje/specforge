@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan score-rise arbitration lock)
+
+### Changed: score increases stay possible-improvement review
+- Added arbitration coverage proving a higher validation score triggers `possible_improvement_review_required` even when findings and grade stay unchanged.
+- This keeps favorable score movement reviewable without treating it as automatic truth promotion.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_arbitration_treats_score_increase_as_possible_improvement` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `565` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan score-drop arbitration lock)
 
 ### Changed: score decreases stay regression review
