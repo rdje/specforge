@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` same-actor width-conflict provenance lock)
+- Tightened `standalone_dt_keeps_conflicting_actor_port_width_unresolved` in `crates/specforge/src/ir/adapters.rs` so same-actor actor-port width conflicts retain both conflicting support IDs and automation confidence.
+- The adapter already kept repeated graph-backed width disagreement unresolved; this regression now proves the blocked inventory preserves enough provenance to audit both sides.
+- This completes the immediate same-actor conflict provenance pair with the existing direction-conflict lock.
+
 ## Session update (2026-05-05 `.fsm` direct flat-conflict provenance lock)
 - Tightened `standalone_dt_blocks_conflicting_flat_direction_even_with_actor_graph` in `crates/specforge/src/ir/adapters.rs` so canonical flat direction conflicts remain provenance-auditable alongside actor graph evidence.
 - The adapter already blocked renderability when flat canonical declarations conflicted; this regression now proves graph-backed actor evidence remains visible without overriding the flat conflict.

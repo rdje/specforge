@@ -7619,6 +7619,22 @@ mod tests {
     fn standalone_dt_keeps_conflicting_actor_port_width_unresolved() -> Result<()> {
         let tempdir = tempdir()?;
         let mut intent_ir = build_explicit_control_intent_ir(tempdir.path())?;
+        let mut data_out_width_16 = actor_port_with_numeric_width(
+            "controller",
+            "DATA_OUT",
+            ActorRelativeDirection::Output,
+            16,
+        );
+        data_out_width_16.source_statement_ids =
+            vec!["graph_controller_DATA_OUT_width16".to_string()];
+        let mut data_out_width_8 = actor_port_with_numeric_width(
+            "controller",
+            "DATA_OUT",
+            ActorRelativeDirection::Output,
+            8,
+        );
+        data_out_width_8.source_statement_ids =
+            vec!["graph_controller_DATA_OUT_width8".to_string()];
         intent_ir.actor_ports = vec![
             actor_port_with_numeric_width(
                 "controller",
@@ -7626,18 +7642,8 @@ mod tests {
                 ActorRelativeDirection::Input,
                 8,
             ),
-            actor_port_with_numeric_width(
-                "controller",
-                "DATA_OUT",
-                ActorRelativeDirection::Output,
-                16,
-            ),
-            actor_port_with_numeric_width(
-                "controller",
-                "DATA_OUT",
-                ActorRelativeDirection::Output,
-                8,
-            ),
+            data_out_width_16,
+            data_out_width_8,
             actor_port_with_numeric_width(
                 "controller",
                 "ZERO_FLAG",
@@ -7675,6 +7681,25 @@ mod tests {
                 .iter()
                 .any(|category| category == "actor_port")
         );
+        assert!(
+            data_out
+                .mention_categories
+                .iter()
+                .any(|category| category == "actor_port_width")
+        );
+        assert!(
+            data_out
+                .supporting_canonical_ids
+                .iter()
+                .any(|id| id == "graph_controller_DATA_OUT_width16")
+        );
+        assert!(
+            data_out
+                .supporting_canonical_ids
+                .iter()
+                .any(|id| id == "graph_controller_DATA_OUT_width8")
+        );
+        assert_eq!(data_out.automation_confidence, AutomationConfidence::High);
         assert!(
             fsm.renderability
                 .blocking_reasons

@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` same-actor width-conflict provenance lock)
+
+### Added: same-actor actor-port width conflict provenance coverage
+- Tightened `standalone_dt_keeps_conflicting_actor_port_width_unresolved` so blocked direct-root same-actor width conflicts now prove both conflicting actor-port width support IDs and high automation confidence survive in `fsm.signal_inventory`.
+- This is coverage-only over the existing adapter behavior: repeated actor-port width disagreement keeps the `.fsm` signal width unresolved instead of selecting one numeric width.
+- The slice keeps same-actor graph width conflict evidence auditable for review/rescan instead of reducing the blocked artifact to a generic width-conflict flag.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_dt_keeps_conflicting_actor_port_width_unresolved` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+
 ## 2026-05-05 (`.fsm` direct flat-conflict provenance lock)
 
 ### Added: direct flat direction conflict provenance coverage
