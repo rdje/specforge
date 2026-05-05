@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan parent traversal replay path rejection)
+
+### Changed: replay command artifact paths cannot traverse upward
+- Added execution-parser hardening so structured rescan command hints reject `..` path components.
+- Added regression coverage for parent traversal in ingest, enrich, and validate replay paths.
+- Stabilized rescan execution tests by resolving relative replay paths against an explicit execution root instead of the process-global current directory.
+- Updated the mdBook rescan-plan reference to describe relative non-traversing replay paths.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_parent_traversal_replay_artifact_paths` -> passed (`1` test, `590` filtered out)
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_execute_` -> passed (`4` tests, `587` filtered out)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`591` Rust tests, warnings denied for Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`130` fixtures, `0` failures)
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan absolute replay path rejection)
 
 ### Changed: replay command artifact paths must be relative

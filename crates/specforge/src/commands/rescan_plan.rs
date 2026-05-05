@@ -30,6 +30,14 @@ pub fn run(args: RescanPlanArgs) -> Result<()> {
 }
 
 pub(crate) fn run_plan(args: RescanPlanArgs) -> Result<RescanPlanRunReport> {
+    let execution_root = std::env::current_dir()?;
+    run_plan_with_execution_root(args, &execution_root)
+}
+
+fn run_plan_with_execution_root(
+    args: RescanPlanArgs,
+    execution_root: &Path,
+) -> Result<RescanPlanRunReport> {
     let plan_path = args.plan;
     let mut plan = load_rescan_plan(&plan_path)?;
     let selected_indices =
@@ -73,7 +81,7 @@ pub(crate) fn run_plan(args: RescanPlanArgs) -> Result<RescanPlanRunReport> {
 
     for index in selected_indices {
         let recommendation = plan.recommendations[index].clone();
-        let outcome = execute_recommendation(&recommendation, &args.prior_memory)?;
+        let outcome = execute_recommendation(&recommendation, &args.prior_memory, execution_root)?;
         match outcome.automation_status {
             EXECUTED_VALIDATED_CHANGED => report.executed_validated_changed += 1,
             EXECUTED_VALIDATED_NO_CHANGE => report.executed_validated_no_change += 1,
@@ -235,12 +243,14 @@ fn render_string_list(values: &[String]) -> String {
 fn execute_recommendation(
     recommendation: &ProjectRescanRecommendation,
     prior_memory: &Path,
+    execution_root: &Path,
 ) -> Result<RescanExecutionOutcome> {
     println!(
         "executing_recommendation: {} {} {}",
         recommendation.document_key, recommendation.stage, recommendation.finding_id
     );
-    let artifact_path = PathBuf::from(&recommendation.artifact_path);
+    let artifact_path =
+        resolve_execution_path(PathBuf::from(&recommendation.artifact_path), execution_root);
     let before = validate_and_snapshot(&artifact_path)?;
     println!(
         "before_validation: fingerprint={} score={} findings={}",
@@ -252,7 +262,7 @@ fn execute_recommendation(
     for command in &recommendation.recommended_commands {
         let invocation = parse_command_hint(command)?;
         println!("executing_command_hint: {}", command.intent);
-        execute_invocation(invocation, prior_memory)?;
+        execute_invocation(invocation, prior_memory, execution_root)?;
     }
 
     let after = validate_and_snapshot(&artifact_path)?;
@@ -284,6 +294,14 @@ fn execute_recommendation(
             validation_delta,
         },
     })
+}
+
+fn resolve_execution_path(path: PathBuf, execution_root: &Path) -> PathBuf {
+    if path.is_absolute() {
+        path
+    } else {
+        execution_root.join(path)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -513,6 +531,14 @@ fn parse_rescan_command_path(value: &str, hint_kind: &str) -> Result<PathBuf> {
             "rescan-plan refuses absolute {hint_kind} path `{value}` in command hint"
         )));
     }
+    if path
+        .components()
+        .any(|component| matches!(component, std::path::Component::ParentDir))
+    {
+        return Err(AppError::InvalidStageArtifact(format!(
+            "rescan-plan refuses parent traversal in {hint_kind} path `{value}`"
+        )));
+    }
 
     Ok(path.to_path_buf())
 }
@@ -685,10 +711,15 @@ fn parse_local_rescan_vlm_provider(value: &str) -> Result<VlmProviderArg> {
     }
 }
 
-fn execute_invocation(invocation: RescanInvocation, prior_memory: &Path) -> Result<()> {
+fn execute_invocation(
+    invocation: RescanInvocation,
+    prior_memory: &Path,
+    execution_root: &Path,
+) -> Result<()> {
+    let prior_memory = resolve_execution_path(prior_memory.to_path_buf(), execution_root);
     match invocation {
         RescanInvocation::Ingest(source) => ingest::run(IngestArgs {
-            source,
+            source: resolve_execution_path(source, execution_root),
             dry_run: false,
         }),
         RescanInvocation::Enrich {
@@ -697,7 +728,7 @@ fn execute_invocation(invocation: RescanInvocation, prior_memory: &Path) -> Resu
             vlm_model,
             classify_only,
         } => enrich::run(EnrichArgs {
-            source_ir,
+            source_ir: resolve_execution_path(source_ir, execution_root),
             vlm_provider,
             vlm_model,
             classify_only,
@@ -708,7 +739,7 @@ fn execute_invocation(invocation: RescanInvocation, prior_memory: &Path) -> Resu
             vlm_provider,
             vlm_model,
         } => nlp_enrich::run(NlpEnrichArgs {
-            evidence_ir,
+            evidence_ir: resolve_execution_path(evidence_ir, execution_root),
             vlm_provider,
             vlm_model,
             dry_run: false,
@@ -716,19 +747,21 @@ fn execute_invocation(invocation: RescanInvocation, prior_memory: &Path) -> Resu
             grounding_signals: None,
         }),
         RescanInvocation::Evidence(source_ir) => evidence::run(EvidenceArgs {
-            source_ir,
-            prior_memory: prior_memory.to_path_buf(),
+            source_ir: resolve_execution_path(source_ir, execution_root),
+            prior_memory,
             dry_run: false,
         }),
         RescanInvocation::Semantic(evidence_ir) => semantic::run(SemanticArgs {
-            evidence_ir,
+            evidence_ir: resolve_execution_path(evidence_ir, execution_root),
             dry_run: false,
         }),
         RescanInvocation::Intent(semantic_ir) => intent::run(IntentArgs {
-            semantic_ir,
+            semantic_ir: resolve_execution_path(semantic_ir, execution_root),
             dry_run: false,
         }),
-        RescanInvocation::Validate(artifact) => validate::run(ValidateArgs { artifact }),
+        RescanInvocation::Validate(artifact) => validate::run(ValidateArgs {
+            artifact: resolve_execution_path(artifact, execution_root),
+        }),
     }
 }
 
@@ -962,20 +995,24 @@ mod tests {
             recommendations: vec![recommendation("doc", PLANNED_NOT_EXECUTED)],
         };
         plan.recommendations[0].artifact_path = artifact_path.display().to_string();
-        let command_artifact_path = command_path_for(&artifact_path);
+        let execution_root = tempdir.path();
+        let command_artifact_path = command_path_for(&artifact_path, execution_root);
         plan.recommendations[0].recommended_commands = vec![command_hint(
             "validate_current_artifact",
             vec!["validate", command_artifact_path.as_str()],
         )];
         fs::write(&plan_path, serde_json::to_string_pretty(&plan)?)?;
 
-        run(RescanPlanArgs {
-            plan: plan_path.clone(),
-            execute: true,
-            limit: 1,
-            document_key: None,
-            prior_memory: PathBuf::from("generated/prior_memory/corpus_memory.json"),
-        })?;
+        run_plan_with_execution_root(
+            RescanPlanArgs {
+                plan: plan_path.clone(),
+                execute: true,
+                limit: 1,
+                document_key: None,
+                prior_memory: PathBuf::from("generated/prior_memory/corpus_memory.json"),
+            },
+            execution_root,
+        )?;
 
         let updated: ProjectRescanPlanRecord =
             serde_json::from_str(&fs::read_to_string(plan_path)?)?;
@@ -1034,20 +1071,24 @@ mod tests {
             recommendations: vec![recommendation("doc", PLANNED_NOT_EXECUTED)],
         };
         plan.recommendations[0].artifact_path = artifact_path.display().to_string();
-        let command_artifact_path = command_path_for(&artifact_path);
+        let execution_root = tempdir.path();
+        let command_artifact_path = command_path_for(&artifact_path, execution_root);
         plan.recommendations[0].recommended_commands = vec![command_hint(
             "validate_current_artifact",
             vec!["validate", command_artifact_path.as_str()],
         )];
         fs::write(&plan_path, serde_json::to_string_pretty(&plan)?)?;
 
-        let report = run_plan(RescanPlanArgs {
-            plan: plan_path.clone(),
-            execute: true,
-            limit: 1,
-            document_key: None,
-            prior_memory: PathBuf::from("generated/prior_memory/corpus_memory.json"),
-        })?;
+        let report = run_plan_with_execution_root(
+            RescanPlanArgs {
+                plan: plan_path.clone(),
+                execute: true,
+                limit: 1,
+                document_key: None,
+                prior_memory: PathBuf::from("generated/prior_memory/corpus_memory.json"),
+            },
+            execution_root,
+        )?;
 
         assert_eq!(report.plan_path, plan_path);
         assert!(report.execute);
@@ -1090,20 +1131,24 @@ mod tests {
             ],
         };
         plan.recommendations[0].artifact_path = artifact_path.display().to_string();
-        let command_artifact_path = command_path_for(&artifact_path);
+        let execution_root = tempdir.path();
+        let command_artifact_path = command_path_for(&artifact_path, execution_root);
         plan.recommendations[0].recommended_commands = vec![command_hint(
             "validate_current_artifact",
             vec!["validate", command_artifact_path.as_str()],
         )];
         fs::write(&plan_path, serde_json::to_string_pretty(&plan)?)?;
 
-        let report = run_plan(RescanPlanArgs {
-            plan: plan_path.clone(),
-            execute: true,
-            limit: 1,
-            document_key: None,
-            prior_memory: PathBuf::from("generated/prior_memory/corpus_memory.json"),
-        })?;
+        let report = run_plan_with_execution_root(
+            RescanPlanArgs {
+                plan: plan_path.clone(),
+                execute: true,
+                limit: 1,
+                document_key: None,
+                prior_memory: PathBuf::from("generated/prior_memory/corpus_memory.json"),
+            },
+            execution_root,
+        )?;
 
         assert_eq!(report.pending_recommendations, 2);
         assert_eq!(report.selected_recommendations, 1);
@@ -1146,20 +1191,24 @@ mod tests {
             ],
         };
         plan.recommendations[0].artifact_path = artifact_path.display().to_string();
-        let command_artifact_path = command_path_for(&artifact_path);
+        let execution_root = tempdir.path();
+        let command_artifact_path = command_path_for(&artifact_path, execution_root);
         plan.recommendations[0].recommended_commands = vec![command_hint(
             "validate_current_artifact",
             vec!["validate", command_artifact_path.as_str()],
         )];
         fs::write(&plan_path, serde_json::to_string_pretty(&plan)?)?;
 
-        let report = run_plan(RescanPlanArgs {
-            plan: plan_path.clone(),
-            execute: true,
-            limit: 0,
-            document_key: Some("doc_target".to_string()),
-            prior_memory: PathBuf::from("generated/prior_memory/corpus_memory.json"),
-        })?;
+        let report = run_plan_with_execution_root(
+            RescanPlanArgs {
+                plan: plan_path.clone(),
+                execute: true,
+                limit: 0,
+                document_key: Some("doc_target".to_string()),
+                prior_memory: PathBuf::from("generated/prior_memory/corpus_memory.json"),
+            },
+            execution_root,
+        )?;
 
         assert_eq!(report.document_key_filter.as_deref(), Some("doc_target"));
         assert_eq!(report.pending_recommendations, 1);
@@ -1245,6 +1294,28 @@ mod tests {
         assert!(parse_command_hint(&absolute_ingest).is_err());
         assert!(parse_command_hint(&absolute_enrich).is_err());
         assert!(parse_command_hint(&absolute_validate).is_err());
+    }
+
+    #[test]
+    fn rescan_plan_rejects_parent_traversal_replay_artifact_paths() {
+        let parent_ingest = command_hint("rebuild_source_ir", vec!["ingest", "../specs/doc.md"]);
+        let parent_enrich = command_hint(
+            "enrich_source_ir",
+            vec![
+                "enrich",
+                "generated/source_ir/../doc/source_ir.json",
+                "--vlm-provider",
+                "skip",
+            ],
+        );
+        let parent_validate = command_hint(
+            "validate_current_artifact",
+            vec!["validate", "generated/intent_ir/../intent_ir.json"],
+        );
+
+        assert!(parse_command_hint(&parent_ingest).is_err());
+        assert!(parse_command_hint(&parent_enrich).is_err());
+        assert!(parse_command_hint(&parent_validate).is_err());
     }
 
     #[test]
@@ -2836,18 +2907,12 @@ mod tests {
             .tempdir_in(".")?)
     }
 
-    fn command_path_for(path: &Path) -> String {
-        if path.is_absolute() {
-            let current_dir = std::env::current_dir().expect("current dir");
-            return path
-                .strip_prefix(current_dir)
-                .expect("test tempdir should be inside repo")
-                .to_str()
-                .expect("utf-8 path")
-                .to_string();
-        }
-
-        path.to_str().expect("utf-8 path").to_string()
+    fn command_path_for(path: &Path, execution_root: &Path) -> String {
+        path.strip_prefix(execution_root)
+            .expect("test artifact should live under execution root")
+            .to_str()
+            .expect("utf-8 path")
+            .to_string()
     }
 
     fn recommendation(document_key: &str, automation_status: &str) -> ProjectRescanRecommendation {

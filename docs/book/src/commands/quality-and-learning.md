@@ -106,7 +106,7 @@ Execution is deliberately narrow.
 The command does not shell out through the display strings.
 It parses the structured `executable` and `args`, accepts only the repository-local `cargo run --manifest-path Cargo.toml -- ...` shape, and dispatches only whitelisted stage commands in-process:
 The structured hint must also keep `working_directory` as `.`, include real SpecForge args after the `--` separator, use a known rescan intent, and keep that intent aligned with the SpecForge subcommand lane.
-Replay source and artifact path arguments must be relative paths; absolute replay paths are rejected before execution.
+Replay source and artifact path arguments must be relative paths without `..` parent traversal; absolute or upward-traversing replay paths are rejected before execution.
 Accepted local provider values are `ollama`, `lmstudio` / `lm-studio`, and `skip`; OpenAI hints are rejected by the executor.
 Malformed provider options, including missing providers, repeated provider/model/classification flags, missing provider or model values, flag-shaped provider or model values, unsupported provider values, and unsupported args, are rejected before execution.
 

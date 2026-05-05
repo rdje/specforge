@@ -4,6 +4,12 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan parent traversal path rejection)
+- Hardened `crates/specforge/src/commands/rescan_plan.rs` command-hint path parsing against `..` parent traversal components.
+- `parse_rescan_command_path` now rejects both absolute paths and upward traversal before constructing replay invocations.
+- Execution dispatch now resolves parsed relative replay paths against a captured execution root, avoiding accidental dependence on process-global current-directory changes during tests or nested execution.
+- This keeps structured replay paths repo-relative in practice rather than merely syntactically relative.
+
 ## Session update (2026-05-05 rescan-plan absolute replay path rejection)
 - Hardened `crates/specforge/src/commands/rescan_plan.rs` command-hint parsing so replay source/artifact path tokens must be relative paths.
 - `parse_rescan_command_path` now rejects absolute paths before constructing `RescanInvocation` variants for ingest, enrich, nlp-enrich, stage rebuild, or validate lanes.

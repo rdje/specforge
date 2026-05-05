@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan parent traversal replay path rejection
+- New batch slice 33/40 extends `parse_rescan_command_path` so structured replay paths cannot contain `..` parent traversal components.
+- The focused regression covers parent traversal in direct ingest, enrich, and validate replay hints.
+- Execution now resolves replay paths against a captured execution root before dispatch, which keeps tests stable even when other parallel tests temporarily change the process current directory.
+- This completes the repo-relative path guard started by the absolute-path rejection slice and keeps command hints from escaping upward through relative spelling.
+
 ## 2026-05-05 rescan-plan absolute replay path rejection
 - New batch slice 32/40 hardens command-hint parsing so replay source/artifact arguments must be relative paths.
 - `parse_command_hint`, `parse_enrich_command_hint_args`, and `parse_nlp_enrich_command_hint_args` now route path tokens through `parse_rescan_command_path`, which rejects absolute paths before any in-process replay dispatch.
