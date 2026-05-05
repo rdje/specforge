@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan source-enrich skip classify-only lock)
+
+### Changed: source enrichment keeps classify-only with skip
+- Added parser coverage proving source-enrichment replay hints accept `--vlm-provider skip --classify-only`.
+- This keeps classification-only replay scoped to source enrichment while allowing VLM enrichment to be skipped.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_parses_skip_source_enrich_classify_only_hint` -> passed (`1` test, `588` filtered out)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`589` Rust tests, warnings denied for Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`130` fixtures, `0` failures)
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan source-enrich skip provider lock)
 
 ### Changed: source enrichment accepts skip provider hints

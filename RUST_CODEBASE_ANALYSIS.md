@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan source-enrich skip classify-only)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` parser tests around source-only classification replay.
+- No production parser code changed; the new regression proves `--vlm-provider skip --classify-only` parses as source enrichment with classification-only enabled.
+- This keeps source-stage classification replay explicit while the evidence NLP lane continues rejecting classify-only flags.
+
 ## Session update (2026-05-05 rescan-plan source-enrich skip provider)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` parser tests around source-enrichment local provider variants.
 - No production parser code changed; the new regression proves `--vlm-provider skip` parses into a source-enrichment replay invocation with `VlmProviderArg::Skip`.

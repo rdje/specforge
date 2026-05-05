@@ -1438,6 +1438,32 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_parses_skip_source_enrich_classify_only_hint() -> Result<()> {
+        let enrich = command_hint(
+            "enrich_source_ir",
+            vec![
+                "enrich",
+                "generated/source_ir/doc/source_ir.json",
+                "--vlm-provider",
+                "skip",
+                "--classify-only",
+            ],
+        );
+
+        assert_eq!(
+            parse_command_hint(&enrich)?,
+            RescanInvocation::Enrich {
+                source_ir: PathBuf::from("generated/source_ir/doc/source_ir.json"),
+                vlm_provider: VlmProviderArg::Skip,
+                vlm_model: None,
+                classify_only: true,
+            }
+        );
+
+        Ok(())
+    }
+
+    #[test]
     fn rescan_plan_parses_unhyphenated_lmstudio_provider_hint() -> Result<()> {
         let nlp_enrich = command_hint(
             "nlp_enrich_evidence_ir",

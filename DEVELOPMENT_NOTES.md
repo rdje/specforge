@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan source-enrich skip classify-only lock
+- New batch slice 31/40 adds parser coverage for source-enrichment replay hints combining `--vlm-provider skip` with `--classify-only`.
+- No production parser code changed; `parse_source_enrich_command_hint_args` already keeps `classify_only` independent from the selected local provider.
+- This locks source-only classification replay while keeping evidence NLP replay protected by the existing classify-only rejection test.
+
 ## 2026-05-05 rescan-plan source-enrich skip provider lock
 - New batch slice 30/40 adds parser coverage for source-enrichment replay hints using `--vlm-provider skip`.
 - No production parser code changed; `parse_local_rescan_vlm_provider` already accepts `skip` and the source-enrichment hint parser preserves it as `VlmProviderArg::Skip`.
