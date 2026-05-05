@@ -1719,6 +1719,40 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_no_change_promotion_gate_is_not_reviewable() {
+        let blockers = rescan_promotion_blockers_for(ARBITRATION_VALIDATED_NO_CHANGE);
+        let review = crate::commands::project_validation::rescan_promotion_review_for(
+            ARBITRATION_VALIDATED_NO_CHANGE,
+        );
+
+        assert_eq!(
+            rescan_promotion_status_for(ARBITRATION_VALIDATED_NO_CHANGE),
+            RESCAN_PROMOTION_NOT_PROMOTED_NO_CHANGE
+        );
+        assert_eq!(
+            blockers,
+            vec![
+                "canonical_ir_not_mutated_by_rescan_plan".to_string(),
+                "no_validation_delta_to_promote".to_string()
+            ]
+        );
+        assert_eq!(
+            review.review_status,
+            crate::commands::project_validation::RESCAN_PROMOTION_REVIEW_NOT_REVIEWABLE_NO_CHANGE
+        );
+        assert_eq!(
+            review.approval_policy,
+            "no_promotion_without_validation_delta"
+        );
+        assert_eq!(
+            review.required_decisions,
+            vec!["no_validation_delta_to_review".to_string()]
+        );
+        assert!(!review.approval_record_required);
+        assert!(!review.canonical_mutation_allowed);
+    }
+
+    #[test]
     fn rescan_plan_validation_delta_sorts_and_deduplicates_finding_changes() {
         let before = ProjectRescanValidationSnapshot {
             artifact_fingerprint: "aaa".to_string(),

@@ -62,6 +62,7 @@
 - `specforge rescan-plan` validation report sidecar paths are regression-locked: Done
 - `specforge rescan-plan` missing validation report sidecars are regression-locked: Done
 - `specforge rescan-plan` fingerprint-only validation deltas are regression-locked: Done
+- `specforge rescan-plan` no-change promotion gates are regression-locked: Done
 - `specforge kg-bench` command created: Done
 - `specforge learn-priors` command created: Done
 - `specforge corpus-kb` command created: Done

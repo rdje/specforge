@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan no-change promotion gate lock
+- New batch slice 19/20 adds pure policy coverage for the `validated_no_change` promotion gate.
+- No production policy code changed; `rescan_promotion_status_for(...)`, `rescan_promotion_blockers_for(...)`, and `rescan_promotion_review_for(...)` already classify no-change rescans as not promoted and not reviewable.
+- This separates no-delta promotion policy coverage from the heavier execute-path integration test.
+
 ## 2026-05-05 rescan-plan fingerprint-delta lock
 - New batch slice 18/20 adds validation-delta coverage for fingerprint-only changes.
 - No production delta code changed; `validation_delta(...)` already reports `fingerprint_changed` while leaving score, grade, and finding deltas neutral.

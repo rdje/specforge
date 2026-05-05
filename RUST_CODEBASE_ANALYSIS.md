@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan no-change promotion gate)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` policy tests around `validated_no_change` promotion gates.
+- No production policy code changed; the new regression proves no-change rescans remain not promoted, blocked by no-delta policy, and not reviewable for canonical mutation.
+- This keeps promotion semantics inspectable without depending only on the integration execution test.
+
 ## Session update (2026-05-05 rescan-plan fingerprint delta)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` delta tests around fingerprint-only changes.
 - No production delta code changed; the new regression proves artifact fingerprint changes remain visible even when validation score, grade, and finding sets are unchanged.

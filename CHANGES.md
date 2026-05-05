@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan no-change promotion gate lock)
+
+### Changed: no-change promotion gates are regression-locked
+- Added pure policy coverage proving `validated_no_change` maps to `not_promoted_no_change`, no-delta blockers, and a non-reviewable promotion review.
+- This keeps no-op rescan executions from looking eligible for human promotion or canonical mutation.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_no_change_promotion_gate_is_not_reviewable` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `558` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan fingerprint-delta lock)
 
 ### Changed: fingerprint-only validation deltas are regression-locked
