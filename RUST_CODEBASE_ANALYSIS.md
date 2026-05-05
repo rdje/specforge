@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` direct output actor provenance lock)
+- Tightened `standalone_dt_selects_output_actor_when_external_actors_share_signals` in `crates/specforge/src/ir/adapters.rs` so selected direct-root output actor evidence retains support IDs and automation confidence.
+- The adapter already selected the controller as the target output actor when external monitor actors shared output signal names; this regression now proves the renderable signal inventory keeps the controller graph evidence visible.
+- This complements the direct control-read and width-recovery provenance locks by keeping both selected-output and recovered-input evidence auditable on the renderable direct-DT path.
+
 ## Session update (2026-05-05 `.fsm` direct-root width-conflict provenance lock)
 - Tightened `standalone_dt_blocks_conflicting_control_input_actor_port_widths` in `crates/specforge/src/ir/adapters.rs` so blocked direct-root actor-port width conflicts retain both graph support IDs and automation confidence.
 - The adapter already blocked contradictory external actor-port widths; this regression now proves the blocked direct inventory keeps both evidence sides visible.

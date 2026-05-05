@@ -182,6 +182,7 @@
   - canonical parametric width blockers preserve interface provenance category, support IDs, and automation confidence while `.fsm` lowering remains blocked until numeric width evidence exists
   - explicit numeric interface width evidence stays provenance-auditable and takes precedence over graph-backed actor-port symbolic widths for `.fsm` emission
   - direct-root actor-port width recovery preserves graph-backed support IDs and automation confidence while avoiding import of the external actor's direction
+  - direct-root output actor selection preserves graph-backed support IDs and high automation confidence while shared external signal actors stay non-authoritative
   - direct-root control-read input recovery preserves canonical control-branch support IDs and high automation confidence while avoiding import of the external actor's direction
   - structured-FSM control-read input recovery preserves canonical control/transition support IDs and high automation confidence while avoiding import of the external actor's direction
   - explicit-module control-read input recovery preserves canonical control/transition support IDs and high automation confidence while avoiding import of the external actor's direction

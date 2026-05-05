@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `32f7515dd7479fbbd9db04c005ca9536f463855c`
-- latest_commit_brief_message: `test(adapter): lock explicit module width conflict provenance`
+- latest_commit_hash: `f95ec63ebbcc01b620cbc5a631bfec6af2fb23be`
+- latest_commit_brief_message: `test(adapter): lock direct width conflict provenance`
 - note: new local `N=100` batch is active; push remains deferred until all 100 slices complete
 
 ## Recent commit chain (last 6)
+- `f95ec63` test(adapter): lock direct width conflict provenance
 - `32f7515` test(adapter): lock explicit module width conflict provenance
 - `34c8777` test(adapter): lock explicit module actor width provenance
 - `7c0d977` test(adapter): lock explicit module read provenance
 - `84341b3` test(adapter): lock structured FSM read provenance
 - `8565cd0` test(adapter): lock direct control-read provenance
-- `6b113a3` test(adapter): lock direct actor width provenance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 37]`
-- files in flight for new batch slice 38:
+- branch state before the next commit: `main...origin/main [ahead 38]`
+- files in flight for new batch slice 39:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -47,19 +47,19 @@
 
 ## Active N-slice batch
 - requested_count: `100`
-- completed_count: `37`
+- completed_count: `38`
 - push_policy: defer push until all `100` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - regression-lock direct-root actor-port width conflict provenance
-  - prove blocked `fsm.signal_inventory` preserves both conflicting graph-backed actor-port support IDs and high automation confidence
-  - keep `.fsm` emission blocked when external actor-port width evidence disagrees
+  - regression-lock direct-root output actor selection provenance
+  - prove renderable `fsm.signal_inventory` preserves selected controller graph-backed support IDs and high automation confidence for `DATA_OUT` and `ZERO_FLAG`
+  - keep shared external monitor actor ports non-authoritative when selecting the direct output actor
 - tracker effect:
-  - live-status tracker gains `.fsm direct-root actor-port width conflicts now regression-lock support IDs and automation confidence: Done`
+  - live-status tracker gains `.fsm direct-root output actor selection now regression-locks support IDs and automation confidence: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge standalone_dt_blocks_conflicting_control_input_actor_port_widths` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge standalone_dt_selects_output_actor_when_external_actors_share_signals` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed before the final `MEMORY.md` verification refresh
@@ -70,4 +70,4 @@
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- rerun docs CI after this final `MEMORY.md` edit, run final guards, commit slice 38 without pushing, and continue slice 39
+- rerun docs CI after this final `MEMORY.md` edit, run final guards, commit slice 39 without pushing, and continue slice 40

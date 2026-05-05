@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` direct output actor provenance lock)
+
+### Added: direct-root output actor selection provenance coverage
+- Tightened `standalone_dt_selects_output_actor_when_external_actors_share_signals` so renderable direct-root output actor selection now proves graph-backed support IDs and high automation confidence survive for both `DATA_OUT` and `ZERO_FLAG`.
+- This is coverage-only over the existing adapter behavior: the controller stays the selected direct output actor even when external monitor actors share the same output signal names.
+- The slice keeps target-actor graph evidence auditable on the renderable `.fsm` path without letting shared external actors replace the selected actor perspective.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_dt_selects_output_actor_when_external_actors_share_signals` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+
 ## 2026-05-05 (`.fsm` direct-root width-conflict provenance lock)
 
 ### Added: direct-root actor-port width conflict provenance coverage

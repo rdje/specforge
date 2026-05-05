@@ -6917,6 +6917,40 @@ mod tests {
                 .iter()
                 .any(|category| category == "actor_port")
         );
+        assert!(
+            zero_flag
+                .mention_categories
+                .iter()
+                .any(|category| category == "actor_port")
+        );
+        assert!(
+            data_out
+                .supporting_canonical_ids
+                .iter()
+                .any(|id| id == "graph_controller_DATA_OUT")
+        );
+        assert!(
+            zero_flag
+                .supporting_canonical_ids
+                .iter()
+                .any(|id| id == "graph_controller_ZERO_FLAG")
+        );
+        assert!(
+            !data_out
+                .supporting_canonical_ids
+                .iter()
+                .any(|id| id == "graph_monitor_DATA_OUT"),
+            "shared external actors must not replace the selected output actor"
+        );
+        assert!(
+            !zero_flag
+                .supporting_canonical_ids
+                .iter()
+                .any(|id| id == "graph_monitor_ZERO_FLAG"),
+            "shared external actors must not replace the selected output actor"
+        );
+        assert_eq!(data_out.automation_confidence, AutomationConfidence::High);
+        assert_eq!(zero_flag.automation_confidence, AutomationConfidence::High);
         assert!(fsm.renderability.is_renderable);
         assert!(emitted_text.contains("(DATA_OUT = DATA_IN)"));
         assert!(emitted_text.contains("(ZERO_FLAG = 1)"));

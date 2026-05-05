@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 `.fsm` direct output actor provenance lock
+- New batch slice 39/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `standalone_dt_selects_output_actor_when_external_actors_share_signals` now asserts selected direct-root output actor evidence keeps `graph_controller_DATA_OUT` / `graph_controller_ZERO_FLAG` support IDs and high automation confidence.
+- This is a coverage-only lock for the renderable target-actor selection path where external monitor actors share output signal names but do not replace the selected controller perspective.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-05 `.fsm` direct-root width-conflict provenance lock
 - New batch slice 38/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `standalone_dt_blocks_conflicting_control_input_actor_port_widths` now asserts blocked direct-root actor-port width conflicts keep both graph-backed support IDs and high automation confidence.
