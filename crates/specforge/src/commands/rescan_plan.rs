@@ -843,6 +843,22 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_rejects_unsupported_schema_version() -> Result<()> {
+        let tempdir = tempdir()?;
+        let plan_path = tempdir.path().join("rescan_plan.json");
+        let plan = ProjectRescanPlanRecord {
+            schema_version: 1,
+            generated_by: "test".to_string(),
+            recommendation_count: 0,
+            recommendations: Vec::new(),
+        };
+        fs::write(&plan_path, serde_json::to_string_pretty(&plan)?)?;
+
+        assert!(load_rescan_plan(&plan_path).is_err());
+        Ok(())
+    }
+
+    #[test]
     fn rescan_plan_execute_marks_validated_no_change() -> Result<()> {
         let tempdir = tempdir()?;
         let source_path = tempdir.path().join("spec.md");

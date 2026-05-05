@@ -58,6 +58,7 @@
 - `specforge rescan-plan` dry-run rendering preserves selected order: Done
 - `specforge rescan-plan` dry-run related IDs preserve plan order: Done
 - `specforge rescan-plan` dry-run replay inputs preserve plan order: Done
+- `specforge rescan-plan` unsupported schema versions are rejected: Done
 - `specforge kg-bench` command created: Done
 - `specforge learn-priors` command created: Done
 - `specforge corpus-kb` command created: Done

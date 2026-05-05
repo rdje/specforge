@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan schema-version lock)
+
+### Changed: rescan plans reject unsupported schema versions
+- Added loader coverage proving a schema-v1 rescan plan is rejected before queue selection or execution.
+- This keeps the executor pinned to the current schema-v2 replay contract.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_unsupported_schema_version` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `554` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan replay-input render lock)
 
 ### Changed: dry-run rendering preserves replay-input order

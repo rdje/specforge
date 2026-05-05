@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan schema-version lock
+- New batch slice 15/20 adds loader coverage for unsupported rescan-plan schema versions.
+- No production loader code changed; `load_rescan_plan(...)` already rejects plans whose `schema_version` is not the supported v2 contract.
+- This protects dry-run and execute modes from silently accepting stale replay-plan shapes.
+
 ## 2026-05-05 rescan-plan replay-input render lock
 - New batch slice 14/20 adds dry-run render coverage for `replay_inputs` ordering.
 - No production rendering code changed; `render_replay_inputs(...)` already preserves stored order when joining replay inputs.
