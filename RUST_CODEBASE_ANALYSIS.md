@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan execute report no-change)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` execute-mode run-report tests around validated-no-change summaries.
+- No production execution code changed; the new regression proves returned reports increment no-change counters, avoid review-required totals, and carry the no-change promotion summary.
+- This keeps the in-memory execution report aligned with the persisted plan mutation.
+
 ## Session update (2026-05-05 rescan-plan dry-run report counts)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` dry-run run-report tests around scoped selection counters.
 - No production report code changed; the new regression proves non-executing reports retain the document-key filter, scoped pending count, selected count, and zero execution counters.

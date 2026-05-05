@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan execute report no-change lock)
+
+### Changed: execute report no-change summaries are regression-locked
+- Added `run_plan --execute` coverage proving validated-no-change executions increment the returned report counters, keep review-required count at zero, and carry a no-change promotion summary.
+- This protects the in-memory report surface used after safe local rescan execution.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_execute_report_tracks_validated_no_change_summary` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `573` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan dry-run report count lock)
 
 ### Changed: dry-run report selection counts are regression-locked

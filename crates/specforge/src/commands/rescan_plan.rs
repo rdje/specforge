@@ -999,6 +999,58 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_execute_report_tracks_validated_no_change_summary() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source_path = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source_path, "# Spec\nSignal VALID is input width 1.\n")?;
+        let source_ir = SourceIr::build(&source_path, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+
+        let artifact_path = source_ir.artifact_layout.source_ir_path.clone();
+        let plan_path = tempdir.path().join("rescan_plan.json");
+        let mut plan = ProjectRescanPlanRecord {
+            schema_version: 2,
+            generated_by: "test".to_string(),
+            recommendation_count: 1,
+            recommendations: vec![recommendation("doc", PLANNED_NOT_EXECUTED)],
+        };
+        plan.recommendations[0].artifact_path = artifact_path.display().to_string();
+        plan.recommendations[0].recommended_commands = vec![command_hint(
+            "validate_current_artifact",
+            vec!["validate", artifact_path.to_str().unwrap()],
+        )];
+        fs::write(&plan_path, serde_json::to_string_pretty(&plan)?)?;
+
+        let report = run_plan(RescanPlanArgs {
+            plan: plan_path.clone(),
+            execute: true,
+            limit: 1,
+            document_key: None,
+            prior_memory: PathBuf::from("generated/prior_memory/corpus_memory.json"),
+        })?;
+
+        assert_eq!(report.plan_path, plan_path);
+        assert!(report.execute);
+        assert_eq!(report.pending_recommendations, 1);
+        assert_eq!(report.selected_recommendations, 1);
+        assert_eq!(report.executed_validated_changed, 0);
+        assert_eq!(report.executed_validated_no_change, 1);
+        assert_eq!(report.review_required_count(), 0);
+        assert_eq!(
+            report.arbitration_verdict_count(ARBITRATION_VALIDATED_NO_CHANGE),
+            1
+        );
+        assert_eq!(report.execution_summaries.len(), 1);
+        assert_eq!(
+            report.execution_summaries[0].promotion_status,
+            RESCAN_PROMOTION_NOT_PROMOTED_NO_CHANGE
+        );
+
+        Ok(())
+    }
+
+    #[test]
     fn rescan_plan_parses_whitelisted_intent_rebuild_hint() -> Result<()> {
         let command = command_hint(
             "rebuild_intent_ir",
