@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan grade-removal arbitration lock)
+
+### Changed: grade removal stays neutral review
+- Added arbitration coverage proving a validation grade changing from present to absent produces `neutral_change_review_required`.
+- This keeps qualitative grade availability drift review-required without forcing it into directional score or finding buckets.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_arbitration_treats_grade_removal_as_neutral_review` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `579` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan score-removal arbitration lock)
 
 ### Changed: score removal stays neutral review

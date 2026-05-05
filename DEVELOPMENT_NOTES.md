@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan grade-removal arbitration lock
+- New batch slice 21/40 adds arbitration coverage for grade removal from validation snapshots.
+- No production arbitration code changed; `validation_delta` already records grade presence changes as qualitative drift, and arbitration routes them to neutral review when score/finding direction does not move.
+- This keeps missing-grade drift reviewable without inventing a numeric quality direction.
+
 ## 2026-05-05 rescan-plan score-removal arbitration lock
 - New batch slice 20/40 adds arbitration coverage for score removal from validation snapshots.
 - No production arbitration code changed; `validation_delta` already leaves `score_delta` as `None` when either side lacks a numeric score, and arbitration treats that as neutral review unless some other directional finding/count signal moves.
