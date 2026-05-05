@@ -197,6 +197,7 @@
   - document-scoped `rescan-plan` selection now has regression coverage for skipping already executed matches and missing document keys while preserving pending-only behavior
   - command-hint parser coverage now locks repository-local working directories, the standard `cargo run --manifest-path Cargo.toml --` prefix, and non-empty SpecForge args for executable rescans
   - local provider command-hint coverage now locks LM Studio alias parsing, `--classify-only` local enrichment, and skip-mode NLP enrichment while preserving OpenAI rejection
+  - malformed local provider hints now have regression coverage for repeated provider flags, missing provider values, and unsupported provider-side args
   - those execution summaries now include explicit not-promoted gates, blockers, and structured `promotion_review` requirements, so possible-improvement validation deltas stay review signals instead of canonical truth mutations
   - `promotion_review` is now documented as a review-requirement descriptor rather than an approval artifact; future approval artifacts stay local/generated unless a deliberate canonical IR mutation workflow also defines tracked approval evidence
   - `specforge validate` now reports `table_signal_declaration_provenance` for `EvidenceIR`, exposing whether table-synthesized signal declarations still point back to structured `SourceIR` table ids before canonical carry-through

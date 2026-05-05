@@ -7,6 +7,15 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan malformed provider hint lock
+- Batch slice 7/20 adds the malformed-option sibling to slice 6.
+- Accepted local providers and OpenAI rejection are not enough on their own; malformed local args also need to stay rejected.
+- Added `rescan_plan_rejects_malformed_local_provider_hints` for:
+  - duplicate `--vlm-provider`
+  - missing provider values
+  - unsupported provider-side args
+- This keeps the executor's argument parser strict and reviewable when future replay hints add more provider flags.
+
 ## 2026-05-05 rescan-plan local provider variant lock
 - Batch slice 6/20 adds the positive side of the local-provider parser boundary.
 - The command parser already rejected OpenAI replay hints, and slice 5 locked the repo-local cargo prefix.

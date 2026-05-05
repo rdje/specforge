@@ -31,6 +31,7 @@
 - `specforge rescan-plan` document-key pending selection is regression-locked: Done
 - `specforge rescan-plan` command-hint locality is regression-locked: Done
 - `specforge rescan-plan` local provider command variants are regression-locked: Done
+- `specforge rescan-plan` malformed provider hints are regression-locked: Done
 - `specforge kg-bench` command created: Done
 - `specforge learn-priors` command created: Done
 - `specforge corpus-kb` command created: Done

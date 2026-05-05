@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `ec5de3b020e5793afba1f78bb5b808c99aa5b25a`
-- latest_commit_brief_message: `test(rescan): lock command hint locality`
-- note: the latest committed baseline is local batch-20 slice 5; push remains deferred until all `20` slices complete
+- latest_commit_hash: `c553a16d5bb3a0d5727ae792cb133ee8c48474cc`
+- latest_commit_brief_message: `test(rescan): lock local provider hint variants`
+- note: the latest committed baseline is local batch-20 slice 6; push remains deferred until all `20` slices complete
 
 ## Recent commit chain (last 6)
+- `c553a16` test(rescan): lock local provider hint variants
 - `ec5de3b` test(rescan): lock command hint locality
 - `e845035` test(rescan): lock scoped pending selection
 - `2aed561` test(rescan): lock empty dry-run preview fields
 - `544f326` test(rescan): lock dry-run command preview
 - `4916c6b` docs(memory): start N=20 batch state
-- `a15d861` test(validation): lock graph replay command lanes
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 5]`
-- files in flight for batch-20 slice 6:
+- branch state before the next commit: `main...origin/main [ahead 6]`
+- files in flight for batch-20 slice 7:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -51,21 +51,21 @@
 
 ## Active N-slice batch
 - requested_count: `20`
-- completed_count: `5`
+- completed_count: `6`
 - push_policy: defer push until all `20` slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - lock accepted local provider variants in `rescan-plan` command-hint parsing: LM Studio alias, classify-only source enrichment, and skip-mode NLP enrichment
-  - complement the OpenAI rejection and command-locality tests with positive coverage for supported local replay controls
+  - lock rejection of malformed local provider options in `rescan-plan` command hints
+  - keep repeated provider flags, missing provider values, and unsupported args from entering executable replay
 - tracker effect:
-  - add a `Done` live-status row for local provider variant coverage
+  - add a `Done` live-status row for malformed provider hint rejection coverage
 - verification status:
-  - focused test passed: `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_parses_whitelisted_lmstudio_and_skip_hints`
+  - focused test passed: `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_malformed_local_provider_hints`
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed
-  - `bash scripts/run_ci.sh` passed with `526` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `bash scripts/run_ci.sh` passed with `527` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `130/130` fixtures
   - `git diff --check` passed
   - checkout-specific absolute path scan across tracked markdown passed
@@ -74,4 +74,4 @@
   - `130/130` tracked KG fixtures
 
 ## Next exact steps
-- commit slice 6 without pushing, then move to slice 7
+- commit slice 7 without pushing, then move to slice 8
