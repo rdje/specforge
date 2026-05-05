@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan duplicate NLP provider coverage)
+- Extended `crates/specforge/src/commands/rescan_plan.rs` malformed provider tests to cover duplicate `--vlm-provider` flags for NLP enrichment hints.
+- NLP enrichment provider parsing already rejected duplicates through the same replacement guard as source enrichment.
+- The regression keeps provider-option hardening symmetrical across both replay enrichment lanes.
+
 ## Session update (2026-05-05 rescan-plan extra intent argument coverage)
 - Extended `crates/specforge/src/commands/rescan_plan.rs` extra-argument coverage to the intent rebuild command hint.
 - The execution parser remains exact-arity for direct rebuild and validation hints.

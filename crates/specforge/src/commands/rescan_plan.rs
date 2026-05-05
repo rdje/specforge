@@ -1703,6 +1703,19 @@ mod tests {
         );
         assert!(parse_command_hint(&duplicate_provider).is_err());
 
+        let duplicate_nlp_provider = command_hint(
+            "nlp_enrich_evidence_ir",
+            vec![
+                "nlp-enrich",
+                "generated/evidence_ir/doc/evidence_ir.json",
+                "--vlm-provider",
+                "ollama",
+                "--vlm-provider",
+                "skip",
+            ],
+        );
+        assert!(parse_command_hint(&duplicate_nlp_provider).is_err());
+
         let missing_provider_value = command_hint(
             "nlp_enrich_evidence_ir",
             vec![
