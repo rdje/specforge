@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 semantic modality-prior AMBA-generic fallback fixture
+- New batch slice 11/100 adds `semantic_modality_reliability_amba_generic_fallback_gold`.
+- No production code changed; this fixture locks the intended positive side of slice 10's protocol-family scoping change.
+- The source file infers `amba_axi`, the staged prior is `amba_generic`, and the expected result is prior-guided decisive arbitration with the original semantic conflict still visible.
+- The corpus-KB prior-memory page now records both the concrete-family mismatch guard and the AMBA-generic fallback gold for semantic modality-reliability priors.
+
 ## 2026-05-05 semantic modality-prior protocol-family guard
 - New batch slice 10/100 adds `semantic_modality_reliability_protocol_family_mismatch_negative` and hardens `CorpusMemory::semantic_modality_reliability_bonus`.
 - The fixture reproduced a family leak: an APB-only reliability prior could resolve an AXI-local semantic conflict through the broad `None` prior-search fallback.

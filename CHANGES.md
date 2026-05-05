@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-05 (semantic modality-prior AMBA-generic fallback fixture)
+
+### Changed: AMBA-generic modality prior fallback is regression-locked
+- Added a KG gold fixture proving an `amba_generic` semantic modality-reliability prior still strengthens an AXI-local semantic conflict after protocol-family lookup was narrowed.
+- The fixture pairs with the APB-vs-AXI mismatch guard so the intended family policy is explicit: exact family or AMBA-generic fallback can apply, unrelated concrete AMBA families cannot.
+- Refreshed corpus-KB fixture projections so the prior-memory and semantic/truthfulness pages count the AMBA-generic fallback guard fixture.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_modality_reliability_amba_generic_fallback_gold semantic_modality_reliability_protocol_family_mismatch_negative semantic_modality_reliability_prior_guided_conflict_gold` -> passed (`3` fixtures, `0` failures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`142` fixtures, `0` failures)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`593` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`142` fixtures, `0` failures)
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (semantic modality-prior protocol-family guard)
 
 ### Changed: modality reliability priors no longer fall through to unrelated protocol families

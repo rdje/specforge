@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 semantic modality-prior AMBA-generic fallback fixture)
+- Added `semantic_modality_reliability_amba_generic_fallback_gold` to the KG quality corpus.
+- This test-only slice locks the intended positive policy after protocol-family hardening: AMBA-generic modality-reliability priors can still guide AXI-family documents, while unrelated concrete families remain blocked.
+- The fixture keeps the semantic conflict visible while proving prior-guided arbitration and consensus are still available for a generic AMBA prior.
+
 ## Session update (2026-05-05 semantic modality-prior protocol-family guard)
 - Hardened `crates/specforge/src/ir/prior_memory.rs` so semantic modality-reliability priors use exact protocol-family lookup plus AMBA-generic fallback, without the broad any-family fallback used by other prior lookups.
 - Added `semantic_modality_reliability_protocol_family_mismatch_negative`, which proved the previous behavior could let an APB prior resolve an AXI-local semantic conflict.
