@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` child sibling-link target width provenance lock)
+- Tightened `top_composition_recovers_child_width_from_sibling_child_link_topology` in `crates/specforge/src/ir/adapters.rs` so target-side child width recovery from a sibling child link retains support IDs and automation confidence.
+- The adapter already rendered top compositions when a consumer child input width could be recovered from a producer sibling link; this regression now proves the consumer module inventory keeps that topology evidence inspectable.
+- This complements the top-link child width recovery lock with the sibling-link target-side width path.
+
 ## Session update (2026-05-05 `.fsm` child top-link width provenance lock)
 - Tightened `top_composition_recovers_child_width_from_top_link_topology` in `crates/specforge/src/ir/adapters.rs` so child width recovery from public top-link topology retains support IDs and automation confidence.
 - The adapter already rendered top compositions when a child output width could be recovered from the linked public top port; this regression now proves the producer module inventory keeps that top-link evidence inspectable.
