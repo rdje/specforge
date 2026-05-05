@@ -55,6 +55,7 @@
 - `specforge rescan-plan` unlimited scoped selection preserves only matching pending work: Done
 - `specforge rescan-plan` empty dry-run queues render explicitly: Done
 - `specforge rescan-plan` dry-run rendering honors selected indices: Done
+- `specforge rescan-plan` dry-run rendering preserves selected order: Done
 - `specforge kg-bench` command created: Done
 - `specforge learn-priors` command created: Done
 - `specforge corpus-kb` command created: Done

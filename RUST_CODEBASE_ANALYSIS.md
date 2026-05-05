@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan selected-order rendering)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` render tests around selected queue order.
+- No production renderer code changed; dry-run output now has direct coverage for preserving caller-provided selected index order.
+- This keeps preview row order deterministic after queue filtering and limiting.
+
 ## Session update (2026-05-05 rescan-plan selected-index rendering)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` render tests around selected queue indices.
 - No production renderer code changed; dry-run output now has direct coverage for excluding unselected recommendations.

@@ -1567,6 +1567,25 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_dry_run_render_preserves_selected_index_order() {
+        let plan = ProjectRescanPlanRecord {
+            schema_version: 2,
+            generated_by: "test".to_string(),
+            recommendation_count: 2,
+            recommendations: vec![
+                recommendation("doc_a", PLANNED_NOT_EXECUTED),
+                recommendation("doc_b", PLANNED_NOT_EXECUTED),
+            ],
+        };
+
+        let rendered = render_dry_run_plan(&plan, &[1, 0]);
+        let doc_b_offset = rendered.find("- doc_b intent_ir").expect("doc_b rendered");
+        let doc_a_offset = rendered.find("- doc_a intent_ir").expect("doc_a rendered");
+
+        assert!(doc_b_offset < doc_a_offset);
+    }
+
+    #[test]
     fn rescan_plan_dry_run_render_uses_command_display_for_review() {
         let mut plan = ProjectRescanPlanRecord {
             schema_version: 2,

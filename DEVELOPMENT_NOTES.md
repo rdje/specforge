@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan selected-order render lock
+- New batch slice 12/20 adds dry-run render coverage for selected index ordering.
+- No production rendering code changed; `render_dry_run_plan(...)` already preserves the caller-provided selected index order.
+- This protects deterministic previews when a selection is filtered or explicitly ordered before rendering.
+
 ## 2026-05-05 rescan-plan selected-index render lock
 - New batch slice 11/20 adds dry-run render coverage for selected recommendation indices.
 - No production rendering code changed; `render_dry_run_plan(...)` already iterates only the selected index list.
