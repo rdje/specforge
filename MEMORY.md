@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `63df237e46ee745b7f04180601809ac542299e77`
-- latest_commit_brief_message: `test(adapter): lock unambiguous actor provenance`
+- latest_commit_hash: `27787e8e9c5c4219838633f1da460612ff23bfdf`
+- latest_commit_brief_message: `test(adapter): lock unrelated actor provenance`
 - note: new local `N=100` batch is active; push remains deferred until all 100 slices complete
 
 ## Recent commit chain (last 6)
+- `27787e8` test(adapter): lock unrelated actor provenance
 - `63df237` test(adapter): lock unambiguous actor provenance
 - `93e2044` test(adapter): lock direct output actor provenance
 - `f95ec63` test(adapter): lock direct width conflict provenance
 - `32f7515` test(adapter): lock explicit module width conflict provenance
 - `34c8777` test(adapter): lock explicit module actor width provenance
-- `7c0d977` test(adapter): lock explicit module read provenance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 40]`
-- files in flight for new batch slice 41:
+- branch state before the next commit: `main...origin/main [ahead 41]`
+- files in flight for new batch slice 42:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -47,19 +47,19 @@
 
 ## Active N-slice batch
 - requested_count: `100`
-- completed_count: `40`
+- completed_count: `41`
 - push_policy: defer push until all `100` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - regression-lock unrelated actor-port graph-context provenance
-  - prove renderable `fsm.signal_inventory` preserves selected controller output support IDs and high automation confidence
-  - prove unrelated `SIDE_BAND` graph evidence stays out of direct-root inventory and selected output support
+  - regression-lock ambiguous actor-port graph-context exclusion
+  - prove blocked `fsm.signal_inventory` does not select graph directions, actor-port categories, or graph support IDs when direct actor context is ambiguous
+  - keep producer/consumer actor context from being guessed into `.fsm` renderability
 - tracker effect:
-  - live-status tracker gains `.fsm unrelated actor-port graph context now regression-locks selected support IDs while excluding side-band evidence: Done`
+  - live-status tracker gains `.fsm ambiguous actor-port graph context now regression-locks absence of selected graph provenance: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge standalone_dt_ignores_unrelated_actor_ports_for_graph_context` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge standalone_dt_ignores_ambiguous_actor_port_context` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed before the final `MEMORY.md` verification refresh
@@ -70,4 +70,4 @@
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- rerun docs CI after this final `MEMORY.md` edit, run final guards, commit slice 41 without pushing, and continue slice 42
+- rerun docs CI after this final `MEMORY.md` edit, run final guards, commit slice 42 without pushing, and continue slice 43

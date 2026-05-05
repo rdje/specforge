@@ -7344,14 +7344,36 @@ mod tests {
         assert_eq!(adapter.lowering_status.as_str(), "blocked");
         assert!(adapter.artifact_layout.emitted_target_path.is_none());
         let fsm = adapter.fsm.expect("fsm artifact should be present");
-        assert!(
-            fsm.signal_inventory
-                .iter()
-                .filter(|signal| signal.signal_name == "DATA_OUT")
-                .all(|signal| {
-                    signal.direction_hint.is_none() && signal.graph_direction_hint.is_none()
-                })
-        );
+        let data_in = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "DATA_IN")
+            .expect("DATA_IN should stay in the direct signal inventory");
+        let data_out = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "DATA_OUT")
+            .expect("DATA_OUT should stay in the direct signal inventory");
+
+        for (signal, support_id) in [
+            (data_in, "graph_consumer_DATA_IN"),
+            (data_out, "graph_producer_DATA_OUT"),
+        ] {
+            assert_eq!(signal.direction_hint, None);
+            assert_eq!(signal.graph_direction_hint, None);
+            assert!(
+                !signal
+                    .mention_categories
+                    .iter()
+                    .any(|category| category == "actor_port")
+            );
+            assert!(
+                !signal
+                    .supporting_canonical_ids
+                    .iter()
+                    .any(|id| id == support_id)
+            );
+        }
         assert!(
             fsm.renderability
                 .blocking_reasons

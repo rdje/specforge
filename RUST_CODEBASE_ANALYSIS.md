@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` ambiguous actor-port exclusion lock)
+- Tightened `standalone_dt_ignores_ambiguous_actor_port_context` in `crates/specforge/src/ir/adapters.rs` so ambiguous actor-port context must leave graph-backed direction and support evidence unselected.
+- The adapter already blocked direct-root lowering when producer/consumer context could not identify a single target actor; this regression now proves the blocked inventory does not carry misleading actor-port provenance.
+- This complements the unambiguous and unrelated-context locks by making the negative selection path auditable too.
+
 ## Session update (2026-05-05 `.fsm` unrelated actor-port provenance lock)
 - Tightened `standalone_dt_ignores_unrelated_actor_ports_for_graph_context` in `crates/specforge/src/ir/adapters.rs` so unrelated actor-port context cannot contaminate selected output provenance.
 - The adapter already excluded unrelated `SIDE_BAND` actor-port signals from direct-root inventories; this regression now also proves selected controller output support IDs and automation confidence remain visible.

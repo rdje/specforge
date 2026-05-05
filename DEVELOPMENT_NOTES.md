@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 `.fsm` ambiguous actor-port exclusion lock
+- New batch slice 42/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `standalone_dt_ignores_ambiguous_actor_port_context` now asserts ambiguous producer/consumer actor-port context leaves direct `DATA_IN` / `DATA_OUT` without graph directions, actor-port categories, or graph support IDs.
+- This is a coverage-only lock for the blocked path where direct-root actor context is not safely selectable.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-05 `.fsm` unrelated actor-port provenance lock
 - New batch slice 41/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `standalone_dt_ignores_unrelated_actor_ports_for_graph_context` now asserts selected controller output evidence keeps `graph_controller_DATA_OUT` / `graph_controller_ZERO_FLAG` support IDs and high automation confidence while unrelated `SIDE_BAND` evidence stays out of inventory.

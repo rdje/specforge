@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` ambiguous actor-port exclusion lock)
+
+### Added: ambiguous direct actor-port context exclusion coverage
+- Tightened `standalone_dt_ignores_ambiguous_actor_port_context` so blocked direct-root graph recovery now proves ambiguous producer/consumer actor-port evidence does not add graph directions, actor-port categories, or actor-port support IDs to `DATA_IN` / `DATA_OUT`.
+- This is coverage-only over the existing adapter behavior: multiple incompatible actor contexts keep `.fsm` emission blocked instead of selecting a target actor by guess.
+- The slice keeps ambiguous graph context auditable as absent selected provenance, not as hidden or partial graph recovery.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_dt_ignores_ambiguous_actor_port_context` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+
 ## 2026-05-05 (`.fsm` unrelated actor-port provenance lock)
 
 ### Added: unrelated actor-port graph-context provenance coverage
