@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-05-05 (README/COMMIT bootstrap refresh)
+
+### Changed: live bootstrap and continuity docs re-executed
+- Re-read `README.md` as the project entrypoint, followed `SESSION_BOOTSTRAP.md` through the referenced root docs, mdBook chapters, corpus-KB surfaces, FSMGEN feedback, `COMMIT.md`, and direct Rust crate/module seams.
+- Confirmed the active steering remains unchanged: `IntentIR` is canonical, `.fsm` stays downstream, and the next implementation pressure remains graph-first actor-relative direction consumers rather than backend expansion.
+- Refreshed continuity docs so the latest committed baseline is `9b425e9` and the previous mixed DT/FSM top child-root slice is no longer described as in flight.
+
+### Validation
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `518` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures and `0` failures
+- `git diff --check` -> passed
+
 ## 2026-04-30 (`.fsm` mixed child root order stays stable)
 
 ### Added: mixed DT/FSM top child roots are regression-locked

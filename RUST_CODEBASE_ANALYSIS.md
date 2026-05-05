@@ -4,6 +4,13 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 README/COMMIT bootstrap refresh)
+- Re-executed `README.md` and `SESSION_BOOTSTRAP.md` for the current session, including the referenced root markdown docs, mdBook chapters, corpus-KB pages, FSMGEN feedback, `COMMIT.md`, and a direct Rust module survey.
+- The codebase still matches the documented architecture: one Rust workspace member, `specforge` CLI, Rust `1.95` MSRV, staged `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR`, and downstream adapters with `.fsm` as the only active lowering implementation.
+- No Rust source behavior changed in this slice; the survey confirms the highest-priority implementation seam remains the existing R15 graph-first transition away from compatibility `direction_hint` consumers, not adapter-family expansion.
+- The measured Rust surface is currently `31` source files and `80,456` Rust source lines under `crates/specforge/src`; full validation for this continuity slice passed with `518` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` KG fixtures.
+- This slice repairs the continuity docs from the stale pre-`9b425e9` handoff state before any next roadmap implementation slice starts.
+
 ## Session update (2026-04-30 `.fsm` mixed child root order)
 - Continued from commit `67a4d84` by locking mixed DT/FSM child ordering in renderable top source documents.
 - The adapter already traverses top children in declaration order and clones each renderable child module into `FsmRenderableSourceDocument.direct_roots`; the new regression proves that this order survives when the first child is `FsmRootKind::Dt` and the second is `FsmRootKind::Fsm`.
@@ -2668,8 +2675,8 @@
 
 ## Testing implications
 - current full local CI path: `bash scripts/run_ci.sh`
-- current active Rust surface after the README/bootstrap refresh: `31` Rust source files and `77,934` total lines under `crates/specforge/src`
-- current Rust test count observed through the canonical local CI path after the latest slice: 499 library tests, 0 binary tests, and 0 doc tests, all passing under warning-deny Clippy/rustdoc plus the mdBook build
+- current active Rust surface after the README/bootstrap refresh: `31` Rust source files and `80,456` Rust source lines under `crates/specforge/src`
+- current Rust test count observed through the canonical local CI path after the latest slice: `518` Rust tests, all passing under warning-deny Clippy/rustdoc plus the mdBook build
 - current tracked KG-quality fixture count: 127
 - current tests cover:
   - source-kind detection
@@ -2713,22 +2720,16 @@
   - future adapter targets beyond the current `.fsm` slice
 
 ## Latest validation completed in this refresh
-- `rustc --version`
-  - passed with `rustc 1.95.0 (59807616e 2026-04-14)`
-- `cargo --version`
-  - passed with `cargo 1.95.0 (f2d3ce0bd 2026-03-21)`
-- README staged pipeline smoke:
-  - `inspect`, `ingest`, `evidence`, `semantic`, `intent`, `validate`, and `adapt --target fsm` all completed for `README.md`
-  - the README-derived `IntentIR` validation correctly scored as `30/100 NEEDS IMPROVEMENT` because README is project documentation, not a protocol spec with declared hardware inventory
-  - `.fsm` adapter lowering blocked honestly with residuals instead of emitting invented target text
+- `cargo fmt --manifest-path Cargo.toml -- --check`
+  - passed
 - `bash scripts/run_docs_ci.sh`
   - passed and rebuilt the mdBook into `generated/mdbook/specforge`
+- `bash scripts/run_ci.sh`
+  - passed with `518` Rust tests, `0` failures, warning-deny Clippy/rustdoc, and a successful mdBook build
 - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench`
   - passed with `127` fixtures and `0` failures
-- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality`
-  - refreshed managed corpus-KB fixture projection pages to `127/127`
-- `bash scripts/run_ci.sh`
-  - passed with `499` Rust tests, `0` failures, `0` binary tests, `0` doc tests, warning-deny Clippy/rustdoc, and a successful mdBook build
+- `git diff --check`
+  - passed
 
 ## Session update (2026-04-19 README bootstrap analysis refresh)
 - Re-executed the README handoff path through `SESSION_BOOTSTRAP.md`, reread the linked continuity and user-facing markdown surfaces, and resurveyed the active Rust crate layout directly from disk.

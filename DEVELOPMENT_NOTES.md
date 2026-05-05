@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 README/COMMIT bootstrap refresh
+- Re-executed the README handoff path from `README.md` through `SESSION_BOOTSTRAP.md`, the root continuity docs, canonical mdBook chapters, corpus-KB pages, FSMGEN feedback, `COMMIT.md`, and direct Rust source/module seams.
+- The Rust survey still matches the documented architecture: single `specforge` workspace member, Rust `1.95` MSRV, staged `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR`, and downstream `.fsm` adapter recovery guarded by graph, shape, provenance, and conflict surfaces.
+- The refresh found no production-code drift and no public-doc contract change; the meaningful action is continuity repair because `MEMORY.md` still pointed to the pre-`9b425e9` baseline and described the now-committed mixed-root regression slice as in flight.
+- Current measured code surface is `31` Rust source files and `80,456` Rust source lines under `crates/specforge/src`; the current verification baseline remains `518` Rust tests and `127/127` KG fixtures after the latest adapter regression chain.
+
 ## 2026-04-30 `.fsm` mixed child root order stays stable
 - Continued from commit `67a4d84` by covering the mixed-root sibling after the all-FSM and reused-FSM child-root regressions.
 - Added `renderable_top_document_preserves_mixed_child_root_order_and_kind`, where top `wrapper` instantiates DT `producer_core` first and structured FSM `controller_core` second.
