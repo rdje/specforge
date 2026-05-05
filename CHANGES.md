@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-05 (KG valid-like prior-guided semantic phrase fixtures)
+
+### Changed: prior-guided valid-like semantic phrase recovery is locked
+- Added a gold KG fixture proving a typed semantic phrase prior can resolve `XREQ can publish the beat` to `handshake_valid_like`.
+- Added a matching without-prior negative fixture proving the same ambiguous phrase does not create a semantic role without prior memory support.
+- Refreshed corpus-KB fixture projections so the benchmark and prior-memory pages include the new valid-like pair.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_valid_prior_guided_phrase_gold semantic_valid_prior_guided_phrase_without_prior_negative` -> passed (`2` fixtures, `0` failures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`132` fixtures, `0` failures)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`593` Rust tests, warnings denied for Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`132` fixtures, `0` failures)
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan unsupported NLP argument coverage)
 
 ### Changed: unsupported provider argument rejection includes NLP enrichment

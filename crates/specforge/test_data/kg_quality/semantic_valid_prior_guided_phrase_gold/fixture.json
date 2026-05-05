@@ -1,0 +1,83 @@
+{
+  "name": "semantic_valid_prior_guided_phrase_gold",
+  "source": "source.md",
+  "prior_memory_patch": {
+    "semantic_phrase_priors": [
+      {
+        "prior_id": "semantic_phrase_prior_0001",
+        "normalized_phrase": "<signal> can publish the beat",
+        "role": "handshake_valid_like",
+        "protocol_family": "amba_generic",
+        "source_kind": "prose_statement",
+        "support_count": 2,
+        "supporting_document_keys": ["seed_amba_valid_1", "seed_amba_valid_2"],
+        "strongest_automation_confidence": "high",
+        "strongest_grounding_strength": "single_source"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["XREQ"],
+      "resolved_semantic_role_signal_names_include": ["XREQ"],
+      "resolved_semantic_roles_include": [
+        {
+          "signal_name": "XREQ",
+          "role": "handshake_valid_like"
+        }
+      ],
+      "semantic_grounding_strengths_include": [
+        {
+          "signal_name": "XREQ",
+          "strength": "single_source"
+        }
+      ],
+      "semantic_consensus_signal_names_include": ["XREQ"],
+      "semantic_candidate_signal_names_include": ["XREQ"],
+      "decisive_semantic_arbitration_signal_names_include": ["XREQ"],
+      "non_decisive_semantic_arbitration_signal_names_exclude": ["XREQ"]
+    },
+    "intent": {
+      "signal_names_include": ["XREQ"],
+      "resolved_semantic_role_signal_names_include": ["XREQ"],
+      "resolved_semantic_roles_include": [
+        {
+          "signal_name": "XREQ",
+          "role": "handshake_valid_like"
+        }
+      ],
+      "semantic_grounding_strengths_include": [
+        {
+          "signal_name": "XREQ",
+          "strength": "single_source"
+        }
+      ],
+      "semantic_consensus_signal_names_include": ["XREQ"],
+      "semantic_candidate_signal_names_include": ["XREQ"],
+      "decisive_semantic_arbitration_signal_names_include": ["XREQ"],
+      "non_decisive_semantic_arbitration_signal_names_exclude": ["XREQ"]
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "signal_semantic_hints": "1",
+          "signal_semantic_hints_from_prose": "1"
+        }
+      },
+      "semantic": {
+        "metric_values": {
+          "with_resolved_semantic_role": "1",
+          "with_semantic_consensus": "1",
+          "with_single_source_semantic_grounding": "1"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "with_resolved_semantic_role": "1",
+          "with_semantic_consensus": "1",
+          "with_single_source_semantic_grounding": "1"
+        }
+      }
+    }
+  }
+}

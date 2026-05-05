@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 KG valid-like prior-guided semantic phrase fixtures
+- New batch slice 2/100 adds a paired KG fixture for prior-guided valid-like semantic phrase recovery.
+- The gold fixture seeds typed prior memory for `<signal> can publish the beat` and expects `XREQ` to resolve as `handshake_valid_like` with single-source semantic grounding.
+- The matching without-prior negative fixture keeps the same source phrase unresolved, preserving the truthfulness boundary that ambiguous prose is not upgraded without prior support.
+- The corpus-KB projection now includes the valid-like pair on the benchmark, semantic/truthfulness pattern, and typed prior-memory pages.
+
 ## 2026-05-05 rescan-plan unsupported NLP argument coverage
 - New batch slice 40/40 extends malformed provider regression coverage to unsupported trailing args in NLP enrichment hints.
 - The NLP provider parser already failed closed on unknown args; the assertion makes this explicit beside duplicate-provider coverage.

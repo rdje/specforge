@@ -20,46 +20,61 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `f22692c33180ebb4ed3c10a2d5d0859d78f8bf6d`
-- latest_commit_brief_message: `test(rescan): lock unsupported nlp provider args`
+- latest_commit_hash: `6627e0683024c06d74cf549ec65c7b24f97df396`
+- latest_commit_brief_message: `docs(memory): start N=100 batch`
 - note: new local `N=100` batch is active; push remains deferred until all 100 slices complete
 
 ## Recent commit chain (last 6)
+- `6627e06` docs(memory): start N=100 batch
 - `f22692c` test(rescan): lock unsupported nlp provider args
 - `9541a6f` test(rescan): lock duplicate nlp provider hints
 - `4a07ae6` test(rescan): lock intent extra args
 - `d3a171b` test(rescan): lock command lane mismatches
 - `e42361d` test(rescan): lock missing replay path lanes
-- `88751c6` fix(rescan): reject current-directory replay paths
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main`
-- files in flight for new batch slice 1:
+- branch state before the next commit: `main...origin/main [ahead 1]`
+- files in flight for new batch slice 2:
+  - `crates/specforge/test_data/kg_quality/semantic_valid_prior_guided_phrase_gold/fixture.json`
+  - `crates/specforge/test_data/kg_quality/semantic_valid_prior_guided_phrase_gold/source.md`
+  - `crates/specforge/test_data/kg_quality/semantic_valid_prior_guided_phrase_without_prior_negative/fixture.json`
+  - `crates/specforge/test_data/kg_quality/semantic_valid_prior_guided_phrase_without_prior_negative/source.md`
+  - `corpus_kb/benchmarks/kg-fixtures.md`
+  - `corpus_kb/patterns/kg-fixtures.md`
+  - `corpus_kb/prior_memory/kg-fixtures.md`
+  - `CHANGES.md`
+  - `DEVELOPMENT_NOTES.md`
+  - `LIVE_ACHIEVEMENT_STATUS.md`
+  - `RUST_CODEBASE_ANALYSIS.md`
   - `MEMORY.md`
 
 ## Active N-slice batch
 - requested_count: `100`
-- completed_count: `0`
+- completed_count: `1`
 - push_policy: defer push until all `100` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - start the new `N=100` batch by refreshing crash-recovery state and deferred-push policy
-  - keep the next implementation slice recoverable before any larger code changes
+  - add paired KG fixtures for prior-guided valid-like semantic phrase recovery
+  - prove the ambiguous valid-like phrase resolves only when typed prior memory supports it
+  - refresh corpus-KB projections for the expanded KG fixture corpus
 - tracker effect:
-  - live-status tracker unchanged; batch policy is already tracked as Done
+  - live-status tracker gains `KG benchmark harness now locks prior-guided valid-like semantic phrase recovery: Done`
 - verification status:
-  - docs-only slice; no focused Rust regression was needed
+  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_valid_prior_guided_phrase_gold semantic_valid_prior_guided_phrase_without_prior_negative` passed with `2` fixtures and `0` failures
+  - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed with `132` fixtures and `0` failures
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed
   - `bash scripts/run_ci.sh` passed with `593` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
-  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `130` fixtures and `0` failures
+  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `132` fixtures and `0` failures
+  - `git diff --check` passed
+  - checkout-specific absolute path scan across tracked markdown passed
 - current known local CI baseline:
   - `593` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
-  - `130/130` tracked KG fixtures
+  - `132/132` tracked KG fixtures
 
 ## Next exact steps
-- validate and commit slice 1 without pushing, then continue slice 2
+- commit slice 2 without pushing, then continue slice 3

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 KG valid-like prior-guided semantic phrase fixtures)
+- Added paired KG quality fixtures under `crates/specforge/test_data/kg_quality` for valid-like semantic phrase recovery.
+- The gold fixture exercises typed prior-memory arbitration for an otherwise ambiguous prose phrase, while the negative fixture verifies the same phrase remains unresolved without that prior.
+- The refreshed corpus-KB projection surfaces the pair in benchmark, semantic/truthfulness pattern, and prior-memory views, preserving reviewability for the broader KG fixture corpus.
+
 ## Session update (2026-05-05 rescan-plan unsupported NLP argument coverage)
 - Extended `crates/specforge/src/commands/rescan_plan.rs` malformed provider tests to cover unsupported trailing args for NLP enrichment hints.
 - NLP enrichment provider parsing now has explicit regression coverage for duplicate providers, missing values, flag-shaped values, unsupported providers, and unsupported args.
