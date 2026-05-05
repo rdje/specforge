@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan missing model values)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` parser tests around truncated local replay model overrides.
+- No production parser code changed; missing `--vlm-model` values are now directly covered for both enrich and NLP-enrich command hints.
+- This complements the duplicate-flag lock by covering the other local model-override malformed-input shape.
+
 ## Session update (2026-05-05 rescan-plan duplicate replay flags)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` parser tests around local replay command hints.
 - No production parser code changed; duplicate `--vlm-model` and duplicate `--classify-only` rejection is now directly covered.

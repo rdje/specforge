@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `af60555fc8f24170c3115f4cf2c7b1da120c3c86`
-- latest_commit_brief_message: `test(rescan): lock scoped limit ordering`
-- note: the latest committed baseline is local batch-20 slice 12; push remains deferred until all `20` slices complete
+- latest_commit_hash: `145c43c39e5ad7e02ec944c572b9a0e8ff9dc628`
+- latest_commit_brief_message: `test(rescan): lock duplicate replay flags`
+- note: the latest committed baseline is local batch-20 slice 13; push remains deferred until all `20` slices complete
 
 ## Recent commit chain (last 6)
+- `145c43c` test(rescan): lock duplicate replay flags
 - `af60555` test(rescan): lock scoped limit ordering
 - `0bea5c6` test(rescan): lock sparse score labels
 - `3be2e19` test(rescan): lock mixed finding arbitration
 - `a9a4175` test(rescan): lock neutral score arbitration
 - `090fdc7` test(rescan): lock validation delta finding order
-- `679f7d9` test(rescan): lock malformed provider hints
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 12]`
-- files in flight for batch-20 slice 13:
+- branch state before the next commit: `main...origin/main [ahead 13]`
+- files in flight for batch-20 slice 14:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -49,27 +49,27 @@
 
 ## Active N-slice batch
 - requested_count: `20`
-- completed_count: `12`
+- completed_count: `13`
 - push_policy: defer push until all `20` slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - lock duplicate replay-flag rejection in `rescan-plan` command hints
-  - ensure duplicate `--vlm-model` and `--classify-only` hints stay invalid before execution
+  - lock missing model-value rejection in `rescan-plan` command hints
+  - ensure truncated `--vlm-model` hints stay invalid before execution
 - tracker effect:
-  - add a `Done` live-status row for duplicate replay-flag rejection
+  - add a `Done` live-status row for missing replay model-value rejection
 - verification status:
-  - focused test passed: `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_duplicate_model_and_classify_flags`
+  - focused test passed: `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_missing_model_values`
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed
-  - `bash scripts/run_ci.sh` passed with `533` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `bash scripts/run_ci.sh` passed with `534` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `130/130` fixtures
   - `git diff --check` passed
   - checkout-specific absolute path scan across tracked markdown passed
 - current known local CI baseline:
-  - `533` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `534` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `130/130` tracked KG fixtures
 
 ## Next exact steps
-- commit slice 13 without pushing, then move to slice 14
+- commit slice 14 without pushing, then move to slice 15

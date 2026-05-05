@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan missing model-value lock
+- Batch slice 14/20 adds focused parser coverage for truncated model override hints.
+- Both `parse_enrich_command_hint_args(...)` and `parse_nlp_enrich_command_hint_args(...)` already rejected `--vlm-model` when no following value exists.
+- Added `rescan_plan_rejects_missing_model_values` to lock that boundary for source enrichment and NLP enrichment replay hints.
+
 ## 2026-05-05 rescan-plan duplicate replay-flag lock
 - Batch slice 13/20 extends parser negative coverage for local replay hints.
 - `parse_enrich_command_hint_args(...)` and `parse_nlp_enrich_command_hint_args(...)` already rejected duplicate model flags, and enrich already rejected duplicate `--classify-only`.
