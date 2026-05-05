@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 `.fsm` direct flat-conflict provenance lock
+- New batch slice 45/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `standalone_dt_blocks_conflicting_flat_direction_even_with_actor_graph` now asserts blocked direct-root canonical direction conflicts keep interface and actor-port categories, graph support ID, and high automation confidence.
+- This is a coverage-only lock for the blocked path where flat canonical direction evidence conflicts even though actor graph evidence is unambiguous.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-05 `.fsm` direct flat/graph disagreement provenance lock
 - New batch slice 44/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `standalone_dt_blocks_flat_graph_direction_disagreement` now asserts blocked direct-root flat/graph disagreement keeps interface and actor-port categories, graph support ID, and high automation confidence.

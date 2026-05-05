@@ -322,6 +322,7 @@
 - `.fsm` ambiguous actor-port graph context now regression-locks absence of selected graph provenance: Done
 - `.fsm` direct-root actor-port direction conflicts now regression-lock support IDs and automation confidence: Done
 - `.fsm` direct-root flat/graph direction disagreement now regression-locks interface and actor-port provenance: Done
+- `.fsm` direct-root flat direction conflicts now regression-lock interface and graph provenance together: Done
 - `.fsm` direct-root output actor selection now regression-locks support IDs and automation confidence: Done
 - `.fsm` direct-root control-read input recovery now regression-locks support IDs and automation confidence: Done
 - `.fsm` structured-FSM control-read input recovery now regression-locks support IDs and automation confidence: Done

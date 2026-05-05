@@ -7505,6 +7505,25 @@ mod tests {
             data_out.graph_direction_hint,
             Some(InterfaceSignalDirection::Output)
         );
+        assert!(
+            data_out
+                .mention_categories
+                .iter()
+                .any(|category| category == "interface")
+        );
+        assert!(
+            data_out
+                .mention_categories
+                .iter()
+                .any(|category| category == "actor_port")
+        );
+        assert!(
+            data_out
+                .supporting_canonical_ids
+                .iter()
+                .any(|id| id == "graph_controller_DATA_OUT")
+        );
+        assert_eq!(data_out.automation_confidence, AutomationConfidence::High);
         assert!(!fsm.renderability.is_renderable);
         assert!(
             fsm.renderability

@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` direct flat-conflict provenance lock)
+
+### Added: direct flat direction conflict provenance coverage
+- Tightened `standalone_dt_blocks_conflicting_flat_direction_even_with_actor_graph` so blocked direct-root canonical direction conflicts now prove interface and actor-port categories, graph support ID, and high automation confidence remain visible.
+- This is coverage-only over the existing adapter behavior: contradictory flat direction evidence blocks `.fsm` emission even when graph-backed actor evidence is unambiguous.
+- The slice keeps canonical conflict provenance and graph evidence inspectable together in `fsm.signal_inventory`.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_dt_blocks_conflicting_flat_direction_even_with_actor_graph` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+
 ## 2026-05-05 (`.fsm` direct flat/graph disagreement provenance lock)
 
 ### Added: direct flat-vs-graph direction disagreement provenance coverage
