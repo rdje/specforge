@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `4e0fdd9e016cef27603a976c4bb5eb50aca69e4a`
-- latest_commit_brief_message: `test(rescan): lock score removal arbitration`
+- latest_commit_hash: `99920b8cd8110f7fdf6af8262e0ed30889cf7cb5`
+- latest_commit_brief_message: `test(rescan): lock grade removal arbitration`
 - note: new local `N=40` batch is active; push remains deferred until all 40 slices complete
 
 ## Recent commit chain (last 6)
+- `99920b8` test(rescan): lock grade removal arbitration
 - `4e0fdd9` test(rescan): lock score removal arbitration
 - `6d14dd1` test(rescan): lock grade execution status
 - `0fe7f90` test(rescan): lock grade-only arbitration
 - `fb2f5ba` test(rescan): lock execute document scoping
 - `a2b9621` test(rescan): lock execute limit handling
-- `697d9cb` test(rescan): lock execute report no-change
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 20]`
-- files in flight for new batch slice 21:
+- branch state before the next commit: `main...origin/main [ahead 21]`
+- files in flight for new batch slice 22:
   - `crates/specforge/src/commands/rescan_plan.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -46,27 +46,27 @@
 
 ## Active N-slice batch
 - requested_count: `40`
-- completed_count: `20`
+- completed_count: `21`
 - push_policy: defer push until all `40` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - add rescan-plan arbitration coverage proving grade removal stays neutral review
-  - refresh live docs for grade-removal arbitration behavior
+  - add rescan-plan execution-status coverage proving score removal counts as changed execution
+  - refresh live docs for score-removal execution-status behavior
 - tracker effect:
-  - planned live-status row addition: `specforge rescan-plan` grade-removal arbitration stays neutral-review: `Done`
+  - planned live-status row addition: `specforge rescan-plan` score-removal execution status is changed: `Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_arbitration_treats_grade_removal_as_neutral_review` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_execution_status_treats_score_removal_as_changed` passed with `1` test
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed
-  - `bash scripts/run_ci.sh` passed with `579` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `bash scripts/run_ci.sh` passed with `580` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `130` fixtures and `0` failures
   - `git diff --check` passed
   - checkout-specific absolute path scan across tracked markdown passed
 - current known local CI baseline:
-  - `579` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `580` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `130/130` tracked KG fixtures
 
 ## Next exact steps
-- commit slice 21 without pushing, then continue slice 22
+- commit slice 22 without pushing, then continue slice 23

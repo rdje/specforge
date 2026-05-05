@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan score-removal execution-status lock)
+
+### Changed: score removal counts as changed execution
+- Added execution-status coverage proving score removal marks the recommendation `executed_validated_changed`.
+- This keeps optional score availability drift visible in execution counters even when arbitration classifies the delta as neutral review.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_execution_status_treats_score_removal_as_changed` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `580` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan grade-removal arbitration lock)
 
 ### Changed: grade removal stays neutral review

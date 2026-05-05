@@ -41,6 +41,7 @@
 - `specforge rescan-plan` replay-input rendering is regression-locked: Done
 - `specforge rescan-plan` score-presence arbitration stays neutral-review: Done
 - `specforge rescan-plan` score-removal arbitration stays neutral-review: Done
+- `specforge rescan-plan` score-removal execution status is changed: Done
 - `specforge rescan-plan` grade-only arbitration stays neutral-review: Done
 - `specforge rescan-plan` grade-removal arbitration stays neutral-review: Done
 - `specforge rescan-plan` grade-only execution status is changed: Done
