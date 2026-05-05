@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan command-hint render order lock
+- New batch slice 3/40 adds dry-run render coverage for multi-command recommendation hints.
+- No production render code changed; `render_dry_run_plan(...)` already iterates `recommended_commands` in stored vector order.
+- This keeps review-facing replay sequences stable when schema-v2 recommendations carry multiple command hints.
+
 ## 2026-05-05 rescan-plan unscoped executed-skip limit lock
 - New batch slice 2/40 adds unscoped queue-selection coverage for executed rows that appear before pending rows.
 - No production selection code changed; `selected_pending_indices(...)` already filters by `planned_not_executed` before applying positive limits.

@@ -56,6 +56,7 @@
 - `specforge rescan-plan` empty dry-run queues render explicitly: Done
 - `specforge rescan-plan` dry-run rendering honors selected indices: Done
 - `specforge rescan-plan` dry-run rendering preserves selected order: Done
+- `specforge rescan-plan` dry-run command hint order is regression-locked: Done
 - `specforge rescan-plan` dry-run related IDs preserve plan order: Done
 - `specforge rescan-plan` dry-run replay inputs preserve plan order: Done
 - `specforge rescan-plan` unsupported schema versions are rejected: Done

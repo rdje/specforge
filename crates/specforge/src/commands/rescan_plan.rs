@@ -1691,6 +1691,37 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_dry_run_render_preserves_command_hint_order() {
+        let mut plan = ProjectRescanPlanRecord {
+            schema_version: 2,
+            generated_by: "test".to_string(),
+            recommendation_count: 1,
+            recommendations: vec![recommendation("doc", PLANNED_NOT_EXECUTED)],
+        };
+        let mut rebuild = command_hint(
+            "rebuild_semantic_ir",
+            vec!["semantic", "generated/evidence_ir/doc/evidence_ir.json"],
+        );
+        rebuild.display = "first rebuild semantic".to_string();
+        let mut validate = command_hint(
+            "validate_current_artifact",
+            vec!["validate", "generated/semantic_ir/doc/semantic_ir.json"],
+        );
+        validate.display = "second validate semantic".to_string();
+        plan.recommendations[0].recommended_commands = vec![rebuild, validate];
+
+        let rendered = render_dry_run_plan(&plan, &[0]);
+        let rebuild_offset = rendered
+            .find("  - rebuild_semantic_ir: first rebuild semantic")
+            .expect("rebuild command rendered");
+        let validate_offset = rendered
+            .find("  - validate_current_artifact: second validate semantic")
+            .expect("validate command rendered");
+
+        assert!(rebuild_offset < validate_offset);
+    }
+
+    #[test]
     fn rescan_plan_dry_run_render_preserves_related_id_order() {
         let mut plan = ProjectRescanPlanRecord {
             schema_version: 2,
