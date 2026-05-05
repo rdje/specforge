@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 NLP alias marker filter hardening
+- New batch slice 24/100 hardens `extract_alias_phrase()` in `crates/specforge/src/commands/nlp_enrich.rs`.
+- The Form 2 alias learner now rejects numeric outline markers (`3.1`, `4.2.1`), parenthesized list markers (`(a)`, `(12)`), and lettered list markers (`b)`) before stripping articles and learning a noun phrase.
+- The new regression keeps these layout/list prefixes from polluting `signal_alias_map`, while the existing noun-phrase and markdown-marker tests continue to pass.
+- Full CI now runs `598` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-05 mdBook adapter provenance docs
 - New batch slice 23/100 updates the mdBook after the top-port inventory provenance fix.
 - `docs/book/src/domain/actor-connectivity.md` now spells out that `.fsm` top-root renderability collapses a disagreed boundary role to unresolved while keeping flat `direction_hint` and graph-backed `graph_direction_hint` separately inspectable.

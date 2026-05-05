@@ -514,6 +514,14 @@ fn subject_has_markup_prefix(subject: &str) -> bool {
         return true;
     }
 
+    if let Some(first_token) = subject.split_whitespace().next()
+        && (is_numeric_outline_marker(first_token)
+            || is_parenthesized_list_marker(first_token)
+            || is_lettered_list_marker(first_token))
+    {
+        return true;
+    }
+
     if let Some((marker, _rest)) = subject
         .split_once(['.', ')'])
         .filter(|(_, rest)| rest.starts_with(char::is_whitespace))
@@ -522,6 +530,41 @@ fn subject_has_markup_prefix(subject: &str) -> bool {
     }
 
     false
+}
+
+fn is_numeric_outline_marker(token: &str) -> bool {
+    let marker = token.trim_end_matches(['.', ')']);
+    if !marker.contains('.') {
+        return false;
+    }
+
+    marker
+        .split('.')
+        .all(|part| !part.is_empty() && part.chars().all(|character| character.is_ascii_digit()))
+}
+
+fn is_parenthesized_list_marker(token: &str) -> bool {
+    let Some(marker) = token
+        .strip_prefix('(')
+        .and_then(|rest| rest.strip_suffix(')'))
+    else {
+        return false;
+    };
+
+    !marker.is_empty()
+        && marker.len() <= 3
+        && marker
+            .chars()
+            .all(|character| character.is_ascii_alphanumeric())
+}
+
+fn is_lettered_list_marker(token: &str) -> bool {
+    let marker = token.trim_end_matches(['.', ')']);
+    marker.len() == 1
+        && marker
+            .chars()
+            .all(|character| character.is_ascii_alphabetic())
+        && token.len() == 2
 }
 
 /// Strip common leading determiners / articles from a noun phrase.
@@ -1153,6 +1196,30 @@ mod tests {
         assert!(
             extract_alias_phrase("2) the address bus shall remain stable", "HADDR").is_none(),
             "ordered-list paren prefixes must not become learned aliases"
+        );
+    }
+
+    #[test]
+    fn extract_alias_phrase_rejects_outline_and_lettered_marker_prefixes() {
+        assert!(
+            extract_alias_phrase("3.1 the address bus shall remain stable", "HADDR").is_none(),
+            "numeric outline prefixes must not become learned aliases"
+        );
+        assert!(
+            extract_alias_phrase("4.2.1 the address bus shall remain stable", "HADDR").is_none(),
+            "nested numeric outline prefixes must not become learned aliases"
+        );
+        assert!(
+            extract_alias_phrase("(a) the address bus shall remain stable", "HADDR").is_none(),
+            "parenthesized lettered prefixes must not become learned aliases"
+        );
+        assert!(
+            extract_alias_phrase("(12) the address bus shall remain stable", "HADDR").is_none(),
+            "parenthesized numeric prefixes must not become learned aliases"
+        );
+        assert!(
+            extract_alias_phrase("b) the address bus shall remain stable", "HADDR").is_none(),
+            "lettered list prefixes must not become learned aliases"
         );
     }
 

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 NLP alias marker filter hardening)
+- Hardened `extract_alias_phrase()` in `crates/specforge/src/commands/nlp_enrich.rs` so Form 2 alias learning rejects numeric outline markers, parenthesized list markers, and lettered list markers before noun-phrase normalization.
+- Added `extract_alias_phrase_rejects_outline_and_lettered_marker_prefixes`, bringing the focused alias parser coverage to `6` tests and the NLP-enrich module coverage to `18` tests.
+- This reduces alias-map pollution from markdown/list structure while preserving the useful implicit noun-phrase alias path.
+
 ## Session update (2026-05-05 mdBook adapter provenance docs)
 - Updated mdBook user-facing documentation for the `.fsm` adapter provenance behavior in the actor-connectivity, pipeline-command, and generated-artifact reference pages.
 - The book now distinguishes blocked renderability role collapse from signal-inventory provenance preservation: users can inspect flat `direction_hint` and graph-backed `graph_direction_hint` even when the renderable top port is unresolved.

@@ -20,52 +20,54 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `7e0add50b4f05026cd3c20bd2e42d7a27c8d069c`
-- latest_commit_brief_message: `fix(adapter): preserve top flat graph direction evidence`
+- latest_commit_hash: `9c572b2537747d4dfb438471be262cb1a60ae130`
+- latest_commit_brief_message: `docs(book): explain adapter graph provenance`
 - note: new local `N=100` batch is active; push remains deferred until all 100 slices complete
 
 ## Recent commit chain (last 6)
+- `9c572b2` docs(book): explain adapter graph provenance
 - `7e0add5` fix(adapter): preserve top flat graph direction evidence
 - `afb2376` test(adapter): lock system contract flat graph disagreement
 - `f3f1fbe` test(adapter): lock structured FSM flat graph disagreement
 - `50a6661` test(adapter): lock module flat graph disagreement
 - `ce867e3` fix(adapter): block flat graph direction disagreement
-- `f56f622` fix(kg): scope actor taxonomy priors by family
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 22]`
-- files in flight for new batch slice 23:
+- branch state before the next commit: `main...origin/main [ahead 23]`
+- files in flight for new batch slice 24:
+  - `crates/specforge/src/commands/nlp_enrich.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
+  - `ROADMAP.md`
   - `RUST_CODEBASE_ANALYSIS.md`
   - `MEMORY.md`
-  - `docs/book/src/domain/actor-connectivity.md`
-  - `docs/book/src/commands/pipeline.md`
-  - `docs/book/src/reference/generated-artifacts.md`
 
 ## Active N-slice batch
 - requested_count: `100`
-- completed_count: `22`
+- completed_count: `23`
 - push_policy: defer push until all `100` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - document `.fsm` adapter flat/graph provenance behavior in the mdBook
-  - explain that blocked top-root renderability can coexist with inspectable flat and graph signal-inventory evidence
-  - keep user-facing generated-artifact guidance aligned with the slice-22 adapter behavior
+  - harden Form 2 NLP alias learning against outline/list marker prefixes
+  - reject numeric outline, parenthesized list, and lettered list prefixes before storing aliases
+  - keep useful implicit noun-phrase alias learning intact
 - tracker effect:
-  - live-status tracker gains `mdBook now documents blocked .fsm adapter renderability together with flat/graph signal-inventory provenance: Done`
+  - live-status tracker gains `NLP alias learning now rejects outline/list marker prefixes before storing Form 2 aliases: Done`
 - verification status:
-  - `bash scripts/run_docs_ci.sh` passed for the mdBook edits and must be rerun after the current live-doc refresh
-  - `bash scripts/run_ci.sh` passed with `597` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `cargo test --manifest-path Cargo.toml -p specforge extract_alias_phrase` passed with `6` tests
+  - `cargo test --manifest-path Cargo.toml -p specforge commands::nlp_enrich::tests` passed with `18` tests
+  - `cargo fmt --manifest-path Cargo.toml -- --check` passed
+  - `bash scripts/run_docs_ci.sh` passed before live-doc edits and must be rerun after the current live-doc refresh
+  - `bash scripts/run_ci.sh` passed with `598` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `148` fixtures and `0` failures
 - current known local CI baseline:
-  - `597` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `598` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- rerun docs after live-doc edits, run final guards, commit slice 23 without pushing, and continue slice 24
+- rerun docs after live-doc edits, run final guards, commit slice 24 without pushing, and continue slice 25

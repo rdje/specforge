@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (NLP alias marker filter hardening)
+
+### Changed: alias learning rejects outline/list marker prefixes
+- Hardened `extract_alias_phrase()` so numeric outline prefixes such as `3.1` / `4.2.1`, parenthesized list markers such as `(a)` / `(12)`, and lettered list markers such as `b)` cannot become learned signal aliases.
+- Added focused unit coverage for the new marker classes while preserving the existing useful noun-phrase alias path.
+- This closes another alias-garbage path in the roadmap's NLP Level 3 feedback loop without changing the LLM provider surface.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge extract_alias_phrase` -> passed (`6` tests)
+- `cargo test --manifest-path Cargo.toml -p specforge commands::nlp_enrich::tests` -> passed (`18` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`598` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+
 ## 2026-05-05 (mdBook adapter provenance docs)
 
 ### Added: user-facing docs for `.fsm` flat/graph adapter provenance
