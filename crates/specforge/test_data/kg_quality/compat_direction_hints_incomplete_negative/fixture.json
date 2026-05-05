@@ -1,0 +1,57 @@
+{
+  "name": "compat_direction_hints_incomplete_negative",
+  "source": "source.md",
+  "semantic_ir_patch": {
+    "clear_signal_direction_hints": ["DATA"]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["DATA"],
+      "graph_direction_signal_names_exclude": ["DATA"]
+    },
+    "intent": {
+      "signal_names_include": ["DATA"],
+      "graph_direction_signal_names_exclude": ["DATA"]
+    },
+    "validation": {
+      "semantic": {
+        "finding_ids_include": ["semantic_compat_direction_hints_incomplete"],
+        "finding_ids_exclude": ["semantic_compat_direction_hints_lag_graph"],
+        "findings_include": [
+          {
+            "finding_id": "semantic_compat_direction_hints_incomplete",
+            "severity": "info",
+            "category": "compatibility_surface",
+            "summary_contains": "1 interface signal record(s) still lack flat compatibility direction hints and actor-relative graph coverage",
+            "related_ids_include": ["DATA"]
+          }
+        ],
+        "metric_values": {
+          "total_signal_records": "1",
+          "with_resolved_direction": "0",
+          "with_graph_direction": "0",
+          "with_compat_direction_hint": "0"
+        }
+      },
+      "intent": {
+        "finding_ids_include": ["intent_compat_direction_hints_incomplete"],
+        "finding_ids_exclude": ["intent_compat_direction_hints_lag_graph"],
+        "findings_include": [
+          {
+            "finding_id": "intent_compat_direction_hints_incomplete",
+            "severity": "info",
+            "category": "compatibility_surface",
+            "summary_contains": "1 declared signal record(s) still lack flat compatibility direction hints and actor-relative graph coverage",
+            "related_ids_include": ["DATA"]
+          }
+        ],
+        "metric_values": {
+          "declared_signal_records": "1",
+          "with_resolved_direction": "0",
+          "with_graph_direction": "0",
+          "with_compat_direction_hint": "0"
+        }
+      }
+    }
+  }
+}

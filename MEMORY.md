@@ -19,22 +19,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `c151bdcac5ed61129be6b2960910381ed9260c18`
-- latest_commit_brief_message: `fix(validate): split intent direction gap findings`
-- note: the latest committed baseline mirrors the SemanticIR graph-backed compatibility-direction split at the IntentIR validation stage
+- latest_commit_hash: `45873250c7ffb387f1418b304f3fe4ad42713c0b`
+- latest_commit_brief_message: `chore(fsmgen): refresh submodule contract baseline`
+- note: the latest committed baseline fast-forwards `subs/fsmgen` to upstream `32aa318` and documents its bounded machine-readable `.fsm` contract surfaces
 
 ## Recent commit chain (last 6)
+- `4587325` chore(fsmgen): refresh submodule contract baseline
 - `c151bdc` fix(validate): split intent direction gap findings
 - `5fb059e` test(adapter): lock fsm graph undriven outputs
 - `a2882b4` fix(adapter): block graph-backed undriven outputs
 - `706118e` docs: refresh README bootstrap continuity
 - `9b425e9` test(adapter): lock mixed top child roots
-- `67a4d84` test(adapter): lock reused fsm child roots
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 22` of `origin/main`
+- branch state before the next commit: `ahead 23` of `origin/main`
 - modified tracked files:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -43,28 +43,27 @@
   - `README.md`
   - `ROADMAP.md`
   - `RUST_CODEBASE_ANALYSIS.md`
-  - `docs/FSMGEN_FEEDBACK.md`
-  - `docs/book/src/pipeline/intentir.md`
-  - `subs/fsmgen`
+  - `crates/specforge/test_data/kg_quality/compat_direction_hints_incomplete_negative/fixture.json`
+  - `crates/specforge/test_data/kg_quality/compat_direction_hints_incomplete_negative/source.md`
+  - `docs/book/src/quality/kg-bench.md`
 
 ## Current in-flight slice
 - objective:
-  - update the pinned FSMGEN submodule before continuing with the next roadmap task
-  - document that the new upstream `32aa318` baseline includes bounded machine-readable `.fsm` contract surfaces relevant to future adapter validation
+  - add a tracked KG fixture for the unresolved compatibility-direction state where a declared signal has no flat direction hint and no actor-relative graph direction
+  - prove SemanticIR and IntentIR emit `*_compat_direction_hints_incomplete` rather than the graph-backed lag finding ids
 - tracker effect:
-  - added a Done row for the FSMGEN submodule now pinning a bounded machine-readable `.fsm` contract baseline for adapter planning
+  - added a Done row for KG benchmark coverage of unresolved compatibility-direction gaps separately from graph-backed lag
 - verification status:
+  - focused `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench compat_direction_hints_incomplete_negative` passed with `1/1` fixture
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed
   - `bash scripts/run_ci.sh` passed with `521` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
-  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `127/127` fixtures
-  - `git -C subs/fsmgen status --short --branch` clean on `main...origin/main`
-  - `git submodule status --recursive` reports `32aa318f83361cd0fcfc499312ebf02ccfa0dfe8 subs/fsmgen (heads/main)`
+  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `128/128` fixtures
   - `git diff --check` passed
 - current known local CI baseline:
   - `521` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation after this IntentIR validation split slice
-  - `127/127` tracked KG fixtures after this IntentIR validation split slice
+  - `128/128` tracked KG fixtures after this unresolved compatibility-direction fixture slice
 
 ## Next exact steps
-- commit the FSMGEN submodule update slice, truncate `git_message_brief.txt` back to `0` bytes, and confirm it remains untracked
-- then pick the next roadmap task and commit that as a separate slice before switching again
+- commit the KG fixture slice, truncate `git_message_brief.txt` back to `0` bytes, and confirm it remains untracked
+- leave branch unpushed unless the next slice reaches the 25-commit threshold

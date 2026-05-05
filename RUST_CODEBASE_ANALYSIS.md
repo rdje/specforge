@@ -4,6 +4,12 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 KG fixture for unresolved direction gaps)
+- Added a tracked KG-quality fixture, `compat_direction_hints_incomplete_negative`, for the no-flat-direction/no-actor-graph validation state.
+- This is intentionally fixture coverage, not a production-code change: `validate_semantic_ir(...)` and `validate_intent_ir(...)` already expose the split, and the benchmark now locks it in the same staged-pipeline harness used for graph truthfulness.
+- The fixture preserves a declared width-bearing signal while clearing its flat compatibility direction hint; with no actor ports, validation must report the `*_compat_direction_hints_incomplete` finding ids and must not report the graph-backed `*_compat_direction_hints_lag_graph` ids.
+- This closes a coverage gap left by the previous unit-test-only IntentIR slice and keeps the R15 graph-first migration honest at the executable fixture layer.
+
 ## Session update (2026-05-05 FSMGEN submodule machine-contract baseline)
 - Fast-forwarded `subs/fsmgen` from `955f2bb` to `32aa318` and kept it read-only from the SPECFORGE parent.
 - No SPECFORGE Rust source changed, but the adapter reference surface changed materially: the pinned FSMGEN baseline now has bounded capability-manifest, check-JSON, stable diagnostic-code, normalized semantic JSON, support-accounting/report contract, generated-SystemVerilog validation, embedding, and `HDLGenerator` contract surfaces.

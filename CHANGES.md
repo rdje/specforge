@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (KG fixture for unresolved direction gaps)
+
+### Added: KG fixture locks compatibility-direction gaps without graph coverage
+- Added `compat_direction_hints_incomplete_negative` under `crates/specforge/test_data/kg_quality/`.
+- The fixture starts from a declared `DATA` signal, clears its flat compatibility `direction_hint`, and leaves it without actor-relative graph coverage.
+- SemanticIR and IntentIR validation must now emit `semantic_compat_direction_hints_incomplete` / `intent_compat_direction_hints_incomplete`, exclude the graph-backed lag finding ids, and report zero resolved, graph, and flat compatibility direction coverage for the affected signal.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench compat_direction_hints_incomplete_negative` -> passed with `1` fixture and `0` failures
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `521` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `128` fixtures and `0` failures
+- `git diff --check` -> passed
+
 ## 2026-05-05 (FSMGEN submodule machine-contract baseline)
 
 ### Changed: FSMGEN reference advanced for `.fsm` adapter planning

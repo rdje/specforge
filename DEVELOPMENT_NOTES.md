@@ -7,6 +7,15 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 KG fixture for unresolved direction gaps
+- Picked the next roadmap-aligned slice after the FSMGEN submodule update: turn the new IntentIR compatibility-direction finding split into tracked KG fixture coverage.
+- Added `compat_direction_hints_incomplete_negative`, a focused fixture where `DATA` is still a declared interface signal with width, but the fixture patch clears its flat `direction_hint` and no actor-relative ports exist.
+- The expected behavior is deliberately different from `compat_direction_hints_lag_graph_negative`:
+  - no graph-backed lag finding is allowed
+  - both `SemanticIR` and `IntentIR` emit the unresolved compatibility-surface finding ids
+  - validation metrics report `with_resolved_direction = 0`, `with_graph_direction = 0`, and `with_compat_direction_hint = 0`
+- The focused `kg-bench` run passed for the new fixture, and the full tracked fixture suite now reports `128/128` passing fixtures.
+
 ## 2026-05-05 FSMGEN submodule machine-contract baseline
 - Fast-forwarded the read-only `subs/fsmgen` reference from `955f2bb` to `32aa318` as requested before taking the next roadmap task.
 - The refreshed FSMGEN baseline is materially different from the prior adapter reconnaissance pin because several SPECFORGE-requested tool-to-tool surfaces now exist in bounded form:

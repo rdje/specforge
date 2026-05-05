@@ -15,6 +15,7 @@ The fixture set is used to lock:
 - residual quality
 - prior-guided before/after behavior
 - graph-backed direction coverage without falling back to flat compatibility hints
+- compatibility-direction gaps that have no actor-relative graph coverage
 
 This lets the project protect individual truthfulness properties instead of relying only on broad integration runs.
 
@@ -63,6 +64,8 @@ Those fields inspect canonical `actor_ports` for non-`unknown` direction evidenc
 This is intentionally separate from `signal_directions_include`.
 The older field still checks the flat compatibility `direction_hint` on interface signal records.
 Keeping both surfaces separate prevents the harness from flattening producer/consumer actor roles into a fake single perspective while still letting graph-first recovery be tested explicitly.
+The tracked fixtures now also separate graph-backed compatibility lag from genuinely unresolved direction gaps.
+When a declared signal has no flat `direction_hint` and no actor-relative graph direction, validation must report the `*_compat_direction_hints_incomplete` finding ids rather than the graph-backed `*_compat_direction_hints_lag_graph` ids.
 
 Fixtures can assert canonical signal-connectivity conflicts directly.
 `signal_connectivity_conflicts_include` checks the conflicted signal, conflict kind, conflicting actor ids or names, and optional supporting statement ids.
