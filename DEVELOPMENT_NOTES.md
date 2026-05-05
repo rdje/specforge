@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 `.fsm` system direction-conflict provenance lock
+- New batch slice 49/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `standalone_sequential_dt_blocks_conflicting_system_contract_signal_direction` now asserts blocked clock direction conflicts keep system-contract support IDs and high automation confidence.
+- This is a coverage-only lock for the blocked standalone sequential DT path where local clock direction evidence conflicts with canonical system-contract direction requirements.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-05 `.fsm` system flat/graph disagreement provenance lock
 - New batch slice 48/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `standalone_sequential_dt_blocks_system_contract_flat_graph_direction_disagreement` now asserts blocked clock flat-vs-graph disagreement keeps the contradictory `graph_controller_clk` support ID and high automation confidence.

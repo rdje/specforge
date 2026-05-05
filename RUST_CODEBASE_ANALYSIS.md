@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` system direction-conflict provenance lock)
+- Tightened `standalone_sequential_dt_blocks_conflicting_system_contract_signal_direction` in `crates/specforge/src/ir/adapters.rs` so blocked system-contract direction conflicts retain support IDs and automation confidence.
+- The adapter already kept contradictory canonical clock direction evidence unresolved; this regression now proves the blocked inventory preserves the system-contract evidence trail.
+- This pairs with the flat/graph disagreement coverage to make both system direction-conflict branches auditable.
+
 ## Session update (2026-05-05 `.fsm` system flat/graph disagreement provenance lock)
 - Tightened `standalone_sequential_dt_blocks_system_contract_flat_graph_direction_disagreement` in `crates/specforge/src/ir/adapters.rs` so blocked clock flat-vs-graph disagreement retains actor-port support ID and automation confidence.
 - The adapter already blocked standalone sequential DT renderability when canonical system-contract direction disagreed with graph-backed actor direction; this regression now proves the contradictory graph evidence remains inspectable.

@@ -185,6 +185,7 @@
   - unambiguous direct actor-port direction recovery preserves graph-backed support IDs and high automation confidence for direct inputs and outputs
   - standalone sequential system-contract actor-port direction recovery preserves graph-backed support IDs and high automation confidence for clock/reset inputs
   - standalone sequential system-contract flat-vs-graph direction disagreement preserves conflicting actor-port support IDs and high automation confidence while blocking `.fsm` emission
+  - standalone sequential system-contract direction conflicts preserve system-contract support IDs and high automation confidence while blocking `.fsm` emission
   - unrelated direct actor-port graph context keeps selected support IDs auditable while excluding unrelated side-band evidence from `.fsm` inventories
   - ambiguous direct actor-port graph context leaves graph direction, actor-port category, and support IDs unselected instead of guessing a target actor
   - direct-root actor-port direction conflicts preserve both conflicting graph-backed support IDs and automation confidence while blocking `.fsm` emission
