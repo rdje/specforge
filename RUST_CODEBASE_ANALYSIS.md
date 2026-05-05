@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan score-removal arbitration)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` arbitration tests around optional score removal.
+- No production arbitration code changed; the new regression proves `Some(score) -> None` leaves `score_delta` unavailable and therefore routes to neutral review absent directional finding/count evidence.
+- This keeps score availability drift distinct from true numeric score decreases.
+
 ## Session update (2026-05-05 rescan-plan grade-only execution status)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` execution-status tests around grade-only validation changes.
 - No production status code changed; the new regression proves qualitative grade drift still counts as `executed_validated_changed` even when arbitration stays neutral review.

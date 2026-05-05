@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan score-removal arbitration lock)
+
+### Changed: score removal stays neutral review
+- Added arbitration coverage proving a validation score changing from present to absent keeps `score_delta` unset and produces `neutral_change_review_required`.
+- This prevents optional-score disappearance from being mislabeled as a numeric score regression when the before/after reports cannot compute a numeric delta.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_arbitration_treats_score_removal_as_neutral_review` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `578` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan grade-only execution-status lock)
 
 ### Changed: grade-only validation changes count as changed execution

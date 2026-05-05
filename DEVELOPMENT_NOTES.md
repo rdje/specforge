@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan score-removal arbitration lock
+- New batch slice 20/40 adds arbitration coverage for score removal from validation snapshots.
+- No production arbitration code changed; `validation_delta` already leaves `score_delta` as `None` when either side lacks a numeric score, and arbitration treats that as neutral review unless some other directional finding/count signal moves.
+- This keeps optional validation-score availability drift review-required without misclassifying it as a score regression.
+
 ## 2026-05-05 rescan-plan grade-only execution-status lock
 - New batch slice 19/40 adds execution-status coverage for grade-only validation changes.
 - No production status code changed; grade-label drift already marks execution as `executed_validated_changed` even when arbitration classifies it as neutral review.

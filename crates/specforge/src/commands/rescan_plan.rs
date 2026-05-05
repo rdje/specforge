@@ -2248,6 +2248,30 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_arbitration_treats_score_removal_as_neutral_review() {
+        let before = ProjectRescanValidationSnapshot {
+            artifact_fingerprint: "aaa".to_string(),
+            overall_score: Some(80),
+            grade: None,
+            finding_count: 0,
+            finding_ids: Vec::new(),
+        };
+        let after = ProjectRescanValidationSnapshot {
+            overall_score: None,
+            ..before.clone()
+        };
+
+        let delta = validation_delta(&before, &after);
+
+        assert!(delta.score_changed);
+        assert_eq!(delta.score_delta, None);
+        assert_eq!(
+            arbitration_verdict(&delta),
+            ARBITRATION_NEUTRAL_CHANGE_REVIEW_REQUIRED
+        );
+    }
+
+    #[test]
     fn rescan_plan_arbitration_treats_grade_only_changes_as_neutral_review() {
         let before = ProjectRescanValidationSnapshot {
             artifact_fingerprint: "aaa".to_string(),
