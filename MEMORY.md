@@ -16,60 +16,49 @@
 - `git_message_brief.txt` must stay untracked and be truncated to `0` bytes after each commit
 - every completion message must report the commit id, exact commit message, full tracked-file list, current live-status snapshot, and whether that snapshot changed
 - outside explicit batch runs, do not push unless the user asks or the branch reaches `25` local commits since the last push
-- active batch-run rule: for this `N=20` batch, commit after every slice but defer push until all 20 slices complete; do not push at the `25`-commit threshold during the batch
+- active batch-run rule: for the new `N=20` batch, commit after every slice but defer push until all 20 slices complete; do not push at the `25`-commit threshold during the batch
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `7b4725d112f87d8c6cb4dc72cc72432bd1491fc9`
-- latest_commit_brief_message: `test(rescan): lock intent lane mismatches`
-- note: the latest committed baseline is local batch-20 slice 19; push remains deferred until slice 20 is committed
+- latest_commit_hash: `1175e509916f8d1f0e98e4366c944d88e613035e`
+- latest_commit_brief_message: `test(rescan): lock unknown command intents`
+- note: this is the pushed baseline before starting the next local `N=20` batch
 
 ## Recent commit chain (last 6)
+- `1175e50` test(rescan): lock unknown command intents
 - `7b4725d` test(rescan): lock intent lane mismatches
 - `4ee80c8` test(rescan): lock unknown provider values
 - `be4f608` test(rescan): lock flag-shaped provider values
 - `c5c52d1` fix(rescan): reject flag-shaped model values
 - `ceac97b` test(rescan): lock explicit provider hints
-- `4a45a32` test(rescan): lock missing model values
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 19]`
-- files in flight for batch-20 slice 20:
-  - `CHANGES.md`
-  - `DEVELOPMENT_NOTES.md`
-  - `LIVE_ACHIEVEMENT_STATUS.md`
+- branch state before the next commit: `main...origin/main`
+- files in flight for new batch slice 1:
   - `MEMORY.md`
-  - `ROADMAP.md`
-  - `RUST_CODEBASE_ANALYSIS.md`
-  - `crates/specforge/src/commands/rescan_plan.rs`
-  - `docs/book/src/commands/quality-and-learning.md`
-  - `docs/book/src/quality/validation.md`
 
 ## Active N-slice batch
 - requested_count: `20`
-- completed_count: `19`
-- push_policy: defer push until all `20` slices are committed; do not push at the `25`-commit threshold during this batch
+- completed_count: `0`
+- push_policy: defer push until all `20` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - lock unknown structured command-intent rejection in `rescan-plan` command hints
-  - ensure valid-looking subcommands still require an allowed replay intent lane
+  - record the new `N=20` batch state after the previous batch was pushed
+  - correct the latest committed baseline and push-deferral state before implementation work continues
 - tracker effect:
-  - add a `Done` live-status row for unknown command-intent rejection
+  - no live-status row change expected; this is continuity state only
 - verification status:
-  - focused test passed: `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_unknown_command_intents`
-  - `cargo fmt --manifest-path Cargo.toml -- --check` passed
-  - `bash scripts/run_docs_ci.sh` passed
-  - `bash scripts/run_ci.sh` passed with `540` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
-  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `130/130` fixtures
-  - `git diff --check` passed
+  - no Rust behavior changed
+  - `bash scripts/run_docs_ci.sh` pending
+  - `git diff --check` pending
   - checkout-specific absolute path scan across tracked markdown passed
 - current known local CI baseline:
   - `540` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `130/130` tracked KG fixtures
 
 ## Next exact steps
-- run slice 20 verification, update validation results, commit slice 20, then push the completed `N=20` batch
+- commit slice 1 batch-state update without pushing, then pick the next focused implementation/test slice
