@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan extra stage-arg lock
+- New batch slice 3/20 adds the negative side of the non-enrichment stage parser boundary.
+- `parse_command_hint(...)` already accepts stage rebuild and validation hints only in exact two-token stage forms.
+- Added `rescan_plan_rejects_extra_stage_command_args` so dry-run or strict-style extras cannot sneak into replay execution for `ingest`, `evidence`, `semantic`, or `validate`.
+
 ## 2026-05-05 rescan-plan stage command parser lock
 - New batch slice 2/20 adds positive parser coverage for non-enrichment replay lanes.
 - `parse_command_hint(...)` already accepted `ingest`, `evidence`, `semantic`, and `validate` only when paired with their structured rescan intents.

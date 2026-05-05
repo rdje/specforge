@@ -950,6 +950,45 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_rejects_extra_stage_command_args() {
+        let ingest_extra = command_hint(
+            "rebuild_source_ir",
+            vec!["ingest", "specs/doc.md", "--dry-run"],
+        );
+        assert!(parse_command_hint(&ingest_extra).is_err());
+
+        let evidence_extra = command_hint(
+            "rebuild_evidence_ir",
+            vec![
+                "evidence",
+                "generated/source_ir/doc/source_ir.json",
+                "--dry-run",
+            ],
+        );
+        assert!(parse_command_hint(&evidence_extra).is_err());
+
+        let semantic_extra = command_hint(
+            "rebuild_semantic_ir",
+            vec![
+                "semantic",
+                "generated/evidence_ir/doc/evidence_ir.json",
+                "--dry-run",
+            ],
+        );
+        assert!(parse_command_hint(&semantic_extra).is_err());
+
+        let validate_extra = command_hint(
+            "validate_current_artifact",
+            vec![
+                "validate",
+                "generated/intent_ir/doc/intent_ir.json",
+                "--strict",
+            ],
+        );
+        assert!(parse_command_hint(&validate_extra).is_err());
+    }
+
+    #[test]
     fn rescan_plan_rejects_command_intent_subcommand_mismatches() {
         let evidence_intent_with_semantic_subcommand = command_hint(
             "rebuild_evidence_ir",

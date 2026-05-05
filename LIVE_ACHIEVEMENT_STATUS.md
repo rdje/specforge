@@ -46,6 +46,7 @@
 - `specforge rescan-plan` intent/subcommand mismatches are rejected: Done
 - `specforge rescan-plan` unknown command intents are rejected: Done
 - `specforge rescan-plan` stage command parsing is regression-locked: Done
+- `specforge rescan-plan` extra stage command args are rejected: Done
 - `specforge kg-bench` command created: Done
 - `specforge learn-priors` command created: Done
 - `specforge corpus-kb` command created: Done
