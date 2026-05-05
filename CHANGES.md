@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan grade-only execution-status lock)
+
+### Changed: grade-only validation changes count as changed execution
+- Added execution-status coverage proving grade-only validation deltas are marked `executed_validated_changed`.
+- This keeps neutral-review grade drift visible as an executed change while arbitration keeps it out of regression/improvement buckets.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_execution_status_treats_grade_only_delta_as_changed` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `577` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan grade-only arbitration lock)
 
 ### Changed: grade-only validation changes stay neutral review

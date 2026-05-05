@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan grade-only execution-status lock
+- New batch slice 19/40 adds execution-status coverage for grade-only validation changes.
+- No production status code changed; grade-label drift already marks execution as `executed_validated_changed` even when arbitration classifies it as neutral review.
+- This keeps qualitative validation changes visible in execution counters without promoting them or calling them regressions.
+
 ## 2026-05-05 rescan-plan grade-only arbitration lock
 - New batch slice 18/40 adds arbitration coverage for grade-only validation changes.
 - No production arbitration code changed; grade-label drift already produces `neutral_change_review_required` when score, fingerprint, and finding surfaces do not move.

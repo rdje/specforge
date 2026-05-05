@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan grade-only execution status)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` execution-status tests around grade-only validation changes.
+- No production status code changed; the new regression proves qualitative grade drift still counts as `executed_validated_changed` even when arbitration stays neutral review.
+- This keeps report counters honest for non-promotional validation changes.
+
 ## Session update (2026-05-05 rescan-plan grade-only arbitration)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` arbitration tests around grade-only validation changes.
 - No production arbitration code changed; the new regression proves grade-label drift alone produces neutral review rather than regression or improvement.
