@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 semantic modality-prior source-kind guard fixture)
+- Added `semantic_modality_reliability_source_kind_mismatch_negative` to the KG quality corpus.
+- The fixture proves semantic modality-reliability prior bonuses remain source-kind scoped: a visual-caption reliability prior cannot decide a prose/table semantic conflict.
+- This is a test-only guard around the existing exact source-kind filter in `CorpusMemory::semantic_modality_reliability_bonus`.
+
 ## Session update (2026-05-05 semantic modality-prior weak-margin guard)
 - Hardened `crates/specforge/src/ir/semantic.rs` so semantic modality-reliability priors are applied once per source kind while building a role candidate.
 - Prior-guided semantic arbitration now requires decisive-strength prior adjustment before learned modality reliability can resolve a conflict, preventing weak priors from using existing evidence asymmetry to force consensus.

@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-05 (semantic modality-prior source-kind guard fixture)
+
+### Changed: modality reliability priors stay source-kind scoped
+- Added a KG negative fixture proving a learned `visual_caption` modality-reliability prior cannot strengthen conflicting prose/table semantic-role evidence.
+- The fixture keeps `XCTRL` non-decisive with the semantic conflict visible, while the existing strong-prior and weak-prior controls still pass.
+- Refreshed corpus-KB fixture projections so the prior-memory and semantic/truthfulness pages count the source-kind mismatch guard fixture.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_modality_reliability_source_kind_mismatch_negative semantic_modality_reliability_prior_guided_conflict_gold semantic_modality_reliability_weak_prior_negative` -> passed (`3` fixtures, `0` failures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`140` fixtures, `0` failures)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`593` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`140` fixtures, `0` failures)
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (semantic modality-prior weak-margin guard)
 
 ### Changed: weak modality priors cannot decide semantic conflicts

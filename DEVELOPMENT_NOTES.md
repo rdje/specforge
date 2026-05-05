@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 semantic modality-prior source-kind guard fixture
+- New batch slice 9/100 adds `semantic_modality_reliability_source_kind_mismatch_negative`.
+- No production code changed; `CorpusMemory::semantic_modality_reliability_bonus` already requires exact `SignalSemanticHintSourceKind` match before returning a prior bonus.
+- The fixture stages a strong `visual_caption` reliability prior while the current local conflict is carried by prose plus a signal-description table, and expects no prior-guided arbitration or semantic consensus.
+- The corpus-KB prior-memory page now counts both a weak-margin guard and a source-kind guard for semantic modality-reliability priors.
+
 ## 2026-05-05 semantic modality-prior weak-margin guard
 - New batch slice 8/100 adds `semantic_modality_reliability_weak_prior_negative` and hardens semantic arbitration in `crates/specforge/src/ir/semantic.rs`.
 - The fixture reproduced that a weak `semantic_modality_reliability_prior` could resolve an otherwise contested `XCTRL` role because duplicate local observations from the same source kind stacked the same prior bonus.

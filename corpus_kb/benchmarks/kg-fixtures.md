@@ -13,8 +13,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 <!-- corpus_kb_kg_fixtures:start -->
 <!-- This block is refreshed by `specforge corpus-kb`. -->
 
-- fixtures_total: `139`
-- fixtures_passed: `139`
+- fixtures_total: `140`
+- fixtures_passed: `140`
 - fixtures_failed: `0`
 
 ### Fixture Family Summary
@@ -31,11 +31,11 @@ Fixtures can appear in more than one family because protocol semantics, modality
 | polarity semantics | `8` | `8` | `0` |
 | protocol-family AMBA/APB/AHB/AXI | `36` | `36` | `0` |
 | residuals and caveats | `4` | `4` | `0` |
-| semantic role arbitration | `26` | `26` | `0` |
+| semantic role arbitration | `27` | `27` | `0` |
 | table extraction and hygiene | `9` | `9` | `0` |
 | temporal semantics | `69` | `69` | `0` |
-| truthfulness negatives and cautions | `62` | `62` | `0` |
-| typed prior memory | `27` | `27` | `0` |
+| truthfulness negatives and cautions | `63` | `63` | `0` |
+| typed prior memory | `28` | `28` | `0` |
 
 ### actor_boundary_residual
 - fixture_path: `crates/specforge/test_data/kg_quality/actor_boundary_residual/fixture.json`
@@ -573,6 +573,12 @@ Fixtures can appear in more than one family because protocol semantics, modality
 
 ### semantic_modality_reliability_prior_guided_conflict_without_prior_negative
 - fixture_path: `crates/specforge/test_data/kg_quality/semantic_modality_reliability_prior_guided_conflict_without_prior_negative/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### semantic_modality_reliability_source_kind_mismatch_negative
+- fixture_path: `crates/specforge/test_data/kg_quality/semantic_modality_reliability_source_kind_mismatch_negative/fixture.json`
 - status: `pass`
 - failures:
   - none
