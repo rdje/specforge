@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 semantic modality-prior weak-margin guard
+- New batch slice 8/100 adds `semantic_modality_reliability_weak_prior_negative` and hardens semantic arbitration in `crates/specforge/src/ir/semantic.rs`.
+- The fixture reproduced that a weak `semantic_modality_reliability_prior` could resolve an otherwise contested `XCTRL` role because duplicate local observations from the same source kind stacked the same prior bonus.
+- `semantic_prior_reliability_adjustment` now deduplicates source kinds before applying learned modality-reliability bonuses, and prior-guided arbitration now requires a decisive-strength prior adjustment of at least `2`.
+- The strong-prior gold fixture still resolves, while the no-prior and weak-prior negatives both stay non-decisive with the conflict visible.
+- The corpus-KB prior-memory page now counts the fixture as a weak semantic modality-prior guard.
+
 ## 2026-05-05 semantic prior broad-phrase guard
 - New batch slice 7/100 adds `semantic_prior_broad_phrase_negative` and hardens `crates/specforge/src/ir/prior_memory.rs`.
 - The new fixture initially reproduced a false positive: a loaded one-token semantic prior `transfer` could resolve `XFLOW can sequence the transfer` as `handshake_valid_like`.

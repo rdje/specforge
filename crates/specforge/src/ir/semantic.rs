@@ -7607,13 +7607,16 @@ fn semantic_prior_reliability_adjustment(
 
     observations
         .iter()
-        .map(|observation| {
+        .map(|observation| observation.source_kind)
+        .collect::<std::collections::BTreeSet<_>>()
+        .into_iter()
+        .map(|source_kind| {
             prior_guidance
                 .corpus_memory
                 .semantic_modality_reliability_bonus(
                     Some(prior_guidance.protocol_family),
                     role,
-                    observation.source_kind,
+                    source_kind,
                 )
         })
         .sum()
@@ -7646,6 +7649,7 @@ fn build_semantic_arbitration(
     });
     let prior_guided_margin = runner_up_candidate.is_some_and(|runner_up| {
         leading_candidate.prior_reliability_adjustment > runner_up.prior_reliability_adjustment
+            && leading_candidate.prior_reliability_adjustment >= 2
             && margin_over_runner_up.unwrap_or_default() >= 2
             && !leading_candidate.alias_dependent
             && !matches!(

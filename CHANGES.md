@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-05-05 (semantic modality-prior weak-margin guard)
+
+### Changed: weak modality priors cannot decide semantic conflicts
+- Hardened semantic modality-reliability arbitration so duplicate local observations from the same source kind cannot stack the same prior bonus repeatedly.
+- Required a prior-guided arbitration margin to carry at least a decisive-strength prior adjustment before it can resolve otherwise competing local semantic-role evidence.
+- Added a KG negative fixture proving a weak `signal_description_table` modality prior keeps `XCTRL` non-decisive when local prose and table evidence still conflict.
+- Refreshed corpus-KB fixture projections so the prior-memory and semantic/truthfulness pages count the weak-prior guard fixture.
+
+### Validation
+- pre-fix `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_modality_reliability_weak_prior_negative semantic_modality_reliability_prior_guided_conflict_gold semantic_modality_reliability_prior_guided_conflict_without_prior_negative` reproduced the false prior-guided resolution
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_modality_reliability_weak_prior_negative semantic_modality_reliability_prior_guided_conflict_gold semantic_modality_reliability_prior_guided_conflict_without_prior_negative` -> passed (`3` fixtures, `0` failures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`139` fixtures, `0` failures)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`593` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`139` fixtures, `0` failures)
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (semantic prior broad-phrase guard)
 
 ### Changed: one-token semantic phrase priors no longer resolve roles
