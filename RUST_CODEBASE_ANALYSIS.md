@@ -4,6 +4,14 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 conflicted graph direction gaps)
+- Tightened `crates/specforge/src/commands/validate.rs` so same-actor graph-direction conflicts are not treated as resolved coverage but also no longer disappear from graph-coverage debt.
+- `missing_graph_direction_signal_names(...)` now includes every declared/interface signal absent from the resolved graph-direction set, including conflicted signals.
+- `unresolved_missing_compat_direction_signal_names(...)` now reports flat-hint-missing conflicted signals as unresolved compatibility gaps instead of suppressing them behind the conflict-only surface.
+- The existing conflict-specific findings and `*_graph_direction_conflict_surface_rescan_guidance` remain the actor-aware diagnostic path, with related ids such as `graph_direction_conflict:actor_completer:PREADY`.
+- Added `compat_direction_hints_graph_conflict_incomplete_negative` so the tracked KG suite proves this behavior through the staged pipeline, not only through validator unit tests.
+- Updated `graph_direction_same_actor_conflict_negative` to keep the flat-hint-present conflict path aligned: conflict evidence still produces graph-coverage debt, but no unresolved compatibility-direction debt is expected while the flat hint exists.
+
 ## Session update (2026-05-05 KG fixture for mixed direction-gap states)
 - Added `compat_direction_hints_mixed_lag_incomplete_negative` to the tracked KG-quality suite.
 - The fixture covers a mixed validation state: `PREADY` is graph-backed but flat-hint-missing, while `PSEL` is flat-hint-missing and graph-uncovered.

@@ -1,7 +1,8 @@
 {
-  "name": "graph_direction_same_actor_conflict_negative",
+  "name": "compat_direction_hints_graph_conflict_incomplete_negative",
   "source": "source.md",
   "semantic_ir_patch": {
+    "clear_signal_direction_hints": ["PREADY"],
     "actor_ports_append": [
       {
         "actor_id": "actor_completer",
@@ -16,37 +17,21 @@
   },
   "expectations": {
     "semantic": {
-      "graph_direction_signal_names_include": ["PADDR"],
-      "graph_direction_signal_names_exclude": ["PREADY"],
-      "graph_direction_conflicted_signal_names_include": ["PREADY"],
-      "graph_direction_conflicted_signal_names_exclude": ["PADDR"],
-      "graph_direction_conflicts_include": [
-        {
-          "signal_name": "PREADY",
-          "actor_name": "Completer"
-        }
-      ]
+      "signal_names_include": ["PREADY"],
+      "graph_direction_signal_names_exclude": ["PREADY"]
     },
     "intent": {
-      "graph_direction_signal_names_include": ["PADDR"],
-      "graph_direction_signal_names_exclude": ["PREADY"],
-      "graph_direction_conflicted_signal_names_include": ["PREADY"],
-      "graph_direction_conflicted_signal_names_exclude": ["PADDR"],
-      "graph_direction_conflicts_include": [
-        {
-          "signal_name": "PREADY",
-          "actor_name": "Completer"
-        }
-      ]
+      "signal_names_include": ["PREADY"],
+      "graph_direction_signal_names_exclude": ["PREADY"]
     },
     "validation": {
       "semantic": {
         "finding_ids_include": [
           "semantic_graph_direction_coverage_incomplete",
-          "semantic_graph_direction_coverage_surface_rescan_guidance",
           "semantic_graph_direction_conflicts_present",
-          "semantic_graph_direction_conflict_surface_rescan_guidance"
+          "semantic_compat_direction_hints_incomplete"
         ],
+        "finding_ids_exclude": ["semantic_compat_direction_hints_lag_graph"],
         "findings_include": [
           {
             "finding_id": "semantic_graph_direction_coverage_incomplete",
@@ -63,24 +48,28 @@
             "related_ids_include": ["graph_direction_conflict:actor_completer:PREADY"]
           },
           {
-            "finding_id": "semantic_graph_direction_conflict_surface_rescan_guidance",
+            "finding_id": "semantic_compat_direction_hints_incomplete",
             "severity": "info",
-            "category": "rescan_guidance",
-            "summary_contains": "same-actor direction disagreement",
-            "related_ids_include": ["graph_direction_conflict:actor_completer:PREADY"]
+            "category": "compatibility_surface",
+            "summary_contains": "1 interface signal record(s) still lack flat compatibility direction hints and actor-relative graph coverage",
+            "related_ids_include": ["PREADY"]
           }
         ],
         "metric_values": {
+          "total_signal_records": "1",
+          "with_resolved_direction": "0",
+          "with_graph_direction": "0",
+          "with_compat_direction_hint": "0",
           "graph_direction_conflicts": "1"
         }
       },
       "intent": {
         "finding_ids_include": [
           "intent_graph_direction_coverage_incomplete",
-          "intent_graph_direction_coverage_surface_rescan_guidance",
           "intent_graph_direction_conflicts_present",
-          "intent_graph_direction_conflict_surface_rescan_guidance"
+          "intent_compat_direction_hints_incomplete"
         ],
+        "finding_ids_exclude": ["intent_compat_direction_hints_lag_graph"],
         "findings_include": [
           {
             "finding_id": "intent_graph_direction_coverage_incomplete",
@@ -97,14 +86,18 @@
             "related_ids_include": ["graph_direction_conflict:actor_completer:PREADY"]
           },
           {
-            "finding_id": "intent_graph_direction_conflict_surface_rescan_guidance",
+            "finding_id": "intent_compat_direction_hints_incomplete",
             "severity": "info",
-            "category": "rescan_guidance",
-            "summary_contains": "same-actor direction disagreement",
-            "related_ids_include": ["graph_direction_conflict:actor_completer:PREADY"]
+            "category": "compatibility_surface",
+            "summary_contains": "1 declared signal record(s) still lack flat compatibility direction hints and actor-relative graph coverage",
+            "related_ids_include": ["PREADY"]
           }
         ],
         "metric_values": {
+          "declared_signal_records": "1",
+          "with_resolved_direction": "0",
+          "with_graph_direction": "0",
+          "with_compat_direction_hint": "0",
           "graph_direction_conflicts": "1"
         }
       }

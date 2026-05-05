@@ -1,5 +1,29 @@
 # CHANGES
 
+## 2026-05-05 (KG fixture for conflicted graph direction gaps)
+
+### Changed: conflicted graph direction stays unresolved for coverage
+- Updated `SemanticIR` and `IntentIR` validation so same-actor graph-direction conflicts still count as missing graph-derived direction coverage while remaining excluded from resolved graph direction metrics.
+- Missing flat compatibility direction hints on conflicted graph signals now report the unresolved `*_compat_direction_hints_incomplete` findings instead of being silently covered by the conflict-only path.
+- The existing `*_graph_direction_conflicts_present` findings and rescan guidance remain the precise diagnostic for why the graph coverage is unresolved.
+
+### Added: conflicted graph-direction compatibility fixture
+- Added `compat_direction_hints_graph_conflict_incomplete_negative`.
+- The fixture clears `PREADY`'s flat compatibility direction and injects conflicting same-actor `Completer` graph directions.
+- SemanticIR and IntentIR validation must now report graph-direction conflict findings, graph-direction coverage gaps, and unresolved compatibility-direction gaps for `PREADY`, while excluding graph-backed compatibility-lag findings.
+- Updated the existing `graph_direction_same_actor_conflict_negative` fixture so conflict-only graph evidence also expects graph-direction coverage debt when flat compatibility hints remain present.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench compat_direction_hints_graph_conflict_incomplete_negative` -> passed with `1` fixture and `0` failures
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench graph_direction_same_actor_conflict_negative` -> passed with `1` fixture and `0` failures
+- `cargo test --manifest-path Cargo.toml -p specforge graph_direction` -> passed with `12` graph-direction tests
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `521` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (KG fixture for mixed direction-gap states)
 
 ### Added: mixed compatibility-direction finding fixture

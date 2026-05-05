@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 KG fixture for conflicted graph direction gaps
+- Batch slice 3/10 closes the conflicted-evidence sibling of the compatibility-direction split.
+- The focused failure was useful: same-actor graph-direction conflicts were excluded from resolved graph direction metrics, but validation also excluded them from generic graph-coverage and unresolved compatibility-direction findings.
+- `missing_graph_direction_signal_names(...)` and `unresolved_missing_compat_direction_signal_names(...)` now treat conflicted signals as unresolved, while `graph_direction_coverage_summary(...)` still keeps them out of the resolved graph-direction set.
+- The conflict-specific findings and replay guidance stay in place, so users see both:
+  - the generic coverage debt on the affected signal
+  - the exact `graph_direction_conflict:<actor>:<signal>` id explaining why graph coverage cannot be credited
+- Added `compat_direction_hints_graph_conflict_incomplete_negative`, which clears `PREADY`'s flat hint and injects a conflicting same-actor `Completer` actor port.
+- The fixture proves `SemanticIR` and `IntentIR` emit graph conflict, coverage incomplete, and unresolved compatibility findings for `PREADY`, while excluding graph-backed compatibility-lag findings.
+- Refreshed `graph_direction_same_actor_conflict_negative` so the older flat-hint-present conflict fixture also expects graph-direction coverage debt without adding compatibility-surface debt.
+
 ## 2026-05-05 KG fixture for mixed direction-gap states
 - Batch slice 2/10 deepens the previous compatibility-direction fixture into a mixed-state case.
 - `compat_direction_hints_mixed_lag_incomplete_negative` starts with two declared signals and clears both flat `direction_hint` values:

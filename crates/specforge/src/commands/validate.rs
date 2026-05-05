@@ -1141,15 +1141,11 @@ fn graph_direction_conflict_related_id(conflict: &GraphDirectionConflictRecord) 
 fn missing_graph_direction_signal_names<'a>(
     signals: impl IntoIterator<Item = &'a crate::ir::semantic::InterfaceSignalRecord>,
     graph_direction_signal_names: &BTreeSet<String>,
-    conflicted_signal_names: &BTreeSet<String>,
 ) -> Vec<String> {
     signals
         .into_iter()
         .map(|signal| signal.signal_name.clone())
-        .filter(|signal_name| {
-            !graph_direction_signal_names.contains(signal_name)
-                && !conflicted_signal_names.contains(signal_name)
-        })
+        .filter(|signal_name| !graph_direction_signal_names.contains(signal_name))
         .collect::<BTreeSet<_>>()
         .into_iter()
         .collect()
@@ -1174,14 +1170,12 @@ fn graph_backed_missing_compat_direction_signal_names<'a>(
 fn unresolved_missing_compat_direction_signal_names<'a>(
     signals: impl IntoIterator<Item = &'a crate::ir::semantic::InterfaceSignalRecord>,
     graph_direction_signal_names: &BTreeSet<String>,
-    conflicted_signal_names: &BTreeSet<String>,
 ) -> Vec<String> {
     signals
         .into_iter()
         .filter(|signal| {
             signal.direction_hint.is_none()
                 && !graph_direction_signal_names.contains(&signal.signal_name)
-                && !conflicted_signal_names.contains(&signal.signal_name)
         })
         .map(|signal| signal.signal_name.clone())
         .collect::<BTreeSet<_>>()
@@ -2812,7 +2806,6 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     let missing_graph_direction_signal_names = missing_graph_direction_signal_names(
         ir.interfaces.iter().flat_map(|i| i.signal_records.iter()),
         graph_direction_signals,
-        graph_direction_conflicts,
     );
     let graph_direction_conflict_related_ids: Vec<String> = graph_direction_summary
         .conflicts
@@ -2829,7 +2822,6 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         unresolved_missing_compat_direction_signal_names(
             ir.interfaces.iter().flat_map(|i| i.signal_records.iter()),
             graph_direction_signals,
-            graph_direction_conflicts,
         );
     let (with_direction, with_graph_direction, with_compat_direction_hint) =
         resolved_direction_counts(
@@ -4118,7 +4110,6 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     let missing_graph_direction_signal_names = missing_graph_direction_signal_names(
         declared_signals.iter().copied(),
         graph_direction_signals,
-        graph_direction_conflicts,
     );
     let graph_direction_conflict_related_ids: Vec<String> = graph_direction_summary
         .conflicts
@@ -4135,7 +4126,6 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         unresolved_missing_compat_direction_signal_names(
             declared_signals.iter().copied(),
             graph_direction_signals,
-            graph_direction_conflicts,
         );
     let (with_direction, with_graph_direction, with_compat_direction_hint) =
         resolved_direction_counts(declared_signals.iter().copied(), graph_direction_signals);
@@ -8165,9 +8155,20 @@ mod tests {
             rescan_guidance.related_ids,
             vec!["graph_direction_conflict:actor_completer:PREADY".to_string()]
         );
-        assert!(
-            !has_finding(&report, "intent_graph_direction_coverage_incomplete"),
-            "same-actor graph conflicts should report via the conflict surface rather than the generic coverage-gap finding"
+        let coverage_finding = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "intent_graph_direction_coverage_incomplete")
+            .expect("expected conflicted graph direction to remain a coverage gap");
+        assert_eq!(coverage_finding.related_ids, vec!["PREADY".to_string()]);
+        let unresolved_compat_finding = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "intent_compat_direction_hints_incomplete")
+            .expect("expected conflicted graph direction to remain an unresolved compat gap");
+        assert_eq!(
+            unresolved_compat_finding.related_ids,
+            vec!["PREADY".to_string()]
         );
 
         Ok(())
@@ -8272,9 +8273,20 @@ mod tests {
             rescan_guidance.related_ids,
             vec!["graph_direction_conflict:actor_completer:PREADY".to_string()]
         );
-        assert!(
-            !has_finding(&report, "semantic_graph_direction_coverage_incomplete"),
-            "same-actor graph conflicts should report via the conflict surface rather than the generic coverage-gap finding"
+        let coverage_finding = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "semantic_graph_direction_coverage_incomplete")
+            .expect("expected conflicted graph direction to remain a coverage gap");
+        assert_eq!(coverage_finding.related_ids, vec!["PREADY".to_string()]);
+        let unresolved_compat_finding = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "semantic_compat_direction_hints_incomplete")
+            .expect("expected conflicted graph direction to remain an unresolved compat gap");
+        assert_eq!(
+            unresolved_compat_finding.related_ids,
+            vec!["PREADY".to_string()]
         );
 
         Ok(())
