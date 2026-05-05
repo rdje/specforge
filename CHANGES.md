@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan explicit provider lock)
+
+### Changed: missing local replay providers now have parser coverage
+- Added negative coverage for source enrichment command hints that omit `--vlm-provider`.
+- Added the same provider-omission coverage for NLP enrichment command hints.
+- This keeps replay hints local-provider explicit instead of relying on defaults at execution time.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_missing_explicit_provider_hints` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `535` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan missing model-value lock)
 
 ### Changed: missing replay model values now have parser coverage

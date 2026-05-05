@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan explicit provider hints)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` parser tests around local replay provider policy.
+- No production parser code changed; missing explicit `--vlm-provider` is now directly covered for both enrich and NLP-enrich command hints.
+- This keeps replay execution local-provider explicit instead of letting hidden defaults leak into generated rescan plans.
+
 ## Session update (2026-05-05 rescan-plan missing model values)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` parser tests around truncated local replay model overrides.
 - No production parser code changed; missing `--vlm-model` values are now directly covered for both enrich and NLP-enrich command hints.

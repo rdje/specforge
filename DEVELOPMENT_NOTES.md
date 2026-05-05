@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan explicit provider lock
+- Batch slice 15/20 adds coverage for local replay hints that omit provider policy entirely.
+- `parse_enrich_command_hint_args(...)` and `parse_nlp_enrich_command_hint_args(...)` intentionally require explicit `--vlm-provider` so execution cannot inherit a default silently.
+- Added `rescan_plan_rejects_missing_explicit_provider_hints` for both source enrichment and NLP enrichment command hints.
+
 ## 2026-05-05 rescan-plan missing model-value lock
 - Batch slice 14/20 adds focused parser coverage for truncated model override hints.
 - Both `parse_enrich_command_hint_args(...)` and `parse_nlp_enrich_command_hint_args(...)` already rejected `--vlm-model` when no following value exists.
