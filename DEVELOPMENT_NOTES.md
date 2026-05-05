@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan large-limit queue lock
+- New batch slice 8/20 adds queue-selection coverage for oversized positive limits.
+- No production selection code changed; `selected_pending_indices(...)` already returns every pending item in original queue order when `limit` exceeds the pending count.
+- This protects automatic batch runs from dropping pending work when a caller supplies a limit larger than the available queue.
+
 ## 2026-05-05 rescan-plan dry-run command-display lock
 - New batch slice 7/20 adds render coverage that dry-run output uses `ProjectRescanCommandHint.display` for human review.
 - No production render code changed; `render_dry_run_plan(...)` already prints command intent plus display text.

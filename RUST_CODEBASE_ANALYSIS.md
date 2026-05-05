@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan large-limit queue selection)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` queue-selection tests around oversized positive limits.
+- No production selection code changed; pending recommendations now have direct coverage for all-pending preservation when `limit` is larger than the queue.
+- This protects automatic batch execution from accidental pending-work loss when callers choose a generous limit.
+
 ## Session update (2026-05-05 rescan-plan dry-run command display)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` render tests around command-hint display text.
 - No production renderer code changed; dry-run output is now directly covered as printing `ProjectRescanCommandHint.display` for human review.

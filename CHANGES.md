@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan large-limit queue lock)
+
+### Changed: pending queue selection keeps all work when limit exceeds queue size
+- Added selection coverage proving a large positive `--limit` returns every pending recommendation in queue order.
+- This keeps oversized batch limits from acting like an accidental truncation or reorder.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_large_limit_keeps_all_pending_in_order` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `547` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan dry-run command-display lock)
 
 ### Changed: dry-run output keeps command display review-facing

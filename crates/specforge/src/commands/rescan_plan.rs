@@ -1435,6 +1435,23 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_large_limit_keeps_all_pending_in_order() {
+        let plan = ProjectRescanPlanRecord {
+            schema_version: 2,
+            generated_by: "test".to_string(),
+            recommendation_count: 4,
+            recommendations: vec![
+                recommendation("doc_a", PLANNED_NOT_EXECUTED),
+                recommendation("doc_b", EXECUTED_VALIDATED_NO_CHANGE),
+                recommendation("doc_c", PLANNED_NOT_EXECUTED),
+                recommendation("doc_d", PLANNED_NOT_EXECUTED),
+            ],
+        };
+
+        assert_eq!(selected_pending_indices(&plan, 10, None), vec![0, 2, 3]);
+    }
+
+    #[test]
     fn rescan_plan_dry_run_render_surfaces_replay_boundary_and_action() {
         let mut plan = ProjectRescanPlanRecord {
             schema_version: 2,
