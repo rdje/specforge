@@ -140,14 +140,15 @@
       "candidate_kind": "table_shape_prior",
       "target_schema": "CorpusMemory.table_shape_priors",
       "readiness": "fixture_paired_review_ready",
-      "supporting_fixture_count": 4,
+      "supporting_fixture_count": 5,
       "positive_fixture_count": 2,
-      "guard_fixture_count": 2,
+      "guard_fixture_count": 3,
       "supporting_fixtures": [
         "table_shape_prior_guided_signal_table_gold",
         "table_shape_prior_guided_signal_table_without_prior_negative",
         "table_shape_prior_guided_timing_table_gold",
-        "table_shape_prior_guided_timing_table_without_prior_negative"
+        "table_shape_prior_guided_timing_table_without_prior_negative",
+        "table_shape_prior_protocol_family_mismatch_negative"
       ],
       "positive_fixtures": [
         "table_shape_prior_guided_signal_table_gold",
@@ -155,7 +156,8 @@
       ],
       "guard_fixtures": [
         "table_shape_prior_guided_signal_table_without_prior_negative",
-        "table_shape_prior_guided_timing_table_without_prior_negative"
+        "table_shape_prior_guided_timing_table_without_prior_negative",
+        "table_shape_prior_protocol_family_mismatch_negative"
       ],
       "required_gates": "typed CorpusMemory schema; paired KG-bench gold/negative coverage; validated SourceIR/IntentIR harvest chain; local table-kind consumer",
       "gates": {

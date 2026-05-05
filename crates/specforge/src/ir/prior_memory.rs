@@ -253,7 +253,7 @@ impl CorpusMemory {
         role: InterfaceSignalSemanticRole,
         source_kind: SignalSemanticHintSourceKind,
     ) -> u32 {
-        for scope in semantic_modality_reliability_search_scopes(protocol_family) {
+        for scope in protocol_family_exact_or_amba_generic_search_scopes(protocol_family) {
             let bonus = self
                 .semantic_modality_reliability_priors
                 .iter()
@@ -396,15 +396,11 @@ impl CorpusMemory {
     ) -> Option<TableKind> {
         let normalized_header_signature = normalize_table_header_signature(table)?;
 
-        for scope in actor_taxonomy_search_scopes(protocol_family) {
+        for scope in protocol_family_exact_or_amba_generic_search_scopes(protocol_family) {
             let mut table_kinds = self
                 .table_shape_priors
                 .iter()
-                .filter(|prior| {
-                    scope
-                        .map(|expected| prior.protocol_family == expected)
-                        .unwrap_or(true)
-                })
+                .filter(|prior| prior.protocol_family == scope)
                 .filter(|prior| prior.normalized_header_signature == normalized_header_signature)
                 .map(|prior| prior.table_kind)
                 .collect::<Vec<_>>();
@@ -765,7 +761,7 @@ fn actor_taxonomy_search_scopes(
     scopes
 }
 
-fn semantic_modality_reliability_search_scopes(
+fn protocol_family_exact_or_amba_generic_search_scopes(
     protocol_family: Option<ProtocolFamily>,
 ) -> Vec<ProtocolFamily> {
     let mut scopes = Vec::new();

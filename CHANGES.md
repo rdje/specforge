@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-05-05 (table-shape prior protocol-family guard)
+
+### Changed: table-shape priors no longer fall through to unrelated protocol families
+- Added a KG negative fixture proving an APB-only table-shape prior for `Name | Direction | Width` cannot classify an AXI-local unknown table.
+- Reused the exact-family plus AMBA-generic prior lookup policy for table-shape classification, matching the semantic modality-prior family boundary.
+- Kept the existing table-shape signal-table gold, semantic modality-prior family mismatch guard, and AMBA-generic modality fallback gold passing under the shared family-scoped helper.
+- Refreshed corpus-KB fixture and prior-candidate projections so table-shape family-mismatch coverage is visible in the benchmark, table, truthfulness, and review-only readiness surfaces.
+
+### Validation
+- pre-fix `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench table_shape_prior_protocol_family_mismatch_negative table_shape_prior_guided_signal_table_gold` reproduced APB table-shape prior leakage into an AXI fixture
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench table_shape_prior_protocol_family_mismatch_negative table_shape_prior_guided_signal_table_gold semantic_modality_reliability_protocol_family_mismatch_negative semantic_modality_reliability_amba_generic_fallback_gold` -> passed (`4` fixtures, `0` failures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`143` fixtures, `0` failures)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`593` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`143` fixtures, `0` failures)
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (semantic modality-prior AMBA-generic fallback fixture)
 
 ### Changed: AMBA-generic modality prior fallback is regression-locked

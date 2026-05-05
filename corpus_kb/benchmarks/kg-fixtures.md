@@ -13,8 +13,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 <!-- corpus_kb_kg_fixtures:start -->
 <!-- This block is refreshed by `specforge corpus-kb`. -->
 
-- fixtures_total: `142`
-- fixtures_passed: `142`
+- fixtures_total: `143`
+- fixtures_passed: `143`
 - fixtures_failed: `0`
 
 ### Fixture Family Summary
@@ -32,9 +32,9 @@ Fixtures can appear in more than one family because protocol semantics, modality
 | protocol-family AMBA/APB/AHB/AXI | `36` | `36` | `0` |
 | residuals and caveats | `4` | `4` | `0` |
 | semantic role arbitration | `29` | `29` | `0` |
-| table extraction and hygiene | `9` | `9` | `0` |
+| table extraction and hygiene | `10` | `10` | `0` |
 | temporal semantics | `69` | `69` | `0` |
-| truthfulness negatives and cautions | `64` | `64` | `0` |
+| truthfulness negatives and cautions | `65` | `65` | `0` |
 | typed prior memory | `30` | `30` | `0` |
 
 ### actor_boundary_residual
@@ -717,6 +717,12 @@ Fixtures can appear in more than one family because protocol semantics, modality
 
 ### table_shape_prior_guided_timing_table_without_prior_negative
 - fixture_path: `crates/specforge/test_data/kg_quality/table_shape_prior_guided_timing_table_without_prior_negative/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### table_shape_prior_protocol_family_mismatch_negative
+- fixture_path: `crates/specforge/test_data/kg_quality/table_shape_prior_protocol_family_mismatch_negative/fixture.json`
 - status: `pass`
 - failures:
   - none

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 table-shape prior protocol-family guard)
+- Hardened `crates/specforge/src/ir/prior_memory.rs` so table-shape prior lookup now shares the exact-family plus AMBA-generic search policy with semantic modality-reliability priors.
+- Added `table_shape_prior_protocol_family_mismatch_negative`, which proved the previous broad fallback could let an APB table-shape prior classify an AXI-local unknown table and mint resolved directions.
+- The helper is now intentionally general for prior consumers that must stay exact-family scoped while preserving AMBA-generic reuse; unrelated concrete protocol families remain advisory-silent.
+
 ## Session update (2026-05-05 semantic modality-prior AMBA-generic fallback fixture)
 - Added `semantic_modality_reliability_amba_generic_fallback_gold` to the KG quality corpus.
 - This test-only slice locks the intended positive policy after protocol-family hardening: AMBA-generic modality-reliability priors can still guide AXI-family documents, while unrelated concrete families remain blocked.

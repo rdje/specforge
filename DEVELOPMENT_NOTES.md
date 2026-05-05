@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 table-shape prior protocol-family guard
+- New batch slice 12/100 adds `table_shape_prior_protocol_family_mismatch_negative` and hardens `CorpusMemory::table_kind_for_structured_table`.
+- The fixture reproduced a family leak: an APB-only `Name | Direction | Width` table-shape prior could classify an AXI-local unknown table through the broad prior-search fallback, producing resolved directions from unrelated prior memory.
+- Table-shape lookup now uses the same exact-family plus AMBA-generic helper as semantic modality-reliability lookup; unrelated concrete AMBA families no longer participate, and the old broad `None` fallback is not used for this prior consumer.
+- The existing table-shape signal-table gold still resolves, and the semantic modality-prior family guard plus AMBA-generic fallback gold continue to pass under the shared helper.
+- The corpus-KB benchmark, table-family, truthfulness, and prior-candidate readiness projections now count the table-shape family-mismatch guard.
+
 ## 2026-05-05 semantic modality-prior AMBA-generic fallback fixture
 - New batch slice 11/100 adds `semantic_modality_reliability_amba_generic_fallback_gold`.
 - No production code changed; this fixture locks the intended positive side of slice 10's protocol-family scoping change.
