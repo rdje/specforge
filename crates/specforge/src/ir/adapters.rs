@@ -6874,15 +6874,46 @@ mod tests {
 
         assert_eq!(adapter.lowering_status.as_str(), "renderable");
         let fsm = adapter.fsm.expect("fsm artifact should be present");
-        assert!(
-            fsm.signal_inventory
-                .iter()
-                .filter(|signal| signal.signal_name == "DATA_OUT")
-                .all(|signal| {
-                    signal.direction_hint.is_none()
-                        && signal.graph_direction_hint == Some(InterfaceSignalDirection::Output)
-                })
-        );
+        let data_out = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "DATA_OUT")
+            .expect("DATA_OUT should stay in the direct signal inventory");
+        let zero_flag = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "ZERO_FLAG")
+            .expect("ZERO_FLAG should stay in the direct signal inventory");
+
+        for (signal, support_id) in [
+            (data_out, "graph_controller_DATA_OUT"),
+            (zero_flag, "graph_controller_ZERO_FLAG"),
+        ] {
+            assert_eq!(signal.direction_hint, None);
+            assert_eq!(
+                signal.graph_direction_hint,
+                Some(InterfaceSignalDirection::Output)
+            );
+            assert!(
+                signal
+                    .mention_categories
+                    .iter()
+                    .any(|category| category == "actor_port")
+            );
+            assert!(
+                signal
+                    .supporting_canonical_ids
+                    .iter()
+                    .any(|id| id == support_id)
+            );
+            assert!(
+                !signal
+                    .supporting_canonical_ids
+                    .iter()
+                    .any(|id| id == "graph_monitor_SIDE_BAND")
+            );
+            assert_eq!(signal.automation_confidence, AutomationConfidence::High);
+        }
         assert!(
             fsm.signal_inventory
                 .iter()

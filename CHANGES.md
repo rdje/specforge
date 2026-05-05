@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` unrelated actor-port provenance lock)
+
+### Added: unrelated actor-port graph-context provenance coverage
+- Tightened `standalone_dt_ignores_unrelated_actor_ports_for_graph_context` so renderable direct-root graph recovery proves selected controller output support IDs and high automation confidence survive even when an unrelated actor exposes a side-band port.
+- This is coverage-only over the existing adapter behavior: unrelated actor-port signals stay out of `fsm.signal_inventory`.
+- The slice keeps direct actor selection auditable while proving unrelated side-band graph evidence does not contaminate selected output provenance.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_dt_ignores_unrelated_actor_ports_for_graph_context` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+
 ## 2026-05-05 (`.fsm` unambiguous direct actor provenance lock)
 
 ### Added: unambiguous direct actor-port direction provenance coverage
