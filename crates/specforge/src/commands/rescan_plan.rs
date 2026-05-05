@@ -753,6 +753,44 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_dry_run_report_tracks_selection_counts() -> Result<()> {
+        let tempdir = tempdir()?;
+        let plan_path = tempdir.path().join("rescan_plan.json");
+        let plan = ProjectRescanPlanRecord {
+            schema_version: 2,
+            generated_by: "test".to_string(),
+            recommendation_count: 3,
+            recommendations: vec![
+                recommendation("doc_target", PLANNED_NOT_EXECUTED),
+                recommendation("doc_other", PLANNED_NOT_EXECUTED),
+                recommendation("doc_target", EXECUTED_VALIDATED_NO_CHANGE),
+            ],
+        };
+        fs::write(&plan_path, serde_json::to_string_pretty(&plan)?)?;
+
+        let report = run_plan(RescanPlanArgs {
+            plan: plan_path.clone(),
+            execute: false,
+            limit: 1,
+            document_key: Some("doc_target".to_string()),
+            prior_memory: PathBuf::from("generated/prior_memory/corpus_memory.json"),
+        })?;
+
+        assert_eq!(report.plan_path, plan_path);
+        assert!(!report.execute);
+        assert_eq!(report.document_key_filter.as_deref(), Some("doc_target"));
+        assert_eq!(report.schema_version, 2);
+        assert_eq!(report.recommendation_count, 3);
+        assert_eq!(report.pending_recommendations, 1);
+        assert_eq!(report.selected_recommendations, 1);
+        assert_eq!(report.executed_validated_changed, 0);
+        assert_eq!(report.executed_validated_no_change, 0);
+        assert!(report.execution_summaries.is_empty());
+
+        Ok(())
+    }
+
+    #[test]
     fn rescan_plan_rejects_untrusted_command_hints() {
         let command = ProjectRescanCommandHint {
             intent: "rebuild_intent_ir".to_string(),

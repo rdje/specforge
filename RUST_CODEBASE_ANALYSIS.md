@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan dry-run report counts)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` dry-run run-report tests around scoped selection counters.
+- No production report code changed; the new regression proves non-executing reports retain the document-key filter, scoped pending count, selected count, and zero execution counters.
+- This keeps dry-run replay summaries deterministic before any local rescan mutation is allowed.
+
 ## Session update (2026-05-05 rescan-plan replay-input rendering)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` dry-run renderer tests around replay-input compact formatting.
 - No production renderer code changed; the new regression proves empty replay inputs render as `none` and non-empty inputs stay ordered as `kind:path` pairs.

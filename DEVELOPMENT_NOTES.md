@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan dry-run report count lock
+- New batch slice 14/40 adds `run_plan` dry-run coverage for report selection counters.
+- No production report code changed; dry-run reports already preserve the document-key filter, scoped pending count, selected count, and zero execution counters.
+- This keeps non-executing replay queue summaries reliable when operators scope and limit the plan.
+
 ## 2026-05-05 rescan-plan replay-input rendering lock
 - New batch slice 13/40 adds direct coverage for the dry-run `render_replay_inputs(...)` helper.
 - No production renderer code changed; the helper already renders empty replay inputs as `none` and non-empty inputs as ordered `kind:path` pairs.
