@@ -130,6 +130,7 @@ It can also scope a multi-document queue with `--document-key <key>`.
 Scoped queues still select only pending `planned_not_executed` recommendations; executed matches and missing document keys produce no pending dry-run work.
 Execution validates before and after the rebuild and records only neutral changed/no-change status, not an improvement claim.
 Executed recommendations also persist an `execution_summary` containing before/after validation snapshots, score/finding deltas, added/removed finding ids, and a conservative verdict that distinguishes possible improvement from regression or neutral artifact drift while still requiring review.
+Sparse before/after score labels render as score plus grade, score only, grade only, or `n/a` when neither field exists.
 Added and removed finding-id lists are sorted and deduplicated before persistence so review diffs do not depend on raw validation-report ordering.
 If a delta contains both added and removed finding ids, added findings take regression-review precedence even when the score and total finding count stay flat.
 That summary also carries an explicit promotion gate: no-change executions remain `not_promoted_no_change`, and changed executions remain `not_promoted_review_required` until current-document evidence and arbitration policy approve any canonical change.

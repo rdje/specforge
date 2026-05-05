@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan score-label formatting lock)
+
+### Changed: sparse validation score labels now have direct coverage
+- Added regression coverage for the score label helper used by `rescan-plan` before/after validation snapshots.
+- The test locks all sparse forms:
+  - score plus grade, such as `91/100 EXCELLENT`
+  - score only, such as `72/100`
+  - grade only, such as `GOOD`
+  - no score or grade as `n/a`
+- This keeps execution summaries readable when older or partial validation reports lack one side of the score metadata.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_score_label_formats_sparse_validation_scores` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `531` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan mixed finding arbitration lock)
 
 ### Changed: added findings now dominate mixed finding exchanges in arbitration

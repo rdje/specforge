@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan score labels)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` presentation tests around validation score labels.
+- No production formatting changed; `score_label(...)` now has direct coverage for complete, score-only, grade-only, and absent metadata.
+- This protects review-facing execution-summary text for partial validation reports without changing the rescan executor contract.
+
 ## Session update (2026-05-05 rescan-plan mixed finding arbitration)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` arbitration tests for mixed finding exchanges.
 - No production verdict logic changed; the new regression locks the existing conservative order where added findings are checked before removed findings.

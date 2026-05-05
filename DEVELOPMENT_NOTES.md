@@ -7,6 +7,15 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan score-label formatting lock
+- Batch slice 11/20 adds focused coverage for `score_label(...)`, the helper used when execution summaries print before/after validation snapshots.
+- The helper intentionally handles sparse reports without hiding missing metadata:
+  - `Some(score)` plus grade renders as `<score>/100 <grade>`
+  - score-only renders as `<score>/100`
+  - grade-only renders as the grade
+  - missing score and grade renders as `n/a`
+- Added `rescan_plan_score_label_formats_sparse_validation_scores` so future presentation changes have to preserve those forms deliberately.
+
 ## 2026-05-05 rescan-plan mixed finding arbitration lock
 - Batch slice 10/20 adds coverage for the mixed finding-exchange case in execution-summary arbitration.
 - If an executed rescan removes one finding while adding another, the total finding count can remain unchanged and the score can remain flat.

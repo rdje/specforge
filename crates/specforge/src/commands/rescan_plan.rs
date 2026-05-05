@@ -1328,6 +1328,14 @@ mod tests {
         );
     }
 
+    #[test]
+    fn rescan_plan_score_label_formats_sparse_validation_scores() {
+        assert_eq!(score_label(Some(91), Some("EXCELLENT")), "91/100 EXCELLENT");
+        assert_eq!(score_label(Some(72), None), "72/100");
+        assert_eq!(score_label(None, Some("GOOD")), "GOOD");
+        assert_eq!(score_label(None, None), "n/a");
+    }
+
     fn command_hint(intent: &str, specforge_args: Vec<&str>) -> ProjectRescanCommandHint {
         let mut args = vec![
             "run".to_string(),
