@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan added-finding arbitration lock)
+
+### Changed: added findings stay regression review
+- Added arbitration coverage proving a newly added validation finding triggers `regression_review_required` even when score and finding-count metadata stay flat.
+- This keeps rescan execution conservative when the finding identity set worsens without an aggregate-count change.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_arbitration_treats_added_findings_as_regression` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `563` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan removed-finding arbitration lock)
 
 ### Changed: removed findings stay possible-improvement review

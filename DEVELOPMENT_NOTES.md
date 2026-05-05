@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan added-finding arbitration lock
+- New batch slice 5/40 adds isolated arbitration coverage for added validation findings.
+- No production arbitration code changed; `arbitration_verdict(...)` already treats added findings as regression review before considering possible improvements.
+- This complements the removed-finding slice and locks finding-identity regressions even when aggregate counts stay flat.
+
 ## 2026-05-05 rescan-plan removed-finding arbitration lock
 - New batch slice 4/40 adds isolated arbitration coverage for removed validation findings.
 - No production arbitration code changed; `arbitration_verdict(...)` already treats removed findings as possible-improvement review when no regression signal is present.

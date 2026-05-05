@@ -2053,6 +2053,33 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_arbitration_treats_added_findings_as_regression() {
+        let before = ProjectRescanValidationSnapshot {
+            artifact_fingerprint: "aaa".to_string(),
+            overall_score: Some(80),
+            grade: Some("GOOD".to_string()),
+            finding_count: 1,
+            finding_ids: vec!["finding_shared".to_string()],
+        };
+        let after = ProjectRescanValidationSnapshot {
+            artifact_fingerprint: "bbb".to_string(),
+            finding_ids: vec!["finding_added".to_string(), "finding_shared".to_string()],
+            ..before.clone()
+        };
+
+        let delta = validation_delta(&before, &after);
+
+        assert_eq!(delta.score_delta, Some(0));
+        assert_eq!(delta.finding_count_delta, 0);
+        assert_eq!(delta.added_findings, vec!["finding_added".to_string()]);
+        assert!(delta.removed_findings.is_empty());
+        assert_eq!(
+            arbitration_verdict(&delta),
+            ARBITRATION_REGRESSION_REVIEW_REQUIRED
+        );
+    }
+
+    #[test]
     fn rescan_plan_score_label_formats_sparse_validation_scores() {
         assert_eq!(score_label(Some(91), Some("EXCELLENT")), "91/100 EXCELLENT");
         assert_eq!(score_label(Some(72), None), "72/100");
