@@ -4,6 +4,13 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 graph replay command-lane assertions)
+- Strengthened the combined graph-direction replay tests in `crates/specforge/src/commands/project_validation.rs`.
+- No production replay logic changed; the tests now assert that both concurrent recommendations keep their command lanes:
+  - SemanticIR coverage and conflict recommendations use NLP enrichment, SemanticIR rebuild, then validation
+  - IntentIR coverage and conflict recommendations use NLP enrichment, SemanticIR rebuild, IntentIR rebuild, then validation
+- This complements the related-id and replay-input assertions by guarding the actionable command-hint side of schema-v2 rescan plans.
+
 ## Session update (2026-05-05 flat-hint graph-conflict guidance fixture)
 - Strengthened `graph_direction_same_actor_conflict_negative` in the tracked KG fixture set.
 - No Rust production code changed; the flat-hint-present graph conflict fixture now asserts the exact rescan-guidance payloads for both SemanticIR and IntentIR:

@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-05 (project-validation command lanes for graph replay split)
+
+### Changed: combined graph replay tests now lock command lanes
+- Tightened the SemanticIR and IntentIR combined graph-direction replay tests in `project-validation`.
+- The tests already proved that graph-coverage and graph-conflict recommendations both survive with separate related ids.
+- They now also assert the command intents for both recommendations:
+  - SemanticIR recommendations keep `nlp_enrich_evidence_ir -> rebuild_semantic_ir -> validate_current_artifact`
+  - IntentIR recommendations keep `nlp_enrich_evidence_ir -> rebuild_semantic_ir -> rebuild_intent_ir -> validate_current_artifact`
+- This prevents a future replay-planning edit from preserving the recommendations while silently dropping or narrowing one command lane.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge project_validation_keeps_graph_direction_conflict_and_coverage_replays` -> passed with `2` tests
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed after applying `cargo fmt`
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `523` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+
 ## 2026-05-05 (KG fixture for flat-hint graph-conflict guidance)
 
 ### Changed: flat-hint-present conflict fixture now locks replay guidance payloads

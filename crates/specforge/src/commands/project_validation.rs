@@ -4404,6 +4404,19 @@ mod tests {
             conflict.recommended_action,
             "run local NLP enrichment on EvidenceIR, rebuild SemanticIR, and validate whether the related graph-direction conflict ids collapse toward one actor-relative direction per actor-signal edge"
         );
+        let expected_replay_inputs = vec![ProjectRescanReplayInput {
+            input_kind: "evidence_ir".to_string(),
+            path: "generated/evidence_ir/doc/evidence_ir.json".to_string(),
+        }];
+        assert_eq!(conflict.replay_inputs, expected_replay_inputs);
+        assert_eq!(
+            recommended_command_intents(conflict),
+            vec![
+                "nlp_enrich_evidence_ir",
+                "rebuild_semantic_ir",
+                "validate_current_artifact"
+            ]
+        );
         let coverage = recommendations
             .iter()
             .find(|recommendation| {
@@ -4415,6 +4428,15 @@ mod tests {
         assert_eq!(
             coverage.recommended_action,
             "run local NLP enrichment on EvidenceIR, rebuild SemanticIR, and validate whether the related signal ids gain actor-relative graph direction coverage"
+        );
+        assert_eq!(coverage.replay_inputs, expected_replay_inputs);
+        assert_eq!(
+            recommended_command_intents(coverage),
+            vec![
+                "nlp_enrich_evidence_ir",
+                "rebuild_semantic_ir",
+                "validate_current_artifact"
+            ]
         );
     }
 
@@ -6152,6 +6174,15 @@ mod tests {
             conflict.recommended_action,
             "run local NLP enrichment on EvidenceIR, rebuild SemanticIR and IntentIR, and validate whether the related graph-direction conflict ids survive with one actor-relative direction per actor-signal edge instead of unresolved same-actor direction disagreement"
         );
+        assert_eq!(
+            recommended_command_intents(conflict),
+            vec![
+                "nlp_enrich_evidence_ir",
+                "rebuild_semantic_ir",
+                "rebuild_intent_ir",
+                "validate_current_artifact"
+            ]
+        );
         let coverage = recommendations
             .iter()
             .find(|recommendation| {
@@ -6163,6 +6194,15 @@ mod tests {
         assert_eq!(
             coverage.recommended_action,
             "run local NLP enrichment on EvidenceIR, rebuild SemanticIR and IntentIR, and validate whether the related signal ids survive with actor-relative graph direction coverage instead of remaining graph-uncovered"
+        );
+        assert_eq!(
+            recommended_command_intents(coverage),
+            vec![
+                "nlp_enrich_evidence_ir",
+                "rebuild_semantic_ir",
+                "rebuild_intent_ir",
+                "validate_current_artifact"
+            ]
         );
 
         Ok(())
@@ -7338,6 +7378,14 @@ mod tests {
             provider: RescanVlmProviderArg::Ollama,
             model: None,
         }
+    }
+
+    fn recommended_command_intents(recommendation: &ProjectRescanRecommendation) -> Vec<&str> {
+        recommendation
+            .recommended_commands
+            .iter()
+            .map(|command| command.intent.as_str())
+            .collect()
     }
 
     fn visual_motif_snapshot(repo_root: &Path) -> ProjectedArtifactSnapshot {

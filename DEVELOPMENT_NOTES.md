@@ -7,6 +7,14 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 project-validation command lanes for graph replay split
+- Batch slice 10/10 tightens the final replay-planning layer around concurrent graph-direction coverage and graph-conflict recommendations.
+- The combined SemanticIR and IntentIR tests already proved that both recommendations survive in one report with distinct related ids.
+- They now also assert the replay command lanes:
+  - SemanticIR: local NLP enrichment on EvidenceIR, rebuild SemanticIR, validate current artifact
+  - IntentIR: local NLP enrichment on EvidenceIR, rebuild SemanticIR, rebuild IntentIR, validate current artifact
+- This closes a subtle failure mode where replay planning could keep both recommendations but accidentally lose the downstream rebuild command sequence for one of them.
+
 ## 2026-05-05 KG fixture for flat-hint graph-conflict guidance
 - Batch slice 9/10 tightens the flat-hint-present graph conflict fixture.
 - `graph_direction_same_actor_conflict_negative` already proved:

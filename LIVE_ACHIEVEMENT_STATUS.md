@@ -74,6 +74,7 @@
 - Validator tests preserve concurrent graph-direction conflict and coverage guidance payloads: Done
 - Project-validation replay planning preserves concurrent graph-direction conflict and coverage targets: Done
 - Project-validation replay planning preserves concurrent IntentIR graph-direction conflict and coverage targets: Done
+- Project-validation replay planning preserves graph replay command lanes for concurrent coverage and conflict targets: Done
 - Negative-knowledge priors now include signal-polarity conflict archetypes: Done
 - KG benchmark harness can now assert canonical resolved semantic-role shape directly: Done
 - KG benchmark harness can now assert canonical semantic grounding-strength shape directly: Done

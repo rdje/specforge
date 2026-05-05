@@ -431,7 +431,7 @@
   - fallback-only resolved semantic roles now also surface as an explicit `semantic_resolved_role_without_consensus` residual decision in `SemanticIR`, and `IntentIR` adds a matching assumption so provisional meaning is visible even before a validator runs
   - typed handshake-role recovery now only trusts observation-backed semantic consensus; fallback-only resolved roles no longer drive canonical handshake-role classification, and handshake-shaped signals with provisional role state now block raw name fallback too
   - direct validator regressions now prove same-actor graph-direction conflict reports carry both replayable payloads at once: signal-id graph-coverage guidance and actor-aware graph-conflict guidance
-  - project-validation regression coverage now proves graph-direction coverage and graph-direction conflict replay recommendations both survive when one SemanticIR or IntentIR report emits both guidance findings for the same underlying signal, including the IntentIR lane that derives EvidenceIR replay inputs from a SemanticIR artifact
+  - project-validation regression coverage now proves graph-direction coverage and graph-direction conflict replay recommendations both survive when one SemanticIR or IntentIR report emits both guidance findings for the same underlying signal, including the IntentIR lane that derives EvidenceIR replay inputs from a SemanticIR artifact and both stages' expected command-intent chains
 - completion criteria:
   - anchored rescans over tables, prose, and figures are first-class parts of the convergent loop
   - weakly labeled signal-detail tables and additional polarity/timing/value facts can be recovered from known anchors
