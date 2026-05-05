@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan verdict-count summary)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` run-report tests around exact arbitration verdict counting.
+- No production report code changed; the new regression proves each verdict is counted by exact match instead of review-required suffix grouping.
+- This keeps CLI/report summary consumers aligned with the distinct arbitration classes.
+
 ## Session update (2026-05-05 rescan-plan review-count summary)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` run-report tests around review-required summary counting.
 - No production report code changed; the new regression proves `validated_no_change` summaries stay out of `review_required_count()` while review-required arbitration verdicts count.

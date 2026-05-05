@@ -39,6 +39,7 @@
 - `specforge rescan-plan` finding-count increases force regression review: Done
 - `specforge rescan-plan` finding-count decreases stay possible-improvement review: Done
 - `specforge rescan-plan` run-report review-required count is regression-locked: Done
+- `specforge rescan-plan` run-report exact verdict counts are regression-locked: Done
 - `specforge rescan-plan` mixed finding arbitration prefers regression review: Done
 - `specforge rescan-plan` added findings force regression review: Done
 - `specforge rescan-plan` removed findings stay possible-improvement review: Done

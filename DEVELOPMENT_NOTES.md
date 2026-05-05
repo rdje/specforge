@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan verdict-count summary lock
+- New batch slice 11/40 adds run-report coverage for `RescanPlanRunReport::arbitration_verdict_count(...)`.
+- No production report code changed; the helper already counts exact arbitration verdict string matches.
+- This protects summary/report consumers from accidentally folding distinct review-required verdict classes together.
+
 ## 2026-05-05 rescan-plan review-count summary lock
 - New batch slice 10/40 adds run-report coverage for `RescanPlanRunReport::review_required_count()`.
 - No production report code changed; the helper already counts arbitration verdicts ending in `_review_required`.

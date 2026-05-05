@@ -2209,6 +2209,33 @@ mod tests {
         assert_eq!(report.review_required_count(), 3);
     }
 
+    #[test]
+    fn rescan_plan_run_report_counts_exact_arbitration_verdicts() {
+        let report = run_report_with_summaries(vec![
+            execution_summary_for_verdict(ARBITRATION_VALIDATED_NO_CHANGE),
+            execution_summary_for_verdict(ARBITRATION_REGRESSION_REVIEW_REQUIRED),
+            execution_summary_for_verdict(ARBITRATION_POSSIBLE_IMPROVEMENT_REVIEW_REQUIRED),
+            execution_summary_for_verdict(ARBITRATION_REGRESSION_REVIEW_REQUIRED),
+        ]);
+
+        assert_eq!(
+            report.arbitration_verdict_count(ARBITRATION_VALIDATED_NO_CHANGE),
+            1
+        );
+        assert_eq!(
+            report.arbitration_verdict_count(ARBITRATION_REGRESSION_REVIEW_REQUIRED),
+            2
+        );
+        assert_eq!(
+            report.arbitration_verdict_count(ARBITRATION_POSSIBLE_IMPROVEMENT_REVIEW_REQUIRED),
+            1
+        );
+        assert_eq!(
+            report.arbitration_verdict_count(ARBITRATION_NEUTRAL_CHANGE_REVIEW_REQUIRED),
+            0
+        );
+    }
+
     fn command_hint(intent: &str, specforge_args: Vec<&str>) -> ProjectRescanCommandHint {
         let mut args = vec![
             "run".to_string(),
