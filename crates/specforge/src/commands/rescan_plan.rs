@@ -929,6 +929,49 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_parses_whitelisted_lmstudio_and_skip_hints() -> Result<()> {
+        let enrich = command_hint(
+            "enrich_source_ir",
+            vec![
+                "enrich",
+                "generated/source_ir/doc/source_ir.json",
+                "--vlm-provider",
+                "lm-studio",
+                "--classify-only",
+            ],
+        );
+        assert_eq!(
+            parse_command_hint(&enrich)?,
+            RescanInvocation::Enrich {
+                source_ir: PathBuf::from("generated/source_ir/doc/source_ir.json"),
+                vlm_provider: VlmProviderArg::LmStudio,
+                vlm_model: None,
+                classify_only: true,
+            }
+        );
+
+        let nlp_enrich = command_hint(
+            "nlp_enrich_evidence_ir",
+            vec![
+                "nlp-enrich",
+                "generated/evidence_ir/doc/evidence_ir.json",
+                "--vlm-provider",
+                "skip",
+            ],
+        );
+        assert_eq!(
+            parse_command_hint(&nlp_enrich)?,
+            RescanInvocation::NlpEnrich {
+                evidence_ir: PathBuf::from("generated/evidence_ir/doc/evidence_ir.json"),
+                vlm_provider: VlmProviderArg::Skip,
+                vlm_model: None,
+            }
+        );
+
+        Ok(())
+    }
+
+    #[test]
     fn rescan_plan_rejects_openai_enrich_hints() {
         let command = command_hint(
             "enrich_source_ir",

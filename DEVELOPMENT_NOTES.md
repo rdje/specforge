@@ -7,6 +7,15 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan local provider variant lock
+- Batch slice 6/20 adds the positive side of the local-provider parser boundary.
+- The command parser already rejected OpenAI replay hints, and slice 5 locked the repo-local cargo prefix.
+- Added `rescan_plan_parses_whitelisted_lmstudio_and_skip_hints` so the accepted local variants are explicit too:
+  - `lm-studio` maps to `VlmProviderArg::LmStudio`
+  - `--classify-only` remains attached to local source enrichment
+  - `skip` remains accepted for NLP enrichment replay
+- This keeps the policy precise: OpenAI stays rejected, while local LM Studio and intentional skip hints remain valid replay controls.
+
 ## 2026-05-05 rescan-plan command-hint locality lock
 - Batch slice 5/20 tightens the whitelisted command-hint parser.
 - Existing tests already rejected arbitrary non-cargo executables and OpenAI replay hints.

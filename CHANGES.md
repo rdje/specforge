@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan local provider variant lock)
+
+### Changed: local provider command hints now have positive parser coverage
+- Added positive parser coverage for accepted local provider variants in `rescan-plan`.
+- The new test proves:
+  - `enrich_source_ir` accepts the `lm-studio` alias as local LM Studio
+  - `enrich_source_ir` preserves `--classify-only`
+  - `nlp_enrich_evidence_ir` accepts `--vlm-provider skip`
+- This complements the OpenAI rejection tests by locking both sides of the local-only replay policy.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_parses_whitelisted_lmstudio_and_skip_hints` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `526` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan command-hint locality lock)
 
 ### Changed: command-hint parser now regression-locks repo-local cargo shape
