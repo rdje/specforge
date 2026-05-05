@@ -211,9 +211,20 @@ fn validate_system_signal_renderability(
                     ),
                 );
                 required_canonical_enrichments.insert(
-                    "resolve conflicting actor-relative graph direction evidence before lowering `.fsm` system contracts"
-                        .to_string(),
+                "resolve conflicting actor-relative graph direction evidence before lowering `.fsm` system contracts"
+                    .to_string(),
+            );
+            } else if direction_hints_disagree(signal) {
+                push_unique_message(
+                    blocking_reasons,
+                    &format!(
+                        "Canonical {role_name} signal `{signal_name}` has conflicting canonical and graph-backed direction evidence, so standalone `.fsm` lowering cannot choose an input role."
+                    ),
                 );
+                required_canonical_enrichments.insert(
+                "resolve conflicting canonical and graph-backed system-signal direction evidence before lowering `.fsm` system contracts"
+                    .to_string(),
+            );
             } else {
                 push_unique_message(
                     blocking_reasons,
@@ -1399,10 +1410,20 @@ fn is_false(value: &bool) -> bool {
 fn preferred_signal_direction_hint(
     signal: &FsmSignalCandidate,
 ) -> Option<InterfaceSignalDirection> {
-    if signal.direction_hint_conflicted || signal.graph_direction_hint_conflicted {
+    if signal.direction_hint_conflicted
+        || signal.graph_direction_hint_conflicted
+        || direction_hints_disagree(signal)
+    {
         return None;
     }
     signal.graph_direction_hint.or(signal.direction_hint)
+}
+
+fn direction_hints_disagree(signal: &FsmSignalCandidate) -> bool {
+    signal
+        .direction_hint
+        .zip(signal.graph_direction_hint)
+        .is_some_and(|(flat, graph)| flat != graph)
 }
 
 fn build_module_candidates(intent_ir: &IntentIr) -> Vec<FsmExplicitModuleCandidate> {
@@ -5114,6 +5135,17 @@ fn register_renderable_signal(
                 "resolve conflicting actor-relative graph direction evidence before lowering `.fsm`"
                     .to_string(),
             );
+        } else if direction_hints_disagree(signal) {
+            push_unique_message(
+                blocking_reasons,
+                &format!(
+                    "Signal `{signal_name}` has conflicting canonical and graph-backed direction evidence required for `.fsm` emission."
+                ),
+            );
+            required_canonical_enrichments.insert(
+                "resolve conflicting canonical and actor-relative graph direction evidence before lowering `.fsm`"
+                    .to_string(),
+            );
         } else {
             push_unique_message(
                 blocking_reasons,
@@ -7319,6 +7351,67 @@ mod tests {
                 .iter()
                 .any(|reason| reason.contains("conflicting canonical direction evidence"))
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn standalone_dt_blocks_flat_graph_direction_disagreement() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_explicit_control_intent_ir(tempdir.path())?;
+        let interface = intent_ir
+            .interfaces
+            .iter_mut()
+            .find(|interface| {
+                interface
+                    .signal_records
+                    .iter()
+                    .any(|signal| signal.signal_name == "DATA_OUT")
+            })
+            .expect("control interface should contain DATA_OUT");
+        let data_out = interface
+            .signal_records
+            .iter_mut()
+            .find(|signal| signal.signal_name == "DATA_OUT")
+            .expect("DATA_OUT declaration should exist");
+        data_out.direction_hint = Some(InterfaceSignalDirection::Input);
+        data_out.supporting_statement_ids =
+            vec!["flat_DATA_OUT_input_contradicts_actor_graph".to_string()];
+        intent_ir.actor_ports = vec![
+            actor_port("controller", "DATA_IN", ActorRelativeDirection::Input),
+            actor_port("controller", "DATA_OUT", ActorRelativeDirection::Output),
+            actor_port("controller", "ZERO_FLAG", ActorRelativeDirection::Output),
+        ];
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let data_out = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "DATA_OUT")
+            .expect("DATA_OUT should remain in signal inventory");
+
+        assert_eq!(
+            data_out.direction_hint,
+            Some(InterfaceSignalDirection::Input)
+        );
+        assert_eq!(
+            data_out.graph_direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert!(!fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.iter().any(|reason| {
+            reason.contains("conflicting canonical and graph-backed direction evidence")
+        }));
 
         Ok(())
     }

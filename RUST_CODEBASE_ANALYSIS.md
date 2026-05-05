@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` flat/graph direction disagreement guard)
+- Hardened `crates/specforge/src/ir/adapters.rs` so `preferred_signal_direction_hint(...)` returns unresolved when unconflicted flat canonical direction evidence disagrees with graph-backed actor-relative direction evidence.
+- Added `standalone_dt_blocks_flat_graph_direction_disagreement`, proving a single contradictory flat declaration is now blocking even when actor-port graph evidence could otherwise render the direct DT root.
+- Renderability diagnostics now distinguish flat-vs-graph disagreement from flat-only conflict, graph-only conflict, and genuinely missing direction evidence.
+
 ## Session update (2026-05-05 actor-taxonomy prior protocol-family guard)
 - Hardened `crates/specforge/src/ir/prior_memory.rs` so actor-taxonomy role lookup now shares the exact-family plus AMBA-generic search policy used by strict prior consumers.
 - Added `actor_taxonomy_prior_protocol_family_mismatch_negative`, which proved the previous broad fallback could let an APB actor-taxonomy prior infer AXI-local section-heading direction, graph direction, actor relations, and actor ports.

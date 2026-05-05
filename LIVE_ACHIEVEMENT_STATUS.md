@@ -304,6 +304,7 @@
 - `.fsm` renderability diagnostics now distinguish graph-direction conflicts from missing direction hints: Done
 - `.fsm` adapter signal inventory now preserves width-conflict provenance and reports conflicted widths distinctly: Done
 - `.fsm` adapter signal inventory now preserves flat direction-conflict provenance and blocks graph recovery from overriding contradictory canonical direction hints: Done
+- `.fsm` adapter renderability now blocks single flat-vs-graph direction disagreement: Done
 - `.fsm` adapter signal inventory now preserves parametric width provenance and reports symbolic widths distinctly from missing numeric width evidence: Done
 - `.fsm` actor-port graph width overlays now preserve parametric width provenance without overriding explicit numeric width evidence: Done
 - `.fsm` explicit top-root lowering now blocks missing or parametric public IO widths instead of rendering implicit 1-bit top ports: Done

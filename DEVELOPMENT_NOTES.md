@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 `.fsm` flat/graph direction disagreement guard
+- New batch slice 18/100 tightens the direct `.fsm` adapter graph-first boundary in `crates/specforge/src/ir/adapters.rs`.
+- The new regression mutates `DATA_OUT` to a single explicit flat `input` declaration while actor-relative `controller.DATA_OUT` graph evidence says `output`; before this guard, graph preference could make that contradictory shape renderable.
+- `preferred_signal_direction_hint(...)` now treats flat-vs-graph disagreement as unresolved, while preserving graph-first behavior for missing flat hints and matching flat/graph evidence.
+- Renderability and system-contract diagnostics now name conflicting canonical and graph-backed direction evidence explicitly, so blocked artifacts keep the root cause visible instead of reporting only missing direction evidence.
+- Full adapter coverage now includes `77` adapter tests, and full CI now runs `594` Rust tests.
+
 ## 2026-05-05 actor-taxonomy prior protocol-family guard
 - New batch slice 17/100 adds `actor_taxonomy_prior_protocol_family_mismatch_negative` and hardens `CorpusMemory::resolve_actor_taxonomy_role`.
 - The fixture reproduced a family leak: an APB-only actor-taxonomy prior for `issuer` could recover AXI-local section-heading directions through the broad any-family fallback.

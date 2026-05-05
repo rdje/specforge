@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` flat/graph direction disagreement guard)
+
+### Changed: direct `.fsm` lowering now blocks contradictory flat and graph directions
+- Added an adapter regression where a direct signal carries one explicit flat `input` declaration while actor-relative graph evidence says the same target-actor signal is an `output`.
+- Updated `.fsm` direction preference so graph-backed directions still win only when they do not contradict unconflicted flat canonical direction evidence.
+- Added direct renderability and system-contract diagnostics for flat-vs-graph direction disagreement, keeping blocked artifacts explicit instead of falling through to generic missing-direction guidance.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_dt_blocks_flat_graph_direction_disagreement` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`77` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed after rustfmt
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`594` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+
 ## 2026-05-05 (actor-taxonomy prior protocol-family guard)
 
 ### Changed: actor-taxonomy priors no longer fall through to unrelated protocol families
