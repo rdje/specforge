@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 NLP alias reference-link normalization)
+- Extended `normalize_alias_subject_markup(...)` in `crates/specforge/src/commands/nlp_enrich.rs` so reference-style markdown links in candidate alias subjects collapse to the visible label.
+- Added `extract_alias_phrase_uses_reference_link_labels`, bringing focused alias parser coverage to `9` tests and NLP-enrich module coverage to `21` tests.
+- This keeps markdown reference ids out of `signal_alias_map` while preserving the useful linked prose phrase.
+
 ## Session update (2026-05-05 NLP alias markdown-link normalization)
 - Hardened `extract_alias_phrase()` in `crates/specforge/src/commands/nlp_enrich.rs` so markdown links in candidate alias subjects are normalized to their visible labels before alias word cleanup.
 - Added `extract_alias_phrase_uses_markdown_link_labels`, bringing focused alias parser coverage to `8` tests and NLP-enrich module coverage to `20` tests.

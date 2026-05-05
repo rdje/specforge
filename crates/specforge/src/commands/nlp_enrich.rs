@@ -538,19 +538,23 @@ fn normalize_alias_subject_markup(text: &str) -> String {
         };
         let label = &after_open[..label_end];
         let after_label = &after_open[label_end + 1..];
-        let Some(after_target_open) = after_label.strip_prefix('(') else {
-            normalized.push('[');
-            remaining = after_open;
+        if let Some(after_target_open) = after_label.strip_prefix('(')
+            && let Some(target_end) = after_target_open.find(')')
+        {
+            normalized.push_str(label);
+            remaining = &after_target_open[target_end + 1..];
             continue;
-        };
-        let Some(target_end) = after_target_open.find(')') else {
-            normalized.push('[');
-            remaining = after_open;
+        }
+        if let Some(after_reference_open) = after_label.strip_prefix('[')
+            && let Some(reference_end) = after_reference_open.find(']')
+        {
+            normalized.push_str(label);
+            remaining = &after_reference_open[reference_end + 1..];
             continue;
-        };
+        }
 
-        normalized.push_str(label);
-        remaining = &after_target_open[target_end + 1..];
+        normalized.push('[');
+        remaining = after_open;
     }
 
     normalized.push_str(remaining);
@@ -1310,6 +1314,25 @@ mod tests {
             .as_deref(),
             Some("write enable control"),
             "link labels should remain usable as learned prose aliases"
+        );
+    }
+
+    #[test]
+    fn extract_alias_phrase_uses_reference_link_labels() {
+        assert_eq!(
+            extract_alias_phrase(
+                "The [address bus][address-bus-ref] shall remain stable",
+                "HADDR"
+            )
+            .as_deref(),
+            Some("address bus"),
+            "reference-style link ids should not be learned as alias text"
+        );
+        assert_eq!(
+            extract_alias_phrase("The [write enable control][] must be stable", "HWRITE")
+                .as_deref(),
+            Some("write enable control"),
+            "collapsed reference-style links should still expose the visible label"
         );
     }
 

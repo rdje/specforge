@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 NLP alias reference-link normalization
+- New batch slice 27/100 hardens `extract_alias_phrase()` in `crates/specforge/src/commands/nlp_enrich.rs`.
+- The Form 2 alias learner now normalizes reference-style markdown links in subject phrases to the visible label, matching the inline-link behavior from slice 26.
+- The new regression covers `[address bus][address-bus-ref]` and `[write enable control][]`, keeping reference ids out of `signal_alias_map`.
+- Full CI now runs `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-05 NLP alias markdown-link normalization
 - New batch slice 26/100 hardens `extract_alias_phrase()` in `crates/specforge/src/commands/nlp_enrich.rs`.
 - The Form 2 alias learner now normalizes markdown links in subject phrases to the visible label before lowercasing and word cleanup, preventing link targets from becoming alias text.

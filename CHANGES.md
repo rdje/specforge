@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (NLP alias reference-link normalization)
+
+### Changed: alias learning uses reference-style markdown link labels
+- Extended `extract_alias_phrase()` markdown normalization so reference-style links in Form 2 alias subjects also collapse to their visible labels.
+- Added focused coverage for `[address bus][address-bus-ref]` and collapsed-reference `[write enable control][]` subjects, proving reference ids do not enter `signal_alias_map`.
+- This completes the immediate markdown-link alias cleanup across inline and reference-style link forms.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge extract_alias_phrase` -> passed (`9` tests)
+- `cargo test --manifest-path Cargo.toml -p specforge commands::nlp_enrich::tests` -> passed (`21` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+
 ## 2026-05-05 (NLP alias markdown-link normalization)
 
 ### Changed: alias learning uses markdown link labels instead of link targets
