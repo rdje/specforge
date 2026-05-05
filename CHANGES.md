@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-05 (project-validation replay split for graph conflicts)
+
+### Added: combined graph conflict and coverage replay regression
+- Added `project_validation_keeps_graph_direction_conflict_and_coverage_replays_for_semantic_stage`.
+- The test builds a single SemanticIR validation snapshot containing both graph-direction coverage guidance for `PREADY` and graph-direction conflict guidance for `graph_direction_conflict:actor_completer:PREADY`.
+- `project-validation` must preserve both replay recommendations on the same artifact instead of letting the conflict-id path mask the signal-id coverage path or vice versa.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge project_validation_keeps_graph_direction_conflict_and_coverage_replays_for_semantic_stage` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `522` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (KG fixture for flat-hint graph conflicts)
 
 ### Changed: flat compatibility hints stay distinct from graph conflicts

@@ -7,6 +7,14 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 project-validation replay split for graph conflicts
+- Batch slice 5/10 moves the graph-conflict coverage semantics into the replay-planning layer.
+- After slice 3, one validation report can carry two graph-direction replay targets for the same logical signal:
+  - `semantic_graph_direction_coverage_surface_rescan_guidance` keyed by the signal id such as `PREADY`
+  - `semantic_graph_direction_conflict_surface_rescan_guidance` keyed by the actor-aware conflict id such as `graph_direction_conflict:actor_completer:PREADY`
+- Added a project-validation unit test that feeds both findings in one SemanticIR snapshot and proves `collect_rescan_recommendations(...)` returns both recommendations.
+- This guards against future sorting, deduplication, or replay-input normalization changes collapsing signal-id coverage debt into conflict-id replay debt.
+
 ## 2026-05-05 KG fixture for flat-hint graph conflicts
 - Batch slice 4/10 tightens the flat-hint-present sibling of slice 3.
 - `graph_direction_same_actor_conflict_negative` now explicitly separates three states in one fixture:

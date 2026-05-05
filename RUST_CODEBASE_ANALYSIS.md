@@ -4,6 +4,12 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 graph-conflict replay split)
+- Added a focused regression in `crates/specforge/src/commands/project_validation.rs` for the combined graph-direction conflict plus coverage guidance state.
+- No production code changed; the test protects `collect_rescan_recommendations(...)` from collapsing two valid replay recommendations that share one artifact and one replay-input lane.
+- The regression matters because graph conflicts now also report coverage debt: operators need both the signal-id replay target and the actor-aware conflict-id replay target to survive into `generated/validation/rescan_plan.json`.
+- This strengthens the R15c replay-planning boundary after the R15e fixture work made graph-direction conflicts count as unresolved coverage.
+
 ## Session update (2026-05-05 flat-hint graph conflicts)
 - Strengthened the tracked expectations for `graph_direction_same_actor_conflict_negative`.
 - No Rust production code changed in this slice; the fixture now explicitly asserts that flat compatibility hints remain a separate coverage surface when graph evidence is conflicted.

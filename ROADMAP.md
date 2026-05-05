@@ -430,6 +430,7 @@
   - `specforge validate` now also reports decisive vs non-decisive semantic arbitration explicitly, so unresolved role competition is visible to users as a first-class canonical state rather than hidden behind absent resolved roles
   - fallback-only resolved semantic roles now also surface as an explicit `semantic_resolved_role_without_consensus` residual decision in `SemanticIR`, and `IntentIR` adds a matching assumption so provisional meaning is visible even before a validator runs
   - typed handshake-role recovery now only trusts observation-backed semantic consensus; fallback-only resolved roles no longer drive canonical handshake-role classification, and handshake-shaped signals with provisional role state now block raw name fallback too
+  - project-validation regression coverage now proves graph-direction coverage and graph-direction conflict replay recommendations both survive when one SemanticIR report emits both guidance findings for the same underlying signal
 - completion criteria:
   - anchored rescans over tables, prose, and figures are first-class parts of the convergent loop
   - weakly labeled signal-detail tables and additional polarity/timing/value facts can be recovered from known anchors

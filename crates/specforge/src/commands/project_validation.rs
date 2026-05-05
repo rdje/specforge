@@ -4336,6 +4336,89 @@ mod tests {
     }
 
     #[test]
+    fn project_validation_keeps_graph_direction_conflict_and_coverage_replays_for_semantic_stage() {
+        let tempdir = tempdir().expect("tempdir");
+        let repo_root = tempdir.path();
+        let artifact_path = repo_root.join("generated/semantic_ir/doc/semantic_ir.json");
+        let evidence_ir_path = repo_root.join("generated/evidence_ir/doc/evidence_ir.json");
+        let snapshot = ProjectedArtifactSnapshot {
+            document_key: "doc".to_string(),
+            display_name: "Spec.pdf".to_string(),
+            stage: IrStage::SemanticIr,
+            artifact_path,
+            replay_inputs: vec![ProjectedReplayInput {
+                input_kind: "evidence_ir",
+                path: evidence_ir_path.clone(),
+            }],
+            report: ValidationReportRecord {
+                report_id: "validation_semantic_ir_test".to_string(),
+                validated_stage: IrStage::SemanticIr,
+                artifact_fingerprint: "fingerprint".to_string(),
+                summary: "SemanticIR validation with conflict and coverage guidance".to_string(),
+                overall_score: Some(78),
+                grade: Some("GOOD".to_string()),
+                metrics: Vec::new(),
+                findings: vec![
+                    ValidationFindingRecord {
+                        finding_id: SEMANTIC_GRAPH_DIRECTION_COVERAGE_SURFACE_RESCAN_GUIDANCE
+                            .to_string(),
+                        severity: ValidationFindingSeverity::Info,
+                        category: "rescan_guidance".to_string(),
+                        summary:
+                            "canonical surface still lacks actor-relative graph direction coverage"
+                                .to_string(),
+                        related_ids: vec!["PREADY".to_string()],
+                    },
+                    ValidationFindingRecord {
+                        finding_id: SEMANTIC_GRAPH_DIRECTION_CONFLICT_SURFACE_RESCAN_GUIDANCE
+                            .to_string(),
+                        severity: ValidationFindingSeverity::Info,
+                        category: "rescan_guidance".to_string(),
+                        summary:
+                            "actor-relative graph still carries unresolved same-actor direction disagreement"
+                                .to_string(),
+                        related_ids: vec![
+                            "graph_direction_conflict:actor_completer:PREADY".to_string(),
+                        ],
+                    },
+                ],
+            },
+        };
+
+        let recommendations =
+            collect_rescan_recommendations(&[snapshot], repo_root, &test_rescan_vlm_policy());
+
+        assert_eq!(recommendations.len(), 2);
+        let conflict = recommendations
+            .iter()
+            .find(|recommendation| {
+                recommendation.finding_id
+                    == SEMANTIC_GRAPH_DIRECTION_CONFLICT_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected graph-direction conflict replay recommendation");
+        assert_eq!(
+            conflict.related_ids,
+            vec!["graph_direction_conflict:actor_completer:PREADY".to_string()]
+        );
+        assert_eq!(
+            conflict.recommended_action,
+            "run local NLP enrichment on EvidenceIR, rebuild SemanticIR, and validate whether the related graph-direction conflict ids collapse toward one actor-relative direction per actor-signal edge"
+        );
+        let coverage = recommendations
+            .iter()
+            .find(|recommendation| {
+                recommendation.finding_id
+                    == SEMANTIC_GRAPH_DIRECTION_COVERAGE_SURFACE_RESCAN_GUIDANCE
+            })
+            .expect("expected graph-direction coverage replay recommendation");
+        assert_eq!(coverage.related_ids, vec!["PREADY".to_string()]);
+        assert_eq!(
+            coverage.recommended_action,
+            "run local NLP enrichment on EvidenceIR, rebuild SemanticIR, and validate whether the related signal ids gain actor-relative graph direction coverage"
+        );
+    }
+
+    #[test]
     fn project_validation_collects_connectivity_missing_producer_rescan_guidance_for_semantic_stage()
      {
         let tempdir = tempdir().expect("tempdir");
