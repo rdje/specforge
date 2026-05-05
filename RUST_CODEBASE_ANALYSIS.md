@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` blocked recovered top-port provenance lock)
+- Tightened `top_composition_preserves_recovered_top_port_direction_when_still_blocked` in `crates/specforge/src/ir/adapters.rs` so top-link-recovered top-port direction retains support IDs and automation confidence when another composition gate still blocks the top.
+- The adapter already preserved recovered top-boundary direction in the selected signal inventory while a missing child module blocked renderability; this regression now proves the top candidate port and inventory both keep high-confidence evidence.
+- This complements the explicit top-link blocker lock by covering successful top-link direction recovery on a blocked top.
+
 ## Session update (2026-05-05 `.fsm` unemitted child-link provenance lock)
 - Tightened `top_composition_blocks_link_to_unemitted_child_port` in `crates/specforge/src/ir/adapters.rs` so blocked top links to child endpoints that are not emitted retain explicit top-link support IDs and automation confidence.
 - The adapter already blocked top lowering when a link endpoint could not resolve to an emitted child port; this regression now proves the blocked link remains inspectable and keeps the source-endpoint enrichment guidance precise.

@@ -11302,6 +11302,15 @@ mod tests {
             recovered_port.direction_hint,
             Some(InterfaceSignalDirection::Output)
         );
+        assert!(
+            topology_support_ids
+                .iter()
+                .any(|id| recovered_port.supporting_statement_ids.contains(id))
+        );
+        assert_eq!(
+            recovered_port.automation_confidence,
+            AutomationConfidence::High
+        );
         assert_eq!(signal_inventory_port.direction_hint, None);
         assert_eq!(
             signal_inventory_port.graph_direction_hint,
@@ -11317,6 +11326,10 @@ mod tests {
             topology_support_ids
                 .iter()
                 .any(|id| signal_inventory_port.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            signal_inventory_port.automation_confidence,
+            AutomationConfidence::High
         );
         assert!(
             fsm.renderability

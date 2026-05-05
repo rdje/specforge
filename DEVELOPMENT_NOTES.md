@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 `.fsm` blocked recovered top-port provenance lock
+- New batch slice 58/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_preserves_recovered_top_port_direction_when_still_blocked` now asserts top-link-recovered top-port direction keeps support IDs and high automation confidence on the blocked top candidate and selected signal inventory.
+- This is a coverage-only lock for the blocked top-composition path where top-boundary direction recovery succeeds but a missing child module still blocks `.fsm` emission.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-05 `.fsm` unemitted child-link provenance lock
 - New batch slice 57/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_link_to_unemitted_child_port` now asserts blocked top links to unemitted child endpoints preserve explicit top-link support IDs and high automation confidence on the top candidate.

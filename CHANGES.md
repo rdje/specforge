@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` blocked recovered top-port provenance lock)
+
+### Added: recovered top-port blocked-path provenance coverage
+- Tightened `top_composition_preserves_recovered_top_port_direction_when_still_blocked` so top-link-recovered top-port direction now proves support IDs and high automation confidence survive on the blocked top candidate and selected signal inventory.
+- This is coverage-only over the existing adapter behavior: the top remains blocked when its child module is missing, but recovered top-boundary direction evidence stays auditable.
+- The slice keeps top-link direction recovery visible even when another composition gate still blocks `.fsm` emission.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_preserves_recovered_top_port_direction_when_still_blocked` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-05 (`.fsm` unemitted child-link provenance lock)
 
 ### Added: top-link blocker provenance coverage
