@@ -186,6 +186,7 @@
   - unrelated direct actor-port graph context keeps selected support IDs auditable while excluding unrelated side-band evidence from `.fsm` inventories
   - ambiguous direct actor-port graph context leaves graph direction, actor-port category, and support IDs unselected instead of guessing a target actor
   - direct-root actor-port direction conflicts preserve both conflicting graph-backed support IDs and automation confidence while blocking `.fsm` emission
+  - direct-root flat-vs-graph direction disagreement preserves interface and actor-port provenance while blocking `.fsm` emission
   - direct-root output actor selection preserves graph-backed support IDs and high automation confidence while shared external signal actors stay non-authoritative
   - direct-root control-read input recovery preserves canonical control-branch support IDs and high automation confidence while avoiding import of the external actor's direction
   - structured-FSM control-read input recovery preserves canonical control/transition support IDs and high automation confidence while avoiding import of the external actor's direction

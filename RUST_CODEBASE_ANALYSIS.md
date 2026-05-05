@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` direct flat/graph disagreement provenance lock)
+- Tightened `standalone_dt_blocks_flat_graph_direction_disagreement` in `crates/specforge/src/ir/adapters.rs` so flat canonical and graph-backed direction disagreement remains provenance-auditable.
+- The adapter already blocked renderability when canonical flat direction evidence disagreed with actor graph direction evidence; this regression now proves interface and actor-port evidence remain visible together.
+- This keeps the direct flat/graph disagreement surface aligned with same-actor graph direction conflict provenance.
+
 ## Session update (2026-05-05 `.fsm` direct actor-port direction-conflict provenance lock)
 - Tightened `standalone_dt_keeps_conflicting_actor_port_direction_unresolved` in `crates/specforge/src/ir/adapters.rs` so same-actor direction conflicts retain both conflicting support IDs and automation confidence.
 - The adapter already kept contradictory graph-backed direction evidence unresolved; this regression now proves the blocked inventory preserves enough provenance to audit both sides.
