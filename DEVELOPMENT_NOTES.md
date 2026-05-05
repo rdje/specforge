@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan grade-only arbitration lock
+- New batch slice 18/40 adds arbitration coverage for grade-only validation changes.
+- No production arbitration code changed; grade-label drift already produces `neutral_change_review_required` when score, fingerprint, and finding surfaces do not move.
+- This keeps qualitative validation-label changes review-required without conflating them with regressions or improvements.
+
 ## 2026-05-05 rescan-plan execute document-key scope lock
 - New batch slice 17/40 adds `run_plan --execute --document-key` coverage for targeted execution behavior.
 - No production execution code changed; scoped execution already updates only matching pending recommendations and leaves other pending document work untouched.

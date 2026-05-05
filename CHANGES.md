@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan grade-only arbitration lock)
+
+### Changed: grade-only validation changes stay neutral review
+- Added arbitration coverage proving a validation grade change without score, fingerprint, or finding movement produces `neutral_change_review_required`.
+- This keeps grade-label drift review-required without misclassifying it as regression or improvement.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_arbitration_treats_grade_only_changes_as_neutral_review` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `576` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan execute document-key scope lock)
 
 ### Changed: execute document-key scoping preserves other pending work
