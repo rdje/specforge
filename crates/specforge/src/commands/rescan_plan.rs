@@ -532,6 +532,11 @@ fn parse_rescan_command_path(value: &str, hint_kind: &str) -> Result<PathBuf> {
     }
 
     let path = Path::new(value);
+    if path == Path::new(".") {
+        return Err(AppError::InvalidStageArtifact(format!(
+            "rescan-plan refuses current-directory {hint_kind} path `{value}` in command hint"
+        )));
+    }
     if path.is_absolute() {
         return Err(AppError::InvalidStageArtifact(format!(
             "rescan-plan refuses absolute {hint_kind} path `{value}` in command hint"
@@ -1336,6 +1341,20 @@ mod tests {
         assert!(parse_command_hint(&empty_ingest).is_err());
         assert!(parse_command_hint(&empty_enrich).is_err());
         assert!(parse_command_hint(&empty_validate).is_err());
+    }
+
+    #[test]
+    fn rescan_plan_rejects_current_directory_replay_artifact_paths() {
+        let current_dir_ingest = command_hint("rebuild_source_ir", vec!["ingest", "."]);
+        let current_dir_enrich = command_hint(
+            "enrich_source_ir",
+            vec!["enrich", ".", "--vlm-provider", "skip"],
+        );
+        let current_dir_validate = command_hint("validate_current_artifact", vec!["validate", "."]);
+
+        assert!(parse_command_hint(&current_dir_ingest).is_err());
+        assert!(parse_command_hint(&current_dir_enrich).is_err());
+        assert!(parse_command_hint(&current_dir_validate).is_err());
     }
 
     #[test]

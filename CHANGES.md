@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan current-directory replay path rejection)
+
+### Changed: replay command artifact paths cannot be `.`
+- Added execution-parser hardening so structured rescan command hints reject current-directory source or artifact path tokens.
+- Added regression coverage for current-directory ingest, enrich, and validate replay paths.
+- Updated the mdBook rescan-plan reference to describe the current-directory replay path restriction.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_current_directory_replay_artifact_paths` -> passed (`1` test, `592` filtered out)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`593` Rust tests, warnings denied for Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`130` fixtures, `0` failures)
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan empty replay path rejection)
 
 ### Changed: replay command artifact paths must be non-empty

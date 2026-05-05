@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan current-directory replay path rejection)
+- Hardened `crates/specforge/src/commands/rescan_plan.rs` command-hint path parsing against the current-directory token `.`.
+- `parse_rescan_command_path` now rejects placeholders that name the execution root itself before accepting a replay path.
+- This keeps structured replay paths non-empty, non-directory-root, relative, and non-traversing before execution dispatch.
+
 ## Session update (2026-05-05 rescan-plan empty replay path rejection)
 - Hardened `crates/specforge/src/commands/rescan_plan.rs` command-hint path parsing against explicit empty path tokens.
 - `parse_rescan_command_path` now rejects missing-by-value paths before checking absolute or parent-traversal forms.

@@ -34,6 +34,7 @@
 - `specforge rescan-plan` absolute replay artifact paths are rejected: Done
 - `specforge rescan-plan` parent-traversal replay artifact paths are rejected: Done
 - `specforge rescan-plan` empty replay artifact paths are rejected: Done
+- `specforge rescan-plan` current-directory replay artifact paths are rejected: Done
 - `specforge rescan-plan` local provider command variants are regression-locked: Done
 - `specforge rescan-plan` source-enrich skip provider hints are regression-locked: Done
 - `specforge rescan-plan` source-enrich skip classify-only hints are regression-locked: Done

@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan current-directory replay path rejection
+- New batch slice 35/40 extends `parse_rescan_command_path` so structured replay paths cannot be the current-directory token `.`.
+- The focused regression covers current-directory direct ingest, enrich, and validate replay hints.
+- This keeps replay hints naming concrete relative paths instead of dispatching whole-directory placeholders into stage execution.
+
 ## 2026-05-05 rescan-plan empty replay path rejection
 - New batch slice 34/40 extends `parse_rescan_command_path` so structured replay paths cannot be empty strings.
 - The focused regression covers empty direct ingest, enrich, and validate replay hints.
