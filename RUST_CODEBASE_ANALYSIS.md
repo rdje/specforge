@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan grade-removal execution status)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` execution-status tests around optional grade removal.
+- No production status code changed; the new regression proves validation snapshot changes from grade disappearance are counted as executed validation changes.
+- This keeps execution reporting sensitive to neutral-review grade availability drift.
+
 ## Session update (2026-05-05 rescan-plan score-removal execution status)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` execution-status tests around optional score removal.
 - No production status code changed; the new regression proves validation snapshot changes from score disappearance are counted as executed validation changes.

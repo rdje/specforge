@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan grade-removal execution-status lock
+- New batch slice 23/40 adds execution-status coverage for grade removal from validation snapshots.
+- No production status code changed; `execution_status` already compares full validation snapshots, so optional grade disappearance counts as `executed_validated_changed`.
+- This keeps neutral-review grade availability drift visible in execution counters.
+
 ## 2026-05-05 rescan-plan score-removal execution-status lock
 - New batch slice 22/40 adds execution-status coverage for score removal from validation snapshots.
 - No production status code changed; `execution_status` already compares full validation snapshots, so optional score disappearance counts as `executed_validated_changed`.

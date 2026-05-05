@@ -2061,6 +2061,26 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_execution_status_treats_grade_removal_as_changed() {
+        let before = ProjectRescanValidationSnapshot {
+            artifact_fingerprint: "aaa".to_string(),
+            overall_score: Some(80),
+            grade: Some("GOOD".to_string()),
+            finding_count: 0,
+            finding_ids: Vec::new(),
+        };
+        let after = ProjectRescanValidationSnapshot {
+            grade: None,
+            ..before.clone()
+        };
+
+        assert_eq!(
+            execution_status(&before, &after),
+            EXECUTED_VALIDATED_CHANGED
+        );
+    }
+
+    #[test]
     fn rescan_plan_no_change_promotion_gate_is_not_reviewable() {
         let blockers = rescan_promotion_blockers_for(ARBITRATION_VALIDATED_NO_CHANGE);
         let review = crate::commands::project_validation::rescan_promotion_review_for(
