@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `0b001d949660a636b72513ea2fd9bde0e4ebc455`
-- latest_commit_brief_message: `test(rescan): lock pending status selection`
+- latest_commit_hash: `15500ea0ad64ab1de85163b03d432d875c74715b`
+- latest_commit_brief_message: `test(rescan): lock command trust boundary`
 - note: new local `N=40` batch is active; push remains deferred until all 40 slices complete
 
 ## Recent commit chain (last 6)
+- `15500ea` test(rescan): lock command trust boundary
 - `0b001d9` test(rescan): lock pending status selection
 - `c2f4c96` test(rescan): lock exact document filtering
 - `c1a16ca` test(rescan): lock grade removal status
 - `1bda030` test(rescan): lock score removal status
 - `99920b8` test(rescan): lock grade removal arbitration
-- `4e0fdd9` test(rescan): lock score removal arbitration
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 25]`
-- files in flight for new batch slice 26:
+- branch state before the next commit: `main...origin/main [ahead 26]`
+- files in flight for new batch slice 27:
   - `crates/specforge/src/commands/rescan_plan.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -46,27 +46,27 @@
 
 ## Active N-slice batch
 - requested_count: `40`
-- completed_count: `25`
+- completed_count: `26`
 - push_policy: defer push until all `40` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - add rescan-plan parser coverage proving command hints must be cargo and repo-local
-  - refresh live docs for command trust-boundary behavior
+  - add rescan-plan parser coverage proving nlp-enrich replay hints reject classify-only
+  - refresh live docs for nlp classify-only rejection behavior
 - tracker effect:
-  - planned live-status row addition: `specforge rescan-plan` command hints stay cargo and repo-local: `Done`
+  - planned live-status row addition: `specforge rescan-plan` nlp-enrich classify-only hints are rejected: `Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_non_cargo_or_non_repo_command_hints` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_classify_only_for_nlp_enrich_hints` passed with `1` test
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed
-  - `bash scripts/run_ci.sh` passed with `584` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `bash scripts/run_ci.sh` passed with `585` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `130` fixtures and `0` failures
   - `git diff --check` passed
   - checkout-specific absolute path scan across tracked markdown passed
 - current known local CI baseline:
-  - `584` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `585` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `130/130` tracked KG fixtures
 
 ## Next exact steps
-- commit slice 26 without pushing, then continue slice 27
+- commit slice 27 without pushing, then continue slice 28

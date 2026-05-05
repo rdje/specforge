@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan nlp classify-only rejection lock)
+
+### Changed: nlp-enrich replay hints reject classify-only
+- Added parser coverage proving `nlp-enrich` command hints reject `--classify-only`.
+- This keeps classify-only replay semantics scoped to source enrichment instead of leaking into evidence NLP replay.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_classify_only_for_nlp_enrich_hints` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `585` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan command trust-boundary lock)
 
 ### Changed: command hints must stay cargo and repo-local

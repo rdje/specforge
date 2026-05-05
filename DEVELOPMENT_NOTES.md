@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan nlp classify-only rejection lock
+- New batch slice 27/40 adds parser coverage proving `nlp-enrich` replay hints reject `--classify-only`.
+- No production parser code changed; `parse_nlp_enrich_command_hint_args` already accepts only local provider/model options and rejects source-enrich-only flags.
+- This keeps source VLM classify-only replay behavior from leaking into evidence NLP replay.
+
 ## 2026-05-05 rescan-plan command trust-boundary lock
 - New batch slice 26/40 adds parser coverage for the rescan command-hint trust boundary.
 - No production parser code changed; `parse_command_hint` already rejects non-`cargo` executables and non-repository working directories before accepting any stage replay args.

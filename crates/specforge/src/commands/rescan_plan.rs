@@ -1497,6 +1497,22 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_rejects_classify_only_for_nlp_enrich_hints() {
+        let classify_only_nlp = command_hint(
+            "nlp_enrich_evidence_ir",
+            vec![
+                "nlp-enrich",
+                "generated/evidence_ir/doc/evidence_ir.json",
+                "--vlm-provider",
+                "ollama",
+                "--classify-only",
+            ],
+        );
+
+        assert!(parse_command_hint(&classify_only_nlp).is_err());
+    }
+
+    #[test]
     fn rescan_plan_rejects_missing_model_values() {
         let missing_enrich_model = command_hint(
             "enrich_source_ir",
