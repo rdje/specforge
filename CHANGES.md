@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` top-link direction conflict provenance lock)
+
+### Added: top-link direction conflict provenance coverage
+- Tightened `top_composition_keeps_conflicting_top_port_direction_unresolved` so blocked top-composition `.fsm` lowering now proves explicit top-port support IDs, topology-link support IDs, and high automation confidence survive when a top link contradicts the declared top-port direction.
+- This is coverage-only over the existing adapter behavior: conflicting top-boundary direction evidence from a top link still blocks `.fsm` emission.
+- The slice keeps the flat top-port declaration and module-topology link evidence auditable together while the selected signal inventory records the graph direction.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_keeps_conflicting_top_port_direction_unresolved` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-05 (`.fsm` top actor-width conflict provenance lock)
 
 ### Added: top actor-port width conflict provenance coverage

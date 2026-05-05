@@ -11568,6 +11568,40 @@ mod tests {
             "conflicting_top_port_direction.md",
             "# Conflicting Top Port Direction\nTop datapath.\n\nTop datapath port drive_data is output width 8.\n\nTop datapath port result_data is output width 8.\n\nTop datapath child consumer uses module consumer_core.\n\nTop datapath link drive_data -> consumer.input_data.\n\nTop datapath link consumer.result_data -> result_data.\n\nModule consumer_core signal input_data is input width 8.\n\nModule consumer_core signal result_data is output width 8.\n\nModule consumer_core block route: result_data = input_data.\n",
         )?;
+        let (top_port_support_ids, topology_support_ids) = {
+            let explicit_top = intent_ir
+                .explicit_tops
+                .iter()
+                .find(|top| top.top_name == "datapath")
+                .expect("explicit top should be present");
+            let raw_port = explicit_top
+                .ports
+                .iter()
+                .find(|port| port.port_name == "drive_data")
+                .expect("conflicting top port should be preserved");
+            let topology_link = explicit_top
+                .links
+                .iter()
+                .find(|link| {
+                    link.source.instance_name.is_none()
+                        && link.source.signal_name == "drive_data"
+                        && link.target.instance_name.as_deref() == Some("consumer")
+                        && link.target.signal_name == "input_data"
+                })
+                .expect("topology link from drive_data should be present");
+            (
+                raw_port.supporting_statement_ids.clone(),
+                super::explicit_top_link_supporting_ids(topology_link),
+            )
+        };
+        assert!(
+            !top_port_support_ids.is_empty(),
+            "top-port provenance should be present"
+        );
+        assert!(
+            !topology_support_ids.is_empty(),
+            "top-link provenance should be present"
+        );
         let artifact_base = tempdir.path().join("generated").join("adapters");
 
         let adapter = AdapterArtifact::build(
@@ -11596,6 +11630,20 @@ mod tests {
             .expect("conflicting top port should stay in selected top inventory");
 
         assert_eq!(recovered_port.direction_hint, None);
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| recovered_port.supporting_statement_ids.contains(id))
+        );
+        assert!(
+            topology_support_ids
+                .iter()
+                .any(|id| recovered_port.supporting_statement_ids.contains(id))
+        );
+        assert_eq!(
+            recovered_port.automation_confidence,
+            AutomationConfidence::High
+        );
         assert_eq!(
             signal_inventory_port.direction_hint,
             Some(InterfaceSignalDirection::Output)
@@ -11605,6 +11653,26 @@ mod tests {
             Some(InterfaceSignalDirection::Input)
         );
         assert!(!signal_inventory_port.graph_direction_hint_conflicted);
+        assert!(
+            signal_inventory_port
+                .mention_categories
+                .iter()
+                .any(|category| category == "module_topology_link")
+        );
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| signal_inventory_port.supporting_canonical_ids.contains(id))
+        );
+        assert!(
+            topology_support_ids
+                .iter()
+                .any(|id| signal_inventory_port.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            signal_inventory_port.automation_confidence,
+            AutomationConfidence::High
+        );
         assert!(
             top_candidate
                 .renderability
