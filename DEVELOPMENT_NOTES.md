@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 KG semantic-prior source-kind guard fixture
+- New batch slice 5/100 adds `semantic_prior_source_kind_mismatch_negative`.
+- The fixture stages a `visual_caption` semantic phrase prior for `<signal> can stage the transfer` while the current document contains only a prose statement with that phrase.
+- Expected behavior is no EvidenceIR hint, no canonical semantic candidate, no semantic consensus, and no resolved semantic role.
+- The corpus-KB prior-candidate projection now counts the fixture as the fourth semantic-phrase guard, preserving source-kind scoping in the review-only readiness surface.
+
 ## 2026-05-05 KG semantic-prior conflict guard fixture
 - New batch slice 4/100 adds `semantic_prior_conflicting_roles_negative`.
 - The fixture stages two matching semantic phrase priors for `<signal> can arbitrate the transfer`, one valid-like and one ready-like, and expects no EvidenceIR hint or canonical semantic role.

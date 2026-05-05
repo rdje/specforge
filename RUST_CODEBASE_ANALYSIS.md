@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 KG semantic-prior source-kind guard fixture)
+- Added `semantic_prior_source_kind_mismatch_negative` to the KG quality corpus.
+- The fixture proves semantic phrase priors remain source-kind scoped by staging a visual-caption prior while presenting the same normalized phrase only as prose.
+- The corpus-KB prior-candidate manifest now surfaces this as another semantic-phrase guard fixture, strengthening the boundary between local evidence modality and advisory prior interpretation.
+
 ## Session update (2026-05-05 KG semantic-prior conflict guard fixture)
 - Added `semantic_prior_conflicting_roles_negative` to the KG quality corpus.
 - The fixture stages conflicting semantic phrase priors for the same normalized local phrase and proves the EvidenceIR/SemanticIR/IntentIR pipeline does not resolve a role or emit semantic consensus from ambiguous prior memory.

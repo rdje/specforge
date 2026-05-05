@@ -1,0 +1,55 @@
+{
+  "name": "semantic_prior_source_kind_mismatch_negative",
+  "source": "source.md",
+  "prior_memory_patch": {
+    "semantic_phrase_priors": [
+      {
+        "prior_id": "semantic_phrase_prior_visual_only",
+        "normalized_phrase": "<signal> can stage the transfer",
+        "role": "handshake_valid_like",
+        "protocol_family": "amba_generic",
+        "source_kind": "visual_caption",
+        "support_count": 2,
+        "supporting_document_keys": ["seed_amba_visual_valid_1", "seed_amba_visual_valid_2"],
+        "strongest_automation_confidence": "high",
+        "strongest_grounding_strength": "single_source"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["XSTAGE"],
+      "resolved_semantic_role_signal_names_exclude": ["XSTAGE"],
+      "semantic_consensus_signal_names_exclude": ["XSTAGE"],
+      "semantic_candidate_signal_names_exclude": ["XSTAGE"]
+    },
+    "intent": {
+      "signal_names_include": ["XSTAGE"],
+      "resolved_semantic_role_signal_names_exclude": ["XSTAGE"],
+      "semantic_consensus_signal_names_exclude": ["XSTAGE"],
+      "semantic_candidate_signal_names_exclude": ["XSTAGE"]
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "signal_semantic_hints": "0",
+          "signal_semantic_hints_from_prose": "0"
+        }
+      },
+      "semantic": {
+        "metric_values": {
+          "with_resolved_semantic_role": "0",
+          "with_semantic_consensus": "0",
+          "with_single_source_semantic_grounding": "0"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "with_resolved_semantic_role": "0",
+          "with_semantic_consensus": "0",
+          "with_single_source_semantic_grounding": "0"
+        }
+      }
+    }
+  }
+}

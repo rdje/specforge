@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-05 (KG semantic-prior source-kind guard fixture)
+
+### Changed: semantic phrase priors stay scoped by source kind
+- Added a negative KG fixture proving a visual-caption semantic phrase prior does not resolve matching prose text.
+- Refreshed corpus-KB fixture projections so the semantic/truthfulness pattern page and prior-candidate readiness manifest count the source-kind guard fixture.
+- This keeps prior memory scoped by local evidence modality instead of treating a phrase match as globally authoritative.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_prior_source_kind_mismatch_negative` -> passed (`1` fixture, `0` failures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`136` fixtures, `0` failures)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`593` Rust tests, warnings denied for Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`136` fixtures, `0` failures)
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (KG semantic-prior conflict guard fixture)
 
 ### Changed: conflicting semantic phrase priors fail closed
