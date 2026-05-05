@@ -155,6 +155,7 @@
 - Negative-knowledge priors now include signal-polarity conflict archetypes: Done
 - KG benchmark harness can now assert canonical resolved semantic-role shape directly: Done
 - KG benchmark harness can now assert canonical semantic grounding-strength shape directly: Done
+- KG benchmark harness now locks actor-taxonomy prior protocol-family scoping: Done
 - KG benchmark harness now locks negative-knowledge prior protocol-family scoping: Done
 - KG benchmark harness now locks semantic phrase prior protocol-family scoping: Done
 - KG benchmark harness now locks temporal-prior protocol-family scoping: Done

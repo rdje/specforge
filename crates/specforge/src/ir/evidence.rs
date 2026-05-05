@@ -8238,7 +8238,7 @@ mod tests {
     #[test]
     fn actor_taxonomy_priors_guide_source_column_direction_inference() -> Result<()> {
         let tempdir = tempdir()?;
-        let source = tempdir.path().join("producer_consumer.md");
+        let source = tempdir.path().join("amba_producer_consumer.md");
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
         let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
         let prior_memory_path = write_actor_taxonomy_prior_memory(tempdir.path())?;
@@ -8325,7 +8325,7 @@ mod tests {
     #[test]
     fn actor_taxonomy_priors_guide_section_heading_direction_inference() -> Result<()> {
         let tempdir = tempdir()?;
-        let source = tempdir.path().join("section_heading.md");
+        let source = tempdir.path().join("amba_section_heading.md");
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
         let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
         let prior_memory_path = write_actor_taxonomy_prior_memory(tempdir.path())?;

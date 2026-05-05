@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 actor-taxonomy prior protocol-family guard
+- New batch slice 17/100 adds `actor_taxonomy_prior_protocol_family_mismatch_negative` and hardens `CorpusMemory::resolve_actor_taxonomy_role`.
+- The fixture reproduced a family leak: an APB-only actor-taxonomy prior for `issuer` could recover AXI-local section-heading directions through the broad any-family fallback.
+- Actor-taxonomy lookup now uses the same exact-family plus AMBA-generic helper as the other strict prior consumers, so unrelated concrete AMBA families no longer infer graph directions or actor ports.
+- Existing AMBA-generic actor-taxonomy positive tests now use AMBA-inferred temporary source names, preserving the intended fallback path without depending on unknown-family lookup.
+- The corpus-KB benchmark, truthfulness, and prior-candidate readiness projections now count the actor-taxonomy family-mismatch guard.
+
 ## 2026-05-05 negative-knowledge prior protocol-family guard
 - New batch slice 16/100 adds `negative_knowledge_prior_protocol_family_mismatch_negative` and hardens `CorpusMemory::negative_knowledge_pattern_is_known`.
 - The fixture reproduced a family leak: an APB-only negative-knowledge prior for a semantic-conflict pattern could match an AXI-local conflict and emit negative-knowledge caution/rescan findings through the broad any-family fallback.

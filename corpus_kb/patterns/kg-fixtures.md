@@ -15,8 +15,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 
 - source: `kg-bench fixtures`
 - selected_family_labels: `actor connectivity`, `semantic role arbitration`, `negative knowledge`, `truthfulness negatives and cautions`, `residuals and caveats`
-- fixtures_total: `84`
-- fixtures_passed: `84`
+- fixtures_total: `85`
+- fixtures_passed: `85`
 - fixtures_failed: `0`
 
 | fixture | status | matched families | path |
@@ -26,6 +26,7 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `actor_ports_gold` | `pass` | `actor connectivity` | `crates/specforge/test_data/kg_quality/actor_ports_gold/fixture.json` |
 | `actor_taxonomy_prior_guided_section_direction_gold` | `pass` | `actor connectivity` | `crates/specforge/test_data/kg_quality/actor_taxonomy_prior_guided_section_direction_gold/fixture.json` |
 | `actor_taxonomy_prior_guided_section_direction_without_prior_negative` | `pass` | `actor connectivity`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/actor_taxonomy_prior_guided_section_direction_without_prior_negative/fixture.json` |
+| `actor_taxonomy_prior_protocol_family_mismatch_negative` | `pass` | `actor connectivity`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/actor_taxonomy_prior_protocol_family_mismatch_negative/fixture.json` |
 | `ahb_section_heading_direction_gold` | `pass` | `actor connectivity` | `crates/specforge/test_data/kg_quality/ahb_section_heading_direction_gold/fixture.json` |
 | `alias_dependent_handshake_completion_caveat` | `pass` | `residuals and caveats`, `semantic role arbitration` | `crates/specforge/test_data/kg_quality/alias_dependent_handshake_completion_caveat/fixture.json` |
 | `amba_destination_column_reads_gold` | `pass` | `actor connectivity` | `crates/specforge/test_data/kg_quality/amba_destination_column_reads_gold/fixture.json` |

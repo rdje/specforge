@@ -415,15 +415,11 @@ impl CorpusMemory {
     where
         F: Fn(&ActorTaxonomyPriorRecord) -> bool,
     {
-        for scope in actor_taxonomy_search_scopes(protocol_family) {
+        for scope in protocol_family_exact_or_amba_generic_search_scopes(protocol_family) {
             let roles = self
                 .actor_taxonomy_priors
                 .iter()
-                .filter(|prior| {
-                    scope
-                        .map(|expected| prior.protocol_family == expected)
-                        .unwrap_or(true)
-                })
+                .filter(|prior| prior.protocol_family == scope)
                 .filter(|prior| is_meaningful_actor_term(&prior.normalized_actor_term))
                 .filter(|prior| predicate(prior))
                 .map(|prior| prior.taxonomy_role)
@@ -729,22 +725,6 @@ pub fn is_meaningful_prior_phrase(text: &str) -> bool {
         && trimmed != "<actor>"
         && trimmed.chars().any(|ch| ch.is_ascii_lowercase())
         && meaningful_terms >= 2
-}
-
-fn actor_taxonomy_search_scopes(
-    protocol_family: Option<ProtocolFamily>,
-) -> Vec<Option<ProtocolFamily>> {
-    let mut scopes = Vec::new();
-    if let Some(protocol_family) =
-        protocol_family.filter(|family| *family != ProtocolFamily::Unknown)
-    {
-        scopes.push(Some(protocol_family));
-        if protocol_family != ProtocolFamily::AmbaGeneric {
-            scopes.push(Some(ProtocolFamily::AmbaGeneric));
-        }
-    }
-    scopes.push(None);
-    scopes
 }
 
 fn protocol_family_exact_or_amba_generic_search_scopes(

@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-05-05 (actor-taxonomy prior protocol-family guard)
+
+### Changed: actor-taxonomy priors no longer fall through to unrelated protocol families
+- Added a KG negative fixture proving an APB-only actor-taxonomy prior cannot infer AXI-local section-heading directions from the same actor term.
+- Reused the exact-family plus AMBA-generic prior lookup policy for actor-taxonomy role recovery, matching the other strict prior consumers.
+- Updated AMBA-generic actor-taxonomy unit-test source names so they continue to cover intentional AMBA-generic fallback without relying on unknown-family fallback.
+- Refreshed corpus-KB fixture and prior-candidate projections so actor-taxonomy family-mismatch coverage is visible in the benchmark, truthfulness, and review-only readiness surfaces.
+
+### Validation
+- pre-fix `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench actor_taxonomy_prior_protocol_family_mismatch_negative actor_taxonomy_prior_guided_section_direction_gold actor_taxonomy_prior_guided_section_direction_without_prior_negative` reproduced APB actor-taxonomy prior leakage into an AXI fixture
+- post-fix focused `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench actor_taxonomy_prior_protocol_family_mismatch_negative actor_taxonomy_prior_guided_section_direction_gold actor_taxonomy_prior_guided_section_direction_without_prior_negative` -> passed (`3` fixtures, `0` failures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`148` fixtures, `0` failures)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- first `bash scripts/run_ci.sh` run caught stale unit-test setup for unknown-family actor-taxonomy fallback; test source names were updated to infer AMBA and keep AMBA-generic fallback covered
+- `cargo test --manifest-path Cargo.toml -p specforge actor_taxonomy_priors_guide` -> passed (`2` tests)
+- final `bash scripts/run_ci.sh` -> passed (`593` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+
 ## 2026-05-05 (negative-knowledge prior protocol-family guard)
 
 ### Changed: negative-knowledge priors no longer fall through to unrelated protocol families
