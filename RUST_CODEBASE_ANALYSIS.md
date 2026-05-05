@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` top actor-width conflict provenance lock)
+- Tightened `top_composition_blocks_conflicting_top_actor_port_width` in `crates/specforge/src/ir/adapters.rs` so blocked top actor-port width conflicts retain explicit top-port support IDs, graph actor-port support ID, width-conflict inventory state, and automation confidence.
+- The adapter already blocked top lowering when flat top-port width and graph actor-port width disagreed; this regression now proves both evidence families remain inspectable on the recovered top port and selected signal inventory.
+- This completes the immediate top actor-port graph-vs-flat conflict pair by covering both direction and width disagreements.
+
 ## Session update (2026-05-05 `.fsm` top actor-direction conflict provenance lock)
 - Tightened `top_composition_blocks_conflicting_top_actor_port_direction` in `crates/specforge/src/ir/adapters.rs` so blocked top actor-port direction conflicts retain explicit top-port support IDs, graph actor-port support ID, and automation confidence.
 - The adapter already blocked top lowering when flat top-port direction and graph actor-port direction disagreed; this regression now proves both evidence families remain inspectable on the recovered top port and selected signal inventory.

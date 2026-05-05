@@ -11459,6 +11459,17 @@ mod tests {
             ActorRelativeDirection::Output,
             16,
         )];
+        let top_port_support_ids = intent_ir
+            .explicit_tops
+            .iter()
+            .find(|top| top.top_name == "wrapper")
+            .and_then(|top| top.ports.iter().find(|port| port.port_name == "ext_data"))
+            .map(|port| port.supporting_statement_ids.clone())
+            .expect("top port should be present");
+        assert!(
+            !top_port_support_ids.is_empty(),
+            "top-port provenance should be present"
+        );
         intent_ir.write_to_disk()?;
 
         let artifact_base = tempdir.path().join("generated").join("adapters");
@@ -11481,12 +11492,55 @@ mod tests {
             .iter()
             .find(|port| port.port_name == "ext_data")
             .expect("conflicting top port should stay visible");
+        let signal_inventory_port = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "ext_data")
+            .expect("conflicting top port should stay in selected top inventory");
 
         assert_eq!(
             recovered_port.direction_hint,
             Some(InterfaceSignalDirection::Output)
         );
         assert_eq!(recovered_port.width_hint, None);
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| recovered_port.supporting_statement_ids.contains(id))
+        );
+        assert!(
+            recovered_port
+                .supporting_statement_ids
+                .iter()
+                .any(|id| id == "graph_wrapper_ext_data")
+        );
+        assert_eq!(
+            recovered_port.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert_eq!(signal_inventory_port.width_hint, None);
+        assert!(signal_inventory_port.width_hint_conflicted);
+        assert!(
+            signal_inventory_port
+                .mention_categories
+                .iter()
+                .any(|category| category == "actor_port_width")
+        );
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| signal_inventory_port.supporting_canonical_ids.contains(id))
+        );
+        assert!(
+            signal_inventory_port
+                .supporting_canonical_ids
+                .iter()
+                .any(|id| id == "graph_wrapper_ext_data")
+        );
+        assert_eq!(
+            signal_inventory_port.automation_confidence,
+            AutomationConfidence::High
+        );
         assert!(
             top_candidate
                 .renderability

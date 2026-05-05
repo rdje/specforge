@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 `.fsm` top actor-width conflict provenance lock
+- New batch slice 60/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_conflicting_top_actor_port_width` now asserts conflicting top-boundary width evidence preserves explicit top-port support IDs, `graph_wrapper_ext_data`, width-conflict inventory state, and high automation confidence on the recovered top port and selected signal inventory.
+- This is a coverage-only lock for the blocked top-composition path where the flat top-port declaration and graph actor-port width disagree.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-05 `.fsm` top actor-direction conflict provenance lock
 - New batch slice 59/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_conflicting_top_actor_port_direction` now asserts conflicting top-boundary direction evidence preserves explicit top-port support IDs, `graph_wrapper_ext_data`, and high automation confidence on the recovered top port and selected signal inventory.

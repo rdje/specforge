@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` top actor-width conflict provenance lock)
+
+### Added: top actor-port width conflict provenance coverage
+- Tightened `top_composition_blocks_conflicting_top_actor_port_width` so blocked top-composition `.fsm` lowering now proves explicit top-port support IDs, graph actor-port support ID, width-conflict inventory state, and high automation confidence survive.
+- This is coverage-only over the existing adapter behavior: conflicting top-boundary width evidence still blocks `.fsm` emission.
+- The slice keeps flat top-port width and graph actor-port width evidence auditable together when they disagree.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_top_actor_port_width` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-05 (`.fsm` top actor-direction conflict provenance lock)
 
 ### Added: top actor-port direction conflict provenance coverage
