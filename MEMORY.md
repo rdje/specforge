@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `d23c173b49c3c1105c0dc275e522ceb160980465`
-- latest_commit_brief_message: `test(adapter): lock top link direction conflict support`
+- latest_commit_hash: `465dd04d87345112c45272909dcb519980a405ab`
+- latest_commit_brief_message: `test(adapter): lock duplicate top direction support`
 - note: new local `N=100` batch is active; push remains deferred until all 100 slices complete
 
 ## Recent commit chain (last 6)
+- `465dd04` test(adapter): lock duplicate top direction support
 - `d23c173` test(adapter): lock top link direction conflict support
 - `c23520c` test(adapter): lock top actor width conflict support
 - `ca5acc0` test(adapter): lock top actor direction conflict support
 - `b27d39e` test(adapter): lock blocked top port recovery support
 - `0c4d6fd` test(adapter): lock unemitted child link support
-- `9079659` test(adapter): lock parametric top port support
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 61]`
-- files in flight for new batch slice 62:
+- branch state before the next commit: `main...origin/main [ahead 62]`
+- files in flight for new batch slice 63:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -47,21 +47,21 @@
 
 ## Active N-slice batch
 - requested_count: `100`
-- completed_count: `61`
+- completed_count: `62`
 - push_policy: defer push until all `100` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - regression-lock duplicate top-port direction conflict provenance
-  - prove blocked top-composition candidates and selected signal inventory preserve both duplicate top-port support-ID sets and high automation confidence
-  - keep duplicate public top-port declarations auditable together while `.fsm` emission stays blocked
+  - regression-lock duplicate top-port width conflict provenance
+  - prove blocked top-composition candidates and selected signal inventory preserve both duplicate top-port support-ID sets, width-conflict inventory state, and high automation confidence
+  - keep duplicate public top-port width declarations auditable together while `.fsm` emission stays blocked
 - tracker effect:
-  - live-status tracker gains `.fsm duplicate top-port direction conflicts now regression-lock support IDs and automation confidence: Done`
+  - live-status tracker gains `.fsm duplicate top-port width conflicts now regression-lock support IDs and automation confidence: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_keeps_duplicate_top_port_width_conflict_unresolved` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
-  - `cargo fmt --manifest-path Cargo.toml -- --check` passed after applying rustfmt to the new assertions
+  - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed before and after the final live-doc refresh
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `148/148` tracked fixtures
   - `bash scripts/run_ci.sh` passed with formatting, warning-deny Clippy, `601` Rust tests, warning-deny Rust docs, and mdBook build
@@ -70,4 +70,4 @@
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- run final docs CI and guards, commit slice 62 without pushing, and continue slice 63
+- run final docs CI and guards, commit slice 63 without pushing, and continue slice 64

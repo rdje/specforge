@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` duplicate top-port width provenance lock)
+- Tightened `top_composition_keeps_duplicate_top_port_width_conflict_unresolved` in `crates/specforge/src/ir/adapters.rs` so duplicate top-port width declarations retain both support-ID sets, width-conflict inventory state, and automation confidence.
+- The adapter already blocked top lowering when duplicate public top-port declarations disagreed on width; this regression now proves both duplicate declaration records remain inspectable on recovered top ports and selected signal inventory entries.
+- This completes the immediate duplicate top-port declaration conflict pair by covering both direction and width disagreements.
+
 ## Session update (2026-05-05 `.fsm` duplicate top-port direction provenance lock)
 - Tightened `top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` in `crates/specforge/src/ir/adapters.rs` so duplicate top-port direction declarations retain both support-ID sets and automation confidence.
 - The adapter already blocked top lowering when duplicate public top-port declarations disagreed on direction; this regression now proves both duplicate declaration records remain inspectable on recovered top ports and selected signal inventory entries.

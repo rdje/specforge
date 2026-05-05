@@ -343,6 +343,7 @@
 - `.fsm` top actor-port width conflicts now regression-lock support IDs and automation confidence: Done
 - `.fsm` top-link direction conflicts now regression-lock support IDs and automation confidence: Done
 - `.fsm` duplicate top-port direction conflicts now regression-lock support IDs and automation confidence: Done
+- `.fsm` duplicate top-port width conflicts now regression-lock support IDs and automation confidence: Done
 - `.fsm` widthless top-port blockers now regression-lock support IDs and automation confidence: Done
 - `.fsm` parametric top-port blockers now regression-lock support IDs and automation confidence: Done
 - `.fsm` explicit top-link lowering now requires child endpoints to resolve to emitted child module ports: Done
