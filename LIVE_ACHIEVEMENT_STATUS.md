@@ -338,6 +338,7 @@
 - `.fsm` explicit-module actor-port width conflicts now regression-lock support IDs and automation confidence: Done
 - `.fsm` direct-root actor-port width conflicts now regression-lock support IDs and automation confidence: Done
 - `.fsm` explicit top-root lowering now blocks missing or parametric public IO widths instead of rendering implicit 1-bit top ports: Done
+- `.fsm` widthless top-port blockers now regression-lock support IDs and automation confidence: Done
 - `.fsm` explicit top-link lowering now requires child endpoints to resolve to emitted child module ports: Done
 - `.fsm` standalone DT/FSM renderability now blocks graph-backed output inventory entries that have no typed driving action instead of silently omitting them: Done
 - `.fsm` standalone DT graph-backed undriven output blockers now regression-lock support IDs and automation confidence: Done

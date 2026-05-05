@@ -10976,6 +10976,23 @@ mod tests {
             "widthless_top_port_without_recovery.md",
             "# Widthless Top Port Without Recovery\nTop wrapper.\n\nTop wrapper port ext_data is output.\n\nTop wrapper child producer uses module producer_core.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n",
         )?;
+        let top_port_support_ids = {
+            let raw_top = intent_ir
+                .explicit_tops
+                .iter()
+                .find(|top| top.top_name == "wrapper")
+                .expect("explicit top should be present");
+            let raw_port = raw_top
+                .ports
+                .iter()
+                .find(|port| port.port_name == "ext_data")
+                .expect("widthless top port should be preserved");
+            assert!(
+                !raw_port.supporting_statement_ids.is_empty(),
+                "raw top-port provenance should be present"
+            );
+            raw_port.supporting_statement_ids.clone()
+        };
 
         let artifact_base = tempdir.path().join("generated").join("adapters");
         let adapter = AdapterArtifact::build(
@@ -11008,8 +11025,26 @@ mod tests {
             Some(InterfaceSignalDirection::Output)
         );
         assert_eq!(recovered_port.width_hint, None);
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| recovered_port.supporting_statement_ids.contains(id))
+        );
+        assert_eq!(
+            recovered_port.automation_confidence,
+            AutomationConfidence::High
+        );
         assert_eq!(signal_inventory_port.width_hint, None);
         assert!(!signal_inventory_port.width_hint_conflicted);
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| signal_inventory_port.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            signal_inventory_port.automation_confidence,
+            AutomationConfidence::High
+        );
         assert!(
             top_candidate
                 .renderability

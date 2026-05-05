@@ -178,6 +178,7 @@
   - real structured `?fsm:name` target text is emitted only when the canonical state graph, state-body control, transition targets, and system/init surface are explicit enough to avoid semantic invention
   - real explicit `?top:name` target text is emitted only when the canonical model carries explicit top ports, child modules, renderable child roots, and width-compatible links
   - selected top signal inventory preserves symbolic public IO width provenance while `.fsm` lowering remains blocked until numeric width evidence exists
+  - widthless public top-port blockers preserve explicit top-port support IDs and high automation confidence while `.fsm` lowering remains blocked until numeric width evidence exists
   - actor-port parametric width blockers preserve graph-backed provenance category, support IDs, and automation confidence while `.fsm` lowering remains blocked until numeric width evidence exists
   - canonical parametric width blockers preserve interface provenance category, support IDs, and automation confidence while `.fsm` lowering remains blocked until numeric width evidence exists
   - explicit numeric interface width evidence stays provenance-auditable and takes precedence over graph-backed actor-port symbolic widths for `.fsm` emission

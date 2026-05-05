@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 `.fsm` widthless top-port provenance lock
+- New batch slice 55/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_widthless_top_port_without_width_recovery` now asserts widthless public top ports preserve explicit top-port support IDs and high automation confidence in both the blocked top candidate and selected signal inventory.
+- This is a coverage-only lock for the blocked top-composition path where an explicit top port has direction evidence but no numeric width evidence.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-05 `.fsm` standalone undriven-output provenance lock
 - New batch slice 54/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `standalone_dt_blocks_graph_backed_undriven_output_inventory` now asserts graph-backed undriven output blockers keep `graph_controller_UNUSED_OUT` and high automation confidence in the direct DT signal inventory.

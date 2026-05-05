@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `ebdee003182463aa89e384dca5c05b36c5dfbc77`
-- latest_commit_brief_message: `test(adapter): lock structured undriven support`
+- latest_commit_hash: `5920c968bce2ad81d66f75283d8bb23e8017bb65`
+- latest_commit_brief_message: `test(adapter): lock standalone undriven support`
 - note: new local `N=100` batch is active; push remains deferred until all 100 slices complete
 
 ## Recent commit chain (last 6)
+- `5920c96` test(adapter): lock standalone undriven support
 - `ebdee00` test(adapter): lock structured undriven support
 - `adbc5bb` test(adapter): lock structured flat graph support
 - `867934a` test(adapter): lock module flat graph support
 - `5877a3c` test(adapter): lock system width conflict support
 - `d782124` test(adapter): lock system direction conflict support
-- `bb443c0` test(adapter): lock system graph conflict support
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 53]`
-- files in flight for new batch slice 54:
+- branch state before the next commit: `main...origin/main [ahead 54]`
+- files in flight for new batch slice 55:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -47,19 +47,19 @@
 
 ## Active N-slice batch
 - requested_count: `100`
-- completed_count: `53`
+- completed_count: `54`
 - push_policy: defer push until all `100` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - regression-lock standalone-DT graph-backed undriven output provenance
-  - prove blocked direct signal inventory preserves `graph_controller_UNUSED_OUT` and high automation confidence
-  - keep selected output actor evidence auditable while renderability blocks missing typed control action
+  - regression-lock widthless top-port blocker provenance
+  - prove blocked top-composition candidates and selected signal inventory preserve explicit top-port support IDs and high automation confidence
+  - keep top-boundary direction evidence auditable while renderability blocks missing numeric width evidence
 - tracker effect:
-  - live-status tracker gains `.fsm standalone DT graph-backed undriven output blockers now regression-lock support IDs and automation confidence: Done`
+  - live-status tracker gains `.fsm widthless top-port blockers now regression-lock support IDs and automation confidence: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge standalone_dt_blocks_graph_backed_undriven_output_inventory` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_widthless_top_port_without_width_recovery` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed before and after the final `MEMORY.md` verification refresh
@@ -70,4 +70,4 @@
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- run final guards, commit slice 54 without pushing, and continue slice 55
+- run final guards, commit slice 55 without pushing, and continue slice 56

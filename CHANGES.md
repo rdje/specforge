@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` widthless top-port provenance lock)
+
+### Added: widthless top-port blocker provenance coverage
+- Tightened `top_composition_blocks_widthless_top_port_without_width_recovery` so blocked top-composition `.fsm` lowering now proves explicit top-port support IDs and high automation confidence survive in both the top candidate and selected signal inventory.
+- This is coverage-only over the existing adapter behavior: a public top port with direction but no numeric width still blocks `.fsm` emission.
+- The slice keeps explicit top-boundary evidence auditable while the renderability blocker explains the missing numeric width.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_widthless_top_port_without_width_recovery` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-05 (`.fsm` standalone undriven-output provenance lock)
 
 ### Added: standalone DT undriven output provenance coverage
