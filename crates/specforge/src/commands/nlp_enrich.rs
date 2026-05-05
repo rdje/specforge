@@ -477,7 +477,8 @@ fn extract_alias_phrase(sentence: &str, subject_signal: &str) -> Option<String> 
 
     // Strip leading articles / determiners then normalize.
     let stripped = strip_leading_articles(subject_raw);
-    let normalized = stripped.to_ascii_lowercase();
+    let normalized_subject = normalize_alias_subject_markup(stripped);
+    let normalized = normalized_subject.to_ascii_lowercase();
 
     let words: Vec<String> = normalized
         .split_whitespace()
@@ -522,6 +523,38 @@ fn clean_alias_word(word: &str) -> Option<String> {
     } else {
         Some(word.to_string())
     }
+}
+
+fn normalize_alias_subject_markup(text: &str) -> String {
+    let mut normalized = String::with_capacity(text.len());
+    let mut remaining = text;
+
+    while let Some(link_start) = remaining.find('[') {
+        normalized.push_str(&remaining[..link_start]);
+        let after_open = &remaining[link_start + 1..];
+        let Some(label_end) = after_open.find(']') else {
+            normalized.push_str(&remaining[link_start..]);
+            return normalized;
+        };
+        let label = &after_open[..label_end];
+        let after_label = &after_open[label_end + 1..];
+        let Some(after_target_open) = after_label.strip_prefix('(') else {
+            normalized.push('[');
+            remaining = after_open;
+            continue;
+        };
+        let Some(target_end) = after_target_open.find(')') else {
+            normalized.push('[');
+            remaining = after_open;
+            continue;
+        };
+
+        normalized.push_str(label);
+        remaining = &after_target_open[target_end + 1..];
+    }
+
+    normalized.push_str(remaining);
+    normalized
 }
 
 fn subject_has_markup_prefix(subject: &str) -> bool {
@@ -1255,6 +1288,28 @@ mod tests {
             extract_alias_phrase("The address bus: must remain stable", "HADDR").as_deref(),
             Some("address bus"),
             "trailing colons before the modal boundary should not pollute learned aliases"
+        );
+    }
+
+    #[test]
+    fn extract_alias_phrase_uses_markdown_link_labels() {
+        assert_eq!(
+            extract_alias_phrase(
+                "The [address bus](#address-bus) shall remain stable",
+                "HADDR"
+            )
+            .as_deref(),
+            Some("address bus"),
+            "markdown link targets should not be learned as alias text"
+        );
+        assert_eq!(
+            extract_alias_phrase(
+                "The [write enable control](signals.md#write-enable) must be stable",
+                "HWRITE"
+            )
+            .as_deref(),
+            Some("write enable control"),
+            "link labels should remain usable as learned prose aliases"
         );
     }
 

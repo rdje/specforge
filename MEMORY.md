@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `1cafcf940ea5ccba5b358254c7eea95597995c51`
-- latest_commit_brief_message: `fix(nlp): reject outline alias markers`
+- latest_commit_hash: `47387b10c71c17539828fc2fb05d68d887653155`
+- latest_commit_brief_message: `fix(nlp): trim alias word punctuation`
 - note: new local `N=100` batch is active; push remains deferred until all 100 slices complete
 
 ## Recent commit chain (last 6)
+- `47387b1` fix(nlp): trim alias word punctuation
 - `1cafcf9` fix(nlp): reject outline alias markers
 - `9c572b2` docs(book): explain adapter graph provenance
 - `7e0add5` fix(adapter): preserve top flat graph direction evidence
 - `afb2376` test(adapter): lock system contract flat graph disagreement
 - `f3f1fbe` test(adapter): lock structured FSM flat graph disagreement
-- `50a6661` test(adapter): lock module flat graph disagreement
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 24]`
-- files in flight for new batch slice 25:
+- branch state before the next commit: `main...origin/main [ahead 25]`
+- files in flight for new batch slice 26:
   - `crates/specforge/src/commands/nlp_enrich.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -47,27 +47,27 @@
 
 ## Active N-slice batch
 - requested_count: `100`
-- completed_count: `24`
+- completed_count: `25`
 - push_policy: defer push until all `100` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - harden Form 2 NLP alias learning against wrapper punctuation in candidate words
-  - trim inline-code delimiters and punctuation immediately before modal boundaries before storing aliases
+  - harden Form 2 NLP alias learning against markdown link target pollution
+  - normalize markdown links in subject phrases to their visible labels before storing aliases
   - keep useful implicit noun-phrase alias learning intact
 - tracker effect:
-  - live-status tracker gains `NLP alias learning now trims wrapper punctuation from Form 2 alias words: Done`
+  - live-status tracker gains `NLP alias learning now uses markdown link labels for Form 2 aliases: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge extract_alias_phrase` passed with `7` tests
-  - `cargo test --manifest-path Cargo.toml -p specforge commands::nlp_enrich::tests` passed with `19` tests
+  - `cargo test --manifest-path Cargo.toml -p specforge extract_alias_phrase` passed with `8` tests
+  - `cargo test --manifest-path Cargo.toml -p specforge commands::nlp_enrich::tests` passed with `20` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed after the live-doc refresh
-  - `bash scripts/run_ci.sh` passed with `599` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `bash scripts/run_ci.sh` passed with `600` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `148` fixtures and `0` failures
 - current known local CI baseline:
-  - `599` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `600` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- run docs/full CI/KG bench after live-doc edits, run final guards, commit slice 25 without pushing, and continue slice 26
+- run docs/full CI/KG bench after live-doc edits, run final guards, commit slice 26 without pushing, and continue slice 27

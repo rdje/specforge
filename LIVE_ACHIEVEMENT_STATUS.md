@@ -444,6 +444,7 @@
 - Actor-relative direction model in `SemanticIR` / `IntentIR`: In Progress
 - NLP alias learning now rejects outline/list marker prefixes before storing Form 2 aliases: Done
 - NLP alias learning now trims wrapper punctuation from Form 2 alias words: Done
+- NLP alias learning now uses markdown link labels for Form 2 aliases: Done
 - Cross-document typed prior memory (`R15f`): In Progress
 
 ## Highest-priority remaining gap

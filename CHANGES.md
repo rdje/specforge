@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (NLP alias markdown-link normalization)
+
+### Changed: alias learning uses markdown link labels instead of link targets
+- Hardened `extract_alias_phrase()` so markdown links in Form 2 alias subjects are normalized to their visible labels before alias word cleanup.
+- Added focused coverage proving subjects such as `[address bus](#address-bus)` and `[write enable control](signals.md#write-enable)` learn the visible prose phrases instead of target-bearing garbage.
+- This keeps link syntax out of `signal_alias_map` while preserving useful implicit aliases from linked prose.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge extract_alias_phrase` -> passed (`8` tests)
+- `cargo test --manifest-path Cargo.toml -p specforge commands::nlp_enrich::tests` -> passed (`20` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`600` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+
 ## 2026-05-05 (NLP alias punctuation normalization)
 
 ### Changed: alias learning trims wrapper punctuation from candidate phrases

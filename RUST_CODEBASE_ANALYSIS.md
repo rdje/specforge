@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 NLP alias markdown-link normalization)
+- Hardened `extract_alias_phrase()` in `crates/specforge/src/commands/nlp_enrich.rs` so markdown links in candidate alias subjects are normalized to their visible labels before alias word cleanup.
+- Added `extract_alias_phrase_uses_markdown_link_labels`, bringing focused alias parser coverage to `8` tests and NLP-enrich module coverage to `20` tests.
+- This prevents link target syntax from entering `signal_alias_map` while keeping linked prose labels usable as implicit aliases.
+
 ## Session update (2026-05-05 NLP alias punctuation normalization)
 - Hardened `extract_alias_phrase()` in `crates/specforge/src/commands/nlp_enrich.rs` so Form 2 alias learning trims surrounding ASCII punctuation from each candidate alias word after article stripping.
 - Added `extract_alias_phrase_trims_wrapping_punctuation_from_alias_words`, bringing focused alias parser coverage to `7` tests and NLP-enrich module coverage to `19` tests.
