@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 `.fsm` structured undriven-output provenance lock
+- New batch slice 53/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `structured_fsm_blocks_graph_backed_undriven_output_inventory` now asserts graph-backed undriven output blockers keep `graph_controller_UNUSED_TRACE` and high automation confidence in the structured-FSM signal inventory.
+- This is a coverage-only lock for the blocked structured-FSM path where graph evidence marks an output but no typed FSM-state action drives it.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-05 `.fsm` structured-FSM flat/graph provenance lock
 - New batch slice 52/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `structured_fsm_blocks_flat_graph_direction_disagreement` now asserts blocked FSM-root flat-vs-graph disagreement keeps interface and actor-port categories, `graph_controller_ACC` support ID, and high automation confidence.

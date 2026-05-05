@@ -8875,6 +8875,16 @@ mod tests {
                 .any(|category| category == "actor_port")
         );
         assert!(
+            unused_trace
+                .supporting_canonical_ids
+                .iter()
+                .any(|id| id == "graph_controller_UNUSED_TRACE")
+        );
+        assert_eq!(
+            unused_trace.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert!(
             fsm.renderability
                 .blocking_reasons
                 .iter()

@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `867934ac719083810138407ddafa374591f25b00`
-- latest_commit_brief_message: `test(adapter): lock module flat graph support`
+- latest_commit_hash: `adbc5bb98f03383a42bff7f9dbb50683de43127b`
+- latest_commit_brief_message: `test(adapter): lock structured flat graph support`
 - note: new local `N=100` batch is active; push remains deferred until all 100 slices complete
 
 ## Recent commit chain (last 6)
+- `adbc5bb` test(adapter): lock structured flat graph support
 - `867934a` test(adapter): lock module flat graph support
 - `5877a3c` test(adapter): lock system width conflict support
 - `d782124` test(adapter): lock system direction conflict support
 - `bb443c0` test(adapter): lock system graph conflict support
 - `5eabaf2` test(adapter): lock system actor direction support
-- `c9907c3` test(adapter): lock same-actor width conflict support
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 51]`
-- files in flight for new batch slice 52:
+- branch state before the next commit: `main...origin/main [ahead 52]`
+- files in flight for new batch slice 53:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -47,22 +47,22 @@
 
 ## Active N-slice batch
 - requested_count: `100`
-- completed_count: `51`
+- completed_count: `52`
 - push_policy: defer push until all `100` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - regression-lock structured-FSM flat/graph direction disagreement provenance
-  - prove blocked FSM signal inventory preserves interface and actor-port categories, `graph_controller_ACC`, and high automation confidence
-  - keep canonical FSM-root and graph-backed actor direction evidence visible together when they disagree
+  - regression-lock structured-FSM graph-backed undriven output provenance
+  - prove blocked FSM signal inventory preserves `graph_controller_UNUSED_TRACE` and high automation confidence
+  - keep selected output actor evidence auditable while renderability blocks missing typed FSM-state action
 - tracker effect:
-  - live-status tracker gains `.fsm structured-FSM flat/graph direction disagreement now regression-locks interface and actor-port provenance: Done`
+  - live-status tracker gains `.fsm structured-FSM graph-backed undriven output blockers now regression-lock support IDs and automation confidence: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge structured_fsm_blocks_flat_graph_direction_disagreement` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge structured_fsm_blocks_graph_backed_undriven_output_inventory` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
-  - `bash scripts/run_docs_ci.sh` passed before the final `MEMORY.md` verification refresh
+  - `bash scripts/run_docs_ci.sh` passed before and after the final `MEMORY.md` verification refresh
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `148/148` tracked fixtures
   - `bash scripts/run_ci.sh` passed with formatting, warning-deny Clippy, `601` Rust tests, warning-deny Rust docs, and mdBook build
 - current known local CI baseline:
@@ -70,4 +70,4 @@
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- rerun docs CI after this final `MEMORY.md` edit, run final guards, commit slice 52 without pushing, and continue slice 53
+- run final guards, commit slice 53 without pushing, and continue slice 54
