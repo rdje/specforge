@@ -105,7 +105,7 @@ cargo run --manifest-path Cargo.toml -- rescan-plan --execute
 Execution is deliberately narrow.
 The command does not shell out through the display strings.
 It parses the structured `executable` and `args`, accepts only the repository-local `cargo run --manifest-path Cargo.toml -- ...` shape, and dispatches only whitelisted stage commands in-process:
-The structured hint must also keep `working_directory` as `.`, include real SpecForge args after the `--` separator, and keep the structured intent aligned with the SpecForge subcommand lane.
+The structured hint must also keep `working_directory` as `.`, include real SpecForge args after the `--` separator, use a known rescan intent, and keep that intent aligned with the SpecForge subcommand lane.
 Accepted local provider values are `ollama`, `lmstudio` / `lm-studio`, and `skip`; OpenAI hints are rejected by the executor.
 Malformed provider options, including missing providers, repeated provider/model/classification flags, missing provider or model values, flag-shaped provider or model values, unsupported provider values, and unsupported args, are rejected before execution.
 

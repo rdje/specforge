@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan unknown command-intent lock)
+
+### Changed: unknown replay command intents now have parser coverage
+- Added negative coverage for an unknown validation-shaped command intent.
+- Added negative coverage for an unknown adapter-rebuild-shaped command intent.
+- This locks the executor to its structured intent allowlist even when a command hint carries a valid-looking SpecForge subcommand.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_unknown_command_intents` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `540` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan intent/subcommand mismatch lock)
 
 ### Changed: replay command intents now have mismatch coverage

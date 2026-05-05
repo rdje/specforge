@@ -766,6 +766,26 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_rejects_unknown_command_intents() {
+        let unknown_validation_intent = command_hint(
+            "validate_generated_artifact",
+            vec!["validate", "generated/intent_ir/doc/intent_ir.json"],
+        );
+        assert!(parse_command_hint(&unknown_validation_intent).is_err());
+
+        let unknown_rebuild_intent = command_hint(
+            "rebuild_adapter_ir",
+            vec![
+                "adapt",
+                "generated/intent_ir/doc/intent_ir.json",
+                "--target",
+                "fsm",
+            ],
+        );
+        assert!(parse_command_hint(&unknown_rebuild_intent).is_err());
+    }
+
+    #[test]
     fn rescan_plan_rejects_non_repository_cargo_hints() {
         let mut wrong_workdir = command_hint(
             "rebuild_intent_ir",

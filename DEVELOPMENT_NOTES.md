@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan unknown command-intent lock
+- Batch slice 20/20 adds focused coverage for unknown structured command intents.
+- `parse_command_hint(...)` already rejected unsupported `(intent, args)` combinations through its allowlist.
+- Added `rescan_plan_rejects_unknown_command_intents` so valid-looking `validate` or `adapt` command shapes stay rejected when their structured rescan intent is not one of the executor lanes.
+
 ## 2026-05-05 rescan-plan intent/subcommand mismatch lock
 - Batch slice 19/20 adds focused coverage for mismatches between structured `intent` values and SpecForge subcommands.
 - `parse_command_hint(...)` already matched both fields together, but the invalid pairing had no direct regression.
