@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan absolute replay path rejection)
+
+### Changed: replay command artifact paths must be relative
+- Added execution-parser hardening so structured rescan command hints reject absolute source or artifact paths.
+- Added regression coverage for absolute ingest, enrich, and validate replay paths.
+- Updated the mdBook rescan-plan reference to mention the path restriction.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_absolute_replay_artifact_paths` -> passed (`1` test, `589` filtered out)
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_execute_` -> passed (`4` tests, `586` filtered out)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`590` Rust tests, warnings denied for Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`130` fixtures, `0` failures)
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan source-enrich skip classify-only lock)
 
 ### Changed: source enrichment keeps classify-only with skip

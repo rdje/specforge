@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan absolute replay path rejection)
+- Hardened `crates/specforge/src/commands/rescan_plan.rs` command-hint parsing so replay source/artifact path tokens must be relative paths.
+- `parse_rescan_command_path` now rejects absolute paths before constructing `RescanInvocation` variants for ingest, enrich, nlp-enrich, stage rebuild, or validate lanes.
+- This closes a trust-boundary gap left after executable and working-directory checks: structured hints still have to stay inside repo-relative replay vocabulary before execution dispatch.
+
 ## Session update (2026-05-05 rescan-plan source-enrich skip classify-only)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` parser tests around source-only classification replay.
 - No production parser code changed; the new regression proves `--vlm-provider skip --classify-only` parses as source enrichment with classification-only enabled.

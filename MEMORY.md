@@ -20,24 +20,25 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `e22ee13a673ade2dc35ad3c54c9f670b70c0a48d`
-- latest_commit_brief_message: `test(rescan): lock source enrich skip provider`
+- latest_commit_hash: `9e04bb94fad6d6213ebc9f41982a433309028765`
+- latest_commit_brief_message: `test(rescan): lock skip classify-only replay`
 - note: new local `N=40` batch is active; push remains deferred until all 40 slices complete
 
 ## Recent commit chain (last 6)
+- `9e04bb9` test(rescan): lock skip classify-only replay
 - `e22ee13` test(rescan): lock source enrich skip provider
 - `251d098` test(rescan): lock open-ai provider rejection
 - `914e09c` test(rescan): lock lmstudio provider spelling
 - `45bb7f5` test(rescan): lock nlp classify flag rejection
 - `15500ea` test(rescan): lock command trust boundary
-- `0b001d9` test(rescan): lock pending status selection
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 30]`
-- files in flight for new batch slice 31:
+- branch state before the next commit: `main...origin/main [ahead 31]`
+- files in flight for new batch slice 32:
   - `crates/specforge/src/commands/rescan_plan.rs`
+  - `docs/book/src/commands/quality-and-learning.md`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -46,27 +47,28 @@
 
 ## Active N-slice batch
 - requested_count: `40`
-- completed_count: `30`
+- completed_count: `31`
 - push_policy: defer push until all `40` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - add rescan-plan parser coverage proving source-enrichment replay hints accept `--vlm-provider skip --classify-only`
-  - refresh live docs for source-only classification replay coverage
+  - harden rescan-plan command-hint parsing so replay source/artifact paths cannot be absolute
+  - refresh live docs and mdBook reference for the path restriction
 - tracker effect:
-  - planned live-status row addition: `specforge rescan-plan` source-enrich skip classify-only hints are regression-locked: `Done`
+  - planned live-status row addition: `specforge rescan-plan` absolute replay artifact paths are rejected: `Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_parses_skip_source_enrich_classify_only_hint` passed with `1` test and `588` filtered out
+  - `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_absolute_replay_artifact_paths` passed with `1` test and `589` filtered out
+  - `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_execute_` passed with `4` tests and `586` filtered out after converting execution fixtures to relative command paths
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed
-  - `bash scripts/run_ci.sh` passed with `589` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `bash scripts/run_ci.sh` passed with `590` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `130` fixtures and `0` failures
   - `git diff --check` passed
   - checkout-specific absolute path scan across tracked markdown passed
 - current known local CI baseline:
-  - `588` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `589` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `130/130` tracked KG fixtures
 
 ## Next exact steps
-- commit slice 31 without pushing, then continue slice 32
+- commit slice 32 without pushing, then continue slice 33

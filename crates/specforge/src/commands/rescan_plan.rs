@@ -455,23 +455,29 @@ fn parse_command_hint(command: &ProjectRescanCommandHint) -> Result<RescanInvoca
 
     let specforge_args = specforge_args_from_cargo_hint(command)?;
     match (command.intent.as_str(), specforge_args) {
-        ("rebuild_source_ir", [subcommand, source]) if subcommand == "ingest" => {
-            Ok(RescanInvocation::Ingest(PathBuf::from(source)))
-        }
+        ("rebuild_source_ir", [subcommand, source]) if subcommand == "ingest" => Ok(
+            RescanInvocation::Ingest(parse_rescan_command_path(source, "ingest source")?),
+        ),
         ("enrich_source_ir", args) => parse_enrich_command_hint_args(args),
         ("nlp_enrich_evidence_ir", args) => parse_nlp_enrich_command_hint_args(args),
-        ("rebuild_evidence_ir", [subcommand, source_ir]) if subcommand == "evidence" => {
-            Ok(RescanInvocation::Evidence(PathBuf::from(source_ir)))
-        }
+        ("rebuild_evidence_ir", [subcommand, source_ir]) if subcommand == "evidence" => Ok(
+            RescanInvocation::Evidence(parse_rescan_command_path(source_ir, "evidence source_ir")?),
+        ),
         ("rebuild_semantic_ir", [subcommand, evidence_ir]) if subcommand == "semantic" => {
-            Ok(RescanInvocation::Semantic(PathBuf::from(evidence_ir)))
+            Ok(RescanInvocation::Semantic(parse_rescan_command_path(
+                evidence_ir,
+                "semantic evidence_ir",
+            )?))
         }
         ("rebuild_intent_ir", [subcommand, semantic_ir]) if subcommand == "intent" => {
-            Ok(RescanInvocation::Intent(PathBuf::from(semantic_ir)))
+            Ok(RescanInvocation::Intent(parse_rescan_command_path(
+                semantic_ir,
+                "intent semantic_ir",
+            )?))
         }
-        ("validate_current_artifact", [subcommand, artifact]) if subcommand == "validate" => {
-            Ok(RescanInvocation::Validate(PathBuf::from(artifact)))
-        }
+        ("validate_current_artifact", [subcommand, artifact]) if subcommand == "validate" => Ok(
+            RescanInvocation::Validate(parse_rescan_command_path(artifact, "validate artifact")?),
+        ),
         _ => Err(AppError::InvalidStageArtifact(format!(
             "rescan-plan refuses unsupported command hint `{}` with args {:?}",
             command.intent, command.args
@@ -500,6 +506,17 @@ fn specforge_args_from_cargo_hint(command: &ProjectRescanCommandHint) -> Result<
     Ok(&command.args[expected_prefix.len()..])
 }
 
+fn parse_rescan_command_path(value: &str, hint_kind: &str) -> Result<PathBuf> {
+    let path = Path::new(value);
+    if path.is_absolute() {
+        return Err(AppError::InvalidStageArtifact(format!(
+            "rescan-plan refuses absolute {hint_kind} path `{value}` in command hint"
+        )));
+    }
+
+    Ok(path.to_path_buf())
+}
+
 fn parse_enrich_command_hint_args(args: &[String]) -> Result<RescanInvocation> {
     if args.len() < 2 || args[0] != "enrich" {
         return Err(AppError::InvalidStageArtifact(format!(
@@ -507,7 +524,7 @@ fn parse_enrich_command_hint_args(args: &[String]) -> Result<RescanInvocation> {
         )));
     }
 
-    let source_ir = PathBuf::from(&args[1]);
+    let source_ir = parse_rescan_command_path(&args[1], "enrich source_ir")?;
     let mut vlm_provider = None;
     let mut vlm_model = None;
     let mut classify_only = false;
@@ -584,7 +601,7 @@ fn parse_nlp_enrich_command_hint_args(args: &[String]) -> Result<RescanInvocatio
         )));
     }
 
-    let evidence_ir = PathBuf::from(&args[1]);
+    let evidence_ir = parse_rescan_command_path(&args[1], "nlp-enrich evidence_ir")?;
     let mut vlm_provider = None;
     let mut vlm_model = None;
     let mut index = 2;
@@ -929,7 +946,7 @@ mod tests {
 
     #[test]
     fn rescan_plan_execute_marks_validated_no_change() -> Result<()> {
-        let tempdir = tempdir()?;
+        let tempdir = repo_tempdir()?;
         let source_path = tempdir.path().join("spec.md");
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
         fs::write(&source_path, "# Spec\nSignal READY is input width 1.\n")?;
@@ -945,9 +962,10 @@ mod tests {
             recommendations: vec![recommendation("doc", PLANNED_NOT_EXECUTED)],
         };
         plan.recommendations[0].artifact_path = artifact_path.display().to_string();
+        let command_artifact_path = command_path_for(&artifact_path);
         plan.recommendations[0].recommended_commands = vec![command_hint(
             "validate_current_artifact",
-            vec!["validate", artifact_path.to_str().unwrap()],
+            vec!["validate", command_artifact_path.as_str()],
         )];
         fs::write(&plan_path, serde_json::to_string_pretty(&plan)?)?;
 
@@ -1000,7 +1018,7 @@ mod tests {
 
     #[test]
     fn rescan_plan_execute_report_tracks_validated_no_change_summary() -> Result<()> {
-        let tempdir = tempdir()?;
+        let tempdir = repo_tempdir()?;
         let source_path = tempdir.path().join("spec.md");
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
         fs::write(&source_path, "# Spec\nSignal VALID is input width 1.\n")?;
@@ -1016,9 +1034,10 @@ mod tests {
             recommendations: vec![recommendation("doc", PLANNED_NOT_EXECUTED)],
         };
         plan.recommendations[0].artifact_path = artifact_path.display().to_string();
+        let command_artifact_path = command_path_for(&artifact_path);
         plan.recommendations[0].recommended_commands = vec![command_hint(
             "validate_current_artifact",
-            vec!["validate", artifact_path.to_str().unwrap()],
+            vec!["validate", command_artifact_path.as_str()],
         )];
         fs::write(&plan_path, serde_json::to_string_pretty(&plan)?)?;
 
@@ -1052,7 +1071,7 @@ mod tests {
 
     #[test]
     fn rescan_plan_execute_limit_leaves_unselected_pending_work() -> Result<()> {
-        let tempdir = tempdir()?;
+        let tempdir = repo_tempdir()?;
         let source_path = tempdir.path().join("spec.md");
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
         fs::write(&source_path, "# Spec\nSignal READY is output width 1.\n")?;
@@ -1071,9 +1090,10 @@ mod tests {
             ],
         };
         plan.recommendations[0].artifact_path = artifact_path.display().to_string();
+        let command_artifact_path = command_path_for(&artifact_path);
         plan.recommendations[0].recommended_commands = vec![command_hint(
             "validate_current_artifact",
-            vec!["validate", artifact_path.to_str().unwrap()],
+            vec!["validate", command_artifact_path.as_str()],
         )];
         fs::write(&plan_path, serde_json::to_string_pretty(&plan)?)?;
 
@@ -1107,7 +1127,7 @@ mod tests {
 
     #[test]
     fn rescan_plan_execute_document_key_filter_leaves_other_pending_work() -> Result<()> {
-        let tempdir = tempdir()?;
+        let tempdir = repo_tempdir()?;
         let source_path = tempdir.path().join("spec.md");
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
         fs::write(&source_path, "# Spec\nSignal RESP is output width 1.\n")?;
@@ -1126,9 +1146,10 @@ mod tests {
             ],
         };
         plan.recommendations[0].artifact_path = artifact_path.display().to_string();
+        let command_artifact_path = command_path_for(&artifact_path);
         plan.recommendations[0].recommended_commands = vec![command_hint(
             "validate_current_artifact",
-            vec!["validate", artifact_path.to_str().unwrap()],
+            vec!["validate", command_artifact_path.as_str()],
         )];
         fs::write(&plan_path, serde_json::to_string_pretty(&plan)?)?;
 
@@ -1207,6 +1228,23 @@ mod tests {
 
         assert!(parse_command_hint(&non_cargo).is_err());
         assert!(parse_command_hint(&non_repo_workdir).is_err());
+    }
+
+    #[test]
+    fn rescan_plan_rejects_absolute_replay_artifact_paths() {
+        let absolute_ingest = command_hint("rebuild_source_ir", vec!["ingest", "/tmp/doc.md"]);
+        let absolute_enrich = command_hint(
+            "enrich_source_ir",
+            vec!["enrich", "/tmp/source_ir.json", "--vlm-provider", "skip"],
+        );
+        let absolute_validate = command_hint(
+            "validate_current_artifact",
+            vec!["validate", "/tmp/intent_ir.json"],
+        );
+
+        assert!(parse_command_hint(&absolute_ingest).is_err());
+        assert!(parse_command_hint(&absolute_enrich).is_err());
+        assert!(parse_command_hint(&absolute_validate).is_err());
     }
 
     #[test]
@@ -2790,6 +2828,26 @@ mod tests {
             display: "cargo run --manifest-path Cargo.toml -- intent generated/semantic_ir/doc/semantic_ir.json"
                 .to_string(),
         }
+    }
+
+    fn repo_tempdir() -> Result<tempfile::TempDir> {
+        Ok(tempfile::Builder::new()
+            .prefix(".rescan-plan-test-")
+            .tempdir_in(".")?)
+    }
+
+    fn command_path_for(path: &Path) -> String {
+        if path.is_absolute() {
+            let current_dir = std::env::current_dir().expect("current dir");
+            return path
+                .strip_prefix(current_dir)
+                .expect("test tempdir should be inside repo")
+                .to_str()
+                .expect("utf-8 path")
+                .to_string();
+        }
+
+        path.to_str().expect("utf-8 path").to_string()
     }
 
     fn recommendation(document_key: &str, automation_status: &str) -> ProjectRescanRecommendation {

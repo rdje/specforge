@@ -31,6 +31,7 @@
 - `specforge rescan-plan` document-key pending selection is regression-locked: Done
 - `specforge rescan-plan` command-hint locality is regression-locked: Done
 - `specforge rescan-plan` command hints stay cargo and repo-local: Done
+- `specforge rescan-plan` absolute replay artifact paths are rejected: Done
 - `specforge rescan-plan` local provider command variants are regression-locked: Done
 - `specforge rescan-plan` source-enrich skip provider hints are regression-locked: Done
 - `specforge rescan-plan` source-enrich skip classify-only hints are regression-locked: Done

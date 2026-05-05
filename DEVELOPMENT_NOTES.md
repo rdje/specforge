@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan absolute replay path rejection
+- New batch slice 32/40 hardens command-hint parsing so replay source/artifact arguments must be relative paths.
+- `parse_command_hint`, `parse_enrich_command_hint_args`, and `parse_nlp_enrich_command_hint_args` now route path tokens through `parse_rescan_command_path`, which rejects absolute paths before any in-process replay dispatch.
+- The regression covers absolute ingest, enrich, and validate hints; the mdBook command reference now documents the restriction.
+
 ## 2026-05-05 rescan-plan source-enrich skip classify-only lock
 - New batch slice 31/40 adds parser coverage for source-enrichment replay hints combining `--vlm-provider skip` with `--classify-only`.
 - No production parser code changed; `parse_source_enrich_command_hint_args` already keeps `classify_only` independent from the selected local provider.
