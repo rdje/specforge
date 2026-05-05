@@ -128,6 +128,7 @@ The generated enrichment hint now uses a local provider policy: `auto-local` pre
 With `--execute`, it dispatches only whitelisted local enrichment/stage rebuild/validate commands from the structured args rather than trusting shell text.
 It can also scope a multi-document queue with `--document-key <key>`.
 Scoped queues still select only pending `planned_not_executed` recommendations; executed matches and missing document keys produce no pending dry-run work.
+Limits are applied after that pending/document filter, so unrelated documents cannot consume a scoped queue's limit.
 Execution validates before and after the rebuild and records only neutral changed/no-change status, not an improvement claim.
 Executed recommendations also persist an `execution_summary` containing before/after validation snapshots, score/finding deltas, added/removed finding ids, and a conservative verdict that distinguishes possible improvement from regression or neutral artifact drift while still requiring review.
 Sparse before/after score labels render as score plus grade, score only, grade only, or `n/a` when neither field exists.

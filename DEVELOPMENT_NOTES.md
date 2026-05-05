@@ -7,6 +7,14 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan scoped limit ordering lock
+- Batch slice 12/20 adds coverage for the selection order inside `selected_pending_indices(...)`.
+- The intended behavior is filter first, limit second:
+  - match `planned_not_executed`
+  - apply the optional document key
+  - then apply the numeric limit
+- Added `rescan_plan_applies_limit_after_document_key_filtering` so pending recommendations for other documents cannot starve a scoped dry-run or scoped convergence hook.
+
 ## 2026-05-05 rescan-plan score-label formatting lock
 - Batch slice 11/20 adds focused coverage for `score_label(...)`, the helper used when execution summaries print before/after validation snapshots.
 - The helper intentionally handles sparse reports without hiding missing metadata:

@@ -1066,6 +1066,30 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_applies_limit_after_document_key_filtering() {
+        let plan = ProjectRescanPlanRecord {
+            schema_version: 2,
+            generated_by: "test".to_string(),
+            recommendation_count: 4,
+            recommendations: vec![
+                recommendation("doc_a", PLANNED_NOT_EXECUTED),
+                recommendation("doc_b", PLANNED_NOT_EXECUTED),
+                recommendation("doc_target", PLANNED_NOT_EXECUTED),
+                recommendation("doc_target", PLANNED_NOT_EXECUTED),
+            ],
+        };
+
+        assert_eq!(
+            selected_pending_indices(&plan, 1, Some("doc_target")),
+            vec![2]
+        );
+        assert_eq!(
+            selected_pending_indices(&plan, 2, Some("doc_target")),
+            vec![2, 3]
+        );
+    }
+
+    #[test]
     fn rescan_plan_dry_run_render_surfaces_replay_boundary_and_action() {
         let mut plan = ProjectRescanPlanRecord {
             schema_version: 2,

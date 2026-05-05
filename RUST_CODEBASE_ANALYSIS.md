@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan scoped limit ordering)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` queue-selection tests.
+- No production selection code changed; the new regression proves `selected_pending_indices(...)` filters by pending status and document key before applying `limit`.
+- This protects multi-document queues where earlier pending recommendations from other documents should not consume a scoped document's execution budget.
+
 ## Session update (2026-05-05 rescan-plan score labels)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` presentation tests around validation score labels.
 - No production formatting changed; `score_label(...)` now has direct coverage for complete, score-only, grade-only, and absent metadata.

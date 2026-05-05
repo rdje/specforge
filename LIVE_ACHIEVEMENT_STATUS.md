@@ -36,6 +36,7 @@
 - `specforge rescan-plan` score-presence arbitration stays neutral-review: Done
 - `specforge rescan-plan` mixed finding arbitration prefers regression review: Done
 - `specforge rescan-plan` sparse score labels are regression-locked: Done
+- `specforge rescan-plan` scoped limits apply after document filtering: Done
 - `specforge kg-bench` command created: Done
 - `specforge learn-priors` command created: Done
 - `specforge corpus-kb` command created: Done

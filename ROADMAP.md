@@ -195,6 +195,7 @@
   - `rescan-plan` dry-run preview coverage now regression-locks artifact path, extractor lane, replay inputs, action text, related ids, automation status, and command hints for review-visible pending recommendations
   - sparse `rescan-plan` dry-run recommendations now have regression-locked `none` rendering for empty replay inputs, related ids, and command hints
   - document-scoped `rescan-plan` selection now has regression coverage for skipping already executed matches and missing document keys while preserving pending-only behavior
+  - document-scoped rescan selection now also has regression coverage proving numeric limits apply after pending-status and document-key filtering
   - command-hint parser coverage now locks repository-local working directories, the standard `cargo run --manifest-path Cargo.toml --` prefix, and non-empty SpecForge args for executable rescans
   - local provider command-hint coverage now locks LM Studio alias parsing, `--classify-only` local enrichment, and skip-mode NLP enrichment while preserving OpenAI rejection
   - malformed local provider hints now have regression coverage for repeated provider flags, missing provider values, and unsupported provider-side args

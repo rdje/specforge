@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan scoped limit ordering lock)
+
+### Changed: document-scoped rescan limits now have direct coverage
+- Added regression coverage proving `rescan-plan` applies `--limit` after document-key and pending-status filtering.
+- A scoped dry-run with earlier pending recommendations from other documents still reaches the first matching pending recommendation for the requested document.
+- This keeps multi-document rescan queues predictable for both standalone `rescan-plan --document-key` and the convergence hook's automatic current-document filter.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_applies_limit_after_document_key_filtering` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `532` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan score-label formatting lock)
 
 ### Changed: sparse validation score labels now have direct coverage
