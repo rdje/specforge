@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` unambiguous direct actor provenance lock)
+- Tightened `standalone_dt_recovers_directions_from_unambiguous_actor_ports` in `crates/specforge/src/ir/adapters.rs` so unambiguous direct actor-port direction recovery retains support IDs and automation confidence.
+- The adapter already recovered graph-backed directions when only one actor context applied; this regression now proves the renderable signal inventory keeps that graph evidence visible for both direct inputs and outputs.
+- This anchors the basic direct-root graph recovery path before the more selective shared-output actor and control-read recovery paths.
+
 ## Session update (2026-05-05 `.fsm` direct output actor provenance lock)
 - Tightened `standalone_dt_selects_output_actor_when_external_actors_share_signals` in `crates/specforge/src/ir/adapters.rs` so selected direct-root output actor evidence retains support IDs and automation confidence.
 - The adapter already selected the controller as the target output actor when external monitor actors shared output signal names; this regression now proves the renderable signal inventory keeps the controller graph evidence visible.

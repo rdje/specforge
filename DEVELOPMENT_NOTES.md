@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 `.fsm` unambiguous direct actor provenance lock
+- New batch slice 40/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `standalone_dt_recovers_directions_from_unambiguous_actor_ports` now asserts unambiguous direct actor-port direction recovery keeps `graph_controller_DATA_IN`, `graph_controller_DATA_OUT`, and `graph_controller_ZERO_FLAG` support IDs plus high automation confidence.
+- This is a coverage-only lock for renderable direct-root graph direction recovery when one actor context is authoritative.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-05 `.fsm` direct output actor provenance lock
 - New batch slice 39/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `standalone_dt_selects_output_actor_when_external_actors_share_signals` now asserts selected direct-root output actor evidence keeps `graph_controller_DATA_OUT` / `graph_controller_ZERO_FLAG` support IDs and high automation confidence.

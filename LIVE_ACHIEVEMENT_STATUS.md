@@ -317,6 +317,7 @@
 - `.fsm` canonical parametric width blockers now regression-lock interface provenance, support IDs, and automation confidence: Done
 - `.fsm` numeric-over-symbolic width precedence now regression-locks interface provenance while dropping stale parametric hints: Done
 - `.fsm` direct-root actor-port width recovery now regression-locks support IDs and automation confidence: Done
+- `.fsm` unambiguous direct actor-port direction recovery now regression-locks support IDs and automation confidence: Done
 - `.fsm` direct-root output actor selection now regression-locks support IDs and automation confidence: Done
 - `.fsm` direct-root control-read input recovery now regression-locks support IDs and automation confidence: Done
 - `.fsm` structured-FSM control-read input recovery now regression-locks support IDs and automation confidence: Done

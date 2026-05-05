@@ -6795,23 +6795,56 @@ mod tests {
             .expect("graph-backed standalone adapter should emit target text");
         let emitted_text = fs::read_to_string(emitted_target_path)?;
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let data_in = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "DATA_IN")
+            .expect("DATA_IN should stay in the direct signal inventory");
         let data_out = fsm
             .signal_inventory
             .iter()
             .find(|signal| signal.signal_name == "DATA_OUT")
             .expect("DATA_OUT should stay in the direct signal inventory");
+        let zero_flag = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "ZERO_FLAG")
+            .expect("ZERO_FLAG should stay in the direct signal inventory");
 
+        assert_eq!(data_in.direction_hint, None);
+        assert_eq!(
+            data_in.graph_direction_hint,
+            Some(InterfaceSignalDirection::Input)
+        );
         assert_eq!(data_out.direction_hint, None);
         assert_eq!(
             data_out.graph_direction_hint,
             Some(InterfaceSignalDirection::Output)
         );
-        assert!(
-            data_out
-                .mention_categories
-                .iter()
-                .any(|category| category == "actor_port")
+        assert_eq!(zero_flag.direction_hint, None);
+        assert_eq!(
+            zero_flag.graph_direction_hint,
+            Some(InterfaceSignalDirection::Output)
         );
+        for (signal, support_id) in [
+            (data_in, "graph_controller_DATA_IN"),
+            (data_out, "graph_controller_DATA_OUT"),
+            (zero_flag, "graph_controller_ZERO_FLAG"),
+        ] {
+            assert!(
+                signal
+                    .mention_categories
+                    .iter()
+                    .any(|category| category == "actor_port")
+            );
+            assert!(
+                signal
+                    .supporting_canonical_ids
+                    .iter()
+                    .any(|id| id == support_id)
+            );
+            assert_eq!(signal.automation_confidence, AutomationConfidence::High);
+        }
         assert!(emitted_text.contains("(?dt:comb_dt"));
         assert!(emitted_text.contains("(DATA_OUT = DATA_IN)"));
         assert!(emitted_text.contains("(ZERO_FLAG = 1)"));

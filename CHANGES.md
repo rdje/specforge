@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` unambiguous direct actor provenance lock)
+
+### Added: unambiguous direct actor-port direction provenance coverage
+- Tightened `standalone_dt_recovers_directions_from_unambiguous_actor_ports` so renderable direct-root actor-port direction recovery now proves graph-backed support IDs and high automation confidence survive for `DATA_IN`, `DATA_OUT`, and `ZERO_FLAG`.
+- This is coverage-only over the existing adapter behavior: a single unambiguous actor context can recover direct signal directions without canonical direction hints.
+- The slice keeps the graph-backed actor evidence auditable on the renderable `.fsm` path for both direct inputs and outputs.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_dt_recovers_directions_from_unambiguous_actor_ports` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+
 ## 2026-05-05 (`.fsm` direct output actor provenance lock)
 
 ### Added: direct-root output actor selection provenance coverage
