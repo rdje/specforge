@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan missing validation report)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` reader tests around absent validation-report sidecars.
+- No production reader code changed; the new regression proves the missing `validation_report.json` path is reported directly.
+- This keeps rescan execution dependent on real validator output rather than implicit or fabricated snapshots.
+
 ## Session update (2026-05-05 rescan-plan validation report sidecar)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` helper tests around validation report sidecar path derivation.
 - No production helper code changed; the new regression proves sidecars stay colocated with the validated artifact directory.

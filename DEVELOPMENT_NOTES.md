@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan missing validation-report lock
+- New batch slice 17/20 adds failure-mode coverage for absent validation-report sidecars.
+- No production reader code changed; `read_validation_report(...)` already maps a missing sidecar to `AppError::MissingPath`.
+- This protects rescan execution from fabricating before/after validation snapshots when the validator sidecar is absent.
+
 ## 2026-05-05 rescan-plan validation-report sidecar lock
 - New batch slice 16/20 adds helper coverage for validation-report sidecar path derivation.
 - No production helper code changed; `validation_report_path_for(...)` already resolves `validation_report.json` in the validated artifact's directory.

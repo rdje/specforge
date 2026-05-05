@@ -870,6 +870,26 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_missing_validation_report_is_reported() -> Result<()> {
+        let tempdir = tempdir()?;
+        let artifact = tempdir
+            .path()
+            .join("generated")
+            .join("intent_ir")
+            .join("doc")
+            .join("intent_ir.json");
+        let expected_report = artifact.parent().unwrap().join("validation_report.json");
+        fs::create_dir_all(artifact.parent().unwrap())?;
+        fs::write(&artifact, "{}")?;
+
+        match read_validation_report(&artifact).unwrap_err() {
+            AppError::MissingPath(path) => assert_eq!(path, expected_report),
+            other => panic!("expected missing validation report path, got {other:?}"),
+        }
+        Ok(())
+    }
+
+    #[test]
     fn rescan_plan_execute_marks_validated_no_change() -> Result<()> {
         let tempdir = tempdir()?;
         let source_path = tempdir.path().join("spec.md");

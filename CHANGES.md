@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan missing validation-report lock)
+
+### Changed: missing validation report sidecars are regression-locked
+- Added coverage proving `rescan-plan` reports the exact missing `validation_report.json` sidecar path for a validated artifact.
+- This keeps rescan execution from silently continuing when a validation run did not materialize its stage-local report.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_missing_validation_report_is_reported` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `556` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan validation-report sidecar lock)
 
 ### Changed: validation report sidecar paths are regression-locked
