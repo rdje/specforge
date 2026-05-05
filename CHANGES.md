@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` FSM undriven graph output lock)
+
+### Added: structured FSM graph-backed undriven outputs are regression-locked
+- Added `structured_fsm_blocks_graph_backed_undriven_output_inventory`, the true-FSM sibling of the standalone DT graph-backed undriven-output regression.
+- The test injects width-only `UNUSED_TRACE`, recovers its output role from `IntentIR.actor_ports`, and proves `.fsm` lowering blocks because no typed FSM-state action drives it.
+- No production behavior changed; this locks the existing `validate_output_inventory_is_driven(...)` true-FSM branch after the previous graph-first renderability fix.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::structured_fsm_blocks_graph_backed_undriven_output_inventory -- --exact --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests -- --nocapture` -> passed with `76` adapter tests
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `520` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures and `0` failures
+- `git diff --check` -> passed
+
 ## 2026-05-05 (`.fsm` graph-backed undriven outputs block)
 
 ### Changed: graph-backed output inventory must be driven before DT/FSM emission

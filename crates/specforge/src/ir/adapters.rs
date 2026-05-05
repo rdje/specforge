@@ -8338,6 +8338,95 @@ mod tests {
     }
 
     #[test]
+    fn structured_fsm_blocks_graph_backed_undriven_output_inventory() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_explicit_fsm_intent_ir(tempdir.path())?;
+        clear_direct_interface_direction_hints(&mut intent_ir);
+        let interface = intent_ir
+            .interfaces
+            .iter_mut()
+            .find(|interface| {
+                interface
+                    .signal_records
+                    .iter()
+                    .any(|signal| signal.signal_name == "TRACE")
+            })
+            .expect("FSM interface should contain TRACE");
+        let mut unused_output = interface
+            .signal_records
+            .iter()
+            .find(|signal| signal.signal_name == "TRACE")
+            .expect("TRACE declaration should exist")
+            .clone();
+        unused_output.signal_name = "UNUSED_TRACE".to_string();
+        unused_output.direction_hint = None;
+        unused_output.width_hint = Some(WidthHint::Numeric(1));
+        unused_output.resolved_polarity = None;
+        unused_output.semantic_tags.clear();
+        unused_output.semantic_candidates.clear();
+        unused_output.semantic_arbitration = None;
+        unused_output.resolved_semantic_role = None;
+        unused_output.semantic_grounding_strength = None;
+        unused_output.semantic_consensus = None;
+        unused_output.semantic_observations.clear();
+        unused_output.supporting_statement_ids = vec!["decl_unused_trace_width".to_string()];
+        unused_output.supporting_table_ids.clear();
+        interface.signals.push("UNUSED_TRACE".to_string());
+        interface.signal_records.push(unused_output);
+        intent_ir.actor_ports = vec![
+            actor_port("controller", "clk", ActorRelativeDirection::Input),
+            actor_port("controller", "rst_n", ActorRelativeDirection::Input),
+            actor_port("controller", "ACC", ActorRelativeDirection::Output),
+            actor_port("controller", "TRACE", ActorRelativeDirection::Output),
+            actor_port("controller", "UNUSED_TRACE", ActorRelativeDirection::Output),
+            actor_port("environment", "DATA_IN", ActorRelativeDirection::Output),
+            actor_port("environment", "GO", ActorRelativeDirection::Output),
+            actor_port("environment", "DONE", ActorRelativeDirection::Output),
+            actor_port("monitor", "ACC", ActorRelativeDirection::Input),
+            actor_port("monitor", "TRACE", ActorRelativeDirection::Input),
+            actor_port("monitor", "UNUSED_TRACE", ActorRelativeDirection::Input),
+        ];
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let unused_trace = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "UNUSED_TRACE")
+            .expect("UNUSED_TRACE should stay in the structured FSM signal inventory");
+
+        assert_eq!(unused_trace.direction_hint, None);
+        assert_eq!(
+            unused_trace.graph_direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert!(
+            unused_trace
+                .mention_categories
+                .iter()
+                .any(|category| category == "actor_port")
+        );
+        assert!(
+            fsm.renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason
+                    == "Declared output signal `UNUSED_TRACE` is not driven by any typed FSM-state action.")
+        );
+
+        Ok(())
+    }
+
+    #[test]
     fn structured_fsm_derives_guard_inputs_from_control_reads_after_output_actor_selection()
     -> Result<()> {
         let tempdir = tempdir()?;

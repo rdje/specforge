@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 `.fsm` FSM undriven graph output lock
+- Continued from commit `a2882b4` by locking the true-FSM consumer of `validate_output_inventory_is_driven(...)`.
+- Added `structured_fsm_blocks_graph_backed_undriven_output_inventory`, which clears flat interface directions, injects width-only `UNUSED_TRACE`, recovers its output role from actor-relative `controller` graph evidence, and verifies lowering blocks with the typed FSM-state undriven-output diagnostic.
+- This is intentionally a regression-only R15 slice: the previous production change already moved DT/FSM output-drive validation to the full graph-first inventory, and this test keeps the structured-FSM branch from drifting back to size-entry-only checks.
+- Adapter coverage increases to `76` tests; full local CI with `520` Rust tests and the full `127/127` tracked KG fixture suite passed after the regression landed.
+
 ## 2026-05-05 `.fsm` graph-backed undriven outputs block
 - Continued from commit `706118e` by taking the next R15 adapter slice instead of broadening backend scope.
 - The root cause was that DT/FSM renderability checked undriven outputs by iterating already-renderable `+size` entries; a graph-backed output inventory entry that was never referenced by an action could therefore avoid both emission and the honest undriven-output diagnostic.

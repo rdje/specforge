@@ -4,6 +4,12 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` FSM undriven graph output lock)
+- Continued from commit `a2882b4` by locking the structured-FSM branch of the graph-backed output-drive validation path.
+- The production seam was already moved from size-entry-only checks to full `FsmSignalCandidate` inventory checks; this slice adds `structured_fsm_blocks_graph_backed_undriven_output_inventory` so true-FSM lowering cannot regress while the DT branch stays covered separately.
+- The fixture clears flat direction hints, adds width-only `UNUSED_TRACE`, recovers its output role from `IntentIR.actor_ports`, and proves the `.fsm` adapter blocks with the typed FSM-state undriven-output diagnostic because no state-body action drives it.
+- No production behavior changed; adapter coverage is now `76` tests, and full local verification passed with `520` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` tracked KG fixtures.
+
 ## Session update (2026-05-05 `.fsm` graph-backed undriven output inventory)
 - Continued from commit `706118e` by moving another `.fsm` renderability consumer onto the graph-first inventory surface.
 - Root cause: DT/FSM renderability checked undriven outputs only by walking `FsmRenderableSizeEntry` values that had already been registered through control expressions/actions, so an explicit-but-unreferenced output whose direction came from `IntentIR.actor_ports` could stay out of emitted `+size` entries without producing the intended "not driven" blocker.
