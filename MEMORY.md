@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `ee821d164334e93dd5e4930a7fdfd906b5e3e1aa`
-- latest_commit_brief_message: `test(rescan): lock oversized queue limits`
+- latest_commit_hash: `0a8bcbdece94c48f5006689b63bc9afb75a8332b`
+- latest_commit_brief_message: `test(rescan): lock scoped unlimited queues`
 - note: new local `N=20` batch is active; push remains deferred until all 20 slices complete
 
 ## Recent commit chain (last 6)
+- `0a8bcbd` test(rescan): lock scoped unlimited queues
 - `ee821d1` test(rescan): lock oversized queue limits
 - `ba5c8fa` test(rescan): lock dry-run command display
 - `1c0b88c` test(rescan): lock display trust boundary
 - `7119834` test(rescan): lock cargo prefix tokens
 - `381e64a` test(rescan): lock missing stage paths
-- `7ea62d1` test(rescan): lock extra stage args
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 8]`
-- files in flight for new batch slice 9:
+- branch state before the next commit: `main...origin/main [ahead 9]`
+- files in flight for new batch slice 10:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -47,27 +47,27 @@
 
 ## Active N-slice batch
 - requested_count: `20`
-- completed_count: `8`
+- completed_count: `9`
 - push_policy: defer push until all `20` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - lock `rescan-plan` queue selection for zero-limit scoped replay
-  - prove unlimited mode still filters by document and pending status before preserving order
+  - lock `rescan-plan` dry-run rendering for an empty selected queue
+  - prove no-op previews remain explicit without emitting recommendation rows
 - tracker effect:
-  - add a `Done` live-status row for unlimited scoped pending queue selection
+  - add a `Done` live-status row for explicit empty dry-run queue rendering
 - verification status:
-  - focused test passed: `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_zero_limit_selects_all_scoped_pending_in_order` (`1` test)
+  - focused test passed: `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_dry_run_render_empty_selection_has_queue_header_only` (`1` test)
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed
-  - `bash scripts/run_ci.sh` passed with `548` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `bash scripts/run_ci.sh` passed with `549` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `130/130` tracked KG fixtures
   - `git diff --check` passed
   - checkout-specific absolute path scan across tracked markdown passed
 - current known local CI baseline:
-  - `548` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `549` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `130/130` tracked KG fixtures
 
 ## Next exact steps
-- commit slice 9 without pushing, then continue slice 10
+- commit slice 10 without pushing, then continue slice 11

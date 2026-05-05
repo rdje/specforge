@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan empty dry-run queue)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` render tests around empty dry-run selections.
+- No production render code changed; empty selected queues now have direct coverage for rendering only the `rescan_queue:` header.
+- This keeps no-op queue previews explicit without fabricating recommendation rows.
+
 ## Session update (2026-05-05 rescan-plan scoped unlimited queue selection)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` queue-selection tests around `limit == 0` with document scoping.
 - No production selection code changed; the new regression proves unlimited mode still applies the document filter before collecting pending indices.

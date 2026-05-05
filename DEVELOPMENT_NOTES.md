@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan empty dry-run queue lock
+- New batch slice 10/20 adds dry-run render coverage for an empty selected queue.
+- No production rendering code changed; `render_dry_run_plan(...)` already emits the `rescan_queue:` header even when no recommendations are selected.
+- This protects no-op dry-runs from becoming invisible or ambiguous.
+
 ## 2026-05-05 rescan-plan scoped unlimited queue lock
 - New batch slice 9/20 adds queue-selection coverage for `limit == 0` with a document filter.
 - No production selection code changed; `selected_pending_indices(...)` already treats zero as unlimited after applying pending-status and document-key filters.

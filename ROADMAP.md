@@ -42,6 +42,7 @@
   - do not fabricate semantic certainty
 - keep generated replay plans inspectable without making display strings authoritative:
   - dry-run command text remains a review-facing rendering surface
+  - empty dry-run selections still render an explicit queue header
   - execution parsing stays pinned to structured command fields and explicit allowlists
 - keep rescan queue selection deterministic for automated batches:
   - positive limits bound work without reordering it

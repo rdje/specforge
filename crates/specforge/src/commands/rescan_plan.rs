@@ -1537,6 +1537,18 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_dry_run_render_empty_selection_has_queue_header_only() {
+        let plan = ProjectRescanPlanRecord {
+            schema_version: 2,
+            generated_by: "test".to_string(),
+            recommendation_count: 1,
+            recommendations: vec![recommendation("doc", PLANNED_NOT_EXECUTED)],
+        };
+
+        assert_eq!(render_dry_run_plan(&plan, &[]), "rescan_queue:");
+    }
+
+    #[test]
     fn rescan_plan_dry_run_render_uses_command_display_for_review() {
         let mut plan = ProjectRescanPlanRecord {
             schema_version: 2,

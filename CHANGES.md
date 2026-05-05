@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan empty dry-run queue lock)
+
+### Changed: empty dry-run selection renders as an explicit empty queue
+- Added render coverage proving an empty selected index list produces only the `rescan_queue:` header.
+- This keeps no-op dry-runs deterministic and easy to distinguish from omitted output.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_dry_run_render_empty_selection_has_queue_header_only` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `549` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan scoped unlimited queue lock)
 
 ### Changed: unlimited pending queue selection respects document scope
