@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan command trust boundary)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` parser tests around command-hint executable and working-directory gates.
+- No production parser code changed; the new regression proves non-`cargo` executables and non-repository working directories are rejected before replay invocation construction.
+- This keeps rescan execution constrained to repository-local cargo stage commands.
+
 ## Session update (2026-05-05 rescan-plan exact pending-status selection)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` selection tests around pending automation status matching.
 - No production selection code changed; the new regression proves only exact `planned_not_executed` entries are selected.

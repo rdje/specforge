@@ -30,6 +30,7 @@
 - `specforge rescan-plan` dry-run empty-field preview is regression-locked: Done
 - `specforge rescan-plan` document-key pending selection is regression-locked: Done
 - `specforge rescan-plan` command-hint locality is regression-locked: Done
+- `specforge rescan-plan` command hints stay cargo and repo-local: Done
 - `specforge rescan-plan` local provider command variants are regression-locked: Done
 - `specforge rescan-plan` malformed provider hints are regression-locked: Done
 - `specforge rescan-plan` validation-delta finding lists are deterministic: Done

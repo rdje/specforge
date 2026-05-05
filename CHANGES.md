@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan command trust-boundary lock)
+
+### Changed: command hints must stay cargo and repo-local
+- Added parser coverage proving rescan command hints reject non-`cargo` executables and non-repository working directories.
+- This keeps replay execution tied to the guarded local `cargo run --manifest-path Cargo.toml -- ...` surface.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_non_cargo_or_non_repo_command_hints` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `584` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan exact pending-status selection lock)
 
 ### Changed: selection requires exact pending status

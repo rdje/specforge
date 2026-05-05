@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan command trust-boundary lock
+- New batch slice 26/40 adds parser coverage for the rescan command-hint trust boundary.
+- No production parser code changed; `parse_command_hint` already rejects non-`cargo` executables and non-repository working directories before accepting any stage replay args.
+- This keeps local rescan execution on the guarded repository-local cargo invocation path.
+
 ## 2026-05-05 rescan-plan exact pending-status selection lock
 - New batch slice 25/40 adds selection coverage for exact `planned_not_executed` matching.
 - No production selection code changed; `selected_pending_indices` already requires the exact pending automation status before document-key filtering and limit selection.

@@ -1192,6 +1192,24 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_rejects_non_cargo_or_non_repo_command_hints() {
+        let mut non_cargo = command_hint(
+            "rebuild_intent_ir",
+            vec!["intent", "generated/semantic_ir/doc/semantic_ir.json"],
+        );
+        non_cargo.executable = "sh".to_string();
+
+        let mut non_repo_workdir = command_hint(
+            "rebuild_intent_ir",
+            vec!["intent", "generated/semantic_ir/doc/semantic_ir.json"],
+        );
+        non_repo_workdir.working_directory = "generated".to_string();
+
+        assert!(parse_command_hint(&non_cargo).is_err());
+        assert!(parse_command_hint(&non_repo_workdir).is_err());
+    }
+
+    #[test]
     fn rescan_plan_parses_whitelisted_stage_command_hints() -> Result<()> {
         let ingest = command_hint("rebuild_source_ir", vec!["ingest", "specs/doc.md"]);
         assert_eq!(
