@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan cargo-prefix token lock
+- New batch slice 5/20 tightens coverage for the repository-local cargo prefix parser.
+- `specforge_args_from_cargo_hint(...)` already requires the exact `cargo run --manifest-path Cargo.toml --` prefix before accepting SpecForge args.
+- Added `rescan_plan_rejects_malformed_cargo_prefix_tokens` for wrong cargo subcommands and missing `--` separators.
+
 ## 2026-05-05 rescan-plan missing stage-path lock
 - New batch slice 4/20 adds the missing-path side of exact stage-command arity coverage.
 - `parse_command_hint(...)` already rejects one-token stage hints because non-enrichment replay lanes require a target source or artifact path.

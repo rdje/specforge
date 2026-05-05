@@ -810,6 +810,23 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_rejects_malformed_cargo_prefix_tokens() {
+        let mut wrong_cargo_subcommand = command_hint(
+            "rebuild_intent_ir",
+            vec!["intent", "generated/semantic_ir/doc/semantic_ir.json"],
+        );
+        wrong_cargo_subcommand.args[0] = "test".to_string();
+        assert!(parse_command_hint(&wrong_cargo_subcommand).is_err());
+
+        let mut missing_separator = command_hint(
+            "rebuild_intent_ir",
+            vec!["intent", "generated/semantic_ir/doc/semantic_ir.json"],
+        );
+        missing_separator.args[3] = "intent".to_string();
+        assert!(parse_command_hint(&missing_separator).is_err());
+    }
+
+    #[test]
     fn rescan_plan_rejects_inconsistent_plan_count() -> Result<()> {
         let tempdir = tempdir()?;
         let plan_path = tempdir.path().join("rescan_plan.json");

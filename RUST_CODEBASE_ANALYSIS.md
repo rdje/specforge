@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan cargo prefix tokens)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` parser tests around the exact cargo command prefix.
+- No production parser code changed; wrong cargo subcommands and missing `--` separators are now directly covered.
+- This protects the executor from accepting cargo-shaped hints unless they preserve the exact repository-local run prefix.
+
 ## Session update (2026-05-05 rescan-plan missing stage paths)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` parser tests around required stage-command paths.
 - No production parser code changed; missing path/artifact args are now directly covered for `ingest`, `evidence`, `semantic`, and `validate`.
