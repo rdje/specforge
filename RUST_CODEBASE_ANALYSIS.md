@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` system actor-port direction provenance lock)
+- Tightened `standalone_sequential_dt_recovers_system_directions_from_actor_ports` in `crates/specforge/src/ir/adapters.rs` so clock/reset graph-backed actor-port recovery retains support IDs and automation confidence.
+- The adapter already used actor-port graph evidence to satisfy standalone sequential DT system-contract direction needs when flat direct-interface hints lagged; this regression now proves that recovered evidence stays visible in the signal inventory.
+- This brings the renderable system-contract actor-port direction path in line with the direct-root actor-port provenance locks.
+
 ## Session update (2026-05-05 `.fsm` same-actor width-conflict provenance lock)
 - Tightened `standalone_dt_keeps_conflicting_actor_port_width_unresolved` in `crates/specforge/src/ir/adapters.rs` so same-actor actor-port width conflicts retain both conflicting support IDs and automation confidence.
 - The adapter already kept repeated graph-backed width disagreement unresolved; this regression now proves the blocked inventory preserves enough provenance to audit both sides.

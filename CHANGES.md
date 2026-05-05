@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` system actor-port direction provenance lock)
+
+### Added: sequential system actor-port direction provenance coverage
+- Tightened `standalone_sequential_dt_recovers_system_directions_from_actor_ports` so renderable standalone sequential `.fsm` lowering now proves graph-backed clock/reset actor-port support IDs and high automation confidence survive in `fsm.signal_inventory`.
+- This is coverage-only over the existing adapter behavior: actor-port graph evidence can satisfy clock/reset system-contract direction needs when flat direct-interface direction hints lag.
+- The slice keeps recovered system-contract actor-port direction evidence auditable on the renderable sequential DT path.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_sequential_dt_recovers_system_directions_from_actor_ports` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+
 ## 2026-05-05 (`.fsm` same-actor width-conflict provenance lock)
 
 ### Added: same-actor actor-port width conflict provenance coverage

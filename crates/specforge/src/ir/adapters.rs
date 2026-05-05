@@ -7889,11 +7889,24 @@ mod tests {
             rst_n.graph_direction_hint,
             Some(InterfaceSignalDirection::Input)
         );
-        assert!(
-            clk.mention_categories
-                .iter()
-                .any(|category| category == "actor_port")
-        );
+        for (signal, support_id) in [
+            (clk, "graph_controller_clk"),
+            (rst_n, "graph_controller_rst_n"),
+        ] {
+            assert!(
+                signal
+                    .mention_categories
+                    .iter()
+                    .any(|category| category == "actor_port")
+            );
+            assert!(
+                signal
+                    .supporting_canonical_ids
+                    .iter()
+                    .any(|id| id == support_id)
+            );
+            assert_eq!(signal.automation_confidence, AutomationConfidence::High);
+        }
         assert!(fsm.renderability.is_renderable);
         assert!(emitted_text.contains("(+system"));
         assert!(emitted_text.contains("(clock clk)"));

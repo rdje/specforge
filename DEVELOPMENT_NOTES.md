@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 `.fsm` system actor-port direction provenance lock
+- New batch slice 47/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `standalone_sequential_dt_recovers_system_directions_from_actor_ports` now asserts clock/reset graph-backed actor-port direction recovery keeps `graph_controller_clk` / `graph_controller_rst_n` support IDs and high automation confidence.
+- This is a coverage-only lock for renderable standalone sequential DT system-contract direction recovery when flat direction hints lag.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-05 `.fsm` same-actor width-conflict provenance lock
 - New batch slice 46/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `standalone_dt_keeps_conflicting_actor_port_width_unresolved` now asserts same-actor actor-port width conflicts keep both conflicting support IDs, the `actor_port_width` provenance category, and high automation confidence while numeric width remains unresolved.

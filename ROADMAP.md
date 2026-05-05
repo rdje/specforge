@@ -183,6 +183,7 @@
   - explicit numeric interface width evidence stays provenance-auditable and takes precedence over graph-backed actor-port symbolic widths for `.fsm` emission
   - direct-root actor-port width recovery preserves graph-backed support IDs and automation confidence while avoiding import of the external actor's direction
   - unambiguous direct actor-port direction recovery preserves graph-backed support IDs and high automation confidence for direct inputs and outputs
+  - standalone sequential system-contract actor-port direction recovery preserves graph-backed support IDs and high automation confidence for clock/reset inputs
   - unrelated direct actor-port graph context keeps selected support IDs auditable while excluding unrelated side-band evidence from `.fsm` inventories
   - ambiguous direct actor-port graph context leaves graph direction, actor-port category, and support IDs unselected instead of guessing a target actor
   - direct-root actor-port direction conflicts preserve both conflicting graph-backed support IDs and automation confidence while blocking `.fsm` emission

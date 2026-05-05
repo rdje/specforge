@@ -267,6 +267,7 @@
 - `.fsm` adapter actor-port conflict stickiness prevents repeated graph evidence from resurrecting poisoned direction or width hints: Done
 - `.fsm` adapter signal inventory now separates graph-backed direction from compatibility/system-contract direction, and explicit graph conflict stays blocking instead of silently falling back: Done
 - `.fsm` standalone sequential system-contract direction recovery from graph-backed actor ports is regression-locked: Done
+- `.fsm` standalone sequential system-contract actor-port direction recovery now regression-locks support IDs and automation confidence: Done
 - `.fsm` standalone sequential system contracts now materialize clock/reset signal-inventory entries when flat interface records are absent: Done
 - `.fsm` standalone sequential and explicit-module system-contract recovery now preserves supporting IDs and automation confidence on recovered/materialized clock/reset signal inventory entries: Done
 - `.fsm` standalone renderable modules and source-document direct roots now preserve system-contract supporting IDs and automation confidence after clock/reset recovery: Done
