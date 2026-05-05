@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` numeric-over-symbolic width precedence lock)
+
+### Added: interface provenance coverage for numeric width precedence
+- Tightened `standalone_dt_keeps_explicit_numeric_width_over_actor_parametric_width` so renderable numeric interface width evidence now proves interface provenance category, nonempty supporting IDs, and high automation confidence remain visible.
+- This coverage locks the precedence rule where explicit numeric canonical width wins over graph-backed actor-port symbolic width without retaining a stale `parametric_width_hint`.
+- The slice is coverage-only and keeps the `.fsm` adapter's numeric-width renderability path auditable.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_dt_keeps_explicit_numeric_width_over_actor_parametric_width` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+
 ## 2026-05-05 (`.fsm` canonical parametric width provenance lock)
 
 ### Added: interface provenance coverage for canonical parametric width blockers

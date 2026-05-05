@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` numeric-over-symbolic width precedence lock)
+- Tightened `standalone_dt_keeps_explicit_numeric_width_over_actor_parametric_width` in `crates/specforge/src/ir/adapters.rs` so the renderable numeric-width precedence path retains interface provenance, supporting IDs, and automation confidence.
+- The adapter already preferred explicit numeric canonical width over actor-port symbolic width; this regression now proves the renderable inventory stays auditable and does not carry a stale `parametric_width_hint`.
+- This keeps the `.fsm` numeric-width emission path honest while future adapters may still use symbolic widths.
+
 ## Session update (2026-05-05 `.fsm` canonical parametric width provenance lock)
 - Tightened `standalone_dt_blocks_parametric_signal_width_with_diagnostic` in `crates/specforge/src/ir/adapters.rs` so canonical parametric width blockers retain interface provenance, supporting IDs, and automation confidence.
 - The adapter already blocked symbolic canonical width lowering; this regression now proves the blocked `fsm.signal_inventory` entry keeps the canonical evidence trail visible.

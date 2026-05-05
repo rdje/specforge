@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 `.fsm` numeric-over-symbolic width precedence lock
+- New batch slice 31/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `standalone_dt_keeps_explicit_numeric_width_over_actor_parametric_width` now asserts explicit numeric interface width evidence keeps interface provenance, nonempty supporting IDs, and high automation confidence while actor-port symbolic width evidence is not retained as a parametric hint.
+- This is a coverage-only lock for the renderable precedence path where canonical numeric width remains authoritative for `.fsm` emission.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-05 `.fsm` canonical parametric width provenance lock
 - New batch slice 30/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `standalone_dt_blocks_parametric_signal_width_with_diagnostic` now asserts canonical parametric signal-width evidence keeps its `interface` provenance category, nonempty supporting IDs, and high automation confidence while numeric `.fsm` signal emission remains blocked.
