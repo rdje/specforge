@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan unscoped executed-skip limit lock)
+
+### Changed: unscoped limits skip executed rows before pending rows
+- Added queue-selection coverage proving executed recommendations do not consume positive `--limit` slots in the unscoped pending queue.
+- This keeps automatic replay batch selection faithful to pending-only semantics whether or not a document filter is active.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_unscoped_limit_skips_executed_entries_before_pending` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `560` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan scoped executed-skip limit lock)
 
 ### Changed: scoped limits skip executed rows before pending rows

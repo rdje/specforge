@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan unscoped executed-skip limit lock
+- New batch slice 2/40 adds unscoped queue-selection coverage for executed rows that appear before pending rows.
+- No production selection code changed; `selected_pending_indices(...)` already filters by `planned_not_executed` before applying positive limits.
+- This pairs with the scoped regression so batch and CLI selection budgets count only eligible pending replay work in both modes.
+
 ## 2026-05-05 rescan-plan scoped executed-skip limit lock
 - New batch slice 20/20 adds scoped queue-selection coverage for executed rows that appear before pending rows in the same document.
 - No production selection code changed; `selected_pending_indices(...)` already filters by `planned_not_executed` before applying positive limits.

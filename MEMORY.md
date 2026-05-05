@@ -20,47 +20,53 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `0e108e7cb9093603356ddd78fe44bc9b85c44521`
-- latest_commit_brief_message: `test(rescan): lock scoped pending limits`
+- latest_commit_hash: `9a77729a996c91ca068a2bf26e269aa019bde68f`
+- latest_commit_brief_message: `docs(memory): start N=40 batch`
 - note: new local `N=40` batch is active; push remains deferred until all 40 slices complete
 
 ## Recent commit chain (last 6)
+- `9a77729` docs(memory): start N=40 batch
 - `0e108e7` test(rescan): lock scoped pending limits
 - `bf7d825` test(rescan): lock no-change promotion gate
 - `edde6c1` test(rescan): lock fingerprint delta
 - `7febd89` test(rescan): lock missing validation report
 - `dfc6b25` test(rescan): lock validation report sidecar
-- `16fb481` test(rescan): lock schema version gate
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main`
-- files in flight for new batch slice 1:
+- branch state before the next commit: `main...origin/main [ahead 1]`
+- files in flight for new batch slice 2:
+  - `crates/specforge/src/commands/rescan_plan.rs`
+  - `CHANGES.md`
+  - `DEVELOPMENT_NOTES.md`
+  - `LIVE_ACHIEVEMENT_STATUS.md`
   - `MEMORY.md`
+  - `RUST_CODEBASE_ANALYSIS.md`
 
 ## Active N-slice batch
 - requested_count: `40`
-- completed_count: `0`
+- completed_count: `1`
 - push_policy: defer push until all `40` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - start the new `N=40` batch-run continuity record
-  - make the deferred-push policy explicit before code/test slices begin
+  - add unscoped rescan-plan queue-selection coverage proving executed rows do not consume positive limit slots before later pending work
+  - refresh live docs for the new regression-locked selection behavior
 - tracker effect:
-  - no live-status row changes; existing batch-run deferred-push policy row remains `Done`
+  - planned live-status row addition: `specforge rescan-plan` unscoped limits skip executed rows before pending work: `Done`
 - verification status:
+  - `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_unscoped_limit_skips_executed_entries_before_pending` passed with `1` test
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed
-  - `bash scripts/run_ci.sh` passed with `559` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `bash scripts/run_ci.sh` passed with `560` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `130` fixtures and `0` failures
   - `git diff --check` passed
   - checkout-specific absolute path scan across tracked markdown passed
 - current known local CI baseline:
-  - `559` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `560` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `130/130` tracked KG fixtures
 
 ## Next exact steps
-- commit slice 1 without pushing, then continue slice 2
+- commit slice 2 without pushing, then continue slice 3

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan unscoped executed-skip limits)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` queue-selection tests around executed entries inside unscoped positive limits.
+- No production selection code changed; the new regression proves positive limits are applied after pending-status filtering even without a document-key filter.
+- This pairs with the scoped executed-skip regression so automatic replay batches do not spend limit slots on already-executed recommendations in either selection mode.
+
 ## Session update (2026-05-05 rescan-plan scoped executed-skip limits)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` queue-selection tests around executed entries inside document-scoped positive limits.
 - No production selection code changed; the new regression proves positive limits are applied after pending-status and document-key filtering.
