@@ -1562,6 +1562,15 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_render_string_list_uses_none_or_comma_separator() {
+        assert_eq!(render_string_list(&[]), "none");
+        assert_eq!(
+            render_string_list(&["finding_z".to_string(), "finding_a".to_string()]),
+            "finding_z, finding_a"
+        );
+    }
+
+    #[test]
     fn rescan_plan_dry_run_render_surfaces_replay_boundary_and_action() {
         let mut plan = ProjectRescanPlanRecord {
             schema_version: 2,

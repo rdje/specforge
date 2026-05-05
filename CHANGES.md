@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan list-rendering lock)
+
+### Changed: dry-run list rendering is regression-locked
+- Added direct coverage for the dry-run string-list helper so empty related-id/command surfaces render as `none` and non-empty lists keep comma-separated plan order.
+- This protects the review-facing compact display used by `rescan-plan` dry-run queues.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_render_string_list_uses_none_or_comma_separator` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `570` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan verdict-count summary lock)
 
 ### Changed: exact arbitration verdict counts are regression-locked

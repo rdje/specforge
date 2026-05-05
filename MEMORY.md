@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `788b6573605863302bdd7ce00cd45c8ae02f1ace`
-- latest_commit_brief_message: `test(rescan): lock review-count summary`
+- latest_commit_hash: `5ec6868d517639abf0cacf74496fdc172ce73d9b`
+- latest_commit_brief_message: `test(rescan): lock verdict-count summary`
 - note: new local `N=40` batch is active; push remains deferred until all 40 slices complete
 
 ## Recent commit chain (last 6)
+- `5ec6868` test(rescan): lock verdict-count summary
 - `788b657` test(rescan): lock review-count summary
 - `9991fce` test(rescan): lock finding-count improvement
 - `0e65f9a` test(rescan): lock finding-count regression
 - `c0dfed5` test(rescan): lock score-rise arbitration
 - `ddb5a97` test(rescan): lock score-drop arbitration
-- `45371f1` test(rescan): lock added-finding arbitration
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 10]`
-- files in flight for new batch slice 11:
+- branch state before the next commit: `main...origin/main [ahead 11]`
+- files in flight for new batch slice 12:
   - `crates/specforge/src/commands/rescan_plan.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -46,27 +46,27 @@
 
 ## Active N-slice batch
 - requested_count: `40`
-- completed_count: `10`
+- completed_count: `11`
 - push_policy: defer push until all `40` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - add rescan-plan run-report coverage proving exact arbitration verdict summary counts stay distinct
-  - refresh live docs for the exact verdict summary count behavior
+  - add rescan-plan dry-run coverage proving string-list rendering keeps empty fields explicit and non-empty order compact
+  - refresh live docs for the list-rendering behavior
 - tracker effect:
-  - planned live-status row addition: `specforge rescan-plan` run-report exact verdict counts are regression-locked: `Done`
+  - planned live-status row addition: `specforge rescan-plan` dry-run list rendering is regression-locked: `Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_run_report_counts_exact_arbitration_verdicts` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_render_string_list_uses_none_or_comma_separator` passed with `1` test
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed
-  - `bash scripts/run_ci.sh` passed with `569` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `bash scripts/run_ci.sh` passed with `570` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `130` fixtures and `0` failures
   - `git diff --check` passed
   - checkout-specific absolute path scan across tracked markdown passed
 - current known local CI baseline:
-  - `569` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `570` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `130/130` tracked KG fixtures
 
 ## Next exact steps
-- commit slice 11 without pushing, then continue slice 12
+- commit slice 12 without pushing, then continue slice 13

@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan list-rendering lock
+- New batch slice 12/40 adds direct coverage for the dry-run `render_string_list(...)` helper.
+- No production renderer code changed; the helper already renders empty lists as `none` and non-empty lists with comma-separated order.
+- This keeps review-facing dry-run compact fields stable for related IDs and similar list surfaces.
+
 ## 2026-05-05 rescan-plan verdict-count summary lock
 - New batch slice 11/40 adds run-report coverage for `RescanPlanRunReport::arbitration_verdict_count(...)`.
 - No production report code changed; the helper already counts exact arbitration verdict string matches.
