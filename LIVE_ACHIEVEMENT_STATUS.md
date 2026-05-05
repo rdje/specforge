@@ -165,6 +165,7 @@
 - KG benchmark harness now locks conflicted graph-direction evidence as unresolved direction coverage: Done
 - KG benchmark harness now locks graph-conflict rescan guidance for conflicted compatibility gaps: Done
 - KG benchmark harness now locks flat-hint-present graph conflicts outside compatibility-direction debt: Done
+- KG benchmark harness now locks flat-hint-present graph-conflict rescan guidance payloads: Done
 - `.fsm` explicit-module/top-composition lowering now recovers child port directions from matching `IntentIR.actor_ports` when flat module-local hints lag: Done
 - `.fsm` explicit-module lowering now recovers missing module-control input widths from actor-port numeric shape evidence without importing external actor direction: Done
 - `.fsm` standalone direct-root lowering now recovers local directions from `IntentIR.actor_ports` when the direct actor context is unambiguous or one target actor drives all direct output targets despite external shared-signal actors, then recovers target inputs from explicit control reads: Done

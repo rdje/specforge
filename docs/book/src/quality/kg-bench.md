@@ -69,7 +69,7 @@ When a declared signal has no flat `direction_hint` and no actor-relative graph 
 The mixed fixture keeps both states in one artifact so related ids stay signal-specific when graph-backed lag and unresolved direction evidence appear together.
 A conflicted graph-direction fixture proves same-actor disagreement is not credited as graph coverage and therefore cannot produce a graph-backed compatibility-lag finding.
 The flat-hint-missing version also asserts both replay-guidance findings: graph coverage guidance related to the signal id and graph-conflict guidance related to the actor-aware conflict id.
-The flat-hint-present conflict fixture locks the converse boundary: graph coverage remains unresolved, but compatibility-direction debt stays absent while the flat direction hint exists.
+The flat-hint-present conflict fixture locks the converse boundary: graph coverage remains unresolved, compatibility-direction debt stays absent while the flat direction hint exists, and the same paired replay-guidance payloads remain explicit.
 
 Fixtures can assert canonical signal-connectivity conflicts directly.
 `signal_connectivity_conflicts_include` checks the conflicted signal, conflict kind, conflicting actor ids or names, and optional supporting statement ids.

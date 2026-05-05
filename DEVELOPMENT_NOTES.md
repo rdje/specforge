@@ -7,6 +7,16 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 KG fixture for flat-hint graph-conflict guidance
+- Batch slice 9/10 tightens the flat-hint-present graph conflict fixture.
+- `graph_direction_same_actor_conflict_negative` already proved:
+  - `PREADY` is withheld from resolved graph-direction coverage because the Completer has conflicting actor-relative directions
+  - flat compatibility direction remains populated, so compatibility-direction debt must stay absent
+- The fixture now also locks the two replay guidance payloads:
+  - coverage guidance points at `PREADY`
+  - conflict guidance points at `graph_direction_conflict:actor_completer:PREADY`
+- This complements slice 7's flat-hint-missing fixture and makes both conflict boundaries assert the same replay payload split.
+
 ## 2026-05-05 validator tests for paired graph-conflict guidance
 - Batch slice 8/10 tightens the direct validator unit layer for same-actor graph-direction conflicts.
 - The existing tests already proved the conflict-specific rescan guidance related id:

@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-05 (KG fixture for flat-hint graph-conflict guidance)
+
+### Changed: flat-hint-present conflict fixture now locks replay guidance payloads
+- Tightened `graph_direction_same_actor_conflict_negative`.
+- The fixture already required the graph-coverage and graph-conflict guidance finding ids.
+- It now also asserts the exact guidance payloads at SemanticIR and IntentIR:
+  - graph-direction coverage guidance keyed by `PREADY`
+  - graph-direction conflict guidance keyed by `graph_direction_conflict:actor_completer:PREADY`
+- This keeps the flat-hint-present conflict fixture aligned with the flat-hint-missing conflicted compatibility fixture while preserving the expected absence of compatibility-direction debt.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench graph_direction_same_actor_conflict_negative` -> passed with `1` fixture and `0` failures
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `523` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+
 ## 2026-05-05 (validator tests for paired graph-conflict guidance)
 
 ### Changed: validator unit coverage now locks paired guidance payloads

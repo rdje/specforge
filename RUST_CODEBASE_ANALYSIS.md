@@ -4,6 +4,13 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 flat-hint graph-conflict guidance fixture)
+- Strengthened `graph_direction_same_actor_conflict_negative` in the tracked KG fixture set.
+- No Rust production code changed; the flat-hint-present graph conflict fixture now asserts the exact rescan-guidance payloads for both SemanticIR and IntentIR:
+  - `PREADY` remains the graph-coverage replay target
+  - `graph_direction_conflict:actor_completer:PREADY` remains the actor-aware disagreement replay target
+- This aligns the flat-hint-present and flat-hint-missing graph-conflict fixtures while preserving their different compatibility-surface expectations.
+
 ## Session update (2026-05-05 validator graph-conflict guidance assertions)
 - Strengthened `crates/specforge/src/commands/validate.rs` tests for same-actor graph-direction conflicts.
 - No production semantics changed; the validator tests now assert that the same report contains both replayable guidance payloads:
