@@ -750,6 +750,30 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_rejects_non_repository_cargo_hints() {
+        let mut wrong_workdir = command_hint(
+            "rebuild_intent_ir",
+            vec!["intent", "generated/semantic_ir/doc/semantic_ir.json"],
+        );
+        wrong_workdir.working_directory = "generated".to_string();
+        assert!(parse_command_hint(&wrong_workdir).is_err());
+
+        let mut wrong_manifest = command_hint(
+            "rebuild_intent_ir",
+            vec!["intent", "generated/semantic_ir/doc/semantic_ir.json"],
+        );
+        wrong_manifest.args[2] = "crates/specforge/Cargo.toml".to_string();
+        assert!(parse_command_hint(&wrong_manifest).is_err());
+
+        let mut missing_specforge_args = command_hint(
+            "rebuild_intent_ir",
+            vec!["intent", "generated/semantic_ir/doc/semantic_ir.json"],
+        );
+        missing_specforge_args.args.truncate(4);
+        assert!(parse_command_hint(&missing_specforge_args).is_err());
+    }
+
+    #[test]
     fn rescan_plan_rejects_inconsistent_plan_count() -> Result<()> {
         let tempdir = tempdir()?;
         let plan_path = tempdir.path().join("rescan_plan.json");

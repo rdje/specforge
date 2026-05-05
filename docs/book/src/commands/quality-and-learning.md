@@ -104,6 +104,7 @@ cargo run --manifest-path Cargo.toml -- rescan-plan --execute
 Execution is deliberately narrow.
 The command does not shell out through the display strings.
 It parses the structured `executable` and `args`, accepts only the repository-local `cargo run --manifest-path Cargo.toml -- ...` shape, and dispatches only whitelisted stage commands in-process:
+The structured hint must also keep `working_directory` as `.` and include real SpecForge args after the `--` separator.
 
 - `ingest`
 - `enrich` with local `ollama`, local `lmstudio`, or `skip`

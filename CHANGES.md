@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan command-hint locality lock)
+
+### Changed: command-hint parser now regression-locks repo-local cargo shape
+- Added parser coverage for `rescan-plan` command hints that look like cargo hints but violate the supported local contract.
+- The parser now has direct regression coverage that rejects:
+  - non-repository working directories
+  - non-standard cargo manifest prefixes
+  - cargo hints with no SpecForge subcommand args after `--`
+- This complements the existing non-cargo and OpenAI replay rejections, keeping `rescan-plan --execute` limited to structured local hints.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_non_repository_cargo_hints` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `525` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan document-key pending selection lock)
 
 ### Changed: document-scoped rescan selection now locks skipped states

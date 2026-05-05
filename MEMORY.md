@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `2aed56190ea6ad603e9cb469d8fcf2d812988337`
-- latest_commit_brief_message: `test(rescan): lock empty dry-run preview fields`
-- note: the latest committed baseline is local batch-20 slice 3; push remains deferred until all `20` slices complete
+- latest_commit_hash: `e8450356eae0b5bd45957d36e65986333c656178`
+- latest_commit_brief_message: `test(rescan): lock scoped pending selection`
+- note: the latest committed baseline is local batch-20 slice 4; push remains deferred until all `20` slices complete
 
 ## Recent commit chain (last 6)
+- `e845035` test(rescan): lock scoped pending selection
 - `2aed561` test(rescan): lock empty dry-run preview fields
 - `544f326` test(rescan): lock dry-run command preview
 - `4916c6b` docs(memory): start N=20 batch state
 - `a15d861` test(validation): lock graph replay command lanes
 - `146a576` test(kg): lock flat-hint conflict guidance payloads
-- `6531382` test(validate): lock graph conflict guidance pair
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 3]`
-- files in flight for batch-20 slice 4:
+- branch state before the next commit: `main...origin/main [ahead 4]`
+- files in flight for batch-20 slice 5:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -51,21 +51,21 @@
 
 ## Active N-slice batch
 - requested_count: `20`
-- completed_count: `3`
+- completed_count: `4`
 - push_policy: defer push until all `20` slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - lock `rescan-plan` document-scoped pending selection so executed matching recommendations and missing document keys select no work
-  - keep standalone `rescan-plan --document-key` and `converge --rescan-plan <plan>` scoped consumers from resurfacing completed or unrelated recommendations
+  - lock `rescan-plan` command-hint parser rejection of cargo-shaped hints that violate repository locality or the standard cargo prefix
+  - preserve the structured local execution boundary for `rescan-plan --execute`
 - tracker effect:
-  - add a `Done` live-status row for document-key pending selection coverage
+  - add a `Done` live-status row for command-hint locality coverage
 - verification status:
-  - focused test passed: `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_selects_only_planned_pending_targets_with_limit`
-  - `cargo fmt --manifest-path Cargo.toml -- --check` passed after applying `cargo fmt`
+  - focused test passed: `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_non_repository_cargo_hints`
+  - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed
-  - `bash scripts/run_ci.sh` passed with `524` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `bash scripts/run_ci.sh` passed with `525` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `130/130` fixtures
   - `git diff --check` passed
   - checkout-specific absolute path scan across tracked markdown passed
@@ -74,4 +74,4 @@
   - `130/130` tracked KG fixtures
 
 ## Next exact steps
-- commit slice 4 without pushing, then move to slice 5
+- commit slice 5 without pushing, then move to slice 6

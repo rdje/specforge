@@ -7,6 +7,15 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan command-hint locality lock
+- Batch slice 5/20 tightens the whitelisted command-hint parser.
+- Existing tests already rejected arbitrary non-cargo executables and OpenAI replay hints.
+- Added `rescan_plan_rejects_non_repository_cargo_hints` for cargo-shaped but still invalid hints:
+  - `working_directory` other than `.`
+  - non-standard `--manifest-path` values
+  - missing SpecForge args after the required `cargo run --manifest-path Cargo.toml --` prefix
+- This keeps display strings non-authoritative and preserves the structured local execution boundary.
+
 ## 2026-05-05 rescan-plan document-key pending selection lock
 - Batch slice 4/20 tightens the queue-selection side of `rescan-plan`.
 - `selected_pending_indices(...)` already filtered by `planned_not_executed`, limit, and optional document key.
