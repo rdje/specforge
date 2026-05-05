@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` system-contract flat/graph disagreement guard)
+
+### Added: system-contract coverage for flat-vs-graph direction disagreement
+- Added a sequential-DT adapter regression where canonical system-contract `clk` input evidence disagrees with controller actor-port graph evidence that marks `clk` as an output.
+- Locked the `.fsm` system-contract validation branch so standalone lowering reports the flat-vs-graph system-signal diagnostic instead of rendering through contradictory actor graph evidence.
+- This is coverage-only over the existing production guard; no additional production behavior changed.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_sequential_dt_blocks_system_contract_flat_graph_direction_disagreement` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed after rustfmt
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`597` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+
 ## 2026-05-05 (`.fsm` structured-FSM flat/graph disagreement guard)
 
 ### Added: structured-FSM coverage for flat-vs-graph direction disagreement

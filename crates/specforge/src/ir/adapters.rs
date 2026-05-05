@@ -7685,6 +7685,66 @@ mod tests {
     }
 
     #[test]
+    fn standalone_sequential_dt_blocks_system_contract_flat_graph_direction_disagreement()
+    -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_explicit_sequential_control_intent_ir(tempdir.path())?;
+        intent_ir.actor_ports = vec![
+            actor_port("controller", "clk", ActorRelativeDirection::Output),
+            actor_port("controller", "rst_n", ActorRelativeDirection::Input),
+            actor_port("controller", "DATA_IN", ActorRelativeDirection::Input),
+            actor_port("controller", "ACC", ActorRelativeDirection::Output),
+        ];
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let clk = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "clk")
+            .expect("clock should remain in the signal inventory");
+
+        assert_eq!(clk.direction_hint, Some(InterfaceSignalDirection::Input));
+        assert_eq!(
+            clk.graph_direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert!(
+            clk.mention_categories
+                .iter()
+                .any(|category| category == "system_contract_signal")
+        );
+        assert!(
+            clk.mention_categories
+                .iter()
+                .any(|category| category == "actor_port")
+        );
+        assert!(!fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.iter().any(|reason| {
+            reason.contains(
+                "clock signal `clk` has conflicting canonical and graph-backed direction evidence",
+            )
+        }));
+        assert!(
+            adapter
+                .residual_decisions
+                .iter()
+                .any(|packet| packet.packet_id == "fsm_adapter_system_contract")
+        );
+
+        Ok(())
+    }
+
+    #[test]
     fn standalone_sequential_dt_recovers_system_signals_from_system_contract() -> Result<()> {
         let tempdir = tempdir()?;
         let mut intent_ir = build_explicit_sequential_control_intent_ir(tempdir.path())?;

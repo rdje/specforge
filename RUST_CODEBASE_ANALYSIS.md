@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` system-contract flat/graph disagreement guard)
+- Added standalone sequential-DT system-contract coverage for the shared flat-vs-graph direction disagreement rule in `crates/specforge/src/ir/adapters.rs`.
+- `standalone_sequential_dt_blocks_system_contract_flat_graph_direction_disagreement` proves canonical system-contract input evidence and graph-backed actor-port output evidence remain visible together while `.fsm` lowering stays blocked.
+- This locks the `validate_system_signal_renderability(...)` branch added with the direct guard, complementing direct DT, explicit-module, and structured-FSM coverage.
+
 ## Session update (2026-05-05 `.fsm` structured-FSM flat/graph disagreement guard)
 - Added structured-FSM coverage for the shared flat-vs-graph direction disagreement rule in `crates/specforge/src/ir/adapters.rs`.
 - `structured_fsm_blocks_flat_graph_direction_disagreement` proves FSM-state action lowering preserves both contradictory direction sources in the adapter artifact and refuses to render until upstream canonical shape is corrected.

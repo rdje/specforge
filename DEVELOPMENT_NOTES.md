@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 `.fsm` system-contract flat/graph disagreement guard fixture
+- New batch slice 21/100 adds `standalone_sequential_dt_blocks_system_contract_flat_graph_direction_disagreement`.
+- This extends the shared flat-vs-graph renderability guard to standalone sequential-DT system-contract validation: canonical `clk` input evidence can no longer render through graph-backed controller output evidence.
+- The blocked artifact keeps both sides visible (`direction_hint: input`, `graph_direction_hint: output`) and routes the decision through the `fsm_adapter_system_contract` residual packet.
+- Full adapter coverage now includes `80` adapter tests, and full CI now runs `597` Rust tests.
+
 ## 2026-05-05 `.fsm` structured-FSM flat/graph disagreement guard fixture
 - New batch slice 20/100 adds `structured_fsm_blocks_flat_graph_direction_disagreement`.
 - This extends the shared flat-vs-graph renderability guard to FSM-state lowering: a single flat `ACC` input declaration plus graph-backed controller output evidence now remains blocked rather than rendering through graph preference.
