@@ -7,6 +7,14 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan duplicate replay-flag lock
+- Batch slice 13/20 extends parser negative coverage for local replay hints.
+- `parse_enrich_command_hint_args(...)` and `parse_nlp_enrich_command_hint_args(...)` already rejected duplicate model flags, and enrich already rejected duplicate `--classify-only`.
+- Added `rescan_plan_rejects_duplicate_model_and_classify_flags` so those ambiguity guards are explicit:
+  - duplicate enrich `--vlm-model`
+  - duplicate enrich `--classify-only`
+  - duplicate NLP-enrich `--vlm-model`
+
 ## 2026-05-05 rescan-plan scoped limit ordering lock
 - Batch slice 12/20 adds coverage for the selection order inside `selected_pending_indices(...)`.
 - The intended behavior is filter first, limit second:

@@ -199,6 +199,7 @@
   - command-hint parser coverage now locks repository-local working directories, the standard `cargo run --manifest-path Cargo.toml --` prefix, and non-empty SpecForge args for executable rescans
   - local provider command-hint coverage now locks LM Studio alias parsing, `--classify-only` local enrichment, and skip-mode NLP enrichment while preserving OpenAI rejection
   - malformed local provider hints now have regression coverage for repeated provider flags, missing provider values, and unsupported provider-side args
+  - duplicate local replay flags now have regression coverage for repeated `--vlm-model` in enrich/NLP-enrich hints and repeated `--classify-only` in enrich hints
   - validation-delta execution summaries now have regression coverage for sorted and deduplicated added/removed finding-id lists
   - score/grade presence-only validation changes now have regression coverage that keeps them neutral review-required signals rather than improvement/regression claims
   - mixed validation deltas that add and remove findings now have regression coverage proving added findings take regression-review precedence over removed-finding improvement hints

@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan duplicate replay-flag lock)
+
+### Changed: duplicate local replay flags now have parser coverage
+- Added negative coverage for duplicate `--vlm-model` flags in both source enrichment and NLP enrichment command hints.
+- Added negative coverage for duplicate `--classify-only` flags in source enrichment hints.
+- This keeps generated local replay commands unambiguous when provider/model overrides are present.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_duplicate_model_and_classify_flags` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `533` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan scoped limit ordering lock)
 
 ### Changed: document-scoped rescan limits now have direct coverage

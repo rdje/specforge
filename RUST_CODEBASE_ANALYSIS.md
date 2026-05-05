@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan duplicate replay flags)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` parser tests around local replay command hints.
+- No production parser code changed; duplicate `--vlm-model` and duplicate `--classify-only` rejection is now directly covered.
+- This keeps replay invocation parsing deterministic before execution reaches local enrichment or NLP-enrichment lanes.
+
 ## Session update (2026-05-05 rescan-plan scoped limit ordering)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` queue-selection tests.
 - No production selection code changed; the new regression proves `selected_pending_indices(...)` filters by pending status and document key before applying `limit`.
