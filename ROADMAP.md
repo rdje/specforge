@@ -186,6 +186,7 @@
   - structured-FSM control-read input recovery preserves canonical control/transition support IDs and high automation confidence while avoiding import of the external actor's direction
   - explicit-module control-read input recovery preserves canonical control/transition support IDs and high automation confidence while avoiding import of the external actor's direction
   - explicit-module actor-port width recovery preserves graph-backed support IDs and automation confidence while avoiding import of the external actor's direction
+  - explicit-module actor-port width conflicts preserve both graph-backed support IDs and automation confidence while blocking `.fsm` emission
   - the canonical system contract preserves reset kind, polarity, assertion/release timing, and reset-target semantics explicitly enough that adapter lowering does not have to infer hardware reset behavior ad hoc
   - compatibility-level `?mod:name` and `?module:name` spellings stay outside the adapter root-kind model until the canonical layer carries an honest direct-module distinction
 - cross-project FSMGEN sync:

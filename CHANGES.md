@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` explicit-module width-conflict provenance lock)
+
+### Added: explicit-module actor-port width conflict provenance coverage
+- Tightened `standalone_explicit_module_blocks_conflicting_control_input_actor_port_widths` so blocked module-local actor-port width conflicts now prove both graph-backed support IDs and high automation confidence survive in module `signal_inventory`.
+- This is coverage-only over the existing adapter behavior: conflicting external actor-port widths keep `.fsm` emission blocked instead of selecting a numeric width.
+- The slice keeps contradictory graph width evidence auditable for review/rescan instead of reducing the blocked artifact to a generic width-conflict flag.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_explicit_module_blocks_conflicting_control_input_actor_port_widths` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+
 ## 2026-05-05 (`.fsm` explicit-module actor-port width provenance lock)
 
 ### Added: explicit-module actor-port width recovery provenance coverage

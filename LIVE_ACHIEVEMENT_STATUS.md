@@ -321,6 +321,7 @@
 - `.fsm` structured-FSM control-read input recovery now regression-locks support IDs and automation confidence: Done
 - `.fsm` explicit-module control-read input recovery now regression-locks support IDs and automation confidence: Done
 - `.fsm` explicit-module actor-port width recovery now regression-locks support IDs and automation confidence: Done
+- `.fsm` explicit-module actor-port width conflicts now regression-lock support IDs and automation confidence: Done
 - `.fsm` explicit top-root lowering now blocks missing or parametric public IO widths instead of rendering implicit 1-bit top ports: Done
 - `.fsm` explicit top-link lowering now requires child endpoints to resolve to emitted child module ports: Done
 - `.fsm` standalone DT/FSM renderability now blocks graph-backed output inventory entries that have no typed driving action instead of silently omitting them: Done

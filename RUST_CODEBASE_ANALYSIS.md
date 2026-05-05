@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` explicit-module width-conflict provenance lock)
+- Tightened `standalone_explicit_module_blocks_conflicting_control_input_actor_port_widths` in `crates/specforge/src/ir/adapters.rs` so blocked explicit-module actor-port width conflicts retain both graph support IDs and automation confidence.
+- The adapter already blocked contradictory external actor-port widths; this regression now proves the blocked module inventory keeps both evidence sides visible.
+- This makes the width-conflict review surface as auditable as the renderable explicit-module width recovery path.
+
 ## Session update (2026-05-05 `.fsm` explicit-module actor-port width provenance lock)
 - Tightened `standalone_explicit_module_recovers_control_input_width_from_actor_port_graph` in `crates/specforge/src/ir/adapters.rs` so recovered explicit-module actor-port width evidence retains support ID and automation confidence.
 - The adapter already recovered missing module-local control-input widths from actor-port numeric shape without importing external actor direction; this regression now proves the renderable module inventory keeps that graph-backed width trail visible.
