@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 `.fsm` duplicate top-port direction provenance lock
+- New batch slice 62/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` now asserts duplicate top-port direction declarations preserve both support-ID sets and high automation confidence on duplicate recovered top ports and selected signal inventory entries.
+- This is a coverage-only lock for the blocked top-composition path where duplicate public top-port declarations disagree on direction.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-05 `.fsm` top-link direction conflict provenance lock
 - New batch slice 61/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_keeps_conflicting_top_port_direction_unresolved` now asserts top-link direction conflicts preserve explicit top-port support IDs, topology-link support IDs, and high automation confidence on the recovered top port and selected signal inventory.

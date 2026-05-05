@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` duplicate top-port direction provenance lock)
+
+### Added: duplicate top-port direction conflict provenance coverage
+- Tightened `top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` so blocked top-composition `.fsm` lowering now proves both duplicate top-port declarations keep support IDs and high automation confidence on the recovered top ports and selected signal inventory.
+- This is coverage-only over the existing adapter behavior: duplicate public top-port declarations with conflicting directions still block `.fsm` emission.
+- The slice keeps both duplicate declaration records auditable while their direction remains unresolved.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-05 (`.fsm` top-link direction conflict provenance lock)
 
 ### Added: top-link direction conflict provenance coverage
