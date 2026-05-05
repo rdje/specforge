@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` top-port flat/graph inventory provenance)
+- Hardened top-root signal inventory projection in `crates/specforge/src/ir/adapters.rs` so flat top-port directions and graph-backed actor/topology directions remain separately inspectable when they disagree.
+- `build_top_signal_inventory(...)` now reserves `graph_direction_hint_conflicted` for true graph-side conflicts, instead of setting it for flat-vs-graph disagreement.
+- Updated the top actor-port and top-link disagreement regressions to lock visible `direction_hint` plus `graph_direction_hint` pairs while top renderability remains blocked.
+
 ## Session update (2026-05-05 `.fsm` system-contract flat/graph disagreement guard)
 - Added standalone sequential-DT system-contract coverage for the shared flat-vs-graph direction disagreement rule in `crates/specforge/src/ir/adapters.rs`.
 - `standalone_sequential_dt_blocks_system_contract_flat_graph_direction_disagreement` proves canonical system-contract input evidence and graph-backed actor-port output evidence remain visible together while `.fsm` lowering stays blocked.

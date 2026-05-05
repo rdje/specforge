@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 `.fsm` top-port flat/graph inventory provenance
+- New batch slice 22/100 updates `build_top_signal_inventory`.
+- Top-root inventories now preserve explicit top-port `direction_hint` evidence and graph-backed actor/topology `graph_direction_hint` evidence side by side when they disagree, instead of collapsing the graph side to `graph_direction_hint_conflicted`.
+- Top renderability still blocks the disagreement through the existing top-boundary diagnostic; the artifact now names the right provenance shape for follow-up rescan/review.
+- Full adapter coverage remains `80` adapter tests, and full CI remains `597` Rust tests.
+
 ## 2026-05-05 `.fsm` system-contract flat/graph disagreement guard fixture
 - New batch slice 21/100 adds `standalone_sequential_dt_blocks_system_contract_flat_graph_direction_disagreement`.
 - This extends the shared flat-vs-graph renderability guard to standalone sequential-DT system-contract validation: canonical `clk` input evidence can no longer render through graph-backed controller output evidence.

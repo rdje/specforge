@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` top-port flat/graph inventory provenance)
+
+### Changed: top-root signal inventory now preserves flat-vs-graph direction disagreement
+- Updated top-root signal inventory projection so explicit top-port direction evidence and graph-backed actor/topology direction evidence remain visible separately when they disagree.
+- Kept the top renderability blocker unchanged, but stopped labeling flat-vs-graph top-port disagreement as a graph-side conflict.
+- Updated top actor-port and top-link disagreement regressions to assert the preserved graph direction and non-conflicted graph provenance.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_top_actor_port_direction` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_keeps_conflicting_top_port_direction_unresolved` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`597` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+
 ## 2026-05-05 (`.fsm` system-contract flat/graph disagreement guard)
 
 ### Added: system-contract coverage for flat-vs-graph direction disagreement

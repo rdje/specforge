@@ -2384,17 +2384,13 @@ fn build_top_signal_inventory(
             let graph_direction = graph_evidence
                 .filter(|evidence| !evidence.direction_conflicted)
                 .and_then(|evidence| evidence.direction_hint);
-            let graph_direction_conflicted = graph_evidence
-                .is_some_and(|evidence| evidence.direction_conflicted)
-                || declared_direction
-                    .zip(graph_direction)
-                    .is_some_and(|(declared, graph)| declared != graph);
-            let graph_direction_hint =
-                if declared_direction.is_none() && !graph_direction_conflicted {
-                    graph_direction
-                } else {
-                    None
-                };
+            let graph_direction_conflicted =
+                graph_evidence.is_some_and(|evidence| evidence.direction_conflicted);
+            let graph_direction_hint = if graph_direction_conflicted {
+                None
+            } else {
+                graph_direction
+            };
             let mut mention_categories = BTreeSet::from(["top_port".to_string()]);
             if let Some(graph_evidence) = graph_evidence {
                 mention_categories.extend(graph_evidence.mention_categories.iter().cloned());
@@ -10872,8 +10868,11 @@ mod tests {
             signal_inventory_port.direction_hint,
             Some(InterfaceSignalDirection::Input)
         );
-        assert_eq!(signal_inventory_port.graph_direction_hint, None);
-        assert!(signal_inventory_port.graph_direction_hint_conflicted);
+        assert_eq!(
+            signal_inventory_port.graph_direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert!(!signal_inventory_port.graph_direction_hint_conflicted);
         assert!(
             top_candidate
                 .renderability
@@ -10987,8 +10986,11 @@ mod tests {
             signal_inventory_port.direction_hint,
             Some(InterfaceSignalDirection::Output)
         );
-        assert_eq!(signal_inventory_port.graph_direction_hint, None);
-        assert!(signal_inventory_port.graph_direction_hint_conflicted);
+        assert_eq!(
+            signal_inventory_port.graph_direction_hint,
+            Some(InterfaceSignalDirection::Input)
+        );
+        assert!(!signal_inventory_port.graph_direction_hint_conflicted);
         assert!(
             top_candidate
                 .renderability
