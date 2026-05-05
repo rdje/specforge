@@ -8282,6 +8282,14 @@ mod tests {
 
         assert_eq!(data_in.width_hint, None);
         assert_eq!(data_in.parametric_width_hint.as_deref(), Some("DATA_WIDTH"));
+        assert!(
+            data_in
+                .mention_categories
+                .iter()
+                .any(|category| category == "interface")
+        );
+        assert!(!data_in.supporting_canonical_ids.is_empty());
+        assert_eq!(data_in.automation_confidence, AutomationConfidence::High);
         assert!(!data_in.width_hint_conflicted);
         assert!(!fsm.renderability.is_renderable);
         assert!(

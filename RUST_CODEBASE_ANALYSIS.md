@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` canonical parametric width provenance lock)
+- Tightened `standalone_dt_blocks_parametric_signal_width_with_diagnostic` in `crates/specforge/src/ir/adapters.rs` so canonical parametric width blockers retain interface provenance, supporting IDs, and automation confidence.
+- The adapter already blocked symbolic canonical width lowering; this regression now proves the blocked `fsm.signal_inventory` entry keeps the canonical evidence trail visible.
+- This complements the actor-port symbolic width provenance lock and keeps both symbolic-width source families independently reviewable.
+
 ## Session update (2026-05-05 `.fsm` actor-port parametric width provenance lock)
 - Tightened `standalone_dt_blocks_parametric_actor_port_width_with_diagnostic` in `crates/specforge/src/ir/adapters.rs` so graph-backed actor-port parametric width blockers must retain provenance category, support ID, and automation confidence.
 - The adapter already blocked symbolic actor-port width lowering; this regression now proves the blocked `fsm.signal_inventory` entry keeps the actor-port evidence trail visible.

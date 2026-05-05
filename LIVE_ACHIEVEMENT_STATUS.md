@@ -314,6 +314,7 @@
 - `.fsm` selected top signal inventory now regression-locks parametric public IO width provenance while blocking `.fsm` emission: Done
 - `.fsm` actor-port graph width overlays now preserve parametric width provenance without overriding explicit numeric width evidence: Done
 - `.fsm` actor-port parametric width blockers now regression-lock provenance category, support IDs, and automation confidence: Done
+- `.fsm` canonical parametric width blockers now regression-lock interface provenance, support IDs, and automation confidence: Done
 - `.fsm` explicit top-root lowering now blocks missing or parametric public IO widths instead of rendering implicit 1-bit top ports: Done
 - `.fsm` explicit top-link lowering now requires child endpoints to resolve to emitted child module ports: Done
 - `.fsm` standalone DT/FSM renderability now blocks graph-backed output inventory entries that have no typed driving action instead of silently omitting them: Done
