@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 `.fsm` top parametric width provenance lock
+- New batch slice 28/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_parametric_top_port_width_for_fsm_public_io` now asserts selected top signal inventory entries preserve `parametric_width_hint: DATA_WIDTH` while renderability stays blocked for numeric `.fsm` public IO emission.
+- This is a coverage-only lock for the adapter provenance surface: symbolic width evidence remains visible and separate from both numeric width hints and width conflicts.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-05 NLP alias reference-link normalization
 - New batch slice 27/100 hardens `extract_alias_phrase()` in `crates/specforge/src/commands/nlp_enrich.rs`.
 - The Form 2 alias learner now normalizes reference-style markdown links in subject phrases to the visible label, matching the inline-link behavior from slice 26.

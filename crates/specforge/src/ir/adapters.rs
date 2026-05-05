@@ -10680,6 +10680,10 @@ mod tests {
             Some(WidthHint::Parametric("DATA_WIDTH".to_string()))
         );
         assert_eq!(signal_inventory_port.width_hint, None);
+        assert_eq!(
+            signal_inventory_port.parametric_width_hint.as_deref(),
+            Some("DATA_WIDTH")
+        );
         assert!(!signal_inventory_port.width_hint_conflicted);
         assert!(
             top_candidate

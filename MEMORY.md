@@ -20,24 +20,24 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `ac618356fa8ae9be1c0f4c8d65f9517fddee56a8`
-- latest_commit_brief_message: `fix(nlp): normalize alias markdown links`
+- latest_commit_hash: `01b9fe16246fdbf4a347acb01c2c0d6d86bbdfe0`
+- latest_commit_brief_message: `fix(nlp): normalize reference alias links`
 - note: new local `N=100` batch is active; push remains deferred until all 100 slices complete
 
 ## Recent commit chain (last 6)
+- `01b9fe1` fix(nlp): normalize reference alias links
 - `ac61835` fix(nlp): normalize alias markdown links
 - `47387b1` fix(nlp): trim alias word punctuation
 - `1cafcf9` fix(nlp): reject outline alias markers
 - `9c572b2` docs(book): explain adapter graph provenance
 - `7e0add5` fix(adapter): preserve top flat graph direction evidence
-- `afb2376` test(adapter): lock system contract flat graph disagreement
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 26]`
-- files in flight for new batch slice 27:
-  - `crates/specforge/src/commands/nlp_enrich.rs`
+- branch state before the next commit: `main...origin/main [ahead 27]`
+- files in flight for new batch slice 28:
+  - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -47,20 +47,20 @@
 
 ## Active N-slice batch
 - requested_count: `100`
-- completed_count: `26`
+- completed_count: `27`
 - push_policy: defer push until all `100` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - harden Form 2 NLP alias learning against reference-style markdown link id pollution
-  - normalize reference-style markdown links in subject phrases to their visible labels before storing aliases
-  - keep useful implicit noun-phrase alias learning intact
+  - regression-lock selected top signal-inventory provenance for parametric public IO widths
+  - prove blocked `.fsm` top-root artifacts preserve `parametric_width_hint` when numeric width evidence is unavailable
+  - keep symbolic width evidence distinct from missing numeric width and width-conflict states
 - tracker effect:
-  - live-status tracker gains `NLP alias learning now uses reference-style markdown link labels for Form 2 aliases: Done`
+  - live-status tracker gains `.fsm selected top signal inventory now regression-locks parametric public IO width provenance while blocking .fsm emission: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge extract_alias_phrase` passed with `9` tests
-  - `cargo test --manifest-path Cargo.toml -p specforge commands::nlp_enrich::tests` passed with `21` tests
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_parametric_top_port_width_for_fsm_public_io` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed after the live-doc refresh
   - `bash scripts/run_ci.sh` passed with `601` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
@@ -70,4 +70,4 @@
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- run docs/full CI/KG bench after live-doc edits, run final guards, commit slice 27 without pushing, and continue slice 28
+- run docs/full CI/KG bench after live-doc edits, run final guards, commit slice 28 without pushing, and continue slice 29

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` top parametric width provenance lock)
+- Tightened `top_composition_blocks_parametric_top_port_width_for_fsm_public_io` in `crates/specforge/src/ir/adapters.rs` so selected top signal inventory entries must preserve the symbolic `parametric_width_hint` for blocked public IO widths.
+- The adapter already blocked parametric public IO lowering; this regression now also proves the blocked artifact keeps the symbolic width provenance visible in `fsm.signal_inventory`.
+- This keeps parametric width evidence distinct from missing numeric width evidence and from true width conflicts at the top-root renderability boundary.
+
 ## Session update (2026-05-05 NLP alias reference-link normalization)
 - Extended `normalize_alias_subject_markup(...)` in `crates/specforge/src/commands/nlp_enrich.rs` so reference-style markdown links in candidate alias subjects collapse to the visible label.
 - Added `extract_alias_phrase_uses_reference_link_labels`, bringing focused alias parser coverage to `9` tests and NLP-enrich module coverage to `21` tests.

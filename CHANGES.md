@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` top parametric width provenance lock)
+
+### Added: selected top inventory coverage for parametric public IO width provenance
+- Tightened `top_composition_blocks_parametric_top_port_width_for_fsm_public_io` so it now asserts the selected top signal inventory preserves `parametric_width_hint: DATA_WIDTH` while numeric `.fsm` public IO emission remains blocked.
+- This is coverage-only over the existing adapter behavior: symbolic width evidence stays inspectable and distinct from missing numeric width evidence.
+- The slice keeps the top-root renderability boundary honest without changing emitted `.fsm` syntax.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_parametric_top_port_width_for_fsm_public_io` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+
 ## 2026-05-05 (NLP alias reference-link normalization)
 
 ### Changed: alias learning uses reference-style markdown link labels
