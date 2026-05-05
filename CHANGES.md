@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan score-drop arbitration lock)
+
+### Changed: score decreases stay regression review
+- Added arbitration coverage proving a lower validation score triggers `regression_review_required` even when findings and grade stay unchanged.
+- This keeps rescan execution conservative when aggregate validation quality drops without a finding-list change.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_arbitration_treats_score_decrease_as_regression` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `564` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan added-finding arbitration lock)
 
 ### Changed: added findings stay regression review
