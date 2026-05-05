@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 batch commit workflow push policy
+- User approved a back-to-back batch workflow for `N=10` tasks/slices/lanes.
+- The important constraint is unchanged: every completed slice still gets its own verification, live-doc refresh, commit, `git_message_brief.txt` truncation, and post-commit checks before continuing.
+- The push policy changes for explicit batches: do not push at the usual local `25`-commit threshold during the batch; defer push until all `N` committed slices are complete unless the user explicitly redirects.
+- `COMMIT.md` now records that batch mode so a crashed or resumed session does not accidentally push halfway through the batch.
+- `MEMORY.md` now records the active `N=10` batch and push deferral state.
+
 ## 2026-05-05 KG fixture for unresolved direction gaps
 - Picked the next roadmap-aligned slice after the FSMGEN submodule update: turn the new IntentIR compatibility-direction finding split into tracked KG fixture coverage.
 - Added `compat_direction_hints_incomplete_negative`, a focused fixture where `DATA` is still a declared interface signal with width, but the fixture patch clears its flat `direction_hint` and no actor-relative ports exist.

@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-05 (batch commit workflow push policy)
+
+### Changed: explicit N-slice batch push rule
+- Documented the active batch-run rule in `COMMIT.md`: the full commit workflow still runs after every completed task/slice/lane, but pushing is deferred until the user-defined `N`-item batch is complete.
+- Updated `MEMORY.md` with the active `N=10` batch state, completed-count tracking, and the instruction not to push at the `25`-commit threshold during this batch.
+
+### Validation
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `521` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `128` fixtures and `0` failures
+- `git diff --check` -> passed
+
 ## 2026-05-05 (KG fixture for unresolved direction gaps)
 
 ### Added: KG fixture locks compatibility-direction gaps without graph coverage

@@ -1,6 +1,6 @@
 # COMMIT.md
 
-Last updated: 2026-03-31
+Last updated: 2026-05-05
 
 ## Purpose
 Define the exact commit workflow for this project so a new AI instance can apply it consistently without re-reading chat history.
@@ -8,6 +8,14 @@ The workflow exists to preserve full operational continuity across session loss,
 
 ## When To Run
 Run this workflow after each completed task/activity.
+
+## Batch Runs
+When the user explicitly authorizes an automatic batch of `N` tasks, slices, or lanes:
+- still run this full commit workflow after every completed task, slice, or lane in the batch
+- do not defer task-scoped commits until the end of the batch
+- push only after the full defined `N`-item batch is complete, unless the user explicitly gives a different push instruction or a blocker requires stopping and asking
+- if the user-defined batch ends early because of a blocker, do not push automatically unless the user explicitly approves that early-batch push
+- record the active batch size, completed count, and push deferral status in `MEMORY.md` during the batch so crash recovery is explicit
 
 ## Files Involved
 - `README.md` (tracked)

@@ -2,6 +2,7 @@
 ## Current snapshot
 - Git repository initialized: Done
 - Commit workflow document present and reviewed: Done
+- Batch-run deferred-push policy documented while preserving per-slice commits: Done
 - GitHub Actions CI workflow present but temporarily manual-only to conserve Actions minutes: Done
 - Canonical CI entrypoint runnable locally and reused by GitHub Actions: Done
 - Canonical CI now runs Clippy with warnings denied: Done
