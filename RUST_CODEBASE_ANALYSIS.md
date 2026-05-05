@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` direct-root width-conflict provenance lock)
+- Tightened `standalone_dt_blocks_conflicting_control_input_actor_port_widths` in `crates/specforge/src/ir/adapters.rs` so blocked direct-root actor-port width conflicts retain both graph support IDs and automation confidence.
+- The adapter already blocked contradictory external actor-port widths; this regression now proves the blocked direct inventory keeps both evidence sides visible.
+- This makes the direct-root width-conflict review surface match the explicit-module conflict coverage.
+
 ## Session update (2026-05-05 `.fsm` explicit-module width-conflict provenance lock)
 - Tightened `standalone_explicit_module_blocks_conflicting_control_input_actor_port_widths` in `crates/specforge/src/ir/adapters.rs` so blocked explicit-module actor-port width conflicts retain both graph support IDs and automation confidence.
 - The adapter already blocked contradictory external actor-port widths; this regression now proves the blocked module inventory keeps both evidence sides visible.

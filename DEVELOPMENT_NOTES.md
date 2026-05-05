@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 `.fsm` direct-root width-conflict provenance lock
+- New batch slice 38/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `standalone_dt_blocks_conflicting_control_input_actor_port_widths` now asserts blocked direct-root actor-port width conflicts keep both graph-backed support IDs and high automation confidence.
+- This is a coverage-only lock for blocked direct-root actor-port width disagreement.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-05 `.fsm` explicit-module width-conflict provenance lock
 - New batch slice 37/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `standalone_explicit_module_blocks_conflicting_control_input_actor_port_widths` now asserts blocked module-local actor-port width conflicts keep both graph-backed support IDs and high automation confidence.
