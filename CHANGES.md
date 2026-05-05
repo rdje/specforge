@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-05 (KG fixture for flat-hint graph conflicts)
+
+### Changed: flat compatibility hints stay distinct from graph conflicts
+- Tightened `graph_direction_same_actor_conflict_negative`.
+- The fixture now asserts a same-actor graph-direction conflict with flat compatibility hints present still has `with_resolved_direction = 2`, `with_graph_direction = 1`, and `with_compat_direction_hint = 2`.
+- SemanticIR and IntentIR validation must still emit graph-conflict and graph-coverage findings for conflicted `PREADY`, but must not emit either graph-backed compatibility lag or unresolved compatibility-direction findings while flat hints remain present.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench graph_direction_same_actor_conflict_negative` -> passed with `1` fixture and `0` failures
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `521` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (KG fixture for conflicted graph direction gaps)
 
 ### Changed: conflicted graph direction stays unresolved for coverage

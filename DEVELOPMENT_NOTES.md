@@ -7,6 +7,15 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 KG fixture for flat-hint graph conflicts
+- Batch slice 4/10 tightens the flat-hint-present sibling of slice 3.
+- `graph_direction_same_actor_conflict_negative` now explicitly separates three states in one fixture:
+  - `PREADY` has a same-actor graph-direction conflict and therefore lacks resolved graph coverage
+  - `PREADY` still has its flat compatibility direction hint, so compatibility-direction debt must stay absent
+  - `PADDR` remains a healthy graph-backed signal, so graph coverage metrics stay mixed rather than all-or-nothing
+- The expected metrics lock this separation: `with_resolved_direction = 2`, `with_graph_direction = 1`, `with_compat_direction_hint = 2`, and `graph_direction_conflicts = 1`.
+- This guards against a regression where graph conflicts become an excuse to report flat compatibility debt even when the compatibility surface is already populated.
+
 ## 2026-05-05 KG fixture for conflicted graph direction gaps
 - Batch slice 3/10 closes the conflicted-evidence sibling of the compatibility-direction split.
 - The focused failure was useful: same-actor graph-direction conflicts were excluded from resolved graph direction metrics, but validation also excluded them from generic graph-coverage and unresolved compatibility-direction findings.

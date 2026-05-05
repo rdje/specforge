@@ -4,6 +4,12 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 flat-hint graph conflicts)
+- Strengthened the tracked expectations for `graph_direction_same_actor_conflict_negative`.
+- No Rust production code changed in this slice; the fixture now explicitly asserts that flat compatibility hints remain a separate coverage surface when graph evidence is conflicted.
+- The expected validation shape is conflict plus graph-coverage debt, with `semantic_compat_direction_hints_*` / `intent_compat_direction_hints_*` findings excluded because the flat hints are present.
+- The metric expectations also lock the mixed state: two resolved directions through graph-or-compat fallback, one graph-covered signal, two compatibility-hinted signals, and one graph conflict.
+
 ## Session update (2026-05-05 conflicted graph direction gaps)
 - Tightened `crates/specforge/src/commands/validate.rs` so same-actor graph-direction conflicts are not treated as resolved coverage but also no longer disappear from graph-coverage debt.
 - `missing_graph_direction_signal_names(...)` now includes every declared/interface signal absent from the resolved graph-direction set, including conflicted signals.

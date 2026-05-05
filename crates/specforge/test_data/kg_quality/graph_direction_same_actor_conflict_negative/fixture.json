@@ -47,6 +47,10 @@
           "semantic_graph_direction_conflicts_present",
           "semantic_graph_direction_conflict_surface_rescan_guidance"
         ],
+        "finding_ids_exclude": [
+          "semantic_compat_direction_hints_incomplete",
+          "semantic_compat_direction_hints_lag_graph"
+        ],
         "findings_include": [
           {
             "finding_id": "semantic_graph_direction_coverage_incomplete",
@@ -71,6 +75,9 @@
           }
         ],
         "metric_values": {
+          "with_resolved_direction": "2",
+          "with_graph_direction": "1",
+          "with_compat_direction_hint": "2",
           "graph_direction_conflicts": "1"
         }
       },
@@ -80,6 +87,10 @@
           "intent_graph_direction_coverage_surface_rescan_guidance",
           "intent_graph_direction_conflicts_present",
           "intent_graph_direction_conflict_surface_rescan_guidance"
+        ],
+        "finding_ids_exclude": [
+          "intent_compat_direction_hints_incomplete",
+          "intent_compat_direction_hints_lag_graph"
         ],
         "findings_include": [
           {
@@ -105,6 +116,9 @@
           }
         ],
         "metric_values": {
+          "with_resolved_direction": "2",
+          "with_graph_direction": "1",
+          "with_compat_direction_hint": "2",
           "graph_direction_conflicts": "1"
         }
       }
