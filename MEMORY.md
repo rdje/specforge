@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `45bb7f5c8339f280f17e80a8fde9a6a8c9d4cfa6`
-- latest_commit_brief_message: `test(rescan): lock nlp classify flag rejection`
+- latest_commit_hash: `914e09c2735552177f1a48cdb88354c3abf13477`
+- latest_commit_brief_message: `test(rescan): lock lmstudio provider spelling`
 - note: new local `N=40` batch is active; push remains deferred until all 40 slices complete
 
 ## Recent commit chain (last 6)
+- `914e09c` test(rescan): lock lmstudio provider spelling
 - `45bb7f5` test(rescan): lock nlp classify flag rejection
 - `15500ea` test(rescan): lock command trust boundary
 - `0b001d9` test(rescan): lock pending status selection
 - `c2f4c96` test(rescan): lock exact document filtering
 - `c1a16ca` test(rescan): lock grade removal status
-- `1bda030` test(rescan): lock score removal status
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 27]`
-- files in flight for new batch slice 28:
+- branch state before the next commit: `main...origin/main [ahead 28]`
+- files in flight for new batch slice 29:
   - `crates/specforge/src/commands/rescan_plan.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -46,27 +46,27 @@
 
 ## Active N-slice batch
 - requested_count: `40`
-- completed_count: `27`
+- completed_count: `28`
 - push_policy: defer push until all `40` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - add rescan-plan parser coverage proving unhyphenated lmstudio provider hints parse as LM Studio
-  - refresh live docs for LM Studio provider alias behavior
+  - add rescan-plan parser coverage proving hyphenated open-ai provider hints are rejected for local replay
+  - refresh live docs for remote-provider alias rejection behavior
 - tracker effect:
-  - planned live-status row addition: `specforge rescan-plan` unhyphenated LM Studio provider hints are regression-locked: `Done`
+  - planned live-status row addition: `specforge rescan-plan` OpenAI provider aliases are rejected: `Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_parses_unhyphenated_lmstudio_provider_hint` passed with `1` test and `585` filtered out
+  - `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_open_ai_provider_alias_hints` passed with `1` test and `586` filtered out
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed
-  - `bash scripts/run_ci.sh` passed with `586` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `bash scripts/run_ci.sh` passed with `587` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `130` fixtures and `0` failures
   - `git diff --check` passed
   - checkout-specific absolute path scan across tracked markdown passed
 - current known local CI baseline:
-  - `585` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `586` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `130/130` tracked KG fixtures
 
 ## Next exact steps
-- commit slice 28 without pushing, then continue slice 29
+- commit slice 29 without pushing, then continue slice 30

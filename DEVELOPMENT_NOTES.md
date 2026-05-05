@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan open-ai alias rejection lock
+- New batch slice 29/40 adds parser coverage for the hyphenated `open-ai` provider alias.
+- No production parser code changed; `parse_local_rescan_vlm_provider` already rejects both `openai` and `open-ai` because rescan replay is intentionally local-provider-only.
+- This keeps remote-provider spellings outside executable rescan-plan command hints.
+
 ## 2026-05-05 rescan-plan lmstudio alias lock
 - New batch slice 28/40 adds parser coverage for the unhyphenated `lmstudio` provider alias.
 - No production parser code changed; `parse_local_rescan_vlm_provider` already maps both `lmstudio` and `lm-studio` to the LM Studio local replay provider.

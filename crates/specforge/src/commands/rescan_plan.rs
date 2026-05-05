@@ -1690,6 +1690,32 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_rejects_open_ai_provider_alias_hints() {
+        let enrich = command_hint(
+            "enrich_source_ir",
+            vec![
+                "enrich",
+                "generated/source_ir/doc/source_ir.json",
+                "--vlm-provider",
+                "open-ai",
+            ],
+        );
+
+        let nlp_enrich = command_hint(
+            "nlp_enrich_evidence_ir",
+            vec![
+                "nlp-enrich",
+                "generated/evidence_ir/doc/evidence_ir.json",
+                "--vlm-provider",
+                "open-ai",
+            ],
+        );
+
+        assert!(parse_command_hint(&enrich).is_err());
+        assert!(parse_command_hint(&nlp_enrich).is_err());
+    }
+
+    #[test]
     fn rescan_plan_selects_only_planned_pending_targets_with_limit() {
         let plan = ProjectRescanPlanRecord {
             schema_version: 2,

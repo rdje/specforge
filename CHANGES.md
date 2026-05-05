@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan open-ai alias rejection lock)
+
+### Changed: hyphenated OpenAI provider hints are rejected
+- Added parser coverage proving local replay command hints reject the `open-ai` provider spelling.
+- This keeps rescan execution constrained to local `ollama`, `lmstudio` / `lm-studio`, or `skip` providers.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_open_ai_provider_alias_hints` -> passed (`1` test, `586` filtered out)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`587` Rust tests, warnings denied for Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`130` fixtures, `0` failures)
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan lmstudio alias lock)
 
 ### Changed: unhyphenated LM Studio provider hints are accepted

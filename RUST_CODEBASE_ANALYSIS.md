@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan open-ai alias rejection)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` parser tests around rejected remote-provider aliases.
+- No production parser code changed; the new regression proves the hyphenated `open-ai` value is rejected for both source enrichment and evidence NLP replay hints.
+- This keeps executable rescan-plan replay constrained to local providers instead of silently accepting remote OpenAI spellings.
+
 ## Session update (2026-05-05 rescan-plan lmstudio alias)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` parser tests around accepted local LM Studio provider spellings.
 - No production parser code changed; the new regression proves the unhyphenated `lmstudio` value still maps to `VlmProviderArg::LmStudio`.
