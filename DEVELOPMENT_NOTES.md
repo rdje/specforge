@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 `.fsm` transitive child-width provenance lock
+- New batch slice 69/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_recovers_child_width_through_transitive_topology` now asserts transitive child width recovery preserves explicit top-link support IDs and high automation confidence in the producer and consumer module inventories.
+- This is a coverage-only lock for the renderable top-composition path where producer output width recovered from a public top link flows through a sibling child link to recover a consumer input width.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-05 `.fsm` child sibling-link source width provenance lock
 - New batch slice 68/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_recovers_source_child_width_from_sibling_child_link_topology` now asserts source-side child width recovery from a sibling child link preserves explicit top-link support IDs and high automation confidence in the producer module inventory.

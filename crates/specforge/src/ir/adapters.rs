@@ -12420,6 +12420,37 @@ mod tests {
             "child_width_through_transitive_topology.md",
             "# Child Width Through Transitive Topology\nTop datapath.\n\nTop datapath port result_data is output width 8.\n\nTop datapath child producer uses module producer_core.\n\nTop datapath child consumer uses module consumer_core.\n\nTop datapath link producer.output_data -> consumer.input_data.\n\nTop datapath link producer.output_data -> result_data.\n\nTop datapath link consumer.result_data -> result_data.\n\nModule producer_core signal output_data is output.\n\nModule producer_core block produce: output_data = 8'3.\n\nModule consumer_core signal input_data is input.\n\nModule consumer_core signal result_data is output width 8.\n\nModule consumer_core block route: result_data = input_data.\n",
         )?;
+        let (producer_to_consumer_support_ids, producer_to_top_support_ids) = {
+            let explicit_top = intent_ir
+                .explicit_tops
+                .iter()
+                .find(|top| top.top_name == "datapath")
+                .expect("explicit top should be present");
+            let producer_to_consumer_link = explicit_top
+                .links
+                .iter()
+                .find(|link| {
+                    link.source.instance_name.as_deref() == Some("producer")
+                        && link.source.signal_name == "output_data"
+                        && link.target.instance_name.as_deref() == Some("consumer")
+                        && link.target.signal_name == "input_data"
+                })
+                .expect("producer to consumer topology link should be present");
+            let producer_to_top_link = explicit_top
+                .links
+                .iter()
+                .find(|link| {
+                    link.source.instance_name.as_deref() == Some("producer")
+                        && link.source.signal_name == "output_data"
+                        && link.target.instance_name.is_none()
+                        && link.target.signal_name == "result_data"
+                })
+                .expect("producer to top topology link should be present");
+            (
+                super::explicit_top_link_supporting_ids(producer_to_consumer_link),
+                super::explicit_top_link_supporting_ids(producer_to_top_link),
+            )
+        };
 
         let artifact_base = tempdir.path().join("generated").join("adapters");
         let adapter = AdapterArtifact::build(
@@ -12466,6 +12497,21 @@ mod tests {
                 .iter()
                 .any(|category| category == "module_topology_link")
         }));
+        assert!(
+            producer_to_top_support_ids
+                .iter()
+                .any(|id| output_data.supporting_canonical_ids.contains(id))
+        );
+        assert!(
+            producer_to_consumer_support_ids
+                .iter()
+                .any(|id| input_data.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            output_data.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert_eq!(input_data.automation_confidence, AutomationConfidence::High);
         assert!(producer.renderability.is_renderable);
         assert!(consumer.renderability.is_renderable);
         assert!(fsm.renderability.is_renderable);

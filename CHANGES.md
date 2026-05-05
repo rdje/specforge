@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` transitive child-width provenance lock)
+
+### Added: transitive child-width recovery provenance coverage
+- Tightened `top_composition_recovers_child_width_through_transitive_topology` so renderable top-composition `.fsm` lowering now proves transitive child width recovery preserves topology-link support IDs and high automation confidence across producer and consumer child inventories.
+- This is coverage-only over the existing adapter behavior: a child output width recovered from a top link can still flow through a sibling child link to recover a consumer input width.
+- The slice keeps both producer-to-top and producer-to-consumer link evidence auditable in the recovered module inventories.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_child_width_through_transitive_topology` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-05 (`.fsm` child sibling-link source width provenance lock)
 
 ### Added: sibling child-link source width recovery provenance coverage

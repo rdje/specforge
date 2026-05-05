@@ -349,6 +349,7 @@
 - `.fsm` child top-link width recovery now regression-locks support IDs and automation confidence: Done
 - `.fsm` child sibling-link target width recovery now regression-locks support IDs and automation confidence: Done
 - `.fsm` child sibling-link source width recovery now regression-locks support IDs and automation confidence: Done
+- `.fsm` transitive child-width recovery now regression-locks support IDs and automation confidence: Done
 - `.fsm` widthless top-port blockers now regression-lock support IDs and automation confidence: Done
 - `.fsm` parametric top-port blockers now regression-lock support IDs and automation confidence: Done
 - `.fsm` explicit top-link lowering now requires child endpoints to resolve to emitted child module ports: Done
