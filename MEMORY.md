@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `f910e116c7e569039efb549cbd4d5e414abd1275`
-- latest_commit_brief_message: `test(adapter): lock canonical parametric width provenance`
+- latest_commit_hash: `669fb396203d67aa16240d74ba17ecf5d10a5749`
+- latest_commit_brief_message: `test(adapter): lock numeric width precedence provenance`
 - note: new local `N=100` batch is active; push remains deferred until all 100 slices complete
 
 ## Recent commit chain (last 6)
+- `669fb39` test(adapter): lock numeric width precedence provenance
 - `f910e11` test(adapter): lock canonical parametric width provenance
 - `298911a` test(adapter): lock actor parametric width provenance
 - `1456e2d` test(adapter): lock top parametric width provenance
 - `01b9fe1` fix(nlp): normalize reference alias links
 - `ac61835` fix(nlp): normalize alias markdown links
-- `47387b1` fix(nlp): trim alias word punctuation
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 30]`
-- files in flight for new batch slice 31:
+- branch state before the next commit: `main...origin/main [ahead 31]`
+- files in flight for new batch slice 32:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -47,27 +47,27 @@
 
 ## Active N-slice batch
 - requested_count: `100`
-- completed_count: `30`
+- completed_count: `31`
 - push_policy: defer push until all `100` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - regression-lock explicit numeric width precedence over actor-port symbolic width evidence
-  - prove renderable `.fsm` signal inventory preserves interface provenance while dropping stale parametric hints
-  - keep the numeric-width emission path auditable
+  - regression-lock direct-root actor-port width recovery provenance
+  - prove renderable `.fsm` signal inventory preserves graph-backed support IDs and high automation confidence
+  - keep external actor direction excluded while consuming actor-port numeric width evidence
 - tracker effect:
-  - live-status tracker gains `.fsm numeric-over-symbolic width precedence now regression-locks interface provenance while dropping stale parametric hints: Done`
+  - live-status tracker gains `.fsm direct-root actor-port width recovery now regression-locks support IDs and automation confidence: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge standalone_dt_keeps_explicit_numeric_width_over_actor_parametric_width` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge standalone_dt_recovers_control_input_width_from_actor_port_graph` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
-  - `bash scripts/run_docs_ci.sh` passed after the live-doc refresh
-  - `bash scripts/run_ci.sh` passed with `601` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
-  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `148` fixtures and `0` failures
+  - `bash scripts/run_docs_ci.sh` passed before the final `MEMORY.md` verification refresh
+  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `148/148` tracked fixtures
+  - `bash scripts/run_ci.sh` passed with formatting, warning-deny Clippy, `601` Rust tests, warning-deny Rust docs, and mdBook build
 - current known local CI baseline:
-  - `601` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `601` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation expected after this slice
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- run docs/full CI/KG bench after live-doc edits, run final guards, commit slice 31 without pushing, and continue slice 32
+- rerun docs CI after this final `MEMORY.md` edit, run final guards, commit slice 32 without pushing, and continue slice 33

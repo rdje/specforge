@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 `.fsm` direct actor-port width provenance lock
+- New batch slice 32/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `standalone_dt_recovers_control_input_width_from_actor_port_graph` now asserts recovered direct-root control-input width evidence keeps the graph-backed actor-port support ID and high automation confidence while still avoiding import of the external actor's direction.
+- This is a coverage-only lock for renderable direct-root actor-port width recovery.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-05 `.fsm` numeric-over-symbolic width precedence lock
 - New batch slice 31/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `standalone_dt_keeps_explicit_numeric_width_over_actor_parametric_width` now asserts explicit numeric interface width evidence keeps interface provenance, nonempty supporting IDs, and high automation confidence while actor-port symbolic width evidence is not retained as a parametric hint.

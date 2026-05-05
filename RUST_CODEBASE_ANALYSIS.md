@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` direct actor-port width provenance lock)
+- Tightened `standalone_dt_recovers_control_input_width_from_actor_port_graph` in `crates/specforge/src/ir/adapters.rs` so recovered direct-root actor-port width evidence retains support ID and automation confidence.
+- The adapter already recovered missing direct control-input widths from actor-port numeric shape without importing external actor direction; this regression now proves the renderable inventory keeps that graph-backed width trail visible.
+- This keeps direct-root `.fsm` width recovery auditable on both blocked and renderable paths.
+
 ## Session update (2026-05-05 `.fsm` numeric-over-symbolic width precedence lock)
 - Tightened `standalone_dt_keeps_explicit_numeric_width_over_actor_parametric_width` in `crates/specforge/src/ir/adapters.rs` so the renderable numeric-width precedence path retains interface provenance, supporting IDs, and automation confidence.
 - The adapter already preferred explicit numeric canonical width over actor-port symbolic width; this regression now proves the renderable inventory stays auditable and does not carry a stale `parametric_width_hint`.
