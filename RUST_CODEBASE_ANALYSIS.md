@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` explicit-module control-read provenance lock)
+- Tightened `standalone_explicit_module_recovers_inputs_from_module_control_reads` in `crates/specforge/src/ir/adapters.rs` so recovered module-control inputs retain canonical control/transition support and automation confidence.
+- The adapter already derived module-local target inputs from explicit-module state-body actions and transition guards; this regression now proves the renderable module inventory keeps that high-confidence evidence trail visible.
+- This mirrors the direct-DT and structured-FSM control-read provenance locks for the explicit-module root path.
+
 ## Session update (2026-05-05 `.fsm` structured-FSM control-read provenance lock)
 - Tightened `structured_fsm_derives_guard_inputs_from_control_reads_after_output_actor_selection` in `crates/specforge/src/ir/adapters.rs` so recovered structured-FSM control-read inputs retain canonical control/transition support and automation confidence.
 - The adapter already derived target-actor inputs from FSM state-body actions and transition guards; this regression now proves the renderable inventory keeps that high-confidence evidence trail visible.

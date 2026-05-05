@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 `.fsm` explicit-module control-read provenance lock
+- New batch slice 35/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `standalone_explicit_module_recovers_inputs_from_module_control_reads` now asserts explicit-module control-read recovery keeps canonical control/transition support IDs and high automation confidence while still avoiding import of external actor-port direction.
+- This is a coverage-only lock for renderable module-local state-body and transition-guard input recovery.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-05 `.fsm` structured-FSM control-read provenance lock
 - New batch slice 34/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `structured_fsm_derives_guard_inputs_from_control_reads_after_output_actor_selection` now asserts structured-FSM control-read recovery keeps canonical control/transition support IDs and high automation confidence while still avoiding import of external actor-port direction.

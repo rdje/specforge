@@ -8826,6 +8826,13 @@ mod tests {
                 "{signal_name} should be recovered from module-local control reads"
             );
             assert!(
+                signal.supporting_canonical_ids.iter().any(|id| {
+                    id.starts_with("control_branch_") || id.starts_with("transition_")
+                }),
+                "{signal_name} should retain canonical module-control support"
+            );
+            assert_eq!(signal.automation_confidence, AutomationConfidence::High);
+            assert!(
                 !signal
                     .mention_categories
                     .iter()

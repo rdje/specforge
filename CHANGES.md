@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` explicit-module control-read provenance lock)
+
+### Added: explicit-module control-read input provenance coverage
+- Tightened `standalone_explicit_module_recovers_inputs_from_module_control_reads` so recovered module-local control-read inputs now prove canonical control/transition support IDs and high automation confidence survive in module `signal_inventory`.
+- This is coverage-only over the existing adapter behavior: explicit-module state-body reads and transition guards can recover module-local input directions without importing external actor-port direction.
+- The slice keeps module-control evidence auditable beside actor-port graph evidence on the renderable `.fsm` path.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_explicit_module_recovers_inputs_from_module_control_reads` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+
 ## 2026-05-05 (`.fsm` structured-FSM control-read provenance lock)
 
 ### Added: structured-FSM control-read input provenance coverage
