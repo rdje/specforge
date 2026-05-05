@@ -172,18 +172,20 @@
       "candidate_kind": "temporal_phrase_prior",
       "target_schema": "CorpusMemory.temporal_phrase_priors",
       "readiness": "fixture_paired_review_ready",
-      "supporting_fixture_count": 2,
+      "supporting_fixture_count": 3,
       "positive_fixture_count": 1,
-      "guard_fixture_count": 1,
+      "guard_fixture_count": 2,
       "supporting_fixtures": [
         "temporal_prior_guided_cycle_window_gold",
-        "temporal_prior_guided_cycle_window_without_prior_negative"
+        "temporal_prior_guided_cycle_window_without_prior_negative",
+        "temporal_prior_protocol_family_mismatch_negative"
       ],
       "positive_fixtures": [
         "temporal_prior_guided_cycle_window_gold"
       ],
       "guard_fixtures": [
-        "temporal_prior_guided_cycle_window_without_prior_negative"
+        "temporal_prior_guided_cycle_window_without_prior_negative",
+        "temporal_prior_protocol_family_mismatch_negative"
       ],
       "required_gates": "typed CorpusMemory schema; paired KG-bench gold/negative coverage; validated IntentIR harvest input; local-grounding temporal consumer",
       "gates": {

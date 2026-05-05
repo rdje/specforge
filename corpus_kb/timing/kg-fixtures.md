@@ -15,8 +15,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 
 - source: `kg-bench fixtures`
 - selected_family_labels: `temporal semantics`, `VLM timing diagrams`
-- fixtures_total: `69`
-- fixtures_passed: `69`
+- fixtures_total: `70`
+- fixtures_passed: `70`
 - fixtures_failed: `0`
 
 | fixture | status | matched families | path |
@@ -77,6 +77,7 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `temporal_conflict_negative` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/temporal_conflict_negative/fixture.json` |
 | `temporal_prior_guided_cycle_window_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/temporal_prior_guided_cycle_window_gold/fixture.json` |
 | `temporal_prior_guided_cycle_window_without_prior_negative` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/temporal_prior_guided_cycle_window_without_prior_negative/fixture.json` |
+| `temporal_prior_protocol_family_mismatch_negative` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/temporal_prior_protocol_family_mismatch_negative/fixture.json` |
 | `tick_unit_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/tick_unit_timing_gold/fixture.json` |
 | `trailing_shorthand_edge_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/trailing_shorthand_edge_timing_gold/fixture.json` |
 | `unit_first_diagram_position_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/unit_first_diagram_position_timing_gold/fixture.json` |

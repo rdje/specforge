@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-05-05 (temporal prior protocol-family guard)
+
+### Changed: temporal phrase priors no longer fall through to unrelated protocol families
+- Added a KG negative fixture proving an APB-only temporal phrase prior cannot add a cycle window to an AXI-local timing rule with the same normalized phrase.
+- Reused the exact-family plus AMBA-generic prior lookup policy for temporal phrase cycle-window recovery, matching the semantic modality, table-shape, and visual-motif prior boundaries.
+- Kept the APB temporal phrase gold, without-prior negative, and visual-motif family guard passing under the shared family-scoped helper.
+- Refreshed corpus-KB fixture and prior-candidate projections so temporal family-mismatch coverage is visible in the benchmark, timing, truthfulness, and review-only readiness surfaces.
+
+### Validation
+- pre-fix `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench temporal_prior_protocol_family_mismatch_negative temporal_prior_guided_cycle_window_gold` reproduced APB temporal phrase prior leakage into an AXI fixture
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench temporal_prior_protocol_family_mismatch_negative temporal_prior_guided_cycle_window_gold temporal_prior_guided_cycle_window_without_prior_negative visual_motif_prior_protocol_family_mismatch_negative` -> passed (`4` fixtures, `0` failures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`145` fixtures, `0` failures)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`593` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`145` fixtures, `0` failures)
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (visual-motif prior protocol-family guard)
 
 ### Changed: visual motif priors no longer fall through to unrelated protocol families

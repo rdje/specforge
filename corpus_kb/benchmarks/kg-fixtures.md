@@ -13,8 +13,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 <!-- corpus_kb_kg_fixtures:start -->
 <!-- This block is refreshed by `specforge corpus-kb`. -->
 
-- fixtures_total: `144`
-- fixtures_passed: `144`
+- fixtures_total: `145`
+- fixtures_passed: `145`
 - fixtures_failed: `0`
 
 ### Fixture Family Summary
@@ -33,8 +33,8 @@ Fixtures can appear in more than one family because protocol semantics, modality
 | residuals and caveats | `4` | `4` | `0` |
 | semantic role arbitration | `29` | `29` | `0` |
 | table extraction and hygiene | `10` | `10` | `0` |
-| temporal semantics | `69` | `69` | `0` |
-| truthfulness negatives and cautions | `66` | `66` | `0` |
+| temporal semantics | `70` | `70` | `0` |
+| truthfulness negatives and cautions | `67` | `67` | `0` |
 | typed prior memory | `30` | `30` | `0` |
 
 ### actor_boundary_residual
@@ -753,6 +753,12 @@ Fixtures can appear in more than one family because protocol semantics, modality
 
 ### temporal_prior_guided_cycle_window_without_prior_negative
 - fixture_path: `crates/specforge/test_data/kg_quality/temporal_prior_guided_cycle_window_without_prior_negative/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### temporal_prior_protocol_family_mismatch_negative
+- fixture_path: `crates/specforge/test_data/kg_quality/temporal_prior_protocol_family_mismatch_negative/fixture.json`
 - status: `pass`
 - failures:
   - none

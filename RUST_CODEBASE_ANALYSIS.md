@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 temporal prior protocol-family guard)
+- Hardened `crates/specforge/src/ir/prior_memory.rs` so temporal phrase cycle-window lookup now shares the exact-family plus AMBA-generic search policy used by semantic modality, table-shape, and visual-motif priors.
+- Added `temporal_prior_protocol_family_mismatch_negative`, which proved the previous broad fallback could let an APB temporal phrase prior add a cycle window to an AXI-local timing rule.
+- This keeps learned temporal phrase priors advisory and protocol-scoped: unrelated concrete families cannot fill timing bounds when current-document evidence still lacks that cycle-window grounding.
+
 ## Session update (2026-05-05 visual-motif prior protocol-family guard)
 - Hardened `crates/specforge/src/ir/prior_memory.rs` so visual motif caption lookup now shares the exact-family plus AMBA-generic search policy used by table-shape and semantic modality-reliability priors.
 - Added `visual_motif_prior_protocol_family_mismatch_negative`, which proved the prior broad fallback could let an APB caption motif classify an AXI-local unknown visual asset and emit visual-motif corroboration.

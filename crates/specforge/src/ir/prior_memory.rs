@@ -204,15 +204,11 @@ impl CorpusMemory {
             return None;
         }
 
-        for scope in actor_taxonomy_search_scopes(protocol_family) {
+        for scope in protocol_family_exact_or_amba_generic_search_scopes(protocol_family) {
             let cycle_windows = self
                 .temporal_phrase_priors
                 .iter()
-                .filter(|prior| {
-                    scope
-                        .map(|expected| prior.protocol_family == expected)
-                        .unwrap_or(true)
-                })
+                .filter(|prior| prior.protocol_family == scope)
                 .filter(|prior| prior.cycle_window.is_some())
                 .filter(|prior| {
                     actor_grounded
