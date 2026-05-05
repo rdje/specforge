@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` child top-link width provenance lock)
+- Tightened `top_composition_recovers_child_width_from_top_link_topology` in `crates/specforge/src/ir/adapters.rs` so child width recovery from public top-link topology retains support IDs and automation confidence.
+- The adapter already rendered top compositions when a child output width could be recovered from the linked public top port; this regression now proves the producer module inventory keeps that top-link evidence inspectable.
+- This extends renderable child-topology provenance from direction recovery into width recovery.
+
 ## Session update (2026-05-05 `.fsm` child link-direction provenance lock)
 - Tightened `top_composition_recovers_child_directions_from_link_topology` in `crates/specforge/src/ir/adapters.rs` so child module direction recovery from explicit top-link topology retains support IDs and automation confidence.
 - The adapter already rendered top compositions when child module directions could be recovered from topology links; this regression now proves producer-to-consumer and consumer-to-top link evidence stays inspectable in child inventories.
