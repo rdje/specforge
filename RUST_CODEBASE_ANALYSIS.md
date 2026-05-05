@@ -4,6 +4,12 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 FSMGEN submodule machine-contract baseline)
+- Fast-forwarded `subs/fsmgen` from `955f2bb` to `32aa318` and kept it read-only from the SPECFORGE parent.
+- No SPECFORGE Rust source changed, but the adapter reference surface changed materially: the pinned FSMGEN baseline now has bounded capability-manifest, check-JSON, stable diagnostic-code, normalized semantic JSON, support-accounting/report contract, generated-SystemVerilog validation, embedding, and `HDLGenerator` contract surfaces.
+- The `.fsm` adapter design should still remain downstream of canonical `IntentIR`; the new FSMGEN surfaces are validation/reference inputs for target-language truth, not a reason to push `.fsm` semantics backward into `SemanticIR` or `IntentIR`.
+- The near-term codebase priority remains the R15 graph-first truthfulness work, but future `.fsm` adapter validation can now be planned against concrete FSMGEN CLI/report surfaces instead of only mdBook/support-accounting prose.
+
 ## Session update (2026-05-05 IntentIR validation direction-gap split)
 - Continued the R15 graph-first validation cleanup in `crates/specforge/src/commands/validate.rs`.
 - `SemanticIR` validation already distinguished graph-backed flat `direction_hint` lag from declared signals that lack both flat direction and actor-relative graph coverage; `IntentIR` now mirrors that split.
@@ -1621,7 +1627,7 @@
 - Full local CI passed through formatting, warning-deny Clippy, `319` Rust tests under warning denial, warning-deny rustdoc, and the mdBook build.
 
 ## Session update (2026-04-17 FSMGEN response captured)
-- FSMGEN responded to SPECFORGE's feedback in `/Users/richarddje/Documents/github/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md`, observed at FSMGEN commit `7475f07`.
+- FSMGEN responded to SPECFORGE's feedback in `subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md`, observed at FSMGEN commit `7475f07`.
 - SPECFORGE captured that response in `docs/FSMGEN_FEEDBACK.md` and `ROADMAP.md` so `.fsm` adapter planning can rely on the accepted sync contract.
 - The concrete adapter posture is now explicit: target strict-mode canonical `.fsm`, block compatibility syntax by default, use FSMGEN's mdBook and regression corpus/support-accounting sources until machine-readable surfaces exist, and plan future adapter validation around capability manifests, stable diagnostic codes, check-only JSON, and normalized semantic JSON export.
 - Longer-term `.fsm` language features remain valuable only when FSMGEN can parse, validate, normalize, document, support-account, and honestly lower or preserve them as checked metadata.

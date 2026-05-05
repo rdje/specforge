@@ -169,10 +169,11 @@
   - the canonical system contract preserves reset kind, polarity, assertion/release timing, and reset-target semantics explicitly enough that adapter lowering does not have to infer hardware reset behavior ad hoc
   - compatibility-level `?mod:name` and `?module:name` spellings stay outside the adapter root-kind model until the canonical layer carries an honest direct-module distinction
 - cross-project FSMGEN sync:
-  - FSMGEN accepted the strict-mode-first `.fsm` contract direction in `docs/SPECFORGE_FEEDBACK_RESPONSE.md` at observed commit `7475f07`
+  - FSMGEN accepted the strict-mode-first `.fsm` contract direction in `subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md`, first observed at commit `7475f07`
+  - the pinned `subs/fsmgen` reference is now refreshed to upstream `32aa318`, where first bounded machine-readable contract surfaces exist for capability manifests, stable diagnostic codes, check-JSON diagnostics, normalized semantic JSON export, generated-SystemVerilog validation, and support-accounting/runtime report contracts
   - SPECFORGE should target strict-mode canonical `.fsm` by default and treat compatibility syntax as adapter-blocked unless FSMGEN explicitly marks a generated-output lane safe
-  - until capability/check/normalized machine surfaces exist, SPECFORGE should use FSMGEN's mdBook plus regression corpus/support-accounting sources as the current contract
-  - future adapter validation should plan around FSMGEN's accepted priority order: capability manifest, stable diagnostic codes, check-only JSON output, normalized semantic JSON export, then richer language features such as actor roles, channel grouping, semantic roles, temporal/stability contracts, and provenance/residual metadata
+  - SPECFORGE should plan future adapter validation around those bounded machine-readable surfaces plus FSMGEN's mdBook and regression corpus/support-accounting sources, while still treating only regression-backed FSMGEN facts as stable target-language truth
+  - future `.fsm` widening should still wait for FSMGEN-backed language features such as actor roles, channel grouping, semantic roles, temporal/stability contracts, and provenance/residual metadata before SPECFORGE lowers richer `IntentIR` facts into target syntax
 
 ### R7 Validation and back-annotation
 - status: In Progress

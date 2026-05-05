@@ -237,7 +237,7 @@ Use it first for the project objective, document navigation, and the current imp
 - the convergent `EvidenceIR` loop now also mines `SignalDescription` tables, explicit asserted-when-level prose such as `asserted when LOW`, unambiguous collective prose such as `CS_N and WE_N are active LOW signals`, and safe clause-local mixed prose such as `CS_N is active LOW and ENABLE is active HIGH` for active-high/active-low facts, merges them conservatively before refining asserted/deasserted constraints, and persists explicit `signal_polarity_conflicts` records when prose/table evidence disagrees so validation can report the conflict instead of hiding it inside a neutral fallback
 - `SemanticIR` and `IntentIR` now also carry those `signal_polarity_conflicts`, so contradictory active-level evidence remains visible in the canonical layers instead of disappearing after `EvidenceIR`
 - learned negative-knowledge caution now covers polarity-conflict archetypes too, so recurring active-level disagreement shapes can be remembered as advisory review patterns without mutating current-document truth
-- a pinned `subs/fsmgen` git submodule now exists as a local `.fsm` reference implementation for upcoming adapter work
+- a pinned `subs/fsmgen` git submodule now exists as a local `.fsm` reference implementation for upcoming adapter work, currently refreshed to upstream `32aa318` with bounded capability-manifest, check-JSON, stable diagnostic-code, normalized semantic JSON, support-accounting contract, and generated-SystemVerilog validation surfaces available for adapter planning
 - the `SourceIR` schema now reserves:
   - parser-backend identity
   - page-artifact manifests
@@ -366,8 +366,8 @@ Use it first for the project objective, document navigation, and the current imp
 ### Reference adapter/tooling paths
 - `subs/fsmgen/`
   - pinned local checkout of `fsmgen`, used as read-only contextual reference while building the first `.fsm` adapter
-  - currently refreshed to the upstream baseline that includes FSMGEN's own live mdBook at `subs/fsmgen/docs/book/`
-  - use its code, tests, strict-mode/support-accounting direction, and book as adapter reference material; do not modify it from this repository
+  - currently refreshed to upstream `32aa318`, including FSMGEN's own live mdBook at `subs/fsmgen/docs/book/`
+  - use its code, tests, strict-mode/support-accounting direction, capability manifest, check-JSON diagnostics, normalized semantic JSON export, generated-HDL validation lane, and book as adapter reference material; do not modify it from this repository
   - if upstream misbehavior is discovered, track it locally as a bug report instead of patching the submodule
 
 ### Current Rust implementation paths

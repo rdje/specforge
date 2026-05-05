@@ -137,6 +137,7 @@
 - IntentIR construction implemented: Done
 - IntentIR canonical interface/control/system/init carry-through implemented: Done
 - `.fsm` adapter artifact and honest renderable lowering for explicit DT/FSM/top cases implemented: Done
+- FSMGEN submodule now pins a bounded machine-readable `.fsm` contract baseline for adapter planning: Done
 - Canonical symbol-definition, reset-role, selector/test-node, and compound-update lowering for `.fsm` implemented: Done
 - Reset-contract carry-through and honest `.fsm` polarity validation implemented: Done
 - `specforge enrich` VLM observation pipeline implemented: Done

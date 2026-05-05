@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-05 (FSMGEN submodule machine-contract baseline)
+
+### Changed: FSMGEN reference advanced for `.fsm` adapter planning
+- Fast-forwarded the pinned `subs/fsmgen` submodule from `955f2bb` to `32aa318`.
+- The new reference baseline includes first bounded FSMGEN machine-readable surfaces relevant to SPECFORGE adapter validation: `--capability-manifest`, `--check --json` / `--check-json`, stable `FSMGEN_*` diagnostic codes, `--emit-semantic-json` / `--semantic-json`, support-accounting/report contracts, and optional generated-SystemVerilog validation through `--verify-hdl` / `--validate-hdl`.
+- Refreshed the SPECFORGE feedback, roadmap, README, mdBook, and live-status docs so future `.fsm` adapter planning uses the bounded machine-readable FSMGEN contract surfaces instead of treating them as only future requests.
+- Converted the stale checkout-specific FSMGEN response path in tracked SPECFORGE markdown to the relative submodule path `subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md`.
+
+### Validation
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `521` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures and `0` failures
+- `git -C subs/fsmgen status --short --branch` -> clean on `main...origin/main`
+- `git submodule status --recursive` -> `32aa318f83361cd0fcfc499312ebf02ccfa0dfe8 subs/fsmgen (heads/main)`
+- `git diff --check` -> passed
+
 ## 2026-05-05 (IntentIR validation direction-gap split)
 
 ### Changed: IntentIR compatibility-direction findings distinguish unresolved gaps from graph lag
@@ -4613,7 +4630,7 @@
 ## 2026-04-17 (FSMGEN response sync contract captured)
 
 ### Added: SPECFORGE records FSMGEN's accepted response
-- Read FSMGEN's tracked response at `/Users/richarddje/Documents/github/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md`, observed at commit `7475f07`.
+- Read FSMGEN's tracked response at `subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md`, observed at commit `7475f07`.
 - Updated `docs/FSMGEN_FEEDBACK.md` with a `FSMGEN Response Received` section that records the accepted shared direction, near-term integration sequence, longer-term language features, and practical SPECFORGE planning rules.
 - Updated the `R6 Adapter layer` roadmap so `.fsm` adapter planning targets strict-mode canonical `.fsm`, blocks compatibility syntax unless FSMGEN explicitly marks it safe for generated output, and plans future validation around capability manifests, stable diagnostic codes, check-only JSON, and normalized semantic JSON export.
 

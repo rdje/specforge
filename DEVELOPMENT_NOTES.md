@@ -7,6 +7,18 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 FSMGEN submodule machine-contract baseline
+- Fast-forwarded the read-only `subs/fsmgen` reference from `955f2bb` to `32aa318` as requested before taking the next roadmap task.
+- The refreshed FSMGEN baseline is materially different from the prior adapter reconnaissance pin because several SPECFORGE-requested tool-to-tool surfaces now exist in bounded form:
+  - `fsmgen --capability-manifest`
+  - `fsmgen --check --json` and `--check-json`
+  - stable `FSMGEN_*` diagnostic-code registry surfaced through support accounting and check JSON
+  - `fsmgen --emit-semantic-json` / `--semantic-json` plus compatibility normalized-JSON aliases
+  - optional generated-SystemVerilog validation through `--verify-hdl` / `--validate-hdl`
+  - bounded support-accounting, report, semantic-payload, diagnostic, embedding, and `HDLGenerator` contract owner modules advertised through the capability manifest
+- SPECFORGE's adapter posture changes only at the validation/reference layer: `IntentIR` remains canonical, `.fsm` stays downstream, compatibility syntax remains adapter-blocked by default, and only FSMGEN-regression-backed surfaces should be treated as target-language truth.
+- Parent Rust source did not change in this slice. The submodule pointer and tracked docs changed so future adapter work can plan against the new FSMGEN contract baseline without relying on transient chat context.
+
 ## 2026-05-05 IntentIR validation direction-gap split
 - Continued the R15 validation cleanup by closing an IntentIR-stage observability asymmetry.
 - Before this slice, `SemanticIR` validation separated two compatibility-direction states:
@@ -3047,7 +3059,7 @@
 - Focused and full `kg-bench` validation passed with `87/87` fixtures after the addition, `corpus-kb` refreshed the benchmark, infrastructure, and semantic/truthfulness pattern projections from that run, and full local CI passed with `319` Rust tests plus the mdBook build.
 
 ## 2026-04-17 FSMGEN response accepted cross-project sync contract
-- FSMGEN responded to `docs/FSMGEN_FEEDBACK.md` in its own tracked file at `/Users/richarddje/Documents/github/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md`, observed at FSMGEN commit `7475f07`.
+- FSMGEN responded to `docs/FSMGEN_FEEDBACK.md` in its own tracked file at `subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md`, observed at FSMGEN commit `7475f07`.
 - The response accepts the shared framing:
   - `.fsm` should remain precise rather than permissive
   - strict mode is the canonical future-facing authoring surface

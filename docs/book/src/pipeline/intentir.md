@@ -51,7 +51,7 @@ This ordering is what keeps the project from collapsing into backend-shaped shor
 The product boundary is supposed to be reusable implementation intent, not one specific code generator.
 
 For `.fsm`, SPECFORGE keeps a pinned FSMGEN reference checkout under `subs/fsmgen/`.
-That checkout is useful for target syntax, strict-mode boundaries, diagnostics, examples, and its own live book, but it does not move the product boundary.
+That checkout is useful for target syntax, strict-mode boundaries, bounded capability/check/semantic JSON surfaces, stable diagnostic codes, support accounting, examples, generated-HDL validation, and its own live book, but it does not move the product boundary.
 FSMGEN tells the adapter what target forms are real; `IntentIR` still decides what document meaning is justified.
 
 ## What a good `IntentIR` artifact looks like

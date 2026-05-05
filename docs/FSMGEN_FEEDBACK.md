@@ -45,16 +45,17 @@ So this feedback is written from the perspective of a tool that wants to lower h
 
 Last SPECFORGE submodule sync reviewed:
 
-- FSMGEN old baseline: `57f00e5`
-- FSMGEN refreshed baseline: `955f2bb`
-- notable new surface: FSMGEN live mdBook at `subs/fsmgen/docs/book/`
+- FSMGEN previous baseline: `955f2bb`
+- FSMGEN refreshed baseline: `32aa318`
+- notable reviewed surfaces: FSMGEN live mdBook at `subs/fsmgen/docs/book/`, first bounded `--capability-manifest`, `--check --json` / `--check-json`, stable `FSMGEN_*` diagnostic-code registry, `--emit-semantic-json` / `--semantic-json`, support-accounting/report contracts, and optional generated-SystemVerilog validation through `--verify-hdl` / `--validate-hdl`
 
 ## FSMGEN Response Received
 
 FSMGEN responded in its own tracked document:
 
-- FSMGEN repo path: `/Users/richarddje/Documents/github/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md`
-- response commit observed by SPECFORGE: `7475f07` (`Docs: track SPECFORGE feedback response`)
+- FSMGEN submodule path: `subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md`
+- initial response commit observed by SPECFORGE: `7475f07` (`Docs: track SPECFORGE feedback response`)
+- latest response baseline reviewed by SPECFORGE: `32aa318` (`Refresh README bootstrap validation notes`)
 
 SPECFORGE's planning interpretation is:
 
@@ -62,7 +63,7 @@ SPECFORGE's planning interpretation is:
 - FSMGEN accepts the near-term integration sequence: capability manifest, stable diagnostic codes, check-only JSON diagnostics, normalized semantic JSON export, and first-class reset/clock contract metadata.
 - FSMGEN accepts actor-relative ports, interface/channel grouping, semantic signal roles, temporal/stability contracts, assumptions/residual/provenance metadata, contract-aware composition, and a possible canonical direct-module root as directionally valuable longer-term language features.
 - FSMGEN explicitly does not want unchecked annotations. Future language additions should be parsed, validated, represented in normalized semantics, documented in the mdBook, support-accounted by fixtures, and either lowered honestly to HDL or preserved honestly as checked metadata.
-- Until the machine-readable surfaces exist, SPECFORGE should target strict-mode canonical `.fsm`, treat compatibility syntax as adapter-blocked unless FSMGEN explicitly marks a compatibility lane safe for generated output, and consult FSMGEN's mdBook plus regression corpus/support-accounting sources as the current contract.
+- SPECFORGE should target strict-mode canonical `.fsm`, treat compatibility syntax as adapter-blocked unless FSMGEN explicitly marks a compatibility lane safe for generated output, and consult FSMGEN's mdBook plus the bounded machine-readable capability/check/semantic/support-accounting surfaces that are now present in the pinned submodule.
 - SPECFORGE can keep FSMGEN as a pinned downstream dependency/reference, but FSMGEN does not need a reciprocal SPECFORGE dependency unless a concrete cross-project conformance workflow later justifies it.
 
 ## Core Adapter Stance
@@ -266,6 +267,7 @@ This would let SPECFORGE lower more of `IntentIR` topologies without flattening 
 ## Requested Support And Tooling Features
 
 These suggestions are about making the language contract executable for tool-to-tool integration.
+As of the `32aa318` submodule sync, FSMGEN has first bounded implementations for the capability manifest, JSON check diagnostics, stable diagnostic-code registry, normalized semantic JSON export, generated-SystemVerilog validation, and several public support/report contract owners. SPECFORGE should treat those as regression-backed first slices to consume carefully, not as permission to infer target-language semantics outside FSMGEN's published contract.
 
 ### 1. Machine-Readable Capability Manifest
 
@@ -414,14 +416,14 @@ The best long-term shape is both:
 If FSMGEN wants an order of attack, the most leverage for SPECFORGE would be:
 
 - first-class reset/clock contract metadata
-- stable strict-mode capability manifest
-- JSON check diagnostics with stable codes
-- normalized AST/IR export
+- continued stabilization and widening of the strict-mode capability manifest
+- continued stabilization and widening of JSON check diagnostics with stable codes
+- continued stabilization and widening of normalized semantic JSON export
 - actor-relative port and semantic-role annotations
 - temporal/stability contract metadata
 - adapter-facing examples
 
-The first four make the current adapter safer.
+The first four already have useful first slices in the pinned FSMGEN baseline, and widening them from regression-backed support-accounting truth would make the current adapter safer.
 The later ones make `.fsm` a more natural target for future `IntentIR` richness.
 
 ## How SPECFORGE Would Use These Features
