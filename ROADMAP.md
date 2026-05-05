@@ -193,6 +193,7 @@
   - `project-validation` now writes schema-v2 replay-oriented rescan recommendations with typed replay inputs, structured command hints, and `planned_not_executed` automation status for explicit rescan consumers
   - `specforge rescan-plan [--execute]` now consumes that schema-v2 plan through a dry-run-by-default, whitelisted in-process executor surface with before/after validation changed/no-change status and persisted execution summaries
   - `rescan-plan` dry-run preview coverage now regression-locks artifact path, extractor lane, replay inputs, action text, related ids, automation status, and command hints for review-visible pending recommendations
+  - sparse `rescan-plan` dry-run recommendations now have regression-locked `none` rendering for empty replay inputs, related ids, and command hints
   - those execution summaries now include explicit not-promoted gates, blockers, and structured `promotion_review` requirements, so possible-improvement validation deltas stay review signals instead of canonical truth mutations
   - `promotion_review` is now documented as a review-requirement descriptor rather than an approval artifact; future approval artifacts stay local/generated unless a deliberate canonical IR mutation workflow also defines tracked approval evidence
   - `specforge validate` now reports `table_signal_declaration_provenance` for `EvidenceIR`, exposing whether table-synthesized signal declarations still point back to structured `SourceIR` table ids before canonical carry-through

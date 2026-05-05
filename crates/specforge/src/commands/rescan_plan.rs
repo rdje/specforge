@@ -998,6 +998,25 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_dry_run_render_surfaces_empty_replay_fields_as_none() {
+        let mut plan = ProjectRescanPlanRecord {
+            schema_version: 2,
+            generated_by: "test".to_string(),
+            recommendation_count: 1,
+            recommendations: vec![recommendation("doc", PLANNED_NOT_EXECUTED)],
+        };
+        plan.recommendations[0].replay_inputs.clear();
+        plan.recommendations[0].related_ids.clear();
+        plan.recommendations[0].recommended_commands.clear();
+
+        let rendered = render_dry_run_plan(&plan, &[0]);
+
+        assert!(rendered.contains("replay_inputs: none"));
+        assert!(rendered.contains("related_ids: none"));
+        assert!(rendered.contains("recommended_commands: none"));
+    }
+
+    #[test]
     fn rescan_plan_execution_status_tracks_validation_deltas() {
         let before = ProjectRescanValidationSnapshot {
             artifact_fingerprint: "aaa".to_string(),

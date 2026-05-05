@@ -7,6 +7,15 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan dry-run empty-field preview lock
+- Batch slice 3/20 covers the sparse recommendation sibling of slice 2.
+- The dry-run renderer already had explicit `none` fallbacks for empty replay inputs, related ids, and command hints.
+- Added `rescan_plan_dry_run_render_surfaces_empty_replay_fields_as_none` so those fallback labels are now locked:
+  - `replay_inputs: none`
+  - `related_ids: none`
+  - `recommended_commands: none`
+- This matters for review ergonomics: an empty list should be visible as intentionally empty, not confused with a renderer omission.
+
 ## 2026-05-05 rescan-plan dry-run preview field lock
 - Batch slice 2/20 stays in the replay/rescan lane after the previous slice-10 command-lane lock.
 - `rescan-plan` already rendered the schema-v2 pending recommendation fields, but the dry-run renderer regression only asserted the queue, replay inputs, action text, and status.

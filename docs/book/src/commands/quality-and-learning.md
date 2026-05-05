@@ -92,6 +92,7 @@ cargo run --manifest-path Cargo.toml -- rescan-plan
 
 `rescan-plan` reads `generated/validation/rescan_plan.json`.
 By default it is a dry-run inspector: it reports pending `planned_not_executed` recommendations and prints the artifact path, extractor lane, replay inputs, recommended action, related ids, current automation status, and structured command hints that would be used.
+When a pending recommendation has no replay inputs, related ids, or command hints, those fields render as explicit `none` values instead of disappearing from the preview.
 Use `--document-key <key>` to scope a multi-document plan to one document.
 
 To execute the current pending hints explicitly:
