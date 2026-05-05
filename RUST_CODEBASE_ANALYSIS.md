@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 semantic modality-prior protocol-family guard)
+- Hardened `crates/specforge/src/ir/prior_memory.rs` so semantic modality-reliability priors use exact protocol-family lookup plus AMBA-generic fallback, without the broad any-family fallback used by other prior lookups.
+- Added `semantic_modality_reliability_protocol_family_mismatch_negative`, which proved the previous behavior could let an APB prior resolve an AXI-local semantic conflict.
+- The narrower lookup preserves the intended strong-prior gold path while keeping family-mismatched priors advisory-silent.
+
 ## Session update (2026-05-05 semantic modality-prior source-kind guard fixture)
 - Added `semantic_modality_reliability_source_kind_mismatch_negative` to the KG quality corpus.
 - The fixture proves semantic modality-reliability prior bonuses remain source-kind scoped: a visual-caption reliability prior cannot decide a prose/table semantic conflict.

@@ -1,0 +1,130 @@
+{
+  "name": "semantic_modality_reliability_protocol_family_mismatch_negative",
+  "source": "axi_protocol.md",
+  "prior_memory_patch": {
+    "semantic_modality_reliability_priors": [
+      {
+        "prior_id": "semantic_modality_reliability_prior_apb_only",
+        "role": "handshake_valid_like",
+        "protocol_family": "amba_apb",
+        "source_kind": "signal_description_table",
+        "support_count": 3,
+        "supporting_document_keys": ["seed_apb_1", "seed_apb_2", "seed_apb_3"],
+        "strongest_automation_confidence": "high",
+        "strongest_grounding_strength": "cross_modality"
+      }
+    ]
+  },
+  "source_ir_patch": {
+    "structured_tables": [
+      {
+        "table_id": "table_semantic_protocol_family_conflict",
+        "asset_id": "asset_semantic_protocol_family_conflict",
+        "page_id": null,
+        "caption_text": "Control signal descriptions",
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            {
+              "text": "Signal",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Description",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            }
+          ]
+        ],
+        "body_rows": [
+          [
+            {
+              "text": "XCTRL",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Indicates that address and control information are valid for transfer.",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ]
+        ],
+        "row_count": 1,
+        "col_count": 2
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["XCTRL"],
+      "semantic_candidate_signal_names_include": ["XCTRL"],
+      "multiple_semantic_candidate_signal_names_include": ["XCTRL"],
+      "semantic_arbitration_signal_names_include": ["XCTRL"],
+      "decisive_semantic_arbitration_signal_names_exclude": ["XCTRL"],
+      "non_decisive_semantic_arbitration_signal_names_include": ["XCTRL"],
+      "resolved_semantic_role_signal_names_exclude": ["XCTRL"],
+      "semantic_consensus_signal_names_exclude": ["XCTRL"],
+      "signal_semantic_conflicts": 1
+    },
+    "intent": {
+      "signal_names_include": ["XCTRL"],
+      "semantic_candidate_signal_names_include": ["XCTRL"],
+      "multiple_semantic_candidate_signal_names_include": ["XCTRL"],
+      "semantic_arbitration_signal_names_include": ["XCTRL"],
+      "decisive_semantic_arbitration_signal_names_exclude": ["XCTRL"],
+      "non_decisive_semantic_arbitration_signal_names_include": ["XCTRL"],
+      "resolved_semantic_role_signal_names_exclude": ["XCTRL"],
+      "semantic_consensus_signal_names_exclude": ["XCTRL"],
+      "signal_semantic_conflicts": 1
+    },
+    "validation": {
+      "semantic": {
+        "finding_ids_include": [
+          "semantic_signal_semantic_conflicts_present",
+          "semantic_non_decisive_semantic_arbitration_present"
+        ],
+        "finding_ids_exclude": [
+          "semantic_prior_guided_semantic_arbitration_present",
+          "semantic_prior_guided_semantic_consensus_present"
+        ],
+        "metric_values": {
+          "signal_semantic_conflicts": "1",
+          "with_multiple_semantic_candidates": "1",
+          "with_decisive_semantic_arbitration": "0",
+          "with_non_decisive_semantic_arbitration": "1",
+          "with_prior_guided_semantic_arbitration": "0",
+          "with_resolved_semantic_role": "0",
+          "with_semantic_consensus": "0",
+          "with_prior_guided_semantic_consensus": "0"
+        }
+      },
+      "intent": {
+        "finding_ids_include": [
+          "intent_signal_semantic_conflicts_present",
+          "intent_non_decisive_semantic_arbitration_present"
+        ],
+        "finding_ids_exclude": [
+          "intent_prior_guided_semantic_arbitration_present",
+          "intent_prior_guided_semantic_consensus_present"
+        ],
+        "metric_values": {
+          "signal_semantic_conflicts": "1",
+          "with_multiple_semantic_candidates": "1",
+          "with_decisive_semantic_arbitration": "0",
+          "with_non_decisive_semantic_arbitration": "1",
+          "with_prior_guided_semantic_arbitration": "0",
+          "with_resolved_semantic_role": "0",
+          "with_semantic_consensus": "0",
+          "with_prior_guided_semantic_consensus": "0"
+        }
+      }
+    }
+  }
+}

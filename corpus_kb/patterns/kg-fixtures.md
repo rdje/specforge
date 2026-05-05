@@ -15,8 +15,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 
 - source: `kg-bench fixtures`
 - selected_family_labels: `actor connectivity`, `semantic role arbitration`, `negative knowledge`, `truthfulness negatives and cautions`, `residuals and caveats`
-- fixtures_total: `77`
-- fixtures_passed: `77`
+- fixtures_total: `78`
+- fixtures_passed: `78`
 - fixtures_failed: `0`
 
 | fixture | status | matched families | path |
@@ -61,6 +61,7 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `relative_clause_actor_noise_negative` | `pass` | `actor connectivity`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/relative_clause_actor_noise_negative/fixture.json` |
 | `semantic_modality_reliability_prior_guided_conflict_gold` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/semantic_modality_reliability_prior_guided_conflict_gold/fixture.json` |
 | `semantic_modality_reliability_prior_guided_conflict_without_prior_negative` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/semantic_modality_reliability_prior_guided_conflict_without_prior_negative/fixture.json` |
+| `semantic_modality_reliability_protocol_family_mismatch_negative` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/semantic_modality_reliability_protocol_family_mismatch_negative/fixture.json` |
 | `semantic_modality_reliability_source_kind_mismatch_negative` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/semantic_modality_reliability_source_kind_mismatch_negative/fixture.json` |
 | `semantic_modality_reliability_weak_prior_negative` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/semantic_modality_reliability_weak_prior_negative/fixture.json` |
 | `semantic_prior_broad_phrase_negative` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/semantic_prior_broad_phrase_negative/fixture.json` |

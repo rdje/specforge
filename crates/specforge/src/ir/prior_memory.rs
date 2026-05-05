@@ -253,15 +253,11 @@ impl CorpusMemory {
         role: InterfaceSignalSemanticRole,
         source_kind: SignalSemanticHintSourceKind,
     ) -> u32 {
-        for scope in actor_taxonomy_search_scopes(protocol_family) {
+        for scope in semantic_modality_reliability_search_scopes(protocol_family) {
             let bonus = self
                 .semantic_modality_reliability_priors
                 .iter()
-                .filter(|prior| {
-                    scope
-                        .map(|expected| prior.protocol_family == expected)
-                        .unwrap_or(true)
-                })
+                .filter(|prior| prior.protocol_family == scope)
                 .filter(|prior| prior.role == role)
                 .filter(|prior| prior.source_kind == source_kind)
                 .map(semantic_modality_reliability_prior_bonus)
@@ -766,6 +762,23 @@ fn actor_taxonomy_search_scopes(
         }
     }
     scopes.push(None);
+    scopes
+}
+
+fn semantic_modality_reliability_search_scopes(
+    protocol_family: Option<ProtocolFamily>,
+) -> Vec<ProtocolFamily> {
+    let mut scopes = Vec::new();
+    if let Some(protocol_family) =
+        protocol_family.filter(|family| *family != ProtocolFamily::Unknown)
+    {
+        scopes.push(protocol_family);
+        if protocol_family != ProtocolFamily::AmbaGeneric {
+            scopes.push(ProtocolFamily::AmbaGeneric);
+        }
+    } else {
+        scopes.push(ProtocolFamily::Unknown);
+    }
     scopes
 }
 

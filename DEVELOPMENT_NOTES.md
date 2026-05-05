@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 semantic modality-prior protocol-family guard
+- New batch slice 10/100 adds `semantic_modality_reliability_protocol_family_mismatch_negative` and hardens `CorpusMemory::semantic_modality_reliability_bonus`.
+- The fixture reproduced a family leak: an APB-only reliability prior could resolve an AXI-local semantic conflict through the broad `None` prior-search fallback.
+- Semantic modality-reliability lookup now uses a dedicated exact-family search with AMBA-generic fallback only; unknown-family contexts only match unknown-family modality priors.
+- The existing strong-prior gold still resolves, while weak-prior, source-kind mismatch, and protocol-family mismatch guards stay non-decisive.
+- The corpus-KB prior-memory page now counts a protocol-family guard for semantic modality-reliability priors.
+
 ## 2026-05-05 semantic modality-prior source-kind guard fixture
 - New batch slice 9/100 adds `semantic_modality_reliability_source_kind_mismatch_negative`.
 - No production code changed; `CorpusMemory::semantic_modality_reliability_bonus` already requires exact `SignalSemanticHintSourceKind` match before returning a prior bonus.
