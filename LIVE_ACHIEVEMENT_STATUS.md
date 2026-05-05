@@ -50,6 +50,7 @@
 - `specforge rescan-plan` missing stage command paths are rejected: Done
 - `specforge rescan-plan` malformed cargo prefixes are rejected: Done
 - `specforge rescan-plan` display strings are non-authoritative: Done
+- `specforge rescan-plan` dry-run command display remains review-facing: Done
 - `specforge kg-bench` command created: Done
 - `specforge learn-priors` command created: Done
 - `specforge corpus-kb` command created: Done

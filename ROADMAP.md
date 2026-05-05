@@ -40,6 +40,9 @@
   - keep alternatives when the evidence is not yet decisive
   - surface contradictions and residual decisions
   - do not fabricate semantic certainty
+- keep generated replay plans inspectable without making display strings authoritative:
+  - dry-run command text remains a review-facing rendering surface
+  - execution parsing stays pinned to structured command fields and explicit allowlists
 - treat the mdBook under `docs/book/` as a live user-facing product surface:
   - it is not a one-time scaffold or release-time afterthought
   - it is the public-facing documentation product for `specforge`, so it should openly explain what the tool does, how it works, and why it is designed that way

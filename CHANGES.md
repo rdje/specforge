@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan dry-run command-display lock)
+
+### Changed: dry-run output keeps command display review-facing
+- Added render coverage proving `rescan-plan` dry-run output prints each command hint's `display` text.
+- This pairs with the execution parser trust-boundary test: `display` remains human-review text, while structured command fields remain authoritative for execution.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_dry_run_render_uses_command_display_for_review` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `546` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan display-string trust lock)
 
 ### Changed: replay parsing ignores display strings

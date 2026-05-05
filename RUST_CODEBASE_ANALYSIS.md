@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan dry-run command display)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` render tests around command-hint display text.
+- No production renderer code changed; dry-run output is now directly covered as printing `ProjectRescanCommandHint.display` for human review.
+- This pairs with the parser trust-boundary test by keeping display text visible without using it as executable input.
+
 ## Session update (2026-05-05 rescan-plan display-string trust)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` parser tests around the display-string trust boundary.
 - No production parser code changed; execution parsing is now directly covered as structured-field driven even when `display` is misleading.

@@ -1499,6 +1499,22 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_dry_run_render_uses_command_display_for_review() {
+        let mut plan = ProjectRescanPlanRecord {
+            schema_version: 2,
+            generated_by: "test".to_string(),
+            recommendation_count: 1,
+            recommendations: vec![recommendation("doc", PLANNED_NOT_EXECUTED)],
+        };
+        plan.recommendations[0].recommended_commands[0].display =
+            "review-visible command text".to_string();
+
+        let rendered = render_dry_run_plan(&plan, &[0]);
+
+        assert!(rendered.contains("  - validate_current_artifact: review-visible command text"));
+    }
+
+    #[test]
     fn rescan_plan_execution_status_tracks_validation_deltas() {
         let before = ProjectRescanValidationSnapshot {
             artifact_fingerprint: "aaa".to_string(),

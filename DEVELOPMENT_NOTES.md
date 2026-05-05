@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan dry-run command-display lock
+- New batch slice 7/20 adds render coverage that dry-run output uses `ProjectRescanCommandHint.display` for human review.
+- No production render code changed; `render_dry_run_plan(...)` already prints command intent plus display text.
+- This complements the structured execution parser test by keeping display text review-facing but non-authoritative for execution.
+
 ## 2026-05-05 rescan-plan display-string trust lock
 - New batch slice 6/20 adds coverage that replay execution parsing ignores `ProjectRescanCommandHint.display`.
 - `parse_command_hint(...)` already uses the structured fields rather than shell/display text.
