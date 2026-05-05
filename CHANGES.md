@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-05 (IntentIR replay split for graph conflicts)
+
+### Added: IntentIR combined graph conflict and coverage replay regression
+- Added `project_validation_keeps_graph_direction_conflict_and_coverage_replays_for_intent_stage`.
+- The test builds a real SourceIR/EvidenceIR/SemanticIR replay chain, injects a same-actor `PREADY` graph-direction conflict, and feeds one IntentIR validation snapshot containing both graph-direction coverage guidance and graph-direction conflict guidance.
+- `project-validation` must preserve both recommendations with the expected EvidenceIR plus SemanticIR replay inputs and with separate signal-id versus conflict-id related ids.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge project_validation_keeps_graph_direction_conflict_and_coverage_replays_for_intent_stage` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `523` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (project-validation replay split for graph conflicts)
 
 ### Added: combined graph conflict and coverage replay regression

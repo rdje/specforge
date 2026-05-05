@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 IntentIR replay split for graph conflicts
+- Batch slice 6/10 adds the IntentIR-stage sibling to the SemanticIR replay split regression.
+- The new test builds a real `SourceIR -> EvidenceIR -> SemanticIR` chain so `project-validation` has to recover the upstream EvidenceIR path from the SemanticIR replay input, matching the real IntentIR replay lane.
+- It then feeds both graph-direction coverage and graph-direction conflict guidance in one IntentIR report.
+- Expected behavior:
+  - two recommendations survive
+  - both carry `evidence_ir` and `semantic_ir` replay inputs
+  - the coverage recommendation keeps related id `PREADY`
+  - the conflict recommendation keeps related id `graph_direction_conflict:actor_completer:PREADY`
+- This covers the higher-risk replay-input derivation path that the SemanticIR-only sibling does not exercise.
+
 ## 2026-05-05 project-validation replay split for graph conflicts
 - Batch slice 5/10 moves the graph-conflict coverage semantics into the replay-planning layer.
 - After slice 3, one validation report can carry two graph-direction replay targets for the same logical signal:

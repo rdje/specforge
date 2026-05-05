@@ -72,6 +72,7 @@
 - Carried signal-semantic conflicts now emit replayable rescan guidance: Done
 - Carried graph-direction self-conflicts now emit replayable rescan guidance: Done
 - Project-validation replay planning preserves concurrent graph-direction conflict and coverage targets: Done
+- Project-validation replay planning preserves concurrent IntentIR graph-direction conflict and coverage targets: Done
 - Negative-knowledge priors now include signal-polarity conflict archetypes: Done
 - KG benchmark harness can now assert canonical resolved semantic-role shape directly: Done
 - KG benchmark harness can now assert canonical semantic grounding-strength shape directly: Done

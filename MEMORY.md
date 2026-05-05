@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `741267dfd6cc6c570a4257d4a78cddbc2b835a4a`
-- latest_commit_brief_message: `test(kg): lock flat-hint graph conflict boundary`
-- note: the latest committed baseline is batch slice 4/10; it locks flat-hint-present graph conflicts outside compatibility-direction debt
+- latest_commit_hash: `7beb26588c91c6bda1497838a0e96877aee9c0ad`
+- latest_commit_brief_message: `test(validation): preserve graph replay target split`
+- note: the latest committed baseline is batch slice 5/10; it locks concurrent SemanticIR graph-direction coverage and conflict replay recommendations
 
 ## Recent commit chain (last 6)
+- `7beb265` test(validation): preserve graph replay target split
 - `741267d` test(kg): lock flat-hint graph conflict boundary
 - `d6751ed` fix(validate): treat graph conflicts as unresolved direction
 - `3a84112` test(kg): lock mixed direction gap findings
 - `b487152` docs(workflow): document batch push policy
 - `62d09a8` test(kg): lock unresolved direction gaps
-- `4587325` chore(fsmgen): refresh submodule contract baseline
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `ahead 28` of `origin/main`
-- files in flight for slice 5:
+- branch state before the next commit: `ahead 29` of `origin/main`
+- files in flight for slice 6:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -48,28 +48,27 @@
 
 ## Active N-slice batch
 - requested_count: `10`
-- completed_count: `4`
+- completed_count: `5`
 - push_policy: defer push until all `10` slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - add project-validation regression coverage for a SemanticIR report carrying both graph-direction coverage replay guidance and graph-direction conflict replay guidance
-  - prove both replay recommendations survive with their separate related-id shapes instead of being merged or masked
+  - add the IntentIR-stage sibling regression for one report carrying both graph-direction coverage and graph-direction conflict replay guidance
+  - prove both replay recommendations survive with separate related ids and the expected EvidenceIR plus SemanticIR replay inputs
 - tracker effect:
-  - add a Done row for concurrent graph-direction conflict and coverage replay targets staying preserved
+  - add a Done row for concurrent IntentIR graph-direction conflict and coverage replay targets staying preserved
 - verification status:
-  - focused `cargo test --manifest-path Cargo.toml -p specforge project_validation_keeps_graph_direction_conflict_and_coverage_replays_for_semantic_stage` passed with `1` test
-  - first exact-name attempt used `--exact` with only the short test name and therefore ran `0` tests; rerun without `--exact` matched the test and passed
+  - focused `cargo test --manifest-path Cargo.toml -p specforge project_validation_keeps_graph_direction_conflict_and_coverage_replays_for_intent_stage` passed with `1` test
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed
-  - `bash scripts/run_ci.sh` passed with `522` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `bash scripts/run_ci.sh` passed with `523` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `130/130` fixtures
   - `git diff --check` passed
   - checkout-specific absolute path scan across tracked markdown passed
 - current known local CI baseline:
-  - `522` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `523` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `130/130` tracked KG fixtures
 
 ## Next exact steps
-- commit slice 5 without pushing
+- commit slice 6 without pushing

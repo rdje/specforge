@@ -4,6 +4,12 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 IntentIR graph-conflict replay split)
+- Added the IntentIR-stage sibling regression in `crates/specforge/src/commands/project_validation.rs`.
+- The new test exercises the real upstream replay-input derivation path for IntentIR recommendations: `project-validation` starts from a SemanticIR replay input, loads that artifact, derives the EvidenceIR input, and emits both replay inputs for each recommendation.
+- It proves concurrent `intent_graph_direction_coverage_surface_rescan_guidance` and `intent_graph_direction_conflict_surface_rescan_guidance` findings stay as two recommendations with distinct related-id payloads.
+- No production code changed, but test coverage now protects both SemanticIR and IntentIR replay-planning surfaces after graph conflicts became graph-coverage debt.
+
 ## Session update (2026-05-05 graph-conflict replay split)
 - Added a focused regression in `crates/specforge/src/commands/project_validation.rs` for the combined graph-direction conflict plus coverage guidance state.
 - No production code changed; the test protects `collect_rescan_recommendations(...)` from collapsing two valid replay recommendations that share one artifact and one replay-input lane.
