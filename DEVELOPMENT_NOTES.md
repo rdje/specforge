@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 `.fsm` actor-port parametric width provenance lock
+- New batch slice 29/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `standalone_dt_blocks_parametric_actor_port_width_with_diagnostic` now asserts graph-backed actor-port parametric width evidence keeps its `actor_port` provenance category, `graph_controller_DATA_IN` support ID, and high automation confidence while numeric `.fsm` signal emission remains blocked.
+- This is a coverage-only lock for the adapter inventory surface and keeps canonical symbolic widths distinct from graph-backed actor-port symbolic widths.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-05 `.fsm` top parametric width provenance lock
 - New batch slice 28/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_parametric_top_port_width_for_fsm_public_io` now asserts selected top signal inventory entries preserve `parametric_width_hint: DATA_WIDTH` while renderability stays blocked for numeric `.fsm` public IO emission.

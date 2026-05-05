@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` actor-port parametric width provenance lock)
+
+### Added: actor-port provenance coverage for parametric width blockers
+- Tightened `standalone_dt_blocks_parametric_actor_port_width_with_diagnostic` so it now asserts the blocked signal inventory preserves actor-port provenance category, support ID, and high automation confidence alongside `parametric_width_hint: DATA_WIDTH`.
+- This is coverage-only over the existing adapter behavior: graph-backed symbolic width evidence stays inspectable when numeric `.fsm` signal width emission is blocked.
+- The slice also confirms canonical parametric signal-width coverage remains separate from actor-port provenance coverage.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_dt_blocks_parametric_actor_port_width_with_diagnostic` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+
 ## 2026-05-05 (`.fsm` top parametric width provenance lock)
 
 ### Added: selected top inventory coverage for parametric public IO width provenance

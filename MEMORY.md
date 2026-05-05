@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `01b9fe16246fdbf4a347acb01c2c0d6d86bbdfe0`
-- latest_commit_brief_message: `fix(nlp): normalize reference alias links`
+- latest_commit_hash: `1456e2dd1e845865ad613792bb85297e96d07116`
+- latest_commit_brief_message: `test(adapter): lock top parametric width provenance`
 - note: new local `N=100` batch is active; push remains deferred until all 100 slices complete
 
 ## Recent commit chain (last 6)
+- `1456e2d` test(adapter): lock top parametric width provenance
 - `01b9fe1` fix(nlp): normalize reference alias links
 - `ac61835` fix(nlp): normalize alias markdown links
 - `47387b1` fix(nlp): trim alias word punctuation
 - `1cafcf9` fix(nlp): reject outline alias markers
 - `9c572b2` docs(book): explain adapter graph provenance
-- `7e0add5` fix(adapter): preserve top flat graph direction evidence
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 27]`
-- files in flight for new batch slice 28:
+- branch state before the next commit: `main...origin/main [ahead 28]`
+- files in flight for new batch slice 29:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -47,19 +47,19 @@
 
 ## Active N-slice batch
 - requested_count: `100`
-- completed_count: `27`
+- completed_count: `28`
 - push_policy: defer push until all `100` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - regression-lock selected top signal-inventory provenance for parametric public IO widths
-  - prove blocked `.fsm` top-root artifacts preserve `parametric_width_hint` when numeric width evidence is unavailable
-  - keep symbolic width evidence distinct from missing numeric width and width-conflict states
+  - regression-lock actor-port provenance for parametric width blockers
+  - prove blocked `.fsm` signal inventory preserves actor-port category, support ID, and high automation confidence
+  - keep canonical symbolic width evidence distinct from graph-backed actor-port symbolic width evidence
 - tracker effect:
-  - live-status tracker gains `.fsm selected top signal inventory now regression-locks parametric public IO width provenance while blocking .fsm emission: Done`
+  - live-status tracker gains `.fsm actor-port parametric width blockers now regression-lock provenance category, support IDs, and automation confidence: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_parametric_top_port_width_for_fsm_public_io` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge standalone_dt_blocks_parametric_actor_port_width_with_diagnostic` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed after the live-doc refresh
@@ -70,4 +70,4 @@
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- run docs/full CI/KG bench after live-doc edits, run final guards, commit slice 28 without pushing, and continue slice 29
+- run docs/full CI/KG bench after live-doc edits, run final guards, commit slice 29 without pushing, and continue slice 30
