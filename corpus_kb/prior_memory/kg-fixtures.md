@@ -15,8 +15,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 
 - source: `kg-bench fixtures`
 - selected_family_labels: `typed prior memory`
-- fixtures_total: `24`
-- fixtures_passed: `24`
+- fixtures_total: `26`
+- fixtures_passed: `26`
 - fixtures_failed: `0`
 
 | fixture | status | matched families | path |
@@ -33,6 +33,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `semantic_modality_reliability_prior_guided_conflict_without_prior_negative` | `pass` | `typed prior memory` | `crates/specforge/test_data/kg_quality/semantic_modality_reliability_prior_guided_conflict_without_prior_negative/fixture.json` |
 | `semantic_prior_guided_phrase_gold` | `pass` | `typed prior memory` | `crates/specforge/test_data/kg_quality/semantic_prior_guided_phrase_gold/fixture.json` |
 | `semantic_prior_guided_phrase_without_prior_negative` | `pass` | `typed prior memory` | `crates/specforge/test_data/kg_quality/semantic_prior_guided_phrase_without_prior_negative/fixture.json` |
+| `semantic_ready_sink_prior_guided_phrase_gold` | `pass` | `typed prior memory` | `crates/specforge/test_data/kg_quality/semantic_ready_sink_prior_guided_phrase_gold/fixture.json` |
+| `semantic_ready_sink_prior_guided_phrase_without_prior_negative` | `pass` | `typed prior memory` | `crates/specforge/test_data/kg_quality/semantic_ready_sink_prior_guided_phrase_without_prior_negative/fixture.json` |
 | `semantic_valid_prior_guided_phrase_gold` | `pass` | `typed prior memory` | `crates/specforge/test_data/kg_quality/semantic_valid_prior_guided_phrase_gold/fixture.json` |
 | `semantic_valid_prior_guided_phrase_without_prior_negative` | `pass` | `typed prior memory` | `crates/specforge/test_data/kg_quality/semantic_valid_prior_guided_phrase_without_prior_negative/fixture.json` |
 | `table_shape_prior_guided_signal_table_gold` | `pass` | `typed prior memory` | `crates/specforge/test_data/kg_quality/table_shape_prior_guided_signal_table_gold/fixture.json` |

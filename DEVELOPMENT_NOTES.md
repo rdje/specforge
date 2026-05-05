@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 KG ready-like prior-guided sink phrase fixtures
+- New batch slice 3/100 adds a paired KG fixture for prior-guided ready-like semantic phrase recovery.
+- The final committed phrase is `XACK can sink the transfer`, which stays unresolved without prior memory but resolves to `handshake_ready_like` when the exact typed phrase prior is present.
+- An earlier `accept the beat` candidate was not used because the built-in ready-like heuristic already covers `can accept`; that would not exercise the prior boundary.
+- The corpus-KB projection now includes `134` passing KG fixtures and surfaces the ready-like sink pair in benchmark, semantic/truthfulness pattern, and typed prior-memory views.
+
 ## 2026-05-05 KG valid-like prior-guided semantic phrase fixtures
 - New batch slice 2/100 adds a paired KG fixture for prior-guided valid-like semantic phrase recovery.
 - The gold fixture seeds typed prior memory for `<signal> can publish the beat` and expects `XREQ` to resolve as `handshake_valid_like` with single-source semantic grounding.

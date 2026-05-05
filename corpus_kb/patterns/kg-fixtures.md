@@ -15,8 +15,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 
 - source: `kg-bench fixtures`
 - selected_family_labels: `actor connectivity`, `semantic role arbitration`, `negative knowledge`, `truthfulness negatives and cautions`, `residuals and caveats`
-- fixtures_total: `69`
-- fixtures_passed: `69`
+- fixtures_total: `71`
+- fixtures_passed: `71`
 - fixtures_failed: `0`
 
 | fixture | status | matched families | path |
@@ -63,6 +63,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `semantic_modality_reliability_prior_guided_conflict_without_prior_negative` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/semantic_modality_reliability_prior_guided_conflict_without_prior_negative/fixture.json` |
 | `semantic_prior_guided_phrase_gold` | `pass` | `semantic role arbitration` | `crates/specforge/test_data/kg_quality/semantic_prior_guided_phrase_gold/fixture.json` |
 | `semantic_prior_guided_phrase_without_prior_negative` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/semantic_prior_guided_phrase_without_prior_negative/fixture.json` |
+| `semantic_ready_sink_prior_guided_phrase_gold` | `pass` | `semantic role arbitration` | `crates/specforge/test_data/kg_quality/semantic_ready_sink_prior_guided_phrase_gold/fixture.json` |
+| `semantic_ready_sink_prior_guided_phrase_without_prior_negative` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/semantic_ready_sink_prior_guided_phrase_without_prior_negative/fixture.json` |
 | `semantic_valid_prior_guided_phrase_gold` | `pass` | `semantic role arbitration` | `crates/specforge/test_data/kg_quality/semantic_valid_prior_guided_phrase_gold/fixture.json` |
 | `semantic_valid_prior_guided_phrase_without_prior_negative` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/semantic_valid_prior_guided_phrase_without_prior_negative/fixture.json` |
 | `signal_table_inventory_authority_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/signal_table_inventory_authority_negative/fixture.json` |

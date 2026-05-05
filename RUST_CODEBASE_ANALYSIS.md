@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 KG ready-like prior-guided sink phrase fixtures)
+- Added paired KG quality fixtures for ready-like semantic phrase recovery through typed prior memory.
+- The gold fixture proves `<signal> can sink the transfer` can map to `handshake_ready_like` when the prior exists, while the negative fixture proves the same source text does not become semantic truth by heuristic fallback.
+- This complements the existing receive-transfer and valid-like publish fixtures with another prior-dependent ready-like wording and keeps the corpus-KB prior-memory projection current.
+
 ## Session update (2026-05-05 KG valid-like prior-guided semantic phrase fixtures)
 - Added paired KG quality fixtures under `crates/specforge/test_data/kg_quality` for valid-like semantic phrase recovery.
 - The gold fixture exercises typed prior-memory arbitration for an otherwise ambiguous prose phrase, while the negative fixture verifies the same phrase remains unresolved without that prior.

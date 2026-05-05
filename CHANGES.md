@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-05 (KG ready-like prior-guided sink phrase fixtures)
+
+### Changed: prior-guided ready-like sink phrase recovery is locked
+- Added a gold KG fixture proving typed prior memory can resolve `XACK can sink the transfer` to `handshake_ready_like`.
+- Added a matching without-prior negative fixture proving the same ambiguous phrase stays unresolved without prior support.
+- Refreshed corpus-KB fixture projections so the benchmark and prior-memory pages include the ready-like sink pair.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_ready_sink_prior_guided_phrase_gold semantic_ready_sink_prior_guided_phrase_without_prior_negative` -> passed (`2` fixtures, `0` failures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`134` fixtures, `0` failures)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`593` Rust tests, warnings denied for Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`134` fixtures, `0` failures)
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (KG valid-like prior-guided semantic phrase fixtures)
 
 ### Changed: prior-guided valid-like semantic phrase recovery is locked
