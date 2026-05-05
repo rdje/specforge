@@ -130,6 +130,7 @@ It can also scope a multi-document queue with `--document-key <key>`.
 Scoped queues still select only pending `planned_not_executed` recommendations; executed matches and missing document keys produce no pending dry-run work.
 Execution validates before and after the rebuild and records only neutral changed/no-change status, not an improvement claim.
 Executed recommendations also persist an `execution_summary` containing before/after validation snapshots, score/finding deltas, added/removed finding ids, and a conservative verdict that distinguishes possible improvement from regression or neutral artifact drift while still requiring review.
+Added and removed finding-id lists are sorted and deduplicated before persistence so review diffs do not depend on raw validation-report ordering.
 That summary also carries an explicit promotion gate: no-change executions remain `not_promoted_no_change`, and changed executions remain `not_promoted_review_required` until current-document evidence and arbitration policy approve any canonical change.
 It now also carries `promotion_review`, which records whether human review and an approval record are required, the policy that would have to be satisfied, the required decisions, and the fact that canonical mutation is still not allowed by the rescan executor itself.
 That review record is not the approval artifact.

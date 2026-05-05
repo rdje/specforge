@@ -126,7 +126,8 @@ That is still not a canonical truth decision.
 It means the relevant stage was rebuilt and validated, and that the validation fingerprint/score/finding-count surface either changed or did not.
 Any fact promotion still has to survive current-document evidence, validation, and arbitration.
 Executed recommendations also carry an optional `execution_summary`.
-That summary preserves before/after validation snapshots, score and finding-count deltas, added/removed finding ids, a conservative arbitration verdict, and an explicit promotion gate:
+That summary preserves before/after validation snapshots, score and finding-count deltas, added/removed finding ids, a conservative arbitration verdict, and an explicit promotion gate.
+Added and removed finding-id lists are sorted and deduplicated before they are persisted, so review diffs stay stable when validation reports contain duplicate or unsorted ids:
 
 - `validated_no_change`
 - `possible_improvement_review_required`

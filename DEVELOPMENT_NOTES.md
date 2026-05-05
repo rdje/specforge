@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan validation-delta finding list lock
+- Batch slice 8/20 moves from command parsing to execution-summary determinism.
+- `validation_delta(...)` already sorted and deduplicated `finding_ids` before deriving added and removed lists.
+- Added `rescan_plan_validation_delta_sorts_and_deduplicates_finding_changes` so that behavior is locked directly.
+- The goal is stable review output: duplicate or unsorted validation report IDs must not cause noisy execution-summary deltas.
+
 ## 2026-05-05 rescan-plan malformed provider hint lock
 - Batch slice 7/20 adds the malformed-option sibling to slice 6.
 - Accepted local providers and OpenAI rejection are not enough on their own; malformed local args also need to stay rejected.

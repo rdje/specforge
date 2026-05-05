@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan validation-delta finding list lock)
+
+### Changed: execution-summary finding deltas now have deterministic-list coverage
+- Added regression coverage for `rescan-plan` validation-delta finding lists.
+- The new test proves added and removed finding IDs are sorted and deduplicated before they are written into execution summaries.
+- This keeps review diffs stable even if validation reports arrive with duplicate or unsorted finding IDs.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_validation_delta_sorts_and_deduplicates_finding_changes` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `528` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan malformed provider hint lock)
 
 ### Changed: malformed local provider options now have parser coverage

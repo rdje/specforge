@@ -1158,6 +1158,45 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_validation_delta_sorts_and_deduplicates_finding_changes() {
+        let before = ProjectRescanValidationSnapshot {
+            artifact_fingerprint: "aaa".to_string(),
+            overall_score: Some(80),
+            grade: Some("GOOD".to_string()),
+            finding_count: 4,
+            finding_ids: vec![
+                "z_existing".to_string(),
+                "a_removed".to_string(),
+                "a_removed".to_string(),
+                "m_removed".to_string(),
+            ],
+        };
+        let after = ProjectRescanValidationSnapshot {
+            artifact_fingerprint: "bbb".to_string(),
+            overall_score: Some(80),
+            grade: Some("GOOD".to_string()),
+            finding_count: 4,
+            finding_ids: vec![
+                "z_existing".to_string(),
+                "b_added".to_string(),
+                "b_added".to_string(),
+                "a_added".to_string(),
+            ],
+        };
+
+        let delta = validation_delta(&before, &after);
+
+        assert_eq!(
+            delta.added_findings,
+            vec!["a_added".to_string(), "b_added".to_string()]
+        );
+        assert_eq!(
+            delta.removed_findings,
+            vec!["a_removed".to_string(), "m_removed".to_string()]
+        );
+    }
+
+    #[test]
     fn rescan_plan_arbitration_verdict_tracks_validation_direction() {
         let before = ProjectRescanValidationSnapshot {
             artifact_fingerprint: "aaa".to_string(),
