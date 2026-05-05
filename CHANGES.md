@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan extra intent argument coverage)
+
+### Changed: extra argument rejection includes intent rebuild hints
+- Extended the extra-stage-argument regression so intent rebuild command hints reject unsupported trailing flags.
+- This keeps the intent replay lane aligned with ingest, evidence, semantic, and validate exact-argument checks.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_extra_stage_command_args` -> passed (`1` test, `592` filtered out)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`593` Rust tests, warnings denied for Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`130` fixtures, `0` failures)
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan lane mismatch coverage)
 
 ### Changed: command intent/subcommand mismatch coverage is broader

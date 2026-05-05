@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan extra intent argument coverage
+- New batch slice 38/40 extends the extra-stage-argument regression to the intent rebuild lane.
+- The parser already rejected extra intent args through the exact match arm; the assertion locks that behavior directly.
+- This keeps every simple rebuild/validate replay lane covered for unsupported trailing arguments.
+
 ## 2026-05-05 rescan-plan lane mismatch coverage
 - New batch slice 37/40 extends command intent/subcommand mismatch assertions across source, enrichment, NLP enrichment, and intent replay lanes.
 - The parser already rejected these through exact match arms and lane-specific argument parsers; the regression now documents that boundary directly.

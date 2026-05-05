@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan extra intent argument coverage)
+- Extended `crates/specforge/src/commands/rescan_plan.rs` extra-argument coverage to the intent rebuild command hint.
+- The execution parser remains exact-arity for direct rebuild and validation hints.
+- This keeps unsupported trailing flags out of the intent replay path before dispatch.
+
 ## Session update (2026-05-05 rescan-plan lane mismatch coverage)
 - Extended `crates/specforge/src/commands/rescan_plan.rs` command-hint mismatch coverage across source, enrichment, NLP enrichment, and intent lanes.
 - The execution parser remains fail-closed unless the structured command intent and SpecForge subcommand agree.

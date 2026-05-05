@@ -1423,6 +1423,16 @@ mod tests {
         );
         assert!(parse_command_hint(&semantic_extra).is_err());
 
+        let intent_extra = command_hint(
+            "rebuild_intent_ir",
+            vec![
+                "intent",
+                "generated/semantic_ir/doc/semantic_ir.json",
+                "--dry-run",
+            ],
+        );
+        assert!(parse_command_hint(&intent_extra).is_err());
+
         let validate_extra = command_hint(
             "validate_current_artifact",
             vec![
