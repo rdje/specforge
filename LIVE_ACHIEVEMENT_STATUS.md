@@ -43,6 +43,7 @@
 - `specforge rescan-plan` flag-shaped replay model values are rejected: Done
 - `specforge rescan-plan` flag-shaped replay provider values are rejected: Done
 - `specforge rescan-plan` unknown replay providers are rejected: Done
+- `specforge rescan-plan` intent/subcommand mismatches are rejected: Done
 - `specforge kg-bench` command created: Done
 - `specforge learn-priors` command created: Done
 - `specforge corpus-kb` command created: Done

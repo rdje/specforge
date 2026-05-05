@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan intent/subcommand mismatch lock
+- Batch slice 19/20 adds focused coverage for mismatches between structured `intent` values and SpecForge subcommands.
+- `parse_command_hint(...)` already matched both fields together, but the invalid pairing had no direct regression.
+- Added `rescan_plan_rejects_command_intent_subcommand_mismatches` for evidence-vs-semantic and validate-vs-intent mismatches so command hints cannot cross lanes by carrying a plausible subcommand under the wrong structured intent.
+
 ## 2026-05-05 rescan-plan unknown provider-value lock
 - Batch slice 18/20 extends local replay parser coverage from malformed option values to unsupported provider names.
 - `parse_local_rescan_vlm_provider(...)` already whitelisted only `ollama`, `lmstudio` / `lm-studio`, and `skip`.

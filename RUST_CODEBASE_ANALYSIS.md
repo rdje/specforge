@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan intent/subcommand mismatches)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` parser tests around structured intent and subcommand pairing.
+- No production parser code changed; evidence-vs-semantic and validate-vs-intent mismatches are now directly covered.
+- This protects the executor from treating a plausible SpecForge subcommand as valid when it is attached to the wrong rescan-plan intent.
+
 ## Session update (2026-05-05 rescan-plan unknown provider values)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` parser tests around unsupported local provider names.
 - No production parser code changed; unknown provider labels are now directly covered for both enrich and NLP-enrich command hints.

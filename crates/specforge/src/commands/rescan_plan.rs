@@ -892,6 +892,21 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_rejects_command_intent_subcommand_mismatches() {
+        let evidence_intent_with_semantic_subcommand = command_hint(
+            "rebuild_evidence_ir",
+            vec!["semantic", "generated/evidence_ir/doc/evidence_ir.json"],
+        );
+        assert!(parse_command_hint(&evidence_intent_with_semantic_subcommand).is_err());
+
+        let validate_intent_with_intent_subcommand = command_hint(
+            "validate_current_artifact",
+            vec!["intent", "generated/semantic_ir/doc/semantic_ir.json"],
+        );
+        assert!(parse_command_hint(&validate_intent_with_intent_subcommand).is_err());
+    }
+
+    #[test]
     fn rescan_plan_parses_whitelisted_local_enrich_hint() -> Result<()> {
         let command = command_hint(
             "enrich_source_ir",

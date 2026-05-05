@@ -125,7 +125,7 @@ Typed temporal rules that still lack explicit cycle-window bounds now join it as
 For visual-motif corroboration, the replay sequence is `enrich_source_ir`, rebuild `EvidenceIR`, then validate the current artifact.
 The generated enrichment hint now uses a local provider policy: `auto-local` prefers ready Ollama and falls back to ready LM Studio, while explicit `ollama`, `lmstudio`, `skip`, and model overrides remain available on `project-validation`.
 `rescan-plan` is the first explicit consumer for that schema: it dry-runs by default, prints artifact path, extractor lane, replay inputs, related ids, and a readable action summary before the command hints, with empty fields rendered as explicit `none` values.
-With `--execute`, it dispatches only whitelisted local enrichment/stage rebuild/validate commands from the structured args rather than trusting shell text.
+With `--execute`, it dispatches only whitelisted local enrichment/stage rebuild/validate commands from the structured args rather than trusting shell text, and the structured intent must match the SpecForge subcommand lane.
 Malformed provider options, including missing providers, repeated provider/model/classification flags, missing provider or model values, flag-shaped provider or model values, unsupported provider values, and unsupported args, are rejected before execution.
 It can also scope a multi-document queue with `--document-key <key>`.
 Scoped queues still select only pending `planned_not_executed` recommendations; executed matches and missing document keys produce no pending dry-run work.

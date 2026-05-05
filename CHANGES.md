@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan intent/subcommand mismatch lock)
+
+### Changed: replay command intents now have mismatch coverage
+- Added negative coverage for a `rebuild_evidence_ir` command hint paired with the `semantic` subcommand.
+- Added negative coverage for a `validate_current_artifact` command hint paired with the `intent` subcommand.
+- This locks the structured command intent as part of the executor trust boundary instead of accepting plausible but mismatched stage commands.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_command_intent_subcommand_mismatches` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `539` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan unknown provider-value lock)
 
 ### Changed: unsupported replay provider values now have parser coverage

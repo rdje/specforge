@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `be4f608bf6d657a529474b14c3cb3a6904b81e87`
-- latest_commit_brief_message: `test(rescan): lock flag-shaped provider values`
-- note: the latest committed baseline is local batch-20 slice 17; push remains deferred until all `20` slices complete
+- latest_commit_hash: `4ee80c855fa25c4b5408cb333643db222937c040`
+- latest_commit_brief_message: `test(rescan): lock unknown provider values`
+- note: the latest committed baseline is local batch-20 slice 18; push remains deferred until all `20` slices complete
 
 ## Recent commit chain (last 6)
+- `4ee80c8` test(rescan): lock unknown provider values
 - `be4f608` test(rescan): lock flag-shaped provider values
 - `c5c52d1` fix(rescan): reject flag-shaped model values
 - `ceac97b` test(rescan): lock explicit provider hints
 - `4a45a32` test(rescan): lock missing model values
 - `145c43c` test(rescan): lock duplicate replay flags
-- `af60555` test(rescan): lock scoped limit ordering
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 17]`
-- files in flight for batch-20 slice 18:
+- branch state before the next commit: `main...origin/main [ahead 18]`
+- files in flight for batch-20 slice 19:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -49,27 +49,27 @@
 
 ## Active N-slice batch
 - requested_count: `20`
-- completed_count: `17`
+- completed_count: `18`
 - push_policy: defer push until all `20` slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - lock unknown local `--vlm-provider` value rejection in `rescan-plan` command hints
-  - ensure arbitrary provider labels cannot enter executable replay policy
+  - lock structured intent/subcommand mismatch rejection in `rescan-plan` command hints
+  - ensure plausible subcommands cannot cross executable replay lanes under the wrong intent
 - tracker effect:
-  - add a `Done` live-status row for unknown replay provider rejection
+  - add a `Done` live-status row for intent/subcommand mismatch rejection
 - verification status:
-  - focused test passed: `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_unknown_local_provider_values`
+  - focused test passed: `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_command_intent_subcommand_mismatches`
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed
-  - `bash scripts/run_ci.sh` passed with `538` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `bash scripts/run_ci.sh` passed with `539` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `130/130` fixtures
   - `git diff --check` passed
   - checkout-specific absolute path scan across tracked markdown passed
 - current known local CI baseline:
-  - `538` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `539` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `130/130` tracked KG fixtures
 
 ## Next exact steps
-- run slice 18 verification, update validation results, commit without pushing, then move to slice 19
+- run slice 19 verification, update validation results, commit without pushing, then move to slice 20
