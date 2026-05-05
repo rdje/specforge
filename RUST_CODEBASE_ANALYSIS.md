@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` explicit-module actor-port width provenance lock)
+- Tightened `standalone_explicit_module_recovers_control_input_width_from_actor_port_graph` in `crates/specforge/src/ir/adapters.rs` so recovered explicit-module actor-port width evidence retains support ID and automation confidence.
+- The adapter already recovered missing module-local control-input widths from actor-port numeric shape without importing external actor direction; this regression now proves the renderable module inventory keeps that graph-backed width trail visible.
+- This mirrors the direct-root actor-port width provenance lock for explicit-module lowering.
+
 ## Session update (2026-05-05 `.fsm` explicit-module control-read provenance lock)
 - Tightened `standalone_explicit_module_recovers_inputs_from_module_control_reads` in `crates/specforge/src/ir/adapters.rs` so recovered module-control inputs retain canonical control/transition support and automation confidence.
 - The adapter already derived module-local target inputs from explicit-module state-body actions and transition guards; this regression now proves the renderable module inventory keeps that high-confidence evidence trail visible.

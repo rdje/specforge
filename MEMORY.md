@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `84341b3c664bc2c285bd6ac1e6f04e73bdbc0e92`
-- latest_commit_brief_message: `test(adapter): lock structured FSM read provenance`
+- latest_commit_hash: `7c0d977de50f221a34654993a1dcbe893fb0b0eb`
+- latest_commit_brief_message: `test(adapter): lock explicit module read provenance`
 - note: new local `N=100` batch is active; push remains deferred until all 100 slices complete
 
 ## Recent commit chain (last 6)
+- `7c0d977` test(adapter): lock explicit module read provenance
 - `84341b3` test(adapter): lock structured FSM read provenance
 - `8565cd0` test(adapter): lock direct control-read provenance
 - `6b113a3` test(adapter): lock direct actor width provenance
 - `669fb39` test(adapter): lock numeric width precedence provenance
 - `f910e11` test(adapter): lock canonical parametric width provenance
-- `298911a` test(adapter): lock actor parametric width provenance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 34]`
-- files in flight for new batch slice 35:
+- branch state before the next commit: `main...origin/main [ahead 35]`
+- files in flight for new batch slice 36:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -47,19 +47,19 @@
 
 ## Active N-slice batch
 - requested_count: `100`
-- completed_count: `34`
+- completed_count: `35`
 - push_policy: defer push until all `100` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - regression-lock explicit-module control-read input recovery provenance
-  - prove renderable module `signal_inventory` preserves canonical control/transition support IDs and high automation confidence
-  - keep external actor direction excluded while deriving module-local input directions from explicit-module state-body reads and transition guards
+  - regression-lock explicit-module actor-port width recovery provenance
+  - prove renderable module `signal_inventory` preserves graph-backed actor-port support IDs and high automation confidence
+  - keep external actor direction excluded while consuming actor-port numeric width evidence
 - tracker effect:
-  - live-status tracker gains `.fsm explicit-module control-read input recovery now regression-locks support IDs and automation confidence: Done`
+  - live-status tracker gains `.fsm explicit-module actor-port width recovery now regression-locks support IDs and automation confidence: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge standalone_explicit_module_recovers_inputs_from_module_control_reads` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge standalone_explicit_module_recovers_control_input_width_from_actor_port_graph` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed before the final `MEMORY.md` verification refresh
@@ -70,4 +70,4 @@
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- rerun docs CI after this final `MEMORY.md` edit, run final guards, commit slice 35 without pushing, and continue slice 36
+- rerun docs CI after this final `MEMORY.md` edit, run final guards, commit slice 36 without pushing, and continue slice 37

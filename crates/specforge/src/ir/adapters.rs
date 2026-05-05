@@ -8912,6 +8912,13 @@ mod tests {
                 .any(|category| category == "actor_port_width")
         );
         assert!(
+            data_in
+                .supporting_canonical_ids
+                .iter()
+                .any(|id| id == "graph_environment_DATA_IN")
+        );
+        assert_eq!(data_in.automation_confidence, AutomationConfidence::High);
+        assert!(
             !data_in
                 .mention_categories
                 .iter()

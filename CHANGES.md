@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` explicit-module actor-port width provenance lock)
+
+### Added: explicit-module actor-port width recovery provenance coverage
+- Tightened `standalone_explicit_module_recovers_control_input_width_from_actor_port_graph` so recovered module-local control-input widths now prove graph-backed actor-port support IDs and high automation confidence survive in module `signal_inventory`.
+- This is coverage-only over the existing adapter behavior: actor-port numeric width evidence can recover missing explicit-module control-input width without importing the external actor's direction.
+- The slice keeps recovered graph width evidence auditable on the renderable explicit-module `.fsm` path.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_explicit_module_recovers_control_input_width_from_actor_port_graph` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+
 ## 2026-05-05 (`.fsm` explicit-module control-read provenance lock)
 
 ### Added: explicit-module control-read input provenance coverage
