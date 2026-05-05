@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-05 (KG fixture for mixed direction-gap states)
+
+### Added: mixed compatibility-direction finding fixture
+- Added `compat_direction_hints_mixed_lag_incomplete_negative`.
+- The fixture clears flat compatibility direction hints for both `PREADY` and `PSEL`, but only `PREADY` has actor-relative graph direction coverage.
+- SemanticIR and IntentIR validation must now emit graph-backed lag findings for `PREADY`, unresolved compatibility-gap findings for `PSEL`, and graph-direction coverage findings only for `PSEL`.
+- The fixture asserts related-id include/exclude payloads so the two compatibility-surface states cannot collapse back into one aggregate missing-hint bucket.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench compat_direction_hints_mixed_lag_incomplete_negative` -> passed with `1` fixture and `0` failures
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `521` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `129` fixtures and `0` failures
+- `git diff --check` -> passed
+
 ## 2026-05-05 (batch commit workflow push policy)
 
 ### Changed: explicit N-slice batch push rule

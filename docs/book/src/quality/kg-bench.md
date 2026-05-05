@@ -66,6 +66,7 @@ The older field still checks the flat compatibility `direction_hint` on interfac
 Keeping both surfaces separate prevents the harness from flattening producer/consumer actor roles into a fake single perspective while still letting graph-first recovery be tested explicitly.
 The tracked fixtures now also separate graph-backed compatibility lag from genuinely unresolved direction gaps.
 When a declared signal has no flat `direction_hint` and no actor-relative graph direction, validation must report the `*_compat_direction_hints_incomplete` finding ids rather than the graph-backed `*_compat_direction_hints_lag_graph` ids.
+The mixed fixture keeps both states in one artifact so related ids stay signal-specific when graph-backed lag and unresolved direction evidence appear together.
 
 Fixtures can assert canonical signal-connectivity conflicts directly.
 `signal_connectivity_conflicts_include` checks the conflicted signal, conflict kind, conflicting actor ids or names, and optional supporting statement ids.

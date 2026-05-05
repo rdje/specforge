@@ -4,6 +4,12 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 KG fixture for mixed direction-gap states)
+- Added `compat_direction_hints_mixed_lag_incomplete_negative` to the tracked KG-quality suite.
+- The fixture covers a mixed validation state: `PREADY` is graph-backed but flat-hint-missing, while `PSEL` is flat-hint-missing and graph-uncovered.
+- This does not change Rust source behavior; it raises executable truthfulness coverage by proving `SemanticIR` and `IntentIR` keep `*_compat_direction_hints_lag_graph`, `*_compat_direction_hints_incomplete`, and graph-direction coverage related ids scoped to the correct signals in the same artifact.
+- The R15 graph-first migration now has fixture coverage for the pure graph-lag case, pure unresolved case, and mixed case.
+
 ## Session update (2026-05-05 KG fixture for unresolved direction gaps)
 - Added a tracked KG-quality fixture, `compat_direction_hints_incomplete_negative`, for the no-flat-direction/no-actor-graph validation state.
 - This is intentionally fixture coverage, not a production-code change: `validate_semantic_ir(...)` and `validate_intent_ir(...)` already expose the split, and the benchmark now locks it in the same staged-pipeline harness used for graph truthfulness.

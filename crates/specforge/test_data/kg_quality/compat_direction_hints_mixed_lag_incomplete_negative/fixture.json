@@ -1,0 +1,99 @@
+{
+  "name": "compat_direction_hints_mixed_lag_incomplete_negative",
+  "source": "source.md",
+  "semantic_ir_patch": {
+    "clear_signal_direction_hints": ["PREADY", "PSEL"]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["PREADY", "PSEL"],
+      "graph_direction_signal_names_include": ["PREADY"],
+      "graph_direction_signal_names_exclude": ["PSEL"]
+    },
+    "intent": {
+      "signal_names_include": ["PREADY", "PSEL"],
+      "graph_direction_signal_names_include": ["PREADY"],
+      "graph_direction_signal_names_exclude": ["PSEL"]
+    },
+    "validation": {
+      "semantic": {
+        "finding_ids_include": [
+          "semantic_graph_direction_coverage_incomplete",
+          "semantic_compat_direction_hints_lag_graph",
+          "semantic_compat_direction_hints_incomplete"
+        ],
+        "findings_include": [
+          {
+            "finding_id": "semantic_graph_direction_coverage_incomplete",
+            "severity": "info",
+            "category": "knowledge_graph",
+            "summary_contains": "1 interface signal record(s) still lack graph-derived direction coverage",
+            "related_ids_include": ["PSEL"],
+            "related_ids_exclude": ["PREADY"]
+          },
+          {
+            "finding_id": "semantic_compat_direction_hints_lag_graph",
+            "severity": "info",
+            "category": "compatibility_surface",
+            "summary_contains": "1 interface signal record(s) still lack flat compatibility direction hints even though actor-relative ports exist",
+            "related_ids_include": ["PREADY"],
+            "related_ids_exclude": ["PSEL"]
+          },
+          {
+            "finding_id": "semantic_compat_direction_hints_incomplete",
+            "severity": "info",
+            "category": "compatibility_surface",
+            "summary_contains": "1 interface signal record(s) still lack flat compatibility direction hints and actor-relative graph coverage",
+            "related_ids_include": ["PSEL"],
+            "related_ids_exclude": ["PREADY"]
+          }
+        ],
+        "metric_values": {
+          "total_signal_records": "2",
+          "with_resolved_direction": "1",
+          "with_graph_direction": "1",
+          "with_compat_direction_hint": "0"
+        }
+      },
+      "intent": {
+        "finding_ids_include": [
+          "intent_graph_direction_coverage_incomplete",
+          "intent_compat_direction_hints_lag_graph",
+          "intent_compat_direction_hints_incomplete"
+        ],
+        "findings_include": [
+          {
+            "finding_id": "intent_graph_direction_coverage_incomplete",
+            "severity": "info",
+            "category": "knowledge_graph",
+            "summary_contains": "1 declared signal record(s) still lack graph-derived direction coverage",
+            "related_ids_include": ["PSEL"],
+            "related_ids_exclude": ["PREADY"]
+          },
+          {
+            "finding_id": "intent_compat_direction_hints_lag_graph",
+            "severity": "info",
+            "category": "compatibility_surface",
+            "summary_contains": "1 declared signal record(s) still lack flat compatibility direction hints even though actor-relative ports exist",
+            "related_ids_include": ["PREADY"],
+            "related_ids_exclude": ["PSEL"]
+          },
+          {
+            "finding_id": "intent_compat_direction_hints_incomplete",
+            "severity": "info",
+            "category": "compatibility_surface",
+            "summary_contains": "1 declared signal record(s) still lack flat compatibility direction hints and actor-relative graph coverage",
+            "related_ids_include": ["PSEL"],
+            "related_ids_exclude": ["PREADY"]
+          }
+        ],
+        "metric_values": {
+          "declared_signal_records": "2",
+          "with_resolved_direction": "1",
+          "with_graph_direction": "1",
+          "with_compat_direction_hint": "0"
+        }
+      }
+    }
+  }
+}

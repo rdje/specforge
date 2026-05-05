@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 KG fixture for mixed direction-gap states
+- Batch slice 2/10 deepens the previous compatibility-direction fixture into a mixed-state case.
+- `compat_direction_hints_mixed_lag_incomplete_negative` starts with two declared signals and clears both flat `direction_hint` values:
+  - `PREADY` still has actor-relative graph direction from Completer/Requester relations
+  - `PSEL` has no actor-relative graph coverage
+- Expected validation shape:
+  - graph-backed lag findings point only at `PREADY`
+  - unresolved compatibility-direction findings point only at `PSEL`
+  - graph-direction coverage findings point only at `PSEL`
+- This guards against a common regression shape where validation reports the right finding ids but loses signal-level separation in `related_ids` or metrics.
+
 ## 2026-05-05 batch commit workflow push policy
 - User approved a back-to-back batch workflow for `N=10` tasks/slices/lanes.
 - The important constraint is unchanged: every completed slice still gets its own verification, live-doc refresh, commit, `git_message_brief.txt` truncation, and post-commit checks before continuing.
