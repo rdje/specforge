@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` child sibling-link source width provenance lock)
+
+### Added: sibling child-link source width recovery provenance coverage
+- Tightened `top_composition_recovers_source_child_width_from_sibling_child_link_topology` so renderable top-composition `.fsm` lowering now proves source-side child width recovery from a sibling child link preserves topology-link support IDs and high automation confidence.
+- This is coverage-only over the existing adapter behavior: a producer child output width recovered from a consumer sibling link remains renderable.
+- The slice keeps the producer-to-consumer link evidence auditable in the producer module inventory.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_source_child_width_from_sibling_child_link_topology` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-05 (`.fsm` child sibling-link target width provenance lock)
 
 ### Added: sibling child-link target width recovery provenance coverage
