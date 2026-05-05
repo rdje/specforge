@@ -320,6 +320,7 @@
 - `.fsm` unambiguous direct actor-port direction recovery now regression-locks support IDs and automation confidence: Done
 - `.fsm` unrelated actor-port graph context now regression-locks selected support IDs while excluding side-band evidence: Done
 - `.fsm` ambiguous actor-port graph context now regression-locks absence of selected graph provenance: Done
+- `.fsm` direct-root actor-port direction conflicts now regression-lock support IDs and automation confidence: Done
 - `.fsm` direct-root output actor selection now regression-locks support IDs and automation confidence: Done
 - `.fsm` direct-root control-read input recovery now regression-locks support IDs and automation confidence: Done
 - `.fsm` structured-FSM control-read input recovery now regression-locks support IDs and automation confidence: Done

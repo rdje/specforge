@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` direct actor-port direction-conflict provenance lock)
+- Tightened `standalone_dt_keeps_conflicting_actor_port_direction_unresolved` in `crates/specforge/src/ir/adapters.rs` so same-actor direction conflicts retain both conflicting support IDs and automation confidence.
+- The adapter already kept contradictory graph-backed direction evidence unresolved; this regression now proves the blocked inventory preserves enough provenance to audit both sides.
+- This mirrors the direct-root width-conflict provenance lock for graph direction evidence.
+
 ## Session update (2026-05-05 `.fsm` ambiguous actor-port exclusion lock)
 - Tightened `standalone_dt_ignores_ambiguous_actor_port_context` in `crates/specforge/src/ir/adapters.rs` so ambiguous actor-port context must leave graph-backed direction and support evidence unselected.
 - The adapter already blocked direct-root lowering when producer/consumer context could not identify a single target actor; this regression now proves the blocked inventory does not carry misleading actor-port provenance.

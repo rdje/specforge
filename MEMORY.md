@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `27787e8e9c5c4219838633f1da460612ff23bfdf`
-- latest_commit_brief_message: `test(adapter): lock unrelated actor provenance`
+- latest_commit_hash: `26c6486376b2c43789875b091ce33591dcac56d1`
+- latest_commit_brief_message: `test(adapter): lock ambiguous actor exclusion`
 - note: new local `N=100` batch is active; push remains deferred until all 100 slices complete
 
 ## Recent commit chain (last 6)
+- `26c6486` test(adapter): lock ambiguous actor exclusion
 - `27787e8` test(adapter): lock unrelated actor provenance
 - `63df237` test(adapter): lock unambiguous actor provenance
 - `93e2044` test(adapter): lock direct output actor provenance
 - `f95ec63` test(adapter): lock direct width conflict provenance
 - `32f7515` test(adapter): lock explicit module width conflict provenance
-- `34c8777` test(adapter): lock explicit module actor width provenance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 41]`
-- files in flight for new batch slice 42:
+- branch state before the next commit: `main...origin/main [ahead 42]`
+- files in flight for new batch slice 43:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -47,19 +47,19 @@
 
 ## Active N-slice batch
 - requested_count: `100`
-- completed_count: `41`
+- completed_count: `42`
 - push_policy: defer push until all `100` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - regression-lock ambiguous actor-port graph-context exclusion
-  - prove blocked `fsm.signal_inventory` does not select graph directions, actor-port categories, or graph support IDs when direct actor context is ambiguous
-  - keep producer/consumer actor context from being guessed into `.fsm` renderability
+  - regression-lock direct-root actor-port direction-conflict provenance
+  - prove blocked `fsm.signal_inventory` preserves both conflicting graph-backed actor-port support IDs and high automation confidence
+  - keep same-actor contradictory direction evidence unresolved instead of guessing one side
 - tracker effect:
-  - live-status tracker gains `.fsm ambiguous actor-port graph context now regression-locks absence of selected graph provenance: Done`
+  - live-status tracker gains `.fsm direct-root actor-port direction conflicts now regression-lock support IDs and automation confidence: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge standalone_dt_ignores_ambiguous_actor_port_context` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge standalone_dt_keeps_conflicting_actor_port_direction_unresolved` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed before the final `MEMORY.md` verification refresh
@@ -70,4 +70,4 @@
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- rerun docs CI after this final `MEMORY.md` edit, run final guards, commit slice 42 without pushing, and continue slice 43
+- rerun docs CI after this final `MEMORY.md` edit, run final guards, commit slice 43 without pushing, and continue slice 44

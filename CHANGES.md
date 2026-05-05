@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` direct actor-port direction-conflict provenance lock)
+
+### Added: direct actor-port direction conflict provenance coverage
+- Tightened `standalone_dt_keeps_conflicting_actor_port_direction_unresolved` so blocked direct-root graph direction conflicts now prove both conflicting actor-port support IDs and high automation confidence survive in `fsm.signal_inventory`.
+- This is coverage-only over the existing adapter behavior: same-actor contradictory direction evidence keeps `.fsm` emission blocked instead of selecting one direction.
+- The slice keeps graph-backed direction conflict evidence auditable for review/rescan instead of reducing the blocked artifact to a generic conflict flag.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_dt_keeps_conflicting_actor_port_direction_unresolved` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+
 ## 2026-05-05 (`.fsm` ambiguous actor-port exclusion lock)
 
 ### Added: ambiguous direct actor-port context exclusion coverage

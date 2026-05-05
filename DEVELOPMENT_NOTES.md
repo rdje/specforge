@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 `.fsm` direct actor-port direction-conflict provenance lock
+- New batch slice 43/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `standalone_dt_keeps_conflicting_actor_port_direction_unresolved` now asserts same-actor direction conflicts keep both conflicting support IDs and high automation confidence while graph direction remains unresolved.
+- This is a coverage-only lock for blocked direct-root actor-port direction disagreement.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-05 `.fsm` ambiguous actor-port exclusion lock
 - New batch slice 42/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `standalone_dt_ignores_ambiguous_actor_port_context` now asserts ambiguous producer/consumer actor-port context leaves direct `DATA_IN` / `DATA_OUT` without graph directions, actor-port categories, or graph support IDs.

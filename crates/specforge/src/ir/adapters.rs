@@ -7389,11 +7389,16 @@ mod tests {
         let tempdir = tempdir()?;
         let mut intent_ir = build_explicit_control_intent_ir(tempdir.path())?;
         clear_direct_interface_direction_hints(&mut intent_ir);
+        let mut data_out_output =
+            actor_port("controller", "DATA_OUT", ActorRelativeDirection::Output);
+        data_out_output.source_statement_ids = vec!["graph_controller_DATA_OUT_output".to_string()];
+        let mut data_out_input =
+            actor_port("controller", "DATA_OUT", ActorRelativeDirection::Input);
+        data_out_input.source_statement_ids = vec!["graph_controller_DATA_OUT_input".to_string()];
         intent_ir.actor_ports = vec![
             actor_port("controller", "DATA_IN", ActorRelativeDirection::Input),
-            actor_port("controller", "DATA_OUT", ActorRelativeDirection::Output),
-            actor_port("controller", "DATA_OUT", ActorRelativeDirection::Input),
-            actor_port("controller", "DATA_OUT", ActorRelativeDirection::Output),
+            data_out_output,
+            data_out_input,
             actor_port("controller", "ZERO_FLAG", ActorRelativeDirection::Output),
         ];
         intent_ir.write_to_disk()?;
@@ -7423,6 +7428,19 @@ mod tests {
                 .iter()
                 .any(|category| category == "actor_port")
         );
+        assert!(
+            data_out
+                .supporting_canonical_ids
+                .iter()
+                .any(|id| id == "graph_controller_DATA_OUT_output")
+        );
+        assert!(
+            data_out
+                .supporting_canonical_ids
+                .iter()
+                .any(|id| id == "graph_controller_DATA_OUT_input")
+        );
+        assert_eq!(data_out.automation_confidence, AutomationConfidence::High);
         assert!(
             fsm.renderability
                 .blocking_reasons
