@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `914e09c2735552177f1a48cdb88354c3abf13477`
-- latest_commit_brief_message: `test(rescan): lock lmstudio provider spelling`
+- latest_commit_hash: `251d098b0dd085209db98c6b434d4cb65898ff88`
+- latest_commit_brief_message: `test(rescan): lock open-ai provider rejection`
 - note: new local `N=40` batch is active; push remains deferred until all 40 slices complete
 
 ## Recent commit chain (last 6)
+- `251d098` test(rescan): lock open-ai provider rejection
 - `914e09c` test(rescan): lock lmstudio provider spelling
 - `45bb7f5` test(rescan): lock nlp classify flag rejection
 - `15500ea` test(rescan): lock command trust boundary
 - `0b001d9` test(rescan): lock pending status selection
 - `c2f4c96` test(rescan): lock exact document filtering
-- `c1a16ca` test(rescan): lock grade removal status
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 28]`
-- files in flight for new batch slice 29:
+- branch state before the next commit: `main...origin/main [ahead 29]`
+- files in flight for new batch slice 30:
   - `crates/specforge/src/commands/rescan_plan.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -46,27 +46,27 @@
 
 ## Active N-slice batch
 - requested_count: `40`
-- completed_count: `28`
+- completed_count: `29`
 - push_policy: defer push until all `40` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - add rescan-plan parser coverage proving hyphenated open-ai provider hints are rejected for local replay
-  - refresh live docs for remote-provider alias rejection behavior
+  - add rescan-plan parser coverage proving source-enrichment replay hints accept `--vlm-provider skip`
+  - refresh live docs for source-enrich local provider matrix coverage
 - tracker effect:
-  - planned live-status row addition: `specforge rescan-plan` OpenAI provider aliases are rejected: `Done`
+  - planned live-status row addition: `specforge rescan-plan` source-enrich skip provider hints are regression-locked: `Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_open_ai_provider_alias_hints` passed with `1` test and `586` filtered out
+  - `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_parses_skip_source_enrich_provider_hint` passed with `1` test and `587` filtered out
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed
-  - `bash scripts/run_ci.sh` passed with `587` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `bash scripts/run_ci.sh` passed with `588` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `130` fixtures and `0` failures
   - `git diff --check` passed
   - checkout-specific absolute path scan across tracked markdown passed
 - current known local CI baseline:
-  - `586` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `587` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `130/130` tracked KG fixtures
 
 ## Next exact steps
-- commit slice 29 without pushing, then continue slice 30
+- commit slice 30 without pushing, then continue slice 31

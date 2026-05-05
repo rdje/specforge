@@ -32,6 +32,7 @@
 - `specforge rescan-plan` command-hint locality is regression-locked: Done
 - `specforge rescan-plan` command hints stay cargo and repo-local: Done
 - `specforge rescan-plan` local provider command variants are regression-locked: Done
+- `specforge rescan-plan` source-enrich skip provider hints are regression-locked: Done
 - `specforge rescan-plan` unhyphenated LM Studio provider hints are regression-locked: Done
 - `specforge rescan-plan` OpenAI provider aliases are rejected: Done
 - `specforge rescan-plan` malformed provider hints are regression-locked: Done

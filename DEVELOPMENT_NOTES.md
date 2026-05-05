@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan source-enrich skip provider lock
+- New batch slice 30/40 adds parser coverage for source-enrichment replay hints using `--vlm-provider skip`.
+- No production parser code changed; `parse_local_rescan_vlm_provider` already accepts `skip` and the source-enrichment hint parser preserves it as `VlmProviderArg::Skip`.
+- This closes the source-enrich side of the local provider matrix coverage.
+
 ## 2026-05-05 rescan-plan open-ai alias rejection lock
 - New batch slice 29/40 adds parser coverage for the hyphenated `open-ai` provider alias.
 - No production parser code changed; `parse_local_rescan_vlm_provider` already rejects both `openai` and `open-ai` because rescan replay is intentionally local-provider-only.
