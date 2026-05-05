@@ -443,6 +443,7 @@
 - Adapter validation (SystemVerilog/Verilog/VHDL targets): Horizon
 - Actor-relative direction model in `SemanticIR` / `IntentIR`: In Progress
 - NLP alias learning now rejects outline/list marker prefixes before storing Form 2 aliases: Done
+- NLP alias learning now trims wrapper punctuation from Form 2 alias words: Done
 - Cross-document typed prior memory (`R15f`): In Progress
 
 ## Highest-priority remaining gap

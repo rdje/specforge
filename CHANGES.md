@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (NLP alias punctuation normalization)
+
+### Changed: alias learning trims wrapper punctuation from candidate phrases
+- Hardened `extract_alias_phrase()` so learned Form 2 alias words trim surrounding ASCII punctuation before entering `signal_alias_map`.
+- Added focused coverage for inline-code delimiters and punctuation immediately before modal boundaries, preserving useful aliases such as `address bus` while avoiding literal aliases like `` `address bus` ``, `address bus,`, or `address bus:`.
+- This follows the marker-prefix hardening with a safer normalization pass for common prose/markdown boundary noise.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge extract_alias_phrase` -> passed (`7` tests)
+- `cargo test --manifest-path Cargo.toml -p specforge commands::nlp_enrich::tests` -> passed (`19` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`599` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+
 ## 2026-05-05 (NLP alias marker filter hardening)
 
 ### Changed: alias learning rejects outline/list marker prefixes

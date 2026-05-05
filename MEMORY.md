@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `9c572b2537747d4dfb438471be262cb1a60ae130`
-- latest_commit_brief_message: `docs(book): explain adapter graph provenance`
+- latest_commit_hash: `1cafcf940ea5ccba5b358254c7eea95597995c51`
+- latest_commit_brief_message: `fix(nlp): reject outline alias markers`
 - note: new local `N=100` batch is active; push remains deferred until all 100 slices complete
 
 ## Recent commit chain (last 6)
+- `1cafcf9` fix(nlp): reject outline alias markers
 - `9c572b2` docs(book): explain adapter graph provenance
 - `7e0add5` fix(adapter): preserve top flat graph direction evidence
 - `afb2376` test(adapter): lock system contract flat graph disagreement
 - `f3f1fbe` test(adapter): lock structured FSM flat graph disagreement
 - `50a6661` test(adapter): lock module flat graph disagreement
-- `ce867e3` fix(adapter): block flat graph direction disagreement
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 23]`
-- files in flight for new batch slice 24:
+- branch state before the next commit: `main...origin/main [ahead 24]`
+- files in flight for new batch slice 25:
   - `crates/specforge/src/commands/nlp_enrich.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -47,27 +47,27 @@
 
 ## Active N-slice batch
 - requested_count: `100`
-- completed_count: `23`
+- completed_count: `24`
 - push_policy: defer push until all `100` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - harden Form 2 NLP alias learning against outline/list marker prefixes
-  - reject numeric outline, parenthesized list, and lettered list prefixes before storing aliases
+  - harden Form 2 NLP alias learning against wrapper punctuation in candidate words
+  - trim inline-code delimiters and punctuation immediately before modal boundaries before storing aliases
   - keep useful implicit noun-phrase alias learning intact
 - tracker effect:
-  - live-status tracker gains `NLP alias learning now rejects outline/list marker prefixes before storing Form 2 aliases: Done`
+  - live-status tracker gains `NLP alias learning now trims wrapper punctuation from Form 2 alias words: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge extract_alias_phrase` passed with `6` tests
-  - `cargo test --manifest-path Cargo.toml -p specforge commands::nlp_enrich::tests` passed with `18` tests
+  - `cargo test --manifest-path Cargo.toml -p specforge extract_alias_phrase` passed with `7` tests
+  - `cargo test --manifest-path Cargo.toml -p specforge commands::nlp_enrich::tests` passed with `19` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
-  - `bash scripts/run_docs_ci.sh` passed before live-doc edits and must be rerun after the current live-doc refresh
-  - `bash scripts/run_ci.sh` passed with `598` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `bash scripts/run_docs_ci.sh` passed after the live-doc refresh
+  - `bash scripts/run_ci.sh` passed with `599` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `148` fixtures and `0` failures
 - current known local CI baseline:
-  - `598` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `599` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- rerun docs after live-doc edits, run final guards, commit slice 24 without pushing, and continue slice 25
+- run docs/full CI/KG bench after live-doc edits, run final guards, commit slice 25 without pushing, and continue slice 26

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 NLP alias punctuation normalization)
+- Hardened `extract_alias_phrase()` in `crates/specforge/src/commands/nlp_enrich.rs` so Form 2 alias learning trims surrounding ASCII punctuation from each candidate alias word after article stripping.
+- Added `extract_alias_phrase_trims_wrapping_punctuation_from_alias_words`, bringing focused alias parser coverage to `7` tests and NLP-enrich module coverage to `19` tests.
+- This keeps inline-code wrappers and trailing modal-boundary punctuation out of `signal_alias_map` without dropping useful implicit noun-phrase aliases.
+
 ## Session update (2026-05-05 NLP alias marker filter hardening)
 - Hardened `extract_alias_phrase()` in `crates/specforge/src/commands/nlp_enrich.rs` so Form 2 alias learning rejects numeric outline markers, parenthesized list markers, and lettered list markers before noun-phrase normalization.
 - Added `extract_alias_phrase_rejects_outline_and_lettered_marker_prefixes`, bringing the focused alias parser coverage to `6` tests and the NLP-enrich module coverage to `18` tests.

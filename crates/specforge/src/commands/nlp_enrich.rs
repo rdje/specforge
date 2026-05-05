@@ -431,7 +431,7 @@ fn auto_extract_declared_signals(evidence_ir: &EvidenceIr) -> Vec<String> {
 ///  1. If the signal token already appears literally in the sentence — no alias needed.
 ///  2. Find the subject part (text before the first modal verb or copula).
 ///  3. Strip leading articles ("the", "a", "an", "its", ...).
-///  4. Normalize to lowercase and limit to 4 words.
+///  4. Normalize to lowercase, trim surrounding punctuation, and limit to 4 words.
 ///  5. Reject single-word pronouns and phrases shorter than 4 characters.
 ///
 /// Example:
@@ -478,15 +478,17 @@ fn extract_alias_phrase(sentence: &str, subject_signal: &str) -> Option<String> 
     // Strip leading articles / determiners then normalize.
     let stripped = strip_leading_articles(subject_raw);
     let normalized = stripped.to_ascii_lowercase();
-    let normalized = normalized.trim();
 
-    let words: Vec<&str> = normalized.split_whitespace().collect();
+    let words: Vec<String> = normalized
+        .split_whitespace()
+        .filter_map(clean_alias_word)
+        .collect();
 
     // Reject single-word pronouns or trivially generic subjects.
     if words.is_empty()
         || (words.len() == 1
             && matches!(
-                words[0],
+                words[0].as_str(),
                 "it" | "this" | "that" | "they" | "them" | "its" | "each" | "all"
             ))
     {
@@ -499,12 +501,26 @@ fn extract_alias_phrase(sentence: &str, subject_signal: &str) -> Option<String> 
     }
 
     // Limit to 4 words so the phrase stays general enough to match future sentences.
-    let phrase = words.iter().take(4).copied().collect::<Vec<_>>().join(" ");
+    let phrase = words
+        .iter()
+        .take(4)
+        .map(String::as_str)
+        .collect::<Vec<_>>()
+        .join(" ");
 
     if phrase.len() >= 4 {
         Some(phrase)
     } else {
         None
+    }
+}
+
+fn clean_alias_word(word: &str) -> Option<String> {
+    let word = word.trim_matches(|character: char| character.is_ascii_punctuation());
+    if word.is_empty() {
+        None
+    } else {
+        Some(word.to_string())
     }
 }
 
@@ -1220,6 +1236,25 @@ mod tests {
         assert!(
             extract_alias_phrase("b) the address bus shall remain stable", "HADDR").is_none(),
             "lettered list prefixes must not become learned aliases"
+        );
+    }
+
+    #[test]
+    fn extract_alias_phrase_trims_wrapping_punctuation_from_alias_words() {
+        assert_eq!(
+            extract_alias_phrase("The `address bus` shall remain stable", "HADDR").as_deref(),
+            Some("address bus"),
+            "inline-code delimiters around prose aliases should not be learned literally"
+        );
+        assert_eq!(
+            extract_alias_phrase("The address bus, shall remain stable", "HADDR").as_deref(),
+            Some("address bus"),
+            "trailing commas before the modal boundary should not pollute learned aliases"
+        );
+        assert_eq!(
+            extract_alias_phrase("The address bus: must remain stable", "HADDR").as_deref(),
+            Some("address bus"),
+            "trailing colons before the modal boundary should not pollute learned aliases"
         );
     }
 

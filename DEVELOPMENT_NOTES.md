@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 NLP alias punctuation normalization
+- New batch slice 25/100 hardens `extract_alias_phrase()` in `crates/specforge/src/commands/nlp_enrich.rs`.
+- The Form 2 alias learner now trims surrounding ASCII punctuation from candidate alias words after article stripping, so markdown inline-code wrappers and modal-boundary punctuation do not become literal alias text.
+- The new regression covers `` `address bus` ``, `address bus,`, and `address bus:` while preserving the useful learned phrase as `address bus`.
+- Full CI now runs `599` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-05 NLP alias marker filter hardening
 - New batch slice 24/100 hardens `extract_alias_phrase()` in `crates/specforge/src/commands/nlp_enrich.rs`.
 - The Form 2 alias learner now rejects numeric outline markers (`3.1`, `4.2.1`), parenthesized list markers (`(a)`, `(12)`), and lettered list markers (`b)`) before stripping articles and learning a noun phrase.
