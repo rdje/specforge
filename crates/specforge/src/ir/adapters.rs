@@ -7055,6 +7055,13 @@ mod tests {
                 .any(|category| category == "direct_control_input")
         );
         assert!(
+            data_in
+                .supporting_canonical_ids
+                .iter()
+                .any(|id| id.starts_with("control_branch_"))
+        );
+        assert_eq!(data_in.automation_confidence, AutomationConfidence::High);
+        assert!(
             !data_in
                 .mention_categories
                 .iter()

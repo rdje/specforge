@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` direct control-read provenance lock)
+- Tightened `standalone_dt_derives_target_inputs_from_control_reads_after_output_actor_selection` in `crates/specforge/src/ir/adapters.rs` so recovered direct control-input graph evidence retains canonical control-branch support and automation confidence.
+- The adapter already derived `DATA_IN` from typed control reads after selecting the target actor; this regression now proves the renderable inventory keeps that high-confidence direct-read evidence trail visible.
+- This complements the direct actor-port width provenance lock by keeping both graph-backed recovery families auditable without importing external actor direction.
+
 ## Session update (2026-05-05 `.fsm` direct actor-port width provenance lock)
 - Tightened `standalone_dt_recovers_control_input_width_from_actor_port_graph` in `crates/specforge/src/ir/adapters.rs` so recovered direct-root actor-port width evidence retains support ID and automation confidence.
 - The adapter already recovered missing direct control-input widths from actor-port numeric shape without importing external actor direction; this regression now proves the renderable inventory keeps that graph-backed width trail visible.

@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` direct control-read provenance lock)
+
+### Added: direct-root control-read input provenance coverage
+- Tightened `standalone_dt_derives_target_inputs_from_control_reads_after_output_actor_selection` so graph-backed direct control-input recovery now proves canonical control-branch support IDs and high automation confidence survive in `fsm.signal_inventory`.
+- This is coverage-only over the existing adapter behavior: target-actor selection can recover `DATA_IN` from typed control reads without importing the external environment actor's direction.
+- The slice keeps direct control-read evidence auditable beside actor-port graph evidence on the renderable `.fsm` path.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_dt_derives_target_inputs_from_control_reads_after_output_actor_selection` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+
 ## 2026-05-05 (`.fsm` direct actor-port width provenance lock)
 
 ### Added: direct-root actor-port width recovery provenance coverage
