@@ -4,6 +4,13 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 IntentIR validation direction-gap split)
+- Continued the R15 graph-first validation cleanup in `crates/specforge/src/commands/validate.rs`.
+- `SemanticIR` validation already distinguished graph-backed flat `direction_hint` lag from declared signals that lack both flat direction and actor-relative graph coverage; `IntentIR` now mirrors that split.
+- `validate_intent_ir(...)` computes `unresolved_missing_compat_direction_signal_names` for declared canonical signals and emits `intent_compat_direction_hints_incomplete` with signal-level `related_ids` when no flat compatibility hint and no graph direction are available.
+- Existing `intent_compat_direction_hints_lag_graph` semantics remain graph-backed only, so unresolved missing graph coverage is no longer collapsed into a graph-lag compatibility finding.
+- The focused regression `validate_intent_ir_keeps_incomplete_direction_finding_without_graph_coverage` locks the no-graph/no-flat path; broader verification passed with `521` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and `127/127` tracked KG fixtures.
+
 ## Session update (2026-05-05 `.fsm` FSM undriven graph output lock)
 - Continued from commit `a2882b4` by locking the structured-FSM branch of the graph-backed output-drive validation path.
 - The production seam was already moved from size-entry-only checks to full `FsmSignalCandidate` inventory checks; this slice adds `structured_fsm_blocks_graph_backed_undriven_output_inventory` so true-FSM lowering cannot regress while the DT branch stays covered separately.

@@ -4131,6 +4131,12 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             declared_signals.iter().copied(),
             graph_direction_signals,
         );
+    let unresolved_missing_compat_direction_signal_names =
+        unresolved_missing_compat_direction_signal_names(
+            declared_signals.iter().copied(),
+            graph_direction_signals,
+            graph_direction_conflicts,
+        );
     let (with_direction, with_graph_direction, with_compat_direction_hint) =
         resolved_direction_counts(declared_signals.iter().copied(), graph_direction_signals);
     // Both numeric and parametric widths count as "known" — parametric means the
@@ -4988,6 +4994,22 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 graph_backed_missing_compat_direction_signal_names.len()
             ),
             graph_backed_missing_compat_direction_signal_names
+                .iter()
+                .take(8)
+                .cloned()
+                .collect(),
+        ));
+    }
+    if !unresolved_missing_compat_direction_signal_names.is_empty() {
+        findings.push(finding(
+            "intent_compat_direction_hints_incomplete",
+            ValidationFindingSeverity::Info,
+            "compatibility_surface",
+            format!(
+                "{} declared signal record(s) still lack flat compatibility direction hints and actor-relative graph coverage",
+                unresolved_missing_compat_direction_signal_names.len()
+            ),
+            unresolved_missing_compat_direction_signal_names
                 .iter()
                 .take(8)
                 .cloned()
@@ -7928,6 +7950,43 @@ mod tests {
             finding.related_ids,
             vec!["PADDR".to_string(), "PREADY".to_string()]
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_intent_ir_keeps_incomplete_direction_finding_without_graph_coverage() -> Result<()>
+    {
+        let (_, mut intent_ir) = build_semantic_and_intent_from_markdown(
+            "intent_direction_unresolved.md",
+            "# Protocol\nSignal DATA is input width 8.\n",
+        )?;
+
+        for interface in &mut intent_ir.interfaces {
+            for signal in &mut interface.signal_records {
+                signal.direction_hint = None;
+            }
+        }
+        intent_ir.actor_ports.clear();
+
+        let report = validate_intent_ir(&intent_ir, "intent_unresolved".to_string());
+
+        assert_eq!(metric_value(&report, "with_resolved_direction"), Some("0"));
+        assert_eq!(metric_value(&report, "with_graph_direction"), Some("0"));
+        assert_eq!(
+            metric_value(&report, "with_compat_direction_hint"),
+            Some("0")
+        );
+        assert!(
+            !has_finding(&report, "intent_compat_direction_hints_lag_graph"),
+            "without actor-relative graph coverage, missing flat hints should not be reported as graph lag"
+        );
+        let finding = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "intent_compat_direction_hints_incomplete")
+            .expect("expected unresolved intent compatibility direction finding");
+        assert_eq!(finding.related_ids, vec!["DATA".to_string()]);
 
         Ok(())
     }

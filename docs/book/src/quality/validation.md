@@ -19,6 +19,7 @@ It measures things like:
 
 - declared-signal direction coverage
 - graph-derived direction coverage
+- compatibility-direction findings that distinguish flat-hint lag from signals that still lack both flat direction and actor-relative graph coverage
 - table-backed signal coverage
 - width coverage
 - temporal rule cycle-window grounding

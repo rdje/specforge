@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-05 (IntentIR validation direction-gap split)
+
+### Changed: IntentIR compatibility-direction findings distinguish unresolved gaps from graph lag
+- `validate_intent_ir(...)` now mirrors the existing `SemanticIR` compatibility-direction split.
+- Declared `IntentIR` signals with missing flat `direction_hint` values but resolved actor-relative graph coverage still report `intent_compat_direction_hints_lag_graph`.
+- Declared `IntentIR` signals with neither flat compatibility direction nor actor-relative graph coverage now report `intent_compat_direction_hints_incomplete` with signal-level `related_ids`, instead of leaving that unresolved compatibility gap visible only through aggregate direction metrics.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge commands::validate::tests::validate_intent_ir_keeps_incomplete_direction_finding_without_graph_coverage -- --exact --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge commands::validate::tests -- --nocapture` -> passed with `96` validator tests
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `521` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures and `0` failures
+- `git diff --check` -> passed
+
 ## 2026-05-05 (`.fsm` FSM undriven graph output lock)
 
 ### Added: structured FSM graph-backed undriven outputs are regression-locked

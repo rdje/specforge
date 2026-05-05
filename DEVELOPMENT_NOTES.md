@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 IntentIR validation direction-gap split
+- Continued the R15 validation cleanup by closing an IntentIR-stage observability asymmetry.
+- Before this slice, `SemanticIR` validation separated two compatibility-direction states:
+  - graph-backed flat-hint lag: actor-relative graph direction exists, but the legacy flat `direction_hint` field is absent
+  - unresolved compatibility gap: neither flat direction nor actor-relative graph direction exists
+- `IntentIR` only reported the first state. A declared signal with no flat direction and no actor-relative graph coverage could still affect direction metrics and graph coverage findings, but it did not get the same compatibility-surface finding shape as `SemanticIR`.
+- `validate_intent_ir(...)` now computes `unresolved_missing_compat_direction_signal_names` from the declared signal set and emits `intent_compat_direction_hints_incomplete` with signal-level `related_ids`.
+- The existing `intent_compat_direction_hints_lag_graph` finding remains graph-backed only, so missing graph coverage is not mislabeled as graph lag.
+- Added `validate_intent_ir_keeps_incomplete_direction_finding_without_graph_coverage`, which clears both flat hints and actor ports for a tiny declared `DATA` signal and proves the validator reports the unresolved IntentIR compatibility finding instead of the graph-lag finding.
+- Full verification passed with `521` Rust tests, warning-deny Clippy/rustdoc, mdBook validation, and the `127/127` tracked KG fixture suite.
+
 ## 2026-05-05 `.fsm` FSM undriven graph output lock
 - Continued from commit `a2882b4` by locking the true-FSM consumer of `validate_output_inventory_is_driven(...)`.
 - Added `structured_fsm_blocks_graph_backed_undriven_output_inventory`, which clears flat interface directions, injects width-only `UNUSED_TRACE`, recovers its output role from actor-relative `controller` graph evidence, and verifies lowering blocks with the typed FSM-state undriven-output diagnostic.
