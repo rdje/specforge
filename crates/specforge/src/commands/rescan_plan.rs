@@ -717,7 +717,7 @@ fn execute_invocation(invocation: RescanInvocation, prior_memory: &Path) -> Resu
 
 #[cfg(test)]
 mod tests {
-    use std::fs;
+    use std::{fs, path::PathBuf};
 
     use tempfile::tempdir;
 
@@ -2197,6 +2197,18 @@ mod tests {
         assert_eq!(score_label(None, None), "n/a");
     }
 
+    #[test]
+    fn rescan_plan_run_report_counts_review_required_summaries() {
+        let report = run_report_with_summaries(vec![
+            execution_summary_for_verdict(ARBITRATION_VALIDATED_NO_CHANGE),
+            execution_summary_for_verdict(ARBITRATION_POSSIBLE_IMPROVEMENT_REVIEW_REQUIRED),
+            execution_summary_for_verdict(ARBITRATION_REGRESSION_REVIEW_REQUIRED),
+            execution_summary_for_verdict(ARBITRATION_NEUTRAL_CHANGE_REVIEW_REQUIRED),
+        ]);
+
+        assert_eq!(report.review_required_count(), 3);
+    }
+
     fn command_hint(intent: &str, specforge_args: Vec<&str>) -> ProjectRescanCommandHint {
         let mut args = vec![
             "run".to_string(),
@@ -2235,6 +2247,54 @@ mod tests {
             )],
             automation_status: automation_status.to_string(),
             execution_summary: None,
+        }
+    }
+
+    fn run_report_with_summaries(
+        execution_summaries: Vec<ProjectRescanExecutionSummary>,
+    ) -> RescanPlanRunReport {
+        RescanPlanRunReport {
+            plan_path: PathBuf::from("generated/validation/rescan_plan.json"),
+            execute: true,
+            document_key_filter: None,
+            schema_version: 2,
+            recommendation_count: execution_summaries.len(),
+            pending_recommendations: 0,
+            selected_recommendations: execution_summaries.len(),
+            executed_validated_changed: 0,
+            executed_validated_no_change: 0,
+            execution_summaries,
+        }
+    }
+
+    fn execution_summary_for_verdict(verdict: &str) -> ProjectRescanExecutionSummary {
+        let snapshot = ProjectRescanValidationSnapshot {
+            artifact_fingerprint: "aaa".to_string(),
+            overall_score: None,
+            grade: None,
+            finding_count: 0,
+            finding_ids: Vec::new(),
+        };
+
+        ProjectRescanExecutionSummary {
+            automation_status: EXECUTED_VALIDATED_NO_CHANGE.to_string(),
+            arbitration_verdict: verdict.to_string(),
+            promotion_status: rescan_promotion_status_for(verdict).to_string(),
+            promotion_blockers: rescan_promotion_blockers_for(verdict),
+            promotion_review: crate::commands::project_validation::rescan_promotion_review_for(
+                verdict,
+            ),
+            before_validation: snapshot.clone(),
+            after_validation: snapshot,
+            validation_delta: ProjectRescanValidationDelta {
+                fingerprint_changed: false,
+                score_changed: false,
+                score_delta: Some(0),
+                grade_changed: false,
+                finding_count_delta: 0,
+                added_findings: Vec::new(),
+                removed_findings: Vec::new(),
+            },
         }
     }
 }

@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan review-count summary lock)
+
+### Changed: review-required report counts are regression-locked
+- Added run-report coverage proving only execution summaries with arbitration verdicts ending in `_review_required` contribute to `review_required_count()`.
+- This keeps `rescan-plan` summary counters aligned with the conservative review verdict taxonomy.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_run_report_counts_review_required_summaries` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `568` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan finding-count improvement lock)
 
 ### Changed: finding-count decreases stay possible-improvement review

@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan review-count summary lock
+- New batch slice 10/40 adds run-report coverage for `RescanPlanRunReport::review_required_count()`.
+- No production report code changed; the helper already counts arbitration verdicts ending in `_review_required`.
+- This protects CLI/summary consumers from accidentally treating `validated_no_change` as a review-required execution.
+
 ## 2026-05-05 rescan-plan finding-count improvement lock
 - New batch slice 9/40 adds isolated arbitration coverage for validation finding-count decreases.
 - No production arbitration code changed; `arbitration_verdict(...)` already treats negative finding-count deltas as possible-improvement review when no regression signal is present.
