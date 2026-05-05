@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` structured-FSM flat/graph provenance lock)
+
+### Added: structured-FSM flat/graph disagreement provenance coverage
+- Tightened `structured_fsm_blocks_flat_graph_direction_disagreement` so blocked structured-FSM `.fsm` lowering now proves interface and actor-port categories, graph support ID, and high automation confidence survive in the FSM signal inventory.
+- This is coverage-only over the existing adapter behavior: canonical FSM-root input evidence and graph-backed actor output evidence keep `.fsm` emission blocked when they disagree.
+- The slice keeps structured-FSM flat/graph disagreement evidence auditable for review/rescan.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge structured_fsm_blocks_flat_graph_direction_disagreement` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+
 ## 2026-05-05 (`.fsm` explicit-module flat/graph provenance lock)
 
 ### Added: explicit-module flat/graph disagreement provenance coverage

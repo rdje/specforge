@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 `.fsm` structured-FSM flat/graph provenance lock
+- New batch slice 52/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `structured_fsm_blocks_flat_graph_direction_disagreement` now asserts blocked FSM-root flat-vs-graph disagreement keeps interface and actor-port categories, `graph_controller_ACC` support ID, and high automation confidence.
+- This is a coverage-only lock for the blocked structured-FSM path where canonical FSM-root direction and actor-port graph direction disagree.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-05 `.fsm` explicit-module flat/graph provenance lock
 - New batch slice 51/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `standalone_explicit_module_blocks_flat_graph_direction_disagreement` now asserts blocked module-local flat-vs-graph disagreement keeps interface and actor-port categories, `graph_controller_ACC` support ID, and high automation confidence.

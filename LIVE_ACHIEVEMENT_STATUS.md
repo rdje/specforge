@@ -309,6 +309,7 @@
 - `.fsm` explicit-module renderability now regression-locks single flat-vs-graph direction disagreement: Done
 - `.fsm` explicit-module flat/graph direction disagreement now regression-locks interface and actor-port provenance: Done
 - `.fsm` structured-FSM renderability now regression-locks single flat-vs-graph direction disagreement: Done
+- `.fsm` structured-FSM flat/graph direction disagreement now regression-locks interface and actor-port provenance: Done
 - `.fsm` system-contract renderability now regression-locks single flat-vs-graph direction disagreement: Done
 - `.fsm` system-contract flat/graph direction disagreement now regression-locks actor-port support IDs and automation confidence: Done
 - `.fsm` system-contract direction conflicts now regression-lock supporting IDs and automation confidence: Done

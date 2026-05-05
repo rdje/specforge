@@ -191,6 +191,7 @@
   - ambiguous direct actor-port graph context leaves graph direction, actor-port category, and support IDs unselected instead of guessing a target actor
   - direct-root actor-port direction conflicts preserve both conflicting graph-backed support IDs and automation confidence while blocking `.fsm` emission
   - explicit-module flat-vs-graph direction disagreement preserves interface and actor-port provenance while blocking `.fsm` emission
+  - structured-FSM flat-vs-graph direction disagreement preserves interface and actor-port provenance while blocking `.fsm` emission
   - direct-root same-actor actor-port width conflicts preserve both conflicting graph-backed support IDs and automation confidence while blocking `.fsm` emission
   - direct-root flat-vs-graph direction disagreement preserves interface and actor-port provenance while blocking `.fsm` emission
   - direct-root flat direction conflicts preserve interface conflict evidence and graph-backed actor provenance while blocking `.fsm` emission

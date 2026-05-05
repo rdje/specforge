@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` structured-FSM flat/graph provenance lock)
+- Tightened `structured_fsm_blocks_flat_graph_direction_disagreement` in `crates/specforge/src/ir/adapters.rs` so blocked FSM-root flat-vs-graph disagreement retains interface/actor-port categories, graph support ID, and automation confidence.
+- The adapter already blocked structured-FSM renderability when canonical FSM-root direction disagreed with graph-backed actor direction; this regression now proves both evidence families remain inspectable.
+- This completes the immediate direct-root, explicit-module, structured-FSM, and system-contract flat/graph provenance coverage set.
+
 ## Session update (2026-05-05 `.fsm` explicit-module flat/graph provenance lock)
 - Tightened `standalone_explicit_module_blocks_flat_graph_direction_disagreement` in `crates/specforge/src/ir/adapters.rs` so blocked module-local flat-vs-graph disagreement retains interface/actor-port categories, graph support ID, and automation confidence.
 - The adapter already blocked explicit-module renderability when canonical module direction disagreed with graph-backed actor direction; this regression now proves both evidence families remain inspectable.
