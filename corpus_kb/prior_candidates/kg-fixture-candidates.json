@@ -102,10 +102,11 @@
       "candidate_kind": "semantic_phrase_prior",
       "target_schema": "CorpusMemory.semantic_phrase_priors",
       "readiness": "fixture_paired_review_ready",
-      "supporting_fixture_count": 7,
+      "supporting_fixture_count": 8,
       "positive_fixture_count": 2,
-      "guard_fixture_count": 5,
+      "guard_fixture_count": 6,
       "supporting_fixtures": [
+        "semantic_prior_broad_phrase_negative",
         "semantic_prior_conflicting_roles_negative",
         "semantic_prior_guided_phrase_gold",
         "semantic_prior_guided_phrase_without_prior_negative",
@@ -119,6 +120,7 @@
         "visual_semantic_prior_guided_caption_gold"
       ],
       "guard_fixtures": [
+        "semantic_prior_broad_phrase_negative",
         "semantic_prior_conflicting_roles_negative",
         "semantic_prior_guided_phrase_without_prior_negative",
         "semantic_prior_phrase_mismatch_negative",

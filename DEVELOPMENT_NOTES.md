@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 semantic prior broad-phrase guard
+- New batch slice 7/100 adds `semantic_prior_broad_phrase_negative` and hardens `crates/specforge/src/ir/prior_memory.rs`.
+- The new fixture initially reproduced a false positive: a loaded one-token semantic prior `transfer` could resolve `XFLOW can sequence the transfer` as `handshake_valid_like`.
+- `resolve_semantic_phrase_role` now filters loaded records through `is_meaningful_prior_phrase`, and that gate now requires at least two non-placeholder terms.
+- The focused post-fix check also reran representative semantic-prior positives so the guard does not break ordinary phrase, valid-like phrase, ready-like phrase, or visual-caption prior recovery.
+- The corpus-KB prior-candidate projection now counts the fixture as the sixth semantic-phrase guard.
+
 ## 2026-05-05 KG semantic-prior phrase-match guard fixture
 - New batch slice 6/100 adds `semantic_prior_phrase_mismatch_negative`.
 - The fixture stages a valid-like prior for `<signal> can publish the beat` while the current document says `XFLOW can sequence the transfer`.

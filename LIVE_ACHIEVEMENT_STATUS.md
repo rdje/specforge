@@ -155,6 +155,7 @@
 - Negative-knowledge priors now include signal-polarity conflict archetypes: Done
 - KG benchmark harness can now assert canonical resolved semantic-role shape directly: Done
 - KG benchmark harness can now assert canonical semantic grounding-strength shape directly: Done
+- Semantic phrase prior lookup rejects one-token broad prior records: Done
 - KG benchmark harness now locks semantic phrase prior local phrase matching: Done
 - KG benchmark harness now locks semantic phrase prior source-kind scoping: Done
 - KG benchmark harness now locks conflicting semantic phrase priors fail closed: Done

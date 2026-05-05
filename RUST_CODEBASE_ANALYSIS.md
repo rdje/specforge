@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 semantic prior broad-phrase guard)
+- Hardened `crates/specforge/src/ir/prior_memory.rs` so loaded semantic phrase priors are rechecked for meaningful phrase shape during lookup.
+- `is_meaningful_prior_phrase` now requires at least two non-placeholder terms, which blocks one-token records like `transfer` from matching arbitrary local prose that happens to contain that word.
+- Added `semantic_prior_broad_phrase_negative` to prove the false positive is closed through the full `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR` KG fixture path while representative positive prior fixtures still pass.
+
 ## Session update (2026-05-05 KG semantic-prior phrase-match guard fixture)
 - Added `semantic_prior_phrase_mismatch_negative` to the KG quality corpus.
 - The fixture proves semantic phrase priors remain local-phrase grounded by staging an unrelated prior and expecting the current prose phrase to stay unresolved.

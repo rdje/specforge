@@ -476,6 +476,7 @@ impl CorpusMemory {
                         .unwrap_or(true)
                 })
                 .filter(|prior| prior.source_kind == source_kind)
+                .filter(|prior| is_meaningful_prior_phrase(&prior.normalized_phrase))
                 .filter(|prior| predicate(prior))
                 .map(|prior| prior.role)
                 .collect::<Vec<_>>();
@@ -737,10 +738,19 @@ pub fn normalize_table_header_signature(table: &StructuredTableRecord) -> Option
 
 pub fn is_meaningful_prior_phrase(text: &str) -> bool {
     let trimmed = text.trim();
+    let meaningful_terms = trimmed
+        .split_whitespace()
+        .map(|term| {
+            term.trim_matches(|ch: char| !ch.is_ascii_alphanumeric() && ch != '<' && ch != '>')
+        })
+        .filter(|term| !term.is_empty() && *term != "<signal>" && *term != "<actor>")
+        .count();
+
     !trimmed.is_empty()
         && trimmed != "<signal>"
         && trimmed != "<actor>"
         && trimmed.chars().any(|ch| ch.is_ascii_lowercase())
+        && meaningful_terms >= 2
 }
 
 fn actor_taxonomy_search_scopes(

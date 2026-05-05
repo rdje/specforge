@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-05-05 (semantic prior broad-phrase guard)
+
+### Changed: one-token semantic phrase priors no longer resolve roles
+- Hardened semantic phrase prior lookup so loaded prior records must pass the meaningful-phrase gate before they can participate in role recovery.
+- Tightened the meaningful prior phrase gate to require at least two non-placeholder terms, preventing broad records such as `transfer` from matching unrelated local prose.
+- Added a KG negative fixture proving a broad one-token semantic phrase prior cannot resolve `XFLOW can sequence the transfer` to a handshake role.
+- Refreshed corpus-KB fixture projections so the semantic/truthfulness pattern page and prior-candidate readiness manifest count the broad-phrase guard fixture.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_prior_broad_phrase_negative semantic_prior_guided_phrase_gold semantic_valid_prior_guided_phrase_gold semantic_ready_sink_prior_guided_phrase_gold visual_semantic_prior_guided_caption_gold` -> passed (`5` fixtures, `0` failures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`138` fixtures, `0` failures)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`593` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`138` fixtures, `0` failures)
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (KG semantic-prior phrase-match guard fixture)
 
 ### Changed: semantic phrase priors require local phrase match
