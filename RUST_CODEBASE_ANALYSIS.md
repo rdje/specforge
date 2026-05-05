@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` child link-direction provenance lock)
+- Tightened `top_composition_recovers_child_directions_from_link_topology` in `crates/specforge/src/ir/adapters.rs` so child module direction recovery from explicit top-link topology retains support IDs and automation confidence.
+- The adapter already rendered top compositions when child module directions could be recovered from topology links; this regression now proves producer-to-consumer and consumer-to-top link evidence stays inspectable in child inventories.
+- This complements the child actor-port direction recovery lock with the parallel link-topology recovery path.
+
 ## Session update (2026-05-05 `.fsm` child actor-port direction provenance lock)
 - Tightened `top_composition_recovers_child_directions_from_actor_ports` in `crates/specforge/src/ir/adapters.rs` so child module direction recovery from actor-port graph evidence retains support IDs and automation confidence.
 - The adapter already rendered top compositions when child module directions could be recovered from actor-port graph hints; this regression now proves producer and consumer child inventories keep that evidence inspectable.

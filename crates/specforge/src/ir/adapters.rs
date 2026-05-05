@@ -12044,6 +12044,37 @@ mod tests {
         let tempdir = tempdir()?;
         let mut intent_ir = build_explicit_top_composition_intent_ir(tempdir.path())?;
         clear_explicit_module_direction_hints(&mut intent_ir);
+        let (producer_to_consumer_support_ids, consumer_to_top_support_ids) = {
+            let explicit_top = intent_ir
+                .explicit_tops
+                .iter()
+                .find(|top| top.top_name == "datapath")
+                .expect("explicit top should be present");
+            let producer_to_consumer_link = explicit_top
+                .links
+                .iter()
+                .find(|link| {
+                    link.source.instance_name.as_deref() == Some("producer")
+                        && link.source.signal_name == "output_data"
+                        && link.target.instance_name.as_deref() == Some("consumer")
+                        && link.target.signal_name == "input_data"
+                })
+                .expect("producer to consumer topology link should be present");
+            let consumer_to_top_link = explicit_top
+                .links
+                .iter()
+                .find(|link| {
+                    link.source.instance_name.as_deref() == Some("consumer")
+                        && link.source.signal_name == "result_data"
+                        && link.target.instance_name.is_none()
+                        && link.target.signal_name == "result_data"
+                })
+                .expect("consumer to top topology link should be present");
+            (
+                super::explicit_top_link_supporting_ids(producer_to_consumer_link),
+                super::explicit_top_link_supporting_ids(consumer_to_top_link),
+            )
+        };
         intent_ir.write_to_disk()?;
 
         let artifact_base = tempdir.path().join("generated").join("adapters");
@@ -12111,7 +12142,20 @@ mod tests {
                     .iter()
                     .any(|category| category == "module_topology_link")
             );
+            assert_eq!(signal.automation_confidence, AutomationConfidence::High);
         }
+        for signal in [output_data, input_data] {
+            assert!(
+                producer_to_consumer_support_ids
+                    .iter()
+                    .any(|id| signal.supporting_canonical_ids.contains(id))
+            );
+        }
+        assert!(
+            consumer_to_top_support_ids
+                .iter()
+                .any(|id| result_data.supporting_canonical_ids.contains(id))
+        );
         assert!(producer.renderability.is_renderable);
         assert!(consumer.renderability.is_renderable);
         assert!(fsm.renderability.is_renderable);

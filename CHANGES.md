@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` child link-direction provenance lock)
+
+### Added: child link-topology direction recovery provenance coverage
+- Tightened `top_composition_recovers_child_directions_from_link_topology` so renderable top-composition `.fsm` lowering now proves child module signal inventories preserve topology-link support IDs and high automation confidence.
+- This is coverage-only over the existing adapter behavior: child directions recovered from explicit top-link topology still allow `.fsm` emission when the top composition is otherwise renderable.
+- The slice keeps producer-to-consumer and consumer-to-top link evidence auditable across child signal inventories.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_child_directions_from_link_topology` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-05 (`.fsm` child actor-port direction provenance lock)
 
 ### Added: child actor-port direction recovery provenance coverage

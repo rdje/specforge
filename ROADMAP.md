@@ -191,6 +191,7 @@
   - duplicate top-port direction conflicts preserve both duplicate declaration support-ID sets and high automation confidence while blocking `.fsm` emission
   - duplicate top-port width conflicts preserve both duplicate declaration support-ID sets, width-conflict inventory state, and high automation confidence while blocking `.fsm` emission
   - child actor-port direction recovery preserves graph-backed support IDs and high automation confidence across producer and consumer child module inventories
+  - child link-topology direction recovery preserves explicit top-link support IDs and high automation confidence across producer and consumer child module inventories
   - direct-root actor-port width recovery preserves graph-backed support IDs and automation confidence while avoiding import of the external actor's direction
   - unambiguous direct actor-port direction recovery preserves graph-backed support IDs and high automation confidence for direct inputs and outputs
   - standalone sequential system-contract actor-port direction recovery preserves graph-backed support IDs and high automation confidence for clock/reset inputs

@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `826c17b8536da8f2a9a232391d58f3b9fe88ca8e`
-- latest_commit_brief_message: `test(adapter): lock duplicate top width support`
+- latest_commit_hash: `a1372b7710e581219f9a15c891fe36de3f49ed1f`
+- latest_commit_brief_message: `test(adapter): lock child actor direction support`
 - note: new local `N=100` batch is active; push remains deferred until all 100 slices complete
 
 ## Recent commit chain (last 6)
+- `a1372b7` test(adapter): lock child actor direction support
 - `826c17b` test(adapter): lock duplicate top width support
 - `465dd04` test(adapter): lock duplicate top direction support
 - `d23c173` test(adapter): lock top link direction conflict support
 - `c23520c` test(adapter): lock top actor width conflict support
 - `ca5acc0` test(adapter): lock top actor direction conflict support
-- `b27d39e` test(adapter): lock blocked top port recovery support
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 63]`
-- files in flight for new batch slice 64:
+- branch state before the next commit: `main...origin/main [ahead 64]`
+- files in flight for new batch slice 65:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -47,19 +47,19 @@
 
 ## Active N-slice batch
 - requested_count: `100`
-- completed_count: `63`
+- completed_count: `64`
 - push_policy: defer push until all `100` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - regression-lock child actor-port direction recovery provenance
-  - prove renderable top-composition child signal inventories preserve actor-port support IDs and high automation confidence
-  - keep producer and consumer child direction recovery auditable while `.fsm` emission remains renderable
+  - regression-lock child link-topology direction recovery provenance
+  - prove renderable top-composition child signal inventories preserve explicit top-link support IDs and high automation confidence
+  - keep producer-to-consumer and consumer-to-top link direction recovery auditable while `.fsm` emission remains renderable
 - tracker effect:
-  - live-status tracker gains `.fsm child actor-port direction recovery now regression-locks support IDs and automation confidence: Done`
+  - live-status tracker gains `.fsm child link-topology direction recovery now regression-locks support IDs and automation confidence: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_child_directions_from_actor_ports` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_child_directions_from_link_topology` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed before and after the final live-doc refresh
@@ -70,4 +70,4 @@
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- run final docs CI and guards, commit slice 64 without pushing, and continue slice 65
+- run final docs CI and guards, commit slice 65 without pushing, and continue slice 66
