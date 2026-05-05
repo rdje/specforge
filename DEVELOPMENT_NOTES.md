@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan empty replay path rejection
+- New batch slice 34/40 extends `parse_rescan_command_path` so structured replay paths cannot be empty strings.
+- The focused regression covers empty direct ingest, enrich, and validate replay hints.
+- This closes the explicit-empty-token gap left after missing, absolute, and parent-traversal replay paths were already rejected.
+
 ## 2026-05-05 rescan-plan parent traversal replay path rejection
 - New batch slice 33/40 extends `parse_rescan_command_path` so structured replay paths cannot contain `..` parent traversal components.
 - The focused regression covers parent traversal in direct ingest, enrich, and validate replay hints.

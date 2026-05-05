@@ -525,6 +525,12 @@ fn specforge_args_from_cargo_hint(command: &ProjectRescanCommandHint) -> Result<
 }
 
 fn parse_rescan_command_path(value: &str, hint_kind: &str) -> Result<PathBuf> {
+    if value.is_empty() {
+        return Err(AppError::InvalidStageArtifact(format!(
+            "rescan-plan refuses empty {hint_kind} path in command hint"
+        )));
+    }
+
     let path = Path::new(value);
     if path.is_absolute() {
         return Err(AppError::InvalidStageArtifact(format!(
@@ -1316,6 +1322,20 @@ mod tests {
         assert!(parse_command_hint(&parent_ingest).is_err());
         assert!(parse_command_hint(&parent_enrich).is_err());
         assert!(parse_command_hint(&parent_validate).is_err());
+    }
+
+    #[test]
+    fn rescan_plan_rejects_empty_replay_artifact_paths() {
+        let empty_ingest = command_hint("rebuild_source_ir", vec!["ingest", ""]);
+        let empty_enrich = command_hint(
+            "enrich_source_ir",
+            vec!["enrich", "", "--vlm-provider", "skip"],
+        );
+        let empty_validate = command_hint("validate_current_artifact", vec!["validate", ""]);
+
+        assert!(parse_command_hint(&empty_ingest).is_err());
+        assert!(parse_command_hint(&empty_enrich).is_err());
+        assert!(parse_command_hint(&empty_validate).is_err());
     }
 
     #[test]
