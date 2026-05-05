@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` structured-FSM flat/graph disagreement guard)
+
+### Added: structured-FSM coverage for flat-vs-graph direction disagreement
+- Added a structured-FSM adapter regression where `ACC` carries a single flat `input` declaration while controller actor-port graph evidence says `output`.
+- Locked the shared `.fsm` renderability rule on FSM-state action lowering, ensuring graph-backed recovery cannot render through contradictory local FSM signal shape.
+- This is coverage-only over the existing production guard; no additional production behavior changed.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge structured_fsm_blocks_flat_graph_direction_disagreement` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`79` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`596` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+
 ## 2026-05-05 (`.fsm` explicit-module flat/graph disagreement guard)
 
 ### Added: explicit-module coverage for flat-vs-graph direction disagreement

@@ -8598,6 +8598,64 @@ mod tests {
     }
 
     #[test]
+    fn structured_fsm_blocks_flat_graph_direction_disagreement() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_explicit_fsm_intent_ir(tempdir.path())?;
+        let interface = intent_ir
+            .interfaces
+            .iter_mut()
+            .find(|interface| {
+                interface
+                    .signal_records
+                    .iter()
+                    .any(|signal| signal.signal_name == "ACC")
+            })
+            .expect("FSM interface should contain ACC");
+        let acc = interface
+            .signal_records
+            .iter_mut()
+            .find(|signal| signal.signal_name == "ACC")
+            .expect("ACC declaration should exist");
+        acc.direction_hint = Some(InterfaceSignalDirection::Input);
+        acc.supporting_statement_ids = vec!["flat_ACC_input_contradicts_actor_graph".to_string()];
+        intent_ir.actor_ports = vec![
+            actor_port("controller", "clk", ActorRelativeDirection::Input),
+            actor_port("controller", "rst_n", ActorRelativeDirection::Input),
+            actor_port("controller", "ACC", ActorRelativeDirection::Output),
+            actor_port("controller", "TRACE", ActorRelativeDirection::Output),
+        ];
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let acc = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "ACC")
+            .expect("ACC should stay in the FSM signal inventory");
+
+        assert_eq!(acc.direction_hint, Some(InterfaceSignalDirection::Input));
+        assert_eq!(
+            acc.graph_direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert!(!fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.iter().any(|reason| {
+            reason.contains("conflicting canonical and graph-backed direction evidence")
+        }));
+
+        Ok(())
+    }
+
+    #[test]
     fn standalone_explicit_module_recovers_inputs_from_module_control_reads() -> Result<()> {
         let tempdir = tempdir()?;
         let mut intent_ir = build_standalone_explicit_module_fsm_intent_ir(tempdir.path())?;

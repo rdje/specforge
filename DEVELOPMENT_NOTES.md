@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 `.fsm` structured-FSM flat/graph disagreement guard fixture
+- New batch slice 20/100 adds `structured_fsm_blocks_flat_graph_direction_disagreement`.
+- This extends the shared flat-vs-graph renderability guard to FSM-state lowering: a single flat `ACC` input declaration plus graph-backed controller output evidence now remains blocked rather than rendering through graph preference.
+- The selected FSM artifact keeps both sides visible (`direction_hint: input`, `graph_direction_hint: output`) and surfaces the flat-vs-graph blocker in renderability.
+- Full adapter coverage now includes `79` adapter tests, and full CI now runs `596` Rust tests.
+
 ## 2026-05-05 `.fsm` explicit-module flat/graph disagreement guard fixture
 - New batch slice 19/100 adds `standalone_explicit_module_blocks_flat_graph_direction_disagreement`.
 - This is focused coverage over the slice-18 shared renderability guard: the explicit-module path now proves a single flat `controller.ACC` input declaration cannot be rendered through graph-backed `controller.ACC` output evidence.

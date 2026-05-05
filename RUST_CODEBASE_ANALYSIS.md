@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` structured-FSM flat/graph disagreement guard)
+- Added structured-FSM coverage for the shared flat-vs-graph direction disagreement rule in `crates/specforge/src/ir/adapters.rs`.
+- `structured_fsm_blocks_flat_graph_direction_disagreement` proves FSM-state action lowering preserves both contradictory direction sources in the adapter artifact and refuses to render until upstream canonical shape is corrected.
+- This completes immediate path coverage for the shared guard across direct DT, explicit-module FSM, and direct structured-FSM roots.
+
 ## Session update (2026-05-05 `.fsm` explicit-module flat/graph disagreement guard)
 - Added explicit-module coverage for the shared flat-vs-graph direction disagreement rule in `crates/specforge/src/ir/adapters.rs`.
 - `standalone_explicit_module_blocks_flat_graph_direction_disagreement` proves module-local canonical shape and actor-relative graph shape are both preserved in the artifact when they disagree, while lowering remains blocked.
