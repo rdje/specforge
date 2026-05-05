@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-05 (KG semantic-prior phrase-match guard fixture)
+
+### Changed: semantic phrase priors require local phrase match
+- Added a negative KG fixture proving an unrelated semantic phrase prior does not resolve a different local prose phrase.
+- Refreshed corpus-KB fixture projections so the semantic/truthfulness pattern page and prior-candidate readiness manifest count the phrase-match guard fixture.
+- This keeps prior memory local-grounded: a stored prior must match current-document wording before it can guide role recovery.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_prior_phrase_mismatch_negative` -> passed (`1` fixture, `0` failures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`137` fixtures, `0` failures)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`593` Rust tests, warnings denied for Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`137` fixtures, `0` failures)
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (KG semantic-prior source-kind guard fixture)
 
 ### Changed: semantic phrase priors stay scoped by source kind

@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 KG semantic-prior phrase-match guard fixture
+- New batch slice 6/100 adds `semantic_prior_phrase_mismatch_negative`.
+- The fixture stages a valid-like prior for `<signal> can publish the beat` while the current document says `XFLOW can sequence the transfer`.
+- Expected behavior is no EvidenceIR hint, no canonical semantic candidate, no semantic consensus, and no resolved semantic role.
+- The corpus-KB prior-candidate projection now counts the fixture as the fifth semantic-phrase guard, preserving the local phrase-match requirement in the review-only readiness surface.
+
 ## 2026-05-05 KG semantic-prior source-kind guard fixture
 - New batch slice 5/100 adds `semantic_prior_source_kind_mismatch_negative`.
 - The fixture stages a `visual_caption` semantic phrase prior for `<signal> can stage the transfer` while the current document contains only a prose statement with that phrase.

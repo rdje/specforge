@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 KG semantic-prior phrase-match guard fixture)
+- Added `semantic_prior_phrase_mismatch_negative` to the KG quality corpus.
+- The fixture proves semantic phrase priors remain local-phrase grounded by staging an unrelated prior and expecting the current prose phrase to stay unresolved.
+- The corpus-KB prior-candidate manifest now surfaces this as another semantic-phrase guard fixture, strengthening the boundary between prior availability and local evidence matching.
+
 ## Session update (2026-05-05 KG semantic-prior source-kind guard fixture)
 - Added `semantic_prior_source_kind_mismatch_negative` to the KG quality corpus.
 - The fixture proves semantic phrase priors remain source-kind scoped by staging a visual-caption prior while presenting the same normalized phrase only as prose.
