@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan fingerprint-delta lock)
+
+### Changed: fingerprint-only validation deltas are regression-locked
+- Added coverage proving artifact fingerprint changes are tracked even when score, grade, and findings stay stable.
+- This keeps rescan arbitration explicit for artifact rewrites that change bytes without changing the validation surface.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_validation_delta_tracks_fingerprint_only_change` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `557` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan missing validation-report lock)
 
 ### Changed: missing validation report sidecars are regression-locked

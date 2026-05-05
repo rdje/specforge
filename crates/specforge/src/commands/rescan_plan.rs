@@ -1758,6 +1758,35 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_validation_delta_tracks_fingerprint_only_change() {
+        let before = ProjectRescanValidationSnapshot {
+            artifact_fingerprint: "aaa".to_string(),
+            overall_score: Some(80),
+            grade: Some("GOOD".to_string()),
+            finding_count: 0,
+            finding_ids: Vec::new(),
+        };
+        let after = ProjectRescanValidationSnapshot {
+            artifact_fingerprint: "bbb".to_string(),
+            ..before.clone()
+        };
+
+        let delta = validation_delta(&before, &after);
+
+        assert!(delta.fingerprint_changed);
+        assert!(!delta.score_changed);
+        assert_eq!(delta.score_delta, Some(0));
+        assert!(!delta.grade_changed);
+        assert_eq!(delta.finding_count_delta, 0);
+        assert!(delta.added_findings.is_empty());
+        assert!(delta.removed_findings.is_empty());
+        assert_eq!(
+            arbitration_verdict(&delta),
+            ARBITRATION_NEUTRAL_CHANGE_REVIEW_REQUIRED
+        );
+    }
+
+    #[test]
     fn rescan_plan_arbitration_verdict_tracks_validation_direction() {
         let before = ProjectRescanValidationSnapshot {
             artifact_fingerprint: "aaa".to_string(),

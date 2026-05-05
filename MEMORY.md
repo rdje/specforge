@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `dfc6b253618de04c46a5a43c0cef2e7e7017bc13`
-- latest_commit_brief_message: `test(rescan): lock validation report sidecar`
+- latest_commit_hash: `7febd89cc10e86cb6aa3d73d1951d8e29a95aa1f`
+- latest_commit_brief_message: `test(rescan): lock missing validation report`
 - note: new local `N=20` batch is active; push remains deferred until all 20 slices complete
 
 ## Recent commit chain (last 6)
+- `7febd89` test(rescan): lock missing validation report
 - `dfc6b25` test(rescan): lock validation report sidecar
 - `16fb481` test(rescan): lock schema version gate
 - `7071da2` test(rescan): lock replay-input rendering
 - `ba29d0a` test(rescan): lock related-id rendering
 - `5e7f3f1` test(rescan): lock dry-run row order
-- `410dab1` test(rescan): lock selected dry-run rows
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 16]`
-- files in flight for new batch slice 17:
+- branch state before the next commit: `main...origin/main [ahead 17]`
+- files in flight for new batch slice 18:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -46,27 +46,27 @@
 
 ## Active N-slice batch
 - requested_count: `20`
-- completed_count: `16`
+- completed_count: `17`
 - push_policy: defer push until all `20` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - lock `rescan-plan` missing validation-report sidecar reporting
-  - prove absent validator output reports the exact expected sidecar path
+  - lock `rescan-plan` fingerprint-only validation delta reporting
+  - prove artifact byte changes remain visible when score, grade, and finding sets are stable
 - tracker effect:
-  - add a `Done` live-status row for missing validation-report sidecar regression coverage
+  - add a `Done` live-status row for fingerprint-only validation delta regression coverage
 - verification status:
-  - focused test passed: `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_missing_validation_report_is_reported` with `1` test
+  - focused test passed: `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_validation_delta_tracks_fingerprint_only_change` with `1` test
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed
-  - `bash scripts/run_ci.sh` passed with `556` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `bash scripts/run_ci.sh` passed with `557` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `130` fixtures and `0` failures
   - `git diff --check` passed
   - checkout-specific absolute path scan across tracked markdown passed
 - current known local CI baseline:
-  - `556` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `557` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `130/130` tracked KG fixtures
 
 ## Next exact steps
-- commit slice 17 without pushing, then continue slice 18
+- commit slice 18 without pushing, then continue slice 19

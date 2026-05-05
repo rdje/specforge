@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan fingerprint-delta lock
+- New batch slice 18/20 adds validation-delta coverage for fingerprint-only changes.
+- No production delta code changed; `validation_delta(...)` already reports `fingerprint_changed` while leaving score, grade, and finding deltas neutral.
+- This keeps artifact-byte changes visible as neutral-review changes rather than collapsing them into unchanged validation state.
+
 ## 2026-05-05 rescan-plan missing validation-report lock
 - New batch slice 17/20 adds failure-mode coverage for absent validation-report sidecars.
 - No production reader code changed; `read_validation_report(...)` already maps a missing sidecar to `AppError::MissingPath`.

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan fingerprint delta)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` delta tests around fingerprint-only changes.
+- No production delta code changed; the new regression proves artifact fingerprint changes remain visible even when validation score, grade, and finding sets are unchanged.
+- This keeps rescan arbitration honest about byte-level artifact changes that still require neutral human review.
+
 ## Session update (2026-05-05 rescan-plan missing validation report)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` reader tests around absent validation-report sidecars.
 - No production reader code changed; the new regression proves the missing `validation_report.json` path is reported directly.
