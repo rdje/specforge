@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` child actor-port direction provenance lock)
+- Tightened `top_composition_recovers_child_directions_from_actor_ports` in `crates/specforge/src/ir/adapters.rs` so child module direction recovery from actor-port graph evidence retains support IDs and automation confidence.
+- The adapter already rendered top compositions when child module directions could be recovered from actor-port graph hints; this regression now proves producer and consumer child inventories keep that evidence inspectable.
+- This starts the renderable child-topology recovery provenance lane after the blocked top-port conflict locks.
+
 ## Session update (2026-05-05 `.fsm` duplicate top-port width provenance lock)
 - Tightened `top_composition_keeps_duplicate_top_port_width_conflict_unresolved` in `crates/specforge/src/ir/adapters.rs` so duplicate top-port width declarations retain both support-ID sets, width-conflict inventory state, and automation confidence.
 - The adapter already blocked top lowering when duplicate public top-port declarations disagreed on width; this regression now proves both duplicate declaration records remain inspectable on recovered top ports and selected signal inventory entries.

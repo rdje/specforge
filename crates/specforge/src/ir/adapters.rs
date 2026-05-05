@@ -11931,6 +11931,24 @@ mod tests {
                 ActorRelativeDirection::Output,
             ),
         ];
+        let producer_output_support_ids = intent_ir
+            .actor_ports
+            .iter()
+            .find(|port| port.actor_name == "producer_core" && port.signal_name == "output_data")
+            .map(super::actor_port_supporting_ids)
+            .expect("producer output actor-port support should be present");
+        let consumer_input_support_ids = intent_ir
+            .actor_ports
+            .iter()
+            .find(|port| port.actor_name == "consumer_core" && port.signal_name == "input_data")
+            .map(super::actor_port_supporting_ids)
+            .expect("consumer input actor-port support should be present");
+        let consumer_result_support_ids = intent_ir
+            .actor_ports
+            .iter()
+            .find(|port| port.actor_name == "consumer_core" && port.signal_name == "result_data")
+            .map(super::actor_port_supporting_ids)
+            .expect("consumer result actor-port support should be present");
         intent_ir.write_to_disk()?;
 
         let artifact_base = tempdir.path().join("generated").join("adapters");
@@ -11954,11 +11972,26 @@ mod tests {
             .iter()
             .find(|candidate| candidate.module_name == "producer_core")
             .expect("producer module candidate should exist");
+        let consumer = fsm
+            .module_candidates
+            .iter()
+            .find(|candidate| candidate.module_name == "consumer_core")
+            .expect("consumer module candidate should exist");
         let output_data = producer
             .signal_inventory
             .iter()
             .find(|signal| signal.signal_name == "output_data")
             .expect("producer output_data should stay in the module inventory");
+        let input_data = consumer
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "input_data")
+            .expect("consumer input_data should stay in the module inventory");
+        let result_data = consumer
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "result_data")
+            .expect("consumer result_data should stay in the module inventory");
 
         assert_eq!(output_data.direction_hint, None);
         assert_eq!(
@@ -11971,6 +12004,34 @@ mod tests {
                 .iter()
                 .any(|category| category == "actor_port")
         );
+        assert_eq!(input_data.direction_hint, None);
+        assert_eq!(
+            input_data.graph_direction_hint,
+            Some(InterfaceSignalDirection::Input)
+        );
+        assert_eq!(result_data.direction_hint, None);
+        assert_eq!(
+            result_data.graph_direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        for (signal, support_ids) in [
+            (output_data, &producer_output_support_ids),
+            (input_data, &consumer_input_support_ids),
+            (result_data, &consumer_result_support_ids),
+        ] {
+            assert!(
+                signal
+                    .mention_categories
+                    .iter()
+                    .any(|category| category == "actor_port")
+            );
+            assert!(
+                support_ids
+                    .iter()
+                    .any(|id| signal.supporting_canonical_ids.contains(id))
+            );
+            assert_eq!(signal.automation_confidence, AutomationConfidence::High);
+        }
         assert!(fsm.renderability.is_renderable);
         assert!(emitted_text.contains("/producer.output_data/consumer.input_data/"));
         assert!(emitted_text.contains("/consumer.result_data/result_data/"));

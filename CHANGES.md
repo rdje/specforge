@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` child actor-port direction provenance lock)
+
+### Added: child actor-port direction recovery provenance coverage
+- Tightened `top_composition_recovers_child_directions_from_actor_ports` so renderable top-composition `.fsm` lowering now proves child module signal inventories preserve actor-port support IDs and high automation confidence for producer and consumer directions.
+- This is coverage-only over the existing adapter behavior: child directions recovered from actor-port graph evidence still allow `.fsm` emission when the rest of the top composition is renderable.
+- The slice keeps child-module graph direction recovery auditable across both producer and consumer child modules.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_child_directions_from_actor_ports` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-05 (`.fsm` duplicate top-port width provenance lock)
 
 ### Added: duplicate top-port width conflict provenance coverage
