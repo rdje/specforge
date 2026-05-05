@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan display-string trust lock)
+
+### Changed: replay parsing ignores display strings
+- Added positive coverage proving a whitelisted structured command still parses from `executable`, `working_directory`, `intent`, and `args` even when `display` is misleading.
+- This keeps human-readable command text non-authoritative for execution.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_ignores_display_string_for_execution_parsing` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `545` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan cargo-prefix token lock)
 
 ### Changed: replay command hints reject malformed cargo prefix tokens

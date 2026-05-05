@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan display-string trust)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` parser tests around the display-string trust boundary.
+- No production parser code changed; execution parsing is now directly covered as structured-field driven even when `display` is misleading.
+- This keeps review-facing shell text separate from executable replay input.
+
 ## Session update (2026-05-05 rescan-plan cargo prefix tokens)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` parser tests around the exact cargo command prefix.
 - No production parser code changed; wrong cargo subcommands and missing `--` separators are now directly covered.

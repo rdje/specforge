@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan display-string trust lock
+- New batch slice 6/20 adds coverage that replay execution parsing ignores `ProjectRescanCommandHint.display`.
+- `parse_command_hint(...)` already uses the structured fields rather than shell/display text.
+- Added `rescan_plan_ignores_display_string_for_execution_parsing` so a misleading display string cannot become authoritative execution input.
+
 ## 2026-05-05 rescan-plan cargo-prefix token lock
 - New batch slice 5/20 tightens coverage for the repository-local cargo prefix parser.
 - `specforge_args_from_cargo_hint(...)` already requires the exact `cargo run --manifest-path Cargo.toml --` prefix before accepting SpecForge args.

@@ -929,6 +929,22 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_ignores_display_string_for_execution_parsing() -> Result<()> {
+        let mut command = command_hint(
+            "rebuild_intent_ir",
+            vec!["intent", "generated/semantic_ir/doc/semantic_ir.json"],
+        );
+        command.display = "rm -rf .".to_string();
+
+        assert_eq!(
+            parse_command_hint(&command)?,
+            RescanInvocation::Intent(PathBuf::from("generated/semantic_ir/doc/semantic_ir.json"))
+        );
+
+        Ok(())
+    }
+
+    #[test]
     fn rescan_plan_parses_whitelisted_stage_command_hints() -> Result<()> {
         let ingest = command_hint("rebuild_source_ir", vec!["ingest", "specs/doc.md"]);
         assert_eq!(

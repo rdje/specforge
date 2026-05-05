@@ -211,6 +211,7 @@
   - non-enrichment replay commands now have regression coverage proving extra ad hoc args are rejected before execution
   - non-enrichment replay commands now have regression coverage proving required source/artifact paths cannot be omitted
   - repository-local cargo prefix parsing now has regression coverage for wrong cargo subcommands and missing `--` separators
+  - replay command display strings now have regression coverage proving execution parsing uses structured fields, not human-readable shell text
   - validation-delta execution summaries now have regression coverage for sorted and deduplicated added/removed finding-id lists
   - score/grade presence-only validation changes now have regression coverage that keeps them neutral review-required signals rather than improvement/regression claims
   - mixed validation deltas that add and remove findings now have regression coverage proving added findings take regression-review precedence over removed-finding improvement hints
