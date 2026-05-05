@@ -100,6 +100,8 @@ cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/<document_key>
 
 Right now the active downstream target is `.fsm`, and the project still treats adapters as downstream consumers rather than the core product boundary.
 When `.fsm` lowering is blocked, the adapter artifact can still preserve recovered context, such as top-link-derived boundary port directions, so users can inspect what was learned separately from why target text was not emitted.
+For standalone DT/FSM roots, renderability also checks graph-backed output roles across the full signal inventory: an output recovered from actor-relative graph evidence still needs a typed driving action before target text is emitted.
+Top-linked child endpoints remain composition diagnostics, so a child port referenced by a top link must resolve to an emitted child module port before a `?top:name` document is renderable.
 
 ## `converge`
 

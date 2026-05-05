@@ -202,6 +202,7 @@
 - `.fsm` actor-port graph width overlays now preserve parametric width provenance without overriding explicit numeric width evidence: Done
 - `.fsm` explicit top-root lowering now blocks missing or parametric public IO widths instead of rendering implicit 1-bit top ports: Done
 - `.fsm` explicit top-link lowering now requires child endpoints to resolve to emitted child module ports: Done
+- `.fsm` standalone DT/FSM renderability now blocks graph-backed output inventory entries that have no typed driving action instead of silently omitting them: Done
 - Initial typed `temporal_rules` surface in `SemanticIR` / `IntentIR` implemented: Done
 - Cycle-window recovery for typed temporal rules, including idiomatic one-cycle phrases like `next cycle` / `next tick`, implemented: Done
 - Built-in temporal parser now recognizes explicit later and ordinal edge phrases: Done

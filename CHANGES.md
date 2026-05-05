@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` graph-backed undriven outputs block)
+
+### Changed: graph-backed output inventory must be driven before DT/FSM emission
+- `analyze_dt_root_renderability(...)` and `analyze_fsm_root_renderability(...)` now validate the full graph-first `FsmSignalCandidate` inventory for output roles, rather than only checking outputs that were already pulled into renderable `+size` entries.
+- Added `standalone_dt_blocks_graph_backed_undriven_output_inventory`, proving a width-only `UNUSED_OUT` whose output role comes from `IntentIR.actor_ports` blocks lowering when no typed control action drives it.
+- Kept top-linked child module endpoints scoped to composition validation, so `module_topology_link` outputs still produce the precise "unemitted child port" diagnostic when top links reference a child port that no child module emitted.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests::standalone_dt_blocks_graph_backed_undriven_output_inventory -- --exact --nocapture` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests -- --nocapture` -> passed with `75` adapter tests
+- `cargo fmt --manifest-path Cargo.toml` -> passed
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `519` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `127` fixtures and `0` failures
+- `git diff --check` -> passed
+
 ## 2026-05-05 (README/COMMIT bootstrap refresh)
 
 ### Changed: live bootstrap and continuity docs re-executed

@@ -4,6 +4,13 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` graph-backed undriven output inventory)
+- Continued from commit `706118e` by moving another `.fsm` renderability consumer onto the graph-first inventory surface.
+- Root cause: DT/FSM renderability checked undriven outputs only by walking `FsmRenderableSizeEntry` values that had already been registered through control expressions/actions, so an explicit-but-unreferenced output whose direction came from `IntentIR.actor_ports` could stay out of emitted `+size` entries without producing the intended "not driven" blocker.
+- `validate_output_inventory_is_driven(...)` now validates every `FsmSignalCandidate` whose `preferred_signal_direction_hint(...)` resolves to `Output`, covering both flat compatibility directions and actor-relative graph recovery.
+- Top-composition child endpoints marked by `module_topology_link` stay composition-scoped: if a top link references a child port that the child module did not emit, the top renderability diagnostic remains the precise "unemitted child port" blocker rather than falsely making the child module non-renderable.
+- The new regression `standalone_dt_blocks_graph_backed_undriven_output_inventory` locks the graph-backed standalone case; adapter coverage is now `75` tests, and full local CI passed with `519` Rust tests plus the `127/127` tracked KG fixture suite.
+
 ## Session update (2026-05-05 README/COMMIT bootstrap refresh)
 - Re-executed `README.md` and `SESSION_BOOTSTRAP.md` for the current session, including the referenced root markdown docs, mdBook chapters, corpus-KB pages, FSMGEN feedback, `COMMIT.md`, and a direct Rust module survey.
 - The codebase still matches the documented architecture: one Rust workspace member, `specforge` CLI, Rust `1.95` MSRV, staged `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR`, and downstream adapters with `.fsm` as the only active lowering implementation.

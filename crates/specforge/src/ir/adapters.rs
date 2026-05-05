@@ -3451,6 +3451,39 @@ fn analyze_renderability(
     }
 }
 
+fn validate_output_inventory_is_driven(
+    signal_inventory: &[FsmSignalCandidate],
+    driven_outputs: &BTreeSet<String>,
+    blocking_reasons: &mut Vec<String>,
+    required_canonical_enrichments: &mut BTreeSet<String>,
+    action_context: &str,
+    enrichment_context: &str,
+) {
+    for signal in signal_inventory {
+        // Top-linked child endpoints are diagnosed by composition validation if they are not
+        // emitted; they do not make the child module's local control body non-renderable.
+        let top_linked_child_endpoint = signal
+            .mention_categories
+            .iter()
+            .any(|category| category == "module_topology_link");
+        if matches!(
+            preferred_signal_direction_hint(signal),
+            Some(InterfaceSignalDirection::Output)
+        ) && !driven_outputs.contains(&signal.signal_name)
+            && !top_linked_child_endpoint
+        {
+            push_unique_message(
+                blocking_reasons,
+                &format!(
+                    "Declared output signal `{}` is not driven by any {action_context}.",
+                    signal.signal_name
+                ),
+            );
+            required_canonical_enrichments.insert(enrichment_context.to_string());
+        }
+    }
+}
+
 fn analyze_dt_root_renderability(
     signal_inventory: &[FsmSignalCandidate],
     system_contract: Option<&SystemContractRecord>,
@@ -3566,22 +3599,14 @@ fn analyze_dt_root_renderability(
         }
     }
 
-    for size_entry in size_entries.values() {
-        if matches!(size_entry.direction_hint, InterfaceSignalDirection::Output)
-            && !driven_outputs.contains(&size_entry.signal_name)
-        {
-            push_unique_message(
-                &mut blocking_reasons,
-                &format!(
-                    "Declared output signal `{}` is not driven by any typed control action.",
-                    size_entry.signal_name
-                ),
-            );
-            required_canonical_enrichments.insert(
-                "keep canonical output roles aligned with explicit driving actions".to_string(),
-            );
-        }
-    }
+    validate_output_inventory_is_driven(
+        signal_inventory,
+        &driven_outputs,
+        &mut blocking_reasons,
+        &mut required_canonical_enrichments,
+        "typed control action",
+        "keep canonical output roles aligned with explicit driving actions",
+    );
 
     let renderability = FsmRenderability {
         is_renderable: blocking_reasons.is_empty(),
@@ -3775,22 +3800,14 @@ fn analyze_fsm_root_renderability(
         }
     }
 
-    for size_entry in size_entries.values() {
-        if matches!(size_entry.direction_hint, InterfaceSignalDirection::Output)
-            && !driven_outputs.contains(&size_entry.signal_name)
-        {
-            push_unique_message(
-                &mut blocking_reasons,
-                &format!(
-                    "Declared output signal `{}` is not driven by any typed FSM-state action.",
-                    size_entry.signal_name
-                ),
-            );
-            required_canonical_enrichments.insert(
-                "keep canonical output roles aligned with explicit FSM-state actions".to_string(),
-            );
-        }
-    }
+    validate_output_inventory_is_driven(
+        signal_inventory,
+        &driven_outputs,
+        &mut blocking_reasons,
+        &mut required_canonical_enrichments,
+        "typed FSM-state action",
+        "keep canonical output roles aligned with explicit FSM-state actions",
+    );
 
     let mut ordered_states = state_candidates.iter().collect::<Vec<_>>();
     ordered_states.sort_by_key(|state| (!state.is_initial, state.declaration_order));
@@ -6875,6 +6892,88 @@ mod tests {
         assert!(fsm.renderability.is_renderable);
         assert!(emitted_text.contains("(DATA_OUT = DATA_IN)"));
         assert!(emitted_text.contains("(ZERO_FLAG = 1)"));
+
+        Ok(())
+    }
+
+    #[test]
+    fn standalone_dt_blocks_graph_backed_undriven_output_inventory() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_explicit_control_intent_ir(tempdir.path())?;
+        clear_direct_interface_direction_hints(&mut intent_ir);
+        let interface = intent_ir
+            .interfaces
+            .iter_mut()
+            .find(|interface| {
+                interface
+                    .signal_records
+                    .iter()
+                    .any(|signal| signal.signal_name == "DATA_OUT")
+            })
+            .expect("control interface should contain DATA_OUT");
+        let mut unused_output = interface
+            .signal_records
+            .iter()
+            .find(|signal| signal.signal_name == "DATA_OUT")
+            .expect("DATA_OUT declaration should exist")
+            .clone();
+        unused_output.signal_name = "UNUSED_OUT".to_string();
+        unused_output.direction_hint = None;
+        unused_output.width_hint = Some(WidthHint::Numeric(1));
+        unused_output.resolved_polarity = None;
+        unused_output.semantic_tags.clear();
+        unused_output.semantic_candidates.clear();
+        unused_output.semantic_arbitration = None;
+        unused_output.resolved_semantic_role = None;
+        unused_output.semantic_grounding_strength = None;
+        unused_output.semantic_consensus = None;
+        unused_output.semantic_observations.clear();
+        unused_output.supporting_statement_ids = vec!["decl_unused_out_width".to_string()];
+        unused_output.supporting_table_ids.clear();
+        interface.signals.push("UNUSED_OUT".to_string());
+        interface.signal_records.push(unused_output);
+        intent_ir.actor_ports = vec![
+            actor_port("controller", "DATA_IN", ActorRelativeDirection::Input),
+            actor_port("controller", "DATA_OUT", ActorRelativeDirection::Output),
+            actor_port("controller", "ZERO_FLAG", ActorRelativeDirection::Output),
+            actor_port("controller", "UNUSED_OUT", ActorRelativeDirection::Output),
+        ];
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let unused_output = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "UNUSED_OUT")
+            .expect("UNUSED_OUT should stay in the direct signal inventory");
+
+        assert_eq!(unused_output.direction_hint, None);
+        assert_eq!(
+            unused_output.graph_direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert!(
+            unused_output
+                .mention_categories
+                .iter()
+                .any(|category| category == "actor_port")
+        );
+        assert!(
+            fsm.renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason
+                    == "Declared output signal `UNUSED_OUT` is not driven by any typed control action.")
+        );
 
         Ok(())
     }

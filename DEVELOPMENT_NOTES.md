@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 `.fsm` graph-backed undriven outputs block
+- Continued from commit `706118e` by taking the next R15 adapter slice instead of broadening backend scope.
+- The root cause was that DT/FSM renderability checked undriven outputs by iterating already-renderable `+size` entries; a graph-backed output inventory entry that was never referenced by an action could therefore avoid both emission and the honest undriven-output diagnostic.
+- Added `validate_output_inventory_is_driven(...)`, which uses `preferred_signal_direction_hint(...)` over the full `FsmSignalCandidate` inventory so flat and graph-backed outputs share the same drive requirement.
+- Preserved the composition boundary: child endpoints introduced by `module_topology_link` remain validated by top-link endpoint resolution, keeping the existing precise "unemitted child port" diagnostic for top composition.
+- Adapter coverage increases to `75` tests after `standalone_dt_blocks_graph_backed_undriven_output_inventory`; full local CI with `519` Rust tests and the full `127/127` tracked KG fixture suite passed after the slice landed.
+
 ## 2026-05-05 README/COMMIT bootstrap refresh
 - Re-executed the README handoff path from `README.md` through `SESSION_BOOTSTRAP.md`, the root continuity docs, canonical mdBook chapters, corpus-KB pages, FSMGEN feedback, `COMMIT.md`, and direct Rust source/module seams.
 - The Rust survey still matches the documented architecture: single `specforge` workspace member, Rust `1.95` MSRV, staged `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR`, and downstream `.fsm` adapter recovery guarded by graph, shape, provenance, and conflict surfaces.
