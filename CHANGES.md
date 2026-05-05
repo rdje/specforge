@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` parametric top-port provenance lock)
+
+### Added: parametric top-port blocker provenance coverage
+- Tightened `top_composition_blocks_parametric_top_port_width_for_fsm_public_io` so blocked top-composition `.fsm` lowering now proves explicit top-port support IDs and high automation confidence survive in both the top candidate and selected signal inventory.
+- This is coverage-only over the existing adapter behavior: a public top port with symbolic width still blocks `.fsm` emission until numeric width evidence exists.
+- The slice keeps explicit top-boundary evidence auditable while the renderability blocker explains the unresolved parametric width.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_parametric_top_port_width_for_fsm_public_io` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-05 (`.fsm` widthless top-port provenance lock)
 
 ### Added: widthless top-port blocker provenance coverage

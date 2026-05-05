@@ -11065,20 +11065,27 @@ mod tests {
             "parametric_top_port_width.md",
             "# Parametric Top Port Width\nTop wrapper.\n\nTop wrapper port ext_data is output width DATA_WIDTH.\n\nTop wrapper child producer uses module producer_core.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n",
         )?;
-        let raw_top = intent_ir
-            .explicit_tops
-            .iter()
-            .find(|top| top.top_name == "wrapper")
-            .expect("explicit top should be present");
-        let raw_port = raw_top
-            .ports
-            .iter()
-            .find(|port| port.port_name == "ext_data")
-            .expect("parametric top port should be preserved");
-        assert_eq!(
-            raw_port.width_hint,
-            Some(WidthHint::Parametric("DATA_WIDTH".to_string()))
-        );
+        let top_port_support_ids = {
+            let raw_top = intent_ir
+                .explicit_tops
+                .iter()
+                .find(|top| top.top_name == "wrapper")
+                .expect("explicit top should be present");
+            let raw_port = raw_top
+                .ports
+                .iter()
+                .find(|port| port.port_name == "ext_data")
+                .expect("parametric top port should be preserved");
+            assert_eq!(
+                raw_port.width_hint,
+                Some(WidthHint::Parametric("DATA_WIDTH".to_string()))
+            );
+            assert!(
+                !raw_port.supporting_statement_ids.is_empty(),
+                "raw top-port provenance should be present"
+            );
+            raw_port.supporting_statement_ids.clone()
+        };
 
         let artifact_base = tempdir.path().join("generated").join("adapters");
         let adapter = AdapterArtifact::build(
@@ -11110,12 +11117,30 @@ mod tests {
             recovered_port.width_hint,
             Some(WidthHint::Parametric("DATA_WIDTH".to_string()))
         );
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| recovered_port.supporting_statement_ids.contains(id))
+        );
+        assert_eq!(
+            recovered_port.automation_confidence,
+            AutomationConfidence::High
+        );
         assert_eq!(signal_inventory_port.width_hint, None);
         assert_eq!(
             signal_inventory_port.parametric_width_hint.as_deref(),
             Some("DATA_WIDTH")
         );
         assert!(!signal_inventory_port.width_hint_conflicted);
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| signal_inventory_port.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            signal_inventory_port.automation_confidence,
+            AutomationConfidence::High
+        );
         assert!(
             top_candidate
                 .renderability

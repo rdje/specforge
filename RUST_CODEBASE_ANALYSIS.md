@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` parametric top-port provenance lock)
+- Tightened `top_composition_blocks_parametric_top_port_width_for_fsm_public_io` in `crates/specforge/src/ir/adapters.rs` so blocked symbolic-width top-composition public IO retains explicit top-port support IDs and automation confidence.
+- The adapter already blocked top roots when a public port had parametric width evidence but no numeric width evidence; this regression now proves that symbolic-width evidence remains inspectable in the top candidate and signal inventory.
+- This complements the widthless top-port provenance lock by covering the unresolved-parametric public IO blocker.
+
 ## Session update (2026-05-05 `.fsm` widthless top-port provenance lock)
 - Tightened `top_composition_blocks_widthless_top_port_without_width_recovery` in `crates/specforge/src/ir/adapters.rs` so blocked top-composition public IO retains explicit top-port support IDs and automation confidence.
 - The adapter already blocked top roots when a public port had direction evidence but no numeric width evidence; this regression now proves that blocked top-boundary evidence remains inspectable in the top candidate and signal inventory.
