@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan finding-count improvement lock)
+
+### Changed: finding-count decreases stay possible-improvement review
+- Added arbitration coverage proving a lower validation finding count triggers `possible_improvement_review_required` even when score, grade, and finding identities stay unchanged.
+- This keeps aggregate validation improvements review-required rather than treating them as automatic canonical promotion.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_arbitration_treats_finding_count_decrease_as_possible_improvement` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `567` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan finding-count regression lock)
 
 ### Changed: finding-count increases stay regression review

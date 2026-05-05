@@ -37,6 +37,7 @@
 - `specforge rescan-plan` score decreases force regression review: Done
 - `specforge rescan-plan` score increases stay possible-improvement review: Done
 - `specforge rescan-plan` finding-count increases force regression review: Done
+- `specforge rescan-plan` finding-count decreases stay possible-improvement review: Done
 - `specforge rescan-plan` mixed finding arbitration prefers regression review: Done
 - `specforge rescan-plan` added findings force regression review: Done
 - `specforge rescan-plan` removed findings stay possible-improvement review: Done

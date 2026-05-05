@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `c0dfed56cf4e650963f8ce70936afbb35ed83b76`
-- latest_commit_brief_message: `test(rescan): lock score-rise arbitration`
+- latest_commit_hash: `0e65f9a0ac005a9235357ec3dca573e476f25c68`
+- latest_commit_brief_message: `test(rescan): lock finding-count regression`
 - note: new local `N=40` batch is active; push remains deferred until all 40 slices complete
 
 ## Recent commit chain (last 6)
+- `0e65f9a` test(rescan): lock finding-count regression
 - `c0dfed5` test(rescan): lock score-rise arbitration
 - `ddb5a97` test(rescan): lock score-drop arbitration
 - `45371f1` test(rescan): lock added-finding arbitration
 - `baf51da` test(rescan): lock removed-finding arbitration
 - `fb8d416` test(rescan): lock command hint render order
-- `08a81d7` test(rescan): lock unscoped pending limits
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 7]`
-- files in flight for new batch slice 8:
+- branch state before the next commit: `main...origin/main [ahead 8]`
+- files in flight for new batch slice 9:
   - `crates/specforge/src/commands/rescan_plan.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -46,27 +46,27 @@
 
 ## Active N-slice batch
 - requested_count: `40`
-- completed_count: `7`
+- completed_count: `8`
 - push_policy: defer push until all `40` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - add rescan-plan arbitration coverage proving finding-count increases alone produce regression review
-  - refresh live docs for the isolated finding-count regression behavior
+  - add rescan-plan arbitration coverage proving finding-count decreases alone produce possible-improvement review
+  - refresh live docs for the isolated finding-count improvement behavior
 - tracker effect:
-  - planned live-status row addition: `specforge rescan-plan` finding-count increases force regression review: `Done`
+  - planned live-status row addition: `specforge rescan-plan` finding-count decreases stay possible-improvement review: `Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_arbitration_treats_finding_count_increase_as_regression` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_arbitration_treats_finding_count_decrease_as_possible_improvement` passed with `1` test
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed
-  - `bash scripts/run_ci.sh` passed with `566` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `bash scripts/run_ci.sh` passed with `567` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `130` fixtures and `0` failures
   - `git diff --check` passed
   - checkout-specific absolute path scan across tracked markdown passed
 - current known local CI baseline:
-  - `566` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `567` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `130/130` tracked KG fixtures
 
 ## Next exact steps
-- commit slice 8 without pushing, then continue slice 9
+- commit slice 9 without pushing, then continue slice 10
