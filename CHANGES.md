@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-05 (N=20 batch continuity activation)
+
+### Changed: active batch continuity now reflects the new run
+- Started a new automatic batch with `N=20`.
+- Updated live continuity state to the pushed `a15d861` baseline from the prior batch.
+- Recorded the new batch size, completed count `0`, and deferred-push policy so crash recovery resumes the correct batch instead of the completed `N=10` run.
+
+### Validation
+- `git status --short --branch` -> clean at `main...origin/main`
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `523` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+
 ## 2026-05-05 (project-validation command lanes for graph replay split)
 
 ### Changed: combined graph replay tests now lock command lanes

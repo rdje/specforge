@@ -7,6 +7,16 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 N=20 batch continuity activation
+- Started a second automatic batch run with `requested_count = 20`.
+- The previous `N=10` batch is complete and pushed through `a15d861`.
+- This slice updates continuity state before functional work resumes:
+  - latest committed baseline is `a15d861`
+  - active batch size is `20`
+  - completed count is `0`
+  - push remains deferred until all `20` slices are committed unless the user redirects or a blocker requires stopping
+- No production behavior changes in this slice.
+
 ## 2026-05-05 project-validation command lanes for graph replay split
 - Batch slice 10/10 tightens the final replay-planning layer around concurrent graph-direction coverage and graph-conflict recommendations.
 - The combined SemanticIR and IntentIR tests already proved that both recommendations survive in one report with distinct related ids.
