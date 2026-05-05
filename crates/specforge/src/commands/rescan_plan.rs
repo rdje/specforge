@@ -1445,6 +1445,15 @@ mod tests {
         let semantic_missing_artifact = command_hint("rebuild_semantic_ir", vec!["semantic"]);
         assert!(parse_command_hint(&semantic_missing_artifact).is_err());
 
+        let intent_missing_artifact = command_hint("rebuild_intent_ir", vec!["intent"]);
+        assert!(parse_command_hint(&intent_missing_artifact).is_err());
+
+        let nlp_missing_artifact = command_hint(
+            "nlp_enrich_evidence_ir",
+            vec!["nlp-enrich", "--vlm-provider", "skip"],
+        );
+        assert!(parse_command_hint(&nlp_missing_artifact).is_err());
+
         let validate_missing_artifact = command_hint("validate_current_artifact", vec!["validate"]);
         assert!(parse_command_hint(&validate_missing_artifact).is_err());
     }

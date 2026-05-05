@@ -31,6 +31,7 @@
 - `specforge rescan-plan` document-key pending selection is regression-locked: Done
 - `specforge rescan-plan` command-hint locality is regression-locked: Done
 - `specforge rescan-plan` command hints stay cargo and repo-local: Done
+- `specforge rescan-plan` missing intent and NLP replay paths are regression-locked: Done
 - `specforge rescan-plan` absolute replay artifact paths are rejected: Done
 - `specforge rescan-plan` parent-traversal replay artifact paths are rejected: Done
 - `specforge rescan-plan` empty replay artifact paths are rejected: Done

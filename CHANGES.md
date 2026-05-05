@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan missing path coverage)
+
+### Changed: missing replay path coverage includes intent and NLP
+- Extended the malformed command-hint regression so missing intent and NLP enrichment replay paths are rejected.
+- This completes the direct missing-path coverage across ingest, evidence, semantic, intent, validate, and NLP enrichment replay lanes.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_missing_stage_command_paths` -> passed (`1` test, `592` filtered out)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`593` Rust tests, warnings denied for Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`130` fixtures, `0` failures)
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan current-directory replay path rejection)
 
 ### Changed: replay command artifact paths cannot be `.`

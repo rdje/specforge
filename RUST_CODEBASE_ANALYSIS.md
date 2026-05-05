@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan missing path coverage)
+- Extended the malformed command-hint tests in `crates/specforge/src/commands/rescan_plan.rs` to cover missing intent and NLP enrichment replay paths.
+- The parser behavior was already fail-closed through exact argument-shape matching and provider parsing.
+- The coverage now spans all replay command families that accept source or artifact path arguments.
+
 ## Session update (2026-05-05 rescan-plan current-directory replay path rejection)
 - Hardened `crates/specforge/src/commands/rescan_plan.rs` command-hint path parsing against the current-directory token `.`.
 - `parse_rescan_command_path` now rejects placeholders that name the execution root itself before accepting a replay path.

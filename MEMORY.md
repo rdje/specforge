@@ -20,25 +20,24 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `11aa0d434cd36c5b5f108ced5b24a70c1b5fc578`
-- latest_commit_brief_message: `fix(rescan): reject empty replay paths`
+- latest_commit_hash: `88751c6775ccd8453991b3940cada43b033fdb1c`
+- latest_commit_brief_message: `fix(rescan): reject current-directory replay paths`
 - note: new local `N=40` batch is active; push remains deferred until all 40 slices complete
 
 ## Recent commit chain (last 6)
+- `88751c6` fix(rescan): reject current-directory replay paths
 - `11aa0d4` fix(rescan): reject empty replay paths
 - `dbb209e` fix(rescan): reject traversing replay paths
 - `c3124f7` fix(rescan): reject absolute replay paths
 - `9e04bb9` test(rescan): lock skip classify-only replay
 - `e22ee13` test(rescan): lock source enrich skip provider
-- `251d098` test(rescan): lock open-ai provider rejection
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 34]`
-- files in flight for new batch slice 35:
+- branch state before the next commit: `main...origin/main [ahead 35]`
+- files in flight for new batch slice 36:
   - `crates/specforge/src/commands/rescan_plan.rs`
-  - `docs/book/src/commands/quality-and-learning.md`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -47,18 +46,18 @@
 
 ## Active N-slice batch
 - requested_count: `40`
-- completed_count: `34`
+- completed_count: `35`
 - push_policy: defer push until all `40` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - harden rescan-plan command-hint parsing so replay source/artifact paths cannot be the current-directory token `.`
-  - refresh live docs and mdBook reference for current-directory replay path restrictions
+  - extend malformed command-hint regression coverage so missing replay paths are locked for intent rebuild and NLP enrichment lanes
+  - refresh live docs for the completed missing-path coverage matrix
 - tracker effect:
-  - planned live-status row addition: `specforge rescan-plan` current-directory replay artifact paths are rejected: `Done`
+  - planned live-status row addition: `specforge rescan-plan` missing intent and NLP replay paths are regression-locked: `Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_current_directory_replay_artifact_paths` passed with `1` test and `592` filtered out
+  - `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_missing_stage_command_paths` passed with `1` test and `592` filtered out
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed
   - `bash scripts/run_ci.sh` passed with `593` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
@@ -70,4 +69,4 @@
   - `130/130` tracked KG fixtures
 
 ## Next exact steps
-- commit slice 35 without pushing, then continue slice 36
+- commit slice 36 without pushing, then continue slice 37

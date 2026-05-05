@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan missing path coverage
+- New batch slice 36/40 extends the missing replay-path regression to the intent rebuild and NLP enrichment lanes.
+- The parser already rejected these malformed hints; the new assertions lock that behavior across the remaining replay command families.
+- This keeps malformed command-hint coverage aligned with the full replay lane set.
+
 ## 2026-05-05 rescan-plan current-directory replay path rejection
 - New batch slice 35/40 extends `parse_rescan_command_path` so structured replay paths cannot be the current-directory token `.`.
 - The focused regression covers current-directory direct ingest, enrich, and validate replay hints.
