@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-05-05 (negative-knowledge prior protocol-family guard)
+
+### Changed: negative-knowledge priors no longer fall through to unrelated protocol families
+- Added a KG negative fixture proving an APB-only negative-knowledge prior cannot match an AXI-local semantic conflict with the same normalized conflict pattern.
+- Reused the exact-family plus AMBA-generic prior lookup policy for negative-knowledge pattern matching, matching the other strict prior consumers.
+- Kept representative existing negative-knowledge semantic, polarity, and temporal caution fixtures passing under the narrower lookup.
+- Refreshed corpus-KB fixture, prior-memory, and prior-candidate projections so negative-knowledge family-mismatch coverage is visible in the benchmark, truthfulness, and review-only readiness surfaces.
+
+### Validation
+- pre-fix `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench negative_knowledge_prior_protocol_family_mismatch_negative negative_knowledge_prior_guided_semantic_conflict_caution_gold` reproduced APB negative-knowledge prior leakage into an AXI fixture
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench negative_knowledge_prior_protocol_family_mismatch_negative negative_knowledge_prior_guided_semantic_conflict_caution_gold negative_knowledge_prior_guided_polarity_conflict_caution_gold negative_knowledge_prior_guided_temporal_conflict_caution_gold` -> passed (`4` fixtures, `0` failures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`147` fixtures, `0` failures)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`593` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`147` fixtures, `0` failures)
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (semantic phrase prior protocol-family guard)
 
 ### Changed: semantic phrase priors no longer fall through to unrelated protocol families

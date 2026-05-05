@@ -36,16 +36,17 @@
       "candidate_kind": "negative_knowledge_prior",
       "target_schema": "CorpusMemory.negative_knowledge_priors",
       "readiness": "caution_surface_review_ready",
-      "supporting_fixture_count": 6,
+      "supporting_fixture_count": 7,
       "positive_fixture_count": 6,
-      "guard_fixture_count": 6,
+      "guard_fixture_count": 7,
       "supporting_fixtures": [
         "negative_knowledge_prior_guided_connectivity_conflict_caution_gold",
         "negative_knowledge_prior_guided_interface_conflict_caution_gold",
         "negative_knowledge_prior_guided_polarity_conflict_caution_gold",
         "negative_knowledge_prior_guided_residual_caution_gold",
         "negative_knowledge_prior_guided_semantic_conflict_caution_gold",
-        "negative_knowledge_prior_guided_temporal_conflict_caution_gold"
+        "negative_knowledge_prior_guided_temporal_conflict_caution_gold",
+        "negative_knowledge_prior_protocol_family_mismatch_negative"
       ],
       "positive_fixtures": [
         "negative_knowledge_prior_guided_connectivity_conflict_caution_gold",
@@ -61,7 +62,8 @@
         "negative_knowledge_prior_guided_polarity_conflict_caution_gold",
         "negative_knowledge_prior_guided_residual_caution_gold",
         "negative_knowledge_prior_guided_semantic_conflict_caution_gold",
-        "negative_knowledge_prior_guided_temporal_conflict_caution_gold"
+        "negative_knowledge_prior_guided_temporal_conflict_caution_gold",
+        "negative_knowledge_prior_protocol_family_mismatch_negative"
       ],
       "required_gates": "typed CorpusMemory schema; caution-only validation consumer; paired KG-bench conflict/residual coverage; rescan guidance review gate",
       "gates": {

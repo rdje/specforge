@@ -330,11 +330,9 @@ impl CorpusMemory {
             return false;
         }
 
-        for scope in actor_taxonomy_search_scopes(protocol_family) {
+        for scope in protocol_family_exact_or_amba_generic_search_scopes(protocol_family) {
             if self.negative_knowledge_priors.iter().any(|prior| {
-                scope
-                    .map(|expected| prior.protocol_family == expected)
-                    .unwrap_or(true)
+                prior.protocol_family == scope
                     && prior.knowledge_kind == knowledge_kind
                     && prior.normalized_pattern == normalized_pattern
             }) {

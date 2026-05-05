@@ -1,0 +1,94 @@
+{
+  "name": "negative_knowledge_prior_protocol_family_mismatch_negative",
+  "source": "axi_source.md",
+  "prior_memory_patch": {
+    "negative_knowledge_priors": [
+      {
+        "prior_id": "negative_knowledge_prior_apb_semantic_conflict",
+        "knowledge_kind": "signal_semantic_conflict",
+        "normalized_pattern": "signal_semantic_conflict:visual_caption:handshake_valid_like|vlm_timing_diagram_annotation:handshake_ready_like",
+        "protocol_family": "amba_apb",
+        "support_count": 3,
+        "supporting_document_keys": ["seed_apb_1", "seed_apb_2", "seed_apb_3"],
+        "strongest_automation_confidence": "medium"
+      }
+    ]
+  },
+  "source_ir_patch": {
+    "visual_assets": [
+      {
+        "asset_id": "figure_xctrl_visual_conflict",
+        "asset_kind": "diagram",
+        "page_id": "page_0001",
+        "image_path": null,
+        "caption_text": "Figure 6: XCTRL valid timing.",
+        "caption_source_path": null,
+        "source_ref": null,
+        "placeholder_text": null,
+        "note": "vlm_timing_diagram_extraction: ```json\n{\n  \"signals\": [{\"name\": \"XCTRL\", \"values\": [{\"cycle\": \"T1\", \"state\": \"HIGH\"}]}],\n  \"annotations\": [\n    \"XCTRL indicates that the subordinate can accept the transfer.\"\n  ]\n}\n```",
+        "diagram_kind": "timing_diagram"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["XCTRL"],
+      "semantic_candidate_signal_names_include": ["XCTRL"],
+      "multiple_semantic_candidate_signal_names_include": ["XCTRL"],
+      "non_decisive_semantic_arbitration_signal_names_include": ["XCTRL"],
+      "resolved_semantic_role_signal_names_exclude": ["XCTRL"],
+      "semantic_consensus_signal_names_exclude": ["XCTRL"],
+      "signal_semantic_conflicts": 1
+    },
+    "intent": {
+      "signal_names_include": ["XCTRL"],
+      "semantic_candidate_signal_names_include": ["XCTRL"],
+      "multiple_semantic_candidate_signal_names_include": ["XCTRL"],
+      "non_decisive_semantic_arbitration_signal_names_include": ["XCTRL"],
+      "resolved_semantic_role_signal_names_exclude": ["XCTRL"],
+      "semantic_consensus_signal_names_exclude": ["XCTRL"],
+      "signal_semantic_conflicts": 1
+    },
+    "validation": {
+      "evidence": {
+        "finding_ids_exclude": [
+          "evidence_negative_knowledge_prior_matches",
+          "evidence_negative_knowledge_rescan_guidance"
+        ],
+        "metric_values": {
+          "signal_semantic_hints": "2",
+          "signal_semantic_conflicts": "1",
+          "negative_knowledge_prior_matches": "0",
+          "negative_knowledge_rescan_recommendations": "0",
+          "negative_knowledge_corroboration_requirements": "0"
+        }
+      },
+      "semantic": {
+        "finding_ids_exclude": [
+          "semantic_negative_knowledge_prior_matches",
+          "semantic_negative_knowledge_rescan_guidance"
+        ],
+        "metric_values": {
+          "signal_semantic_conflicts": "1",
+          "with_non_decisive_semantic_arbitration": "1",
+          "negative_knowledge_prior_matches": "0",
+          "negative_knowledge_rescan_recommendations": "0",
+          "negative_knowledge_corroboration_requirements": "0"
+        }
+      },
+      "intent": {
+        "finding_ids_exclude": [
+          "intent_negative_knowledge_prior_matches",
+          "intent_negative_knowledge_rescan_guidance"
+        ],
+        "metric_values": {
+          "signal_semantic_conflicts": "1",
+          "with_non_decisive_semantic_arbitration": "1",
+          "negative_knowledge_prior_matches": "0",
+          "negative_knowledge_rescan_recommendations": "0",
+          "negative_knowledge_corroboration_requirements": "0"
+        }
+      }
+    }
+  }
+}

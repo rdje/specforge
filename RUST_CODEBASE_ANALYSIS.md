@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 negative-knowledge prior protocol-family guard)
+- Hardened `crates/specforge/src/ir/prior_memory.rs` so negative-knowledge pattern matching now shares the exact-family plus AMBA-generic search policy used by strict prior consumers.
+- Added `negative_knowledge_prior_protocol_family_mismatch_negative`, which proved the previous broad fallback could let an APB negative-knowledge prior match an AXI-local semantic conflict and emit caution/rescan findings.
+- The change keeps negative knowledge advisory and scoped: it can still surface matching-family caution records, but unrelated concrete protocol families no longer create prior-memory matches.
+
 ## Session update (2026-05-05 semantic phrase prior protocol-family guard)
 - Hardened `crates/specforge/src/ir/prior_memory.rs` so semantic phrase role lookup now shares the exact-family plus AMBA-generic search policy used by the other strict prior consumers.
 - Added `semantic_prior_protocol_family_mismatch_negative`, which proved the previous broad fallback could let an APB semantic phrase prior resolve an AXI-local signal role.

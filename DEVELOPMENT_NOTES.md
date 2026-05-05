@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 negative-knowledge prior protocol-family guard
+- New batch slice 16/100 adds `negative_knowledge_prior_protocol_family_mismatch_negative` and hardens `CorpusMemory::negative_knowledge_pattern_is_known`.
+- The fixture reproduced a family leak: an APB-only negative-knowledge prior for a semantic-conflict pattern could match an AXI-local conflict and emit negative-knowledge caution/rescan findings through the broad any-family fallback.
+- Negative-knowledge pattern lookup now uses the same exact-family plus AMBA-generic helper as the strict prior consumers, so unrelated concrete AMBA families no longer add caution matches.
+- Existing semantic-conflict, polarity-conflict, and temporal-conflict negative-knowledge caution fixtures still pass, preserving the intended review-only caution behavior for matching families.
+- The corpus-KB benchmark, prior-memory, truthfulness, and prior-candidate readiness projections now count the negative-knowledge family-mismatch guard.
+
 ## 2026-05-05 semantic phrase prior protocol-family guard
 - New batch slice 15/100 adds `semantic_prior_protocol_family_mismatch_negative` and hardens `CorpusMemory::resolve_semantic_phrase_role`.
 - The fixture reproduced a family leak: an APB-only semantic phrase prior for `<signal> can publish the beat` could resolve an AXI-local `XREQ` prose phrase through the broad any-family fallback.
