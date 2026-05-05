@@ -989,6 +989,21 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_rejects_missing_stage_command_paths() {
+        let ingest_missing_path = command_hint("rebuild_source_ir", vec!["ingest"]);
+        assert!(parse_command_hint(&ingest_missing_path).is_err());
+
+        let evidence_missing_artifact = command_hint("rebuild_evidence_ir", vec!["evidence"]);
+        assert!(parse_command_hint(&evidence_missing_artifact).is_err());
+
+        let semantic_missing_artifact = command_hint("rebuild_semantic_ir", vec!["semantic"]);
+        assert!(parse_command_hint(&semantic_missing_artifact).is_err());
+
+        let validate_missing_artifact = command_hint("validate_current_artifact", vec!["validate"]);
+        assert!(parse_command_hint(&validate_missing_artifact).is_err());
+    }
+
+    #[test]
     fn rescan_plan_rejects_command_intent_subcommand_mismatches() {
         let evidence_intent_with_semantic_subcommand = command_hint(
             "rebuild_evidence_ir",

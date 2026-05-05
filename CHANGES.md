@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan missing stage-path lock)
+
+### Changed: non-enrichment replay commands reject missing paths
+- Added negative coverage for missing `ingest`, `evidence`, `semantic`, and `validate` command-hint path arguments.
+- This locks required artifact/path presence for exact stage rebuild and validation replay hints.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_missing_stage_command_paths` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `543` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan extra stage-arg lock)
 
 ### Changed: non-enrichment replay commands reject extra args

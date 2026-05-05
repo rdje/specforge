@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan missing stage paths)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` parser tests around required stage-command paths.
+- No production parser code changed; missing path/artifact args are now directly covered for `ingest`, `evidence`, `semantic`, and `validate`.
+- This completes the exact-arity lock around non-enrichment replay lanes after extra args were covered.
+
 ## Session update (2026-05-05 rescan-plan extra stage args)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` parser tests around exact stage-command arity.
 - No production parser code changed; extra args are now directly covered for `ingest`, `evidence`, `semantic`, and `validate` command hints.

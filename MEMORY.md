@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `0f57e18d8d3c88473405a4100a14381af294e011`
-- latest_commit_brief_message: `test(rescan): lock stage command parsing`
+- latest_commit_hash: `7ea62d176aa96f8cb39c409a9da3fe107b1a4370`
+- latest_commit_brief_message: `test(rescan): lock extra stage args`
 - note: new local `N=20` batch is active; push remains deferred until all 20 slices complete
 
 ## Recent commit chain (last 6)
+- `7ea62d1` test(rescan): lock extra stage args
 - `0f57e18` test(rescan): lock stage command parsing
 - `f7c55ef` docs(memory): start next N=20 batch
 - `1175e50` test(rescan): lock unknown command intents
 - `7b4725d` test(rescan): lock intent lane mismatches
 - `4ee80c8` test(rescan): lock unknown provider values
-- `be4f608` test(rescan): lock flag-shaped provider values
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 2]`
-- files in flight for new batch slice 3:
+- branch state before the next commit: `main...origin/main [ahead 3]`
+- files in flight for new batch slice 4:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -47,27 +47,27 @@
 
 ## Active N-slice batch
 - requested_count: `20`
-- completed_count: `2`
+- completed_count: `3`
 - push_policy: defer push until all `20` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - lock rejection of extra args on non-enrichment `rescan-plan` stage command hints
-  - cover `ingest`, `evidence`, `semantic`, and `validate` exact-arity enforcement
+  - lock rejection of missing path/artifact args on non-enrichment `rescan-plan` stage command hints
+  - cover `ingest`, `evidence`, `semantic`, and `validate` required-path enforcement
 - tracker effect:
-  - add a `Done` live-status row for extra stage command arg rejection
+  - add a `Done` live-status row for missing stage command path rejection
 - verification status:
-  - focused test passed: `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_extra_stage_command_args`
+  - focused test passed: `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_missing_stage_command_paths`
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed
-  - `bash scripts/run_ci.sh` passed with `542` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `bash scripts/run_ci.sh` passed with `543` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `130/130` fixtures
   - `git diff --check` passed
   - checkout-specific absolute path scan across tracked markdown passed
 - current known local CI baseline:
-  - `542` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `543` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `130/130` tracked KG fixtures
 
 ## Next exact steps
-- run slice 3 verification, update validation results, commit without pushing, then continue slice 4
+- run slice 4 verification, update validation results, commit without pushing, then continue slice 5

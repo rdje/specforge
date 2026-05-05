@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan missing stage-path lock
+- New batch slice 4/20 adds the missing-path side of exact stage-command arity coverage.
+- `parse_command_hint(...)` already rejects one-token stage hints because non-enrichment replay lanes require a target source or artifact path.
+- Added `rescan_plan_rejects_missing_stage_command_paths` for `ingest`, `evidence`, `semantic`, and `validate`.
+
 ## 2026-05-05 rescan-plan extra stage-arg lock
 - New batch slice 3/20 adds the negative side of the non-enrichment stage parser boundary.
 - `parse_command_hint(...)` already accepts stage rebuild and validation hints only in exact two-token stage forms.
