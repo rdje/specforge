@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` system flat/graph disagreement provenance lock)
+
+### Added: sequential system flat/graph disagreement provenance coverage
+- Tightened `standalone_sequential_dt_blocks_system_contract_flat_graph_direction_disagreement` so blocked standalone sequential `.fsm` lowering now proves the conflicting graph-backed clock actor-port support ID and high automation confidence survive in `fsm.signal_inventory`.
+- This is coverage-only over the existing adapter behavior: canonical system-contract input evidence and graph-backed actor output evidence keep `.fsm` emission blocked when they disagree.
+- The slice keeps blocked system-contract flat/graph disagreement evidence auditable for review/rescan instead of reducing the artifact to a generic blocker.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_sequential_dt_blocks_system_contract_flat_graph_direction_disagreement` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+
 ## 2026-05-05 (`.fsm` system actor-port direction provenance lock)
 
 ### Added: sequential system actor-port direction provenance coverage

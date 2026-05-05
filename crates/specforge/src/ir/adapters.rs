@@ -7965,6 +7965,12 @@ mod tests {
                 .iter()
                 .any(|category| category == "actor_port")
         );
+        assert!(
+            clk.supporting_canonical_ids
+                .iter()
+                .any(|id| id == "graph_controller_clk")
+        );
+        assert_eq!(clk.automation_confidence, AutomationConfidence::High);
         assert!(!fsm.renderability.is_renderable);
         assert!(fsm.renderability.blocking_reasons.iter().any(|reason| {
             reason.contains(
