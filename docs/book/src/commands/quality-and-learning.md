@@ -107,7 +107,7 @@ The command does not shell out through the display strings.
 It parses the structured `executable` and `args`, accepts only the repository-local `cargo run --manifest-path Cargo.toml -- ...` shape, and dispatches only whitelisted stage commands in-process:
 The structured hint must also keep `working_directory` as `.` and include real SpecForge args after the `--` separator.
 Accepted local provider values are `ollama`, `lmstudio` / `lm-studio`, and `skip`; OpenAI hints are rejected by the executor.
-Malformed provider options, including missing providers, repeated provider/model/classification flags, missing provider or model values, flag-shaped provider or model values, and unsupported args, are rejected before execution.
+Malformed provider options, including missing providers, repeated provider/model/classification flags, missing provider or model values, flag-shaped provider or model values, unsupported provider values, and unsupported args, are rejected before execution.
 
 - `ingest`
 - `enrich` with local `ollama`, local `lmstudio`, or `skip`

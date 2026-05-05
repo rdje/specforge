@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan unknown provider-value lock)
+
+### Changed: unsupported replay provider values now have parser coverage
+- Added negative coverage for source enrichment command hints that name an unsupported local provider value.
+- Added the same coverage for NLP enrichment command hints.
+- This locks the replay executor boundary to the explicit local provider set instead of allowing arbitrary provider labels.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_unknown_local_provider_values` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `538` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan flag-shaped provider-value lock)
 
 ### Changed: flag-shaped replay provider values now have parser coverage

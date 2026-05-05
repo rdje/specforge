@@ -1170,6 +1170,31 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_rejects_unknown_local_provider_values() {
+        let unknown_enrich_provider = command_hint(
+            "enrich_source_ir",
+            vec![
+                "enrich",
+                "generated/source_ir/doc/source_ir.json",
+                "--vlm-provider",
+                "remote-gpu",
+            ],
+        );
+        assert!(parse_command_hint(&unknown_enrich_provider).is_err());
+
+        let unknown_nlp_provider = command_hint(
+            "nlp_enrich_evidence_ir",
+            vec![
+                "nlp-enrich",
+                "generated/evidence_ir/doc/evidence_ir.json",
+                "--vlm-provider",
+                "remote-gpu",
+            ],
+        );
+        assert!(parse_command_hint(&unknown_nlp_provider).is_err());
+    }
+
+    #[test]
     fn rescan_plan_rejects_openai_enrich_hints() {
         let command = command_hint(
             "enrich_source_ir",

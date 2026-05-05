@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan unknown provider-value lock
+- Batch slice 18/20 extends local replay parser coverage from malformed option values to unsupported provider names.
+- `parse_local_rescan_vlm_provider(...)` already whitelisted only `ollama`, `lmstudio` / `lm-studio`, and `skip`.
+- Added `rescan_plan_rejects_unknown_local_provider_values` for both enrich and NLP-enrich hints so arbitrary labels such as `remote-gpu` stay outside executable replay policy.
+
 ## 2026-05-05 rescan-plan flag-shaped provider-value lock
 - Batch slice 17/20 adds the provider-side sibling to the flag-shaped model-value lock.
 - `parse_local_rescan_vlm_provider(...)` already rejected option tokens as unsupported providers.

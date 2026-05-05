@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan unknown provider values)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` parser tests around unsupported local provider names.
+- No production parser code changed; unknown provider labels are now directly covered for both enrich and NLP-enrich command hints.
+- This keeps the executable replay surface pinned to the explicit local provider allowlist.
+
 ## Session update (2026-05-05 rescan-plan flag-shaped provider values)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` parser tests around local provider values.
 - No production parser code changed; option-token provider values are now directly covered for both enrich and NLP-enrich command hints.
