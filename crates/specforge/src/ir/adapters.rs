@@ -7094,6 +7094,16 @@ mod tests {
                 .any(|category| category == "actor_port")
         );
         assert!(
+            unused_output
+                .supporting_canonical_ids
+                .iter()
+                .any(|id| id == "graph_controller_UNUSED_OUT")
+        );
+        assert_eq!(
+            unused_output.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert!(
             fsm.renderability
                 .blocking_reasons
                 .iter()

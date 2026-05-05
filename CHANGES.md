@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` standalone undriven-output provenance lock)
+
+### Added: standalone DT undriven output provenance coverage
+- Tightened `standalone_dt_blocks_graph_backed_undriven_output_inventory` so blocked standalone-DT `.fsm` lowering now proves graph-backed undriven output support ID and high automation confidence survive in the FSM signal inventory.
+- This is coverage-only over the existing adapter behavior: graph-backed output inventory entries with no typed control action keep `.fsm` emission blocked.
+- The slice keeps the selected output actor evidence auditable while the renderability blocker explains the missing typed action.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_dt_blocks_graph_backed_undriven_output_inventory` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-05 (`.fsm` structured undriven-output provenance lock)
 
 ### Added: structured-FSM undriven output provenance coverage
