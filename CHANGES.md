@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-05 (KG semantic-prior conflict guard fixture)
+
+### Changed: conflicting semantic phrase priors fail closed
+- Added a negative KG fixture proving two typed semantic phrase priors with the same normalized phrase but different roles do not create a resolved semantic role.
+- Refreshed corpus-KB fixture projections so the semantic/truthfulness pattern page and prior-candidate readiness manifest count the new guard fixture.
+- This keeps prior memory advisory: ambiguous prior evidence cannot author a canonical role winner without a unique local interpretation.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_prior_conflicting_roles_negative` -> passed (`1` fixture, `0` failures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`135` fixtures, `0` failures)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`593` Rust tests, warnings denied for Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`135` fixtures, `0` failures)
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (KG ready-like prior-guided sink phrase fixtures)
 
 ### Changed: prior-guided ready-like sink phrase recovery is locked

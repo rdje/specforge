@@ -20,30 +20,29 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `5e9de711fb00a4154a7946c16bb367cd9f295dac`
-- latest_commit_brief_message: `test(kg): add valid-like semantic prior pair`
+- latest_commit_hash: `33e456b75ff200f3b260ec54ca38748b933def4f`
+- latest_commit_brief_message: `test(kg): add ready-like semantic prior pair`
 - note: new local `N=100` batch is active; push remains deferred until all 100 slices complete
 
 ## Recent commit chain (last 6)
+- `33e456b` test(kg): add ready-like semantic prior pair
 - `5e9de71` test(kg): add valid-like semantic prior pair
 - `6627e06` docs(memory): start N=100 batch
 - `f22692c` test(rescan): lock unsupported nlp provider args
 - `9541a6f` test(rescan): lock duplicate nlp provider hints
 - `4a07ae6` test(rescan): lock intent extra args
-- `d3a171b` test(rescan): lock command lane mismatches
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 2]`
-- files in flight for new batch slice 3:
-  - `crates/specforge/test_data/kg_quality/semantic_ready_sink_prior_guided_phrase_gold/fixture.json`
-  - `crates/specforge/test_data/kg_quality/semantic_ready_sink_prior_guided_phrase_gold/source.md`
-  - `crates/specforge/test_data/kg_quality/semantic_ready_sink_prior_guided_phrase_without_prior_negative/fixture.json`
-  - `crates/specforge/test_data/kg_quality/semantic_ready_sink_prior_guided_phrase_without_prior_negative/source.md`
+- branch state before the next commit: `main...origin/main [ahead 3]`
+- files in flight for new batch slice 4:
+  - `crates/specforge/test_data/kg_quality/semantic_prior_conflicting_roles_negative/fixture.json`
+  - `crates/specforge/test_data/kg_quality/semantic_prior_conflicting_roles_negative/source.md`
   - `corpus_kb/benchmarks/kg-fixtures.md`
   - `corpus_kb/patterns/kg-fixtures.md`
-  - `corpus_kb/prior_memory/kg-fixtures.md`
+  - `corpus_kb/prior_candidates/kg-fixture-candidates.md`
+  - `corpus_kb/prior_candidates/kg-fixture-candidates.json`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -52,29 +51,29 @@
 
 ## Active N-slice batch
 - requested_count: `100`
-- completed_count: `2`
+- completed_count: `3`
 - push_policy: defer push until all `100` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - add paired KG fixtures for prior-guided ready-like sink phrase recovery
-  - prove the ambiguous ready-like phrase resolves only when typed prior memory supports it
-  - refresh corpus-KB projections for the expanded KG fixture corpus
+  - add a negative KG fixture proving conflicting semantic phrase priors fail closed
+  - prove prior memory cannot resolve a role when a local phrase maps to multiple prior roles
+  - refresh corpus-KB projections for the expanded KG fixture and prior-candidate surfaces
 - tracker effect:
-  - live-status tracker gains `KG benchmark harness now locks prior-guided ready-like sink phrase recovery: Done`
+  - live-status tracker gains `KG benchmark harness now locks conflicting semantic phrase priors fail closed: Done`
 - verification status:
-  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_ready_sink_prior_guided_phrase_gold semantic_ready_sink_prior_guided_phrase_without_prior_negative` passed with `2` fixtures and `0` failures
-  - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed with `134` fixtures and `0` failures
+  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_prior_conflicting_roles_negative` passed with `1` fixture and `0` failures
+  - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed with `135` fixtures and `0` failures
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed
   - `bash scripts/run_ci.sh` passed with `593` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
-  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `134` fixtures and `0` failures
+  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `135` fixtures and `0` failures
   - `git diff --check` passed
   - checkout-specific absolute path scan across tracked markdown passed
 - current known local CI baseline:
   - `593` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
-  - `134/134` tracked KG fixtures
+  - `135/135` tracked KG fixtures
 
 ## Next exact steps
-- commit slice 3 without pushing, then continue slice 4
+- commit slice 4 without pushing, then continue slice 5

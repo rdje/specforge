@@ -1,0 +1,66 @@
+{
+  "name": "semantic_prior_conflicting_roles_negative",
+  "source": "source.md",
+  "prior_memory_patch": {
+    "semantic_phrase_priors": [
+      {
+        "prior_id": "semantic_phrase_prior_ambiguous_valid",
+        "normalized_phrase": "<signal> can arbitrate the transfer",
+        "role": "handshake_valid_like",
+        "protocol_family": "amba_generic",
+        "source_kind": "prose_statement",
+        "support_count": 2,
+        "supporting_document_keys": ["seed_amba_valid_conflict_1", "seed_amba_valid_conflict_2"],
+        "strongest_automation_confidence": "high",
+        "strongest_grounding_strength": "single_source"
+      },
+      {
+        "prior_id": "semantic_phrase_prior_ambiguous_ready",
+        "normalized_phrase": "<signal> can arbitrate the transfer",
+        "role": "handshake_ready_like",
+        "protocol_family": "amba_generic",
+        "source_kind": "prose_statement",
+        "support_count": 2,
+        "supporting_document_keys": ["seed_amba_ready_conflict_1", "seed_amba_ready_conflict_2"],
+        "strongest_automation_confidence": "high",
+        "strongest_grounding_strength": "single_source"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["XCTRL"],
+      "resolved_semantic_role_signal_names_exclude": ["XCTRL"],
+      "semantic_consensus_signal_names_exclude": ["XCTRL"],
+      "semantic_candidate_signal_names_exclude": ["XCTRL"]
+    },
+    "intent": {
+      "signal_names_include": ["XCTRL"],
+      "resolved_semantic_role_signal_names_exclude": ["XCTRL"],
+      "semantic_consensus_signal_names_exclude": ["XCTRL"],
+      "semantic_candidate_signal_names_exclude": ["XCTRL"]
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "signal_semantic_hints": "0",
+          "signal_semantic_hints_from_prose": "0"
+        }
+      },
+      "semantic": {
+        "metric_values": {
+          "with_resolved_semantic_role": "0",
+          "with_semantic_consensus": "0",
+          "with_single_source_semantic_grounding": "0"
+        }
+      },
+      "intent": {
+        "metric_values": {
+          "with_resolved_semantic_role": "0",
+          "with_semantic_consensus": "0",
+          "with_single_source_semantic_grounding": "0"
+        }
+      }
+    }
+  }
+}

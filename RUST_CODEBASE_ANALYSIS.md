@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 KG semantic-prior conflict guard fixture)
+- Added `semantic_prior_conflicting_roles_negative` to the KG quality corpus.
+- The fixture stages conflicting semantic phrase priors for the same normalized local phrase and proves the EvidenceIR/SemanticIR/IntentIR pipeline does not resolve a role or emit semantic consensus from ambiguous prior memory.
+- The corpus-KB prior-candidate manifest now treats this as an additional semantic-phrase guard fixture, strengthening the review-only non-mutation boundary around semantic prior promotion.
+
 ## Session update (2026-05-05 KG ready-like prior-guided sink phrase fixtures)
 - Added paired KG quality fixtures for ready-like semantic phrase recovery through typed prior memory.
 - The gold fixture proves `<signal> can sink the transfer` can map to `handshake_ready_like` when the prior exists, while the negative fixture proves the same source text does not become semantic truth by heuristic fallback.

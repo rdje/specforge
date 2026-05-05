@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 KG semantic-prior conflict guard fixture
+- New batch slice 4/100 adds `semantic_prior_conflicting_roles_negative`.
+- The fixture stages two matching semantic phrase priors for `<signal> can arbitrate the transfer`, one valid-like and one ready-like, and expects no EvidenceIR hint or canonical semantic role.
+- This directly locks `CorpusMemory::semantic_phrase_role_in_text` fail-closed behavior for role ambiguity in the fixture harness, not only in unit-level prior lookup logic.
+- The corpus-KB prior-candidate projection now counts the fixture as a semantic-phrase guard, raising the semantic phrase guard count to `3` while keeping the page review-only.
+
 ## 2026-05-05 KG ready-like prior-guided sink phrase fixtures
 - New batch slice 3/100 adds a paired KG fixture for prior-guided ready-like semantic phrase recovery.
 - The final committed phrase is `XACK can sink the transfer`, which stays unresolved without prior memory but resolves to `handshake_ready_like` when the exact typed phrase prior is present.
