@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 semantic phrase prior protocol-family guard
+- New batch slice 15/100 adds `semantic_prior_protocol_family_mismatch_negative` and hardens `CorpusMemory::resolve_semantic_phrase_role`.
+- The fixture reproduced a family leak: an APB-only semantic phrase prior for `<signal> can publish the beat` could resolve an AXI-local `XREQ` prose phrase through the broad any-family fallback.
+- Semantic phrase lookup now uses the same exact-family plus AMBA-generic helper as semantic modality, temporal phrase, table-shape, and visual-motif prior lookup.
+- Positive AMBA-generic semantic-prior fixture source files were renamed to AMBA-scoped filenames so they still cover intended AMBA-generic fallback after unknown-family fallback was removed from this consumer.
+- The corpus-KB benchmark, semantic/truthfulness, and prior-candidate readiness projections now count the semantic-prior family-mismatch guard.
+
 ## 2026-05-05 temporal prior protocol-family guard
 - New batch slice 14/100 adds `temporal_prior_protocol_family_mismatch_negative` and hardens `CorpusMemory::temporal_cycle_window_in_text`.
 - The fixture reproduced a family leak: an APB-only temporal phrase prior for `<signal> must be asserted one beat later` could add a cycle window to an AXI-local `XREADY` rule through the broad any-family fallback.

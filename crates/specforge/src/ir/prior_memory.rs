@@ -450,15 +450,11 @@ impl CorpusMemory {
     where
         F: Fn(&SemanticPhrasePriorRecord) -> bool,
     {
-        for scope in actor_taxonomy_search_scopes(protocol_family) {
+        for scope in protocol_family_exact_or_amba_generic_search_scopes(protocol_family) {
             let mut roles = self
                 .semantic_phrase_priors
                 .iter()
-                .filter(|prior| {
-                    scope
-                        .map(|expected| prior.protocol_family == expected)
-                        .unwrap_or(true)
-                })
+                .filter(|prior| prior.protocol_family == scope)
                 .filter(|prior| prior.source_kind == source_kind)
                 .filter(|prior| is_meaningful_prior_phrase(&prior.normalized_phrase))
                 .filter(|prior| predicate(prior))

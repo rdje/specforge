@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 semantic phrase prior protocol-family guard)
+- Hardened `crates/specforge/src/ir/prior_memory.rs` so semantic phrase role lookup now shares the exact-family plus AMBA-generic search policy used by the other strict prior consumers.
+- Added `semantic_prior_protocol_family_mismatch_negative`, which proved the previous broad fallback could let an APB semantic phrase prior resolve an AXI-local signal role.
+- Renamed the AMBA-generic positive semantic-prior fixture source files to AMBA-scoped names, keeping fallback coverage intentional while removing hidden dependence on unknown-family fallback.
+
 ## Session update (2026-05-05 temporal prior protocol-family guard)
 - Hardened `crates/specforge/src/ir/prior_memory.rs` so temporal phrase cycle-window lookup now shares the exact-family plus AMBA-generic search policy used by semantic modality, table-shape, and visual-motif priors.
 - Added `temporal_prior_protocol_family_mismatch_negative`, which proved the previous broad fallback could let an APB temporal phrase prior add a cycle window to an AXI-local timing rule.

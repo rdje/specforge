@@ -1,6 +1,6 @@
 {
   "name": "visual_semantic_prior_guided_caption_gold",
-  "source": "source.md",
+  "source": "amba_visual_semantic_prior.md",
   "prior_memory_patch": {
     "semantic_phrase_priors": [
       {

@@ -15,8 +15,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 
 - source: `kg-bench fixtures`
 - selected_family_labels: `actor connectivity`, `semantic role arbitration`, `negative knowledge`, `truthfulness negatives and cautions`, `residuals and caveats`
-- fixtures_total: `82`
-- fixtures_passed: `82`
+- fixtures_total: `83`
+- fixtures_passed: `83`
 - fixtures_failed: `0`
 
 | fixture | status | matched families | path |
@@ -70,6 +70,7 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `semantic_prior_guided_phrase_gold` | `pass` | `semantic role arbitration` | `crates/specforge/test_data/kg_quality/semantic_prior_guided_phrase_gold/fixture.json` |
 | `semantic_prior_guided_phrase_without_prior_negative` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/semantic_prior_guided_phrase_without_prior_negative/fixture.json` |
 | `semantic_prior_phrase_mismatch_negative` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/semantic_prior_phrase_mismatch_negative/fixture.json` |
+| `semantic_prior_protocol_family_mismatch_negative` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/semantic_prior_protocol_family_mismatch_negative/fixture.json` |
 | `semantic_prior_source_kind_mismatch_negative` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/semantic_prior_source_kind_mismatch_negative/fixture.json` |
 | `semantic_ready_sink_prior_guided_phrase_gold` | `pass` | `semantic role arbitration` | `crates/specforge/test_data/kg_quality/semantic_ready_sink_prior_guided_phrase_gold/fixture.json` |
 | `semantic_ready_sink_prior_guided_phrase_without_prior_negative` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/semantic_ready_sink_prior_guided_phrase_without_prior_negative/fixture.json` |

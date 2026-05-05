@@ -1,6 +1,6 @@
 {
   "name": "semantic_valid_prior_guided_phrase_gold",
-  "source": "source.md",
+  "source": "amba_valid_semantic_prior.md",
   "prior_memory_patch": {
     "semantic_phrase_priors": [
       {

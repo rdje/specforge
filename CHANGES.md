@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-05-05 (semantic phrase prior protocol-family guard)
+
+### Changed: semantic phrase priors no longer fall through to unrelated protocol families
+- Added a KG negative fixture proving an APB-only semantic phrase prior cannot resolve an AXI-local prose phrase with the same normalized wording.
+- Reused the exact-family plus AMBA-generic prior lookup policy for semantic phrase role recovery, matching the other family-scoped prior consumers.
+- Renamed the positive AMBA-generic semantic-prior fixture source files so they infer an AMBA family and continue testing intentional AMBA-generic fallback rather than unknown-family fallback.
+- Refreshed corpus-KB fixture and prior-candidate projections so semantic-prior family-mismatch coverage is visible in the benchmark, semantic/truthfulness, and review-only readiness surfaces.
+
+### Validation
+- pre-fix `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_prior_protocol_family_mismatch_negative semantic_valid_prior_guided_phrase_gold` reproduced APB semantic phrase prior leakage into an AXI fixture
+- post-fix focused `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_prior_protocol_family_mismatch_negative semantic_valid_prior_guided_phrase_gold semantic_ready_sink_prior_guided_phrase_gold visual_semantic_prior_guided_caption_gold semantic_prior_guided_phrase_gold semantic_prior_source_kind_mismatch_negative semantic_prior_broad_phrase_negative semantic_prior_conflicting_roles_negative semantic_prior_phrase_mismatch_negative` -> passed (`9` fixtures, `0` failures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`146` fixtures, `0` failures)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`593` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`146` fixtures, `0` failures)
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (temporal prior protocol-family guard)
 
 ### Changed: temporal phrase priors no longer fall through to unrelated protocol families
