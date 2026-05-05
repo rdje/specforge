@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan mixed finding arbitration)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` arbitration tests for mixed finding exchanges.
+- No production verdict logic changed; the new regression locks the existing conservative order where added findings are checked before removed findings.
+- This matters because an execution can remove one finding and introduce another while keeping score and finding count flat, and that state must still require regression review rather than possible-improvement review.
+
 ## Session update (2026-05-05 graph replay command-lane assertions)
 - Strengthened the combined graph-direction replay tests in `crates/specforge/src/commands/project_validation.rs`.
 - No production replay logic changed; the tests now assert that both concurrent recommendations keep their command lanes:

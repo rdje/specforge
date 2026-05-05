@@ -127,7 +127,9 @@ It means the relevant stage was rebuilt and validated, and that the validation f
 Any fact promotion still has to survive current-document evidence, validation, and arbitration.
 Executed recommendations also carry an optional `execution_summary`.
 That summary preserves before/after validation snapshots, score and finding-count deltas, added/removed finding ids, a conservative arbitration verdict, and an explicit promotion gate.
-Added and removed finding-id lists are sorted and deduplicated before they are persisted, so review diffs stay stable when validation reports contain duplicate or unsorted ids:
+Added and removed finding-id lists are sorted and deduplicated before they are persisted, so review diffs stay stable when validation reports contain duplicate or unsorted ids.
+If one execution both adds and removes findings, the added finding keeps the verdict in regression review even when the score and finding count are unchanged.
+The conservative verdict values are:
 
 - `validated_no_change`
 - `possible_improvement_review_required`

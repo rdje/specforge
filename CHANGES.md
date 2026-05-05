@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan mixed finding arbitration lock)
+
+### Changed: added findings now dominate mixed finding exchanges in arbitration
+- Added arbitration coverage for validation deltas that both remove an old finding and add a new one.
+- The finding count and score can remain flat in that state, but a newly introduced finding is still a regression-review signal.
+- This prevents rescan execution summaries from treating a finding exchange as a possible improvement just because another finding disappeared.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_arbitration_prioritizes_added_findings_over_removed_findings` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `530` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan neutral score-presence arbitration lock)
 
 ### Changed: score/grade presence changes now stay neutral review signals

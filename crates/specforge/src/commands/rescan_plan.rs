@@ -1301,6 +1301,33 @@ mod tests {
         );
     }
 
+    #[test]
+    fn rescan_plan_arbitration_prioritizes_added_findings_over_removed_findings() {
+        let before = ProjectRescanValidationSnapshot {
+            artifact_fingerprint: "aaa".to_string(),
+            overall_score: Some(80),
+            grade: Some("GOOD".to_string()),
+            finding_count: 2,
+            finding_ids: vec!["finding_old".to_string(), "finding_shared".to_string()],
+        };
+        let after = ProjectRescanValidationSnapshot {
+            artifact_fingerprint: "bbb".to_string(),
+            finding_ids: vec!["finding_new".to_string(), "finding_shared".to_string()],
+            ..before.clone()
+        };
+
+        let delta = validation_delta(&before, &after);
+
+        assert_eq!(delta.score_delta, Some(0));
+        assert_eq!(delta.finding_count_delta, 0);
+        assert_eq!(delta.added_findings, vec!["finding_new".to_string()]);
+        assert_eq!(delta.removed_findings, vec!["finding_old".to_string()]);
+        assert_eq!(
+            arbitration_verdict(&delta),
+            ARBITRATION_REGRESSION_REVIEW_REQUIRED
+        );
+    }
+
     fn command_hint(intent: &str, specforge_args: Vec<&str>) -> ProjectRescanCommandHint {
         let mut args = vec![
             "run".to_string(),

@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan mixed finding arbitration lock
+- Batch slice 10/20 adds coverage for the mixed finding-exchange case in execution-summary arbitration.
+- If an executed rescan removes one finding while adding another, the total finding count can remain unchanged and the score can remain flat.
+- That is still not an improvement signal: a new validation finding means regression review wins over removed-finding possible-improvement review.
+- Added `rescan_plan_arbitration_prioritizes_added_findings_over_removed_findings` to lock that conservative precedence.
+
 ## 2026-05-05 rescan-plan neutral score-presence arbitration lock
 - Batch slice 9/20 adds coverage for sparse validation metadata changes.
 - If a score appears where none existed, or a grade appears where none existed, the execution summary should be reviewable because the report surface changed.

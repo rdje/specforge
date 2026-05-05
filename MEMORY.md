@@ -20,58 +20,56 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `090fdc742247b2fa3f4a0f36c3a314137abd8b96`
-- latest_commit_brief_message: `test(rescan): lock validation delta finding order`
-- note: the latest committed baseline is local batch-20 slice 8; push remains deferred until all `20` slices complete
+- latest_commit_hash: `a9a4175c94270cdc4d363db8c26184e3414f8267`
+- latest_commit_brief_message: `test(rescan): lock neutral score arbitration`
+- note: the latest committed baseline is local batch-20 slice 9; push remains deferred until all `20` slices complete
 
 ## Recent commit chain (last 6)
+- `a9a4175` test(rescan): lock neutral score arbitration
 - `090fdc7` test(rescan): lock validation delta finding order
 - `679f7d9` test(rescan): lock malformed provider hints
 - `c553a16` test(rescan): lock local provider hint variants
 - `ec5de3b` test(rescan): lock command hint locality
 - `e845035` test(rescan): lock scoped pending selection
-- `2aed561` test(rescan): lock empty dry-run preview fields
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 8]`
-- files in flight for batch-20 slice 9:
+- branch state before the next commit: `main...origin/main [ahead 9]`
+- files in flight for batch-20 slice 10:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `MEMORY.md`
-  - `README.md`
   - `ROADMAP.md`
   - `RUST_CODEBASE_ANALYSIS.md`
   - `crates/specforge/src/commands/rescan_plan.rs`
   - `docs/book/src/commands/quality-and-learning.md`
   - `docs/book/src/quality/validation.md`
-  - `docs/book/src/reference/generated-artifacts.md`
 
 ## Active N-slice batch
 - requested_count: `20`
-- completed_count: `8`
+- completed_count: `9`
 - push_policy: defer push until all `20` slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - lock conservative arbitration for score/grade presence-only changes in `rescan-plan` execution summaries
-  - ensure sparse validation metadata changes require review but are not mislabeled as improvement or regression
+  - lock conservative arbitration for mixed finding exchanges in `rescan-plan` execution summaries
+  - ensure added findings take regression-review precedence even when removed findings, score, and finding count could suggest a flat or improved surface
 - tracker effect:
-  - add a `Done` live-status row for score-presence neutral arbitration coverage
+  - add a `Done` live-status row for mixed-finding arbitration precedence
 - verification status:
-  - focused test passed: `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_arbitration_treats_score_presence_changes_as_neutral_review`
+  - focused test passed: `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_arbitration_prioritizes_added_findings_over_removed_findings`
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed
-  - `bash scripts/run_ci.sh` passed with `529` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `bash scripts/run_ci.sh` passed with `530` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `130/130` fixtures
   - `git diff --check` passed
   - checkout-specific absolute path scan across tracked markdown passed
 - current known local CI baseline:
-  - `523` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `530` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `130/130` tracked KG fixtures
 
 ## Next exact steps
-- commit slice 9 without pushing, then move to slice 10
+- commit slice 10 without pushing, then move to slice 11

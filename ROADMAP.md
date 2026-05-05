@@ -200,6 +200,7 @@
   - malformed local provider hints now have regression coverage for repeated provider flags, missing provider values, and unsupported provider-side args
   - validation-delta execution summaries now have regression coverage for sorted and deduplicated added/removed finding-id lists
   - score/grade presence-only validation changes now have regression coverage that keeps them neutral review-required signals rather than improvement/regression claims
+  - mixed validation deltas that add and remove findings now have regression coverage proving added findings take regression-review precedence over removed-finding improvement hints
   - those execution summaries now include explicit not-promoted gates, blockers, and structured `promotion_review` requirements, so possible-improvement validation deltas stay review signals instead of canonical truth mutations
   - `promotion_review` is now documented as a review-requirement descriptor rather than an approval artifact; future approval artifacts stay local/generated unless a deliberate canonical IR mutation workflow also defines tracked approval evidence
   - `specforge validate` now reports `table_signal_declaration_provenance` for `EvidenceIR`, exposing whether table-synthesized signal declarations still point back to structured `SourceIR` table ids before canonical carry-through
