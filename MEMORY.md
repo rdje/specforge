@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `7071da2a3ac2ab4af7c0baab4af18fa165a6da1e`
-- latest_commit_brief_message: `test(rescan): lock replay-input rendering`
+- latest_commit_hash: `16fb4815317a35e2add5ce85ce4615ca913334f3`
+- latest_commit_brief_message: `test(rescan): lock schema version gate`
 - note: new local `N=20` batch is active; push remains deferred until all 20 slices complete
 
 ## Recent commit chain (last 6)
+- `16fb481` test(rescan): lock schema version gate
 - `7071da2` test(rescan): lock replay-input rendering
 - `ba29d0a` test(rescan): lock related-id rendering
 - `5e7f3f1` test(rescan): lock dry-run row order
 - `410dab1` test(rescan): lock selected dry-run rows
 - `fa44295` test(rescan): lock empty dry-run queue
-- `0a8bcbd` test(rescan): lock scoped unlimited queues
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 14]`
-- files in flight for new batch slice 15:
+- branch state before the next commit: `main...origin/main [ahead 15]`
+- files in flight for new batch slice 16:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -46,27 +46,27 @@
 
 ## Active N-slice batch
 - requested_count: `20`
-- completed_count: `14`
+- completed_count: `15`
 - push_policy: defer push until all `20` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - lock `rescan-plan` loader rejection for unsupported schema versions
-  - prove stale schema-v1 replay plans are rejected before queue use
+  - lock `rescan-plan` validation-report sidecar path derivation
+  - prove validation reports are read from the validated artifact's own directory
 - tracker effect:
-  - add a `Done` live-status row for unsupported rescan-plan schema rejection
+  - add a `Done` live-status row for validation-report sidecar path regression coverage
 - verification status:
-  - focused test passed: `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_unsupported_schema_version` with `1` test
+  - focused test passed: `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_validation_report_path_uses_artifact_directory_sidecar` with `1` test
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed
-  - `bash scripts/run_ci.sh` passed with `554` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `bash scripts/run_ci.sh` passed with `555` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `130` fixtures and `0` failures
   - `git diff --check` passed
   - checkout-specific absolute path scan across tracked markdown passed
 - current known local CI baseline:
-  - `554` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `555` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `130/130` tracked KG fixtures
 
 ## Next exact steps
-- commit slice 15 without pushing, then continue slice 16
+- commit slice 16 without pushing, then continue slice 17

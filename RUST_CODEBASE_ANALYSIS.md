@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan validation report sidecar)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` helper tests around validation report sidecar path derivation.
+- No production helper code changed; the new regression proves sidecars stay colocated with the validated artifact directory.
+- This keeps validation snapshot loading aligned with the `validate` command's deterministic `validation_report.json` placement.
+
 ## Session update (2026-05-05 rescan-plan schema version)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` loader tests around schema-version gating.
 - No production loader code changed; unsupported schema versions now have direct regression coverage.

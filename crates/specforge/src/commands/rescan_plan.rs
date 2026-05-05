@@ -859,6 +859,17 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_validation_report_path_uses_artifact_directory_sidecar() -> Result<()> {
+        let artifact = PathBuf::from("generated/intent_ir/doc/intent_ir.json");
+
+        assert_eq!(
+            validation_report_path_for(&artifact)?,
+            PathBuf::from("generated/intent_ir/doc/validation_report.json")
+        );
+        Ok(())
+    }
+
+    #[test]
     fn rescan_plan_execute_marks_validated_no_change() -> Result<()> {
         let tempdir = tempdir()?;
         let source_path = tempdir.path().join("spec.md");

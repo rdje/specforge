@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan validation-report sidecar lock
+- New batch slice 16/20 adds helper coverage for validation-report sidecar path derivation.
+- No production helper code changed; `validation_report_path_for(...)` already resolves `validation_report.json` in the validated artifact's directory.
+- This protects rescan execution summaries from drifting away from the stage-local validation report contract.
+
 ## 2026-05-05 rescan-plan schema-version lock
 - New batch slice 15/20 adds loader coverage for unsupported rescan-plan schema versions.
 - No production loader code changed; `load_rescan_plan(...)` already rejects plans whose `schema_version` is not the supported v2 contract.
