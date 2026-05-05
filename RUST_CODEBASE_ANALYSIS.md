@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan exact document-key filter)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` selection tests around scoped document-key matching.
+- No production selection code changed; the new regression proves `--document-key` selection is exact and does not catch prefix-like sibling keys.
+- This reduces risk when rescan plans contain multiple related generated document keys.
+
 ## Session update (2026-05-05 rescan-plan grade-removal execution status)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` execution-status tests around optional grade removal.
 - No production status code changed; the new regression proves validation snapshot changes from grade disappearance are counted as executed validation changes.

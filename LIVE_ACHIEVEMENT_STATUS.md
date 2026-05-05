@@ -37,6 +37,7 @@
 - `specforge rescan-plan` execute report no-change summaries are regression-locked: Done
 - `specforge rescan-plan` execute limits preserve unselected pending work: Done
 - `specforge rescan-plan` execute document-key scope preserves other pending work: Done
+- `specforge rescan-plan` document-key filters use exact matches: Done
 - `specforge rescan-plan` dry-run list rendering is regression-locked: Done
 - `specforge rescan-plan` replay-input rendering is regression-locked: Done
 - `specforge rescan-plan` score-presence arbitration stays neutral-review: Done

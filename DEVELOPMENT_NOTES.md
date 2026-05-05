@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan exact document-key filter lock
+- New batch slice 24/40 adds selection coverage for exact `--document-key` matching.
+- No production selection code changed; `selected_pending_indices` already compares document keys for equality before applying limits.
+- This keeps scoped rescan execution from accidentally selecting sibling document keys with shared prefixes.
+
 ## 2026-05-05 rescan-plan grade-removal execution-status lock
 - New batch slice 23/40 adds execution-status coverage for grade removal from validation snapshots.
 - No production status code changed; `execution_status` already compares full validation snapshots, so optional grade disappearance counts as `executed_validated_changed`.

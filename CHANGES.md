@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan exact document-key filter lock)
+
+### Changed: scoped rescan selection uses exact document keys
+- Added selection coverage proving `--document-key` matches only exact document keys and does not select prefix-like neighbors.
+- This protects multi-document rescan plans whose generated document keys share stems.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_document_key_filter_uses_exact_match` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `582` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan grade-removal execution-status lock)
 
 ### Changed: grade removal counts as changed execution

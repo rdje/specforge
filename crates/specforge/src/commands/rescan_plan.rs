@@ -1682,6 +1682,26 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_document_key_filter_uses_exact_match() {
+        let plan = ProjectRescanPlanRecord {
+            schema_version: 2,
+            generated_by: "test".to_string(),
+            recommendation_count: 3,
+            recommendations: vec![
+                recommendation("doc", PLANNED_NOT_EXECUTED),
+                recommendation("doc_extra", PLANNED_NOT_EXECUTED),
+                recommendation("other_doc", PLANNED_NOT_EXECUTED),
+            ],
+        };
+
+        assert_eq!(selected_pending_indices(&plan, 0, Some("doc")), vec![0]);
+        assert_eq!(
+            selected_pending_indices(&plan, 0, Some("doc_extra")),
+            vec![1]
+        );
+    }
+
+    #[test]
     fn rescan_plan_scoped_limit_skips_executed_entries_before_pending() {
         let plan = ProjectRescanPlanRecord {
             schema_version: 2,
