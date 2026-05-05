@@ -35,6 +35,7 @@
 - `specforge rescan-plan` validation-delta finding lists are deterministic: Done
 - `specforge rescan-plan` score-presence arbitration stays neutral-review: Done
 - `specforge rescan-plan` mixed finding arbitration prefers regression review: Done
+- `specforge rescan-plan` removed findings stay possible-improvement review: Done
 - `specforge rescan-plan` sparse score labels are regression-locked: Done
 - `specforge rescan-plan` scoped limits apply after document filtering: Done
 - `specforge rescan-plan` duplicate replay flags are rejected: Done

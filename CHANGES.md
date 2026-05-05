@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan removed-finding arbitration lock)
+
+### Changed: removed findings stay possible-improvement review
+- Added arbitration coverage proving a removed validation finding triggers `possible_improvement_review_required` even when score and finding-count metadata stay flat.
+- This keeps rescan execution review conservative while still distinguishing pure finding removals from neutral artifact rewrites.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_arbitration_treats_removed_findings_as_possible_improvement` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `562` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan command-hint render order lock)
 
 ### Changed: dry-run command hint order is regression-locked

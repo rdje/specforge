@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan removed-finding arbitration lock
+- New batch slice 4/40 adds isolated arbitration coverage for removed validation findings.
+- No production arbitration code changed; `arbitration_verdict(...)` already treats removed findings as possible-improvement review when no regression signal is present.
+- This separates the removed-finding improvement path from score/count improvements and mixed added/removed finding exchanges.
+
 ## 2026-05-05 rescan-plan command-hint render order lock
 - New batch slice 3/40 adds dry-run render coverage for multi-command recommendation hints.
 - No production render code changed; `render_dry_run_plan(...)` already iterates `recommended_commands` in stored vector order.

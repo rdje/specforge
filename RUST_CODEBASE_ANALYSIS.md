@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan removed-finding arbitration)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` arbitration tests around removed validation findings.
+- No production arbitration code changed; the new regression proves removed findings alone produce possible-improvement review rather than neutral drift.
+- This keeps the review verdict boundary explicit for rescan executions that remove a finding without changing score or finding-count metadata.
+
 ## Session update (2026-05-05 rescan-plan command-hint render order)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` dry-run renderer tests around multi-command recommendations.
 - No production renderer code changed; the new regression proves command hints are printed in stored plan order within each selected recommendation.
