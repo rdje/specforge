@@ -34,6 +34,7 @@
 - `specforge rescan-plan` malformed provider hints are regression-locked: Done
 - `specforge rescan-plan` validation-delta finding lists are deterministic: Done
 - `specforge rescan-plan` dry-run list rendering is regression-locked: Done
+- `specforge rescan-plan` replay-input rendering is regression-locked: Done
 - `specforge rescan-plan` score-presence arbitration stays neutral-review: Done
 - `specforge rescan-plan` score decreases force regression review: Done
 - `specforge rescan-plan` score increases stay possible-improvement review: Done

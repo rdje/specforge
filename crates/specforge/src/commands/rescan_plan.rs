@@ -1571,6 +1571,26 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_render_replay_inputs_formats_kind_path_pairs() {
+        let replay_inputs = vec![
+            ProjectRescanReplayInput {
+                input_kind: "source_ir".to_string(),
+                path: "generated/source_ir/doc/source_ir.json".to_string(),
+            },
+            ProjectRescanReplayInput {
+                input_kind: "evidence_ir".to_string(),
+                path: "generated/evidence_ir/doc/evidence_ir.json".to_string(),
+            },
+        ];
+
+        assert_eq!(render_replay_inputs(&[]), "none");
+        assert_eq!(
+            render_replay_inputs(&replay_inputs),
+            "source_ir:generated/source_ir/doc/source_ir.json, evidence_ir:generated/evidence_ir/doc/evidence_ir.json"
+        );
+    }
+
+    #[test]
     fn rescan_plan_dry_run_render_surfaces_replay_boundary_and_action() {
         let mut plan = ProjectRescanPlanRecord {
             schema_version: 2,

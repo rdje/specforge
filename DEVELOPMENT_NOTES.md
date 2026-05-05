@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan replay-input rendering lock
+- New batch slice 13/40 adds direct coverage for the dry-run `render_replay_inputs(...)` helper.
+- No production renderer code changed; the helper already renders empty replay inputs as `none` and non-empty inputs as ordered `kind:path` pairs.
+- This keeps replay-scope display stable for review-facing rescan queues.
+
 ## 2026-05-05 rescan-plan list-rendering lock
 - New batch slice 12/40 adds direct coverage for the dry-run `render_string_list(...)` helper.
 - No production renderer code changed; the helper already renders empty lists as `none` and non-empty lists with comma-separated order.

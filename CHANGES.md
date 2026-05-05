@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan replay-input rendering lock)
+
+### Changed: replay-input compact rendering is regression-locked
+- Added direct coverage for the dry-run replay-input renderer so empty inputs render as `none` and non-empty inputs render ordered `kind:path` pairs.
+- This protects the review-facing replay scope display used by `rescan-plan` dry-run queues.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_render_replay_inputs_formats_kind_path_pairs` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `571` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan list-rendering lock)
 
 ### Changed: dry-run list rendering is regression-locked

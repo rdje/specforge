@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan replay-input rendering)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` dry-run renderer tests around replay-input compact formatting.
+- No production renderer code changed; the new regression proves empty replay inputs render as `none` and non-empty inputs stay ordered as `kind:path` pairs.
+- This keeps replay-scope review output deterministic for local rescan operators.
+
 ## Session update (2026-05-05 rescan-plan list rendering)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` dry-run renderer tests around compact string-list rendering.
 - No production renderer code changed; the new regression proves empty list fields render as `none` and non-empty values stay comma-separated in source order.
