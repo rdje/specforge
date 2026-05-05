@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` explicit-module flat/graph disagreement guard)
+- Added explicit-module coverage for the shared flat-vs-graph direction disagreement rule in `crates/specforge/src/ir/adapters.rs`.
+- `standalone_explicit_module_blocks_flat_graph_direction_disagreement` proves module-local canonical shape and actor-relative graph shape are both preserved in the artifact when they disagree, while lowering remains blocked.
+- This closes the immediate coverage gap after the direct-root production fix: both direct-root and explicit-module inventories now lock the same graph-first but contradiction-safe behavior.
+
 ## Session update (2026-05-05 `.fsm` flat/graph direction disagreement guard)
 - Hardened `crates/specforge/src/ir/adapters.rs` so `preferred_signal_direction_hint(...)` returns unresolved when unconflicted flat canonical direction evidence disagrees with graph-backed actor-relative direction evidence.
 - Added `standalone_dt_blocks_flat_graph_direction_disagreement`, proving a single contradictory flat declaration is now blocking even when actor-port graph evidence could otherwise render the direct DT root.

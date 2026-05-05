@@ -8884,6 +8884,75 @@ mod tests {
     }
 
     #[test]
+    fn standalone_explicit_module_blocks_flat_graph_direction_disagreement() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_standalone_explicit_module_fsm_intent_ir(tempdir.path())?;
+        let controller = intent_ir
+            .explicit_modules
+            .iter_mut()
+            .find(|module| module.module_name == "controller")
+            .expect("controller module should exist");
+        let interface = controller
+            .interfaces
+            .iter_mut()
+            .find(|interface| {
+                interface
+                    .signal_records
+                    .iter()
+                    .any(|signal| signal.signal_name == "ACC")
+            })
+            .expect("controller interface should contain ACC");
+        let acc = interface
+            .signal_records
+            .iter_mut()
+            .find(|signal| signal.signal_name == "ACC")
+            .expect("ACC declaration should exist");
+        acc.direction_hint = Some(InterfaceSignalDirection::Input);
+        acc.supporting_statement_ids = vec!["flat_ACC_input_contradicts_actor_graph".to_string()];
+        intent_ir.actor_ports = vec![
+            actor_port("controller", "clk", ActorRelativeDirection::Input),
+            actor_port("controller", "rst_n", ActorRelativeDirection::Input),
+            actor_port("controller", "ACC", ActorRelativeDirection::Output),
+            actor_port("controller", "TRACE", ActorRelativeDirection::Output),
+        ];
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let module = fsm
+            .module_candidates
+            .iter()
+            .find(|candidate| candidate.module_name == "controller")
+            .expect("controller module candidate should exist");
+        let acc = module
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "ACC")
+            .expect("ACC should stay in module inventory");
+
+        assert_eq!(acc.direction_hint, Some(InterfaceSignalDirection::Input));
+        assert_eq!(
+            acc.graph_direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert!(!module.renderability.is_renderable);
+        assert!(module.renderability.blocking_reasons.iter().any(|reason| {
+            reason.contains("conflicting canonical and graph-backed direction evidence")
+        }));
+        assert!(!fsm.renderability.is_renderable);
+
+        Ok(())
+    }
+
+    #[test]
     fn standalone_explicit_module_recovers_system_signals_from_system_contract() -> Result<()> {
         let tempdir = tempdir()?;
         let mut intent_ir = build_standalone_explicit_module_fsm_intent_ir(tempdir.path())?;

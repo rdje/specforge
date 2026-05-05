@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` explicit-module flat/graph disagreement guard)
+
+### Added: explicit-module coverage for flat-vs-graph direction disagreement
+- Added an explicit-module adapter regression where `controller.ACC` carries a single flat `input` declaration while matching controller actor-port graph evidence says `output`.
+- Locked the shared `.fsm` renderability rule from the explicit-module path, ensuring graph-backed recovery cannot render through contradictory local module shape.
+- This is coverage-only over the slice-18 production guard; no additional production behavior changed.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_explicit_module_blocks_flat_graph_direction_disagreement` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`78` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed after rustfmt
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`595` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+
 ## 2026-05-05 (`.fsm` flat/graph direction disagreement guard)
 
 ### Changed: direct `.fsm` lowering now blocks contradictory flat and graph directions

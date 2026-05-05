@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 `.fsm` explicit-module flat/graph disagreement guard fixture
+- New batch slice 19/100 adds `standalone_explicit_module_blocks_flat_graph_direction_disagreement`.
+- This is focused coverage over the slice-18 shared renderability guard: the explicit-module path now proves a single flat `controller.ACC` input declaration cannot be rendered through graph-backed `controller.ACC` output evidence.
+- The artifact keeps both sides visible (`direction_hint: input`, `graph_direction_hint: output`) while module renderability stays blocked with the flat-vs-graph diagnostic.
+- Full adapter coverage now includes `78` adapter tests, and full CI now runs `595` Rust tests.
+
 ## 2026-05-05 `.fsm` flat/graph direction disagreement guard
 - New batch slice 18/100 tightens the direct `.fsm` adapter graph-first boundary in `crates/specforge/src/ir/adapters.rs`.
 - The new regression mutates `DATA_OUT` to a single explicit flat `input` declaration while actor-relative `controller.DATA_OUT` graph evidence says `output`; before this guard, graph preference could make that contradictory shape renderable.
