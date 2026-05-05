@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-05 (mdBook adapter provenance docs)
+
+### Added: user-facing docs for `.fsm` flat/graph adapter provenance
+- Updated the mdBook actor-connectivity chapter to explain that top-root renderability can block flat-vs-graph top-port disagreement while signal inventory still preserves the declared `direction_hint` and graph-backed `graph_direction_hint` separately.
+- Updated the pipeline command docs and generated-artifact reference so users know to inspect renderability reasons and signal inventory provenance together when `.fsm` lowering is blocked.
+- This is documentation-only coverage for the slice-22 adapter provenance behavior.
+
+### Validation
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`597` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+
 ## 2026-05-05 (`.fsm` top-port flat/graph inventory provenance)
 
 ### Changed: top-root signal inventory now preserves flat-vs-graph direction disagreement

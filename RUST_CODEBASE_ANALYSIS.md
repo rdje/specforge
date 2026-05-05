@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 mdBook adapter provenance docs)
+- Updated mdBook user-facing documentation for the `.fsm` adapter provenance behavior in the actor-connectivity, pipeline-command, and generated-artifact reference pages.
+- The book now distinguishes blocked renderability role collapse from signal-inventory provenance preservation: users can inspect flat `direction_hint` and graph-backed `graph_direction_hint` even when the renderable top port is unresolved.
+- This documents the slice-22 top-root inventory contract without changing Rust behavior.
+
 ## Session update (2026-05-05 `.fsm` top-port flat/graph inventory provenance)
 - Hardened top-root signal inventory projection in `crates/specforge/src/ir/adapters.rs` so flat top-port directions and graph-backed actor/topology directions remain separately inspectable when they disagree.
 - `build_top_signal_inventory(...)` now reserves `graph_direction_hint_conflicted` for true graph-side conflicts, instead of setting it for flat-vs-graph disagreement.

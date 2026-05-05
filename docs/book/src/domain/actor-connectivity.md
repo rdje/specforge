@@ -221,13 +221,15 @@ The same explicit links can recover existing child module port roles before modu
 That recovered boundary role remains visible in the adapter artifact even when another composition gate still blocks emission, such as a missing child module.
 That path is composition-topology recovery, not actor-graph inference; it does not create undeclared child ports, and conflicting or unresolved top or child directions still block.
 If a top declaration says a boundary port is an output but link topology uses that same boundary endpoint as a source, the adapter collapses the boundary direction to unresolved rather than keeping the stale declaration in the blocked artifact.
+The top signal inventory still keeps both pieces of evidence visible: the flat `direction_hint` remains the declared direction, and `graph_direction_hint` remains the actor/topology-derived direction unless the graph evidence conflicts with itself.
+That distinction matters because a flat-vs-graph disagreement is not the same defect as two graph facts disagreeing.
 The same collapse applies when duplicate top-port declarations disagree about direction; duplicate declarations still block, but the artifact no longer lets the later declaration overwrite the earlier one.
 The same idea now applies to duplicate top-port widths too: duplicate width disagreement blocks and collapses the blocked artifact width instead of leaving a last-writer numeric width behind.
 For example, if the same child signal is used as both a link source and a link target, the adapter keeps that child port direction unresolved rather than choosing one topology interpretation.
 
 This is still conservative.
 Graph `input` and `output` directions can fill the module-local port role, but `in_out` and `unknown` are not turned into fake `.fsm` directions.
-Conflicts between flat hints and graph evidence still collapse to unresolved state and block lowering instead of silently choosing a winner.
+Conflicts between flat hints and graph evidence still collapse the renderable port role to unresolved and block lowering instead of silently choosing a winner, while artifact provenance keeps the two evidence planes inspectable.
 
 ## What users should inspect
 

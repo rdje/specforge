@@ -121,6 +121,8 @@ Adapter output lives under:
 Adapter artifacts are downstream products of `IntentIR`.
 They should not define what the canonical document meaning is.
 If an adapter needs meaning that is not present in `IntentIR`, the fix should usually be upstream in the IR pipeline, not hidden inside the adapter.
+When an adapter artifact is blocked, inspect both the renderability reasons and the signal inventory provenance.
+For `.fsm` top roots, a top-port direction can be unresolved for rendering while the inventory still shows the declared `direction_hint` and the actor/topology-derived `graph_direction_hint` separately.
 
 ## Prior memory
 

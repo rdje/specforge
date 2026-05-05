@@ -309,6 +309,7 @@
 - `.fsm` structured-FSM renderability now regression-locks single flat-vs-graph direction disagreement: Done
 - `.fsm` system-contract renderability now regression-locks single flat-vs-graph direction disagreement: Done
 - `.fsm` top-root signal inventory now preserves flat-vs-graph top-port direction disagreement without mislabeling graph provenance as conflicted: Done
+- mdBook now documents blocked `.fsm` adapter renderability together with flat/graph signal-inventory provenance: Done
 - `.fsm` adapter signal inventory now preserves parametric width provenance and reports symbolic widths distinctly from missing numeric width evidence: Done
 - `.fsm` actor-port graph width overlays now preserve parametric width provenance without overriding explicit numeric width evidence: Done
 - `.fsm` explicit top-root lowering now blocks missing or parametric public IO widths instead of rendering implicit 1-bit top ports: Done

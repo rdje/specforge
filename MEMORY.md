@@ -20,49 +20,47 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `afb23762b1595ce2eeff238aff318dd729097a8c`
-- latest_commit_brief_message: `test(adapter): lock system contract flat graph disagreement`
+- latest_commit_hash: `7e0add50b4f05026cd3c20bd2e42d7a27c8d069c`
+- latest_commit_brief_message: `fix(adapter): preserve top flat graph direction evidence`
 - note: new local `N=100` batch is active; push remains deferred until all 100 slices complete
 
 ## Recent commit chain (last 6)
+- `7e0add5` fix(adapter): preserve top flat graph direction evidence
 - `afb2376` test(adapter): lock system contract flat graph disagreement
 - `f3f1fbe` test(adapter): lock structured FSM flat graph disagreement
 - `50a6661` test(adapter): lock module flat graph disagreement
 - `ce867e3` fix(adapter): block flat graph direction disagreement
 - `f56f622` fix(kg): scope actor taxonomy priors by family
-- `0392d66` fix(kg): scope negative knowledge priors by family
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 21]`
-- files in flight for new batch slice 22:
-  - `crates/specforge/src/ir/adapters.rs`
+- branch state before the next commit: `main...origin/main [ahead 22]`
+- files in flight for new batch slice 23:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `RUST_CODEBASE_ANALYSIS.md`
   - `MEMORY.md`
+  - `docs/book/src/domain/actor-connectivity.md`
+  - `docs/book/src/commands/pipeline.md`
+  - `docs/book/src/reference/generated-artifacts.md`
 
 ## Active N-slice batch
 - requested_count: `100`
-- completed_count: `21`
+- completed_count: `22`
 - push_policy: defer push until all `100` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - preserve top-root flat-vs-graph direction disagreement provenance in signal inventory
-  - prove explicit top-port direction evidence and graph-backed actor/topology direction evidence stay visible when they disagree
-  - keep graph conflict flags scoped to true graph-side disagreement
+  - document `.fsm` adapter flat/graph provenance behavior in the mdBook
+  - explain that blocked top-root renderability can coexist with inspectable flat and graph signal-inventory evidence
+  - keep user-facing generated-artifact guidance aligned with the slice-22 adapter behavior
 - tracker effect:
-  - live-status tracker gains `.fsm top-root signal inventory now preserves flat-vs-graph top-port direction disagreement without mislabeling graph provenance as conflicted: Done`
+  - live-status tracker gains `mdBook now documents blocked .fsm adapter renderability together with flat/graph signal-inventory provenance: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_top_actor_port_direction` passed with `1` test
-  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_keeps_conflicting_top_port_direction_unresolved` passed with `1` test
-  - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
-  - `cargo fmt --manifest-path Cargo.toml -- --check` passed
-  - `bash scripts/run_docs_ci.sh` passed before live-doc edits and must be rerun after the current live-doc refresh
+  - `bash scripts/run_docs_ci.sh` passed for the mdBook edits and must be rerun after the current live-doc refresh
   - `bash scripts/run_ci.sh` passed with `597` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `148` fixtures and `0` failures
 - current known local CI baseline:
@@ -70,4 +68,4 @@
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- rerun docs after live-doc edits, run final guards, commit slice 22 without pushing, and continue slice 23
+- rerun docs after live-doc edits, run final guards, commit slice 23 without pushing, and continue slice 24
