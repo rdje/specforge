@@ -1549,6 +1549,24 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_dry_run_render_honors_selected_indices() {
+        let plan = ProjectRescanPlanRecord {
+            schema_version: 2,
+            generated_by: "test".to_string(),
+            recommendation_count: 2,
+            recommendations: vec![
+                recommendation("doc_a", PLANNED_NOT_EXECUTED),
+                recommendation("doc_b", PLANNED_NOT_EXECUTED),
+            ],
+        };
+
+        let rendered = render_dry_run_plan(&plan, &[1]);
+
+        assert!(rendered.contains("- doc_b intent_ir intent_negative_knowledge_rescan_guidance"));
+        assert!(!rendered.contains("- doc_a intent_ir intent_negative_knowledge_rescan_guidance"));
+    }
+
+    #[test]
     fn rescan_plan_dry_run_render_uses_command_display_for_review() {
         let mut plan = ProjectRescanPlanRecord {
             schema_version: 2,
