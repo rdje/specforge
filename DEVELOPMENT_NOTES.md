@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan exact pending-status selection lock
+- New batch slice 25/40 adds selection coverage for exact `planned_not_executed` matching.
+- No production selection code changed; `selected_pending_indices` already requires the exact pending automation status before document-key filtering and limit selection.
+- This keeps malformed or review-mutated status strings out of executable rescan selections.
+
 ## 2026-05-05 rescan-plan exact document-key filter lock
 - New batch slice 24/40 adds selection coverage for exact `--document-key` matching.
 - No production selection code changed; `selected_pending_indices` already compares document keys for equality before applying limits.

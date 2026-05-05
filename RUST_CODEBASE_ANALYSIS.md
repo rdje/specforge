@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan exact pending-status selection)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` selection tests around pending automation status matching.
+- No production selection code changed; the new regression proves only exact `planned_not_executed` entries are selected.
+- This keeps malformed or review-adjusted status strings from slipping into local rescan execution.
+
 ## Session update (2026-05-05 rescan-plan exact document-key filter)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` selection tests around scoped document-key matching.
 - No production selection code changed; the new regression proves `--document-key` selection is exact and does not catch prefix-like sibling keys.

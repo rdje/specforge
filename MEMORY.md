@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `c1a16ca028b5b7c4c15136b0ed1b2b5a420fad26`
-- latest_commit_brief_message: `test(rescan): lock grade removal status`
+- latest_commit_hash: `c2f4c968c2ce7144181666085b1cc9fd0599aa78`
+- latest_commit_brief_message: `test(rescan): lock exact document filtering`
 - note: new local `N=40` batch is active; push remains deferred until all 40 slices complete
 
 ## Recent commit chain (last 6)
+- `c2f4c96` test(rescan): lock exact document filtering
 - `c1a16ca` test(rescan): lock grade removal status
 - `1bda030` test(rescan): lock score removal status
 - `99920b8` test(rescan): lock grade removal arbitration
 - `4e0fdd9` test(rescan): lock score removal arbitration
 - `6d14dd1` test(rescan): lock grade execution status
-- `0fe7f90` test(rescan): lock grade-only arbitration
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 23]`
-- files in flight for new batch slice 24:
+- branch state before the next commit: `main...origin/main [ahead 24]`
+- files in flight for new batch slice 25:
   - `crates/specforge/src/commands/rescan_plan.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -46,27 +46,27 @@
 
 ## Active N-slice batch
 - requested_count: `40`
-- completed_count: `23`
+- completed_count: `24`
 - push_policy: defer push until all `40` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - add rescan-plan selection coverage proving document-key filters use exact matching
-  - refresh live docs for exact document-key filtering behavior
+  - add rescan-plan selection coverage proving only exact pending statuses are selectable
+  - refresh live docs for exact pending-status selection behavior
 - tracker effect:
-  - planned live-status row addition: `specforge rescan-plan` document-key filters use exact matches: `Done`
+  - planned live-status row addition: `specforge rescan-plan` selection requires exact pending status: `Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_document_key_filter_uses_exact_match` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_selection_requires_exact_pending_status` passed with `1` test
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed
-  - `bash scripts/run_ci.sh` passed with `582` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `bash scripts/run_ci.sh` passed with `583` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `130` fixtures and `0` failures
   - `git diff --check` passed
   - checkout-specific absolute path scan across tracked markdown passed
 - current known local CI baseline:
-  - `582` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `583` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `130/130` tracked KG fixtures
 
 ## Next exact steps
-- commit slice 24 without pushing, then continue slice 25
+- commit slice 25 without pushing, then continue slice 26

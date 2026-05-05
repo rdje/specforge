@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan exact pending-status selection lock)
+
+### Changed: selection requires exact pending status
+- Added selection coverage proving only exact `planned_not_executed` recommendations are selected for dry-run or execution.
+- This prevents near-pending or malformed status strings from entering local rescan execution.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_selection_requires_exact_pending_status` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `583` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan exact document-key filter lock)
 
 ### Changed: scoped rescan selection uses exact document keys

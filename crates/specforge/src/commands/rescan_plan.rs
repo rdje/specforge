@@ -1658,6 +1658,26 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_selection_requires_exact_pending_status() {
+        let plan = ProjectRescanPlanRecord {
+            schema_version: 2,
+            generated_by: "test".to_string(),
+            recommendation_count: 3,
+            recommendations: vec![
+                recommendation("doc_a", PLANNED_NOT_EXECUTED),
+                recommendation("doc_b", "planned_not_executed_reviewed"),
+                recommendation("doc_c", ""),
+            ],
+        };
+
+        assert_eq!(selected_pending_indices(&plan, 0, None), vec![0]);
+        assert_eq!(
+            selected_pending_indices(&plan, 0, Some("doc_b")),
+            Vec::<usize>::new()
+        );
+    }
+
+    #[test]
     fn rescan_plan_applies_limit_after_document_key_filtering() {
         let plan = ProjectRescanPlanRecord {
             schema_version: 2,

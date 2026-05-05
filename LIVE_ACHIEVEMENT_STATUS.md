@@ -34,6 +34,7 @@
 - `specforge rescan-plan` malformed provider hints are regression-locked: Done
 - `specforge rescan-plan` validation-delta finding lists are deterministic: Done
 - `specforge rescan-plan` dry-run report selection counts are regression-locked: Done
+- `specforge rescan-plan` selection requires exact pending status: Done
 - `specforge rescan-plan` execute report no-change summaries are regression-locked: Done
 - `specforge rescan-plan` execute limits preserve unselected pending work: Done
 - `specforge rescan-plan` execute document-key scope preserves other pending work: Done
