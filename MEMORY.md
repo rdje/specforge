@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `edde6c1bf235566b235b591a9ebb2fc264b843c5`
-- latest_commit_brief_message: `test(rescan): lock fingerprint delta`
-- note: new local `N=20` batch is active; push remains deferred until all 20 slices complete
+- latest_commit_hash: `bf7d8255047ea8ddbb783b517df1cd0b66179d36`
+- latest_commit_brief_message: `test(rescan): lock no-change promotion gate`
+- note: new local `N=20` batch has `20/20` slices verified locally; push remains deferred until the slice-20 commit is created
 
 ## Recent commit chain (last 6)
+- `bf7d825` test(rescan): lock no-change promotion gate
 - `edde6c1` test(rescan): lock fingerprint delta
 - `7febd89` test(rescan): lock missing validation report
 - `dfc6b25` test(rescan): lock validation report sidecar
 - `16fb481` test(rescan): lock schema version gate
 - `7071da2` test(rescan): lock replay-input rendering
-- `ba29d0a` test(rescan): lock related-id rendering
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 18]`
-- files in flight for new batch slice 19:
+- branch state before the next commit: `main...origin/main [ahead 19]`
+- files in flight for new batch slice 20:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -46,27 +46,27 @@
 
 ## Active N-slice batch
 - requested_count: `20`
-- completed_count: `18`
+- completed_count: `20`
 - push_policy: defer push until all `20` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - lock `rescan-plan` no-change promotion gate policy
-  - prove `validated_no_change` remains not promoted and not reviewable without an execute-path fixture
+  - lock `rescan-plan` scoped positive limits when executed rows precede pending rows
+  - prove document-scoped limits count only pending replay recommendations
 - tracker effect:
-  - add a `Done` live-status row for no-change promotion gate regression coverage
+  - add a `Done` live-status row for scoped executed-row skip coverage
 - verification status:
-  - focused test passed: `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_no_change_promotion_gate_is_not_reviewable` with `1` test
+  - focused test passed: `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_scoped_limit_skips_executed_entries_before_pending` with `1` test
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed
-  - `bash scripts/run_ci.sh` passed with `558` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `bash scripts/run_ci.sh` passed with `559` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `130` fixtures and `0` failures
   - `git diff --check` passed
   - checkout-specific absolute path scan across tracked markdown passed
 - current known local CI baseline:
-  - `558` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `559` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `130/130` tracked KG fixtures
 
 ## Next exact steps
-- commit slice 19 without pushing, then continue slice 20
+- commit slice 20 without pushing, then push the completed `N=20` batch

@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan scoped executed-skip limit lock
+- New batch slice 20/20 adds scoped queue-selection coverage for executed rows that appear before pending rows in the same document.
+- No production selection code changed; `selected_pending_indices(...)` already filters by `planned_not_executed` before applying positive limits.
+- This closes the batch by proving document-scoped limits count only eligible pending replay work.
+
 ## 2026-05-05 rescan-plan no-change promotion gate lock
 - New batch slice 19/20 adds pure policy coverage for the `validated_no_change` promotion gate.
 - No production policy code changed; `rescan_promotion_status_for(...)`, `rescan_promotion_blockers_for(...)`, and `rescan_promotion_review_for(...)` already classify no-change rescans as not promoted and not reviewable.

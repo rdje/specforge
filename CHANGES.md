@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan scoped executed-skip limit lock)
+
+### Changed: scoped limits skip executed rows before pending rows
+- Added queue-selection coverage proving executed recommendations inside a document scope do not consume positive `--limit` slots before later pending work.
+- This keeps document-scoped batch selection faithful to pending-only replay semantics.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_scoped_limit_skips_executed_entries_before_pending` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `559` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan no-change promotion gate lock)
 
 ### Changed: no-change promotion gates are regression-locked

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan scoped executed-skip limits)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` queue-selection tests around executed entries inside document-scoped positive limits.
+- No production selection code changed; the new regression proves positive limits are applied after pending-status and document-key filtering.
+- This keeps scoped automatic replay batches from spending limit slots on already-executed recommendations.
+
 ## Session update (2026-05-05 rescan-plan no-change promotion gate)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` policy tests around `validated_no_change` promotion gates.
 - No production policy code changed; the new regression proves no-change rescans remain not promoted, blocked by no-delta policy, and not reviewable for canonical mutation.

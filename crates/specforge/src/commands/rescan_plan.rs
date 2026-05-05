@@ -1482,6 +1482,30 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_scoped_limit_skips_executed_entries_before_pending() {
+        let plan = ProjectRescanPlanRecord {
+            schema_version: 2,
+            generated_by: "test".to_string(),
+            recommendation_count: 4,
+            recommendations: vec![
+                recommendation("doc_target", EXECUTED_VALIDATED_NO_CHANGE),
+                recommendation("doc_target", PLANNED_NOT_EXECUTED),
+                recommendation("doc_other", PLANNED_NOT_EXECUTED),
+                recommendation("doc_target", PLANNED_NOT_EXECUTED),
+            ],
+        };
+
+        assert_eq!(
+            selected_pending_indices(&plan, 1, Some("doc_target")),
+            vec![1]
+        );
+        assert_eq!(
+            selected_pending_indices(&plan, 2, Some("doc_target")),
+            vec![1, 3]
+        );
+    }
+
+    #[test]
     fn rescan_plan_large_limit_keeps_all_pending_in_order() {
         let plan = ProjectRescanPlanRecord {
             schema_version: 2,
