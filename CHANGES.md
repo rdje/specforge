@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` system width-conflict provenance lock)
+
+### Added: sequential system width-conflict provenance coverage
+- Tightened `standalone_sequential_dt_blocks_conflicting_system_contract_signal_width` so blocked standalone sequential `.fsm` lowering now proves system-contract support IDs and high automation confidence survive when clock width evidence conflicts.
+- This is coverage-only over the existing adapter behavior: contradictory canonical clock width evidence keeps `.fsm` emission blocked instead of selecting a numeric width.
+- The slice keeps system-contract width conflict evidence auditable in `fsm.signal_inventory` for review/rescan.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_sequential_dt_blocks_conflicting_system_contract_signal_width` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+
 ## 2026-05-05 (`.fsm` system direction-conflict provenance lock)
 
 ### Added: sequential system direction-conflict provenance coverage

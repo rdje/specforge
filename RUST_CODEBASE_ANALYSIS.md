@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` system width-conflict provenance lock)
+- Tightened `standalone_sequential_dt_blocks_conflicting_system_contract_signal_width` in `crates/specforge/src/ir/adapters.rs` so blocked system-contract width conflicts retain support IDs and automation confidence.
+- The adapter already kept contradictory canonical clock width evidence unresolved; this regression now proves the blocked inventory preserves the system-contract evidence trail.
+- This completes the immediate standalone sequential system-contract direction/width conflict provenance pair.
+
 ## Session update (2026-05-05 `.fsm` system direction-conflict provenance lock)
 - Tightened `standalone_sequential_dt_blocks_conflicting_system_contract_signal_direction` in `crates/specforge/src/ir/adapters.rs` so blocked system-contract direction conflicts retain support IDs and automation confidence.
 - The adapter already kept contradictory canonical clock direction evidence unresolved; this regression now proves the blocked inventory preserves the system-contract evidence trail.

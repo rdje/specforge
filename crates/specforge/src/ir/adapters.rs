@@ -8248,6 +8248,17 @@ mod tests {
         let tempdir = tempdir()?;
         let mut intent_ir = build_explicit_sequential_control_intent_ir(tempdir.path())?;
         set_direct_signal_width_hint(&mut intent_ir, "clk", 2);
+        let system_contract_support_ids = {
+            let system_contract = intent_ir
+                .system_contract
+                .as_ref()
+                .expect("system contract should be present");
+            assert!(
+                !system_contract.supporting_statement_ids.is_empty(),
+                "system contract should carry concrete support IDs"
+            );
+            system_contract.supporting_statement_ids.clone()
+        };
         intent_ir.write_to_disk()?;
 
         let artifact_base = tempdir.path().join("generated").join("adapters");
@@ -8273,6 +8284,12 @@ mod tests {
                 .iter()
                 .any(|category| category == "system_contract_signal")
         );
+        assert!(
+            system_contract_support_ids
+                .iter()
+                .any(|id| clk.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(clk.automation_confidence, AutomationConfidence::High);
         assert!(!fsm.renderability.is_renderable);
         assert!(
             fsm.renderability
