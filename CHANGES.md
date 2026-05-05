@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` unemitted child-link provenance lock)
+
+### Added: top-link blocker provenance coverage
+- Tightened `top_composition_blocks_link_to_unemitted_child_port` so blocked top-composition `.fsm` lowering now proves the explicit top-link support IDs and high automation confidence survive when a child endpoint does not resolve to an emitted child port.
+- The regression also locks the source-endpoint enrichment guidance for the blocked link.
+- This is coverage-only over the existing adapter behavior: a top link to an unemitted child port still blocks `.fsm` emission.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_to_unemitted_child_port` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-05 (`.fsm` parametric top-port provenance lock)
 
 ### Added: parametric top-port blocker provenance coverage

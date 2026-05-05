@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` unemitted child-link provenance lock)
+- Tightened `top_composition_blocks_link_to_unemitted_child_port` in `crates/specforge/src/ir/adapters.rs` so blocked top links to child endpoints that are not emitted retain explicit top-link support IDs and automation confidence.
+- The adapter already blocked top lowering when a link endpoint could not resolve to an emitted child port; this regression now proves the blocked link remains inspectable and keeps the source-endpoint enrichment guidance precise.
+- This complements the public top-port blocker locks by covering a blocked top-link endpoint path.
+
 ## Session update (2026-05-05 `.fsm` parametric top-port provenance lock)
 - Tightened `top_composition_blocks_parametric_top_port_width_for_fsm_public_io` in `crates/specforge/src/ir/adapters.rs` so blocked symbolic-width top-composition public IO retains explicit top-port support IDs and automation confidence.
 - The adapter already blocked top roots when a public port had parametric width evidence but no numeric width evidence; this regression now proves that symbolic-width evidence remains inspectable in the top candidate and signal inventory.

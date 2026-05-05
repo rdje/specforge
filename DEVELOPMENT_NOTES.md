@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 `.fsm` unemitted child-link provenance lock
+- New batch slice 57/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_link_to_unemitted_child_port` now asserts blocked top links to unemitted child endpoints preserve explicit top-link support IDs and high automation confidence on the top candidate.
+- The test also locks the required source-endpoint enrichment guidance when the link source cannot resolve to an emitted child port.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-05 `.fsm` parametric top-port provenance lock
 - New batch slice 56/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_parametric_top_port_width_for_fsm_public_io` now asserts parametric public top ports preserve explicit top-port support IDs and high automation confidence in both the blocked top candidate and selected signal inventory.

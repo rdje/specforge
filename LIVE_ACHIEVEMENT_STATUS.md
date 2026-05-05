@@ -341,6 +341,7 @@
 - `.fsm` widthless top-port blockers now regression-lock support IDs and automation confidence: Done
 - `.fsm` parametric top-port blockers now regression-lock support IDs and automation confidence: Done
 - `.fsm` explicit top-link lowering now requires child endpoints to resolve to emitted child module ports: Done
+- `.fsm` top-link blockers for unemitted child endpoints now regression-lock support IDs and automation confidence: Done
 - `.fsm` standalone DT/FSM renderability now blocks graph-backed output inventory entries that have no typed driving action instead of silently omitting them: Done
 - `.fsm` standalone DT graph-backed undriven output blockers now regression-lock support IDs and automation confidence: Done
 - `.fsm` structured FSM renderability now regression-locks graph-backed undriven output blocking: Done
