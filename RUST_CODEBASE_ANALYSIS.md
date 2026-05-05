@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan unsupported NLP argument coverage)
+- Extended `crates/specforge/src/commands/rescan_plan.rs` malformed provider tests to cover unsupported trailing args for NLP enrichment hints.
+- NLP enrichment provider parsing now has explicit regression coverage for duplicate providers, missing values, flag-shaped values, unsupported providers, and unsupported args.
+- This completes the current batch with symmetrical provider hardening coverage across source and NLP enrichment replay hints.
+
 ## Session update (2026-05-05 rescan-plan duplicate NLP provider coverage)
 - Extended `crates/specforge/src/commands/rescan_plan.rs` malformed provider tests to cover duplicate `--vlm-provider` flags for NLP enrichment hints.
 - NLP enrichment provider parsing already rejected duplicates through the same replacement guard as source enrichment.

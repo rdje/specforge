@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan unsupported NLP argument coverage)
+
+### Changed: unsupported provider argument rejection includes NLP enrichment
+- Extended the malformed local-provider regression so NLP enrichment command hints reject unsupported trailing arguments.
+- This keeps source enrichment and NLP enrichment provider parsing covered for both duplicate flags and unsupported args.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_malformed_local_provider_hints` -> passed (`1` test, `592` filtered out)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`593` Rust tests, warnings denied for Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`130` fixtures, `0` failures)
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan duplicate NLP provider coverage)
 
 ### Changed: duplicate provider rejection includes NLP enrichment

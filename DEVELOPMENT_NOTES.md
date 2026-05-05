@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan unsupported NLP argument coverage
+- New batch slice 40/40 extends malformed provider regression coverage to unsupported trailing args in NLP enrichment hints.
+- The NLP provider parser already failed closed on unknown args; the assertion makes this explicit beside duplicate-provider coverage.
+- This completes the current N=40 batch with symmetric malformed provider coverage across the two enrichment replay lanes.
+
 ## 2026-05-05 rescan-plan duplicate NLP provider coverage
 - New batch slice 39/40 extends malformed provider regression coverage to duplicate `--vlm-provider` flags in NLP enrichment hints.
 - The NLP provider parser already failed closed on duplicate provider replacement; the assertion makes the contract explicit.

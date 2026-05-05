@@ -44,6 +44,7 @@
 - `specforge rescan-plan` unhyphenated LM Studio provider hints are regression-locked: Done
 - `specforge rescan-plan` OpenAI provider aliases are rejected: Done
 - `specforge rescan-plan` duplicate NLP provider hints are regression-locked: Done
+- `specforge rescan-plan` unsupported NLP provider args are regression-locked: Done
 - `specforge rescan-plan` malformed provider hints are regression-locked: Done
 - `specforge rescan-plan` nlp-enrich classify-only hints are rejected: Done
 - `specforge rescan-plan` validation-delta finding lists are deterministic: Done

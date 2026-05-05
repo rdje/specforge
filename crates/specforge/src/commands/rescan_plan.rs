@@ -1737,6 +1737,18 @@ mod tests {
             ],
         );
         assert!(parse_command_hint(&unsupported_arg).is_err());
+
+        let unsupported_nlp_arg = command_hint(
+            "nlp_enrich_evidence_ir",
+            vec![
+                "nlp-enrich",
+                "generated/evidence_ir/doc/evidence_ir.json",
+                "--vlm-provider",
+                "ollama",
+                "--unexpected",
+            ],
+        );
+        assert!(parse_command_hint(&unsupported_nlp_arg).is_err());
     }
 
     #[test]
