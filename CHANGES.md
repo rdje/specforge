@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan execute document-key scope lock)
+
+### Changed: execute document-key scoping preserves other pending work
+- Added `run_plan --execute --document-key` coverage proving scoped execution updates only the matching pending recommendation and leaves other pending recommendations untouched.
+- This protects targeted local rescan execution when multiple documents share one plan.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_execute_document_key_filter_leaves_other_pending_work` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `575` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan execute limit lock)
 
 ### Changed: execute limits preserve unselected pending work

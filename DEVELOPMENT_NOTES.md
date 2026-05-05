@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan execute document-key scope lock
+- New batch slice 17/40 adds `run_plan --execute --document-key` coverage for targeted execution behavior.
+- No production execution code changed; scoped execution already updates only matching pending recommendations and leaves other pending document work untouched.
+- This keeps multi-document rescan plans safe for targeted local replay.
+
 ## 2026-05-05 rescan-plan execute limit lock
 - New batch slice 16/40 adds `run_plan --execute --limit 1` coverage for bounded execution behavior.
 - No production execution code changed; selected work already executes while unselected pending recommendations stay `planned_not_executed` with no execution summary.

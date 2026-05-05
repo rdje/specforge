@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `697d9cbfec5df7545111ad081fa6be74ee463a13`
-- latest_commit_brief_message: `test(rescan): lock execute report no-change`
+- latest_commit_hash: `a2b9621bb60288651667722c50177b1c550d05c6`
+- latest_commit_brief_message: `test(rescan): lock execute limit handling`
 - note: new local `N=40` batch is active; push remains deferred until all 40 slices complete
 
 ## Recent commit chain (last 6)
+- `a2b9621` test(rescan): lock execute limit handling
 - `697d9cb` test(rescan): lock execute report no-change
 - `c6a3bfc` test(rescan): lock dry-run report counts
 - `97bd187` test(rescan): lock replay-input rendering
 - `f4428fb` test(rescan): lock dry-run list rendering
 - `5ec6868` test(rescan): lock verdict-count summary
-- `788b657` test(rescan): lock review-count summary
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 15]`
-- files in flight for new batch slice 16:
+- branch state before the next commit: `main...origin/main [ahead 16]`
+- files in flight for new batch slice 17:
   - `crates/specforge/src/commands/rescan_plan.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -46,27 +46,27 @@
 
 ## Active N-slice batch
 - requested_count: `40`
-- completed_count: `15`
+- completed_count: `16`
 - push_policy: defer push until all `40` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - add rescan-plan execute-mode coverage proving limits leave unselected pending work untouched
-  - refresh live docs for bounded execute behavior
+  - add rescan-plan execute-mode coverage proving document-key scoping leaves other pending document work untouched
+  - refresh live docs for scoped execute behavior
 - tracker effect:
-  - planned live-status row addition: `specforge rescan-plan` execute limits preserve unselected pending work: `Done`
+  - planned live-status row addition: `specforge rescan-plan` execute document-key scope preserves other pending work: `Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_execute_limit_leaves_unselected_pending_work` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_execute_document_key_filter_leaves_other_pending_work` passed with `1` test
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed
-  - `bash scripts/run_ci.sh` passed with `574` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `bash scripts/run_ci.sh` passed with `575` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `130` fixtures and `0` failures
   - `git diff --check` passed
   - checkout-specific absolute path scan across tracked markdown passed
 - current known local CI baseline:
-  - `574` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `575` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `130/130` tracked KG fixtures
 
 ## Next exact steps
-- commit slice 16 without pushing, then continue slice 17
+- commit slice 17 without pushing, then continue slice 18

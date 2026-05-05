@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan execute document-key scope)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` execute-mode tests around document-key scoped queue execution.
+- No production execution code changed; the new regression proves `--execute --document-key` updates only matching pending recommendations and leaves other document work pending without summaries.
+- This keeps targeted local replay safe for multi-document plans.
+
 ## Session update (2026-05-05 rescan-plan execute limit)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` execute-mode tests around bounded queue execution.
 - No production execution code changed; the new regression proves `--execute --limit 1` updates only selected work and leaves unselected pending recommendations without execution summaries.
