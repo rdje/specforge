@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan lane mismatch coverage)
+
+### Changed: command intent/subcommand mismatch coverage is broader
+- Extended the command-hint mismatch regression across source, enrichment, NLP enrichment, intent, and validation lane mismatches.
+- This locks the executor parser to intent-aligned SpecForge subcommands before any replay dispatch occurs.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_rejects_command_intent_subcommand_mismatches` -> passed (`1` test, `592` filtered out)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`593` Rust tests, warnings denied for Clippy/rustdoc, mdBook validation)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`130` fixtures, `0` failures)
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan missing path coverage)
 
 ### Changed: missing replay path coverage includes intent and NLP

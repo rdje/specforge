@@ -1460,11 +1460,45 @@ mod tests {
 
     #[test]
     fn rescan_plan_rejects_command_intent_subcommand_mismatches() {
+        let source_intent_with_evidence_subcommand = command_hint(
+            "rebuild_source_ir",
+            vec!["evidence", "generated/source_ir/doc/source_ir.json"],
+        );
+        assert!(parse_command_hint(&source_intent_with_evidence_subcommand).is_err());
+
+        let enrich_intent_with_nlp_subcommand = command_hint(
+            "enrich_source_ir",
+            vec![
+                "nlp-enrich",
+                "generated/evidence_ir/doc/evidence_ir.json",
+                "--vlm-provider",
+                "skip",
+            ],
+        );
+        assert!(parse_command_hint(&enrich_intent_with_nlp_subcommand).is_err());
+
+        let nlp_intent_with_enrich_subcommand = command_hint(
+            "nlp_enrich_evidence_ir",
+            vec![
+                "enrich",
+                "generated/source_ir/doc/source_ir.json",
+                "--vlm-provider",
+                "skip",
+            ],
+        );
+        assert!(parse_command_hint(&nlp_intent_with_enrich_subcommand).is_err());
+
         let evidence_intent_with_semantic_subcommand = command_hint(
             "rebuild_evidence_ir",
             vec!["semantic", "generated/evidence_ir/doc/evidence_ir.json"],
         );
         assert!(parse_command_hint(&evidence_intent_with_semantic_subcommand).is_err());
+
+        let intent_intent_with_semantic_subcommand = command_hint(
+            "rebuild_intent_ir",
+            vec!["semantic", "generated/semantic_ir/doc/semantic_ir.json"],
+        );
+        assert!(parse_command_hint(&intent_intent_with_semantic_subcommand).is_err());
 
         let validate_intent_with_intent_subcommand = command_hint(
             "validate_current_artifact",

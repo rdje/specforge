@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan lane mismatch coverage)
+- Extended `crates/specforge/src/commands/rescan_plan.rs` command-hint mismatch coverage across source, enrichment, NLP enrichment, and intent lanes.
+- The execution parser remains fail-closed unless the structured command intent and SpecForge subcommand agree.
+- This further constrains replay dispatch to the command-hint contract rather than trusting display strings or mismatched args.
+
 ## Session update (2026-05-05 rescan-plan missing path coverage)
 - Extended the malformed command-hint tests in `crates/specforge/src/commands/rescan_plan.rs` to cover missing intent and NLP enrichment replay paths.
 - The parser behavior was already fail-closed through exact argument-shape matching and provider parsing.

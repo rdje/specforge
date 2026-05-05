@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan lane mismatch coverage
+- New batch slice 37/40 extends command intent/subcommand mismatch assertions across source, enrichment, NLP enrichment, and intent replay lanes.
+- The parser already rejected these through exact match arms and lane-specific argument parsers; the regression now documents that boundary directly.
+- This keeps replay dispatch tied to the structured rescan intent rather than accepting a mismatched SpecForge subcommand.
+
 ## 2026-05-05 rescan-plan missing path coverage
 - New batch slice 36/40 extends the missing replay-path regression to the intent rebuild and NLP enrichment lanes.
 - The parser already rejected these malformed hints; the new assertions lock that behavior across the remaining replay command families.
