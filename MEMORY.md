@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `544f326655ece5cd94bbd9e9137fe03b6c34673d`
-- latest_commit_brief_message: `test(rescan): lock dry-run command preview`
-- note: the latest committed baseline is local batch-20 slice 2; push remains deferred until all `20` slices complete
+- latest_commit_hash: `2aed56190ea6ad603e9cb469d8fcf2d812988337`
+- latest_commit_brief_message: `test(rescan): lock empty dry-run preview fields`
+- note: the latest committed baseline is local batch-20 slice 3; push remains deferred until all `20` slices complete
 
 ## Recent commit chain (last 6)
+- `2aed561` test(rescan): lock empty dry-run preview fields
 - `544f326` test(rescan): lock dry-run command preview
 - `4916c6b` docs(memory): start N=20 batch state
 - `a15d861` test(validation): lock graph replay command lanes
 - `146a576` test(kg): lock flat-hint conflict guidance payloads
 - `6531382` test(validate): lock graph conflict guidance pair
-- `5d739ee` test(kg): lock graph conflict rescan payloads
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 2]`
-- files in flight for batch-20 slice 3:
+- branch state before the next commit: `main...origin/main [ahead 3]`
+- files in flight for batch-20 slice 4:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
@@ -51,19 +51,19 @@
 
 ## Active N-slice batch
 - requested_count: `20`
-- completed_count: `2`
+- completed_count: `3`
 - push_policy: defer push until all `20` slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - lock `rescan-plan` dry-run fallback rendering for sparse recommendations with no replay inputs, no related ids, and no command hints
-  - make empty schema-v2 lists visible as explicit `none` values in the human preview
+  - lock `rescan-plan` document-scoped pending selection so executed matching recommendations and missing document keys select no work
+  - keep standalone `rescan-plan --document-key` and `converge --rescan-plan <plan>` scoped consumers from resurfacing completed or unrelated recommendations
 - tracker effect:
-  - add a `Done` live-status row for the dry-run empty-field preview lock
+  - add a `Done` live-status row for document-key pending selection coverage
 - verification status:
-  - focused test passed: `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_dry_run_render_surfaces_empty_replay_fields_as_none`
-  - `cargo fmt --manifest-path Cargo.toml -- --check` passed
+  - focused test passed: `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_selects_only_planned_pending_targets_with_limit`
+  - `cargo fmt --manifest-path Cargo.toml -- --check` passed after applying `cargo fmt`
   - `bash scripts/run_docs_ci.sh` passed
   - `bash scripts/run_ci.sh` passed with `524` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `130/130` fixtures
@@ -74,4 +74,4 @@
   - `130/130` tracked KG fixtures
 
 ## Next exact steps
-- commit slice 3 without pushing, then move to slice 4
+- commit slice 4 without pushing, then move to slice 5

@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan document-key pending selection lock)
+
+### Changed: document-scoped rescan selection now locks skipped states
+- Tightened the `rescan-plan` pending-selection regression around `--document-key`.
+- The test already proved that unfiltered dry-runs select pending planned recommendations and honor limits.
+- It now also proves that document-scoped selection returns no work when the matching recommendation is already executed or when the document key is absent.
+- This keeps scoped dry-runs from resurfacing completed work or unrelated documents.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_selects_only_planned_pending_targets_with_limit` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed after applying `cargo fmt`
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `524` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan dry-run empty-field preview lock)
 
 ### Changed: dry-run preview now regression-locks explicit `none` fallbacks

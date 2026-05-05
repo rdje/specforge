@@ -28,6 +28,7 @@
 - `specforge rescan-plan` command created: Done
 - `specforge rescan-plan` dry-run preview fields are regression-locked: Done
 - `specforge rescan-plan` dry-run empty-field preview is regression-locked: Done
+- `specforge rescan-plan` document-key pending selection is regression-locked: Done
 - `specforge kg-bench` command created: Done
 - `specforge learn-priors` command created: Done
 - `specforge corpus-kb` command created: Done

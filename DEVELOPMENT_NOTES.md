@@ -7,6 +7,14 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan document-key pending selection lock
+- Batch slice 4/20 tightens the queue-selection side of `rescan-plan`.
+- `selected_pending_indices(...)` already filtered by `planned_not_executed`, limit, and optional document key.
+- The regression now asserts the two empty scoped cases directly:
+  - a matching document whose recommendation is already executed does not re-enter the pending queue
+  - a missing document key returns no selected work
+- This is especially important for `converge --rescan-plan <plan>`, which relies on the same scoped consumer after the fixed-point loop stabilizes.
+
 ## 2026-05-05 rescan-plan dry-run empty-field preview lock
 - Batch slice 3/20 covers the sparse recommendation sibling of slice 2.
 - The dry-run renderer already had explicit `none` fallbacks for empty replay inputs, related ids, and command hints.

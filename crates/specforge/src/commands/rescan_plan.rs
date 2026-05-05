@@ -950,6 +950,14 @@ mod tests {
         assert_eq!(selected_pending_indices(&plan, 1, None), vec![0]);
         assert_eq!(selected_pending_indices(&plan, 0, None), vec![0, 2]);
         assert_eq!(selected_pending_indices(&plan, 0, Some("doc_c")), vec![2]);
+        assert_eq!(
+            selected_pending_indices(&plan, 0, Some("doc_b")),
+            Vec::<usize>::new()
+        );
+        assert_eq!(
+            selected_pending_indices(&plan, 0, Some("missing_doc")),
+            Vec::<usize>::new()
+        );
     }
 
     #[test]

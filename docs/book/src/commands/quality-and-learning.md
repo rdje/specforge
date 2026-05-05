@@ -93,7 +93,7 @@ cargo run --manifest-path Cargo.toml -- rescan-plan
 `rescan-plan` reads `generated/validation/rescan_plan.json`.
 By default it is a dry-run inspector: it reports pending `planned_not_executed` recommendations and prints the artifact path, extractor lane, replay inputs, recommended action, related ids, current automation status, and structured command hints that would be used.
 When a pending recommendation has no replay inputs, related ids, or command hints, those fields render as explicit `none` values instead of disappearing from the preview.
-Use `--document-key <key>` to scope a multi-document plan to one document.
+Use `--document-key <key>` to scope a multi-document plan to one document; the scoped view still selects only pending `planned_not_executed` recommendations, so executed matches and missing document keys produce no pending work.
 
 To execute the current pending hints explicitly:
 
@@ -148,6 +148,7 @@ cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target fsm 
 
 Add `--execute-rescan-plan` only when you want those whitelisted hints to run.
 Unlike standalone `rescan-plan`, the convergence hook automatically filters the queue to the current source document key.
+That automatic filter uses the same pending-only selection rule as `rescan-plan --document-key`.
 The convergence summary reports whether the post-rescan artifact snapshot changed and emits an arbitration status such as `dry_run_not_promoted` or `changed_requires_validation_review`.
 That keeps rescans visible without pretending that a changed validation surface is already an improvement.
 

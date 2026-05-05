@@ -127,6 +127,7 @@ The generated enrichment hint now uses a local provider policy: `auto-local` pre
 `rescan-plan` is the first explicit consumer for that schema: it dry-runs by default, prints artifact path, extractor lane, replay inputs, related ids, and a readable action summary before the command hints, with empty fields rendered as explicit `none` values.
 With `--execute`, it dispatches only whitelisted local enrichment/stage rebuild/validate commands from the structured args rather than trusting shell text.
 It can also scope a multi-document queue with `--document-key <key>`.
+Scoped queues still select only pending `planned_not_executed` recommendations; executed matches and missing document keys produce no pending dry-run work.
 Execution validates before and after the rebuild and records only neutral changed/no-change status, not an improvement claim.
 Executed recommendations also persist an `execution_summary` containing before/after validation snapshots, score/finding deltas, added/removed finding ids, and a conservative verdict that distinguishes possible improvement from regression or neutral artifact drift while still requiring review.
 That summary also carries an explicit promotion gate: no-change executions remain `not_promoted_no_change`, and changed executions remain `not_promoted_review_required` until current-document evidence and arbitration policy approve any canonical change.
