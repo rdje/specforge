@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan scoped unlimited queue lock)
+
+### Changed: unlimited pending queue selection respects document scope
+- Added selection coverage proving `--limit 0` selects all pending recommendations for the requested document only.
+- This keeps unlimited mode consistent with document-scoped replay instead of falling back to the full multi-document queue.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_zero_limit_selects_all_scoped_pending_in_order` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `548` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan large-limit queue lock)
 
 ### Changed: pending queue selection keeps all work when limit exceeds queue size

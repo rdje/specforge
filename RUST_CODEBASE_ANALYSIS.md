@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan scoped unlimited queue selection)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` queue-selection tests around `limit == 0` with document scoping.
+- No production selection code changed; the new regression proves unlimited mode still applies the document filter before collecting pending indices.
+- This protects multi-document rescan plans when operators ask to process all pending work for one document.
+
 ## Session update (2026-05-05 rescan-plan large-limit queue selection)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` queue-selection tests around oversized positive limits.
 - No production selection code changed; pending recommendations now have direct coverage for all-pending preservation when `limit` is larger than the queue.

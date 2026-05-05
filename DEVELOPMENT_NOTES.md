@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan scoped unlimited queue lock
+- New batch slice 9/20 adds queue-selection coverage for `limit == 0` with a document filter.
+- No production selection code changed; `selected_pending_indices(...)` already treats zero as unlimited after applying pending-status and document-key filters.
+- This protects scoped replay from accidentally selecting unrelated documents when users ask for all pending work on one document.
+
 ## 2026-05-05 rescan-plan large-limit queue lock
 - New batch slice 8/20 adds queue-selection coverage for oversized positive limits.
 - No production selection code changed; `selected_pending_indices(...)` already returns every pending item in original queue order when `limit` exceeds the pending count.

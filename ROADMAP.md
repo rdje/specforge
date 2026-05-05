@@ -46,6 +46,7 @@
 - keep rescan queue selection deterministic for automated batches:
   - positive limits bound work without reordering it
   - limits larger than pending work preserve every selected pending recommendation
+  - zero-limit unlimited mode still honors document scope before selecting work
 - treat the mdBook under `docs/book/` as a live user-facing product surface:
   - it is not a one-time scaffold or release-time afterthought
   - it is the public-facing documentation product for `specforge`, so it should openly explain what the tool does, how it works, and why it is designed that way
