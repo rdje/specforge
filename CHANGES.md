@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan finding-count regression lock)
+
+### Changed: finding-count increases stay regression review
+- Added arbitration coverage proving a higher validation finding count triggers `regression_review_required` even when score, grade, and finding identities stay unchanged.
+- This keeps aggregate validation regressions visible even when a report lacks precise new finding ids.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_arbitration_treats_finding_count_increase_as_regression` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `566` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan score-rise arbitration lock)
 
 ### Changed: score increases stay possible-improvement review

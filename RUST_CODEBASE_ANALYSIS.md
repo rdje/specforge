@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan finding-count regression)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` arbitration tests around validation finding-count increases.
+- No production arbitration code changed; the new regression proves a positive finding-count delta alone produces regression review.
+- This protects aggregate validation regressions even when precise finding identity changes are absent.
+
 ## Session update (2026-05-05 rescan-plan score-rise arbitration)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` arbitration tests around validation score increases.
 - No production arbitration code changed; the new regression proves a positive score delta alone produces possible-improvement review.

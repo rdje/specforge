@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan finding-count regression lock
+- New batch slice 8/40 adds isolated arbitration coverage for validation finding-count increases.
+- No production arbitration code changed; `arbitration_verdict(...)` already treats positive finding-count deltas as regression review.
+- This locks the aggregate-count regression path independently of finding-id additions.
+
 ## 2026-05-05 rescan-plan score-rise arbitration lock
 - New batch slice 7/40 adds isolated arbitration coverage for validation score increases.
 - No production arbitration code changed; `arbitration_verdict(...)` already treats positive score deltas as possible-improvement review when no regression signal is present.
