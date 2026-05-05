@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan replay-input render lock)
+
+### Changed: dry-run rendering preserves replay-input order
+- Added render coverage proving `replay_inputs` are printed in stored plan order.
+- This keeps the review-facing replay chain faithful to the recommendation record.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_dry_run_render_preserves_replay_input_order` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `553` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan related-id render lock)
 
 ### Changed: dry-run rendering preserves related-id order

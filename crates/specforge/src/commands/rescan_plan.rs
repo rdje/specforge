@@ -1618,6 +1618,32 @@ mod tests {
     }
 
     #[test]
+    fn rescan_plan_dry_run_render_preserves_replay_input_order() {
+        let mut plan = ProjectRescanPlanRecord {
+            schema_version: 2,
+            generated_by: "test".to_string(),
+            recommendation_count: 1,
+            recommendations: vec![recommendation("doc", PLANNED_NOT_EXECUTED)],
+        };
+        plan.recommendations[0].replay_inputs = vec![
+            ProjectRescanReplayInput {
+                input_kind: "semantic_ir".to_string(),
+                path: "generated/semantic_ir/doc/semantic_ir.json".to_string(),
+            },
+            ProjectRescanReplayInput {
+                input_kind: "source_ir".to_string(),
+                path: "generated/source_ir/doc/source_ir.json".to_string(),
+            },
+        ];
+
+        let rendered = render_dry_run_plan(&plan, &[0]);
+
+        assert!(rendered.contains(
+            "replay_inputs: semantic_ir:generated/semantic_ir/doc/semantic_ir.json, source_ir:generated/source_ir/doc/source_ir.json"
+        ));
+    }
+
+    #[test]
     fn rescan_plan_execution_status_tracks_validation_deltas() {
         let before = ProjectRescanValidationSnapshot {
             artifact_fingerprint: "aaa".to_string(),

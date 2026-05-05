@@ -7,6 +7,11 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan replay-input render lock
+- New batch slice 14/20 adds dry-run render coverage for `replay_inputs` ordering.
+- No production rendering code changed; `render_replay_inputs(...)` already preserves stored order when joining replay inputs.
+- This keeps review-facing replay-chain text faithful to the recommendation record.
+
 ## 2026-05-05 rescan-plan related-id render lock
 - New batch slice 13/20 adds dry-run render coverage for `related_ids` ordering.
 - No production rendering code changed; `render_string_list(...)` already preserves stored order when joining related IDs.

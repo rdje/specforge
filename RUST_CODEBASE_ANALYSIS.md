@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 rescan-plan replay-input rendering)
+- Strengthened `crates/specforge/src/commands/rescan_plan.rs` render tests around `replay_inputs`.
+- No production renderer code changed; dry-run output now has direct coverage for preserving the plan's replay-input order.
+- This keeps the displayed replay chain stable and faithful to the stored recommendation.
+
 ## Session update (2026-05-05 rescan-plan related-id rendering)
 - Strengthened `crates/specforge/src/commands/rescan_plan.rs` render tests around `related_ids`.
 - No production renderer code changed; dry-run output now has direct coverage for preserving the plan's related-id order.
