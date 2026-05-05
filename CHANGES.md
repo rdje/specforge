@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-05 (rescan-plan neutral score-presence arbitration lock)
+
+### Changed: score/grade presence changes now stay neutral review signals
+- Added arbitration coverage for validation snapshots where a score or grade appears after being absent.
+- The resulting delta is review-worthy, but without a comparable numeric score delta it must remain `neutral_change_review_required`.
+- This prevents sparse validation-report metadata changes from being mislabeled as an improvement or regression.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge rescan_plan_arbitration_treats_score_presence_changes_as_neutral_review` -> passed with `1` test
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `529` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+- `git diff --check` -> passed
+- checkout-specific absolute path scan across tracked markdown -> passed
+
 ## 2026-05-05 (rescan-plan validation-delta finding list lock)
 
 ### Changed: execution-summary finding deltas now have deterministic-list coverage

@@ -136,6 +136,7 @@ Added and removed finding-id lists are sorted and deduplicated before they are p
 
 Promotion is recorded separately from validation movement.
 A no-change run stays `not_promoted_no_change`, and any changed run stays `not_promoted_review_required` with blockers such as `validation_delta_is_not_truth_promotion` and `current_document_evidence_review_required`.
+If a score or grade appears where the previous validation snapshot had none, that is treated as neutral review-required drift rather than automatic improvement or regression, because there is no comparable score delta.
 The same summary also carries a structured `promotion_review` record.
 Changed outcomes are `human_review_required`, require an approval record, and keep `canonical_mutation_allowed` false until current-document evidence, validation-delta direction, explicit mutation scope, and prior-memory non-authority have all been reviewed.
 No-change outcomes are `not_reviewable_no_change`.

@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 rescan-plan neutral score-presence arbitration lock
+- Batch slice 9/20 adds coverage for sparse validation metadata changes.
+- If a score appears where none existed, or a grade appears where none existed, the execution summary should be reviewable because the report surface changed.
+- But without a before/after numeric score pair, `score_delta` remains `None`, so arbitration must stay `neutral_change_review_required`.
+- Added `rescan_plan_arbitration_treats_score_presence_changes_as_neutral_review` to lock that conservative behavior.
+
 ## 2026-05-05 rescan-plan validation-delta finding list lock
 - Batch slice 8/20 moves from command parsing to execution-summary determinism.
 - `validation_delta(...)` already sorted and deduplicated `finding_ids` before deriving added and removed lists.

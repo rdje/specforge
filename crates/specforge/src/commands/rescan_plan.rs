@@ -1267,6 +1267,40 @@ mod tests {
         );
     }
 
+    #[test]
+    fn rescan_plan_arbitration_treats_score_presence_changes_as_neutral_review() {
+        let before = ProjectRescanValidationSnapshot {
+            artifact_fingerprint: "aaa".to_string(),
+            overall_score: None,
+            grade: None,
+            finding_count: 0,
+            finding_ids: Vec::new(),
+        };
+        let scored_after = ProjectRescanValidationSnapshot {
+            overall_score: Some(80),
+            ..before.clone()
+        };
+        let graded_after = ProjectRescanValidationSnapshot {
+            grade: Some("GOOD".to_string()),
+            ..before.clone()
+        };
+
+        let scored_delta = validation_delta(&before, &scored_after);
+        assert!(scored_delta.score_changed);
+        assert_eq!(scored_delta.score_delta, None);
+        assert_eq!(
+            arbitration_verdict(&scored_delta),
+            ARBITRATION_NEUTRAL_CHANGE_REVIEW_REQUIRED
+        );
+
+        let graded_delta = validation_delta(&before, &graded_after);
+        assert!(graded_delta.grade_changed);
+        assert_eq!(
+            arbitration_verdict(&graded_delta),
+            ARBITRATION_NEUTRAL_CHANGE_REVIEW_REQUIRED
+        );
+    }
+
     fn command_hint(intent: &str, specforge_args: Vec<&str>) -> ProjectRescanCommandHint {
         let mut args = vec![
             "run".to_string(),
