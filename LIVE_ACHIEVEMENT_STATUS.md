@@ -162,6 +162,7 @@
 - KG benchmark harness now locks unresolved compatibility-direction gaps separately from graph-backed lag: Done
 - KG benchmark harness now locks mixed graph-lag and unresolved compatibility-direction related IDs: Done
 - KG benchmark harness now locks conflicted graph-direction evidence as unresolved direction coverage: Done
+- KG benchmark harness now locks graph-conflict rescan guidance for conflicted compatibility gaps: Done
 - KG benchmark harness now locks flat-hint-present graph conflicts outside compatibility-direction debt: Done
 - `.fsm` explicit-module/top-composition lowering now recovers child port directions from matching `IntentIR.actor_ports` when flat module-local hints lag: Done
 - `.fsm` explicit-module lowering now recovers missing module-control input widths from actor-port numeric shape evidence without importing external actor direction: Done

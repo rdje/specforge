@@ -28,7 +28,9 @@
       "semantic": {
         "finding_ids_include": [
           "semantic_graph_direction_coverage_incomplete",
+          "semantic_graph_direction_coverage_surface_rescan_guidance",
           "semantic_graph_direction_conflicts_present",
+          "semantic_graph_direction_conflict_surface_rescan_guidance",
           "semantic_compat_direction_hints_incomplete"
         ],
         "finding_ids_exclude": ["semantic_compat_direction_hints_lag_graph"],
@@ -45,6 +47,20 @@
             "severity": "warning",
             "category": "knowledge_graph",
             "summary_contains": "conflicting actor-relative directions from the same actor",
+            "related_ids_include": ["graph_direction_conflict:actor_completer:PREADY"]
+          },
+          {
+            "finding_id": "semantic_graph_direction_coverage_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "lacks actor-relative graph direction coverage",
+            "related_ids_include": ["PREADY"]
+          },
+          {
+            "finding_id": "semantic_graph_direction_conflict_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "same-actor direction disagreement",
             "related_ids_include": ["graph_direction_conflict:actor_completer:PREADY"]
           },
           {
@@ -66,7 +82,9 @@
       "intent": {
         "finding_ids_include": [
           "intent_graph_direction_coverage_incomplete",
+          "intent_graph_direction_coverage_surface_rescan_guidance",
           "intent_graph_direction_conflicts_present",
+          "intent_graph_direction_conflict_surface_rescan_guidance",
           "intent_compat_direction_hints_incomplete"
         ],
         "finding_ids_exclude": ["intent_compat_direction_hints_lag_graph"],
@@ -83,6 +101,20 @@
             "severity": "warning",
             "category": "knowledge_graph",
             "summary_contains": "conflicting actor-relative directions from the same actor",
+            "related_ids_include": ["graph_direction_conflict:actor_completer:PREADY"]
+          },
+          {
+            "finding_id": "intent_graph_direction_coverage_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "lacks actor-relative graph direction coverage",
+            "related_ids_include": ["PREADY"]
+          },
+          {
+            "finding_id": "intent_graph_direction_conflict_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "same-actor direction disagreement",
             "related_ids_include": ["graph_direction_conflict:actor_completer:PREADY"]
           },
           {

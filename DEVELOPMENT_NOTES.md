@@ -7,6 +7,16 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 KG fixture for graph-conflict rescan guidance
+- Batch slice 7/10 tightens the executable KG fixture for flat-hint-missing same-actor graph conflicts.
+- `compat_direction_hints_graph_conflict_incomplete_negative` already proved the core validator split:
+  - graph conflicts are not resolved graph coverage
+  - flat-hint-missing conflicted signals are unresolved compatibility gaps, not graph-backed lag
+- The fixture now also proves the replay surface:
+  - graph-coverage rescan guidance points at the signal id `PREADY`
+  - graph-conflict rescan guidance points at `graph_direction_conflict:actor_completer:PREADY`
+- This keeps the KG fixture layer aligned with the project-validation replay split tests from slices 5 and 6.
+
 ## 2026-05-05 IntentIR replay split for graph conflicts
 - Batch slice 6/10 adds the IntentIR-stage sibling to the SemanticIR replay split regression.
 - The new test builds a real `SourceIR -> EvidenceIR -> SemanticIR` chain so `project-validation` has to recover the upstream EvidenceIR path from the SemanticIR replay input, matching the real IntentIR replay lane.

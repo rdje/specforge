@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-05-05 (KG fixture for graph-conflict rescan guidance)
+
+### Changed: conflicted compatibility fixture now locks replay guidance
+- Tightened `compat_direction_hints_graph_conflict_incomplete_negative`.
+- The fixture now requires both graph-direction coverage rescan guidance keyed by `PREADY` and graph-direction conflict rescan guidance keyed by `graph_direction_conflict:actor_completer:PREADY`.
+- The same fixture still requires unresolved compatibility-direction findings and excludes graph-backed compatibility lag, so the fixture now locks validation findings, metrics, and replay guidance together.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench compat_direction_hints_graph_conflict_incomplete_negative` -> passed with `1` fixture and `0` failures
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed with `523` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `130` fixtures and `0` failures
+
 ## 2026-05-05 (IntentIR replay split for graph conflicts)
 
 ### Added: IntentIR combined graph conflict and coverage replay regression

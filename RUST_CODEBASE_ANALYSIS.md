@@ -4,6 +4,12 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 graph-conflict guidance fixture)
+- Strengthened `compat_direction_hints_graph_conflict_incomplete_negative` in the tracked KG fixture set.
+- No Rust production code changed; the fixture now asserts both rescan-guidance findings that should accompany a flat-hint-missing graph conflict.
+- The fixture now ties three layers together: validation findings, metric counts, and replay guidance related-id payloads.
+- This complements the project-validation unit tests by proving the staged pipeline fixture emits the exact guidance that the replay planner is expected to preserve.
+
 ## Session update (2026-05-05 IntentIR graph-conflict replay split)
 - Added the IntentIR-stage sibling regression in `crates/specforge/src/commands/project_validation.rs`.
 - The new test exercises the real upstream replay-input derivation path for IntentIR recommendations: `project-validation` starts from a SemanticIR replay input, loads that artifact, derives the EvidenceIR input, and emits both replay inputs for each recommendation.
