@@ -13403,6 +13403,24 @@ mod tests {
     fn top_composition_blocks_conflicting_actor_port_directions() -> Result<()> {
         let tempdir = tempdir()?;
         let mut intent_ir = build_explicit_top_composition_intent_ir(tempdir.path())?;
+        let output_data_support_ids = intent_ir
+            .explicit_modules
+            .iter()
+            .find(|module| module.module_name == "producer_core")
+            .and_then(|module| {
+                module.interfaces.iter().find_map(|interface| {
+                    interface
+                        .signal_records
+                        .iter()
+                        .find(|signal| signal.signal_name == "output_data")
+                })
+            })
+            .map(|signal| signal.supporting_statement_ids.clone())
+            .expect("producer output_data signal declaration should be present");
+        assert!(
+            !output_data_support_ids.is_empty(),
+            "child output signal provenance should be present"
+        );
         let mut conflicting_port = actor_port(
             "producer_core",
             "output_data",
@@ -13411,6 +13429,7 @@ mod tests {
         conflicting_port
             .source_statement_ids
             .push("graph_duplicate_producer_core_output_data".to_string());
+        let graph_support_ids = conflicting_port.source_statement_ids.clone();
         intent_ir.actor_ports = vec![conflicting_port];
         intent_ir.write_to_disk()?;
 
@@ -13441,6 +13460,24 @@ mod tests {
         );
         assert_eq!(output_data.graph_direction_hint, None);
         assert!(output_data.graph_direction_hint_conflicted);
+        assert!(
+            output_data
+                .mention_categories
+                .iter()
+                .any(|category| category == "actor_port")
+        );
+        assert!(
+            output_data_support_ids
+                .iter()
+                .any(|id| output_data.supporting_canonical_ids.contains(id))
+        );
+        for support_id in &graph_support_ids {
+            assert!(output_data.supporting_canonical_ids.contains(support_id));
+        }
+        assert_eq!(
+            output_data.automation_confidence,
+            AutomationConfidence::High
+        );
         assert!(!producer.renderability.is_renderable);
         assert!(
             producer

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` child actor-port direction conflict support lock)
+- Tightened `top_composition_blocks_conflicting_actor_port_directions` in `crates/specforge/src/ir/adapters.rs` so the blocked producer `output_data` inventory entry retains local child signal declaration support and both conflicting graph actor-port support IDs.
+- The adapter already blocked `.fsm` emission when actor-port direction evidence for the child output disagreed; this regression now proves the graph conflict and declaration evidence remain inspectable together.
+- This complements the child actor-port direction recovery lock with the blocked conflict path.
+
 ## Session update (2026-05-06 `.fsm` child topology direction conflict support lock)
 - Tightened `top_composition_blocks_conflicting_child_link_topology_directions` in `crates/specforge/src/ir/adapters.rs` so the blocked producer `output_data` inventory entry retains both contradictory topology-link support-ID sets and the local signal declaration support.
 - The adapter already blocked graph-backed direction conflict after module-local direction hints were cleared; this regression now proves the competing topology evidence and declaration evidence remain inspectable.

@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` child actor-port direction conflict support lock)
+
+### Added: child actor-port direction conflict provenance coverage
+- Tightened `top_composition_blocks_conflicting_actor_port_directions` so a blocked child output now proves the local child signal declaration support and both conflicting graph actor-port support IDs survive in the selected module inventory.
+- The test also locks the `actor_port` evidence category and high automation confidence while graph-backed direction evidence remains conflicted.
+- This keeps child-local declaration evidence and graph conflict evidence auditable while `.fsm` emission remains blocked.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_actor_port_directions` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` child topology direction conflict support lock)
 
 ### Added: conflicting child-link direction provenance coverage
