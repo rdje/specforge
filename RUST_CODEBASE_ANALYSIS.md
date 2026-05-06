@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` flat-graph residual guidance)
+- Added signal-inventory residual-guidance assertions to `standalone_dt_blocks_flat_graph_direction_disagreement` in `crates/specforge/src/ir/adapters.rs`.
+- Direct-root flat/graph direction disagreements now prove interface direction, graph-backed actor direction, graph support provenance, high inventory confidence, blocked renderability, and low-confidence `fsm_adapter_signal_inventory` repair guidance stay visible together.
+- The live tracker and roadmap now mark direct-root flat/graph disagreement residual guidance as closed; focused adapter coverage, full adapter coverage, KG bench, docs, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` conflict residual guidance alignment)
 - Aligned blocked direct-root conflict residual guidance in `crates/specforge/src/ir/adapters.rs`.
 - `standalone_dt_keeps_conflicting_actor_port_width_unresolved` now carries the width-conflict `fsm_adapter_signal_inventory` guidance assertion directly, while `standalone_dt_blocks_conflicting_flat_direction_even_with_actor_graph` keeps an accurately named flat-direction conflict guidance assertion.

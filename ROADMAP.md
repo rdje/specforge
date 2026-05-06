@@ -302,7 +302,7 @@
   - explicit-module flat-vs-graph direction disagreement preserves interface and actor-port provenance while blocking `.fsm` emission
   - structured-FSM flat-vs-graph direction disagreement preserves interface and actor-port provenance while blocking `.fsm` emission
   - direct-root same-actor actor-port width conflicts preserve both conflicting graph-backed support IDs, automation confidence, and signal-inventory repair guidance while blocking `.fsm` emission
-  - direct-root flat-vs-graph direction disagreement preserves interface and actor-port provenance while blocking `.fsm` emission
+  - direct-root flat-vs-graph direction disagreement preserves interface and actor-port provenance plus signal-inventory repair guidance while blocking `.fsm` emission
   - direct-root flat direction conflicts preserve interface conflict evidence, graph-backed actor provenance, and signal-inventory repair guidance while blocking `.fsm` emission
   - direct-root output actor selection preserves graph-backed support IDs and high automation confidence while shared external signal actors stay non-authoritative and renderable recovery stays signal-inventory-residual clean
   - direct-root control-read input recovery preserves canonical control-branch support IDs and high automation confidence while avoiding import of the external actor's direction and staying signal-inventory-residual clean once renderable
