@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `c5c70990ab576b2e78e6f122094135745ee31103`
-- latest_commit_brief_message: `test(adapter): lock child topology width diagnostics`
-- note: new local `N=200` batch is active; slice 138 is committed, slice 139 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `19f3926861c3d5eb87fd88e01b0d83a51c6b8ca8`
+- latest_commit_brief_message: `test(adapter): lock sibling link width diagnostics`
+- note: new local `N=200` batch is active; slice 139 is committed, slice 140 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `19f3926` test(adapter): lock sibling link width diagnostics
 - `c5c7099` test(adapter): lock child topology width diagnostics
 - `55f52c8` test(adapter): lock undeclared top source diagnostics
 - `0e7c463` test(adapter): lock undeclared top target diagnostics
 - `e3a6495` test(adapter): lock duplicate child diagnostics
 - `f7aa5da` test(adapter): lock no-top-port diagnostics
-- `4fab6ef` test(adapter): lock no-child top diagnostics
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 139]`
-- files in flight for new batch slice 139:
+- branch state before the next commit: `main...origin/main [ahead 140]`
+- files in flight for new batch slice 140:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,21 +49,21 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `138`
+- completed_count: `139`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - lock composition-topology residual diagnostics for sibling child-link width conflicts
-  - prove `top_composition_blocks_conflicting_sibling_child_link_widths` keeps low-confidence `fsm_adapter_composition_topology` diagnostics and topology-detail blocker text while preserving width-conflict repair guidance, conflicting topology-link support-ID sets, and renderable-child context
-  - sync the live tracker, roadmap, and mdBook with the sibling child-link width residual-diagnostics guarantee
+  - lock composition-topology residual diagnostics for top child-link width conflicts
+  - prove `top_composition_blocks_conflicting_top_port_widths_from_child_links` keeps low-confidence `fsm_adapter_composition_topology` diagnostics and topology-detail blocker text while preserving top-boundary width-conflict repair guidance, conflicting topology-link support-ID sets, and explicit-top-port context
+  - sync the live tracker, roadmap, and mdBook with the top child-link width residual-diagnostics guarantee
 - tracker effect:
-  - live-status tracker changed; new row marks `.fsm` sibling child-link width residuals locking low-confidence topology-detail diagnostics as `Done`
+  - live-status tracker changed; new row marks `.fsm` top child-link width residuals locking low-confidence topology-detail diagnostics as `Done`
 - verification status:
   - implementation and live-doc sync are complete
-  - focused sibling child-link width residual-diagnostics regression passed (`1` test)
+  - focused top child-link width residual-diagnostics regression passed (`1` test)
   - adapter suite (`92` tests), formatting, docs CI, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation) passed
   - user-requested `cargo sweep --time 1` is deferred until no target-tree process is active because `target/release/tool_matrix` is active
   - final commit guards pending
@@ -74,4 +74,4 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final commit guards and commit slice 139 without pushing
+- run final commit guards and commit slice 140 without pushing

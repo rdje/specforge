@@ -196,6 +196,7 @@ Top-boundary actor-port, duplicate declaration, and child-link width conflicts p
 Top-boundary actor-port width conflicts also emit the composition-topology residual decision so explicit-top-port repair remains visible in structured diagnostics.
 That actor-port width residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Top child-link width conflicts also emit the composition-topology residual decision so explicit-top-port repair remains visible in structured diagnostics.
+That top child-link width residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Top-link endpoint width mismatches preserve width-compatible repair guidance on the blocked top candidate and aggregate adapter renderability while keeping the mismatched topology-link support visible.
 Those width-mismatched top-link blockers also emit the composition-topology residual decision so the same repair lane remains visible in structured adapter diagnostics.
 Duplicate top-boundary width blockers also preserve explicit top-port deduplication guidance alongside the width repair guidance.
