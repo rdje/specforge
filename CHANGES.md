@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` structured FSM candidate support lock)
+
+### Added: structured state-graph candidate coverage
+- Tightened `builds_renderable_structured_fsm_adapter_artifact` so the renderable structured FSM now proves the named state candidates `idle` and `busy` remain visible.
+- The test also locks transition candidates for `idle -> busy` and `busy -> idle` while preserving emitted `.fsm` state, transition, system, and action text.
+- This keeps the baseline structured-FSM adapter artifact auditable beyond candidate counts alone.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge builds_renderable_structured_fsm_adapter_artifact` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` standalone sequential DT support lock)
 
 ### Added: sequential DT provenance coverage

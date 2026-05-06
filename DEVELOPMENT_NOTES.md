@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` structured FSM candidate support lock
+- New batch slice 95/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `builds_renderable_structured_fsm_adapter_artifact` now asserts the renderable structured FSM keeps named `idle` and `busy` state candidates plus `idle -> busy` and `busy -> idle` transition candidates.
+- This is a coverage-only lock for the baseline structured-FSM path that already emits system, state, transition, and action text.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` standalone sequential DT support lock
 - New batch slice 94/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `builds_renderable_standalone_sequential_dt_fsm_adapter_artifact` now asserts the renderable standalone sequential DT keeps the canonical `dt_primary_intent_cone` candidate and selected inventory for `clk`, `rst_n`, `DATA_IN`, and `ACC`.

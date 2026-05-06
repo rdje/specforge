@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` structured FSM candidate support lock)
+- Tightened `builds_renderable_structured_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs` so the renderable structured-FSM artifact retains named `idle` and `busy` state candidates.
+- The transition candidate list now explicitly proves `idle -> busy` and `busy -> idle` survive in the adapter artifact while emitted system, state, transition, and action text remains unchanged.
+- This moves the baseline structured-FSM test from count-only candidate checks to named graph coverage.
+
 ## Session update (2026-05-06 `.fsm` standalone sequential DT support lock)
 - Tightened `builds_renderable_standalone_sequential_dt_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs` so the renderable sequential DT artifact retains the canonical `dt_primary_intent_cone` candidate id.
 - The selected signal inventory now explicitly covers `clk`, `rst_n`, `DATA_IN`, and `ACC` while system-contract, init-assignment, size, and sequential assignment emission stay unchanged.

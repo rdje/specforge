@@ -8947,6 +8947,18 @@ mod tests {
         );
         assert_eq!(fsm.state_candidates.len(), 2);
         assert_eq!(fsm.transition_candidates.len(), 2);
+        for state_name in ["idle", "busy"] {
+            assert!(
+                fsm.state_candidates
+                    .iter()
+                    .any(|state| state.state_name == state_name)
+            );
+        }
+        for (source_state, target_state) in [("idle", "busy"), ("busy", "idle")] {
+            assert!(fsm.transition_candidates.iter().any(|transition| {
+                transition.source_state == source_state && transition.target_state == target_state
+            }));
+        }
         assert!(fsm.renderable_module.is_some());
         assert!(emitted_text.contains("(?fsm:explicit_fsm"));
         assert!(emitted_text.contains("(+system"));
