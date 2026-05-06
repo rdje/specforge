@@ -192,7 +192,7 @@
   - actor-port parametric width blockers preserve graph-backed provenance category, support IDs, and automation confidence while `.fsm` lowering remains blocked until numeric width evidence exists
   - canonical parametric width blockers preserve interface provenance category, support IDs, and automation confidence while `.fsm` lowering remains blocked until numeric width evidence exists
   - explicit numeric interface width evidence stays provenance-auditable and takes precedence over graph-backed actor-port symbolic widths for `.fsm` emission
-  - blocked top-composition recovered top-port direction preserves top-link support IDs, high automation confidence, and composition-topology residual diagnostics even when another composition gate blocks `.fsm` emission
+  - blocked top-composition recovered top-port direction preserves top-link support IDs, high automation confidence, and low-confidence composition-topology residual diagnostics even when another composition gate blocks `.fsm` emission
   - top-link direction recovery preserves original public top-port declaration support IDs alongside topology-link support IDs and stays composition-residual clean once renderable
   - actor-port direction recovery preserves original public top-port declaration support IDs alongside graph actor-port support IDs and stays composition-residual clean once renderable
   - actor-port width recovery preserves original public top-port declaration support IDs alongside graph actor-port width support IDs and stays composition-residual clean once renderable

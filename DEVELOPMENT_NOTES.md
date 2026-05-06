@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` recovered top-port direction residual diagnostics
+- New batch slice 122/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_preserves_recovered_top_port_direction_when_still_blocked` now asserts blocked recovered top-port direction cases keep low-confidence `fsm_adapter_composition_topology` diagnostics with explicit topology-detail blocker text.
+- This keeps topology-recovered direction provenance, child-source declaration guidance, and child-module residual guidance tied together.
+- Focused recovered top-port direction residual-diagnostics regression, adapter suite, fmt, docs, KG bench, and full CI all passed; user-requested `cargo sweep --time 1` is deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` target unemitted child residual diagnostics
 - New batch slice 121/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_link_to_unemitted_child_target_guidance` now asserts target-side unemitted child endpoint blockers keep low-confidence `fsm_adapter_composition_topology` diagnostics with explicit topology-detail blocker text.

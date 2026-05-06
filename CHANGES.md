@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` recovered top-port direction residual diagnostics)
+
+### Added: recovered top-port direction residuals lock topology-detail diagnostics
+- Tightened `top_composition_preserves_recovered_top_port_direction_when_still_blocked` so blocked top-link-recovered public direction cases retain low-confidence `fsm_adapter_composition_topology` diagnostics.
+- The regression now pairs topology-recovered direction provenance, child-source declaration guidance, explicit topology-detail residual text, and child-module repair guidance.
+- Updated the live tracker, roadmap, and mdBook to mark recovered top-port direction residual diagnostics as closed.
+
+### Validation
+- Passed: focused recovered top-port direction residual-diagnostics regression (`1` test), adapter suite (`92` tests), rustfmt check, docs CI/mdBook, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation).
+- Deferred: user-requested `cargo sweep --time 1` until safe because another shell still had a `target/release/tool_matrix` process running from this repository.
+
 ## 2026-05-06 (`.fsm` target unemitted child residual diagnostics)
 
 ### Added: target-side unemitted child residuals lock topology-detail diagnostics

@@ -31,6 +31,7 @@
 - `.fsm` parametric top-port blockers now preserve composition topology residual decisions: Done
 - `.fsm` parametric top-port residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` blocked recovered top-port direction now preserves composition topology residual decisions: Done
+- `.fsm` blocked recovered top-port direction residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` recovered top-root confidence blockers now preserve composition topology residual decisions: Done
 - `.fsm` recovered top-root confidence residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` child-declaration top-root confidence now stays composition-residual clean when renderable: Done
@@ -465,6 +466,7 @@
 - `.fsm` parametric top-port residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` blocked recovered top-port direction now regression-locks support IDs and automation confidence: Done
 - `.fsm` blocked recovered top-port direction now preserves composition topology residual decisions: Done
+- `.fsm` blocked recovered top-port direction residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` top-link direction recovery now preserves top-port declaration support alongside topology support: Done
 - `.fsm` actor-port direction recovery now preserves top-port declaration support alongside graph support: Done
 - `.fsm` actor-port width recovery now preserves top-port declaration support alongside graph width support: Done
