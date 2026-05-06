@@ -3287,6 +3287,10 @@ fn merge_top_port_direction_evidence(
             "resolve conflicting top boundary port direction evidence before lowering `?top:name`"
                 .to_string(),
         );
+        if evidence_description.starts_with("Top link ") {
+            required_canonical_enrichments
+                .insert(TOP_LINK_ENDPOINT_DIRECTION_ROLE_ENRICHMENT.to_string());
+        }
     }
 }
 
@@ -12863,6 +12867,13 @@ mod tests {
                 .any(|enrichment| enrichment
                     == "resolve conflicting top boundary port direction evidence before lowering `?top:name`")
         );
+        assert!(
+            top_candidate
+                .renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment == super::TOP_LINK_ENDPOINT_DIRECTION_ROLE_ENRICHMENT)
+        );
         assert!(!fsm.renderability.is_renderable);
         assert!(
             fsm.renderability
@@ -12870,6 +12881,12 @@ mod tests {
                 .iter()
                 .any(|enrichment| enrichment
                     == "resolve conflicting top boundary port direction evidence before lowering `?top:name`")
+        );
+        assert!(
+            fsm.renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment == super::TOP_LINK_ENDPOINT_DIRECTION_ROLE_ENRICHMENT)
         );
 
         Ok(())

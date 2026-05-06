@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` top-boundary role guidance lock)
+
+### Changed: top-boundary top-link role conflicts surface endpoint guidance
+- Top-link-derived public top-port direction conflicts now also carry endpoint-role guidance, so a top source/target used with the wrong boundary direction points upstream repair at source/output and target/input alignment.
+- Tightened `top_composition_keeps_conflicting_top_port_direction_unresolved` to prove the role guidance survives beside existing top-boundary direction-conflict guidance.
+- The regression keeps the conflicting top-port provenance, topology-link provenance, blocked top candidate, and aggregate `.fsm` renderability review-visible.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_keeps_conflicting_top_port_direction_unresolved` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`90` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`611` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` top-link target-role guidance lock)
 
 ### Changed: target-side top-link role guidance is regression-locked

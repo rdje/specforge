@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `a64aaa1b135fe4c666bbc430afcbf34a76f17912`
-- latest_commit_brief_message: `fix(adapter): surface top-link role guidance`
-- note: new local `N=200` batch is active; slice 41 is committed, slice 42 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `ec5436aec81741edc3717c3dac43fa0676f9b010`
+- latest_commit_brief_message: `test(adapter): lock top-link target role guidance`
+- note: new local `N=200` batch is active; slice 42 is committed, slice 43 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `ec5436a` test(adapter): lock top-link target role guidance
 - `a64aaa1` fix(adapter): surface top-link role guidance
 - `f2dfb42` test(adapter): lock unemitted child-source guidance
 - `45d3cbe` test(adapter): lock unemitted child-target guidance
 - `a21e282` test(adapter): lock undeclared top-source guidance
 - `e557330` test(adapter): lock undeclared top-target guidance
-- `a99df69` test(adapter): lock no-top-port guidance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 42]`
-- files in flight for new batch slice 42:
+- branch state before the next commit: `main...origin/main [ahead 43]`
+- files in flight for new batch slice 43:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -49,21 +49,21 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `41`
+- completed_count: `42`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - regression-lock top-link target direction-role guidance across topology-backed flat/graph direction disagreements
-  - prove a child target declared as output but used as a top-link target carries target/input role guidance through the blocked child module, top candidate, and aggregate `.fsm` renderability
-  - preserve declared top-port, child, and top-link support IDs while the role conflict remains review-visible
+  - regression-lock top-boundary top-link direction conflicts carrying endpoint-role guidance
+  - prove top-link-derived public top-port direction conflicts keep role guidance beside boundary direction-conflict guidance
+  - preserve top-port declaration, topology-link support IDs, and selected top inventory evidence while the role conflict remains review-visible
   - keep live docs and mdBook aligned with this blocked-artifact guidance surface
 - tracker effect:
-  - expected live-status tracker gain: `.fsm top-link target-role mismatches now preserve endpoint-role repair guidance: Done`
+  - expected live-status tracker gain: `.fsm top-boundary top-link role conflicts now preserve endpoint-role repair guidance: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_child_target_direction_role_guidance` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_keeps_conflicting_top_port_direction_unresolved` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `90` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed after live-doc/mdBook sync
@@ -74,4 +74,4 @@
   - current slice passed `148/148` tracked KG fixtures
 
 ## Next exact steps
-- commit slice 42 without pushing, run post-commit checks, and continue slice 43
+- commit slice 43 without pushing, run post-commit checks, and continue slice 44

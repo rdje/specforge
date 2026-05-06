@@ -203,6 +203,7 @@
   - top-link direction conflict blockers preserve top-boundary direction-conflict enrichment guidance on blocked top and aggregate `.fsm` renderability surfaces
   - top-link endpoint direction-role blockers preserve source/output and target/input repair guidance on blocked child, top, and aggregate `.fsm` renderability surfaces
   - top-link target endpoint direction-role blockers preserve source/output and target/input repair guidance across topology-backed flat/graph disagreements
+  - top-boundary top-link direction conflicts preserve source/output and target/input repair guidance alongside boundary direction-conflict guidance
   - duplicate top-port direction conflicts preserve both duplicate declaration support-ID sets and high automation confidence while blocking `.fsm` emission
   - duplicate top-port direction conflict blockers preserve top-boundary direction-conflict enrichment guidance on blocked top and aggregate `.fsm` renderability surfaces
   - duplicate top-port direction blockers preserve explicit top-port deduplication guidance alongside direction-conflict guidance

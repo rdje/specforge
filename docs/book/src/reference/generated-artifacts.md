@@ -156,6 +156,7 @@ Widthless public top ports preserve top-boundary width recovery guidance on the 
 Parametric public top ports preserve top-boundary width resolution guidance while keeping symbolic width evidence inspectable in the selected top signal inventory.
 Top-link direction-role mismatches preserve source/output and target/input repair guidance on blocked child, top, and aggregate renderability surfaces while keeping topology-link provenance visible.
 Topology-backed child target direction-role mismatches preserve the same role guidance even when the blocker is a flat/graph direction disagreement rather than a graph-only conflict.
+Top-boundary top-link direction conflicts preserve the same endpoint-role guidance alongside boundary direction-conflict guidance while keeping top-port and topology-link provenance visible.
 Top links to child endpoints that are not emitted preserve source-endpoint repair guidance on both the blocked top candidate and aggregate renderability surfaces.
 For blocked composition roots, the same artifact shape is useful for diagnostics: a missing child can block emission while the surviving top-port provenance remains available for review.
 Missing-child top blockers also preserve child-source declaration guidance on both blocked renderability surfaces.
