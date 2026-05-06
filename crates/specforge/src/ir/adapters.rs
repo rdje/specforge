@@ -15642,6 +15642,8 @@ mod tests {
             AutomationConfidence::High
         );
         assert!(!producer.renderability.is_renderable);
+        assert!(producer.renderable_module.is_none());
+        assert!(fsm.renderable_document.is_none());
         assert!(
             producer
                 .renderability

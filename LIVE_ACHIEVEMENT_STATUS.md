@@ -753,6 +753,7 @@
 - `.fsm` top source-child renderable size entries now consume graph-backed sibling-link widths: Done
 - `.fsm` top child renderable size entries now consume graph-backed transitive topology widths: Done
 - `.fsm` top child width conflicts now block stale renderable child output: Done
+- `.fsm` top child topology-width conflicts now block stale renderable child output: Done
 - NLP alias learning now rejects outline/list marker prefixes before storing Form 2 aliases: Done
 - NLP alias learning now trims wrapper punctuation from Form 2 alias words: Done
 - NLP alias learning now uses markdown link labels for Form 2 aliases: Done

@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` child topology-width conflict renderable block)
+
+### Added: conflicting child topology widths cannot leak renderable child output
+- Tightened `top_composition_blocks_conflicting_child_topology_widths` so a child output width conflict with top-link topology leaves the producer without a renderable module and the aggregate `.fsm` artifact without a renderable source document.
+- This locks the blocked path after direct child/top width disagreement: conflicting topology evidence keeps the child inventory unresolved and prevents stale `(+size ...)` child emission.
+- Synced the live tracker, roadmap, and mdBook with the child topology-width conflict renderable-block guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_child_topology_widths` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+
 ## 2026-05-06 (`.fsm` sibling child-width conflict renderable block)
 
 ### Added: conflicting child-link widths cannot leak renderable child output
