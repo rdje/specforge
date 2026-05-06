@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` ambiguous actor residual guidance
+- New batch slice 98/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `standalone_dt_ignores_ambiguous_actor_port_context` now asserts ambiguous direct actor-port graph context keeps the `fsm_adapter_signal_inventory` residual packet when graph evidence remains unselected.
+- This keeps absent graph direction/category/support selection tied to low-confidence signal-inventory guidance and the upstream interface-inventory enrichment candidate.
+- Focused ambiguous actor residual-guidance regression, adapter suite, fmt, docs, KG bench, and full CI all passed; user-requested `cargo sweep --time 1` is deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` unrelated actor context residual cleanliness
 - New batch slice 97/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `standalone_dt_ignores_unrelated_actor_ports_for_graph_context` now asserts no stale signal-inventory residual remains while the standalone direct-root path excludes unrelated side-band actor-port evidence from selected graph recovery.

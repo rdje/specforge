@@ -128,6 +128,7 @@ Target-actor-backed direct output selection follows the same rule while excludin
 Direct control-read input recovery also stays signal-inventory-residual clean while retaining control-branch support IDs and avoiding external actor direction import.
 Direct actor-port width recovery keeps actor-port width provenance on the recovered control input without importing external actor direction, and renderable recovery leaves no signal-inventory residual.
 Unrelated actor-port graph context follows the same residual-clean rule while keeping side-band graph evidence out of the selected inventory.
+Ambiguous actor-port graph context remains blocked instead of selecting graph provenance, and the artifact keeps signal-inventory residual guidance for upstream enrichment.
 
 For renderable `.fsm` top-composition roots, inspect the selected top candidate as well as the emitted target text.
 The adapter artifact keeps the declared top-port direction and numeric width, the top-port automation confidence, child declaration support IDs, topology-link support IDs, and the renderable top root.

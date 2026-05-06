@@ -7374,6 +7374,27 @@ mod tests {
 
         assert_eq!(adapter.lowering_status.as_str(), "blocked");
         assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let signal_inventory_residual = adapter
+            .residual_decisions
+            .iter()
+            .find(|packet| packet.packet_id == "fsm_adapter_signal_inventory")
+            .expect("ambiguous actor context should retain signal inventory guidance");
+        assert_eq!(
+            signal_inventory_residual.automation_confidence,
+            AutomationConfidence::Low
+        );
+        assert!(
+            signal_inventory_residual
+                .why_unresolved
+                .contains("render-critical signal roles unresolved")
+        );
+        assert!(
+            signal_inventory_residual
+                .candidate_interpretations
+                .iter()
+                .any(|candidate| candidate.interpretation_id
+                    == "enrich_intent_ir_interface_inventory")
+        );
         let fsm = adapter.fsm.expect("fsm artifact should be present");
         let data_in = fsm
             .signal_inventory

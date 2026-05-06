@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` ambiguous actor residual guidance)
+- Added signal-inventory residual-guidance assertions to `standalone_dt_ignores_ambiguous_actor_port_context` in `crates/specforge/src/ir/adapters.rs`.
+- Ambiguous direct actor-port graph context now proves graph direction/category/support evidence stays unselected while the blocked adapter retains low-confidence `fsm_adapter_signal_inventory` repair guidance and the upstream interface-inventory enrichment candidate.
+- The live tracker and roadmap now mark the ambiguous actor-port residual-guidance guarantee as closed; focused adapter coverage, full adapter coverage, KG bench, docs, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` unrelated actor context residual cleanliness)
 - Added a signal-inventory residual-clean assertion to `standalone_dt_ignores_unrelated_actor_ports_for_graph_context` in `crates/specforge/src/ir/adapters.rs`.
 - Unrelated actor-port graph context now proves side-band graph evidence stays excluded without leaving a stale `fsm_adapter_signal_inventory` packet once the standalone DT root is renderable.
