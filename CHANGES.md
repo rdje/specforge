@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` child topology direction residual lock)
+
+### Added: child topology direction conflicts now lock residual diagnostics
+- Tightened `top_composition_blocks_conflicting_child_link_topology_directions` so contradictory child topology direction evidence proves `fsm_adapter_composition_topology` remains present.
+- The residual assertion keeps renderable-child repair visible while the blocked module and aggregate renderability still preserve graph-direction conflict guidance.
+- Updated the live tracker, roadmap, and mdBook to mark the child topology direction residual guarantee as closed.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_child_link_topology_directions` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`613` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo sweep --time 1` -> completed (`Cleaned nothing`)
+
 ## 2026-05-06 (`.fsm` child topology width residual lock)
 
 ### Added: child topology width conflicts now lock residual diagnostics
