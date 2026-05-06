@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` missing-system-contract DT support lock
+- New batch slice 87/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `keeps_standalone_sequential_dt_blocked_without_system_contract` now asserts the blocked sequential DT keeps its decision-tree candidate, control-fragment support IDs, referenced signals, and high automation confidence while system/init evidence remains missing.
+- This is a coverage-only lock for the blocked path where explicit control exists but clock/reset/init semantics are not explicit enough for `.fsm` emission.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` reset-polarity blocker support lock
 - New batch slice 86/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `keeps_reset_polarity_blocked_when_signal_name_cannot_preserve_it` now asserts the blocked sequential DT keeps its system contract visible with reset signal name, active-low polarity, support IDs, and high automation confidence.

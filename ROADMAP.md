@@ -217,6 +217,7 @@
   - standalone sequential system-contract direction conflicts preserve system-contract support IDs and high automation confidence while blocking `.fsm` emission
   - standalone sequential system-contract width conflicts preserve system-contract support IDs and high automation confidence while blocking `.fsm` emission
   - reset-polarity name blockers preserve system-contract support IDs and confidence while blocking `.fsm` emission
+  - missing-system-contract blockers preserve DT control-fragment support IDs and confidence while blocking `.fsm` emission
   - unrelated direct actor-port graph context keeps selected support IDs auditable while excluding unrelated side-band evidence from `.fsm` inventories
   - ambiguous direct actor-port graph context leaves graph direction, actor-port category, and support IDs unselected instead of guessing a target actor
   - standalone DT graph-backed undriven output blockers preserve selected actor support IDs and high automation confidence while blocking `.fsm` emission

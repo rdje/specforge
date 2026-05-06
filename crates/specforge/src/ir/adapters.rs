@@ -8325,6 +8325,12 @@ mod tests {
     fn keeps_standalone_sequential_dt_blocked_without_system_contract() -> Result<()> {
         let tempdir = tempdir()?;
         let intent_ir = build_incomplete_sequential_control_intent_ir(tempdir.path())?;
+        let control_fragment_ids = intent_ir
+            .decision_tree_fragments
+            .iter()
+            .map(|fragment| fragment.fragment_id.clone())
+            .collect::<Vec<_>>();
+        assert_eq!(control_fragment_ids.len(), 1);
         let artifact_base = tempdir.path().join("generated").join("adapters");
 
         let adapter = AdapterArtifact::build(
@@ -8341,6 +8347,31 @@ mod tests {
                 .any(|packet| { packet.packet_id == "fsm_adapter_system_contract" })
         );
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+        assert_eq!(fsm.decision_tree_candidates.len(), 1);
+        let dt_candidate = fsm
+            .decision_tree_candidates
+            .iter()
+            .find(|candidate| candidate.candidate_id == "dt_primary_intent_cone")
+            .expect("decision-tree candidate should remain visible");
+        for fragment_id in &control_fragment_ids {
+            assert!(dt_candidate.supporting_fragment_ids.contains(fragment_id));
+        }
+        assert!(
+            dt_candidate
+                .referenced_signal_names
+                .iter()
+                .any(|signal| signal == "DATA_IN")
+        );
+        assert!(
+            dt_candidate
+                .referenced_signal_names
+                .iter()
+                .any(|signal| signal == "ACC")
+        );
+        assert_eq!(
+            dt_candidate.automation_confidence,
+            AutomationConfidence::High
+        );
         assert!(!fsm.renderability.is_renderable);
         assert!(fsm.renderability.blocking_reasons.iter().any(|reason| {
             reason.contains("system contract") || reason.contains("init assignment")

@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` missing-system-contract DT support lock)
+
+### Added: control provenance coverage for missing system/init blockers
+- Tightened `keeps_standalone_sequential_dt_blocked_without_system_contract` so a blocked sequential DT now proves its decision-tree candidate remains visible.
+- The test locks control-fragment support IDs, referenced signal names, and high automation confidence while missing system-contract or init evidence keeps `.fsm` emission blocked.
+- This keeps the usable control cone auditable without inventing clock/reset/init structure.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge keeps_standalone_sequential_dt_blocked_without_system_contract` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` reset-polarity blocker support lock)
 
 ### Added: system-contract provenance coverage for reset polarity blockers

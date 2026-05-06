@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` missing-system-contract DT support lock)
+- Tightened `keeps_standalone_sequential_dt_blocked_without_system_contract` in `crates/specforge/src/ir/adapters.rs` so the blocked sequential-DT artifact retains its decision-tree candidate, control-fragment support IDs, referenced signals, and high confidence.
+- The adapter already blocked `.fsm` emission when clock/reset/init evidence was missing; this regression now proves the explicit control cone remains auditable.
+- This complements system-contract blocker coverage by showing the missing contract does not hide the otherwise usable DT evidence.
+
 ## Session update (2026-05-06 `.fsm` reset-polarity blocker support lock)
 - Tightened `keeps_reset_polarity_blocked_when_signal_name_cannot_preserve_it` in `crates/specforge/src/ir/adapters.rs` so the blocked sequential-DT artifact retains system-contract support IDs, reset signal name, active-low polarity, and high confidence.
 - The adapter already blocked `.fsm` emission when active-low polarity could not be preserved through the reset signal name; this regression now proves the rejected system contract remains auditable.
