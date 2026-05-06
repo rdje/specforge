@@ -8610,11 +8610,26 @@ mod tests {
         )?;
         assert_eq!(adapter.lowering_status.as_str(), "blocked");
         assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let system_contract_residual = adapter
+            .residual_decisions
+            .iter()
+            .find(|packet| packet.packet_id == "fsm_adapter_system_contract")
+            .expect("missing system contract should surface system guidance");
+        assert_eq!(
+            system_contract_residual.automation_confidence,
+            AutomationConfidence::Low
+        );
         assert!(
-            adapter
-                .residual_decisions
+            system_contract_residual
+                .why_unresolved
+                .contains("explicit clock/reset facts")
+        );
+        assert!(
+            system_contract_residual
+                .candidate_interpretations
                 .iter()
-                .any(|packet| { packet.packet_id == "fsm_adapter_system_contract" })
+                .any(|interpretation| interpretation.interpretation_id
+                    == "enrich_intent_ir_system_surface")
         );
         let fsm = adapter.fsm.expect("fsm artifact should be present");
         assert_eq!(fsm.decision_tree_candidates.len(), 1);
