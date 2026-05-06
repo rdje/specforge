@@ -222,7 +222,7 @@
   - top links targeting undeclared top-boundary ports preserve target-endpoint enrichment guidance, composition-topology residual diagnostics, and top-port, child, and link provenance
   - top links originating from undeclared top-boundary ports preserve source-endpoint enrichment guidance, composition-topology residual diagnostics, and top-port, child, and link provenance
   - top links originating from child endpoints absent from emitted child modules preserve source-endpoint enrichment guidance, low-confidence composition-topology residual diagnostics, and top-port, child, and link provenance
-  - top links targeting child endpoints absent from emitted child modules preserve target-endpoint enrichment guidance, composition-topology residual diagnostics, and top-port, child, and link provenance
+  - top links targeting child endpoints absent from emitted child modules preserve target-endpoint enrichment guidance, low-confidence composition-topology residual diagnostics, and top-port, child, and link provenance
   - child actor-port direction recovery preserves graph-backed support IDs and high automation confidence across producer and consumer child module inventories while staying composition-residual clean once renderable
   - child actor-port direction recovery preserves original child signal declaration support IDs alongside graph actor-port support IDs in recovered child module inventories while staying composition-residual clean once renderable
   - child actor-port direction conflicts preserve explicit child signal declaration support IDs and graph actor-port support IDs while blocking `.fsm` emission

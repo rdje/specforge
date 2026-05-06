@@ -228,6 +228,7 @@ Top links that target child endpoints absent from emitted child modules preserve
 Source-side unemitted child endpoint blockers also emit the composition-topology residual decision, mirroring the target-side residual lock.
 That source-side residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Target-side unemitted child endpoint blockers also emit the composition-topology residual decision so renderable-child repair remains visible in structured adapter diagnostics.
+That target-side residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 
 For structured FSM roots, the artifact preserves the graph surface that led to renderability or blocking.
 Renderable structured-FSM cases keep named state and transition candidates, and reset-block cases keep renderable state bodies plus synchronous/asynchronous reset block roles.

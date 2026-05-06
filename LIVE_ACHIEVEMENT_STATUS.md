@@ -87,6 +87,7 @@
 - `.fsm` links from undeclared top sources now preserve composition topology residual decisions: Done
 - `.fsm` links to undeclared top targets now preserve composition topology residual decisions: Done
 - `.fsm` links to unemitted child targets now preserve composition topology residual decisions: Done
+- `.fsm` target-side unemitted child residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` missing-child top blockers now preserve composition topology residual decisions: Done
 - `.fsm` multi-child no-link top blockers now preserve composition topology residual decisions: Done
 - `.fsm` no-child top blockers now preserve composition topology residual decisions: Done
@@ -569,6 +570,7 @@
 - `.fsm` links from unemitted child sources now preserve composition topology residual decisions: Done
 - `.fsm` source-side unemitted child residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` links to unemitted child targets now preserve composition topology residual decisions: Done
+- `.fsm` target-side unemitted child residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` standalone DT/FSM renderability now blocks graph-backed output inventory entries that have no typed driving action instead of silently omitting them: Done
 - `.fsm` blocked DT-centric adapters now retain signal-inventory repair guidance when blocked: Done
 - `.fsm` standalone DT graph-backed undriven output blockers now regression-lock support IDs and automation confidence: Done

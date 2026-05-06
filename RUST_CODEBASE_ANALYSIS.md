@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` target unemitted child residual diagnostics)
+- Added composition residual confidence and blocker-text assertions to `top_composition_blocks_link_to_unemitted_child_target_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- Target-side unemitted child endpoint blockers now prove target-endpoint repair guidance, preserved top-link support/confidence, low-confidence `fsm_adapter_composition_topology` diagnostics, topology-detail blocker text, and renderable-child repair guidance stay visible together.
+- The live tracker and roadmap now mark target-side unemitted child residual diagnostics as closed; focused adapter coverage, full adapter coverage, KG bench, docs, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` source unemitted child residual diagnostics)
 - Added composition residual confidence and blocker-text assertions to `top_composition_blocks_link_from_unemitted_child_source_guidance` in `crates/specforge/src/ir/adapters.rs`.
 - Source-side unemitted child endpoint blockers now prove source-endpoint repair guidance, preserved top-link support/confidence, low-confidence `fsm_adapter_composition_topology` diagnostics, topology-detail blocker text, and renderable-child repair guidance stay visible together.

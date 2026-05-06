@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` target unemitted child residual diagnostics)
+
+### Added: target-side unemitted child residuals lock topology-detail diagnostics
+- Tightened `top_composition_blocks_link_to_unemitted_child_target_guidance` so top links to child endpoints absent from emitted child modules retain low-confidence `fsm_adapter_composition_topology` diagnostics.
+- The regression now pairs target-endpoint repair guidance, preserved top-link support/confidence, explicit topology-detail residual text, and renderable-child repair guidance.
+- Updated the live tracker, roadmap, and mdBook to mark target-side unemitted child residual diagnostics as closed.
+
+### Validation
+- Passed: focused target-side unemitted child residual-diagnostics regression (`1` test), adapter suite (`92` tests), rustfmt check, docs CI/mdBook, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation).
+- Deferred: user-requested `cargo sweep --time 1` until safe because another shell still had a `target/release/tool_matrix` process running from this repository.
+
 ## 2026-05-06 (`.fsm` source unemitted child residual diagnostics)
 
 ### Added: source-side unemitted child residuals lock topology-detail diagnostics
