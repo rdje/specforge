@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `8aa87f1862c19d14e894aba9f48ed4eb02142d83`
-- latest_commit_brief_message: `test(adapter): lock child confidence residual cleanliness`
-- note: new local `N=200` batch is active; slice 75 is committed, slice 76 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `9c976278e72539c36a4b0f6e213722ff37ca666d`
+- latest_commit_brief_message: `test(adapter): lock link confidence residual cleanliness`
+- note: new local `N=200` batch is active; slice 76 is committed, slice 77 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `9c97627` test(adapter): lock link confidence residual cleanliness
 - `8aa87f1` test(adapter): lock child confidence residual cleanliness
 - `991d882` test(adapter): lock root confidence residual
 - `fbc7192` test(adapter): lock recovered top residual
 - `c668620` test(adapter): lock missing-child residual
 - `2de0b3a` test(adapter): align unemitted endpoint guidance
-- `af8584d` test(adapter): lock parametric top residual
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 76]`
-- files in flight for new batch slice 76:
+- branch state before the next commit: `main...origin/main [ahead 77]`
+- files in flight for new batch slice 77:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,22 +49,21 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `75`
+- completed_count: `76`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - lock residual-clean behavior for top-link top-root confidence cases
-  - prove `top_root_kind_confidence_follows_top_link_evidence` is aggregate-renderable when high-confidence top-link evidence raises selected top-root confidence
-  - prove no stale `fsm_adapter_composition_topology` residual remains for that renderable linked topology
-  - sync the live tracker, roadmap, and mdBook with the top-link confidence residual-clean guarantee
+  - lock residual-clean behavior for renderable reused-child top documents
+  - prove `renderable_top_document_deduplicates_reused_child_module_roots` leaves no stale `fsm_adapter_composition_topology` residual after shared child-root de-duplication
+  - sync the live tracker, roadmap, and mdBook with the reused-child residual-clean guarantee
 - tracker effect:
-  - live-status tracker changed; new row marks `.fsm` top-link top-root confidence staying composition-residual clean when renderable as `Done`
+  - live-status tracker changed; new row marks `.fsm` reused-child top documents staying composition-residual clean after deduplicating child roots as `Done`
 - verification status:
   - implementation and live-doc sync are complete
-  - focused top-link confidence residual-clean regression passed (`1` test)
+  - focused reused-child residual-clean regression passed (`1` test)
   - adapter suite passed (`92` tests)
   - formatting, docs CI, KG bench (`148/148` fixtures), full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook), and `cargo sweep --time 1` all passed
 - current known local CI baseline:
@@ -74,4 +73,4 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final commit guards, commit slice 76 without pushing, then start slice 77 of the active `N=200` batch
+- run final commit guards, commit slice 77 without pushing, then start slice 78 of the active `N=200` batch

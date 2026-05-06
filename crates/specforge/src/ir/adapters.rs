@@ -10287,6 +10287,12 @@ mod tests {
         assert_eq!(emitted_text.matches("(?dt:stage_core").count(), 1);
         assert!(emitted_text.contains("(?dtc:first stage_core)"));
         assert!(emitted_text.contains("(?dtc:second stage_core)"));
+        assert!(
+            adapter
+                .residual_decisions
+                .iter()
+                .all(|packet| packet.packet_id != "fsm_adapter_composition_topology")
+        );
 
         Ok(())
     }
