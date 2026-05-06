@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `7a6a7d42b7d6e11df52e9f28ccb3e2a70a967af4`
-- latest_commit_brief_message: `test(adapter): lock child topology direction residual`
-- note: new local `N=200` batch is active; slice 67 is committed, slice 68 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `dbd8d2e121d53e1746ff90628d9996870296baba`
+- latest_commit_brief_message: `test(adapter): lock actor direction residual`
+- note: new local `N=200` batch is active; slice 68 is committed, slice 69 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `dbd8d2e` test(adapter): lock actor direction residual
 - `7a6a7d4` test(adapter): lock child topology direction residual
 - `dd44c58` test(adapter): lock child topology width residual
 - `1a03b5b` test(adapter): lock sibling width residual
 - `e1f9b42` test(adapter): lock child-link width residual
 - `4cd2764` test(adapter): align top-link direction residual
-- `1e88286` test(adapter): lock actor width residual
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 68]`
-- files in flight for new batch slice 68:
+- branch state before the next commit: `main...origin/main [ahead 69]`
+- files in flight for new batch slice 69:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,23 +49,23 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `67`
+- completed_count: `68`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - lock structured composition residual diagnostics for child actor-port direction conflicts
-  - prove `top_composition_blocks_conflicting_actor_port_directions` keeps renderable-child repair visible in `fsm_adapter_composition_topology`
-  - preserve existing child-module graph-direction conflict guidance plus child signal and graph actor-port support IDs
-  - sync the live tracker, roadmap, and mdBook with the child actor-port direction residual guarantee
+  - lock structured composition residual diagnostics for widthless public top-port blockers
+  - prove `top_composition_blocks_widthless_top_port_without_width_recovery` keeps explicit top-port repair visible in `fsm_adapter_composition_topology`
+  - preserve existing top-boundary width-recovery guidance plus explicit top-port support IDs and high automation confidence
+  - sync the live tracker, roadmap, and mdBook with the widthless top-port residual guarantee
 - tracker effect:
-  - live-status tracker changed; new row marks `.fsm` child actor-port direction conflicts preserving composition topology residual decisions as `Done`
+  - live-status tracker changed; new row marks `.fsm` widthless top-port blockers preserving composition topology residual decisions as `Done`
 - verification status:
   - implementation and live-doc sync are complete
   - focused regression, adapter suite, fmt, docs, KG bench, full CI, and `cargo sweep --time 1` passed
-  - final docs build, whitespace guard, and markdown absolute-path guard passed; slice 68 is ready to commit
+  - final docs build, whitespace guard, and markdown absolute-path guard passed; slice 69 is ready to commit
 - current known local CI baseline:
   - current slice passed `613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - current slice passed `148/148` tracked KG fixtures
@@ -73,4 +73,4 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final commit guards, commit slice 68 without pushing, then start slice 69
+- run final commit guards, commit slice 69 without pushing, then start slice 70

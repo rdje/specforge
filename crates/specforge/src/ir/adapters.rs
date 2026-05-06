@@ -12164,6 +12164,17 @@ mod tests {
                 .any(|enrichment| enrichment
                     == "recover each top boundary port width from explicit declaration, actor-port graph, or top-link topology before lowering `?top:name`")
         );
+        let composition_residual = adapter
+            .residual_decisions
+            .iter()
+            .find(|packet| packet.packet_id == "fsm_adapter_composition_topology")
+            .expect("widthless top-port blocker should surface a composition residual");
+        assert!(
+            composition_residual
+                .candidate_interpretations
+                .iter()
+                .any(|interpretation| interpretation.description.contains("explicit top ports"))
+        );
 
         Ok(())
     }

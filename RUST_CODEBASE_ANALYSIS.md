@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` widthless top-port residual lock)
+- Added a composition residual assertion to `top_composition_blocks_widthless_top_port_without_width_recovery` in `crates/specforge/src/ir/adapters.rs`.
+- Widthless public top-port blockers now keep explicit-top-port repair visible in `fsm_adapter_composition_topology` while retaining existing top-boundary width-recovery guidance.
+- The live tracker and roadmap now mark the widthless top-port residual guarantee as closed; focused adapter coverage, full adapter coverage, KG bench, docs, full CI, and `cargo sweep --time 1` all passed.
+
 ## Session update (2026-05-06 `.fsm` child actor-port direction residual lock)
 - Added a composition residual assertion to `top_composition_blocks_conflicting_actor_port_directions` in `crates/specforge/src/ir/adapters.rs`.
 - Child actor-port direction conflicts now keep renderable-child repair visible in `fsm_adapter_composition_topology` while retaining existing child-module graph-direction conflict enrichment guidance.

@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` widthless top-port residual lock
+- New batch slice 69/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_widthless_top_port_without_width_recovery` now asserts that widthless top-port blockers emit the composition topology residual.
+- This pairs top-boundary width-recovery guidance with structured residual diagnostics while preserving explicit top-port support IDs and high automation confidence.
+- Focused widthless top-port regression, adapter suite, fmt, docs, KG bench, full CI, and the user-requested `cargo sweep --time 1` all passed.
+
 ## 2026-05-06 `.fsm` child actor-port direction residual lock
 - New batch slice 68/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_conflicting_actor_port_directions` now asserts that child actor-port direction conflicts emit the composition topology residual.
