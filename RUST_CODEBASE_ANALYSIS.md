@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` missing-child guidance lock)
+- Tightened `top_composition_preserves_recovered_top_port_direction_when_still_blocked` in `crates/specforge/src/ir/adapters.rs` so missing child module blockers retain child-source declaration guidance on the blocked top candidate and aggregate `.fsm` renderability.
+- Existing assertions still cover recovered `result_data` top-boundary direction, topology-link support IDs, signal-inventory graph provenance, high automation confidence, and the precise missing-module blocker.
+- This keeps recovered top-boundary evidence reviewable while the separate missing-child declaration lane remains actionable.
+
 ## Session update (2026-05-06 `.fsm` unemitted child-link aggregate guidance lock)
 - Tightened `top_composition_blocks_link_to_unemitted_child_port` in `crates/specforge/src/ir/adapters.rs` so top links to child endpoints that are not emitted retain source-endpoint repair guidance on aggregate `.fsm` renderability.
 - Existing assertions still cover the blocked top candidate guidance, explicit top-link support IDs, high automation confidence, and the precise unemitted-child-port diagnostic.

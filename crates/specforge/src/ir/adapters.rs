@@ -12440,6 +12440,22 @@ mod tests {
                 .iter()
                 .any(|reason| reason.contains("missing explicit module `missing_module`"))
         );
+        assert!(
+            top_candidate
+                .renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment
+                    == "declare every top child source as an explicit module before lowering `?top:name`")
+        );
+        assert!(!fsm.renderability.is_renderable);
+        assert!(
+            fsm.renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment
+                    == "declare every top child source as an explicit module before lowering `?top:name`")
+        );
 
         Ok(())
     }

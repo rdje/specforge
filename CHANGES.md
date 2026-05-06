@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` missing-child guidance lock)
+
+### Added: missing-child enrichment guidance coverage
+- Tightened `top_composition_preserves_recovered_top_port_direction_when_still_blocked` so a missing child module blocker proves child-source declaration guidance survives on the blocked top candidate and aggregate `.fsm` renderability.
+- Existing checks still prove the recovered `result_data` top-boundary direction, topology-link support IDs, signal-inventory graph provenance, high automation confidence, and the precise missing-module diagnostic remain visible.
+- This keeps missing-child top blockers actionable without dropping independently recovered top-boundary evidence.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_preserves_recovered_top_port_direction_when_still_blocked` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` unemitted child-link aggregate guidance lock)
 
 ### Added: aggregate source-endpoint guidance coverage
