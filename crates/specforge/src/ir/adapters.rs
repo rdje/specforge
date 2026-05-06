@@ -11181,6 +11181,12 @@ mod tests {
             AutomationConfidence::High
         );
         assert!(emitted_text.contains("result_data>8"));
+        assert!(
+            adapter
+                .residual_decisions
+                .iter()
+                .all(|packet| packet.packet_id != "fsm_adapter_composition_topology")
+        );
 
         Ok(())
     }

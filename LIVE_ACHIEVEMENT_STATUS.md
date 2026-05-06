@@ -37,6 +37,7 @@
 - `.fsm` single-FSM-child top documents now stay composition-residual clean while preserving FSM child root kind: Done
 - `.fsm` reused-FSM-child top documents now stay composition-residual clean after deduplicating the shared FSM root: Done
 - `.fsm` mixed-child top documents now stay composition-residual clean while preserving DT/FSM root order: Done
+- `.fsm` top-link direction recovery now stays composition-residual clean when renderable: Done
 - `.fsm` top-link width mismatch blockers now preserve width-compatible repair guidance: Done
 - `.fsm` top-target boundary role conflicts now preserve endpoint-role repair guidance: Done
 - `.fsm` top-boundary top-link role conflicts now preserve endpoint-role repair guidance: Done
@@ -452,6 +453,7 @@
 - `.fsm` child-declaration top-root confidence now regression-locks child support IDs: Done
 - `.fsm` child-declaration top-root confidence now stays composition-residual clean when renderable: Done
 - `.fsm` top-link top-root confidence now stays composition-residual clean when renderable: Done
+- `.fsm` top-link direction recovery now stays composition-residual clean when renderable: Done
 - `.fsm` baseline top-composition lowering now regression-locks top port, child, and link support IDs: Done
 - `.fsm` missing-child top blockers now preserve unresolved child support IDs and confidence: Done
 - `.fsm` reused-child top lowering now regression-locks per-instance child support IDs: Done

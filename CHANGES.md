@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` top-link direction residual cleanliness)
+
+### Added: renderable top-link direction recovery stays residual-clean
+- Tightened `top_composition_recovers_top_port_direction_from_link_topology` so topology-recovered public top-port direction proves no stale `fsm_adapter_composition_topology` residual remains once the top is renderable.
+- The regression now pairs top-port declaration support, topology-link support, selected inventory provenance, and emitted `.fsm` text with a clean aggregate residual surface.
+- Updated the live tracker, roadmap, and mdBook to mark the top-link direction recovery residual-clean guarantee as closed.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_top_port_direction_from_link_topology` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`613` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo sweep --time 1` -> completed (`Cleaned nothing`)
+
 ## 2026-05-06 (`.fsm` mixed-child residual cleanliness)
 
 ### Added: renderable mixed-child top documents stay residual-clean

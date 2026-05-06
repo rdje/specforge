@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` top-link direction residual cleanliness)
+- Added a residual-clean assertion to `top_composition_recovers_top_port_direction_from_link_topology` in `crates/specforge/src/ir/adapters.rs`.
+- Top-link direction recovery now proves topology-backed public top-port direction recovery leaves no stale `fsm_adapter_composition_topology` packet once the top is renderable.
+- The live tracker and roadmap now mark the top-link direction recovery residual-clean guarantee as closed; focused adapter coverage, full adapter coverage, KG bench, docs, full CI, and `cargo sweep --time 1` all passed.
+
 ## Session update (2026-05-06 `.fsm` mixed-child residual cleanliness)
 - Added a residual-clean assertion to `renderable_top_document_preserves_mixed_child_root_order_and_kind` in `crates/specforge/src/ir/adapters.rs`.
 - Mixed DT/FSM child top documents now prove the combined `?dtc` / `?fsmc` source-document path leaves no stale `fsm_adapter_composition_topology` packet once renderable.

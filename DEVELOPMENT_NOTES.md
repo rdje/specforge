@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` top-link direction residual cleanliness
+- New batch slice 82/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_recovers_top_port_direction_from_link_topology` now asserts no stale composition topology residual remains after explicit top-link topology recovers a public top-port direction and the top emits.
+- This keeps top-port declaration support, topology-link support, selected inventory provenance, and emitted `.fsm` text paired with a clean aggregate residual surface once the top is renderable.
+- Focused top-link direction recovery residual-clean regression, adapter suite, fmt, docs, KG bench, full CI, and the user-requested `cargo sweep --time 1` all passed.
+
 ## 2026-05-06 `.fsm` mixed-child residual cleanliness
 - New batch slice 81/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `renderable_top_document_preserves_mixed_child_root_order_and_kind` now asserts no stale composition topology residual remains after the renderable source document emits mixed DT/FSM child direct roots.
