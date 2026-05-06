@@ -7392,6 +7392,17 @@ mod tests {
             "external actor width must not import the external actor's direction"
         );
         assert!(fsm.renderability.is_renderable);
+        let renderable_module = fsm
+            .renderable_module
+            .as_ref()
+            .expect("control-input-width-backed standalone DT should produce a renderable module");
+        let data_in_size = renderable_module
+            .size_entries
+            .iter()
+            .find(|entry| entry.signal_name == "DATA_IN")
+            .expect("DATA_IN should have a renderable size entry");
+        assert_eq!(data_in_size.direction_hint, InterfaceSignalDirection::Input);
+        assert_eq!(data_in_size.width, 8);
         assert!(emitted_text.contains("(DATA_IN 8)"));
         assert!(emitted_text.contains("(<DATA_IN==8'0"));
         assert!(
