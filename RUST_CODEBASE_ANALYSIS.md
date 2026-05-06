@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` parametric top-port guidance lock)
+- Tightened `top_composition_blocks_parametric_top_port_width_for_fsm_public_io` in `crates/specforge/src/ir/adapters.rs` so symbolic public IO width blockers retain parametric-width resolution guidance on the blocked top candidate and aggregate `.fsm` renderability.
+- Existing assertions still cover explicit top-port support IDs, high automation confidence, and selected top signal-inventory `parametric_width_hint`.
+- This keeps symbolic top-width blockers actionable without confusing them with missing numeric width or width-conflict repair lanes.
+
 ## Session update (2026-05-06 `.fsm` widthless top-port guidance lock)
 - Tightened `top_composition_blocks_widthless_top_port_without_width_recovery` in `crates/specforge/src/ir/adapters.rs` so missing numeric public IO width blockers retain top-boundary width recovery guidance on the blocked top candidate and aggregate `.fsm` renderability.
 - Existing assertions still cover explicit top-port support IDs, high automation confidence, and selected top signal-inventory missing-width state.

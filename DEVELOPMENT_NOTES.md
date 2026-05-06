@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` parametric top-port guidance lock
+- New batch slice 27/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_parametric_top_port_width_for_fsm_public_io` now asserts symbolic public IO width blockers keep `resolve parametric top boundary widths to numeric widths before lowering ?top:name` guidance on the blocked top candidate and aggregate `.fsm` renderability.
+- Existing checks still prove explicit top-port support IDs, high automation confidence, and selected top signal-inventory `parametric_width_hint` remain distinct from missing and conflicted numeric width states.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` widthless top-port guidance lock
 - New batch slice 26/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_widthless_top_port_without_width_recovery` now asserts missing numeric public IO width blockers keep `recover each top boundary port width from explicit declaration, actor-port graph, or top-link topology before lowering ?top:name` guidance on the blocked top candidate and aggregate `.fsm` renderability.

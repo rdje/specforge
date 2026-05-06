@@ -12229,7 +12229,22 @@ mod tests {
                 .iter()
                 .any(|reason| reason.contains("parametric width `DATA_WIDTH`"))
         );
+        assert!(
+            top_candidate
+                .renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment
+                    == "resolve parametric top boundary widths to numeric widths before lowering `?top:name`")
+        );
         assert!(!fsm.renderability.is_renderable);
+        assert!(
+            fsm.renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment
+                    == "resolve parametric top boundary widths to numeric widths before lowering `?top:name`")
+        );
 
         Ok(())
     }
