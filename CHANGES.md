@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` unemitted child target renderable block)
+
+### Added: unemitted child targets cannot leak renderable top output
+- Tightened `top_composition_blocks_link_to_unemitted_child_target_guidance` so top links targeting child endpoints absent from emitted child modules leave the selected top without a renderable top root and the aggregate `.fsm` artifact without a renderable source document.
+- This locks the target-side unemitted child endpoint blocker against stale `?top` output until the child target endpoint is declared and emitted.
+- Synced the live tracker, roadmap, and mdBook with the unemitted child-target renderable-block guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_to_unemitted_child_target_guidance` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+- `cargo sweep --time 1` -> deferred because `target/release/tool_matrix` is active
+
 ## 2026-05-06 (`.fsm` source endpoint renderable block)
 
 ### Added: source-side top-link endpoint blockers cannot leak renderable top output

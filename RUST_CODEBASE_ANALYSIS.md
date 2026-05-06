@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` unemitted child target renderable block)
+- Tightened `top_composition_blocks_link_to_unemitted_child_target_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The test now proves target-side top links to child endpoints absent from emitted child modules leave the selected top without a renderable top root and leave the aggregate `.fsm` artifact without a renderable source document.
+- This locks the target-side unemitted child endpoint blocker against stale renderable top output; focused adapter coverage, full adapter coverage, fmt, docs CI, KG bench, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` source endpoint renderable block)
 - Tightened `top_composition_blocks_link_from_undeclared_top_source_guidance` and `top_composition_blocks_link_from_unemitted_child_source_guidance` in `crates/specforge/src/ir/adapters.rs`.
 - The tests now prove source-side top-link endpoint blockers leave the selected top without a renderable top root and leave the aggregate `.fsm` artifact without a renderable source document.
