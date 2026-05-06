@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` child actor-direction blocker guidance lock
+- New batch slice 17/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `analyze_top_renderability(...)` now extends the aggregate top required-enrichment set with the required enrichments from any blocked explicit child module before it continues past that child.
+- `top_composition_blocks_conflicting_actor_port_directions` now asserts the blocked child module candidate and aggregate `.fsm` renderability both carry `resolve conflicting actor-relative graph direction evidence before lowering .fsm` enrichment guidance.
+- Existing checks still prove child signal declaration support IDs, graph actor-port support IDs, high automation confidence, and conflicted graph-direction inventory state survive together.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` child actor-direction provenance lock
 - New batch slice 16/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_recovers_child_directions_from_actor_ports` now asserts recovered `producer_core.output_data`, `consumer_core.input_data`, and `consumer_core.result_data` child directions keep original child signal declaration support IDs in selected child module inventories.

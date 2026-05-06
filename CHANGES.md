@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` child actor-direction blocker guidance lock)
+
+### Added: child actor-port direction conflict enrichment coverage
+- Top-composition renderability now carries required enrichment guidance upward from blocked explicit child modules, so aggregate `.fsm` artifacts expose the repair hint that made a child root non-renderable.
+- Tightened `top_composition_blocks_conflicting_actor_port_directions` so child actor-port direction conflicts prove the actor-relative graph-direction enrichment guidance survives on both the blocked child module candidate and aggregate `.fsm` renderability.
+- The regression keeps existing child signal declaration support IDs, graph actor-port support IDs, high automation confidence, and conflicted graph-direction inventory state intact.
+- This makes the blocked artifact actionable for replay/review instead of only preserving the conflicting evidence payload.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_actor_port_directions` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` child actor-direction provenance lock)
 
 ### Added: child-signal declaration provenance for actor-recovered directions

@@ -2745,6 +2745,13 @@ fn analyze_top_renderability(
                 "keep top children aligned with renderable explicit modules before lowering `?top:name`"
                     .to_string(),
             );
+            required_canonical_enrichments.extend(
+                module_candidate
+                    .renderability
+                    .required_canonical_enrichments
+                    .iter()
+                    .cloned(),
+            );
             continue;
         }
 
@@ -14485,7 +14492,22 @@ mod tests {
                 .iter()
                 .any(|reason| reason.contains("conflicting graph-backed direction evidence"))
         );
+        assert!(
+            producer
+                .renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment
+                    == "resolve conflicting actor-relative graph direction evidence before lowering `.fsm`")
+        );
         assert!(!fsm.renderability.is_renderable);
+        assert!(
+            fsm.renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment
+                    == "resolve conflicting actor-relative graph direction evidence before lowering `.fsm`")
+        );
 
         Ok(())
     }
