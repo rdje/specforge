@@ -128,6 +128,7 @@ Standalone DT actor-port direction recovery keeps graph-backed direct signal dir
 Those recovered graph directions also feed the renderable `.fsm` `(+size ...)` entries, so the emitted input/output roles do not require flat compatibility `direction_hint` values to be present.
 Structured FSM roots follow the same rule for graph-recovered guard and control-read inputs: renderable size entries can use those input roles without fabricating flat compatibility hints.
 Explicit-module roots also keep that contract for module-local control-read recovery, so module `(+size ...)` entries can consume graph-backed input roles while the flat module-local `direction_hint` remains absent.
+Standalone DT roots also preserve it for direct control-read recovery: a target-actor input recovered from the control graph can feed the emitted `(+size ...)` entry while the flat direct-interface hint remains absent.
 Target-actor-backed direct output selection follows the same rule while excluding shared external actor evidence from the selected inventory.
 Direct control-read input recovery also stays signal-inventory-residual clean while retaining control-branch support IDs and avoiding external actor direction import.
 Direct actor-port width recovery keeps actor-port width provenance on the recovered control input without importing external actor direction, and renderable recovery leaves no signal-inventory residual.

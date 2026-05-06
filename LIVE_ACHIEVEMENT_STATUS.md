@@ -743,6 +743,7 @@
 - Standalone `.fsm` DT renderable size entries now consume graph-backed actor-port directions: Done
 - Structured `.fsm` renderable size entries now consume graph-backed control-read directions: Done
 - Explicit-module `.fsm` renderable size entries now consume graph-backed module-control directions: Done
+- Direct `.fsm` DT renderable size entries now consume graph-backed control-read directions: Done
 - NLP alias learning now rejects outline/list marker prefixes before storing Form 2 aliases: Done
 - NLP alias learning now trims wrapper punctuation from Form 2 alias words: Done
 - NLP alias learning now uses markdown link labels for Form 2 aliases: Done

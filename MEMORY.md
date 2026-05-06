@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `af3db8c5812ec5d3850622338f339a68008a78ad`
-- latest_commit_brief_message: `test(adapter): lock fsm graph size entries`
-- note: new local `N=200` batch is active; slice 147 is committed, slice 148 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `72b813486dced530db0d8ea87ec1bec0de67ffc9`
+- latest_commit_brief_message: `test(adapter): lock module graph size entries`
+- note: new local `N=200` batch is active; slice 148 is committed, slice 149 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `72b8134` test(adapter): lock module graph size entries
 - `af3db8c` test(adapter): lock fsm graph size entries
 - `c20bb6a` test(adapter): lock graph size-entry directions
 - `c8a139c` test(nlp): reject source-label aliases
 - `1de996e` test(adapter): lock child source guidance diagnostics
 - `3685077` test(adapter): lock child actor direction diagnostics
-- `8d4b0f4` test(adapter): lock child topology direction diagnostics
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 148]`
-- files in flight for new batch slice 148:
+- branch state before the next commit: `main...origin/main [ahead 149]`
+- files in flight for new batch slice 149:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,21 +49,21 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `147`
+- completed_count: `148`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - lock explicit-module renderable `.fsm` size entries as consumers of graph-recovered module-local input directions when flat module-local `direction_hint` values are absent
-  - prove `DATA_IN`, `GO`, and `DONE` lower with expected input roles and widths from explicit-module control-read recovery
-  - sync the live tracker, roadmap, mdBook, Rust analysis, and continuity docs with the explicit-module size-entry guarantee
+  - lock direct-DT renderable `.fsm` size entries as consumers of graph-recovered target-actor input directions from direct control-read recovery when flat direct-interface `direction_hint` values are absent
+  - prove `DATA_IN` lowers with expected input role and width from direct control-read recovery
+  - sync the live tracker, roadmap, mdBook, Rust analysis, and continuity docs with the direct-DT control-read size-entry guarantee
 - tracker effect:
-  - live-status tracker changed; new row marks explicit-module `.fsm` renderable size entries consuming graph-backed module-control directions as `Done`
+  - live-status tracker changed; new row marks direct `.fsm` DT renderable size entries consuming graph-backed control-read directions as `Done`
 - verification status:
   - implementation and live-doc sync are complete
-  - focused explicit-module graph-backed size-entry regression passed (`1` test)
+  - focused direct-DT control-read size-entry regression passed (`1` test)
   - adapter suite passed (`92` tests)
   - formatting passed
   - docs CI passed
@@ -74,9 +74,9 @@
 - current known local CI baseline:
   - current in-flight slice passed `614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - current in-flight slice passed `148/148` tracked KG fixtures
-  - current slice has passed focused explicit-module graph-backed size-entry regression, adapter suite, and formatting
+  - current slice has passed focused direct-DT control-read size-entry regression, adapter suite, formatting, docs CI, KG bench, and full CI
   - latest `cargo sweep --time 1` attempt was deferred because `target/release/tool_matrix` is active
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final commit guards and commit slice 148 without pushing
+- run final commit guards and commit slice 149 without pushing

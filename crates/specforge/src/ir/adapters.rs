@@ -7295,6 +7295,17 @@ mod tests {
             "external environment actor port must not become the target actor perspective"
         );
         assert!(fsm.renderability.is_renderable);
+        let renderable_module = fsm
+            .renderable_module
+            .as_ref()
+            .expect("control-read-backed standalone DT should produce a renderable module");
+        let data_in_size = renderable_module
+            .size_entries
+            .iter()
+            .find(|entry| entry.signal_name == "DATA_IN")
+            .expect("DATA_IN should have a renderable size entry");
+        assert_eq!(data_in_size.direction_hint, InterfaceSignalDirection::Input);
+        assert_eq!(data_in_size.width, 8);
         assert!(emitted_text.contains("(DATA_OUT = DATA_IN)"));
         assert!(emitted_text.contains("(<DATA_IN==8'0"));
         assert!(

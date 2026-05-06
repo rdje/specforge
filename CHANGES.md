@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` direct control graph size-entry lock)
+
+### Added: direct DT control-read size entries lock graph-backed input direction
+- Tightened `standalone_dt_derives_target_inputs_from_control_reads_after_output_actor_selection` so the renderable `.fsm` size entry for `DATA_IN` must consume the graph-recovered target-actor input direction.
+- The regression now proves the direct control-read recovery path feeds `DATA_IN` into a renderable input size entry without fabricating a flat compatibility `direction_hint`.
+- Synced the live tracker, roadmap, and mdBook with the direct-DT control-read size-entry guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_dt_derives_target_inputs_from_control_reads_after_output_actor_selection` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+
 ## 2026-05-06 (`.fsm` explicit-module graph size-entry lock)
 
 ### Added: explicit-module size entries lock graph-backed control-input directions

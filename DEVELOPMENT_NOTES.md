@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` direct control graph size-entry lock
+- New batch slice 149/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `standalone_dt_derives_target_inputs_from_control_reads_after_output_actor_selection` now asserts the renderable `(+size ...)` entry for `DATA_IN` consumes the graph-recovered target-actor input direction from direct control-read recovery.
+- This locks direct-DT control-read direction recovery through target emission, not just signal inventory: `DATA_IN` remains flat-hint-free but still lowers as an input width-8 size entry.
+- Focused direct-DT control-read size-entry coverage, the adapter suite, fmt, docs CI, KG bench (`148/148` fixtures), and full CI passed; user-requested `cargo sweep --time 1` remains deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` explicit-module graph size-entry lock
 - New batch slice 148/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `standalone_explicit_module_recovers_inputs_from_module_control_reads` now asserts module-local renderable `(+size ...)` entries consume graph-recovered input directions for module control-read signals when flat module-local `direction_hint` values are absent.
