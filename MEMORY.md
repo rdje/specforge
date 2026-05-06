@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `8d003c268dfe2efe55fd41479624b25ad4224316`
-- latest_commit_brief_message: `test(adapter): lock undriven output residual guidance`
-- note: new local `N=200` batch is active; slice 103 is committed, slice 104 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `7f7ca69abe4c9c7d6cc32b41dd0fd94a526e8dc0`
+- latest_commit_brief_message: `test(adapter): lock structured undriven residual guidance`
+- note: new local `N=200` batch is active; slice 104 is committed, slice 105 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `7f7ca69` test(adapter): lock structured undriven residual guidance
 - `8d003c2` test(adapter): lock undriven output residual guidance
 - `0a4f8bf` test(adapter): lock flat graph residual guidance
 - `790a1ec` test(adapter): align conflict residual guidance
 - `024876d` test(adapter): lock actor width residual guidance
 - `face783` test(adapter): lock actor direction residual guidance
-- `f2a8c3a` test(adapter): lock ambiguous actor residual guidance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 104]`
-- files in flight for new batch slice 104:
+- branch state before the next commit: `main...origin/main [ahead 105]`
+- files in flight for new batch slice 105:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,29 +49,29 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `103`
+- completed_count: `104`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - lock signal-inventory residual guidance for structured-FSM graph-backed undriven output blockers
-  - prove `structured_fsm_blocks_graph_backed_undriven_output_inventory` keeps the `fsm_adapter_signal_inventory` residual packet while preserving selected actor support
-  - sync the live tracker, roadmap, and mdBook with the structured-FSM undriven-output residual-guidance guarantee
+  - lock state-graph residual guidance for structured-FSM missing-initial blockers
+  - prove `keeps_structured_fsm_blocked_without_exactly_one_initial_state` keeps the `fsm_adapter_state_graph` residual packet and upstream enrichment candidate while preserving state/transition provenance
+  - sync the live tracker, roadmap, and mdBook with the missing-initial residual-guidance guarantee
 - tracker effect:
-  - live-status tracker changed; new row marks `.fsm` structured graph-backed undriven outputs retaining signal-inventory repair guidance when blocked as `Done`
+  - live-status tracker changed; new row marks `.fsm` missing-initial structured-FSM blockers retaining state-graph repair guidance when blocked as `Done`
 - verification status:
   - implementation and live-doc sync are complete
-  - focused structured undriven output residual-guidance regression passed (`1` test)
+  - focused missing-initial residual-guidance regression passed (`1` test)
   - adapter suite passed (`92` tests)
-  - formatting, docs CI, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook) passed
-  - user-requested `cargo sweep --time 1` is deferred until no target-tree process is active
+  - formatting, docs CI, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation) passed
+  - user-requested `cargo sweep --time 1` was deferred because another shell still had `target/release/tool_matrix` running from this repository
 - current known local CI baseline:
-  - current slice passed `613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
-  - current slice passed `148/148` tracked KG fixtures
-  - current `cargo sweep --time 1` was deferred because another shell still had `target/release/tool_matrix` running from this repository
+  - last committed slice passed `613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - last committed slice passed `148/148` tracked KG fixtures
+  - latest `cargo sweep --time 1` attempt was deferred because another shell still had `target/release/tool_matrix` running from this repository
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final commit guards, commit slice 104 without pushing, retry `cargo sweep --time 1` when the target tree is idle, then start slice 105 of the active `N=200` batch
+- run final commit guards and commit slice 105 without pushing

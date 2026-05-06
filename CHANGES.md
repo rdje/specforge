@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` missing-initial residual guidance)
+
+### Added: missing-initial FSM blockers keep state-graph repair guidance
+- Tightened `keeps_structured_fsm_blocked_without_exactly_one_initial_state` so missing initial-state blockers retain the `fsm_adapter_state_graph` residual packet.
+- The regression now pairs state/transition support IDs, high candidate confidence, exact missing-initial blocker text, low residual confidence, and the upstream state-graph enrichment candidate.
+- Updated the live tracker, roadmap, and mdBook to mark the missing-initial residual-guidance guarantee as closed.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge keeps_structured_fsm_blocked_without_exactly_one_initial_state` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`613` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo sweep --time 1` -> deferred until safe because another shell still had a `target/release/tool_matrix` process running from this repository
+
 ## 2026-05-06 (`.fsm` structured undriven residual guidance)
 
 ### Added: structured graph-backed undriven outputs keep signal-inventory repair guidance

@@ -17132,11 +17132,26 @@ mod tests {
                 .iter()
                 .any(|reason| { reason.contains("exactly one explicit initial regular state") })
         );
+        let state_graph_residual = adapter
+            .residual_decisions
+            .iter()
+            .find(|packet| packet.packet_id == "fsm_adapter_state_graph")
+            .expect("missing initial state should surface state-graph guidance");
+        assert_eq!(
+            state_graph_residual.automation_confidence,
+            AutomationConfidence::Low
+        );
         assert!(
-            adapter
-                .residual_decisions
+            state_graph_residual
+                .why_unresolved
+                .contains("canonical state graph")
+        );
+        assert!(
+            state_graph_residual
+                .candidate_interpretations
                 .iter()
-                .any(|packet| packet.packet_id == "fsm_adapter_state_graph")
+                .any(|interpretation| interpretation.interpretation_id
+                    == "enrich_intent_ir_state_graph")
         );
 
         Ok(())

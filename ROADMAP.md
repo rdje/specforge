@@ -296,7 +296,7 @@
   - ambiguous direct actor-port graph context leaves graph direction, actor-port category, and support IDs unselected instead of guessing a target actor while retaining signal-inventory repair guidance when blocked
   - standalone DT graph-backed undriven output blockers preserve selected actor support IDs, high automation confidence, and signal-inventory repair guidance while blocking `.fsm` emission
   - structured-FSM graph-backed undriven output blockers preserve selected actor support IDs, high automation confidence, and signal-inventory repair guidance while blocking `.fsm` emission
-  - structured-FSM missing-initial blockers preserve state declaration support IDs and confidence while blocking `.fsm` emission
+  - structured-FSM missing-initial blockers preserve state declaration support IDs, confidence, and state-graph repair guidance while blocking `.fsm` emission
   - structured-FSM undeclared-transition blockers preserve transition support IDs and confidence while blocking `.fsm` emission
   - direct-root actor-port direction conflicts preserve both conflicting graph-backed support IDs, automation confidence, and signal-inventory repair guidance while blocking `.fsm` emission
   - explicit-module flat-vs-graph direction disagreement preserves interface and actor-port provenance while blocking `.fsm` emission
