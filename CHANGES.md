@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` renderable selector support lock)
+
+### Added: selector/test-node provenance coverage
+- Tightened `builds_renderable_selector_based_dt_fsm_adapter_artifact` so the renderable selector-based DT now proves its decision-tree candidate remains visible.
+- The test locks control-fragment support IDs, the single selector branch block, high automation confidence, and selector/output signal inventory while preserving emitted `.fsm` selector/test-node text.
+- This pairs the renderable selector path with the blocked selector-branch coverage so both outcomes keep their control evidence auditable.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge builds_renderable_selector_based_dt_fsm_adapter_artifact` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` selector-branch blocker support lock)
 
 ### Added: selector-blocker provenance coverage

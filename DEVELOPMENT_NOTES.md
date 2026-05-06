@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` renderable selector support lock
+- New batch slice 89/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `builds_renderable_selector_based_dt_fsm_adapter_artifact` now asserts the renderable selector DT keeps its decision-tree candidate, control-fragment support IDs, single selector branch block, high automation confidence, and selector/output signal inventory while emitted `.fsm` selector/test-node text remains unchanged.
+- This is a coverage-only lock for the supported selector/test-node lowering path paired with the blocked selector-predicate branch.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` selector-branch blocker support lock
 - New batch slice 88/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `keeps_selector_based_dt_blocked_when_branch_predicate_is_not_relative_to_selector` now asserts the blocked selector DT keeps its decision-tree candidate, control-fragment support IDs, referenced guard/action signals, and high automation confidence while the unsupported branch predicate keeps `.fsm` emission blocked.

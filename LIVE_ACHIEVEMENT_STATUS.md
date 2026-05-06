@@ -319,6 +319,7 @@
 - `.fsm` reset-polarity blockers now preserve system-contract support IDs and confidence: Done
 - `.fsm` missing-system-contract blockers now preserve DT control support IDs and confidence: Done
 - `.fsm` selector-branch blockers now preserve DT control support IDs and selector inventory: Done
+- `.fsm` renderable selector/test-node lowering now preserves DT control support IDs and selector inventory: Done
 - `.fsm` top-root signal inventory now preserves flat-vs-graph top-port direction disagreement without mislabeling graph provenance as conflicted: Done
 - mdBook now documents blocked `.fsm` adapter renderability together with flat/graph signal-inventory provenance: Done
 - `.fsm` adapter signal inventory now preserves parametric width provenance and reports symbolic widths distinctly from missing numeric width evidence: Done

@@ -8480,6 +8480,12 @@ mod tests {
     fn builds_renderable_selector_based_dt_fsm_adapter_artifact() -> Result<()> {
         let tempdir = tempdir()?;
         let intent_ir = build_selector_control_intent_ir(tempdir.path())?;
+        let control_fragment_ids = intent_ir
+            .decision_tree_fragments
+            .iter()
+            .map(|fragment| fragment.fragment_id.clone())
+            .collect::<Vec<_>>();
+        assert_eq!(control_fragment_ids.len(), 1);
         let artifact_base = tempdir.path().join("generated").join("adapters");
 
         let adapter = AdapterArtifact::build(
@@ -8497,6 +8503,27 @@ mod tests {
         let emitted_text = fs::read_to_string(emitted_target_path)?;
         let fsm = adapter.fsm.expect("fsm artifact should be present");
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Dt);
+        assert_eq!(fsm.decision_tree_candidates.len(), 1);
+        let dt_candidate = fsm
+            .decision_tree_candidates
+            .iter()
+            .find(|candidate| candidate.candidate_id == "dt_primary_intent_cone")
+            .expect("decision-tree candidate should remain visible");
+        for fragment_id in &control_fragment_ids {
+            assert!(dt_candidate.supporting_fragment_ids.contains(fragment_id));
+        }
+        assert_eq!(dt_candidate.blocks.len(), 1);
+        assert_eq!(
+            dt_candidate.automation_confidence,
+            AutomationConfidence::High
+        );
+        for signal_name in ["MODE", "OUT"] {
+            assert!(
+                fsm.signal_inventory
+                    .iter()
+                    .any(|signal| signal.signal_name == signal_name)
+            );
+        }
         assert!(fsm.renderability.is_renderable);
         assert!(emitted_text.contains("(?dt:selector_dt"));
         assert!(emitted_text.contains("(-decode"));

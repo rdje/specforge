@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` renderable selector support lock)
+- Tightened `builds_renderable_selector_based_dt_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs` so the renderable selector-based DT artifact retains its decision-tree candidate, control-fragment support IDs, single branch block, and high confidence.
+- The adapter already emitted selector/test-node `.fsm` text for the supported `MODE == mode_t.idle` shape; this regression now proves the same renderable path keeps its selector and output signal inventory visible.
+- This complements the blocked selector-predicate coverage by pinning both renderable and blocked selector outcomes to auditable DT provenance.
+
 ## Session update (2026-05-06 `.fsm` selector-branch blocker support lock)
 - Tightened `keeps_selector_based_dt_blocked_when_branch_predicate_is_not_relative_to_selector` in `crates/specforge/src/ir/adapters.rs` so the blocked selector-based DT artifact retains its decision-tree candidate, control-fragment support IDs, referenced guard/action signals, and high confidence.
 - The adapter already blocked `.fsm` emission when a branch predicate could not be rendered relative to the selector token; this regression now proves the selected control cone remains auditable.
