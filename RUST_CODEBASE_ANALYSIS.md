@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` top width-conflict renderable-block anchor)
+- Tightened `top_composition_blocks_conflicting_top_port_widths_from_child_links` in `crates/specforge/src/ir/adapters.rs`.
+- The child-link top-width conflict test now directly proves blocked public top-port width disagreement leaves no renderable top root and no aggregate renderable source document.
+- The live analysis also records the actor-port top-width conflict renderable-block assertion already present in the adapter suite; focused adapter coverage, full adapter coverage, fmt, docs CI, KG bench, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` top child-link width conflict renderable block)
 - Tightened `top_composition_blocks_conflicting_top_port_widths_from_child_links` in `crates/specforge/src/ir/adapters.rs`.
 - The test now proves conflicting child-link width evidence for a public top port leaves the selected top without a renderable top root and leaves the aggregate `.fsm` artifact without a renderable source document.

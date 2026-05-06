@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` top width-conflict renderable-block anchor)
+
+### Added: child-link top width conflicts are anchored in the intended regression
+- Tightened `top_composition_blocks_conflicting_top_port_widths_from_child_links` so child-link width conflicts on a public top port directly assert there is no renderable top root and no aggregate renderable source document.
+- Synced the live docs to also record the existing actor-port top-width conflict renderable-block guarantee, keeping the tracker aligned with the actual adapter regression surface.
+- This closes the top-boundary width-conflict lock across both actor-port and child-link evidence paths.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_top_port_widths_from_child_links` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+
 ## 2026-05-06 (`.fsm` top child-link width conflict renderable block)
 
 ### Added: conflicting child-link top widths cannot leak renderable top output

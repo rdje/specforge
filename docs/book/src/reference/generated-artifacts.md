@@ -170,6 +170,7 @@ High-confidence child declarations can raise the selected top root-kind confiden
 High-confidence top-link evidence follows the same residual-clean rule once the linked topology is renderable.
 Actor-port-backed top direction recovery follows the same rule: the graph evidence is added without dropping the public top-port declaration support IDs, and renderable recovery leaves no composition-topology residual.
 Actor-port-backed top width recovery also retains public top-port declaration support while adding the graph width evidence, and renderable recovery leaves no composition-topology residual.
+Conflicting actor-port top widths keep the selected top unresolved with no renderable top root or aggregate source document, so stale `?top` output cannot leak past the blocked graph-width decision.
 Child-link-backed top width recovery likewise retains public top-port declaration support while adding the topology width evidence, and renderable recovery leaves no composition-topology residual.
 Conflicting child-link top widths keep the selected top unresolved with no renderable top root or aggregate source document, so stale `?top` output cannot leak past the blocked topology decision.
 Child-system-contract-backed top width recovery retains the clock/reset top-port declaration support while adding topology-link and system-contract evidence, and renderable recovery leaves no composition-topology residual.

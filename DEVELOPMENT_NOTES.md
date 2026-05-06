@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` top width-conflict renderable-block anchor
+- New batch slice 161/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_conflicting_top_port_widths_from_child_links` now carries the no-renderable-top-root and no-renderable-source-document assertions for child-link public top-port width conflicts.
+- The live docs also record the actor-port top-width conflict renderable-block guarantee already present in the adapter tests, so the documented surface matches the concrete regression coverage.
+- Focused top child-link width-conflict coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` top child-link width conflict renderable block
 - New batch slice 160/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_conflicting_top_port_widths_from_child_links` now asserts a top port with conflicting child-link widths has no renderable top root and the aggregate `.fsm` artifact has no renderable source document.
