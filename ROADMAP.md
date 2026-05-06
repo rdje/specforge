@@ -210,6 +210,7 @@
   - top-link target endpoint direction-role blockers preserve the same composition-topology residual decision as the source-side role blockers
   - top-boundary top-link direction conflicts preserve source/output and target/input repair guidance alongside boundary direction-conflict guidance
   - top-target boundary role conflicts preserve source/output and target/input repair guidance alongside boundary direction-conflict guidance
+  - top-target boundary role conflicts preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
   - duplicate top-port direction conflicts preserve both duplicate declaration support-ID sets and high automation confidence while blocking `.fsm` emission
   - duplicate top-port direction conflict blockers preserve top-boundary direction-conflict enrichment guidance on blocked top and aggregate `.fsm` renderability surfaces
   - duplicate top-port direction blockers preserve explicit top-port deduplication guidance, composition-topology residual diagnostics, and direction-conflict guidance

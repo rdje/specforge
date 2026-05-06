@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` top-target role residual diagnostics)
+
+### Added: top-target role residuals lock topology-detail diagnostics
+- Tightened `top_composition_blocks_top_target_direction_role_guidance` so top-boundary target role conflicts retain low-confidence `fsm_adapter_composition_topology` diagnostics.
+- The regression now pairs top-boundary direction-conflict guidance, endpoint-role guidance, selected top signal-inventory evidence, explicit topology-detail residual text, and renderable-child repair guidance.
+- Updated the live tracker, roadmap, and mdBook to mark top-target role residual diagnostics as closed.
+
+### Validation
+- Passed: focused top-target role residual-diagnostics regression (`1` test), adapter suite (`92` tests), rustfmt check, docs CI/mdBook, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation).
+- Deferred: user-requested `cargo sweep --time 1` until safe because another shell still had a `target/release/tool_matrix` process running from this repository.
+
 ## 2026-05-06 (`.fsm` top-link direction residual diagnostics)
 
 ### Added: top-link direction residuals lock topology-detail diagnostics

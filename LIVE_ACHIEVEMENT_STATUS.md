@@ -81,6 +81,7 @@
 - `.fsm` reset-polarity blockers now retain system-surface repair guidance when blocked: Done
 - `.fsm` top-link width mismatch blockers now preserve width-compatible repair guidance: Done
 - `.fsm` top-target boundary role conflicts now preserve endpoint-role repair guidance: Done
+- `.fsm` top-target boundary role residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` top-boundary top-link role conflicts now preserve endpoint-role repair guidance: Done
 - `.fsm` top-link target-role mismatches now preserve endpoint-role repair guidance: Done
 - `.fsm` top-link direction-role mismatches now preserve endpoint-role repair guidance: Done
