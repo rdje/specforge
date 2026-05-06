@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` top-target boundary role guidance lock
+- New batch slice 44/200 adds coverage in `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_top_target_direction_role_guidance` proves a public top target declared as input but used as a top-link target keeps endpoint-role guidance beside top-boundary direction-conflict guidance.
+- The regression keeps the conflicting top-port declaration, topology-link support IDs, selected top inventory evidence, blocked top candidate, and aggregate `.fsm` renderability visible for repair.
+- Full adapter coverage is now `91` adapter tests, full CI is now `612` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` top-boundary role guidance lock
 - New batch slice 43/200 updates `crates/specforge/src/ir/adapters.rs`.
 - Top-link-derived public top-port direction conflicts now also carry `align top-link endpoint directions with source/output and target/input roles before lowering ?top:name` guidance beside the existing top-boundary direction-conflict repair.

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` top-target boundary role guidance lock)
+- Added `top_composition_blocks_top_target_direction_role_guidance` in `crates/specforge/src/ir/adapters.rs` so a top-boundary target declared as input, while topology needs output, preserves endpoint-role repair guidance.
+- The regression pairs the top-target conflict with the top-source boundary lock and keeps direction-conflict guidance on both blocked top and aggregate `.fsm` renderability.
+- Top-port declaration provenance, topology-link support IDs, and selected top signal-inventory evidence remain visible for review.
+
 ## Session update (2026-05-06 `.fsm` top-boundary role guidance lock)
 - Extended top-port direction conflict handling in `crates/specforge/src/ir/adapters.rs` so conflicts caused by explicit top-link topology also preserve endpoint-role repair guidance.
 - Tightened `top_composition_keeps_conflicting_top_port_direction_unresolved` to prove the new role guidance survives beside top-boundary direction-conflict guidance on blocked top and aggregate `.fsm` renderability.

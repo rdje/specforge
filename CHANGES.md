@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` top-target boundary role guidance lock)
+
+### Added: top-target boundary role coverage
+- Added `top_composition_blocks_top_target_direction_role_guidance` so a public top target declared as an input but used as a top-link target proves endpoint-role guidance survives beside top-boundary direction-conflict guidance.
+- The regression keeps the conflicting top-port provenance, topology-link provenance, selected top signal-inventory evidence, blocked top candidate, and aggregate `.fsm` renderability visible.
+- This pairs the top-target boundary role case with the top-source boundary role lock.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_top_target_direction_role_guidance` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`91` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`612` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` top-boundary role guidance lock)
 
 ### Changed: top-boundary top-link role conflicts surface endpoint guidance
