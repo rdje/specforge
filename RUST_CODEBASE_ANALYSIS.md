@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` primary missing-child guidance lock)
+- Tightened `keeps_top_composition_blocked_when_child_module_is_missing` in `crates/specforge/src/ir/adapters.rs` so the primary missing child module blocker retains child-source declaration guidance on the blocked top candidate and aggregate `.fsm` renderability.
+- Existing assertions still cover declared `result_data` top-port provenance, missing child declaration support IDs, high automation confidence, and the precise missing-module blocker.
+- This pairs the dedicated missing-child composition regression with the recovered-top-direction missing-child guidance lock.
+
 ## Session update (2026-05-06 `.fsm` missing-child guidance lock)
 - Tightened `top_composition_preserves_recovered_top_port_direction_when_still_blocked` in `crates/specforge/src/ir/adapters.rs` so missing child module blockers retain child-source declaration guidance on the blocked top candidate and aggregate `.fsm` renderability.
 - Existing assertions still cover recovered `result_data` top-boundary direction, topology-link support IDs, signal-inventory graph provenance, high automation confidence, and the precise missing-module blocker.

@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` primary missing-child guidance lock
+- New batch slice 30/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `keeps_top_composition_blocked_when_child_module_is_missing` now asserts missing child module blockers keep `declare every top child source as an explicit module before lowering ?top:name` guidance on the blocked top candidate and aggregate `.fsm` renderability.
+- Existing checks still prove declared `result_data` top-port provenance, missing child declaration support IDs, high automation confidence, and the missing-module blocker survive together.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` missing-child guidance lock
 - New batch slice 29/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_preserves_recovered_top_port_direction_when_still_blocked` now asserts missing child module blockers keep `declare every top child source as an explicit module before lowering ?top:name` guidance on the blocked top candidate and aggregate `.fsm` renderability.
