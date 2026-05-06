@@ -6701,11 +6701,26 @@ mod tests {
                 .ends_with("generated/adapters/fsm/handshake/adapter.json")
         );
         assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let signal_inventory_residual = adapter
+            .residual_decisions
+            .iter()
+            .find(|packet| packet.packet_id == "fsm_adapter_signal_inventory")
+            .expect("blocked DT-centric artifact should surface signal guidance");
+        assert_eq!(
+            signal_inventory_residual.automation_confidence,
+            AutomationConfidence::Low
+        );
         assert!(
-            adapter
-                .residual_decisions
+            signal_inventory_residual
+                .why_unresolved
+                .contains("render-critical signal roles")
+        );
+        assert!(
+            signal_inventory_residual
+                .candidate_interpretations
                 .iter()
-                .any(|packet| { packet.packet_id == "fsm_adapter_signal_inventory" })
+                .any(|interpretation| interpretation.interpretation_id
+                    == "enrich_intent_ir_interface_inventory")
         );
 
         let fsm = adapter.fsm.expect("fsm artifact should be present");

@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` blocked DT signal-inventory guidance
+- New batch slice 116/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `builds_blocked_dt_centric_fsm_adapter_artifact` now asserts baseline blocked DT-centric artifacts keep the `fsm_adapter_signal_inventory` residual packet with low confidence and the upstream interface-inventory enrichment candidate.
+- This keeps blocked lowering status, absent target emission, DT root-kind selection, selected signal inventory, and signal-inventory repair guidance tied together.
+- Focused blocked-DT signal-inventory residual-guidance regression, adapter suite, fmt, docs, KG bench, and full CI all passed; user-requested `cargo sweep --time 1` is deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` reset-polarity residual guidance
 - New batch slice 115/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `keeps_reset_polarity_blocked_when_signal_name_cannot_preserve_it` now asserts reset-polarity blockers keep the `fsm_adapter_system_contract` residual packet with low confidence and the upstream system-surface enrichment candidate.

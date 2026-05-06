@@ -53,6 +53,7 @@
 - `.fsm` standalone direct control-read input recovery now stays signal-inventory-residual clean when renderable: Done
 - `.fsm` standalone direct actor-port width recovery now stays signal-inventory-residual clean when renderable: Done
 - `.fsm` standalone unrelated actor-port context now stays signal-inventory-residual clean when renderable: Done
+- `.fsm` blocked DT-centric adapters now retain signal-inventory repair guidance when blocked: Done
 - `.fsm` ambiguous actor-port context now retains signal-inventory repair guidance when blocked: Done
 - `.fsm` actor-port direction conflicts now retain signal-inventory repair guidance when blocked: Done
 - `.fsm` actor-port width conflicts now retain signal-inventory repair guidance when blocked: Done
@@ -561,6 +562,7 @@
 - `.fsm` links from unemitted child sources now preserve composition topology residual decisions: Done
 - `.fsm` links to unemitted child targets now preserve composition topology residual decisions: Done
 - `.fsm` standalone DT/FSM renderability now blocks graph-backed output inventory entries that have no typed driving action instead of silently omitting them: Done
+- `.fsm` blocked DT-centric adapters now retain signal-inventory repair guidance when blocked: Done
 - `.fsm` standalone DT graph-backed undriven output blockers now regression-lock support IDs and automation confidence: Done
 - `.fsm` structured FSM renderability now regression-locks graph-backed undriven output blocking: Done
 - `.fsm` structured-FSM graph-backed undriven output blockers now regression-lock support IDs and automation confidence: Done

@@ -122,6 +122,7 @@ Adapter artifacts are downstream products of `IntentIR`.
 They should not define what the canonical document meaning is.
 If an adapter needs meaning that is not present in `IntentIR`, the fix should usually be upstream in the IR pipeline, not hidden inside the adapter.
 When an adapter artifact is blocked, inspect both the renderability reasons and the signal inventory provenance.
+Baseline blocked DT-centric artifacts also keep signal-inventory repair guidance so unresolved ports, predicates, and assignment facts stay upstream-reviewable.
 For `.fsm` top roots, a top-port direction can be unresolved for rendering while the inventory still shows the declared `direction_hint` and the actor/topology-derived `graph_direction_hint` separately.
 Standalone DT actor-port direction recovery keeps graph-backed direct signal directions in `graph_direction_hint` with actor-port provenance, and renderable recovery leaves no signal-inventory residual.
 Target-actor-backed direct output selection follows the same rule while excluding shared external actor evidence from the selected inventory.

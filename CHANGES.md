@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` blocked DT signal-inventory guidance)
+
+### Added: blocked DT-centric adapters keep signal-inventory repair guidance
+- Tightened `builds_blocked_dt_centric_fsm_adapter_artifact` so baseline blocked DT-centric artifacts retain the `fsm_adapter_signal_inventory` residual packet with explicit repair guidance.
+- The regression now pairs blocked lowering status, absent target emission, DT root-kind selection, signal-inventory visibility, low residual confidence, and the upstream interface-inventory enrichment candidate.
+- Updated the live tracker, roadmap, and mdBook to mark blocked DT-centric signal-inventory residual guidance as closed.
+
+### Validation
+- Passed: focused blocked-DT signal-inventory residual-guidance regression (`1` test), adapter suite (`92` tests), rustfmt check, docs CI/mdBook, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation).
+- Deferred: user-requested `cargo sweep --time 1` until safe because another shell still had a `target/release/tool_matrix` process running from this repository.
+
 ## 2026-05-06 (`.fsm` reset-polarity residual guidance)
 
 ### Added: reset-polarity blockers keep system-surface repair guidance
