@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` top actor width residual diagnostics
+- New batch slice 124/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_conflicting_top_actor_port_width` now asserts top actor-port width conflicts keep low-confidence `fsm_adapter_composition_topology` diagnostics with explicit topology-detail blocker text.
+- This keeps top-boundary width-conflict guidance, top-port and graph actor-port provenance, and explicit-top-port residual guidance tied together.
+- Focused top actor-port width residual-diagnostics regression, adapter suite, fmt, docs, KG bench, and full CI all passed; user-requested `cargo sweep --time 1` is deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` top actor direction residual diagnostics
 - New batch slice 123/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_conflicting_top_actor_port_direction` now asserts top actor-port direction conflicts keep low-confidence `fsm_adapter_composition_topology` diagnostics with explicit topology-detail blocker text.
