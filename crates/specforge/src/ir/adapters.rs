@@ -12506,7 +12506,22 @@ mod tests {
                 .iter()
                 .any(|reason| reason.contains("Top actor-port graph `wrapper.ext_data`"))
         );
+        assert!(
+            top_candidate
+                .renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment
+                    == "resolve conflicting top boundary port direction evidence before lowering `?top:name`")
+        );
         assert!(!fsm.renderability.is_renderable);
+        assert!(
+            fsm.renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment
+                    == "resolve conflicting top boundary port direction evidence before lowering `?top:name`")
+        );
 
         Ok(())
     }

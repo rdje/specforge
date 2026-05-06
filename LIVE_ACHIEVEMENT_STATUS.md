@@ -369,6 +369,7 @@
 - `.fsm` child link-topology direction recovery now preserves child signal declaration support alongside topology support: Done
 - `.fsm` child actor-port direction recovery now preserves child signal declaration support alongside graph support: Done
 - `.fsm` top actor-port direction conflicts now regression-lock support IDs and automation confidence: Done
+- `.fsm` top actor-port direction conflicts now preserve top-boundary direction enrichment guidance: Done
 - `.fsm` top actor-port width conflicts now regression-lock support IDs and automation confidence: Done
 - `.fsm` top actor-port width conflicts now preserve top-boundary width enrichment guidance: Done
 - `.fsm` top-link direction conflicts now regression-lock support IDs and automation confidence: Done

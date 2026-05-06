@@ -191,6 +191,7 @@
   - child-link width recovery preserves original public top-port declaration support IDs alongside topology-link width support IDs
   - child-system-contract width recovery preserves original public top-port declaration support IDs alongside topology-link and system-contract support IDs
   - top actor-port direction conflicts preserve explicit top-port support IDs, graph actor-port support IDs, and high automation confidence while blocking `.fsm` emission
+  - top actor-port direction conflict blockers preserve top-boundary direction-conflict enrichment guidance on blocked top and aggregate `.fsm` renderability surfaces
   - top actor-port width conflicts preserve explicit top-port support IDs, graph actor-port width support IDs, width-conflict inventory state, and high automation confidence while blocking `.fsm` emission
   - top actor-port width conflict blockers preserve top-boundary width-conflict enrichment guidance on blocked top and aggregate `.fsm` renderability surfaces
   - top-link direction conflicts preserve explicit top-port support IDs, topology-link support IDs, graph-direction inventory state, and high automation confidence while blocking `.fsm` emission

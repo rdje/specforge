@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` top actor-direction blocker guidance lock
+- New batch slice 23/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_conflicting_top_actor_port_direction` now asserts actor-port graph direction conflicts keep `resolve conflicting top boundary port direction evidence before lowering ?top:name` guidance on the blocked top candidate and aggregate `.fsm` renderability.
+- Existing checks still prove explicit top-port support IDs, `graph_wrapper_ext_data`, high automation confidence, and selected top signal-inventory direction disagreement survive together.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` top-boundary width blocker guidance lock
 - New batch slice 22/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_keeps_duplicate_top_port_width_conflict_unresolved` now asserts duplicate top-port width conflicts keep `resolve conflicting top boundary port width evidence before lowering ?top:name` guidance on the blocked top candidate and aggregate `.fsm` renderability.
