@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `a23381a2177cc88b94c7bc0a41a1be058785ed15`
-- latest_commit_brief_message: `test(adapter): lock structured flat graph guidance`
-- note: new local `N=200` batch is active; slice 107 is committed, slice 108 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `b6b4048bf84b00fa859b8bed676c9974e40c07a3`
+- latest_commit_brief_message: `test(adapter): lock explicit module flat graph guidance`
+- note: new local `N=200` batch is active; slice 108 is committed, slice 109 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `b6b4048` test(adapter): lock explicit module flat graph guidance
 - `a23381a` test(adapter): lock structured flat graph guidance
 - `82602cf` test(adapter): lock undeclared-target residual guidance
 - `e1efddc` test(adapter): lock missing-initial residual guidance
 - `7f7ca69` test(adapter): lock structured undriven residual guidance
 - `8d003c2` test(adapter): lock undriven output residual guidance
-- `0a4f8bf` test(adapter): lock flat graph residual guidance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 108]`
-- files in flight for new batch slice 108:
+- branch state before the next commit: `main...origin/main [ahead 109]`
+- files in flight for new batch slice 109:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,21 +49,21 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `107`
+- completed_count: `108`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - lock signal-inventory residual guidance for explicit-module flat/graph direction disagreement blockers
-  - prove `standalone_explicit_module_blocks_flat_graph_direction_disagreement` keeps the `fsm_adapter_signal_inventory` residual packet and upstream enrichment candidate while preserving module interface and actor-port provenance
-  - sync the live tracker, roadmap, and mdBook with the explicit-module flat/graph residual-guidance guarantee
+  - lock signal-inventory residual guidance for explicit-module control-read direction conflict blockers
+  - prove `standalone_explicit_module_blocks_conflicting_module_control_read_direction` keeps the `fsm_adapter_signal_inventory` residual packet and upstream enrichment candidate while preserving actor-port/control-read provenance categories
+  - sync the live tracker, roadmap, and mdBook with the explicit-module control-read residual-guidance guarantee
 - tracker effect:
-  - live-status tracker changed; new row marks `.fsm` explicit-module flat/graph direction disagreements retaining signal-inventory repair guidance when blocked as `Done`
+  - live-status tracker changed; new row marks `.fsm` explicit-module control-read direction conflicts retaining signal-inventory repair guidance when blocked as `Done`
 - verification status:
   - implementation and live-doc sync are complete
-  - focused explicit-module flat/graph residual-guidance regression passed (`1` test)
+  - focused explicit-module control-read residual-guidance regression passed (`1` test)
   - adapter suite passed (`92` tests)
   - formatting, docs CI, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation) passed
   - user-requested `cargo sweep --time 1` was deferred because another shell still had `target/release/tool_matrix` running from this repository
@@ -74,4 +74,4 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final commit guards and commit slice 108 without pushing
+- run final commit guards and commit slice 109 without pushing

@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` explicit-module control-read residual guidance)
+
+### Added: explicit-module control-read direction conflicts keep signal-inventory repair guidance
+- Tightened `standalone_explicit_module_blocks_conflicting_module_control_read_direction` so module control-read direction conflicts retain the `fsm_adapter_signal_inventory` residual packet.
+- The regression now pairs actor-port/control-read categories, unresolved conflicting graph direction, blocked module/root renderability, and low-confidence repair guidance.
+- Updated the live tracker, roadmap, and mdBook to mark the explicit-module control-read conflict residual-guidance guarantee as closed.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_explicit_module_blocks_conflicting_module_control_read_direction` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`613` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo sweep --time 1` -> deferred until safe because another shell still had a `target/release/tool_matrix` process running from this repository
+
 ## 2026-05-06 (`.fsm` explicit-module flat/graph residual guidance)
 
 ### Added: explicit-module flat/graph direction disagreements keep signal-inventory repair guidance

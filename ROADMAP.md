@@ -308,6 +308,7 @@
   - direct-root control-read input recovery preserves canonical control-branch support IDs and high automation confidence while avoiding import of the external actor's direction and staying signal-inventory-residual clean once renderable
   - structured-FSM control-read input recovery preserves canonical control/transition support IDs and high automation confidence while avoiding import of the external actor's direction
   - explicit-module control-read input recovery preserves canonical control/transition support IDs and high automation confidence while avoiding import of the external actor's direction
+  - explicit-module control-read direction conflicts preserve actor-port/control-read provenance plus signal-inventory repair guidance while blocking `.fsm` emission
   - explicit-module actor-port width recovery preserves graph-backed support IDs and automation confidence while avoiding import of the external actor's direction
   - explicit-module actor-port width conflicts preserve both graph-backed support IDs and automation confidence while blocking `.fsm` emission
   - direct-root actor-port width conflicts preserve both graph-backed support IDs and automation confidence while blocking `.fsm` emission

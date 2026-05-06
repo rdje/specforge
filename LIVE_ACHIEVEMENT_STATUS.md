@@ -64,6 +64,7 @@
 - `.fsm` undeclared-target structured-FSM blockers now retain state-graph repair guidance when blocked: Done
 - `.fsm` structured-FSM flat/graph direction disagreements now retain signal-inventory repair guidance when blocked: Done
 - `.fsm` explicit-module flat/graph direction disagreements now retain signal-inventory repair guidance when blocked: Done
+- `.fsm` explicit-module control-read direction conflicts now retain signal-inventory repair guidance when blocked: Done
 - `.fsm` top-link width mismatch blockers now preserve width-compatible repair guidance: Done
 - `.fsm` top-target boundary role conflicts now preserve endpoint-role repair guidance: Done
 - `.fsm` top-boundary top-link role conflicts now preserve endpoint-role repair guidance: Done
@@ -561,6 +562,7 @@
 - `.fsm` undeclared-target structured-FSM blockers now retain state-graph repair guidance when blocked: Done
 - `.fsm` structured-FSM flat/graph direction disagreements now retain signal-inventory repair guidance when blocked: Done
 - `.fsm` explicit-module flat/graph direction disagreements now retain signal-inventory repair guidance when blocked: Done
+- `.fsm` explicit-module control-read direction conflicts now retain signal-inventory repair guidance when blocked: Done
 - Initial typed `temporal_rules` surface in `SemanticIR` / `IntentIR` implemented: Done
 - Cycle-window recovery for typed temporal rules, including idiomatic one-cycle phrases like `next cycle` / `next tick`, implemented: Done
 - Built-in temporal parser now recognizes explicit later and ordinal edge phrases: Done
